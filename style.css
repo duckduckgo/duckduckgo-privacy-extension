@@ -1,0 +1,22 @@
+
+#ddg_zeroclick {
+        background: none repeat scroll 0 0 #F9F9F9;
+        border: 1px solid #D2D2D2;
+        border-radius: 6px 6px 6px 6px;
+        display: block;
+}
+
+.ddg_zeroclick_icon {
+        display: inline;
+        float: left;
+        padding-left: 8px;
+        padding-right: 10px;
+        padding-top: 4px;
+}
+
+.ddg_answer {
+        background: url(http://duckduckgo.com/icon16.png) 4px 4px no-repeat #F9F9F9 !important;
+        line-height: 1.4;
+        padding: 4px 0px 4px 30px !important;
+        margin-bottom: 12px;
+}

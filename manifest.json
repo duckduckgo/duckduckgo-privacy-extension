@@ -1,0 +1,23 @@
+{
+    "name": "Google with 0click",
+    "version": "0.1",
+    "description": "DuckDuckGo's ZeroClick info on Google.",
+    "content_scripts": [
+        {
+            "matches": [
+                           "http://www.google.com/*",
+                           "http://www.google.de/*",
+                           "http://www.google.fr/*",
+                           "http://www.google.cz/*",
+                           "http://www.google.sk/*"
+            ],
+            "js": ["script.js"],
+            "css": ["style.css"]
+        }
+    ],
+    "permissions": [
+        "http://api.duckduckgo.com/*",
+        "http://duckduckgo.com/*"
+    ]
+    
+}
