@@ -43,16 +43,32 @@ function renderZeroClick()
                 break;
  
             default:
-               break;
+                hideZeroClick();
+                break;
                     
         } 
     }
+}
+
+function hideZeroClick()
+{
+    var ddg_result = document.getElementById("ddg_zeroclick");
+    if (ddg_result !== null)
+        ddg_result.style.display = 'none';
+}
+
+function showZeroClick()
+{
+    var ddg_result = document.getElementById("ddg_zeroclick");
+    if (ddg_result !== null)
+        ddg_result.style.display = 'block';
 }
 
 function createResultDiv()
 {
     var result = document.getElementById("center_col");
     var ddg_result = document.getElementById("ddg_zeroclick");
+    showZeroClick();
     if (ddg_result === null) {
         result.innerHTML = '<div id="ddg_zeroclick"></div>' + result.innerHTML;
         ddg_result = document.getElementById("ddg_zeroclick");
