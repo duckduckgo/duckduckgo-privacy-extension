@@ -386,7 +386,7 @@
         }
     ],
     "permissions": [
-        "http://api.duckduckgo.com/*",
+        "https://api.duckduckgo.com/*",
         "http://duckduckgo.com/*"
     ]
     

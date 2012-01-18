@@ -1,20 +1,25 @@
 
 var req;
 
-search();
+var regex = new RegExp('[\?\&]q=([^\&]+)');
+if(regex.test(window.location.href)) {
+    search(decodeURIComponent(RegExp.$1.replace(/\+/g," ")));
+}
 
-document.getElementsByName("q")[0].onkeyup = search;
+document.getElementsByName("q")[0].onkeyup = function(){
+    search(document.getElementsByName("q")[0].value);
+};
 
-function search()
+function search(query)
 {
-    var query = document.getElementsByName("q")[0].value;
+    //console.log(query);
     loadZeroClick(query);
 }
 
 function loadZeroClick(query) 
 {
     req = new XMLHttpRequest();
-    req.open('GET', 'http://api.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json', true);
+    req.open('GET', 'https://api.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json', true);
     req.onload = renderZeroClick;
     req.send();
 }
@@ -23,6 +28,7 @@ function renderZeroClick()
 {
     if (req.readyState != 4)  { return; } 
     var res = JSON.parse(req.responseText);
+    //console.log(res);
 
     if(res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
@@ -54,10 +60,19 @@ function createResultDiv()
     return ddg_result;
 }
 
+function resultsLoaded()
+{
+    return document.getElementById("center_col") !== null;
+}
+
 function displayAnswer(answer)
 {
-    var ddg_result = createResultDiv();
-    ddg_result.className += " ddg_answer";
-    ddg_result.innerHTML = answer;
+    if (resultsLoaded()) {
+        var ddg_result = createResultDiv();
+        ddg_result.className += " ddg_answer";
+        ddg_result.innerHTML = answer;
+    } else {
+        setTimeout('displayAnswer("'+answer+'");', 200);
+    }
 }
 
