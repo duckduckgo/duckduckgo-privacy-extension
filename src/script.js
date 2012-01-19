@@ -83,6 +83,10 @@ function resultsLoaded()
 
 function displayAnswer(answer)
 {
+    if (answer === '') {
+        hideZeroClick();
+        return;
+    }
     if (resultsLoaded()) {
         var ddg_result = createResultDiv();
         ddg_result.className += " ddg_answer";
