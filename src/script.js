@@ -1,6 +1,4 @@
 
-var req;
-
 var regex = new RegExp('[\?\&]q=([^\&]+)');
 if(regex.test(window.location.href)) {
     search(decodeURIComponent(RegExp.$1.replace(/\+/g," ")));
@@ -12,24 +10,14 @@ document.getElementsByName("q")[0].onkeyup = function(){
 
 function search(query)
 {
-    //console.log(query);
-    loadZeroClick(query);
+    var request = {query: query};
+    chrome.extension.sendRequest(request, function(response){
+        renderZeroClick(response);
+    });
 }
 
-function loadZeroClick(query) 
+function renderZeroClick(res) 
 {
-    req = new XMLHttpRequest();
-    req.open('GET', 'https://api.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json', true);
-    req.onload = renderZeroClick;
-    req.send();
-}
-
-function renderZeroClick() 
-{
-    if (req.readyState != 4)  { return; } 
-    var res = JSON.parse(req.responseText);
-    //console.log(res);
-
     if(res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
     } else {     

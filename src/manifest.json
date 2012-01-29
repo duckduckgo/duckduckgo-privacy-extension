@@ -1,8 +1,7 @@
 {
     "name": "Google with 0click",
-    "version": "0.2.1",
+    "version": "0.3",
     "description": "DuckDuckGo's ZeroClick info on Google.",
-    "minimum_chrome_version" : "13",
     "content_scripts": [
         {
             "matches": [
@@ -386,6 +385,7 @@
             "css": ["style.css"]
         }
     ],
+    "background_page": "background.html", 
     "permissions": [
         "https://api.duckduckgo.com/*",
         "http://duckduckgo.com/*"
