@@ -4,8 +4,16 @@ if(regex.test(window.location.href)) {
     search(decodeURIComponent(RegExp.$1.replace(/\+/g," ")));
 }
 
-document.getElementsByName("q")[0].onkeyup = function(){
+var lasttime;
+
+
+function qsearch() {
     search(document.getElementsByName("q")[0].value);
+}
+
+document.getElementsByName("q")[0].onkeyup = function(){
+    clearTimeout(lasttime);
+    lasttime = setTimeout('qsearch()', 700);
 };
 
 function search(query)
