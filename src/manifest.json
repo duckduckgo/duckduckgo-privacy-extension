@@ -2,6 +2,11 @@
     "name": "Google with 0click",
     "version": "0.3",
     "description": "DuckDuckGo's ZeroClick info on Google.",
+    "icons": {
+        "16": "img/icon_16.png",
+        "48": "img/icon_48.png",
+        "128": "img/icon_128.png"
+    },
     "content_scripts": [
         {
             "matches": [
