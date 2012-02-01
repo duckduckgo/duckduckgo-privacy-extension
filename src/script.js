@@ -26,8 +26,11 @@ function search(query)
 
 function renderZeroClick(res) 
 {
+    //console.log(res);
     if(res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
+    } else if (res['Type'] == 'A' && res['Abstract'] !== "") {
+        displaySummary(res);
     } else {     
         switch (res['Type']){
             case 'E':
@@ -85,10 +88,57 @@ function displayAnswer(answer)
     }
     if (resultsLoaded()) {
         var ddg_result = createResultDiv();
-        ddg_result.className += " ddg_answer";
+        ddg_result.className = "ddg_answer";
         ddg_result.innerHTML = answer;
     } else {
         setTimeout('displayAnswer("'+answer+'");', 200);
     }
+}
+
+function displaySummary(res) {
+    var ddg_result = createResultDiv();
+    var result = ''
+
+    var img_url = res['AbstractURL'];
+    var official_site = '';
+
+    if (res['Results'].length !== 0) {
+        if(res['Results'][0]['Text'] === "Official site") {
+            official_site = ' | ' + res['Results'][0]['Result'];
+            img_url = res['Results'][0]['FirstURL'];
+        }
+   } 
+
+    result += '<div id="ddg_zeroclick_header">' +
+                '<a href="' + res['AbstractURL'] + '">'+ 
+                    res['Heading'] +
+                '</a>' + 
+              '</div>';
+
+    result += '<div id="ddg_zeroclick_image">' + 
+                '<a href="' + img_url +'">' + 
+                    '<img src="' + res['Image']  + '" />' +
+                '</a>' +
+              '</div>';
+
+    result += '<div id="ddg_zeroclick_abstract">' + res['Abstract'] +
+                '<div id="ddg_zeroclick_official_links">' + 
+                    '<a href="' + res['AbstractURL'] + '"> More at ' +
+                        res['AbstractSource'] +
+                    '</a>' + official_site +
+                '</div>' +
+              '</div>';
+
+
+    if(resultsLoaded()) {
+        ddg_result.innerHTML = result;
+    } else {
+        setTimeout(function(){
+            displaySummary(res);
+        }, 200);
+    }
+
+    //console.log(result);
+
 }
 
