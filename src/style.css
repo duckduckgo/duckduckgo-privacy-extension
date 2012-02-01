@@ -33,14 +33,17 @@
 #ddg_zeroclick_image {
     padding: 5px;
     float: right;
+}
+
+.ddg_zeroclick_img {
     max-width: 100px;
+    max-height: 100px;
 }
 
 #ddg_zeroclick_abstract {
     padding: 3px 3px 3px 15px;
-    max-width: 400px;
     word-wrap: break-word;
-    min-height: 100px;
+ /*   min-height: 105px; */
 }
 
 #ddg_zeroclick_official_links {

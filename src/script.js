@@ -11,9 +11,15 @@ function qsearch() {
     search(document.getElementsByName("q")[0].value);
 }
 
+// instant search
 document.getElementsByName("q")[0].onkeyup = function(){
     clearTimeout(lasttime);
     lasttime = setTimeout('qsearch()', 700);
+};
+
+// click on search button
+document.getElementsByName("btnG")[0].onclick = function(){
+    qsearch();
 };
 
 function search(query)
@@ -114,12 +120,15 @@ function displaySummary(res) {
                     res['Heading'] +
                 '</a>' + 
               '</div>';
-
-    result += '<div id="ddg_zeroclick_image">' + 
-                '<a href="' + img_url +'">' + 
-                    '<img src="' + res['Image']  + '" />' +
-                '</a>' +
-              '</div>';
+    
+    if (res['Image']) {
+        result += '<div id="ddg_zeroclick_image">' + 
+                    '<a href="' + img_url +'">' + 
+                        '<img class="ddg_zeroclick_img" src="' + res['Image']  +
+                        '" />' +
+                    '</a>' +
+                  '</div>';
+    }
 
     result += '<div id="ddg_zeroclick_abstract">' + res['Abstract'] +
                 '<div id="ddg_zeroclick_official_links">' + 
