@@ -23,7 +23,7 @@ document.getElementsByName("btnG")[0].onclick = function(){
 
 function search(query)
 {
-    console.log("query:", query);
+    //console.log("query:", query);
     var request = {query: query};
     chrome.extension.sendRequest(request, function(response){
         renderZeroClick(response, query);
@@ -32,7 +32,7 @@ function search(query)
 
 function renderZeroClick(res, query) 
 {
-    console.log(res);
+    //console.log(res);
     if(res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
     } else if (res['Type'] == 'A' && res['Abstract'] !== "") {
