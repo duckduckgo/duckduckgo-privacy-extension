@@ -118,7 +118,7 @@ function displaySummary(res, query) {
     
 
     for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 1)
+        if (i > 1 || res['RelatedTopics'].length === 0)
             break;
         
         var link = res['RelatedTopics'][i]['Result'].
@@ -129,11 +129,13 @@ function displaySummary(res, query) {
                           '</div>';
     }
     
-    first_category += '<div id="ddg_zeroclick_more">' +
+    if (res['RelatedTopics'].length !== 0) {
+        first_category += '<div id="ddg_zeroclick_more">' +
                         '<a href="https://duckduckgo.com/?q='+ 
                             encodeURIComponent(query)
                         +'"> More at DuckDuckGo </a>' +
                       '</div>';
+    }
 
     result += '<div id="ddg_zeroclick_header">' +
                 '<a href="' + res['AbstractURL'] + '">'+ 
