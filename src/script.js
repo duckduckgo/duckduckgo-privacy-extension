@@ -1,7 +1,9 @@
 
 var regex = new RegExp('[\?\&]q=([^\&#]+)');
 if(regex.test(window.location.href)) {
-    search(decodeURIComponent(RegExp.$1.replace(/\+/g," ")));
+    var q = window.location.href.split(regex);
+    q = q[q.length - 2].replace(/\+/g," ");
+    search(decodeURIComponent(q));
 }
 
 var lasttime;
@@ -46,7 +48,11 @@ function renderZeroClick(res, query)
             case 'A':
                 displayAnswer(res['Answer']);
                 break;
- 
+/*
+            case 'C':
+                displayCategory(res);
+                break;
+ */
             default:
                 hideZeroClick();
                 break;
