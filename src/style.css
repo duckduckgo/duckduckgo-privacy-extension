@@ -41,13 +41,22 @@
 }
 
 #ddg_zeroclick_abstract {
-    padding: 3px 3px 3px 15px;
+    padding: 5px 7px 5px 15px;
     word-wrap: break-word;
- /*   min-height: 105px; */
+    min-height: 105px;
+    width: 75%;
+}
+
+#ddg_zeroclick_abstract a{
+    text-decoration: none;
+}
+
+#ddg_zeroclick_abstract a:hover {
+    text-decoration: underline;
 }
 
 #ddg_zeroclick_official_links {
-    padding: 5px 0px;
+    padding: 5px 0px 10px 0px;
 }
 
 #ddg_zeroclick_header a {
@@ -58,3 +67,18 @@
 #ddg_zeroclick_header a:hover {
     text-decoration: underline;
 }
+
+#ddg_zeroclick_category{
+    background: url(https://duckduckgo.com/assets/icon_article.v101.png) 4px 4px no-repeat #F9F9F9 !important;
+    margin-top: -2px;
+    line-height: 1.4;
+    padding: 4px 0px 4px 24px !important;
+}
+
+#ddg_zeroclick_more{
+    background: url(https://duckduckgo.com/assets/icon_ellipsis.v101.png) 4px 4px no-repeat #F9F9F9 !important;
+    margin-top: -2px;
+    line-height: 1.4;
+    padding: 4px 0px 4px 24px !important;
+}
+

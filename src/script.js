@@ -1,11 +1,10 @@
 
-var regex = new RegExp('[\?\&]q=([^\&]+)');
+var regex = new RegExp('[\?\&]q=([^\&#]+)');
 if(regex.test(window.location.href)) {
     search(decodeURIComponent(RegExp.$1.replace(/\+/g," ")));
 }
 
 var lasttime;
-
 
 function qsearch() {
     search(document.getElementsByName("q")[0].value);
@@ -24,19 +23,20 @@ document.getElementsByName("btnG")[0].onclick = function(){
 
 function search(query)
 {
+    console.log("query:", query);
     var request = {query: query};
     chrome.extension.sendRequest(request, function(response){
-        renderZeroClick(response);
+        renderZeroClick(response, query);
     });
 }
 
-function renderZeroClick(res) 
+function renderZeroClick(res, query) 
 {
-    //console.log(res);
+    console.log(res);
     if(res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
     } else if (res['Type'] == 'A' && res['Abstract'] !== "") {
-        displaySummary(res);
+        displaySummary(res, query);
     } else {     
         switch (res['Type']){
             case 'E':
@@ -101,19 +101,36 @@ function displayAnswer(answer)
     }
 }
 
-function displaySummary(res) {
+function displaySummary(res, query) {
     var ddg_result = createResultDiv();
     var result = ''
 
     var img_url = res['AbstractURL'];
     var official_site = '';
+    var first_category = ''
 
     if (res['Results'].length !== 0) {
         if(res['Results'][0]['Text'] === "Official site") {
             official_site = ' | ' + res['Results'][0]['Result'];
             img_url = res['Results'][0]['FirstURL'];
         }
-   } 
+    } 
+
+    for (var i = 0; i < res['RelatedTopics'].length; i++){
+        if (i > 1)
+            break;
+
+        var link = res['RelatedTopics'][i]['Result'].split(/-/);
+        first_category += '<div id="ddg_zeroclick_category">' + 
+                            link[0] +
+                          '</div>';
+    }
+    
+    first_category += '<div id="ddg_zeroclick_more">' +
+                        '<a href="https://duckduckgo.com/?q='+ 
+                            encodeURIComponent(query)
+                        +'"> More at DuckDuckGo </a>' +
+                      '</div>';
 
     result += '<div id="ddg_zeroclick_header">' +
                 '<a href="' + res['AbstractURL'] + '">'+ 
@@ -136,10 +153,12 @@ function displaySummary(res) {
                         res['AbstractSource'] +
                     '</a>' + official_site +
                 '</div>' +
+                 first_category + 
               '</div>';
 
 
     if(resultsLoaded()) {
+        ddg_result.className = '';
         ddg_result.innerHTML = result;
     } else {
         setTimeout(function(){
