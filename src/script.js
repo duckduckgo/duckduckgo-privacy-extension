@@ -102,12 +102,12 @@ function displayAnswer(answer)
 }
 
 function displaySummary(res, query) {
-    var ddg_result = createResultDiv();
     var result = ''
 
     var img_url = res['AbstractURL'];
     var official_site = '';
     var first_category = ''
+
 
     if (res['Results'].length !== 0) {
         if(res['Results'][0]['Text'] === "Official site") {
@@ -115,14 +115,17 @@ function displaySummary(res, query) {
             img_url = res['Results'][0]['FirstURL'];
         }
     } 
+    
 
     for (var i = 0; i < res['RelatedTopics'].length; i++){
         if (i > 1)
             break;
+        
+        var link = res['RelatedTopics'][i]['Result'].
+                    match(/<a href=".*">.*<\/a>/);
 
-        var link = res['RelatedTopics'][i]['Result'].split(/-/);
         first_category += '<div id="ddg_zeroclick_category">' + 
-                            link[0] +
+                            link +
                           '</div>';
     }
     
@@ -158,6 +161,7 @@ function displaySummary(res, query) {
 
 
     if(resultsLoaded()) {
+        var ddg_result = createResultDiv();
         ddg_result.className = '';
         ddg_result.innerHTML = result;
     } else {
