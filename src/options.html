@@ -1,0 +1,39 @@
+<html>
+<head><title>DuckDuckGo's Chrome extension - Options</title></head>
+<script type="text/javascript">
+
+// Saves options to localStorage.
+function save_options() {
+  var dev = document.getElementById("dev").checked;
+  localStorage["dev"] = dev;
+  console.log(localStorage);
+
+  // Update status to let user know options were saved.
+  var status = document.getElementById("status");
+  status.innerHTML = "Options Saved.";
+  setTimeout(function() {
+    status.innerHTML = "";
+  }, 750);
+}
+
+// Restores select box state to saved value from localStorage.
+function restore_options() {
+  var dev = localStorage["dev"];
+  if (!dev) {
+    return;
+  } else {
+    document.getElementById("dev").checked = dev;
+  }
+}
+
+</script>
+
+<body onload="restore_options()">
+
+  Developer mode:
+  <input type="checkbox" id="dev" checked="false"></input>
+<br>
+<button onclick="save_options()">Save</button>
+  <div id="status"> </div>
+</body>
+</html>

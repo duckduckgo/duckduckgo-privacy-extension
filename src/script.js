@@ -61,6 +61,10 @@ function renderZeroClick(res, query)
                 displayCategory(res);
                 break;
  */
+            case 'D':
+                displayDisambiguation(res, query);
+                break;
+
             default:
                 hideZeroClick();
                 break;
@@ -182,9 +186,65 @@ function displaySummary(res, query) {
         ddg_result.innerHTML = result;
     } else {
         setTimeout(function(){
-            displaySummary(res);
+            displaySummary(res, query);
         }, 200);
     }
+
+}
+
+function displayDisambiguation(res, query){
+    
+    var result = '';
+    result += '<div id="ddg_zeroclick_header"> Meanings of ' +
+                    res['Heading'] +
+              '</div>';
+
+    var disambigs = '' 
+
+   for (var i = 0; i < res['RelatedTopics'].length; i++){
+        if (i > 1 || res['RelatedTopics'].length === 0)
+            break;
+        
+        if (developer)
+            console.log(res['RelatedTopics'][i]['Result']);
+ 
+        disambigs += '<div>' +
+                        '<div id="ddg_zeroclick_disambig_img">' + 
+                            '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
+                        '</div>' +
+                        '<div id="ddg_zeroclick_disambig">' +
+                            res['RelatedTopics'][i]['Result'] +
+                        '</div>' +
+                      '</div>';
+    }
+    
+    if (res['RelatedTopics'].length !== 0) {
+        disambigs += '<div id="ddg_zeroclick_more" class="disambig_more">' +
+                        '<a href="https://duckduckgo.com/?q='+ 
+                            encodeURIComponent(query)
+                        +'"> More at DuckDuckGo </a>' +
+                      '</div>';
+    }
+
+    result += '<div id="ddg_zeroclick_abstract">' + 
+                    disambigs +
+                '</div>';
+                
+    
+    if (developer)
+        console.log(result);
+
+    if(resultsLoaded()) {
+        var ddg_result = createResultDiv();
+        ddg_result.className = '';
+        ddg_result.innerHTML = result;
+    } else {
+        setTimeout(function(){
+            displaySummary(res, query);
+        }, 200);
+    }
+
+
 
 }
 

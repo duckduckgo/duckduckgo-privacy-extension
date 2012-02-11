@@ -73,10 +73,38 @@
     padding: 4px 0px 4px 24px !important;
 }
 
+#ddg_zeroclick_disambig {
+    line-height: 1.4;
+    padding: 0px 0px 4px 4px !important;
+    min-height: 30px;
+    margin-left: 38px;
+}
+
+#ddg_zeroclick_disambig_img {
+    max-width: 38px;
+    height: 30px;
+    float: left;
+    padding: 2px 0px 2px 2px;
+}
+
+#ddg_zeroclick_disambig_img img {
+    max-height: 30px;
+    max-width: 30px;   
+}
+
+.disambig_holder {
+    margin: 3px;
+}
+
+.disambig_more {
+    margin-left: 18px !important;
+}
+
 #ddg_zeroclick_more{
     background: url(https://duckduckgo.com/assets/icon_ellipsis.v101.png) 4px 4px no-repeat #F9F9F9 !important;
     margin-top: -2px;
     line-height: 1.4;
     padding: 4px 0px 4px 24px !important;
 }
+
 
