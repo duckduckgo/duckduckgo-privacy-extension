@@ -1,4 +1,9 @@
 
+var developer = false;
+chrome.extension.sendRequest({storage_key: "dev"}, function(dev){
+    developer = (dev === "true");
+});
+
 var regex = new RegExp('[\?\&]q=([^\&#]+)');
 if(regex.test(window.location.href)) {
     var q = window.location.href.split(regex);
@@ -25,17 +30,20 @@ document.getElementsByName("btnG")[0].onclick = function(){
 
 function search(query)
 {
-    //console.log("query:", query);
-    var request = {query: query};
+   var request = {query: query};
     chrome.extension.sendRequest(request, function(response){
         renderZeroClick(response, query);
     });
+    if (developer)
+        console.log("query:", query);
+ 
 }
 
 function renderZeroClick(res, query) 
 {
-    //console.log(res);
-    if(res['AnswerType'] !== "") {
+    if (developer)
+        console.log(res);
+    if (res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
     } else if (res['Type'] == 'A' && res['Abstract'] !== "") {
         displaySummary(res, query);
@@ -177,8 +185,6 @@ function displaySummary(res, query) {
             displaySummary(res);
         }, 200);
     }
-
-    //console.log(result);
 
 }
 

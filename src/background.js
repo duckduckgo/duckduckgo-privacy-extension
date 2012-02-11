@@ -4,6 +4,8 @@ function Background()
     chrome.extension.onRequest.addListener(function(request, sender, callback){
         if(request.query)
             $this.query(request.query, callback);
+        if (request.storage_key)
+            callback(localStorage[request.storage_key]);
     });
 }
 
