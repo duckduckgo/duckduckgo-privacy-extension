@@ -56,11 +56,11 @@ function renderZeroClick(res, query)
             case 'A':
                 displayAnswer(res['Answer']);
                 break;
-/*
+
             case 'C':
-                displayCategory(res);
+                displayCategory(res, query);
                 break;
- */
+
             case 'D':
                 displayDisambiguation(res, query);
                 break;
@@ -209,7 +209,7 @@ function displayDisambiguation(res, query){
             console.log(res['RelatedTopics'][i]['Result']);
  
         disambigs += '<div>' +
-                        '<div id="ddg_zeroclick_disambig_img">' + 
+                        '<div id="ddg_zeroclick_img" class="icon_disambig">' + 
                             '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                         '</div>' +
                         '<div id="ddg_zeroclick_disambig">' +
@@ -244,7 +244,57 @@ function displayDisambiguation(res, query){
         }, 200);
     }
 
+}
 
+function displayCategory(res, query){
+    var result = '';
+    result += '<div id="ddg_zeroclick_header">' +
+                    res['Heading'] +
+              '</div>';
+    
+    var categories = '';
+    for (var i = 0; i < res['RelatedTopics'].length; i++){
+        if (i > 1 || res['RelatedTopics'].length === 0)
+            break;
+        
+        if (developer)
+            console.log(res['RelatedTopics'][i]['Result']);
+ 
+        categories += '<div>' +
+                        '<div id="ddg_zeroclick_img" class="icon_category">' + 
+                            '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
+                        '</div>' +
+                        '<div id="ddg_zeroclick_category_item">' +
+                            res['RelatedTopics'][i]['Result'] +
+                        '</div>' +
+                      '</div>';
+    }
+    
+    if (res['RelatedTopics'].length !== 0) {
+        categories += '<div id="ddg_zeroclick_more" class="category_more">' +
+                        '<a href="https://duckduckgo.com/?q='+ 
+                            encodeURIComponent(query)
+                        +'"> More at DuckDuckGo </a>' +
+                      '</div>';
+    }
+
+    result += '<div id="ddg_zeroclick_abstract">' + 
+                    categories +
+                '</div>';
+                
+    
+    if (developer)
+        console.log(result);
+
+    if(resultsLoaded()) {
+        var ddg_result = createResultDiv();
+        ddg_result.className = '';
+        ddg_result.innerHTML = result;
+    } else {
+        setTimeout(function(){
+            displayCategory(res, query);
+        }, 200);
+    }
 
 }
 
