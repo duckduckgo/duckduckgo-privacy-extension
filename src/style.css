@@ -53,8 +53,12 @@
     text-decoration: underline;
 }
 
+.first_category {
+    margin-top: 3px !important;
+}
+
 #ddg_zeroclick_official_links {
-    padding: 5px 0px 10px 0px;
+    padding: 5px 0px 5px 0px;
 }
 
 #ddg_zeroclick_header a {

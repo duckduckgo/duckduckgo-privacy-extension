@@ -141,8 +141,9 @@ function displaySummary(res, query) {
         
         var link = res['RelatedTopics'][i]['Result'].
                     match(/<a href=".*">.*<\/a>/);
-
-        first_category += '<div id="ddg_zeroclick_category">' + 
+        
+        var first = (i === 0)? ' class="first_category"': '';
+        first_category += '<div id="ddg_zeroclick_category"'+ first + '>' + 
                             link +
                           '</div>';
     }
