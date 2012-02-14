@@ -1,7 +1,7 @@
 
-var developer = false;
-chrome.extension.sendRequest({storage_key: "dev"}, function(dev){
-    developer = (dev === "true");
+var options = [];
+chrome.extension.sendRequest({options: "get"}, function(opt){
+    options = opt;
 });
 
 var regex = new RegExp('[\?\&]q=([^\&#]+)');
@@ -34,14 +34,14 @@ function search(query)
     chrome.extension.sendRequest(request, function(response){
         renderZeroClick(response, query);
     });
-    if (developer)
+    if (options.dev)
         console.log("query:", query);
  
 }
 
 function renderZeroClick(res, query) 
 {
-    if (developer)
+    if (options.dev)
         console.log(res);
     if (res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
@@ -206,7 +206,7 @@ function displayDisambiguation(res, query){
         if (i > 1 || res['RelatedTopics'].length === 0)
             break;
         
-        if (developer)
+        if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
  
         disambigs += '<div>' +
@@ -232,7 +232,7 @@ function displayDisambiguation(res, query){
                 '</div>';
                 
     
-    if (developer)
+    if (options.dev)
         console.log(result);
 
     if(resultsLoaded()) {
@@ -258,7 +258,7 @@ function displayCategory(res, query){
         if (i > 1 || res['RelatedTopics'].length === 0)
             break;
         
-        if (developer)
+        if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
  
         categories += '<div>' +
@@ -284,7 +284,7 @@ function displayCategory(res, query){
                 '</div>';
                 
     
-    if (developer)
+    if (options.dev)
         console.log(result);
 
     if(resultsLoaded()) {
