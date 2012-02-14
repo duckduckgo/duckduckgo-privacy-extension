@@ -79,9 +79,9 @@
 
 #ddg_zeroclick_disambig {
     line-height: 1.4;
-    padding: 0px 0px 4px 4px !important;
+    padding: 0px 0px 8px 4px !important;
     min-height: 30px;
-    margin-left: 38px;
+    margin-left: 48px;
 }
 
 #ddg_zeroclick_img {
@@ -90,13 +90,13 @@
 }
 
 .icon_disambig {
-    max-width: 38px;
-    height: 30px;
+    max-width: 48px;
+    height: 40px;
 }
 
 .icon_disambig img {
-    max-height: 30px;
-    max-width: 30px;   
+    max-height: 40px;
+    max-width: 40px;   
 }
 
 .icon_category {
@@ -125,7 +125,7 @@
 }
 
 .disambig_more {
-    margin-left: 18px !important;
+    margin-left: 28px !important;
 }
 
 .category_more {
