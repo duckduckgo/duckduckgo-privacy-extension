@@ -93,7 +93,7 @@
 .icon_disambig {
     text-align: right;
     width: 48px;
-    height: 40px;
+    max-height: 40px;
     padding-right: 8px !important;
     display: block;
 }
@@ -107,7 +107,7 @@
 .icon_category {
     text-align: right;
     width: 58px;
-    height: 50px;
+    max-height: 50px;
     padding-right: 8px;
 }
 
@@ -132,7 +132,7 @@
 }
 
 .disambig_more {
-    margin-left: 28px !important;
+    margin-left: 34px !important;
 }
 
 .category_more {
