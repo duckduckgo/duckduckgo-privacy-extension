@@ -5,6 +5,7 @@
     border-radius: 6px 6px 6px 6px;
     display: block;
     margin-bottom: 20px;
+    width: 512px;
 }
 
 .ddg_zeroclick_icon {
@@ -79,29 +80,35 @@
 
 #ddg_zeroclick_disambig {
     line-height: 1.4;
-    padding: 0px 0px 8px 4px !important;
+    padding: 4px;
     min-height: 30px;
     margin-left: 48px;
 }
 
 #ddg_zeroclick_img {
     float: left;
-    padding: 2px 0px 2px 2px;
+    padding: 5px 0px 2px 2px;
 }
 
 .icon_disambig {
-    max-width: 48px;
+    text-align: right;
+    width: 48px;
     height: 40px;
+    padding-right: 8px !important;
+    display: block;
 }
 
 .icon_disambig img {
     max-height: 40px;
     max-width: 40px;   
+    display: inline;
 }
 
 .icon_category {
-    max-width: 58px;
+    text-align: right;
+    width: 58px;
     height: 50px;
+    padding-right: 8px;
 }
 
 .icon_category img {
@@ -111,7 +118,7 @@
 
 #ddg_zeroclick_category_item {
     line-height: 1.4;
-    padding: 0px 0px 4px 4px !important;
+    padding: 4px;
     min-height: 30px;
     margin-left: 58px;
 }
@@ -143,6 +150,11 @@
     margin-top: -2px;
     line-height: 1.4;
     padding: 4px 0px 4px 24px !important;
+}
+
+.wrapper {
+    clear: left;
+    padding-bottom: 3px;
 }
 
 

@@ -209,7 +209,7 @@ function displayDisambiguation(res, query){
         if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
  
-        disambigs += '<div>' +
+        disambigs += '<div class="wrapper">' +
                         '<div id="ddg_zeroclick_img" class="icon_disambig">' + 
                             '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                         '</div>' +
@@ -261,7 +261,7 @@ function displayCategory(res, query){
         if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
  
-        categories += '<div>' +
+        categories += '<div class="wrapper">' +
                         '<div id="ddg_zeroclick_img" class="icon_category">' + 
                             '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                         '</div>' +
