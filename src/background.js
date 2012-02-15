@@ -6,7 +6,7 @@ function Background()
         if(request.query)
             $this.query(request.query, callback);
         if (request.options) {
-            $this.meanings = (localStorage['meanings'] === "true");
+            $this.meanings = (localStorage['meanings'] !== "false");
             callback(localStorage);
         }
     });
