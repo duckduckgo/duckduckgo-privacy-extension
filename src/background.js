@@ -3,6 +3,7 @@ function Background()
     $this = this;
     this.meanings = true;
     chrome.extension.onRequest.addListener(function(request, sender, callback){
+        console.log(request);
         if(request.query)
             $this.query(request.query, callback);
         if (request.options) {

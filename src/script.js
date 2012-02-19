@@ -136,7 +136,7 @@ function displaySummary(res, query) {
     
 
     for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 1 || res['RelatedTopics'].length === 0)
+        if (i > 2 || res['RelatedTopics'].length === 0)
             break;
         
         var link = res['RelatedTopics'][i]['Result'].
@@ -147,20 +147,15 @@ function displaySummary(res, query) {
                             link +
                           '</div>';
     }
-    
-    if (res['RelatedTopics'].length !== 0) {
-        first_category += '<div id="ddg_zeroclick_more">' +
-                        '<a href="https://duckduckgo.com/?q='+ 
-                            encodeURIComponent(query)
-                        +'"> More at DuckDuckGo </a>' +
-                      '</div>';
-    }
 
     result += '<div id="ddg_zeroclick_header">' +
                 '<a href="' + res['AbstractURL'] + '">'+ 
                     res['Heading'] +
                 '</a>' + 
-              '</div>';
+                '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
+                    encodeURIComponent(query)
+                +'"> More at DuckDuckGo </a>' +
+                '</div>';
     
     if (res['Image']) {
         result += '<div id="ddg_zeroclick_image">' + 
@@ -198,12 +193,17 @@ function displayDisambiguation(res, query){
     var result = '';
     result += '<div id="ddg_zeroclick_header"> Meanings of ' +
                     res['Heading'] +
+
+                '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
+                    encodeURIComponent(query)
+                +'"> More at DuckDuckGo </a>' +
+
               '</div>';
 
     var disambigs = '' 
 
    for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 1 || res['RelatedTopics'].length === 0)
+        if (i > 2 || res['RelatedTopics'].length === 0)
             break;
         
         if (options.dev)
@@ -219,15 +219,7 @@ function displayDisambiguation(res, query){
                       '</div>';
     }
     
-    if (res['RelatedTopics'].length !== 0) {
-        disambigs += '<div id="ddg_zeroclick_more" class="disambig_more">' +
-                        '<a href="https://duckduckgo.com/?q='+ 
-                            encodeURIComponent(query)
-                        +'"> More at DuckDuckGo </a>' +
-                      '</div>';
-    }
-
-    result += '<div id="ddg_zeroclick_abstract">' + 
+      result += '<div id="ddg_zeroclick_abstract">' + 
                     disambigs +
                 '</div>';
                 
@@ -251,11 +243,14 @@ function displayCategory(res, query){
     var result = '';
     result += '<div id="ddg_zeroclick_header">' +
                     res['Heading'] +
+                '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
+                    encodeURIComponent(query)
+                +'"> More at DuckDuckGo </a>' +
               '</div>';
     
     var categories = '';
     for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 1 || res['RelatedTopics'].length === 0)
+        if (i > 2 || res['RelatedTopics'].length === 0)
             break;
         
         if (options.dev)
@@ -271,13 +266,6 @@ function displayCategory(res, query){
                       '</div>';
     }
     
-    if (res['RelatedTopics'].length !== 0) {
-        categories += '<div id="ddg_zeroclick_more" class="category_more">' +
-                        '<a href="https://duckduckgo.com/?q='+ 
-                            encodeURIComponent(query)
-                        +'"> More at DuckDuckGo </a>' +
-                      '</div>';
-    }
 
     result += '<div id="ddg_zeroclick_abstract">' + 
                     categories +
