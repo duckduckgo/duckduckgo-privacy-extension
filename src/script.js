@@ -154,7 +154,7 @@ function displaySummary(res, query) {
                 '</a>' + 
                 '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
                     encodeURIComponent(query)
-                +'"> More at DuckDuckGo </a>' +
+                +'"> See DuckDuckGo results </a>' +
                 '</div>';
     
     if (res['Image']) {
@@ -196,7 +196,7 @@ function displayDisambiguation(res, query){
 
                 '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
                     encodeURIComponent(query)
-                +'"> More at DuckDuckGo </a>' +
+                +'"> See DuckDuckGo results </a>' +
 
               '</div>';
 
@@ -245,7 +245,7 @@ function displayCategory(res, query){
                     res['Heading'] +
                 '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
                     encodeURIComponent(query)
-                +'"> More at DuckDuckGo </a>' +
+                +'"> See DuckDuckGo results </a>' +
               '</div>';
     
     var categories = '';
