@@ -125,6 +125,7 @@ function displaySummary(res, query) {
     var img_url = res['AbstractURL'];
     var official_site = '';
     var first_category = ''
+    var hidden_categories = '';
 
 
     if (res['Results'].length !== 0) {
@@ -136,17 +137,36 @@ function displaySummary(res, query) {
     
 
     for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 2 || res['RelatedTopics'].length === 0)
+        if (res['RelatedTopics'].length === 0)
             break;
         
         var link = res['RelatedTopics'][i]['Result'].
                     match(/<a href=".*">.*<\/a>/);
         
-        var first = (i === 0)? ' class="first_category"': '';
-        first_category += '<div id="ddg_zeroclick_category"'+ first + '>' + 
-                            link +
-                          '</div>';
+        if (i < 2) {
+            var first = (i === 0)? ' class="first_category"': '';
+            first_category += '<div id="ddg_zeroclick_category"'+ first + '>' + 
+                                link +
+                              '</div>';
+        } else {
+            hidden_categories += '<div id="ddg_zeroclick_category">' + 
+                                link +
+                              '</div>';
+        }
     }
+
+    if (hidden_categories !== '') {
+        hidden_categories  = '<div id="ddg_zeroclick_more">' +
+                                '<a href="javascript:;" onclick="' + 
+                                    "this.parentElement.style.display='none';" +
+                                    "this.parentElement.nextElementSibling.style.display='block'" +
+                                '"> More related topics </a>' +
+                             '</div>' + 
+                                '<div style="display:none">' + 
+                                    hidden_categories +
+                                '</div>';
+    }
+
 
     result += '<div id="ddg_zeroclick_header">' +
                 '<a href="' + res['AbstractURL'] + '">'+ 
@@ -173,6 +193,7 @@ function displaySummary(res, query) {
                     '</a>' + official_site +
                 '</div>' +
                  first_category + 
+                 hidden_categories + 
               '</div>';
 
 
