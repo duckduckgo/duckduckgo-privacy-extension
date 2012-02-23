@@ -5,7 +5,8 @@
     border-radius: 6px 6px 6px 6px;
     display: block;
     margin-bottom: 20px;
-    width: 512px;
+    width: 554px;
+    z-index: 10;
 }
 
 .ddg_zeroclick_icon {
@@ -46,7 +47,7 @@
 }
 
 #ddg_zeroclick_abstract {
-    padding: 5px 7px 5px 15px;
+    margin: 5px 7px 5px 15px;
     word-wrap: break-word;
 }
 
@@ -82,7 +83,7 @@
     padding: 4px 0px 4px 24px !important;
 }
 
-#ddg_zeroclick_disambig {
+.ddg_zeroclick_disambig {
     line-height: 1.4;
     padding: 4px;
     margin-left: 48px;
@@ -94,10 +95,10 @@
 }
 
 .icon_disambig {
+    padding-top: 5px;
+    float: left;
     text-align: right;
     width: 48px;
-    max-height: 40px;
-    padding-right: 8px !important;
     display: block;
 }
 
@@ -106,6 +107,7 @@
     max-width: 40px;   
     display: inline;
     margin-top: 2px;
+    padding-right: 4px;
 }
 
 .icon_category {
@@ -168,3 +170,10 @@
     height: 16px;
 }
 
+
+.clear {
+    clear: both;
+    height: 0;
+    font-size: 0;
+    line-height: 0;
+}

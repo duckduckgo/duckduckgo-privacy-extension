@@ -231,10 +231,10 @@ function displayDisambiguation(res, query){
             console.log(res['RelatedTopics'][i]['Result']);
  
         disambigs += '<div class="wrapper">' +
-                        '<div id="ddg_zeroclick_img" class="icon_disambig">' + 
+                        '<div class="icon_disambig">' + 
                             '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                         '</div>' +
-                        '<div id="ddg_zeroclick_disambig">' +
+                        '<div class="ddg_zeroclick_disambig">' +
                             res['RelatedTopics'][i]['Result'] +
                         '</div>' +
                       '</div>';
@@ -242,7 +242,7 @@ function displayDisambiguation(res, query){
     
       result += '<div id="ddg_zeroclick_abstract">' + 
                     disambigs +
-                '</div>';
+                '</div><div class="clear"></div>';
                 
     
     if (options.dev)
