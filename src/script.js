@@ -43,6 +43,11 @@ function renderZeroClick(res, query)
 {
     if (options.dev)
         console.log(res);
+    
+    // disable on images
+    if (document.getElementById('isr_pps') !== null)
+        return;
+
     if (res['AnswerType'] !== "") {
         displayAnswer(res['Answer']);
     } else if (res['Type'] == 'A' && res['Abstract'] !== "") {
@@ -170,7 +175,7 @@ function displaySummary(res, query) {
 
     result += '<div id="ddg_zeroclick_header">' +
                 '<a href="' + res['AbstractURL'] + '">'+ 
-                    res['Heading'] +
+                    (res['Heading'] === ''? "&nbsp;": res['Heading']) +
                 '</a>' + 
                 '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
                     encodeURIComponent(query)
@@ -222,28 +227,59 @@ function displayDisambiguation(res, query){
               '</div>';
 
     var disambigs = '' 
+    var hidden_disambigs = '';
+    var nhidden = 0;
 
    for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 2 || res['RelatedTopics'].length === 0)
+        if (res['RelatedTopics'].length === 0)
             break;
         
         if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
+
+        if(res['RelatedTopics'][i]['Topics'])
+            break;
  
-        disambigs += '<div class="wrapper">' +
-                        '<div class="icon_disambig">' + 
-                            '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                        '</div>' +
-                        '<div class="ddg_zeroclick_disambig">' +
-                            res['RelatedTopics'][i]['Result'] +
-                        '</div>' +
-                      '</div>';
+        if (i < 2) {
+            disambigs += '<div class="wrapper">' +
+                            '<div class="icon_disambig">' + 
+                                '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
+                            '</div>' +
+                            '<div class="ddg_zeroclick_disambig">' +
+                                res['RelatedTopics'][i]['Result'] +
+                            '</div>' +
+                          '</div>';
+        } else {
+            hidden_disambigs += '<div class="wrapper">' +
+                                    '<div class="icon_disambig">' + 
+                                        '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
+                                    '</div>' +
+                                    '<div class="ddg_zeroclick_disambig">' +
+                                        res['RelatedTopics'][i]['Result'] +
+                                    '</div>' +
+                                  '</div>'; 
+            nhidden++;
+        }
     }
     
-      result += '<div id="ddg_zeroclick_abstract">' + 
-                    disambigs +
-                '</div><div class="clear"></div>';
-                
+    if (hidden_disambigs!== '') {
+        hidden_disambigs  = '<div class="disambig_more">' +
+                                '<a href="javascript:;" onclick="' + 
+                                    "this.parentElement.style.display='none';" +
+                                    "this.parentElement.nextElementSibling.style.display='block'" +
+                                '"> More ('+ nhidden + ')</a>' +
+                             '</div>' + 
+                                '<div style="display:none">' + 
+                                    hidden_disambigs+
+                                '</div>';
+    }
+
+
+    result += '<div id="ddg_zeroclick_abstract">' + 
+                  disambigs +
+                  hidden_disambigs +
+              '</div><div class="clear"></div>';
+              
     
     if (options.dev)
         console.log(result);
