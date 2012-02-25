@@ -139,6 +139,18 @@
 .disambig_more {
     margin-left: 48px !important;
     padding: 4px;
+    clear: left
+}
+
+.disambig_more hr {
+    width: 85%;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: #BADE89;
+    background-color: #D2D2D2;
+    text-align: left;
 }
 
 .category_more {

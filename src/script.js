@@ -228,6 +228,7 @@ function displayDisambiguation(res, query){
 
     var disambigs = '' 
     var hidden_disambigs = '';
+    var others = '';
     var nhidden = 0;
 
    for (var i = 0; i < res['RelatedTopics'].length; i++){
@@ -236,9 +237,34 @@ function displayDisambiguation(res, query){
         
         if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
-
-        if(res['RelatedTopics'][i]['Topics'])
-            break;
+        
+        // other topics
+        if(res['RelatedTopics'][i]['Topics']) {
+            var topics = res['RelatedTopics'][i]['Topics'];
+            var output = '';
+            for(var j = 0; j < topics.length; j++){
+                output += '<div class="wrapper">' +
+                            '<div class="icon_disambig">' + 
+                                '<img src="' + topics[j]['Icon']['URL'] +'" />' +
+                            '</div>' +
+                            '<div class="ddg_zeroclick_disambig">' +
+                                topics[j]['Result'] +
+                            '</div>' +
+                          '</div>';
+            }
+            others += '<div class="disambig_more">' +
+                                '<a href="javascript:;" onclick="' + 
+                                    "this.parentElement.nextElementSibling.style.display='block';" +
+                                    "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
+                                '"> ' + res['RelatedTopics'][i]['Name']  + ' ('+ topics.length + ')</a>' +
+                             '</div>' + 
+                                '<div style="display:none">' + 
+                                    output +
+                                '</div>';
+            
+            continue;
+        }
+            
  
         if (i < 2) {
             disambigs += '<div class="wrapper">' +
@@ -278,6 +304,7 @@ function displayDisambiguation(res, query){
     result += '<div id="ddg_zeroclick_abstract">' + 
                   disambigs +
                   hidden_disambigs +
+                  others +
               '</div><div class="clear"></div>';
               
     
