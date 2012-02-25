@@ -37,7 +37,7 @@
 }
 
 #ddg_zeroclick_image {
-    padding: 5px;
+    margin: 10px;
     float: right;
 }
 
@@ -73,6 +73,7 @@
     padding-right: 5px;
     width: 16px;
     height: 16px;
+    margin-top: -2px;
 }
 
 #ddg_zeroclick_header a {
