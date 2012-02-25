@@ -114,7 +114,6 @@
     text-align: right;
     width: 58px;
     max-height: 50px;
-    padding-right: 8px;
 }
 
 .icon_category img {
@@ -126,7 +125,7 @@
     line-height: 1.4;
     padding: 4px;
     min-height: 30px;
-    margin-left: 58px;
+    margin-left: 62px;
 }
 
 #ddg_zeroclick_category_item a {
@@ -143,7 +142,8 @@
 }
 
 .category_more {
-    margin-left: 38px !important;
+    padding: 4px;
+    margin-left: 62px !important;
 }
 
 

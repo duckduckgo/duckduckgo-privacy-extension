@@ -306,26 +306,55 @@ function displayCategory(res, query){
               '</div>';
     
     var categories = '';
+    var hidden_categories = '';
+    var nhidden = 0;
     for (var i = 0; i < res['RelatedTopics'].length; i++){
-        if (i > 2 || res['RelatedTopics'].length === 0)
+        if (res['RelatedTopics'].length === 0)
             break;
         
         if (options.dev)
             console.log(res['RelatedTopics'][i]['Result']);
  
-        categories += '<div class="wrapper">' +
-                        '<div id="ddg_zeroclick_img" class="icon_category">' + 
-                            '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                        '</div>' +
-                        '<div id="ddg_zeroclick_category_item">' +
-                            res['RelatedTopics'][i]['Result'] +
-                        '</div>' +
-                      '</div>';
+        if (i <= 2) {
+            categories += '<div class="wrapper">' +
+                            '<div id="ddg_zeroclick_img" class="icon_category">' + 
+                                '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
+                            '</div>' +
+                            '<div id="ddg_zeroclick_category_item">' +
+                                res['RelatedTopics'][i]['Result'] +
+                            '</div>' +
+                          '</div>';
+        } else {
+            hidden_categories += '<div class="wrapper">' +
+                                '<div id="ddg_zeroclick_img" class="icon_category">' + 
+                                    '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
+                                '</div>' +
+                                '<div id="ddg_zeroclick_category_item">' +
+                                    res['RelatedTopics'][i]['Result'] +
+                                '</div>' +
+                              '</div>';
+
+            nhidden++;
+        }
+
     }
     
+    if (hidden_categories !== '') {
+        hidden_categories = '<div class="category_more">' +
+                                '<a href="javascript:;" onclick="' + 
+                                    "this.parentElement.style.display='none';" +
+                                    "this.parentElement.nextElementSibling.style.display='block'" +
+                                '"> More ('+ nhidden + ')</a>' +
+                             '</div>' + 
+                                '<div style="display:none">' + 
+                                    hidden_categories+
+                                '</div>';
+ 
+    }
 
     result += '<div id="ddg_zeroclick_abstract">' + 
                     categories +
+                    hidden_categories +
                 '</div>';
                 
     
