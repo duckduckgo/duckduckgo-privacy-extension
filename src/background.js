@@ -17,9 +17,9 @@ Background.prototype.query = function(query, callback)
 {
     var req = new XMLHttpRequest();
     if(this.meanings)
-        req.open('GET', 'https://api.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json', true);
+        req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json', true);
     else
-        req.open('GET', 'https://api.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json&d=1', true);
+        req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json&d=1', true);
 
     req.onreadystatechange = function(data) {
         if (req.readyState != 4)  { return; } 

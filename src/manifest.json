@@ -393,7 +393,6 @@
     "options_page": "options.html",
     "background_page": "background.html", 
     "permissions": [
-        "https://api.duckduckgo.com/*",
-        "http://duckduckgo.com/*"
+        "https://chrome.duckduckgo.com/*"
     ]
 }
