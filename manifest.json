@@ -386,12 +386,12 @@
                 "https://www.google.cat/*"
  
             ],
-            "js": ["script.js"],
-            "css": ["style.css"]
+            "js": ["js/script.js"],
+            "css": ["css/style.css"]
         }
     ],
-    "options_page": "options.html",
-    "background_page": "background.html", 
+    "options_page": "html/options.html",
+    "background_page": "html/background.html", 
     "permissions": [
         "https://chrome.duckduckgo.com/*"
     ]
