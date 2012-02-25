@@ -290,7 +290,7 @@ function displayDisambiguation(res, query){
         ddg_result.innerHTML = result;
     } else {
         setTimeout(function(){
-            displaySummary(res, query);
+            displayDisambiguation(res, query);
         }, 200);
     }
 
