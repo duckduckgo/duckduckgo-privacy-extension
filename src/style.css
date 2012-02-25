@@ -67,6 +67,14 @@
     padding: 5px 0px 5px 0px;
 }
 
+#ddg_zeroclick_official_links img{
+    display: inline;
+    float: left;
+    padding-right: 5px;
+    width: 16px;
+    height: 16px;
+}
+
 #ddg_zeroclick_header a {
     text-decoration: none;
     color: #434343;

@@ -190,9 +190,12 @@ function displaySummary(res, query) {
                     '</a>' +
                   '</div>';
     }
+    
+    var source_base_url = res['AbstractURL'].match(/http.?:\/\/(.*?\.)?(.*\..*?)\/.*/)[2];
 
     result += '<div id="ddg_zeroclick_abstract">' + res['Abstract'] +
                 '<div id="ddg_zeroclick_official_links">' + 
+                    '<img src="http://duckduckgo.com/i/'+ source_base_url +'.ico" />' +
                     '<a href="' + res['AbstractURL'] + '"> More at ' +
                         res['AbstractSource'] +
                     '</a>' + official_site +
@@ -266,7 +269,7 @@ function displayDisambiguation(res, query){
         }
             
  
-        if (i < 2) {
+        if (i <= 2) {
             disambigs += '<div class="wrapper">' +
                             '<div class="icon_disambig">' + 
                                 '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
