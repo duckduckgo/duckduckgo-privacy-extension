@@ -1,7 +1,7 @@
 {
-    "name": "Google with 0click",
+    "name": "DuckDuckGo Zero-click Info",
     "version": "0.3.16",
-    "description": "DuckDuckGo's ZeroClick info on Google.",
+    "description": "DuckDuckGo Zero-click Info",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
