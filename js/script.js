@@ -4,17 +4,47 @@ chrome.extension.sendRequest({options: "get"}, function(opt){
     options = opt;
 });
 
-var regex = new RegExp('[\?\&]q=([^\&#]+)');
-if(regex.test(window.location.href)) {
-    var q = window.location.href.split(regex);
-    q = q[q.length - 2].replace(/\+/g," ");
-    search(decodeURIComponent(q));
+function lastQuery()
+{
+    var regex = new RegExp('[\?\&]q=([^\&#]+)');
+    if(regex.test(window.location.href)) {
+        var q = window.location.href.split(regex);
+        q = q[q.length - 2].replace(/\+/g," ");
+
+        if(options.dev)
+            console.log(q)
+
+        return decodeURIComponent(q);
+    }
 }
 
-var lasttime;
+search(lastQuery());
 
+
+var lasttime;
 function qsearch() {
-    search(document.getElementsByName("q")[0].value);
+
+    if(options.dev)
+        console.log();
+    
+    var instant = document.getElementsByClassName("gssb_a");
+    if (instant.length !== 0){
+        var first_instant = instant[0];
+        
+        var query = first_instant.childNodes[0].childNodes[0].childNodes[0].
+                    childNodes[0].childNodes[0].childNodes[0].innerHTML;
+        query = query.replace(/<\/?(?!\!)[^>]*>/gi, '');
+
+        if(options.dev)
+            console.log(query);
+
+        search(query);
+
+    } else {
+        search(document.getElementsByName("q")[0].value);
+    }
+
+
 }
 
 // instant search
