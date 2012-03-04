@@ -56,12 +56,21 @@ document.getElementsByName("q")[0].onkeyup = function(e){
 
     clearTimeout(lasttime);
     lasttime = setTimeout(fn, 700);
+
+    // instant search suggestions box onclick
+    document.getElementsByClassName("gssb_c")[0].onclick = function(){
+        if(options.dev)
+            console.log("clicked")
+
+        qsearch(true);
+    };
 };
 
 // click on search button
 document.getElementsByName("btnG")[0].onclick = function(){
     qsearch();
 };
+
 
 function search(query)
 {
