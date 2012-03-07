@@ -71,7 +71,6 @@ document.getElementsByName("btnG")[0].onclick = function(){
     qsearch();
 };
 
-
 function search(query)
 {
    var request = {query: query};
@@ -246,7 +245,7 @@ function displaySummary(res, query) {
                 '</div>' +
                  first_category + 
                  hidden_categories + 
-              '</div>';
+              '</div><div class="clear"></div>';
 
 
     if(resultsLoaded()) {
