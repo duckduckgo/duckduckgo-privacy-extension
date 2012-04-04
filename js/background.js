@@ -10,6 +10,19 @@ function Background()
             $this.meanings = (localStorage['meanings'] !== "false");
             callback(localStorage);
         }
+
+        if (request.selection) {
+        
+        }
+    });
+
+    this.menuID = chrome.contextMenus.create({
+         "title" : "Ask the duck",
+         "type" : "normal",
+         "contexts" : ["selection"],
+         "onclick" : function() {
+            console.log('clicked!!!'); 
+         }
     });
 }
 
