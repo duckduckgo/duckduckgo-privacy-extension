@@ -193,11 +193,11 @@ function displaySummary(res, query) {
         
         if (i < 2) {
             var first = (i === 0)? ' class="first_category"': '';
-            first_category += '<div id="ddg_zeroclick_category"'+ first + '>' + 
+            first_category += '<div class="ddg_zeroclick_category"'+ first + '>' + 
                                 link +
                               '</div>';
         } else {
-            hidden_categories += '<div id="ddg_zeroclick_category">' + 
+            hidden_categories += '<div class="ddg_zeroclick_category">' + 
                                 link +
                               '</div>';
         }
@@ -217,7 +217,7 @@ function displaySummary(res, query) {
 
 
     result += '<div id="ddg_zeroclick_header">' +
-                '<a href="' + res['AbstractURL'] + '">'+ 
+                '<a class="ddg_head" href="' + res['AbstractURL'] + '">'+ 
                     (res['Heading'] === ''? "&nbsp;": res['Heading']) +
                 '</a>' + 
                 '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
@@ -239,10 +239,10 @@ function displaySummary(res, query) {
     if (source_base_url === "wikipedia.org")
         more_image = '<img src="http://duckduckgo.com/assets/icon_wikipedia.v101.png" />';
 
-    result += '<div id="ddg_zeroclick_abstract">' + res['Abstract'] +
-                '<div id="ddg_zeroclick_official_links">' + 
+    result += '<div id="ddg_zeroclick_abstract"><p>' + res['Abstract'] +
+                '</p><div id="ddg_zeroclick_official_links">' + 
                     more_image + 
-                    '<a href="' + res['AbstractURL'] + '"> More at ' +
+                    '<a class="ddg_more_link" href="' + res['AbstractURL'] + '"> More at ' +
                         res['AbstractSource'] +
                     '</a>' + official_site +
                 '</div>' +
