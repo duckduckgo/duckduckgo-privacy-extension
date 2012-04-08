@@ -60,6 +60,12 @@
     float: right;
 }
 
+#ddg_zeroclick_image img {
+    border: 1px solid #b4b4b4;
+    padding: 1px;
+    border-radius: 2px;
+}
+
 .ddg_zeroclick_img {
     max-width: 100px;
     max-height: 100px;
