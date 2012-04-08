@@ -45,6 +45,11 @@
     font-family: "Helvetica Neue", sans-serif;
 }
 
+#ddg_zeroclick_header img {
+    margin-top: -4px;
+    float: right;
+}
+
 #ddg_zeroclick_header a:active {
     color: #fff !important;
 }
@@ -230,7 +235,6 @@
     padding-left: 5px;
     text-shadow: 0px -1px 0px #7d320d;
 }
-
 
 .clear {
     clear: both;
