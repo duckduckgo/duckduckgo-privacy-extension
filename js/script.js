@@ -178,7 +178,7 @@ function displaySummary(res, query) {
 
     if (res['Results'].length !== 0) {
         if(res['Results'][0]['Text'] === "Official site") {
-            var url = res['Results'][0]['FirstURL'].match(/http.?:\/\/(.*\.[a-z]+)/);
+            var url = res['Results'][0]['FirstURL'].match(/http.?:\/\/(?:www.)?(.*\.[a-z]+)/);
             official_site = ' | Official site: <a href="' + res['Results'][0]['FirstURL']+'">' +
                 url[1] + '</a>';
             img_url = res['Results'][0]['FirstURL'];
