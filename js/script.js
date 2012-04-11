@@ -396,19 +396,19 @@ function displayCategory(res, query){
  
         if (i <= 2) {
             categories += '<div class="wrapper">' +
-                            '<div id="ddg_zeroclick_img" class="icon_category">' + 
+                            '<div class="icon_category">' + 
                                 '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                             '</div>' +
-                            '<div id="ddg_zeroclick_category_item">' +
+                            '<div class="ddg_zeroclick_category_item">' +
                                 res['RelatedTopics'][i]['Result'] +
                             '</div>' +
                           '</div>';
         } else {
             hidden_categories += '<div class="wrapper">' +
-                                '<div id="ddg_zeroclick_img" class="icon_category">' + 
+                                '<div class="icon_category">' + 
                                     '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                                 '</div>' +
-                                '<div id="ddg_zeroclick_category_item">' +
+                                '<div class="ddg_zeroclick_category_item">' +
                                     res['RelatedTopics'][i]['Result'] +
                                 '</div>' +
                               '</div>';

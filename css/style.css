@@ -138,11 +138,6 @@
     margin-left: 48px;
 }
 
-#ddg_zeroclick_img {
-    float: left;
-    padding: 5px 0px 2px 2px;
-}
-
 .icon_disambig {
     padding-top: 5px;
     float: left;
@@ -163,6 +158,8 @@
     text-align: right;
     width: 58px;
     max-height: 50px;
+    float: left;
+    padding: 5px 0px 2px 2px;
 }
 
 .icon_category img {
@@ -170,14 +167,14 @@
     max-width: 50px;   
 }
 
-#ddg_zeroclick_category_item {
+.ddg_zeroclick_category_item {
     line-height: 1.4;
     padding: 4px;
     min-height: 30px;
     margin-left: 62px;
 }
 
-#ddg_zeroclick_category_item a {
+.ddg_zeroclick_category_item a {
     font-size: 1.2em;
 }
 
