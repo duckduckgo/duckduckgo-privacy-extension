@@ -23,7 +23,6 @@ search(lastQuery());
 
 var lasttime;
 function qsearch(direct) {
-    hideZeroClick();
 
     var instant = document.getElementsByClassName("gssb_a");
     if (instant.length !== 0 && !direct){
@@ -45,12 +44,17 @@ function qsearch(direct) {
 
 }
 
+var lastquery = document.getElementsByName("q")[0].value;
 // instant search
 document.getElementsByName("q")[0].onkeyup = function(e){
 
     if(options.dev)
         console.log(e.keyCode);
-    hideZeroClick();
+
+    if (options.dev)
+        console.log(lastquery, document.getElementsByName("q")[0].value, document.getElementsByName("q")[0].value === lastquery);
+    if (document.getElementsByName("q")[0].value != lastquery)
+        hideZeroClick();
 
     var fn = 'qsearch()';
     if(e.keyCode == 40 || e.keyCode == 38)
@@ -64,8 +68,10 @@ document.getElementsByName("q")[0].onkeyup = function(e){
         if(options.dev)
             console.log("clicked")
 
+        hideZeroClick();
         qsearch(true);
     };
+    lastquery = document.getElementsByName("q")[0].value;
 };
 
 // click on search button
