@@ -23,6 +23,7 @@ search(lastQuery());
 
 var lasttime;
 function qsearch(direct) {
+    hideZeroClick();
 
     var instant = document.getElementsByClassName("gssb_a");
     if (instant.length !== 0 && !direct){
@@ -49,6 +50,7 @@ document.getElementsByName("q")[0].onkeyup = function(e){
 
     if(options.dev)
         console.log(e.keyCode);
+    hideZeroClick();
 
     var fn = 'qsearch()';
     if(e.keyCode == 40 || e.keyCode == 38)
