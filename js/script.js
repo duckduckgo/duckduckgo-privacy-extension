@@ -44,17 +44,11 @@ function qsearch(direct) {
 
 }
 
-var lastquery = document.getElementsByName("q")[0].value;
 // instant search
 document.getElementsByName("q")[0].onkeyup = function(e){
 
     if(options.dev)
         console.log(e.keyCode);
-
-    if (options.dev)
-        console.log(lastquery, document.getElementsByName("q")[0].value, document.getElementsByName("q")[0].value === lastquery);
-    if (document.getElementsByName("q")[0].value != lastquery)
-        hideZeroClick();
 
     var fn = 'qsearch()';
     if(e.keyCode == 40 || e.keyCode == 38)
@@ -71,7 +65,6 @@ document.getElementsByName("q")[0].onkeyup = function(e){
         hideZeroClick();
         qsearch(true);
     };
-    lastquery = document.getElementsByName("q")[0].value;
 };
 
 // click on search button
@@ -348,7 +341,7 @@ function displayDisambiguation(res, query){
     }
     
     if (hidden_disambigs!== '') {
-        hidden_disambigs  = '<div class="disambig_more">' +
+        hidden_disambigs  = '<div class="disambig_more" onmouseover="this.className+=\' disambig_selected\'" onmouseout="this.className=\'disambig_more\'" onclick="this.firstChild.onclick();this.className=\'disambig_more\';this.onmouseover=function(){}">' +
                                 '<a href="javascript:;" onclick="' + 
                                     "this.parentElement.style.display='none';" +
                                     "this.parentElement.nextElementSibling.style.display='block'" +
