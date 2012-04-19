@@ -298,14 +298,14 @@ function displayDisambiguation(res, query){
                             '<div class="icon_disambig">' + 
                                 '<img src="' + topics[j]['Icon']['URL'] +'" />' +
                             '</div>' +
-                            '<div class="ddg_zeroclick_disambig">' +
+                            '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' disambig_selected\'" onmouseout="this.className=\'ddg_zeroclick_disambig\'" onclick="window.location.href=this.firstChild.href">' +
                                 topics[j]['Result'] +
                             '</div>' +
                           '</div>';
             }
-            others += '<div class="disambig_more">' +
+            others += '<div class="disambig_more" onmouseover="this.className+=\' disambig_selected\'" onmouseout="this.className=\'disambig_more\'" onclick="this.firstChild.onclick();this.className=\'disambig_more\';this.onmouseover=function(){}">' +
                                 '<a href="javascript:;" onclick="' + 
-                                    "this.parentElement.nextElementSibling.style.display='block';" +
+                                    "this.parentElement.nextElementSibling.style.display='block';this.onmouseover=null;" +
                                     "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
                                 '"> ' + res['RelatedTopics'][i]['Name']  + ' ('+ topics.length + ')</a>' +
                              '</div>' + 
@@ -322,7 +322,7 @@ function displayDisambiguation(res, query){
                             '<div class="icon_disambig">' + 
                                 '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                             '</div>' +
-                            '<div class="ddg_zeroclick_disambig">' +
+                            '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' disambig_selected\'" onmouseout="this.className=\'ddg_zeroclick_disambig\'" onclick="window.location.href=this.firstChild.href">' +
                                 res['RelatedTopics'][i]['Result'] +
                             '</div>' +
                           '</div>';

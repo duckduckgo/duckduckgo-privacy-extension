@@ -136,6 +136,7 @@
     line-height: 1.4;
     padding: 4px;
     margin-left: 48px;
+    border: 1px solid #fafafa;
 }
 
 .icon_disambig {
@@ -183,9 +184,10 @@
 }
 
 .disambig_more {
+    border: 1px solid #fafafa;
     margin-left: 48px !important;
     padding: 4px;
-    clear: left
+    clear: left;
 }
 
 .disambig_more hr {
@@ -197,6 +199,13 @@
     color: #BADE89;
     background-color: #D2D2D2;
     text-align: left;
+}
+
+.disambig_selected {
+    background-color: #efefef;
+    border-radius: 2px;
+    border: 1px solid #c2c2c2;
+    cursor: pointer;
 }
 
 .category_more {
