@@ -72,11 +72,16 @@
 }
 
 #ddg_zeroclick_abstract {
-    margin: 5px 7px 5px 12px;
+    margin: 5px 7px 5px 10px;
     word-wrap: break-word;
     font-size: 13px; 
     color: #505050;
     max-width: 420px;
+}
+
+#ddg_zeroclick_abstract > div{
+    border: 1px solid #fafafa;
+    padding-left: 2px;
 }
 
 #ddg_zeroclick_abstract p {
@@ -129,7 +134,6 @@
     background-repeat: no-repeat;
     background-position: 2px 4px;
     line-height: 22px;
-    margin-left: -2px !important;
     padding: 1px 0px 1px 36px !important;
     border: 1px solid #fafafa;
 }
@@ -226,7 +230,7 @@
     background-position: 0px 4px;
     background-repeat: no-repeat;
     margin-top: -2px;
-    padding: 3px 3px 3px 33px !important;
+    padding: 3px 3px 3px 35px !important;
     border: 1px solid #fafafa;
 }
 

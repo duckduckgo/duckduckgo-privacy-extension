@@ -243,13 +243,15 @@ function displaySummary(res, query) {
     if (source_base_url === "wikipedia.org")
         more_image = '<img src="http://duckduckgo.com/assets/icon_wikipedia.v101.png" />';
 
-    result += '<div id="ddg_zeroclick_abstract"><p>' + res['Abstract'] +
+    result += '<div id="ddg_zeroclick_abstract">' +
+                '<div onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'\'" onclick="window.location.href=\''+ res['AbstractURL'] +'\'">' +
+                '<p>' + res['Abstract'] +
                 '</p><div id="ddg_zeroclick_official_links">' + 
                     more_image + 
                     '<a class="ddg_more_link" href="' + res['AbstractURL'] + '"> More at ' +
                         res['AbstractSource'] +
                     '</a>' + official_site +
-                '</div>' +
+                '</div></div>' +
                  first_category + 
                  hidden_categories + 
               '</div><div class="clear"></div>';
