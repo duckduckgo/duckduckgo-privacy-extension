@@ -399,7 +399,7 @@ function displayCategory(res, query){
             console.log(res['RelatedTopics'][i]['Result']);
  
         if (i <= 2) {
-            categories += '<div class="wrapper">' +
+            categories += '<div class="wrapper" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'wrapper\'" onclick="window.location.href=this.lastChild.firstChild.href;">' +
                             '<div class="icon_category">' + 
                                 '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                             '</div>' +
@@ -408,7 +408,7 @@ function displayCategory(res, query){
                             '</div>' +
                           '</div>';
         } else {
-            hidden_categories += '<div class="wrapper">' +
+            hidden_categories += '<div class="wrapper" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'wrapper\'" onclick="window.location.href=this.lastChild.firstChild.href;">' +
                                 '<div class="icon_category">' + 
                                     '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                                 '</div>' +
@@ -423,7 +423,7 @@ function displayCategory(res, query){
     }
     
     if (hidden_categories !== '') {
-        hidden_categories = '<div class="category_more">' +
+        hidden_categories = '<div class="category_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'category_more\'" onclick="this.firstChild.onclick();this.className=\'category_more\';this.onmouseover=function(){}">' +
                                 '<a href="javascript:;" onclick="' + 
                                     "this.parentElement.style.display='none';" +
                                     "this.parentElement.nextElementSibling.style.display='block'" +
