@@ -46,6 +46,7 @@ function qsearch(direct) {
 
 // instant search
 document.getElementsByName("q")[0].onkeyup = function(e){
+    hideZeroClick();
 
     if(options.dev)
         console.log(e.keyCode);
@@ -62,6 +63,7 @@ document.getElementsByName("q")[0].onkeyup = function(e){
         if(options.dev)
             console.log("clicked")
 
+        hideZeroClick();
         qsearch(true);
     };
 };
@@ -73,7 +75,6 @@ document.getElementsByName("btnG")[0].onclick = function(){
 
 function search(query)
 {
-    hideZeroClick();
     var request = {query: query};
     chrome.extension.sendRequest(request, function(response){
         renderZeroClick(response, query);
