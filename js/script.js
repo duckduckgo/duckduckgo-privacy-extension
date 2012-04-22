@@ -156,7 +156,16 @@ function createResultDiv()
 
 function resultsLoaded()
 {
-    return document.getElementById("center_col") !== null;
+    if(options.dev)
+        console.log(document.getElementById("center_col"), document.getElementById("center_col").style.visibility);
+    
+    if (document.getElementById("center_col") !== null){
+        if (document.getElementById("center_col").style.visibility === "visible") {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 function displayAnswer(answer)
@@ -169,7 +178,11 @@ function displayAnswer(answer)
         var ddg_result = createResultDiv();
         ddg_result.className = "ddg_answer";
         ddg_result.innerHTML = answer;
+        if(options.dev)
+            console.log('showing answer');
     } else {
+        if(options.dev)
+            console.log('trying again');
         setTimeout('displayAnswer("'+answer+'");', 200);
     }
 }
@@ -268,8 +281,12 @@ function displaySummary(res, query) {
         var ddg_result = createResultDiv();
         ddg_result.className = '';
         ddg_result.innerHTML = result;
+        if(options.dev)
+            console.log('loaded and showing');
     } else {
         setTimeout(function(){
+            if(options.dev)
+                console.log('trying again');
             displaySummary(res, query);
         }, 200);
     }
