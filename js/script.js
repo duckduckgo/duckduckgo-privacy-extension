@@ -214,7 +214,7 @@ function displaySummary(res, query) {
                                     "this.parentElement.nextElementSibling.style.display='block'" +
                                 '"> More related topics </a>' +
                              '</div>' + 
-                                '<div style="display:none">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     hidden_categories +
                                 '</div>';
     }
@@ -313,7 +313,7 @@ function displayDisambiguation(res, query){
                                     "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
                                 '"> ' + res['RelatedTopics'][i]['Name']  + ' ('+ topics.length + ')</a>' +
                              '</div>' + 
-                                '<div style="display:none">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     output +
                                 '</div>';
             
@@ -350,7 +350,7 @@ function displayDisambiguation(res, query){
                                     "this.parentElement.nextElementSibling.style.display='block'" +
                                 '"> More ('+ nhidden + ')</a>' +
                              '</div>' + 
-                                '<div style="display:none">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     hidden_disambigs+
                                 '</div>';
     }
@@ -429,7 +429,7 @@ function displayCategory(res, query){
                                     "this.parentElement.nextElementSibling.style.display='block'" +
                                 '"> More ('+ nhidden + ')</a>' +
                              '</div>' + 
-                                '<div style="display:none">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     hidden_categories+
                                 '</div>';
  
