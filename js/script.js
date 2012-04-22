@@ -259,9 +259,9 @@ function displaySummary(res, query) {
     }
     
     var source_base_url = res['AbstractURL'].match(/http.?:\/\/(.*?\.)?(.*\..*?)\/.*/)[2];
-    var more_image = '<img src="http://duckduckgo.com/i/'+ source_base_url +'.ico" />';
+    var more_image = '<img src="https://duckduckgo.com/i/'+ source_base_url +'.ico" />';
     if (source_base_url === "wikipedia.org")
-        more_image = '<img src="http://duckduckgo.com/assets/icon_wikipedia.v101.png" />';
+        more_image = '<img src="https://duckduckgo.com/assets/icon_wikipedia.v101.png" />';
 
     result += '<div id="ddg_zeroclick_abstract">' +
                 '<div onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'\'" onclick="window.location.href=\''+ res['AbstractURL'] +'\'">' +
