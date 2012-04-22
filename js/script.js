@@ -20,10 +20,7 @@ function lastQuery()
 
 search(lastQuery());
 
-
-var lasttime;
-function qsearch(direct) {
-
+function getQuery(direct) {
     var instant = document.getElementsByClassName("gssb_a");
     if (instant.length !== 0 && !direct){
         var selected_instant = instant[0];
@@ -35,18 +32,26 @@ function qsearch(direct) {
         if(options.dev)
             console.log(query);
 
-        search(query);
+        return query;
 
     } else {
-        search(document.getElementsByName("q")[0].value);
+        return document.getElementsByName("q")[0].value;
     }
-
-
 }
 
+var lasttime;
+function qsearch(direct) {
+    var query =  getQuery(direct);
+    lastquery = query;
+    search(query);
+}
+
+var lastquery = document.getElementsByName("q")[0].value;
 // instant search
 document.getElementsByName("q")[0].onkeyup = function(e){
-    hideZeroClick();
+
+    if(lastquery !== getQuery())
+        hideZeroClick();
 
     if(options.dev)
         console.log(e.keyCode);
