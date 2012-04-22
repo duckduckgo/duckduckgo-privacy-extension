@@ -1,5 +1,5 @@
 {
-    "name": "DuckDuckGo Zero-click Info",
+    "name": "DuckDuckGo Instant Answers",
     "version": "42.0.9",
     "description": "DuckDuckGo Zero-click Info",
     "icons": {
@@ -383,7 +383,8 @@
                 "https://www.google.co.za/*",
                 "https://www.google.co.zm/*",
                 "https://www.google.co.zw/*",
-                "https://www.google.cat/*"
+                "https://www.google.cat/*",
+                "https://encrypted.google.com/*"
  
             ],
             "js": ["js/script.js"],
