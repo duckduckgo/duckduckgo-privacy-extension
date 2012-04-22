@@ -192,9 +192,10 @@
 
 .disambig_more {
     border: 1px solid #fafafa;
-    margin-left: 48px !important;
+    margin-left: 52px !important;
     padding: 4px;
     clear: left;
+    width: 474px;
 }
 
 .disambig_more hr {
