@@ -213,7 +213,7 @@ function displaySummary(res, query) {
         var link = res['RelatedTopics'][i]['Result'].
                     match(/<a href=".*">.*<\/a>/);
 
-        var cls = (res['RelatedTopics'][i]['FirstURL'].match(/https?:\/\/[a-z0-9\-]+\.[a-z]+\/c\/.*/) !== null) ? "ddg_zeroclick_category" : "ddg_zeroclick_article";
+        var cls = (res['RelatedTopics'][i]['FirstURL'].match(/https?:\/\/[a-z0-9\-]+\.[a-z]+(?:\/\d+)?\/c\/.*/) !== null) ? "ddg_zeroclick_category" : "ddg_zeroclick_article";
         
         if (i < 2) {
             var first = (i === 0)? 'first_category': '';
