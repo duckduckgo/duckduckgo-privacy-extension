@@ -1,4 +1,3 @@
-
 var options = [];
 chrome.extension.sendRequest({options: "get"}, function(opt){
     options = opt;
@@ -74,7 +73,7 @@ document.getElementsByName("q")[0].onkeyup = function(e){
 };
 
 // click on search button
-document.getElementsByName("btnG")[0].onclick = function(){
+document.getElementsByName("go")[0].onclick = function(){
     qsearch();
 };
 
@@ -144,7 +143,7 @@ function showZeroClick()
 
 function createResultDiv()
 {
-    var result = document.getElementById("center_col");
+    var result = document.getElementById("results");
     var ddg_result = document.getElementById("ddg_zeroclick");
     showZeroClick();
     if (ddg_result === null) {
@@ -157,12 +156,10 @@ function createResultDiv()
 function resultsLoaded()
 {
     if(options.dev)
-        console.log(document.getElementById("center_col"), document.getElementById("center_col").style.visibility);
+        console.log(document.getElementById("results"), document.getElementById("results").style.visibility);
     
-    if (document.getElementById("center_col") !== null){
-        if (document.getElementById("center_col").style.visibility === "visible") {
-            return true;
-        }
+    if (document.getElementById("results") !== null){
+        return true;
     }
     
     return false;
@@ -198,7 +195,7 @@ function displaySummary(res, query) {
 
     if (res['Results'].length !== 0) {
         if(res['Results'][0]['Text'] === "Official site") {
-            var url = res['Results'][0]['FirstURL'].match(/http.?:\/\/(?:www.)?(.*\.[a-z]+)\//);
+            var url = res['Results'][0]['FirstURL'].match(/https?:\/\/(?:www.)?(.*\.[a-z]+)(?:\/)?/);
             official_site = ' | Official site: <a href="' + res['Results'][0]['FirstURL']+'">' +
                 url[1] + '</a>';
             img_url = res['Results'][0]['FirstURL'];
