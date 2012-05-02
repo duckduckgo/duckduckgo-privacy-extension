@@ -262,7 +262,7 @@ function displaySummary(res, query) {
     if (source_base_url === "wikipedia.org")
         more_image = '<img src="https://duckduckgo.com/assets/icon_wikipedia.v101.png" />';
 
-    result += '<div id="ddg_zeroclick_abstract" style="'+ (res['Image'] ? 'max-width: 420px': '') +'">' +
+    result += '<div id="ddg_zeroclick_abstract" style="'+ (res['Image'] ? 'max-width: 383px': '') +'">' +
                 '<div onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'\'" onclick="window.location.href=\''+ res['AbstractURL'] +'\'">' +
                 '<p>' + res['Abstract'] +
                 '</p><div id="ddg_zeroclick_official_links">' + 

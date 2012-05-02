@@ -388,14 +388,14 @@
  
             ],
             "js": ["js/google.js"],
-            "css": ["css/style.css"]
+            "css": ["css/google.css"]
         },
         {
             "matches": [
                 "http://www.bing.com/search*"
             ],
             "js": ["js/bing.js"],
-            "css": ["css/style.css"]
+            "css": ["css/bing.css"]
         }
     ],
     "options_page": "html/options.html",
