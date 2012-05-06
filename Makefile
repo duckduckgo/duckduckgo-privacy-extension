@@ -13,12 +13,12 @@ moveout: $(ITEMS)
 	mkdir $(TMPDIR)/$(EXTNAME)
 	cp -R $(ITEMS) $(TMPDIR)/$(EXTNAME)
 
-pack: moveout
+crx: moveout
 	$(CHROME) --pack-extension=$(TMPDIR)/$(EXTNAME) \
 	    --pack-extension-key=$(KEYFILE) --no-message-box
 	mv $(TMPDIR)/$(EXTNAME).crx $(CWD)/build/chrome_zeroclickinfo_latest.crx
 
-zipball: moveout
+zip: moveout
 	cd $(TMPDIR)/$(EXTNAME)/ && zip $(EXTNAME)-$(VERSION).zip -r ./*
 	cp $(TMPDIR)/$(EXTNAME)/$(EXTNAME)-$(VERSION).zip $(CWD)
 
