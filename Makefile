@@ -16,7 +16,7 @@ moveout: $(ITEMS)
 crx: moveout
 	$(CHROME) --pack-extension=$(TMPDIR)/$(EXTNAME) \
 	    --pack-extension-key=$(KEYFILE) --no-message-box
-	mv $(TMPDIR)/$(EXTNAME).crx $(CWD)/build/chrome_zeroclickinfo_latest.crx
+	mv $(TMPDIR)/$(EXTNAME).crx $(CWD)/build/$(EXTNAME)-latest.crx
 
 zip: moveout
 	cd $(TMPDIR)/$(EXTNAME)/ && zip $(EXTNAME)-$(VERSION).zip -r ./*
