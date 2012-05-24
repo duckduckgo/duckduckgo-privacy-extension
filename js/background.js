@@ -16,14 +16,14 @@ function Background()
         }
     });
 
-    this.menuID = chrome.contextMenus.create({
-         "title" : "Ask the duck",
-         "type" : "normal",
-         "contexts" : ["selection"],
-         "onclick" : function() {
-            console.log('clicked!!!'); 
-         }
-    });
+//  this.menuID = chrome.contextMenus.create({
+//       "title" : "Ask the duck",
+//       "type" : "normal",
+//       "contexts" : ["selection"],
+//       "onclick" : function() {
+//          console.log('clicked!!!'); 
+//       }
+//  });
 }
 
 Background.prototype.query = function(query, callback) 
