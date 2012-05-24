@@ -1,6 +1,6 @@
 {
     "name": "DuckDuckGo for Chrome",
-    "version": "0.4.6",
+    "version": "0.4.7",
     "description": "DuckDuckGo enhacements for Chrome.",
     "icons": {
         "16": "img/icon_16.png",
@@ -405,7 +405,6 @@
     "options_page": "html/options.html",
     "background_page": "html/background.html", 
     "permissions": [
-        "https://chrome.duckduckgo.com/*",
-        "tabs"
+        "https://chrome.duckduckgo.com/*"
     ]
 }
