@@ -1,7 +1,7 @@
 {
-    "name": "DuckDuckGo Instant Answers",
-    "version": "0.4.4",
-    "description": "DuckDuckGo Zero-click Info",
+    "name": "DuckDuckGo for Chrome",
+    "version": "0.4.5",
+    "description": "DuckDuckGo enhacements for Chrome.",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
