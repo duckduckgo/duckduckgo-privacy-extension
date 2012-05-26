@@ -148,6 +148,15 @@
     border: 1px solid #fafafa;
 }
 
+.ddg_zeroclick_more{
+    background-image: url(https://duckduckgo.com/assets/icon_ellipsis.v101.png);
+    background-position: 2px 4px;
+    background-repeat: no-repeat;
+    line-height: 22px;
+    padding: 1px 0px 1px 36px !important;
+    border: 1px solid #fafafa;
+}
+
 .ddg_zeroclick_disambig {
     line-height: 1.4;
     padding: 4px;
@@ -237,14 +246,6 @@
     max-width: 30px;   
 }
 
-.ddg_zeroclick_more{
-    background-image: url(https://duckduckgo.com/assets/icon_ellipsis.v101.png);
-    background-position: 0px 4px;
-    background-repeat: no-repeat;
-    margin-top: -2px;
-    padding: 3px 3px 3px 35px !important;
-    border: 1px solid #fafafa;
-}
 
 .wrapper {
     clear: left;
