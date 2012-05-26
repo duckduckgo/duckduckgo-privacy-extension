@@ -214,18 +214,18 @@ function displaySummary(res, query) {
         
         if (i < 2) {
             var first = (i === 0)? 'first_category': '';
-            first_category += '<div class="' + cls + ' '+ first +'" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' + 
+            first_category += '<div class="' + cls + ' '+ first +'" >' + 
                                 link +
                               '</div>';
         } else {
-            hidden_categories += '<div class="' + cls + '" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' + 
+            hidden_categories += '<div class="' + cls + '" >' + 
                                 link +
                               '</div>';
         }
     }
 
     if (hidden_categories !== '') {
-        hidden_categories  = '<div class="ddg_zeroclick_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'ddg_zeroclick_more\'" onclick="this.firstChild.onclick();this.className=\'\';this.onmouseover=function(){}">' +
+        hidden_categories  = '<div class="ddg_zeroclick_more">' +
                                 '<a href="javascript:;" onclick="' + 
                                     "this.parentElement.style.display='none';" +
                                     "this.parentElement.nextElementSibling.style.display='block'" +
@@ -327,12 +327,12 @@ function displayDisambiguation(res, query){
                             '<div class="icon_disambig">' + 
                                 '<img src="' + topics[j]['Icon']['URL'] +'" />' +
                             '</div>' +
-                            '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' +
+                            '<div class="ddg_zeroclick_disambig" >' +
                                 topics[j]['Result'] +
                             '</div>' +
                           '</div>';
             }
-            others += '<div class="disambig_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'disambig_more\'" onclick="this.firstChild.onclick();this.className=\'disambig_more\';this.onmouseover=function(){}">' +
+            others += '<div class="disambig_more" >' +
                                 '<a href="javascript:;" onclick="' + 
                                     "this.parentElement.nextElementSibling.style.display='block';this.onmouseover=null;" +
                                     "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
@@ -351,7 +351,7 @@ function displayDisambiguation(res, query){
                             '<div class="icon_disambig">' + 
                                 '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                             '</div>' +
-                            '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' +
+                            '<div class="ddg_zeroclick_disambig" >' +
                                 res['RelatedTopics'][i]['Result'] +
                             '</div>' +
                           '</div>';
@@ -360,7 +360,7 @@ function displayDisambiguation(res, query){
                                     '<div class="icon_disambig">' + 
                                         '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                                     '</div>' +
-                                    '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' +
+                                    '<div class="ddg_zeroclick_disambig" >' +
                                         res['RelatedTopics'][i]['Result'] +
                                     '</div>' +
                                   '</div>'; 
@@ -369,7 +369,7 @@ function displayDisambiguation(res, query){
     }
     
     if (hidden_disambigs!== '') {
-        hidden_disambigs  = '<div class="disambig_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="this.firstChild.onclick();this.className=\'disambig_more\';this.onmouseover=function(){}">' +
+        hidden_disambigs  = '<div class="disambig_more" >' +
                                 '<a href="javascript:;" onclick="' + 
                                     "this.parentElement.style.display='none';" +
                                     "this.parentElement.nextElementSibling.style.display='block'" +
@@ -426,7 +426,7 @@ function displayCategory(res, query){
             console.log(res['RelatedTopics'][i]['Result']);
  
         if (i <= 2) {
-            categories += '<div class="wrapper" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.lastChild.firstChild.href;">' +
+            categories += '<div class="wrapper" >' +
                             '<div class="icon_category">' + 
                                 '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                             '</div>' +
@@ -435,7 +435,7 @@ function displayCategory(res, query){
                             '</div>' +
                           '</div>';
         } else {
-            hidden_categories += '<div class="wrapper" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.lastChild.firstChild.href;">' +
+            hidden_categories += '<div class="wrapper" >' +
                                 '<div class="icon_category">' + 
                                     '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
                                 '</div>' +
@@ -450,7 +450,7 @@ function displayCategory(res, query){
     }
     
     if (hidden_categories !== '') {
-        hidden_categories = '<div class="category_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="this.firstChild.onclick();this.className=\'category_more\';this.onmouseover=function(){}">' +
+        hidden_categories = '<div class="category_more" >' +
                                 '<a href="javascript:;" onclick="' + 
                                     "this.parentElement.style.display='none';" +
                                     "this.parentElement.nextElementSibling.style.display='block'" +
