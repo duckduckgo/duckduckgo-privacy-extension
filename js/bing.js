@@ -231,7 +231,7 @@ function displaySummary(res, query) {
                                     "this.parentElement.nextElementSibling.style.display='block'" +
                                 '"> More related topics </a>' +
                              '</div>' + 
-                                '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     hidden_categories +
                                 '</div>';
     }
@@ -263,7 +263,7 @@ function displaySummary(res, query) {
         more_image = '<img src="https://duckduckgo.com/assets/icon_wikipedia.v101.png" />';
 
     result += '<div id="ddg_zeroclick_abstract" style="'+ (res['Image'] ? 'max-width: 383px': '') +'">' +
-                '<div onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'\'" onclick="window.location.href=\''+ res['AbstractURL'] +'\'">' +
+                '<div onclick="window.location.href=\''+ res['AbstractURL'] +'\'">' +
                 '<p>' + res['Abstract'] +
                 '</p><div id="ddg_zeroclick_official_links">' + 
                     more_image + 
@@ -338,7 +338,7 @@ function displayDisambiguation(res, query){
                                     "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
                                 '"> ' + res['RelatedTopics'][i]['Name']  + ' ('+ topics.length + ')</a>' +
                              '</div>' + 
-                                '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     output +
                                 '</div>';
             
@@ -375,7 +375,7 @@ function displayDisambiguation(res, query){
                                     "this.parentElement.nextElementSibling.style.display='block'" +
                                 '"> More ('+ nhidden + ')</a>' +
                              '</div>' + 
-                                '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     hidden_disambigs+
                                 '</div>';
     }
@@ -456,7 +456,7 @@ function displayCategory(res, query){
                                     "this.parentElement.nextElementSibling.style.display='block'" +
                                 '"> More ('+ nhidden + ')</a>' +
                              '</div>' + 
-                                '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
+                                '<div style="display:none;padding-left:0px;">' + 
                                     hidden_categories+
                                 '</div>';
  

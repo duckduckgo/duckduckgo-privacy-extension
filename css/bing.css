@@ -78,7 +78,6 @@
 }
 
 #ddg_zeroclick_abstract > div{
-    border: 1px solid #fafafa;
     padding-left: 2px;
 }
 
@@ -100,11 +99,11 @@
 }
 
 .first_category {
-    margin-top: 3px !important;
+    /*margin-top: 3px !important;*/
 }
 
 #ddg_zeroclick_official_links {
-    padding: 5px 0px 5px 0px;
+    padding: 5px 0px 5px 1px;
 }
 
 #ddg_zeroclick_official_links img{
@@ -131,9 +130,9 @@
     /* background-image: url("data:image/gif;base64,R0lGODlhEAAQAMQQAKCgoJiYmIaGho6OjqSkpHt7e35+fq6urqurq4KCgoqKipycnJOTk3h4eLCwsKioqP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABAALAAAAAAQABAAAAVYICQ6ZGmWInSkLLu2cIo8dG3X4kPE7A4RAF4qCAEsRIuk8ghhLgJCERQSYIgY2KwVsmUMopBvWCFSmM9kSFohALchgoQoQaez5HQDWC8qgP0iDYKDhIMpIQA7"); */
     background-image: url(https://duckduckgo.com/assets/icon_category.v101.png);
     background-repeat: no-repeat;
-    background-position: 2px 4px;
+    background-position: 2px 2px;
     line-height: 22px;
-    padding: 1px 0px 1px 36px !important;
+    padding: 0px 0px 0px 26px !important;
     border: 1px solid #fafafa;
 }
 
@@ -142,11 +141,21 @@
     /* background-image: url("data:image/gif;base64,R0lGODlhEAAQAMQQAKCgoJiYmIaGho6OjqSkpHt7e35+fq6urqurq4KCgoqKipycnJOTk3h4eLCwsKioqP///wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABAALAAAAAAQABAAAAVYICQ6ZGmWInSkLLu2cIo8dG3X4kPE7A4RAF4qCAEsRIuk8ghhLgJCERQSYIgY2KwVsmUMopBvWCFSmM9kSFohALchgoQoQaez5HQDWC8qgP0iDYKDhIMpIQA7"); */
     background-image: url(https://duckduckgo.com/assets/icon_article.v101.png);
     background-repeat: no-repeat;
-    background-position: 2px 4px;
+    background-position: 2px 2px;
     line-height: 22px;
-    padding: 1px 0px 1px 36px !important;
+    padding: 0px 0px 0px 26px !important;
     border: 1px solid #fafafa;
 }
+
+.ddg_zeroclick_more{
+    background-image: url(https://duckduckgo.com/assets/icon_ellipsis.v101.png);
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
+    line-height: 22px;
+    padding: 0px 0px 0px 26px !important;
+    border: 1px solid #fafafa;
+}
+
 
 .ddg_zeroclick_disambig {
     line-height: 1.4;
@@ -237,15 +246,6 @@
     max-width: 30px;   
 }
 
-.ddg_zeroclick_more{
-    background-image: url(https://duckduckgo.com/assets/icon_ellipsis.v101.png);
-    background-position: 0px 4px;
-    background-repeat: no-repeat;
-    margin-top: -2px;
-    padding: 3px 3px 3px 35px !important;
-    border: 1px solid #fafafa;
-}
-
 .wrapper {
     clear: left;
     padding-bottom: 3px;
@@ -261,7 +261,7 @@
 }
 
 .ddg_more_link {
-    padding-left: 12px;
+    padding-left: 2px;
 }
 
 .ddg_head {
