@@ -79,6 +79,10 @@ document.getElementsByName("btnG")[0].onclick = function(){
 
 function search(query)
 {
+  //document.getElementById('center_col').innerHTML = ' <div id="zeroclick_loader"> '+
+  //    '<img src="http://duckduckgo.com/l.gif" /> Loading ...' +
+  //    '</div>' + document.getElementById('center_col').innerHTML;
+
     var request = {query: query};
     chrome.extension.sendRequest(request, function(response){
         renderZeroClick(response, query);

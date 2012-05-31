@@ -178,7 +178,7 @@ ktWRIZgIcFYAAAAASUVORK5CYII=
     <h2>SPECIAL</h2>
     <ul>
       <li>
-        <input type="checkbox" id="adv_ducky"> 
+        <input type="checkbox" id="adv_ducky" onclick="return ducky_check()"> 
         <label for="adv_ducky"> 
           I am feeling Ducky
         </label>
@@ -234,6 +234,10 @@ ktWRIZgIcFYAAAAASUVORK5CYII=
 </div>
 
 <script type="text/javascript">
+if (localStorage['ducky'] === 'true') {
+  document.getElementById('adv_ducky').checked = true;  
+}
+
 var prefill_text = 'Search DuckDuckGo...';
 var search_form_input_homepage = d.getElementById('search_form_input_homepage');
 search_form_input_homepage.value = decodeURIComponent(prefill_text);
@@ -359,6 +363,10 @@ function add_bang(bang) {
     inp.value += bang;
     search();
   }
+}
+
+function ducky_check(){
+  localStorage['ducky'] = document.getElementById('adv_ducky').checked;
 }
 
 </script>
