@@ -259,7 +259,14 @@ setTimeout(function(){
 
 function search(){
   var input = document.getElementById("search_form_input_homepage").value;
-  chrome.tabs.create({url: "https://duckduckgo.com/?q="+encodeURIComponent(input)});
+  var special = '';
+  if(document.getElementById('adv_meanings').checked !== true) {
+    special = '&d=1'; 
+  }
+
+  chrome.tabs.create({
+        url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
+      });
 }
 
 document.getElementById('icon_advanced').onclick = function(){
