@@ -259,6 +259,11 @@ setTimeout(function(){
 
 function search(){
   var input = document.getElementById("search_form_input_homepage").value;
+  
+  if (document.getElementById('adv_ducky').checked === true) {
+    input = "\\" + input;
+  }
+
   var special = '';
   if(document.getElementById('adv_meanings').checked !== true) {
     special = '&d=1'; 
