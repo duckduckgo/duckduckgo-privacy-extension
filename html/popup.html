@@ -8,9 +8,11 @@ html {
   overflow: hidden;
   background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#f8f8f8));
   height: auto;
+  border: 0;
 }
 
 body {
+  border: 0;
 }
 
 #search_form_homepage {
@@ -35,6 +37,7 @@ body {
 
 #icon_advanced {
   padding-top: 20px;
+  padding-left: 3px;
   display: inline;
 }
 
@@ -44,7 +47,7 @@ body {
 }
 
 #advanced {
-  width: 486px;
+  width: 499px;
   height: 30px;
   margin: 10px;
   display: none;
@@ -77,6 +80,10 @@ body {
 
 #advanced .link a:hover {
   text-decoration: none;
+}
+
+#advanced ul {
+  padding: 0;
 }
 
 #advanced li {
@@ -113,17 +120,22 @@ body {
 
 #advanced #right {
   float: left;
-  width: 304px;
+  width: 317px;
+  padding-bottom: 6px;
 }
 
 #advanced #right ul {
-  padding: 0px;
-  width: 50%;
+  width: 155px;
 }
 
 #advanced #right ul.left, #advanced #right ul.right {
   float: left;
 }
+
+#advanced #right ul.left {
+  padding-left: 7px;
+}
+
 
 </style>
 </head>
