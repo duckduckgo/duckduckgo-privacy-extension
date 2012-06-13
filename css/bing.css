@@ -198,7 +198,7 @@
     padding: 4px;
     min-height: 30px;
     margin-left: 62px;
-    width: 470px;
+    width: 430px !important;
 }
 
 .ddg_zeroclick_category_item a {
@@ -249,7 +249,7 @@
 .wrapper {
     clear: left;
     padding-bottom: 3px;
-    width: 530px;
+    width: 490px !important;
     border: 1px solid #fafafa;
 }
 
