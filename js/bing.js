@@ -143,7 +143,7 @@ function showZeroClick()
 
 function createResultDiv()
 {
-    var result = document.getElementById("results");
+    var result = document.getElementById("results_container");
     var ddg_result = document.getElementById("ddg_zeroclick");
     showZeroClick();
     if (ddg_result === null) {
@@ -156,9 +156,9 @@ function createResultDiv()
 function resultsLoaded()
 {
     if(options.dev)
-        console.log(document.getElementById("results"), document.getElementById("results").style.visibility);
+        console.log(document.getElementById("results_container"), document.getElementById("results_container").style.visibility);
     
-    if (document.getElementById("results") !== null){
+    if (document.getElementById("results_container") !== null){
         return true;
     }
     
