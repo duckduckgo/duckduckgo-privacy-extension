@@ -158,7 +158,7 @@ body {
   <input id="search_button_homepage" type="submit" value="" />
 </div>
 <input type="text" autocomplete="off"
-  name="q" id="search_form_input_homepage" 
+  name="q" id="search_form_input_homepage" placeholder="Search DuckDuckGo..."
   onFocus="if ('rc' in window) {nua('nro',rc)};fq=1;" onBlur="fq=0" onclick="if (this.value=='put search terms here') {this.value='';this.style.color='#000000';}" value="">
 </form>
 <img id="icon_advanced" class="minimized" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2Fy
@@ -270,21 +270,16 @@ if (localStorage['ducky'] === 'true') {
 
 var prefill_text = 'Search DuckDuckGo...';
 var search_form_input_homepage = d.getElementById('search_form_input_homepage');
-search_form_input_homepage.value = decodeURIComponent(prefill_text);
 YAHOO.util.Dom.setStyle(search_form_input_homepage,'color','#999999'); 
 eval("search_form_input_homepage.onclick = function() {if (this.value=='" + prefill_text + "') {this.value='';this.style.color='#000000';}}");
 
 setTimeout(function(){
   YAHOO.util.Dom.get("search_form_input_homepage").focus();               
   YAHOO.util.Dom.get("search_form_input_homepage").onkeydown = function(){
-    if (this.value == prefill_text) {
-      this.value = '';
-    }
     this.style.color = '#000000';
   };               
   YAHOO.util.Dom.get("search_form_input_homepage").onkeyup = function(){
     if (this.value == '') {
-      this.value = prefill_text;
       this.style.color = '#999999';
     }
   };               
