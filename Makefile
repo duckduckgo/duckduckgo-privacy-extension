@@ -22,5 +22,8 @@ zip: moveout
 	cd $(TMPDIR)/$(EXTNAME)/ && zip $(EXTNAME)-$(VERSION).zip -r ./*
 	cp $(TMPDIR)/$(EXTNAME)/$(EXTNAME)-$(VERSION).zip $(CWD)
 
+build: zip
+	mv $(CWD)/$(EXTNAME)-$(VERSION).zip ~/dropbox/Dropbox/DuckDuckGo\ Assets/Extensions/Chrome/
+
 clean:
 	rm $(CWD)/*.zip
