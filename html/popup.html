@@ -206,7 +206,7 @@ QmCC">
         </label>
       </li>
       <li>
-        <input type="checkbox" checked="checked" id="adv_meanings">
+        <input type="checkbox" id="adv_meanings" onclick="return meanings_check()">
         <label for="adv_meanings">
           Show Meanings
         </label>
@@ -267,10 +267,18 @@ if (localStorage['ducky'] === 'true') {
   document.getElementById('adv_ducky').checked = true;  
 }
 
-var prefill_text = 'Search DuckDuckGo...';
-var search_form_input_homepage = d.getElementById('search_form_input_homepage');
-YAHOO.util.Dom.setStyle(search_form_input_homepage,'color','#999999'); 
-eval("search_form_input_homepage.onclick = function() {if (this.value=='" + prefill_text + "') {this.value='';this.style.color='#000000';}}");
+if (localStorage['meanings'] === 'true') {
+  document.getElementById('adv_meanings').checked = true;  
+}
+
+//var prefill_text = 'Search DuckDuckGo...';
+//var search_form_input_homepage = d.getElementById('search_form_input_homepage');
+//YAHOO.util.Dom.setStyle(search_form_input_homepage,'color','#999999'); 
+//eval("search_form_input_homepage.onclick = function() {if (this.value=='" + prefill_text + "') {this.value='';this.style.color='#000000';}}");
+
+if (localStorage['meanings'] == undefined) {
+  localStorage['meanings'] = true;
+}
 
 if (localStorage['advanced_options'] == undefined){
   localStorage['advanced_options'] = 'true';
@@ -340,8 +348,8 @@ function search(){
   }
 
   chrome.tabs.create({
-        url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
-      });
+    url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
+  });
 }
 
 document.getElementById('icon_advanced').onclick = function(){
@@ -434,6 +442,10 @@ function add_bang(bang) {
 
 function ducky_check(){
   localStorage['ducky'] = document.getElementById('adv_ducky').checked;
+}
+
+function meanings_check(){
+  localStorage['meanings'] = document.getElementById('adv_meanings').checked;
 }
 
 </script>
