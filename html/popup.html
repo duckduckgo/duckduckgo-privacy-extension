@@ -271,10 +271,6 @@ if (localStorage['meanings'] === 'true') {
   document.getElementById('adv_meanings').checked = true;  
 }
 
-//var prefill_text = 'Search DuckDuckGo...';
-//var search_form_input_homepage = d.getElementById('search_form_input_homepage');
-//YAHOO.util.Dom.setStyle(search_form_input_homepage,'color','#999999'); 
-//eval("search_form_input_homepage.onclick = function() {if (this.value=='" + prefill_text + "') {this.value='';this.style.color='#000000';}}");
 
 if (localStorage['meanings'] == undefined) {
   localStorage['meanings'] = true;
@@ -283,6 +279,8 @@ if (localStorage['meanings'] == undefined) {
 if (localStorage['advanced_options'] == undefined){
   localStorage['advanced_options'] = 'true';
 }
+
+
 
 if (localStorage['advanced_options'] !== 'true') {
   document.getElementById('icon_advanced').src = 
