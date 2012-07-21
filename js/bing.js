@@ -55,9 +55,9 @@ document.getElementsByName("q")[0].onkeyup = function(e){
     if(options.dev)
         console.log(e.keyCode);
 
-    var fn = 'qsearch()';
+    var fn = function(){qsearch();};
     if(e.keyCode == 40 || e.keyCode == 38)
-        fn = 'qsearch(true)';
+        fn = function(){qsearch(true);};
 
     clearTimeout(lasttime);
     lasttime = setTimeout(fn, 700);
