@@ -263,15 +263,6 @@ QmCC">
 </div>
 
 <script type="text/javascript">
-if (localStorage['ducky'] === 'true') {
-  document.getElementById('adv_ducky').checked = true;  
-}
-
-if (localStorage['meanings'] === 'true') {
-  document.getElementById('adv_meanings').checked = true;  
-}
-
-
 if (localStorage['meanings'] == undefined) {
   localStorage['meanings'] = true;
 }
@@ -280,6 +271,14 @@ if (localStorage['advanced_options'] == undefined){
   localStorage['advanced_options'] = 'true';
 }
 
+
+if (localStorage['ducky'] === 'true') {
+  document.getElementById('adv_ducky').checked = true;  
+}
+
+if (localStorage['meanings'] === 'true') {
+  document.getElementById('adv_meanings').checked = true;  
+}
 
 
 if (localStorage['advanced_options'] !== 'true') {
