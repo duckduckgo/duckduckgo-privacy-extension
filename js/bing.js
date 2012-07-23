@@ -65,6 +65,3 @@ document.getElementsByName("go")[0].onclick = function(){
 
 ddgBox.init();
 
-
-
-
