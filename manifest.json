@@ -389,16 +389,21 @@
             "https://www.google.co.zw/*",
             "https://www.google.cat/*",
             "https://encrypted.google.com/*"
- 
             ],
-            "js": ["js/google.js"],
+            "js": [
+                "js/common.js",
+                "js/google.js"
+            ],
             "css": ["css/google.css"]
         },
         {
             "matches": [
                 "http://www.bing.com/search*"
             ],
-            "js": ["js/bing.js"],
+            "js": [
+                "js/common.js",
+                "js/bing.js"
+            ],
             "css": ["css/bing.css"]
         }
     ],
