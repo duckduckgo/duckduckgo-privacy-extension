@@ -16,8 +16,8 @@ var DuckDuckBox = function(inputName, forbiddenIDs, contentDiv, hover) {
         this.hover = false
 
     input = $("[name='" + this.inputName + "']"); 
-    if (input)
-        this.lastQuery = input;
+    if (input.length !== 0)
+        this.lastQuery = input.value;
     else
         this.lastQuery = '';
 };
@@ -50,7 +50,7 @@ DuckDuckBox.prototype = {
     renderZeroClick: function(res, query) {
         // disable on forbidden IDs
         for(var i in this.forbiddenIDs) {
-            if ($("#" + this.forbiddenIDs[i]) !== null)
+            if ($("#" + this.forbiddenIDs[i]).length !== 0)
                 return;           
         }
 
@@ -88,30 +88,35 @@ DuckDuckBox.prototype = {
 
     hideZeroClick: function() {
         var ddg_result = $("#ddg_zeroclick");
-        if (ddg_result !== null)
-            ddg_result.style.display = 'none';
+        if (ddg_result.length !== 0)
+            ddg_result.hide();
     },
 
     showZeroClick: function() {
         var ddg_result = $("#ddg_zeroclick");
-        if (ddg_result !== null)
-            ddg_result.style.display = 'block';
+        if (options.dev) console.log( $("#ddg_zeroclick") )
+
+        if (ddg_result.length !== 0)
+            ddg_result.show();
     },
 
     createResultDiv: function() {
         var ddg_result = $("#ddg_zeroclick");
         this.showZeroClick();
 
-        if (ddg_result === null) {
+        if (ddg_result.length === 0) {
             ddg_result = $("<div>", {id: 'ddg_zeroclick'});
         }
+
+        console.log(ddg_result);
 
         return ddg_result;
     },
 
     updateResultDiv: function(result) {
         var contentDiv = $(this.contentDiv);
-        result.prependTo(contentDiv);
+        console.log(contentDiv, result);
+        contentDiv.prepend(result);
     },
 
     createHeader: function(heading) {
@@ -132,11 +137,12 @@ DuckDuckBox.prototype = {
 
     resultsLoaded: function() {
         if(options.dev)
-            console.log($(this.contentDiv), $(this.contentDiv).css());
+            console.log($(this.contentDiv));
         
         var contentDiv = $(this.contentDiv);
 
-        if (contentDiv !== null){
+        if (contentDiv.length !== 0){
+            console.log(contentDiv.css('visibility'), contentDiv.css('display'));
             if (contentDiv.css('visibility') === "visible" ||
                 contentDiv.css('display') !== 'none') {
                 return true;
@@ -160,6 +166,7 @@ DuckDuckBox.prototype = {
             if(options.dev)
                 console.log('showing answer');
             
+            console.log(ddg_result);
             this.updateResultDiv(ddg_result)
 
         } else {
