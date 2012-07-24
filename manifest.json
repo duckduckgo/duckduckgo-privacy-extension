@@ -391,6 +391,7 @@
             "https://encrypted.google.com/*"
             ],
             "js": [
+                "js/jquery.js",
                 "js/common.js",
                 "js/google.js"
             ],
