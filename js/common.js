@@ -108,7 +108,8 @@ DuckDuckBox.prototype = {
             ddg_result = $("<div>", {id: 'ddg_zeroclick'});
         }
 
-        console.log(ddg_result);
+        // clean it up, please!
+        ddg_result.html('');
 
         return ddg_result;
     },
@@ -119,7 +120,7 @@ DuckDuckBox.prototype = {
         contentDiv.prepend(result);
     },
 
-    createHeader: function(heading) {
+    createHeader: function(heading, query) {
         return $('<div>', {id: 'ddg_zeroclick_header'})
                        .append($('<a>', {
                                    class: 'ddg_head',
@@ -206,23 +207,31 @@ DuckDuckBox.prototype = {
             }
         } 
         
-        first_categories = $('<div>');
-        hidden_categories = $('<div>');
+        first_categories = [];
+        hidden_categories = [];
 
         for (var i = 0; i < res['RelatedTopics'].length; i++){
             if (res['RelatedTopics'].length === 0)
                 break;
             
             var link = res['RelatedTopics'][i]['Result'].
-                        match(/<a href=".*">.*<\/a>/);
+                        match(/<a href="(.*)">(.*)<\/a>/);
 
             var cls = (res['RelatedTopics'][i]['FirstURL'].match(/https?:\/\/[a-z0-9\-]+\.[a-z]+(?:\/\d+)?\/c\/.*/) !== null) ? "ddg_zeroclick_category" : "ddg_zeroclick_article";
             
+            link = $('<a>', {
+                                href: link[1],
+                                text: link[2]
+                            });
+            console.log(link);
+
             var category = $('<div>', {
-                                class: cls
+                                class: cls,
+                                html: link
                             }).click(function(event){
                                 window.location.href = this.firstChild.href;  
-                            });
+                            }).append(link);
+
 
             if (this.hover) {
                 category.mouseover(function(event){
@@ -230,16 +239,15 @@ DuckDuckBox.prototype = {
                         })
                         .mouseout(function(event){
                             $(this).removeClass('ddg_selected');
-                        })
-                        .html(link);
+                        });
 
                 if (i < 2) {
                     if (i === 0)
                         category.addClass('first_category');
 
-                    category.appendTo(first_categories);
+                    first_categories.push(category);
                 } else {
-                    category.appendTo(hidden_categories);
+                    hidden_categories.push(category);
                 }
 
             } else {
@@ -249,16 +257,22 @@ DuckDuckBox.prototype = {
                     if (i === 0) 
                         category.addClass('first_category');
                     
-                    category.appendTo(first_categories);
+                    first_categories.push(category);
                 } else {
-                    category.appendTo(hidden_categories);
+                    hidden_categories.push(category);
                 }
             }
         }
 
-        result.append(this.createHeader(heading));
+        console.log(first_categories, hidden_categories);
+
+        result.append(this.createHeader(heading, query));
 
         if (res['RelatedTopics'].length >= 2){
+
+            if (options.dev)
+                console.log(tmp_div);
+
             var more_topics = $('<div>', {
                                 class: 'ddg_zeroclick_more'
                             }).click(function(event){
@@ -266,14 +280,11 @@ DuckDuckBox.prototype = {
                                 $(this).mouseover(function(event){});
                                 $(this).mouseout(function(event){});
                             }).append($('<a>', {
-                                    href: 'javascript:;'
+                                    text: 'More related topics'        
                                 }).click(function(event){
-                                    $(this).parent().hide();
                                     $(this).parent().next().show();
-                                }).text('More related topics')
-                            ).append($('<div>', {
-                                    style: 'display:none;padding-left:0px;margin-left:-1px;'
-                                }).append(hidden_categories)
+                                    $(this).parent().hide();
+                                })
                             );
 
             if (this.hover) {
@@ -281,12 +292,12 @@ DuckDuckBox.prototype = {
                     $(this).addClass('ddg_selected');                
                 }).mouseout(function(event){
                     $(this).removeClass('ddg_selected');
+                }).click(function(event){
+                    $(this).children().click();
                 });
             }
 
-            result.append(more_topics);
         }
-
 
         if (res['Image']) {
             image = $('<div>', {
@@ -299,6 +310,8 @@ DuckDuckBox.prototype = {
                     }
                 ))
             );
+            
+            result.append(image);
         }
         
         var source_base_url = res['AbstractURL'].match(/http.?:\/\/(.*?\.)?(.*\..*?)\/.*/)[2];
@@ -309,10 +322,7 @@ DuckDuckBox.prototype = {
         if (source_base_url === "wikipedia.org")
             more_image.attr('src', 'https://duckduckgo.com/assets/icon_wikipedia.v101.png');
 
-        var abst = $('<div>', {
-            id: 'ddg_zeroclick_abstract',
-            style:  (res['Image'] ? 'max-width: 420px': '')
-        }).append($('<div>')
+        var text_div = $('<div>')
                     .click(function(event){
                                 window.location.href = res['AbstractURL'];
                             })
@@ -330,24 +340,43 @@ DuckDuckBox.prototype = {
                             .append($('<a>', {
                                         href: official_site['url']
                                     }).html(official_site['text']))
-                            )
-        )
-        .append(first_categories)
-        .append(hidden_categories)
-        .append($('<div>', {class: 'clear'}));
+                            );
+
 
         if (this.hover) {
 
-            abst.mouseover(function(event){
+            text_div.mouseover(function(event){
                 $(this).addClass('ddg_selected');
             }).mouseout(function(event){
                 $(this).removeClass('ddg_selected');
             });
 
         } 
-        
-        result.append(abst);
+        var abst = $('<div>', {
+            id: 'ddg_zeroclick_abstract',
+            style:  (res['Image'] ? 'max-width: 420px': '')
+        }).append(text_div);
 
+
+        for (var i = first_categories.length - 1; i >= 0; i--){
+            abst.append( first_categories[i] );
+        };
+        
+
+        abst.append(more_topics);
+
+        var tmp_div = $('<div>', {
+                                style: 'display:none;padding-left:0px;margin-left:-1px;'
+                            });
+
+        for (var i = hidden_categories.length - 1; i >= 0; i--){
+            tmp_div.append( hidden_categories[i] );
+        };
+        
+        abst.append(tmp_div);
+
+        result.append(abst);
+        result.append($('<div>', {class: 'clear'}));
 
         if(this.resultsLoaded()) {
             this.updateResultDiv(result);
