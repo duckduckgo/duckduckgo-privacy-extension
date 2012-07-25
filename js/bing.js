@@ -44,7 +44,8 @@ function qsearch(direct) {
 // instant search
 document.getElementsByName('q')[0].onkeyup = function(e){
 
-    if(ddgBox.lastQuery !== getQuery())
+    query = getQuery();
+    if(ddgBox.lastQuery !== query && query !== '')
         ddgBox.hideZeroClick();
 
     if(options.dev)

@@ -402,6 +402,7 @@
                 "http://www.bing.com/search*"
             ],
             "js": [
+                "js/jquery.js",
                 "js/common.js",
                 "js/bing.js"
             ],

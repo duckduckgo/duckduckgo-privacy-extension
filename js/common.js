@@ -54,6 +54,9 @@ DuckDuckBox.prototype = {
                 return;           
         }
 
+        if (query === '')
+            return;
+
         if (options.dev) console.log(res, query);
 
         if (res['AnswerType'] !== "") {
