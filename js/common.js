@@ -142,7 +142,6 @@ DuckDuckBox.prototype = {
         var contentDiv = $(this.contentDiv);
 
         if (contentDiv.length !== 0){
-            console.log(contentDiv.css('visibility'), contentDiv.css('display'));
             if (contentDiv.css('visibility') === "visible" ||
                 contentDiv.css('display') !== 'none') {
                 return true;
@@ -288,7 +287,8 @@ DuckDuckBox.prototype = {
                 }).mouseout(function (event){
                     $(this).removeClass('ddg_selected');
                 }).click(function (event){
-                    $(this).children().click();
+                    $(this).next().show();
+                    $(this).hide();
                 });
             }
 
@@ -317,36 +317,39 @@ DuckDuckBox.prototype = {
         if (source_base_url === "wikipedia.org")
             more_image.attr('src', 'https://duckduckgo.com/assets/icon_wikipedia.v101.png');
 
+        var official_links = $('<div>', {
+                            id: 'ddg_zeroclick_official_links'
+                       })
+                       .append(more_image)
+                       .append($('<a>', {
+                                   class: 'ddg_more_link',
+                                   href: res['AbstractURL']
+                               }).html('More at ' + res['AbstractSource']));
+
+        if (official_site['url'] !== undefined) {
+            official_links.append($('<span>', {text: ' | Official site: '}))
+                          .append($('<a>', {
+                                        href: official_site['url']
+                            }).html(official_site['text']));
+        }
+       
         var text_div = $('<div>')
                     .click(function (event){
                                 window.location.href = res['AbstractURL'];
                             })
                     .append($('<p>')
                                 .text(res['Abstract']))
-                    .append($('<div>', {
-                                id: 'ddg_zeroclick_official_links'
-                            })
-                            .append(more_image)
-                            .append($('<a>', {
-                                        class: 'ddg_more_link',
-                                        href: res['AbstractURL']
-                                    }).html('More at ' + res['AbstractSource']))
-                            .append($('<span>', {text: ' | Official site: '}))
-                            .append($('<a>', {
-                                        href: official_site['url']
-                                    }).html(official_site['text']))
-                            );
+                    .append(official_links);
 
 
         if (this.hover) {
-
             text_div.mouseover(function (event){
                 $(this).addClass('ddg_selected');
             }).mouseout(function (event){
                 $(this).removeClass('ddg_selected');
             });
-
         } 
+
         var abst = $('<div>', {
             id: 'ddg_zeroclick_abstract',
             style:  (res['Image'] ? 'max-width: 420px': '')
