@@ -212,6 +212,12 @@ QmCC">
           Show Meanings
         </label>
       </li> 
+      <li>
+        <input type="checkbox" id="zeroclickinfo" onclick="return zeroclickinfo_check()">
+        <label for="zeroclickinfo">
+          Answers on Google/Bing
+        </label>
+      </li> 
     </ul>
     
   </div>
@@ -446,6 +452,10 @@ function meanings_check(){
   localStorage['meanings'] = document.getElementById('adv_meanings').checked;
 }
 
+function zeroclickinfo_check(){
+  localStorage['zeroclickinfo'] = document.getElementById('zeroclickinfo').checked;
+}
+
 function defaults_check(){
   if (localStorage['ducky'] === 'true') {
     document.getElementById('adv_ducky').checked = true;  
@@ -454,6 +464,11 @@ function defaults_check(){
   if (localStorage['meanings'] === 'true') {
     document.getElementById('adv_meanings').checked = true;  
   }
+
+  if (localStorage['zeroclickinfo'] === 'true') {
+    document.getElementById('zeroclickinfo').checked = true;  
+  }
+
 }
 
 </script>
