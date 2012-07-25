@@ -356,7 +356,7 @@ DuckDuckBox.prototype = {
         }).append(text_div);
 
 
-        for (var i = first_categories.length - 1; i >= 0; i--){
+        for (var i = 0; i < first_categories.length; i++){
             abst.append( first_categories[i] );
         };
         
@@ -367,7 +367,7 @@ DuckDuckBox.prototype = {
                               style: 'display:none;padding-left:0px;margin-left:-1px;'
                             });
 
-        for (var i = hidden_categories.length - 1; i >= 0; i--){
+        for (var i = 0; i < hidden_categories.length; i++){
             tmp_div.append( hidden_categories[i] );
         };
         
@@ -484,7 +484,7 @@ DuckDuckBox.prototype = {
                     hidden_results.css('margin-left', '-1px');
 
 
-                for (var z=output.length; z>=0; z--){
+                for (var z = 0; z < hidden_results.length; z++){
                     hidden_results.append( output[z] )
                 };
 
@@ -529,7 +529,7 @@ DuckDuckBox.prototype = {
             id: 'ddg_zeroclick_abstract',
         });
 
-        for (var i = disambigs.length - 1; i >= 0; i--){
+        for (var i = 0; i < disambigs.length; i++){
             abst.append( disambigs[i] );
         };
 
@@ -561,7 +561,7 @@ DuckDuckBox.prototype = {
             if (this.hover)
                 tmp.css('margin-left', '-1px');
 
-            for (var i = hidden_disambigs.length - 1; i >= 0; i--){
+            for (var i = 0; i < hidden_disambigs.length; i++){
                 tmp.append( hidden_disambigs[i] );
             };
 
@@ -570,7 +570,7 @@ DuckDuckBox.prototype = {
 
         }
 
-        for (var i=0; i < others.length; i++) {
+        for (var i = 0; i < others.length; i++) {
             abst.append( others[i] );
         };
         
