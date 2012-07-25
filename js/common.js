@@ -591,20 +591,12 @@ DuckDuckBox.prototype = {
     },
 
     displayCategory: function (res, query) {
-        var result = '';
-        result += '<div id="ddg_zeroclick_header"> <a class="ddg_head" href="https://duckduckgo.com/?q='+ 
-                        encodeURIComponent(query)
-                    +'">' +
-                        res['Heading'] +
-                    '</a> <img alt="" src="'+ HEADER_ICON_URL +'" />' + 
-                    '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
-                        encodeURIComponent(query)
-                    +'"> See DuckDuckGo results </a>' +
-                  '</div>';
+        var result = [];
         
-        var categories = '';
-        var hidden_categories = '';
+        var categories = []; 
+        var hidden_categories = [];
         var nhidden = 0;
+
         for (var i = 0; i < res['RelatedTopics'].length; i++){
             if (res['RelatedTopics'].length === 0)
                 break;
@@ -612,97 +604,86 @@ DuckDuckBox.prototype = {
             if (options.dev)
                 console.log(res['RelatedTopics'][i]['Result']);
      
+            var category = $('<div>', {class: 'wrapper'})
+                .append($('<div>', {class: 'icon_category'})
+                            .append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']})))
+                .append($('<div>', {class: 'ddg_zeroclick_category_item'})
+                .html(res['RelatedTopics'][i]['Result']));
+
             if (this.hover) {
-                if (i <= 2) {
-                    categories += '<div class="wrapper" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.lastChild.firstChild.href;">' +
-                                    '<div class="icon_category">' + 
-                                        '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                    '</div>' +
-                                    '<div class="ddg_zeroclick_category_item">' +
-                                        res['RelatedTopics'][i]['Result'] +
-                                    '</div>' +
-                                  '</div>';
-                } else {
-                    hidden_categories += '<div class="wrapper" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.lastChild.firstChild.href;">' +
-                                        '<div class="icon_category">' + 
-                                            '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                        '</div>' +
-                                        '<div class="ddg_zeroclick_category_item">' +
-                                            res['RelatedTopics'][i]['Result'] +
-                                        '</div>' +
-                                      '</div>';
-
-                    nhidden++;
-                }
-            } else {
-                if (i <= 2) {
-                    categories += '<div class="wrapper" >' +
-                                    '<div class="icon_category">' + 
-                                        '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                    '</div>' +
-                                    '<div class="ddg_zeroclick_category_item">' +
-                                        res['RelatedTopics'][i]['Result'] +
-                                    '</div>' +
-                                  '</div>';
-                } else {
-                    hidden_categories += '<div class="wrapper" >' +
-                                        '<div class="icon_category">' + 
-                                            '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                        '</div>' +
-                                        '<div class="ddg_zeroclick_category_item">' +
-                                            res['RelatedTopics'][i]['Result'] +
-                                        '</div>' +
-                                      '</div>';
-
-                    nhidden++;
-                }
-            }
-        }
-        
-        if (this.hover) {
-            if (hidden_categories !== '') {
-                hidden_categories = '<div class="category_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="this.firstChild.onclick();this.className=\'category_more\';this.onmouseover=function (){}">' +
-                                        '<a href="javascript:;" onclick="' + 
-                                            "this.parentElement.style.display='none';" +
-                                            "this.parentElement.nextElementSibling.style.display='block'" +
-                                        '"> More ('+ nhidden + ')</a>' +
-                                     '</div>' + 
-                                        '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
-                                            hidden_categories+
-                                        '</div>';
-     
-            }
-        } else {
-            if (hidden_categories !== '') {
-                hidden_categories = '<div class="category_more" >' +
-                                        '<a href="javascript:;" onclick="' + 
-                                            "this.parentElement.style.display='none';" +
-                                            "this.parentElement.nextElementSibling.style.display='block'" +
-                                        '"> More ('+ nhidden + ')</a>' +
-                                     '</div>' + 
-                                        '<div style="display:none;padding-left:0px;">' + 
-                                            hidden_categories+
-                                        '</div>';
+                category.mouseover(function(event){
+                    $(this).addClass('ddg_selected');
+                }).mouseout(function(event){
+                    $(this).removeClass('ddg_selected');
+                }).click(function(event){
+                    window.location.href = $(this).children(':last').children().attr('href');
+                });
  
             }
-        }
 
-        result += '<div id="ddg_zeroclick_abstract">' + 
-                        categories +
-                        hidden_categories +
-                    '</div>';
-                    
+            if (i <= 2) {
+                categories.push(category);
+            } else {
+                hidden_categories.push(category);
+                nhidden++;
+            }
+        }
 
         result = this.createResultDiv();
         result.append(this.createHeader(res['Heading'], query));
         
+        var abst = $('<div>', {
+            id: 'ddg_zeroclick_abstract',
+        });
+
+        for (var i = 0; i < categories.length; i++){
+            abst.append( categories[i] );
+        };
+
+        tmp = $('<div>', {class: 'category_more'})
+                .append($('<a>', {href: 'javascript:;'})
+                            .click(function(event){
+                                $(this).parent().hide();
+                                $(this).parent().next().show();
+                            })
+                            .text('More (' + nhidden + ')'));
+
+        if (this.hover) {
+            tmp.mouseover(function(event){
+                $(this).addClass('ddg_selected');
+            }).mouseout(function(event){
+                $(this).removeClass('ddg_selected');
+            }).click(function(event){
+
+                $(this).hide();
+                $(this).next().show();
+
+                $(this).removeClass('ddg_selected');
+                $(this).unbind('mouseover');
+            });
+        }
+
+        abst.append(tmp);
+
+        tmp = $('<div>', {style: 'display:none;padding-left:0px;'});
+        if (this.hover)
+            tmp.css('margin-left', '-1px');
+
+        for (var i = 0; i < hidden_categories.length; i++){
+            tmp.append( hidden_categories[i] );
+        };
+
+        abst.append(tmp)
+
+        result.append(abst);
+
         if (options.dev)
             console.log(result);
 
         if(this.resultsLoaded()) {
-            var ddg_result = this.createResultDiv();
-            ddg_result.className = '';
-            ddg_result.innerHTML = result;
+            
+            this.updateResultDiv(result);
+
         } else {
             var $this = this;
             setTimeout(function (){
