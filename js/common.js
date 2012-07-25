@@ -491,7 +491,7 @@ DuckDuckBox.prototype = {
                     hidden_results.css('margin-left', '-1px');
 
 
-                for (var z = 0; z < hidden_results.length; z++){
+                for (var z = 0; z < output.length; z++){
                     hidden_results.append( output[z] )
                 };
 
