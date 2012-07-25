@@ -1,22 +1,29 @@
 var options = [];
 chrome.extension.sendRequest({options: "get"}, function(opt){
-    options = opt;
+    for (var option in opt) {
+        options[option] = (opt[option] === 'true') ? true : false; 
+    }
 });
 
-if (options.zeroclickinfo) {
-    var ddgBox = new DuckDuckBox('q', [], 'results', false);
+var ddgBox;
 
-    ddgBox.search = function(query) {
-        var request = {query: query};
-        chrome.extension.sendRequest(request, function(response){
-            ddgBox.renderZeroClick(response, query);
-        });
+$(document).ready(function(){
+    if (options.zeroclickinfo) {
+        ddgBox = new DuckDuckBox('q', [], 'results', false);
 
-        if (options.dev)
-            console.log("query:", query);
-    }
-}
+        ddgBox.search = function(query) {
+            var request = {query: query};
+            chrome.extension.sendRequest(request, function(response){
+                ddgBox.renderZeroClick(response, query);
+            });
 
+            if (options.dev)
+                console.log("query:", query);
+        }
+
+        ddgBox.init();
+    } 
+});
 
 var ddg_timer;
 
@@ -66,7 +73,4 @@ document.getElementsByName('q')[0].onkeyup = function(e){
 document.getElementsByName("go")[0].onclick = function(){
     qsearch();
 };
-
-if (options.zeroclickinfo)
-    ddgBox.init();
 

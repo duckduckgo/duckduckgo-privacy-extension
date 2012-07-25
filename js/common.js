@@ -54,6 +54,9 @@ DuckDuckBox.prototype = {
                 return;           
         }
 
+        if (res === '')
+            return;
+
         if (query === '')
             return;
 
@@ -480,6 +483,7 @@ DuckDuckBox.prototype = {
                         });
                 }
 
+
                 others.push(disambig_more);
 
                 var hidden_results = $('<div>', {style: 'display:none;padding-left:0px;'});
@@ -516,9 +520,7 @@ DuckDuckBox.prototype = {
             
             if (i <= 2) {
                 disambigs.push(tmp);
-
             } else {
-
                 hidden_disambigs.push(tmp);
                 nhidden++;
             }

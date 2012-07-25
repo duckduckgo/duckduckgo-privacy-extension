@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
 <title>DuckDuckGo</title>
 <link rel="stylesheet" href="http://duckduckgo.com/s427.css" type="text/css">
@@ -263,22 +264,22 @@ QmCC">
 </div>
 
 <script type="text/javascript">
+
+
+
 if (localStorage['meanings'] == undefined) {
-  localStorage['meanings'] = true;
+  localStorage['meanings'] = 'true';
 }
 
 if (localStorage['advanced_options'] == undefined){
   localStorage['advanced_options'] = 'true';
 }
 
+defaults_check();
 
-if (localStorage['ducky'] === 'true') {
-  document.getElementById('adv_ducky').checked = true;  
-}
-
-if (localStorage['meanings'] === 'true') {
-  document.getElementById('adv_meanings').checked = true;  
-}
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
+  defaults_check();
+});
 
 
 if (localStorage['advanced_options'] !== 'true') {
@@ -443,6 +444,16 @@ function ducky_check(){
 
 function meanings_check(){
   localStorage['meanings'] = document.getElementById('adv_meanings').checked;
+}
+
+function defaults_check(){
+  if (localStorage['ducky'] === 'true') {
+    document.getElementById('adv_ducky').checked = true;  
+  }
+
+  if (localStorage['meanings'] === 'true') {
+    document.getElementById('adv_meanings').checked = true;  
+  }
 }
 
 </script>

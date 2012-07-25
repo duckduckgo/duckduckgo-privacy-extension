@@ -1,5 +1,5 @@
 <html>
-<head><title>DuckDuckGo's Chrome extension - Options</title></head>
+<head><title>DuckDuckGo for Chrome - Options</title></head>
 <script type="text/javascript">
 
 // Saves options to localStorage.
@@ -20,6 +20,10 @@ function save_options() {
   setTimeout(function() {
     status.innerHTML = "";
   }, 750);
+
+  chrome.extension.sendMessage({'options': localStorage}, function(response){
+    console.log(response); 
+  });
 }
 
 // Restores select box state to saved value from localStorage.
