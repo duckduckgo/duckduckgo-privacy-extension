@@ -1,7 +1,8 @@
 var options = [];
 chrome.extension.sendRequest({options: "get"}, function(opt){
-    options = opt;
+    //options = opt;
 });
+options.dev = false;
 
 var ddgBox = new DuckDuckBox('q', ['isr_pps'], 'center_col', true);
 

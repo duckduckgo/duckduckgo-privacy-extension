@@ -1,7 +1,7 @@
 var HEADER_ICON_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAgCAYAAACRpmGNAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABM9JREFUeNq8WF1oHFUUPndnZid/7S5JmzVJk7V9sNJqVqOiaBof1NY+JEVIQZA8CBVfIn3yyfhkC4XogxgfJJY+VEFRKM2iJGjRrMQUSsLuNoFGmthSu+xust2Z/Z2fnb3eGZJ1dnd2fhLwwGHv3Dkz95t7znfOuYsAgIZ6QWAuVveNBDu1cf1PwOw+V2VDO3gBWrqzEXiy1xegadpfLBbnifJdXV2RXQDEFjZYD1BVxkTdql5bWh/NCXIa66RcLt8TRfGTubm5zh07m8pYKA12gal6dzMbTmQF/KggYQNJcxx3ltix27pnkGh7YCsGLs+vDu2Mn32889UnfN7xVpb26m1kWf4ikUh809vbG9ktEfRiuWN6zWazo6orsYWUSqXrRHwOdtIIg31g+Xz+HHYgKkAdOMcAbaeS2cWIn2Gbpp3kDoqiRsgHjdW823Yqou0aPtbd8zFDuSAvYfhuWQShIMCZZ1rgULu7zjaZA7j4qwAcn4G3A82TZOqqWbowm7d0p+qStURGi7PPQgr+eVXU3PYgJRq6M1szrYZDjXtZm+61B+52jNcW2kiVbcdcLMHjTE5Qc2HYABxrBc5lozpUzR9uR5DNi/DtzLKmjeS3m3fh5Htfw8yNVUAIBQhzvQ5KGmpUWw2FK0qVsbrgpcu/w9HDByFIxkYSS2a0350PGBwc7HdajGm7u1aUFTWpBtTx/lZWm3t34ge4cuGs4YPvjAxo4Ht8HsP7qT/pkWYWNMBFEeY7Xi6Fate2zdYkX4jugBt+7Th0de6HfQTk0SOdDZ95/uneyrip8H0ge4sJuBk4QbnwiN6OzE1sx+DuUomilKLJnAidbWzdwtWGGcCZWUDSA8D5BW2qLCwBq8Qm65cn5mUU4rNwwWmeq3K1JAoRriBVwBkKPwvKw/fJijHLEJZLOJhMUVP+N6SIGQCmQczVzd28lxJe9Lcbvym3CMrfQ6aISgoKSjLh06Ir+NZ5kbMq/rQT9mQEuUKKurZCWKm6Lorow30vyFPLP7L+Dg/2kB2KOuhSwFEq2SGFrJSNXeA5TYppd938wKh4XwdMk5XrjF9la2GJnrj2OevdTW3Fta5VSZEuysZxxxwCquerSsw1s3hSCjNjJLZCGAOvmTDohAthPyJaAX8MB9UY3FPhVyXLpUPJrK8xKTxvQkq8dYpe7/G0NOFhmoIR1g3jRmFFWDoT30QXtwmBnRLCkBR/rG8Kg0cONHZ9MnnK5/NVEur9X9z9ba1lP8tAwOUCnCug0MKyK1pDCMtO2LDg12ow+s+8WbEnJzI1ZzUZKGuihg2AFSHqvogvSpG8VGpcD2m63+GButE97IitWq4qydF0QTbrfquS3cFPn+uD6VemqamXhpyu5bLzBfqLrXgsxBHGpoV1+DI6DFfuXIJIKvxfkCLkIUfEYa0G/zT4kbevZY2i0ZjCUmNOdk1PCFsn/kqv9lcyfqwn5r26dh5u8xhWOAxu5IPRpwJwIxaG5WScO9NB8Vsy+KPk3kYeA1ZwqHxu4aQTcLRVbjNsd/JFNalWuSmhxGFu6yHEBQRlQN5HMnh3eVbFZhXC8qGiWApxJnGnlTppz/84gVNC4O0OhVSK6tVJwwLN0KaNXz8wAOPHP4Du5j59x8E5Ze6/AgwAHWTjLQ+v54oAAAAASUVORK5CYII=';
 var DDG_URL = 'https://duckduckgo.com/?q=';
 
-var DuckDuckBox = function(inputName, forbiddenIDs, contentDiv, hover) {
+var DuckDuckBox = function (inputName, forbiddenIDs, contentDiv, hover) {
     this.inputName = inputName;
     this.forbiddenIDs = forbiddenIDs;
 
@@ -23,18 +23,18 @@ var DuckDuckBox = function(inputName, forbiddenIDs, contentDiv, hover) {
 };
 
 DuckDuckBox.prototype = {
-    init: function() {
+    init: function () {
         this.search(this.getQueryFromURL());
     },
 
-    search: function() {
+    search: function () {
         if (options.dev)
             console.log('bad search called');
 
         return; 
     },
 
-    getQueryFromURL: function() {
+    getQueryFromURL: function () {
         var regex = new RegExp('[\?\&]q=([^\&#]+)');
         if(regex.test(window.location.href)) {
             var q = window.location.href.split(regex);
@@ -47,7 +47,7 @@ DuckDuckBox.prototype = {
         }
     },
 
-    renderZeroClick: function(res, query) {
+    renderZeroClick: function (res, query) {
         // disable on forbidden IDs
         for(var i in this.forbiddenIDs) {
             if ($("#" + this.forbiddenIDs[i]).length !== 0)
@@ -86,13 +86,13 @@ DuckDuckBox.prototype = {
         }
    },
 
-    hideZeroClick: function() {
+    hideZeroClick: function () {
         var ddg_result = $("#ddg_zeroclick");
         if (ddg_result.length !== 0)
             ddg_result.hide();
     },
 
-    showZeroClick: function() {
+    showZeroClick: function () {
         var ddg_result = $("#ddg_zeroclick");
         if (options.dev) console.log( $("#ddg_zeroclick") )
 
@@ -100,7 +100,7 @@ DuckDuckBox.prototype = {
             ddg_result.show();
     },
 
-    createResultDiv: function() {
+    createResultDiv: function () {
         var ddg_result = $("#ddg_zeroclick");
         this.showZeroClick();
 
@@ -114,13 +114,12 @@ DuckDuckBox.prototype = {
         return ddg_result;
     },
 
-    updateResultDiv: function(result) {
+    updateResultDiv: function (result) {
         var contentDiv = $(this.contentDiv);
-        console.log(contentDiv, result);
         contentDiv.prepend(result);
     },
 
-    createHeader: function(heading, query) {
+    createHeader: function (heading, query) {
         return $('<div>', {id: 'ddg_zeroclick_header'})
                        .append($('<a>', {
                                    class: 'ddg_head',
@@ -136,7 +135,7 @@ DuckDuckBox.prototype = {
 
     },
 
-    resultsLoaded: function() {
+    resultsLoaded: function () {
         if(options.dev)
             console.log($(this.contentDiv));
         
@@ -153,7 +152,7 @@ DuckDuckBox.prototype = {
         return false;
     },
 
-    displayAnswer: function(answer) {
+    displayAnswer: function (answer) {
         if (answer === '') {
             this.hideZeroClick();
             return;
@@ -167,7 +166,6 @@ DuckDuckBox.prototype = {
             if(options.dev)
                 console.log('showing answer');
             
-            console.log(ddg_result);
             this.updateResultDiv(ddg_result)
 
         } else {
@@ -175,24 +173,23 @@ DuckDuckBox.prototype = {
                 console.log('trying again');
 
             var $this = this;
-            setTimeout(function() { 
+            setTimeout(function () { 
                 $this.displayAnswer(answer); 
             }, 200);
         }
     },
 
-    displaySummary: function(res, query) {
+    displaySummary: function (res, query) {
         var result = this.createResultDiv();
 
         var img_url = res['AbstractURL'];
         var official_site = {};
-        var first_category = ''
-        var hidden_categories = '';
+        var first_categoies = [];
+        var hidden_categories = []; 
 
         var heading = (res['Heading'] === ''? "&nbsp;": res['Heading']);
 
         var image = '';
-        
 
         if (res['Results'].length !== 0) {
             if(res['Results'][0]['Text'] === "Official site") {
@@ -223,21 +220,20 @@ DuckDuckBox.prototype = {
                                 href: link[1],
                                 text: link[2]
                             });
-            console.log(link);
 
             var category = $('<div>', {
                                 class: cls,
                                 html: link
-                            }).click(function(event){
+                            }).click(function (event){
                                 window.location.href = this.firstChild.href;  
                             }).append(link);
 
 
             if (this.hover) {
-                category.mouseover(function(event){
+                category.mouseover(function (event){
                             $(this).addClass('ddg_selected');
                         })
-                        .mouseout(function(event){
+                        .mouseout(function (event){
                             $(this).removeClass('ddg_selected');
                         });
 
@@ -264,7 +260,6 @@ DuckDuckBox.prototype = {
             }
         }
 
-        console.log(first_categories, hidden_categories);
 
         result.append(this.createHeader(heading, query));
 
@@ -275,24 +270,24 @@ DuckDuckBox.prototype = {
 
             var more_topics = $('<div>', {
                                 class: 'ddg_zeroclick_more'
-                            }).click(function(event){
+                            }).click(function (event){
                                 $(this).removeClass('ddg_selected');
-                                $(this).mouseover(function(event){});
-                                $(this).mouseout(function(event){});
+                                $(this).mouseover(function (event){});
+                                $(this).mouseout(function (event){});
                             }).append($('<a>', {
                                     text: 'More related topics'        
-                                }).click(function(event){
+                                }).click(function (event){
                                     $(this).parent().next().show();
                                     $(this).parent().hide();
                                 })
                             );
 
             if (this.hover) {
-                more_topics.mouseover(function(event){
+                more_topics.mouseover(function (event){
                     $(this).addClass('ddg_selected');                
-                }).mouseout(function(event){
+                }).mouseout(function (event){
                     $(this).removeClass('ddg_selected');
-                }).click(function(event){
+                }).click(function (event){
                     $(this).children().click();
                 });
             }
@@ -323,7 +318,7 @@ DuckDuckBox.prototype = {
             more_image.attr('src', 'https://duckduckgo.com/assets/icon_wikipedia.v101.png');
 
         var text_div = $('<div>')
-                    .click(function(event){
+                    .click(function (event){
                                 window.location.href = res['AbstractURL'];
                             })
                     .append($('<p>')
@@ -345,9 +340,9 @@ DuckDuckBox.prototype = {
 
         if (this.hover) {
 
-            text_div.mouseover(function(event){
+            text_div.mouseover(function (event){
                 $(this).addClass('ddg_selected');
-            }).mouseout(function(event){
+            }).mouseout(function (event){
                 $(this).removeClass('ddg_selected');
             });
 
@@ -366,7 +361,7 @@ DuckDuckBox.prototype = {
         abst.append(more_topics);
 
         var tmp_div = $('<div>', {
-                                style: 'display:none;padding-left:0px;margin-left:-1px;'
+                              style: 'display:none;padding-left:0px;margin-left:-1px;'
                             });
 
         for (var i = hidden_categories.length - 1; i >= 0; i--){
@@ -385,7 +380,7 @@ DuckDuckBox.prototype = {
                 console.log('loaded and showing');
         } else {
             var $this = this;
-            setTimeout(function(){
+            setTimeout(function (){
                 if(options.dev)
                     console.log('trying again');
                 $this.updateResultDiv(result);
@@ -394,178 +389,208 @@ DuckDuckBox.prototype = {
 
     },
 
-    displayDisambiguation: function(res, query) {
+    displayDisambiguation: function (res, query) {
         
-        var result = '';
-        result += '<div id="ddg_zeroclick_header"> <a class="ddg_head" href="https://duckduckgo.com/?q='+ 
-                        encodeURIComponent(query)
-                    +'"> Meanings of ' +
-                        res['Heading'] +
-                    '</a> <img alt="" src="'+ HEADER_ICON_URL +'" />' + 
-                    '<a class="ddg_more" href="https://duckduckgo.com/?q='+ 
-                        encodeURIComponent(query)
-                    +'"> See DuckDuckGo results </a>' +
-
-                  '</div>';
-
-        var disambigs = '' 
-        var hidden_disambigs = '';
-        var others = '';
+        var result;
+        var disambigs = [];
+        var hidden_disambigs = []; 
+        var others = [];
         var nhidden = 0;
 
-       for (var i = 0; i < res['RelatedTopics'].length; i++){
+        var tmp;
+        
+
+        for (var i = 0; i < res['RelatedTopics'].length; i++){
             if (res['RelatedTopics'].length === 0)
                 break;
             
+
             if (options.dev)
                 console.log(res['RelatedTopics'][i]['Result']);
             
             // other topics
             if(res['RelatedTopics'][i]['Topics']) {
                 var topics = res['RelatedTopics'][i]['Topics'];
-                var output = '';
-                if (this.hover) {
-                    for(var j = 0; j < topics.length; j++){
-                        output += '<div class="wrapper">' +
-                                    '<div class="icon_disambig">' + 
-                                        '<img src="' + topics[j]['Icon']['URL'] +'" />' +
-                                    '</div>' +
-                                    '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' +
-                                        topics[j]['Result'] +
-                                    '</div>' +
-                                  '</div>';
+                var output = [];
+                for(var j = 0; j < topics.length; j++){
+                    var disambig = $('<div>', {
+                                            class: 'ddg_zeroclick_disambig',
+                                        })
+                                        .html(topics[j]['Result'])
+                                        .click(function(event){
+                                            $(this).children().click();
+                                        });
+
+                    if (this.hover) {
+                        disambig.mouseover(function (event){
+                            $(this).addClass('ddg_selected');
+                        }).mouseout(function (event){
+                            $(this).removeClass('ddg_selected');
+                        });
                     }
-                    others += '<div class="disambig_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=\'disambig_more\'" onclick="this.firstChild.onclick();this.className=\'disambig_more\';this.onmouseover=function(){}">' +
-                                        '<a href="javascript:;" onclick="' + 
-                                            "this.parentElement.nextElementSibling.style.display='block';this.onmouseover=null;" +
-                                            "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
-                                        '"> ' + res['RelatedTopics'][i]['Name']  + ' ('+ topics.length + ')</a>' +
-                                     '</div>' + 
-                                        '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
-                                            output +
-                                        '</div>';
-                } else {
-                    for(var j = 0; j < topics.length; j++){
-                        output += '<div class="wrapper">' +
-                                    '<div class="icon_disambig">' + 
-                                        '<img src="' + topics[j]['Icon']['URL'] +'" />' +
-                                    '</div>' +
-                                    '<div class="ddg_zeroclick_disambig" >' +
-                                        topics[j]['Result'] +
-                                    '</div>' +
-                                  '</div>';
-                    }
-                    others += '<div class="disambig_more" >' +
-                                        '<a href="javascript:;" onclick="' + 
-                                            "this.parentElement.nextElementSibling.style.display='block';this.onmouseover=null;" +
-                                            "this.parentElement.innerHTML = '" + res['RelatedTopics'][i]['Name']  + "<hr>';" +
-                                        '"> ' + res['RelatedTopics'][i]['Name']  + ' ('+ topics.length + ')</a>' +
-                                     '</div>' + 
-                                        '<div style="display:none;padding-left:0px;">' + 
-                                            output +
-                                        '</div>';
+
+                    tmp = $('<div>', {class: 'wrapper'})
+                                .append($('<div>', {class: 'icon_disambig'})
+                                        .append($('<img>', {src: topics[j]['Icon']['URL']})))
+                                .append(disambig);
                     
-                       
+                    output.push(tmp);
+
                 }
+
+               var name = res['RelatedTopics'][i]['Name'];
+
+               var disambig_more = $('<div>', {class: 'disambig_more'})
+                        .append($('<a>')
+                            .text(name  + ' ('+ topics.length + ')')
+                            .click(function (event){
+                                
+                                $(this).parent().next().show();
+                                $(this).hide();
+                                $(this).next().show();
+
+                            }))
+                        .click(function (event){
+
+                            $(this).children().hide();
+                            $(this).children().next().show();
+                            $(this).next().show();
+                            
+                            $(this).removeClass('ddg_selected');
+                            $(this).unbind('mouseover');
+                            
+                        })
+                        .append($('<div>')
+                                        .text(name)
+                                        .append($('<hr>'))
+                                        .hide()
+                        );
+
+                if (this.hover) {
+                    disambig_more.mouseover(function (event){
+                            $(this).addClass('ddg_selected');
+                        }).mouseout(function (event){
+                            $(this).removeClass('ddg_selected');
+                        });
+                }
+
+                others.push(disambig_more);
+
+                var hidden_results = $('<div>', {style: 'display:none;padding-left:0px;'});
+                if (this.hover)
+                    hidden_results.css('margin-left', '-1px');
+
+
+                for (var z=output.length; z>=0; z--){
+                    hidden_results.append( output[z] )
+                };
+
+                others.push(hidden_results);
+                
                 continue;
             }
-                
-            
+
+            tmp = $('<div>', {class: 'wrapper'})
+                    .append($('<div>', {class: 'icon_disambig'})
+                                .append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']})))
+                    .append($('<div>', {class: 'ddg_zeroclick_disambig'})
+                                .click(function (event){
+                                    window.location.href = $(this).children().href;
+                                })
+                                .html(res['RelatedTopics'][i]['Result']));
+
             if (this.hover) {
-                if (i <= 2) {
-                    disambigs += '<div class="wrapper">' +
-                                    '<div class="icon_disambig">' + 
-                                        '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                    '</div>' +
-                                    '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' +
-                                        res['RelatedTopics'][i]['Result'] +
-                                    '</div>' +
-                                  '</div>';
-                } else {
-                    hidden_disambigs += '<div class="wrapper">' +
-                                            '<div class="icon_disambig">' + 
-                                                '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                            '</div>' +
-                                            '<div class="ddg_zeroclick_disambig" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="window.location.href=this.firstChild.href">' +
-                                                res['RelatedTopics'][i]['Result'] +
-                                            '</div>' +
-                                          '</div>'; 
-                    nhidden++;
-                }
+                tmp.find('div:nth-child(2)').mouseover(function (event){
+                    $(this).addClass('ddg_selected');
+                }).mouseout(function (event){
+                    $(this).removeClass('ddg_selected'); 
+                });
+            }
+
+            
+            if (i <= 2) {
+                disambigs.push(tmp);
+
             } else {
-                if (i <= 2) {
-                    disambigs += '<div class="wrapper">' +
-                                    '<div class="icon_disambig">' + 
-                                        '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                    '</div>' +
-                                    '<div class="ddg_zeroclick_disambig" >' +
-                                        res['RelatedTopics'][i]['Result'] +
-                                    '</div>' +
-                                  '</div>';
-                } else {
-                    hidden_disambigs += '<div class="wrapper">' +
-                                            '<div class="icon_disambig">' + 
-                                                '<img src="' + res['RelatedTopics'][i]['Icon']['URL'] +'" />' +
-                                            '</div>' +
-                                            '<div class="ddg_zeroclick_disambig" >' +
-                                                res['RelatedTopics'][i]['Result'] +
-                                            '</div>' +
-                                          '</div>'; 
-                    nhidden++;
-                }
-            }
-         }
-        
-        if (this.hover) {
-            if (hidden_disambigs!== '') {
-                hidden_disambigs  = '<div class="disambig_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="this.firstChild.onclick();this.className=\'disambig_more\';this.onmouseover=function(){}">' +
-                                        '<a href="javascript:;" onclick="' + 
-                                            "this.parentElement.style.display='none';" +
-                                            "this.parentElement.nextElementSibling.style.display='block'" +
-                                        '"> More ('+ nhidden + ')</a>' +
-                                     '</div>' + 
-                                        '<div style="display:none;padding-left:0px;margin-left:-1px;">' + 
-                                            hidden_disambigs+
-                                        '</div>';
-            }
-        } else {
-            if (hidden_disambigs!== '') {
-                hidden_disambigs  = '<div class="disambig_more" >' +
-                                        '<a href="javascript:;" onclick="' + 
-                                            "this.parentElement.style.display='none';" +
-                                            "this.parentElement.nextElementSibling.style.display='block'" +
-                                        '"> More ('+ nhidden + ')</a>' +
-                                     '</div>' + 
-                                        '<div style="display:none;padding-left:0px;">' + 
-                                            hidden_disambigs+
-                                        '</div>';
+
+                hidden_disambigs.push(tmp);
+                nhidden++;
             }
         }
+        
+        
+        result = this.createResultDiv();
+        result.append(this.createHeader('Meanings of ' + res['Heading'], query));
+        
+        var abst = $('<div>', {
+            id: 'ddg_zeroclick_abstract',
+        });
 
-        result += '<div id="ddg_zeroclick_abstract">' + 
-                      disambigs +
-                      hidden_disambigs +
-                      others +
-                  '</div><div class="clear"></div>';
-                  
+        for (var i = disambigs.length - 1; i >= 0; i--){
+            abst.append( disambigs[i] );
+        };
+
+
+        // hidden disambigs
+        if (hidden_disambigs.length > 0) {
+
+            tmp = $('<div>', {class: 'disambig_more'})
+                    .append($('<a>').click(function (event){
+                        $(this).parent().hide();
+                        $(this).parent().next().show();
+                    }).text('More (' + nhidden + ')'))
+                      .click(function (event){
+                                $(this).removeClass('ddg_selected');
+                                $(this).children().click();
+                            });
+            
+            if (this.hover) {
+                tmp.mouseover(function (event){
+                    $(this).addClass('ddg_selected');
+                }).mouseout(function (event){
+                    $(this).removeClass('ddg_selected');
+                });
+            }
+
+            abst.append(tmp);
+        
+            tmp = $('<div>', {style: 'display:none;padding-left:0px;'});
+            if (this.hover)
+                tmp.css('margin-left', '-1px');
+
+            for (var i = hidden_disambigs.length - 1; i >= 0; i--){
+                tmp.append( hidden_disambigs[i] );
+            };
+
+            abst.append(tmp);
+
+
+        }
+
+        for (var i=0; i < others.length; i++) {
+            abst.append( others[i] );
+        };
+        
+
+        abst.append($('<div>', {class: 'clear'}));
+
+        result.append(abst);
         
         if (options.dev)
-            console.log(result);
+            console.log('result', result);
 
         if(this.resultsLoaded()) {
-            var ddg_result = this.createResultDiv();
-            ddg_result.className = '';
-            ddg_result.innerHTML = result;
+            this.updateResultDiv(result);
         } else {
             var $this = this;
-            setTimeout(function(){
+            setTimeout(function (){
                 $this.displayDisambiguation(res, query);
             }, 200);
         }
 
     },
 
-    displayCategory: function(res, query) {
+    displayCategory: function (res, query) {
         var result = '';
         result += '<div id="ddg_zeroclick_header"> <a class="ddg_head" href="https://duckduckgo.com/?q='+ 
                         encodeURIComponent(query)
@@ -636,7 +661,7 @@ DuckDuckBox.prototype = {
         
         if (this.hover) {
             if (hidden_categories !== '') {
-                hidden_categories = '<div class="category_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="this.firstChild.onclick();this.className=\'category_more\';this.onmouseover=function(){}">' +
+                hidden_categories = '<div class="category_more" onmouseover="this.className+=\' ddg_selected\'" onmouseout="this.className=this.className.replace(\' ddg_selected\',\'\')" onclick="this.firstChild.onclick();this.className=\'category_more\';this.onmouseover=function (){}">' +
                                         '<a href="javascript:;" onclick="' + 
                                             "this.parentElement.style.display='none';" +
                                             "this.parentElement.nextElementSibling.style.display='block'" +
@@ -667,6 +692,9 @@ DuckDuckBox.prototype = {
                         hidden_categories +
                     '</div>';
                     
+
+        result = this.createResultDiv();
+        result.append(this.createHeader(res['Heading'], query));
         
         if (options.dev)
             console.log(result);
@@ -677,7 +705,7 @@ DuckDuckBox.prototype = {
             ddg_result.innerHTML = result;
         } else {
             var $this = this;
-            setTimeout(function(){
+            setTimeout(function (){
                 $this.displayCategory(res, query);
             }, 200);
         }
