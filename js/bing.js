@@ -3,17 +3,20 @@ chrome.extension.sendRequest({options: "get"}, function(opt){
     options = opt;
 });
 
-var ddgBox = new DuckDuckBox('q', [], 'results', false);
+if (options.zeroclickinfo) {
+    var ddgBox = new DuckDuckBox('q', [], 'results', false);
 
-ddgBox.search = function(query) {
-    var request = {query: query};
-    chrome.extension.sendRequest(request, function(response){
-        ddgBox.renderZeroClick(response, query);
-    });
+    ddgBox.search = function(query) {
+        var request = {query: query};
+        chrome.extension.sendRequest(request, function(response){
+            ddgBox.renderZeroClick(response, query);
+        });
 
-    if (options.dev)
-        console.log("query:", query);
+        if (options.dev)
+            console.log("query:", query);
+    }
 }
+
 
 var ddg_timer;
 
@@ -64,5 +67,6 @@ document.getElementsByName("go")[0].onclick = function(){
     qsearch();
 };
 
-ddgBox.init();
+if (options.zeroclickinfo)
+    ddgBox.init();
 

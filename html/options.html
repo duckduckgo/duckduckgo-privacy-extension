@@ -8,6 +8,8 @@ function save_options() {
   localStorage["dev"] = dev;
   var meanings = document.getElementById("meanings").checked;
   localStorage["meanings"] = meanings;
+  var zeroclickinfo = document.getElementById("zeroclickinfo").checked;
+  localStorage["zeroclickinfo"] = zeroclickinfo;
 
   if (dev)
     console.log(localStorage);
@@ -35,6 +37,13 @@ function restore_options() {
   } else {
     document.getElementById("meanings").checked = false;
   }
+
+  var zeroclickinfo = localStorage["zeroclickinfo"];
+  if (zeroclickinfo === 'true' || zeroclickinfo == undefined) {
+    document.getElementById("zeroclickinfo").checked = true;
+  } else {
+    document.getElementById("zeroclickinfo").checked = false;
+  }
 }
 
 </script>
@@ -47,6 +56,9 @@ function restore_options() {
   Meanings: 
   <input type="checkbox" id="meanings" checked="yes"></input>
 <br>
+  Instant answers on Google/Bing
+  <input type="checkbox" id="zeroclickinfo" checked="yes"></input>
+
 
 <button onclick="save_options()">Save</button>
   <div id="status"> </div>
