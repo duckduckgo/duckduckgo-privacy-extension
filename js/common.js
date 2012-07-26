@@ -566,7 +566,9 @@ DuckDuckBox.prototype = {
                     }).text('More (' + nhidden + ')'))
                       .click(function (event){
                                 $(this).removeClass('ddg_selected');
-                                $(this).children().click();
+
+                                $(this).hide();
+                                $(this).next().show();
                             });
             
             if (this.hover) {

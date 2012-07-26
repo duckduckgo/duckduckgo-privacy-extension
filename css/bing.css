@@ -231,6 +231,7 @@
     padding: 4px;
     clear: left;
     width: 474px;
+    cursor: pointer;
 }
 
 .disambig_more hr {
