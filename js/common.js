@@ -247,7 +247,7 @@ DuckDuckBox.prototype = {
                                 class: cls,
                                 html: link
                             }).click(function (event){
-                                window.location.href = this.firstChild.href;  
+                                window.location.href = $(this).children().attr('href');
                             }).append(link);
 
 
@@ -444,7 +444,7 @@ DuckDuckBox.prototype = {
                                         })
                                         .html(topics[j]['Result'])
                                         .click(function(event){
-                                            $(this).children().click();
+                                            window.location.href = $(this).children().attr('href');
                                         });
 
                     if (this.hover) {
@@ -522,7 +522,7 @@ DuckDuckBox.prototype = {
                                 .append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']})))
                     .append($('<div>', {class: 'ddg_zeroclick_disambig'})
                                 .click(function (event){
-                                    window.location.href = $(this).children().href;
+                                    window.location.href = $(this).children().attr('href');
                                 })
                                 .html(res['RelatedTopics'][i]['Result']));
 
