@@ -454,10 +454,13 @@ DuckDuckBox.prototype = {
                             $(this).removeClass('ddg_selected');
                         });
                     }
+                    
+                    var icon_disambig = $('<div>', {class: 'icon_disambig'});
+                    if (topics[j]['Icon']['URL'])
+                        icon_disambig.append($('<img>', {src: topics[j]['Icon']['URL']}))
 
                     tmp = $('<div>', {class: 'wrapper'})
-                                .append($('<div>', {class: 'icon_disambig'})
-                                        .append($('<img>', {src: topics[j]['Icon']['URL']})))
+                                .append(icon_disambig)
                                 .append(disambig);
                     
                     output.push(tmp);
@@ -517,9 +520,15 @@ DuckDuckBox.prototype = {
                 continue;
             }
 
+            var icon_disambig = $('<div>', {class: 'icon_disambig'});
+
+            if (res['RelatedTopics'][i]['Icon']['URL']) {
+                icon_disambig.append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']}));
+            }
+
+                                
             tmp = $('<div>', {class: 'wrapper'})
-                    .append($('<div>', {class: 'icon_disambig'})
-                                .append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']})))
+                    .append(icon_disambig)
                     .append($('<div>', {class: 'ddg_zeroclick_disambig'})
                                 .click(function (event){
                                     window.location.href = $(this).children().attr('href');
@@ -630,10 +639,15 @@ DuckDuckBox.prototype = {
             
             if (options.dev)
                 console.log(res['RelatedTopics'][i]['Result']);
-     
+            
+            var icon_category = $('<div>', {class: 'icon_category'});
+
+            if (res['RelatedTopics'][i]['Icon']['URL']) {
+                icon_category.append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']}))
+            }
+
             var category = $('<div>', {class: 'wrapper'})
-                .append($('<div>', {class: 'icon_category'})
-                            .append($('<img>', {src: res['RelatedTopics'][i]['Icon']['URL']})))
+                .append(icon_category)
                 .append($('<div>', {class: 'ddg_zeroclick_category_item'})
                 .html(res['RelatedTopics'][i]['Result']));
 
