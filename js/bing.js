@@ -25,7 +25,7 @@ var ddgBox;
 
 $(document).ready(function(){
     if (options.zeroclickinfo) {
-        ddgBox = new DuckDuckBox('q', [], 'results', false);
+        ddgBox = new DuckDuckBox('q', [], 'results_container', false);
 
         ddgBox.search = function(query) {
             var request = {query: query};
