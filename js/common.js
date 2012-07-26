@@ -74,7 +74,7 @@ DuckDuckBox.prototype = {
         if (res === '')
             return;
 
-        if (query === '')
+        if (query === '' || query === undefined)
             return;
 
         if (options.dev) console.log(res, query);
