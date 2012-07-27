@@ -231,6 +231,9 @@
     padding: 4px;
     clear: left;
     width: 474px;
+}
+
+.disambig_more a {
     cursor: pointer;
 }
 
