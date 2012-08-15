@@ -285,7 +285,7 @@ DuckDuckBox.prototype = {
 
         result.append(this.createHeader(heading, query));
 
-        if (res['RelatedTopics'].length >= 2){
+        if (res['RelatedTopics'].length > 2){
 
             if (options.dev)
                 console.log(tmp_div);

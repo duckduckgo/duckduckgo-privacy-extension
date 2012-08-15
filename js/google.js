@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 var options = {};
 chrome.extension.sendRequest({options: "get"}, function(opt){
     for (var option in opt) {
@@ -23,8 +22,7 @@ chrome.extension.sendRequest({options: "get"}, function(opt){
 });
 
 var ddgBox;
-$(document).ready(function() {
-    if (options.zeroclickinfo) {
+$(document).ready(function(){
         ddgBox = new DuckDuckBox('q', ['isr_pps'], 'center_col', true);
 
         ddgBox.search = function(query) {
@@ -38,7 +36,6 @@ $(document).ready(function() {
         }
 
         ddgBox.init();
-    }
 });
 
 var ddg_timer;

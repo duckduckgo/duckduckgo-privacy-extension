@@ -22,9 +22,7 @@ chrome.extension.sendRequest({options: "get"}, function(opt){
 });
 
 var ddgBox;
-
 $(document).ready(function(){
-    if (options.zeroclickinfo) {
         ddgBox = new DuckDuckBox('q', [], 'results_container', false);
 
         ddgBox.search = function(query) {
@@ -38,7 +36,6 @@ $(document).ready(function(){
         }
 
         ddgBox.init();
-    } 
 });
 
 var ddg_timer;
