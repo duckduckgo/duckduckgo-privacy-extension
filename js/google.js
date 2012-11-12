@@ -15,8 +15,9 @@
  */
 
 var options = {};
-chrome.extension.sendRequest({options: "get"}, function(opt){
+chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
+        console.log(opt);
         options[option] = (opt[option] === 'true') ? true : false; 
     }
 });
@@ -27,7 +28,7 @@ $(document).ready(function(){
 
         ddgBox.search = function(query) {
             var request = {query: query};
-            chrome.extension.sendRequest(request, function(response){
+            chrome.extension.sendMessage(request, function(response){
                 ddgBox.renderZeroClick(response, query);
             });
 
