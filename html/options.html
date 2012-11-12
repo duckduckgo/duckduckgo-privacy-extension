@@ -17,59 +17,9 @@
 <!DOCTYPE html>
 <html>
 <head><title>DuckDuckGo for Chrome - Options</title></head>
-<script type="text/javascript">
+<script type="text/javascript" src="../js/options.js"></script>
 
-// Saves options to localStorage.
-function save_options() {
-  var dev = document.getElementById("dev").checked;
-  localStorage["dev"] = dev;
-  var meanings = document.getElementById("meanings").checked;
-  localStorage["meanings"] = meanings;
-  var zeroclickinfo = document.getElementById("zeroclickinfo").checked;
-  localStorage["zeroclickinfo"] = zeroclickinfo;
-
-  if (dev)
-    console.log(localStorage);
-
-  // Update status to let user know options were saved.
-  var status = document.getElementById("status");
-  status.innerHTML = "Options Saved.";
-  setTimeout(function() {
-    status.innerHTML = "";
-  }, 750);
-
-  chrome.extension.sendMessage({'options': localStorage}, function(response){
-    console.log(response); 
-  });
-}
-
-// Restores select box state to saved value from localStorage.
-function restore_options() {
-  var dev = localStorage["dev"];
-  if (dev === 'true') {
-    document.getElementById("dev").checked = true;
-  } else {
-    document.getElementById("dev").checked = false;
-  }
-
-  var meanings = localStorage["meanings"];
-  if (meanings === 'true') {
-    document.getElementById("meanings").checked = true;
-  } else {
-    document.getElementById("meanings").checked = false;
-  }
-
-  var zeroclickinfo = localStorage["zeroclickinfo"];
-  if (zeroclickinfo === 'true' || zeroclickinfo == undefined) {
-    document.getElementById("zeroclickinfo").checked = true;
-  } else {
-    document.getElementById("zeroclickinfo").checked = false;
-  }
-}
-
-</script>
-
-<body onload="restore_options()">
+<body>
 
   Developer mode:
   <input type="checkbox" id="dev" ></input>
@@ -82,7 +32,7 @@ function restore_options() {
 <br>
 
 
-<button onclick="save_options()">Save</button>
+<button>Save</button>
   <div id="status"> </div>
 </body>
 </html>

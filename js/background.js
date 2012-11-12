@@ -18,7 +18,7 @@
 function Background()
 {
     $this = this;
-    chrome.extension.onRequest.addListener(function(request, sender, callback){
+    chrome.extension.onMessage.addListener(function(request, sender, callback){
         console.log(request);
         if(request.query)
             $this.query(request.query, callback);
@@ -62,3 +62,5 @@ Background.prototype.query = function(query, callback)
 
     req.send(null);
 }
+
+var background = new Background();
