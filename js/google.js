@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
+
+
 var options = {};
+var ddgBox;
 chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
         options[option] = (opt[option] === 'true') ? true : false; 
-    }
-});
 
-var ddgBox = new DuckDuckBox({ 
+    }
+    
+    ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
                 forbiddenIDs: ['isr_pps'],
                 hover: true,
@@ -29,16 +32,19 @@ var ddgBox = new DuckDuckBox({
                 debug: options.dev
               });
 
-ddgBox.search = function(query) {
-var request = {query: query};
-        chrome.extension.sendMessage(request, function(response){
-            ddgBox.renderZeroClick(response, query);
-        });
+    ddgBox.search = function(query) {
+    var request = {query: query};
+            chrome.extension.sendMessage(request, function(response){
+                ddgBox.renderZeroClick(response, query);
+                return true;
+            });
 
-    if (options.dev)
-        console.log("query:", query);
-}
+        if (options.dev)
+            console.log("query:", query);
+    }
 
+    ddgBox.init();
+});
 
 var ddg_timer;
 
@@ -99,5 +105,4 @@ $('[name="btnG"]').click(function(){
     qsearch();
 });
 
-ddgBox.init();
 

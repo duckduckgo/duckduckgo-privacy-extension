@@ -21,7 +21,7 @@ function Background()
     chrome.extension.onMessage.addListener(function(request, sender, callback){
         console.log(request);
         if(request.query)
-            $this.query(request.query, callback);
+            return $this.query(request.query, callback);
         if (request.options) {
             callback(localStorage);
         }
@@ -29,6 +29,7 @@ function Background()
         if (request.selection) {
         
         }
+        return true;
     });
 
 //  this.menuID = chrome.contextMenus.create({
@@ -61,6 +62,7 @@ Background.prototype.query = function(query, callback)
     }
 
     req.send(null);
+    return true;
 }
 
 var background = new Background();

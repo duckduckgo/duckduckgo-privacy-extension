@@ -15,18 +15,31 @@
  */
 
 var options = {};
+var ddgBox;
 chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
         options[option] = (opt[option] === 'true') ? true : false; 
     }
-});
-
-var ddgBox = new DuckDuckBox({ 
+    ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
                 hover: false,
-                contentDiv: 'results_container',
-                debug: options.dev
+                contentDiv: 'results_container'
               });
+
+    ddgBox.search = function(query) {
+    var request = {query: query};
+            chrome.extension.sendMessage(request, function(response){
+                ddgBox.renderZeroClick(response, query);
+                return true;
+            });
+
+        if (options.dev)
+            console.log("query:", query);
+    }
+
+    ddgBox.init();
+
+});
 
 ddgBox.search = function(query) {
 var request = {query: query};
