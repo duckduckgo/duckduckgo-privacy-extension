@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-var options = [];
-chrome.extension.sendRequest({options: "get"}, function(opt){
+var options = {};
+chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
         options[option] = (opt[option] === 'true') ? true : false; 
     }
 });
 
-var ddgBox;
-$(document).ready(function(){
-        ddgBox = new DuckDuckBox('q', [], 'results_container', false);
+var ddgBox = new DuckDuckBox({ 
+                inputName: 'q',
+                hover: false,
+                contentDiv: 'results_container',
+                debug: options.dev
+              });
 
-        ddgBox.search = function(query) {
-            var request = {query: query};
-            chrome.extension.sendRequest(request, function(response){
-                ddgBox.renderZeroClick(response, query);
-            });
+ddgBox.search = function(query) {
+var request = {query: query};
+        chrome.extension.sendMessage(request, function(response){
+            ddgBox.renderZeroClick(response, query);
+        });
 
-            if (options.dev)
-                console.log("query:", query);
-        }
-
-        ddgBox.init();
-});
+    if (options.dev)
+        console.log("query:", query);
+}
 
 var ddg_timer;
 
@@ -65,25 +65,29 @@ function qsearch(direct) {
 } 
 
 // instant search
-document.getElementsByName('q')[0].onkeyup = function(e){
 
-    query = getQuery();
+$('[name="q"]').keyup(function(e){
+    var query = getQuery();
     if(ddgBox.lastQuery !== query && query !== '')
         ddgBox.hideZeroClick();
 
     if(options.dev)
         console.log(e.keyCode);
 
-    var fn = function(){ qsearch(); };
-
+    var direct = false;
     if(e.keyCode == 40 || e.keyCode == 38)
-        fn = function(){ qsearch(true); };
+        direct = true;
 
     clearTimeout(ddg_timer);
-    ddg_timer = setTimeout(fn, 700);
-};
+    ddg_timer = setTimeout(function(){
+        qsearch(direct);
+    }, 700);
+   
+});
 
-document.getElementsByName("go")[0].onclick = function(){
+$('[name="go"]').click(function(){
     qsearch();
-};
+});
+
+ddgBox.init();
 

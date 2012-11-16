@@ -17,27 +17,28 @@
 var options = {};
 chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
-        console.log(opt);
         options[option] = (opt[option] === 'true') ? true : false; 
     }
 });
 
-var ddgBox;
-$(document).ready(function(){
-        ddgBox = new DuckDuckBox('q', ['isr_pps'], 'center_col', true);
+var ddgBox = new DuckDuckBox({ 
+                inputName: 'q',
+                forbiddenIDs: ['isr_pps'],
+                hover: true,
+                contentDiv: 'center_col',
+                debug: options.dev
+              });
 
-        ddgBox.search = function(query) {
-            var request = {query: query};
-            chrome.extension.sendMessage(request, function(response){
-                ddgBox.renderZeroClick(response, query);
-            });
+ddgBox.search = function(query) {
+var request = {query: query};
+        chrome.extension.sendMessage(request, function(response){
+            ddgBox.renderZeroClick(response, query);
+        });
 
-            if (options.dev)
-                console.log("query:", query);
-        }
+    if (options.dev)
+        console.log("query:", query);
+}
 
-        ddgBox.init();
-});
 
 var ddg_timer;
 
@@ -66,9 +67,8 @@ function qsearch(direct) {
 } 
 
 // instant search
-document.getElementsByName('q')[0].onkeyup = function(e){
-
-    query = getQuery();
+$('[name="q"]').keyup(function(e){
+    var query = getQuery();
     if(ddgBox.lastQuery !== query && query !== '')
         ddgBox.hideZeroClick();
 
@@ -81,7 +81,9 @@ document.getElementsByName('q')[0].onkeyup = function(e){
         fn = function(){ qsearch(true); };
 
     clearTimeout(ddg_timer);
-    ddg_timer = setTimeout(fn, 700);
+    ddg_timer = setTimeout(function(){
+        fn();
+    }, 700);
 
     // instant search suggestions box onclick
     document.getElementsByClassName("gssb_c")[0].onclick = function(){
@@ -91,9 +93,11 @@ document.getElementsByName('q')[0].onkeyup = function(e){
         ddgBox.hideZeroClick();
         qsearch(true);
     };
-};
+});
 
-document.getElementsByName("btnG")[0].onclick = function(){
+$('[name="btnG"]').click(function(){
     qsearch();
-};
+});
+
+ddgBox.init();
 
