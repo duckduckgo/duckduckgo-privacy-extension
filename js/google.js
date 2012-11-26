@@ -26,7 +26,7 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
     
     ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
-                forbiddenIDs: ['page2'],
+                forbiddenIDs: ['rg_s'],
                 hover: true,
                 contentDiv: 'center_col',
                 debug: options.dev
