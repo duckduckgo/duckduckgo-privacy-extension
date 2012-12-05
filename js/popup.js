@@ -14,6 +14,11 @@ window.onload = function() {
       localStorage['advanced_options'] = 'true';
     }
 
+    if (localStorage['zeroclickinfo'] == undefined) {
+      localStorage['zeroclickinfo'] = 'true';
+    }
+
+
     document.getElementById('adv_ducky').onclick = ducky_check;
     document.getElementById('adv_meanings').onclick = meanings_check;
     document.getElementById('adv_zeroclick').onclick = zeroclickinfo_check;
@@ -213,7 +218,7 @@ window.onload = function() {
     }
 
     function zeroclickinfo_check(){
-      localStorage['zeroclickinfo'] = document.getElementById('zeroclickinfo').checked;
+      localStorage['zeroclickinfo'] = document.getElementById('adv_zeroclick').checked;
     }
 
     function defaults_check(){
