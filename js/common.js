@@ -402,13 +402,12 @@ DuckDuckBox.prototype = {
                             }).text(official_site['text']));
         }
        
-        var decoded_abstract = $('<div/>').html(res['Abstract']).text();
         var text_div = $('<div>')
                     .click(function (event){
                                 window.location.href = res['AbstractURL'];
                             })
                     .append($('<p>')
-                                .text(decoded_abstract))
+                                .html(res['Abstract']))
                     .append(official_links);
 
 
