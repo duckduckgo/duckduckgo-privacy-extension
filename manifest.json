@@ -1,6 +1,6 @@
 {
     "name": "DuckDuckGo for Chrome",
-    "version": "42.5.4",
+    "version": "42.5.5",
     "description": "DuckDuckGo enhacements for Chrome.",
     "icons": {
         "16": "img/icon_16.png",
@@ -13,7 +13,7 @@
         "default_popup": "html/popup.html"
     },
     "content_scripts": [
-    {
+        {
         "matches": [
             "http://www.google.com/*",
             "http://www.google.ad/*",
@@ -396,7 +396,10 @@
                 "js/common.js",
                 "js/google.js"
             ],
-            "css": ["css/google.css"]
+            "css": [
+                "css/common.css",
+                "css/google.css"
+            ]
         },
         {
             "matches": [
@@ -407,7 +410,10 @@
                 "js/common.js",
                 "js/bing.js"
             ],
-            "css": ["css/bing.css"]
+            "css": [
+                "css/common.css",
+                "css/bing.css"
+            ]
         }
     ],
     "options_page": "html/options.html",
