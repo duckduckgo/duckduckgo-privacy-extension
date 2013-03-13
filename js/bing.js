@@ -23,7 +23,8 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
     ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
                 hover: false,
-                contentDiv: 'results_container'
+                contentDiv: 'results_container',
+                className: 'bing'
               });
 
     ddgBox.search = function(query) {

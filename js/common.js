@@ -30,7 +30,7 @@ var DuckDuckBox = function (options) {
         this.debug = true;
 
     if (options.className)
-        this.className = className;
+        this.className = options.className;
     else
         this.className = '';
 
@@ -401,7 +401,7 @@ DuckDuckBox.prototype = {
                                         href: official_site['url']
                             }).text(official_site['text']));
         }
-       
+        
         var text_div = $('<div>')
                     .click(function (event){
                                 window.location.href = res['AbstractURL'];
