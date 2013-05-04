@@ -12,6 +12,7 @@
         "default_icon": "img/icon_16.png",
         "default_popup": "html/popup.html"
     },
+    "omnibox": {"keyword": "d"},
     "content_scripts": [
         {
         "matches": [

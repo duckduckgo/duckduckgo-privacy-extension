@@ -66,3 +66,9 @@ Background.prototype.query = function(query, callback)
 }
 
 var background = new Background();
+
+chrome.omnibox.onInputEntered.addListener( function(text) {
+        chrome.tabs.getSelected( undefined, function(tab) {
+            chrome.tabs.update(tab.id, {url: tab.url = "https://duckduckgo.com/?q="+encodeURIComponent(text)}, undefined);
+        });
+});
