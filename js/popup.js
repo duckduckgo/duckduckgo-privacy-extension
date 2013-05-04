@@ -95,10 +95,12 @@ window.onload = function() {
       document.getElementById("search_form_input_homepage").focus();               
       document.getElementById("search_form_input_homepage").onkeydown = function(){
         this.style.color = '#000000';
+        document.getElementById("search_form_input_clear").style.background = '#fff url("https://duckduckgo.com/assets/icon_xon.v101.png") no-repeat left center';
       };               
       document.getElementById("search_form_input_homepage").onkeyup = function(){
         if (this.value == '') {
           this.style.color = '#999999';
+          document.getElementById("search_form_input_clear").style.background = 'none';
         }
       };               
     }, 300);
