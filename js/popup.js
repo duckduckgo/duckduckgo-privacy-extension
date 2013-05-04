@@ -3,6 +3,7 @@ window.onload = function() {
     document.getElementById('search_form_input_homepage').focus();
 
     document.getElementById('search_form_homepage').onsubmit = search;
+    document.getElementById('search_form_input_clear').onclick = search_input_clear;
 
     var prefill_text = 'Search DuckDuckGo...';
 
@@ -236,6 +237,12 @@ window.onload = function() {
         document.getElementById('adv_zeroclick').checked = true;  
       }
 
+    }
+
+    function search_input_clear() {
+        document.getElementById('search_form_input_homepage').value = '';
+        document.getElementById("search_form_input_clear").style.background = 'none';
+        document.getElementById('search_form_input_homepage').focus();
     }
 
 
