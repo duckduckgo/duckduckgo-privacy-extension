@@ -1,4 +1,3 @@
-
 window.onload = function() {
     document.getElementById('search_form_input_homepage').focus();
 
@@ -17,6 +16,11 @@ window.onload = function() {
 
     if (localStorage['zeroclickinfo'] == undefined) {
       localStorage['zeroclickinfo'] = 'true';
+    }
+
+    if (localStorage['last_search'] != '') {
+        document.getElementById('search_form_input_homepage').value = localStorage['last_search']; 
+        document.getElementById("search_form_input_clear").style.background = '#fff url("https://duckduckgo.com/assets/icon_xon.v101.png") no-repeat left center';
     }
 
 
@@ -110,6 +114,7 @@ window.onload = function() {
     function search(){
       var input = document.getElementById("search_form_input_homepage").value;
       
+      localStorage['last_search'] = input;
       if (document.getElementById('adv_ducky').checked === true) {
         input = "\\" + input;
       }
@@ -241,7 +246,7 @@ window.onload = function() {
 
     function search_input_clear() {
         document.getElementById('search_form_input_homepage').value = '';
-        document.getElementById("search_form_input_clear").style.background = 'none';
+        document.getElementById("search_form_input_clear").style.background = '#fff';
         document.getElementById('search_form_input_homepage').focus();
     }
 

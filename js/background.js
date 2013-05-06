@@ -18,6 +18,10 @@
 function Background()
 {
     $this = this;
+
+    // clearing last search on borwser startup
+    localStorage['last_search'] = '';
+
     chrome.extension.onMessage.addListener(function(request, sender, callback){
         console.log(request);
         if(request.query)
