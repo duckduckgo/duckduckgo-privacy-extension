@@ -105,7 +105,7 @@ window.onload = function() {
       document.getElementById("search_form_input_homepage").onkeyup = function(){
         if (this.value == '') {
           this.style.color = '#999999';
-          document.getElementById("search_form_input_clear").style.background = 'none';
+          document.getElementById("search_form_input_clear").style.background = '#fff';
         }
       };               
     }, 300);
