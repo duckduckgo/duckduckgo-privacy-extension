@@ -22,6 +22,9 @@ function save_options() {
   localStorage["meanings"] = meanings;
   var zeroclickinfo = document.getElementById("zeroclickinfo").checked;
   localStorage["zeroclickinfo"] = zeroclickinfo;
+  var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
+  localStorage["zeroclickinfo"] = lastsearch_enabled;
+
 
   if (dev)
     console.log(localStorage);
@@ -60,6 +63,14 @@ function restore_options() {
   } else {
     document.getElementById("zeroclickinfo").checked = false;
   }
+
+  var lastsearch_enabled = localStorage["lastsearch_enabled"];
+  if (lastsearch_enabled === 'true' || lastsearch_enabled == undefined) {
+    document.getElementById("lastsearch_enabled").checked = true;
+  } else {
+    document.getElementById("lastsearch_enabled").checked = false;
+  }
+
 }
 
 document.addEventListener('load', function(){
