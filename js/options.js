@@ -23,7 +23,7 @@ function save_options() {
   var zeroclickinfo = document.getElementById("zeroclickinfo").checked;
   localStorage["zeroclickinfo"] = zeroclickinfo;
   var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
-  localStorage["zeroclickinfo"] = lastsearch_enabled;
+  localStorage["lastsearch_enabled"] = lastsearch_enabled;
 
 
   if (dev)
