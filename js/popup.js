@@ -114,7 +114,11 @@ window.onload = function() {
     function search(){
       var input = document.getElementById("search_form_input_homepage").value;
       
-      localStorage['last_search'] = input;
+      if (localStorage['lastsearch_enabled'] == 'true')
+          localStorage['last_search'] = input;
+      else
+          localStorage['last_search'] = '';
+
       if (document.getElementById('adv_ducky').checked === true) {
         input = "\\" + input;
       }
