@@ -25,6 +25,10 @@ function save_options() {
   var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
   localStorage["lastsearch_enabled"] = lastsearch_enabled;
 
+  // setting this to false should also reset the last search.
+  if (!lastsearch_enabled)
+      localStorage["last_search"] = '';
+
 
   if (dev)
     console.log(localStorage);
