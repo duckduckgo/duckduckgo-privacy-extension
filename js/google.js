@@ -23,6 +23,8 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
         options[option] = (opt[option] === 'true') ? true : false; 
 
     }
+
+    var ddg_zeroclick_timestamp = new Date().getTime();
     
     ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
@@ -36,6 +38,8 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
     ddgBox.search = function(query) {
     var request = {query: query};
             chrome.extension.sendMessage(request, function(response){
+                var time = new Date().getTime();
+                console.log(ddg_zeroclick_timestamp - time);
                 ddgBox.renderZeroClick(response, query);
                 return true;
             });
