@@ -48,6 +48,9 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                 var time = new Date().getTime();
                 var d = time - ddg_zeroclick_timestamp;
 
+                if (options.dev)
+                    console.log("delay", d);
+
                 if (d >= 500)
                     return true;
 
@@ -56,7 +59,7 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
             });
 
         if (options.dev)
-            console.log("query:", query);
+            console.log("asked query:", query);
     }
 
     ddgBox.init();
@@ -74,7 +77,7 @@ function getQuery(direct) {
         query = query.replace(/<\/?(?!\!)[^>]*>/gi, '');
 
         if(options.dev)
-            console.log(query);
+            console.log("query from hash:", query);
 
         return query;
     } else {
@@ -96,7 +99,7 @@ $('[name="q"]').keyup(function(e){
         ddgBox.hideZeroClick();
 
     if(options.dev)
-        console.log(e.keyCode);
+        console.log("pressed key:", e.keyCode);
 
     var fn = function(){ qsearch(); };
 
