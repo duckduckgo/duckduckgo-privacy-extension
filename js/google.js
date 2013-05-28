@@ -48,6 +48,9 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                 var time = new Date().getTime();
                 var d = time - ddg_zeroclick_timestamp;
 
+                if (d >= 500)
+                    return true;
+
                 ddgBox.renderZeroClick(response, query);
                 return true;
             });
