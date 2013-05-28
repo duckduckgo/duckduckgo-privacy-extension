@@ -18,13 +18,20 @@
 
 var options = {};
 var ddgBox;
+var ddg_zeroclick_timestamp = new Date().getTime();
+
+function init_timer() {
+    ddg_zeroclick_timestamp = new Date().getTime();
+}
+
+
 chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
         options[option] = (opt[option] === 'true') ? true : false; 
 
     }
 
-    var ddg_zeroclick_timestamp = new Date().getTime();
+    init_timer();
     
     ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
@@ -39,7 +46,8 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
     var request = {query: query};
             chrome.extension.sendMessage(request, function(response){
                 var time = new Date().getTime();
-                console.log(ddg_zeroclick_timestamp - time);
+                var d = time - ddg_zeroclick_timestamp;
+
                 ddgBox.renderZeroClick(response, query);
                 return true;
             });
@@ -75,6 +83,7 @@ function qsearch(direct) {
     var query = getQuery(direct);
     ddgBox.lastQuery = query;
     ddgBox.search(query);
+    init_timer();
 } 
 
 // instant search
