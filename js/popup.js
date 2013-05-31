@@ -211,13 +211,21 @@ window.onload = function() {
 
     function add_bang(bang) {
       var inp = document.getElementById('search_form_input_homepage');
+
+      var bang_regex = /\!\w+/;
+       
       if (inp.value === prefill_text || inp.value === '') {
         inp.style.color = '#000';
         inp.value = bang + ' ';
         inp.focus();
       } else {
-        inp.value += bang;
-        search();
+        var found_bangs = bang_regex.exec(inp.value);
+        if (found_bangs.length > 0) {
+            inp.value = inp.value.replace(found_bangs[0], bang);
+        } else {
+            inp.value += bang;
+            search();
+        }
       }
     }
 
