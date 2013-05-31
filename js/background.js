@@ -22,6 +22,20 @@ function Background()
     // clearing last search on borwser startup
     localStorage['last_search'] = '';
 
+    var curr_version = chrome.app.getDetails().version;
+    var prev_version = localStorage['prev_version'];
+
+    if (curr_version === '42.5.14') {
+        chrome.tabs.create({'url': "https://duckduckgo.com/extensions/thanks/#updated"});
+    } else if (prev_version === undefined) {
+        chrome.tabs.create({'url': "https://duckduckgo.com/extensions/thanks/"});
+    } else if (prev_version !== curr_version) {
+        chrome.tabs.create({'url': 
+            "https://duckduckgo.com/extensions/thanks/?from=" + prev_version + "&to="
+                + curr_version});
+    }
+    localStorage['prev_version'] = curr_version;
+
     chrome.extension.onMessage.addListener(function(request, sender, callback){
         console.log(request);
         if(request.query)
