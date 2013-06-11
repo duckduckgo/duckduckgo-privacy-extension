@@ -1,4 +1,11 @@
 window.onload = function() {
+
+    var current_url = {current_url: 'get'};
+    chrome.extension.sendMessage(current_url, function(response){
+       alert(response);
+    });
+
+
     document.getElementById('search_form_input_homepage').focus();
 
     document.getElementById('search_form_homepage').onsubmit = search;

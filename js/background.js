@@ -47,6 +47,14 @@ function Background()
         if (request.selection) {
         
         }
+
+        if (request.current_url) {
+            chrome.tabs.getCurrent(function(tab) {
+                var url = tab.url;
+                callback(url);
+            });
+        }
+
         return true;
     });
 
