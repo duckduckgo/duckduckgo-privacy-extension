@@ -17,7 +17,7 @@ window.onload = function() {
             document.getElementById('bang_gi').onclick = function(){
                 add_bang('site:' + l.hostname);
             }
-            document.getElementById('bang_gi').innerHTML = PLUS_IMG + 'This site (<em> ' + l.hostname + ' </em>)';
+            document.getElementById('bang_gi').innerHTML = PLUS_IMG + '<em>' + l.hostname + '</em>';
             document.getElementById('bang_bi').innerHTML = PLUS_IMG + 'Images (<em> !bi </em>)';
         }
 
