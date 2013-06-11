@@ -25,9 +25,7 @@ function Background()
     var curr_version = chrome.app.getDetails().version;
     var prev_version = localStorage['prev_version'];
 
-    if (curr_version === '42.5.14') {
-        chrome.tabs.create({'url': "https://duckduckgo.com/extensions/thanks/#updated"});
-    } else if (prev_version === undefined) {
+    if (prev_version === undefined) {
         chrome.tabs.create({'url': "https://duckduckgo.com/extensions/thanks/"});
     } else if (prev_version !== curr_version) {
         chrome.tabs.create({'url': 
