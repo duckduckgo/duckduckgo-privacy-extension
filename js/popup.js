@@ -17,7 +17,7 @@ window.onload = function() {
             document.getElementById('bang_gi').onclick = function(){
                 add_bang('site:' + l.hostname);
             }
-            document.getElementById('bang_gi').innerHTML = PLUS_IMG + '<em>' + l.hostname + '</em>';
+            document.getElementById('bang_gi').innerHTML = PLUS_IMG + '<em>site:' + l.hostname + '</em>';
             document.getElementById('bang_bi').innerHTML = PLUS_IMG + 'Images (<em> !bi </em>)';
         }
 
@@ -243,7 +243,7 @@ window.onload = function() {
         inp.focus();
       } else {
         var found_bangs = bang_regex.exec(inp.value);
-        if (found_bangs.length > 0) {
+        if (found_bangs) {
             inp.value = inp.value.replace(found_bangs[0], bang);
         } else {
             inp.value += bang;
