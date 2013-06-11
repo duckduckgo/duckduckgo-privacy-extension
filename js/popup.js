@@ -4,6 +4,9 @@ var getLocation = function(href) {
     return l;
 };
 
+
+var PLUS_IMG = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAJCAMAAAA4jZ0cAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYxIDY0LjE0MDk0OSwgMjAxMC8xMi8wNy0xMDo1NzowMSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDpCREIzMTNEOTI2MjA2ODExOTJCMEZCNkFGMDgyOTlGRiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpCMjZFQzVBRDlFRTUxMUUxQThENjk3Nzc4MDM2MTg3NSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpCMjZFQzVBQzlFRTUxMUUxQThENjk3Nzc4MDM2MTg3NSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1LjEgTWFjaW50b3NoIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NTRCNkI2MEQxMTIwNjgxMThBNkRBODgwNTQzNTE4NDEiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QkRCMzEzRDkyNjIwNjgxMTkyQjBGQjZBRjA4Mjk5RkYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4CS5bAAAAADFBMVEWfn5/////CwsL///+/0LgLAAAABHRSTlP///8AQCqp9AAAACtJREFUeNpsikEKADAMwjT+/8+19DRYIMGDSiJtKjyjwPWQbWg+52o3I8AAGIEAnR9vbgMAAAAASUVORK5CYII=" />';
+
 window.onload = function() {
 
     var current_url = {current_url: 'get'};
@@ -14,8 +17,8 @@ window.onload = function() {
             document.getElementById('bang_gi').onclick = function(){
                 add_bang('site:' + l.hostname);
             }
-            document.getElementById('bang_gi').innerHTML = 'This site (<em> ' + l.hostname + ' </em>)';
-            document.getElementById('bang_bi').innerHTML = 'Images (<em> !bi </em>)';
+            document.getElementById('bang_gi').innerHTML = PLUS_IMG + 'This site (<em> ' + l.hostname + ' </em>)';
+            document.getElementById('bang_bi').innerHTML = PLUS_IMG + 'Images (<em> !bi </em>)';
         }
 
     });
