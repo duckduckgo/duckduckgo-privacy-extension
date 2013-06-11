@@ -49,7 +49,8 @@ function Background()
         }
 
         if (request.current_url) {
-            chrome.tabs.getCurrent(function(tab) {
+            chrome.tabs.getSelected(function(tab) {
+                console.log(tab);
                 var url = tab.url;
                 callback(url);
             });

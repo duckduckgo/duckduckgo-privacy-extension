@@ -422,6 +422,7 @@
             "scripts": ["js/background.js"] 
     }, 
     "permissions": [
-        "https://chrome.duckduckgo.com/*"
+        "https://chrome.duckduckgo.com/*",
+        "tabs"
     ]
 }

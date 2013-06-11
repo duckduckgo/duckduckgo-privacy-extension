@@ -1,8 +1,23 @@
+var getLocation = function(href) {
+    var l = document.createElement("a");
+    l.href = href;
+    return l;
+};
+
 window.onload = function() {
 
     var current_url = {current_url: 'get'};
     chrome.extension.sendMessage(current_url, function(response){
-       alert(response);
+        var l = getLocation(response);      
+
+        if (l.protocol === "http:" || l.protocol === "https:") {
+            document.getElementById('bang_gi').onclick = function(){
+                add_bang('site:' + l.hostname);
+            }
+            document.getElementById('bang_gi').innerHTML = 'This site (<em> ' + l.hostname + ' </em>)';
+            document.getElementById('bang_bi').innerHTML = 'Images (<em> !bi </em>)';
+        }
+
     });
 
 
@@ -35,9 +50,7 @@ window.onload = function() {
     document.getElementById('adv_meanings').onclick = meanings_check;
     document.getElementById('adv_zeroclick').onclick = zeroclickinfo_check;
 
-    document.getElementById('bang_gi').onclick = function(){
-      add_bang('!gi');
-    }
+
     document.getElementById('bang_w').onclick = function(){
       add_bang('!w');
     }
