@@ -12,6 +12,16 @@
         "default_icon": "img/icon_16.png",
         "default_popup": "html/popup.html"
     },
+    "commands": {
+      "_execute_browser_action": {
+        "suggested_key": {
+          "default": "Alt+G",
+          "mac": "Alt+G",
+          "linux": "Alt+G",
+          "windows": "Alt+G"
+        }
+      }
+    },
     "omnibox": {"keyword": "d"},
     "content_scripts": [
         {
