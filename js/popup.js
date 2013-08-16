@@ -9,19 +9,19 @@ var PLUS_IMG = '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAJ
 
 window.onload = function() {
 
-    var current_url = {current_url: 'get'};
-    chrome.extension.sendMessage(current_url, function(response){
-        var l = getLocation(response);      
+  //var current_url = {current_url: 'get'};
+  //chrome.extension.sendMessage(current_url, function(response){
+  //    var l = getLocation(response);      
 
-        if (l.protocol === "http:" || l.protocol === "https:") {
-            document.getElementById('bang_gi').onclick = function(){
-                add_bang('site:' + l.hostname);
-            }
-            document.getElementById('bang_gi').innerHTML = PLUS_IMG + '<em>site:' + l.hostname + '</em>';
-            document.getElementById('bang_bi').innerHTML = PLUS_IMG + 'Images (<em> !bi </em>)';
-        }
+  //    if (l.protocol === "http:" || l.protocol === "https:") {
+  //        document.getElementById('bang_gi').onclick = function(){
+  //            add_bang('site:' + l.hostname);
+  //        }
+  //        document.getElementById('bang_gi').innerHTML = PLUS_IMG + '<em>site:' + l.hostname + '</em>';
+  //        document.getElementById('bang_bi').innerHTML = PLUS_IMG + 'Images (<em> !bi </em>)';
+  //    }
 
-    });
+  //});
 
 
     document.getElementById('search_form_input_homepage').focus();
