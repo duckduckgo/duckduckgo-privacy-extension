@@ -54,6 +54,10 @@ function Background()
             });
         }
 
+        if (request.uninstall) {
+            chrome.management.uninstallSelf({showConfirmDialog: true}); 
+        }
+
         return true;
     });
 

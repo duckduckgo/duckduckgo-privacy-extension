@@ -425,7 +425,14 @@
                 "css/common.css",
                 "css/bing.css"
             ]
-        }
+        },
+            "matches": [
+                "http://duckduckgo.com/extensions/*",
+                "https://duckduckgo.com/extensions/*"
+            ],
+            "js": [
+                "js/uninstall.js"
+            ]
     ],
     "options_page": "html/options.html",
     "background": { 
