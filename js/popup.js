@@ -53,6 +53,10 @@ window.onload = function() {
     document.getElementById('adv_meanings').onclick = meanings_check;
     document.getElementById('adv_zeroclick').onclick = zeroclickinfo_check;
 
+    document.getElementById('addons').onclick = function(){
+        chrome.tabs.create({url: "html/options.html"});
+    }
+
 
     document.getElementById('bang_w').onclick = function(){
       add_bang('!w');
