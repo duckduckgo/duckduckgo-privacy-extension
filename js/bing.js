@@ -20,10 +20,17 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
         options[option] = (opt[option] === 'true') ? true : false; 
     }
+
+    if (document.getElementById('b_results') !== null) {
+        var results_div = 'b_results';
+    } else {
+        var results_div = 'results_container';
+    }
+
     ddgBox = new DuckDuckBox({ 
                 inputName: 'q',
                 hover: false,
-                contentDiv: 'results_container',
+                contentDiv: results_div,
                 className: 'bing'
               });
 
