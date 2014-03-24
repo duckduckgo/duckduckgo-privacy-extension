@@ -27,13 +27,13 @@ function init_timer() {
 
 chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
-        options[option] = (opt[option] === 'true') ? true : false; 
+        options[option] = (opt[option] === 'true') ? true : false;
 
     }
 
     init_timer();
-    
-    ddgBox = new DuckDuckBox({ 
+
+    ddgBox = new DuckDuckBox({
                 inputName: 'q',
                 forbiddenIDs: ['rg_s'],
                 hover: true,
@@ -71,7 +71,7 @@ function getQuery(direct) {
     var instant = document.getElementsByClassName("gssb_a");
     if (instant.length !== 0 && !direct){
         var selected_instant = instant[0];
-        
+
         var query = selected_instant.childNodes[0].childNodes[0].childNodes[0].
                     childNodes[0].childNodes[0].childNodes[0].innerHTML;
         query = query.replace(/<\/?(?!\!)[^>]*>/gi, '');
@@ -90,7 +90,7 @@ function qsearch(direct) {
     ddgBox.lastQuery = query;
     ddgBox.search(query);
     init_timer();
-} 
+}
 
 // instant search
 $('[name="q"]').keyup(function(e){
