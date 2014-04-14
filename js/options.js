@@ -24,6 +24,8 @@ function save_options() {
   localStorage["zeroclickinfo"] = zeroclickinfo;
   var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
   localStorage["lastsearch_enabled"] = lastsearch_enabled;
+  var zeroclick_google_right = document.getElementById("zeroclick_google_right").checked;
+  localStorage["zeroclick_google_right"] = zeroclick_google_right;
 
   // setting this to false should also reset the last search.
   if (!lastsearch_enabled)
@@ -74,6 +76,14 @@ function restore_options() {
   } else {
     document.getElementById("lastsearch_enabled").checked = false;
   }
+
+  var zeroclick_google_right = localStorage["zeroclick_google_right"];
+  if (zeroclick_google_right === 'true') {
+    document.getElementById("zeroclick_google_right").checked = true;
+  } else {
+    document.getElementById("zeroclick_google_right").checked = false;
+  }
+
 
 }
 
