@@ -87,7 +87,7 @@ function restore_options() {
 
 }
 
-document.addEventListener('load', function(){
+document.addEventListener('DOMContentLoaded', function(){
     restore_options();
 })
 
