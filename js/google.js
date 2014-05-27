@@ -48,6 +48,12 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                 var time = new Date().getTime();
                 var d = time - ddg_zeroclick_timestamp;
 
+                // ditch the InstantAnswer Box if there is a Knowledge Graph
+                // result.
+                if ($('#rhs_block ol').length > 0) {
+                    return true;
+                }
+
                 if (options.dev)
                     console.log("delay", d);
 
