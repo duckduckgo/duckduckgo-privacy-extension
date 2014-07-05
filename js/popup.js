@@ -115,28 +115,38 @@ window.onload = function() {
     }
 
 
-  document.getElementById('bang_w').onclick = function(){
-    add_bang('!w');
-  }
-  document.getElementById('bang_bi').onclick = function(){
-    add_bang('!bi');
-  }
-  document.getElementById('bang_a').onclick = function(){
-    add_bang('!a');
-  }
-  document.getElementById('bang_gi').onclick = function(){
-    add_bang('!gi');
-  }
-  document.getElementById('bang_n').onclick = function(){
-    add_bang('!n');
-  }
-  document.getElementById('bang_yt').onclick = function(){
-    add_bang('!yt');
-  }
-  document.getElementById('bang_m').onclick = function(){
-    add_bang('!m');
-  }
+    document.getElementById('bang_w').onclick = function(){
+      add_bang('!w');
+    }
+    document.getElementById('bang_bi').onclick = function(){
+      add_bang('!bi');
+    }
+    document.getElementById('bang_a').onclick = function(){
+      add_bang('!a');
+    }
+    document.getElementById('bang_gi').onclick = function(){
+      add_bang('!gi');
+    }
+    document.getElementById('bang_n').onclick = function(){
+      add_bang('!n');
+    }
+    document.getElementById('bang_yt').onclick = function(){
+      add_bang('!yt');
+    }
+    document.getElementById('bang_m').onclick = function(){
+      add_bang('!m');
+    }
 
+    var images = document.querySelectorAll('li img');
+    for(var i = 0; i < images.length; i++) {
+      images[i].onmouseover = function() {
+          this.src = BTN_HOVER;
+      }
+
+      images[i].onmouseout = function() {
+          this.src = BTN_NORMAL;
+      }
+    }
 
     defaults_check();
 
