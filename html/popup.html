@@ -272,32 +272,27 @@ input[type="checkbox"]:checked + label {
     <h2>SPECIAL</h2>
     <ul>
       <li>
-        <input type="checkbox" id="adv_ducky" onclick="return ducky_check()">
+        <input type="checkbox" id="adv_ducky">
         <label for="adv_ducky">
-          I'm feeling Ducky
+          I am feeling Ducky
         </label>
       </li>
       <li>
-        <input type="checkbox" id="zeroclickinfo" onclick="return zeroclickinfo_check()">
+        <input type="checkbox" id="adv_meanings">
+        <label for="adv_meanings">
+          Show Meanings
+        </label>
+      </li>
+      <li>
+        <input type="checkbox" id="adv_zeroclick">
         <label for="zeroclickinfo">
           Answers on Google/Bing
         </label>
       </li>
-      <li>
-        <input type="checkbox" id="remember_last_search" onclick="return remember_last_search_check()">
-        <label for="remember_last_search">
-          Remember last search
-        </label>
+      <li class="link">
+        <a href="javascript:;" id="addons">More options</a>
       </li>
-      <li>
-        <input type="checkbox" id="locationbar" onclick="return locationbar_check()"
-          style="float:left;">
-        <label for="locationbar">
-          DuckDuckGo as default
-        </label>
-     </li>
     </ul>
-
   </div>
   <div id="right">
     <h2>FEATURED BANGS</h2>
