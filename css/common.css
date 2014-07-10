@@ -17,10 +17,11 @@
 #ddg_zeroclick {
     background: none repeat scroll 0 0 #fff;
     border-top: 4px solid #ce4c15;
-    box-shadow: -1px 1px 5px 3px #ccc;
+    box-shadow: 0px 1px 5px 1px #ccc;
     display: block;
     width: 554px;
     z-index: 10;
+    margin-bottom: 20px;
 }
 
 .ddg_zeroclick_icon {
@@ -127,6 +128,19 @@
 }
 
 .first_category {
+}
+
+#ddg_zeroclick_answer {
+    padding: 14px;
+}
+
+#ddg_zeroclick_answer_title {
+    font-size: 24px;
+}
+
+#ddg_zeroclick_answer_category {
+    font-size: 14px;
+    color: #989898;
 }
 
 #ddg_zeroclick_bottom {

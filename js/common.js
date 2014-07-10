@@ -228,8 +228,24 @@ DuckDuckBox.prototype = {
 
         if (this.resultsLoaded()) {
             var ddg_result = this.createResultDiv();
-            ddg_result.addClass('ddg_answer');
-            ddg_result.html(answer);
+
+            var category = answer.match(/\((.*)\)/g);
+            console.log(answer, category);
+            if (category.length > 0) {
+                category = category[0].replace(/\(|\)/g, '');
+                category = category.replace(/(\s.|^.)/g, function(_, word) { return word.toUpperCase(); });
+            }
+
+            answer = answer.replace(/ \(.*\)/g, '')
+
+            var result = $("<div>", {id: 'ddg_zeroclick_answer'});
+
+            result.append(
+                    $("<div>", {id: 'ddg_zeroclick_answer_title'}).html(answer));
+            result.append(
+                    $("<div>", {id: "ddg_zeroclick_answer_category"}).html(category));
+
+            ddg_result.append(result);
 
             if(this.debug)
                 console.log('showing answer');
