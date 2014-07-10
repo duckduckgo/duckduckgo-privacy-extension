@@ -54,6 +54,11 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                     return true;
                 }
 
+                if ($('#center_col .vk_c').length > 0) {
+                    return true;
+                }
+
+
                 if (options.dev)
                     console.log("delay", d);
 
