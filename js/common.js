@@ -272,96 +272,96 @@ DuckDuckBox.prototype = {
             }
         } 
         
-        first_categories = [];
-        hidden_categories = [];
+      //first_categories = [];
+      //hidden_categories = [];
 
-        for (var i = 0; i < res['RelatedTopics'].length; i++){
-            if (res['RelatedTopics'].length === 0)
-                break;
-            
-            var link = res['RelatedTopics'][i]['Result'].
-                        match(/<a href="(.*)">(.*)<\/a>/);
+      //for (var i = 0; i < res['RelatedTopics'].length; i++){
+      //    if (res['RelatedTopics'].length === 0)
+      //        break;
+      //    
+      //    var link = res['RelatedTopics'][i]['Result'].
+      //                match(/<a href="(.*)">(.*)<\/a>/);
 
-            var cls = (res['RelatedTopics'][i]['FirstURL'].match(/https?:\/\/[a-z0-9\-]+\.[a-z]+(?:\/\d+)?\/c\/.*/) !== null) ? "ddg_zeroclick_category" : "ddg_zeroclick_article";
-            
-            link = $('<a>', {
-                                href: link[1],
-                                text: link[2]
-                            });
+      //    var cls = (res['RelatedTopics'][i]['FirstURL'].match(/https?:\/\/[a-z0-9\-]+\.[a-z]+(?:\/\d+)?\/c\/.*/) !== null) ? "ddg_zeroclick_category" : "ddg_zeroclick_article";
+      //    
+      //    link = $('<a>', {
+      //                        href: link[1],
+      //                        text: link[2]
+      //                    });
 
-            var category = $('<div>', {
-                                class: cls,
-                                html: link
-                            }).click(function (event){
-                                window.location.href = $(this).children().attr('href');
-                            }).append(link);
-
-
-            if (this.hover) {
-                category.mouseover(function (event){
-                            $(this).addClass('ddg_selected');
-                        })
-                        .mouseout(function (event){
-                            $(this).removeClass('ddg_selected');
-                        });
-
-                if (i < 2) {
-                    if (i === 0)
-                        category.addClass('first_category');
-
-                    first_categories.push(category);
-                } else {
-                    hidden_categories.push(category);
-                }
-
-            } else {
-                category.html(link);
-
-                if (i < 2) {
-                    if (i === 0) 
-                        category.addClass('first_category');
-                    
-                    first_categories.push(category);
-                } else {
-                    hidden_categories.push(category);
-                }
-            }
-        }
+      //    var category = $('<div>', {
+      //                        class: cls,
+      //                        html: link
+      //                    }).click(function (event){
+      //                        window.location.href = $(this).children().attr('href');
+      //                    }).append(link);
 
 
-        result.append(this.createHeader(heading, query));
+      //    if (this.hover) {
+      //        category.mouseover(function (event){
+      //                    $(this).addClass('ddg_selected');
+      //                })
+      //                .mouseout(function (event){
+      //                    $(this).removeClass('ddg_selected');
+      //                });
 
-        if (res['RelatedTopics'].length > 2){
+      //        if (i < 2) {
+      //            if (i === 0)
+      //                category.addClass('first_category');
 
-            if (this.debug)
-                console.log(tmp_div);
+      //            first_categories.push(category);
+      //        } else {
+      //            hidden_categories.push(category);
+      //        }
 
-            var more_topics = $('<div>', {
-                                class: 'ddg_zeroclick_more'
-                            }).click(function (event){
-                                $(this).removeClass('ddg_selected');
-                                $(this).mouseover(function (event){});
-                                $(this).mouseout(function (event){});
-                            }).append($('<a>', {
-                                    text: 'More related topics'        
-                                }).click(function (event){
-                                    $(this).parent().next().show();
-                                    $(this).parent().hide();
-                                })
-                            );
+      //    } else {
+      //        category.html(link);
 
-            if (this.hover) {
-                more_topics.mouseover(function (event){
-                    $(this).addClass('ddg_selected');                
-                }).mouseout(function (event){
-                    $(this).removeClass('ddg_selected');
-                }).click(function (event){
-                    $(this).next().show();
-                    $(this).hide();
-                });
-            }
+      //        if (i < 2) {
+      //            if (i === 0) 
+      //                category.addClass('first_category');
+      //            
+      //            first_categories.push(category);
+      //        } else {
+      //            hidden_categories.push(category);
+      //        }
+      //    }
+      //}
 
-        }
+
+      //result.append(this.createHeader(heading, query));
+
+      //if (res['RelatedTopics'].length > 2){
+
+      //    if (this.debug)
+      //        console.log(tmp_div);
+
+      //    var more_topics = $('<div>', {
+      //                        class: 'ddg_zeroclick_more'
+      //                    }).click(function (event){
+      //                        $(this).removeClass('ddg_selected');
+      //                        $(this).mouseover(function (event){});
+      //                        $(this).mouseout(function (event){});
+      //                    }).append($('<a>', {
+      //                            text: 'More related topics'        
+      //                        }).click(function (event){
+      //                            $(this).parent().next().show();
+      //                            $(this).parent().hide();
+      //                        })
+      //                    );
+
+      //    if (this.hover) {
+      //        more_topics.mouseover(function (event){
+      //            $(this).addClass('ddg_selected');                
+      //        }).mouseout(function (event){
+      //            $(this).removeClass('ddg_selected');
+      //        }).click(function (event){
+      //            $(this).next().show();
+      //            $(this).hide();
+      //        });
+      //    }
+
+      //}
 
         if (res['Image']) {
             image = $('<div>', {
@@ -377,6 +377,12 @@ DuckDuckBox.prototype = {
             
             result.append(image);
         }
+
+        var heading = $('<h2>', {
+            id: 'ddg_zeroclick_title'
+        }).text(query);
+        result.append(res['Heading']);
+
         
         var source_base_url = res['AbstractURL'].match(/http.?:\/\/(.*?\.)?(.*\..*?)\/.*/)[2];
         var more_image = $('<img>', {
@@ -390,10 +396,11 @@ DuckDuckBox.prototype = {
                             id: 'ddg_zeroclick_official_links'
                        })
                        .append(more_image)
+                       .append($('<span>').text('More at '))
                        .append($('<a>', {
                                    class: 'ddg_more_link',
                                    href: res['AbstractURL']
-                               }).text('More at ' + res['AbstractSource']));
+                               }).text(res['AbstractSource']));
 
         if (official_site['url'] !== undefined) {
             official_links.append($('<span>', {text: ' | Official site: '}))
@@ -401,7 +408,7 @@ DuckDuckBox.prototype = {
                                         href: official_site['url']
                             }).text(official_site['text']));
         }
-        
+
         var text_div = $('<div>')
                     .click(function (event){
                                 window.location.href = res['AbstractURL'];
@@ -412,11 +419,11 @@ DuckDuckBox.prototype = {
 
 
         if (this.hover) {
-            text_div.mouseover(function (event){
-                $(this).addClass('ddg_selected');
-            }).mouseout(function (event){
-                $(this).removeClass('ddg_selected');
-            });
+          //text_div.mouseover(function (event){
+          //    $(this).addClass('ddg_selected');
+          //}).mouseout(function (event){
+          //    $(this).removeClass('ddg_selected');
+          //});
         } 
 
         var abst = $('<div>', {
@@ -425,22 +432,22 @@ DuckDuckBox.prototype = {
         }).append(text_div);
 
 
-        for (var i = 0; i < first_categories.length; i++){
-            abst.append( first_categories[i] );
-        };
+      //for (var i = 0; i < first_categories.length; i++){
+      //    abst.append( first_categories[i] );
+      //};
         
 
-        abst.append(more_topics);
+        //abst.append(more_topics);
 
-        var tmp_div = $('<div>', {
-                              style: 'display:none;padding-left:0px;margin-left:-1px;'
-                            });
+      //var tmp_div = $('<div>', {
+      //                      style: 'display:none;padding-left:0px;margin-left:-1px;'
+      //                    });
 
-        for (var i = 0; i < hidden_categories.length; i++){
-            tmp_div.append( hidden_categories[i] );
-        };
-        
-        abst.append(tmp_div);
+      //for (var i = 0; i < hidden_categories.length; i++){
+      //    tmp_div.append( hidden_categories[i] );
+      //};
+      //
+      //abst.append(tmp_div);
 
         result.append(abst);
         result.append($('<div>', {class: 'clear'}));
