@@ -453,7 +453,11 @@ DuckDuckBox.prototype = {
 
         result.append(right_text);
         result.append($('<div>', {class: 'clear'}));
-        result.append(official_links);
+
+        var bottom = $('<div>', {id: 'ddg_zeroclick_bottom'})
+                        .append(official_links);
+
+        result.append(bottom);
 
         if(this.resultsLoaded()) {
             this.updateResultDiv(result);

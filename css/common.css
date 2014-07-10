@@ -129,7 +129,14 @@
 .first_category {
 }
 
+#ddg_zeroclick_bottom {
+    height: 40px;
+    background-color: #f7f7f7;
+}
+
 #ddg_zeroclick_official_links {
+    color: #767676;
+    padding: 10px;
 }
 
 #ddg_zeroclick_official_links img{
@@ -275,7 +282,7 @@
 }
 
 #ddg_zeroclick .ddg_more_link {
-    padding-left: 12px;
+    padding-right: 3px;
 }
 
 #ddg_zeroclick .ddg_head {
