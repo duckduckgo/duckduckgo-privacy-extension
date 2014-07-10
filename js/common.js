@@ -230,8 +230,7 @@ DuckDuckBox.prototype = {
             var ddg_result = this.createResultDiv();
 
             var category = answer.match(/\((.*)\)/g);
-            console.log(answer, category);
-            if (category.length > 0) {
+            if (category) {
                 category = category[0].replace(/\(|\)/g, '');
                 category = category.replace(/(\s.|^.)/g, function(_, word) { return word.toUpperCase(); });
             }
