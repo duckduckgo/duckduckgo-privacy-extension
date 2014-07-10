@@ -389,7 +389,7 @@ DuckDuckBox.prototype = {
         }); 
 
         if (source_base_url === "wikipedia.org")
-            more_image.attr('src', 'https://duckduckgo.com/assets/icon_wikipedia.v101.png');
+            more_image.attr('src', 'https://duckduckgo.com/assets/icons/favicons/wikipedia.png');
 
         var official_links = $('<div>', {
                             id: 'ddg_zeroclick_official_links'
