@@ -37,7 +37,7 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                 inputName: 'q',
                 forbiddenIDs: ['rg_s'],
                 hover: true,
-                contentDiv: (opt['zeroclick_google_right']) ? 'rhs' : 'center_col',
+                contentDiv: (options['zeroclick_google_right']) ? 'rhs' : 'center_col',
                 className: 'google',
                 debug: options.dev
               });
