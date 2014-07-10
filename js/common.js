@@ -378,10 +378,9 @@ DuckDuckBox.prototype = {
             result.append(image);
         }
 
-        var heading = $('<h2>', {
+        var title = $('<h2>', {
             id: 'ddg_zeroclick_title'
-        }).text(query);
-        result.append(res['Heading']);
+        }).text(res['Heading']);
 
         
         var source_base_url = res['AbstractURL'].match(/http.?:\/\/(.*?\.)?(.*\..*?)\/.*/)[2];
@@ -409,13 +408,12 @@ DuckDuckBox.prototype = {
                             }).text(official_site['text']));
         }
 
-        var text_div = $('<div>')
-                    .click(function (event){
-                                window.location.href = res['AbstractURL'];
-                            })
-                    .append($('<p>')
-                                .html(res['Abstract']))
-                    .append(official_links);
+      //var text_div = $('<div>')
+      //            .click(function (event){
+      //                        window.location.href = res['AbstractURL'];
+      //                    })
+      //            .append($('<p>')
+      //                        .html(res['Abstract']));
 
 
         if (this.hover) {
@@ -427,9 +425,8 @@ DuckDuckBox.prototype = {
         } 
 
         var abst = $('<div>', {
-            id: 'ddg_zeroclick_abstract',
-            style:  (res['Image'] ? 'max-width: 420px': '')
-        }).append(text_div);
+            id: 'ddg_zeroclick_abstract'
+        }).append(res['Abstract']);
 
 
       //for (var i = 0; i < first_categories.length; i++){
@@ -449,8 +446,14 @@ DuckDuckBox.prototype = {
       //
       //abst.append(tmp_div);
 
-        result.append(abst);
+        var right_text = $('<div>', {id: 'ddg_zeroclick_right_text', 
+                                     style: (res['Image'] ? 'margin-left: 128px': '')})
+                                .append(title)
+                                .append(abst);
+
+        result.append(right_text);
         result.append($('<div>', {class: 'clear'}));
+        result.append(official_links);
 
         if(this.resultsLoaded()) {
             this.updateResultDiv(result);

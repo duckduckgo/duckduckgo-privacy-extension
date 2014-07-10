@@ -15,11 +15,10 @@
  */
 
 #ddg_zeroclick {
-    background: none repeat scroll 0 0 #fafafa;
-    border: 1px solid #dedede;
-    border-radius: 2px;
+    background: none repeat scroll 0 0 #fff;
+    border-top: 4px solid #ce4c15;
+    box-shadow: -1px 1px 5px 3px #ccc;
     display: block;
-    margin-bottom: 20px;
     width: 554px;
     z-index: 10;
 }
@@ -74,8 +73,8 @@
 
 
 #ddg_zeroclick_image {
-    margin: 10px;
-    float: right;
+    margin: 14px;
+    float: left;
 }
 
 #ddg_zeroclick_image img {
@@ -85,11 +84,22 @@
 
 .ddg_zeroclick_img {
     max-width: 100px;
-    max-height: 100px;
+    max-height: 120px;
+}
+
+#ddg_zeroclick_right_text {
+    padding: 10px;
+}
+
+#ddg_zeroclick_title {
+    margin: 0;
+    margin-top: 18px;
 }
 
 #ddg_zeroclick_abstract {
-    margin: 5px 7px 5px 10px;
+    margin-top: 12px;
+    margin-right: 40px;
+
     word-wrap: break-word;
     font-size: 13px; 
     color: #505050;
