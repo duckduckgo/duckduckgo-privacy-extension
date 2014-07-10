@@ -106,11 +106,11 @@ DuckDuckBox.prototype = {
                     break;
 
                 case 'C':
-                    this.displayCategory(res, query);
+                    //this.displayCategory(res, query);
                     break;
 
                 case 'D':
-                    this.displayDisambiguation(res, query);
+                    //this.displayDisambiguation(res, query);
                     break;
 
                 default:
