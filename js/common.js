@@ -416,6 +416,7 @@ DuckDuckBox.prototype = {
                                    href: res['AbstractURL']
                                }).text(res['AbstractSource']));
 
+
         if (official_site['url'] !== undefined) {
             official_links.append($('<span>', {text: ' | Official site: '}))
                           .append($('<a>', {
@@ -470,8 +471,13 @@ DuckDuckBox.prototype = {
         result.append($('<div>', {class: 'clear'}));
 
         var bottom = $('<div>', {id: 'ddg_zeroclick_bottom'})
-                        .append(official_links);
-
+                        .append(official_links)
+                        .append($('<img>', {
+                                    src: 'https://duckduckgo.com//assets/icons/meta/DDG-icon_24x24.png',
+                                    id: 'ddg_zeroclick_official_links_img'
+                       }).click(function(){
+                           window.location.href = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
+                       }));
         result.append(bottom);
 
         if(this.resultsLoaded()) {

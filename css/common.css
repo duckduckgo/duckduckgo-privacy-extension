@@ -151,9 +151,14 @@
 #ddg_zeroclick_official_links {
     color: #767676;
     padding: 10px;
-    background-image: url(https://duckduckgo.com//assets/icons/meta/DDG-icon_24x24.png);
-    background-repeat: no-repeat;
-    background-position: top 8px right 8px;
+    float:left;
+}
+
+#ddg_zeroclick_official_links_img {
+    float: right;
+    position: relative;
+    top: 8px;
+    right: 8px;
 }
 
 #ddg_zeroclick_official_links img{
