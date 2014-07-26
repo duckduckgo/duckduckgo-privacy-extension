@@ -223,13 +223,14 @@ window.onload = function() {
         document.getElementById("search_button_homepage").className = 'selected';
 
         if (inp.value === '') {
-            //inp.style.color = '#000';
+            inp.style.color = '#000';
             inp.value = bang + ' ';
             inp.focus();
         } else {
             var found_bangs = bang_regex.exec(inp.value);
             if (found_bangs !== null) {
                 inp.value = inp.value.replace(found_bangs[0], bang);
+                inp.focus();
             } else {
                 inp.value += bang;
                 search();
