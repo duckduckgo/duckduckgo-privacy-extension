@@ -49,15 +49,20 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                 var d = time - ddg_zeroclick_timestamp;
 
                 // ditch the InstantAnswer Box if there is a Knowledge Graph
-                // result.
+                // result, e.g. superbad
                 if ($('#rhs_block ol .xpdopen').length > 0) {
+                    return true;
+                }
+
+                // ditch the InstantAnswer Box if there is an artist Knowledge
+                // Graph result, e.g. justin bieber
+                if ($('#rhs_block ol .rhsvw').length > 0) {
                     return true;
                 }
 
                 if ($('#center_col .vk_c').length > 0) {
                     return true;
                 }
-
 
                 if (options.dev)
                     console.log("delay", d);
