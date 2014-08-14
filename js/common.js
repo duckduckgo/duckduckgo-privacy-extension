@@ -221,7 +221,9 @@ DuckDuckBox.prototype = {
     },
 
     displayAnswer: function (answer) {
-        if (answer === '') {
+        // answers with no content or too much content just don't look good. 
+        // Example: regexp
+        if (answer === '' || answer.length > 500) {
             this.hideZeroClick();
             return;
         }
