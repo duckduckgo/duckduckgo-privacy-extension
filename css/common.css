@@ -163,10 +163,11 @@
 
 #ddg_zeroclick_official_links img{
     display: inline;
-    float: left;
     padding-right: 5px;
     width: 16px;
     height: 16px;
+    position: relative;
+    top: 2px;
 }
 
 
@@ -327,3 +328,59 @@
     line-height: 0;
 }
 
+/* Show more/less button */
+
+/* This is the gray circle: */
+.ddg_zeroclick_summary_icon {
+  ext-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: #d3d3d3;
+  margin-right: 0.25em;
+  position: relative;
+  text-indent: 0.125em;
+  line-height: 1.8;
+  width: 18px;
+  height: 18px;
+  top: -0.1em;
+  border-radius: 50%;
+}
+
+/* This draws the down arrow: */
+.ddg_zeroclick_summary_icon:after {
+  content: '';
+  border: 3px solid transparent;
+  border-top-color: #707070;
+  border-top-width: 5px;
+  border-bottom-width: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -2px;
+  margin-left: -3px;
+  width: 0;
+  height: 0;
+}
+
+/* This modifies the arrow to flip it upside down when it's expanded: */
+.ddg_zeroclick_summary_show_more.ddg_zeroclick_summary_is-expanded .ddg_zeroclick_summary_icon:after {
+  border-top-width: 0;
+  border-top-color: transparent;
+  border-bottom-color: #707070;
+  border-bottom-width: 5px;
+  margin-top: -3px;
+}
+
+.ddg_zeroclick_summary_show_more {
+  cursor: pointer;
+}
+
+.ddg_zeroclick_summary_expand-less,
+.ddg_zeroclick_summary_show_more.ddg_zeroclick_summary_is-expanded .ddg_zeroclick_summary_expand-more {
+  display: none;
+}
+
+.ddg_zeroclick_summary_expand-more,
+.ddg_zeroclick_summary_show_more.ddg_zeroclick_summary_is-expanded .ddg_zeroclick_summary_expand-less {
+  display: inline-block;
+}

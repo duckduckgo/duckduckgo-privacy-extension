@@ -63,6 +63,16 @@ DuckDuckBox.prototype = {
         return; 
     },
 
+    truncate: function(text, limit, append) {
+        if (!append)
+          append = '…'
+
+        subtext = text.substr(0, limit);
+        subtext = subtext.replace(/\s+\S*$/, "");
+
+        return subtext + ' ' + append;
+    },
+
     getQueryFromURL: function () {
         var regex = new RegExp('[\?\&#]q=([^\&#]+)');
         if(regex.test(window.location.href)) {
@@ -395,6 +405,12 @@ DuckDuckBox.prototype = {
             result.append(image);
         }
 
+        var abstract = (res['Abstract'].length > 210) ? this.truncate(res['Abstract'], 210) : res['Abstract'];
+        var abst = $('<div>', {
+            id: 'ddg_zeroclick_abstract'
+        }).text(abstract);
+
+
         var title = $('<h2>', {
             id: 'ddg_zeroclick_title'
         }).text(res['Heading']);
@@ -418,6 +434,27 @@ DuckDuckBox.prototype = {
                                    href: res['AbstractURL']
                                }).text(res['AbstractSource']));
 
+        // adding show more/less button
+        if (res['Abstract'].length > 210) {
+            official_links.prepend($('<span>').text(' | '));
+            official_links.prepend($('<a>', {class: 'ddg_zeroclick_summary_show_more'})
+                                        .append($('<i>', {class: 'ddg_zeroclick_summary_icon'}))
+                                        .append($('<span>', {class: 'ddg_zeroclick_summary_expand-more'})
+                                            .text('Show more')
+                                        )
+                                        .append($('<span>', {class: 'ddg_zeroclick_summary_expand-less'})
+                                            .text('Show less')
+                                        )
+                                        .click(function(){
+                                            console.log($(this).hasClass('ddg_zeroclick_summary_is-expanded'));
+                                            if($(this).hasClass('ddg_zeroclick_summary_is-expanded')) {
+                                                $('#ddg_zeroclick_abstract').text(abstract);
+                                            } else {
+                                                $('#ddg_zeroclick_abstract').text(res['Abstract']);
+                                            }
+                                            $(this).toggleClass('ddg_zeroclick_summary_is-expanded');
+                                        }));
+        }
 
         if (official_site['url'] !== undefined) {
             official_links.append($('<span>', {text: ' | Official site: '}))
@@ -442,9 +479,6 @@ DuckDuckBox.prototype = {
           //});
         } 
 
-        var abst = $('<div>', {
-            id: 'ddg_zeroclick_abstract'
-        }).append(res['Abstract']);
 
 
       //for (var i = 0; i < first_categories.length; i++){
