@@ -18,8 +18,6 @@
 function save_options() {
   var dev = document.getElementById("dev").checked;
   localStorage["dev"] = dev;
-  var meanings = document.getElementById("meanings").checked;
-  localStorage["meanings"] = meanings;
   var zeroclickinfo = document.getElementById("zeroclickinfo").checked;
   localStorage["zeroclickinfo"] = zeroclickinfo;
   var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
@@ -54,13 +52,6 @@ function restore_options() {
     document.getElementById("dev").checked = true;
   } else {
     document.getElementById("dev").checked = false;
-  }
-
-  var meanings = localStorage["meanings"];
-  if (meanings === 'true') {
-    document.getElementById("meanings").checked = true;
-  } else {
-    document.getElementById("meanings").checked = false;
   }
 
   var zeroclickinfo = localStorage["zeroclickinfo"];
