@@ -513,7 +513,7 @@ DuckDuckBox.prototype = {
                                     src: 'https://duckduckgo.com//assets/icons/meta/DDG-icon_24x24.png',
                                     id: 'ddg_zeroclick_official_links_img'
                        }).click(function(){
-                           window.location.href = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
+                           window.location.href = DDG_URL + encodeURIComponent(query);
                        }));
         result.append(bottom);
 
