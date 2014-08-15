@@ -23,11 +23,11 @@ var DuckDuckBox = function (options) {
     this.inputName = options.inputName;
     this.forbiddenIDs = [];
     this.debug = false;
-    
+
     if (options.forbiddenIDs)
         this.forbiddenIDs = options.forbiddenIDs;
 
-    if (options.debug) 
+    if (options.debug)
         this.debug = true;
 
     if (options.className)
@@ -40,12 +40,12 @@ var DuckDuckBox = function (options) {
     else
         this.contentDiv = '#' + options.contentDiv;
 
-    if (options.hover) 
+    if (options.hover)
         this.hover = options.hover;
     else
         this.hover = false
 
-    input = $("[name='" + this.inputName + "']"); 
+    input = $("[name='" + this.inputName + "']");
     if (input.length !== 0)
         this.lastQuery = input.value;
     else
@@ -61,7 +61,7 @@ DuckDuckBox.prototype = {
         if (this.debug)
             console.log('bad search called');
 
-        return; 
+        return;
     },
 
     truncate: function(text, limit, append) {
@@ -91,7 +91,7 @@ DuckDuckBox.prototype = {
         // disable on forbidden IDs
         for(var i in this.forbiddenIDs) {
             if ($("#" + this.forbiddenIDs[i]).length !== 0)
-                return;           
+                return;
         }
 
         if (res === '')
@@ -106,7 +106,7 @@ DuckDuckBox.prototype = {
             this.displayAnswer(res['Answer']);
         } else if (res['Type'] == 'A' && res['Abstract'] !== "") {
             this.displaySummary(res, query);
-        } else {     
+        } else {
             switch (res['Type']){
                 case 'E':
                     this.displayAnswer(res['Answer']);
@@ -127,8 +127,8 @@ DuckDuckBox.prototype = {
                 default:
                     this.hideZeroClick();
                     break;
-                        
-            } 
+
+            }
         }
    },
 
@@ -185,7 +185,7 @@ DuckDuckBox.prototype = {
     resultsLoaded: function () {
         if(this.debug)
             console.log($(this.contentDiv));
-        
+
         var contentDiv = $(this.contentDiv);
 
         if (contentDiv.length !== 0){
@@ -194,7 +194,7 @@ DuckDuckBox.prototype = {
                 return true;
             }
         }
-        
+
         return false;
     },
 
@@ -227,12 +227,12 @@ DuckDuckBox.prototype = {
                                     .text(link_html[2]));
         category_item.append($('<br>'));
         category_item.append($('<span>').text(parts[1]));
-        
+
         return category_item;
     },
 
     displayAnswer: function (answer) {
-        // answers with no content or too much content just don't look good. 
+        // answers with no content or too much content just don't look good.
         // Example: regexp
         if (answer === '' || answer.length > 500) {
             this.hideZeroClick();
@@ -261,7 +261,7 @@ DuckDuckBox.prototype = {
 
             if(this.debug)
                 console.log('showing answer');
-            
+
             this.updateResultDiv(ddg_result)
 
         } else {
@@ -269,8 +269,8 @@ DuckDuckBox.prototype = {
                 console.log('trying again');
 
             var $this = this;
-            setTimeout(function () { 
-                $this.displayAnswer(answer); 
+            setTimeout(function () {
+                $this.displayAnswer(answer);
             }, 200);
         }
     },
@@ -281,7 +281,7 @@ DuckDuckBox.prototype = {
         var img_url = res['AbstractURL'];
         var official_site = {};
         var first_categoies = [];
-        var hidden_categories = []; 
+        var hidden_categories = [];
 
         var heading = (res['Heading'] === ''? "&nbsp;": res['Heading']);
 
@@ -298,20 +298,20 @@ DuckDuckBox.prototype = {
 
                 img_url = res['Results'][0]['FirstURL'];
             }
-        } 
-        
+        }
+
       //first_categories = [];
       //hidden_categories = [];
 
       //for (var i = 0; i < res['RelatedTopics'].length; i++){
       //    if (res['RelatedTopics'].length === 0)
       //        break;
-      //    
+      //
       //    var link = res['RelatedTopics'][i]['Result'].
       //                match(/<a href="(.*)">(.*)<\/a>/);
 
       //    var cls = (res['RelatedTopics'][i]['FirstURL'].match(/https?:\/\/[a-z0-9\-]+\.[a-z]+(?:\/\d+)?\/c\/.*/) !== null) ? "ddg_zeroclick_category" : "ddg_zeroclick_article";
-      //    
+      // 
       //    link = $('<a>', {
       //                        href: link[1],
       //                        text: link[2]
@@ -346,9 +346,9 @@ DuckDuckBox.prototype = {
       //        category.html(link);
 
       //        if (i < 2) {
-      //            if (i === 0) 
+      //            if (i === 0)
       //                category.addClass('first_category');
-      //            
+      //
       //            first_categories.push(category);
       //        } else {
       //            hidden_categories.push(category);
@@ -371,7 +371,7 @@ DuckDuckBox.prototype = {
       //                        $(this).mouseover(function (event){});
       //                        $(this).mouseout(function (event){});
       //                    }).append($('<a>', {
-      //                            text: 'More related topics'        
+      //                            text: 'More related topics'       
       //                        }).click(function (event){
       //                            $(this).parent().next().show();
       //                            $(this).parent().hide();
@@ -380,7 +380,7 @@ DuckDuckBox.prototype = {
 
       //    if (this.hover) {
       //        more_topics.mouseover(function (event){
-      //            $(this).addClass('ddg_selected');                
+      //            $(this).addClass('ddg_selected');
       //        }).mouseout(function (event){
       //            $(this).removeClass('ddg_selected');
       //        }).click(function (event){
@@ -402,7 +402,7 @@ DuckDuckBox.prototype = {
                     }
                 ))
             );
-            
+
             result.append(image);
         }
 
@@ -416,11 +416,11 @@ DuckDuckBox.prototype = {
             id: 'ddg_zeroclick_title'
         }).text(res['Heading']);
 
-        
+
         var source_base_url = res['AbstractURL'].match(/http.?:\/\/(.*?\.)?(.*\..*?)\/.*/)[2];
         var more_image = $('<img>', {
             src: 'https://duckduckgo.com/i/'+ source_base_url +'.ico'
-        }); 
+        });
 
         if (source_base_url === "wikipedia.org")
             more_image.attr('src', 'https://duckduckgo.com/assets/icons/favicons/wikipedia.png');
@@ -478,14 +478,14 @@ DuckDuckBox.prototype = {
           //}).mouseout(function (event){
           //    $(this).removeClass('ddg_selected');
           //});
-        } 
+        }
 
 
 
       //for (var i = 0; i < first_categories.length; i++){
       //    abst.append( first_categories[i] );
       //};
-        
+
 
         //abst.append(more_topics);
 
@@ -499,7 +499,7 @@ DuckDuckBox.prototype = {
       //
       //abst.append(tmp_div);
 
-        var right_text = $('<div>', {id: 'ddg_zeroclick_right_text', 
+        var right_text = $('<div>', {id: 'ddg_zeroclick_right_text',
                                      style: (res['Image'] ? 'margin-left: 128px': '')})
                                 .append(title)
                                 .append(abst);
@@ -534,10 +534,10 @@ DuckDuckBox.prototype = {
     },
 
     displayDisambiguation: function (res, query) {
-        
+
         var result;
         var disambigs = [];
-        var hidden_disambigs = []; 
+        var hidden_disambigs = [];
         var others = [];
         var nhidden = 0;
 
