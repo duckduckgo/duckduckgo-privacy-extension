@@ -16,8 +16,9 @@
 
 #ddg_zeroclick.bing {
    width: 517px;
+   margin-left: 20px;
 }
-
+/*
 .bing #ddg_zeroclick_official_links {
     padding: 5px 0px 5px 1px;
 }
@@ -62,5 +63,4 @@
 .bing .ddg_more_link {
     padding-left: 2px;
 }
-
-
+*/
