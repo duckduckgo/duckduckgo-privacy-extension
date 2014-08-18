@@ -270,6 +270,7 @@ window.onload = function() {
         document.getElementById("search_form_input_clear").style.display= 'none';
         document.getElementById('search_form_input_homepage').focus();
         document.getElementById("search_button_homepage").className = '';
+        localStorage['last_search'] = '';
     }
 }
 
