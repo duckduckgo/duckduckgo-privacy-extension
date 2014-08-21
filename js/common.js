@@ -447,7 +447,6 @@ DuckDuckBox.prototype = {
                                             .text('Show less')
                                         )
                                         .click(function(){
-                                            console.log($(this).hasClass('ddg_zeroclick_summary_is-expanded'));
                                             if($(this).hasClass('ddg_zeroclick_summary_is-expanded')) {
                                                 $('#ddg_zeroclick_abstract').text(abstract);
                                             } else {
