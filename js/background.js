@@ -22,25 +22,18 @@ function Background()
     // clearing last search on borwser startup
     localStorage['last_search'] = '';
 
-    var VersionManager = {
-        majorUpdates: [],
-        addMajorUpdate: function (vers) {
-            this.majorUpdates = this.majorUpdates.concat(vers);
-        },
-        isMajorUpdate: function (ver) {
-            return (this.majorUpdates.indexOf(ver) != -1);
-        }
-    };
-
     var curr_version = chrome.app.getDetails().version;
     var prev_version = localStorage['prev_version'];
 
     if (prev_version === undefined) {
-        chrome.tabs.create({'url': "https://duckduckgo.com/extensions/thanks/"});
-    } else if ((prev_version !== curr_version) && VersionManager.isMajorUpdate(curr_version)) {
-        chrome.tabs.create({'url': 
-            "https://duckduckgo.com/extensions/thanks/?from=" + prev_version + "&to="
-                + curr_version});
+        chrome.tabs.create({
+            'url': "https://duckduckgo.com/extensions/thanks/?to=" + curr_version
+        });
+    } else if (prev_version !== curr_version) {
+        chrome.tabs.create({
+            'url':  "https://duckduckgo.com/extensions/thanks/?from=" + prev_version + "&to="
+                + curr_version
+        });
     }
     localStorage['prev_version'] = curr_version;
 
@@ -64,10 +57,6 @@ function Background()
             });
         }
 
-        if (request.uninstall) {
-            chrome.management.uninstallSelf({showConfirmDialog: true}); 
-        }
-
         return true;
     });
 
@@ -83,17 +72,23 @@ function Background()
 
 Background.prototype.query = function(query, callback) 
 {
+    console.log('got a query', query);
     var req = new XMLHttpRequest();
-    if (localStorage['zeroclickinfo'] === 'true') {
-        req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json&d=1', true);
-    } else {
+    console.log(localStorage['zeroclickinfo']);
+    if (localStorage['zeroclickinfo'] === 'false') {
         callback(null);
         return;
+    } else {
+        if(localStorage['meanings'] === 'true')
+            req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json', true);
+        else
+            req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json&d=1', true);
     }
 
     req.onreadystatechange = function(data) {
         if (req.readyState != 4)  { return; } 
         var res = JSON.parse(req.responseText);
+        console.log('res:', res);
         callback(res);
     }
 
@@ -104,7 +99,7 @@ Background.prototype.query = function(query, callback)
 var background = new Background();
 
 chrome.omnibox.onInputEntered.addListener( function(text) {
-        chrome.tabs.getSelected( undefined, function(tab) {
-            chrome.tabs.update(tab.id, {url: tab.url = "https://duckduckgo.com/?q="+encodeURIComponent(text)}, undefined);
-        });
+    chrome.tabs.query({'currentWindow': true, 'active': true}, function(tabs) {
+        chrome.tabs.update(tabs[0].id, {url: "https://duckduckgo.com/?q="+encodeURIComponent(text)});
+    });
 });
