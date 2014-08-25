@@ -50,17 +50,17 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
 
                 // ditch the InstantAnswer Box if there is a Knowledge Graph
                 // result, e.g. superbad
-                if ($('#rhs_block ol .xpdopen').length > 0) {
+                if (document.querySelector('#rhs_block ol .xpdopen') !== null) {
                     return true;
                 }
 
                 // ditch the InstantAnswer Box if there is an artist Knowledge
                 // Graph result, e.g. justin bieber
-                if ($('#rhs_block ol .rhsvw').length > 0) {
+                if (document.querySelector('#rhs_block ol .rhsvw') !== null) {
                     return true;
                 }
 
-                if ($('#center_col .vk_c').length > 0) {
+                if (document.querySelector('#center_col .vk_c') !== null) {
                     return true;
                 }
 
