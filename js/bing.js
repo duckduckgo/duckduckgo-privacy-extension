@@ -18,7 +18,7 @@ var options = {};
 var ddgBox;
 chrome.extension.sendMessage({options: "get"}, function(opt){
     for (var option in opt) {
-        options[option] = (opt[option] === 'true') ? true : false; 
+        options[option] = (opt[option] === 'true') ? true : false;
     }
 
     if (document.getElementById('b_results') !== null) {
@@ -27,7 +27,7 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
         var results_div = 'results_container';
     }
 
-    ddgBox = new DuckDuckBox({ 
+    ddgBox = new DuckDuckBox({
                 inputName: 'q',
                 hover: false,
                 contentDiv: results_div,
@@ -37,6 +37,11 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
     ddgBox.search = function(query) {
     var request = {query: query};
             chrome.extension.sendMessage(request, function(response){
+                // ditch the InstantAnswer Box if there is a Bing Calc one
+                if (document.getElementById('rcCalB') !== null) {
+                    return true;
+                }
+
                 ddgBox.renderZeroClick(response, query);
                 return true;
             });
@@ -49,23 +54,13 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
 
 });
 
-ddgBox.search = function(query) {
-var request = {query: query};
-        chrome.extension.sendMessage(request, function(response){
-            ddgBox.renderZeroClick(response, query);
-        });
-
-    if (options.dev)
-        console.log("query:", query);
-}
-
 var ddg_timer;
 
 function getQuery(direct) {
     var instant = document.getElementsByClassName("gssb_a");
     if (instant.length !== 0 && !direct){
         var selected_instant = instant[0];
-        
+
         var query = selected_instant.childNodes[0].childNodes[0].childNodes[0].
                     childNodes[0].childNodes[0].childNodes[0].innerHTML;
         query = query.replace(/<\/?(?!\!)[^>]*>/gi, '');
@@ -83,7 +78,7 @@ function qsearch(direct) {
     var query = getQuery(direct);
     ddgBox.lastQuery = query;
     ddgBox.search(query);
-} 
+}
 
 // instant search
 
@@ -103,12 +98,9 @@ $('[name="q"]').keyup(function(e){
     ddg_timer = setTimeout(function(){
         qsearch(direct);
     }, 700);
-   
+
 });
 
 $('[name="go"]').click(function(){
     qsearch();
 });
-
-ddgBox.init();
-
