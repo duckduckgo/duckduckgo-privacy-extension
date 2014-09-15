@@ -4,4 +4,6 @@ This is the official Chrome Extension for DuckDuckGo.
 
 You can install this extension directly from the [Chrome web store](https://chrome.google.com/webstore/detail/duckduckgo-for-chrome/bpphkkgodbfncbcpgopijlfakfgmclao?hl=en).
 
-Copyright (c) 2012 - 2013 [duckduckgo.com](https://duckduckgo.com)
+It is licensed under the terms of the Apache License, Version 2.0 (see LICENSE).
+
+Copyright (c) 2012 - 2014 [duckduckgo.com](https://duckduckgo.com)
