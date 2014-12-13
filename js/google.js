@@ -43,7 +43,7 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
               });
 
     ddgBox.search = function(query) {
-    var request = {query: query};
+            var request = {query: query};
             chrome.extension.sendMessage(request, function(response){
                 var time = new Date().getTime();
                 var d = time - ddg_zeroclick_timestamp;
@@ -67,7 +67,7 @@ chrome.extension.sendMessage({options: "get"}, function(opt){
                 if (options.dev)
                     console.log("delay", d);
 
-                if (d >= 500)
+                if (d >= 600)
                     return true;
 
                 ddgBox.renderZeroClick(response, query);
@@ -107,6 +107,12 @@ function qsearch(direct) {
     ddgBox.search(query);
     init_timer();
 }
+
+// initialize the IA box on every hashchange (helps instant search)
+$(window).bind('hashchange', function() {
+    init_timer();
+    ddgBox.init();
+});
 
 // instant search
 $('[name="q"]').keyup(function(e){
