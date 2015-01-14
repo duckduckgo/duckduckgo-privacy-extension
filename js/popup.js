@@ -75,7 +75,22 @@ var BTN_NORMAL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf
 
 var BTN_HOVER = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2hpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo5NzdGRjYyNjM1MjA2ODExODA4M0EwQTEwMEI2OEZENyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFMUVGNTNGNERFQzQxMUUzODQ5QUI1ODJBQzQ1Njc3OSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFMUVGNTNGM0RFQzQxMUUzODQ5QUI1ODJBQzQ1Njc3OSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M2IChNYWNpbnRvc2gpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6ODEzMjRFQjY0MDIwNjgxMTgwODNBMEExMDBCNjhGRDciIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OTc3RkY2MjYzNTIwNjgxMTgwODNBMEExMDBCNjhGRDciLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4VloBjAAAAjElEQVR42mJRq5nvxcjEPJuBgUGKgTTw+v+/v8lMQM2zyNAMAqJAvdOZgAxpBvKBNBMDhQCvATcaY8GYbAModgExgAWbs/GJadQvprELkG2A2Yxu6yAPRFzewekCYIYg2/b/f/8wMP3+8PopiEGyZqDFvz++fcLy7+eP5J+vnoCysyyJZjwH4nSAAAMA2+YxjF/1c3MAAAAASUVORK5CYII=";
 
-
+var FAKE_POST_FUNCTION =
+"   function fake_post() {" +
+"       var form = document.createElement('form');" +
+"       form.setAttribute('method', 'post');" +
+"       form.setAttribute('action', 'https://duckduckgo.com');" +
+"       var params = {{{PARAMS}}};" +
+"       for(var key in params) {" +
+"           var hiddenField = document.createElement('input');" +
+"           hiddenField.setAttribute('type', 'hidden');" +
+"           hiddenField.setAttribute('name', key);" +
+"           hiddenField.setAttribute('value', params[key]);" +
+"           form.appendChild(hiddenField);" +
+"       }" +
+"       document.body.appendChild(form);" +
+"       form.submit();" +
+"   }";
 
 window.onload = function() {
 
@@ -195,9 +210,24 @@ window.onload = function() {
             special = '&d=1';
         }
 
-        chrome.tabs.create({
-            url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
-        });
+        if (localStorage['use_post'] === 'true') {
+            var fake_post_code = FAKE_POST_FUNCTION.replace(/(\n|\t)/gm,'');
+
+            var params = {
+                q: input,
+                d:  (special == '') ? 0 : 1
+            };
+
+            fake_post_code = fake_post_code.replace('{{{PARAMS}}}', JSON.stringify(params));
+
+            chrome.tabs.create({
+                url:  "javascript:" + fake_post_code + "; fake_post();"
+            });
+        } else {
+            chrome.tabs.create({
+                url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
+            });
+        }
     }
 
     document.getElementById('icon_advanced').onclick = function(){

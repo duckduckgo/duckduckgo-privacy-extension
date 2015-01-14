@@ -441,9 +441,9 @@
         }
     ],
     "options_page": "html/options.html",
-    "background": { 
-            "scripts": ["js/background.js"] 
-    }, 
+    "background": {
+            "scripts": ["js/background.js"]
+    },
     "permissions": [
         "https://chrome.duckduckgo.com/*",
         "tabs"
