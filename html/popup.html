@@ -19,8 +19,6 @@
 <title>DuckDuckGo</title>
 <style type="text/css">
 html {
-  font-family: "DDG_ProximaNova","Proxima Nova","Helvetica Neue","Helvetica","Segoe UI","Nimbus Sans L","Liberation Sans","Open Sans",FreeSans,Arial,sans-serif;
-  font-weight: normal;
   overflow: hidden;
   /*background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#f8f8f8));*/
   background: #fff;
@@ -29,6 +27,8 @@ html {
 }
 
 body {
+  font-family: "Helvetica Neue", sans-serif !important;
+  font-weight: normal;
   border: 0;
   margin: 0;
   padding: 0;
@@ -57,7 +57,6 @@ body {
 
   -moz-appearance: none;
   font-size: 17px;
-  font-family: "DDG_ProximaNova","Proxima Nova","Helvetica Neue","Helvetica","Segoe UI","Nimbus Sans L","Liberation Sans","Open Sans",FreeSans,Arial,sans-serif;
   font-weight: normal;
   background: none repeat scroll 0% 0% transparent;
   outline: medium none;
@@ -231,7 +230,9 @@ body {
 #advanced #left ul {
   padding-left: 10px;
   font-size: 12px;
-  padding-top: 39px !important;
+  float: left;
+  width: 182px;
+  padding-top: 2px !important;
 }
 
 #advanced #right h2 {
@@ -264,10 +265,12 @@ input[type="checkbox"] {
 
 input[type="checkbox"]+label {
     background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iI0U1RTVFNSIgZD0iTTE0LDE2SDJjLTEuMSwwLTItMC45LTItMlYyYzAtMS4xLDAuOS0yLDItMmgxMmMxLjEsMCwyLDAuOSwyLDJ2MTJDMTYsMTUuMSwxNS4xLDE2LDE0LDE2eiIvPjwvc3ZnPg==) no-repeat;
+    background-size: 16px 16px;
 }
 
 input[type="checkbox"]:checked + label {
     background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzY2NjY2NiIgZD0iTTE0LDE2SDJjLTEuMSwwLTItMC45LTItMlYyYzAtMS4xLDAuOS0yLDItMmgxMmMxLjEsMCwyLDAuOSwyLDJ2MTJDMTYsMTUuMSwxNS4xLDE2LDE0LDE2eiIvPjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik04LjQsMTAuOWwtMS42LDEuNmwtNC00bDEuNi0xLjZsMi40LDIuNGw0LjgtNC44bDEuNiwxLjZMOC40LDEwLjlMOC40LDEwLjl6Ii8+PC9zdmc+) no-repeat;
+    background-size: 16px 16px;
 }
 
 </style>
