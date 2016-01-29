@@ -6,4 +6,4 @@ You can install this extension directly from the [Chrome web store](https://chro
 
 It is licensed under the terms of the Apache License, Version 2.0 (see LICENSE).
 
-Copyright (c) 2012 - 2014 [duckduckgo.com](https://duckduckgo.com)
+Copyright (c) 2012 - 2016 [duckduckgo.com](https://duckduckgo.com)
