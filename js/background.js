@@ -85,3 +85,14 @@ chrome.omnibox.onInputEntered.addListener( function(text) {
         chrome.tabs.update(tabs[0].id, {url: "https://duckduckgo.com/?q="+encodeURIComponent(text)});
     });
 });
+
+//This adds Context Menu when user select some text.
+//create context menu
+chrome.contextMenus.create({
+    title : 'Search DuckDuckGo for "%s"',
+    contexts : ["selection"],
+    onclick : function(info){
+        var queryText = info.selectionText;
+        chrome.tabs.create({url:"https://duckduckgo.com/?q="+queryText});
+    }
+});
