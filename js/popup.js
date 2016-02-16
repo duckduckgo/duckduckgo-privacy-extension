@@ -158,6 +158,13 @@ window.onload = function() {
             special = '&d=1';
         }
 
+        var os = "o";
+        if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
+        if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
+        if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+
+        special += '&bext=' + os + 'cp';
+
         if (localStorage['use_post'] === 'true') {
             var fake_post_code = FAKE_POST_FUNCTION.replace(/(\n|\t)/gm,'');
 
