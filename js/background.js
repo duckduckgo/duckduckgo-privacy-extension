@@ -21,6 +21,13 @@ function Background() {
   // clearing last search on borwser startup
   localStorage['last_search'] = '';
 
+  var os = "o";
+  if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
+  if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
+  if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+
+  localStorage['os'] = os;
+
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
     if (request.query)
       return $this.query(request.query, callback);
@@ -47,8 +54,7 @@ Background.prototype.query = function(query, callback) {
     callback(null);
     return;
   } else {
-    req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) +
-      '&format=json&d=1', true);
+    req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json&d=1&bext=' + localStorage['os'] + 'ce', true);
   }
 
   req.onreadystatechange = function(data) {
@@ -72,7 +78,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
     'active': true
   }, function(tabs) {
     chrome.tabs.update(tabs[0].id, {
-      url: "https://duckduckgo.com/?q=" + encodeURIComponent(text)
+      url: "https://duckduckgo.com/?q=" + encodeURIComponent(text) + "&bext=" + localStorage['os'] + "cl"
     });
   });
 });
@@ -85,7 +91,7 @@ chrome.contextMenus.create({
   onclick: function(info) {
     var queryText = info.selectionText;
     chrome.tabs.create({
-      url: "https://duckduckgo.com/?q=" + queryText
+      url: "https://duckduckgo.com/?q=" + queryText + "&bext=" + localStorage['os'] + "cr"
     });
   }
 });

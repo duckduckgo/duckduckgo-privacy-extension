@@ -167,17 +167,22 @@ DuckDuckBox.prototype = {
     },
 
     createHeader: function (heading, query) {
+        var os = "o";
+        if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
+        if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
+        if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+
         return $('<div>', {id: 'ddg_zeroclick_header'})
                        .append($('<a>', {
                                    class: 'ddg_head',
-                                   href: DDG_URL + encodeURIComponent(query)
+                                   href: DDG_URL + encodeURIComponent(query) + '&bext=' + os + 'cc'
                                }).text(heading))
                        .append($('<img>', {
                                    src: HEADER_ICON_URL
                                }))
                        .append($('<a>', {
                                    class: 'ddg_more',
-                                   href: DDG_URL + encodeURIComponent(query)
+                                   href: DDG_URL + encodeURIComponent(query) + '&bext=' + os + 'cc'
                                }).html('See DuckDuckGo results &raquo;'));
 
     },
@@ -506,13 +511,18 @@ DuckDuckBox.prototype = {
         result.append(right_text);
         result.append($('<div>', {class: 'clear'}));
 
+        var os = "o";
+        if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
+        if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
+        if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+
         var bottom = $('<div>', {id: 'ddg_zeroclick_bottom'})
                         .append(official_links)
                         .append($('<img>', {
                                     src: 'https://duckduckgo.com//assets/icons/meta/DDG-icon_24x24.png',
                                     id: 'ddg_zeroclick_official_links_img'
                        }).click(function(){
-                           window.location.href = DDG_URL + encodeURIComponent(query);
+                           window.location.href = DDG_URL + encodeURIComponent(query) + '&bext=' + os + 'cc';
                        }));
         result.append(bottom);
 
