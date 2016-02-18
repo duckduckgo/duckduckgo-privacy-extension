@@ -446,7 +446,6 @@
     },
     "permissions": [
         "https://chrome.duckduckgo.com/*",
-        "tabs",
         "contextMenus"
     ]
 }
