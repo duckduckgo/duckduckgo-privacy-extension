@@ -158,6 +158,9 @@ window.onload = function() {
             special = '&d=1';
         }
 
+        if (localStorage['safesearch'] === 'false')
+            special += '&kp=-1'
+
         var os = "o";
         if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
         if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";

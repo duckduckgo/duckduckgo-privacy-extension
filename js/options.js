@@ -26,11 +26,12 @@ function save_options() {
   localStorage["zeroclick_google_right"] = zeroclick_google_right;
   var use_post = document.getElementById("use_post").checked;
   localStorage["use_post"] = use_post;
-
+  var safesearch = document.getElementById("safesearch").checked;
+  localStorage["safesearch"] = safesearch;
 
   // setting this to false should also reset the last search.
   if (!lastsearch_enabled)
-      localStorage["last_search"] = '';
+    localStorage["last_search"] = '';
 
 
   if (dev)
@@ -43,8 +44,10 @@ function save_options() {
     status.innerHTML = "";
   }, 750);
 
-  chrome.extension.sendMessage({'options': localStorage}, function(response){
-    console.log(response); 
+  chrome.extension.sendMessage({
+    'options': localStorage
+  }, function(response) {
+    console.log(response);
   });
 }
 
@@ -84,12 +87,19 @@ function restore_options() {
   } else {
     document.getElementById("use_post").checked = false;
   }
+
+  var safesearch = localStorage["safesearch"];
+  if (safesearch === 'true') {
+    document.getElementById("safesearch").checked = true;
+  } else {
+    document.getElementById("safesearch").checked = false;
+  }
 }
 
-document.addEventListener('DOMContentLoaded', function(){
-    restore_options();
+document.addEventListener('DOMContentLoaded', function() {
+  restore_options();
 })
 
-document.addEventListener('click', function(){
-    save_options();
+document.addEventListener('click', function() {
+  save_options();
 })
