@@ -89,7 +89,7 @@ function restore_options() {
   }
 
   var safesearch = localStorage["safesearch"];
-  if (safesearch === 'true') {
+  if (safesearch === 'true' || safesearch == undefined) {
     document.getElementById("safesearch").checked = true;
   } else {
     document.getElementById("safesearch").checked = false;
