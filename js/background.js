@@ -28,6 +28,16 @@ function Background() {
 
   localStorage['os'] = os;
 
+  /*
+   * Make sure previous versions of the extensions defaults to showing
+   * Answers on Google/Bing
+   */
+  if (localStorage['prev_version'] === undefined) {
+    localStorage['zeroclickinfo'] = 'false';
+  } else {
+    localStorage['zeroclickinfo'] = 'true';
+  }
+
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
     if (request.query)
       return $this.query(request.query, callback);
