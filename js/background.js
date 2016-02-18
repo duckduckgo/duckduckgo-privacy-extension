@@ -35,7 +35,9 @@ function Background() {
   if (localStorage['prev_version'] === undefined) {
     localStorage['zeroclickinfo'] = 'false';
   } else {
-    localStorage['zeroclickinfo'] = 'true';
+    if (localStorage['zeroclickinfo'] === undefined) {
+      localStorage['zeroclickinfo'] = 'true';
+    }
   }
 
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
