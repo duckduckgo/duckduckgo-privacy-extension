@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 DuckDuckGo, Inc.
+ * Copyright (C) 2012, 2016 DuckDuckGo, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 function save_options() {
   var dev = document.getElementById("dev").checked;
   localStorage["dev"] = dev;
-  var zeroclickinfo = document.getElementById("zeroclickinfo").checked;
-  localStorage["zeroclickinfo"] = zeroclickinfo;
   var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
   localStorage["lastsearch_enabled"] = lastsearch_enabled;
   var zeroclick_google_right = document.getElementById("zeroclick_google_right").checked;

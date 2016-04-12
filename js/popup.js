@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012, 2014 DuckDuckGo, Inc.
+   Copyright (C) 2012, 2016 DuckDuckGo, Inc.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -57,10 +57,6 @@ window.onload = function() {
       localStorage['advanced_options'] = 'true';
     }
 
-    if (localStorage['zeroclickinfo'] == undefined) {
-      localStorage['zeroclickinfo'] = 'true';
-    }
-
     if (localStorage['last_search'] != '') {
         document.getElementById('search_form_input_homepage').value = localStorage['last_search'];
         document.getElementById("search_form_input_clear").style.display = 'inline-block';
@@ -71,7 +67,6 @@ window.onload = function() {
 
     document.getElementById('adv_ducky').onclick = ducky_check;
     document.getElementById('adv_meanings').onclick = meanings_check;
-    document.getElementById('adv_zeroclick').onclick = zeroclickinfo_check;
 
     document.getElementById('addons').onclick = function(){
         chrome.tabs.create({url: "html/options.html"});
@@ -234,10 +229,6 @@ window.onload = function() {
         localStorage['meanings'] = document.getElementById('adv_meanings').checked;
     }
 
-    function zeroclickinfo_check(){
-        localStorage['zeroclickinfo'] = document.getElementById('adv_zeroclick').checked;
-    }
-
     function defaults_check(){
         if (localStorage['ducky'] === 'true') {
             document.getElementById('adv_ducky').checked = true;
@@ -245,10 +236,6 @@ window.onload = function() {
 
         if (localStorage['meanings'] === 'true') {
             document.getElementById('adv_meanings').checked = true;
-        }
-
-        if (localStorage['zeroclickinfo'] === 'true') {
-            document.getElementById('adv_zeroclick').checked = true;
         }
 
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 DuckDuckGo, Inc.
+ * Copyright (C) 2012, 2016 DuckDuckGo, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,8 +41,6 @@ function Background() {
   }
 
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
-    if (request.query)
-      return $this.query(request.query, callback);
     if (request.options) {
       callback(localStorage);
     }
@@ -58,29 +56,6 @@ function Background() {
     return true;
   });
 }
-
-Background.prototype.query = function(query, callback) {
-  console.log('got a query', query);
-  var req = new XMLHttpRequest();
-  if (localStorage['zeroclickinfo'] === 'false') {
-    callback(null);
-    return;
-  } else {
-    req.open('GET', 'https://chrome.duckduckgo.com?q=' + encodeURIComponent(query) + '&format=json&d=1&bext=' + localStorage['os'] + 'ce', true);
-  }
-
-  req.onreadystatechange = function(data) {
-    if (req.readyState != 4) {
-      return;
-    }
-    var res = JSON.parse(req.responseText);
-    console.log('res:', res);
-    callback(res);
-  };
-
-  req.send(null);
-  return true;
-};
 
 var background = new Background();
 
