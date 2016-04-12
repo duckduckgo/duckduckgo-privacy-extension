@@ -58,13 +58,6 @@ function restore_options() {
     document.getElementById("dev").checked = false;
   }
 
-  var zeroclickinfo = localStorage["zeroclickinfo"];
-  if (zeroclickinfo === 'true' || zeroclickinfo == undefined) {
-    document.getElementById("zeroclickinfo").checked = true;
-  } else {
-    document.getElementById("zeroclickinfo").checked = false;
-  }
-
   var lastsearch_enabled = localStorage["lastsearch_enabled"];
   if (lastsearch_enabled === 'true' || lastsearch_enabled == undefined) {
     document.getElementById("lastsearch_enabled").checked = true;
