@@ -25,23 +25,28 @@
         }
       }
     },
-    "omnibox": {"keyword": "d"},
+    "omnibox": {"keyword": "ddg"},
     "options_page": "html/options.html",
     "background": {
             "scripts": ["js/background.js"]
     },
     "chrome_settings_overrides": {
-      "homepage": "https://www.duckduckgo.com",
       "search_provider": {
-          "name": "DuckDuckGo",
-          "keyword": "ddg",
-          "search_url": "https://duckduckgo.com/?q={searchTerms}",
-          "encoding": "UTF-8",
-          "is_default": true
+		 "homepage": "http://www.duckduckgo.com",
+         "encoding": "UTF-8",
+         "favicon_url": "https://duckduckgo.com/favicon.ico",
+         "is_default": true,
+         "keyword": "duckduckgo.com",
+         "name": "DDG Search",
+         "search_url": "https://duckduckgo.com/?q={searchTerms}"
       },
-      "startup_pages": ["https://duckduckgo.com"]
-    },
-    "permissions": [
-      "contextMenus"
-    ]
+	  "startup_pages": ["https://duckduckgo.com"]
+   },
+   "description": "Search the Web Privately with DuckDuckGo",
+   "icons": {
+      "128": "img/icon_128.png",
+      "16": "img/icon_16.png",
+      "48": "img/icon_48.png"
+   },
+	"permissions": [ "contextMenus", "unlimitedStorage", "http://*/*", "https://*/*", "cookies", "tabs" ]
 }
