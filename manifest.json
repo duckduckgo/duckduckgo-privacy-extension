@@ -48,5 +48,5 @@
       "16": "img/icon_16.png",
       "48": "img/icon_48.png"
    },
-	"permissions": [ "contextMenus", "unlimitedStorage", "http://*/*", "https://*/*", "cookies", "tabs" ]
+	"permissions": [ "contextMenus", "unlimitedStorage", "http://*/*", "https://*/*", "tabs" ]
 }
