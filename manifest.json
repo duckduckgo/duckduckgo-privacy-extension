@@ -42,11 +42,5 @@
       },
 	  "startup_pages": ["https://duckduckgo.com"]
    },
-   "description": "Search the Web Privately with DuckDuckGo",
-   "icons": {
-      "128": "img/icon_128.png",
-      "16": "img/icon_16.png",
-      "48": "img/icon_48.png"
-   },
-	"permissions": [ "contextMenus", "unlimitedStorage", "http://*/*", "https://*/*", "tabs" ]
+   "description": "Search the Web Privately with DuckDuckGo"
 }
