@@ -30,7 +30,18 @@
     "background": {
             "scripts": ["js/background.js"]
     },
+    "chrome_settings_overrides": {
+      "homepage": "https://www.duckduckgo.com",
+      "search_provider": {
+          "name": "DuckDuckGo",
+          "keyword": "ddg",
+          "search_url": "https://duckduckgo.com/?q={searchTerms}",
+          "encoding": "UTF-8",
+          "is_default": true
+      },
+      "startup_pages": ["https://duckduckgo.com"]
+    },
     "permissions": [
-        "contextMenus"
+      "contextMenus"
     ]
 }
