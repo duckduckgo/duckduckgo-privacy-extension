@@ -42,5 +42,7 @@
       },
 	  "startup_pages": ["https://duckduckgo.com"]
    },
-   "description": "Search the Web Privately with DuckDuckGo"
+   "permissions": [
+     "contextMenus"
+   ]
 }
