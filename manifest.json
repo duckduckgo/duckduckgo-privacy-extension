@@ -30,7 +30,16 @@
     "background": {
             "scripts": ["js/background.js"]
     },
+    "content_scripts": [
+      {
+        "matches": ["https://*.duckduckgo.com/*", "https://duckduckgo.com/*"],
+        "css": ["css/noatb.css"]
+      }
+    ],
     "permissions": [
-        "contextMenus"
+        "contextMenus",
+        "webRequest",
+        "webRequestBlocking",
+        "*://duckduckgo.com/"
     ]
 }
