@@ -28,8 +28,11 @@ function Background() {
 
   localStorage['os'] = os;
 
-  if (localStorage['prev_version'] === undefined) {
-    localStorage['prev_version'] = chrome.runtime.getManifest().version;
+  chrome.runtime.onInstalled.addListener(function(details) {
+    // only run the following section on install
+    if (details.reason !== "install") {
+      return;
+    }
 
     if (localStorage['atb'] === undefined) {
         var oneWeek = 604800000,
@@ -40,7 +43,22 @@ function Background() {
 
         localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
     }
-  }
+
+	//});
+    // inject the oninstall script to opened DuckDuckGo tab.
+    chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
+      var i = tabs.length, tab;
+      while (i--) {
+        tab = tabs[i];
+        chrome.tabs.executeScript(tab.id, {
+          file: 'js/oninstall.js'
+        });
+        chrome.tabs.insertCSS(tab.id, {
+          file: 'css/noatb.css'
+        });
+      }
+    });
+  });
 
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
     if (request.options) {
@@ -53,6 +71,10 @@ function Background() {
         var url = tab.url;
         callback(url);
       });
+    }
+
+    if (request.atb) {
+      localStorage['atb'] = request.atb;
     }
 
     return true;
@@ -106,6 +128,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     {
         urls: [
             "*://duckduckgo.com/?*",
+            "*://*.duckduckgo.com/?*",
         ],
         types: ["main_frame"]
     },
