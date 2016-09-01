@@ -40,7 +40,17 @@
         "search_url": "https://duckduckgo.com/?q={searchTerms}"
       }
     },
+    "content_scripts": [
+      {
+        "matches": ["https://*.duckduckgo.com/*", "https://duckduckgo.com/*"],
+        "css": ["css/noatb.css"],
+        "js": ["js/oninstall.js"]
+      }
+    ],
     "permissions": [
-      "contextMenus"
+        "contextMenus",
+        "webRequest",
+        "webRequestBlocking",
+        "*://*.duckduckgo.com/"
     ]
 }
