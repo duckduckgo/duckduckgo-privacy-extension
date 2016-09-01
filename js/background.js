@@ -28,15 +28,17 @@ function Background() {
 
   localStorage['os'] = os;
 
-  /*
-   * Make sure previous versions of the extensions defaults to showing
-   * Answers on Google/Bing
-   */
   if (localStorage['prev_version'] === undefined) {
-    localStorage['zeroclickinfo'] = 'false';
-  } else {
-    if (localStorage['zeroclickinfo'] === undefined) {
-      localStorage['zeroclickinfo'] = 'true';
+    localStorage['prev_version'] = chrome.runtime.getManifest().version;
+
+    if (localStorage['atb'] === undefined) {
+        var oneWeek = 604800000,
+            oneDay = 86400000,
+            timeSinceEpoch = new Date().getTime() - 1456333200000,
+            majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
+            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);
+
+        localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
     }
   }
 
@@ -82,3 +84,30 @@ chrome.contextMenus.create({
     });
   }
 });
+
+// Add ATB param
+chrome.webRequest.onBeforeRequest.addListener(
+    function (e) {
+      // Only change the URL if there is no ATB param specified.
+      if (e.url.indexOf('atb=') !== -1) {
+        return;
+      }
+
+      // Only change the URL if there is an ATB saved in localStorage
+      if (localStorage['atb'] === undefined) {
+        return;
+      }
+
+      var newURL = e.url + "&atb=" + localStorage['atb'];
+      return {
+        redirectUrl: newURL
+      };
+    },
+    {
+        urls: [
+            "*://duckduckgo.com/?*",
+        ],
+        types: ["main_frame"]
+    },
+    ["blocking"]
+);
