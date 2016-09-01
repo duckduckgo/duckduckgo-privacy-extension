@@ -125,6 +125,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     {
         urls: [
             "*://duckduckgo.com/?*",
+            "*://*.duckduckgo.com/?*",
         ],
         types: ["main_frame"]
     },
