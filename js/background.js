@@ -53,6 +53,9 @@ function Background() {
         chrome.tabs.executeScript(tab.id, {
           file: 'js/oninstall.js'
         });
+        chrome.tabs.insertCSS(tab.id, {
+          file: 'css/noatb.css'
+        });
       }
     });
   });
