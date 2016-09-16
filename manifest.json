@@ -1,6 +1,6 @@
 {
     "name": "DuckDuckGo for Chrome",
-    "version": "42.7.1",
+    "version": "42.7.0",
     "description": "DuckDuckGo enhancements for Chrome.",
     "icons": {
         "16": "img/icon_16.png",
@@ -29,6 +29,16 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": ["js/background.js"]
+    },
+    "chrome_settings_overrides": {
+      "search_provider": {
+        "encoding": "UTF-8",
+        "favicon_url": "https://duckduckgo.com/favicon.ico",
+        "is_default": true,
+        "keyword": "duckduckgo.com",
+        "name": "DuckDuckGo Search",
+        "search_url": "https://duckduckgo.com/?q={searchTerms}"
+      }
     },
     "content_scripts": [
       {
