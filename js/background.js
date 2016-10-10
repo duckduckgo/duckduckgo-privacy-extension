@@ -55,7 +55,6 @@ function Background() {
         localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
     }
 
-	//});
     // inject the oninstall script to opened DuckDuckGo tab.
     chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
       var i = tabs.length, tab;
@@ -78,14 +77,14 @@ function Background() {
 
     if (request.current_url) {
       chrome.tabs.getSelected(function(tab) {
-        console.log(tab);
         var url = tab.url;
         callback(url);
       });
     }
 
-    if (request.atb) {
+    if (!localStorage['set_atb'] && request.atb) {
       localStorage['atb'] = request.atb;
+      localStorage['set_atb'] = true;
     }
 
     return true;
