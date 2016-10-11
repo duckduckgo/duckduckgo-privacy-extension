@@ -43,8 +43,7 @@
     "content_scripts": [
       {
         "matches": ["https://*.duckduckgo.com/*", "https://duckduckgo.com/*"],
-        "css": ["css/noatb.css"],
-        "js": ["js/oninstall.js"]
+        "css": ["css/noatb.css"]
       }
     ],
     "permissions": [
