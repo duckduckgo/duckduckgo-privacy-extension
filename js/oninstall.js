@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-var atbParam = document.querySelector('html').getAttribute('data-atb');
+var atbParam = document.querySelector('html').getAttribute('data-chromeatb');
 chrome.extension.sendMessage({atb: atbParam});
