@@ -52,8 +52,9 @@ function Background() {
             majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
             minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);
 
-        localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
-        //localStorage['set_atb'] = localStorage['atb'];;
+        var atb = 'v' + majorVersion + '-' + minorVersion;
+        localStorage['atb'] = atb;
+        localStorage['set_atb'] = atb;
     }
 
     // inject the oninstall script to opened DuckDuckGo tab.
