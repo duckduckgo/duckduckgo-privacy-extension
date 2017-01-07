@@ -50,9 +50,9 @@ function Background() {
             epoch = isDST ? estEpoch - oneHour : estEpoch,
             timeSinceEpoch = new Date().getTime() - epoch,
             majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);
+            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay), 
+            atb = 'v' + majorVersion + '-' + minorVersion;
 
-        var atb = 'v' + majorVersion + '-' + minorVersion;
         localStorage['atb'] = atb;
         localStorage['set_atb'] = atb;
     }
