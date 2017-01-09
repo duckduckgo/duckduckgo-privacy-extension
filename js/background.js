@@ -50,11 +50,9 @@ function Background() {
             epoch = isDST ? estEpoch - oneHour : estEpoch,
             timeSinceEpoch = new Date().getTime() - epoch,
             majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay), 
-            atb = 'v' + majorVersion + '-' + minorVersion;
+            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);
 
-        localStorage['atb'] = atb;
-        localStorage['set_atb'] = atb;
+        localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
     }
 
     // inject the oninstall script to opened DuckDuckGo tab.
