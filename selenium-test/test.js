@@ -24,8 +24,13 @@ wd.get(POPUP_URL);
 var searchbar = wd.findElement({id:'search_form_input_homepage'});
 var exists = new assert.Assertion(searchbar.isDisplayed(), 'Searchbar exists and is displayed');
 
-var searchbar_text = searchbar.getText();
+wd.sleep(500);
+
+var searchbar_text = searchbar.getText()
+	.then(function(text){ return text; });
 var equal_text = new assert.Assertion(searchbar_text).equals('', 'Searchbar is empty');
+
+wd.sleep(500);
 
 // Test bangs
 var amazon_bang = wd.findElement({id:'bang_a'});
@@ -37,8 +42,9 @@ wd.actions()
 wd.sleep(500);
 
 searchbar = wd.findElement({id:'search_form_input_homepage'});
-searchbar_text = searchbar.getText();
-//equal_text = new assert.Assertion(searchbar_text).equals('!a', 'Searchbar contains amazon bang');
+searchbar_text = searchbar.getAttribute('value')
+	.then(function(text){ return text; });
+equal_text = new assert.Assertion(searchbar_text).equals('!a ', 'Searchbar contains amazon bang');
 
 wd.sleep(500);
 
@@ -47,6 +53,6 @@ var search_btn = wd.findElement({id:'search_button_homepage'});
 
 wd.actions()
 	.click(search_btn)
-        .perform();
+	.perform();
 
 wd.sleep(500);
