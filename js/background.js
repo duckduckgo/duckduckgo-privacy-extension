@@ -168,7 +168,7 @@ chrome.webRequest.onCompleted.addListener(
       };
 
       xhr.open('GET',
-        'https://duckduckgo.com/collect.js?' + new Date().getTime()
+        'https://duckduckgo.com/collect.js?' + Math.ceil(Math.random() * 1e7) 
           + '&type=atb&atb=' + atb + '&set_atb=' + setATB,
         true
       );
