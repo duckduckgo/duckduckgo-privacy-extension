@@ -11,7 +11,8 @@ var MORE_OPTIONS_URL = BASE_URL + 'options.html';
 var POPUP_URL = BASE_URL + 'popup.html';
 var BACKGROUND_URL = BASE_URL + 'background.html';
 
-
+// Build the webdriver
+function init() {
 var options = new chrome.Options().addExtensions(EXT_PATH);
 
 var wd = new webdriver.Builder()
@@ -19,7 +20,33 @@ var wd = new webdriver.Builder()
 	.setChromeOptions(options)
 	.build();
 
+	return wd;
+}
 
+function main() {
+	var driver = init();
+	testPopup(driver);
+	// coming soon
+	/*
+	testOptions(driver);
+	testBackground(driver);
+	tearDown(driver);
+	*/
+}
+
+// Close all tabs
+function tearDown(driver) {
+	driver.getAllWindowHandles()
+	.then(function(tabs) {
+		for (var i = 0; i < tabs.length; i++) {
+			driver.close();
+		}
+	});
+}
+
+// Test functionality in the popup modal:
+// searchbar, bangs and visible options
+function testPopup(wd) {
 wd.get(POPUP_URL);
 
 // Test searchbar in the popup modal
@@ -68,10 +95,14 @@ wd.getAllWindowHandles().then(function(tabs){
 	testBangUrl(wd, /www\.amazon\.com/);
 });
 
+}
+
 // Test whether searching using a bang redirects to the correct site
-function testBangUrl(newtab, bang_regex) {
-var url = newtab.getCurrentUrl()
+function testBangUrl(wd, bang_regex) {
+var url = wd.getCurrentUrl()
 	.then(function(url){ return url; });
 wd.sleep(500);
 var equal_url = new assert.Assertion(url).matches(bang_regex, 'Amazon bang search redirected to the correct site');
 }
+
+main();
