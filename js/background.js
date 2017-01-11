@@ -168,8 +168,8 @@ chrome.webRequest.onCompleted.addListener(
       };
 
       xhr.open('GET',
-        'https://duckduckgo.com/collect.js?' + Math.ceil(Math.random() * 1e7) 
-          + '&type=atb&atb=' + atb + '&set_atb=' + setATB,
+        'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
+          + '&atb=' + atb + '&set_atb=' + setATB,
         true
       );
       xhr.send();
