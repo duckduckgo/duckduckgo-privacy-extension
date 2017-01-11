@@ -1,6 +1,8 @@
 var chrome = require('selenium-webdriver/chrome');
 var webdriver = require('selenium-webdriver');
 var assert = require('selenium-webdriver/testing/assert');
+var input = require('selenium-webdriver/lib/input');
+var by = require('selenium-webdriver/lib/by');
 
 var EXT_PATH = '../build/chrome-zeroclick-latest.crx';
 
@@ -56,3 +58,20 @@ wd.actions()
 	.perform();
 
 wd.sleep(500);
+
+// Switch to new tab
+wd.getAllWindowHandles().then(function(tabs){ 
+	//console.log(tabs); 
+	new assert.Assertion(tabs.length).equals(2, 'New tab opened ' + tabs);
+	wd.switchTo().window(tabs[1]);
+	wd.sleep(500);
+	testBangUrl(wd, /www\.amazon\.com/);
+});
+
+// Test whether searching using a bang redirects to the correct site
+function testBangUrl(newtab, bang_regex) {
+var url = newtab.getCurrentUrl()
+	.then(function(url){ return url; });
+wd.sleep(500);
+var equal_url = new assert.Assertion(url).matches(bang_regex, 'Amazon bang search redirected to the correct site');
+}
