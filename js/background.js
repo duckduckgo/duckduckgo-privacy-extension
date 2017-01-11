@@ -18,7 +18,7 @@
 function Background() {
   $this = this;
 
-  // clearing last search on borwser startup
+  // clearing last search on browser startup
   localStorage['last_search'] = '';
 
   var os = "o";
@@ -84,7 +84,7 @@ function Background() {
 
     if (!localStorage['set_atb'] && request.atb) {
       localStorage['atb'] = request.atb;
-      localStorage['set_atb'] = true;
+      localStorage['set_atb'] = request.atb;
     }
 
     return true;
@@ -143,4 +143,41 @@ chrome.webRequest.onBeforeRequest.addListener(
         types: ["main_frame"]
     },
     ["blocking"]
+);
+
+chrome.webRequest.onCompleted.addListener(
+    function () {
+      var atb = localStorage['atb'],
+          setATB = localStorage['set_atb'];
+
+      if (!atb || !setATB) {
+        return;
+      }
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == XMLHttpRequest.DONE) {
+           if (xhr.status == 200) {
+             var curATB = JSON.parse(xhr.responseText);
+             if(curATB.version !== setATB) {
+               localStorage['set_atb'] = curATB.version;
+             }
+           }
+        }
+      };
+
+      xhr.open('GET',
+        'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
+          + '&atb=' + atb + '&set_atb=' + setATB,
+        true
+      );
+      xhr.send();
+    },
+    {
+        urls: [
+            '*://duckduckgo.com/?*',
+            '*://*.duckduckgo.com/?*',
+        ],
+    }
 );
