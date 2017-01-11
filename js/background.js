@@ -150,7 +150,7 @@ chrome.webRequest.onCompleted.addListener(
       var atb = localStorage['atb'],
           setATB = localStorage['set_atb'];
 
-      if (atb === undefined) {
+      if (!atb || !setATB) {
         return;
       }
 
