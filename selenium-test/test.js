@@ -30,8 +30,8 @@ function main() {
 	/*
 	testOptions(driver);
 	testBackground(driver);
-	tearDown(driver);
 	*/
+	tearDown(driver);
 }
 
 // Close all tabs
@@ -39,6 +39,8 @@ function tearDown(driver) {
 	driver.getAllWindowHandles()
 	.then(function(tabs) {
 		for (var i = 0; i < tabs.length; i++) {
+			driver.switchTo().window(tabs[i]);
+			driver.sleep(500);
 			driver.close();
 		}
 	});
