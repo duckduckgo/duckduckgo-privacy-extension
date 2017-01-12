@@ -50,31 +50,22 @@ var amazon = {
 
 var bangs = [amazon, gimages, bimages, map, news, wikipedia];
 
-var wd;
+var wd, searchbar, searchbar_text;
 
 // Build the webdriver
-test.before(function() {
+function init() {
 	var options = new chrome.Options().addExtensions(EXT_PATH);
 
 	wd = new Builder()
 		.forBrowser('chrome')
 		.setChromeOptions(options)
 		.build();
-});
+}
 
 
-test.after(function() {
+function tearDown() {
      wd.quit();
-});
-
-test.it(function() {
-	testPopup();
-	// coming soon
-	/*
-	testOptions();
-	testBackground();
-	*/
-});
+}
 
 // Test functionality in the popup modal:
 // searchbar, bangs and visible options
@@ -82,75 +73,97 @@ function testPopup() {
 	wd.get(POPUP_URL);
 
 	// Test searchbar in the popup modal
-	var searchbar = wd.findElement({id:'search_form_input_homepage'});
-	var exists = new assert.Assertion(searchbar.isDisplayed(), 'Searchbar exists and is displayed');
+	searchbar = wd.findElement({id:'search_form_input_homepage'});
+	new assert.Assertion(searchbar.isDisplayed(), 'Searchbar exists and is displayed');
 
 	wd.sleep(500);
 
-	var searchbar_text = searchbar.getText()
+	searchbar_text = searchbar.getText()
 		.then(function(text){ return text; });
 	new assert.Assertion(searchbar_text).equals('', 'Searchbar is empty');
 
 	wd.wait(searchbar_text);
 	
 	searchbar.sendKeys('Philadelphia');
-	
-	testBangs();
+
+	testBangs(bangs[0])
+	.then(function(result) {testBangs(bangs[1]);})
+	.then(function(result) {testBangs(bangs[2]);});
+		
+	//test_b.then(function(){console.log('finished testing')});	
 }
 
 // Test bangs
-function testBangs() {
-	for (var i = 0; i < bangs.length; i++) {
-		var bang = bangs[i];
-		var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
+function testBangs(bang) {
+	//for (var i = 0; i < bangs.length; i++) {
+	//var bang = bangs[i];
+	var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
 
-		var promise_clickbang = wd.actions()
-			.click(bang_btn)
-			.perform();
+	console.log(bang.name);
+	var promise_clickbang = wd.actions()
+		.click(bang_btn)
+		.perform();
 
-		wd.wait(promise_clickbang);
+	wd.wait(promise_clickbang);
 
-		//searchbar = wd.findElement({id:'search_form_input_homepage'});
-		var bang_text = searchbar.getAttribute('value')
-			.then(function(text){ 
-				var control_txt = new RegExp('!' + bang.text);
-				var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
-				new assert.Assertion(text).matches(control_txt, assert_msg);
-			});
-	
-		wd.wait(bang_text);
-
-		var search_btn = wd.findElement({id:'search_button_homepage'});
-
-		var promise_clickbtn = wd.actions()
-			.click(search_btn)
-			.perform();
-
-		wd.wait(promise_clickbtn);
-
-		// Switch to new tab
-		var promise_tab = wd.getAllWindowHandles().then(function(tabs) { 
-			//console.log(tabs); 
-			new assert.Assertion(tabs.length).equals(2, 'New tab opened ' + tabs);
-			wd.switchTo().window(tabs[1]);
-			var url = testBangUrl(wd, bang);
-			wd.wait(url).then(function(){ wd.close();});
-			wd.switchTo().window(tabs[0]);
-			
+	searchbar = wd.findElement({id:'search_form_input_homepage'});
+	var bang_text = searchbar.getAttribute('value')
+		.then(function(text){ 
+			var control_txt = new RegExp('!' + bang.text);
+			var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
+			new assert.Assertion(text).matches(control_txt, assert_msg);
 		});
 
-		wd.wait(promise_tab);
+	wd.wait(bang_text);
+
+	var search_btn = wd.findElement({id:'search_button_homepage'});
+
+	var promise_clickbtn = wd.actions()
+		.click(search_btn)
+		.perform();
+
+	wd.wait(promise_clickbtn).then(function(){console.log('clicked search for bang ' + bang.text + ' ' + bang.name)});
+
+	// Switch to new tab
+	var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
+		//console.log(tabs); 
+		new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
+		wd.switchTo().window(tabs[1])
+			.then(function(){ testBangUrl(wd, bang);})
+			.then(function(){ wd.close();})
+			.then(function(){ wd.switchTo().window(tabs[0])});
+		//wd.switchTo().window(tabs[0]);
 		
-	}
+	});
+
+	return promise_tab;
+        //}
+	
 }
+
+
+
 // Test whether searching using a bang redirects to the correct site
 function testBangUrl(wd, bang) {
 	var msg = bang.name + ' bang search redirected to the correct site: ';
 	var promise_url = wd.getCurrentUrl()
 		.then(function(url) { 
-			//new assert.Assertion(url).matches(bang.reg_url, msg + url);
+			new assert.Assertion(url).matches(bang.reg_url, msg + url);
 		});
 	return promise_url;
+}
+
+
+function main() {
+	init();
+	testPopup();
+//	testBangs();
+	// coming soon
+	/*
+	testOptions();
+	testBackground();
+	*/
+	tearDown();
 }
 
 main();
