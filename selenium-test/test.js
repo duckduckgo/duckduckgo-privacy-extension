@@ -107,7 +107,8 @@ function testBangs(bang) {
 		            new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 		
                     wd.switchTo().window(tabs[1]).then(function(){ 
-                        testBangUrl(wd, bang);
+			var msg = bang.name + ' bang search redirected to the correct site: ';
+                        testUrl(msg, bang.reg_url);
                         wd.close();
                         wd.switchTo().window(tabs[0]);
                     });
@@ -120,11 +121,11 @@ function testBangs(bang) {
 
 
 // Test whether searching using a bang redirects to the correct site
-function testBangUrl(wd, bang) {
-	var msg = bang.name + ' bang search redirected to the correct site: ';
+function testUrl(msg, test_url) {
+	//var msg = bang.name + ' bang search redirected to the correct site: ';
 	var promise_url = wd.getCurrentUrl()
 		.then(function(url) { 
-			new assert.Assertion(url).matches(bang.reg_url, msg + url);
+			new assert.Assertion(url).matches(test_url, msg + url);
 		});
 	return promise_url;
 }
@@ -135,17 +136,27 @@ function testDdgSearch() {
 
 	wd.actions()
 	.click(x_btn)
-	.click(search_btn)
+	.perform()
+	.then(function() {
+		testNewTabUrl(search_btn, /duckduckgo\.com/);
+	});
+}
+
+function testNewTabUrl(click_el, test_url) {
+	wd.actions()
+	.click(click_el)
 	.perform()
 	.then(function() {
 		wd.getAllWindowHandles().then(function(tabs) {
 			new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 			wd.switchTo().window(tabs[1])
 			.then(function() {
-				wd.getCurrentUrl()
+				var msg = 'Searching on DDG';
+				testUrl(msg, test_url);
+				/*wd.getCurrentUrl()
 				.then (function(url) {
-					new assert.Assertion(url).matches(/duckduckgo\.com/, 'Searching on DDG');
-				});
+					new assert.Assertion(url).matches(test_url, 'Searching on DDG');
+				});*/
 				wd.close();
 				wd.switchTo().window(tabs[0]);
 			});
