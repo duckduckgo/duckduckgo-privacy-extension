@@ -3,7 +3,8 @@ var chrome = require('selenium-webdriver/chrome'),
     webdriver = require('selenium-webdriver'),
     test = require('selenium-webdriver/testing'),
     assert = require('selenium-webdriver/testing/assert'),
-    input = require('selenium-webdriver/lib/input');
+    input = require('selenium-webdriver/lib/input'),
+    localStorage = require('localStorage');
 
 var EXT_PATH = '../build/chrome-zeroclick-latest.crx',
     BASE_URL = 'chrome-extension://cjkpfdbancffifiponpcgmapihcohejj/html/',
@@ -99,7 +100,7 @@ function testBangs(bang) {
 		var msg = bang.name + ' bang search redirected to the correct site: ';
 		testNewTabUrl(search_btn, msg, bang.reg_url);
         });
-    });
+    }, 1000);
 }
 
 
@@ -144,6 +145,25 @@ function testNewTabUrl(click_el, msg, test_url) {
 	}, 5000);
 }
 
+function testOptionClick(option) {
+    var defaultOpt = localStorage[option];
+    console.log("Testing option: " + option);
+    wd.actions()
+        .click(wd.findElement({id: option}))
+        .perform()
+        .then(function() {
+        new assert.Assertion(localStorage[option] !== defaultOpt, "Option test: " + option);
+    });
+}
+
+function testOptions() {
+    var options = ['zeroclick_google_right', 'use_post', 'safesearch', 'lastsearch_enabled'];
+    options.forEach(function(option){
+	    wd.get(MORE_OPTIONS_URL).then(function(){
+            testOptionClick(option);
+        });
+    });
+}
 
 function main() {
 	init();
@@ -158,7 +178,9 @@ function main() {
     console.log("Done Testing Bangs");
     testDdgSearch();
     console.log('done testing ddg search');
-    //tearDown();
+	testOptions();
+	// coming soon
+	//tearDown();
 }
 
 main();
