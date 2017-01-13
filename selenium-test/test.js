@@ -83,27 +83,18 @@ function testPopup() {
 // Test bangs
 function testBangs(bang) {
 	var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
-
-	
-    var promise_clickbang = wd.actions()
-		.click(bang_btn)
-		.perform();
+    var promise_clickbang = wd.actions().click(bang_btn).perform();
 
 	wd.wait(promise_clickbang).then(function() {
-        console.log("Bang: " + bang.text);
-
         searchbar = wd.findElement({id:'search_form_input_homepage'});
         
             var bang_text = searchbar.getAttribute('value').then(function(text){
-                console.log("Search bar is correct?");
 
 	        var control_txt = new RegExp('!' + bang.text);
 		    var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
 		    new assert.Assertion(text).matches(control_txt, assert_msg);
 
 	        var search_btn = wd.findElement({id:'search_button_homepage'});
-
-            console.log("Wait for tab to open");
         
             var promise_clickbtn = wd.actions().click(search_btn).perform();
         
@@ -112,8 +103,6 @@ function testBangs(bang) {
    
 	            // Switch to new tab
 	            var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
-		    
-                    console.log(tabs); 
 		            new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 		
                     wd.switchTo().window(tabs[1]).then(function(){ 
@@ -124,7 +113,7 @@ function testBangs(bang) {
 	            });
             }, 5000);
         });
-    }, 5000);
+    });
 }
 
 
@@ -151,6 +140,7 @@ function main() {
 	    testBangs(bang);
     });
 
+    console.log("Done with bangs");
 	// coming soon
 	/*
 	testOptions();
