@@ -109,6 +109,8 @@ function testBangs(bang) {
 		.click(search_btn)
 		.perform();
 
+    var reallyWait = false;
+
 	wd.wait(promise_clickbtn).then(function(){
         console.log('clicked search for bang ' + bang.text + ' ' + bang.name)
     
@@ -123,10 +125,10 @@ function testBangs(bang) {
                 testBangUrl(wd, bang);
                 wd.close();
                 wd.switchTo().window(tabs[0]);
+                reallyWait = true;
             });
 	    });
     });
-
 }
 
 
@@ -144,11 +146,15 @@ function testBangUrl(wd, bang) {
 
 function main() {
 	init();
+    console.log("Testing popup");
 	testPopup();
+    console.log("Done Testing popup");
 
+    console.log("Testing Bangs");
     bangs.forEach(function(bang){
 	    testBangs(bang);
     });
+    console.log("Done Testing Bangs");
 
 	// coming soon
 	/*
