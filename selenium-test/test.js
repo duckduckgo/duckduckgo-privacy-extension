@@ -27,11 +27,6 @@ var amazon = {
     reg_url: /www\.bing\.com/,
     text: 'bi'
 },
-    map = {
-    name: 'Map',
-    reg_url: /www\.google\..+\/maps\//,
-    text: 'm'
-},
     news = {
     name: 'News',
     reg_url: /news\.google\.com/,
@@ -48,7 +43,7 @@ var amazon = {
    text: 'yt'
 };
 
-var bangs = [amazon, gimages, bimages, map, news, wikipedia];
+var bangs = [amazon, gimages, bimages, news, wikipedia];
 
 var wd, searchbar, searchbar_text;
 
@@ -79,35 +74,27 @@ function testPopup() {
 	wd.sleep(500);
 
 	searchbar_text = searchbar.getText()
-		.then(function(text){ return text; });
-	new assert.Assertion(searchbar_text).equals('', 'Searchbar is empty');
-
-	wd.wait(searchbar_text);
-	
-	searchbar.sendKeys('Philadelphia');
-
-	testBangs(bangs[0])
-	.then(function(result) {testBangs(bangs[1]);})
-	.then(function(result) {testBangs(bangs[2]);});
-		
-	//test_b.then(function(){console.log('finished testing')});	
+		.then(function(text){ 
+	        new assert.Assertion(text).equals('', 'Searchbar is empty');
+         });
 }
 
 // Test bangs
 function testBangs(bang) {
-	//for (var i = 0; i < bangs.length; i++) {
-	//var bang = bangs[i];
 	var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
 
 	console.log(bang.name);
-	var promise_clickbang = wd.actions()
+	
+    var promise_clickbang = wd.actions()
 		.click(bang_btn)
 		.perform();
 
 	wd.wait(promise_clickbang);
 
+
 	searchbar = wd.findElement({id:'search_form_input_homepage'});
-	var bang_text = searchbar.getAttribute('value')
+	
+    var bang_text = searchbar.getAttribute('value')
 		.then(function(text){ 
 			var control_txt = new RegExp('!' + bang.text);
 			var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
@@ -122,23 +109,24 @@ function testBangs(bang) {
 		.click(search_btn)
 		.perform();
 
-	wd.wait(promise_clickbtn).then(function(){console.log('clicked search for bang ' + bang.text + ' ' + bang.name)});
-
-	// Switch to new tab
-	var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
+	wd.wait(promise_clickbtn).then(function(){
+        console.log('clicked search for bang ' + bang.text + ' ' + bang.name)
+    
+    
+	    // Switch to new tab
+	    var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
 		//console.log(tabs); 
 		new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
-		wd.switchTo().window(tabs[1])
-			.then(function(){ testBangUrl(wd, bang);})
-			.then(function(){ wd.close();})
-			.then(function(){ wd.switchTo().window(tabs[0])});
-		//wd.switchTo().window(tabs[0]);
 		
-	});
+        wd.switchTo().window(tabs[1])
+			.then(function(){ 
+                testBangUrl(wd, bang);
+                wd.close();
+                wd.switchTo().window(tabs[0]);
+            });
+	    });
+    });
 
-	return promise_tab;
-        //}
-	
 }
 
 
@@ -157,7 +145,11 @@ function testBangUrl(wd, bang) {
 function main() {
 	init();
 	testPopup();
-//	testBangs();
+
+    bangs.forEach(function(bang){
+	    testBangs(bang);
+    });
+
 	// coming soon
 	/*
 	testOptions();
