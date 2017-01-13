@@ -84,10 +84,9 @@ function testPopup() {
 // Test bangs
 function testBangs(bang) {
 	var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
-    var promise_clickbang = wd.actions().click(bang_btn).perform();
-
-	wd.wait(promise_clickbang).then(function() {
-        searchbar = wd.findElement({id:'search_form_input_homepage'});
+    
+    wd.actions().click(bang_btn).perform().then(function(){
+            searchbar = wd.findElement({id:'search_form_input_homepage'});
         
             var bang_text = searchbar.getAttribute('value').then(function(text){
 
@@ -107,7 +106,7 @@ function testBangs(bang) {
 		            new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 		
                     wd.switchTo().window(tabs[1]).then(function(){ 
-			var msg = bang.name + ' bang search redirected to the correct site: ';
+			            var msg = bang.name + ' bang search redirected to the correct site: ';
                         testUrl(msg, bang.reg_url);
                         wd.close();
                         wd.switchTo().window(tabs[0]);
@@ -115,19 +114,15 @@ function testBangs(bang) {
 	            });
             }, 5000);
         });
-    }, 1000);
+    });
 }
-
-
 
 // Test whether searching using a bang redirects to the correct site
 function testUrl(msg, test_url) {
-	//var msg = bang.name + ' bang search redirected to the correct site: ';
-	var promise_url = wd.getCurrentUrl()
-		.then(function(url) { 
-			new assert.Assertion(url).matches(test_url, msg + url);
-		});
-	return promise_url;
+    wd.getCurrentUrl().then(function(url) {
+        console.log("URL: " + url);
+        new assert.Assertion(url).matches(test_url, msg + url);
+    });
 }
 
 function testDdgSearch() {
@@ -164,7 +159,7 @@ function testNewTabUrl(click_el, test_url) {
 	});
 }
 
-function testOptionClick(option) {
+function testOptionClick(option, cb) {
     var defaultOpt = localStorage[option];
     console.log("Testing option: " + option);
     wd.actions()
@@ -172,16 +167,42 @@ function testOptionClick(option) {
         .perform()
         .then(function() {
         new assert.Assertion(localStorage[option] !== defaultOpt, "Option test: " + option);
+        cb();
     });
 }
 
 function testOptions() {
-    var options = ['zeroclick_google_right', 'use_post', 'safesearch', 'lastsearch_enabled'];
+    var options = [
+    {
+        id: 'zeroclick_google_right',
+        action: null
+    },{
+        id: 'use_post',
+        action: null
+    },{
+        id: 'safesearch',
+        action: safeSearch,
+    },{
+        id: 'lastsearch_enabled',
+        action: rememberLastSearch
+    }];
+
     options.forEach(function(option){
 	    wd.get(MORE_OPTIONS_URL).then(function(){
-            testOptionClick(option);
+            testOptionClick(option.id, function(){
+                if(option.action)
+                    option.action();
+            });
         });
     });
+}
+
+var rememberLastSearch = function() {
+    console.log("Testing remember last search");
+}
+
+var safeSearch = function() {
+    console.log("Testing Safesearch");
 }
 
 function main() {
