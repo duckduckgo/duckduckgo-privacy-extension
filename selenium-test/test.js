@@ -140,17 +140,19 @@ function testNewTabUrl(click_el, msg, test_url) {
 	}, 5000);
 }
 
+// Test clicking on the More Bangs link redirects to the bangs page
 function testMoreBangs() {
 	var bangs_link = wd.findElement(By.css('.link.bang a'));
 	testNewTabUrl(bangs_link, "More Bangs link opens bangs page", /duckduckgo\.com\/bang/);
 }
-
+// Test clicking on the More Options link redirects to options.html
 function testMoreOptions() {
 	var options_link = wd.findElement(By.css('.link.more a'));
 	var opts_url = new RegExp(MORE_OPTIONS_URL);
 	testNewTabUrl(options_link, "More Options link opens options.html", opts_url);
 }
 
+// Test options are saved in localStorage
 function testOptionClick(option, cb) {
     var defaultOpt = localStorage[option];
     console.log("Testing option: " + option);
@@ -163,6 +165,7 @@ function testOptionClick(option, cb) {
     });
 }
 
+// Test options in options.html
 function testOptions() {
     var options = [
     {
@@ -189,12 +192,28 @@ function testOptions() {
     });
 }
 
+function testPopupOptions() {
+    var meanings = wd.findElement({id:'adv_meanings'});
+    new assert.Assertion(meanings.getAttribute('checked')).isTrue("Meanings enabled");
+    
+    search_btn = wd.findElement({id:'search_button_homepage'});    
+    var reg_url = new RegExp('&d=1');
+ 
+    testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url);
+}
+
 var rememberLastSearch = function() {
     console.log("Testing remember last search");
 }
-
+	
 var safeSearch = function() {
     console.log("Testing Safesearch");
+    wd.get(POPUP_URL);
+    search_btn = wd.findElement({id:'search_button_homepage'});    
+    var reg_url = new RegExp('&kp=-1');
+ 
+    testNewTabUrl(search_btn, "Safe search option turned off in DDG searches", reg_url);
+    
 }
 
 function main() {
@@ -211,10 +230,11 @@ function main() {
     testDdgSearch();
     testMoreBangs();
     testMoreOptions();
+    //testPopupOptions();
     console.log('done testing ddg search');
 	testOptions();
 	// coming soon
-	//tearDown();
+	tearDown();
 }
 
 main();
