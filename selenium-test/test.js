@@ -59,6 +59,7 @@ function init() {
 
 
 function tearDown() {
+    console.log("quit");
      wd.quit();
 }
 
@@ -83,52 +84,47 @@ function testPopup() {
 function testBangs(bang) {
 	var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
 
-	console.log(bang.name);
 	
     var promise_clickbang = wd.actions()
 		.click(bang_btn)
 		.perform();
 
-	wd.wait(promise_clickbang);
+	wd.wait(promise_clickbang).then(function() {
+        console.log("Bang: " + bang.text);
 
+        searchbar = wd.findElement({id:'search_form_input_homepage'});
+        
+            var bang_text = searchbar.getAttribute('value').then(function(text){
+                console.log("Search bar is correct?");
 
-	searchbar = wd.findElement({id:'search_form_input_homepage'});
-	
-    var bang_text = searchbar.getAttribute('value')
-		.then(function(text){ 
-			var control_txt = new RegExp('!' + bang.text);
-			var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
-			new assert.Assertion(text).matches(control_txt, assert_msg);
-		});
+	        var control_txt = new RegExp('!' + bang.text);
+		    var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
+		    new assert.Assertion(text).matches(control_txt, assert_msg);
 
-	wd.wait(bang_text);
+	        var search_btn = wd.findElement({id:'search_button_homepage'});
 
-	var search_btn = wd.findElement({id:'search_button_homepage'});
-
-	var promise_clickbtn = wd.actions()
-		.click(search_btn)
-		.perform();
-
-    var reallyWait = false;
-
-	wd.wait(promise_clickbtn).then(function(){
-        console.log('clicked search for bang ' + bang.text + ' ' + bang.name)
-    
-    
-	    // Switch to new tab
-	    var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
-		//console.log(tabs); 
-		new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
+            console.log("Wait for tab to open");
+        
+            var promise_clickbtn = wd.actions().click(search_btn).perform();
+        
+            wd.wait(promise_clickbtn).then(function(){
+                console.log('clicked search for bang ' + bang.text + ' ' + bang.name)
+   
+	            // Switch to new tab
+	            var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
+		    
+                    console.log(tabs); 
+		            new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 		
-        wd.switchTo().window(tabs[1])
-			.then(function(){ 
-                testBangUrl(wd, bang);
-                wd.close();
-                wd.switchTo().window(tabs[0]);
-                reallyWait = true;
-            });
-	    });
-    });
+                    wd.switchTo().window(tabs[1]).then(function(){ 
+                        testBangUrl(wd, bang);
+                        wd.close();
+                        wd.switchTo().window(tabs[0]);
+                    });
+	            });
+            }, 5000);
+        });
+    }, 5000);
 }
 
 
@@ -150,18 +146,17 @@ function main() {
 	testPopup();
     console.log("Done Testing popup");
 
-    console.log("Testing Bangs");
+    console.log("Loading Bang tests");
     bangs.forEach(function(bang){
 	    testBangs(bang);
     });
-    console.log("Done Testing Bangs");
 
 	// coming soon
 	/*
 	testOptions();
 	testBackground();
 	*/
-	tearDown();
+	//tearDown();
 }
 
 main();
