@@ -145,6 +145,17 @@ function testNewTabUrl(click_el, msg, test_url) {
 	}, 5000);
 }
 
+function testMoreBangs() {
+	var bangs_link = wd.findElement(By.css('.link.bang a'));
+	testNewTabUrl(bangs_link, "More Bangs link opens bangs page", /duckduckgo\.com\/bang/);
+}
+
+function testMoreOptions() {
+	var options_link = wd.findElement(By.css('.link.more a'));
+	var opts_url = new RegExp(MORE_OPTIONS_URL);
+	testNewTabUrl(options_link, "More Options link opens options.html", opts_url);
+}
+
 function testOptionClick(option) {
     var defaultOpt = localStorage[option];
     console.log("Testing option: " + option);
@@ -177,6 +188,8 @@ function main() {
     });
     console.log("Done Testing Bangs");
     testDdgSearch();
+    testMoreBangs();
+    testMoreOptions();
     console.log('done testing ddg search');
 	testOptions();
 	// coming soon
