@@ -45,7 +45,7 @@ var amazon = {
 
 var bangs = [amazon, gimages, bimages, news, wikipedia];
 
-var wd, searchbar, searchbar_text;
+var wd, searchbar, searchbar_text, search_btn;
 
 // Build the webdriver
 function init() {
@@ -128,6 +128,30 @@ function testBangUrl(wd, bang) {
 	return promise_url;
 }
 
+function testDdgSearch() {
+	var x_btn = wd.findElement({id:'search_form_input_clear'});
+	search_btn = wd.findElement({id:'search_button_homepage'});
+
+	wd.actions()
+	.click(x_btn)
+	.click(search_btn)
+	.perform()
+	.then(function() {
+		wd.getAllWindowHandles().then(function(tabs) {
+			new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
+			wd.switchTo().window(tabs[1])
+			.then(function() {
+				wd.getCurrentUrl()
+				.then (function(url) {
+					new assert.Assertion(url).matches(/duckduckgo\.com/, 'Searching on DDG');
+				});
+				wd.close();
+				wd.switchTo().window(tabs[0]);
+			});
+		});
+	});
+}
+
 
 function main() {
 	init();
@@ -139,8 +163,9 @@ function main() {
     bangs.forEach(function(bang){
 	    testBangs(bang);
     });
-
-    console.log("Done with bangs");
+    console.log("Done Testing Bangs");
+    testDdgSearch();
+    console.log('done testing ddg search');
 	// coming soon
 	/*
 	testOptions();
