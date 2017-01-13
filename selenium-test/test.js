@@ -186,7 +186,7 @@ function main() {
 	testOptions();
 	testBackground();
 	*/
-//	tearDown();
+	tearDown();
 }
 
 main();
