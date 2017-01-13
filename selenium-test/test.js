@@ -96,32 +96,16 @@ function testBangs(bang) {
 
 	        var search_btn = wd.findElement({id:'search_button_homepage'});
         
-            var promise_clickbtn = wd.actions().click(search_btn).perform();
-        
-            wd.wait(promise_clickbtn).then(function(){
-                console.log('clicked search for bang ' + bang.text + ' ' + bang.name)
-   
-	            // Switch to new tab
-	            var promise_tab =  wd.getAllWindowHandles().then(function(tabs) { 
-		            new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
-		
-                    wd.switchTo().window(tabs[1]).then(function(){ 
-			var msg = bang.name + ' bang search redirected to the correct site: ';
-                        testUrl(msg, bang.reg_url);
-                        wd.close();
-                        wd.switchTo().window(tabs[0]);
-                    });
-	            });
-            }, 5000);
+		var msg = bang.name + ' bang search redirected to the correct site: ';
+		testNewTabUrl(search_btn, msg, bang.reg_url);
         });
     });
 }
 
 
 
-// Test whether searching using a bang redirects to the correct site
+// Test URL matches the expected one
 function testUrl(msg, test_url) {
-	//var msg = bang.name + ' bang search redirected to the correct site: ';
 	var promise_url = wd.getCurrentUrl()
 		.then(function(url) { 
 			new assert.Assertion(url).matches(test_url, msg + url);
@@ -129,6 +113,7 @@ function testUrl(msg, test_url) {
 	return promise_url;
 }
 
+// Test queries in DDG searchbar redirect to duckduckgo.com
 function testDdgSearch() {
 	var x_btn = wd.findElement({id:'search_form_input_clear'});
 	search_btn = wd.findElement({id:'search_button_homepage'});
@@ -137,11 +122,12 @@ function testDdgSearch() {
 	.click(x_btn)
 	.perform()
 	.then(function() {
-		testNewTabUrl(search_btn, /duckduckgo\.com/);
+		testNewTabUrl(search_btn, 'Searching on DDG', /duckduckgo\.com/);
 	});
 }
 
-function testNewTabUrl(click_el, test_url) {
+// Test newly opened tab and its URL
+function testNewTabUrl(click_el, msg, test_url) {
 	wd.actions()
 	.click(click_el)
 	.perform()
@@ -150,17 +136,12 @@ function testNewTabUrl(click_el, test_url) {
 			new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 			wd.switchTo().window(tabs[1])
 			.then(function() {
-				var msg = 'Searching on DDG';
 				testUrl(msg, test_url);
-				/*wd.getCurrentUrl()
-				.then (function(url) {
-					new assert.Assertion(url).matches(test_url, 'Searching on DDG');
-				});*/
 				wd.close();
 				wd.switchTo().window(tabs[0]);
 			});
 		});
-	});
+	}, 5000);
 }
 
 
@@ -177,12 +158,7 @@ function main() {
     console.log("Done Testing Bangs");
     testDdgSearch();
     console.log('done testing ddg search');
-	// coming soon
-	/*
-	testOptions();
-	testBackground();
-	*/
-	//tearDown();
+    //tearDown();
 }
 
 main();
