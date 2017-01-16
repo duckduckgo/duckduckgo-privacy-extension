@@ -135,9 +135,9 @@ function testNewTabUrl(click_el, msg, test_url) {
 				testUrl(msg, test_url);
 				wd.close();
 				wd.switchTo().window(tabs[0]);
-			});
-		});
-	}, 5000);
+			}, 5000);
+		}, 1000);
+	});
 }
 
 // Test clicking on the More Bangs link redirects to the bangs page
