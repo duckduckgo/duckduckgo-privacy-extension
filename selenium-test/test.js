@@ -233,12 +233,12 @@ function testFeelingDucky() {
 
     searchbar.sendKeys('Philadelphia')
     .then(function() {
-	    wd.actions()
-	    .click(feelducky)
-	    .perform()
-	    .then(function() {
-		return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
-	    });    
+            wd.actions()
+            .click(feelducky)
+            .perform()
+            .then(function() {
+                return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
+            });    
     });
 }
 
