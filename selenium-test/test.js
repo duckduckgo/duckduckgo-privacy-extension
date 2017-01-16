@@ -124,7 +124,7 @@ return 	wd.actions()
 
 // Test newly opened tab and its URL
 function testNewTabUrl(click_el, msg, test_url) {
-	wd.actions()
+	return wd.actions()
 	.click(click_el)
 	.perform()
 	.then(function() {
@@ -145,6 +145,7 @@ function testMoreBangs() {
 	var bangs_link = wd.findElement(By.css('.link.bang a'));
 	testNewTabUrl(bangs_link, "More Bangs link opens bangs page", /duckduckgo\.com\/bang/);
 }
+
 // Test clicking on the More Options link redirects to options.html
 function testMoreOptions() {
 	var options_link = wd.findElement(By.css('.link.more a'));
@@ -192,20 +193,32 @@ function testOptions() {
     });
 }
 
+// Test "show meanings" option, checked and unchecked
 function testMeanings() {
     var meanings = wd.findElement({id:'adv_meanings'});
-    //new assert.Assertion(meanings.getAttribute('checked')).isTrue("Meanings enabled");
     
     search_btn = wd.findElement({id:'search_button_homepage'});    
     var reg_url = /[^&d=1]/;
  
-    testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url);
+    testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url)
+    .then(function() {
+    reg_url = new RegExp('&d=1');
+    search_btn = wd.findElement({id:'search_button_homepage'});    
+    
+    wd.actions()
+    .click(meanings)
+    .perform()
+    .then(function() {
+        testNewTabUrl(search_btn, "Meanings turned off for DDG searches", reg_url);
+    });
+});
 }
 
 var rememberLastSearch = function() {
     console.log("Testing remember last search");
 }
-	
+
+
 var safeSearch = function() {
     console.log("Testing Safesearch");
     wd.get(POPUP_URL);
@@ -217,7 +230,8 @@ var safeSearch = function() {
 }
 
 function main() {
-	init();
+    init();
+    
     console.log("Testing popup");
 	testPopup();
     console.log("Done Testing popup");
@@ -227,17 +241,22 @@ function main() {
 	    testBangs(bang);
     });
     console.log("Done Testing Bangs");
+    
     testDdgSearch()
     .then(function() {
-    testMoreBangs();})
+        testMoreBangs();
+    })
     .then(function() {
-    testMoreOptions();})
+        testMoreOptions();
+    })
     .then(function() {
-    testMeanings();});
+        testMeanings();
+    });
     console.log('done testing ddg search');
-	testOptions();
-	// coming soon
-	tearDown();
+    
+    testOptions();
+    
+    tearDown();
 }
 
 main();
