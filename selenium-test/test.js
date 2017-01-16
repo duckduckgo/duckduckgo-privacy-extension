@@ -207,18 +207,24 @@ var rememberLastSearch = function() {
     console.log("Testing remember last search");
 }
 
+// Test expanding and collapsing the Popup modal advanced content
 function testExpandCollapse() {
     var expand_btn = wd.findElement({id:'icon_advanced'});
-
-    wd.actions()
-    .click(expand_btn)
-    .perform()
-    .then(function() {
-        var modal_content = wd.findElement({id:'advanced'}).getCssValue('display')
-        .then(function(display) {
-             new assert.Assertion(display).equals('none', 'Popup modal collapsed');
-        });
-    });
+    
+    // First collapse, then click again to expand
+    for (var i = 0; i < 2; i++) {
+	    wd.actions()
+	    .click(expand_btn)
+	    .perform()
+	    .then(function() {
+		var modal_content = wd.findElement({id:'advanced'}).getCssValue('display')
+		.then(function(display) {
+                     var test_display = i? 'none' : 'block';
+		     var state = i? 'collapsed' : 'expanded';
+                     new assert.Assertion(display).equals(test_display, 'Popup modal ' + state);
+		});
+	    });
+    }
 }
 
 
