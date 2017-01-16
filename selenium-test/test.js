@@ -103,7 +103,7 @@ function testBangs(bang) {
 
 // Test whether searching using a bang redirects to the correct site
 function testUrl(msg, test_url) {
-    wd.getCurrentUrl().then(function(url) {
+   return  wd.getCurrentUrl().then(function(url) {
         console.log("URL: " + url);
         new assert.Assertion(url).matches(test_url, msg + url);
     });
@@ -114,7 +114,7 @@ function testDdgSearch() {
 	var x_btn = wd.findElement({id:'search_form_input_clear'});
 	search_btn = wd.findElement({id:'search_button_homepage'});
 
-	wd.actions()
+return 	wd.actions()
 	.click(x_btn)
 	.perform()
 	.then(function() {
@@ -192,12 +192,12 @@ function testOptions() {
     });
 }
 
-function testPopupOptions() {
+function testMeanings() {
     var meanings = wd.findElement({id:'adv_meanings'});
-    new assert.Assertion(meanings.getAttribute('checked')).isTrue("Meanings enabled");
+    //new assert.Assertion(meanings.getAttribute('checked')).isTrue("Meanings enabled");
     
     search_btn = wd.findElement({id:'search_button_homepage'});    
-    var reg_url = new RegExp('&d=1');
+    var reg_url = /[^&d=1]/;
  
     testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url);
 }
@@ -227,10 +227,13 @@ function main() {
 	    testBangs(bang);
     });
     console.log("Done Testing Bangs");
-    testDdgSearch();
-    testMoreBangs();
-    testMoreOptions();
-    //testPopupOptions();
+    testDdgSearch()
+    .then(function() {
+    testMoreBangs();})
+    .then(function() {
+    testMoreOptions();})
+    .then(function() {
+    testMeanings();});
     console.log('done testing ddg search');
 	testOptions();
 	// coming soon
