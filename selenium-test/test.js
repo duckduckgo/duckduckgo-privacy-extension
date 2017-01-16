@@ -207,6 +207,20 @@ var rememberLastSearch = function() {
     console.log("Testing remember last search");
 }
 
+function testExpandCollapse() {
+    var expand_btn = wd.findElement({id:'icon_advanced'});
+
+    wd.actions()
+    .click(expand_btn)
+    .perform()
+    .then(function() {
+        var modal_content = wd.findElement({id:'advanced'}).getCssValue('display')
+        .then(function(display) {
+             new assert.Assertion(display).equals('none', 'Popup modal collapsed');
+        });
+    });
+}
+
 
 var safeSearch = function() {
     console.log("Testing Safesearch");
@@ -240,6 +254,9 @@ function main() {
     })
     .then(function() {
         testMeanings();
+    })
+    .then(function() {
+        testExpandCollapse();
     })
     .then(function() {
         testOptions();
