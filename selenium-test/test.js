@@ -92,7 +92,7 @@ function testBangs(bang) {
 	        var control_txt = new RegExp('!' + bang.text);
 	        var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
 	   
-            new assert.Assertion(text).matches(control_txt, assert_msg);
+                new assert.Assertion(text).matches(control_txt, assert_msg);
 
 	        var search_btn = wd.findElement({id:'search_button_homepage'});
 	        var msg = bang.name + ' bang search redirected to the correct site: ';
@@ -128,13 +128,13 @@ function testNewTabUrl(click_el, msg, test_url) {
 	.click(click_el)
 	.perform()
 	.then(function() {
-		wd.getAllWindowHandles().then(function(tabs) {
+		return wd.getAllWindowHandles().then(function(tabs) {
 			new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
 			wd.switchTo().window(tabs[1])
 			.then(function() {
 				testUrl(msg, test_url);
 				wd.close();
-				wd.switchTo().window(tabs[0]);
+				return wd.switchTo().window(tabs[0]);
 			}, 5000);
 		}, 1000);
 	});
@@ -198,20 +198,9 @@ function testMeanings() {
     var meanings = wd.findElement({id:'adv_meanings'});
     
     search_btn = wd.findElement({id:'search_button_homepage'});    
-    var reg_url = /[^&d=1]/;
+    var reg_url =  /^((?!\&d\=1).)*$/;
  
-    testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url)
-    .then(function() {
-    reg_url = new RegExp('&d=1');
-    search_btn = wd.findElement({id:'search_button_homepage'});    
-    
-    wd.actions()
-    .click(meanings)
-    .perform()
-    .then(function() {
-        testNewTabUrl(search_btn, "Meanings turned off for DDG searches", reg_url);
-    });
-});
+    return testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url);
 }
 
 var rememberLastSearch = function() {
@@ -251,10 +240,13 @@ function main() {
     })
     .then(function() {
         testMeanings();
+    })
+    .then(function() {
+        testOptions();
     });
     console.log('done testing ddg search');
     
-    testOptions();
+    //testOptions();
     
     tearDown();
 }
