@@ -50,12 +50,12 @@ var wd, searchbar, searchbar_text, search_btn;
 
 // Build the webdriver
 function init() {
-	var options = new chrome.Options().addExtensions(EXT_PATH);
+        var options = new chrome.Options().addExtensions(EXT_PATH);
 
-	wd = new Builder()
-		.forBrowser('chrome')
-		.setChromeOptions(options)
-		.build();
+        wd = new Builder()
+                .forBrowser('chrome')
+                .setChromeOptions(options)
+                .build();
 }
 
 function tearDown() {
@@ -66,37 +66,37 @@ function tearDown() {
 // Test functionality in the popup modal:
 // searchbar, bangs and visible options
 function testPopup() {
-	wd.get(POPUP_URL);
+        wd.get(POPUP_URL);
 
-	// Test searchbar in the popup modal
-	searchbar = wd.findElement({id:'search_form_input_homepage'});
-	new assert.Assertion(searchbar.isDisplayed(), 'Searchbar exists and is displayed');
+        // Test searchbar in the popup modal
+        searchbar = wd.findElement({id:'search_form_input_homepage'});
+        new assert.Assertion(searchbar.isDisplayed(), 'Searchbar exists and is displayed');
 
-	wd.sleep(500);
+        wd.sleep(500);
 
-	searchbar_text = searchbar.getText()
-		.then(function(text){ 
-	        new assert.Assertion(text).equals('', 'Searchbar is empty');
+        searchbar_text = searchbar.getText()
+                .then(function(text){ 
+                new assert.Assertion(text).equals('', 'Searchbar is empty');
          });
 }
 
 // Test bangs
 function testBangs(bang) {
-	var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
+        var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
     
     wd.actions().click(bang_btn).perform().then(function(){
         searchbar = wd.findElement({id:'search_form_input_homepage'});
         
         searchbar.getAttribute('value').then(function(text){
 
-	        var control_txt = new RegExp('!' + bang.text);
-	        var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
-	   
+                var control_txt = new RegExp('!' + bang.text);
+                var assert_msg = 'Searchbar contains ' + bang.name + ' bang';
+           
                 new assert.Assertion(text).matches(control_txt, assert_msg);
 
-	        var search_btn = wd.findElement({id:'search_button_homepage'});
-	        var msg = bang.name + ' bang search redirected to the correct site: ';
-	        testNewTabUrl(search_btn, msg, bang.reg_url);
+                var search_btn = wd.findElement({id:'search_button_homepage'});
+                var msg = bang.name + ' bang search redirected to the correct site: ';
+                testNewTabUrl(search_btn, msg, bang.reg_url);
         });
     });
 }
@@ -111,46 +111,46 @@ function testUrl(msg, test_url) {
 
 // Test queries in DDG searchbar redirect to duckduckgo.com
 function testDdgSearch() {
-	var x_btn = wd.findElement({id:'search_form_input_clear'});
-	search_btn = wd.findElement({id:'search_button_homepage'});
+        var x_btn = wd.findElement({id:'search_form_input_clear'});
+        search_btn = wd.findElement({id:'search_button_homepage'});
 
-return 	wd.actions()
-	.click(x_btn)
-	.perform()
-	.then(function() {
-		testNewTabUrl(search_btn, 'Searching on DDG', /duckduckgo\.com/);
-	});
+return  wd.actions()
+        .click(x_btn)
+        .perform()
+        .then(function() {
+                testNewTabUrl(search_btn, 'Searching on DDG', /duckduckgo\.com/);
+        });
 }
 
 // Test newly opened tab and its URL
 function testNewTabUrl(click_el, msg, test_url) {
-	return wd.actions()
-	.click(click_el)
-	.perform()
-	.then(function() {
-		return wd.getAllWindowHandles().then(function(tabs) {
-			new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
-			wd.switchTo().window(tabs[1])
-			.then(function() {
-				testUrl(msg, test_url);
-				wd.close();
-				return wd.switchTo().window(tabs[0]);
-			}, 5000);
-		}, 1000);
-	});
+        return wd.actions()
+        .click(click_el)
+        .perform()
+        .then(function() {
+                return wd.getAllWindowHandles().then(function(tabs) {
+                        new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
+                        wd.switchTo().window(tabs[1])
+                        .then(function() {
+                                testUrl(msg, test_url);
+                                wd.close();
+                                return wd.switchTo().window(tabs[0]);
+                        }, 5000);
+                }, 1000);
+        });
 }
 
 // Test clicking on the More Bangs link redirects to the bangs page
 function testMoreBangs() {
-	var bangs_link = wd.findElement(By.css('.link.bang a'));
-	testNewTabUrl(bangs_link, "More Bangs link opens bangs page", /duckduckgo\.com\/bang/);
+        var bangs_link = wd.findElement(By.css('.link.bang a'));
+        testNewTabUrl(bangs_link, "More Bangs link opens bangs page", /duckduckgo\.com\/bang/);
 }
 
 // Test clicking on the More Options link redirects to options.html
 function testMoreOptions() {
-	var options_link = wd.findElement(By.css('.link.more a'));
-	var opts_url = new RegExp(MORE_OPTIONS_URL);
-	testNewTabUrl(options_link, "More Options link opens options.html", opts_url);
+        var options_link = wd.findElement(By.css('.link.more a'));
+        var opts_url = new RegExp(MORE_OPTIONS_URL);
+        testNewTabUrl(options_link, "More Options link opens options.html", opts_url);
 }
 
 // Test options are saved in localStorage
@@ -184,7 +184,7 @@ function testOptions() {
     }];
 
     options.forEach(function(option){
-	    wd.get(MORE_OPTIONS_URL).then(function(){
+            wd.get(MORE_OPTIONS_URL).then(function(){
             testOptionClick(option.id, function(){
                 if(option.action)
                     option.action();
@@ -215,18 +215,32 @@ function testExpandCollapse(collapsed) {
     .click(expand_btn)
     .perform()
     .then(function() {
-	var modal_content = wd.findElement({id:'advanced'}).getCssValue('display')
-	.then(function(display) {
-	     var test_display = collapsed? 'none' : 'block';
-	     var state = collapsed? 'collapsed' : 'expanded';
-	     new assert.Assertion(display).equals(test_display, 'Popup modal ' + state);
-	});
+        var modal_content = wd.findElement({id:'advanced'}).getCssValue('display')
+        .then(function(display) {
+             var test_display = collapsed? 'none' : 'block';
+             var state = collapsed? 'collapsed' : 'expanded';
+             new assert.Assertion(display).equals(test_display, 'Popup modal ' + state);
+        });
     });
 }
 
-function clickExpandCollapse(collapsed) {
-}
+// Test performing a search after clicking on "I'm Feeling Ducky"
+function testFeelingDucky() {
+    var feelducky = wd.findElement({id:'adv_ducky'});
+    search_btn = wd.findElement({id:'search_button_homepage'});
+    searchbar = wd.findElement({id:'search_form_input_homepage'});
+    var reg_url = /^((duckduckgo\.com).)*$/;
 
+    searchbar.sendKeys('Philadelphia')
+    .then(function() {
+	    wd.actions()
+	    .click(feelducky)
+	    .perform()
+	    .then(function() {
+		return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
+	    });    
+    });
+}
 
 var safeSearch = function() {
     console.log("Testing Safesearch");
@@ -242,12 +256,12 @@ function main() {
     init();
     
     console.log("Testing popup");
-	testPopup();
+        testPopup();
     console.log("Done Testing popup");
 
     console.log("Loading Bang tests");
     bangs.forEach(function(bang){
-	    testBangs(bang);
+            testBangs(bang);
     });
     console.log("Done Testing Bangs");
     
@@ -266,6 +280,9 @@ function main() {
     })
     .then(function() {
          testExpandCollapse(false);
+    })
+    .then(function() {
+         testFeelingDucky();
     })
     .then(function() {
         testOptions();
