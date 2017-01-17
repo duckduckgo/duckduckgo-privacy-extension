@@ -136,7 +136,7 @@ function testNewTabUrl(click_el, msg, test_url) {
                                 wd.close();
                                 return wd.switchTo().window(tabs[0]);
                         }, 5000);
-                }, 1000);
+                }, 5000);
         });
 }
 
