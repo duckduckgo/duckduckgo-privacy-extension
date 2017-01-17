@@ -1,4 +1,4 @@
-const {Builder, By, promise, until} = require('selenium-webdriver');
+const {Builder, By, Condition, promise, until} = require('selenium-webdriver');
 var chrome = require('selenium-webdriver/chrome'),
     webdriver = require('selenium-webdriver'),
     test = require('selenium-webdriver/testing'),
@@ -129,12 +129,14 @@ function testNewTabUrl(click_el, msg, test_url) {
         .perform()
         .then(function() {
                 return wd.getAllWindowHandles().then(function(tabs) {
-                        new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
-                        wd.switchTo().window(tabs[1])
-                        .then(function() {
+                        wd.wait(new Condition('new tab opened', function() {return tabs.length > 1})).then(function() {
+                            new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
+                            wd.switchTo().window(tabs[1])
+                            .then(function() {
                                 testUrl(msg, test_url);
                                 wd.close();
                                 return wd.switchTo().window(tabs[0]);
+                            }, 5000);
                         }, 5000);
                 }, 5000);
         });
