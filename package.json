@@ -1,6 +1,6 @@
 {
   "name": "chrome_zeroclickinfo",
-  "version": "0.210.0",
+  "version": "0.100.0",
   "engines": {
     "node": ">=3.10.10"
   },
