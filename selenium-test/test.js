@@ -1,4 +1,3 @@
-const {Builder, By, Condition, promise, until} = require('selenium-webdriver');
 var chrome = require('selenium-webdriver/chrome'),
     webdriver = require('selenium-webdriver'),
     test = require('selenium-webdriver/testing'),
@@ -53,7 +52,7 @@ var wd, searchbar, searchbar_text, search_btn;
 function init() {
         var options = new chrome.Options().addExtensions(EXT_PATH);
 
-        wd = new Builder()
+        wd = new webdriver.Builder()
                 .forBrowser('chrome')
                 .setChromeOptions(options)
                 .build();
@@ -135,7 +134,7 @@ function testNewTabUrl(click_el, msg, test_url) {
         .perform()
         .then(function() {
                 return wd.getAllWindowHandles().then(function(tabs) {
-                        wd.wait(new Condition('new tab opened', function() {return tabs.length > 1}), 5000).then(function() {
+                        wd.wait(new webdriver.Condition('new tab opened', function() {return tabs.length > 1}), 5000).then(function() {
                             new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
                             if (tabs.length <= 1) {
                                 new logger.Logger('Expected new tab to open - going to next test', logger.Level.WARNING);
@@ -154,13 +153,13 @@ function testNewTabUrl(click_el, msg, test_url) {
 
 // Test clicking on the More Bangs link redirects to the bangs page
 function testMoreBangs() {
-        var bangs_link = wd.findElement(By.css('.link.bang a'));
+        var bangs_link = wd.findElement(webdriver.By.css('.link.bang a'));
         testNewTabUrl(bangs_link, "More Bangs link opens bangs page", /duckduckgo\.com\/bang/);
 }
 
 // Test clicking on the More Options link redirects to options.html
 function testMoreOptions() {
-        var options_link = wd.findElement(By.css('.link.more a'));
+        var options_link = wd.findElement(webdriver.By.css('.link.more a'));
         var opts_url = new RegExp(MORE_OPTIONS_URL);
         testNewTabUrl(options_link, "More Options link opens options.html", opts_url);
 }
