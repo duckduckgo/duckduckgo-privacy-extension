@@ -6,6 +6,7 @@
   },
   "repository": "duckduckgo/chrome-zeroclickinfo",
   "scripts": {
+    "postinstall" : "export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "test": "cd selenium-test && node test.js"
   },
   "devDependencies": {
