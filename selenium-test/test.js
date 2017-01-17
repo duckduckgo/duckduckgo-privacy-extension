@@ -226,19 +226,17 @@ function testExpandCollapse(collapsed) {
 
 // Test performing a search after clicking on "I'm Feeling Ducky"
 function testFeelingDucky() {
-    var feelducky = wd.findElement({id:'adv_ducky'});
     search_btn = wd.findElement({id:'search_button_homepage'});
     searchbar = wd.findElement({id:'search_form_input_homepage'});
     var reg_url = /^((duckduckgo\.com).)*$/;
 
-    searchbar.sendKeys('Philadelphia')
+    var feelducky = wd.findElement({id:'adv_ducky'});
+    wd.wait(until.elementIsVisible(feelducky), 5000).click(feelducky)
     .then(function() {
-            wd.actions()
-            .click(feelducky)
-            .perform()
-            .then(function() {
-                return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
-            });    
+	    searchbar.sendKeys('Philadelphia')
+	    .then(function() {
+		return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
+	    });
     });
 }
 
