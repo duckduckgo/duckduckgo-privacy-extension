@@ -1,0 +1,17 @@
+{
+  "name": "chrome_zeroclickinfo",
+  "version": "0.100.0",
+  "engines": {
+    "node": ">=4.2"
+  },
+  "repository": "duckduckgo/chrome-zeroclickinfo",
+  "scripts": {
+    "postinstall" : "export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+    "test": "cd selenium-test && node test.js"
+  },
+  "devDependencies": {
+    "chromedriver": "^2.27.2",
+    "localStorage": "^1.0.3",
+    "selenium-webdriver": "^3.0.1"
+  }
+}
