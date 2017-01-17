@@ -2,7 +2,7 @@
   "name": "chrome_zeroclickinfo",
   "version": "0.100.0",
   "engines": {
-    "node": ">=3.10.10"
+    "node": ">=4.2"
   },
   "repository": "duckduckgo/chrome-zeroclickinfo",
   "scripts": {
