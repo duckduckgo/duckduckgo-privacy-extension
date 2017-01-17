@@ -105,11 +105,11 @@ function testBangs(bang) {
 // Return true if searching using a bang redirects to the correct site
 function testUrl(msg, test_url) {
    return  wd.getCurrentUrl().then(function(url) {
-        console.log("URL: " + url);
+        console.log("URL: " + url); 
         if (url.match(test_url)){
             return true;
         } else {
-            logger.warning('Expected URL differs from current URL: ' + url);
+            new logger.Logger('Expected URL differs from current URL: ' + url, logger.Level.WARNING);
             return false;
         }
     });
@@ -138,7 +138,7 @@ function testNewTabUrl(click_el, msg, test_url) {
                         wd.wait(new Condition('new tab opened', function() {return tabs.length > 1})).then(function() {
                             new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
                             if (tabs.length <= 1) {
-                                logger.warning('Expected new tab to open - going to next test');
+                                new logger.Logger('Expected new tab to open - going to next test', logger.Level.WARNING);
                             } else {
                                 wd.switchTo().window(tabs[1])
                                 .then(function() {
