@@ -58,14 +58,14 @@ function init() {
                 .build();
 }
 
+// Close the browser window
 function tearDown() {
-    console.log("quit");
-     wd.quit();
+    wd.quit();
 }
 
 // Test functionality in the popup modal:
 // searchbar, bangs and visible options
-function testPopup() {
+function testSearchbar() {
         wd.get(POPUP_URL);
 
         // Test searchbar in the popup modal
@@ -80,7 +80,7 @@ function testPopup() {
          });
 }
 
-// Test bangs
+// Test clicking on bangs and then performing a search
 function testBangs(bang) {
         var bang_btn = wd.findElement({id:BASE_BANG_ID + bang.text});
     
@@ -203,6 +203,7 @@ function testMeanings() {
     return testNewTabUrl(search_btn, "Meanings showing for DDG searches", reg_url);
 }
 
+// No way to test this so far. Doesn't seem to work on Chrome anyway
 var rememberLastSearch = function() {
     console.log("Testing remember last search");
 }
@@ -230,16 +231,19 @@ function testFeelingDucky() {
     searchbar = wd.findElement({id:'search_form_input_homepage'});
     var reg_url = /^((duckduckgo\.com).)*$/;
 
-    var feelducky = wd.findElement({id:'adv_ducky'});
-    wd.wait(until.elementIsVisible(feelducky), 5000).click(feelducky)
+    //var feelducky = wd.findElement({id:'adv_ducky'});
+    wd.actions()
+    .click(wd.findElement({id:'adv_ducky'}))
+    .perform()
     .then(function() {
-	    searchbar.sendKeys('Philadelphia')
-	    .then(function() {
-		return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
-	    });
+       searchbar.sendKeys('Philadelphia')
+       .then(function() {
+            return testNewTabUrl(search_btn, "Feeling ducky redirects to site", reg_url);    
+       });
     });
 }
 
+// Test turning safe search off adds the right param to the search URL
 var safeSearch = function() {
     console.log("Testing Safesearch");
     wd.get(POPUP_URL);
@@ -250,18 +254,15 @@ var safeSearch = function() {
     
 }
 
+// Run all the tests
 function main() {
     init();
     
-    console.log("Testing popup");
-        testPopup();
-    console.log("Done Testing popup");
+    testSearchbar();
 
-    console.log("Loading Bang tests");
     bangs.forEach(function(bang){
             testBangs(bang);
     });
-    console.log("Done Testing Bangs");
     
     testDdgSearch()
     .then(function() {
@@ -279,15 +280,12 @@ function main() {
     .then(function() {
          testExpandCollapse(false);
     })
-    .then(function() {
+    /*.then(function() {
          testFeelingDucky();
-    })
+    })*/
     .then(function() {
         testOptions();
     });
-    console.log('done testing ddg search');
-    
-    //testOptions();
     
     tearDown();
 }
