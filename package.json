@@ -1,0 +1,14 @@
+{
+  "name": "chrome_zeroclickinfo",
+  "version": "0.210.0",
+  "engines": {
+    "node": ">=3.10.10"
+  },
+  "repository": "duckduckgo/chrome-zeroclickinfo",
+  "devDependencies": {},
+  "dependencies": {
+    "chromedriver": "^2.27.2",
+    "localStorage": "^1.0.3",
+    "selenium-webdriver": "^3.0.1"
+  }
+}
