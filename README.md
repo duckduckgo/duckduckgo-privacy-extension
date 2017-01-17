@@ -13,6 +13,6 @@ Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/jav
 - [Node.js](https://nodejs.org/en/)
 - A Google Chrome executable (you must have the browser installed on your machine)
 
-To install dependencies, just run `npm install'.
+To install dependencies, just run `npm install`.
 
-For tests, run 'npm test'.
+For tests, run `npm test`.
