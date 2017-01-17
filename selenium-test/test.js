@@ -135,7 +135,7 @@ function testNewTabUrl(click_el, msg, test_url) {
         .perform()
         .then(function() {
                 return wd.getAllWindowHandles().then(function(tabs) {
-                        wd.wait(new Condition('new tab opened', function() {return tabs.length > 1})).then(function() {
+                        wd.wait(new Condition('new tab opened', function() {return tabs.length > 1}), 5000).then(function() {
                             new assert.Assertion(tabs.length).greaterThan(1, 'New tab opened ' + tabs);
                             if (tabs.length <= 1) {
                                 new logger.Logger('Expected new tab to open - going to next test', logger.Level.WARNING);
@@ -148,7 +148,7 @@ function testNewTabUrl(click_el, msg, test_url) {
                             }, 5000);
                             }
                         }, 5000);
-                }, 5000);
+                });
         });
 }
 
