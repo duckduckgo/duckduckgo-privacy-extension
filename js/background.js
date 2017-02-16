@@ -157,9 +157,9 @@ chrome.webRequest.onBeforeRequest.addListener(
             "*://duckduckgo.com/?*",
             "*://*.duckduckgo.com/?*",
             "*://*.google.*/*",
-            "*://google.*/*"
+            "*://google.*/*",
         ],
-        types: allTypes
+        types: allTypes,
     },
     ["blocking"]
 );

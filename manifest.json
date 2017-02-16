@@ -43,6 +43,7 @@
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
+        "all_frames": true,
         "css": ["css/noatb.css"]
       }
     ],
