@@ -146,7 +146,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         'xmlhttprequest',
         'other'
       ];
-                                                                ];
+      
       var newURL = e.url + "&atb=" + localStorage['atb'];
       return {
         redirectUrl: newURL
