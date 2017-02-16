@@ -42,7 +42,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["https://*.duckduckgo.com/*", "https://duckduckgo.com/*"],
+        "matches": ["<all_urls>"],
         "css": ["css/noatb.css"]
       }
     ],

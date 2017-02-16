@@ -120,9 +120,9 @@ chrome.contextMenus.create({
 // Add ATB param
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
-      // alert(e);
+      localStorage[e.url] = "analyzing...";
       if (e.url.indexOf('google.*/gen_204*') !== -1) {
-          alert(e.url + "Blocked");
+          localStorage[e.url] =  "Blocked";
           return {cancel: true};
       }
 
