@@ -50,6 +50,6 @@
         "contextMenus",
         "webRequest",
         "webRequestBlocking",
-        "*://*.duckduckgo.com/"
+        "*://*/*"
     ]
 }
