@@ -148,7 +148,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             "*://*.google.*/*",
             "*://google.*/*"
         ],
-        types: ["main_frame"]
+//        types: ["main_frame"]
     },
     ["blocking"]
 );
