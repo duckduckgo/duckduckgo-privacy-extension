@@ -120,7 +120,7 @@ chrome.contextMenus.create({
 // Add ATB param
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
-      if (e.url.indexOf('google.*/gen_204*') {
+      if (e.url.indexOf('google.*/gen_204*') !== -1) {
         return {cancel: true};
       }
 
@@ -143,7 +143,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         urls: [
             "*://duckduckgo.com/?*",
             "*://*.duckduckgo.com/?*",
-            "*://google.*/gen_204*",
+            "*://google.*/gen_204*"
         ],
         types: ["main_frame"]
     },
