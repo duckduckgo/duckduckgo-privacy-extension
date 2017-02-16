@@ -133,7 +133,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             var tabId = tabs[0].id;
             $this.tabTrackers[tabId] += 1;
 
-            chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId]});
+            chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
           });
           
           return {cancel: true};
