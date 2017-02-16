@@ -123,6 +123,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       localStorage[e.url] = "analyzing...";
       if (e.url.search('/*google\.*\/gen_204*') !== -1) {
           localStorage[e.url] =  "Blocked";
+          chrome.browserAction.setBadgeText({text: "1"});
           return {cancel: true};
       }
 
