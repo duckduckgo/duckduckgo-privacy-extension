@@ -136,6 +136,17 @@ chrome.webRequest.onBeforeRequest.addListener(
         return;
       }
 
+      var allTypes = [
+        'main_frame',
+        'sub_frame',
+        'stylesheet',
+        'script',
+        'image',
+        'object',
+        'xmlhttprequest',
+        'other'
+      ];
+                                                                ];
       var newURL = e.url + "&atb=" + localStorage['atb'];
       return {
         redirectUrl: newURL
@@ -148,7 +159,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             "*://*.google.*/*",
             "*://google.*/*"
         ],
-//        types: ["main_frame"]
+        types: allTypes
     },
     ["blocking"]
 );
