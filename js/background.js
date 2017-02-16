@@ -143,9 +143,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     },
     {
         urls: [
-            "*://duckduckgo.com/?*",
-            "*://*.duckduckgo.com/?*",
-            "*://google.*/*",
+            "<all_urls>",
         ],
         types: [
         'main_frame',
