@@ -28,6 +28,8 @@ function Background() {
 
   localStorage['os'] = os;
 
+  var tabTrackers = {};
+
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
     if (details.reason !== "install") {
@@ -123,7 +125,17 @@ chrome.webRequest.onBeforeRequest.addListener(
       localStorage[e.url] = "analyzing...";
       if (e.url.search('/*google\.*\/gen_204*') !== -1) {
           localStorage[e.url] =  "Blocked";
-          chrome.browserAction.setBadgeText({text: "1"});
+          
+          chrome.tabs.query({
+            'currentWindow': true,
+            'active': true
+          }, function(tabs) {
+            var tabId = tabs[0].id;
+            tabTrackers[tabId] += 1;
+
+            chrome.browserAction.setBadgeText({tabId: tabId, text: tabTrackers[tabId]});
+          });
+          
           return {cancel: true};
       }
 
