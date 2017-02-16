@@ -28,7 +28,7 @@ function Background() {
 
   localStorage['os'] = os;
 
-  var tabTrackers = {};
+  localStorage['tabTrackers'] = {};
 
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
@@ -131,9 +131,9 @@ chrome.webRequest.onBeforeRequest.addListener(
             'active': true
           }, function(tabs) {
             var tabId = tabs[0].id;
-            tabTrackers[tabId] += 1;
+            localStorage['tabTrackers'][tabId] += 1;
 
-            chrome.browserAction.setBadgeText({tabId: tabId, text: tabTrackers[tabId]});
+            chrome.browserAction.setBadgeText({tabId: tabId, text: localStorage['tabTrackers'][tabId]});
           });
           
           return {cancel: true};
