@@ -126,20 +126,25 @@ chrome.webRequest.onBeforeRequest.addListener(
           return {cancel: true};
       }
 
-      // Only change the URL if there is no ATB param specified.
-      if (e.url.indexOf('atb=') !== -1) {
-        return;
-      }
+      if (e.url.search('/duckduckgo\.com') !== -1) {
+          // Only change the URL if there is no ATB param specified.
+          if (e.url.indexOf('atb=') !== -1) {
+            return;
+          }
 
-      // Only change the URL if there is an ATB saved in localStorage
-      if (localStorage['atb'] === undefined) {
+          // Only change the URL if there is an ATB saved in localStorage
+          if (localStorage['atb'] === undefined) {
+            return;
+          }
+        
+          var newURL = e.url + "&atb=" + localStorage['atb'];
+          return {
+            redirectUrl: newURL
+          };
+      } 
+      else {
         return;
       }
-      
-      var newURL = e.url + "&atb=" + localStorage['atb'];
-      return {
-        redirectUrl: newURL
-      };
     },
     {
         urls: [
