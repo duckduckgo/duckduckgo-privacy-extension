@@ -135,17 +135,6 @@ chrome.webRequest.onBeforeRequest.addListener(
       if (localStorage['atb'] === undefined) {
         return;
       }
-
-      var allTypes = [
-        'main_frame',
-        'sub_frame',
-        'stylesheet',
-        'script',
-        'image',
-        'object',
-        'xmlhttprequest',
-        'other'
-      ];
       
       var newURL = e.url + "&atb=" + localStorage['atb'];
       return {
@@ -159,7 +148,16 @@ chrome.webRequest.onBeforeRequest.addListener(
             "*://*.google.*/*",
             "*://google.*/*",
         ],
-        types: allTypes,
+        types: [
+        'main_frame',
+        'sub_frame',
+        'stylesheet',
+        'script',
+        'image',
+        'object',
+        'xmlhttprequest',
+        'other'
+      ]
     },
     ["blocking"]
 );
