@@ -145,7 +145,6 @@ chrome.webRequest.onBeforeRequest.addListener(
         urls: [
             "*://duckduckgo.com/?*",
             "*://*.duckduckgo.com/?*",
-            "*://*.google.*/*",
             "*://google.*/*",
         ],
         types: [
