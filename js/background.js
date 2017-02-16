@@ -121,7 +121,7 @@ chrome.contextMenus.create({
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
       localStorage[e.url] = "analyzing...";
-      if (e.url.indexOf('google.*/gen_204*') !== -1) {
+      if (e.url.search('/*google\.*\/gen_204*') !== -1) {
           localStorage[e.url] =  "Blocked";
           return {cancel: true};
       }
