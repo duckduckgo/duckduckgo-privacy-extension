@@ -129,7 +129,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       localStorage[e.url] = "analyzing...";
       if ((localStorage['blocking'] === 'true') && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
           localStorage[e.url] =  "Blocked";
-          localStorage['debug_blocking'] = localStorage['blocking']; 
+          localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
           chrome.tabs.query({
             'currentWindow': true,
             'active': true
