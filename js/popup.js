@@ -94,6 +94,9 @@ window.onload = function() {
     document.getElementById('bang_m').onclick = function(){
       add_bang('!m');
     }
+    document.getElementById('toggle_blocking').onclick = function(){
+      toggle_blocking();
+    }
 
     var images = document.querySelectorAll('li img');
     for(var i = 0; i < images.length; i++) {
@@ -119,6 +122,9 @@ window.onload = function() {
         document.getElementById('icon_advanced').className = 'minimized';
     }
 
+    function toggle_blocking() {
+        localStorage['blocking'] = localStorage['blocking']? false : true;
+    }
 
     setTimeout(function(){
         document.getElementById("search_form_input_homepage").focus();
