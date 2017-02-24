@@ -36,6 +36,10 @@ function Background() {
       return;
     }
 
+    if (localStorage['blocking'] === undefined) {
+        localStorage['blocking'] = true;
+    }
+
     if (localStorage['atb'] === undefined) {
         var oneWeek = 604800000,
             oneDay = 86400000,

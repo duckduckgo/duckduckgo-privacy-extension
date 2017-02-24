@@ -112,9 +112,9 @@ window.onload = function() {
 
     defaults_check();
 
-    chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
+    /*chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
       defaults_check();
-    });
+    });*/
 
 
     if (localStorage['advanced_options'] !== 'true') {
