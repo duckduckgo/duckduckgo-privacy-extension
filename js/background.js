@@ -127,7 +127,7 @@ chrome.contextMenus.create({
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
       localStorage[e.url] = "analyzing...";
-      if ((localStorage['blocking'] === true) && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
+      if ((localStorage['blocking'] === 'true') && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
           localStorage[e.url] =  "Blocked";
           localStorage['debug_blocking'] = localStorage['blocking']; 
           chrome.tabs.query({

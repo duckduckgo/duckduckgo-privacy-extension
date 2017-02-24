@@ -124,7 +124,7 @@ window.onload = function() {
     }
 
     function toggle_blocking() {
-        localStorage['blocking'] = localStorage['blocking']? false : true;
+        localStorage['blocking'] = (localStorage['blocking'] === 'true')? 'false' : 'true';
     }
 
     setTimeout(function(){
