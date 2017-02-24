@@ -64,7 +64,7 @@ window.onload = function() {
         document.getElementById('search_form_input_homepage').select();
     }
 
-
+/*
     document.getElementById('adv_ducky').onclick = ducky_check;
     document.getElementById('adv_meanings').onclick = meanings_check;
 
@@ -94,6 +94,7 @@ window.onload = function() {
     document.getElementById('bang_m').onclick = function(){
       add_bang('!m');
     }
+    */
     document.getElementById('toggle_blocking').onclick = function(){
       toggle_blocking();
     }
