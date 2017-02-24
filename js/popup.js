@@ -110,7 +110,7 @@ window.onload = function() {
       }
     }
 
-    defaults_check();
+   // defaults_check();
 
     /*chrome.extension.onMessage.addListener(function(request, sender, sendResponse){
       defaults_check();

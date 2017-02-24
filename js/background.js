@@ -37,7 +37,7 @@ function Background() {
     }
 
     if (localStorage['blocking'] === undefined) {
-        localStorage['blocking'] = true;
+        localStorage['blocking'] = 'true';
     }
 
     if (localStorage['atb'] === undefined) {
