@@ -134,13 +134,17 @@ chrome.webRequest.onBeforeRequest.addListener(
             'currentWindow': true,
             'active': true
           }, function(tabs) {
-            var tabId = tabs[0].id;
+            var tabId = tabs[0]? tabs[0].id : '';
             $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
 
             chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
           });
           
           return {cancel: true};
+      }
+      else if (localStorage['blocking'] === 'false') {
+          $this.tabTrackers[tabId] = 0;
+          chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
       }
 
       if (e.url.search('/duckduckgo\.com') !== -1) {
