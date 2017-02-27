@@ -127,6 +127,8 @@ chrome.contextMenus.create({
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
       localStorage[e.url] = "analyzing...";
+      var tabId;
+
       if ((localStorage['blocking'] === 'true') && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
           localStorage[e.url] =  "Blocked";
           localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
@@ -134,7 +136,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             'currentWindow': true,
             'active': true
           }, function(tabs) {
-            var tabId = tabs[0]? tabs[0].id : '';
+            tabId = tabs[0]? tabs[0].id : '';
             $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
 
             chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
@@ -143,8 +145,14 @@ chrome.webRequest.onBeforeRequest.addListener(
           return {cancel: true};
       }
       else if (localStorage['blocking'] === 'false') {
-          $this.tabTrackers[tabId] = 0;
-          chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
+          chrome.tabs.query({
+            'currentWindow': true,
+            'active': true
+          }, function(tabs) {
+            tabId = tabs[0]? tabs[0].id : '';
+            $this.tabTrackers[tabId] = 0;
+            chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
+          });
       }
 
       if (e.url.search('/duckduckgo\.com') !== -1) {
