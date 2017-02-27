@@ -145,14 +145,8 @@ chrome.webRequest.onBeforeRequest.addListener(
           return {cancel: true};
       }
       else if (localStorage['blocking'] === 'false') {
-          chrome.tabs.query({
-            'currentWindow': true,
-            'active': true
-          }, function(tabs) {
-            tabId = tabs[0]? tabs[0].id : '';
-            $this.tabTrackers[tabId] = 0;
-            chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
-          });
+          $this.tabTrackers = {};
+          chrome.browserAction.setBadgeText({text: ""});
       }
 
       if (e.url.search('/duckduckgo\.com') !== -1) {
