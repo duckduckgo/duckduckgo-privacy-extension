@@ -154,7 +154,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           };
       } 
       else {
-        return blockTrackers(e.url);
+        return blockTrackers(tabId, e.url);
       }
     },
     {
@@ -215,9 +215,9 @@ chrome.webRequest.onCompleted.addListener(
 // If blocking option is enabled
 // and url matches a tracker pattern
 // block the request
-function blockTrackers(url) {
-    if ((localStorage['blocking'] === 'true') && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
-      //  localStorage[e.url] =  "Blocked";
+function blockTrackers(tabId, url) {
+    if ((localStorage['blocking'] === 'true') && ((url.search(/.*google\..*\/gen_204.*/) !== -1) || (url.search(/.*doubleclick\..*/) !== -1)) || (url.search(/.*google\-analytics\..*/) !== -1)) {
+      //  localStorage[url] =  "Blocked";
         
         localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
         $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
