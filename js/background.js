@@ -30,6 +30,9 @@ function Background() {
 
   $this.tabTrackers = {};
 
+  var trackers = get_json();
+  $this.trackers = trackers? JSON.parse(trackers) : [];
+  
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
     if (details.reason !== "install") {
@@ -217,10 +220,8 @@ chrome.webRequest.onCompleted.addListener(
 // block the request
 function blockTrackers(tabId, url) {
     if (localStorage['blocking'] === 'true') {
-        var trackers = get_json();
-        trackers = trackers? JSON.parse(trackers) : [];
-        for (var i = 0; i < trackers.length; i++) {
-            if (url.indexOf(trackers[i]) !== -1) {
+        for (var i = 0; i < $this.trackers.length; i++) {
+            if (url.indexOf($this.trackers[i]) !== -1) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
                 $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
                 chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
