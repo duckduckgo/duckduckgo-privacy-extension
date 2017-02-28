@@ -57,6 +57,11 @@ window.onload = function() {
       localStorage['advanced_options'] = 'true';
     }
 
+    if (localStorage['blocking'] === 'false') {
+      var switch_button = document.getElementById('toggle_blocking');
+      switch_button.classList.remove('is-on');
+    }
+
     if (localStorage['last_search'] != '') {
         document.getElementById('search_form_input_homepage').value = localStorage['last_search'];
         document.getElementById("search_form_input_clear").style.display = 'inline-block';
