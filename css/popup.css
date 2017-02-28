@@ -298,3 +298,34 @@ input[type="checkbox"]:checked + label {
     background-size: 16px 16px;
 }
 
+/*
+    On/Off Switch
+*/
+
+.switch {
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+    position: relative;
+    height: 16px;
+    width: 26px;
+    background: #aaaaaa;
+    cursor: pointer;
+}
+.switch.is-on {
+        background: #4495d4;
+}
+.switch__knob {
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        single-transition: 0.1s linear left;
+        position: absolute;
+        display: block;
+        left: 2px;
+        top: 2px;
+        height: 14px;
+        width: 14px;
+        background-color: #fff;
+}
+.switch__knob.is-on {
+        left: 10px;
+}
