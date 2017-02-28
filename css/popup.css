@@ -312,33 +312,33 @@ input[type="checkbox"]:checked + label {
     cursor: pointer;
 }
 .switch.is-on {
-        background: #4495d4;
+   background: #4495d4;
 }
-.switch__knob {
-        border-radius: 5px;
-        -webkit-border-radius: 5px;
-        -webkit-transition: all 1s ease-in-out;
-        transition: all 1s ease-in-out;
-        position: absolute;
-        display: block;
-        left: 2px;
-        top: 2px;
-        height: 14px;
-        width: 14px;
-        background-color: #fff;
+.switch .switch__knob {
+   border-radius: 5px;
+   -webkit-border-radius: 5px;
+   -webkit-transition: left 1s;
+   transition: left 1s;
+   position: absolute;
+   display: block;
+   left: 2px;
+   top: 2px;
+   height: 14px;
+   width: 14px;
+   background-color: #fff;
 }
-.switch__knob.is-on {
-        left: 10px;
+.switch.is-on .switch__knob {
+   left: 10px;
 }
 
 #switch_txt {
-    margin-left: 0.5em;
+   margin-left: 0.5em;
 }
 
 .left {
-    float: left;
+   float: left;
 }
 
 .clearfix {
-    clear: both;
+   clear: both;
 }
