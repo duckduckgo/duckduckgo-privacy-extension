@@ -126,7 +126,7 @@ chrome.contextMenus.create({
 // Add ATB param
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
-      localStorage[e.url] = "analyzing...";
+      //localStorage[e.url] = "analyzing...";
       var tabId;
 
       chrome.tabs.query({
@@ -135,21 +135,8 @@ chrome.webRequest.onBeforeRequest.addListener(
       }, function(tabs) {
         tabId = tabs[0]? tabs[0].id : '';
       });
-      
-      if ((localStorage['blocking'] === 'true') && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
-          localStorage[e.url] =  "Blocked";
-          
-          localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
-          $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
-          chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
-          
-          return {cancel: true};
-      }
-      else if (localStorage['blocking'] === 'false') {
-          $this.tabTrackers = {};
-          chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
-      }
 
+      // Add ATB for DDG URLs, otherwise block trackers
       if (e.url.search('/duckduckgo\.com') !== -1) {
           // Only change the URL if there is no ATB param specified.
           if (e.url.indexOf('atb=') !== -1) {
@@ -167,7 +154,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           };
       } 
       else {
-        return;
+        return blockTrackers(e.url);
       }
     },
     {
@@ -224,3 +211,22 @@ chrome.webRequest.onCompleted.addListener(
         ],
     }
 );
+
+// If blocking option is enabled
+// and url matches a tracker pattern
+// block the request
+function blockTrackers(url) {
+    if ((localStorage['blocking'] === 'true') && ((e.url.search(/.*google\..*\/gen_204.*/) !== -1) || (e.url.search(/.*doubleclick\..*/) !== -1)) || (e.url.search(/.*google\-analytics\..*/) !== -1)) {
+      //  localStorage[e.url] =  "Blocked";
+        
+        localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
+        $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
+        chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
+        
+        return {cancel: true};
+    }
+    else if (localStorage['blocking'] === 'false') {
+        $this.tabTrackers = {};
+        chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
+    }
+}

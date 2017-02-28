@@ -201,7 +201,7 @@ window.onload = function() {
         }
     }
 
-    document.getElementById('icon_advanced').onclick = function(){
+    /*document.getElementById('icon_advanced').onclick = function(){
         if (this.className == 'minimized') {
             this.src = ICON_MINIMIZE;
             document.getElementById('advanced').style.display = 'block';
@@ -213,7 +213,7 @@ window.onload = function() {
         }
         localStorage['advanced_options'] = (document.getElementById('advanced').style.display === 'block');
         document.getElementById('search_form_input_homepage').focus();
-    }
+    }*/
 
     function add_bang(bang) {
         var inp = document.getElementById('search_form_input_homepage');
