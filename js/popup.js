@@ -58,8 +58,10 @@ window.onload = function() {
     }
 
     if (localStorage['blocking'] === 'false') {
-      var switch_button = document.getElementById('toggle_blocking');
-      switch_button.classList.remove('is-on');
+        var switch_button = document.getElementById('toggle_blocking');
+        switch_button.classList.remove('is-on');
+        var switch_txt = document.getElementById('switch_txt');
+        switch_txt.innerHTML = 'Off';
     }
 
     if (localStorage['last_search'] != '') {
