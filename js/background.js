@@ -220,7 +220,7 @@ function blockTrackers(tabId, url) {
         var trackers = get_json();
         trackers = trackers? JSON.parse(trackers) : [];
         for (var i = 0; i < trackers.length; i++) {
-            if (url.search(new Regexp(trackers[i])) !== -1) {
+            if (url.indexOf(trackers[i]) !== -1) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
                 $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
                 chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
