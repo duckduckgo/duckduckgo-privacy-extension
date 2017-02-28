@@ -216,17 +216,38 @@ chrome.webRequest.onCompleted.addListener(
 // and url matches a tracker pattern
 // block the request
 function blockTrackers(tabId, url) {
-    if ((localStorage['blocking'] === 'true') && ((url.search(/.*google\..*\/gen_204.*/) !== -1) || (url.search(/.*doubleclick\..*/) !== -1)) || (url.search(/.*google\-analytics\..*/) !== -1)) {
+    if (localStorage['blocking'] === 'true') {
+        var trackers = JSON.parse(get_json());
+        trackers = trackers.trackers;
+        for (var i = 0; i < trackers.length; i++) {
+            if (url.search(new Regexp(trackers[i]) !== -1) {
+                localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
+                $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
+                chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
+                
+                return {cancel: true};
+            }
+        }
+
+        //&& ((url.search(/.*google\..*\/gen_204.*/) !== -1) || (url.search(/.*doubleclick\..*/) !== -1)) || (url.search(/.*google\-analytics\..*/) !== -1)) {
       //  localStorage[url] =  "Blocked";
         
-        localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
-        $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
-        chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
-        
-        return {cancel: true};
     }
     else if (localStorage['blocking'] === 'false') {
         $this.tabTrackers = {};
         chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
     }
+}
+
+function get_json() {
+    var xobj = new XMLHttpRequest();
+    xobj.overrideMimeType("application/json");
+    xobj.open('GET', 'trackers.json', true); 
+    xobj.onreadystatechange = function () {
+        if (xobj.readyState == 4 && xobj.status == "200") {
+            return xobj.responseText;
+        }
+    }
+    
+    xobj.send(null);
 }

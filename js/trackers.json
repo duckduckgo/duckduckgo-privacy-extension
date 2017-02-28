@@ -1,0 +1,7 @@
+{
+    "trackers": [
+        ".*google\..*\/gen_204.*",
+        ".*doubleclick\..*",
+        ".*google\-analytics\..*"
+    ]
+}
