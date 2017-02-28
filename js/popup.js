@@ -125,8 +125,10 @@ window.onload = function() {
 
     function toggle_blocking() {
         localStorage['blocking'] = (localStorage['blocking'] === 'true')? 'false' : 'true';
-        var $switch = document.getElementById('toggle_blocking');
-        $switch.classList.toggle('is-on');
+        var switch = document.getElementById('toggle_blocking');
+        switch.classList.toggle('is-on');
+        var switch_txt = document.getElementById('switch_txt');
+        switch_txt.innerHTML = (switch_txt.innerHTML === 'On')? 'Off' : 'On';
     }
 
     setTimeout(function(){
