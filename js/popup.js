@@ -125,6 +125,8 @@ window.onload = function() {
 
     function toggle_blocking() {
         localStorage['blocking'] = (localStorage['blocking'] === 'true')? 'false' : 'true';
+        var $switch = document.getElementById('toggle_blocking');
+        $switch.classList.toggle('is-on');
     }
 
     setTimeout(function(){
