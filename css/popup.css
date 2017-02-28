@@ -329,3 +329,11 @@ input[type="checkbox"]:checked + label {
 .switch__knob.is-on {
         left: 10px;
 }
+
+.left {
+    float: left;
+}
+
+.clearfix {
+    clear: both;
+}
