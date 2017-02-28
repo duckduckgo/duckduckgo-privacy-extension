@@ -317,7 +317,8 @@ input[type="checkbox"]:checked + label {
 .switch__knob {
         border-radius: 5px;
         -webkit-border-radius: 5px;
-        single-transition: 0.1s linear left;
+        -webkit-transition: all 1s ease-in-out;
+        transition: all 1s ease-in-out;
         position: absolute;
         display: block;
         left: 2px;
@@ -328,6 +329,10 @@ input[type="checkbox"]:checked + label {
 }
 .switch__knob.is-on {
         left: 10px;
+}
+
+#switch_txt {
+    margin-left: 0.5em;
 }
 
 .left {
