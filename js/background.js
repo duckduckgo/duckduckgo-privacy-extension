@@ -217,8 +217,8 @@ chrome.webRequest.onCompleted.addListener(
 // block the request
 function blockTrackers(tabId, url) {
     if (localStorage['blocking'] === 'true') {
-        var trackers = JSON.parse(get_json());
-        trackers = trackers.trackers;
+        var trackers = get_json();
+        trackers = trackers? JSON.parse(trackers) : [];
         for (var i = 0; i < trackers.length; i++) {
             if (url.search(new Regexp(trackers[i])) !== -1) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
