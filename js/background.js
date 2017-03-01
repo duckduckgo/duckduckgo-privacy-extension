@@ -37,7 +37,7 @@ function Background() {
       return;
     }
     
-    var trackers = get_json(assign_json);
+    $this.trackers = get_json();
 
     if (localStorage['blocking'] === undefined) {
         localStorage['blocking'] = 'true';
@@ -240,19 +240,13 @@ function blockTrackers(tabId, url) {
     }
 }
 
-function get_json(callback) {
+function get_json() {
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', 'js/trackers.json', true); 
-    xobj.onreadystatechange = function () {
-        if (xobj.readyState == 4 && xobj.status == "200") {
-            callback.apply(this, [xobj.responseText]);
-        }
-    }
-    
-    xobj.send(null);
-}
+    var trackers = xobj.responseText? JSON.parse(xobj.responseText) : [];
 
-var assign_json = function assign_json(trackers) {
-    $this.trackers = trackers? JSON.parse(trackers) : [];
+    xobj.send();
+
+    return trackers;
 }
