@@ -253,6 +253,6 @@ function get_json(callback) {
     xobj.send(null);
 }
 
-function assign_json(trackers) {
+var assign_json = function assign_json(trackers) {
     $this.trackers = trackers? JSON.parse(trackers) : [];
 }
