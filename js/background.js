@@ -30,14 +30,14 @@ function Background() {
 
   $this.tabTrackers = {};
 
-  var trackers = get_json();
-  $this.trackers = trackers? JSON.parse(trackers) : [];
   
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
     if (details.reason !== "install") {
       return;
     }
+    
+    var trackers = get_json(assign_json);
 
     if (localStorage['blocking'] === undefined) {
         localStorage['blocking'] = 'true';
@@ -240,15 +240,19 @@ function blockTrackers(tabId, url) {
     }
 }
 
-function get_json() {
+function get_json(callback) {
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', 'js/trackers.json', true); 
     xobj.onreadystatechange = function () {
         if (xobj.readyState == 4 && xobj.status == "200") {
-            return xobj.responseText;
+            callback.apply(this, [xobj.responseText]);
         }
     }
     
     xobj.send(null);
+}
+
+function assign_json(trackers) {
+    $this.trackers = trackers? JSON.parse(trackers) : [];
 }
