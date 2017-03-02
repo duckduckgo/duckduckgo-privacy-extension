@@ -6,6 +6,13 @@ const trivial_rule_from_c = new RegExp("^http:");
 const trivial_cookie_name_c = new RegExp(".*");
 const trivial_cookie_host_c = new RegExp(".*");
 
+var WARN = 1;
+var DBUG = 2;
+
+function log(typ, str){
+    console.log(str);
+}
+
 /**
  * A single rule
  * @param from
