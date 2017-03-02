@@ -156,16 +156,20 @@ chrome.webRequest.onBeforeRequest.addListener(
             'currentWindow': true,
             'active': true
           }, function(tabs) {
-            localStorage['tab'] = tabs[0]? tabs[0].id : '';
+            localStorage['tab'] = tabs[0]? JSON.stringify(tabs[0]) : '';
           });
           
           // Reset blocked trackers count on page reload
-          if (e.type === 'main_frame') {
-            var tabId = localStorage['tab'];
-            localStorage[tabId] = '';
-          }
+          if (localStorage['tab'])) {
+              var tab = JSON.parse(localStorage['tab']);
+              
+              if (e.type === 'main_frame') {
+                localStorage[tab.url] = '';
+              }
 
-          return blockTrackers.blockTrackers(localStorage['tab'], e.url);
+              return blockTrackers.blockTrackers(tab, e.url);
+      
+          }
       }
     },
     {
@@ -185,6 +189,12 @@ chrome.webRequest.onBeforeRequest.addListener(
     },
     ["blocking"]
 );
+
+chrome.tabs.onReplaced.addListener(function (addedTabId) {
+    chrome.tabs.get(addedTabId, function(tab) {
+        chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
+    });
+});
 
 chrome.webRequest.onCompleted.addListener(
     function () {
