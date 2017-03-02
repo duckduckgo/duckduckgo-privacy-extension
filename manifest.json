@@ -29,9 +29,9 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": [
-                "js/background.js",
                 "js/require.js",
-                "js/blockTrackers.js"
+                "js/blockTrackers.js",
+                "js/background.js"
             ]
     },
     "chrome_settings_overrides": {
