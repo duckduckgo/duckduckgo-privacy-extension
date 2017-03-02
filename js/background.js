@@ -29,15 +29,14 @@ function Background() {
   localStorage['os'] = os;
 
   $this.tabTrackers = {};
-
+  
+  get_json();
   
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
     if (details.reason !== "install") {
       return;
-    }
-    
-    $this.trackers = get_json();
+    }  
 
     if (localStorage['blocking'] === undefined) {
         localStorage['blocking'] = 'true';
@@ -130,6 +129,8 @@ chrome.contextMenus.create({
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
       //localStorage[e.url] = "analyzing...";
+      $this.trackers = JSON.parse(localStorage['response']);
+      //localStorage['this_trackers'] = $this.trackers;
       var tabId;
 
       chrome.tabs.query({
@@ -220,8 +221,8 @@ chrome.webRequest.onCompleted.addListener(
 // block the request
 function blockTrackers(tabId, url) {
     if (localStorage['blocking'] === 'true') {
-        for (var i = 0; i < $this.trackers.length; i++) {
-            if (url.indexOf($this.trackers[i]) !== -1) {
+        for (var i = 0; i < $this.trackers.trackers.length; i++) {
+            if (url.indexOf($this.trackers.trackers[i]) !== -1) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
                 $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
                 chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
@@ -229,10 +230,6 @@ function blockTrackers(tabId, url) {
                 return {cancel: true};
             }
         }
-
-        //&& ((url.search(/.*google\..*\/gen_204.*/) !== -1) || (url.search(/.*doubleclick\..*/) !== -1)) || (url.search(/.*google\-analytics\..*/) !== -1)) {
-      //  localStorage[url] =  "Blocked";
-        
     }
     else if (localStorage['blocking'] === 'false') {
         $this.tabTrackers = {};
@@ -244,9 +241,16 @@ function get_json() {
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', 'js/trackers.json', true); 
-    var trackers = xobj.responseText? JSON.parse(xobj.responseText) : [];
+    xobj.responseType = 'text';
 
-    xobj.send();
 
-    return trackers;
+    xobj.onload = function () {
+        if (xobj.readyState === xobj.DONE) {
+            if (xobj.status === 200) {
+                localStorage['response'] = xobj.responseText;    
+            }
+        }
+    };
+
+    xobj.send(null);
 }
