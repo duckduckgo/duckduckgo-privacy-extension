@@ -15,6 +15,8 @@
  */
 
 
+var blockTrackers = require("blockTrackers");
+
 function Background() {
   $this = this;
 
@@ -27,7 +29,6 @@ function Background() {
   if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
 
   localStorage['os'] = os;
-  var blockTrackers = require("blockTrackers");
 
   $this.tabTrackers = {};
   
