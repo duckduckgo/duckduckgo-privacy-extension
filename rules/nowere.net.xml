@@ -1,7 +1,0 @@
-<ruleset name="nowere.net">
-	<target host="nowere.net" />
-	<target host="www.nowere.net" />
-	<target host="sky.nowere.net" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

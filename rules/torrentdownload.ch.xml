@@ -1,6 +1,0 @@
-<ruleset name="torrentdownload.ch">
-	<target host="torrentdownload.ch" />
-	<target host="www.torrentdownload.ch" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

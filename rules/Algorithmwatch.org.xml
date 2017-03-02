@@ -1,5 +1,0 @@
-<ruleset name="Algorithmwatch.org">
-	<target host="algorithmwatch.org" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

@@ -1,6 +1,0 @@
-<ruleset name="ievaphone.com">
-	<target host="ievaphone.com" />
-	<target host="www.ievaphone.com" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

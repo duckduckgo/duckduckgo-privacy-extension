@@ -1,6 +1,0 @@
-<ruleset name="multistre.am">
-	<target host="multistre.am" />
-	<target host="www.multistre.am" />
-	<rule from="^http:"
-		to="https:" />
-</ruleset>

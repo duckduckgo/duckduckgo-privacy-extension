@@ -1,5 +1,0 @@
-<ruleset name="ReflexPhoto">
-        <target host="reflexphoto.eu" />
-        <target host="www.reflexphoto.eu" />
-        <rule from="^http:" to="https:" />
-</ruleset>

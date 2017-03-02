@@ -1,6 +1,0 @@
-<ruleset name="peercloud.io">
-	<target host="peercloud.io" />
-	<target host="www.peercloud.io" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

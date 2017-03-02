@@ -1,5 +1,0 @@
-<ruleset name="ljsear.ch">
-	<target host="ljsear.ch" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

@@ -1,8 +1,0 @@
-<ruleset name="QuranProject.org">
-	<target host="quranproject.org" />
-	<target host="www.quranproject.org" />
-
-	<securecookie host=".+" name=".+" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

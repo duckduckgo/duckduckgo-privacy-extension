@@ -1,8 +1,0 @@
-<ruleset name="Baden-Airpark">
-
-	<target host="baden-airpark.de" />
-	<target host="www.baden-airpark.de" />
-
-	<rule from="^http:"
-		to="https:" />
-</ruleset>

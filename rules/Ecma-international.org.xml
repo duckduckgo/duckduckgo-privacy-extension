@@ -1,6 +1,0 @@
-<ruleset name="Ecma-international.org">
-	<target host="ecma-international.org" />
-	<target host="www.ecma-international.org" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

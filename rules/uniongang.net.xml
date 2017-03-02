@@ -1,6 +1,0 @@
-<ruleset name="uniongang.net">
-	<target host="uniongang.net" />
-	<target host="www.uniongang.net" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

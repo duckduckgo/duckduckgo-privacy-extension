@@ -1,9 +1,0 @@
-<ruleset name="Deprogressive.dk">
-
-	<target host="deprogressive.dk" />
-	<target host="www.deprogressive.dk" />
-
-	<rule from="^http:"
-		to="https:" />
-
-</ruleset>

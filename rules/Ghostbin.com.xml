@@ -1,6 +1,0 @@
-<ruleset name="Ghostbin.com">
-	<target host="ghostbin.com" />
-	<target host="www.ghostbin.com" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

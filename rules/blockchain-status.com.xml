@@ -1,6 +1,0 @@
-<ruleset name="blockchain-status.com">
-	<target host="blockchain-status.com" />
-	<target host="www.blockchain-status.com" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

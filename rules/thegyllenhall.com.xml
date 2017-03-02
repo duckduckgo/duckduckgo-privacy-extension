@@ -1,8 +1,0 @@
-<ruleset name="thegyllenhall.com">
-	<target host="thegyllenhall.com" />
-	<target host="www.thegyllenhall.com" />
-
-	<securecookie host=".+" name=".+" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

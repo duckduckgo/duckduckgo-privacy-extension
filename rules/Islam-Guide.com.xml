@@ -1,8 +1,0 @@
-<ruleset name="Islam-Guide.com">
-	<target host="islam-guide.com" />
-	<target host="www.islam-guide.com" />
-
-	<securecookie host=".+" name=".+" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

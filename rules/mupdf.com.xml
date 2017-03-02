@@ -1,6 +1,0 @@
-<ruleset name="mupdf.com">
-	<target host="mupdf.com" />
-	<target host="www.mupdf.com" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>

@@ -1,5 +1,0 @@
-<ruleset name="file.pizza">
-	<target host="file.pizza" />
-
-	<rule from="^http:" to="https:" />
-</ruleset>
