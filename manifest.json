@@ -28,7 +28,11 @@
     "omnibox": {"keyword": "d"},
     "options_page": "html/options.html",
     "background": {
-            "scripts": ["js/background.js"]
+            "scripts": [
+                "js/background.js",
+                "js/require.js",
+                "js/blockTrackers.js"
+            ]
     },
     "chrome_settings_overrides": {
       "search_provider": {
