@@ -160,7 +160,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           });
           
           // Reset blocked trackers count on page reload
-          if (localStorage['tab'])) {
+          if (localStorage['tab']) {
               var tab = JSON.parse(localStorage['tab']);
               
               if (e.type === 'main_frame') {
