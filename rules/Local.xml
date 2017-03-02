@@ -1,0 +1,38 @@
+<!--
+	Other The Local:
+
+		- thelocal.at.xml
+		- thelocal.ch.xml
+		- thelocal.de.xml
+		- thelocal.dk.xml
+		- thelocal.es.xml
+		- thelocal.fr.xml
+		- thelocal.it.xml
+		- thelocal.no.xml
+		- thelocal.se.xml
+
+
+	Insecure cookies are set for these hosts: ᶜ
+
+		- www.thelocal.com
+
+	ᶜ See https://owasp.org/index.php/SecureFlag
+
+-->
+<ruleset name="The Local.com">
+
+	<target host="thelocal.com" />
+	<target host="www.thelocal.com" />
+
+
+	<!--	Not secured by server:
+					-->
+	<!--securecookie host="^www\.thelocal\.com$" name="^ci_session$" /-->
+
+	<securecookie host="^\w" name="." />
+
+
+	<rule from="^http:"
+		to="https:" />
+
+</ruleset>

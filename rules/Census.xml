@@ -1,0 +1,13 @@
+<ruleset name="census-labs.com">
+
+	<target host="census-labs.com" />
+	<target host="www.census-labs.com" />
+
+
+	<securecookie host="^\w" name="." />
+
+
+	<rule from="^http:"
+		to="https:" />
+
+</ruleset>

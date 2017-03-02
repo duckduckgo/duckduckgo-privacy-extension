@@ -1,0 +1,35 @@
+<!--
+	For mismatches and other UBM coverage, see UBM-mismatches.xml
+
+	For clients, see DeusM-clients.xml.
+
+
+	CDN buckets:
+
+		- deusm.cachefly.net	← img.deusm.com
+
+
+	Problematic hosts in *deusm.com:
+
+		- (www.)? ᵐ
+		- img ᵐ
+
+	ᵐ Mismatched
+
+-->
+<ruleset name="DeusM.com (partial)">
+
+	<!--	Complications:
+				-->
+	<target host="img.deusm.com" />
+
+
+	<securecookie host="." name="." />
+
+
+	<rule from="^http://img\.deusm\.com/"
+		to="https://deusm.cachefly.net/" />
+
+		<test url="http://img.deusm.com/images/spacer.gif" /><!--	49 -->
+
+</ruleset>

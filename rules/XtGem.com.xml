@@ -1,0 +1,74 @@
+<!--
+	For problematic rules, see XtGem.com-problematic.xml.
+
+
+	Problematic hosts in *xtgem.com:
+
+		- blog ᵐ
+		- bucklink ᵐ
+		- syntax ᵐ
+		- www ᵐ
+
+	ᵐ Mismatched
+
+
+	Insecure cookies are set for these domains and hosts:
+
+		- xtgem.com
+		- .xtgem.com
+		- blog.xtgem.com
+
+
+	Mixed content:
+
+		- css, on:
+
+			- blog from blog ˢ
+			- blog from fonts.googleapis.com ˢ
+			- syntax from syntax ˢ
+			- syntax from fonts.googleapis.com ˢ
+
+		- Images, on:
+
+			- blog from ^ ˢ
+			- syntax from ^ ˢ
+			- syntax from www4.clustrmaps.com **
+			- syntax from tutorial.graham.yn.lt
+
+		- Web bugs, on:
+
+			- blog from www.google-analytics.com ˢ
+			- blog from pixel.quantserve.com ˢ
+			- syntax from www.google-analytics.com ˢ
+			- syntax from pixel.quantserve.com ˢ
+
+	ˢ Secured by us, see https://www.paulirish.com/2010/the-protocol-relative-url/
+	** Unsecurable
+
+-->
+<ruleset name="XtGem.com (partial)">
+
+	<!--	Direct rewrites:
+				-->
+	<target host="xtgem.com" />
+
+	<!--	Complications:
+				-->
+	<target host="www.xtgem.com" />
+
+
+	<!--	Not secured by server:
+					-->
+	<!--securecookie host="^xtgem\.com$" name="^_(?:_lang|_template|xta_vid)$" /-->
+	<!--securecookie host="^(?:blog)?\.xtgem\.com$" name="^session$" /-->
+
+	<securecookie host="." name="." />
+
+
+	<rule from="^http://www\.xtgem\.com/"
+		to="https://xtgem.com/" />
+
+	<rule from="^http:"
+		to="https:" />
+
+</ruleset>

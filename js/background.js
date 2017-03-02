@@ -16,6 +16,22 @@
 
 
 var blockTrackers = require("blockTrackers");
+var rules = require('rules').RuleSets;
+rules.addFromXml(loadExtensionFile('rules/default.rulesets', 'xml'));
+
+
+function loadExtensionFile(url, returnType){
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", chrome.extension.getURL(url), false);
+    xhr.send(null);
+
+    if (xhr.readyState != 4) {
+        return;
+    }
+    if (returnType === 'xml') {
+        return xhr.responseXML;
+    }
+}
 
 function Background() {
   $this = this;

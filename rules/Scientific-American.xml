@@ -1,0 +1,88 @@
+<!--
+	Other Scientific American rulesets:
+
+		- sciamdigital.com.xml
+
+
+	Problematic hosts in *scientificamerican.com:
+
+		- ^ ᶜ
+		- books ᶜ
+		- links.email ᵐ
+
+	ᶜ Server sends no certificate chain, see https://whatsmychaincert.com
+	ᵐ Silverpop / mismatched
+
+
+	STS header includes includeSubdomains
+	for subscribe
+
+
+	These altnames do not exist:
+
+		- www.subscribe.scientificamerican.com
+
+
+	Insecure cookies are set for these domains and hosts: ᶜ
+
+		- .scientificamerican.com
+		- subscribe.scientificamerican.com
+		- www.scientificamerican.com
+
+	ᶜ See https://owasp.org/index.php/SecureFlag
+
+-->
+<ruleset name="Scientific American.com (partial)">
+
+	<!--	Direct rewrites:
+				-->
+	<target host="blogs.scientificamerican.com" />
+	<!--target host="books.scientificamerican.com" /-->
+	<target host="static.scientificamerican.com" />
+	<target host="subscribe.scientificamerican.com" />
+	<target host="*.subscribe.scientificamerican.com" />
+	<target host="www.scientificamerican.com" />
+
+		<!--	includeSubdomains applies to one level only, so:
+									-->
+		<exclusion pattern="^http://(?:[^./]+\.){2,}subscribe\.scientificamerican\.com/" />
+
+			<!--	+ve:
+					-->
+			<test url="http://this.host.subscribe.scientificamerican.com/" />
+			<test url="http://exists.not.subscribe.scientificamerican.com/" />
+
+		<test url="http://www.subscribe.scientificamerican.com/" />
+
+		<!--	Sets cookies without Secure:
+							-->
+		<!--test url="http://www.scientificamerican.com/store/subscribe/scientific-american-magazine/" /-->
+
+	<!--	Complications:
+				-->
+	<target host="scientificamerican.com" />
+	<target host="links.email.scientificamerican.com" />
+
+
+	<!--	Not secured by server:
+					-->
+	<!--securecookie host="^\.scientificamerican.com$" name="^(?:cfid|cftoken)$" /-->
+	<!--securecookie host="^subscribe\.scientificamerican.com$" name="^JSESSIONID$" /-->
+	<!--securecookie host="^www\.scientificamerican.com$" name="^(?:MOBILEFORMAT|ORIGINALURLTOKEN)$" /-->
+
+	<securecookie host="^\." name="^(?:__qca$|optimizely)" />
+	<securecookie host="^\w" name="." />
+
+
+	<rule from="^http://scientificamerican\.com/"
+		to="https://www.scientificamerican.com/" />
+
+	<rule from="^http://links\.email\.scientificamerican\.com/"
+		to="https://recp.links.mkt41.net/" />
+
+		<test url="http://links.email.scientificamerican.com/ctt?kn=26&amp;ms=NDc5ODcyOTYS1" />
+
+	<rule from="^http:"
+		to="https:" />
+
+</ruleset>

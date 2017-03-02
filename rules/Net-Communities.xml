@@ -1,0 +1,28 @@
+<!--
+	Nonfunctional hosts in *netcommunities.com:
+
+		- (www.)? ᵈ
+		- adgallery ᵈ
+		- bagyourselfabillboard ᵈ
+
+	ᵈ Dropped
+
+
+	Problematic hosts in *netcommunities.com:
+
+		- ad ᵐ
+
+	ᵐ Mismatched
+
+-->
+<ruleset name="Net Communities.com (partial)">
+
+	<target host="ad.netcommunities.com" />
+
+
+	<rule from="^http://ad\.netcommunities\.com/"
+		to="https://id.adnxs.com/" />
+
+		<test url="http://ad.netcommunities.com/seg?add=1&amp;t=1" />
+
+</ruleset>

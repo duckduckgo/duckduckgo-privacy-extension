@@ -1,0 +1,20 @@
+<!--
+Similar ruleset: quay.io.xml
+
+-->
+
+<ruleset name="CoreOS.com">
+
+	<!--	Direct rewrites:
+				-->
+	<target host="coreos.com" />
+	<target host="www.coreos.com" />
+
+
+	<securecookie host="^\.coreos\.com$" name=".+" />
+
+
+	<rule from="^http:"
+		to="https:" />
+
+</ruleset>
