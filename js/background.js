@@ -131,8 +131,6 @@ chrome.webRequest.onBeforeRequest.addListener(
       //localStorage[e.url] = "analyzing...";
       $this.trackers = JSON.parse(localStorage['response']);
       //localStorage['this_trackers'] = $this.trackers;
-      var tabId;
-
 
       // Add ATB for DDG URLs, otherwise block trackers
       if (e.url.search('/duckduckgo\.com') !== -1) {
@@ -159,6 +157,12 @@ chrome.webRequest.onBeforeRequest.addListener(
             localStorage['tab'] = tabs[0]? tabs[0].id : '';
           });
           
+          // Reset blocked trackers count on page reload
+          if (e.type === 'main_frame') {
+            var tabId = localStorage['tab'];
+            localStorage[tabId] = '';
+          }
+
           return blockTrackers(localStorage['tab'], e.url);
       }
     },
