@@ -27,10 +27,11 @@ function Background() {
   if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
 
   localStorage['os'] = os;
+  var blockTrackers = require("blockTrackers");
 
   $this.tabTrackers = {};
   
-  get_json();
+  blockTrackers.getJSON();
   
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
@@ -163,7 +164,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             localStorage[tabId] = '';
           }
 
-          return blockTrackers(localStorage['tab'], e.url);
+          return blockTrackers.blockTrackers(localStorage['tab'], e.url);
       }
     },
     {
@@ -221,41 +222,3 @@ chrome.webRequest.onCompleted.addListener(
     }
 );
 
-// If blocking option is enabled
-// and url matches a tracker pattern
-// block the request
-function blockTrackers(tabId, url) {
-    if (localStorage['blocking'] === 'true') {
-        for (var i = 0; i < $this.trackers.trackers.length; i++) {
-            if (url.indexOf($this.trackers.trackers[i]) !== -1) {
-                localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
-                localStorage[tabId] = localStorage[tabId]? parseInt(localStorage[tabId]) + 1 : 1;
-                chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: localStorage[tabId] + ""});
-                
-                return {cancel: true};
-            }
-        }
-    }
-    else if (localStorage['blocking'] === 'false') {
-        //$this.tabTrackers = {};
-        chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
-    }
-}
-
-function get_json() {
-    var xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    xobj.open('GET', 'js/trackers.json', true); 
-    xobj.responseType = 'text';
-
-
-    xobj.onload = function () {
-        if (xobj.readyState === xobj.DONE) {
-            if (xobj.status === 200) {
-                localStorage['response'] = xobj.responseText;    
-            }
-        }
-    };
-
-    xobj.send(null);
-}
