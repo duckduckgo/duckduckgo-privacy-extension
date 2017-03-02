@@ -133,12 +133,6 @@ chrome.webRequest.onBeforeRequest.addListener(
       //localStorage['this_trackers'] = $this.trackers;
       var tabId;
 
-      chrome.tabs.query({
-        'currentWindow': true,
-        'active': true
-      }, function(tabs) {
-        tabId = tabs[0]? tabs[0].id : '';
-      });
 
       // Add ATB for DDG URLs, otherwise block trackers
       if (e.url.search('/duckduckgo\.com') !== -1) {
@@ -158,7 +152,14 @@ chrome.webRequest.onBeforeRequest.addListener(
           };
       } 
       else {
-        return blockTrackers(tabId, e.url);
+          chrome.tabs.query({
+            'currentWindow': true,
+            'active': true
+          }, function(tabs) {
+            localStorage['tab'] = tabs[0]? tabs[0].id : '';
+          });
+          
+          return blockTrackers(localStorage['tab'], e.url);
       }
     },
     {
@@ -224,16 +225,16 @@ function blockTrackers(tabId, url) {
         for (var i = 0; i < $this.trackers.trackers.length; i++) {
             if (url.indexOf($this.trackers.trackers[i]) !== -1) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
-                $this.tabTrackers[tabId] = $this.tabTrackers[tabId]? $this.tabTrackers[tabId]++ : 1;
-                chrome.browserAction.setBadgeText({tabId: tabId, text: $this.tabTrackers[tabId] + ""});
+                localStorage[tabId] = localStorage[tabId]? parseInt(localStorage[tabId]) + 1 : 1;
+                chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: localStorage[tabId] + ""});
                 
                 return {cancel: true};
             }
         }
     }
     else if (localStorage['blocking'] === 'false') {
-        $this.tabTrackers = {};
-        chrome.browserAction.setBadgeText({tabId: tabId, text: ""});
+        //$this.tabTrackers = {};
+        chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
     }
 }
 
