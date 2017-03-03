@@ -163,13 +163,16 @@ chrome.webRequest.onBeforeRequest.addListener(
               }
 
               var block =  blockTrackers.blockTrackers(tab, e.url);
-              if (!block) {
-                  var httpsUrl = rules.rewriteURI(e.url, utils.getHost(e.url));
+              var httpsUrl = rules.rewriteURI(tab.url, utils.getHost(tab.url));
+              
+              if (block) {
+                  return block;
+              }
+              
+              if (httpsUrl) {
                   return {
                       redirectUrl: httpsUrl
                   };
-              } else {
-                  return block;
               }
           }
       }
