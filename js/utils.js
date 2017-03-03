@@ -6,7 +6,6 @@ require.scopes.utils = ( () => {
     }
     
     var exports = {};
-    exports.rules = rules;
     exports.getHost = getHost;
     return exports;
 })();
