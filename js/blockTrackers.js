@@ -1,6 +1,6 @@
 
 var load = require('load');
-var trackers = JSON.parse(load.loadExtensionFile('js/trackers.json', 'json'));
+var trackers = JSON.parse(load.loadExtensionFile('js/trackers.json', 'json')).trackers;
 
 require.scopes.blockTrackers = (function() {    
     
@@ -26,6 +26,7 @@ require.scopes.blockTrackers = (function() {
     
     var exports = {};
     exports.blockTrackers = blockTrackers;
+    exports.trackers = trackers;
 
     return exports;
 })();

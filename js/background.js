@@ -15,7 +15,7 @@
  */
 
 
-var blockTrackers = require("blockTrackers");
+var blockTrackers = require('blockTrackers');
 var https = require('https');
 
 function Background() {
