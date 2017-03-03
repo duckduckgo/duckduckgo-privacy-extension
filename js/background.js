@@ -17,6 +17,7 @@
 
 var blockTrackers = require('blockTrackers');
 var https = require('https');
+var utils = require('utils');
 
 function Background() {
   $this = this;
@@ -161,10 +162,16 @@ chrome.webRequest.onBeforeRequest.addListener(
                 localStorage[tab.url] = '';
               }
 
-              return blockTrackers.blockTrackers(tab, e.url);
-      
+              var block =  blockTrackers.blockTrackers(tab, e.url);
+              if (!block) {
+                  var httpsUrl = rules.rewriteURI(e.url, utils.getHost(e.url));
+                  return {
+                      redirectUrl: httpsUrl
+                  };
+              } else {
+                  return block;
+              }
           }
-      }
     },
     {
         urls: [
