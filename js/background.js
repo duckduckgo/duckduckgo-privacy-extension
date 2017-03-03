@@ -127,9 +127,6 @@ chrome.contextMenus.create({
 // Add ATB param
 chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
-      //localStorage[e.url] = "analyzing...";
-      $this.trackers = JSON.parse(localStorage['response']);
-      //localStorage['this_trackers'] = $this.trackers;
 
       // Add ATB for DDG URLs, otherwise block trackers
       if (e.url.search('/duckduckgo\.com') !== -1) {
