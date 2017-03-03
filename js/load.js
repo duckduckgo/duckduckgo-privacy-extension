@@ -8,8 +8,13 @@ require.scopes.load = ( () => {
         if (xhr.readyState != 4) {
             return;
         }
+
         if (returnType === 'xml') {
             return xhr.responseXML;
+        }
+        
+        if (returnType === 'json') {
+            return xhr.responseJSON;
         }
     }
 

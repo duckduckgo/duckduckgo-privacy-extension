@@ -1,12 +1,16 @@
-require.scopes.blockTrackers = (function() {
+
+var load = require('load');
+var trackers = load.loadExtensionFile('js/trackers.json', 'json')
+
+require.scopes.blockTrackers = (function() {    
     
     // If blocking option is enabled
     // and url matches a tracker pattern
     // block the request
     function blockTrackers(tab, url) {
         if (localStorage['blocking'] === 'true') {
-            for (var i = 0; i < $this.trackers.trackers.length; i++) {
-                if (url.indexOf($this.trackers.trackers[i]) !== -1) {
+            for (var i = 0; i < trackers.length; i++) {
+                if (url.indexOf(trackers[i]) !== -1) {
                     localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
                     localStorage[tab.url] = localStorage[tab.url]? parseInt(localStorage[tab.url]) + 1 : 1;
                     chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
@@ -16,31 +20,9 @@ require.scopes.blockTrackers = (function() {
             }
         }
         else if (localStorage['blocking'] === 'false') {
-            //$this.tabTrackers = {};
             chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
         }
     }
-
-    // Import JSON list of trackers to block
-    function getJSON() {
-        var xobj = new XMLHttpRequest();
-        xobj.overrideMimeType("application/json");
-        xobj.open('GET', 'js/trackers.json', true); 
-        xobj.responseType = 'text';
-
-
-        xobj.onload = function () {
-            if (xobj.readyState === xobj.DONE) {
-                if (xobj.status === 200) {
-                    localStorage['response'] = xobj.responseText;    
-                }
-            }
-        };
-
-        xobj.send(null);
-    }
-    
-    
     
     var exports = {};
     exports.blockTrackers = blockTrackers;

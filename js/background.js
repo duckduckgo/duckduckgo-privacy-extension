@@ -30,10 +30,6 @@ function Background() {
   if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
 
   localStorage['os'] = os;
-
-  $this.tabTrackers = {};
-  
-  blockTrackers.getJSON();
   
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
