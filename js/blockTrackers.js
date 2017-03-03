@@ -26,7 +26,6 @@ require.scopes.blockTrackers = (function() {
     
     var exports = {};
     exports.blockTrackers = blockTrackers;
-    exports.getJSON = getJSON;
 
     return exports;
 })();
