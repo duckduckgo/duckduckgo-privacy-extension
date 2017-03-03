@@ -172,6 +172,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                   return block;
               }
           }
+      }
     },
     {
         urls: [
