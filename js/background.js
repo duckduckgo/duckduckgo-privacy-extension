@@ -16,6 +16,7 @@
 
 
 var blockTrackers = require("blockTrackers");
+var https = require('https');
 
 function Background() {
   $this = this;
