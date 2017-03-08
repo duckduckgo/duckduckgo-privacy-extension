@@ -68,9 +68,10 @@ function Background() {
         });
       }
     });
+
   });
 
-  chrome.extension.onMessage.addListener(function(request, sender, callback) {
+  chrome.runtime.onMessage.addListener(function(request, sender, callback) {
     if (request.options) {
       callback(localStorage);
     }
@@ -85,6 +86,14 @@ function Background() {
     if (!localStorage['set_atb'] && request.atb) {
       localStorage['atb'] = request.atb;
       localStorage['set_atb'] = request.atb;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('GET',
+        'https://duckduckgo.com/exti/?atb=' + request.atb,
+        true
+      );
+      xhr.send();
     }
 
     return true;
