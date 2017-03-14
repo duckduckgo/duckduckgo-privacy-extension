@@ -16,8 +16,8 @@
 
 
 var blockTrackers = require('blockTrackers');
-var https = require('https');
 var utils = require('utils');
+var tabs = {};
 
 function Background() {
   $this = this;
@@ -31,7 +31,18 @@ function Background() {
   if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
 
   localStorage['os'] = os;
-  
+
+  chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
+      console.log(savedTabs);
+      for(var i = 0; i < savedTabs.length; i++){ 
+          var tab = savedTabs[i];
+          if(tab.url){
+            console.log(tab);
+            tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
+          }
+      }
+  });
+
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
     if (details.reason !== "install") {
@@ -147,34 +158,36 @@ chrome.webRequest.onBeforeRequest.addListener(
           };
       } 
       else {
-          chrome.tabs.query({
-            'currentWindow': true,
-            'active': true
-          }, function(tabs) {
-            localStorage['tab'] = tabs[0]? JSON.stringify(tabs[0]) : '';
-          });
-          
-          // Reset blocked trackers count on page reload
-          if (localStorage['tab']) {
-              var tab = JSON.parse(localStorage['tab']);
-              
-              if (e.type === 'main_frame') {
-                localStorage[tab.url] = '';
-              }
 
-              var block =  blockTrackers.blockTrackers(tab, e.url);
-              var httpsUrl = rules.rewriteURI(tab.url, utils.getHost(tab.url));
-              
-              if (block) {
-                  return block;
-              }
-              
-              if (httpsUrl) {
-                  return {
-                      redirectUrl: httpsUrl
-                  };
-              }
+          if(e.type === 'main_frame'){
+              delete tabs[e.tabId];
           }
+
+          if(!tabs[e.tabId]){
+              tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url}
+          }
+              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url);
+
+              if(block){
+                  
+                if(!tabs[e.tabId]){
+                    tabs[e.tabId] = {'trackers': {}, "total": 0};
+                }
+
+                if(!tabs[e.tabId]['trackers'][block]){
+                    tabs[e.tabId]['trackers'][block] = 1;
+                }
+                else {
+                    tabs[e.tabId]['trackers'][block] += 1;
+                }
+                tabs[e.tabId]['total'] += 1;
+
+                tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
+
+                updateBadge(e.tabId, tabs[e.tabId].dispTotal);
+
+                return {cancel: true};
+              }
       }
     },
     {
@@ -195,10 +208,31 @@ chrome.webRequest.onBeforeRequest.addListener(
     ["blocking"]
 );
 
+function updateBadge(tabId, numBlocked){
+    if(numBlocked === 0){
+        chrome.browserAction.setBadgeBackgroundColor({tabId: tabId, color: "#00cc00"});
+    } 
+    else {
+        chrome.browserAction.setBadgeBackgroundColor({tabId: tabId, color: "#cc0000"});
+    }
+    chrome.browserAction.setBadgeText({tabId: tabId, text: numBlocked + ""});
+}
+
 chrome.tabs.onReplaced.addListener(function (addedTabId) {
     chrome.tabs.get(addedTabId, function(tab) {
-        chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
+        //tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
+        //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
     });
+});
+
+chrome.tabs.onUpdated.addListener(function(id, info, tab) {
+    if(tabs[id] && info.status === "loading"){
+        tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url};
+    }
+});
+
+chrome.tabs.onRemoved.addListener(function(id, info) {
+    delete tabs[id];
 });
 
 chrome.webRequest.onCompleted.addListener(

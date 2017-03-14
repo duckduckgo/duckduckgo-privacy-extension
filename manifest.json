@@ -32,8 +32,6 @@
                 "js/require.js",
                 "js/utils.js",
                 "js/load.js",
-                "js/rules.js",
-                "js/https.js",
                 "js/blockTrackers.js",
                 "js/background.js"
             ]
