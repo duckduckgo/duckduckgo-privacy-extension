@@ -108,7 +108,16 @@ window.onload = function() {
     (function(){
         getTab(function(t) { 
             var tab = bg.tabs[t.id];
-            trackers = tab.trackers;
+            var html = "<table>";
+            if(tab && tab.trackers){
+                html += "<tr><th>Tracker</th><th>Requests</th></tr>";
+                Object.keys(tab.trackers).forEach( function(name) {
+                    console.log(name);
+                    html += "<tr><td>" + name + "</td><td>" + tab.trackers[name] + "</td></tr>";
+                });
+                html += "</table>"
+                trackers.innerHTML = html
+            }
         });
     })();
 
