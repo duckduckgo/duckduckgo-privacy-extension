@@ -102,7 +102,15 @@ window.onload = function() {
     document.getElementById('toggle_blocking').onclick = function(){
       toggle_blocking();
     }
-    
+
+    var trackers = document.getElementById('trackers');
+
+    (function(){
+        getTab(function(t) { 
+            var tab = bg.tabs[t.id];
+            trackers = tab.trackers;
+        });
+    })();
 
 
     var images = document.querySelectorAll('li img');
@@ -286,6 +294,10 @@ window.onload = function() {
                 window.close();
             }
         });
+    }
+
+    function getTab(callback) {
+              chrome.tabs.query({active: true, lastFocusedWindow: true}, function(t) { callback(t[0]); });
     }
 }
 

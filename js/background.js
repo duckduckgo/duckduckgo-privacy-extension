@@ -18,9 +18,11 @@
 var blockTrackers = require('blockTrackers');
 var utils = require('utils');
 var tabs = {};
+var isExtensionEnabled = true;
 
 function Background() {
   $this = this;
+
 
   // clearing last search on browser startup
   localStorage['last_search'] = '';
@@ -166,6 +168,11 @@ chrome.webRequest.onBeforeRequest.addListener(
           if(!tabs[e.tabId]){
               tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url}
           }
+
+          if(!isExtensionEnabled){
+              return;
+          }
+
               var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url);
 
               if(block){
