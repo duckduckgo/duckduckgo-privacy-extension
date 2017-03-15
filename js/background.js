@@ -176,16 +176,17 @@ chrome.webRequest.onBeforeRequest.addListener(
               var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url);
 
               if(block){
-                  
+                var name = block.tracker;
+
                 if(!tabs[e.tabId]){
                     tabs[e.tabId] = {'trackers': {}, "total": 0};
                 }
 
-                if(!tabs[e.tabId]['trackers'][block]){
-                    tabs[e.tabId]['trackers'][block] = 1;
+                if(!tabs[e.tabId]['trackers'][name]){
+                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url};
                 }
                 else {
-                    tabs[e.tabId]['trackers'][block] += 1;
+                    tabs[e.tabId]['trackers'][name].count += 1;
                 }
                 tabs[e.tabId]['total'] += 1;
 

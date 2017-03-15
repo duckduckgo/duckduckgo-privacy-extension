@@ -109,11 +109,19 @@ window.onload = function() {
         getTab(function(t) { 
             var tab = bg.tabs[t.id];
             var html = "<table>";
-            if(tab && tab.trackers){
+            if(tab && tab.trackers && Object.keys(tab.trackers).length){
                 html += "<tr><th>Tracker</th><th>Requests</th></tr>";
-                Object.keys(tab.trackers).forEach( function(name) {
-                    console.log(name);
-                    html += "<tr><td>" + name + "</td><td>" + tab.trackers[name] + "</td></tr>";
+                Object.keys(tab.trackers).forEach( function(name) {i
+                    html  += "<tr>";
+
+                    if(bg.betterList.indexOf(tab.trackers[name].url)){
+                        html += '<td><a href="https://better.fyi/trackers/'+ tab.trackers[name].url + '">' + name + "</a></td>"; 
+                    }
+                    else{
+                        html += "<td>" + name + "</td>";
+                    }
+                    
+                    html += "<td>" + tab.trackers[name].count + "</td></tr>";
                 });
                 html += "</table>"
                 trackers.innerHTML = html

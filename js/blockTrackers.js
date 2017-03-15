@@ -8,6 +8,8 @@ var trackers = load.processMozillaBlockList(blockList);
 
 var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'external'));
 
+var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
+
 require.scopes.blockTrackers = (function() {    
     
     // If blocking option is enabled
@@ -24,7 +26,7 @@ require.scopes.blockTrackers = (function() {
 
                 if( !isRelatedEntity(trackers[host], currLocation) ){
                     console.log("Blocking: " + host); 
-                    return trackers[host].c;
+                    return { 'tracker': trackers[host].c, 'url': host};
                 }
                 
                 console.log("Skipping: " + host); 
