@@ -119,7 +119,7 @@ window.onload = function() {
                         trackers_html = '',
                         req_html = '';
                     
-                    if(bg.betterList.indexOf(tab.trackers[name].url)){
+                    if(bg.betterList.indexOf(tab.trackers[name].url) !== -1){
                         temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
                     }
                     
