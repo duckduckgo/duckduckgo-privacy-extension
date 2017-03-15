@@ -221,7 +221,7 @@ ul {
   margin: 0 !important;
 }
 
-li {
+#advanced li {
   list-style-type: none;
   line-height: 16px;
   height: 16px !important;
@@ -242,6 +242,7 @@ h2 {
 
 #advanced #left ul li, #trackers ul li {
   padding: 1px 3px 5px 0px;
+  font-size: 12px;
 }
 
 #advanced #left ul li label {
