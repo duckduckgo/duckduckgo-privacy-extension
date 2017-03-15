@@ -342,3 +342,16 @@ input[type="checkbox"]:checked + label {
 .clearfix {
    clear: both;
 }
+
+.hide { display: none; }
+
+#reload_tab {
+       border-radius: 3px;
+          padding: 3px 5px 3px 5px;
+             font-size: 12px;
+                cursor: pointer;
+                   background: #4495d4;
+                      color: #fff;
+                         margin-bottom: 0.5em;
+                            width: 5em;
+                        }
