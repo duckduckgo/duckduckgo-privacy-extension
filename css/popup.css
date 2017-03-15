@@ -227,7 +227,7 @@ body {
   height: 16px !important;
 }
 
-#advanced h2 {
+h2 {
   float: left;
   width: 100%;
   font-size: 12px;
@@ -346,12 +346,18 @@ input[type="checkbox"]:checked + label {
 .hide { display: none; }
 
 #reload_tab {
-       border-radius: 3px;
-          padding: 3px 5px 3px 5px;
-             font-size: 12px;
-                cursor: pointer;
-                   background: #4495d4;
-                      color: #fff;
-                         margin-bottom: 0.5em;
-                            width: 5em;
-                        }
+   border-radius: 3px;
+   padding: 3px 5px 3px 5px;
+   font-size: 12px;
+   cursor: pointer;
+   background: #4495d4;
+   color: #fff;
+   margin-bottom: 0.5em;
+   width: 5em;
+}
+
+#trackers {
+    padding-top: 6em; 
+    padding-left:1em; 
+    padding-bottom:1em;
+}

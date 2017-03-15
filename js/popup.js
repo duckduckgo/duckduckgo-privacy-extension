@@ -103,28 +103,30 @@ window.onload = function() {
       toggle_blocking();
     }
 
-    var trackers = document.getElementById('trackers');
+    var trackers = document.getElementById('trackers'),
+        tracker_name = document.getElementById('tracker_name'),
+        req_count = document.getElementById('req_count');
 
     (function(){
         getTab(function(t) { 
             var tab = bg.tabs[t.id];
-            var html = "<table>";
-            if(tab && tab.trackers && Object.keys(tab.trackers).length){
-                html += "<tr><th>Tracker</th><th>Requests</th></tr>";
-                Object.keys(tab.trackers).forEach( function(name) {i
-                    html  += "<tr>";
+            tracker_name.innerHTML = '';
+            req_count.innerHTML = '';
 
+            if(tab && tab.trackers && Object.keys(tab.trackers).length){
+                Object.keys(tab.trackers).forEach( function(name) {
+                    var temp_url = '',
+                        trackers_html = '',
+                        req_html = '';
+                    
                     if(bg.betterList.indexOf(tab.trackers[name].url)){
-                        html += '<td><a href="https://better.fyi/trackers/'+ tab.trackers[name].url + '">' + name + "</a></td>"; 
-                    }
-                    else{
-                        html += "<td>" + name + "</td>";
+                        temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
                     }
                     
-                    html += "<td>" + tab.trackers[name].count + "</td></tr>";
+                    tracker_name.innerHTML += '<li><a href="' + temp_url + '">' + name + '</a></li>'; 
+                    
+                    req_count.innerHTML += "<li>" + tab.trackers[name].count + "</li>";
                 });
-                html += "</table>"
-                trackers.innerHTML = html
             }
         });
     })();
