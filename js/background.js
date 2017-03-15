@@ -89,6 +89,12 @@ function Background() {
         });
       }
     });
+    
+    if (!chrome.extension.inIncognitoContext) {
+        chrome.tabs.create({
+            url: "/html/intro.html"
+        });
+    }
   });
 
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
