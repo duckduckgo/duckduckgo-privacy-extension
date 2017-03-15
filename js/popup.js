@@ -113,7 +113,13 @@ window.onload = function() {
             tracker_name.innerHTML = '';
             req_count.innerHTML = '';
 
+            if (tab && ((!tab.trackers) || (!Object.keys(tab.trackers).length))) {
+                trackers.classList.add('hide');
+            }
+
             if(tab && tab.trackers && Object.keys(tab.trackers).length){
+                trackers.classList.remove('hide');
+
                 Object.keys(tab.trackers).forEach( function(name) {
                     var temp_url = '',
                         trackers_html = '',
