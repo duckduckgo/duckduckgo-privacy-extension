@@ -33,6 +33,11 @@
                 "js/utils.js",
                 "js/load.js",
                 "js/blockTrackers.js",
+                "https-everywhere/chromium/rules.js", 
+                "https-everywhere/chromium/storage.js", 
+                "https-everywhere/chromium/util.js", 
+                "https-everywhere/chromium/background.js", 
+                "https-everywhere/chromium/incognito-cache-clearing.js",
                 "js/background.js"
             ]
     },
@@ -57,6 +62,12 @@
         "contextMenus",
         "webRequest",
         "webRequestBlocking",
-        "*://*/*"
+        "*://*/*",
+        "webNavigation", 
+        "webRequestBlocking", 
+        "tabs", 
+        "cookies", 
+        "storage", 
+        "<all_urls>"
     ]
 }
