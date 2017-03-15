@@ -240,7 +240,7 @@ h2 {
   width: 182px;
 }
 
-#advanced #left ul li, #trackers .name ul li {
+#advanced #left ul li, #trackers ul li {
   padding: 1px 3px 5px 0px;
 }
 
@@ -259,7 +259,7 @@ h2 {
   padding-top: 2px !important;
 }
 
-#advanced #right h2, #trackers .req h2 {
+#advanced #right h2, #trackers .req {
   padding-left: 5px;
 }
 
