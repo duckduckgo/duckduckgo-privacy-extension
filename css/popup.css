@@ -195,16 +195,16 @@ body {
 }
 
 
-#advanced .link {
+.link {
   font-size: 12px;
   padding: 5px 10px 5px 5px;
 }
 
-#advanced .link a {
+.link a {
   color: #4495d4 !important;
 }
 
-#advanced .link a:hover {
+.link a:hover {
   text-decoration: none;
 }
 
@@ -216,12 +216,12 @@ body {
   padding-top: 5px !important;
 }
 
-#advanced ul {
+ul {
   padding: 0 !important;
   margin: 0 !important;
 }
 
-#advanced li {
+li {
   list-style-type: none;
   line-height: 16px;
   height: 16px !important;
@@ -235,12 +235,12 @@ h2 {
   color: #858585;
 }
 
-#advanced #left {
+#advanced #left, #trackers .name {
   float: left;
   width: 182px;
 }
 
-#advanced #left ul li {
+#advanced #left ul li, #trackers .name ul li {
   padding: 1px 3px 5px 0px;
 }
 
@@ -251,7 +251,7 @@ h2 {
   font-size: 12px;
 }
 
-#advanced #left ul {
+#advanced #left ul, #trackers .name ul {
   padding-left: 10px;
   font-size: 12px;
   float: left;
@@ -259,17 +259,17 @@ h2 {
   padding-top: 2px !important;
 }
 
-#advanced #right h2 {
+#advanced #right h2, #trackers .req h2 {
   padding-left: 5px;
 }
 
-#advanced #right {
+#advanced #right, #trackers .req {
   float: left;
   width: 317px;
   padding-bottom: 6px;
 }
 
-#advanced #right ul {
+#advanced #right ul, #trackers .req ul {
   width: 158px;
 }
 
@@ -277,7 +277,7 @@ h2 {
   float: left;
 }
 
-#advanced #right ul.left {
+#advanced #right ul.left, #trackers .req ul {
   padding-left: 4px;
 }
 

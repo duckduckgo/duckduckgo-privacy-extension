@@ -123,7 +123,7 @@ window.onload = function() {
                         temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
                     }
                     
-                    tracker_name.innerHTML += '<li><a href="' + temp_url + '">' + name + '</a></li>'; 
+                    tracker_name.innerHTML += '<li class="link"><a href="' + temp_url + '">' + name + '</a></li>'; 
                     
                     req_count.innerHTML += "<li>" + tab.trackers[name].count + "</li>";
                 });
