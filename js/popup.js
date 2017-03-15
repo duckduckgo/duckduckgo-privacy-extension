@@ -123,10 +123,21 @@ window.onload = function() {
                         temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
                     }
                     
-                    tracker_name.innerHTML += '<li class="link"><a href="' + temp_url + '">' + name + '</a></li>'; 
+                    tracker_name.innerHTML += '<li class="link"><a class="tracker-link" href="' + temp_url + '">' + name + '</a></li>'; 
                     
                     req_count.innerHTML += "<li>" + tab.trackers[name].count + "</li>";
                 });
+
+
+                var trackerLinks = document.getElementsByClassName('tracker-link');
+                for(var t=0; t < trackerLinks.length; t++){
+                    if(trackerLinks[t].href){
+                        trackerLinks[t].onclick = function() {
+                            chrome.tabs.create({url: this.href});
+                        }
+                    }
+                }
+
             }
         });
     })();
