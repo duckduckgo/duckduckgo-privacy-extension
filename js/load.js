@@ -31,7 +31,7 @@ require.scopes.load = ( () => {
          * "<tracker host>" : { "c": <company name>, "u": "company url" }
          */
         var trackers = {};
-        var trackerTypes = ['Advertising', 'Analytics'];
+        var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
 
         trackerTypes.forEach((type) => {
             blockList.categories[type].forEach((entry) => {

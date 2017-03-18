@@ -1,6 +1,7 @@
 
 var load = require('load');
-var blockListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json";
+//var blockListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json";
+var blockListSource = "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json";
 var entityListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json";
 
 var blockList = JSON.parse(load.loadExtensionFile(blockListSource, 'json', 'external'));
