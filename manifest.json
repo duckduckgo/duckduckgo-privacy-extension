@@ -37,7 +37,8 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo Search",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}"
+        "search_url": "https://duckduckgo.com/?q={searchTerms}",
+        "suggest_url": "https://duckduckgo.com/ac/?type=list&q={searchTerms}"
       }
     },
     "content_scripts": [
