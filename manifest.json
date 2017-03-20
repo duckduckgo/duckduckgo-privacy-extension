@@ -1,6 +1,6 @@
 {
     "name": "DuckDuckGo for Chrome",
-    "version": "42.8.10",
+    "version": "42.8.11",
     "description": "DuckDuckGo enhancements for Chrome.",
     "icons": {
         "16": "img/icon_16.png",
@@ -38,7 +38,7 @@
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo Search",
         "search_url": "https://duckduckgo.com/?q={searchTerms}",
-        "suggest_url": "https://duckduckgo.com/ac/?type=list&q={searchTerms}"
+        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
     "content_scripts": [
