@@ -16,7 +16,9 @@
 
 
 var blockTrackers = require('blockTrackers');
+var socialwidgets = require('socialwidgets');
 var utils = require('utils');
+
 var tabs = {};
 var isExtensionEnabled = true;
 
@@ -250,39 +252,45 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
 });
 
 chrome.webRequest.onCompleted.addListener(
-    function () {
-      var atb = localStorage['atb'],
-          setATB = localStorage['set_atb'];
+    function (e) {
+      if (e.url.search('/duckduckgo\.com') !== -1) {
+          var atb = localStorage['atb'],
+              setATB = localStorage['set_atb'];
 
-      if (!atb || !setATB) {
-        return;
+          if (!atb || !setATB) {
+            return;
+          }
+
+          var xhr = new XMLHttpRequest();
+
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+               if (xhr.status == 200) {
+                 var curATB = JSON.parse(xhr.responseText);
+                 if(curATB.version !== setATB) {
+                   localStorage['set_atb'] = curATB.version;
+                 }
+               }
+            }
+          };
+
+          xhr.open('GET',
+            'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
+              + '&atb=' + atb + '&set_atb=' + setATB,
+            true
+          );
+          xhr.send();
+      } else {
+          socialwidgets.replaceAllButtons();
       }
-
-      var xhr = new XMLHttpRequest();
-
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
-           if (xhr.status == 200) {
-             var curATB = JSON.parse(xhr.responseText);
-             if(curATB.version !== setATB) {
-               localStorage['set_atb'] = curATB.version;
-             }
-           }
-        }
-      };
-
-      xhr.open('GET',
-        'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
-          + '&atb=' + atb + '&set_atb=' + setATB,
-        true
-      );
-      xhr.send();
     },
     {
         urls: [
-            '*://duckduckgo.com/?*',
-            '*://*.duckduckgo.com/?*',
+            "<all_urls>",
         ],
+        types: [
+            'main_frame',
+        ]
     }
 );
 
