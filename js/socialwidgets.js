@@ -72,7 +72,7 @@ require.scopes.socialwidgets = ( () => {
     }
     
     function getReplacementButtonUrl(replacementButtonLocation) {
-        return safari.extension.baseURI + replacementButtonLocation;
+        return "../img/" + replacementButtonLocation;
     }
     
     function replaceButtonWithIframeAndUnblockTracker(button, tracker, iframeUrl) {
