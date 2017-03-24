@@ -1,5 +1,3 @@
-require.scopes.socialwidgets = ( () => {
-
     function replaceAllButtons() {
         var key;
         for (key in socialwidgets) {
@@ -52,7 +50,6 @@ require.scopes.socialwidgets = ( () => {
             case 1: // in place button type; replace the existing button with an
                 // iframe when clicked
                 var iframeUrl = details + encodeURIComponent(window.location.href);
-                safari.extension.dispatchMessage(window.location.href);
                 
                 button.addEventListener("click", function() {
                                         // for some reason, the callback function can execute more than
@@ -72,7 +69,7 @@ require.scopes.socialwidgets = ( () => {
     }
     
     function getReplacementButtonUrl(replacementButtonLocation) {
-        return "../img/" + replacementButtonLocation;
+        return chrome.extension.getURL("../img/" + replacementButtonLocation);
     }
     
     function replaceButtonWithIframeAndUnblockTracker(button, tracker, iframeUrl) {
@@ -142,7 +139,4 @@ require.scopes.socialwidgets = ( () => {
     };
 
 
-    var exports = {};
-    exports.replaceAllButtons = replaceAllButtons;
-    return exports;
-})();
+    replaceAllButtons();

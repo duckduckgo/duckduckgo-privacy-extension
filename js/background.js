@@ -16,7 +16,6 @@
 
 
 var blockTrackers = require('blockTrackers');
-var socialwidgets = require('socialwidgets');
 var utils = require('utils');
 
 var tabs = {};
@@ -252,8 +251,7 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
 });
 
 chrome.webRequest.onCompleted.addListener(
-    function (e) {
-      if (e.url.search('/duckduckgo\.com') !== -1) {
+      function () {
           var atb = localStorage['atb'],
               setATB = localStorage['set_atb'];
 
@@ -280,16 +278,11 @@ chrome.webRequest.onCompleted.addListener(
             true
           );
           xhr.send();
-      } else {
-          socialwidgets.replaceAllButtons();
-      }
     },
     {
         urls: [
-            "<all_urls>",
-        ],
-        types: [
-            'main_frame',
+            "*://duckduckgo.com/?*",
+            "*://*.duckduckgo.com/?*"
         ]
     }
 );
