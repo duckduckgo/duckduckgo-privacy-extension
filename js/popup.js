@@ -102,6 +102,9 @@ window.onload = function() {
     document.getElementById('toggle_blocking').onclick = function(){
       toggle_blocking();
     }
+    document.getElementById('toggle_social_blocking').onclick = function(){
+      toggle_social_blocking();
+    }
 
     var trackers = document.getElementById('trackers'),
         tracker_name = document.getElementById('tracker_name'),
@@ -173,19 +176,34 @@ window.onload = function() {
         document.getElementById('icon_advanced').className = 'minimized';
     }
 
+    function check_uncheck(isChecked, checkboxId) {
+        isChecked = !isChecked;
+
+        var switch_button = document.getElementById(checkboxId);
+
+        if (!isChecked) {
+            switch_button.checked = false;
+        } else {
+            switch_button.checked = true;
+        }
+
+        document.getElementById('reload_tab').classList.remove('hide');
+        
+        return isChecked;
+    }
+
     function toggle_blocking() {
-         bg.isExtensionEnabled = !bg.isExtensionEnabled;
-         
-         var switch_button = document.getElementById('toggle_blocking');
+         bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, 'toggle_blocking');
          
          if (!bg.isExtensionEnabled) {
-             switch_button.checked = false;
+             bg.isSocialBlockingEnabled = false;
          } else {
-             switch_button.checked = true;
              document.getElementById('toggle_social_blocking').parentNode.classList.remove('hide');
          }
+    }
 
-         document.getElementById('reload_tab').classList.remove('hide');
+    function toggle_social_blocking() {
+        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, 'toggle_social_blocking');
     }
 
     setTimeout(function(){

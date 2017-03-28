@@ -20,6 +20,7 @@ var utils = require('utils');
 
 var tabs = {};
 var isExtensionEnabled = true;
+var isSocialBlockingEnabled = false;
 
 function Background() {
   $this = this;
