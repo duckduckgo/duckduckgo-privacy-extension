@@ -1,3 +1,5 @@
+var bg = chrome.extension.getBackgroundPage();
+
 require.scopes.load = ( () => {
 
     function loadExtensionFile(url, returnType, source){
