@@ -11,6 +11,8 @@ var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'ex
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
+var bg = chrome.extension.getBackgroundPage();
+
 require.scopes.blockTrackers = (function() {    
     
     // If blocking option is enabled

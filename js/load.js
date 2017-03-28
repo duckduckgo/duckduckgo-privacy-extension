@@ -25,7 +25,7 @@ require.scopes.load = ( () => {
         }
     }
 
-    function processMozillaBlockList(blockList, includeSocial){
+    function processMozillaBlockList(blockList){
         /* format Mozilla block list for our use
          * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
          * "<tracker host>" : { "c": <company name>, "u": "company url" }
@@ -33,7 +33,7 @@ require.scopes.load = ( () => {
         var trackers = {};
         var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
         
-        if (includeSocial) {
+        if (bg.isSocialBlockingEnabled) {
             trackerTypes.push('Social');
         }
 
