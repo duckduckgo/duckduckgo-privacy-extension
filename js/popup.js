@@ -198,7 +198,9 @@ window.onload = function() {
          if (!bg.isExtensionEnabled) {
              bg.isSocialBlockingEnabled = false;
          } else {
-             document.getElementById('toggle_social_blocking').parentNode.classList.remove('hide');
+             var social = document.getElementById('toggle_social_blocking');
+             social.parentNode.classList.remove('hide');
+             social.checked = bg.isSocialBlockingEnabled? true : false;
          }
     }
 
@@ -326,7 +328,10 @@ window.onload = function() {
 
         if (bg.isExtensionEnabled) {
             document.getElementById('toggle_blocking').checked = true;
-            document.getElementById('toggle_social_blocking').parentNode.classList.remove('hide');
+            
+            var social = document.getElementById('toggle_social_blocking');
+            social.parentNode.classList.remove('hide');
+            social.checked = bg.isSocialBlockingEnabled? true : false;
         }
     }
 
