@@ -25,13 +25,17 @@ require.scopes.load = ( () => {
         }
     }
 
-    function processMozillaBlockList(blockList){
+    function processMozillaBlockList(blockList, includeSocial){
         /* format Mozilla block list for our use
          * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
          * "<tracker host>" : { "c": <company name>, "u": "company url" }
          */
         var trackers = {};
         var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
+        
+        if (includeSocial) {
+            trackerTypes.push('Social');
+        }
 
         trackerTypes.forEach((type) => {
             blockList.categories[type].forEach((entry) => {
@@ -40,6 +44,13 @@ require.scopes.load = ( () => {
                         entry[name][domain].forEach((trackerURL) => {
                         trackers[trackerURL] = {'c': name, 'u': domain};
                         });
+                    }
+                    
+                    // Facebook and Twitter are listed as Disconnect type
+                    // Remap them to Social
+                    if ((type === 'Disconnect') && (name.match(/(facebook|twitter)/i))) {
+                        blockList.categories.Social.push(entry);
+                        delete entry;
                     }
                 }
             });
