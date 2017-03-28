@@ -22,6 +22,7 @@ require.scopes.blockTrackers = (function() {
     function blockTrackers(url, currLocation) {
         if (localStorage['blocking'] === 'true') {
             if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
+                formerSocialBlocking = bg.isSocialBlockingEnabled;
                 trackers = load.processMozillaBlockList(blockList);
             }
 
