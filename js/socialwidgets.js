@@ -142,7 +142,7 @@
     };
 
 
-    console.log("social blocking " + localStorage['social']);
-    if (localStorage['social']) {
+    console.log("social blocking " + (localStorage['social']) === 'true');
+    if (localStorage['social'] === 'true') {
         replaceAllButtons();
     }
