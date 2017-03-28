@@ -1,4 +1,7 @@
-    function replaceAllButtons() {
+    
+  var bg = chrome.extension.getBackgroundPage();
+  
+  function replaceAllButtons() {
         var key;
         for (key in socialwidgets) {
             replaceIndividualButton(key);
@@ -139,4 +142,6 @@
     };
 
 
-    replaceAllButtons();
+    if (bg.isSocialBlockingEnabled) {
+        replaceAllButtons();
+    }
