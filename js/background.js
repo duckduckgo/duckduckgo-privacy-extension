@@ -240,9 +240,13 @@ chrome.tabs.onReplaced.addListener(function (addedTabId) {
 });
 
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
-    if(tabs[id] && info.status === "loading"){
-        tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url};
+    if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
+        tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "status": "loading"};
     }
+    else if(tabs[id] && info.status === "complete"){
+        tabs[id].status = "complete";
+    }
+
 });
 
 chrome.tabs.onRemoved.addListener(function(id, info) {
