@@ -50,9 +50,14 @@ require.scopes.load = ( () => {
                     
                     // Facebook and Twitter are listed as Disconnect type
                     // Remap them to Social
+                    console.log("list tracker type: " + type);
                     if ((type === 'Disconnect') && (name.match(/(facebook|twitter)/i))) {
+                        console.log(entry);
                         blockList.categories.Social.push(entry);
-                        delete entry;
+                        console.log("Social: " + blockList.categories.Social);
+                        var id = blockList.categories.Disconnect.indexOf(entry);
+                        blockList.categories.Disconnect.splice(id, 1);
+                        console.log("Disconnect: " + blockList.categories.Social);
                     }
                 }
             });

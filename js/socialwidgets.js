@@ -142,6 +142,7 @@
     };
 
 
+    console.log("social blocking " + bg.isSocialBlockingEnabled);
     if (bg.isSocialBlockingEnabled) {
         replaceAllButtons();
     }

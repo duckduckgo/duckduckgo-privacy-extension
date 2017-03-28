@@ -11,6 +11,9 @@ var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'ex
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
+var bg = chrome.extension.getBackgroundPage();
+var formerSocialBlocking = bg.isSocialBlockingEnabled;
+
 require.scopes.blockTrackers = (function() {    
     
     // If blocking option is enabled
@@ -18,6 +21,10 @@ require.scopes.blockTrackers = (function() {
     // block the request
     function blockTrackers(url, currLocation) {
         if (localStorage['blocking'] === 'true') {
+            if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
+                trackers = load.processMozillaBlockList(blockList);
+            }
+
             var host = extractHostFromURL(url);
 
             if (trackers[host]) {
