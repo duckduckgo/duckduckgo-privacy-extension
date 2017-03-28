@@ -182,6 +182,7 @@ window.onload = function() {
              switch_button.checked = false;
          } else {
              switch_button.checked = true;
+             document.getElementById('toggle_social_blocking').parentNode.classList.remove('hide');
          }
 
          document.getElementById('reload_tab').classList.remove('hide');
@@ -307,6 +308,7 @@ window.onload = function() {
 
         if (bg.isExtensionEnabled) {
             document.getElementById('toggle_blocking').checked = true;
+            document.getElementById('toggle_social_blocking').parentNode.classList.remove('hide');
         }
     }
 
