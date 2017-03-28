@@ -194,11 +194,14 @@ window.onload = function() {
 
     function toggle_blocking() {
          bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, 'toggle_blocking');
+         var social = document.getElementById('toggle_social_blocking');
          
          if (!bg.isExtensionEnabled) {
              bg.isSocialBlockingEnabled = false;
+             social.parentNode.classList.add('hide');
+             social.checked = false;
+             bg.isSocialBlockingEnabled = false;
          } else {
-             var social = document.getElementById('toggle_social_blocking');
              social.parentNode.classList.remove('hide');
              social.checked = bg.isSocialBlockingEnabled? true : false;
          }
