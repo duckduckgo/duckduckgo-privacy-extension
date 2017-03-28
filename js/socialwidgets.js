@@ -1,5 +1,5 @@
     
-  var bg = chrome.extension.getBackgroundPage();
+  //var bg = chrome.extension.getBackgroundPage();
   
   function replaceAllButtons() {
         var key;
@@ -142,7 +142,7 @@
     };
 
 
-    console.log("social blocking " + bg.isSocialBlockingEnabled);
-    if (bg.isSocialBlockingEnabled) {
+    console.log("social blocking " + localStorage['social']);
+    if (localStorage['social']) {
         replaceAllButtons();
     }

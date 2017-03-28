@@ -205,6 +205,10 @@ window.onload = function() {
              social.parentNode.classList.remove('hide');
              social.checked = bg.isSocialBlockingEnabled? true : false;
          }
+         
+         chrome.tabs.executeScript({
+             code: 'localStorage["social"] = ' + bg.isSocialBlockingEnabled + ';'
+         });
     }
 
     function toggle_social_blocking() {
