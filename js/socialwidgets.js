@@ -83,6 +83,12 @@
             iframe.setAttribute("class", "ddgOriginalButton");
             
             button.parentNode.replaceChild(iframe, button);
+
+            var request = {
+                "whitelist": iframeUrl
+            };
+            
+            chrome.runtime.sendMessage(request);
         }
     }
     

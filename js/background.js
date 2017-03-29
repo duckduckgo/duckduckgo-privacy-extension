@@ -111,6 +111,15 @@ function Background() {
       });
     }
 
+    if (request.whitelist) {
+      chrome.tabs.query({
+        'currentWindow': true,
+        'active': true
+      }, function(tabs) {
+        tabs[tabs[0].id] = request.whitelist;
+      });
+    }
+
     if (!localStorage['set_atb'] && request.atb) {
       localStorage['atb'] = request.atb;
       localStorage['set_atb'] = request.atb;
@@ -181,6 +190,7 @@ chrome.webRequest.onBeforeRequest.addListener(
               return;
           }
 
+          if (!tabs[e.tabID].whitelist || (tabs[e.tabID].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
               var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url);
 
               if(block){
@@ -204,6 +214,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 return {cancel: true};
               }
+          }
       }
     },
     {
