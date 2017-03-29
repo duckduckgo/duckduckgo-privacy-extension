@@ -88,7 +88,7 @@
             button.parentNode.replaceChild(iframe, button);
 
         }
-      }
+      });
     }
 
     function unblockTracker(tracker, callback) {
