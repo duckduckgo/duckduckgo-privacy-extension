@@ -24,6 +24,13 @@ require.scopes.blockTrackers = (function() {
             if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
                 formerSocialBlocking = bg.isSocialBlockingEnabled;
                 trackers = load.processMozillaBlockList(blockList);
+                
+                var code_str = 'localStorage["social"] = "';
+                code_str += bg.isSocialBlockingEnabled? 'true";' : '";';
+                
+                chrome.tabs.executeScript({
+                    code: code_str 
+                });
             }
 
             var host = extractHostFromURL(url);

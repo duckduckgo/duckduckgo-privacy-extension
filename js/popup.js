@@ -195,23 +195,16 @@ window.onload = function() {
     function toggle_blocking() {
          bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, 'toggle_blocking');
          var social = document.getElementById('toggle_social_blocking');
-         var code_str = 'localStorage["social"] = "';
 
          if (!bg.isExtensionEnabled) {
              bg.isSocialBlockingEnabled = false;
              social.parentNode.classList.add('hide');
              social.checked = false;
              bg.isSocialBlockingEnabled = false;
-             code_str += '";'
          } else {
              social.parentNode.classList.remove('hide');
              social.checked = bg.isSocialBlockingEnabled? true : false;
-             code_str += bg.isSocialBlockingEnabled? 'true";' : '";';
          }
-
-         chrome.tabs.executeScript({
-             code: code_str 
-         });
     }
 
     function toggle_social_blocking() {
