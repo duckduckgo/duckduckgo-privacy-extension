@@ -115,8 +115,12 @@ function Background() {
       chrome.tabs.query({
         'currentWindow': true,
         'active': true
-      }, function(tabs) {
-        var tabId = tabs[0].id;
+      }, function(currentTabs) {
+        var tabId = currentTabs[0].id;
+        if (!tabs[tabId]) {
+            tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
+        }
+
         if (!tabs[tabId].whitelist) {
             tabs[tabId].whitelist = [];
         }
