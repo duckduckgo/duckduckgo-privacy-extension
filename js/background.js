@@ -116,7 +116,12 @@ function Background() {
         'currentWindow': true,
         'active': true
       }, function(tabs) {
-        tabs[tabs[0].id] = request.whitelist;
+        var tabId = tabs[0].id;
+        if (!tabs[tabId].whitelist) {
+            tabs[tabId].whitelist = [];
+        }
+        
+        tabs[tabId].whitelist.push(request.whitelist);
       });
     }
 
