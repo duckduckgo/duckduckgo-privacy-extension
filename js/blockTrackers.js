@@ -28,7 +28,7 @@ require.scopes.blockTrackers = (function() {
                 var code_str = 'localStorage["social"] = "';
                 code_str += bg.isSocialBlockingEnabled? 'true";' : '";';
                 
-                chrome.tabs.query({currentWindow: true, status: 'complete'}, function(currentTabs){
+                chrome.tabs.query({currentWindow: true}, function(currentTabs){
                     console.log(currentTabs);
                     for(var i = 0; i < currentTabs.length; i++){
                         var tabId = currentTabs[i].id;
