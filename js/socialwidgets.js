@@ -77,6 +77,13 @@
     
     function replaceButtonWithIframeAndUnblockTracker(button, tracker, iframeUrl) {
         if (button.parentNode !== null) {
+            var request = {
+                "whitelist": iframeUrl
+            };
+            
+            chrome.runtime.sendMessage(request);
+            
+            
             var iframe = document.createElement("iframe");
             
             iframe.setAttribute("src", iframeUrl);
@@ -84,11 +91,6 @@
             
             button.parentNode.replaceChild(iframe, button);
 
-            var request = {
-                "whitelist": iframeUrl
-            };
-            
-            chrome.runtime.sendMessage(request);
         }
     }
     
