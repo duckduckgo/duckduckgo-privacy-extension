@@ -32,10 +32,12 @@ require.scopes.blockTrackers = (function() {
                     console.log(currentTabs);
                     for(var i = 0; i < currentTabs.length; i++){
                         var tabId = currentTabs[i].id;
-                        chrome.tabs.executeScript(tabId, {
-                            code: code_str
-                           // allFrames: true
-                        });
+                        if (currentTabs[i].url && (!currentTabs[i].url.match(/(chrome\:\/\/)|(chrome\-extension\:\/\/)/))) {
+                            chrome.tabs.executeScript(tabId, {
+                                code: code_str
+                               // allFrames: true
+                            });
+                        }
                     }
                 });
             }
