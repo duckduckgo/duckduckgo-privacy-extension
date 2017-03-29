@@ -30,7 +30,8 @@ require.scopes.blockTrackers = (function() {
                 
                 chrome.tabs.query({currentWindow: true, status: 'complete'}, function(currentTabs){
                     console.log(currentTabs);
-                    for(var tabId = 0; tabId < currentTabs.length; tabId++){ 
+                    for(var i = 0; i < currentTabs.length; i++){
+                        var tabId = currentTabs[i].id;
                         chrome.tabs.executeScript(tabId, {
                             code: code_str,
                             allFrames: true
