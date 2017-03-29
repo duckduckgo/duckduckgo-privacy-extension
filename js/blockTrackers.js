@@ -33,8 +33,8 @@ require.scopes.blockTrackers = (function() {
                     for(var i = 0; i < currentTabs.length; i++){
                         var tabId = currentTabs[i].id;
                         chrome.tabs.executeScript(tabId, {
-                            code: code_str,
-                            allFrames: true
+                            code: code_str
+                           // allFrames: true
                         });
                     }
                 });
