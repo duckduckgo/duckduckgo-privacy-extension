@@ -112,6 +112,8 @@
                                 "fb\\:share_button",
                                 "iframe[src*='://www.facebook.com/plugins/share_button.php']",
                                 "iframe[src*='://www.facebook.com/v2.0/plugins/share_button.php']",
+                                "a[href*='https://www.facebook.com/sharer/sharer.php']",
+                                "a[href*='https://facebook.com/sharer.php']",
                                 ".fb-share-button"
                                 ],
             "replacementButton": {
