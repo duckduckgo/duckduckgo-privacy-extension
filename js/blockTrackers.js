@@ -21,6 +21,9 @@ require.scopes.blockTrackers = (function() {
     // block the request
     function blockTrackers(url, currLocation) {
         if (localStorage['blocking'] === 'true') {
+            var host = extractHostFromURL(url);
+            var isWhiteListed = false;
+
             if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
                 formerSocialBlocking = bg.isSocialBlockingEnabled;
                 trackers = load.processMozillaBlockList(blockList);
@@ -38,13 +41,16 @@ require.scopes.blockTrackers = (function() {
                                // allFrames: true
                             });
                         }
+                        
+                        if ((i === 0) && ((tabs[tabId]) && (!tabs[tabId].whitelist.indexOf(host) !== -1))) {
+                            isWhiteListed = true;
+                        }
                     }
                 });
             }
 
-            var host = extractHostFromURL(url);
 
-            if (trackers[host]) {
+            if (trackers[host] && (!isWhitelisted)) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
                 //localStorage[tab.url] = localStorage[tab.url]? parseInt(localStorage[tab.url]) + 1 : 1;
                 //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
@@ -86,6 +92,7 @@ require.scopes.blockTrackers = (function() {
 
     var exports = {};
     exports.blockTrackers = blockTrackers;
+    exports.extractHostFromURL = extractHostFromURL;
     exports.trackers = trackers;
 
     return exports;

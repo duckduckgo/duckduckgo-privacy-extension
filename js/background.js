@@ -112,21 +112,22 @@ function Background() {
     }
 
     if (request.whitelist) {
-      console.log("WHITELIST: " + request.whitelist);
+      var toWhitelist = blockTrackers.extractHostFromURL(request.whitelist);
+      console.log("WHITELIST: " + toWhitelist);
       chrome.tabs.query({
         'currentWindow': true,
         'active': true
       }, function(currentTabs) {
         var tabId = currentTabs[0].id;
         if (!tabs[tabId]) {
-            tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
+            tabs[tabId] = {'trackers': {}, "total": 0, 'url': tab.url};
         }
 
         if (!tabs[tabId].whitelist) {
             tabs[tabId].whitelist = [];
         }
         
-        tabs[tabId].whitelist.push(request.whitelist);
+        tabs[tabId].whitelist.push(toWhitelist);
       });
     }
 
