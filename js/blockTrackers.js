@@ -28,8 +28,14 @@ require.scopes.blockTrackers = (function() {
                 var code_str = 'localStorage["social"] = "';
                 code_str += bg.isSocialBlockingEnabled? 'true";' : '";';
                 
-                chrome.tabs.executeScript({
-                    code: code_str 
+                chrome.tabs.query({currentWindow: true, status: 'complete'}, function(currentTabs){
+                    console.log(currentTabs);
+                    for(var tabId = 0; tabId < currentTabs.length; tabId++){ 
+                        chrome.tabs.executeScript(tabId, {
+                            code: code_str,
+                            allFrames: true
+                        });
+                    }
                 });
             }
 
