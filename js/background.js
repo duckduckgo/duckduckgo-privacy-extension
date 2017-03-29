@@ -99,7 +99,7 @@ function Background() {
     }
   });
 
-  chrome.runtime.onMessage.addListener(function request, sender, response) {
+  chrome.runtime.onMessage.addListener(function (request, sender, response) {
     if (typeof(request.social) == 'undefined') {
         return;
     }
@@ -114,7 +114,6 @@ function Background() {
                 });
             }
         });
-
   });
 
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
