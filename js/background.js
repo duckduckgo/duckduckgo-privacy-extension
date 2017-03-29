@@ -112,6 +112,7 @@ function Background() {
     }
 
     if (request.whitelist) {
+      console.log("WHITELIST: " + request.whitelist);
       chrome.tabs.query({
         'currentWindow': true,
         'active': true

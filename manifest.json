@@ -75,6 +75,7 @@
         "*://*/*",
         "webNavigation", 
         "webRequestBlocking", 
+        "activeTab",
         "tabs", 
         "cookies", 
         "storage", 
