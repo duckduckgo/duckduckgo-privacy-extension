@@ -28,24 +28,14 @@ require.scopes.blockTrackers = (function() {
                 formerSocialBlocking = bg.isSocialBlockingEnabled;
                 trackers = load.processMozillaBlockList(blockList);
                 
-                var code_str = 'localStorage["social"] = "';
-                code_str += bg.isSocialBlockingEnabled? 'true";' : '";';
-                
-                chrome.tabs.query({currentWindow: true}, function(currentTabs){
-                    console.log(currentTabs);
-                    for(var i = 0; i < currentTabs.length; i++){
-                        var tabId = currentTabs[i].id;
-                        if (currentTabs[i].url && (!currentTabs[i].url.match(/(chrome\:\/\/)|(chrome\-extension\:\/\/)/))) {
-                            chrome.tabs.executeScript(tabId, {
-                                code: code_str
-                               // allFrames: true
-                            });
-                        }
-                        
-                        if ((i === 0) && ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1))) {
-                            isWhiteListed = true;
-                        }
-                    }
+                chrome.tabs.query({
+                  'currentWindow': true,
+                  'active': true
+                }, function(currentTabs) {
+                   var tabId = currentTabs[0].id;
+                   if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
+                       isWhiteListed = true;
+                   }
                 });
             }
 

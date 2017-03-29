@@ -205,10 +205,13 @@ window.onload = function() {
              social.parentNode.classList.remove('hide');
              social.checked = bg.isSocialBlockingEnabled? true : false;
          }
+         
+         chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
     }
 
     function toggle_social_blocking() {
         bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, 'toggle_social_blocking');
+        chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
     }
 
     setTimeout(function(){

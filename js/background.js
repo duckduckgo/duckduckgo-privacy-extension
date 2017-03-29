@@ -99,6 +99,24 @@ function Background() {
     }
   });
 
+  chrome.runtime.onMessage.addListener(function request, sender, response) {
+    if (typeof(request.social) == 'undefined') {
+        return;
+    }
+
+    var code_str = 'localStorage["social"] = ' + request.social;
+   
+    Object.keys(tabs).forEach(function(tabId) {
+            if (tabs[tabId].url && (!tabs[tabId].url.match(/(chrome\:\/\/)|(chrome\-extension\:\/\/)/))) {
+                chrome.tabs.executeScript(Number(tabId), {
+                    code: code_str
+                   // allFrames: true
+                });
+            }
+        });
+
+  });
+
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
     if (request.options) {
       callback(localStorage);
@@ -128,6 +146,7 @@ function Background() {
         }
         
         tabs[tabId].whitelist.push(toWhitelist);
+        callback();
       });
     }
 
