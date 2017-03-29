@@ -76,12 +76,8 @@
     }
     
     function replaceButtonWithIframeAndUnblockTracker(button, tracker, iframeUrl) {
+      unblockTracker(tracker, function() {
         if (button.parentNode !== null) {
-            var request = {
-                "whitelist": iframeUrl
-            };
-            
-            chrome.runtime.sendMessage(request);
             
             
             var iframe = document.createElement("iframe");
@@ -92,6 +88,15 @@
             button.parentNode.replaceChild(iframe, button);
 
         }
+      }
+    }
+
+    function unblockTracker(tracker, callback) {
+        var request = {
+            "whitelist": tracker
+        };
+        
+        chrome.runtime.sendMessage(request, callback);
     }
     
     var socialwidgets = {
