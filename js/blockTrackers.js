@@ -50,7 +50,7 @@ require.scopes.blockTrackers = (function() {
             }
 
 
-            if (trackers[host] && (!isWhitelisted)) {
+            if (trackers[host] && (!isWhiteListed)) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
                 //localStorage[tab.url] = localStorage[tab.url]? parseInt(localStorage[tab.url]) + 1 : 1;
                 //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
