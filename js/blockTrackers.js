@@ -42,7 +42,7 @@ require.scopes.blockTrackers = (function() {
                             });
                         }
                         
-                        if ((i === 0) && ((tabs[tabId]) && (!tabs[tabId].whitelist.indexOf(host) !== -1))) {
+                        if ((i === 0) && ((tabs[tabId] && tabs[tabId].whitelist) && (!tabs[tabId].whitelist.indexOf(host) !== -1))) {
                             isWhiteListed = true;
                         }
                     }
