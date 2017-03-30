@@ -8,8 +8,8 @@ var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'ex
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
-//var bg = chrome.extension.getBackgroundPage();
-//var formerSocialBlocking = bg.isSocialBlockingEnabled;
+var bg = chrome.extension.getBackgroundPage();
+var formerSocialBlocking = bg.isSocialBlockingEnabled;
 
 require.scopes.blockTrackers = (function() {    
 
