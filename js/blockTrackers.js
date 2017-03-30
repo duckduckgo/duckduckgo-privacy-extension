@@ -34,13 +34,13 @@ require.scopes.blockTrackers = (function() {
               'active': true
             }, function(currentTabs) {
                 if (currentTabs[0]) {
+                   console.log(currentTabs[0]);
                    var tabId = currentTabs[0].id;
                    if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
                        isWhiteListed = true;
                    }
                 }
             });
-
 
             if (trackers[host] && (!isWhiteListed)) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
