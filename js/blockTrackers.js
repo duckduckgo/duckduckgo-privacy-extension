@@ -4,9 +4,6 @@ var load = require('load');
 var blockListSource = "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json";
 var entityListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json";
 
-var blockList = JSON.parse(load.loadExtensionFile(blockListSource, 'json', 'external'));
-var trackers = load.processMozillaBlockList(blockList);
-
 var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'external'));
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
@@ -15,6 +12,9 @@ var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 //var formerSocialBlocking = bg.isSocialBlockingEnabled;
 
 require.scopes.blockTrackers = (function() {    
+
+    var blockList = JSON.parse(load.loadExtensionFile(blockListSource, 'json', 'external'));
+    var trackers = load.processMozillaBlockList(blockList);
     
     // If blocking option is enabled
     // and url matches a tracker pattern
