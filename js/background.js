@@ -37,11 +37,9 @@ function Background() {
   localStorage['os'] = os;
 
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      console.log(savedTabs);
       for(var i = 0; i < savedTabs.length; i++){ 
           var tab = savedTabs[i];
           if(tab.url){
-            console.log(tab);
             tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
           }
       }
@@ -130,7 +128,6 @@ function Background() {
 
     if (request.whitelist) {
       var toWhitelist = blockTrackers.extractHostFromURL(request.whitelist);
-      console.log("WHITELIST: " + toWhitelist);
       chrome.tabs.query({
         'currentWindow': true,
         'active': true

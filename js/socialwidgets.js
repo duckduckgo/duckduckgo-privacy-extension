@@ -16,7 +16,6 @@
         
         for (var i = 0; i < buttonsToReplace.length; i++) {
             var buttonToReplace = buttonsToReplace[i];
-            console.log("Replacing social widget for " + key);
             
             var button =
             createReplacementButtonImage(key, buttonToReplace);
@@ -155,7 +154,6 @@
     };
 
 
-    console.log("social blocking " + (localStorage['social'] === 'true'));
     if (localStorage['social'] === 'true') {
         replaceAllButtons();
     }

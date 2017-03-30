@@ -39,11 +39,9 @@ require.scopes.blockTrackers = (function() {
                 //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
 
                 if( !isRelatedEntity(trackers[host], currLocation) ){
-                    console.log("Blocking: " + host); 
                     return { 'tracker': trackers[host].c, 'url': host};
                 }
                 
-                console.log("Skipping: " + host); 
              }
         }
         else if (localStorage['blocking'] === 'false') {
