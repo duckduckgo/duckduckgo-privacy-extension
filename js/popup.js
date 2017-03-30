@@ -102,6 +102,9 @@ window.onload = function() {
     document.getElementById('toggle_blocking').onclick = function(){
       toggle_blocking();
     }
+    document.getElementById('toggle_social_blocking').onclick = function(){
+      toggle_social_blocking();
+    }
 
     var trackers = document.getElementById('trackers'),
         tracker_name = document.getElementById('tracker_name'),
@@ -173,18 +176,42 @@ window.onload = function() {
         document.getElementById('icon_advanced').className = 'minimized';
     }
 
-    function toggle_blocking() {
-         bg.isExtensionEnabled = !bg.isExtensionEnabled;
-         
-         var switch_button = document.getElementById('toggle_blocking');
-         
-         if (!bg.isExtensionEnabled) {
-             switch_button.checked = false;
-         } else {
-             switch_button.checked = true;
-         }
+    function check_uncheck(isChecked, checkboxId) {
+        isChecked = !isChecked;
 
-         document.getElementById('reload_tab').classList.remove('hide');
+        var switch_button = document.getElementById(checkboxId);
+
+        if (!isChecked) {
+            switch_button.checked = false;
+        } else {
+            switch_button.checked = true;
+        }
+
+        document.getElementById('reload_tab').classList.remove('hide');
+        
+        return isChecked;
+    }
+
+    function toggle_blocking() {
+         bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, 'toggle_blocking');
+         var social = document.getElementById('toggle_social_blocking');
+
+         if (!bg.isExtensionEnabled) {
+             bg.isSocialBlockingEnabled = false;
+             social.parentNode.classList.add('hide');
+             social.checked = false;
+             bg.isSocialBlockingEnabled = false;
+         } else {
+             social.parentNode.classList.remove('hide');
+             social.checked = bg.isSocialBlockingEnabled? true : false;
+         }
+         
+         chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
+    }
+
+    function toggle_social_blocking() {
+        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, 'toggle_social_blocking');
+        chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
     }
 
     setTimeout(function(){
@@ -307,6 +334,10 @@ window.onload = function() {
 
         if (bg.isExtensionEnabled) {
             document.getElementById('toggle_blocking').checked = true;
+            
+            var social = document.getElementById('toggle_social_blocking');
+            social.parentNode.classList.remove('hide');
+            social.checked = bg.isSocialBlockingEnabled? true : false;
         }
     }
 

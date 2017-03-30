@@ -17,8 +17,10 @@
 
 var blockTrackers = require('blockTrackers');
 var utils = require('utils');
+
 var tabs = {};
 var isExtensionEnabled = true;
+var isSocialBlockingEnabled = false;
 
 function Background() {
   $this = this;
@@ -35,11 +37,9 @@ function Background() {
   localStorage['os'] = os;
 
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      console.log(savedTabs);
       for(var i = 0; i < savedTabs.length; i++){ 
           var tab = savedTabs[i];
           if(tab.url){
-            console.log(tab);
             tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
           }
       }
@@ -97,6 +97,23 @@ function Background() {
     }
   });
 
+  chrome.runtime.onMessage.addListener(function (request, sender, response) {
+    if (typeof(request.social) == 'undefined') {
+        return;
+    }
+
+    var code_str = 'localStorage["social"] = ' + request.social;
+   
+    Object.keys(tabs).forEach(function(tabId) {
+            if (tabs[tabId].url && (!tabs[tabId].url.match(/(chrome\:\/\/)|(chrome\-extension\:\/\/)/))) {
+                chrome.tabs.executeScript(Number(tabId), {
+                    code: code_str
+                   // allFrames: true
+                });
+            }
+        });
+  });
+
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
     if (request.options) {
       callback(localStorage);
@@ -106,6 +123,26 @@ function Background() {
       chrome.tabs.getSelected(function(tab) {
         var url = tab.url;
         callback(url);
+      });
+    }
+
+    if (request.whitelist) {
+      var toWhitelist = blockTrackers.extractHostFromURL(request.whitelist);
+      chrome.tabs.query({
+        'currentWindow': true,
+        'active': true
+      }, function(currentTabs) {
+        var tabId = currentTabs[0].id;
+        if (!tabs[tabId]) {
+            tabs[tabId] = {'trackers': {}, "total": 0, 'url': tab.url};
+        }
+
+        if (!tabs[tabId].whitelist) {
+            tabs[tabId].whitelist = [];
+        }
+        
+        tabs[tabId].whitelist.push(toWhitelist);
+        callback();
       });
     }
 
@@ -179,7 +216,8 @@ chrome.webRequest.onBeforeRequest.addListener(
               return;
           }
 
-              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url);
+          if (!tabs[e.tabId].whitelist || (tabs[e.tabId].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
+              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url, e.tabId);
 
               if(block){
                 var name = block.tracker;
@@ -202,6 +240,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 return {cancel: true};
               }
+          }
       }
     },
     {
@@ -254,39 +293,39 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
 });
 
 chrome.webRequest.onCompleted.addListener(
-    function () {
-      var atb = localStorage['atb'],
-          setATB = localStorage['set_atb'];
+      function () {
+          var atb = localStorage['atb'],
+              setATB = localStorage['set_atb'];
 
-      if (!atb || !setATB) {
-        return;
-      }
+          if (!atb || !setATB) {
+            return;
+          }
 
-      var xhr = new XMLHttpRequest();
+          var xhr = new XMLHttpRequest();
 
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState == XMLHttpRequest.DONE) {
-           if (xhr.status == 200) {
-             var curATB = JSON.parse(xhr.responseText);
-             if(curATB.version !== setATB) {
-               localStorage['set_atb'] = curATB.version;
-             }
-           }
-        }
-      };
+          xhr.onreadystatechange = function() {
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+               if (xhr.status == 200) {
+                 var curATB = JSON.parse(xhr.responseText);
+                 if(curATB.version !== setATB) {
+                   localStorage['set_atb'] = curATB.version;
+                 }
+               }
+            }
+          };
 
-      xhr.open('GET',
-        'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
-          + '&atb=' + atb + '&set_atb=' + setATB,
-        true
-      );
-      xhr.send();
+          xhr.open('GET',
+            'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
+              + '&atb=' + atb + '&set_atb=' + setATB,
+            true
+          );
+          xhr.send();
     },
     {
         urls: [
-            '*://duckduckgo.com/?*',
-            '*://*.duckduckgo.com/?*',
-        ],
+            "*://duckduckgo.com/?*",
+            "*://*.duckduckgo.com/?*"
+        ]
     }
 );
 

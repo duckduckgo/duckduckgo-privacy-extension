@@ -1,3 +1,5 @@
+var bg = chrome.extension.getBackgroundPage();
+
 require.scopes.load = ( () => {
 
     function loadExtensionFile(url, returnType, source){
@@ -32,6 +34,10 @@ require.scopes.load = ( () => {
          */
         var trackers = {};
         var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
+        
+        if (bg.isSocialBlockingEnabled) {
+            trackerTypes.push('Social');
+        }
 
         trackerTypes.forEach((type) => {
             blockList.categories[type].forEach((entry) => {
@@ -40,6 +46,14 @@ require.scopes.load = ( () => {
                         entry[name][domain].forEach((trackerURL) => {
                         trackers[trackerURL] = {'c': name, 'u': domain};
                         });
+                    }
+                    
+                    // Facebook and Twitter are listed as Disconnect type
+                    // Remap them to Social
+                    if ((type === 'Disconnect') && (name.match(/(facebook|twitter)/i))) {
+                        blockList.categories.Social.push(entry);
+                        var id = blockList.categories.Disconnect.indexOf(entry);
+                        blockList.categories.Disconnect.splice(id, 1);
                     }
                 }
             });
