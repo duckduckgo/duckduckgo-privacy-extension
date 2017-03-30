@@ -220,7 +220,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           }
 
           if (!tabs[e.tabId].whitelist || (tabs[e.tabId].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
-              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url);
+              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url, tabId);
 
               if(block){
                 var name = block.tracker;

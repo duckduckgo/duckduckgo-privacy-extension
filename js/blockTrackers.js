@@ -19,7 +19,7 @@ require.scopes.blockTrackers = (function() {
     // If blocking option is enabled
     // and url matches a tracker pattern
     // block the request
-    function blockTrackers(url, currLocation) {
+    function blockTrackers(url, currLocation, tabId) {
         if (localStorage['blocking'] === 'true') {
             var host = extractHostFromURL(url);
             var isWhiteListed = false;
@@ -29,18 +29,9 @@ require.scopes.blockTrackers = (function() {
                 trackers = load.processMozillaBlockList(blockList);
             }
             
-            chrome.tabs.query({
-              'currentWindow': true,
-              'active': true
-            }, function(currentTabs) {
-                if (currentTabs[0]) {
-                   console.log(currentTabs[0]);
-                   var tabId = currentTabs[0].id;
-                   if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
-                       isWhiteListed = true;
-                   }
-                }
-            });
+            if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
+                isWhiteListed = true;
+            }
 
             if (trackers[host] && (!isWhiteListed)) {
                 localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
