@@ -11,8 +11,8 @@ var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'ex
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
-var bg = chrome.extension.getBackgroundPage();
-var formerSocialBlocking = bg.isSocialBlockingEnabled;
+//var bg = chrome.extension.getBackgroundPage();
+//var formerSocialBlocking = bg.isSocialBlockingEnabled;
 
 require.scopes.blockTrackers = (function() {    
     
@@ -24,10 +24,10 @@ require.scopes.blockTrackers = (function() {
             var host = extractHostFromURL(url);
             var isWhiteListed = false;
 
-            if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
-                formerSocialBlocking = bg.isSocialBlockingEnabled;
-                trackers = load.processMozillaBlockList(blockList);
-            }
+  //          if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
+    //            formerSocialBlocking = bg.isSocialBlockingEnabled;
+      //          trackers = load.processMozillaBlockList(blockList);
+        //    }
             
             if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
                 isWhiteListed = true;
@@ -77,6 +77,7 @@ require.scopes.blockTrackers = (function() {
     exports.blockTrackers = blockTrackers;
     exports.extractHostFromURL = extractHostFromURL;
     exports.trackers = trackers;
+    exports.blockList = blockList;
 
     return exports;
 })();

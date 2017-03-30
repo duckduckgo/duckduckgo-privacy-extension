@@ -16,6 +16,7 @@
 
 
 var blockTrackers = require('blockTrackers');
+var load = require('load');
 var utils = require('utils');
 
 var tabs = {};
@@ -114,6 +115,8 @@ function Background() {
                 });
             }
         });
+
+    blockTrackers.trackers = load.processMozillaBlockList(blocklist);
   });
 
   chrome.extension.onMessage.addListener(function(request, sender, callback) {
