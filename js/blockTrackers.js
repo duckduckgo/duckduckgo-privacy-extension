@@ -24,10 +24,10 @@ require.scopes.blockTrackers = (function() {
             var host = extractHostFromURL(url);
             var isWhiteListed = false;
 
-  //          if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
-    //            formerSocialBlocking = bg.isSocialBlockingEnabled;
-      //          trackers = load.processMozillaBlockList(blockList);
-        //    }
+            if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
+                formerSocialBlocking = bg.isSocialBlockingEnabled;
+                trackers = load.processMozillaBlockList(blockList);
+            }
             
             if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
                 isWhiteListed = true;
