@@ -26,16 +26,28 @@ var asset_paths = {
 
 var base_bang = "bang_";
 var elements_by_id = {
-    bang_w: base_bang + "w",
-    bang_bi: base_bang + "bi",
-    bang_a: base_bang + "a",
-    bang_gi: base_bang + "gi",
-    bang_n: base_bang + "n",
-    bang_yt: base_bang + "yt",
-    bang_m: base_bang + "m",
+    bang: {
+        w: base_bang + "w",
+        bi: base_bang + "bi",
+        a: base_bang + "a",
+        gi: base_bang + "gi",
+        n: base_bang + "n",
+        yt: base_bang + "yt",
+        m: base_bang + "m",
+    },
     reload_tab: "reload_tab",
     toggle_blocking: "toggle_blocking",
-    toggle_social_blocking: "toggle_social_blocking"
+    toggle_social_blocking: "toggle_social_blocking",
+    trackers: "trackers",
+    adv: {
+        ducky: "adv_ducky",
+        meanings: "adv_meanings",
+    },
+    search: {
+        input: "search_form_input_homepage",
+        clear: "search_form_input_clear",
+        button: "search_button_homepage",
+    },
 };
 
 var FAKE_POST_FUNCTION =
@@ -80,35 +92,39 @@ window.onload = function() {
     }
 
 
-    document.getElementById('adv_ducky').onclick = ducky_check;
-    document.getElementById('adv_meanings').onclick = meanings_check;
+    var adv = elements_by_id.adv;
+    document.getElementById(adv.ducky).onclick = ducky_check;
+    document.getElementById(adv.meanings).onclick = meanings_check;
 
     document.getElementById('addons').onclick = function(){
         chrome.tabs.create({url: "html/options.html"});
     }
 
 
-    document.getElementById(elements_by_id.bang_w).onclick = function(){
-      add_bang('!w');
+    var bang = elements_by_id.bang;
+    document.getElementById(bang.w).onclick = function(){
+      add_bang('!' + bang.w);
     }
-    document.getElementById(elements_by_id.bang_bi).onclick = function(){
-      add_bang('!bi');
+    document.getElementById(bang.bi).onclick = function(){
+      add_bang('!' + bang.bi);
     }
-    document.getElementById(elements_by_id.bang_a).onclick = function(){
-      add_bang('!a');
+    document.getElementById(bang.a).onclick = function(){
+      add_bang('!' + bang.a);
     }
-    document.getElementById(elements_by_id.bang_gi).onclick = function(){
-      add_bang('!gi');
+    document.getElementById(bang.gi).onclick = function(){
+      add_bang('!' + bang.gi);
     }
-    document.getElementById(elements_by_id.bang_n).onclick = function(){
-      add_bang('!n');
+    document.getElementById(bang.n).onclick = function(){
+      add_bang('!' + bang.n);
     }
-    document.getElementById(elements_by_id.bang_yt).onclick = function(){
-      add_bang('!yt');
+    document.getElementById(bang.yt).onclick = function(){
+      add_bang('!' + bang.yt);
     }
-    document.getElementById(elements_by_id.bang_m).onclick = function(){
-      add_bang('!m');
+    document.getElementById(bang.m).onclick = function(){
+      add_bang('!' + bang.m);
     }
+
+
     document.getElementById(elements_by_id.reload_tab).onclick = function(){
       reload_tab();
     }
