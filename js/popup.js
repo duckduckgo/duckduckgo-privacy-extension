@@ -44,11 +44,16 @@ var elements_by_id = {
         meanings: "adv_meanings",
     },
     search: {
+        form: "search_form_homepage",
         input: "search_form_input_homepage",
         clear: "search_form_input_clear",
         button: "search_button_homepage",
     },
 };
+
+var search = elements_by_id.search;
+var bang = elements_by_id.bang;
+var adv = elements_by_id.adv;
 
 var FAKE_POST_FUNCTION =
 "   function fake_post() {" +
@@ -69,10 +74,10 @@ var FAKE_POST_FUNCTION =
 
 window.onload = function() {
 
-    document.getElementById('search_form_input_homepage').focus();
+    document.getElementById(search.input).focus();
 
-    document.getElementById('search_form_homepage').onsubmit = search;
-    document.getElementById('search_form_input_clear').onclick = search_input_clear;
+    document.getElementById(search.form).onsubmit = search;
+    document.getElementById(search.clear).onclick = search_input_clear;
 
     var prefill_text = 'Search DuckDuckGo...';
 
@@ -85,10 +90,10 @@ window.onload = function() {
     }
 
     if (localStorage['last_search'] != '') {
-        document.getElementById('search_form_input_homepage').value = localStorage['last_search'];
-        document.getElementById("search_form_input_clear").style.display = 'inline-block';
-        document.getElementById("search_button_homepage").className = 'selected';
-        document.getElementById('search_form_input_homepage').select();
+        document.getElementById(search.input).value = localStorage['last_search'];
+        document.getElementById(search.clear).style.display = 'inline-block';
+        document.getElementById(search.button).className = 'selected';
+        document.getElementById(search.input).select();
     }
 
 
@@ -244,13 +249,15 @@ window.onload = function() {
     }
 
     setTimeout(function(){
-        document.getElementById("search_form_input_homepage").focus();
-        document.getElementById("search_form_input_homepage").onkeydown = function(){
-            document.getElementById("search_form_input_clear").style.display = 'inline-block';
-            document.getElementById("search_button_homepage").className = 'selected';
+        var search_input = document.getElementById(search.input);
+        
+        search_input.focus();
+        search_input.onkeydown = function(){
+            document.getElementById(search.clear).style.display = 'inline-block';
+            document.getElementById(search.button).className = 'selected';
             this.style.color = '#000000';
         };
-        document.getElementById("search_form_input_homepage").onkeyup = function(){
+       search_input.onkeyup = function(){
             if (this.value == '') {
                 this.style.color = '#999999';
                 search_input_clear();
@@ -260,19 +267,20 @@ window.onload = function() {
 
 
     function search(){
-        var input = document.getElementById("search_form_input_homepage").value;
+        var search_input = document.getElementById(search.input);
+        var input = search_input.value;
 
         if (localStorage['lastsearch_enabled'] === 'false')
             localStorage['last_search'] = '';
         else
             localStorage['last_search'] = input;
 
-        if (document.getElementById('adv_ducky').checked === true) {
+        if (document.getElementById(adv.ducky).checked === true) {
             input = "\\" + input;
         }
 
         var special = '';
-        if(document.getElementById('adv_meanings').checked !== true) {
+        if(document.getElementById(adv.meanings).checked !== true) {
             special = '&d=1';
         }
 
@@ -317,16 +325,16 @@ window.onload = function() {
             this.className = 'minimized';
         }
         localStorage['advanced_options'] = (document.getElementById('advanced').style.display === 'block');
-        document.getElementById('search_form_input_homepage').focus();
+        document.getElementById(search.input).focus();
     }
 
     function add_bang(bang) {
-        var inp = document.getElementById('search_form_input_homepage');
+        var inp = document.getElementById(search.input);
 
         var bang_regex = /\!\w+/;
 
-        document.getElementById("search_form_input_clear").style.display= 'inline-block';
-        document.getElementById("search_button_homepage").className = 'selected';
+        document.getElementById(search.clear).style.display= 'inline-block';
+        document.getElementById(search.button).className = 'selected';
 
         if (inp.value === '') {
             inp.style.color = '#000';
@@ -354,27 +362,28 @@ window.onload = function() {
 
     function defaults_check(){
         if (localStorage['ducky'] === 'true') {
-            document.getElementById('adv_ducky').checked = true;
+            document.getElementById(adv.ducky).checked = true;
         }
 
         if (localStorage['meanings'] === 'true') {
-            document.getElementById('adv_meanings').checked = true;
+            document.getElementById(adv.meanings).checked = true;
         }
 
         if (bg.isExtensionEnabled) {
-            document.getElementById('toggle_blocking').checked = true;
+            document.getElementById(elements_by_id.toggle_blocking).checked = true;
             
-            var social = document.getElementById('toggle_social_blocking');
+            var social = document.getElementById(elements_by_id.toggle_social_blocking);
             social.parentNode.classList.remove('hide');
             social.checked = bg.isSocialBlockingEnabled? true : false;
         }
     }
 
     function search_input_clear() {
-        document.getElementById('search_form_input_homepage').value = '';
-        document.getElementById("search_form_input_clear").style.display= 'none';
-        document.getElementById('search_form_input_homepage').focus();
-        document.getElementById("search_button_homepage").className = '';
+        var search_input = document.getElementById(search.input);
+        search_input.value = '';
+        document.getElementById(search.clear).style.display= 'none';
+        search_input.focus();
+        document.getElementById(search.button).className = '';
         localStorage['last_search'] = '';
     }
 
@@ -386,7 +395,7 @@ window.onload = function() {
             if (tabs[0]) {
                 var tabId = tabs[0].id;
                 chrome.tabs.reload(tabId);
-                document.getElementById('reload_tab').classList.add('hide');
+                document.getElementById(elements_by_id.reload_tab).classList.add('hide');
                 window.close();
             }
         });
