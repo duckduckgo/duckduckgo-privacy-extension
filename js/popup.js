@@ -25,40 +25,55 @@ var asset_paths = {
 };
 
 var base_bang = "bang_";
-var elements_by_id = {
-    bang: {
-        w: base_bang + "w",
-        bi: base_bang + "bi",
-        a: base_bang + "a",
-        gi: base_bang + "gi",
-        n: base_bang + "n",
-        yt: base_bang + "yt",
-        m: base_bang + "m",
+var elements = {
+    id: {
+        bang: {
+            w: base_bang + "w",
+            bi: base_bang + "bi",
+            a: base_bang + "a",
+            gi: base_bang + "gi",
+            n: base_bang + "n",
+            yt: base_bang + "yt",
+            m: base_bang + "m",
+        },
+        reload_tab: "reload_tab",
+        toggle_blocking: "toggle_blocking",
+        toggle_social_blocking: "toggle_social_blocking",
+        trackers: "trackers",
+        tracker_name: "tracker_name",
+        req_count: "req_count",
+        addons: "addons",
+        icon_advanced: "icon_advanced",
+        advanced: "advanced",
+        adv: {
+            ducky: "adv_ducky",
+            meanings: "adv_meanings",
+        },
+        search: {
+            form: "search_form_homepage",
+            input: "search_form_input_homepage",
+            clear: "search_form_input_clear",
+            button: "search_button_homepage",
+        },
     },
-    reload_tab: "reload_tab",
-    toggle_blocking: "toggle_blocking",
-    toggle_social_blocking: "toggle_social_blocking",
-    trackers: "trackers",
-    tracker_name: "tracker_name",
-    req_count: "req_count",
-    addons: "addons",
-    icon_advanced: "icon_advanced",
-    advanced: "advanced",
-    adv: {
-        ducky: "adv_ducky",
-        meanings: "adv_meanings",
+    text: {
+        search: "Search DuckDuckGo...",
     },
-    search: {
-        form: "search_form_homepage",
-        input: "search_form_input_homepage",
-        clear: "search_form_input_clear",
-        button: "search_button_homepage",
+    css_class: {
+        hide: "hide",
+        link: "link",
+        minimized: "minimized",
+        maximized: "maximized",
+        selected: "selected",
+        tracker: "tracker-link",
     },
 };
 
-var search = elements_by_id.search;
-var bang = elements_by_id.bang;
-var adv = elements_by_id.adv;
+var css_class = elements.css_class;
+var by_id = elements.id;
+var search = by_id.search;
+var bang = by_id.bang;
+var adv = by_id.adv;
 
 var FAKE_POST_FUNCTION =
 "   function fake_post() {" +
@@ -97,21 +112,19 @@ window.onload = function() {
     if (localStorage['last_search'] != '') {
         document.getElementById(search.input).value = localStorage['last_search'];
         document.getElementById(search.clear).style.display = 'inline-block';
-        document.getElementById(search.button).className = 'selected';
+        document.getElementById(search.button).className = css_class.selected;
         document.getElementById(search.input).select();
     }
 
 
-    var adv = elements_by_id.adv;
     document.getElementById(adv.ducky).onclick = ducky_check;
     document.getElementById(adv.meanings).onclick = meanings_check;
 
-    document.getElementById(elements_by_id.addons).onclick = function(){
+    document.getElementById(by_id.addons).onclick = function(){
         chrome.tabs.create({url: "html/options.html"});
     }
 
 
-    var bang = elements_by_id.bang;
     document.getElementById(bang.w).onclick = function(){
       add_bang('!' + bang.w);
     }
@@ -135,19 +148,19 @@ window.onload = function() {
     }
 
 
-    document.getElementById(elements_by_id.reload_tab).onclick = function(){
+    document.getElementById(by_id.reload_tab).onclick = function(){
       reload_tab();
     }
-    document.getElementById(elements_by_id.toggle_blocking).onclick = function(){
+    document.getElementById(by_id.toggle_blocking).onclick = function(){
       toggle_blocking();
     }
-    document.getElementById(elements_by_id.toggle_social_blocking).onclick = function(){
+    document.getElementById(by_id.toggle_social_blocking).onclick = function(){
       toggle_social_blocking();
     }
 
-    var trackers = document.getElementById(elements_by_id.trackers),
-        tracker_name = document.getElementById(elements_by_id.tracker_name),
-        req_count = document.getElementById(elements_by_id.req_count);
+    var trackers = document.getElementById(by_id.trackers),
+        tracker_name = document.getElementById(by_id.tracker_name),
+        req_count = document.getElementById(by_id.req_count);
 
     (function(){
         getTab(function(t) { 
@@ -156,11 +169,11 @@ window.onload = function() {
             req_count.innerHTML = '';
 
             if (tab && ((!tab.trackers) || (!Object.keys(tab.trackers).length))) {
-                trackers.classList.add('hide');
+                trackers.classList.add(css_class.hide);
             }
 
             if(tab && tab.trackers && Object.keys(tab.trackers).length){
-                trackers.classList.remove('hide');
+                trackers.classList.remove(css_class.hide);
 
                 Object.keys(tab.trackers).forEach( function(name) {
                     var temp_url = '',
@@ -171,7 +184,7 @@ window.onload = function() {
                         temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
                     }
                     
-                    tracker_name.innerHTML += '<li class="link"><a class="tracker-link" href="' + temp_url + '">' + name + '</a></li>'; 
+                    tracker_name.innerHTML += '<li class="' + css_class.link + '"><a class="' + css_class.tracker + '" href="' + temp_url + '">' + name + '</a></li>'; 
                     
                     req_count.innerHTML += "<li>" + tab.trackers[name].count + "</li>";
                 });
@@ -210,10 +223,10 @@ window.onload = function() {
 
 
     if (localStorage['advanced_options'] !== 'true') {
-        var icon_adv = document.getElementById(elements_by_id.icon_advanced);
+        var icon_adv = document.getElementById(by_id.icon_advanced);
         icon_adv.src = asset_paths.icon_maximize;
-        document.getElementById(elements_by_id.advanced).style.display = 'none';
-        icon_adv.className = 'minimized';
+        document.getElementById(by_id.advanced).style.display = 'none';
+        icon_adv.className = css_class.minimized;
     }
 
     function check_uncheck(isChecked, checkboxId) {
@@ -227,22 +240,22 @@ window.onload = function() {
             switch_button.checked = true;
         }
 
-        document.getElementById(elements_by_id.reload_tab).classList.remove('hide');
+        document.getElementById(by_id.reload_tab).classList.remove(css_class.hide);
         
         return isChecked;
     }
 
     function toggle_blocking() {
          bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, elements_by_id.toggle_blocking);
-         var social = document.getElementById(elements_by_id.toggle_social_blocking);
+         var social = document.getElementById(by_id.toggle_social_blocking);
 
          if (!bg.isExtensionEnabled) {
              bg.isSocialBlockingEnabled = false;
-             social.parentNode.classList.add('hide');
+             social.parentNode.classList.add(css_class.hide);
              social.checked = false;
              bg.isSocialBlockingEnabled = false;
          } else {
-             social.parentNode.classList.remove('hide');
+             social.parentNode.classList.remove(css_class.hide);
              social.checked = bg.isSocialBlockingEnabled? true : false;
          }
          
@@ -250,7 +263,7 @@ window.onload = function() {
     }
 
     function toggle_social_blocking() {
-        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, elements_by_id.toggle_social_blocking);
+        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, by_id.toggle_social_blocking);
         chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
     }
 
@@ -260,7 +273,7 @@ window.onload = function() {
         search_input.focus();
         search_input.onkeydown = function(){
             document.getElementById(search.clear).style.display = 'inline-block';
-            document.getElementById(search.button).className = 'selected';
+            document.getElementById(search.button).className = css_class.selected;
             this.style.color = '#000000';
         };
        search_input.onkeyup = function(){
@@ -320,16 +333,16 @@ window.onload = function() {
         }
     }
 
-    document.getElementById(elements_by_id.icon_advanced).onclick = function(){
-        var advanced =  document.getElementById(elements_by_id.advanced)
-        if (this.className == 'minimized') {
+    document.getElementById(by_id.icon_advanced).onclick = function(){
+        var advanced =  document.getElementById(by_id.advanced)
+        if (this.className == css_class.minimized) {
             this.src = asset_paths.icon_minimize;
             advanced.style.display = 'block';
-            this.className = 'maximized';
+            this.className = css_class.maximized;
         } else {
             this.src = asset_paths.icon_maximize;
             advanced.style.display = 'none';
-            this.className = 'minimized';
+            this.className = css_class.minimized;
         }
         localStorage['advanced_options'] = (advanced.style.display === 'block');
         document.getElementById(search.input).focus();
@@ -341,7 +354,7 @@ window.onload = function() {
         var bang_regex = /\!\w+/;
 
         document.getElementById(search.clear).style.display= 'inline-block';
-        document.getElementById(search.button).className = 'selected';
+        document.getElementById(search.button).className = css_class.selected;
 
         if (inp.value === '') {
             inp.style.color = '#000';
@@ -377,9 +390,9 @@ window.onload = function() {
         }
 
         if (bg.isExtensionEnabled) {
-            document.getElementById(elements_by_id.toggle_blocking).checked = true;
+            document.getElementById(by_id.toggle_blocking).checked = true;
             
-            var social = document.getElementById(elements_by_id.toggle_social_blocking);
+            var social = document.getElementById(by_id.toggle_social_blocking);
             social.parentNode.classList.remove('hide');
             social.checked = bg.isSocialBlockingEnabled? true : false;
         }
@@ -402,7 +415,7 @@ window.onload = function() {
             if (tabs[0]) {
                 var tabId = tabs[0].id;
                 chrome.tabs.reload(tabId);
-                document.getElementById(elements_by_id.reload_tab).classList.add('hide');
+                document.getElementById(by_id.reload_tab).classList.add(css_class.hide);
                 window.close();
             }
         });
