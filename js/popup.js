@@ -39,6 +39,11 @@ var elements_by_id = {
     toggle_blocking: "toggle_blocking",
     toggle_social_blocking: "toggle_social_blocking",
     trackers: "trackers",
+    tracker_name: "tracker_name",
+    req_count: "req_count",
+    addons: "addons",
+    icon_advanced: "icon_advanced",
+    advanced: "advanced",
     adv: {
         ducky: "adv_ducky",
         meanings: "adv_meanings",
@@ -101,7 +106,7 @@ window.onload = function() {
     document.getElementById(adv.ducky).onclick = ducky_check;
     document.getElementById(adv.meanings).onclick = meanings_check;
 
-    document.getElementById('addons').onclick = function(){
+    document.getElementById(elements_by_id.addons).onclick = function(){
         chrome.tabs.create({url: "html/options.html"});
     }
 
@@ -140,9 +145,9 @@ window.onload = function() {
       toggle_social_blocking();
     }
 
-    var trackers = document.getElementById('trackers'),
-        tracker_name = document.getElementById('tracker_name'),
-        req_count = document.getElementById('req_count');
+    var trackers = document.getElementById(elements_by_id.trackers),
+        tracker_name = document.getElementById(elements_by_id.tracker_name),
+        req_count = document.getElementById(elements_by_id.req_count);
 
     (function(){
         getTab(function(t) { 
@@ -205,9 +210,10 @@ window.onload = function() {
 
 
     if (localStorage['advanced_options'] !== 'true') {
-        document.getElementById('icon_advanced').src = asset_paths.icon_maximize;
-        document.getElementById('advanced').style.display = 'none';
-        document.getElementById('icon_advanced').className = 'minimized';
+        var icon_adv = document.getElementById(elements_by_id.icon_advanced);
+        icon_adv.src = asset_paths.icon_maximize;
+        document.getElementById(elements_by_id.advanced).style.display = 'none';
+        icon_adv.className = 'minimized';
     }
 
     function check_uncheck(isChecked, checkboxId) {
@@ -221,14 +227,14 @@ window.onload = function() {
             switch_button.checked = true;
         }
 
-        document.getElementById('reload_tab').classList.remove('hide');
+        document.getElementById(elements_by_id.reload_tab).classList.remove('hide');
         
         return isChecked;
     }
 
     function toggle_blocking() {
-         bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, 'toggle_blocking');
-         var social = document.getElementById('toggle_social_blocking');
+         bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, elements_by_id.toggle_blocking);
+         var social = document.getElementById(elements_by_id.toggle_social_blocking);
 
          if (!bg.isExtensionEnabled) {
              bg.isSocialBlockingEnabled = false;
@@ -244,7 +250,7 @@ window.onload = function() {
     }
 
     function toggle_social_blocking() {
-        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, 'toggle_social_blocking');
+        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, elements_by_id.toggle_social_blocking);
         chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
     }
 
@@ -314,17 +320,18 @@ window.onload = function() {
         }
     }
 
-    document.getElementById('icon_advanced').onclick = function(){
+    document.getElementById(elements_by_id.icon_advanced).onclick = function(){
+        var advanced =  document.getElementById(elements_by_id.advanced)
         if (this.className == 'minimized') {
             this.src = asset_paths.icon_minimize;
-            document.getElementById('advanced').style.display = 'block';
+            advanced.style.display = 'block';
             this.className = 'maximized';
         } else {
             this.src = asset_paths.icon_maximize;
-            document.getElementById('advanced').style.display = 'none';
+            advanced.style.display = 'none';
             this.className = 'minimized';
         }
-        localStorage['advanced_options'] = (document.getElementById('advanced').style.display === 'block');
+        localStorage['advanced_options'] = (advanced.style.display === 'block');
         document.getElementById(search.input).focus();
     }
 
@@ -353,11 +360,11 @@ window.onload = function() {
     }
 
     function ducky_check(){
-        localStorage['ducky'] = document.getElementById('adv_ducky').checked;
+        localStorage['ducky'] = document.getElementById(adv.ducky).checked;
     }
 
     function meanings_check(){
-        localStorage['meanings'] = document.getElementById('adv_meanings').checked;
+        localStorage['meanings'] = document.getElementById(adv.meanings).checked;
     }
 
     function defaults_check(){
