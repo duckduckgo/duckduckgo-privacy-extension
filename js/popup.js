@@ -18,7 +18,12 @@
 var bg = chrome.extension.getBackgroundPage();
 
 var elements = JSON.parse(loadExtensionFile("popup_data.json", "json"));
+var asset_paths = elements.asset_paths;
+
 elements = elements.elements;
+
+var os = elements.os;
+var param = elements.param;
 var css_class = elements.css_class;
 var by_id = elements.id;
 var search = by_id.search;
@@ -251,18 +256,18 @@ window.onload = function() {
 
         var special = '';
         if(document.getElementById(adv.meanings).checked !== true) {
-            special = '&d=1';
+            special = param.meanings;
         }
 
         if (localStorage['safesearch'] === 'false')
-            special += '&kp=-1'
+            special += param.safesearch;
 
         var os = "o";
-        if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
-        if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
-        if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+        if (window.navigator.userAgent.indexOf(os.win) != -1) os = "w";
+        if (window.navigator.userAgent.indexOf(os.mac) != -1) os = "m";
+        if (window.navigator.userAgent.indexOf(os.lin) != -1) os = "l";
 
-        special += '&bext=' + os + 'cp';
+        special += param.os + os + 'cp';
 
         if (localStorage['use_post'] === 'true') {
             var fake_post_code = FAKE_POST_FUNCTION.replace(/(\n|\t)/gm,'');
@@ -344,7 +349,7 @@ window.onload = function() {
             document.getElementById(by_id.toggle_blocking).checked = true;
             
             var social = document.getElementById(by_id.toggle_social_blocking);
-            social.parentNode.classList.remove('hide');
+            social.parentNode.classList.remove(css_class.hide);
             social.checked = bg.isSocialBlockingEnabled? true : false;
         }
     }
