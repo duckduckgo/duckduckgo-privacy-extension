@@ -17,10 +17,9 @@
 
 var bg = chrome.extension.getBackgroundPage();
 
-// TODO: fetch data from popup_data.json
-
-var css_class = elements.css_class;
-var by_id = elements.id;
+var elements = JSON.parse(loadExtensionFile("popup_data.json", "json"));
+var css_class = data.elements.css_class;
+var by_id = data.elements.id;
 var search = by_id.search;
 var bang = by_id.bang;
 var adv = by_id.adv;
