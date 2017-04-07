@@ -48,5 +48,10 @@
         "maximized": "maximized",
         "selected": "selected",
         "tracker": "tracker-link"
+    },
+    "url": {
+        "ddg": "https://duckduckgo.com/?q=",
+        "better_fyi": "https://better.fyi/trackers/",
+        "html": "html/options.html"
     }
  }}

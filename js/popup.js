@@ -24,6 +24,7 @@ var by_id = elements.id;
 var search = by_id.search;
 var bang = by_id.bang;
 var adv = by_id.adv;
+var url = elements.url;
 
 var FAKE_POST_FUNCTION =
 "   function fake_post() {" +
@@ -49,7 +50,7 @@ window.onload = function() {
     document.getElementById(search.form).onsubmit = search;
     document.getElementById(search.clear).onclick = search_input_clear;
 
-    var prefill_text = 'Search DuckDuckGo...';
+    var prefill_text = elements.text.search;
 
     if (localStorage['meanings'] == undefined) {
       localStorage['meanings'] = 'true';
@@ -71,7 +72,7 @@ window.onload = function() {
     document.getElementById(adv.meanings).onclick = meanings_check;
 
     document.getElementById(by_id.addons).onclick = function(){
-        chrome.tabs.create({url: "html/options.html"});
+        chrome.tabs.create({url: url.html});
     }
 
 
@@ -131,7 +132,7 @@ window.onload = function() {
                         req_html = '';
                     
                     if(bg.betterList.indexOf(tab.trackers[name].url) !== -1){
-                        temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
+                        temp_url = url.better_fyi + tab.trackers[name].url;
                     }
                     
                     tracker_name.innerHTML += '<li class="' + css_class.link + '"><a class="' + css_class.tracker + '" href="' + temp_url + '">' + name + '</a></li>'; 
@@ -278,7 +279,7 @@ window.onload = function() {
             });
         } else {
             chrome.tabs.create({
-                url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
+                url: url.ddg + encodeURIComponent(input) + special
             });
         }
     }
