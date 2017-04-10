@@ -2,6 +2,10 @@ var bg = chrome.extension.getBackgroundPage();
 
 require.scopes.load = ( () => {
 
+    function JSONfromLocalFile(path){
+        return JSON.parse(loadExtensionFile(path, 'json'));
+    }
+
     function loadExtensionFile(url, returnType, source){
         var xhr = new XMLHttpRequest();
 
@@ -62,8 +66,10 @@ require.scopes.load = ( () => {
         return trackers;
     }
 
-    var exports = {};
-    exports.loadExtensionFile = loadExtensionFile;
-    exports.processMozillaBlockList = processMozillaBlockList;
+    var exports = {
+        loadExtensionFile: loadExtensionFile,
+        processMozillaBlockList: processMozillaBlockList,
+        JSONfromLocalFile: JSONfromLocalFile
+    }
     return exports;
 })();

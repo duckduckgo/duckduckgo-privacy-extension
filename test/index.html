@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+
+    <title>DuckDuckGo Extension Unit Tests</title>
+
+    <link rel="stylesheet" href="lib/qunit-2.2.0.css"/>
+
+    <script src="lib/jquery/jquery-2.2.4.min.js"></script>
+
+    <script src="lib/qunit-2.2.0.js"></script>
+    <script src="lib/qunit_config.js"></script>
+    <script src="lib/sinon-2.0.0.js"></script>
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    
+    <script src="../js/require.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/load.js"></script>
+    <script src="../js/settings.js"></script>
+    <script src="../js/blockTrackers.js"></script>
+    <script src="../https-everywhere/chromium/rules.js"></script> 
+    <script src="../https-everywhere/chromium/storage.js"></script>
+    <script src="../https-everywhere/chromium/util.js"></script>
+    <script src="../https-everywhere/chromium/background.js"></script>
+    <script src="../https-everywhere/chromium/incognito-cache-clearing.js"></script>
+    <script src="../js/background.js"></script>
+
+    <script src="tests/settings.js"></script>
+  </body>
+</html>
