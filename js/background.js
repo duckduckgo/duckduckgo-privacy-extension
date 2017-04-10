@@ -17,10 +17,9 @@
 
 var blockTrackers = require('blockTrackers');
 var utils = require('utils');
+var settings = require('settings');
 
 var tabs = {};
-var isExtensionEnabled = true;
-var isSocialBlockingEnabled = false;
 
 function Background() {
   $this = this;
@@ -212,7 +211,7 @@ chrome.webRequest.onBeforeRequest.addListener(
               tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url}
           }
 
-          if(!isExtensionEnabled){
+          if(!settings.getSetting('extensionIsEnabled')){
               return;
           }
 
