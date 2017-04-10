@@ -12,7 +12,12 @@ require.scopes.settings =(() => {
     function buildSettingsFromLocalStorage() {
         chrome.storage.local.get(null, function(results){
             for(var name in results){
-                settings[name] = results[name];
+                try {
+                    settings[name] = JSON.parse(results[name]);
+                }
+                catch(e) {
+                    settings[name] = results[name];
+                }
             }
         });
     }
@@ -29,9 +34,12 @@ require.scopes.settings =(() => {
 
     function syncSettingTolocalStorage(name, value){
         var settingToUpdate = {};
-            settingToUpdate[name] =value;
-            chrome.storage.local.set(settingToUpdate);
-            return true;
+        if(typeof(value) === 'object'){
+            value = JSON.stringify(value);
+        }
+        settingToUpdate[name] =value;
+        chrome.storage.local.set(settingToUpdate);
+        return true;
     }
 
     function getSetting(name) {

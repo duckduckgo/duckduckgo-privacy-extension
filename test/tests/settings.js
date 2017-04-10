@@ -12,15 +12,14 @@
       assert.ok(updatedSetting !== null, 'test setting was added');
       assert.ok(updatedSetting === testSetting.value, 'test setting has correct value');
   });
-  
-  QUnit.test("get setting by messaging", function (assert) {
-      assert.expect(1);
-      var done = assert.async();
 
-      chrome.runtime.sendMessage(chrome.runtime.id, {'getSetting': {'name': testSetting.name}}, function(result) {
-          assert.ok(result === testSetting.value, 'get setting by message has correct value');
-          done();
-      });
+  QUnit.test("store and get an object through interface", function (assert) {
+      var obj = {'key': true};
+      settings.updateSetting(testSetting.name, obj);
+      var updatedSetting = settings.getSetting(testSetting.name);
 
+      assert.ok(updatedSetting !== null, 'test setting was added');
+      assert.ok(updatedSetting === obj, 'test setting has correct value');
   });
+
 })();
