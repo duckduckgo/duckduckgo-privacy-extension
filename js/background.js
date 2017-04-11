@@ -18,6 +18,7 @@
 var blockTrackers = require('blockTrackers');
 var utils = require('utils');
 var settings = require('settings');
+var load = require('load');
 
 var tabs = {};
 

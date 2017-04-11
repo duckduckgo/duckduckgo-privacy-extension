@@ -16,9 +16,10 @@
 */
 
 var bg = chrome.extension.getBackgroundPage();
-var settings = require('settings');
+var settings = bg.settings;
+var load = bg.load;
 
-var elements = JSON.parse(loadExtensionFile("popup_data.json", "json"));
+var elements = JSON.parse(load.loadExtensionFile("popup_data.json", "json"));
 var asset_paths = elements.asset_paths;
 
 elements = elements.elements;
@@ -241,7 +242,7 @@ window.onload = function() {
         if (!settings.getSetting('lastsearch_enabled')) {
             settings.updateSetting('last_search', '');
         } else {
-            settings.updateSetting'last_search', input);
+            settings.updateSetting('last_search', input);
         }
 
         if (document.getElementById(adv.ducky).checked === true) {
