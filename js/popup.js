@@ -213,7 +213,7 @@ window.onload = function() {
 
     function toggle_social_blocking() {
         social_blocking = settings.getSetting("socialBlockingIsEnabled");
-        settings.updateSetting("socialBlockingIsEnabled", check_uncheck(social_blocking, by_id.toggle_social_blocking);
+        settings.updateSetting("socialBlockingIsEnabled", check_uncheck(social_blocking, by_id.toggle_social_blocking));
         chrome.runtime.sendMessage({"social": settings.getSetting("socialBlockingIsEnabled")}, function(){});
     }
 
