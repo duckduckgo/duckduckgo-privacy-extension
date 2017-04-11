@@ -19,7 +19,7 @@ var bg = chrome.extension.getBackgroundPage();
 var settings = bg.settings;
 var load = bg.load;
 
-var elements = JSON.parse(load.JSONfromLocalFile("data/popup_data.json"));
+var elements = load.JSONfromLocalFile("data/popup_data.json");
 var asset_paths = elements.asset_paths;
 
 elements = elements.elements;
