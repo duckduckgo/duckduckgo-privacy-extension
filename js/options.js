@@ -41,7 +41,7 @@ function save_options() {
   var zeroclick_google_right = document.getElementById("zeroclick_google_right").checked;
   settings.updateSetting("zeroclick_google_right", zeroclick_google_right);
   var use_post = document.getElementById("use_post").checked;
-  settings.updateSetting("use_post", use_post;
+  settings.updateSetting("use_post", use_post);
   var safesearch = document.getElementById("safesearch").checked;
   settings.updateSetting("safesearch", safesearch);
 
