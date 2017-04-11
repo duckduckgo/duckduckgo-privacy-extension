@@ -28,7 +28,7 @@ var os = elements.os;
 var param = elements.param;
 var css_class = elements.css_class;
 var by_id = elements.id;
-var search = by_id.search;
+var search_data = by_id.search;
 var bang = by_id.bang;
 var adv = by_id.adv;
 var url = elements.url;
@@ -52,18 +52,18 @@ var FAKE_POST_FUNCTION =
 
 window.onload = function() {
 
-    document.getElementById(search.input).focus();
+    document.getElementById(search_data.input).focus();
 
-    document.getElementById(search.form).onsubmit = search;
-    document.getElementById(search.clear).onclick = search_input_clear;
+    document.getElementById(search_data.form).onsubmit = search;
+    document.getElementById(search_data.clear).onclick = search_input_clear;
 
     var prefill_text = elements.text.search;
 
     if (settings.getSetting('last_search') !== '') {
-        document.getElementById(search.input).value = settings.getSetting('last_search');
-        document.getElementById(search.clear).style.display = 'inline-block';
-        document.getElementById(search.button).className = css_class.selected;
-        document.getElementById(search.input).select();
+        document.getElementById(search_data.input).value = settings.getSetting('last_search');
+        document.getElementById(search_data.clear).style.display = 'inline-block';
+        document.getElementById(search_data.button).className = css_class.selected;
+        document.getElementById(search_data.input).select();
     }
 
 
@@ -218,12 +218,12 @@ window.onload = function() {
     }
 
     setTimeout(function(){
-        var search_input = document.getElementById(search.input);
+        var search_input = document.getElementById(search_data.input);
         
         search_input.focus();
         search_input.onkeydown = function(){
-            document.getElementById(search.clear).style.display = 'inline-block';
-            document.getElementById(search.button).className = css_class.selected;
+            document.getElementById(search_data.clear).style.display = 'inline-block';
+            document.getElementById(search_data.button).className = css_class.selected;
             this.style.color = '#000000';
         };
        search_input.onkeyup = function(){
@@ -236,7 +236,7 @@ window.onload = function() {
 
 
     function search(){
-        var search_input = document.getElementById(search.input);
+        var search_input = document.getElementById(search_data.input);
         var input = search_input.value;
 
         if (!settings.getSetting('lastsearch_enabled')) {
@@ -297,16 +297,16 @@ window.onload = function() {
             this.className = css_class.minimized;
         }
         settings.updateSetting('advanced_options', (advanced.style.display === 'block'));
-        document.getElementById(search.input).focus();
+        document.getElementById(search_data.input).focus();
     }
 
     function add_bang(bang) {
-        var inp = document.getElementById(search.input);
+        var inp = document.getElementById(search_data.input);
 
         var bang_regex = /\!\w+/;
 
-        document.getElementById(search.clear).style.display= 'inline-block';
-        document.getElementById(search.button).className = css_class.selected;
+        document.getElementById(search_data.clear).style.display= 'inline-block';
+        document.getElementById(search_data.button).className = css_class.selected;
 
         if (inp.value === '') {
             inp.style.color = '#000';
@@ -351,11 +351,11 @@ window.onload = function() {
     }
 
     function search_input_clear() {
-        var search_input = document.getElementById(search.input);
+        var search_input = document.getElementById(search_data.input);
         search_input.value = '';
-        document.getElementById(search.clear).style.display= 'none';
+        document.getElementById(search_data.clear).style.display= 'none';
         search_input.focus();
-        document.getElementById(search.button).className = '';
+        document.getElementById(search_data.button).className = '';
         settings.updateSetting('last_search', '');
     }
 
