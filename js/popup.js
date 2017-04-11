@@ -196,7 +196,7 @@ window.onload = function() {
     }
 
     function toggle_blocking() {
-         settings.updateSetting("extensionIsEnabled", check_uncheck(settings.getSetting("extensionIsEnabled"), by_id.toggle_blocking);
+         settings.updateSetting("extensionIsEnabled", check_uncheck(settings.getSetting("extensionIsEnabled"), by_id.toggle_blocking));
          var social = document.getElementById(by_id.toggle_social_blocking);
 
          if (!settings.getSetting("extensionIsEnabled")) {
