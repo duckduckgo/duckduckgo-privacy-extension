@@ -32,6 +32,7 @@
                 "js/require.js",
                 "js/utils.js",
                 "js/load.js",
+                "js/settings.js",
                 "js/blockTrackers.js",
                 "https-everywhere/chromium/rules.js", 
                 "https-everywhere/chromium/storage.js", 
