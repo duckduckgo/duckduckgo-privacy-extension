@@ -196,25 +196,25 @@ window.onload = function() {
     }
 
     function toggle_blocking() {
-         bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, elements_by_id.toggle_blocking);
+         settings.updateSetting("extensionIsEnabled", check_uncheck(settings.getSetting("extensionIsEnabled"), by_id.toggle_blocking);
          var social = document.getElementById(by_id.toggle_social_blocking);
 
-         if (!bg.isExtensionEnabled) {
-             bg.isSocialBlockingEnabled = false;
+         if (!settings.getSetting("extensionIsEnabled")) {
+             settings.updateSetting("socialBlockingIsEnabled", false);
              social.parentNode.classList.add(css_class.hide);
              social.checked = false;
-             bg.isSocialBlockingEnabled = false;
          } else {
              social.parentNode.classList.remove(css_class.hide);
-             social.checked = bg.isSocialBlockingEnabled? true : false;
+             social.checked = settings.getSetting("socialBlockingIsEnabled")? true : false;
          }
          
-         chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
+         chrome.runtime.sendMessage({"social": settings.getSetting("socialBlockingIsEnabled")}, function(){});
     }
 
     function toggle_social_blocking() {
-        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, by_id.toggle_social_blocking);
-        chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
+        social_blocking = settings.getSetting("socialBlockingIsEnabled");
+        settings.updateSetting("socialBlockingIsEnabled", check_uncheck(social_blocking, by_id.toggle_social_blocking);
+        chrome.runtime.sendMessage({"social": settings.getSetting("socialBlockingIsEnabled")}, function(){});
     }
 
     setTimeout(function(){
@@ -341,12 +341,12 @@ window.onload = function() {
             document.getElementById(adv.meanings).checked = true;
         }
 
-        if (bg.isExtensionEnabled) {
+        if (settings.getSetting('extensionIsEnabled') {
             document.getElementById(by_id.toggle_blocking).checked = true;
             
             var social = document.getElementById(by_id.toggle_social_blocking);
             social.parentNode.classList.remove(css_class.hide);
-            social.checked = bg.isSocialBlockingEnabled? true : false;
+            social.checked = settings.getSetting('socialBlockingIsEnabled')? true : false;
         }
     }
 
