@@ -84,21 +84,21 @@ function restore_options() {
   }
 
   var zeroclick_google_right = settings.getSetting("zeroclick_google_right");
-  if (zeroclick_google_right === 'true') {
+  if (zeroclick_google_right) {
     document.getElementById("zeroclick_google_right").checked = true;
   } else {
     document.getElementById("zeroclick_google_right").checked = false;
   }
 
   var use_post = settings.getSetting("use_post");
-  if (use_post === 'true') {
+  if (use_post) {
     document.getElementById("use_post").checked = true;
   } else {
     document.getElementById("use_post").checked = false;
   }
 
   var safesearch = settings.getSetting("safesearch");
-  if (safesearch === 'true' || safesearch == undefined) {
+  if (safesearch) {
     document.getElementById("safesearch").checked = true;
   } else {
     document.getElementById("safesearch").checked = false;
