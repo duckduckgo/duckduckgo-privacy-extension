@@ -16,6 +16,7 @@
 */
 
 var bg = chrome.extension.getBackgroundPage();
+var settings = require('settings');
 
 var elements = JSON.parse(loadExtensionFile("popup_data.json", "json"));
 var asset_paths = elements.asset_paths;
@@ -57,16 +58,8 @@ window.onload = function() {
 
     var prefill_text = elements.text.search;
 
-    if (localStorage['meanings'] == undefined) {
-      localStorage['meanings'] = 'true';
-    }
-
-    if (localStorage['advanced_options'] == undefined){
-      localStorage['advanced_options'] = 'true';
-    }
-
-    if (localStorage['last_search'] != '') {
-        document.getElementById(search.input).value = localStorage['last_search'];
+    if (settings.getSetting('last_search') !== '') {
+        document.getElementById(search.input).value = settings.getSetting('last_search');
         document.getElementById(search.clear).style.display = 'inline-block';
         document.getElementById(search.button).className = css_class.selected;
         document.getElementById(search.input).select();
@@ -178,7 +171,7 @@ window.onload = function() {
     });
 
 
-    if (localStorage['advanced_options'] !== 'true') {
+    if (!settings.getSetting('advanced_options')) {
         var icon_adv = document.getElementById(by_id.icon_advanced);
         icon_adv.src = asset_paths.icon_maximize;
         document.getElementById(by_id.advanced).style.display = 'none';
@@ -245,10 +238,11 @@ window.onload = function() {
         var search_input = document.getElementById(search.input);
         var input = search_input.value;
 
-        if (localStorage['lastsearch_enabled'] === 'false')
-            localStorage['last_search'] = '';
-        else
-            localStorage['last_search'] = input;
+        if (!settings.getSetting('lastsearch_enabled')) {
+            settings.updateSetting('last_search', '');
+        } else {
+            settings.updateSetting'last_search', input);
+        }
 
         if (document.getElementById(adv.ducky).checked === true) {
             input = "\\" + input;
@@ -259,8 +253,9 @@ window.onload = function() {
             special = param.meanings;
         }
 
-        if (localStorage['safesearch'] === 'false')
+        if (!settings.getSetting('safesearch')) {
             special += param.safesearch;
+        }
 
         var os = "o";
         if (window.navigator.userAgent.indexOf(os.win) != -1) os = "w";
@@ -269,7 +264,7 @@ window.onload = function() {
 
         special += param.os + os + 'cp';
 
-        if (localStorage['use_post'] === 'true') {
+        if (settings.getSetting('use_post')) {
             var fake_post_code = FAKE_POST_FUNCTION.replace(/(\n|\t)/gm,'');
 
             var params = {
@@ -300,7 +295,7 @@ window.onload = function() {
             advanced.style.display = 'none';
             this.className = css_class.minimized;
         }
-        localStorage['advanced_options'] = (advanced.style.display === 'block');
+        settings.updateSetting('advanced_options', (advanced.style.display === 'block'));
         document.getElementById(search.input).focus();
     }
 
@@ -329,19 +324,19 @@ window.onload = function() {
     }
 
     function ducky_check(){
-        localStorage['ducky'] = document.getElementById(adv.ducky).checked;
+        settings.updateSetting('ducky', document.getElementById(adv.ducky).checked);
     }
 
     function meanings_check(){
-        localStorage['meanings'] = document.getElementById(adv.meanings).checked;
+        settings.updateSetting('meanings', document.getElementById(adv.meanings).checked);
     }
 
     function defaults_check(){
-        if (localStorage['ducky'] === 'true') {
+        if (settings.getSetting('ducky')) {
             document.getElementById(adv.ducky).checked = true;
         }
 
-        if (localStorage['meanings'] === 'true') {
+        if (settings.getSetting('meanings')) {
             document.getElementById(adv.meanings).checked = true;
         }
 
@@ -360,7 +355,7 @@ window.onload = function() {
         document.getElementById(search.clear).style.display= 'none';
         search_input.focus();
         document.getElementById(search.button).className = '';
-        localStorage['last_search'] = '';
+        settings.updateSetting('last_search', '');
     }
 
     function reload_tab() {
