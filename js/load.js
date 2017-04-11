@@ -1,5 +1,5 @@
 var bg = chrome.extension.getBackgroundPage();
-
+var settings = bg.settings;
 require.scopes.load = ( () => {
 
     function JSONfromLocalFile(path){
@@ -39,7 +39,7 @@ require.scopes.load = ( () => {
         var trackers = {};
         var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
         
-        if (bg.isSocialBlockingEnabled) {
+        if (settings.getSetting('socialBlockingIsEnabled')) {
             trackerTypes.push('Social');
         }
 
