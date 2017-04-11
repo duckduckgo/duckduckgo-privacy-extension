@@ -341,7 +341,7 @@ window.onload = function() {
             document.getElementById(adv.meanings).checked = true;
         }
 
-        if (settings.getSetting('extensionIsEnabled') {
+        if (settings.getSetting('extensionIsEnabled')) {
             document.getElementById(by_id.toggle_blocking).checked = true;
             
             var social = document.getElementById(by_id.toggle_social_blocking);
