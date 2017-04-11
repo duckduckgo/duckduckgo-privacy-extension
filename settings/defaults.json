@@ -1,3 +1,11 @@
 {
-    "someDefaultSetting": "true"
+    "extensionIsEnabled": true,
+    "socialBlockingIsEnabled": false,
+    "meanings": true,
+    "advanced_options": true,
+    "last_search": "",
+    "lastsearch_enabled": true,
+    "safesearch": true,
+    "use_post": false,
+    "ducky": false
 }
