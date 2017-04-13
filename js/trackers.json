@@ -1,7 +1,0 @@
-{
-    "trackers": {
-        "doubleclick.net": "google",
-        "google-analytics.com" : "google",
-        "advertising.com": "some other place"
-    }
-}

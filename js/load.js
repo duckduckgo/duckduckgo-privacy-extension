@@ -1,5 +1,5 @@
 var bg = chrome.extension.getBackgroundPage();
-
+var settings = bg.settings;
 require.scopes.load = ( () => {
 
     function JSONfromLocalFile(path){
@@ -38,8 +38,9 @@ require.scopes.load = ( () => {
          */
         var trackers = {};
         var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
-        
-        if (bg.isSocialBlockingEnabled) {
+        var socialBlocking = settings.getSetting('socialBlockingIsEnabled');
+
+        if(socialBlocking){
             trackerTypes.push('Social');
         }
 
@@ -48,16 +49,13 @@ require.scopes.load = ( () => {
                 for(var name in entry){
                     for( var domain in entry[name]){
                         entry[name][domain].forEach((trackerURL) => {
-                        trackers[trackerURL] = {'c': name, 'u': domain};
+                            if(!socialBlocking && name.match(/(facebook|twitter)/i)) {
+                                return;
+                            }
+                            else{
+                                trackers[trackerURL] = {'c': name, 'u': domain};
+                            }
                         });
-                    }
-                    
-                    // Facebook and Twitter are listed as Disconnect type
-                    // Remap them to Social
-                    if ((type === 'Disconnect') && (name.match(/(facebook|twitter)/i))) {
-                        blockList.categories.Social.push(entry);
-                        var id = blockList.categories.Disconnect.indexOf(entry);
-                        blockList.categories.Disconnect.splice(id, 1);
                     }
                 }
             });

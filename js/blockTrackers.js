@@ -1,5 +1,6 @@
 
 var load = require('load');
+var settings = require('settings');
 //var blockListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json";
 var blockListSource = "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json";
 var entityListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json";
@@ -8,8 +9,7 @@ var entityList = JSON.parse(load.loadExtensionFile(entityListSource, 'json', 'ex
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
-var bg = chrome.extension.getBackgroundPage();
-var formerSocialBlocking = bg.isSocialBlockingEnabled;
+var formerSocialBlocking = settings.getSetting('socialBlockingIsEnabled');
 
 require.scopes.blockTrackers = (function() {    
 
@@ -20,12 +20,13 @@ require.scopes.blockTrackers = (function() {
     // and url matches a tracker pattern
     // block the request
     function blockTrackers(url, currLocation, tabId) {
-        if (localStorage['blocking'] === 'true') {
+        var blocking = settings.getSetting('extensionIsEnabled');
+        if (blocking) {
             var host = extractHostFromURL(url);
             var isWhiteListed = false;
-
-            if (formerSocialBlocking !== bg.isSocialBlockingEnabled) {
-                formerSocialBlocking = bg.isSocialBlockingEnabled;
+            var social_block = settings.getSetting('socialBlockingIsEnabled');
+            if (formerSocialBlocking !== social_block) {
+                formerSocialBlocking = social_block;
                 trackers = load.processMozillaBlockList(blockList);
             }
             
@@ -34,7 +35,7 @@ require.scopes.blockTrackers = (function() {
             }
 
             if (trackers[host] && (!isWhiteListed)) {
-                localStorage['debug_blocking'] = (localStorage['blocking'] === 'true')? 'true' : 'false'; 
+                localStorage['debug_blocking'] = blocking? 'true' : 'false'; 
                 //localStorage[tab.url] = localStorage[tab.url]? parseInt(localStorage[tab.url]) + 1 : 1;
                 //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
 
@@ -44,7 +45,7 @@ require.scopes.blockTrackers = (function() {
                 
              }
         }
-        else if (localStorage['blocking'] === 'false') {
+        else if (!blocking) {
             chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
         }
     }

@@ -18,6 +18,7 @@
 var blockTrackers = require('blockTrackers');
 var utils = require('utils');
 var settings = require('settings');
+var load = require('load');
 
 var tabs = {};
 
@@ -26,7 +27,7 @@ function Background() {
 
 
   // clearing last search on browser startup
-  localStorage['last_search'] = '';
+  settings.updateSetting('last_search', '');
 
   var os = "o";
   if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
@@ -49,10 +50,6 @@ function Background() {
     if (details.reason !== "install") {
       return;
     }  
-
-    if (localStorage['blocking'] === undefined) {
-        localStorage['blocking'] = 'true';
-    }
 
     if (localStorage['atb'] === undefined) {
         var oneWeek = 604800000,

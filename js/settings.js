@@ -23,7 +23,7 @@ require.scopes.settings =(() => {
     }
 
     function buildSettingsFromDefaults() {
-        var defaults = load.JSONfromLocalFile('settings/defaults.json');
+        var defaults = load.JSONfromLocalFile('data/default_settings.json');
         for(var defaultName in defaults){
             // user stored settings are built first. Don't override them with a default
             if(!settings[defaultName]){

@@ -16,14 +16,22 @@
 */
 
 var bg = chrome.extension.getBackgroundPage();
+var settings = bg.settings;
+var load = bg.load;
 
-var ICON_MAXIMIZE = "data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9Im1heGltaXplIj48cGF0aCBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojQUFBQUFBOyIgZD0iTTEwLDBjNS41LDAsMTAsNC41LDEwLDEwYzAsNS41LTQuNSwxMC0xMCwxMFMwLDE1LjUsMCwxMEMwLDQuNSw0LjUsMCwxMCwweiIvPjxnPjxnPjxwb2x5Z29uIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDtmaWxsOiNGRkZGRkY7IiBwb2ludHM9IjE0LDkgMTEsOSAxMSw2IDksNiA5LDkgNiw5IDYsMTEgOSwxMSA5LDE0IDExLDE0IDExLDExIDE0LDExICIvPjwvZz48L2c+PC9nPjwvc3ZnPg==";
+var elements = load.JSONfromLocalFile("data/popup_data.json");
+var asset_paths = elements.asset_paths;
 
-var ICON_MINIMIZE = "data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9Im1pbmltaXplIj48cGF0aCBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojQUFBQUFBOyIgZD0iTTEwLDBjNS41LDAsMTAsNC41LDEwLDEwYzAsNS41LTQuNSwxMC0xMCwxMFMwLDE1LjUsMCwxMEMwLDQuNSw0LjUsMCwxMCwweiIvPjxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDtmaWxsOiNGRkZGRkY7IiBkPSJNMTQsOXYySDZWOUgxNHoiLz48L2c+PC9zdmc+"
+elements = elements.elements;
 
-var BTN_NORMAL = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzYxQTVEQSIgZD0iTTE0LDE2SDJjLTEuMSwwLTItMC45LTItMlYyYzAtMS4xLDAuOS0yLDItMmgxMmMxLjEsMCwyLDAuOSwyLDJ2MTJDMTYsMTUuMSwxNS4xLDE2LDE0LDE2eiIvPjxwb2x5Z29uIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjEyLDcgOSw3IDksNCA3LDQgNyw3IDQsNyA0LDkgNyw5IDcsMTIgOSwxMiA5LDkgMTIsOSAiLz48L3N2Zz4=";
-
-var BTN_HOVER = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTYgMTYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE2IDE2IiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZmlsbD0iIzQ0OTVENCIgZD0iTTE0LDE2SDJjLTEuMSwwLTItMC45LTItMlYyYzAtMS4xLDAuOS0yLDItMmgxMmMxLjEsMCwyLDAuOSwyLDJ2MTJDMTYsMTUuMSwxNS4xLDE2LDE0LDE2eiIvPjxwb2x5Z29uIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBmaWxsPSIjRkZGRkZGIiBwb2ludHM9IjEyLDcgOSw3IDksNCA3LDQgNyw3IDQsNyA0LDkgNyw5IDcsMTIgOSwxMiA5LDkgMTIsOSAiLz48L3N2Zz4=";
+var os = elements.os;
+var param = elements.param;
+var css_class = elements.css_class;
+var by_id = elements.id;
+var search_data = by_id.search;
+var bang = by_id.bang;
+var adv = by_id.adv;
+var url = elements.url;
 
 var FAKE_POST_FUNCTION =
 "   function fake_post() {" +
@@ -44,71 +52,65 @@ var FAKE_POST_FUNCTION =
 
 window.onload = function() {
 
-    document.getElementById('search_form_input_homepage').focus();
+    document.getElementById(search_data.input).focus();
 
-    document.getElementById('search_form_homepage').onsubmit = search;
-    document.getElementById('search_form_input_clear').onclick = search_input_clear;
+    document.getElementById(search_data.form).onsubmit = search;
+    document.getElementById(search_data.clear).onclick = search_input_clear;
 
-    var prefill_text = 'Search DuckDuckGo...';
+    var prefill_text = elements.text.search;
 
-    if (localStorage['meanings'] == undefined) {
-      localStorage['meanings'] = 'true';
-    }
-
-    if (localStorage['advanced_options'] == undefined){
-      localStorage['advanced_options'] = 'true';
-    }
-
-    if (localStorage['last_search'] != '') {
-        document.getElementById('search_form_input_homepage').value = localStorage['last_search'];
-        document.getElementById("search_form_input_clear").style.display = 'inline-block';
-        document.getElementById("search_button_homepage").className = 'selected';
-        document.getElementById('search_form_input_homepage').select();
+    if (settings.getSetting('last_search') !== '') {
+        document.getElementById(search_data.input).value = settings.getSetting('last_search');
+        document.getElementById(search_data.clear).style.display = 'inline-block';
+        document.getElementById(search_data.button).className = css_class.selected;
+        document.getElementById(search_data.input).select();
     }
 
 
-    document.getElementById('adv_ducky').onclick = ducky_check;
-    document.getElementById('adv_meanings').onclick = meanings_check;
+    document.getElementById(adv.ducky).onclick = ducky_check;
+    document.getElementById(adv.meanings).onclick = meanings_check;
 
-    document.getElementById('addons').onclick = function(){
-        chrome.tabs.create({url: "html/options.html"});
+    document.getElementById(by_id.addons).onclick = function(){
+        chrome.tabs.create({url: url.html});
     }
 
 
-    document.getElementById('bang_w').onclick = function(){
-      add_bang('!w');
+    document.getElementById(bang.w).onclick = function(){
+      add_bang('!' + bang.w);
     }
-    document.getElementById('bang_bi').onclick = function(){
-      add_bang('!bi');
+    document.getElementById(bang.bi).onclick = function(){
+      add_bang('!' + bang.bi);
     }
-    document.getElementById('bang_a').onclick = function(){
-      add_bang('!a');
+    document.getElementById(bang.a).onclick = function(){
+      add_bang('!' + bang.a);
     }
-    document.getElementById('bang_gi').onclick = function(){
-      add_bang('!gi');
+    document.getElementById(bang.gi).onclick = function(){
+      add_bang('!' + bang.gi);
     }
-    document.getElementById('bang_n').onclick = function(){
-      add_bang('!n');
+    document.getElementById(bang.n).onclick = function(){
+      add_bang('!' + bang.n);
     }
-    document.getElementById('bang_yt').onclick = function(){
-      add_bang('!yt');
+    document.getElementById(bang.yt).onclick = function(){
+      add_bang('!' + bang.yt);
     }
-    document.getElementById('bang_m').onclick = function(){
-      add_bang('!m');
+    document.getElementById(bang.m).onclick = function(){
+      add_bang('!' + bang.m);
     }
-    document.getElementById('reload_tab').onclick = function(){
+
+
+    document.getElementById(by_id.reload_tab).onclick = function(){
       reload_tab();
     }
-    document.getElementById('toggle_blocking').onclick = function(){
+    document.getElementById(by_id.toggle_blocking).onclick = function(){
       toggle_blocking();
     }
-    document.getElementById('toggle_social_blocking').onclick = function(){
+    document.getElementById(by_id.toggle_social_blocking).onclick = function(){
       toggle_social_blocking();
     }
 
-    var trackers = document.getElementById('trackers'),
-        tracker_name = document.getElementById('tracker_name'),
-        req_count = document.getElementById('req_count');
+    var trackers = document.getElementById(by_id.trackers),
+        tracker_name = document.getElementById(by_id.tracker_name),
+        req_count = document.getElementById(by_id.req_count);
 
     (function(){
         getTab(function(t) { 
@@ -117,11 +119,11 @@ window.onload = function() {
             req_count.innerHTML = '';
 
             if (tab && ((!tab.trackers) || (!Object.keys(tab.trackers).length))) {
-                trackers.classList.add('hide');
+                trackers.classList.add(css_class.hide);
             }
 
             if(tab && tab.trackers && Object.keys(tab.trackers).length){
-                trackers.classList.remove('hide');
+                trackers.classList.remove(css_class.hide);
 
                 Object.keys(tab.trackers).forEach( function(name) {
                     var temp_url = '',
@@ -129,10 +131,10 @@ window.onload = function() {
                         req_html = '';
                     
                     if(bg.betterList.indexOf(tab.trackers[name].url) !== -1){
-                        temp_url = 'https://better.fyi/trackers/' + tab.trackers[name].url;
+                        temp_url = url.better_fyi + tab.trackers[name].url;
                     }
                     
-                    tracker_name.innerHTML += '<li class="link"><a class="tracker-link" href="' + temp_url + '">' + name + '</a></li>'; 
+                    tracker_name.innerHTML += '<li class="' + css_class.link + '"><a class="' + css_class.tracker + '" href="' + temp_url + '">' + name + '</a></li>'; 
                     
                     req_count.innerHTML += "<li>" + tab.trackers[name].count + "</li>";
                 });
@@ -155,11 +157,11 @@ window.onload = function() {
     var images = document.querySelectorAll('li img');
     for(var i = 0; i < images.length; i++) {
       images[i].onmouseover = function() {
-          this.src = BTN_HOVER;
+          this.src = asset_paths.btn_hover;
       }
 
       images[i].onmouseout = function() {
-          this.src = BTN_NORMAL;
+          this.src = asset_paths.btn_normal;
       }
     }
 
@@ -170,10 +172,11 @@ window.onload = function() {
     });
 
 
-    if (localStorage['advanced_options'] !== 'true') {
-        document.getElementById('icon_advanced').src = ICON_MAXIMIZE;
-        document.getElementById('advanced').style.display = 'none';
-        document.getElementById('icon_advanced').className = 'minimized';
+    if (!settings.getSetting('advanced_options')) {
+        var icon_adv = document.getElementById(by_id.icon_advanced);
+        icon_adv.src = asset_paths.icon_maximize;
+        document.getElementById(by_id.advanced).style.display = 'none';
+        icon_adv.className = css_class.minimized;
     }
 
     function check_uncheck(isChecked, checkboxId) {
@@ -187,41 +190,43 @@ window.onload = function() {
             switch_button.checked = true;
         }
 
-        document.getElementById('reload_tab').classList.remove('hide');
+        document.getElementById(by_id.reload_tab).classList.remove(css_class.hide);
         
         return isChecked;
     }
 
     function toggle_blocking() {
-         bg.isExtensionEnabled = check_uncheck(bg.isExtensionEnabled, 'toggle_blocking');
-         var social = document.getElementById('toggle_social_blocking');
+         settings.updateSetting("extensionIsEnabled", check_uncheck(settings.getSetting("extensionIsEnabled"), by_id.toggle_blocking));
+         var social = document.getElementById(by_id.toggle_social_blocking);
 
-         if (!bg.isExtensionEnabled) {
-             bg.isSocialBlockingEnabled = false;
-             social.parentNode.classList.add('hide');
+         if (!settings.getSetting("extensionIsEnabled")) {
+             settings.updateSetting("socialBlockingIsEnabled", false);
+             social.parentNode.classList.add(css_class.hide);
              social.checked = false;
-             bg.isSocialBlockingEnabled = false;
          } else {
-             social.parentNode.classList.remove('hide');
-             social.checked = bg.isSocialBlockingEnabled? true : false;
+             social.parentNode.classList.remove(css_class.hide);
+             social.checked = settings.getSetting("socialBlockingIsEnabled")? true : false;
          }
          
-         chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
+         chrome.runtime.sendMessage({"social": settings.getSetting("socialBlockingIsEnabled")}, function(){});
     }
 
     function toggle_social_blocking() {
-        bg.isSocialBlockingEnabled = check_uncheck(bg.isSocialBlockingEnabled, 'toggle_social_blocking');
-        chrome.runtime.sendMessage({"social": bg.isSocialBlockingEnabled}, function(){});
+        social_blocking = settings.getSetting("socialBlockingIsEnabled");
+        settings.updateSetting("socialBlockingIsEnabled", check_uncheck(social_blocking, by_id.toggle_social_blocking));
+        chrome.runtime.sendMessage({"social": settings.getSetting("socialBlockingIsEnabled")}, function(){});
     }
 
     setTimeout(function(){
-        document.getElementById("search_form_input_homepage").focus();
-        document.getElementById("search_form_input_homepage").onkeydown = function(){
-            document.getElementById("search_form_input_clear").style.display = 'inline-block';
-            document.getElementById("search_button_homepage").className = 'selected';
+        var search_input = document.getElementById(search_data.input);
+        
+        search_input.focus();
+        search_input.onkeydown = function(){
+            document.getElementById(search_data.clear).style.display = 'inline-block';
+            document.getElementById(search_data.button).className = css_class.selected;
             this.style.color = '#000000';
         };
-        document.getElementById("search_form_input_homepage").onkeyup = function(){
+       search_input.onkeyup = function(){
             if (this.value == '') {
                 this.style.color = '#999999';
                 search_input_clear();
@@ -231,33 +236,36 @@ window.onload = function() {
 
 
     function search(){
-        var input = document.getElementById("search_form_input_homepage").value;
+        var search_input = document.getElementById(search_data.input);
+        var input = search_input.value;
 
-        if (localStorage['lastsearch_enabled'] === 'false')
-            localStorage['last_search'] = '';
-        else
-            localStorage['last_search'] = input;
+        if (!settings.getSetting('lastsearch_enabled')) {
+            settings.updateSetting('last_search', '');
+        } else {
+            settings.updateSetting('last_search', input);
+        }
 
-        if (document.getElementById('adv_ducky').checked === true) {
+        if (document.getElementById(adv.ducky).checked === true) {
             input = "\\" + input;
         }
 
         var special = '';
-        if(document.getElementById('adv_meanings').checked !== true) {
-            special = '&d=1';
+        if(document.getElementById(adv.meanings).checked !== true) {
+            special = param.meanings;
         }
 
-        if (localStorage['safesearch'] === 'false')
-            special += '&kp=-1'
+        if (!settings.getSetting('safesearch')) {
+            special += param.safesearch;
+        }
 
         var os = "o";
-        if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
-        if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
-        if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+        if (window.navigator.userAgent.indexOf(os.win) != -1) os = "w";
+        if (window.navigator.userAgent.indexOf(os.mac) != -1) os = "m";
+        if (window.navigator.userAgent.indexOf(os.lin) != -1) os = "l";
 
-        special += '&bext=' + os + 'cp';
+        special += param.os + os + 'cp';
 
-        if (localStorage['use_post'] === 'true') {
+        if (settings.getSetting('use_post')) {
             var fake_post_code = FAKE_POST_FUNCTION.replace(/(\n|\t)/gm,'');
 
             var params = {
@@ -272,32 +280,33 @@ window.onload = function() {
             });
         } else {
             chrome.tabs.create({
-                url: "https://duckduckgo.com/?q="+encodeURIComponent(input)+special
+                url: url.ddg + encodeURIComponent(input) + special
             });
         }
     }
 
-    document.getElementById('icon_advanced').onclick = function(){
-        if (this.className == 'minimized') {
-            this.src = ICON_MINIMIZE;
-            document.getElementById('advanced').style.display = 'block';
-            this.className = 'maximized';
+    document.getElementById(by_id.icon_advanced).onclick = function(){
+        var advanced =  document.getElementById(by_id.advanced)
+        if (this.className == css_class.minimized) {
+            this.src = asset_paths.icon_minimize;
+            advanced.style.display = 'block';
+            this.className = css_class.maximized;
         } else {
-            this.src = ICON_MAXIMIZE;
-            document.getElementById('advanced').style.display = 'none';
-            this.className = 'minimized';
+            this.src = asset_paths.icon_maximize;
+            advanced.style.display = 'none';
+            this.className = css_class.minimized;
         }
-        localStorage['advanced_options'] = (document.getElementById('advanced').style.display === 'block');
-        document.getElementById('search_form_input_homepage').focus();
+        settings.updateSetting('advanced_options', (advanced.style.display === 'block'));
+        document.getElementById(search_data.input).focus();
     }
 
     function add_bang(bang) {
-        var inp = document.getElementById('search_form_input_homepage');
+        var inp = document.getElementById(search_data.input);
 
         var bang_regex = /\!\w+/;
 
-        document.getElementById("search_form_input_clear").style.display= 'inline-block';
-        document.getElementById("search_button_homepage").className = 'selected';
+        document.getElementById(search_data.clear).style.display= 'inline-block';
+        document.getElementById(search_data.button).className = css_class.selected;
 
         if (inp.value === '') {
             inp.style.color = '#000';
@@ -316,37 +325,38 @@ window.onload = function() {
     }
 
     function ducky_check(){
-        localStorage['ducky'] = document.getElementById('adv_ducky').checked;
+        settings.updateSetting('ducky', document.getElementById(adv.ducky).checked);
     }
 
     function meanings_check(){
-        localStorage['meanings'] = document.getElementById('adv_meanings').checked;
+        settings.updateSetting('meanings', document.getElementById(adv.meanings).checked);
     }
 
     function defaults_check(){
-        if (localStorage['ducky'] === 'true') {
-            document.getElementById('adv_ducky').checked = true;
+        if (settings.getSetting('ducky')) {
+            document.getElementById(adv.ducky).checked = true;
         }
 
-        if (localStorage['meanings'] === 'true') {
-            document.getElementById('adv_meanings').checked = true;
+        if (settings.getSetting('meanings')) {
+            document.getElementById(adv.meanings).checked = true;
         }
 
-        if (bg.isExtensionEnabled) {
-            document.getElementById('toggle_blocking').checked = true;
+        if (settings.getSetting('extensionIsEnabled')) {
+            document.getElementById(by_id.toggle_blocking).checked = true;
             
-            var social = document.getElementById('toggle_social_blocking');
-            social.parentNode.classList.remove('hide');
-            social.checked = bg.isSocialBlockingEnabled? true : false;
+            var social = document.getElementById(by_id.toggle_social_blocking);
+            social.parentNode.classList.remove(css_class.hide);
+            social.checked = settings.getSetting('socialBlockingIsEnabled')? true : false;
         }
     }
 
     function search_input_clear() {
-        document.getElementById('search_form_input_homepage').value = '';
-        document.getElementById("search_form_input_clear").style.display= 'none';
-        document.getElementById('search_form_input_homepage').focus();
-        document.getElementById("search_button_homepage").className = '';
-        localStorage['last_search'] = '';
+        var search_input = document.getElementById(search_data.input);
+        search_input.value = '';
+        document.getElementById(search_data.clear).style.display= 'none';
+        search_input.focus();
+        document.getElementById(search_data.button).className = '';
+        settings.updateSetting('last_search', '');
     }
 
     function reload_tab() {
@@ -357,7 +367,7 @@ window.onload = function() {
             if (tabs[0]) {
                 var tabId = tabs[0].id;
                 chrome.tabs.reload(tabId);
-                document.getElementById('reload_tab').classList.add('hide');
+                document.getElementById(by_id.reload_tab).classList.add(css_class.hide);
                 window.close();
             }
         });
