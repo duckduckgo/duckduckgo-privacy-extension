@@ -9,5 +9,14 @@
     "use_post": false,
     "ducky": false,
     "dev": false,
-    "zeroclick_google_right": false
+    "zeroclick_google_right": false,
+    "blockLists": [
+        {
+            "name": "disconnect",
+            "type": "disconnect",
+            "loc": "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json"
+        }
+    ],
+    "entityList": "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json",
+    "blocking": ["Advertising", "Analytics", "Disconnect"]
 }

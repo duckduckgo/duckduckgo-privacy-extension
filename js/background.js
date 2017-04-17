@@ -15,16 +15,19 @@
  */
 
 
-var blockTrackers = require('blockTrackers');
+var blockTrackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
+var importers = require('importers');
 
 var tabs = {};
 
 function Background() {
   $this = this;
 
+  // build tracker lists
+  importers.init();
 
   // clearing last search on browser startup
   settings.updateSetting('last_search', '');
