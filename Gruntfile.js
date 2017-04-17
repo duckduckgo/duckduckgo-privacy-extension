@@ -1,12 +1,16 @@
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
-    var static_dir = 'root/static/';
+    var static_dir = 'static/';
     var templates_dir = 'templates/';
+    var js_dir = 'js/';
 
     var build_tasks = [
-        'handlebars:compile'
+        'handlebars:compile',
+        'concat:js'
     ];
+
+    var js_file = js_dir + 'popup.js';
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -30,6 +34,17 @@ module.exports = function(grunt) {
                 }
             }
         },
+
+        // Concat handlebars templates with popup.js, copy result to static/js/popup.js
+        concat: {
+            js: {
+                src: [
+                    templates_dir + 'handlebars_tmp',
+                    js_file
+                ],
+                dest: static_dir + js_file
+            }
+        }
     });
     
     grunt.registerTask('build', 'Compiles handlebars templates', build_tasks);
