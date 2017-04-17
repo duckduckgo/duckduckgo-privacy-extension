@@ -1,6 +1,8 @@
 
-var load = require('load');
-var settings = require('settings');
+var load = require('load'),
+    settings = require('settings'),
+    utils = require('utils');
+
 //var blockListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json";
 var blockListSource = "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json";
 var entityListSource = "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json";
@@ -22,7 +24,7 @@ require.scopes.blockTrackers = (function() {
     function blockTrackers(url, currLocation, tabId) {
         var blocking = settings.getSetting('extensionIsEnabled');
         if (blocking) {
-            var host = extractHostFromURL(url);
+            var host = utils.extractHostFromURL(url);
             var isWhiteListed = false;
             var social_block = settings.getSetting('socialBlockingIsEnabled');
             if (formerSocialBlocking !== social_block) {
@@ -56,7 +58,7 @@ require.scopes.blockTrackers = (function() {
      */
     function isRelatedEntity(tracker, currLocation) {
         var parentEntity = entityList[tracker.c];
-        var host = extractHostFromURL(currLocation);
+        var host = utils.extractHostFromURL(currLocation);
 
         if(parentEntity && parentEntity.properties && parentEntity.properties.indexOf(host) !== -1){
             return true;
@@ -64,17 +66,8 @@ require.scopes.blockTrackers = (function() {
         return false;
     }
 
-    function extractHostFromURL(url) {
-        var a = document.createElement('a');
-        a.href = url;
-        var parts = a.hostname.split('.');
-        var host = parts.slice(-2).join('.');;
-        return host;
-    }
-
     var exports = {};
     exports.blockTrackers = blockTrackers;
-    exports.extractHostFromURL = extractHostFromURL;
     exports.trackers = trackers;
     exports.blockList = blockList;
 
