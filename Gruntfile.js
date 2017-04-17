@@ -25,8 +25,7 @@ module.exports = function(grunt) {
                     namespace: "Handlebars.templates",
                     processName: function(filepath) {
                         var parts = filepath.split('/');
-                        parts = parts[parts.length - 1]
-                        return parts.replace('.handlebars', '');
+                        return parts[parts.length - 1].replace('.handlebars', '');
                     }
                 },
                 files: {
