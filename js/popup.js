@@ -134,9 +134,9 @@ window.onload = function() {
                         temp_url = url.better_fyi + tab.trackers[name].url;
                     }
                     
-                    tracker_name.innerHTML += '<li class="' + css_class.link + '"><a class="' + css_class.tracker + '" href="' + temp_url + '">' + name + '</a></li>'; 
+                    tracker_name.innerHTML += Handlebars.templates.tracker({css_class: css_class, tmp_url: tmp_url, name: name});
                     
-                    req_count.innerHTML += "<li>" + tab.trackers[name].count + "</li>";
+                    req_count.innerHTML += Handlebars.templates.req_count({tab_trackers_count: tab.trackers[name].count});
                 });
 
 

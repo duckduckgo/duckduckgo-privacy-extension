@@ -12,6 +12,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         static_dir: static_dir,
         templates_dir: templates_dir,
+        build_tasks: build_tasks,
 
         // Compile handlebars templates
         handlebars: {
@@ -20,7 +21,8 @@ module.exports = function(grunt) {
                     namespace: "Handlebars.templates",
                     processName: function(filepath) {
                         var parts = filepath.split('/');
-                        return parts[parts.length - 1].replace('.handlebars', '');
+                        parts = parts[parts.length - 1]
+                        return parts.replace('.handlebars', '');
                     }
                 },
                 files: {
@@ -28,7 +30,8 @@ module.exports = function(grunt) {
                 }
             }
         },
-
+    });
+    
     grunt.registerTask('build', 'Compiles handlebars templates', build_tasks);
     grunt.registerTask('default', build_tasks);
 }
