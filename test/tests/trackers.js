@@ -29,9 +29,9 @@
   });
 
   var thirdPartyTests = [
-      { 'url': 'https://facebook.com', 'host': 'https://facebook.com', 'block': false},
-      { 'url': 'https://facebook.com', 'host': 'https://reddit.com', 'block': true},
-      { 'url': 'https://facebook.com', 'host': 'https://instagram.com', 'block': false}
+      { 'url': 'https://facebook.com', 'host': 'https://facebook.com', 'block': false, 'message': 'don\'t block first party requests'},
+      { 'url': 'https://facebook.com', 'host': 'https://reddit.com', 'block': true, 'message': 'should block third party request'},
+      { 'url': 'https://facebook.com', 'host': 'https://instagram.com', 'block': false, 'message': 'should not block third party requests owned by same parent company'}
   ];
 
   thirdPartyTests.forEach(function(test) {
@@ -39,7 +39,7 @@
           settings.updateSetting('extensionIsEnabled', true);
           var toBlock = trackers.blockTrackers(test.url, test.host, 0);
           toBlock = toBlock ? true : false;
-          assert.ok(toBlock === test.block, 'test third party blocking');
+          assert.ok(toBlock === test.block, test.message);
       });
   });
 
