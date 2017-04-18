@@ -3,7 +3,7 @@ require.scopes.importers.disconnect = function(listData){
      * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
      * "<tracker host>" : { "c": <company name>, "u": "company url" }
      */
-    var trackers = require('trackers'),
+    var trackerLists = require('trackerLists'),
     utils = require('utils'),
     disconnectList = load.JSONfromExternalFile(listData.loc);
     
@@ -22,7 +22,7 @@ require.scopes.importers.disconnect = function(listData){
         });
     });
 
-    trackers.trackersWithParentCompany = trackerList;
+    trackerLists.setList('trackersWithParentCompany', trackerList);
 
     function addToList(type, url, data) {
         trackerList[type] = trackerList[type] ? trackerList[type] : {};

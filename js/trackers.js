@@ -1,19 +1,22 @@
+
+var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
+
 require.scopes.trackers = (function() {    
 
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
+    trackerLists = require('trackerLists').getLists(),
     blockLists = settings.getSetting('blockLists'),
-    entityList = JSON.parse(load.loadExtensionFile(settings.getSetting('entityList'), 'json', 'external')),
-    betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
+    entityList = JSON.parse(load.loadExtensionFile(settings.getSetting('entityList'), 'json', 'external'));
 
-var trackersWithParentCompany = {};
 
 var blockList = {};
-var trackers = [];
     
 function blockTrackers(url, currLocation, tabId) {
-    
+
+    var toBlock = false;
+
     if (settings.getSetting('extensionIsEnabled')) {
         
         var host = utils.extractHostFromURL(url);
@@ -24,16 +27,18 @@ function blockTrackers(url, currLocation, tabId) {
             return;
         }
 
-        settings.getSetting('blocking').forEach( function(trackerType) {
-            var tracker = trackersWithParentCompany[trackerType][host];
+        settings.getSetting('blocking').some( function(trackerType) {
+            var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
             if(tracker && !isRelatedEntity(tracker.c, currLocation)){
-                return { 'tracker': tracker.c, 'url': host};
+                return toBlock = {'tracker': tracker.c, 'url': host};
             }
          });
     }
     else {
         chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
     }
+
+    return toBlock;
 }
 
 function isWhitelisted(host, tabId){
@@ -58,9 +63,5 @@ function isRelatedEntity(parentCompany, currLocation) {
 
 var exports = {};
 exports.blockTrackers = blockTrackers;
-exports.trackers = trackers;
-exports.blockList = blockList;
-exports.trackersWithParentCompany = trackersWithParentCompany;
-
 return exports;
 })();

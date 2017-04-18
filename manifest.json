@@ -33,6 +33,7 @@
                 "js/utils.js",
                 "js/load.js",
                 "js/settings.js",
+                "js/trackerLists.js",
                 "js/list_importers/importers.js",
                 "js/list_importers/disconnect.js",
                 "js/trackers.js",
