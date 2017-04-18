@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     var static_dir = 'static/';
     var templates_dir = 'templates/';
     var js_dir = 'js/';
+    var css_dir = 'css/';
 
     var build_tasks = [
         'handlebars:compile',
@@ -11,6 +12,7 @@ module.exports = function(grunt) {
     ];
 
     var js_file = js_dir + 'popup.js';
+    var css_file = css_dir + 'popup.css';
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -42,6 +44,15 @@ module.exports = function(grunt) {
                     js_file
                 ],
                 dest: static_dir + js_file
+            }
+        },
+
+        // Compile Sass into CSS and copy result to static/css/popup.css
+        sass: {
+            dist: {
+                files: {
+                    static_dir + css_file: css_dir + 'popup.scss',
+                }
             }
         }
     });
