@@ -8,7 +8,8 @@ module.exports = function(grunt) {
 
     var build_tasks = [
         'handlebars:compile',
-        'concat:js'
+        'concat:js',
+        'sass'
     ];
 
     var js_file = js_dir + 'popup.js';
