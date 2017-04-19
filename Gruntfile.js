@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     ];
 
     var js_file = js_dir + 'popup.js';
-    var css_file = css_dir + 'popup.css';
+    var sass_file = css_dir + 'popup.scss';
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -52,7 +52,7 @@ module.exports = function(grunt) {
         sass: {
             dist: {
                 files: {
-                    static_dir + css_file: css_dir + 'popup.scss',
+                    'static/css/popup.css': sass_file,
                 }
             }
         }
