@@ -111,9 +111,10 @@ function Background() {
                 });
             }
         });
+
   });
 
-  chrome.extension.onMessage.addListener(function(request, sender, callback) {
+  chrome.runtime.onMessage.addListener(function(request, sender, callback) {
     if (request.options) {
       callback(localStorage);
     }
@@ -148,6 +149,14 @@ function Background() {
     if (!localStorage['set_atb'] && request.atb) {
       localStorage['atb'] = request.atb;
       localStorage['set_atb'] = request.atb;
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('GET',
+        'https://duckduckgo.com/exti/?atb=' + request.atb,
+        true
+      );
+      xhr.send();
     }
 
     return true;
@@ -205,6 +214,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           if(e.type === 'main_frame'){
               delete tabs[e.tabId];
+              return;
           }
 
           if(!tabs[e.tabId]){
@@ -226,7 +236,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
 
                 if(!tabs[e.tabId]['trackers'][name]){
-                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url};
+                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
                 }
                 else {
                     tabs[e.tabId]['trackers'][name].count += 1;
@@ -238,6 +248,9 @@ chrome.webRequest.onBeforeRequest.addListener(
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
                 return {cancel: true};
+              }
+              else {
+                  //chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
               }
           }
       }

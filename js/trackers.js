@@ -27,17 +27,27 @@ function blockTrackers(url, currLocation, tabId) {
             return;
         }
 
-        settings.getSetting('blocking').some( function(trackerType) {
-            var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
-            if(tracker && !isRelatedEntity(tracker.c, currLocation)){
-                return toBlock = {'tracker': tracker.c, 'url': host};
-            }
-         });
+        var trackerByParentCompany = checkTrackersWithParentCompany(host, currLocation);
+        if(trackerByParentCompany) {
+            return trackerByParentCompany;
+        }
+
     }
     else {
         chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
     }
 
+    return toBlock;
+}
+
+function checkTrackersWithParentCompany(host, currLocation) {
+    var toBlock;
+    settings.getSetting('blocking').some( function(trackerType) {
+        var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
+        if(tracker && !isRelatedEntity(tracker.c, currLocation)){
+            return toBlock = {'tracker': tracker.c, 'url': host};
+        }
+     });
     return toBlock;
 }
 
