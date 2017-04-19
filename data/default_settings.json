@@ -14,9 +14,9 @@
         {
             "name": "disconnect",
             "type": "disconnect",
-            "loc": "https://raw.githubusercontent.com/disconnectme/disconnect-tracking-protection/master/services.json"
+            "loc": "data/tracker_lists/disconnect-trackerlist.json"
         }
     ],
-    "entityList": "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json",
+    "entityList": "data/tracker_lists/disconnect-entitylist.json",
     "blocking": ["Advertising", "Analytics", "Disconnect"]
 }

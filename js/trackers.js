@@ -8,7 +8,7 @@ var load = require('load'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists(),
     blockLists = settings.getSetting('blockLists'),
-    entityList = JSON.parse(load.loadExtensionFile(settings.getSetting('entityList'), 'json', 'external'));
+    entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
 
 
 var blockList = {};

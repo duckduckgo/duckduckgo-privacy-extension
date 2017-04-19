@@ -4,8 +4,8 @@ require.scopes.importers.disconnect = function(listData){
      * "<tracker host>" : { "c": <company name>, "u": "company url" }
      */
     var trackerLists = require('trackerLists'),
-    utils = require('utils'),
-    disconnectList = load.JSONfromExternalFile(listData.loc);
+    load = require('load'),
+    disconnectList = load.JSONfromLocalFile(listData.loc);
     
     var trackerList = {};
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social'];
