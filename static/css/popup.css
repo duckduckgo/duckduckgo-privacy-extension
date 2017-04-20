@@ -44,7 +44,7 @@ table {
 html {
   overflow: hidden;
   /*background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#f8f8f8));*/
-  background: #fff;
+  background: #ffffff;
   height: auto;
   border: 0; }
 
@@ -272,7 +272,7 @@ input[type="checkbox"]:checked + label {
   top: 2px;
   height: 14px;
   width: 14px;
-  background-color: #fff; }
+  background-color: #ffffff; }
 
 .switch.is-on .switch__knob {
   left: 10px; }
@@ -295,7 +295,7 @@ input[type="checkbox"]:checked + label {
   font-size: 12px;
   cursor: pointer;
   background: #4495d4;
-  color: #fff;
+  color: #ffffff;
   margin-bottom: 0.5em;
   width: 5em; }
 
