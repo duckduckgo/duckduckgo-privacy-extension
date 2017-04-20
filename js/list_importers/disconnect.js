@@ -5,8 +5,9 @@ require.scopes.importers.disconnect = function(listData){
      */
     var trackerLists = require('trackerLists'),
     load = require('load'),
-    disconnectList = load.JSONfromLocalFile(listData.loc);
-    
+    disconnectList = load.JSONfromLocalFile(listData.loc),
+    googleRemapData = load.JSONfromLocalFile(listData.gmapping).categories;
+
     var trackerList = {};
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social'];
 
@@ -25,7 +26,43 @@ require.scopes.importers.disconnect = function(listData){
     trackerLists.setList('trackersWithParentCompany', trackerList);
 
     function addToList(type, url, data) {
+        type = applyRemapping(type, data.c, url);
         trackerList[type] = trackerList[type] ? trackerList[type] : {};
         trackerList[type][url] = data;
+    }
+
+    function applyRemapping(type, name, url) {
+        if(type === 'Disconnect'){
+            var socialRemap = remapSocial(type,name,url);
+            if(socialRemap){
+                return socialRemap;
+            }
+            
+            var googleReMap = remapGoogle(type,name,url);
+            if(googleReMap){
+                return googleReMap;
+            }
+        }
+        return type;
+    }
+
+    function remapSocial(type, name, url){
+        var newType;
+        if(name === 'Facebook' || name === 'Twitter'){
+            newType = "Social";
+        }
+        return newType;
+    }
+
+    function remapGoogle(type, name, url){
+        var newType;
+        if(name === "Google"){
+            Object.keys(googleRemapData).some( function(category) {
+                if(googleRemapData[category][0]['Google']['http://www.google.com/'].indexOf(url) !== -1){
+                    return newType = category;
+                }
+            });
+        }
+        return newType;
     }
 };

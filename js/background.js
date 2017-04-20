@@ -15,7 +15,7 @@
  */
 
 
-var blockTrackers = require('trackers');
+var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
@@ -127,7 +127,7 @@ function Background() {
     }
 
     if (request.whitelist) {
-      var toWhitelist = blockTrackers.extractHostFromURL(request.whitelist);
+      var toWhitelist = utils.extractHostFromURL(request.whitelist);
       chrome.tabs.query({
         'currentWindow': true,
         'active': true
@@ -226,7 +226,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           }
 
           if (!tabs[e.tabId].whitelist || (tabs[e.tabId].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
-              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url, e.tabId);
+              var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
 
               if(block){
                 var name = block.tracker;
@@ -248,9 +248,6 @@ chrome.webRequest.onBeforeRequest.addListener(
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
                 return {cancel: true};
-              }
-              else {
-                  //chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
               }
           }
       }
