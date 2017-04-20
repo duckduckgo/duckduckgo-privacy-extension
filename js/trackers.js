@@ -9,11 +9,8 @@ var load = require('load'),
     trackerLists = require('trackerLists').getLists(),
     blockLists = settings.getSetting('blockLists'),
     entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
-
-
-var blockList = {};
     
-function blockTrackers(url, currLocation, tabId) {
+function isTracker(url, currLocation, tabId) {
 
     var toBlock = false;
 
@@ -22,30 +19,33 @@ function blockTrackers(url, currLocation, tabId) {
         var host = utils.extractHostFromURL(url);
         var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
+        var blockSettings = settings.getSetting('blocking');
 
         if(isWhitelisted(host, tabId)) {
             return;
         }
 
-        var trackerByParentCompany = checkTrackersWithParentCompany(host, currLocation);
+        if(social_block){
+            blockSettings.push('Social');
+        }
+
+        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, host, currLocation);
         if(trackerByParentCompany) {
             return trackerByParentCompany;
         }
 
     }
-    else {
-        chrome.browserAction.setBadgeText({tabId: parseInt(tabId) + 0, text: ""});
-    }
-
     return toBlock;
 }
 
-function checkTrackersWithParentCompany(host, currLocation) {
+function checkTrackersWithParentCompany(blockSettings, host, currLocation) {
     var toBlock;
-    settings.getSetting('blocking').some( function(trackerType) {
-        var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
-        if(tracker && !isRelatedEntity(tracker.c, currLocation)){
-            return toBlock = {'tracker': tracker.c, 'url': host};
+    blockSettings.some( function(trackerType) {
+        if(trackerLists.trackersWithParentCompany[trackerType]) {
+            var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
+            if(tracker && !isRelatedEntity(tracker.c, currLocation)){
+                return toBlock = {'tracker': tracker.c, 'url': host, 'type': trackerType};
+            }
         }
      });
     return toBlock;
@@ -72,6 +72,6 @@ function isRelatedEntity(parentCompany, currLocation) {
 }
 
 var exports = {};
-exports.blockTrackers = blockTrackers;
+exports.isTracker = isTracker;
 return exports;
 })();
