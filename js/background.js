@@ -210,6 +210,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           if(e.type === 'main_frame'){
               delete tabs[e.tabId];
+              return;
           }
 
           if(!tabs[e.tabId]){
