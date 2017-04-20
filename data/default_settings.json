@@ -14,9 +14,10 @@
         {
             "name": "disconnect",
             "type": "disconnect",
-            "loc": "data/tracker_lists/disconnect-trackerlist.json"
+            "loc": "data/tracker_lists/disconnect-trackerlist.json",
+            "gmapping": "data/tracker_lists/disconnect-google-mapping.json"
         }
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
-    "blocking": ["Advertising", "Analytics", "Disconnect"]
+    "blocking": ["Advertising", "Analytics"]
 }
