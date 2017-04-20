@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     ];
 
     var js_file = js_dir + 'popup.js';
-    var sass_file = css_dir + 'popup.scss';
+    var sass_file = css_dir + 'main.scss';
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
