@@ -1,13 +1,10 @@
-require.scopes.importers.disconnect = function(listData){
+global.disconnect = function(listData){
     /* format Mozilla block list for our use
      * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
      * "<tracker host>" : { "c": <company name>, "u": "company url" }
      */
-    var trackerLists = require('trackerLists'),
-    load = require('load'),
-    disconnectList = load.JSONfromLocalFile(listData.loc),
-    googleRemapData = load.JSONfromLocalFile(listData.gmapping).categories;
-
+    var disconnectList = require("./../tracker_lists/" + listData.loc);
+    var googleRemapData = require("./../tracker_lists/" + listData.gmapping).categories;
     var trackerList = {};
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social'];
 
@@ -23,7 +20,7 @@ require.scopes.importers.disconnect = function(listData){
         });
     });
 
-    trackerLists.setList('trackersWithParentCompany', trackerList);
+    return {"name": 'trackersWithParentCompany', "data": trackerList};
 
     function addToList(type, url, data) {
         type = applyRemapping(type, data.c, url);

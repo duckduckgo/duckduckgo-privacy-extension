@@ -1,8 +1,8 @@
 require.scopes.trackerLists = ( function() {
-    
-    var lists = {
-        trackersWithParentCompany: {}
-    };
+    var settings = require('settings');
+    var load = require('load');
+    var lists = {};
+    var listLocation = settings.getSetting('trackerListLoc');
 
     function getLists() {
         return lists;
@@ -12,9 +12,18 @@ require.scopes.trackerLists = ( function() {
         lists[name] = data;
     }
 
+    function loadLists(){
+        var blockLists = settings.getSetting('blockLists');
+        blockLists.forEach( function(list) {
+            var listJSON = load.JSONfromLocalFile(listLocation + "/" + list.processedName);
+            lists[list.processedName] = listJSON;
+        });
+    }
+
+    loadLists();
+
     var exports = {
         getLists: getLists,
-        setList: setList
     }
     return exports;
 })();

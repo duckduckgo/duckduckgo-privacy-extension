@@ -26,9 +26,6 @@ var tabs = {};
 function Background() {
   $this = this;
 
-  // build tracker lists
-  importers.init();
-
   // clearing last search on browser startup
   settings.updateSetting('last_search', '');
 

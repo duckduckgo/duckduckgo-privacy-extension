@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
+    grunt.loadNpmTasks('grunt-execute');
 
     var static_dir = 'static/';
     var templates_dir = 'templates/';
@@ -9,7 +10,8 @@ module.exports = function(grunt) {
     var build_tasks = [
         'handlebars:compile',
         'concat:js',
-        'sass'
+        'sass',
+        'execute:preProcessLists'
     ];
 
     var js_file = js_dir + 'popup.js';
@@ -54,6 +56,11 @@ module.exports = function(grunt) {
                 files: {
                     'static/css/popup.css': sass_file,
                 }
+            }
+        },
+        execute: {
+            preProcessLists: {
+                src: ['scripts/buildLists.js']
             }
         }
     });

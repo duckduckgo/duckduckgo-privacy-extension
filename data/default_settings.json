@@ -10,12 +10,14 @@
     "ducky": false,
     "dev": false,
     "zeroclick_google_right": false,
+    "trackerListLoc": "data/tracker_lists",
     "blockLists": [
         {
             "name": "disconnect",
             "type": "disconnect",
-            "loc": "data/tracker_lists/disconnect-trackerlist.json",
-            "gmapping": "data/tracker_lists/disconnect-google-mapping.json"
+            "loc": "disconnect-trackerlist.json",
+            "gmapping": "disconnect-google-mapping.json",
+            "processedName": "trackersWithParentCompany"
         }
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
