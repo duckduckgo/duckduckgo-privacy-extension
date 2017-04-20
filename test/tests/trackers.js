@@ -4,25 +4,24 @@
   var trackers = require('trackers');
   var settings = require('settings');
 
-  var tests = [
+  var basicBlocking = [
     { 'url': 'https://doubleclick.net', 'block': true},
-    { 'url': 'https://facebook.com/?q=something&param=a', 'block': true},
     { 'url': 'https://duckduckgo.com', 'block': false}
   ];
 
-  tests.forEach(function(test) {
+  basicBlocking.forEach(function(test) {
       QUnit.test("block url", function (assert) {
           settings.updateSetting('extensionIsEnabled', true);
-          var toBlock = trackers.blockTrackers(test.url, '', 0);
+          var toBlock = trackers.isTracker(test.url, '', 0);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
 
-  tests.forEach(function(test) {
+  basicBlocking.forEach(function(test) {
       QUnit.test("turn off blocking", function (assert) {
           settings.updateSetting('extensionIsEnabled', false);
-          var toBlock = trackers.blockTrackers(test.url, '', 0);
+          var toBlock = trackers.isTracker(test.url, '', 0);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === false, 'url should not be');
       });
@@ -37,9 +36,35 @@
   thirdPartyTests.forEach(function(test) {
       QUnit.test("third party blocking", function (assert) {
           settings.updateSetting('extensionIsEnabled', true);
-          var toBlock = trackers.blockTrackers(test.url, test.host, 0);
+          settings.updateSetting('socialBlockingIsEnabled', true);
+          var toBlock = trackers.isTracker(test.url, test.host, 0);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, test.message);
+      });
+  });
+
+  var socialBlocking = [
+    { 'url': 'https://facebook.com/?q=something&param=a', 'block': true},
+    { 'url': 'http://twitter.com/somescript.js', 'block': true}
+  ];
+
+  socialBlocking.forEach(function(test) {
+      QUnit.test("social blocking On", function (assert) {
+          settings.updateSetting('extensionIsEnabled', true);
+          settings.updateSetting('socialBlockingIsEnabled', true);
+          var toBlock = trackers.isTracker(test.url, '', 0);
+          toBlock = toBlock ? true : false;
+          assert.ok(toBlock === test.block, 'url should be blocked');
+      });
+  });
+
+  socialBlocking.forEach(function(test) {
+      QUnit.test("social blocking Off", function (assert) {
+          settings.updateSetting('extensionIsEnabled', true);
+          settings.updateSetting('socialBlockingIsEnabled', false);
+          var toBlock = trackers.isTracker(test.url, '', 0);
+          toBlock = toBlock ? false : true;
+          assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
 

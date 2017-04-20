@@ -19,7 +19,7 @@ function isTracker(url, currLocation, tabId) {
         var host = utils.extractHostFromURL(url);
         var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
-        var blockSettings = settings.getSetting('blocking');
+        var blockSettings = settings.getSetting('blocking').slice(0);
 
         if(isWhitelisted(host, tabId)) {
             return;

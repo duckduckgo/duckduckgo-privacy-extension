@@ -19,7 +19,6 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
-var importers = require('importers');
 
 var tabs = {};
 
