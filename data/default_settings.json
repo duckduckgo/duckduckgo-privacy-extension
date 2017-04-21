@@ -12,13 +12,7 @@
     "zeroclick_google_right": false,
     "trackerListLoc": "data/tracker_lists",
     "blockLists": [
-        {
-            "name": "disconnect",
-            "type": "disconnect",
-            "loc": "disconnect-trackerlist.json",
-            "gmapping": "disconnect-google-mapping.json",
-            "processedName": "trackersWithParentCompany"
-        }
+        "trackersWithParentCompany"
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
     "blocking": ["Advertising", "Analytics"]
