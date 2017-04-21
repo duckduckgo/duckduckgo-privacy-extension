@@ -1,27 +1,21 @@
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
 
-    var static_dir = 'static/';
-    var templates_dir = 'templates/';
-    var js_dir = 'js/';
-    var css_dir = 'css/';
-
-    var build_tasks = [
-        'handlebars:compile',
-        'concat:js',
-        'sass'
-    ];
-
-    var js_file = js_dir + 'popup.js';
-    var sass_file = css_dir + 'popup.scss';
-
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        static_dir: static_dir,
-        templates_dir: templates_dir,
-        build_tasks: build_tasks,
+        dirs: {
+            cache: '.cache',
+            src: {
+                js: 'js',
+                css: 'css',
+                templates: 'templates'
+            },
+            public: {
+                js: 'public/js',
+                css: 'public/css'
+            }
+        },
 
-        // Compile handlebars templates
         handlebars: {
             compile: {
                 options: {
@@ -32,32 +26,45 @@ module.exports = function(grunt) {
                     }
                 },
                 files: {
-                    '<%= templates_dir %>/handlebars_tmp': '<%= templates_dir %>/*.handlebars'
+                    '<%= dirs.cache %>/popup.handlebars.tmp': '<%= dirs.src.templates %>/popup/*.handlebars'
                 }
             }
         },
 
-        // Concat handlebars templates with popup.js, copy result to static/js/popup.js
         concat: {
             js: {
-                src: [
-                    templates_dir + 'handlebars_tmp',
-                    js_file
-                ],
-                dest: static_dir + js_file
+                files: {
+                    '<%= dirs.public.js %>/popup.js': ['<%= dirs.cache %>/popup.handlebars.tmp', '<%= dirs.src.js %>/popup.js']
+                }
             }
         },
 
-        // Compile Sass into CSS and copy result to static/css/popup.css
         sass: {
             dist: {
                 files: {
-                    'static/css/popup.css': sass_file,
+                    '<%= dirs.public.css %>/popup.css': '<%= dirs.src.css %>/popup.scss',
                 }
+            }
+        },
+
+        watch: {
+            css: {
+                files: ['<%= dirs.src.css %>/**/*.scss'],
+                tasks: ['sass']
+            },
+            javascript: {
+                files: ['<%= dirs.src.js %>/**/*.js'],
+                tasks: ['concat:js']
+            },
+            templates: {
+                files: ['<%= dirs.src.templates %>/**/*.handlebars'],
+                tasks: ['handlebars:compile', 'concat:js']
             }
         }
     });
-    
-    grunt.registerTask('build', 'Compiles handlebars templates', build_tasks);
-    grunt.registerTask('default', build_tasks);
+
+
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'concat']);
+    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
+    grunt.registerTask('default', 'build');
 }
