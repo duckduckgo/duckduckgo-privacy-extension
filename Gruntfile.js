@@ -43,7 +43,7 @@ module.exports = function(grunt) {
         sass: {
             dist: {
                 files: {
-                    '<%= dirs.public.css %>/popup.css': '<%= dirs.src.css %>/popup.scss',
+                    '<%= dirs.public.css %>/popup.css': '<%= dirs.src.css %>/main.scss',
                 }
             }
         },
