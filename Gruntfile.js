@@ -2,21 +2,6 @@ module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-execute');
 
-    var static_dir = 'static/';
-    var templates_dir = 'templates/';
-    var js_dir = 'js/';
-    var css_dir = 'css/';
-
-    var build_tasks = [
-        'handlebars:compile',
-        'concat:js',
-        'sass',
-        'execute:preProcessLists'
-    ];
-
-    var js_file = js_dir + 'popup.js';
-    var sass_file = css_dir + 'popup.scss';
-
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         dirs: {
@@ -84,7 +69,7 @@ module.exports = function(grunt) {
     });
 
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'concat']);
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'concat', 'execute:preProcessLists']);
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('default', 'build');
 }
