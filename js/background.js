@@ -15,7 +15,7 @@
  */
 
 
-var blockTrackers = require('blockTrackers');
+var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
@@ -24,7 +24,6 @@ var tabs = {};
 
 function Background() {
   $this = this;
-
 
   // clearing last search on browser startup
   settings.updateSetting('last_search', '');
@@ -108,6 +107,7 @@ function Background() {
                 });
             }
         });
+
   });
 
   chrome.runtime.onMessage.addListener(function(request, sender, callback) {
@@ -123,7 +123,7 @@ function Background() {
     }
 
     if (request.whitelist) {
-      var toWhitelist = blockTrackers.extractHostFromURL(request.whitelist);
+      var toWhitelist = utils.extractHostFromURL(request.whitelist);
       chrome.tabs.query({
         'currentWindow': true,
         'active': true
@@ -210,6 +210,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           if(e.type === 'main_frame'){
               delete tabs[e.tabId];
+              return;
           }
 
           if(!tabs[e.tabId]){
@@ -221,7 +222,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           }
 
           if (!tabs[e.tabId].whitelist || (tabs[e.tabId].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
-              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url, e.tabId);
+              var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
 
               if(block){
                 var name = block.tracker;
@@ -231,7 +232,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
 
                 if(!tabs[e.tabId]['trackers'][name]){
-                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url};
+                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
                 }
                 else {
                     tabs[e.tabId]['trackers'][name].count += 1;

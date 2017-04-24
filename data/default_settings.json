@@ -9,5 +9,11 @@
     "use_post": false,
     "ducky": false,
     "dev": false,
-    "zeroclick_google_right": false
+    "zeroclick_google_right": false,
+    "trackerListLoc": "data/tracker_lists",
+    "blockLists": [
+        "trackersWithParentCompany"
+    ],
+    "entityList": "data/tracker_lists/disconnect-entitylist.json",
+    "blocking": ["Advertising", "Analytics"]
 }
