@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt);
+    grunt.loadNpmTasks('grunt-execute');
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -46,7 +47,11 @@ module.exports = function(grunt) {
                 }
             }
         },
-
+        execute: {
+            preProcessLists: {
+                src: ['scripts/buildLists.js']
+            }
+        },
         watch: {
             css: {
                 files: ['<%= dirs.src.css %>/**/*.scss'],
@@ -64,7 +69,7 @@ module.exports = function(grunt) {
     });
 
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'concat']);
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'concat', 'execute:preProcessLists']);
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('default', 'build');
 }
