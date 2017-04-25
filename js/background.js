@@ -19,11 +19,13 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
+var stats = require('stats');
 
 var tabs = {};
 
 function Background() {
   $this = this;
+
 
   // clearing last search on browser startup
   settings.updateSetting('last_search', '');
@@ -243,6 +245,10 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
+                if(tabs[e.tabId].status === "complete"){
+                    stats.update(name, tabs[e.tabId].url, tabs[e.tabId]['trackers'][name]);
+                }
+
                 return {cancel: true};
               }
           }
@@ -276,19 +282,19 @@ function updateBadge(tabId, numBlocked){
     chrome.browserAction.setBadgeText({tabId: tabId, text: numBlocked + ""});
 }
 
-chrome.tabs.onReplaced.addListener(function (addedTabId) {
-    chrome.tabs.get(addedTabId, function(tab) {
-        //tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
-        //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
-    });
-});
-
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
         tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "status": "loading"};
     }
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
+        chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
+            if(tabData.length){
+                var id = tabData[0].id;
+                tabs[id].url = tabData[0].url;
+                stats.updateStatsFromTabData(tabs[id]);
+            }
+        });
     }
 
 });
