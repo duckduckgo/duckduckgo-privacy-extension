@@ -76,16 +76,25 @@ require.scopes.stats = ( () => {
     }
 
     function buildSavedStatsFromStorage(){
-        // chrome.runtime.storage
+        chrome.storage.local.get(['stats'], function(result) {
+            if(result['statsByParentCompany']){
+                statsByParentCompany = result['statsByParentCompany'];
+            }
+            if(result['topBlocked']){
+                topBlocked = result['topBlocked'];
+            };
+        });
     }
 
     function syncToStorage(){
-       // chrome.runtime.storage
+        chrome.storage.local.set({'stats': { "byParent": statsByParentCompany, "topBlocked": topBlocked}});
     }
 
     function getStatsBySite(){
         return statsBySite;
     }
+
+    buildSavedStatsFromStorage();
 
     var exports = {
         "update": update,

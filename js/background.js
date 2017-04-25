@@ -246,7 +246,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
                 if(tabs[e.tabId].status === "complete"){
-                    stats.update(name, tabs[e.tabId].url, tabs[e.tabId]['trackers'][name]);
+                    stats.update(name, tabs[e.tabId].url, {'count': 1, 'url': block.url});
                 }
 
                 return {cancel: true};
