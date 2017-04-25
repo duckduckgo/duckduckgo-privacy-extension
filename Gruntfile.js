@@ -39,6 +39,19 @@ module.exports = function(grunt) {
             }
         },
 
+        browserify: {
+            dist: {
+                options: {
+                    transform: [
+                        ['babelify']
+                    ]
+                },
+                files: {
+                    '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/base/index.es6.js']
+                }
+            }
+        },
+
         sass: {
             dist: {
                 files: {
@@ -56,6 +69,10 @@ module.exports = function(grunt) {
                 files: ['<%= dirs.src.js %>/**/*.js'],
                 tasks: ['concat:js']
             },
+            es6: {
+                files: ['<%= dirs.src.js %>/**/*.es6.js'],
+                tasks: ['browserify']
+            },
             templates: {
                 files: ['<%= dirs.src.templates %>/**/*.handlebars'],
                 tasks: ['handlebars:compile', 'concat:js']
@@ -64,7 +81,7 @@ module.exports = function(grunt) {
     });
 
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'concat']);
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'browserify', 'concat']);
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('default', 'build');
 }
