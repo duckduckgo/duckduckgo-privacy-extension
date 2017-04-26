@@ -47,7 +47,8 @@ module.exports = function(grunt) {
                     ]
                 },
                 files: {
-                    '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/base/index.es6.js']
+                    '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/base/index.es6.js'],
+                    '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/pages/trackers.es6.js']
                 }
             }
         },
@@ -69,13 +70,13 @@ module.exports = function(grunt) {
                 files: ['<%= dirs.src.js %>/**/*.js'],
                 tasks: ['concat:js']
             },
-            es6: {
-                files: ['<%= dirs.src.js %>/**/*.es6.js'],
-                tasks: ['browserify']
-            },
             templates: {
                 files: ['<%= dirs.src.templates %>/**/*.handlebars'],
                 tasks: ['handlebars:compile', 'concat:js']
+            },
+            es6: {
+                files: ['<%= dirs.src.js %>/**/*.es6.js'],
+                tasks: ['browserify']
             }
         }
     });

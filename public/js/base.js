@@ -12,10 +12,8 @@ var BasePage = require('./page.es6.js');
 var BaseView = require('./view.es6.js');
 
 // init base application
-// TODO: make this a constructor and init from outside of here
-var NAMESPACE = 'DDG';
-window[NAMESPACE] = {};
-window[NAMESPACE].app = {
+// TODO: make this a constructor and init from outside of here?
+window.DDG = {
   mixins: mixins,
   models: {
     _Base: BaseModel
@@ -198,14 +196,16 @@ module.exports = BaseModel;
 
 function BasePage(ops) {
     this.views = {};
-    env.ready(this.ready.bind(this));
+    this.ready();
 };
 
 BasePage.prototype = {
 
     // pageType: '' - should be defined by each page subclass
 
-    ready: function ready() {}
+    ready: function ready() {
+        debugger;
+    }
 
 };
 

@@ -1,6 +1,6 @@
 function BasePage (ops) {
     this.views = {};
-    env.ready(this.ready.bind(this));
+    this.ready();
 };
 
 BasePage.prototype = {
@@ -8,7 +8,7 @@ BasePage.prototype = {
     // pageType: '' - should be defined by each page subclass
 
     ready: function() {
-
+      debugger;
     }
 
 };

@@ -39,7 +39,8 @@ const mixins = require('./mixins/index.es6.js');
 BaseView.prototype = $.extend(
     {},
     EventEmitter2.prototype,
-    mixins.events, {
+    mixins.events,
+    {
 
         /***
          * Each view should define a template
