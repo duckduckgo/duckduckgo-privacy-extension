@@ -10,6 +10,8 @@ require.scopes.stats = ( () => {
                 update(parentCompany, tab.url, tab.trackers[parentCompany]);
             });
         }
+        // only sync when tab load completes. Should help avoid chrome.storage rate limts
+        syncToStorage();
     }
 
     function update(parentCompany, currentSite, tracker){
@@ -17,7 +19,6 @@ require.scopes.stats = ( () => {
         addToParentCompanyStats(parentCompany, tracker);
         addToSiteStats(currentSite, tracker);
         calcTopBlocked(parentCompany);
-        syncToStorage();
     }
 
     function addToParentCompanyStats(parentCompany, tracker){
@@ -87,7 +88,7 @@ require.scopes.stats = ( () => {
     }
 
     function syncToStorage(){
-        chrome.storage.local.set({'stats': { "byParent": statsByParentCompany, "topBlocked": topBlocked}});
+        chrome.storage.local.set({'stats': { "byParent": statsByParentCompany, "topBlocked": topBlocked, "bySite": statsBySite}});
     }
 
     function getStatsBySite(){
