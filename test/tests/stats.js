@@ -27,7 +27,6 @@
       var parents = ['Google', 'Adobe', 'Amazon', 'Facebook', 'Twitter'];
       var urls = ["reddit.com", "facebook.com", "amazon.com"];
       var trackers = ["doubleclick.net", "moat.com"];
-      var topCount; // store the top generaged count
       var entriesToAdd = 15;
       var randomData = {};
       stats.clearStats();
@@ -43,8 +42,13 @@
       }
 
       var topBlocked = stats.getTopBlocked();
+      var lastCount;
       for(var i = 0; i < topBlocked.length; i++){
+          if(lastCount){
+              assert.ok(topBlocked[i].count <= lastCount, "array is sorted");
+          }
           assert.ok(topBlocked[i].count === randomData[topBlocked[i].name], "random data was correctly totaled");
+          lastCount = topBlocked[i].count;
       }
   });
 
