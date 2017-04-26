@@ -1,18 +1,20 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-// global dependencies
+// create global $
+// TODO: is this necessary? maybe not.
 window.$ = window.jQuery = require('./../../node_modules/jquery');
 
 // local dependencies
-var BaseModel = require('./model.es6.js').BaseModel;
+var BaseModel = require('./model.es6.js');
+var mixins = require('./mixins');
 
 // init base application
 // TODO: make this a constructor and init from outside of here
 var NAMESPACE = 'DDG';
 window[NAMESPACE] = {};
 window[NAMESPACE].app = {
-  mixins: {},
+  mixins: mixins,
   models: {
     _Base: BaseModel
   },
@@ -27,17 +29,75 @@ var world = 'World';
 console.log('Hello ' + world);
 debugger;
 
-},{"./../../node_modules/jquery":4,"./model.es6.js":2}],2:[function(require,module,exports){
+},{"./../../node_modules/jquery":6,"./mixins":3,"./model.es6.js":4}],2:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
+var $ = require('./../../../node_modules/jquery');
+
+module.exports = {
+
+    bindEvents: function bindEvents(events) {
+        if (!this._bEvents) {
+            this._bEvents = [];
+        }
+
+        for (var i = 0, evt; evt = events[i]; i++) {
+            if (evt.length < 2 || !evt[0] || !evt[1] || !evt[2]) {
+                continue;
+            }
+
+            var eventObject = {
+                bound: evt[2].bind(this),
+                evt: evt
+            };
+
+            if (typeof evt[0] === 'string') {
+                this.$ && this.$(evt[0]).on(evt[1], eventObject.bound);
+            } else {
+                evt[0].on(evt[1], eventObject.bound);
+            }
+
+            this._bEvents.push(eventObject);
+        }
+    },
+
+    unbindEvents: function unbindEvents() {
+        while (this._bEvents && this._bEvents.length) {
+            var eventObject = this._bEvents[this._bEvents.length - 1],
+                evt = eventObject.evt;
+
+            if (evt) {
+                if (typeof evt[0] === "string") {
+                    this.$ && this.$(evt[0]).off(evt[1], eventObject.bound);
+                } else {
+                    evt[0].off(evt[1], eventObject.bound);
+                }
+            }
+
+            this._bEvents.pop();
+        }
+
+        this._bEvents = null;
+    }
+
+};
+
+},{"./../../../node_modules/jquery":6}],3:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+  events: require('./events')
+  // ...add more here!
+};
+
+},{"./events":2}],4:[function(require,module,exports){
+'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-exports.BaseModel = BaseModel;
+var $ = require('./../../node_modules/jquery');
 var EventEmitter2 = require('./../../node_modules/eventemitter2');
+var mixins = require('./mixins');
 
 function BaseModel(attrs) {
 
@@ -51,9 +111,7 @@ function BaseModel(attrs) {
     $.extend(this, attrs);
 };
 
-BaseModel.prototype = $.extend({}, EventEmitter2.prototype,
-// env.Mixins.Events,
-{
+BaseModel.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
 
     /**
      * Setter method for modifying attributes
@@ -127,7 +185,9 @@ BaseModel.prototype = $.extend({}, EventEmitter2.prototype,
 
 });
 
-},{"./../../node_modules/eventemitter2":3}],3:[function(require,module,exports){
+module.exports = BaseModel;
+
+},{"./../../node_modules/eventemitter2":5,"./../../node_modules/jquery":6,"./mixins":3}],5:[function(require,module,exports){
 (function (process){
 /*!
  * EventEmitter2
@@ -907,7 +967,7 @@ BaseModel.prototype = $.extend({}, EventEmitter2.prototype,
 }();
 
 }).call(this,require('_process'))
-},{"_process":5}],4:[function(require,module,exports){
+},{"_process":7}],6:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -11162,7 +11222,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

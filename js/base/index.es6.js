@@ -1,15 +1,17 @@
-// global dependencies
+// create global $
+// TODO: is this necessary? maybe not.
 window.$ = window.jQuery = require('./../../node_modules/jquery');
 
 // local dependencies
-const BaseModel = require('./model.es6.js').BaseModel;
+const BaseModel = require('./model.es6.js');
+const mixins = require('./mixins');
 
 // init base application
 // TODO: make this a constructor and init from outside of here
 const NAMESPACE = 'DDG';
 window[NAMESPACE] = {};
 window[NAMESPACE].app = {
-  mixins: {},
+  mixins: mixins,
   models: {
     _Base: BaseModel
   },

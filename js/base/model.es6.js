@@ -1,6 +1,8 @@
+const $ = require('./../../node_modules/jquery');
 const EventEmitter2 = require('./../../node_modules/eventemitter2');
+const mixins = require('./mixins');
 
-export function BaseModel (attrs) {
+function BaseModel (attrs) {
 
     // By default EventEmitter2 is capped at 10 to prevent unintentional memory leaks/crashes,
     // bumping up so we can violate it. Need to do an audio/review at some point and see if we can
@@ -15,7 +17,7 @@ export function BaseModel (attrs) {
 BaseModel.prototype = $.extend(
     {},
     EventEmitter2.prototype,
-    // env.Mixins.Events,
+    mixins.events,
     {
 
         /**
@@ -90,3 +92,5 @@ BaseModel.prototype = $.extend(
 
     }
 );
+
+module.exports = BaseModel;
