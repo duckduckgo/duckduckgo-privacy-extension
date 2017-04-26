@@ -4,6 +4,13 @@ require.scopes.stats = ( () => {
         statsBySite = {},
         topBlocked = [];
 
+    function clearStats(){
+        statsByParentCompany = {};
+        statsBySite = {};
+        topBlocked = [];
+        syncToStorage();
+    }
+
     function updateStatsFromTabData(tab){
         if(tab && tab.trackers && tab.trackers){
             Object.keys(tab.trackers).forEach(function(parentCompany){
@@ -16,9 +23,15 @@ require.scopes.stats = ( () => {
 
     function update(parentCompany, currentSite, tracker){
         currentSite = utils.extractHostFromURL(currentSite);
+        addToTopBlocked(parentCompany);
         addToParentCompanyStats(parentCompany, tracker);
         addToSiteStats(currentSite, tracker);
-        calcTopBlocked(parentCompany);
+    }
+
+    function addToTopBlocked(parent){
+        if(!statsByParentCompany[parent]){
+            topBlocked.push(parent);
+        }
     }
 
     function addToParentCompanyStats(parentCompany, tracker){
@@ -40,26 +53,12 @@ require.scopes.stats = ( () => {
         statsBySite[site] = siteData;
     }
 
-    function calcTopBlocked(parentCompany){
-        var currIndex = topBlocked.indexOf(parentCompany);
-        if(currIndex !== -1){
-            topBlocked.splice(currIndex, 1);
-        }
-
-        if(topBlocked.length === 0){
-            topBlocked.push(parentCompany);
-            return;
-        }
-
-        for(var i = 0; i < topBlocked.length; i++){
-            var topBlockedEntry = topBlocked[i];
-            if(statsByParentCompany[parentCompany] >= statsByParentCompany[topBlockedEntry]){
-                topBlocked.splice(i, 0, parentCompany);
-                return;
-            }
-        }
-
-        topBlocked.push(parentCompany);
+    function sortTopBlocked(){
+        topBlocked.sort(function(a, b){
+            var a = statsByParentCompany[a];
+            var b = statsByParentCompany[b];
+            return b - a;
+        });
     }
 
     function calcSiteScore(siteData){
@@ -68,6 +67,7 @@ require.scopes.stats = ( () => {
     }
 
     function getTopBlocked(blocked){
+        sortTopBlocked();
         blocked = blocked ? blocked : 10;
         let topBlockedCompanies = []
         topBlocked.slice(0, blocked).forEach(function(name){
@@ -78,11 +78,15 @@ require.scopes.stats = ( () => {
 
     function buildSavedStatsFromStorage(){
         chrome.storage.local.get(['stats'], function(result) {
-            if(result['statsByParentCompany']){
-                statsByParentCompany = result['statsByParentCompany'];
+            if(result['byParent']){
+                statsByParentCompany = result['byParent'];
             }
             if(result['topBlocked']){
                 topBlocked = result['topBlocked'];
+            };
+
+            if(result['bySite']){
+                statsBySite = result['bySite'];
             };
         });
     }
@@ -101,7 +105,9 @@ require.scopes.stats = ( () => {
         "update": update,
         "getTopBlocked": getTopBlocked,
         "getStatsBySite": getStatsBySite,
-        "updateStatsFromTabData": updateStatsFromTabData
+        "updateStatsFromTabData": updateStatsFromTabData,
+        "syncToStorage": syncToStorage,
+        "clearStats": clearStats
     };
     return exports;
 })();
