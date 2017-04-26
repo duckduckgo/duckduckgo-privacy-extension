@@ -8,6 +8,7 @@ window.$ = window.jQuery = require('./../../node_modules/jquery');
 // local dependencies
 var BaseModel = require('./model.es6.js');
 var mixins = require('./mixins');
+var BasePage = require('./page.es6.js');
 
 // init base application
 // TODO: make this a constructor and init from outside of here
@@ -18,7 +19,9 @@ window[NAMESPACE].app = {
   models: {
     _Base: BaseModel
   },
-  pages: {},
+  pages: {
+    _Base: BasePage
+  },
   views: {},
   utils: {}
 };
@@ -29,7 +32,7 @@ var world = 'World';
 console.log('Hello ' + world);
 debugger;
 
-},{"./../../node_modules/jquery":6,"./mixins":3,"./model.es6.js":4}],2:[function(require,module,exports){
+},{"./../../node_modules/jquery":7,"./mixins":3,"./model.es6.js":4,"./page.es6.js":5}],2:[function(require,module,exports){
 'use strict';
 
 var $ = require('./../../../node_modules/jquery');
@@ -82,7 +85,7 @@ module.exports = {
 
 };
 
-},{"./../../../node_modules/jquery":6}],3:[function(require,module,exports){
+},{"./../../../node_modules/jquery":7}],3:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -187,7 +190,25 @@ BaseModel.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
 
 module.exports = BaseModel;
 
-},{"./../../node_modules/eventemitter2":5,"./../../node_modules/jquery":6,"./mixins":3}],5:[function(require,module,exports){
+},{"./../../node_modules/eventemitter2":6,"./../../node_modules/jquery":7,"./mixins":3}],5:[function(require,module,exports){
+"use strict";
+
+function BasePage(ops) {
+    this.views = {};
+    env.ready(this.ready.bind(this));
+};
+
+BasePage.prototype = {
+
+    // pageType: '' - should be defined by each page subclass
+
+    ready: function ready() {}
+
+};
+
+module.exports = BasePage;
+
+},{}],6:[function(require,module,exports){
 (function (process){
 /*!
  * EventEmitter2
@@ -967,7 +988,7 @@ module.exports = BaseModel;
 }();
 
 }).call(this,require('_process'))
-},{"_process":7}],6:[function(require,module,exports){
+},{"_process":8}],7:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.2.1
  * https://jquery.com/
@@ -11222,7 +11243,7 @@ if ( !noGlobal ) {
 return jQuery;
 } );
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

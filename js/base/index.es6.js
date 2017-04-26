@@ -5,6 +5,7 @@ window.$ = window.jQuery = require('./../../node_modules/jquery');
 // local dependencies
 const BaseModel = require('./model.es6.js');
 const mixins = require('./mixins');
+const BasePage = require('./page.es6.js');
 
 // init base application
 // TODO: make this a constructor and init from outside of here
@@ -15,7 +16,9 @@ window[NAMESPACE].app = {
   models: {
     _Base: BaseModel
   },
-  pages: {},
+  pages: {
+    _Base: BasePage
+  },
   views: {},
   utils: {}
 };
