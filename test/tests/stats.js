@@ -24,7 +24,7 @@
   });
 
   QUnit.test("add random generated stats data", function (assert) {
-      var parents = ['Google', 'Adobe', 'Amazon'];
+      var parents = ['Google', 'Adobe', 'Amazon', 'Facebook', 'Twitter'];
       var urls = ["reddit.com", "facebook.com", "amazon.com"];
       var trackers = ["doubleclick.net", "moat.com"];
       var topCount; // store the top generaged count
