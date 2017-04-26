@@ -1,37 +1,133 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-/**
- * This establishes the main DDG namespace
- * structure for all the frontend JS classes.
- *
- * @namespace
- */
-var DDG = exports.DDG = {
-  Mixins: {},
-  Models: {},
-  Pages: {},
-  Views: {},
-  Utils: {}
-};
-
-},{}],2:[function(require,module,exports){
 'use strict';
 
+// global dependencies
 window.$ = window.jQuery = require('./../../node_modules/jquery');
-window.EventEmitter2 = require('./../../node_modules/eventemitter2');
 
-window.DDG = require('./ddg.es6.js').DDG;
+// local dependencies
+var BaseModel = require('./model.es6.js').BaseModel;
+
+// init base application
+// TODO: make this a constructor and init from outside of here
+var NAMESPACE = 'DDG';
+window[NAMESPACE] = {};
+window[NAMESPACE].app = {
+  mixins: {},
+  models: {
+    _Base: BaseModel
+  },
+  pages: {},
+  views: {},
+  utils: {}
+};
 console.log(window.DDG);
 
+// verify build transform to es5
 var world = 'World';
 console.log('Hello ' + world);
 debugger;
 
-},{"./../../node_modules/eventemitter2":3,"./../../node_modules/jquery":4,"./ddg.es6.js":1}],3:[function(require,module,exports){
+},{"./../../node_modules/jquery":4,"./model.es6.js":2}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.BaseModel = BaseModel;
+var EventEmitter2 = require('./../../node_modules/eventemitter2');
+
+function BaseModel(attrs) {
+
+    // By default EventEmitter2 is capped at 10 to prevent unintentional memory leaks/crashes,
+    // bumping up so we can violate it. Need to do an audio/review at some point and see if we can
+    // reduce some of the event binding.
+    this.setMaxListeners(500);
+
+    // attributes are applied directly
+    // onto the instance:
+    $.extend(this, attrs);
+};
+
+BaseModel.prototype = $.extend({}, EventEmitter2.prototype,
+// env.Mixins.Events,
+{
+
+    /**
+     * Setter method for modifying attributes
+     * on the model. Since the attributes
+     * are directly accessible + mutable on the object
+     * itself, you don't *have* to use the set method.
+     *
+     * However, the benefit of using the set method
+     * is that changes can be broadcast out
+     * to any UI components that might want to observe
+     * changes and update their state.
+     *
+     * @param {string} attr
+     * @param {*} val
+     * @param {object} ops
+     * @api public
+     */
+    set: function set(attr, val, ops) {
+        // support passing a hash of values to set instead of
+        // single attribute/value pair, i.e.:
+        //
+        // this.set({
+        //   name: 'something',
+        //   description: 'something described'
+        // });
+        if ((typeof attr === 'undefined' ? 'undefined' : _typeof(attr)) === 'object') {
+            for (var key in attr) {
+                this.set(key, attr[key], val);
+            }
+        }
+
+        ops = ops || {};
+
+        var existingVal = this[attr],
+            isChanging = existingVal !== val;
+
+        this[attr] = val;
+
+        !ops.silent && isChanging && this._emitChange(attr, existingVal);
+    },
+
+    /**
+     * Actually broadcasts the changes out
+     * to anyone listening.
+     *
+     * 2 events are emitted:
+     *  - more granular a specific attribute changed: 'change:<attr>'
+     *  - and the generic something changed on me: 'change'
+     *
+     * The change is emitted out with the new value as the first
+     * arg and the old value as the second arg (if one was passed).
+     *
+     * @param {string} attr
+     * @param {*} oldVal
+     * @api private
+     */
+    _emitChange: function _emitChange(attr, oldVal) {
+        var val = this[attr];
+        this.emit('change:' + attr, val, oldVal);
+        this.emit('change', attr, val, oldVal);
+    },
+
+    /**
+     * Convenience method for code clarity
+     * so we can explicitly call clear()
+     * instead of doing null sets
+     */
+    clear: function clear(attr, ops) {
+        this.set(attr, null, ops);
+    }
+
+});
+
+},{"./../../node_modules/eventemitter2":3}],3:[function(require,module,exports){
 (function (process){
 /*!
  * EventEmitter2
@@ -11248,4 +11344,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[2]);
+},{}]},{},[1]);
