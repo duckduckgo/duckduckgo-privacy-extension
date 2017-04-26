@@ -4,7 +4,7 @@
  *
  * @namespace
  */
-export const ddg = {
+export const DDG = {
     Mixins: {},
     Models: {},
     Pages: {},
