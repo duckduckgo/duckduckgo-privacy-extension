@@ -1,6 +1,6 @@
 const $ = require('./../../node_modules/jquery');
 const EventEmitter2 = require('./../../node_modules/eventemitter2');
-const mixins = require('./mixins');
+const mixins = require('./mixins/index.es6.js');
 
 /**
  * Abstract Base class for any type of view.

@@ -6,7 +6,7 @@
 window.$ = window.jQuery = require('./../../node_modules/jquery');
 
 // local dependencies
-var mixins = require('./mixins');
+var mixins = require('./mixins/index.es6.js');
 var BaseModel = require('./model.es6.js');
 var BasePage = require('./page.es6.js');
 var BaseView = require('./view.es6.js');
@@ -35,7 +35,7 @@ var world = 'World';
 console.log('Hello ' + world);
 debugger;
 
-},{"./../../node_modules/jquery":8,"./mixins":3,"./model.es6.js":4,"./page.es6.js":5,"./view.es6.js":6}],2:[function(require,module,exports){
+},{"./../../node_modules/jquery":8,"./mixins/index.es6.js":3,"./model.es6.js":4,"./page.es6.js":5,"./view.es6.js":6}],2:[function(require,module,exports){
 'use strict';
 
 var $ = require('./../../../node_modules/jquery');
@@ -92,18 +92,18 @@ module.exports = {
 'use strict';
 
 module.exports = {
-  events: require('./events')
+  events: require('./events.es6.js')
   // ...add more here!
 };
 
-},{"./events":2}],4:[function(require,module,exports){
+},{"./events.es6.js":2}],4:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var $ = require('./../../node_modules/jquery');
 var EventEmitter2 = require('./../../node_modules/eventemitter2');
-var mixins = require('./mixins');
+var mixins = require('./mixins/index.es6.js');
 
 function BaseModel(attrs) {
 
@@ -193,7 +193,7 @@ BaseModel.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
 
 module.exports = BaseModel;
 
-},{"./../../node_modules/eventemitter2":7,"./../../node_modules/jquery":8,"./mixins":3}],5:[function(require,module,exports){
+},{"./../../node_modules/eventemitter2":7,"./../../node_modules/jquery":8,"./mixins/index.es6.js":3}],5:[function(require,module,exports){
 "use strict";
 
 function BasePage(ops) {
@@ -216,7 +216,7 @@ module.exports = BasePage;
 
 var $ = require('./../../node_modules/jquery');
 var EventEmitter2 = require('./../../node_modules/eventemitter2');
-var mixins = require('./mixins');
+var mixins = require('./mixins/index.es6.js');
 
 /**
  * Abstract Base class for any type of view.
@@ -455,7 +455,7 @@ BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
 
 module.exports = BaseView;
 
-},{"./../../node_modules/eventemitter2":7,"./../../node_modules/jquery":8,"./mixins":3}],7:[function(require,module,exports){
+},{"./../../node_modules/eventemitter2":7,"./../../node_modules/jquery":8,"./mixins/index.es6.js":3}],7:[function(require,module,exports){
 (function (process){
 /*!
  * EventEmitter2
