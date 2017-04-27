@@ -5,10 +5,7 @@ var Parent = window.DDG.base.Model;
 
 function Whitelist(attrs) {
 
-    // TODO: utilize base.Model so we get nice set() method
-    // pick up here tomorrow by setting model properly
-    // so base view render() can do its thing with template fn
-    debugger;
+    Parent.call(this, attrs);
 };
 
 Whitelist.prototype = $.extend({}, Parent.prototype, {
@@ -68,11 +65,10 @@ var template = require('./../templates/whitelist.es6.js');
 
 function Whitelist(ops) {
 
-    this.model = ops.model = {};
+    this.model = ops.model;
     this.pageView = ops.pageView;
     this.template = template;
 
-    debugger;
     Parent.call(this, ops);
 
     // this._cacheElems('.js-whitelist', [

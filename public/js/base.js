@@ -95,6 +95,7 @@ var mixins = require('./mixins/index.es6.js');
 
 function BaseModel(attrs) {
 
+    // TODO: do we need this?
     // By default EventEmitter2 is capped at 10 to prevent unintentional memory leaks/crashes,
     // bumping up so we can violate it. Need to do an audio/review at some point and see if we can
     // reduce some of the event binding.

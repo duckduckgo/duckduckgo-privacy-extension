@@ -3,11 +3,10 @@ const template = require('./../templates/whitelist.es6.js');
 
 function Whitelist (ops) {
 
-    this.model = ops.model = {};
+    this.model = ops.model;
     this.pageView = ops.pageView;
     this.template = template;
 
-    debugger;
     Parent.call(this, ops);
 
     // this._cacheElems('.js-whitelist', [
