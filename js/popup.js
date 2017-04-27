@@ -157,7 +157,6 @@ window.onload = function() {
             }
 
             var topBlocked = stats.getTopBlocked();
-            console.log(topBlocked);
             topBlockedElement.innerHTML = Handlebars.templates.topBlocked({'topBlocked': topBlocked});
         });
     })();
