@@ -110,13 +110,12 @@ BaseView.prototype = $.extend(
          * @param {object} ops - the same ops hash passed into the view constructor
          */
         _render: function (ops) {
-            debugger;
             if (!this.$el) {
                 if (ops && ops.$el) {
                     this.$el = ops.$el;
                 } else {
-                    // TODO: update this to just use tagged template literals
-                    // this.$el = DDG.$exec_template(this.template, ops || {});
+                    var el = this.template.call(this);
+                    this.$el = $(el);
                 }
             }
 

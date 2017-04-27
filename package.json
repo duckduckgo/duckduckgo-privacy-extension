@@ -31,10 +31,18 @@
     "selenium-webdriver": "^3.0.1"
   },
   "dependencies": {
+    "bel": "^4.6.0",
     "eventemitter2": "^4.1.0",
     "jquery": "^3.2.1"
   },
   "babel": {
-    "presets": [["env", {"debug": "true"} ]]
+    "presets": [
+      [
+        "env",
+        {
+          "debug": "true"
+        }
+      ]
+    ]
   }
 }

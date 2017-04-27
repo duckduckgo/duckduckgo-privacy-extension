@@ -313,13 +313,12 @@ BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
      * @param {object} ops - the same ops hash passed into the view constructor
      */
     _render: function _render(ops) {
-        debugger;
         if (!this.$el) {
             if (ops && ops.$el) {
                 this.$el = ops.$el;
             } else {
-                // TODO: update this to just use tagged template literals
-                // this.$el = DDG.$exec_template(this.template, ops || {});
+                var el = this.template.call(this);
+                this.$el = $(el);
             }
         }
 

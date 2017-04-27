@@ -8,14 +8,17 @@ function Whitelist (ops) {
 
     Parent.call(this, ops);
 
-    // this._cacheElems('.js-whitelist', [
-    //   'foo',
-    //   'bar'
-    // ]);
+    // this._cacheElems() caches jQuery selectors, so the following would be
+    // accessible via: `this.$item` from within this view
+    // and is equivalent to $('.js-whitelist-item')
+    this._cacheElems('.js-whitelist', [
+      'item'
+    ]);
 
-    // this.bindEvents([
-    //   [this.$foo, 'click', this._handleClick]
-    // ]);
+    // this.bindEvents() wires up jQuery selectors to events and their handlers:
+    this.bindEvents([
+      [this.$item, 'click', this._handleClick]
+    ]);
 
 };
 
