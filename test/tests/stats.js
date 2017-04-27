@@ -1,7 +1,9 @@
 (function() {
   QUnit.module("stats");
 
-  var utils = require('stats');
+  var stats = require('stats');
+  stats.clearStats();
+
   var trackers = [
   { "parent": "Google", 'currURL': "reddit.com", "tracker": "doubleclick.net"}
   ];
@@ -12,7 +14,6 @@
       var entriesToAdd = 10;
       for(var i = 0; i < entriesToAdd; i++){
           stats.update(testData.parent, testData.currURL, testData.tracker);
-          stats.syncToStorage();
       }
       var topBlocked = stats.getTopBlocked();
       assert.ok(topBlocked.length !== 0, 'topBlocked has data');
