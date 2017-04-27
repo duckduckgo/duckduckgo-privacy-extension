@@ -24,8 +24,6 @@ require.scopes.stats = ( () => {
                 return;
            }
    
-            console.log("update from tab");
-            console.log(tab);
             Object.keys(tab.trackers).forEach(function(parentCompany){
                 update(parentCompany, tab.url, tab.trackers[parentCompany]);
             });
@@ -98,7 +96,6 @@ require.scopes.stats = ( () => {
     }
 
     function syncToStorage(){
-        console.log("syncing stats");
         chrome.storage.local.set({'stats': { "byParent": statsByParentCompany, "topBlocked": topBlocked, "bySite": statsBySite}});
     }
 
