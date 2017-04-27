@@ -2,36 +2,29 @@
 'use strict';
 
 // create global $
-// TODO: is this necessary? maybe not.
 window.$ = window.jQuery = require('./../../node_modules/jquery');
 
-// local dependencies
+// base app dependencies
 var mixins = require('./mixins/index.es6.js');
 var BaseModel = require('./model.es6.js');
 var BasePage = require('./page.es6.js');
 var BaseView = require('./view.es6.js');
 
-// init base application
+// init base
 // TODO: make this a constructor and init from outside of here?
-window.DDG = {
-  mixins: mixins,
-  models: {
-    _Base: BaseModel
-  },
-  pages: {
-    _Base: BasePage
-  },
-  views: {
-    _Base: BaseView
-  },
-  utils: {}
+window.DDG = window.DDG || {};
+window.DDG.base = {
+    mixins: mixins,
+    Model: BaseModel,
+    models: {},
+    Page: BasePage,
+    pages: {},
+    utils: {},
+    View: BaseView,
+    views: {}
 };
-console.log(window.DDG);
 
-// verify build transform to es5
-var world = 'World';
-console.log('Hello ' + world);
-debugger;
+console.log(window.DDG.base);
 
 },{"./../../node_modules/jquery":8,"./mixins/index.es6.js":3,"./model.es6.js":4,"./page.es6.js":5,"./view.es6.js":6}],2:[function(require,module,exports){
 'use strict';

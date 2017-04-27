@@ -1,10 +1,11 @@
-const Parent = DDG.pages._Base;
+const Parent = window.DDG.base.Page;
+// const Whitelist = require('./../views/whitelist.es6.js');
 
-window.DDG.pages.Trackers = function(ops) {
+const Trackers = window.DDG.base.pages.Trackers = function (ops) {
     Parent.call(this, ops);
 };
 
-window.DDG.pages.Trackers.prototype = $.extend(
+Trackers.prototype = $.extend(
     {},
     Parent.prototype,
     {
@@ -15,6 +16,8 @@ window.DDG.pages.Trackers.prototype = $.extend(
             Parent.prototype.ready.call(this);
 
             // TODO: add sub-views here!
+            // this.views.whitelist = new Whitelist(
+            // )
             debugger;
         }
 
@@ -22,5 +25,6 @@ window.DDG.pages.Trackers.prototype = $.extend(
 );
 
 // kickoff!
-window.DDG.page = new DDG.pages.Trackers();
-
+window.DDG = window.DDG || {};
+window.DDG.page = new Trackers();
+debugger;
