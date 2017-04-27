@@ -20,12 +20,18 @@ require.scopes.stats = ( () => {
 
     function updateStatsFromTabData(tab){
         if(tab && tab.trackers && tab.trackers){
+            if(/chrome:\/\//g.exec(tab.url)){
+                return;
+           }
+   
+            console.log("update from tab");
+            console.log(tab);
             Object.keys(tab.trackers).forEach(function(parentCompany){
                 update(parentCompany, tab.url, tab.trackers[parentCompany]);
             });
+            // only sync when tab load completes. Should help avoid chrome.storage rate limts
+            syncToStorage();
         }
-        // only sync when tab load completes. Should help avoid chrome.storage rate limts
-        syncToStorage();
     }
 
     function update(parentCompany, currentSite, tracker){
@@ -77,20 +83,22 @@ require.scopes.stats = ( () => {
 
     function buildSavedStatsFromStorage(){
         chrome.storage.local.get(['stats'], function(result) {
-            if(result['byParent']){
-                statsByParentCompany = result['byParent'];
+            var stats = result.stats;
+            if(stats['byParent']){
+                statsByParentCompany = stats['byParent'];
             }
-            //if(result['topBlocked']){
-            //    topBlocked = result['topBlocked'];
-            //};
+            if(stats['topBlocked']){
+                topBlocked.setData(stats['topBlocked'].data);
+            };
 
-            if(result['bySite']){
-                statsBySite = result['bySite'];
+            if(stats['bySite']){
+                statsBySite = stats['bySite'];
             };
         });
     }
 
     function syncToStorage(){
+        console.log("syncing stats");
         chrome.storage.local.set({'stats': { "byParent": statsByParentCompany, "topBlocked": topBlocked, "bySite": statsBySite}});
     }
 

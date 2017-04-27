@@ -11,8 +11,9 @@ require.scopes.settings =(() => {
 
     function buildSettingsFromLocalStorage(callback) {
         chrome.storage.local.get(['settings'], function(results){
-            savedSettings = JSON.parse(results['settings']);
+            savedSettings = results['settings'];
             Object.assign(settings, savedSettings);
+            syncSettingTolocalStorage();
         });
     }
 
@@ -20,9 +21,8 @@ require.scopes.settings =(() => {
         settings = load.JSONfromLocalFile('data/default_settings.json');
     }
 
-    function syncSettingTolocalStorage(name, value){
-        var toSync = JSON.stringify(settings);
-        chrome.storage.local.set({'settings': toSync});
+    function syncSettingTolocalStorage(){
+        chrome.storage.local.set({'settings': settings});
         return true;
     }
 
@@ -37,7 +37,7 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         settings[name] = value;
-        syncSettingTolocalStorage(name, value);
+        syncSettingTolocalStorage();
     }
 
     function registerListeners(){
