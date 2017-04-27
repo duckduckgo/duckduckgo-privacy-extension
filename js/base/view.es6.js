@@ -14,7 +14,7 @@ const mixins = require('./mixins/index.es6.js');
  * @param {object} ops
  */
 
- function BaseView (ops){
+ function BaseView (ops) {
     this.model = ops.model;
     this.views = this.views || {};
 
@@ -33,7 +33,7 @@ const mixins = require('./mixins/index.es6.js');
 
     this._render(ops);
 
-    this._wrapLinks();
+    // this._wrapLinks();
 };
 
 BaseView.prototype = $.extend(
@@ -109,13 +109,14 @@ BaseView.prototype = $.extend(
          *
          * @param {object} ops - the same ops hash passed into the view constructor
          */
-        _render: function(ops){
+        _render: function (ops) {
+            debugger;
             if (!this.$el) {
                 if (ops && ops.$el) {
                     this.$el = ops.$el;
                 } else {
                     // TODO: update this to just use tagged template literals
-                    this.$el = DDG.$exec_template(this.template, ops || {});
+                    // this.$el = DDG.$exec_template(this.template, ops || {});
                 }
             }
 
@@ -145,7 +146,7 @@ BaseView.prototype = $.extend(
             this.emit('rerender');
 
             // make sure any new links are wrapped
-            this._wrapLinks();
+            // this._wrapLinks();
         },
 
         /**
@@ -158,6 +159,7 @@ BaseView.prototype = $.extend(
          * @param {jQuery} $container - optional container with links to wrap
          * @api private
          */
+         /*
         _wrapLinks: function ($container) {
             // default to this view's element
             if (!$container || !$container.length) {
@@ -184,6 +186,7 @@ BaseView.prototype = $.extend(
                 }
             }.bind(this));
         },
+        */
 
         /**
          * Add the rendered element to the DOM.
@@ -222,6 +225,7 @@ BaseView.prototype = $.extend(
             }
         },
 
+        /*
         _onExternalLinkClick: function (e) {
             var link = e.currentTarget;
 
@@ -233,6 +237,7 @@ BaseView.prototype = $.extend(
             // open link with stripped referrers
             return nrl(e, link);
         }
+        */
 
 });
 

@@ -1,8 +1,30 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
+
+var Parent = window.DDG.base.Model;
+
+var Whitelist = window.DDG.base.models.Whitelist = function (attrs) {
+
+    // TODO: utilize base.Model so we get nice set() method
+    debugger;
+};
+
+Whitelist.prototype = $.extend({}, Parent.prototype, {
+
+    getList: function getList() {
+        // retrieve list from local storage
+    }
+
+});
+
+module.exports = Whitelist;
+
+},{}],2:[function(require,module,exports){
 'use strict';
 
 var Parent = window.DDG.base.Page;
 var WhitelistView = require('./../views/whitelist.es6.js');
+var WhitelistModel = require('./../models/whitelist.es6.js');
 
 var Trackers = window.DDG.base.pages.Trackers = function (ops) {
     Parent.call(this, ops);
@@ -15,9 +37,11 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
     ready: function ready() {
         Parent.prototype.ready.call(this);
 
+        var wlModel = new WhitelistModel({ heading: 'Domain Whitelist' });
         this.views.whitelist = new WhitelistView({
             pageView: this,
-            appendTo: $('body')
+            appendTo: $('body'),
+            model: wlModel
         });
     }
 
@@ -27,17 +51,24 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
 window.DDG = window.DDG || {};
 window.DDG.page = new Trackers();
 
-},{"./../views/whitelist.es6.js":2}],2:[function(require,module,exports){
+},{"./../models/whitelist.es6.js":1,"./../views/whitelist.es6.js":4}],3:[function(require,module,exports){
 "use strict";
 
+module.exports = function (ctx) {
+    return "<h2>" + ctx.heading + "</h2>\n        <ul>\n          <li>foo.com</li>\n          <li>foo.com</li>\n        </ul>\n    ";
+};
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
 var Parent = window.DDG.base.View;
-// const WhitelistModel = require('./../models/whitelist.es6.js');
+var template = require('./../templates/whitelist.es6.js');
 
 var Whitelist = window.DDG.base.views.Whitelist = function (ops) {
 
     this.model = ops.model = {};
     this.pageView = ops.pageView;
-    // this.template = 'hp_onboarding_education';
+    this.template = template;
 
     debugger;
     Parent.call(this, ops);
@@ -55,11 +86,11 @@ var Whitelist = window.DDG.base.views.Whitelist = function (ops) {
 Whitelist.prototype = $.extend({}, Parent.prototype, {
 
     _handleClick: function _handleClick(e) {
-        console.log("_handleClick()");
+        console.log('_handleClick()');
     }
 
 });
 
 module.exports = Whitelist;
 
-},{}]},{},[1]);
+},{"./../templates/whitelist.es6.js":3}]},{},[2]);

@@ -1,11 +1,11 @@
 const Parent = window.DDG.base.View;
-// const WhitelistModel = require('./../models/whitelist.es6.js');
+const template = require('./../templates/whitelist.es6.js');
 
 const Whitelist = window.DDG.base.views.Whitelist = function (ops) {
 
     this.model = ops.model = {};
     this.pageView = ops.pageView;
-    // this.template = 'hp_onboarding_education';
+    this.template = template;
 
     debugger;
     Parent.call(this, ops);

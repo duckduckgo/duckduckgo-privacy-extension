@@ -101,7 +101,7 @@ function BaseModel(attrs) {
     // By default EventEmitter2 is capped at 10 to prevent unintentional memory leaks/crashes,
     // bumping up so we can violate it. Need to do an audio/review at some point and see if we can
     // reduce some of the event binding.
-    this.setMaxListeners(500);
+    // this.setMaxListeners(500);
 
     // attributes are applied directly
     // onto the instance:
@@ -196,9 +196,7 @@ BasePage.prototype = {
 
     // pageType: '' - should be defined by each page subclass
 
-    ready: function ready() {
-        debugger;
-    }
+    ready: function ready() {}
 
 };
 
@@ -242,7 +240,7 @@ function BaseView(ops) {
 
     this._render(ops);
 
-    this._wrapLinks();
+    // this._wrapLinks();
 };
 
 BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
@@ -317,12 +315,13 @@ BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
      * @param {object} ops - the same ops hash passed into the view constructor
      */
     _render: function _render(ops) {
+        debugger;
         if (!this.$el) {
             if (ops && ops.$el) {
                 this.$el = ops.$el;
             } else {
                 // TODO: update this to just use tagged template literals
-                this.$el = DDG.$exec_template(this.template, ops || {});
+                // this.$el = DDG.$exec_template(this.template, ops || {});
             }
         }
 
@@ -354,7 +353,7 @@ BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
         this.emit('rerender');
 
         // make sure any new links are wrapped
-        this._wrapLinks();
+        // this._wrapLinks();
     },
 
     /**
@@ -367,32 +366,30 @@ BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
      * @param {jQuery} $container - optional container with links to wrap
      * @api private
      */
-    _wrapLinks: function _wrapLinks($container) {
-        // default to this view's element
-        if (!$container || !$container.length) {
-            $container = this.$el;
-        }
-
+    /*
+    _wrapLinks: function ($container) {
+       // default to this view's element
+       if (!$container || !$container.length) {
+           $container = this.$el;
+       }
         // if there's still no container, the view
-        // hasn't rendered yet, leave wrapping for a later date
-        if (!$container) {
-            return;
-        }
-
+       // hasn't rendered yet, leave wrapping for a later date
+       if (!$container) {
+           return;
+       }
         $container.find("a").each(function (i, el) {
-            var $el = $(el);
-
+           var $el = $(el);
             // only add these handlers once
-            if ($el.data("wrapped")) {
-                return;
-            }
-            $el.data("wrapped", true);
-
+           if ($el.data("wrapped")) {
+               return;
+           }
+           $el.data("wrapped", true);
             if (!DDG.isInternalURL(el.href)) {
-                $el.on("click.wrap", this._onExternalLinkClick.bind(this));
-            }
-        }.bind(this));
+               $el.on("click.wrap", this._onExternalLinkClick.bind(this));
+           }
+       }.bind(this));
     },
+    */
 
     /**
      * Add the rendered element to the DOM.
@@ -430,18 +427,6 @@ BaseView.prototype = $.extend({}, EventEmitter2.prototype, mixins.events, {
 
             this[id] = this.$(selector);
         }
-    },
-
-    _onExternalLinkClick: function _onExternalLinkClick(e) {
-        var link = e.currentTarget;
-
-        // open in a new window if the New Window setting is set...
-        if (DDG.settings && !DDG.settings.isDefault("kn")) {
-            link.target = "_blank";
-        }
-
-        // open link with stripped referrers
-        return nrl(e, link);
     }
 
 });

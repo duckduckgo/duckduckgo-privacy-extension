@@ -8,7 +8,6 @@ BasePage.prototype = {
     // pageType: '' - should be defined by each page subclass
 
     ready: function() {
-      debugger;
     }
 
 };

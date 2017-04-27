@@ -7,15 +7,15 @@ function BaseModel (attrs) {
     // By default EventEmitter2 is capped at 10 to prevent unintentional memory leaks/crashes,
     // bumping up so we can violate it. Need to do an audio/review at some point and see if we can
     // reduce some of the event binding.
-    this.setMaxListeners(500);
+    // this.setMaxListeners(500);
 
     // attributes are applied directly
     // onto the instance:
     $.extend(this, attrs);
+
 };
 
-BaseModel.prototype = $.extend(
-    {},
+BaseModel.prototype = $.extend({},
     EventEmitter2.prototype,
     mixins.events,
     {
