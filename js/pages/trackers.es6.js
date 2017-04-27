@@ -1,6 +1,8 @@
 const Parent = window.DDG.base.Page;
 const WhitelistView = require('./../views/whitelist.es6.js');
 const WhitelistModel = require('./../models/whitelist.es6.js');
+const whitelistTemplate = require('./../templates/whitelist.es6.js');
+
 
 function Trackers (ops) {
     Parent.call(this, ops);
@@ -15,11 +17,11 @@ Trackers.prototype = $.extend({},
         ready: function() {
             Parent.prototype.ready.call(this);
 
-            const wlModel = new WhitelistModel({ heading: 'Domain Whitelist'});
             this.views.whitelist = new WhitelistView({
                 pageView: this,
+                model: new WhitelistModel({ heading: 'Domain Whitelist'}),
                 appendTo: $('body'),
-                model: wlModel
+                template: whitelistTemplate
             });
 
         }

@@ -1,11 +1,10 @@
 const Parent = window.DDG.base.View;
-const template = require('./../templates/whitelist.es6.js');
 
 function Whitelist (ops) {
 
     this.model = ops.model;
     this.pageView = ops.pageView;
-    this.template = template;
+    this.template = ops.template;
 
     Parent.call(this, ops);
 

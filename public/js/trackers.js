@@ -24,6 +24,7 @@ module.exports = Whitelist;
 var Parent = window.DDG.base.Page;
 var WhitelistView = require('./../views/whitelist.es6.js');
 var WhitelistModel = require('./../models/whitelist.es6.js');
+var whitelistTemplate = require('./../templates/whitelist.es6.js');
 
 function Trackers(ops) {
     Parent.call(this, ops);
@@ -36,11 +37,11 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
     ready: function ready() {
         Parent.prototype.ready.call(this);
 
-        var wlModel = new WhitelistModel({ heading: 'Domain Whitelist' });
         this.views.whitelist = new WhitelistView({
             pageView: this,
+            model: new WhitelistModel({ heading: 'Domain Whitelist' }),
             appendTo: $('body'),
-            model: wlModel
+            template: whitelistTemplate
         });
     }
 
@@ -50,24 +51,23 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
 window.DDG = window.DDG || {};
 window.DDG.page = new Trackers();
 
-},{"./../models/whitelist.es6.js":1,"./../views/whitelist.es6.js":4}],3:[function(require,module,exports){
+},{"./../models/whitelist.es6.js":1,"./../templates/whitelist.es6.js":3,"./../views/whitelist.es6.js":4}],3:[function(require,module,exports){
 "use strict";
 
 module.exports = function (ctx) {
-    return "<h2>" + ctx.heading + "</h2>\n        <ul>\n          <li>foo.com</li>\n          <li>foo.com</li>\n        </ul>\n    ";
+    return "<h2>" + ctx.model.heading + "</h2>\n        <ul>\n          <li>foo.com</li>\n          <li>foo.com</li>\n        </ul>\n    ";
 };
 
 },{}],4:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var Parent = window.DDG.base.View;
-var template = require('./../templates/whitelist.es6.js');
 
 function Whitelist(ops) {
 
     this.model = ops.model;
     this.pageView = ops.pageView;
-    this.template = template;
+    this.template = ops.template;
 
     Parent.call(this, ops);
 
@@ -84,11 +84,11 @@ function Whitelist(ops) {
 Whitelist.prototype = $.extend({}, Parent.prototype, {
 
     _handleClick: function _handleClick(e) {
-        console.log('_handleClick()');
+        console.log("_handleClick()");
     }
 
 });
 
 module.exports = Whitelist;
 
-},{"./../templates/whitelist.es6.js":3}]},{},[2]);
+},{}]},{},[2]);
