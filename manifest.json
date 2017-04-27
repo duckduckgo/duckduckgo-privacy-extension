@@ -33,6 +33,7 @@
                 "js/utils.js",
                 "js/load.js",
                 "js/settings.js",
+                "js/topBlocked.js",
                 "js/stats.js",
                 "js/trackerLists.js",
                 "js/trackers.js",

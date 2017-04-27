@@ -1,13 +1,20 @@
 require.scopes.stats = ( () => {
     var utils = require('utils'),
         statsByParentCompany = {},
-        statsBySite = {},
-        topBlocked = [];
+        statsBySite = {};
+    
+    function sortFunc(a, b){
+        var a = statsByParentCompany[a];
+        var b = statsByParentCompany[b];
+        return b - a;
+    }
+    
+    var topBlocked = new TopBlocked(sortFunc);
 
     function clearStats(){
         statsByParentCompany = {};
         statsBySite = {};
-        topBlocked = [];
+        topBlocked.clear();
         syncToStorage();
     }
 
@@ -30,7 +37,7 @@ require.scopes.stats = ( () => {
 
     function addToTopBlocked(parent){
         if(!statsByParentCompany[parent]){
-            topBlocked.push(parent);
+            topBlocked.add(parent);
         }
     }
 
@@ -53,13 +60,6 @@ require.scopes.stats = ( () => {
         statsBySite[site] = siteData;
     }
 
-    function sortTopBlocked(){
-        topBlocked.sort(function(a, b){
-            var a = statsByParentCompany[a];
-            var b = statsByParentCompany[b];
-            return b - a;
-        });
-    }
 
     function calcSiteScore(siteData){
         // dummy score for now
@@ -67,10 +67,9 @@ require.scopes.stats = ( () => {
     }
 
     function getTopBlocked(blocked){
-        sortTopBlocked();
-        blocked = blocked ? blocked : 10;
-        let topBlockedCompanies = []
-        topBlocked.slice(0, blocked).forEach(function(name){
+        let topBlockedCompanies = [];
+        var sorted = topBlocked.getTop();
+        sorted.forEach(function(name){
             topBlockedCompanies.push({ "name": name, "count": statsByParentCompany[name]});
         });
         return topBlockedCompanies;
@@ -81,9 +80,9 @@ require.scopes.stats = ( () => {
             if(result['byParent']){
                 statsByParentCompany = result['byParent'];
             }
-            if(result['topBlocked']){
-                topBlocked = result['topBlocked'];
-            };
+            //if(result['topBlocked']){
+            //    topBlocked = result['topBlocked'];
+            //};
 
             if(result['bySite']){
                 statsBySite = result['bySite'];

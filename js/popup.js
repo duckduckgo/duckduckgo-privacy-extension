@@ -17,6 +17,7 @@
 
 var bg = chrome.extension.getBackgroundPage();
 var settings = bg.settings;
+var stats = bg.stats;
 var load = bg.load;
 
 var elements = load.JSONfromLocalFile("data/popup_data.json");
@@ -51,6 +52,7 @@ var FAKE_POST_FUNCTION =
 "   }";
 
 window.onload = function() {
+
 
     document.getElementById(search_data.input).focus();
 
@@ -110,7 +112,8 @@ window.onload = function() {
 
     var trackers = document.getElementById(by_id.trackers),
         tracker_name = document.getElementById(by_id.tracker_name),
-        req_count = document.getElementById(by_id.req_count);
+        req_count = document.getElementById(by_id.req_count),
+        topBlockedElement = document.getElementById('top-blocked');
 
     (function(){
         getTab(function(t) { 
@@ -118,12 +121,17 @@ window.onload = function() {
             tracker_name.innerHTML = '';
             req_count.innerHTML = '';
 
+            var topBlocked = stats.getTopBlocked();
+            console.log(topBlocked);
+            topBlockedElement.innerHTML = Handlebars.templates.topBlocked({'topBlocked': topBlocked});
+            
             if (tab && ((!tab.trackers) || (!Object.keys(tab.trackers).length))) {
                 trackers.classList.add(css_class.hide);
             }
 
             if(tab && tab.trackers && Object.keys(tab.trackers).length){
                 trackers.classList.remove(css_class.hide);
+                
 
                 Object.keys(tab.trackers).forEach( function(name) {
                     var temp_url = '',
