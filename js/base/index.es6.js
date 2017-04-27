@@ -13,12 +13,9 @@ window.DDG = window.DDG || {};
 window.DDG.base = {
     mixins: mixins,
     Model: BaseModel,
-    models: {},
     Page: BasePage,
-    pages: {},
     utils: {},
     View: BaseView,
-    views: {}
 };
 
 console.log(window.DDG.base);

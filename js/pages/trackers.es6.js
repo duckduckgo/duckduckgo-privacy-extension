@@ -2,7 +2,7 @@ const Parent = window.DDG.base.Page;
 const WhitelistView = require('./../views/whitelist.es6.js');
 const WhitelistModel = require('./../models/whitelist.es6.js');
 
-const Trackers = window.DDG.base.pages.Trackers = function (ops) {
+function Trackers (ops) {
     Parent.call(this, ops);
 };
 

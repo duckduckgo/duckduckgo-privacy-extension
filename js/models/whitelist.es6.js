@@ -1,9 +1,12 @@
 const Parent = window.DDG.base.Model;
 
-const Whitelist = window.DDG.base.models.Whitelist = function (attrs) {
+function Whitelist (attrs) {
 
     // TODO: utilize base.Model so we get nice set() method
+    // pick up here tomorrow by setting model properly
+    // so base view render() can do its thing with template fn
     debugger;
+
 };
 
 Whitelist.prototype = $.extend({},

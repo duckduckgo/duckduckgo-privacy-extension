@@ -3,9 +3,11 @@
 
 var Parent = window.DDG.base.Model;
 
-var Whitelist = window.DDG.base.models.Whitelist = function (attrs) {
+function Whitelist(attrs) {
 
     // TODO: utilize base.Model so we get nice set() method
+    // pick up here tomorrow by setting model properly
+    // so base view render() can do its thing with template fn
     debugger;
 };
 
@@ -26,7 +28,7 @@ var Parent = window.DDG.base.Page;
 var WhitelistView = require('./../views/whitelist.es6.js');
 var WhitelistModel = require('./../models/whitelist.es6.js');
 
-var Trackers = window.DDG.base.pages.Trackers = function (ops) {
+function Trackers(ops) {
     Parent.call(this, ops);
 };
 
@@ -64,7 +66,7 @@ module.exports = function (ctx) {
 var Parent = window.DDG.base.View;
 var template = require('./../templates/whitelist.es6.js');
 
-var Whitelist = window.DDG.base.views.Whitelist = function (ops) {
+function Whitelist(ops) {
 
     this.model = ops.model = {};
     this.pageView = ops.pageView;
