@@ -2,7 +2,7 @@
 'use strict';
 
 var Parent = window.DDG.base.Page;
-// const Whitelist = require('./../views/whitelist.es6.js');
+var WhitelistView = require('./../views/whitelist.es6.js');
 
 var Trackers = window.DDG.base.pages.Trackers = function (ops) {
     Parent.call(this, ops);
@@ -15,10 +15,10 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
     ready: function ready() {
         Parent.prototype.ready.call(this);
 
-        // TODO: add sub-views here!
-        // this.views.whitelist = new Whitelist(
-        // )
-        debugger;
+        this.views.whitelist = new WhitelistView({
+            pageView: this,
+            appendTo: $('body')
+        });
     }
 
 });
@@ -26,6 +26,40 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
 // kickoff!
 window.DDG = window.DDG || {};
 window.DDG.page = new Trackers();
-debugger;
+
+},{"./../views/whitelist.es6.js":2}],2:[function(require,module,exports){
+"use strict";
+
+var Parent = window.DDG.base.View;
+// const WhitelistModel = require('./../models/whitelist.es6.js');
+
+var Whitelist = window.DDG.base.views.Whitelist = function (ops) {
+
+    this.model = ops.model = {};
+    this.pageView = ops.pageView;
+    // this.template = 'hp_onboarding_education';
+
+    debugger;
+    Parent.call(this, ops);
+
+    // this._cacheElems('.js-whitelist', [
+    //   'foo',
+    //   'bar'
+    // ]);
+
+    // this.bindEvents([
+    //   [this.$foo, 'click', this._handleClick]
+    // ]);
+};
+
+Whitelist.prototype = $.extend({}, Parent.prototype, {
+
+    _handleClick: function _handleClick(e) {
+        console.log("_handleClick()");
+    }
+
+});
+
+module.exports = Whitelist;
 
 },{}]},{},[1]);

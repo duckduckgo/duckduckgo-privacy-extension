@@ -4,7 +4,7 @@
 // create global $
 window.$ = window.jQuery = require('./../../node_modules/jquery');
 
-// base app dependencies
+// base dependencies
 var mixins = require('./mixins/index.es6.js');
 var BaseModel = require('./model.es6.js');
 var BasePage = require('./page.es6.js');
