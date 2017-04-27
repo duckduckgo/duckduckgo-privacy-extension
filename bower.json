@@ -1,0 +1,21 @@
+{
+  "name": "chrome_zeroclickinfo",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Maria Grazia Alastra <maria@duckduckgo.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/duckduckgo/chrome-zeroclickinfo",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "_ls": "duckduckgo/litestrap#^0.0.4"
+  }
+}

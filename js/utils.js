@@ -1,16 +1,14 @@
 require.scopes.utils = ( () => {
-    
-    function getHost(url) {
-        try {
-            var url = new URL(url);
-            return url.hostname;
-        } catch (e) {
-            console.log("Invalid URL: " + url);
-            return;
-        }
+
+    function extractHostFromURL(url) {
+        var a = document.createElement('a');
+        a.href = url;
+        var parts = a.hostname.split('.');
+        var host = parts.slice(-2).join('.');
+        return host;
     }
-    
+
     var exports = {};
-    exports.getHost = getHost;
+    exports.extractHostFromURL = extractHostFromURL;
     return exports;
 })();
