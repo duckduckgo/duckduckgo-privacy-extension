@@ -9,6 +9,8 @@ var Sites = ( () => {
                 data[domain] = new Site(domain);
             }
             return data[domain];
-        }
+        },
+
+        all: () => { return Object.keys(data) }
     };
 })();

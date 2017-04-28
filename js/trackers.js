@@ -20,6 +20,7 @@ function isTracker(url, currLocation, tabId) {
         var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
         var blockSettings = settings.getSetting('blocking').slice(0);
+        var currSite = Sites.add(utils.extractHostFromURL(currLocation));
 
         if(isWhitelisted(host, tabId)) {
             return;
@@ -31,6 +32,7 @@ function isTracker(url, currLocation, tabId) {
 
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, host, currLocation);
         if(trackerByParentCompany) {
+            currSite.addTracker(host);
             return trackerByParentCompany;
         }
 
