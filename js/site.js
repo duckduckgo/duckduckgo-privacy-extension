@@ -1,21 +1,20 @@
-function Site(domain) {
-    var domain = domain,
-        trackers = [],
-        score = null;
-        whiteListed = false;
-        
-    return {
-        whiteList: () => { whiteListed = true },
-
-        isWhiteListed: () => { return whiteListed },
-
-        addTracker: (tracker) => { 
-            if(trackers.indexOf(tracker) === -1){
-                trackers.push(tracker);
-            }
-        },
-
-        getTrackers: () => { return trackers }
-
+class Site{
+    constructor(domain) {
+        this.domain = domain,
+        this.trackers = [],
+        this.score = null;
+        this.whiteListed = false;
     }
+    whiteList(){ this.whiteListed = true };
+    
+    isWhiteListed(){ return this.whiteListed };
+    
+    addTracker(tracker){ 
+        if(this.trackers.indexOf(tracker) === -1){
+            this.trackers.push(tracker);
+        }
+    };
+    
+    getTrackers(){ return this.trackers };
+
 }
