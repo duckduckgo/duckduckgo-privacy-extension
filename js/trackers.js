@@ -46,6 +46,7 @@ function checkTrackersWithParentCompany(blockSettings, host, currLocation) {
         if(trackerLists.trackersWithParentCompany[trackerType]) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
             if(tracker && !isRelatedEntity(tracker.c, currLocation)){
+                Companies.add(tracker.c);
                 return toBlock = {'tracker': tracker.c, 'url': host, 'type': trackerType};
             }
         }
