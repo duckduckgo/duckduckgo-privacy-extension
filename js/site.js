@@ -1,15 +1,12 @@
 class Site{
-    constructor(domain) {
+    constructor(domain, scoreFunction) {
         this.domain = domain,
         this.trackers = [],
         this.score = null;
         this.whiteListed = false;
-        
-        this.calculateSiteScore = function(){
-            this.score = this.trackers.length;
-        }
-
+        this.scoreFunction = scoreFunction;
     }
+
     whiteList(){ this.whiteListed = true };
     
     isWhiteListed(){ return this.whiteListed };
@@ -21,7 +18,7 @@ class Site{
     };
 
     getScore(){
-        this.calculateSiteScore();
+        this.score = this.scoreFunction();
         return this.score;
     }
 

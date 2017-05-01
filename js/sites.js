@@ -2,6 +2,9 @@ var Sites = ( () => {
     var data = {};
     var storageName = "siteData";
     var utils = require('utils');
+    var scoreFunction = function(){
+        return this.trackers.length;
+    };
 
     return {
         get: (domain) => { return data[domain] },
@@ -21,7 +24,7 @@ var Sites = ( () => {
             
         add: (domain) => {
             if(!data[domain]){
-                data[domain] = new Site(domain);
+                data[domain] = new Site(domain, scoreFunction);
             }
             return data[domain];
         },
