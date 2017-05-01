@@ -19,13 +19,11 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
-var stats = require('stats');
 
 var tabs = {};
 
 function Background() {
   $this = this;
-
 
   // clearing last search on browser startup
   settings.updateSetting('last_search', '');
@@ -287,7 +285,6 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
         utils.getCurrentURL(function(url){
             tabs[id].url = url;
             Companies.syncToStorage();
-            Sites.syncToStorage();
         });
     }
 
