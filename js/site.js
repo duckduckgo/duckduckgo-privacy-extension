@@ -17,4 +17,8 @@ class Site{
     
     getTrackers(){ return this.trackers };
 
+    setTrackers(newTrackers){ this.trackers = newTrackers };
+    setScore(newScore){ this.score = newScore };
+    setWhiteList(newWhitelisted){ this.whiteListed = newWhitelisted };
+
 }

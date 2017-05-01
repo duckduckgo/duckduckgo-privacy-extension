@@ -1,6 +1,8 @@
 var Sites = ( () => {
     var data = {};
-    
+    var storageName = "siteData";
+    var utils = require('utils');
+
     return {
         get: (domain) => { return data[domain] },
 
@@ -11,6 +13,26 @@ var Sites = ( () => {
             return data[domain];
         },
 
-        all: () => { return Object.keys(data) }
+        all: () => { return Object.keys(data) },
+
+        syncToStorage: () => { 
+            var toSync = {};
+            toSync[storageName] = data;
+            utils.syncToStorage(toSync);
+        },
+
+        buildFromStorage: () => {
+            utils.getFromStorage(storageName, function(storageData){
+                for(site in storageData){
+                    let newSite = Sites.add(site);
+                    let siteData = storageData[site];
+                    newSite.setTrackers(siteData.trackers);
+                    newSite.setScore(siteData.score);
+                    newSite.setWhiteList(siteData.whiteListed);
+                }
+            });
+        }
     };
 })();
+
+Sites.buildFromStorage();

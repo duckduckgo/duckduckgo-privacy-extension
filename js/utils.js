@@ -8,7 +8,23 @@ require.scopes.utils = ( () => {
         return host;
     }
 
+    function syncToStorage(data){
+        chrome.storage.local.set(data, function() {
+            console.log("updated local storage data");
+        });
+    }
+
+    function getFromStorage(key, callback){
+        chrome.storage.local.get(key, function(result){
+            if(result[key]){
+                callback(result[key]);
+            }
+        });
+    }
+
     var exports = {};
     exports.extractHostFromURL = extractHostFromURL;
+    exports.syncToStorage = syncToStorage;
+    exports.getFromStorage = getFromStorage;
     return exports;
 })();

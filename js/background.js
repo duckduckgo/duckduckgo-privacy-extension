@@ -245,10 +245,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
-                if(tabs[e.tabId].status === "complete"){
-                    stats.update(name, tabs[e.tabId].url, {'count': 1, 'url': block.url});
-                }
-
                 return {cancel: true};
               }
           }
@@ -292,7 +288,8 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
             if(tabData.length){
                 var id = tabData[0].id;
                 tabs[id].url = tabData[0].url;
-                stats.updateStatsFromTabData(tabs[id]);
+                Companies.syncToStorage();
+                Sites.syncToStorage();
             }
         });
     }

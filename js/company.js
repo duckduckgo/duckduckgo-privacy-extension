@@ -11,4 +11,8 @@ class Company{
     getCount(){
         return this.count;
     };
+
+    setCount(newCount){
+        this.count = newCount;
+    }
 }
