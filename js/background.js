@@ -284,13 +284,10 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     }
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
-        chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
-            if(tabData.length){
-                var id = tabData[0].id;
-                tabs[id].url = tabData[0].url;
-                Companies.syncToStorage();
-                Sites.syncToStorage();
-            }
+        utils.getCurrentURL(function(url){
+            tabs[id].url = url;
+            Companies.syncToStorage();
+            Sites.syncToStorage();
         });
     }
 

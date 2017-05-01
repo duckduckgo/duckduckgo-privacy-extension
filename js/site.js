@@ -4,6 +4,11 @@ class Site{
         this.trackers = [],
         this.score = null;
         this.whiteListed = false;
+        
+        this.calculateSiteScore = function(){
+            this.score = this.trackers.length;
+        }
+
     }
     whiteList(){ this.whiteListed = true };
     
@@ -14,7 +19,12 @@ class Site{
             this.trackers.push(tracker);
         }
     };
-    
+
+    getScore(){
+        this.calculateSiteScore();
+        return this.score;
+    }
+
     getTrackers(){ return this.trackers };
 
     setTrackers(newTrackers){ this.trackers = newTrackers };

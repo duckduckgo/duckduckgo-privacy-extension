@@ -27,21 +27,26 @@ var Companies = ( () => {
             return topBlocked.getTop(n);
         },
 
-       syncToStorage: () => {
-           var toSync = {};
-           toSync[storageName] = data;
-           utils.syncToStorage(toSync);
-       },
+        clearData: () => { 
+            data = {};
+            topBlocked.clear();
+        },
 
-       buildFromStorage: () => {
-            utils.getFromStorage(storageName, function(storageData){
-                for(company in storageData){
-                    let newCompany = Companies.add(company);
-                    newCompany.setCount(storageData[company].count);
-                }
-            });
-        }
-    };
+        syncToStorage: () => {
+            var toSync = {};
+            toSync[storageName] = data;
+            utils.syncToStorage(toSync);
+        },
+
+        buildFromStorage: () => {
+             utils.getFromStorage(storageName, function(storageData){
+                 for(company in storageData){
+                     let newCompany = Companies.add(company);
+                     newCompany.setCount(storageData[company].count);
+                 }
+             });
+         }
+     };
 })();
 
 Companies.buildFromStorage();
