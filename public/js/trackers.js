@@ -3,45 +3,169 @@
 
 var Parent = window.DDG.base.Model;
 
-function Whitelist(attrs) {
+function ItemMenu(attrs) {
 
     Parent.call(this, attrs);
 };
 
-Whitelist.prototype = $.extend({}, Parent.prototype, {
+ItemMenu.prototype = $.extend({}, Parent.prototype, {
+    // f: function (s) {
+    //     console.log(`ItemMenu f()`);
+    // }
 
-    getList: function getList() {
-        // retrieve list from local storage
+});
+
+module.exports = ItemMenu;
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
+var Parent = window.DDG.base.Model;
+
+function Search(attrs) {
+
+  Parent.call(this, attrs);
+};
+
+Search.prototype = $.extend({}, Parent.prototype, {
+
+  doSearch: function doSearch(s) {
+    this.searchText = s;
+    console.log("doSearch() for " + s);
+
+    chrome.tabs.create({
+      url: "https://duckduckgo.com/?q=" + s + "&bext=" + localStorage['os'] + "cr"
+    });
+  }
+
+});
+
+module.exports = Search;
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+var Parent = window.DDG.base.Model;
+
+function Site(attrs) {
+
+    // domain: "cnn.com",
+    // isWhitelisted: false,
+    // siteRating: 'B',
+    // trackerCount: 21
+
+
+    attrs.httpsIcon = 'orange';
+    attrs.httpsStatusText = 'Forced Secure Connection';
+    attrs.blockMessage = 'Trackers Blocked';
+
+    Parent.call(this, attrs);
+};
+
+Site.prototype = $.extend({}, Parent.prototype, {
+    toggleWhitelist: function toggleWhitelist(s) {
+        console.log('Site toggleWhitelist()');
     }
 
 });
 
-module.exports = Whitelist;
+module.exports = Site;
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+"use strict";
+
+var Parent = window.DDG.base.Model;
+
+function TrackerList(attrs) {
+
+    Parent.call(this, attrs);
+
+    // test data for now
+    // this might reference chrome.extension.getBackgroundPage();
+    // to get the parent company data
+    this.testList = [{ domain: "google.com", blocked: 100 }, { domain: "facebook.com", blocked: 20 }, { domain: "twitter.com", blocked: 10 }, { domain: "amazon.com", blocked: 5 }, { domain: "adnexus.com", blocked: 4 }];
+
+    // this.extensionIsEnabled = this.bg.settings.getSetting("extensionIsEnabled");
+    // console.log("extension is enabled: ",  this.bg.settings.getSetting("extensionIsEnabled"));
+
+};
+
+TrackerList.prototype = $.extend({}, Parent.prototype, {});
+
+module.exports = TrackerList;
+
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var Parent = window.DDG.base.Page;
-var WhitelistView = require('./../views/whitelist.es6.js');
-var WhitelistModel = require('./../models/whitelist.es6.js');
-var whitelistTemplate = require('./../templates/whitelist.es6.js');
+var TrackerListView = require('./../views/trackerlist.es6.js');
+var TrackerListModel = require('./../models/trackerlist.es6.js');
+var TrackerListTemplate = require('./../templates/trackerlist.es6.js');
+
+var SiteView = require('./../views/site.es6.js');
+var SiteModel = require('./../models/site.es6.js');
+var SiteTemplate = require('./../templates/site.es6.js');
+
+var SearchView = require('./../views/search.es6.js');
+var SearchModel = require('./../models/search.es6.js');
+var SearchTemplate = require('./../templates/search.es6.js');
+
+var ItemMenuView = require('./../views/itemMenu.es6.js');
+var ItemMenuModel = require('./../models/itemMenu.es6.js');
+var ItemMenuTemplate = require('./../templates/itemMenu.es6.js');
 
 function Trackers(ops) {
     Parent.call(this, ops);
 };
+
+// var bg = chrome.extension.getBackgroundPage();
 
 Trackers.prototype = $.extend({}, Parent.prototype, {
 
     pageType: 'trackers',
 
     ready: function ready() {
+
+        console.log("Trackers ready()");
+        var $parent = $('#DDG-site-info');
+
         Parent.prototype.ready.call(this);
 
-        this.views.whitelist = new WhitelistView({
+        this.views.search = new SearchView({
             pageView: this,
-            model: new WhitelistModel({ heading: 'Domain Whitelist' }),
-            appendTo: $('body'),
-            template: whitelistTemplate
+            model: new SearchModel({ searchText: '' }),
+            appendTo: $parent,
+            template: SearchTemplate
+        });
+
+        this.views.site = new SiteView({
+            pageView: this,
+            model: new SiteModel({
+                domain: "cnn.com",
+                isTrackerListed: false,
+                siteRating: 'B',
+                trackerCount: 21
+            }),
+            appendTo: $parent,
+            template: SiteTemplate
+        });
+
+        this.views.trackerlist = new TrackerListView({
+            pageView: this,
+            model: new TrackerListModel({ heading: 'Top Blocked', max: 5 }),
+            appendTo: $parent,
+            template: TrackerListTemplate
+        });
+
+        this.views.trackerlist = new ItemMenuView({
+            pageView: this,
+            model: new ItemMenuModel({ title: 'Options', id: "options-page",
+                link: function link() {
+                    chrome.tabs.update({ url: 'chrome://chrome/extensions' });
+                }
+            }),
+            appendTo: $parent,
+            template: ItemMenuTemplate
         });
     }
 
@@ -51,25 +175,72 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
 window.DDG = window.DDG || {};
 window.DDG.page = new Trackers();
 
-},{"./../models/whitelist.es6.js":1,"./../templates/whitelist.es6.js":3,"./../views/whitelist.es6.js":4}],3:[function(require,module,exports){
+},{"./../models/itemMenu.es6.js":1,"./../models/search.es6.js":2,"./../models/site.es6.js":3,"./../models/trackerlist.es6.js":4,"./../templates/itemMenu.es6.js":6,"./../templates/search.es6.js":7,"./../templates/site.es6.js":8,"./../templates/trackerlist.es6.js":9,"./../views/itemMenu.es6.js":10,"./../views/search.es6.js":11,"./../views/site.es6.js":12,"./../views/trackerlist.es6.js":13}],6:[function(require,module,exports){
 'use strict';
 
-var _templateObject = _taggedTemplateLiteral(['<div class="js-whitelist">\n      <h2>', '</h2>\n        <ul>\n          <li class="js-whitelist-item">foo.com</li>\n          <li class="js-whitelist-item">foo.com</li>\n        </ul>\n    </div>'], ['<div class="js-whitelist">\n      <h2>', '</h2>\n        <ul>\n          <li class="js-whitelist-item">foo.com</li>\n          <li class="js-whitelist-item">foo.com</li>\n        </ul>\n    </div>']);
+var _templateObject = _taggedTemplateLiteral(['<div class="js-menu-title js-menu-arrow" id="js-item-menu-', '">\n            <span>', '</span>\n            <div class="js-site-inline-icon js-site-icon-right js-icon-arrow"></div>\n        </div>'], ['<div class="js-menu-title js-menu-arrow" id="js-item-menu-', '">\n            <span>', '</span>\n            <div class="js-site-inline-icon js-site-icon-right js-icon-arrow"></div>\n        </div>']);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 var bel = require('./../../node_modules/bel');
 
 module.exports = function () {
-  return bel(_templateObject, this.model.heading);
+        return bel(_templateObject, this.model.id, this.model.title);
 };
 
-},{"./../../node_modules/bel":5}],4:[function(require,module,exports){
+},{"./../../node_modules/bel":14}],7:[function(require,module,exports){
 'use strict';
+
+var _templateObject = _taggedTemplateLiteral(['<div class="js-search js-menu-section">\n        <form class="js-search-form" name="x">\n          <input type="text" autocomplete="off" placeholder="Search DuckDuckGo" name="q" class="js-search-input" value="', '" />\n          <input class="js-search-go" tabindex="2" value="" type="button"> <!-- submit -->\n          <input id="search_form_input_clear" tabindex="3" value=" " type="button">\n        </form>\n    </div>'], ['<div class="js-search js-menu-section">\n        <form class="js-search-form" name="x">\n          <input type="text" autocomplete="off" placeholder="Search DuckDuckGo" name="q" class="js-search-input" value="', '" />\n          <input class="js-search-go" tabindex="2" value="" type="button"> <!-- submit -->\n          <input id="search_form_input_clear" tabindex="3" value=" " type="button">\n        </form>\n    </div>']);
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+var bel = require('./../../node_modules/bel');
+
+module.exports = function () {
+    return bel(_templateObject, this.model.searchText);
+};
+
+},{"./../../node_modules/bel":14}],8:[function(require,module,exports){
+'use strict';
+
+var _templateObject = _taggedTemplateLiteral(['<div class="js-site js-menu-section">\n        <ul class="js-menu-item-list">\n            <li class="js-site-item">\n                <span class="js-site-domain">', '</span>\n                <span class="js-site-whitelistToggle">', '</span>\n                <div class="js-site-rating-', ' js-site-inline-icon js-site-icon-right"></div>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-inline-icon js-site-https-', '"></span>\n                <span class="js-site-httpsStatusText">', '</span>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-trackerCount">', '</span> ', '\n            </li>\n        </ul>\n    </div>'], ['<div class="js-site js-menu-section">\n        <ul class="js-menu-item-list">\n            <li class="js-site-item">\n                <span class="js-site-domain">', '</span>\n                <span class="js-site-whitelistToggle">', '</span>\n                <div class="js-site-rating-', ' js-site-inline-icon js-site-icon-right"></div>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-inline-icon js-site-https-', '"></span>\n                <span class="js-site-httpsStatusText">', '</span>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-trackerCount">', '</span> ', '\n            </li>\n        </ul>\n    </div>']);
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+var bel = require('./../../node_modules/bel');
+
+module.exports = function () {
+    return bel(_templateObject, this.model.domain, this.model.isWhitelisted, this.model.siteRating, this.model.httpsIcon, this.model.httpsStatusText, this.model.trackerCount, this.model.blockMessage);
+};
+
+},{"./../../node_modules/bel":14}],9:[function(require,module,exports){
+'use strict';
+
+var _templateObject = _taggedTemplateLiteral(['<li> ', ' = ', ' </li>'], ['<li> ', ' = ', ' </li>']),
+    _templateObject2 = _taggedTemplateLiteral(['<div class="js-trackerlist js-menu-section">\n        <div class="js-menu-title">', '</div>\n        <ul class="js-menu-item-list">\n            ', '\n        </ul>\n    </div>'], ['<div class="js-trackerlist js-menu-section">\n        <div class="js-menu-title">', '</div>\n        <ul class="js-menu-item-list">\n            ', '\n        </ul>\n    </div>']);
+
+function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
+
+var bel = require('./../../node_modules/bel');
+
+module.exports = function () {
+
+    var f = function f(list) {
+        return list.map(function (site) {
+            return bel(_templateObject, site.domain, site.blocked);
+        });
+    };
+
+    return bel(_templateObject2, this.model.heading, f(this.model.testList));
+};
+
+},{"./../../node_modules/bel":14}],10:[function(require,module,exports){
+"use strict";
 
 var Parent = window.DDG.base.View;
 
-function Whitelist(ops) {
+function ItemMenu(ops) {
 
     this.model = ops.model;
     this.pageView = ops.pageView;
@@ -77,26 +248,138 @@ function Whitelist(ops) {
 
     Parent.call(this, ops);
 
-    // _cacheElems() caches jQuery selectors, so the following would be
-    // accessible via: `this.$item` from within this view
-    // and is equivalent to $('.js-whitelist-item')
-    this._cacheElems('.js-whitelist', ['item']);
+    console.log("new itemMenu view");
+
+    // this._cacheElems('#js-item-menu', [ this.model.id ]);
+
+    this.$linkableItem = $("#js-item-menu-" + this.model.id);
 
     // this.bindEvents() wires up jQuery selectors to events and their handlers:
-    this.bindEvents([[this.$item, 'click', this._handleClick]]);
+    this.bindEvents([[this.$linkableItem, 'click', this._handleClick]]);
 };
 
-Whitelist.prototype = $.extend({}, Parent.prototype, {
+ItemMenu.prototype = $.extend({}, Parent.prototype, {
 
     _handleClick: function _handleClick(e) {
-        console.log('_handleClick()');
+        console.log('ItemMenu _handleClick()');
+
+        this.model.link();
     }
 
 });
 
-module.exports = Whitelist;
+module.exports = ItemMenu;
 
-},{}],5:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+'use strict';
+
+var Parent = window.DDG.base.View;
+
+function Search(ops) {
+
+    this.model = ops.model;
+    this.pageView = ops.pageView;
+    this.template = ops.template;
+
+    Parent.call(this, ops);
+
+    console.log("new search view");
+
+    // this._cacheElems() caches jQuery selectors, so the following would be
+    // accessible via: `this.$item` from within this view
+    // and is equivalent to $('.js-search-item')
+
+    this._cacheElems('.js-search', ['form', 'input', 'go']);
+
+    // this.bindEvents() wires up jQuery selectors to events and their handlers:
+    this.bindEvents([[this.$go, 'click', this._handleSubmit]]);
+
+    this.bindEvents([[this.$form, 'submit', this._handleSubmit]]);
+};
+
+Search.prototype = $.extend({}, Parent.prototype, {
+    _handleSubmit: function _handleSubmit(e) {
+        console.log('Search submit for ' + this.$input.val());
+        this.model.doSearch(this.$input.val());
+    }
+
+    // _handleClick: function (e) {
+    //     console.log('Search _handleClick()');
+    //     this.model.doSearch();
+    // }
+
+});
+
+module.exports = Search;
+
+},{}],12:[function(require,module,exports){
+'use strict';
+
+var Parent = window.DDG.base.View;
+
+function Site(ops) {
+
+    this.model = ops.model;
+    this.pageView = ops.pageView;
+    this.template = ops.template;
+
+    Parent.call(this, ops);
+
+    console.log("new site view");
+
+    // this._cacheElems() caches jQuery selectors, so the following would be
+    // accessible via: `this.$item` from within this view
+    // and is equivalent to $('.js-site-item')
+
+    this._cacheElems('.js-site', ['whitelistToggle']);
+
+    // this.bindEvents() wires up jQuery selectors to events and their handlers:
+    this.bindEvents([[this.$whitelistToggle, 'click', this._whitelistClick]]);
+};
+
+Site.prototype = $.extend({}, Parent.prototype, {
+    _whitelistClick: function _whitelistClick(e) {
+        console.log('set whitelist for ' + this.model.domain + ' to ' + this.model.isWhitelisted);
+
+        this.model.toggleWhitelist();
+    }
+
+    // _handleClick: function (e) {
+    //     console.log('Site _handleClick()');
+    //     this.model.doSite();
+    // }
+
+});
+
+module.exports = Site;
+
+},{}],13:[function(require,module,exports){
+"use strict";
+
+var Parent = window.DDG.base.View;
+
+function TrackerList(ops) {
+
+    this.model = ops.model;
+    this.pageView = ops.pageView;
+    this.template = ops.template;
+
+    Parent.call(this, ops);
+
+    console.log("new trackerlist view");
+};
+
+TrackerList.prototype = $.extend({}, Parent.prototype, {
+
+    // _handleClick: function (e) {
+    //     console.log('TrackerList _handleClick()');
+    // }
+
+});
+
+module.exports = TrackerList;
+
+},{}],14:[function(require,module,exports){
 var document = require('global/document')
 var hyperx = require('hyperx')
 var onload = require('on-load')
@@ -251,9 +534,9 @@ module.exports = hyperx(belCreateElement, {comments: true})
 module.exports.default = module.exports
 module.exports.createElement = belCreateElement
 
-},{"global/document":7,"hyperx":10,"on-load":11}],6:[function(require,module,exports){
+},{"global/document":16,"hyperx":19,"on-load":20}],15:[function(require,module,exports){
 
-},{}],7:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (global){
 var topLevel = typeof global !== 'undefined' ? global :
     typeof window !== 'undefined' ? window : {}
@@ -274,7 +557,7 @@ if (typeof document !== 'undefined') {
 module.exports = doccy;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"min-document":6}],8:[function(require,module,exports){
+},{"min-document":15}],17:[function(require,module,exports){
 (function (global){
 var win;
 
@@ -291,7 +574,7 @@ if (typeof window !== "undefined") {
 module.exports = win;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 module.exports = attributeToProperty
 
 var transform = {
@@ -312,7 +595,7 @@ function attributeToProperty (h) {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var attrToProp = require('hyperscript-attribute-to-property')
 
 var VAR = 0, TEXT = 1, OPEN = 2, CLOSE = 3, ATTR = 4
@@ -592,7 +875,7 @@ var closeRE = RegExp('^(' + [
 ].join('|') + ')(?:[\.#][a-zA-Z0-9\u007F-\uFFFF_:-]+)*$')
 function selfClosing (tag) { return closeRE.test(tag) }
 
-},{"hyperscript-attribute-to-property":9}],11:[function(require,module,exports){
+},{"hyperscript-attribute-to-property":18}],20:[function(require,module,exports){
 /* global MutationObserver */
 var document = require('global/document')
 var window = require('global/window')
@@ -681,4 +964,4 @@ function eachMutation (nodes, fn) {
   }
 }
 
-},{"global/document":7,"global/window":8}]},{},[2]);
+},{"global/document":16,"global/window":17}]},{},[5]);
