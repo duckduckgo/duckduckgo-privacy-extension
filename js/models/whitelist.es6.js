@@ -4,6 +4,7 @@ function Whitelist (attrs) {
 
     Parent.call(this, attrs);
 
+
 };
 
 
