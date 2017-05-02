@@ -25,7 +25,10 @@
           newCompany.setCount(sortedData[c]);
       });
 
-      var sortedTopBlocked = Companies.getTopBlocked();
+      var sortedTopBlocked = [];
+      Companies.getTopBlocked().forEach((c) => {
+          sortedTopBlocked.push(c.name);
+      });
 
       assert.ok(sortedTopBlocked.join(',') === sortedList.join(','), "top blocked returns correct sorted list");
 
