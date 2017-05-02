@@ -5,3 +5,5 @@ node_modules
 npm-debug.log
 .cache
 *.map
+public/js/*.*
+public/css/*.*

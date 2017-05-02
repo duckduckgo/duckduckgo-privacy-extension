@@ -16,11 +16,12 @@ This software is licensed under the terms of the Apache License, Version 2.0 (se
 - `$ git submodule init` to pull in EFF's https-everywhere project
 - `$ git submodule update`
 
-## Development flow
-- `$ npm run dev`
-
 ## Build
 - `$ npm run build`
+
+## Development flow
+Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6.js files
+- `$ npm run dev`
 
 ## Testing
 - Do steps in "Set up development environment" above
