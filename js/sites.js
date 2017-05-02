@@ -1,5 +1,5 @@
 var Sites = ( () => {
-    var data = {};
+    var siteContainer = {};
     var storageName = "siteData";
     var utils = require('utils');
     var scoreFunction = function(){
@@ -7,30 +7,17 @@ var Sites = ( () => {
     };
 
     return {
-        get: (domain) => { return data[domain] },
-
-        currentSiteScore: (domain) => {
-            if(domain){
-                return data[domain].score;
-            }
-            else {
-                utils.getCurrentURL(function(url){
-                    let host = utils.extractHostFromURL(url);
-                    let site =  data[host];
-                    return site.score;
-                });
-            }
-        },
+        get: (domain) => { return siteContainer[domain] },
             
         add: (domain) => {
-            if(!data[domain]){
-                data[domain] = new Site(domain, scoreFunction);
+            if(!siteContainer[domain]){
+                siteContainer[domain] = new Site(domain, scoreFunction);
             }
-            return data[domain];
+            return siteContainer[domain];
         },
 
-        all: () => { return Object.keys(data) },
+        all: () => { return Object.keys(siteContainer) },
 
-        clearData: () => { data = {} },
+        clearData: () => { siteContainer = {} },
     };
 })();

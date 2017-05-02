@@ -1,27 +1,27 @@
 var Companies = ( () => {
-    var data = {};
+    var companyContainer = {};
     var topBlocked = new TopBlocked(sortFunc);
     var utils = require('utils');
     var storageName = "companyData";
 
     function sortFunc(a, b){
-        return data[b].count - data[a].count;
+        return companyContainer[b].count - companyContainer[a].count;
     }
     
 
     return {
-        get: (name) => { return data[name] },
+        get: (name) => { return companyContainer[name] },
 
         add: (name) => {
-            if(!data[name]){
-                data[name] = new Company(name);
+            if(!companyContainer[name]){
+                companyContainer[name] = new Company(name);
                 topBlocked.add(name);
             }
-            data[name].incrementCount();
-            return data[name];
+            companyContainer[name].incrementCount();
+            return companyContainer[name];
         },
 
-        all: () => { return Object.keys(data) },
+        all: () => { return Object.keys(companyContainer) },
 
         getTopBlocked: (n) => {
             var topBlockedData = [];
@@ -34,13 +34,13 @@ var Companies = ( () => {
         },
 
         clearData: () => { 
-            data = {};
+            companyContainer = {};
             topBlocked.clear();
         },
 
         syncToStorage: () => {
             var toSync = {};
-            toSync[storageName] = data;
+            toSync[storageName] = companyContainer;
             utils.syncToStorage(toSync);
         },
 
