@@ -128,6 +128,23 @@ ul.js-menu-item-list li {
     padding-top:17px;
 }
 
+/* Whitelist toggle                              */
+/* getting this approximately in place           */
+/* this needs to be replaced with a real control */
+.js-site-whitelist-toggle {
+    display:inline-block;
+    position:absolute;
+    right:50px;
+}
+/* whitelist true means tracking is off, ie gray */
+.js-site-whitelist-true {
+    color:#aaa;
+}
+/* whitelist false means tracking is on, ie green */
+.js-site-whitelist-false {
+    color:#84ba50;
+}
+
 .js-site-inline-icon {
     background-repeat:no-repeat;
     background-size: cover;

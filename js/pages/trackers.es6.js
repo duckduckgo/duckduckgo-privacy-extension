@@ -45,7 +45,7 @@ Trackers.prototype = $.extend({},
                 pageView: this,
                 model: new SiteModel({
                     domain: "cnn.com",
-                    isTrackerListed: false,
+                    isWhitelisted: false,
                     siteRating: 'B',
                     trackerCount: 21
                 }),

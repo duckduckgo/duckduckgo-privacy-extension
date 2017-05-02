@@ -10,16 +10,10 @@ function Site (ops) {
 
     console.log("new site view");
 
+    this._cacheElems('.js-site', [ 'whitelist-toggle' ]);
 
-    // this._cacheElems() caches jQuery selectors, so the following would be
-    // accessible via: `this.$item` from within this view
-    // and is equivalent to $('.js-site-item')
-
-    this._cacheElems('.js-site', [ 'whitelistToggle' ]);
-
-    // this.bindEvents() wires up jQuery selectors to events and their handlers:
     this.bindEvents([
-      [this.$whitelistToggle, 'click', this._whitelistClick]
+      [this.$whitelisttoggle, 'click', this._whitelistClick]
     ]);
 
 };
@@ -32,11 +26,6 @@ Site.prototype = $.extend({},
 
             this.model.toggleWhitelist();
         }
-
-        // _handleClick: function (e) {
-        //     console.log('Site _handleClick()');
-        //     this.model.doSite();
-        // }
 
     }
 
