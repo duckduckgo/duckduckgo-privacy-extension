@@ -127,7 +127,7 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
     ready: function ready() {
 
         console.log("Trackers ready()");
-        var $parent = $('#DDG-site-info');
+        var $parent = $('#ddg-site-info');
 
         Parent.prototype.ready.call(this);
 
@@ -142,7 +142,7 @@ Trackers.prototype = $.extend({}, Parent.prototype, {
             pageView: this,
             model: new SiteModel({
                 domain: "cnn.com",
-                isTrackerListed: false,
+                isWhitelisted: false,
                 siteRating: 'B',
                 trackerCount: 21
             }),
@@ -204,21 +204,21 @@ module.exports = function () {
 },{"./../../node_modules/bel":14}],8:[function(require,module,exports){
 'use strict';
 
-var _templateObject = _taggedTemplateLiteral(['<div class="js-site js-menu-section">\n        <ul class="js-menu-item-list">\n            <li class="js-site-item">\n                <span class="js-site-domain">', '</span>\n                <span class="js-site-whitelistToggle">', '</span>\n                <div class="js-site-rating-', ' js-site-inline-icon js-site-icon-right"></div>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-inline-icon js-site-https-', '"></span>\n                <span class="js-site-httpsStatusText">', '</span>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-trackerCount">', '</span> ', '\n            </li>\n        </ul>\n    </div>'], ['<div class="js-site js-menu-section">\n        <ul class="js-menu-item-list">\n            <li class="js-site-item">\n                <span class="js-site-domain">', '</span>\n                <span class="js-site-whitelistToggle">', '</span>\n                <div class="js-site-rating-', ' js-site-inline-icon js-site-icon-right"></div>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-inline-icon js-site-https-', '"></span>\n                <span class="js-site-httpsStatusText">', '</span>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-trackerCount">', '</span> ', '\n            </li>\n        </ul>\n    </div>']);
+var _templateObject = _taggedTemplateLiteral(['<div class="js-site js-menu-section">\n        <ul class="js-menu-item-list">\n            <li class="js-site-item">\n                <span class="js-site-domain">', '</span>\n                <span class="js-site-whitelist-toggle js-site-whitelist-', '">', '</span>\n                <div class="js-site-rating-', ' js-site-inline-icon js-site-icon-right"></div>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-inline-icon js-site-https-', '"></span>\n                <span class="js-site-httpsStatusText">', '</span>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-trackerCount">', '</span> ', '\n            </li>\n        </ul>\n    </div>'], ['<div class="js-site js-menu-section">\n        <ul class="js-menu-item-list">\n            <li class="js-site-item">\n                <span class="js-site-domain">', '</span>\n                <span class="js-site-whitelist-toggle js-site-whitelist-', '">', '</span>\n                <div class="js-site-rating-', ' js-site-inline-icon js-site-icon-right"></div>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-inline-icon js-site-https-', '"></span>\n                <span class="js-site-httpsStatusText">', '</span>\n            </li>\n            <li class="js-site-item">\n                <span class="js-site-trackerCount">', '</span> ', '\n            </li>\n        </ul>\n    </div>']);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 var bel = require('./../../node_modules/bel');
 
 module.exports = function () {
-    return bel(_templateObject, this.model.domain, this.model.isWhitelisted, this.model.siteRating, this.model.httpsIcon, this.model.httpsStatusText, this.model.trackerCount, this.model.blockMessage);
+    return bel(_templateObject, this.model.domain, this.model.isWhitelisted, this.model.isWhitelisted, this.model.siteRating, this.model.httpsIcon, this.model.httpsStatusText, this.model.trackerCount, this.model.blockMessage);
 };
 
 },{"./../../node_modules/bel":14}],9:[function(require,module,exports){
 'use strict';
 
-var _templateObject = _taggedTemplateLiteral(['<li> ', ' = ', ' </li>'], ['<li> ', ' = ', ' </li>']),
-    _templateObject2 = _taggedTemplateLiteral(['<div class="js-trackerlist js-menu-section">\n        <div class="js-menu-title">', '</div>\n        <ul class="js-menu-item-list">\n            ', '\n        </ul>\n    </div>'], ['<div class="js-trackerlist js-menu-section">\n        <div class="js-menu-title">', '</div>\n        <ul class="js-menu-item-list">\n            ', '\n        </ul>\n    </div>']);
+var _templateObject = _taggedTemplateLiteral(['<div class="js-trackerlist js-menu-section">\n        <div class="js-menu-title">', '</div>\n        <ul class="js-menu-item-list">\n            ', '\n        </ul>\n    </div>'], ['<div class="js-trackerlist js-menu-section">\n        <div class="js-menu-title">', '</div>\n        <ul class="js-menu-item-list">\n            ', '\n        </ul>\n    </div>']),
+    _templateObject2 = _taggedTemplateLiteral(['<li> ', ': ', ' </li>'], ['<li> ', ': ', ' </li>']);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
@@ -226,13 +226,9 @@ var bel = require('./../../node_modules/bel');
 
 module.exports = function () {
 
-    var f = function f(list) {
-        return list.map(function (site) {
-            return bel(_templateObject, site.domain, site.blocked);
-        });
-    };
-
-    return bel(_templateObject2, this.model.heading, f(this.model.testList));
+    return bel(_templateObject, this.model.heading, this.model.testList.map(function (site) {
+        return bel(_templateObject2, site.domain, site.blocked);
+    }));
 };
 
 },{"./../../node_modules/bel":14}],10:[function(require,module,exports){
@@ -285,16 +281,9 @@ function Search(ops) {
 
     console.log("new search view");
 
-    // this._cacheElems() caches jQuery selectors, so the following would be
-    // accessible via: `this.$item` from within this view
-    // and is equivalent to $('.js-search-item')
-
     this._cacheElems('.js-search', ['form', 'input', 'go']);
 
-    // this.bindEvents() wires up jQuery selectors to events and their handlers:
-    this.bindEvents([[this.$go, 'click', this._handleSubmit]]);
-
-    this.bindEvents([[this.$form, 'submit', this._handleSubmit]]);
+    this.bindEvents([[this.$go, 'click', this._handleSubmit], [this.$form, 'submit', this._handleSubmit]]);
 };
 
 Search.prototype = $.extend({}, Parent.prototype, {
@@ -302,12 +291,6 @@ Search.prototype = $.extend({}, Parent.prototype, {
         console.log('Search submit for ' + this.$input.val());
         this.model.doSearch(this.$input.val());
     }
-
-    // _handleClick: function (e) {
-    //     console.log('Search _handleClick()');
-    //     this.model.doSearch();
-    // }
-
 });
 
 module.exports = Search;
@@ -327,14 +310,9 @@ function Site(ops) {
 
     console.log("new site view");
 
-    // this._cacheElems() caches jQuery selectors, so the following would be
-    // accessible via: `this.$item` from within this view
-    // and is equivalent to $('.js-site-item')
+    this._cacheElems('.js-site', ['whitelist-toggle']);
 
-    this._cacheElems('.js-site', ['whitelistToggle']);
-
-    // this.bindEvents() wires up jQuery selectors to events and their handlers:
-    this.bindEvents([[this.$whitelistToggle, 'click', this._whitelistClick]]);
+    this.bindEvents([[this.$whitelisttoggle, 'click', this._whitelistClick]]);
 };
 
 Site.prototype = $.extend({}, Parent.prototype, {
@@ -343,11 +321,6 @@ Site.prototype = $.extend({}, Parent.prototype, {
 
         this.model.toggleWhitelist();
     }
-
-    // _handleClick: function (e) {
-    //     console.log('Site _handleClick()');
-    //     this.model.doSite();
-    // }
 
 });
 
