@@ -24,7 +24,13 @@ var Companies = ( () => {
         all: () => { return Object.keys(data) },
 
         getTopBlocked: (n) => {
-            return topBlocked.getTop(n);
+            var topBlockedData = [];
+            topBlocked.getTop(n).forEach((name) => {
+                let c = Companies.get(name);
+                topBlockedData.push({"name": c.name, "count": c.count});
+            });
+            return topBlockedData;
+            
         },
 
         clearData: () => { 
