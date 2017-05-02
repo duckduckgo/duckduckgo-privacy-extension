@@ -48,7 +48,7 @@ table {
 html {
   overflow: hidden;
   /*background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#f8f8f8));*/
-  background: #fff;
+  background: $white;
   height: auto;
   border: 0;
 }
@@ -69,9 +69,9 @@ body {
   font-size: 1.14em;
   border-radius: 2px;
   height: 38px;
-  border: 1px solid #d0d0d0;
+  border: 1px solid $platinum-dark;
   color:  #383838;
-  background-color: #f7f7f7;
+  background-color: $silver-light;
 }
 
 #logo {
@@ -131,12 +131,12 @@ body {
 #search_button_homepage:hover, #search_button_homepage.selected{
   background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9InNlYXJjaC1sb3VwZSI+PGc+PGc+PHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6I2ZmZmZmZjsiIGQ9Ik0xOC43LDE2LjJsLTIuOS0yLjlDMTYuNSwxMi4xLDE3LDEwLjYsMTcsOWMwLTQuNC0zLjYtOC04LThTMSw0LjYsMSw5czMuNiw4LDgsOGMxLjYsMCwzLTAuNSw0LjMtMS4ybDIuOSwyLjljMC41LDAuNSwxLjIsMC41LDEuNiwwbDAuOC0wLjhDMTkuMSwxNy40LDE5LjEsMTYuNywxOC43LDE2LjJ6IE05LDE1Yy0zLjMsMC02LTIuNy02LTZjMC0zLjMsMi43LTYsNi02YzMuMywwLDYsMi43LDYsNkMxNSwxMi4zLDEyLjMsMTUsOSwxNXoiLz48L2c+PC9nPjwvZz48L3N2Zz4=) !important;
 
-  background-color: #589e4d !important;
+  background-color: $green !important;
 }
 
 #search_form_input_clear {
   border: 0 !important;
-  background-color: #f7f7f7;
+  background-color: $silver-light;
   margin-left: -8px;
   height: 27px;
   width: 21px;
@@ -309,11 +309,11 @@ input[type="checkbox"]:checked + label {
     position: relative;
     height: 16px;
     width: 26px;
-    background: #aaaaaa;
+    background: $grey-light;
     cursor: pointer;
 }
 .switch.is-on {
-   background: #4495d4;
+   background: $blue;
 }
 .switch .switch__knob {
    border-radius: 5px;
@@ -326,7 +326,7 @@ input[type="checkbox"]:checked + label {
    top: 2px;
    height: 14px;
    width: 14px;
-   background-color: #fff;
+   background-color: $white;
 }
 .switch.is-on .switch__knob {
    left: 10px;
@@ -351,8 +351,8 @@ input[type="checkbox"]:checked + label {
    padding: 3px 5px 3px 5px;
    font-size: 12px;
    cursor: pointer;
-   background: #4495d4;
-   color: #fff;
+   background: $blue;
+   color: $white;
    margin-bottom: 0.5em;
    width: 5em;
 }
