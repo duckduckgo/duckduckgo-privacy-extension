@@ -33,7 +33,6 @@ const mixins = require('./mixins/index.es6.js');
 
     this._render(ops);
 
-    // this._wrapLinks();
 };
 
 BaseView.prototype = $.extend(
@@ -149,45 +148,6 @@ BaseView.prototype = $.extend(
         },
 
         /**
-         * Add extra handlers for all a tags in this view
-         *
-         * Internal and external links get separate handlers,
-         * and external links get special treatment to allow
-         * for referrers to be stripped
-         *
-         * @param {jQuery} $container - optional container with links to wrap
-         * @api private
-         */
-         /*
-        _wrapLinks: function ($container) {
-            // default to this view's element
-            if (!$container || !$container.length) {
-                $container = this.$el;
-            }
-
-            // if there's still no container, the view
-            // hasn't rendered yet, leave wrapping for a later date
-            if (!$container) {
-                return;
-            }
-
-            $container.find("a").each(function (i, el) {
-                var $el = $(el);
-
-                // only add these handlers once
-                if ($el.data("wrapped")) {
-                    return;
-                }
-                $el.data("wrapped", true);
-
-                if (!DDG.isInternalURL(el.href)) {
-                    $el.on("click.wrap", this._onExternalLinkClick.bind(this));
-                }
-            }.bind(this));
-        },
-        */
-
-        /**
          * Add the rendered element to the DOM.
          */
         _addToDOM: function(){
@@ -222,21 +182,7 @@ BaseView.prototype = $.extend(
 
                 this[id] = this.$(selector);
             }
-        },
-
-        /*
-        _onExternalLinkClick: function (e) {
-            var link = e.currentTarget;
-
-            // open in a new window if the New Window setting is set...
-            if (DDG.settings && !DDG.settings.isDefault("kn")) {
-                link.target = "_blank";
-            }
-
-            // open link with stripped referrers
-            return nrl(e, link);
         }
-        */
 
 });
 
