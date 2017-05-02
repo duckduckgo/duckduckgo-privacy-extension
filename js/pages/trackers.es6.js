@@ -30,7 +30,7 @@ Trackers.prototype = $.extend({},
         ready: function() {
 
             console.log("Trackers ready()");
-            var $parent = $('#DDG-site-info');
+            var $parent = $('#ddg-site-info');
 
             Parent.prototype.ready.call(this);
 
