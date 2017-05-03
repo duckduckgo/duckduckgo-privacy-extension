@@ -243,6 +243,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
+
                 return {cancel: true};
               }
           }
