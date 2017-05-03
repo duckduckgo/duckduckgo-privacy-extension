@@ -31,6 +31,11 @@
             "scripts": [
                 "js/require.js",
                 "js/utils.js",
+                "js/topBlocked.js",
+                "js/sites.js",
+                "js/site.js",
+                "js/companies.js",
+                "js/company.js",
                 "js/load.js",
                 "js/settings.js",
                 "js/trackerLists.js",

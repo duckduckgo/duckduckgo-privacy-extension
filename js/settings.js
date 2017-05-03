@@ -4,41 +4,25 @@ require.scopes.settings =(() => {
     var settings = {};
 
     function init() {
-        buildSettingsFromLocalStorage();
         buildSettingsFromDefaults();
+        buildSettingsFromLocalStorage();
         registerListeners();
     }
 
-    function buildSettingsFromLocalStorage() {
-        chrome.storage.local.get(null, function(results){
-            for(var name in results){
-                try {
-                    settings[name] = JSON.parse(results[name]);
-                }
-                catch(e) {
-                    settings[name] = results[name];
-                }
-            }
+    function buildSettingsFromLocalStorage(callback) {
+        chrome.storage.local.get(['settings'], function(results){
+            savedSettings = results['settings'];
+            Object.assign(settings, savedSettings);
+            syncSettingTolocalStorage();
         });
     }
 
     function buildSettingsFromDefaults() {
-        var defaults = load.JSONfromLocalFile('data/default_settings.json');
-        for(var defaultName in defaults){
-            // user stored settings are built first. Don't override them with a default
-            if(!settings[defaultName]){
-                settings[defaultName] = defaults[defaultName];
-            }
-        }
+        settings = load.JSONfromLocalFile('data/default_settings.json');
     }
 
-    function syncSettingTolocalStorage(name, value){
-        var settingToUpdate = {};
-        if(typeof(value) === 'object'){
-            value = JSON.stringify(value);
-        }
-        settingToUpdate[name] =value;
-        chrome.storage.local.set(settingToUpdate);
+    function syncSettingTolocalStorage(){
+        chrome.storage.local.set({'settings': settings});
         return true;
     }
 
@@ -53,7 +37,7 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         settings[name] = value;
-        syncSettingTolocalStorage(name, value);
+        syncSettingTolocalStorage();
     }
 
     function registerListeners(){

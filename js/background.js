@@ -19,7 +19,7 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var load = require('load');
-
+var stats = require('stats');
 var tabs = {};
 
 function Background() {
@@ -276,19 +276,16 @@ function updateBadge(tabId, numBlocked){
     chrome.browserAction.setBadgeText({tabId: tabId, text: numBlocked + ""});
 }
 
-chrome.tabs.onReplaced.addListener(function (addedTabId) {
-    chrome.tabs.get(addedTabId, function(tab) {
-        //tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
-        //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
-    });
-});
-
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
         tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "status": "loading"};
     }
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
+        utils.getCurrentURL(function(url){
+            tabs[id].url = url;
+            Companies.syncToStorage();
+        });
     }
 
 });
