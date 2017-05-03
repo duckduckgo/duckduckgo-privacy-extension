@@ -18,22 +18,25 @@ function Site (ops) {
       [this.$whitelisttoggle, 'click', this._whitelistClick]
     ]);
 
-    var thisSite = this;
+
+    // set up messaging to update the tracker count
+
+    var thisView = this,
+        thisModel = this.model;
 
     backgroundPage.utils.getCurrentTab(function(tab) {
         if(tab){
-            let siteDomain = backgroundPage.utils.extractHostFromURL(tab.url);
-            thisSite.model.domain = siteDomain;
-            thisSite.model.tabId = tab.id;
-            thisSite.model.updateTrackerCount();
-            thisSite._rerender();
+            thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
+            thisModel.tabId = tab.id;
+            thisModel.updateTrackerCount();
+            thisView._rerender();
         }
     });
 
     chrome.runtime.onMessage.addListener(function(req, sender, res){
         if(req.rerenderPopup){
-            thisSite.model.updateTrackerCount();
-            thisSite._rerender();
+            thisModel.updateTrackerCount();
+            thisView._rerender();
         }
     });
 
