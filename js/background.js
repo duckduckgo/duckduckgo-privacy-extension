@@ -243,6 +243,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
+                if(tabs[e.tabId].thisSite){
+                    console.log("rerendering");
+                    tabs[e.tabId].thisSite._rerender();
+                }
+
                 return {cancel: true};
               }
           }

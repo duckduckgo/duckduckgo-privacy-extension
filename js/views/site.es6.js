@@ -21,22 +21,24 @@ function Site (ops) {
     // FIXME should be moved to the right place --- model?
     // _rerender() below should probably not be called directly but via a model change event
     var thisSite = this;
-    (function poll() {
-        setTimeout(
-            backgroundPage.utils.getCurrentTab(function(tab) {
-                if(tab){
-                    let siteDomain = backgroundPage.utils.extractHostFromURL(tab.url);
-                    thisSite.model.domain = siteDomain;
-                    let tabObj = backgroundPage.tabs[tab.id];
-            
-                    if(tabObj){
-                        thisSite.model.trackerCount = tabObj.dispTotal;
-                    }
-                    thisSite._rerender();
-                    poll();
-                }
-            }), 200);
-    })();
+
+    backgroundPage.utils.getCurrentTab(function(tab) {
+        if(tab){
+            console.log(tab);
+            let siteDomain = backgroundPage.utils.extractHostFromURL(tab.url);
+            thisSite.model.domain = siteDomain;
+
+            let tabObj = backgroundPage.tabs[tab.id];
+
+            if(tabObj){
+                thisSite.model.trackerCount = tabObj.dispTotal;
+                tabObj.thisSite = thisSite;
+            }
+
+            thisSite._rerender();
+        }
+    });
+
 };
 
 Site.prototype = $.extend({},
