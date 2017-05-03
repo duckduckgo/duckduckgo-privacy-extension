@@ -24,10 +24,10 @@ function Site (ops) {
     var thisTab = null;
 
     function updateTrackerCount(){
-            let tabObj = backgroundPage.tabs[thisTab];
-            if(tabObj){
-                thisSite.model.trackerCount = tabObj.dispTotal;
-            }
+        let tabObj = backgroundPage.tabs[thisTab];
+        if(tabObj){
+            thisSite.model.trackerCount = tabObj.dispTotal;
+        }
     }
 
     backgroundPage.utils.getCurrentTab(function(tab) {
