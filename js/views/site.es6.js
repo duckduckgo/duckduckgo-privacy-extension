@@ -22,12 +22,16 @@ function Site (ops) {
     // _rerender() below should probably not be called directly but via a model change event
     var thisSite = this;
 
-    backgroundPage.utils.getCurrentURL(function(url) {
-                let siteDomain = backgroundPage.utils.extractHostFromURL(url);
-                thisSite.model.domain = siteDomain;
-                let siteObj = backgroundPage.Sites.get(siteDomain);
-                thisSite.model.trackerCount = siteObj.trackers.length;
-                thisSite._rerender();
+    backgroundPage.utils.getCurrentTab(function(tab) {
+        if(tab){
+            let siteDomain = backgroundPage.utils.extractHostFromURL(tab.url);
+            thisSite.model.domain = siteDomain;
+            let tabObj = backgroundPage.tabs[tab.id];
+            if(tabObj){
+                thisSite.model.trackerCount = tabObj.dispTotal;
+            }
+            thisSite._rerender();
+        }
     });
 
 };
