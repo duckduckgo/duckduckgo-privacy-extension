@@ -23,9 +23,13 @@ function Site (ops) {
     var thisSite = this;
 
     backgroundPage.utils.getCurrentURL(function(url) {
-                thisSite.model.domain = backgroundPage.utils.extractHostFromURL(url);
+                let siteDomain = backgroundPage.utils.extractHostFromURL(url);
+                thisSite.model.domain = siteDomain;
+                let siteObj = backgroundPage.Sites.get(siteDomain);
+                thisSite.model.trackerCount = siteObj.trackers.length;
                 thisSite._rerender();
     });
+
 };
 
 Site.prototype = $.extend({},

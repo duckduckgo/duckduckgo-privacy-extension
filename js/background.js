@@ -215,6 +215,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           if(!tabs[e.tabId]){
               tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url}
+              
           }
 
           if(!settings.getSetting('extensionIsEnabled')){
@@ -240,8 +241,6 @@ chrome.webRequest.onBeforeRequest.addListener(
                 tabs[e.tabId]['total'] += 1;
 
                 tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
-
-                updateBadge(e.tabId, tabs[e.tabId].dispTotal);
 
                 return {cancel: true};
               }
