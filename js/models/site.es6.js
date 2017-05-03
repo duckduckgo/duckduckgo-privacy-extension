@@ -15,6 +15,8 @@ Site.prototype = $.extend({},
   {
       toggleWhitelist: function (s) {
           console.log(`Site toggleWhitelist()`);
+          this.isWhitelisted = !this.isWhitelisted;
+          
       }
 
   }

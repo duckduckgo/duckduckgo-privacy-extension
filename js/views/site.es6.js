@@ -12,10 +12,11 @@ function Site (ops) {
 
     console.log("new site view");
 
-    this._cacheElems('.js-site', [ 'whitelist-toggle' ]);
+    this._cacheElems('.js-site', [ 'whitelist-toggle-bg', 'whitelist-toggle-fg' ]);
 
     this.bindEvents([
-      [this.$whitelisttoggle, 'click', this._whitelistClick]
+      [this.$whitelisttogglebg, 'click', this._whitelistClick],
+      [this.$whitelisttogglefg, 'click', this._whitelistClick]
     ]);
 
     // FIXME should be moved to the right place --- model?
@@ -35,6 +36,7 @@ Site.prototype = $.extend({},
             console.log(`set whitelist for ${this.model.domain} to ${this.model.isWhitelisted}`);
 
             this.model.toggleWhitelist();
+            this.pageView._rerender();
         }
 
     }
