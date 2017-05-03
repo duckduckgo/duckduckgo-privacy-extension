@@ -19,8 +19,6 @@ function Trackers (ops) {
     Parent.call(this, ops);
 };
 
-// var bg = chrome.extension.getBackgroundPage();
-
 Trackers.prototype = $.extend({},
     Parent.prototype,
     {
@@ -63,7 +61,7 @@ Trackers.prototype = $.extend({},
             this.views.trackerlist = new ItemMenuView({
                 pageView: this,
                 model: new ItemMenuModel({title: 'Options', id: "options-page",
-                     link: function() { chrome.tabs.update({ url: 'chrome://chrome/extensions' }); }
+                     link: function() { chrome.tabs.update({ url: 'chrome-extension://' + chrome.runtime.id + '/html/options.html' }); }
                 }),
                 appendTo: $parent,
                 template: ItemMenuTemplate

@@ -5,7 +5,7 @@ module.exports = function () {
         <ul class="js-menu-item-list">
             <li class="js-site-item">
                 <span class="js-site-domain">${this.model.domain}</span>
-                <span class="js-site-whitelist-toggle js-site-whitelist-${this.model.isWhitelisted}">${this.model.isWhitelisted}</span>
+                <div class="js-site-whitelist-toggle-bg js-site-whitelist-${this.model.isWhitelisted}"><div class="js-site-whitelist-toggle-fg js-site-whitelist-fg-${this.model.isWhitelisted}"></div></div>
                 <div class="js-site-rating-${this.model.siteRating} js-site-inline-icon js-site-icon-right"></div>
             </li>
             <li class="js-site-item">
