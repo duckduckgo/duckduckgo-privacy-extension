@@ -7,3 +7,5 @@ npm-debug.log
 *.map
 public/js/*.*
 public/css/*.*
+*.swp
+trackersWithParentCompany
