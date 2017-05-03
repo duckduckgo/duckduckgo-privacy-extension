@@ -18,31 +18,21 @@ function Site (ops) {
       [this.$whitelisttoggle, 'click', this._whitelistClick]
     ]);
 
-    // FIXME should be moved to the right place --- model?
-    // _rerender() below should probably not be called directly but via a model change event
     var thisSite = this;
-    var thisTab = null;
-
-    function updateTrackerCount(){
-        let tabObj = backgroundPage.tabs[thisTab];
-        if(tabObj){
-            thisSite.model.trackerCount = tabObj.dispTotal;
-        }
-    }
 
     backgroundPage.utils.getCurrentTab(function(tab) {
         if(tab){
-            thisTab = tab.id;
             let siteDomain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisSite.model.domain = siteDomain;
-            updateTrackerCount();
+            thisSite.model.tabId = tab.id;
+            thisSite.model.updateTrackerCount();
             thisSite._rerender();
         }
     });
 
     chrome.runtime.onMessage.addListener(function(req, sender, res){
         if(req.rerenderPopup){
-            updateTrackerCount();
+            thisSite.model.updateTrackerCount();
             thisSite._rerender();
         }
     });
