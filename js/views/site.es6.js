@@ -21,12 +21,10 @@ function Site (ops) {
     // FIXME should be moved to the right place --- model?
     // _rerender() below should probably not be called directly but via a model change event
     var thisSite = this;
-    chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
-            if (tabData.length){
-                console.log("SITE!", tabData[0].url);
-                thisSite.model.domain = backgroundPage.utils.extractHostFromURL(tabData[0].url);
+
+    backgroundPage.utils.getCurrentURL(function(url) {
+                thisSite.model.domain = backgroundPage.utils.extractHostFromURL(url);
                 thisSite._rerender();
-            }
     });
 };
 
