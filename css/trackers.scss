@@ -218,3 +218,19 @@ ul.js-menu-item-list li {
     padding:0px 8px;
 }
 
+/* max width: 270 - (7*2) = 256 */
+.js-site-blocker-bar {
+    background:#e0e0e0;
+    position:absolute;
+    height:2em;
+    left: 7px;
+    z-index:-1;
+    margin-top:-0.3em;
+    border-radius: 2px;
+}
+
+.js-site-blocker-count {
+    display:inline-block;
+    position:absolute;
+    right: 14px;
+}

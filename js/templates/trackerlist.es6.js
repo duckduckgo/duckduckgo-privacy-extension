@@ -5,7 +5,8 @@ module.exports = function () {
     return bel`<div class="js-trackerlist js-menu-section">
         <div class="js-menu-title">${this.model.heading}</div>
         <ul class="js-menu-item-list">
-            ${this.model.companyList.map((site) => bel`<li> ${site.name}: ${site.count} </li>`)}
+            ${this.model.companyListM.map((site) => bel`<li> <div class="js-site-blocker-bar" style="width:${site.p}px"></div>
+                                          ${site.name} <div class="js-site-blocker-count">${site.count}</div></li>`)}
         </ul>
     </div>`
 }
