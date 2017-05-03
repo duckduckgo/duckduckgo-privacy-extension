@@ -19,8 +19,6 @@ function Trackers (ops) {
     Parent.call(this, ops);
 };
 
-// var bg = chrome.extension.getBackgroundPage();
-
 Trackers.prototype = $.extend({},
     Parent.prototype,
     {
