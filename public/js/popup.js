@@ -15,6 +15,32 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
+this["Handlebars"]["templates"]["topBlocked"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    <li>";
+  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + " ";
+  if (helper = helpers.count) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.count); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</li>\n";
+  return buffer;
+  }
+
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.topBlocked), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
+  return buffer;
+  });
+
 this["Handlebars"]["templates"]["tracker"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -55,6 +81,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
 var bg = chrome.extension.getBackgroundPage();
 var settings = bg.settings;
+var stats = bg.stats;
 var load = bg.load;
 
 var elements = load.JSONfromLocalFile("data/popup_data.json");
@@ -89,6 +116,7 @@ var FAKE_POST_FUNCTION =
 "   }";
 
 window.onload = function() {
+
 
     document.getElementById(search_data.input).focus();
 
@@ -148,7 +176,8 @@ window.onload = function() {
 
     var trackers = document.getElementById(by_id.trackers),
         tracker_name = document.getElementById(by_id.tracker_name),
-        req_count = document.getElementById(by_id.req_count);
+        req_count = document.getElementById(by_id.req_count),
+        topBlockedElement = document.getElementById('top-blocked');
 
     (function(){
         getTab(function(t) { 
@@ -156,12 +185,14 @@ window.onload = function() {
             tracker_name.innerHTML = '';
             req_count.innerHTML = '';
 
+            
             if (tab && ((!tab.trackers) || (!Object.keys(tab.trackers).length))) {
                 trackers.classList.add(css_class.hide);
             }
 
             if(tab && tab.trackers && Object.keys(tab.trackers).length){
                 trackers.classList.remove(css_class.hide);
+                
 
                 Object.keys(tab.trackers).forEach( function(name) {
                     var temp_url = '',
@@ -188,6 +219,9 @@ window.onload = function() {
                 }
 
             }
+
+            var topBlocked = stats.getTopBlocked();
+            topBlockedElement.innerHTML = Handlebars.templates.topBlocked({'topBlocked': topBlocked});
         });
     })();
 
