@@ -8,9 +8,6 @@ function TrackerList (ops) {
 
     Parent.call(this, ops);
 
-    console.log("new trackerlist view");
-
-
 };
 
 TrackerList.prototype = $.extend({},

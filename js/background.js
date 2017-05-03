@@ -242,9 +242,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                 tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
 
                 updateBadge(e.tabId, tabs[e.tabId].dispTotal);
-
                 chrome.runtime.sendMessage({"rerenderPopup": true});
-
+                
                 return {cancel: true};
               }
           }
