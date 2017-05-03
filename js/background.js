@@ -220,32 +220,29 @@ chrome.webRequest.onBeforeRequest.addListener(
           if(!settings.getSetting('extensionIsEnabled')){
               return;
           }
+          
+          var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
+          
+          if(block){
+              var name = block.tracker;
 
-          if (!tabs[e.tabId].whitelist || (tabs[e.tabId].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
-              var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
-
-              if(block){
-                var name = block.tracker;
-
-                if(!tabs[e.tabId]){
-                    tabs[e.tabId] = {'trackers': {}, "total": 0};
-                }
-
-                if(!tabs[e.tabId]['trackers'][name]){
-                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
-                }
-                else {
-                    tabs[e.tabId]['trackers'][name].count += 1;
-                }
-                tabs[e.tabId]['total'] += 1;
-
-                tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
-
-                updateBadge(e.tabId, tabs[e.tabId].dispTotal);
-
-
-                return {cancel: true};
+              if(!tabs[e.tabId]){
+                  tabs[e.tabId] = {'trackers': {}, "total": 0};
               }
+
+              if(!tabs[e.tabId]['trackers'][name]){
+                  tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
+              }
+              else {
+                  tabs[e.tabId]['trackers'][name].count += 1;
+              }
+              tabs[e.tabId]['total'] += 1;
+
+              tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
+
+              updateBadge(e.tabId, tabs[e.tabId].dispTotal);
+
+              return {cancel: true};
           }
       }
     },
