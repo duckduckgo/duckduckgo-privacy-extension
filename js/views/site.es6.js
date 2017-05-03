@@ -39,6 +39,15 @@ function Site (ops) {
         }
     });
 
+    chrome.runtime.onMessage.addListener(function(req, sender, res){
+        console.log("Request ", req);
+        if(req.rerenderPopup){
+            console.log("Rerender in view from message");
+            console.log(thisSite);
+            thisSite._rerender();
+        }
+    });
+
 };
 
 Site.prototype = $.extend({},
