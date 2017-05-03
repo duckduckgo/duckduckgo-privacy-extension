@@ -21,29 +21,28 @@ function Site (ops) {
     // FIXME should be moved to the right place --- model?
     // _rerender() below should probably not be called directly but via a model change event
     var thisSite = this;
+    var thisTab = null;
+
+    function updateTrackerCount(){
+            let tabObj = backgroundPage.tabs[thisTab];
+            if(tabObj){
+                thisSite.model.trackerCount = tabObj.dispTotal;
+            }
+    }
 
     backgroundPage.utils.getCurrentTab(function(tab) {
         if(tab){
-            console.log(tab);
+            thisTab = tab.id;
             let siteDomain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisSite.model.domain = siteDomain;
-
-            let tabObj = backgroundPage.tabs[tab.id];
-
-            if(tabObj){
-                thisSite.model.trackerCount = tabObj.dispTotal;
-                tabObj.thisSite = thisSite;
-            }
-
+            updateTrackerCount();
             thisSite._rerender();
         }
     });
 
     chrome.runtime.onMessage.addListener(function(req, sender, res){
-        console.log("Request ", req);
         if(req.rerenderPopup){
-            console.log("Rerender in view from message");
-            console.log(thisSite);
+            updateTrackerCount();
             thisSite._rerender();
         }
     });
