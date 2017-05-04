@@ -16,7 +16,6 @@ function Site (attrs) {
 
     // set message and icon based on httpsState
     attrs.httpsStatusText = httpsStates[attrs.httpsState];
-    attrs.blockMessage = 'Trackers Blocked';
 
     Parent.call(this, attrs);
 };

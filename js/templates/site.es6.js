@@ -13,7 +13,7 @@ module.exports = function () {
                 <span class="js-site-httpsStatusText">${this.model.httpsStatusText}</span>
             </li>
             <li class="js-site-item">
-                <span class="js-site-trackerCount">${this.model.trackerCount}</span> ${this.model.blockMessage}
+                <span class="js-site-trackerCount">${this.model.trackerCount}</span> Trackers Blocked
             </li>
         </ul>
     </div>`;
