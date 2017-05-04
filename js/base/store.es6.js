@@ -1,25 +1,32 @@
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 
-// reducers: to go in model(s)
-// eventually we'll want to combine all reducers
 // maybe we only offer model.set() method (reducer) and hide
-// all this "reducer" stuff from developer
-// and swap this out for model._emit()
-function exampleReducer (state, action) {
-    if (action.type === 'SET_EXAMPLEREDUCER') {
+// all this "reducer" stuff from developer, dynamically create each reducer
+// behind the curtain when each model is init'd, first dispatch() is model attrs
+// ...and swap this out for model._emit()
+function exampleReducer1 (state, action) {
+    if (action.type === 'SET_EXAMPLEREDUCER1') {
         return action.properties || {};
     }
 }
 
-// combine reducers (...from models?)
+function exampleReducer2 (state, action) {
+  if (action.type === 'SET_EXAMPLEREDUCER2') {
+    return action.properties || {};
+  }
+}
+
+// combine reducers
+const reducers = minidux.combineReducers({exampleReducer1, exampleReducer2});
+
 // dynamically register each model in its "default state"
 // after model init (the $.extend(this, attrs) part of BaseModel.call()... etc)
 // maybe the only reducer is the .set() method on each model
 // after init phase!
-const store = minidux.createStore (exampleReducer, { example: false })
+const store = minidux.createStore(reducers, {});
 
-console.log('default state:')
+console.log('default state:');
 console.log(store.getState());
 
 // store.subscribe will need to be broadcast out to each model
@@ -30,17 +37,31 @@ store.subscribe((state) => {
   console.log(state)
   // make state immutable before broadcasting out to models!
   state = deepFreeze(state);
+  // TODO: broadcast out changes to corresponding state.modelTypes
 });
 
-// this will happen when models call model.set()
+// this will happen when models call model.set(), we'll just simulate it here:
 window.setTimeout(() => {
-  store.dispatch({ type: 'SET_EXAMPLEREDUCER', properties: {
+
+  store.dispatch({ type: 'SET_EXAMPLEREDUCER1', properties: {
+    modelType: 'model1',
     foo: 'foo',
     bar: { baz: 'baz' }
   }
   });
-  console.log('state after dispatch call:')
+  console.log('state after first dispatch call:')
   console.log(store.getState());
+
+  store.dispatch({ type: 'SET_EXAMPLEREDUCER2', properties: {
+    modelType: 'model2',
+    hay: 'hay'
+  }
+  });
+  console.log('state after second dispatch call:')
+  console.log(store.getState());
+
+  // TODO: figure out if we can dynamically register a new model+reducer!
+
 }, 1000)
 
 module.exports = store;
