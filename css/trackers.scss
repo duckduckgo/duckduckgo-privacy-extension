@@ -5,6 +5,7 @@ body {
     padding:0;
     font-size:14px;
     font-weight:bolder;
+    color:#333;
 }
 
 #ddg-site-info {
@@ -121,11 +122,16 @@ body {
 ul.js-menu-item-list {
     list-style-type: none;
     padding-left:14px;
+    margin-top:0;
 }
 
 // .js-site-item
 ul.js-menu-item-list li {
     padding-top:17px;
+}
+
+ul.js-menu-item-list li.js-site-co:first-child {
+    padding-top:0 !important;
 }
 
 /* Whitelist toggle                              */
