@@ -45,7 +45,7 @@ Site.prototype = $.extend({},
               this.httpsState = 'default';
           }
           else{
-              let url = backgroundPage.utils.parseUrl(tab.url);
+              let url = backgroundPage.utils.parseURL(tab.url);
               let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
               
               httpsRules.forEach((ruleSet) => {
