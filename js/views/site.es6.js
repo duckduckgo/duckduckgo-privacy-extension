@@ -29,6 +29,7 @@ function Site (ops) {
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisModel.tabId = tab.id;
             thisModel.updateTrackerCount();
+            thisModel.isHTTPS();
             thisView._rerender();
         }
     });

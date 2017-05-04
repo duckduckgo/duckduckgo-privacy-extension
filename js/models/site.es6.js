@@ -24,6 +24,38 @@ Site.prototype = $.extend({},
           if(tab){
             this.trackerCount = tab.dispTotal;
           }
+      },
+
+      isHTTPS: function() {
+          let tabHttpsRules = backgroundPage.activeRulesets.getRulesets(this.tabId);
+          let tab = backgroundPage.tabs[this.tabId];
+          let secureMessage = "Secure Connection";
+          let unSecureMessage = "Unsecure Connection";
+          
+          if(/^https/.exec(tab.url)){
+              this.httpsStatusText = secureMessage;
+              return;
+          }
+          else if(tabHttpsRules && tabHttpsRules.length){
+              for(siteRules in tabHttpsRules){
+                  if(_hasMainFrameHttpsRule){
+                      this.httpsStatusText = secureMessage;
+                      return;
+                  }
+              }
+          }
+          else {
+              this.httpsStatusText = unSecureMessage;
+          }
+          
+      },
+
+      _hasMainFrameHttpsRule: function(siteRules, tab){
+          for(rule in siteRules.rules){
+              if(rules.to === "https"){
+                  return true;
+              }
+          }
       }
   }
 );
