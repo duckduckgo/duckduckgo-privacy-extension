@@ -44,11 +44,8 @@ Site.prototype = $.extend({},
     Parent.prototype,
     {
         _whitelistClick: function (e) {
-            // console.log(`set whitelist for ${this.model.domain} to ${this.model.isWhitelisted}`);
-            console.log('set whitelist', this);
 
             this.model.toggleWhitelist();
-            // // this.pageView._rerender();
             this.rerender();
         },
 
