@@ -45,7 +45,7 @@ Trackers.prototype = $.extend({},
                     domain: "cnn.com",
                     isWhitelisted: false,
                     siteRating: 'B',
-                    trackerCount: 21
+                    trackerCount: 0
                 }),
                 appendTo: $parent,
                 template: SiteTemplate
