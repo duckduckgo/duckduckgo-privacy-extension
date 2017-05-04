@@ -25,25 +25,18 @@ Site.prototype = $.extend({},
   Parent.prototype,
   {
       toggleWhitelist: function () {
-          let site = this._getSite();
-          if(site){
-              site.toggleWhiteList();
-              this.isWhitelisted = site.whiteListed;
+          if(this.site){
+              this.site.toggleWhiteList();
           }
       },
 
-      setWhitelistStatus: function() {
-          let site = this._getSite();
-          if(site){
-            this.isWhitelisted = site.whiteListed;
-          }
-      },
-
-      _getSite: function() {
+      setSiteObj: function() {
           let tab = backgroundPage.tabs[this.tabId];
           let host = backgroundPage.utils.extractHostFromURL(tab.url);
           let site = backgroundPage.Sites.get(host);
-          return site;
+          if(site){
+              this.site = site;
+          }
       },
 
       updateTrackerCount: function() {

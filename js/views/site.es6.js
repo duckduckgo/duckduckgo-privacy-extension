@@ -22,7 +22,8 @@ function Site (ops) {
         if(tab){
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisModel.tabId = tab.id;
-            thisModel.setWhitelistStatus();
+            thisModel.setSiteObj();
+            thisModel.isWhitelisted = thisModel.site.whietListed;
             thisModel.updateTrackerCount();
             thisModel.setHttpsMessage();
             thisView.rerender(); // our custom rerender below
