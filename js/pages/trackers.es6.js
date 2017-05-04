@@ -27,14 +27,13 @@ Trackers.prototype = $.extend({},
 
         ready: function() {
 
-            console.log("Trackers ready()");
             var $parent = $('#ddg-site-info');
 
             Parent.prototype.ready.call(this);
 
             this.views.search = new SearchView({
                 pageView: this,
-                model: new SearchModel({searchText:''}),
+                model: new SearchModel({searchText:''}), // TODO proper location of remembered query
                 appendTo: $parent,
                 template: SearchTemplate
             });
@@ -42,20 +41,13 @@ Trackers.prototype = $.extend({},
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel({
-                    domain: "cnn.com",
+                    domain: "cnn.com",    // FIXME remove dummy data, handle initial/zero case
                     isWhitelisted: false,
                     siteRating: 'B',
                     trackerCount: 0
                 }),
                 appendTo: $parent,
                 template: SiteTemplate
-            });
-
-            this.views.trackerlist = new TrackerListView({
-                pageView: this,
-                model: new TrackerListModel({heading: 'Top Blocked', max:5}),
-                appendTo: $parent,
-                template: TrackerListTemplate
             });
 
             this.views.trackerlist = new ItemMenuView({
@@ -66,6 +58,14 @@ Trackers.prototype = $.extend({},
                 appendTo: $parent,
                 template: ItemMenuTemplate
             });
+
+            this.views.trackerlist = new TrackerListView({
+                pageView: this,
+                model: new TrackerListModel({}),
+                appendTo: $parent,
+                template: TrackerListTemplate
+            });
+
 
         }
 
