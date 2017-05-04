@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.View;
 
+
 var backgroundPage = chrome.extension.getBackgroundPage(); // FIXME probably centralize this?
 
 function Site (ops) {
@@ -10,15 +11,10 @@ function Site (ops) {
 
     Parent.call(this, ops);
 
-    console.log("new site view");
-
-
     // bind events
     this.setup();
 
-
     // set up messaging to update the tracker count
-
     var thisView = this,
         thisModel = this.model;
 

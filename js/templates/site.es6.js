@@ -9,7 +9,7 @@ module.exports = function () {
                 <div class="js-site-rating-${this.model.siteRating} js-site-inline-icon js-site-icon-right"></div>
             </li>
             <li class="js-site-item">
-                <span class="js-site-inline-icon js-site-https-${this.model.httpsIcon}"></span>
+                <span class="js-site-inline-icon js-site-https-${this.model.httpsState}"></span>
                 <span class="js-site-httpsStatusText">${this.model.httpsStatusText}</span>
             </li>
             <li class="js-site-item">
