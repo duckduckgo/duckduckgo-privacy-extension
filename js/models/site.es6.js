@@ -5,7 +5,7 @@ var backgroundPage = chrome.extension.getBackgroundPage();
 function Site (attrs) {
 
     attrs.httpsIcon = 'orange';
-    attrs.httpsStatusText = 'Forced Secure Connection';
+    attrs.httpsStatusText = 'Unsecure Connection';
     attrs.blockMessage = 'Trackers Blocked';
 
     Parent.call(this, attrs);
@@ -27,46 +27,33 @@ Site.prototype = $.extend({},
       },
 
       setHttpsMessage: function() {
-          let tabHttpsRules = backgroundPage.activeRulesets.getRulesets(this.tabId);
           let tab = backgroundPage.tabs[this.tabId];
+          let hostname = "www." + backgroundPage.utils.extractHostFromURL(tab.url);
+          let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(hostname);
           let secureMessage = "Secure Connection";
-          let unSecureMessage = "Unsecure Connection";
           let secureMessageHttps = "Secure Connection-HTTPS";
 
-          if(tabHttpsRules){
-              for(var ruleUrl in tabHttpsRules){
-                  if(this._hasMainFrameHttpsRule(ruleUrl, tabHttpsRules[ruleUrl], tab.url)){
+          if(httpsRules.size){
+              httpsRules.forEach((ruleSet) => {
+                  if(ruleSet.active && this._hasMainFrameHttpsRule(ruleSet.rules)){
                       this.httpsStatusText = secureMessageHttps;
-                      return;
                   }
-              }
+              });
           }
           else if(/^https/.exec(tab.url)){
               this.httpsStatusText = secureMessage;
               return;
           }
-
-          // fall through to unsecure message
-          this.httpsStatusText = unSecureMessage;
       },
 
-      _hasMainFrameHttpsRule: function(ruleUrl, siteRules, tabUrl){
-          if(this._isMainFrameURL(ruleUrl, tabUrl)){
-            for(var rule in siteRules.rules){
-                if(siteRules.rules[rule].to === "https:"){
-                    return true;
-                }
-            }
-          }
-      },
-
-      _isMainFrameURL(urlToCheck, mainFrameUrl){
-          let host = backgroundPage.utils.extractHostFromURL(mainFrameUrl);
-          let re = new RegExp(host, "gi");
-          if(re.exec(urlToCheck)){
-              return true;
-          }
-          return false;
+      _hasMainFrameHttpsRule: function(rules){
+          let hasHttps = false;
+          rules.forEach((rule) => {
+              if(rule.to === "https:"){
+                  hasHttps = true;
+              }
+          });
+          return hasHttps;
       }
   }
 );
