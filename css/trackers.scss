@@ -209,8 +209,16 @@ ul.js-menu-item-list li.site-co:first-child {
     /*display:inline-block; */
 }
 
-.js-site-https-orange {
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CiAgICA8cGF0aCBmaWxsPSIjRjFBMDMxIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik05Ljk5OCAxOS45OTFjLTUuNTIzIDAtMTAtNC40NzctMTAtMTBTNC40NzUtLjAxIDkuOTk4LS4wMSAxOS45OTkgNC40NjggMTkuOTk5IDkuOTkxcy00LjQ3OCAxMC0xMC4wMDEgMTB6TTE0IDguOTk2aC0xVjYuNDk3YTIuNSAyLjUgMCAwIDAtMi41LTIuNWgtMWEyLjUgMi41IDAgMCAwLTIuNSAyLjV2Mi40OTlINnY2LjAwMWg4VjguOTk2ek05LjUgNC45OTdoMWExLjUgMS41IDAgMCAxIDEuNSAxLjV2Mi40OTlIOFY2LjQ5N2ExLjUgMS41IDAgMCAxIDEuNS0xLjV6Ii8+Cjwvc3ZnPgo=);
+.js-site-https-default {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green.png');
+}
+
+.js-site-https-upgraded {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange.png');
+}
+
+.js-site-https-none {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red.png');
 }
 
 
