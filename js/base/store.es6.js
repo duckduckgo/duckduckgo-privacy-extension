@@ -1,6 +1,9 @@
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 
+// TODO: turn store into constructor with an init phase that gets kicked
+// off (maybe) by page, and is required by page vs in base/index where it is now
+
 // maybe we only offer model.set() method (reducer) and hide
 // all this "reducer" stuff from developer, dynamically create each reducer
 // behind the curtain when each model is init'd, first dispatch() is model attrs
@@ -38,6 +41,7 @@ store.subscribe((state) => {
   // make state immutable before broadcasting out to models!
   state = deepFreeze(state);
   // TODO: broadcast out changes to corresponding state.modelTypes
+  // via EventEmitter2
 });
 
 // this will happen when models call model.set(), we'll just simulate it here:
