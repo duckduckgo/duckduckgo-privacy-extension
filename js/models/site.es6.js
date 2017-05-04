@@ -40,13 +40,14 @@ Site.prototype = $.extend({},
 
       setHttpsMessage: function() {
           let tab = backgroundPage.tabs[this.tabId];
-          let url = backgroundPage.utils.parseUrl(tab.url);
-          let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
 
           if(/^https/.exec(tab.url)){
               this.httpsState = 'default';
           }
-          else if(httpsRules.size){
+          else{
+              let url = backgroundPage.utils.parseUrl(tab.url);
+              let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
+              
               httpsRules.forEach((ruleSet) => {
                   if(ruleSet.active && ruleSet.apply(tab.url)){
                       this.httpsState = 'default'; // figure out if this is upgraded later
