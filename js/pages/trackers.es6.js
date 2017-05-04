@@ -51,13 +51,6 @@ Trackers.prototype = $.extend({},
                 template: SiteTemplate
             });
 
-            this.views.trackerlist = new TrackerListView({
-                pageView: this,
-                model: new TrackerListModel({heading: 'Top Blocked', max:5}),
-                appendTo: $parent,
-                template: TrackerListTemplate
-            });
-
             this.views.trackerlist = new ItemMenuView({
                 pageView: this,
                 model: new ItemMenuModel({title: 'Options', id: "options-page",
@@ -66,6 +59,14 @@ Trackers.prototype = $.extend({},
                 appendTo: $parent,
                 template: ItemMenuTemplate
             });
+
+            this.views.trackerlist = new TrackerListView({
+                pageView: this,
+                model: new TrackerListModel({heading: 'Top Blocked', max:5}),
+                appendTo: $parent,
+                template: TrackerListTemplate
+            });
+
 
         }
 
