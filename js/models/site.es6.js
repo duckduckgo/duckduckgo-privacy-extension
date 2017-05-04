@@ -16,7 +16,10 @@ Site.prototype = $.extend({},
   Parent.prototype,
   {
       toggleWhitelist: function (s) {
-          console.log(`Site toggleWhitelist()`);
+          console.log('Site toggleWhitelist() not implemented');
+          this.isWhitelisted = !this.isWhitelisted;
+
+          // TODO actually update whitelist
       },
 
       updateTrackerCount: function() {
