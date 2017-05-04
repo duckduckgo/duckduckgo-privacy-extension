@@ -16,10 +16,14 @@ Site.prototype = $.extend({},
   Parent.prototype,
   {
       toggleWhitelist: function (s) {
-          console.log('Site toggleWhitelist() not implemented');
           this.isWhitelisted = !this.isWhitelisted;
-
-          // TODO actually update whitelist
+          let tab = backgroundPage.tabs[this.tabId];
+          let host = backgroundPage.utils.extractHostFromURL(tab.url);
+          let site = backgroundPage.Sites.get(host);
+          
+          if(site){
+              site.toggleWhiteList();
+          }
       },
 
       updateTrackerCount: function() {
