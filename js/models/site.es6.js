@@ -26,7 +26,8 @@ Site.prototype = $.extend({},
   {
       toggleWhitelist: function () {
           if(this.site){
-              this.site.toggleWhiteList();
+              this.isWhitelisted = !this.isWhitelisted;
+              this.site.setWhitelisted(this.isWhitelisted);
           }
       },
 
@@ -36,6 +37,7 @@ Site.prototype = $.extend({},
           let site = backgroundPage.Sites.get(host);
           if(site){
               this.site = site;
+              this.isWhitelisted = site.whiteListed;
           }
       },
 

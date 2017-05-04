@@ -7,7 +7,7 @@ class Site{
         this.scoreFunction = scoreFunction;
     }
 
-    toggleWhiteList(){ this.whiteListed = !this.whiteListed };
+    setWhitelisted(value){ this.whiteListed = value };
     
     isWhiteListed(){ return this.whiteListed };
     
