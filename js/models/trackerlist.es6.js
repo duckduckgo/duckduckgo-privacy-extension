@@ -4,8 +4,6 @@ var backgroundPage = chrome.extension.getBackgroundPage();
 
 function TrackerList (attrs) {
 
-    attrs.heading = "Top Blocked";
-
     Parent.call(this, attrs);
     this.companyList = backgroundPage.Companies.getTopBlocked(5);
 
