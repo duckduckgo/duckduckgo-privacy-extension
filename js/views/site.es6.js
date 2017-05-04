@@ -12,12 +12,9 @@ function Site (ops) {
 
     console.log("new site view");
 
-    this._cacheElems('.js-site', [ 'whitelist-toggle-bg', 'whitelist-toggle-fg' ]);
 
-    this.bindEvents([
-      [this.$whitelisttogglebg, 'click', this._whitelistClick],
-      [this.$whitelisttogglefg, 'click', this._whitelistClick]
-    ]);
+    // bind events
+    this.setup();
 
 
     // set up messaging to update the tracker count
@@ -30,14 +27,14 @@ function Site (ops) {
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisModel.tabId = tab.id;
             thisModel.updateTrackerCount();
-            thisView._rerender();
+            thisView.rerender(); // our custom rerender below
         }
     });
 
     chrome.runtime.onMessage.addListener(function(req, sender, res){
         if(req.rerenderPopup){
             thisModel.updateTrackerCount();
-            thisView._rerender();
+            thisView.rerender(); // our custom rerender below
         }
     });
 
@@ -47,10 +44,29 @@ Site.prototype = $.extend({},
     Parent.prototype,
     {
         _whitelistClick: function (e) {
-            console.log(`set whitelist for ${this.model.domain} to ${this.model.isWhitelisted}`);
+            // console.log(`set whitelist for ${this.model.domain} to ${this.model.isWhitelisted}`);
+            console.log('set whitelist', this);
 
             this.model.toggleWhitelist();
-            this.pageView._rerender();
+            // // this.pageView._rerender();
+            this.rerender();
+        },
+
+        setup: function() {
+
+            this._cacheElems('.js-site', [ 'whitelist-toggle-bg', 'whitelist-toggle-fg' ]);
+
+            this.bindEvents([
+              [this.$whitelisttogglebg, 'click', this._whitelistClick],
+              [this.$whitelisttogglefg, 'click', this._whitelistClick]
+            ]);
+            
+        },
+
+        rerender: function() {
+            this.unbindEvents();
+            this._rerender();
+            this.setup();
         }
 
     }
