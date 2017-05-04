@@ -28,14 +28,14 @@ Site.prototype = $.extend({},
           let site = this._getSite();
           if(site){
               site.toggleWhiteList();
-              this.isWhitelisted = !this.isWhitelisted;
+              this.isWhitelisted = site.whiteListed;
           }
       },
 
       setWhitelistStatus: function() {
           let site = this._getSite();
           if(site){
-            this.isWhitelisted = site.isWhiteListed();
+            this.isWhitelisted = site.whiteListed;
           }
       },
 
