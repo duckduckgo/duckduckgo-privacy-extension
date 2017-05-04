@@ -24,11 +24,21 @@ function Site (attrs) {
 Site.prototype = $.extend({},
   Parent.prototype,
   {
-      toggleWhitelist: function (s) {
-          console.log('Site toggleWhitelist() not implemented');
-          this.isWhitelisted = !this.isWhitelisted;
+      toggleWhitelist: function () {
+          if(this.site){
+              this.isWhitelisted = !this.isWhitelisted;
+              this.site.setWhitelisted(this.isWhitelisted);
+          }
+      },
 
-          // TODO actually update whitelist
+      setSiteObj: function() {
+          let tab = backgroundPage.tabs[this.tabId];
+          let host = backgroundPage.utils.extractHostFromURL(tab.url);
+          let site = backgroundPage.Sites.get(host);
+          if(site){
+              this.site = site;
+              this.isWhitelisted = site.whiteListed;
+          }
       },
 
       updateTrackerCount: function() {

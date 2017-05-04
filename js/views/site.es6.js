@@ -22,6 +22,7 @@ function Site (ops) {
         if(tab){
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisModel.tabId = tab.id;
+            thisModel.setSiteObj();
             thisModel.updateTrackerCount();
             thisModel.setHttpsMessage();
             thisView.rerender(); // our custom rerender below

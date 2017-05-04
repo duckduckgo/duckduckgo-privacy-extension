@@ -22,7 +22,7 @@ function isTracker(url, currLocation, tabId) {
         var blockSettings = settings.getSetting('blocking').slice(0);
         var currSite = Sites.add(utils.extractHostFromURL(currLocation));
 
-        if(isWhitelisted(host, tabId)) {
+        if(currSite.whiteListed) {
             return;
         }
 
@@ -52,12 +52,6 @@ function checkTrackersWithParentCompany(blockSettings, host, currLocation) {
         }
      });
     return toBlock;
-}
-
-function isWhitelisted(host, tabId){
-    if ((tabs[tabId] && tabs[tabId].whitelist) && (tabs[tabId].whitelist.indexOf(host) !== -1)) {
-        return true;
-    }
 }
 
 /* Check to see if this tracker is related
