@@ -26,36 +26,47 @@ Site.prototype = $.extend({},
           }
       },
 
-      isHTTPS: function() {
+      setHttpsMessage: function() {
           let tabHttpsRules = backgroundPage.activeRulesets.getRulesets(this.tabId);
           let tab = backgroundPage.tabs[this.tabId];
           let secureMessage = "Secure Connection";
           let unSecureMessage = "Unsecure Connection";
-          
-          if(/^https/.exec(tab.url)){
-              this.httpsStatusText = secureMessage;
-              return;
-          }
-          else if(tabHttpsRules && tabHttpsRules.length){
-              for(siteRules in tabHttpsRules){
-                  if(_hasMainFrameHttpsRule){
-                      this.httpsStatusText = secureMessage;
+          let secureMessageHttps = "Secure Connection-HTTPS";
+
+          if(tabHttpsRules){
+              for(var ruleUrl in tabHttpsRules){
+                  if(this._hasMainFrameHttpsRule(ruleUrl, tabHttpsRules[ruleUrl], tab.url)){
+                      this.httpsStatusText = secureMessageHttps;
                       return;
                   }
               }
           }
-          else {
-              this.httpsStatusText = unSecureMessage;
+          else if(/^https/.exec(tab.url)){
+              this.httpsStatusText = secureMessage;
+              return;
           }
-          
+
+          // fall through to unsecure message
+          this.httpsStatusText = unSecureMessage;
       },
 
-      _hasMainFrameHttpsRule: function(siteRules, tab){
-          for(rule in siteRules.rules){
-              if(rules.to === "https"){
-                  return true;
-              }
+      _hasMainFrameHttpsRule: function(ruleUrl, siteRules, tabUrl){
+          if(this._isMainFrameURL(ruleUrl, tabUrl)){
+            for(var rule in siteRules.rules){
+                if(siteRules.rules[rule].to === "https:"){
+                    return true;
+                }
+            }
           }
+      },
+
+      _isMainFrameURL(urlToCheck, mainFrameUrl){
+          let host = backgroundPage.utils.extractHostFromURL(mainFrameUrl);
+          let re = new RegExp(host, "gi");
+          if(re.exec(urlToCheck)){
+              return true;
+          }
+          return false;
       }
   }
 );
