@@ -2,11 +2,20 @@ const Parent = window.DDG.base.Model;
 
 var backgroundPage = chrome.extension.getBackgroundPage();
 
-function Site (attrs) {
+// TODO move to settings?
+const httpsStates = {
+        'default':  'Secure Connection',
+        'upgraded': 'Forced Secure Connection',
+        'none':     'Insecure Connection'
+    };
 
-    attrs.httpsIcon = 'orange';
-    attrs.httpsStatusText = 'Unsecure Connection';
-    attrs.blockMessage = 'Trackers Blocked';
+function Site (attrs) {
+    
+    // test FIXME get from httpseverywhere
+    attrs.httpsState = 'none';
+
+    // set message and icon based on httpsState
+    attrs.httpsStatusText = httpsStates[attrs.httpsState];
 
     Parent.call(this, attrs);
 };
