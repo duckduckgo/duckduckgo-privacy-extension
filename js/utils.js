@@ -30,10 +30,19 @@ require.scopes.utils = ( () => {
         });
     }
 
+    function getCurrentTab(callback){
+        chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
+            if(tabData.length){
+                callback(tabData[0])
+            }
+        });
+    }
+
     var exports = {};
     exports.extractHostFromURL = extractHostFromURL;
     exports.syncToStorage = syncToStorage;
     exports.getFromStorage = getFromStorage;
     exports.getCurrentURL = getCurrentURL;
+    exports.getCurrentTab = getCurrentTab;
     return exports;
 })();

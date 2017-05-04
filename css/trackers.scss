@@ -1,41 +1,39 @@
 @import "../node_modules/duckduckgo-colors/colors";
 
 body {
-    margin:0;
-    padding:0;
-    font-size:14px;
-    font-weight:bolder;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-weight: bolder;
+    color: #333;
 }
 
 #ddg-site-info {
     width: 270px;
-    padding:0px;
+    padding: 0px;
 }
 
 .js-menu-title {
-    padding:14px;
+    padding: 14px;
 }
 
 .js-menu-section {
-    border-bottom:1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 .js-search-form {
-  // float: left;
-  margin:0;
-  width:270px;
-  // width: 464px;
-  // margin: 10px;
+  margin: 0;
+  width: 270px;
   font-size: 1.14em;
   border-radius: 2px;
   height: 38px;
   border: 1px solid $platinum-dark;
-  color:  #383838;
+  color: #383838;
   background-color: $silver-light;
 
   position:absolute;
-  top:0px;
-  left:0px;
+  top: 0px;
+  left: 0px;
 }
 
 .js-search-input {
@@ -120,12 +118,17 @@ body {
  // .jsmenu-section ul, .js-site ul
 ul.js-menu-item-list {
     list-style-type: none;
-    padding-left:14px;
+    padding-left: 14px;
+    margin-top: 0;
 }
 
 // .js-site-item
 ul.js-menu-item-list li {
-    padding-top:17px;
+    padding-top: 17px;
+}
+
+ul.js-menu-item-list li.site-co:first-child {
+    padding-top: 0;
 }
 
 /* Whitelist toggle                              */
@@ -133,51 +136,51 @@ ul.js-menu-item-list li {
 /* this needs to be replaced with a real control */
 /* background */
 .js-site-whitelist-toggle-bg {
-    display:inline-block;
-    position:absolute;
-    right:50px;
-    width:32px;
-    overflow:visible;
-    height:12px;
-    border-radius:12px;
-    margin-top:0.3em;   // FIXME need proper vertical alignment
+    display: inline-block;
+    position: absolute;
+    right: 50px;
+    width: 32px;
+    overflow: visible;
+    height: 12px;
+    border-radius: 12px;
+    margin-top: 0.3em;   // FIXME need proper vertical alignment
 }
 /* foreground control */
 .js-site-whitelist-toggle-fg {
-    display:inline-block;
-    width:16px;
-    height:16px;
-    border-radius:16px;
-    background-color:white;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 16px;
+    background-color: white;
     margin-top:-2px;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 .js-site-whitelist-fg-true {
-    margin-left:0px;
+    margin-left: 0px;
 }
 .js-site-whitelist-fg-false {
-    margin-left:16px;
+    margin-left: 16px;
 }
 
 /* whitelist true means tracking is off, ie gray */
 .js-site-whitelist-true {
-    background-color:#aaa;
-    color:#aaa;
+    background-color: #aaa;
+    color: #aaa;
 }
 /* whitelist false means tracking is on, ie green */
 .js-site-whitelist-false {
-    background-color:#84ba50;
-    color:#84ba50;
+    background-color: #84ba50;
+    color: #84ba50;
 }
 
 .js-site-inline-icon {
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
     background-size: cover;
-    display:inline-block;
-    width:20px;
-    height:20px;
-    vertical-align:middle;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
 }
 
 .js-site-icon-right {
@@ -212,17 +215,17 @@ ul.js-menu-item-list li {
 
 
 .js-site-trackerCount {
-    border-radius:16px;
+    border-radius: 16px;
     background: #de5833;
     color: white;
-    padding:0px 8px;
+    padding: 0px 8px;
 }
 
 /* max width: 270 - (7*2) = 256 */
 .js-site-blocker-bar {
-    background:#e0e0e0;
-    position:absolute;
-    height:2em;
+    background: #e0e0e0;
+    position: absolute;
+    height: 2em;
     left: 7px;
     z-index:-1;
     margin-top:-0.3em;
@@ -230,7 +233,7 @@ ul.js-menu-item-list li {
 }
 
 .js-site-blocker-count {
-    display:inline-block;
-    position:absolute;
+    display: inline-block;
+    position: absolute;
     right: 14px;
 }

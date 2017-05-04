@@ -1,5 +1,7 @@
 const Parent = window.DDG.base.Model;
 
+var backgroundPage = chrome.extension.getBackgroundPage();
+
 function Site (attrs) {
 
     attrs.httpsIcon = 'orange';
@@ -14,9 +16,18 @@ Site.prototype = $.extend({},
   Parent.prototype,
   {
       toggleWhitelist: function (s) {
-          console.log(`Site toggleWhitelist()`);
-      }
+          console.log('Site toggleWhitelist() not implemented');
+          this.isWhitelisted = !this.isWhitelisted;
 
+          // TODO actually update whitelist
+      },
+
+      updateTrackerCount: function() {
+          let tab = backgroundPage.tabs[this.tabId];
+          if(tab){
+            this.trackerCount = tab.dispTotal;
+          }
+      }
   }
 );
 
