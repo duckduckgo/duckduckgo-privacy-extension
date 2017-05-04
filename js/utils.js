@@ -1,11 +1,16 @@
 require.scopes.utils = ( () => {
 
     function extractHostFromURL(url) {
-        var a = document.createElement('a');
-        a.href = url;
+        var a = parseUrl(url)
         var parts = a.hostname.split('.');
         var host = parts.slice(-2).join('.');
         return host;
+    }
+
+    function parseUrl(url){
+        var a = document.createElement('a');
+        a.href = url;
+        return a;
     }
 
     function syncToStorage(data){
@@ -44,5 +49,6 @@ require.scopes.utils = ( () => {
     exports.getFromStorage = getFromStorage;
     exports.getCurrentURL = getCurrentURL;
     exports.getCurrentTab = getCurrentTab;
+    exports.parseUrl = parseUrl;
     return exports;
 })();

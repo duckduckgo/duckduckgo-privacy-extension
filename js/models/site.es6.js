@@ -40,35 +40,23 @@ Site.prototype = $.extend({},
 
       setHttpsMessage: function() {
           let tab = backgroundPage.tabs[this.tabId];
-          let hostname = "www." + backgroundPage.utils.extractHostFromURL(tab.url);
-          let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(hostname);
+          let url = backgroundPage.utils.parseUrl(tab.url);
+          let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
 
-          if(httpsRules.size){
+          if(/^https/.exec(tab.url)){
+              this.httpsState = 'default';
+          }
+          else if(httpsRules.size){
               httpsRules.forEach((ruleSet) => {
-                  if(ruleSet.active && this._hasMainFrameHttpsRule(ruleSet.rules)){
+                  if(ruleSet.active && ruleSet.apply(tab.url)){
                       this.httpsState = 'default'; // figure out if this is upgraded later
                   }
               });
           }
-          else if(/^https/.exec(tab.url)){
-              this.httpsState = 'default';
-          }
 
           this.httpsStatusText = httpsStates[this.httpsState];
-      },
-
-      _hasMainFrameHttpsRule: function(rules){
-          let hasHttps = false;
-          rules.forEach((rule) => {
-              if(rule.to === "https:"){
-                  hasHttps = true;
-              }
-          });
-          return hasHttps;
       }
   }
 );
 
-
 module.exports = Site;
-
