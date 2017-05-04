@@ -25,7 +25,9 @@ Site.prototype = $.extend({},
 
       setWhitelistStatus: function() {
           let site = this._getSite();
-          this.isWhitelisted = site.isWhiteListed();
+          if(site){
+            this.isWhitelisted = site.isWhiteListed();
+          }
       },
 
       _getSite: function() {
