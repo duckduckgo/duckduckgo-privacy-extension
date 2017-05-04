@@ -42,20 +42,19 @@ Site.prototype = $.extend({},
           let tab = backgroundPage.tabs[this.tabId];
           let hostname = "www." + backgroundPage.utils.extractHostFromURL(tab.url);
           let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(hostname);
-          let secureMessage = "Secure Connection";
-          let secureMessageHttps = "Secure Connection-HTTPS";
 
           if(httpsRules.size){
               httpsRules.forEach((ruleSet) => {
                   if(ruleSet.active && this._hasMainFrameHttpsRule(ruleSet.rules)){
-                      this.httpsStatusText = secureMessageHttps;
+                      this.httpsState = 'default'; // figure out if this is upgraded later
                   }
               });
           }
           else if(/^https/.exec(tab.url)){
-              this.httpsStatusText = secureMessage;
-              return;
+              this.httpsState = 'default';
           }
+
+          this.httpsStatusText = httpsStates[this.httpsState];
       },
 
       _hasMainFrameHttpsRule: function(rules){
