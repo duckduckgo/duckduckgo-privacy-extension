@@ -22,7 +22,6 @@ function Site (ops) {
     var thisView = this,
         thisModel = this.model;
 
-
     backgroundPage.utils.getCurrentTab(function(tab) {
         if(tab){
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
