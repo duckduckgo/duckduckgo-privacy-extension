@@ -277,10 +277,12 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     }
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
-        utils.getCurrentURL(function(url){
-            tabs[id].url = url;
-            Companies.syncToStorage();
-        });
+        
+        if(tab.url){
+            tabs[id].url = tab.url;
+        }
+
+        Companies.syncToStorage();
     }
 
 });
