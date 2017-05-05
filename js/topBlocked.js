@@ -1,6 +1,6 @@
 function TopBlocked(sortFunc){
     this.data = [],
-    this.sortFunc = sortFunc,
+    this.sortFunc = sortFunc;
 }
 
 TopBlocked.prototype = {
