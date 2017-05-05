@@ -18,9 +18,9 @@ TopBlocked.prototype = {
    },
 
    sort: function(){
-       if(this.sorted){
-           return;
-       }
+       //if(this.sorted){
+       //    return;
+       //}
        this.data.sort(this.sortFunc);
        this.sorted = true;
    },
