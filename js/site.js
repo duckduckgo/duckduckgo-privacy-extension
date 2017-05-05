@@ -9,6 +9,10 @@ class Site{
 
     setWhitelisted(value){ 
         this.whiteListed = value;
+        this.setGlobalWhitelist();
+    };
+
+    setGlobalWhitelist(){
         let globalWhitelist = settings.getSetting('whitelist');
 
         if(!globalWhitelist){
@@ -18,16 +22,16 @@ class Site{
         var index = globalWhitelist.indexOf(this.domain);
         
         // add to settings whitelist
-        if(index === -1 && value === true){
+        if(index === -1 && this.whiteListed === true){
             globalWhitelist.push(this.domain);
         }
         // remove from settings whitelist
-        else if(index !== -1 && value === false){
+        else if(index !== -1 && this.whiteListed === false){
             globalWhitelist.splice(index, 1);
         }
         settings.updateSetting('whitelist', globalWhitelist);
     };
-    
+
     isWhiteListed(){ return this.whiteListed };
     
     addTracker(tracker){ 
