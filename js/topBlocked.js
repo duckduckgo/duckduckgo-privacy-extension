@@ -1,14 +1,12 @@
 function TopBlocked(sortFunc){
     this.data = [],
     this.sortFunc = sortFunc,
-    this.sorted = false;
 }
 
 TopBlocked.prototype = {
 
    add: function(element){
        this.data.push(element);
-       this.sorted = false
    },
 
    getTop: function(n){
@@ -18,11 +16,7 @@ TopBlocked.prototype = {
    },
 
    sort: function(){
-       //if(this.sorted){
-       //    return;
-       //}
        this.data.sort(this.sortFunc);
-       this.sorted = true;
    },
 
     clear: function(){
