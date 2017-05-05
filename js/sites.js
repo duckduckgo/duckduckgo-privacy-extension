@@ -18,6 +18,7 @@ var Sites = ( () => {
 
         all: () => { return Object.keys(siteContainer) },
 
-        clearData: () => { siteContainer = {} },
+        clearData: () => { siteContainer = {} }
+
     };
 })();
