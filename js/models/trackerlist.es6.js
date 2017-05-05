@@ -26,6 +26,8 @@ TrackerList.prototype = $.extend({},
   Parent.prototype,
   {
 
+      modelType: 'trackerList'
+
   }
 );
 

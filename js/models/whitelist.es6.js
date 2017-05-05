@@ -12,6 +12,8 @@ Whitelist.prototype = $.extend({},
   Parent.prototype,
   {
 
+      modelType: 'whitelist',
+
       getList: function () {
           // retrieve list from local storage
       }

@@ -15,6 +15,9 @@ function Site (attrs) {
 Site.prototype = $.extend({},
   Parent.prototype,
   {
+
+      modelType: 'site',
+
       toggleWhitelist: function (s) {
           console.log(`Site toggleWhitelist()`);
       },

@@ -1,6 +1,7 @@
 const $ = require('./../../node_modules/jquery');
 const EventEmitter2 = require('./../../node_modules/eventemitter2');
 const mixins = require('./mixins/index.es6.js');
+const store = require('./store.es6.js');
 
 function BaseModel (attrs) {
 
@@ -13,6 +14,21 @@ function BaseModel (attrs) {
     // attributes are applied directly
     // onto the instance:
     $.extend(this, attrs);
+
+
+
+    // check modelType and inject new reducer into minidux store
+    if (!this.modelType || typeof this.modelType !== 'string') {
+        throw new Error ('model missing a modelType property')
+    }
+    const initialState = JSON.stringify(this);
+    console.log(this.modelType + ' initialState: ' + initialState);
+    this.actionType = 'SET_' + this.modelType.toUpperCase();
+    this.store = store.createReducer(this.modelType, this.actionType);
+    this.store.dispatch({ type: this.actionType, properties: initialState });
+    // TODO: hook up dispatch to this.set() and this._emitChange()
+
+
 
 };
 
