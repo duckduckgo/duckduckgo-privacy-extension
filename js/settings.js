@@ -28,7 +28,13 @@ require.scopes.settings =(() => {
 
     function getSetting(name) {
         if(name){
-            return settings[name];
+            let setting = settings[name];
+            if(setting){
+                return setting
+            }
+            else{
+                return {}
+            }
         }
         else {
             return settings;
