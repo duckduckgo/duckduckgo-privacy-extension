@@ -3,8 +3,8 @@ class Site{
         this.domain = domain,
         this.trackers = [],
         this.score = null;
-        this.whiteListed = this._checkGlobalWhitelist(domain);
         this.scoreFunction = scoreFunction;
+        this.setWhitelistStatusFromGlobal(domain)
     }
 
     setWhitelisted(value){ 
@@ -42,12 +42,14 @@ class Site{
         return this.score;
     };
 
-    _checkGlobalWhitelist(domain){
+    setWhitelistStatusFromGlobal(domain){
         let globalWhitelist = settings.getSetting('whitelist');
         if(globalWhitelist && globalWhitelist[this.domain]){
-            return true;
+            this.setWhitelisted(true);
         }
-        return false;
+        else{
+            this.setWhitelisted(false);
+        }
     };
 
     getTrackers(){ return this.trackers };
