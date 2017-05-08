@@ -9,6 +9,7 @@ function Site (attrs) {
     attrs.blockMessage = 'Trackers Blocked';
 
     Parent.call(this, attrs);
+
 };
 
 

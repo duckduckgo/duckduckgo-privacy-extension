@@ -2,19 +2,42 @@ const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 const addReducer = require('./reducers.es6.js');
 
+// TODO: turn this whole thing into IIFE
+// TODO: notify autocomplete of change after onkeyup event in search input
+// LATER: don't return store. tuck store away from public API
+//        and only expose .register(), .subscribe() and .getState()
+// TODO: move creation of action type string into here from model
+//       and make actionType just `SET_<modelType>`
+// TODO: model.modelType -> .modelName
+// TODO: don't allow duplicate modelType/modelName (aka reducer names), throw error
+// TODO: create another fn/method that does the actual minidux dispatch
+//       from model.set() just call into that method!
 var store = null;
-
 const asyncReducers = {};
-function createReducer (reducerName, actionType) {
+
+/**
+ * Creates a reducer for each caller (in most cases, a model will be its caller)
+ * Returns store object with with updated reducers.
+ * Callers can now call .getState() and .dispatch() method on returned store obj
+ * @param {string} reducer name
+ * @param {actionType} uppercase action type that identifies the reducer
+ */
+function register (reducerName, actionType) {
+
     addReducer(asyncReducers, reducerName, (state, action) => {
+        if (state === undefined) state = { properties: {} }
         if (action.type === actionType) {
-            return action.properties || {};
+            return { properties: action.properties };
+        } else {
+            return state;
         }
+
     });
 
     const reducers = minidux.combineReducers(asyncReducers);
 
     if (!store) {
+      console.log('MINIDUX CREATE STORE')
         store = minidux.createStore(reducers, {});
         store.subscribe((state) => {
             console.log('subscriber state update:')
@@ -22,82 +45,18 @@ function createReducer (reducerName, actionType) {
             // make state immutable before broadcasting out to models!
             state = deepFreeze(state);
             // TODO: broadcast out changes to corresponding state.modelTypes
-            // via EventEmitter2
+            // via EventEmitter2; broadcast what's changed, old value, new value
+            // do a deep compare somewhere?
         });
     } else {
+        console.log('MINIDUX replaceReducer()')
         store.replaceReducer(reducers);
     }
 
     return store;
 }
 
-// TODO: turn store into constructor with an init phase that gets kicked
-// off (maybe) by page, and is required by page vs in base/index where it is now
-
-// maybe we only offer model.set() method (reducer) and hide
-// all this "reducer" stuff from developer, dynamically create each reducer
-// behind the curtain when each model is init'd, first dispatch() is model attrs
-// ...and swap this out for model._emit()
-// function exampleReducer1 (state, action) {
-//     if (action.type === 'SET_EXAMPLEREDUCER1') {
-//         return action.properties || {};
-//     }
-// }
-
-// function exampleReducer2 (state, action) {
-//   if (action.type === 'SET_EXAMPLEREDUCER2') {
-//     return action.properties || {};
-//   }
-// }
-
-// combine reducers
-// const reducers = minidux.combineReducers({exampleReducer1, exampleReducer2});
-
-// dynamically register each model in its "default state"
-// after model init (the $.extend(this, attrs) part of BaseModel.call()... etc)
-// maybe the only reducer is the .set() method on each model
-// after init phase!
-// const store = minidux.createStore(reducers, {});
-
-// console.log('default state:');
-// console.log(store.getState());
-
-// store.subscribe will need to be broadcast out to each model
-// each model will need to subscribe
-// remember: minidux only allows one store subscriber(!)
-// store.subscribe((state) => {
-//   console.log('subscriber state update:')
-//   console.log(state)
-//   // make state immutable before broadcasting out to models!
-//   state = deepFreeze(state);
-//   // TODO: broadcast out changes to corresponding state.modelTypes
-//   // via EventEmitter2
-// });
-
-// this will happen when models call model.set(), we'll just simulate it here:
-// window.setTimeout(() => {
-
-//   store.dispatch({ type: 'SET_EXAMPLEREDUCER1', properties: {
-//     modelType: 'model1',
-//     foo: 'foo',
-//     bar: { baz: 'baz' }
-//   }
-//   });
-//   console.log('state after first dispatch call:')
-//   console.log(store.getState());
-
-//   store.dispatch({ type: 'SET_EXAMPLEREDUCER2', properties: {
-//     modelType: 'model2',
-//     hay: 'hay'
-//   }
-//   });
-//   console.log('state after second dispatch call:')
-//   console.log(store.getState());
-
-//   // TODO: figure out if we can dynamically register a new model+reducer!
-
-// }, 1000)
 
 module.exports = {
-  createReducer: createReducer
+  register: register
 };

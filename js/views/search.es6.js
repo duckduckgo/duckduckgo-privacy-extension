@@ -13,6 +13,7 @@ function Search (ops) {
     this._cacheElems('.js-search', [ 'form', 'input', 'go' ]);
 
     this.bindEvents([
+      [this.$input, 'keyup', this._handleKeyup],
       [this.$go, 'click', this._handleSubmit],
       [this.$form, 'submit', this._handleSubmit]
     ]);
@@ -22,6 +23,11 @@ function Search (ops) {
 Search.prototype = $.extend({},
     Parent.prototype,
     {
+
+        _handleKeyup: function (e) {
+            this.model.set('searchText', this.$input.val());
+        },
+
         _handleSubmit: function (e) {
             console.log(`Search submit for ${this.$input.val()}`);
             this.model.doSearch(this.$input.val());

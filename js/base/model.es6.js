@@ -1,5 +1,5 @@
 const $ = require('./../../node_modules/jquery');
-const EventEmitter2 = require('./../../node_modules/eventemitter2');
+// const EventEmitter2 = require('./../../node_modules/eventemitter2');
 const mixins = require('./mixins/index.es6.js');
 const store = require('./store.es6.js');
 
@@ -16,7 +16,6 @@ function BaseModel (attrs) {
     $.extend(this, attrs);
 
 
-
     // check modelType and inject new reducer into minidux store
     if (!this.modelType || typeof this.modelType !== 'string') {
         throw new Error ('model missing a modelType property')
@@ -24,17 +23,14 @@ function BaseModel (attrs) {
     const initialState = JSON.stringify(this);
     console.log(this.modelType + ' initialState: ' + initialState);
     this.actionType = 'SET_' + this.modelType.toUpperCase();
-    this.store = store.createReducer(this.modelType, this.actionType);
+    this.store = store.register(this.modelType, this.actionType);
     this.store.dispatch({ type: this.actionType, properties: initialState });
-    // TODO: hook up dispatch to this.set() and this._emitChange()
-
-
 
 };
 
 BaseModel.prototype = $.extend({},
-    EventEmitter2.prototype,
-    mixins.events,
+    // EventEmitter2.prototype,
+    // mixins.events,
     {
 
         /**
@@ -50,10 +46,15 @@ BaseModel.prototype = $.extend({},
          *
          * @param {string} attr
          * @param {*} val
-         * @param {object} ops
+         * REMOVE @param {object} ops -- remove silent option
          * @api public
          */
-        set: function(attr, val, ops) {
+        set: function(attr, val) {
+
+            this[attr] = val;
+            this.store.dispatch({ type: this.actionType, properties: JSON.stringify(this) });
+
+            // OLD CODE:
             // support passing a hash of values to set instead of
             // single attribute/value pair, i.e.:
             //
@@ -61,13 +62,14 @@ BaseModel.prototype = $.extend({},
             //   name: 'something',
             //   description: 'something described'
             // });
+            /*
             if (typeof attr === 'object') {
                 for (var key in attr) {
                     this.set(key, attr[key], val);
                 }
             }
-
-            ops = ops || {};
+            */
+            /*ops = ops || {};
 
             var existingVal = this[attr],
                 isChanging = existingVal !== val;
@@ -75,7 +77,10 @@ BaseModel.prototype = $.extend({},
             this[attr] = val;
 
             !ops.silent && isChanging && this._emitChange(attr, existingVal);
+            */
         },
+
+
 
         /**
          * Actually broadcasts the changes out
@@ -92,11 +97,14 @@ BaseModel.prototype = $.extend({},
          * @param {*} oldVal
          * @api private
          */
+
+         /*
         _emitChange: function(attr, oldVal) {
             var val = this[attr];
             this.emit('change:' + attr, val, oldVal);
             this.emit('change', attr, val, oldVal);
         },
+        */
 
         /**
          * Convenience method for code clarity

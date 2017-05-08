@@ -6,4 +6,3 @@ module.exports = function () {
             <div class="js-site-inline-icon js-site-icon-right js-icon-arrow"></div>
         </div>`;
 }
-

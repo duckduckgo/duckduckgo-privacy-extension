@@ -15,6 +15,11 @@ const ItemMenuView = require('./../views/itemMenu.es6.js');
 const ItemMenuModel = require('./../models/itemMenu.es6.js');
 const ItemMenuTemplate = require('./../templates/itemMenu.es6.js');
 
+const AutocompleteView = require('./../views/autocomplete.es6.js');
+const AutocompleteModel = require('./../models/autocomplete.es6.js');
+const autocompleteTemplate = require('./../templates/autocomplete.es6.js');
+
+
 function Trackers (ops) {
     Parent.call(this, ops);
 };
@@ -37,6 +42,13 @@ Trackers.prototype = $.extend({},
                 model: new SearchModel({searchText:''}),
                 appendTo: $parent,
                 template: SearchTemplate
+            });
+
+            this.views.autocomplete = new AutocompleteView({
+                pageView: this,
+                model: new AutocompleteModel({searchText: ''}),
+                appendTo: null,
+                template: autocompleteTemplate
             });
 
             this.views.site = new SiteView({
