@@ -15,6 +15,10 @@ class Site{
     setGlobalWhitelist(){
         let globalWhitelist = settings.getSetting('whitelist');
 
+        if(!globalWhitelist){
+            globalWhitelist = {};
+        }
+
         if(this.whiteListed){
             globalWhitelist[this.domain] = true;
         }
@@ -40,6 +44,11 @@ class Site{
 
     setWhitelistStatusFromGlobal(domain){
         let globalWhitelist = settings.getSetting('whitelist');
+
+        if(!globalWhitelist){
+            globalWhitelist = {};
+        }
+
         if(globalWhitelist[this.domain]){
             this.setWhitelisted(true);
         }
