@@ -33,6 +33,7 @@ require.scopes.settings =(() => {
                 return setting
             }
             else{
+                updateSetting(name, {});
                 return {}
             }
         }
