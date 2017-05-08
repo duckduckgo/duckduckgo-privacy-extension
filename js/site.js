@@ -16,19 +16,16 @@ class Site{
         let globalWhitelist = settings.getSetting('whitelist');
 
         if(!globalWhitelist){
-            globalWhitelist = [];
+            globalWhitelist = {};
         }
 
-        var index = globalWhitelist.indexOf(this.domain);
-        
-        // add to settings whitelist
-        if(index === -1 && this.whiteListed === true){
-            globalWhitelist.push(this.domain);
+        if(this.whiteListed){
+            globalWhitelist[this.domain] = true;
         }
-        // remove from settings whitelist
-        else if(index !== -1 && this.whiteListed === false){
-            globalWhitelist.splice(index, 1);
+        else {
+            delete globalWhitelist[this.domain];
         }
+
         settings.updateSetting('whitelist', globalWhitelist);
     };
 
@@ -47,7 +44,7 @@ class Site{
 
     _checkGlobalWhitelist(domain){
         let globalWhitelist = settings.getSetting('whitelist');
-        if(globalWhitelist && globalWhitelist.indexOf(domain) !== -1){
+        if(globalWhitelist && globalWhitelist[this.domain]){
             return true;
         }
         return false;
