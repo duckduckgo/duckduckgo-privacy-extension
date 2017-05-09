@@ -16,29 +16,41 @@
 -->
 <!DOCTYPE html>
 <html>
-<head><title>DuckDuckGo for Chrome - Options</title></head>
-<script type="text/javascript" src="../js/options.js"></script>
+<head>
+    <title>DuckDuckGo for Chrome - Options</title>
+    <link rel="stylesheet" type="text/css" href="../public/css/trackers.css">
+</head>
 
 <body>
 
-  Show Answers in right panel on Google
-  <input type="checkbox" id="zeroclick_google_right" ></input>
-<br>
-  Remember last search in the popup
-  <input type="checkbox" id="lastsearch_enabled" checked="yes"></input>
-<br>
-  Use POST requests where possible
-  <input type="checkbox" id="use_post" ></input>
-<br>
-  Show debug information:
-  <input type="checkbox" id="dev" ></input>
-<br>
-  Safe Search:
-  <input type="checkbox" id="safesearch" checked="yes" ></input>
-<br>
 
 
-<button>Save</button>
-  <div id="status"> </div>
+<div id="ddg-options">
+
+    <div id="ddg_logo"></div>
+
+    <div class="menu-section">
+        <div class="menu-title">About</div>
+
+        <div class="menu-p">DuckDuckGo-the search engine that respsects your privacy-now helps you
+            protect your privacy online. Browse the web without being tracked.
+        </div>
+
+        <ul class="menu-item-list">
+            <li><a href="#">Learn More</a></li> 
+            <li><a href="#">Send Feedback</a></li> 
+        </ul>
+    </div>
+    
+    <div id="ddg-options-content">
+    </div>
+
+
+</div>
+
+
+<script src="../public/js/base.js" type="text/javascript"></script>
+<script src="../public/js/options.js" type="text/javascript"></script>
+
 </body>
 </html>

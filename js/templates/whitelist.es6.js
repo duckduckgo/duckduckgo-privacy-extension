@@ -1,11 +1,21 @@
 const bel = require('./../../node_modules/bel');
 
 module.exports = function () {
+
+    var listItems = function(list) {
+
+        if (list.length > 0) {
+            return bel`${list.map((dom) => bel`<li class="js-whitelist-item">${dom}<span class="js-site-icon-right">x</span></li>`)}`;
+        }
+
+        return bel`<li class="js-whitelist-item">No whitelisted sites.</li>`;
+
+    };
+
     return bel`<div class="js-whitelist">
-      <h2>${this.model.heading}</h2>
-        <ul>
-          <li class="js-whitelist-item">foo.com</li>
-          <li class="js-whitelist-item">foo.com</li>
-        </ul>
-    </div>`;
+            <div class="menu-title">Whitelist</div>
+            <ul class="js-menu-item-list">
+                ${listItems(this.model.list)}
+            </ul>
+        </div>`;
 }

@@ -10,14 +10,8 @@ function Whitelist (ops) {
 
     console.log("new Whitelist");
 
-    // this._cacheElems() caches jQuery selectors, so the following would be
-    // accessible via: `this.$item` from within this view
-    // and is equivalent to $('.js-whitelist-item')
-    this._cacheElems('.js-whitelist', [
-      'item'
-    ]);
+    this._cacheElems('.js-whitelist', [ 'item' ]);
 
-    // this.bindEvents() wires up jQuery selectors to events and their handlers:
     this.bindEvents([
       [this.$item, 'click', this._handleClick]
     ]);
@@ -29,7 +23,7 @@ Whitelist.prototype = $.extend({},
     {
 
         _handleClick: function (e) {
-            console.log(`_handleClick()`);
+            console.log(`whitelist _handleClick()`);
         }
 
     }

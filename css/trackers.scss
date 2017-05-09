@@ -13,12 +13,17 @@ body {
     padding: 0px;
 }
 
-.js-menu-title {
+.js-menu-title, .menu-title {
     padding: 14px;
 }
 
-.js-menu-section {
+.js-menu-section, .menu-section {
     border-bottom: 1px solid #e0e0e0;
+}
+
+.menu-p {
+    padding-left:14px;
+    font-weight:normal;
 }
 
 .js-search-form {
@@ -116,14 +121,14 @@ body {
 }
 
  // .jsmenu-section ul, .js-site ul
-ul.js-menu-item-list {
+ul.js-menu-item-list, ul.menu-item-list {
     list-style-type: none;
     padding-left: 14px;
     margin-top: 0;
 }
 
 // .js-site-item
-ul.js-menu-item-list li {
+ul.js-menu-item-list li, ul.menu-item-list li {
     padding-top: 17px;
 }
 
@@ -135,7 +140,7 @@ ul.js-menu-item-list li.site-co:first-child {
 /* getting this approximately in place           */
 /* this needs to be replaced with a real control */
 /* background */
-.js-site-whitelist-toggle-bg {
+.js-site-whitelist-toggle-bg, .js-toggle-bg {
     display: inline-block;
     position: absolute;
     right: 50px;
@@ -146,7 +151,7 @@ ul.js-menu-item-list li.site-co:first-child {
     margin-top: 0.3em;   // FIXME need proper vertical alignment
 }
 /* foreground control */
-.js-site-whitelist-toggle-fg {
+.js-site-whitelist-toggle-fg, .js-toggle-fg {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -156,20 +161,23 @@ ul.js-menu-item-list li.site-co:first-child {
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
-.js-site-whitelist-fg-true {
+.js-site-whitelist-fg-true, .js-toggle-fg-false {
     margin-left: 0px;
 }
-.js-site-whitelist-fg-false {
+.js-site-whitelist-fg-false, .js-toggle-fg-true {
     margin-left: 16px;
 }
 
 /* whitelist true means tracking is off, ie gray */
-.js-site-whitelist-true {
+/* normal toggle false means off and gray! */
+.js-site-whitelist-true, .js-toggle-bg-false {
     background-color: #aaa;
     color: #aaa;
 }
+
 /* whitelist false means tracking is on, ie green */
-.js-site-whitelist-false {
+/* normal toggle true means on and green! */
+.js-site-whitelist-false, .js-toggle-bg-true {
     background-color: #84ba50;
     color: #84ba50;
 }
@@ -244,4 +252,19 @@ ul.js-menu-item-list li.site-co:first-child {
     display: inline-block;
     position: absolute;
     right: 14px;
+}
+
+
+#ddg-options {
+    width: 400px;
+    margin: 3em auto auto auto;
+    position: relative;
+}
+
+#ddg_logo {
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/logo-horizontal.png');
+    width: 158px;
+    height: 44px;
+    background-repeat: no-repeat;
+    margin-left:14px;
 }
