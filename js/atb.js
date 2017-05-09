@@ -17,8 +17,8 @@ var ATB = (() => {
                 ATB.getSetAtb(atbSetting, setAtbSetting).then((newAtb) => {
                     if(newAtb !== setAtbSetting){
                         settings.updateSetting('set_atb', newAtb);
-                        resolve(newAtb);
                     }
+                    resolve(newAtb);
                 });
             });
         },
@@ -61,6 +61,37 @@ var ATB = (() => {
 
                 return {redirectUrl: newURL};
             }
+        },
+
+        setInitialVersions: () => {
+            console.log("Setting intial versions");
+            if(!settings.getSetting('atb')){
+                let versions = ATB.calculateInitialVersions();
+                console.log("Versions: ", versions);
+                if(versions && versions.major && versions.minor){
+                    settings.updateSetting('atb', 'v' + versions.major + '-' +versions.minor);
+                }
+            }
+        },
+
+        calculateInitialVersions: () => {
+            let oneWeek = 604800000,
+                oneDay = 86400000,
+                oneHour = 3600000,
+                oneMinute = 60000,
+                estEpoch = 1456290000000,
+                localDate = new Date(),
+                localTime = localDate.getTime(),
+                utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute),
+                est = new Date(utcTime + (oneHour * -5)),
+                dstStartDay = 13 - ((est.getFullYear() - 2016) % 6),
+                dstStopDay = 6 - ((est.getFullYear() - 2016) % 6),
+                isDST = (est.getMonth() > 2 || (est.getMonth() == 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() == 10 && est.getDate() < dstStopDay)),
+                epoch = isDST ? estEpoch - oneHour : estEpoch,
+                timeSinceEpoch = new Date().getTime() - epoch,
+                majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
+                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);        
+            return {"major": majorVersion, "minor": minorVersion};
         }
     }
 })()

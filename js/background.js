@@ -50,26 +50,7 @@ function Background() {
       return;
     }  
 
-    if (localStorage['atb'] === undefined) {
-        var oneWeek = 604800000,
-            oneDay = 86400000,
-            oneHour = 3600000,
-            oneMinute = 60000,
-            estEpoch = 1456290000000,
-            localDate = new Date(),
-            localTime = localDate.getTime(),
-            utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute),
-            est = new Date(utcTime + (oneHour * -5)),
-            dstStartDay = 13 - ((est.getFullYear() - 2016) % 6),
-            dstStopDay = 6 - ((est.getFullYear() - 2016) % 6),
-            isDST = (est.getMonth() > 2 || (est.getMonth() == 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() == 10 && est.getDate() < dstStopDay)),
-            epoch = isDST ? estEpoch - oneHour : estEpoch,
-            timeSinceEpoch = new Date().getTime() - epoch,
-            majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);
-
-        localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
-    }
+    ATB.setInitialVersions();
 
     // inject the oninstall script to opened DuckDuckGo tab.
     chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
@@ -190,57 +171,42 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
 
       // Add ATB for DDG URLs, otherwise block trackers
-      if (e.url.search('/duckduckgo\.com') !== -1) {
-          // Only change the URL if there is no ATB param specified.
-          if (e.url.indexOf('atb=') !== -1) {
-            return;
-          }
+      let ddgAtbRewrite = ATB.redirectURL(e);
+      if(ddgAtbRewrite)
+          return ddgAtbRewrite;
+      
+      if(e.type === 'main_frame'){
+          delete tabs[e.tabId];
+          return;
+      }
 
-          // Only change the URL if there is an ATB saved in localStorage
-          if (localStorage['atb'] === undefined) {
-            return;
-          }
-        
-          var newURL = e.url + "&atb=" + localStorage['atb'];
-          return {
-            redirectUrl: newURL
-          };
-      } 
-      else {
+      if(!tabs[e.tabId]){
+          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0}
+      }
 
-          if(e.type === 'main_frame'){
-              delete tabs[e.tabId];
-              return;
+      if(!settings.getSetting('extensionIsEnabled')){
+          return;
+      }
+          
+      var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
+      
+      if(block){
+          var name = block.tracker;
+          
+          if(!tabs[e.tabId]['trackers'][name]){
+                tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
           }
-
-          if(!tabs[e.tabId]){
-              tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0}
-          }
-
-          if(!settings.getSetting('extensionIsEnabled')){
-              return;
+          else{
+              tabs[e.tabId]['trackers'][name].count += 1;
           }
           
-          var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
+          tabs[e.tabId]['total'] += 1;
+          tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
 
-            if(block){
-                var name = block.tracker;
-
-                if(!tabs[e.tabId]['trackers'][name]){
-                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
-                }
-                else {
-                    tabs[e.tabId]['trackers'][name].count += 1;
-                }
-                tabs[e.tabId]['total'] += 1;
-
-                tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
-
-                updateBadge(e.tabId, tabs[e.tabId].dispTotal);
-                chrome.runtime.sendMessage({"rerenderPopup": true});
+          updateBadge(e.tabId, tabs[e.tabId].dispTotal);
+          chrome.runtime.sendMessage({"rerenderPopup": true});
                 
-                return {cancel: true};
-            }
+          return {cancel: true};
       }
     },
     {
@@ -291,35 +257,7 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
     delete tabs[id];
 });
 
-chrome.webRequest.onCompleted.addListener(
-      function () {
-          var atb = localStorage['atb'],
-              setATB = localStorage['set_atb'];
-
-          if (!atb || !setATB) {
-            return;
-          }
-
-          var xhr = new XMLHttpRequest();
-
-          xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-               if (xhr.status == 200) {
-                 var curATB = JSON.parse(xhr.responseText);
-                 if(curATB.version !== setATB) {
-                   localStorage['set_atb'] = curATB.version;
-                 }
-               }
-            }
-          };
-
-          xhr.open('GET',
-            'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
-              + '&atb=' + atb + '&set_atb=' + setATB,
-            true
-          );
-          xhr.send();
-    },
+chrome.webRequest.onCompleted.addListener( ATB.updateSetAtb,
     {
         urls: [
             "*://duckduckgo.com/?*",
