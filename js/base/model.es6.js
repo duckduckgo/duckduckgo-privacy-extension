@@ -20,7 +20,7 @@ function BaseModel (attrs) {
     if (!this.modelName || typeof this.modelName !== 'string') {
         throw new Error ('cannot init a model without a modelName property')
     } else {
-        store.register(this.modelName, JSON.stringify(this));
+        store.register(this.modelName, this._toJSON());
     }
 
 };
@@ -54,7 +54,7 @@ BaseModel.prototype = $.extend({},
             store.update(
                 this.modelName,
                 { property: attr, value: val, lastValue: lastValue },
-                JSON.stringify(this)
+                this._toJSON()
             );
         },
 
@@ -92,6 +92,17 @@ BaseModel.prototype = $.extend({},
         clear: function(attr, ops) {
             this.set(attr, null, ops);
             // TODO: update minidux store here!
+        },
+
+
+        /**
+         * Private method for turning `this` into a
+         * JSON object before sending to minidux store
+         * Basically just weeds out properties that
+         * are functions.
+         */
+        _toJSON: function () {
+            return JSON.parse(JSON.stringify(this))
         }
 
     }

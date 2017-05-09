@@ -6,10 +6,16 @@ const reducers = require('./reducers.es6.js');
 // LATER: don't return store. tuck store away from public API
 //        and only expose .register(), .subscribe() and .getState()
 
+/**
+ * store is our minidux state machine
+ * its api is not publicly exposed. developers must use public api below.
+ * @api private
+ */
 let store = null;
 
+
 /**
- * Creates a reducer for each caller (the base model will be its caller)
+ * Creates a minidux reducer for each caller (the base model will be its caller)
  * to track its state
  * @param {string} modelName - must be unique
  * @param {object} initialState - initial state of model
@@ -34,12 +40,24 @@ function register (modelName, initialState) {
             // do a deep compare somewhere?
         });
     } else {
+        // update reducers to include the newest registered here
         store.replaceReducer(combinedReducers);
-        // send initial state of model
+        // send initial state of model that registered itself to store
         update(modelName, null, initialState);
     }
 }
 
+
+/**
+ * Updates state of store by model name, which is mapped to
+ * a corresponding reducer.
+ * Although api is public, most of what you need to do can be
+ * done with model.set() and model.clear() instead of directly here
+ * @param {string} modelName
+ * @param {object} change - { property, value, lastValue }
+ * @param {object} model properties as JSON
+ * @api public
+ */
 function update (modelName, change, properties) {
   const actionType = reducers.getActionType(modelName);
   store.dispatch({
@@ -48,6 +66,7 @@ function update (modelName, change, properties) {
     properties: properties
   });
 }
+
 
 // public api
 module.exports = {
