@@ -46,6 +46,7 @@
           let atbRegex = new RegExp('&atb=' + settings.getSetting('atb'),'g');
           assert.ok(atbRegex.exec(tab.url), "new tab url has atb param");
           done();
+          chrome.tabs.remove(tab.id);
       });
   });
 
