@@ -15,8 +15,8 @@ let store = null;
 
 
 /**
- * Creates a minidux reducer for each caller (the base model will be its caller)
- * to track its state
+ * Creates a minidux reducer for each model.
+ * The base model will be its caller in most cases.
  * @param {string} modelName - must be unique
  * @param {object} initialState - initial state of model
  * @api public
@@ -50,7 +50,7 @@ function register (modelName, initialState) {
 
 /**
  * Updates state of store by model name, which is mapped to
- * a corresponding reducer.
+ * a corresponding reducer in the store.
  * Although api is public, most of what you need to do can be
  * done with model.set() and model.clear() instead of directly here
  * @param {string} modelName
