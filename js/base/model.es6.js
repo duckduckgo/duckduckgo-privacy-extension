@@ -1,33 +1,28 @@
 const $ = require('./../../node_modules/jquery');
-// const EventEmitter2 = require('./../../node_modules/eventemitter2');
 const mixins = require('./mixins/index.es6.js');
 const store = require('./store.es6.js');
 
 function BaseModel (attrs) {
 
-    // TODO: do we need this?
-    // By default EventEmitter2 is capped at 10 to prevent unintentional memory leaks/crashes,
-    // bumping up so we can violate it. Need to do an audio/review at some point and see if we can
-    // reduce some of the event binding.
-    // this.setMaxListeners(500);
-
     // attributes are applied directly
     // onto the instance:
     $.extend(this, attrs);
 
-
-    // check modelName and register with minidux store
+    // register model with minidux store
+    // after checking `modelName` property
     if (!this.modelName || typeof this.modelName !== 'string') {
-        throw new Error ('cannot init a model without a modelName property')
+        throw new Error ('cannot init a model without a `modelName` property')
     } else {
         store.register(this.modelName, this._toJSON());
     }
 
+    // subscriber to minidux store/state updates
+    this.storeSubscriber = store.subscriber;
+
 };
 
 BaseModel.prototype = $.extend({},
-    // EventEmitter2.prototype,
-    // mixins.events,
+    mixins.events,
     {
 
         /**
@@ -58,31 +53,6 @@ BaseModel.prototype = $.extend({},
             );
         },
 
-
-
-        /**
-         * Actually broadcasts the changes out
-         * to anyone listening.
-         *
-         * 2 events are emitted:
-         *  - more granular a specific attribute changed: 'change:<attr>'
-         *  - and the generic something changed on me: 'change'
-         *
-         * The change is emitted out with the new value as the first
-         * arg and the old value as the second arg (if one was passed).
-         *
-         * @param {string} attr
-         * @param {*} oldVal
-         * @api private
-         */
-
-         /*
-        _emitChange: function(attr, oldVal) {
-            var val = this[attr];
-            this.emit('change:' + attr, val, oldVal);
-            this.emit('change', attr, val, oldVal);
-        },
-        */
 
         /**
          * Convenience method for code clarity

@@ -1,14 +1,15 @@
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 const reducers = require('./reducers.es6.js');
+const EventEmitter2 = require('./../../node_modules/eventemitter2');
 
 // TODO: notify autocomplete of change after onkeyup event in search input
 // LATER: don't return store. tuck store away from public API
 //        and only expose .register(), .subscribe() and .getState()
 
 /**
- * store is our minidux state machine
- * its api is not publicly exposed. developers must use public api below.
+ * `store` is our minidux state machine
+ * Its api is not publicly exposed. Developers must use public api below.
  * @api private
  */
 let store = null;
@@ -33,11 +34,10 @@ function register (modelName, initialState) {
         store.subscribe((state) => {
             console.log('state update:')
             console.log(state)
-            // make state immutable before broadcasting out to models!
+            // make state immutable before publishing
             state = deepFreeze(state);
-            // TODO: broadcast out changes to subscribers
-            // via EventEmitter2; broadcast what's changed, old value, new value
-            // do a deep compare somewhere?
+            // publish changes to subscribers
+            publish(state);
         });
     } else {
         // update reducers to include the newest registered here
@@ -60,6 +60,7 @@ function register (modelName, initialState) {
  */
 function update (modelName, change, properties) {
   const actionType = reducers.getActionType(modelName);
+  if (properties.storeSubscriber) delete properties.storeSubscriber;
   store.dispatch({
     type: actionType,
     change: change,
@@ -68,8 +69,24 @@ function update (modelName, change, properties) {
 }
 
 
+/**
+ * Actually broadcasts the changes out to models subscribed.
+ *
+ * 2 events are emitted:
+ *  - generic something changed in global state: 'change'
+ *  - more granular a specific attribute changed: 'change:<modelName>'
+ */
+const subscriber = new EventEmitter2();
+subscriber.setMaxListeners(100);
+function publish (state) {
+  subscriber.emit(`change`, state);
+  // TODO: subscriber.emit(`change:<modelName>`, state.<modelName>);
+}
+
+
 // public api
 module.exports = {
   register: register,
-  update: update
+  update: update,
+  subscriber: subscriber
 };
