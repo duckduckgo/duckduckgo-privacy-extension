@@ -11,7 +11,7 @@ Autocomplete.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelType: 'autocomplete'
+      modelName: 'autocomplete'
 
   }
 );

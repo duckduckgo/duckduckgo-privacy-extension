@@ -23,8 +23,8 @@ function combine () {
   return minidux.combineReducers(asyncReducers);
 }
 
-function getActionType (modelType) {
-    return 'SET_' + modelType.toUpperCase();
+function getActionType (reducerName) {
+    return 'SET_' + reducerName.toUpperCase();
 }
 
 // public api

@@ -5,44 +5,43 @@ const reducers = require('./reducers.es6.js');
 // TODO: notify autocomplete of change after onkeyup event in search input
 // LATER: don't return store. tuck store away from public API
 //        and only expose .register(), .subscribe() and .getState()
-// TODO: model.modelType -> .modelName
-// TODO: don't allow duplicate modelType/modelName (aka reducer names), throw error
 
 let store = null;
 
 /**
  * Creates a reducer for each caller (the base model will be its caller)
  * to track its state
- * @param {string} modelType
- * @param {object} initialState
+ * @param {string} modelName - must be unique
+ * @param {object} initialState - initial state of model
+ * @api public
  */
-function register (modelType, initialState) {
-    if (typeof modelType !== 'string') { throw new Error('modelType must be a string'); }
-    if (reducers.asyncReducers[modelType]) { throw new Error ('modelType must be unique, no duplicates'); }
+function register (modelName, initialState) {
+    if (typeof modelName !== 'string') { throw new Error('modelName must be a string'); }
+    if (reducers.asyncReducers[modelName]) { throw new Error ('modelName must be unique, no duplicates'); }
 
-    reducers.add(modelType);
+    reducers.add(modelName);
     const combinedReducers = reducers.combine();
 
     if (!store) {
         store = minidux.createStore(combinedReducers, {});
         store.subscribe((state) => {
-            console.log('subscriber state update:')
+            console.log('state update:')
             console.log(state)
             // make state immutable before broadcasting out to models!
             state = deepFreeze(state);
-            // TODO: broadcast out changes to corresponding state.modelTypes
+            // TODO: broadcast out changes to subscribers
             // via EventEmitter2; broadcast what's changed, old value, new value
             // do a deep compare somewhere?
         });
     } else {
         store.replaceReducer(combinedReducers);
-        // send initial state to reducer
-        update(modelType, null, initialState);
+        // send initial state of model
+        update(modelName, null, initialState);
     }
 }
 
-function update (modelType, change, properties) {
-  const actionType = reducers.getActionType(modelType);
+function update (modelName, change, properties) {
+  const actionType = reducers.getActionType(modelName);
   store.dispatch({
     type: actionType,
     change: change,

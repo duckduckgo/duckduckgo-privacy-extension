@@ -16,11 +16,11 @@ function BaseModel (attrs) {
     $.extend(this, attrs);
 
 
-    // check modelType and register with minidux store
-    if (!this.modelType || typeof this.modelType !== 'string') {
-        throw new Error ('model missing a modelType property')
+    // check modelName and register with minidux store
+    if (!this.modelName || typeof this.modelName !== 'string') {
+        throw new Error ('cannot init a model without a modelName property')
     } else {
-        store.register(this.modelType, JSON.stringify(this));
+        store.register(this.modelName, JSON.stringify(this));
     }
 
 };
@@ -52,7 +52,7 @@ BaseModel.prototype = $.extend({},
 
             // send model state update to minidux store
             store.update(
-                this.modelType,
+                this.modelName,
                 { property: attr, value: val, lastValue: lastValue },
                 JSON.stringify(this)
             );
@@ -91,6 +91,7 @@ BaseModel.prototype = $.extend({},
          */
         clear: function(attr, ops) {
             this.set(attr, null, ops);
+            // TODO: update minidux store here!
         }
 
     }

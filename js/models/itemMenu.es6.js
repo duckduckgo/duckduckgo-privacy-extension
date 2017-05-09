@@ -12,7 +12,7 @@ ItemMenu.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelType: 'itemMenu'
+      modelName: 'itemMenu'
 
   }
 );
