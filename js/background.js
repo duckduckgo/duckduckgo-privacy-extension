@@ -50,27 +50,7 @@ function Background() {
       return;
     }  
 
-    ATB.setInitialVersions();
-
-    // inject the oninstall script to opened DuckDuckGo tab.
-    chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
-      var i = tabs.length, tab;
-      while (i--) {
-        tab = tabs[i];
-        chrome.tabs.executeScript(tab.id, {
-          file: 'js/oninstall.js'
-        });
-        chrome.tabs.insertCSS(tab.id, {
-          file: 'css/noatb.css'
-        });
-      }
-    });
-    
-    if (!chrome.extension.inIncognitoContext) {
-        chrome.tabs.create({
-            url: "/html/intro.html"
-        });
-    }
+    ATB.onInstalled();
   });
 
   chrome.runtime.onMessage.addListener(function (request, sender, response) {

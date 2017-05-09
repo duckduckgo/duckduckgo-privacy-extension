@@ -91,15 +91,42 @@ var ATB = (() => {
             return {"major": majorVersion, "minor": minorVersion};
         },
 
-        setAtbValuesFromSuccessPage: (request) => {
+        setAtbValuesFromSuccessPage: (atb) => {
+            console.log("Setting atb from success page ", atb);
             if(!settings.getSetting('set_atb')){
-                settings.updateSetting('atb', request.atb);
-                settings.updateSetting('set_atb', request.atb);
+                settings.updateSetting('atb', atb);
+                settings.updateSetting('set_atb', atb);
             }
 
             let xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + request.atb, true);
+            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true);
             xhr.send();
+        },
+
+        inject: () => {
+            chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
+                var i = tabs.length, tab;
+                while (i--) {
+                    tab = tabs[i];
+                    
+                    chrome.tabs.executeScript(tab.id, {
+                        file: 'js/oninstall.js'
+                    });
+                    
+                    chrome.tabs.insertCSS(tab.id, {
+                        file: 'css/noatb.css'
+                    });
+                }
+            });
+        },
+
+        onInstalled: () => {
+            ATB.setInitialVersions();
+            ATB.inject();
+            
+            if (!chrome.extension.inIncognitoContext) {
+                chrome.tabs.create({url: "/html/intro.html"});
+            }
         }
     }
 })();
@@ -107,6 +134,6 @@ var ATB = (() => {
 // register message listener
 chrome.runtime.onMessage.addListener((request) => {
     if(request.atb){
-        ATB.setAtbValuesFromSuccessPage();
+        ATB.setAtbValuesFromSuccessPage(request.atb);
     }
 });
