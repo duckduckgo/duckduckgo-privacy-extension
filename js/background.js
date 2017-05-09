@@ -123,19 +123,6 @@ function Background() {
       });
     }
 
-    if (!localStorage['set_atb'] && request.atb) {
-      localStorage['atb'] = request.atb;
-      localStorage['set_atb'] = request.atb;
-
-      var xhr = new XMLHttpRequest();
-
-      xhr.open('GET',
-        'https://duckduckgo.com/exti/?atb=' + request.atb,
-        true
-      );
-      xhr.send();
-    }
-
     return true;
   });
 }
@@ -257,7 +244,8 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
     delete tabs[id];
 });
 
-chrome.webRequest.onCompleted.addListener( ATB.updateSetAtb,
+chrome.webRequest.onCompleted.addListener(
+        ATB.updateSetAtb,
     {
         urls: [
             "*://duckduckgo.com/?*",

@@ -1,7 +1,4 @@
 var ATB = (() => {
-    var majorVersion;
-    var minorVersion;
-    var setAtb;
     var ddgRegex = '/duckduckgo\.com';
     var ddgAtbURL = 'https://duckduckgo.com/atb.js?';
 
@@ -12,7 +9,7 @@ var ATB = (() => {
                     setAtbSetting = settings.getSetting('set_atb');
 
                 if(!atbSetting || !setAtbSetting)
-                    reject('No current atb or set_atb values');
+                    resolve(null);
 
                 ATB.getSetAtb(atbSetting, setAtbSetting).then((newAtb) => {
                     if(newAtb !== setAtbSetting){
@@ -92,6 +89,24 @@ var ATB = (() => {
                 majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
                 minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);        
             return {"major": majorVersion, "minor": minorVersion};
+        },
+
+        setAtbValuesFromSuccessPage: (request) => {
+            if(!settings.getSetting('set_atb')){
+                settings.updateSetting('atb', request.atb);
+                settings.updateSetting('set_atb', request.atb);
+            }
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + request.atb, true);
+            xhr.send();
         }
     }
-})()
+})();
+
+// register message listener
+chrome.runtime.onMessage.addListener((request) => {
+    if(request.atb){
+        ATB.setAtbValuesFromSuccessPage();
+    }
+});
