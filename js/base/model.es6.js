@@ -16,15 +16,12 @@ function BaseModel (attrs) {
     $.extend(this, attrs);
 
 
-    // check modelType and inject new reducer into minidux store
+    // check modelType and register with minidux store
     if (!this.modelType || typeof this.modelType !== 'string') {
         throw new Error ('model missing a modelType property')
+    } else {
+        store.register(this.modelType, JSON.stringify(this));
     }
-    const initialState = JSON.stringify(this);
-    console.log(this.modelType + ' initialState: ' + initialState);
-    this.actionType = 'SET_' + this.modelType.toUpperCase();
-    this.store = store.register(this.modelType, this.actionType);
-    this.store.dispatch({ type: this.actionType, properties: initialState });
 
 };
 
@@ -46,38 +43,19 @@ BaseModel.prototype = $.extend({},
          *
          * @param {string} attr
          * @param {*} val
-         * REMOVE @param {object} ops -- remove silent option
          * @api public
          */
         set: function(attr, val) {
 
-            this[attr] = val;
-            this.store.dispatch({ type: this.actionType, properties: JSON.stringify(this) });
-
-            // OLD CODE:
-            // support passing a hash of values to set instead of
-            // single attribute/value pair, i.e.:
-            //
-            // this.set({
-            //   name: 'something',
-            //   description: 'something described'
-            // });
-            /*
-            if (typeof attr === 'object') {
-                for (var key in attr) {
-                    this.set(key, attr[key], val);
-                }
-            }
-            */
-            /*ops = ops || {};
-
-            var existingVal = this[attr],
-                isChanging = existingVal !== val;
-
+            const lastValue = this[attr] || null;
             this[attr] = val;
 
-            !ops.silent && isChanging && this._emitChange(attr, existingVal);
-            */
+            // send model state update to minidux store
+            store.update(
+                this.modelType,
+                { property: attr, value: val, lastValue: lastValue },
+                JSON.stringify(this)
+            );
         },
 
 

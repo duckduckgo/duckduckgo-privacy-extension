@@ -1,18 +1,14 @@
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
-const addReducer = require('./reducers.es6.js');
+const reducers = require('./reducers.es6.js');
 
-// TODO: turn this whole thing into IIFE
 // TODO: notify autocomplete of change after onkeyup event in search input
 // LATER: don't return store. tuck store away from public API
 //        and only expose .register(), .subscribe() and .getState()
-// TODO: move creation of action type string into here from model
-//       and make actionType just `SET_<modelType>`
 // TODO: model.modelType -> .modelName
 // TODO: don't allow duplicate modelType/modelName (aka reducer names), throw error
-// TODO: create another fn/method that does the actual minidux dispatch
-//       from model.set() just call into that method!
-var store = null;
+
+let store = null;
 const asyncReducers = {};
 
 /**
@@ -22,23 +18,27 @@ const asyncReducers = {};
  * @param {string} reducer name
  * @param {actionType} uppercase action type that identifies the reducer
  */
-function register (reducerName, actionType) {
+function register (modelType, initialState) {
 
-    addReducer(asyncReducers, reducerName, (state, action) => {
-        if (state === undefined) state = { properties: {} }
+    const reducerName = modelType;
+    const actionType = reducers.getActionType(modelType);
+
+    reducers.add(asyncReducers, reducerName, (state, action) => {
+        // this will happen during init phase:
+        if (state === undefined) state = { change: null, properties: {}  }
+        // this will happen during updates:
         if (action.type === actionType) {
-            return { properties: action.properties };
+            let change = null;
+            if (action.change) change = action.change;
+            return { change: change, properties: action.properties };
         } else {
             return state;
         }
-
     });
-
-    const reducers = minidux.combineReducers(asyncReducers);
+    const combinedReducers = minidux.combineReducers(asyncReducers);
 
     if (!store) {
-      console.log('MINIDUX CREATE STORE')
-        store = minidux.createStore(reducers, {});
+        store = minidux.createStore(combinedReducers, {});
         store.subscribe((state) => {
             console.log('subscriber state update:')
             console.log(state)
@@ -49,14 +49,24 @@ function register (reducerName, actionType) {
             // do a deep compare somewhere?
         });
     } else {
-        console.log('MINIDUX replaceReducer()')
-        store.replaceReducer(reducers);
+        store.replaceReducer(combinedReducers);
+        // send initial state to reducer
+        update(modelType, null, initialState);
     }
-
-    return store;
 }
 
+function update (modelType, change, properties) {
+  const actionType = reducers.getActionType(modelType);
+  if (properties.store) delete properties.store;
+  store.dispatch({
+    type: actionType,
+    change: change,
+    properties: properties
+  });
+}
 
+// public api
 module.exports = {
-  register: register
+  register: register,
+  update: update
 };

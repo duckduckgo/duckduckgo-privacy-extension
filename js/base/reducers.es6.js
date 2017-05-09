@@ -6,4 +6,12 @@ function addReducer (asyncReducers, reducerName, reducerFn) {
     asyncReducers[reducerName] = reducerFn;
 }
 
-module.exports = addReducer;
+function getActionType (modelType) {
+    return 'SET_' + modelType.toUpperCase();
+}
+
+// public api
+module.exports = {
+  add: addReducer,
+  getActionType: getActionType
+}
