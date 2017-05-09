@@ -15,12 +15,23 @@ Whitelist.prototype = $.extend({},
   {
 
         removeDomain(itemIndex) {
-            console.log(`whitelist: remove ${this.list[itemIndex]}`);
-            this.list.splice(itemIndex, 1);
+            var domain = this.list[itemIndex];
+            console.log(`whitelist: remove ${domain}`);
+
+            // remove from UX. or we could do this.setWhitelistFromSettings
+            // after we save the new whitelist
+            // this.list.splice(itemIndex, 1);
 
             // TODO remove from actual whitelist
-            //
-            // this.setWhitelistFromSettings();
+            var wlist = backgroundPage.settings.getSetting('whitelist') || {};
+
+            if (wlist[domain]) { // it's got to exist right?
+                delete wlist[domain];
+
+                backgroundPage.settings.updateSetting('whitelist', wlist);
+            }
+
+            this.setWhitelistFromSettings();
         },
 
         setWhitelistFromSettings: function() {
