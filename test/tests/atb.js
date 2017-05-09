@@ -12,7 +12,7 @@
       ];
 
       urlTests.forEach(function(testRequest){
-          let toRewrite = atb.redirectURL(testRequest);
+          let toRewrite = ATB.redirectURL(testRequest);
           let rewrite = false;
 
           if(toRewrite && toRewrite['redirectUrl']){
@@ -25,8 +25,8 @@
       // test getting new atb values from atb.js
       var fakeSetAtb = "fakeatbvalue";
       settings.updateSetting('set_atb', fakeSetAtb);
-      atb.updateSetAtb().then((res) => {
-              assert.ok(settings.getSetting('set_atb') !== fakeSetAtb, "should have a new set_atb value")
+      ATB.updateSetAtb().then((res) => {
+              assert.ok(settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
       });
 
   });
