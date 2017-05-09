@@ -215,6 +215,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           if(!tabs[e.tabId]){
               tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0}
+              updateBadge(e.tabId, tabs[e.tabId].dispTotal);
           }
 
           if(!settings.getSetting('extensionIsEnabled')){
@@ -274,6 +275,7 @@ function updateBadge(tabId, numBlocked){
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
         tabs[id] = {'trackers': {}, "total": 0, "dispTotal": 0, 'url': tab.url, "status": "loading"};
+        updateBadge(id, 0);
     }
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
