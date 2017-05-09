@@ -7,18 +7,20 @@ var atb = (() => {
 
     return {
         updateSetAtb: () => {
-            let atbSetting = settings.getSetting('atb'),
-                setAtbSetting = settings.getSetting('set_atb');
+            return new Promise((resolve, reject) => {
+                let atbSetting = settings.getSetting('atb'),
+                    setAtbSetting = settings.getSetting('set_atb');
 
-            if(!atbSetting || !setAtbSetting)
-                return;
+                if(!atbSetting || !setAtbSetting)
+                    reject();
 
-            getSetAtb(atbSetting, setAtbSetting, function(newAtb){
-                if(newAtb !== setAtbSetting){
-                    settings.updateSetting('set_atb', newAtb);
-                }
+                atb.getSetAtb(atbSetting, setAtbSetting, function(newAtb){
+                    if(newAtb !== setAtbSetting){
+                        settings.updateSetting('set_atb', newAtb);
+                        resolve(newAtb);
+                    }
+                });
             });
-
         },
 
         getSetAtb: (atbSetting, setAtb, callback) => {
