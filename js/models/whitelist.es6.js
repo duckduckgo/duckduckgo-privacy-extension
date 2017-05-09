@@ -4,13 +4,9 @@ var backgroundPage = chrome.extension.getBackgroundPage();
 
 function Whitelist (attrs) {
 
-    var wlist = backgroundPage.settings.getSetting('whitelist') || {};
+    this.setWhitelistFromSettings();
 
-    attrs.list = Object.keys(wlist);
-    
     Parent.call(this, attrs);
-
-
 };
 
 
@@ -18,8 +14,21 @@ Whitelist.prototype = $.extend({},
   Parent.prototype,
   {
 
-      getList: function () {
-      }
+        removeDomain(itemIndex) {
+            console.log(`whitelist: remove ${this.list[itemIndex]}`);
+            this.list.splice(itemIndex, 1);
+
+            // TODO remove from actual whitelist
+            //
+            // this.setWhitelistFromSettings();
+        },
+
+        setWhitelistFromSettings: function() {
+            var wlist = backgroundPage.settings.getSetting('whitelist') || {};
+
+            this.list = Object.keys(wlist);
+        }
+
 
   }
 );

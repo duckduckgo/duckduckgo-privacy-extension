@@ -10,11 +10,9 @@ function Whitelist (ops) {
 
     console.log("new Whitelist");
 
-    this._cacheElems('.js-whitelist', [ 'item' ]);
+    // bind events
+    this.setup();
 
-    this.bindEvents([
-      [this.$item, 'click', this._handleClick]
-    ]);
 
 };
 
@@ -22,11 +20,31 @@ Whitelist.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _handleClick: function (e) {
-            console.log(`whitelist _handleClick()`);
+        _removeItem: function (e) {
+
+            var itemIndex = $(e.target).data("item");
+
+            this.model.removeDomain(itemIndex);
+            this.rerender();
+
+        },
+
+        setup: function() {
+            this._cacheElems('.js-whitelist', [ 'remove' ]);
+
+            this.bindEvents([
+              [this.$remove, 'click', this._removeItem]
+            ]);
+        },
+
+        rerender: function() {
+            this.unbindEvents();
+            this._rerender();
+            this.setup();
         }
 
-    }
+    },
+
 
 );
 
