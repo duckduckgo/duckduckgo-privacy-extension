@@ -1,5 +1,6 @@
 (function() {
   QUnit.module("utils");
+  QUnit.test("Utils", function (assert) {
 
   var utils = require('utils');
   var tests = [
@@ -8,9 +9,8 @@
   ];
 
   tests.forEach(function(test) {
-      QUnit.test("get hostname from url", function (assert) {
           var host = utils.extractHostFromURL(test.url);
           assert.ok(host === test.expected, 'extracted correct host from url');
-      });
+  });
   });
 })();
