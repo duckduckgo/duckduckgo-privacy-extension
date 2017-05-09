@@ -22,6 +22,12 @@
           assert.ok(rewrite === testRequest.rewrite, "correctly rewrite only ddg URLs: " + testRequest.url);   
       });
 
+      // don't update atb values if they don't already exist
+      settings.updateSetting('set_atb', null);
+      ATB.updateSetAtb().then().catch((message) => {
+          assert.ok(message, 'should not set a new atb if one doesnt exist already: ' + message);
+      });
+
       // test getting new atb values from atb.js
       var fakeSetAtb = "fakeatbvalue";
       settings.updateSetting('set_atb', fakeSetAtb);
