@@ -46,11 +46,10 @@ function Background() {
 
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
-    if (details.reason !== "install") {
-      return;
-    }  
-
-    ATB.onInstalled();
+    if (details.reason === "install") {
+        ATB.onInstalled();
+        ATB.startUpPage();
+    }
   });
 
   chrome.runtime.onMessage.addListener(function (request, sender, response) {

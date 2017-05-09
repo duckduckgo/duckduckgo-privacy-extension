@@ -124,6 +124,9 @@ var ATB = (() => {
             ATB.setInitialVersions();
             ATB.inject();
             
+        },
+
+        startUpPage: () => {
             if (!chrome.extension.inIncognitoContext) {
                 chrome.tabs.create({url: "/html/intro.html"});
             }
