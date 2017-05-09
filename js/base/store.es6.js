@@ -9,7 +9,6 @@ const reducers = require('./reducers.es6.js');
 // TODO: don't allow duplicate modelType/modelName (aka reducer names), throw error
 
 let store = null;
-const asyncReducers = {};
 
 /**
  * Creates a reducer for each caller (in most cases, a model will be its caller)
@@ -23,7 +22,7 @@ function register (modelType, initialState) {
     const reducerName = modelType;
     const actionType = reducers.getActionType(modelType);
 
-    reducers.add(asyncReducers, reducerName, (state, action) => {
+    reducers.add(reducerName, (state, action) => {
         // this will happen during init phase:
         if (state === undefined) state = { change: null, properties: {}  }
         // this will happen during updates:
@@ -35,7 +34,7 @@ function register (modelType, initialState) {
             return state;
         }
     });
-    const combinedReducers = minidux.combineReducers(asyncReducers);
+    const combinedReducers = minidux.combineReducers(reducers.asyncReducers);
 
     if (!store) {
         store = minidux.createStore(combinedReducers, {});
@@ -57,7 +56,6 @@ function register (modelType, initialState) {
 
 function update (modelType, change, properties) {
   const actionType = reducers.getActionType(modelType);
-  if (properties.store) delete properties.store;
   store.dispatch({
     type: actionType,
     change: change,
