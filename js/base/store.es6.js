@@ -11,30 +11,17 @@ const reducers = require('./reducers.es6.js');
 let store = null;
 
 /**
- * Creates a reducer for each caller (in most cases, a model will be its caller)
- * Returns store object with with updated reducers.
- * Callers can now call .getState() and .dispatch() method on returned store obj
- * @param {string} reducer name
- * @param {actionType} uppercase action type that identifies the reducer
+ * Creates a reducer for each caller (the base model will be its caller)
+ * to track its state
+ * @param {string} modelType
+ * @param {object} initialState
  */
 function register (modelType, initialState) {
+    if (typeof modelType !== 'string') { throw new Error('modelType must be a string'); }
+    if (reducers.asyncReducers[modelType]) { throw new Error ('modelType must be unique, no duplicates'); }
 
-    const reducerName = modelType;
-    const actionType = reducers.getActionType(modelType);
-
-    reducers.add(reducerName, (state, action) => {
-        // this will happen during init phase:
-        if (state === undefined) state = { change: null, properties: {}  }
-        // this will happen during updates:
-        if (action.type === actionType) {
-            let change = null;
-            if (action.change) change = action.change;
-            return { change: change, properties: action.properties };
-        } else {
-            return state;
-        }
-    });
-    const combinedReducers = minidux.combineReducers(reducers.asyncReducers);
+    reducers.add(modelType);
+    const combinedReducers = reducers.combine();
 
     if (!store) {
         store = minidux.createStore(combinedReducers, {});
