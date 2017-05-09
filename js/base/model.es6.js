@@ -17,7 +17,7 @@ function BaseModel (attrs) {
     }
 
     // subscriber to minidux store/state updates
-    this.storeSubscriber = store.subscriber;
+    this.storePublisher = store.publisher;
 
 };
 

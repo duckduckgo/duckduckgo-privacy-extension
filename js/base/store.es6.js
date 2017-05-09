@@ -8,11 +8,11 @@ const EventEmitter2 = require('./../../node_modules/eventemitter2');
 //        and only expose .register(), .subscribe() and .getState()
 
 /**
- * `store` is our minidux state machine
+ * `_store` is our minidux state machine
  * Its api is not publicly exposed. Developers must use public api below.
  * @api private
  */
-let store = null;
+var _store = null;
 
 
 /**
@@ -29,11 +29,9 @@ function register (modelName, initialState) {
     reducers.add(modelName);
     const combinedReducers = reducers.combine();
 
-    if (!store) {
-        store = minidux.createStore(combinedReducers, {});
-        store.subscribe((state) => {
-            console.log('state update:')
-            console.log(state)
+    if (!_store) {
+        _store = minidux.createStore(combinedReducers, {});
+        _store.subscribe((state) => {
             // make state immutable before publishing
             state = deepFreeze(state);
             // publish changes to subscribers
@@ -41,7 +39,7 @@ function register (modelName, initialState) {
         });
     } else {
         // update reducers to include the newest registered here
-        store.replaceReducer(combinedReducers);
+        _store.replaceReducer(combinedReducers);
         // send initial state of model that registered itself to store
         update(modelName, null, initialState);
     }
@@ -61,7 +59,7 @@ function register (modelName, initialState) {
 function update (modelName, change, properties) {
   const actionType = reducers.getActionType(modelName);
   if (properties.storeSubscriber) delete properties.storeSubscriber;
-  store.dispatch({
+  _store.dispatch({
     type: actionType,
     change: change,
     properties: properties
@@ -76,10 +74,10 @@ function update (modelName, change, properties) {
  *  - generic something changed in global state: 'change'
  *  - more granular a specific attribute changed: 'change:<modelName>'
  */
-const subscriber = new EventEmitter2();
-subscriber.setMaxListeners(100);
+const publisher = new EventEmitter2();
+publisher.setMaxListeners(100); // default is too low at 10
 function publish (state) {
-  subscriber.emit(`change`, state);
+  publisher.emit(`change`, state);
   // TODO: subscriber.emit(`change:<modelName>`, state.<modelName>);
 }
 
@@ -88,5 +86,5 @@ function publish (state) {
 module.exports = {
   register: register,
   update: update,
-  subscriber: subscriber
+  publisher: publisher
 };
