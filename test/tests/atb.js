@@ -1,4 +1,6 @@
 (function() {
+ 
+  let ddgTestUrl = "https://duckduckgo.com/?q=test"
   QUnit.module("ATB");
   
   QUnit.test("Testing ATB module", function (assert) {
@@ -35,5 +37,31 @@
               assert.ok(settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
       });
 
+          
+      var done = assert.async();
+      // check new tab url
+      chrome.tabs.create({url: ddgTestUrl});
+      
+      getLoadedTab().then((tab) => {
+          let atbRegex = new RegExp('&atb=' + settings.getSetting('atb'),'g');
+          assert.ok(atbRegex.exec(tab.url), "new tab url has atb param");
+          done();
+      });
   });
+
+  function getLoadedTab(){
+      return new Promise ((resolve) => {
+          chrome.tabs.query({url: ddgTestUrl + '*', }, (tabs) => {
+              if(tabs){
+                  let tab = tabs[0];
+                  if(tab.status === 'complete'){
+                    resolve(tab);
+                  }
+                  else{
+                      resolve(getLoadedTab());
+                  }
+              }
+          });
+      });
+  }
 })();
