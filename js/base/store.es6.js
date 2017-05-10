@@ -1,4 +1,3 @@
-// TODO: destroying view/model destroys store reducer
 // TODO: README at js/base directory level, point to it from main README
 // TODO: create a state injector for test mocks
 
@@ -50,7 +49,7 @@ function register (modelName) {
  * Although api is public, most of what you need to do can be
  * done with model.set() and model.clear() instead of directly here
  * @param {string} modelName
- * @param {object} change - { property, value, lastValue }
+ * @param {object} change - { attribute, value, lastValue }
  * @api public
  */
 function update (modelName, change) {
