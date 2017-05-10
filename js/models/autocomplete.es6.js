@@ -5,7 +5,7 @@ function Autocomplete (attrs) {
     Parent.call(this, attrs);
 
     this.bindEvents([
-      [this.storePublisher, 'change', this._handleUpdate],
+      [this.storePublisher, 'change', this._handleUpdate]
     ]);
 
 };
@@ -22,9 +22,10 @@ Autocomplete.prototype = $.extend({},
           console.log(state);
 
           if (state.search && state.search.change) {
-            this.searchText = state.search.searchText;
-            // TODO: figure out why model.set() is hinky here
-            // this.set('searchText', state.search.searchText);
+              this.searchText = state.search.searchText;
+              // TODO: figure out why model.set() is hinky here
+              this.set('searchText', this.searchText);
+              // TODO: rm minidux opinions so async fn poss here
           }
       }
 

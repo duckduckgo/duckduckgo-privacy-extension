@@ -1,11 +1,13 @@
+// TODO: don't return store. tuck store away from public API
+//       only expose .register(), .subscribe() and .getState()
+// TODO: granular state publisher
+// TODO: test state injector
+
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 const reducers = require('./reducers.es6.js');
 const EventEmitter2 = require('./../../node_modules/eventemitter2');
 
-// TODO: notify autocomplete of change after onkeyup event in search input
-// LATER: don't return store. tuck store away from public API
-//        and only expose .register(), .subscribe() and .getState()
 
 /**
  * `_store` is our minidux state machine
@@ -78,7 +80,7 @@ const publisher = new EventEmitter2();
 publisher.setMaxListeners(100); // default is too low at 10
 function publish (state) {
   publisher.emit(`change`, state);
-  // TODO: subscriber.emit(`change:<modelName>`, state.<modelName>);
+  // TODO: publisher.emit(`change:<modelName>`, state.<modelName>);
 }
 
 
