@@ -45,7 +45,7 @@ function register (modelName, initialState) {
         _store = minidux.createStore(combinedReducers, {});
         _store.subscribe((state) => {
             state = deepFreeze(state); // make state immutable before publishing
-            publish(state); // publish changes to subscribers
+            _publishChange(state); // publish changes to subscribers
         });
     } else {
         // update reducers to include the newest registered here
@@ -78,19 +78,23 @@ function update (modelName, change, properties) {
 
 
 /**
- * Broadcasts the changes out to models subscribed to state change events.
- * 2 events are emitted:
- *  - generic something changed in global state: 'change'
- *  - more granular a specific attribute changed: 'change:<modelName>'
+ * Broadcasts state change events out to subscribers
+ * @api public, but exposed as `subscribe` for clarity
  */
-const publisher = new EventEmitter2();
-publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
-function publish (state) {
+const _publisher = new EventEmitter2();
+_publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
+/**
+ * Emits state change events via _publisher
+ * _store.subscriber
+ * @api private
+ */
+function _publishChange (state) {
 
   Object.keys(state).forEach((key) => {
       if (state[key].change) {
           console.log(`PUBLISH change:${state[key].change.modelName}`)
-          publisher.emit(`change:${state[key].change.modelName}`, state[state[key].change.modelName]);
+          _publisher.emit(`change`, state);
+          _publisher.emit(`change:${state[key].change.modelName}`, state[state[key].change.modelName]);
       }
   });
 
@@ -101,5 +105,5 @@ function publish (state) {
 module.exports = {
   register: register,
   update: update,
-  subscribe: publisher
+  subscribe: _publisher
 };
