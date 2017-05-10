@@ -24,8 +24,8 @@ Autocomplete.prototype = $.extend({},
             console.log(searchModel);
 
             if (searchModel.change && searchModel.change.property === 'searchText') {
-                this.model.fetchSuggestions(searchModel.change.value);
-                this._rerender();
+                this.model.fetchSuggestions(searchModel.change.value)
+                  .then(() => this._rerender());
             }
         },
 

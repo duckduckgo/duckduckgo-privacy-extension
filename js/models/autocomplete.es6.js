@@ -14,8 +14,12 @@ Autocomplete.prototype = $.extend({},
       modelName: 'autocomplete',
 
       fetchSuggestions: function (searchText) {
-            // mockup autocomplete query result for now:
-            this.suggestions = [`${searchText}es`, `${searchText}able`]
+          return new Promise((resolve, reject) => {
+              // TODO: ajax call here to ddg autocomplete service
+              // for now we'll just mock up an async xhr query result:
+              this.suggestions = [`${searchText}es`, `${searchText}able`]
+              resolve();
+          });
       }
 
   }

@@ -4,7 +4,6 @@
 //       XX - .subscribe()
 //       - .getState()
 // TODO: follow prev nomenclature: model properties -> attributes
-// TODO: make autocomplete.fetchSuggestions return a promise
 // TODO: model.set() should accept hash
 // TODO: model.clear() should update minidux store
 // TODO: this.store.update() signature arg should be hash so its readable
