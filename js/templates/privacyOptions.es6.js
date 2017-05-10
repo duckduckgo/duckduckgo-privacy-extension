@@ -3,6 +3,7 @@ const bel = require('./../../node_modules/bel');
 module.exports = function () {
     return bel`<div class="js-privacy-options">
         <div class="menu-section">
+        <div class="menu-title">Options</div>
             <ul class="js-menu-item-list">
                 <li class="js-site-item">
                     Block Trackers
