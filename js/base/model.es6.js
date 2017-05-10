@@ -59,7 +59,7 @@ BaseModel.prototype = $.extend({},
 
             this.store.update(
                 this.modelName,
-                { modelName: this.modelName, attribute: attr, value: val, lastValue: lastValue },
+                { attribute: attr, value: val, lastValue: lastValue }
             );
         },
 
