@@ -2,6 +2,9 @@ var load = require('load');
 
 require.scopes.settings =(() => {
     var settings = {};
+    var aliases = {
+        'httpsEverywhereEnabled': 'extensionIsEnabled'
+    };
 
     function init() {
         buildSettingsFromDefaults();
@@ -37,6 +40,12 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         settings[name] = value;
+        let alias = aliases[name];
+
+        if(alias){
+            settings[alias] = value;
+        }
+
         syncSettingTolocalStorage();
     }
 
