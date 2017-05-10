@@ -8,16 +8,14 @@ function BaseModel (attrs) {
     // onto the instance:
     $.extend(this, attrs);
 
-    // register model with minidux store
+    // register model with `store` of global state
     // after checking `modelName` property
     if (!this.modelName || typeof this.modelName !== 'string') {
-        throw new Error ('cannot init a model without a `modelName` property')
+        throw new Error ('cannot init model without `modelName` property')
     } else {
-        store.register(this.modelName, this._toJSON());
+        this.store = store;
+        this.store.register(this.modelName, this._toJSON());
     }
-
-    // subscriber to minidux store/state updates
-    this.storePublisher = store.publisher;
 
 };
 
@@ -32,7 +30,7 @@ BaseModel.prototype = $.extend({},
          * itself, you don't *have* to use the set method.
          *
          * However, the benefit of using the set method
-         * is that changes can be broadcast out
+         * is that changes are broadcast out via store
          * to any UI components that might want to observe
          * changes and update their state.
          *
@@ -48,8 +46,7 @@ BaseModel.prototype = $.extend({},
             const lastValue = this[attr] || null;
             this[attr] = val;
 
-            // send model state update to minidux store
-            store.update(
+            this.store.update(
                 this.modelName,
                 { modelName: this.modelName, property: attr, value: val, lastValue: lastValue },
                 this._toJSON()
@@ -75,7 +72,8 @@ BaseModel.prototype = $.extend({},
          * are functions.
          */
         _toJSON: function () {
-            return JSON.parse(JSON.stringify(this))
+            const properties = Object.assign({}, Object.getPrototypeOf(this), this);
+            return JSON.parse(JSON.stringify(properties));
         }
 
     }

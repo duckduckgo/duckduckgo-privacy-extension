@@ -8,11 +8,26 @@ function Autocomplete (ops) {
 
     Parent.call(this, ops);
 
+    this.bindEvents([
+      [this.model.store.subscribe, 'change:search', this._handleUpdate]
+    ]);
+
+
 };
 
 Autocomplete.prototype = $.extend({},
     Parent.prototype,
     {
+
+        _handleUpdate: function (searchModel) {
+            console.log('[AutocompleteView] _handleUpdate(searchModel):');
+            console.log(searchModel);
+
+            if (searchModel.change && searchModel.change.property === 'searchText') {
+                this.model.fetchSuggestions(searchModel.change.value);
+                this._rerender();
+            }
+        },
 
     }
 

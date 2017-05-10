@@ -3,9 +3,15 @@
 //       XX - .register(),
 //       XX - .subscribe()
 //       - .getState()
+// TODO: follow prev nomenclature: model properties -> attributes
+// TODO: make autocomplete.fetchSuggestions return a promise
 // TODO: model.set() should accept hash
+// TODO: model.clear() should update minidux store
+// TODO: this.store.update() signature arg should be hash so its readable
+// TODO: make store agnostic about whether reducer is for model or view(!)
 // TODO: destroying view/model destroys store reducer
-// TODO: test state injector
+// TODO: README at js/base directory level, point to it from main README
+// TODO: create a state injector for test mocks
 
 
 const minidux = require('minidux');
@@ -23,7 +29,7 @@ var _store = null;
 
 
 /**
- * Creates a minidux reducer for each model.
+ * Creates a minidux reducer for each caller.
  * The base model will be its caller in most cases.
  * @param {string} modelName - must be unique
  * @param {object} initialState - initial state of model
@@ -39,10 +45,8 @@ function register (modelName, initialState) {
     if (!_store) {
         _store = minidux.createStore(combinedReducers, {});
         _store.subscribe((state) => {
-            // make state immutable before publishing
-            state = deepFreeze(state);
-            // publish changes to subscribers
-            publish(state);
+            state = deepFreeze(state); // make state immutable before publishing
+            publish(state); // publish changes to subscribers
         });
     } else {
         // update reducers to include the newest registered here
@@ -65,7 +69,7 @@ function register (modelName, initialState) {
  */
 function update (modelName, change, properties) {
   const actionType = reducers.getActionType(modelName);
-  if (properties.storePublisher) delete properties.storePublisher;
+  if (properties.store) delete properties.store;
   _store.dispatch({
     type: actionType,
     change: change,
@@ -75,14 +79,13 @@ function update (modelName, change, properties) {
 
 
 /**
- * Actually broadcasts the changes out to models subscribed.
- *
+ * Broadcasts the changes out to models subscribed to state change events.
  * 2 events are emitted:
  *  - generic something changed in global state: 'change'
  *  - more granular a specific attribute changed: 'change:<modelName>'
  */
 const publisher = new EventEmitter2();
-publisher.setMaxListeners(100); // default is too low at 10
+publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
 function publish (state) {
 
   Object.keys(state).forEach((key) => {
@@ -99,5 +102,5 @@ function publish (state) {
 module.exports = {
   register: register,
   update: update,
-  publisher: publisher
+  subscribe: publisher
 };
