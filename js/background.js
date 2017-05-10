@@ -218,10 +218,6 @@ chrome.webRequest.onBeforeRequest.addListener(
               updateBadge(e.tabId, tabs[e.tabId].dispTotal);
           }
 
-          if(!settings.getSetting('extensionIsEnabled')){
-              return;
-          }
-          
           var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
 
             if(block){

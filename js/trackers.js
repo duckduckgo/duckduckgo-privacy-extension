@@ -14,7 +14,7 @@ function isTracker(url, currLocation, tabId) {
 
     var toBlock = false;
 
-    if (settings.getSetting('extensionIsEnabled')) {
+    if (settings.getSetting('trackerBlockingEnabled')) {
         
         var host = utils.extractHostFromURL(url);
         var isWhiteListed = false;
