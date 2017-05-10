@@ -10,22 +10,15 @@ require.scopes.settings =(() => {
 
     function init() {
         buildSettingsFromDefaults();
-        buildSettingsFromLocalStorage().then(() => {
-            runExternalSettings();
-            registerListeners();
-        });
+        buildSettingsFromLocalStorage();
+        registerListeners();
     }
 
-    function buildSettingsFromLocalStorage(callback) {
-        return new Promise((resolve) => {
-            chrome.storage.local.get(['settings'], function(results){
-                savedSettings = results['settings'];
-                Object.assign(settings, savedSettings);
-                syncSettingTolocalStorage();
-                resolve();
-            });
+    function buildSettingsFromLocalStorage() {
+        chrome.storage.local.get(['settings'], function(results){
+            Object.assign(settings, results['settings']);
+            runExternalSettings();
         });
-
     }
 
     function runExternalSettings(){
@@ -84,14 +77,12 @@ require.scopes.settings =(() => {
         }
     };
 
+    init();
     
     var exports = {
         getSetting: getSetting,
         updateSetting: updateSetting,
     }
-
-    init();
-    
     return exports;
 
 })();
