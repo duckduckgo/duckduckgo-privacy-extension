@@ -51,7 +51,7 @@ BaseModel.prototype = $.extend({},
             // send model state update to minidux store
             store.update(
                 this.modelName,
-                { property: attr, value: val, lastValue: lastValue },
+                { modelName: this.modelName, property: attr, value: val, lastValue: lastValue },
                 this._toJSON()
             );
         },

@@ -1,8 +1,12 @@
 // TODO: don't return store. tuck store away from public API
-//       only expose .register(), .subscribe() and .getState()
-// TODO: granular state publisher
+//       only expose
+//       XX - .register(),
+//       XX - .subscribe()
+//       - .getState()
 // TODO: model.set() should accept hash
+// TODO: destroying view/model destroys store reducer
 // TODO: test state injector
+
 
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
@@ -80,8 +84,14 @@ function update (modelName, change, properties) {
 const publisher = new EventEmitter2();
 publisher.setMaxListeners(100); // default is too low at 10
 function publish (state) {
-  publisher.emit(`change`, state);
-  // TODO: publisher.emit(`change:<modelName>`, state.<modelName>);
+
+  Object.keys(state).forEach((key) => {
+      if (state[key].change) {
+          console.log(`PUBLISH change:${state[key].change.modelName}`)
+          publisher.emit(`change:${state[key].change.modelName}`, state[state[key].change.modelName]);
+      }
+  });
+
 }
 
 

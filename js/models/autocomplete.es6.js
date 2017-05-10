@@ -5,7 +5,7 @@ function Autocomplete (attrs) {
     Parent.call(this, attrs);
 
     this.bindEvents([
-      [this.storePublisher, 'change', this._handleUpdate]
+      [this.storePublisher, 'change:search', this._handleUpdate]
     ]);
 
 };
@@ -18,15 +18,17 @@ Autocomplete.prototype = $.extend({},
       modelName: 'autocomplete',
 
       _handleUpdate: function (state) {
-          console.log('_handleUpdate(state):');
+          console.log('[Autocomplete] _handleUpdate(state):');
           console.log(state);
 
-          if (state.search && state.search.change) {
-              this.searchText = state.search.searchText;
-              // TODO: figure out why model.set() is hinky here
-              this.set('searchText', this.searchText);
-              // TODO: rm minidux opinions so async fn poss here
+          if (state.change && state.change.property === 'searchText') {
+              this._fetchSuggestions(state.change.value);
           }
+      },
+
+      _fetchSuggestions: function (searchText) {
+            // mockup autocomplete result for now:
+            this.suggestions = [`${searchText}es`, `${searchText}able`]
       }
 
   }
