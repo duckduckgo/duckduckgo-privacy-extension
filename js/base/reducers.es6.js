@@ -24,7 +24,7 @@ function combine () {
 }
 
 function getActionType (reducerName) {
-    return 'SET_' + reducerName.toUpperCase();
+    return 'UPDATE_' + reducerName.toUpperCase();
 }
 
 // public api
