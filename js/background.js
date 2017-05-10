@@ -145,27 +145,23 @@ chrome.webRequest.onBeforeRequest.addListener(
           delete tabs[e.tabId];
           return;
       }
-
+      
       if(!tabs[e.tabId]){
           tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0}
+          updateBadge(e.tabId, tabs[e.tabId].dispTotal);
       }
 
-      if(!settings.getSetting('extensionIsEnabled')){
-          return;
-      }
-          
       var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
-      
+
       if(block){
           var name = block.tracker;
-          
+
           if(!tabs[e.tabId]['trackers'][name]){
-                tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
+              tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
           }
-          else{
+          else {
               tabs[e.tabId]['trackers'][name].count += 1;
           }
-          
           tabs[e.tabId]['total'] += 1;
           tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
 
@@ -206,6 +202,7 @@ function updateBadge(tabId, numBlocked){
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
         tabs[id] = {'trackers': {}, "total": 0, "dispTotal": 0, 'url': tab.url, "status": "loading"};
+        updateBadge(id, 0);
     }
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
