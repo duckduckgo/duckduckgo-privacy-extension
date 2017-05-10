@@ -14,7 +14,7 @@ module.exports = function () {
     };
 
     return bel`<div class="js-whitelist">
-            <div class="menu-title">Whitelist</div>
+            <div class="menu-title">Whitelisted Sites</div>
             <ul class="js-menu-item-list">
                 ${listItems(this.model.list)}
             </ul>
