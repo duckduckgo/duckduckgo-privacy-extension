@@ -1,13 +1,10 @@
 const Parent = window.DDG.base.Model;
 
+var backgroundPage = chrome.extension.getBackgroundPage();
 function PrivacyOptions (attrs) {
 
-    // test data
-
-    console.log("new privacy options model");
-    
-    attrs.blockTrackers = true;
-    attrs.forceHTTPS = true;
+    attrs.trackerBlockingEnabled = backgroundPage.settings.getSetting('trackerBlockingEnabled');
+    attrs.httpsEverywhereEnabled = backgroundPage.settings.getSetting('httpsEverywhereEnabled');
 
     Parent.call(this, attrs);
 
@@ -21,6 +18,8 @@ PrivacyOptions.prototype = $.extend({},
           if (this.hasOwnProperty(k)) {
               this[k] = !this[k];
               console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`);
+
+              backgroundPage.settings.updateSetting(k, this[k]);
           }
       }
 

@@ -8,9 +8,6 @@ function PrivacyOptions (ops) {
 
     Parent.call(this, ops);
 
-    console.log("new privacyOptions view");
-
-
     this.setup();
 
 };
@@ -19,25 +16,22 @@ PrivacyOptions.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _click_blocktrackers: function (e) {
-            console.log('PrivacyOptions _click_blocktrackers()');
-            this.model.toggle('blockTrackers');
-            this.rerender();
-        },
+        _click_setting: function (e) {
+            var k =  $(e.target).data('key');
 
-        _click_forcehttps: function (e) {
-            console.log('PrivacyOptions _click_forcehttps()');
-            this.model.toggle('forceHTTPS');
+            console.log(`privacyOptions view click for setting "${k}"`);
+
+            this.model.toggle(k);
             this.rerender();
         },
 
         setup: function() {
 
-            this._cacheElems('.js-options', [ 'blocktrackers', 'force-https' ]);
+            this._cacheElems('.js-options', [ 'blocktrackers', 'https-everywhere-enabled' ]);
 
             this.bindEvents([
-              [this.$blocktrackers, 'click', this._click_blocktrackers],
-              [this.$forcehttps, 'click', this._click_forcehttps]
+              [this.$blocktrackers, 'click', this._click_setting],
+              [this.$httpseverywhereenabled, 'click', this._click_setting]
             ]);
             
         },
