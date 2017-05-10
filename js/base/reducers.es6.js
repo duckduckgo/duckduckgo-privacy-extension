@@ -7,12 +7,12 @@ function addReducer (reducerName, reducerFn) {
     // auto-generate our reducer functions here, add to `asyncReducers` object
     asyncReducers[reducerName] = (state, action) => {
         // this will happen during init phase:
-        if (state === undefined) state = { change: null, properties: {}  }
+        if (state === undefined) state = { change: null }
         // this will happen during updates:
         if (action.type === actionType) {
             let change = null;
             if (action.change) change = action.change;
-            return { change: change, properties: action.properties };
+            return { change: change };
         } else {
             return state;
         }

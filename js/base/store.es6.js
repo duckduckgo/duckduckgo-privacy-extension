@@ -29,7 +29,7 @@ var _store = null;
  * @param {object} initialState - initial state of model
  * @api public
  */
-function register (modelName, initialState) {
+function register (modelName) {
     if (typeof modelName !== 'string') { throw new Error('modelName must be a string'); }
     if (reducers.asyncReducers[modelName]) { throw new Error ('modelName must be unique, no duplicates'); }
 
@@ -46,7 +46,7 @@ function register (modelName, initialState) {
         // update reducers to include the newest registered here
         _store.replaceReducer(combinedReducers);
         // send initial state of model that registered itself to store
-        update(modelName, null, initialState);
+        // update(modelName, null, {});
     }
 }
 
@@ -58,16 +58,13 @@ function register (modelName, initialState) {
  * done with model.set() and model.clear() instead of directly here
  * @param {string} modelName
  * @param {object} change - { property, value, lastValue }
- * @param {object} model properties as JSON
  * @api public
  */
-function update (modelName, change, properties) {
+function update (modelName, change) {
   const actionType = reducers.getActionType(modelName);
-  if (properties.store) delete properties.store;
   _store.dispatch({
     type: actionType,
-    change: change,
-    properties: properties
+    change: change
   });
 }
 
@@ -91,7 +88,7 @@ function _publishChange (state) {
           console.log(state);
           _publisher.emit(`change`, state);
           console.log(`PUBLISH change:${state[key].change.modelName}`)
-          _publisher.emit(`  change:${state[key].change.modelName}`, state[state[key].change.modelName]);
+          _publisher.emit(`change:${state[key].change.modelName}`, state[state[key].change.modelName]);
       }
   });
 

@@ -19,12 +19,12 @@ Autocomplete.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _handleUpdate: function (searchModel) {
-            console.log('[AutocompleteView] _handleUpdate(searchModel):');
-            console.log(searchModel);
+        _handleUpdate: function (update) {
+            console.log('[AutocompleteView] _handleUpdate(update):');
+            console.log(update);
 
-            if (searchModel.change && searchModel.change.property === 'searchText') {
-                this.model.fetchSuggestions(searchModel.change.value)
+            if (update.change && update.change.attribute === 'searchText') {
+                this.model.fetchSuggestions(update.change.value)
                   .then(() => this._rerender());
             }
         },
