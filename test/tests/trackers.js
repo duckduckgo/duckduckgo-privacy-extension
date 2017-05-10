@@ -11,7 +11,7 @@
 
   basicBlocking.forEach(function(test) {
       QUnit.test("block url", function (assert) {
-          settings.updateSetting('extensionIsEnabled', true);
+          settings.updateSetting('trackerBlockingEnabled', true);
           var toBlock = trackers.isTracker(test.url, '', 0);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
@@ -20,7 +20,7 @@
 
   basicBlocking.forEach(function(test) {
       QUnit.test("turn off blocking", function (assert) {
-          settings.updateSetting('extensionIsEnabled', false);
+          settings.updateSetting('trackerBlockingEnabled', false);
           var toBlock = trackers.isTracker(test.url, '', 0);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === false, 'url should not be');
@@ -35,7 +35,7 @@
 
   thirdPartyTests.forEach(function(test) {
       QUnit.test("third party blocking", function (assert) {
-          settings.updateSetting('extensionIsEnabled', true);
+          settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', true);
           var toBlock = trackers.isTracker(test.url, test.host, 0);
           toBlock = toBlock ? true : false;
@@ -50,7 +50,7 @@
 
   socialBlocking.forEach(function(test) {
       QUnit.test("social blocking On", function (assert) {
-          settings.updateSetting('extensionIsEnabled', true);
+          settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', true);
           var toBlock = trackers.isTracker(test.url, '', 0);
           toBlock = toBlock ? true : false;
@@ -60,7 +60,7 @@
 
   socialBlocking.forEach(function(test) {
       QUnit.test("social blocking Off", function (assert) {
-          settings.updateSetting('extensionIsEnabled', true);
+          settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', false);
           var toBlock = trackers.isTracker(test.url, '', 0);
           toBlock = toBlock ? false : true;
