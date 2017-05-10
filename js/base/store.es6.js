@@ -1,6 +1,5 @@
 // TODO: follow prev nomenclature: model properties -> attributes
 //       HMMM... maybe we get rid of model._toJSON properties altogether?
-// TODO: model.set() should accept hash
 // TODO: model.clear() should update minidux store
 // TODO: this.store.update() signature arg should be hash so its readable
 // TODO: make store agnostic about whether reducer is for model or view(!)
