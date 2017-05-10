@@ -31,6 +31,7 @@ Whitelist.prototype = $.extend({},
             var wlist = backgroundPage.settings.getSetting('whitelist') || {};
 
             this.list = Object.keys(wlist);
+            this.list.sort();
         }
 
 
