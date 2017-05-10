@@ -40,8 +40,6 @@ function register (modelName) {
     } else {
         // update reducers to include the newest registered here
         _store.replaceReducer(combinedReducers);
-        // send initial state of model that registered itself to store
-        // update(modelName, null, {});
     }
 }
 
@@ -79,9 +77,6 @@ function _publishChange (state) {
 
   Object.keys(state).forEach((key) => {
       if (state[key].change) {
-          console.log(`PUBLISH change`)
-          console.log(state);
-          _publisher.emit(`change`, state);
           console.log(`PUBLISH change:${key}`)
           _publisher.emit(`change:${key}`, state[key]);
       }
@@ -90,9 +85,23 @@ function _publishChange (state) {
 }
 
 
+/**
+ * Remove reducer that corresponds to modelName from store.
+ * @param {string} modelName
+ * @api public
+ */
+function remove (modelName) {
+  if (reducers.remove(modelName)) {
+      const combinedReducers = reducers.combine();
+      _store.replaceReducer(combinedReducers);
+  }
+}
+
+
 // public api
 module.exports = {
   register: register,
   update: update,
-  subscribe: _publisher
+  subscribe: _publisher,
+  remove: remove
 };

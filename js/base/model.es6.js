@@ -71,7 +71,19 @@ BaseModel.prototype = $.extend({},
          */
         clear: function(attr, ops) {
             this.set(attr, null, ops);
-        }
+        },
+
+
+        /**
+         * Destroy any of this model's bound events
+         * and remove its reducer from store so
+         * there is no memeory footprint left.
+         * Mostly used when view.destroy() is called.
+         */
+         destroy: function () {
+             this.unbindEvents();
+             this.store.remove(this.modelName);
+         }
 
     }
 );

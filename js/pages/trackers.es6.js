@@ -44,13 +44,6 @@ Trackers.prototype = $.extend({},
                 template: SearchTemplate
             });
 
-            this.views.autocomplete = new AutocompleteView({
-                pageView: this,
-                model: new AutocompleteModel({suggestions: []}),
-                appendTo: $parent,
-                template: autocompleteTemplate
-            });
-
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel({
@@ -77,6 +70,18 @@ Trackers.prototype = $.extend({},
                 }),
                 appendTo: $parent,
                 template: ItemMenuTemplate
+            });
+
+            // TODO: hook up model query to actual ddg ac endpoint.
+            // For now this is just here to demonstrate how to
+            // listen to another component via model.set() +
+            // model.store.subscribe()
+            // It's not populating in dom bc appendTo is null
+            this.views.autocomplete = new AutocompleteView({
+                pageView: this,
+                model: new AutocompleteModel({suggestions: []}),
+                appendTo: null,
+                template: autocompleteTemplate
             });
 
         }

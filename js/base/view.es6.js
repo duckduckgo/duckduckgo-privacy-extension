@@ -59,6 +59,7 @@ BaseView.prototype = $.extend(
             this.unbindEvents();
             this.destroyChildViews();
             this.$el.remove();
+            if (this.model) this.model.destroy();
         },
 
         /**

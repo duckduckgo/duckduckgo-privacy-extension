@@ -21,18 +21,27 @@ function addReducer (reducerName, reducerFn) {
     }
 }
 
-function combine () {
-  return minidux.combineReducers(asyncReducers);
-}
-
 function getActionType (reducerName) {
     return 'UPDATE_' + reducerName.toUpperCase();
 }
+
+function combine () {
+    return minidux.combineReducers(asyncReducers);
+}
+
+function removeReducer (reducerName) {
+    if (asyncReducers[reducerName]) {
+        delete asyncReducers[reducerName];
+        return true;
+    }
+}
+
 
 // public api
 module.exports = {
   asyncReducers: asyncReducers,
   add: addReducer,
   combine: combine,
+  remove: removeReducer,
   getActionType: getActionType,
 }

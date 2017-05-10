@@ -9,7 +9,7 @@ function Autocomplete (ops) {
     Parent.call(this, ops);
 
     this.bindEvents([
-      [this.model.store.subscribe, 'change:search', this._handleSearchTextUpdate]
+      [this.model.store.subscribe, 'change:search', this._handleSearchTextUpdate],
     ]);
 
 
@@ -27,7 +27,7 @@ Autocomplete.prototype = $.extend({},
                 this.model.fetchSuggestions(update.change.value)
                   .then(() => this._rerender());
             }
-        },
+        }
 
     }
 
