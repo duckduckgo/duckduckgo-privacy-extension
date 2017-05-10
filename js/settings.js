@@ -2,8 +2,8 @@ var load = require('load');
 
 require.scopes.settings =(() => {
     var settings = {};
-    var aliases = {
-        'httpsEverywhereEnabled': 'extensionIsEnabled'
+    var externalSettings = {
+        'httpsEverywhereEnabled': function(value){ isExtensionEnabled = value }
     };
 
     function init() {
@@ -40,10 +40,9 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         settings[name] = value;
-        let alias = aliases[name];
-
-        if(alias){
-            settings[alias] = value;
+        
+        if(externalSettings[name]){
+            externalSettings[name](value);
         }
 
         syncSettingTolocalStorage();
