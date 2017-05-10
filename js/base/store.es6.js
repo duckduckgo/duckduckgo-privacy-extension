@@ -69,7 +69,6 @@ const _publisher = new EventEmitter2();
 _publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
 /**
  * Emits state change events via _publisher
- * _store.subscriber
  * @api private
  */
 function _publishChange (state) {
