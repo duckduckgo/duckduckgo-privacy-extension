@@ -60,7 +60,7 @@ function register (modelName, initialState) {
  */
 function update (modelName, change, properties) {
   const actionType = reducers.getActionType(modelName);
-  if (properties.storeSubscriber) delete properties.storeSubscriber;
+  if (properties.storePublisher) delete properties.storePublisher;
   _store.dispatch({
     type: actionType,
     change: change,
