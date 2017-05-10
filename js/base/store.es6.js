@@ -1,6 +1,7 @@
 // TODO: don't return store. tuck store away from public API
 //       only expose .register(), .subscribe() and .getState()
 // TODO: granular state publisher
+// TODO: model.set() should accept hash
 // TODO: test state injector
 
 const minidux = require('minidux');

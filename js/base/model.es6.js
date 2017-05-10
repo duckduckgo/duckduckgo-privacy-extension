@@ -42,6 +42,9 @@ BaseModel.prototype = $.extend({},
          */
         set: function(attr, val) {
 
+            // TODO: accept first arg as hash here, too
+            // i.e.: { foo: 'foo', bar: 'bar'}
+
             const lastValue = this[attr] || null;
             this[attr] = val;
 
