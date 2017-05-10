@@ -20,10 +20,12 @@ Autocomplete.prototype = $.extend({},
     {
 
         _handleSearchTextUpdate: function (update) {
-            console.log('[AutocompleteView] _handleSearchTextUpdate(update):');
-            console.log(update);
-
             if (update.change && update.change.attribute === 'searchText') {
+                if (!update.change.value) {
+                  this.model.suggestions = [];
+                  this._rerender();
+                  return;
+                }
                 this.model.fetchSuggestions(update.change.value)
                   .then(() => this._rerender());
             }

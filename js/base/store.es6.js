@@ -77,7 +77,7 @@ function _publishChange (state) {
 
   Object.keys(state).forEach((key) => {
       if (state[key].change) {
-          console.log(`PUBLISH change:${key}`)
+          console.info(`STORE PUBLISH change:${key}`, state[key]);
           _publisher.emit(`change:${key}`, state[key]);
       }
   });

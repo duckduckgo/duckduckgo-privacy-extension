@@ -76,11 +76,10 @@ Trackers.prototype = $.extend({},
             // For now this is just here to demonstrate how to
             // listen to another component via model.set() +
             // model.store.subscribe()
-            // It's not populating in dom bc appendTo is null
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
                 model: new AutocompleteModel({suggestions: []}),
-                appendTo: null,
+                appendTo: this.views.search.$el,
                 template: autocompleteTemplate
             });
 
