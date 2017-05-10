@@ -4,7 +4,9 @@ const asyncReducers = {}
 function addReducer (reducerName, reducerFn) {
     const actionType = getActionType(reducerName);
 
-    // auto-generate our reducer functions here, add to `asyncReducers` object
+    // auto-generate our reducer functions here,
+    // add to `asyncReducers` object that
+    // gets combine()'d below
     asyncReducers[reducerName] = (state, action) => {
         // this will happen during init phase:
         if (state === undefined) state = { change: null }

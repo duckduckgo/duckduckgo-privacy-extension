@@ -71,7 +71,6 @@ BaseModel.prototype = $.extend({},
          */
         clear: function(attr, ops) {
             this.set(attr, null, ops);
-            // TODO: update minidux store here!
         }
 
     }
