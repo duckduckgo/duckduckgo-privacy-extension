@@ -34,14 +34,25 @@ BaseModel.prototype = $.extend({},
          * to any UI components that might want to observe
          * changes and update their state.
          *
-         * @param {string} attr
+         * @param {string or object} attr
          * @param {*} val
          * @api public
          */
         set: function(attr, val) {
 
-            // TODO: accept first arg as hash here, too
-            // i.e.: { foo: 'foo', bar: 'bar'}
+            // support passing a hash of values to set instead of
+            // single attribute/value pair, i.e.:
+            //
+            // this.set({
+            //   title: 'something',
+            //   description: 'something described'
+            // });
+            if (typeof attr === 'object') {
+                for (var key in attr) {
+                    this.set(key, attr[key], val);
+                }
+                return;
+            }
 
             const lastValue = this[attr] || null;
             this[attr] = val;

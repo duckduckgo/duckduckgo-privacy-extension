@@ -1,9 +1,5 @@
-// TODO: don't return store. tuck store away from public API
-//       only expose
-//       XX - .register(),
-//       XX - .subscribe()
-//       - .getState()
 // TODO: follow prev nomenclature: model properties -> attributes
+//       HMMM... maybe we get rid of model._toJSON properties altogether?
 // TODO: model.set() should accept hash
 // TODO: model.clear() should update minidux store
 // TODO: this.store.update() signature arg should be hash so its readable
@@ -92,9 +88,11 @@ function _publishChange (state) {
 
   Object.keys(state).forEach((key) => {
       if (state[key].change) {
-          console.log(`PUBLISH change:${state[key].change.modelName}`)
+          console.log(`PUBLISH change`)
+          console.log(state);
           _publisher.emit(`change`, state);
-          _publisher.emit(`change:${state[key].change.modelName}`, state[state[key].change.modelName]);
+          console.log(`PUBLISH change:${state[key].change.modelName}`)
+          _publisher.emit(`  change:${state[key].change.modelName}`, state[state[key].change.modelName]);
       }
   });
 
