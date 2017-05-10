@@ -1,4 +1,3 @@
-// TODO: make store agnostic about whether reducer is for model or view(!)
 // TODO: destroying view/model destroys store reducer
 // TODO: README at js/base directory level, point to it from main README
 // TODO: create a state injector for test mocks

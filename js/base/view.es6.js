@@ -141,10 +141,6 @@ BaseView.prototype = $.extend(
             this.$el.remove();
             delete this.$el;
             this._render();
-            this.emit('rerender');
-
-            // make sure any new links are wrapped
-            // this._wrapLinks();
         },
 
         /**
