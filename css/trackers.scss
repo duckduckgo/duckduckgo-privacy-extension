@@ -14,13 +14,15 @@ body {
 }
 
 #ddg-site-info {
-    // width: 270px;
     padding: 0px;
 }
 
 .js-menu-title, .menu-title {
     padding: 14px 0px;
-    color: black;
+}
+
+.js-menu-arrow {
+    cursor: pointer;
 }
 
 .js-menu-section, .menu-section {
@@ -28,7 +30,6 @@ body {
 }
 
 .menu-p {
-    // padding-left:14px;
     font-weight:normal;
 }
 
@@ -91,7 +92,6 @@ body {
   background-position: 50% 50%;
   background-size: 20px 20px;
 
-  // float: right;
   height: 34px;
   width: 49px;
 
@@ -131,6 +131,11 @@ ul.js-menu-item-list, ul.menu-item-list {
     list-style-type: none;
     padding-left: 0px;
     margin-top: 0;
+    font-weight:500;
+}
+
+.js-site-domain {
+    font-weight:600;
 }
 
 // .js-site-item
@@ -154,7 +159,8 @@ ul.js-menu-item-list li.site-co:first-child {
     overflow: visible;
     height: 12px;
     border-radius: 12px;
-    margin-top: 0.3em;   // FIXME need proper vertical alignment
+    margin-top: 0.3em;
+    cursor: pointer;
 }
 
 .js-site-whitelist-toggle-bg {
@@ -174,6 +180,7 @@ ul.js-menu-item-list li.site-co:first-child {
     background-color: white;
     margin-top:-2px;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
 
 .js-site-whitelist-fg-true, .js-toggle-fg-false {
@@ -225,11 +232,6 @@ ul.js-menu-item-list li.site-co:first-child {
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow.png');
     width: 16px;
     height: 16px;
-}
-
-
-.js-site-item span {
-    /*display:inline-block; */
 }
 
 .js-site-https-default {
