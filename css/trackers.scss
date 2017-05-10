@@ -136,6 +136,7 @@ ul.js-menu-item-list li.site-co:first-child {
     padding-top: 0;
 }
 
+
 /* Whitelist toggle                              */
 /* getting this approximately in place           */
 /* this needs to be replaced with a real control */
@@ -143,13 +144,21 @@ ul.js-menu-item-list li.site-co:first-child {
 .js-site-whitelist-toggle-bg, .js-toggle-bg {
     display: inline-block;
     position: absolute;
-    right: 50px;
     width: 32px;
     overflow: visible;
     height: 12px;
     border-radius: 12px;
     margin-top: 0.3em;   // FIXME need proper vertical alignment
 }
+
+.js-site-whitelist-toggle-bg {
+    right: 50px;
+}
+
+.js-toggle-bg {
+    right: 0px;
+}
+
 /* foreground control */
 .js-site-whitelist-toggle-fg, .js-toggle-fg {
     display: inline-block;
@@ -267,4 +276,12 @@ ul.js-menu-item-list li.site-co:first-child {
     height: 44px;
     background-repeat: no-repeat;
     margin-left:14px;
+}
+
+.js-whitelist-remove {
+    color: #AAA;
+    font-size: 22px;
+    margin-top: -4px; /* (22-14)/2 */
+    font-weight: normal;
+    cursor: pointer;
 }
