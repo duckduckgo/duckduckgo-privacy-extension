@@ -1,5 +1,4 @@
 // TODO: model.clear() should update minidux store
-// TODO: this.store.update() signature arg should be hash so its readable
 // TODO: make store agnostic about whether reducer is for model or view(!)
 // TODO: destroying view/model destroys store reducer
 // TODO: README at js/base directory level, point to it from main README
