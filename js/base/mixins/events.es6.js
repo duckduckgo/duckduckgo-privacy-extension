@@ -1,4 +1,4 @@
-const $ = require('./../../../node_modules/jquery');
+const $ = require('jquery');
 
 module.exports = {
 

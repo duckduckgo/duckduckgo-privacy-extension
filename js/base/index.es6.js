@@ -1,5 +1,5 @@
 // create global $
-window.$ = window.jQuery = require('./../../node_modules/jquery');
+window.$ = window.jQuery = require('jquery');
 
 // base dependencies
 const mixins = require('./mixins/index.es6.js');

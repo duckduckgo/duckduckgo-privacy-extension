@@ -4,7 +4,7 @@
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 const reducers = require('./reducers.es6.js');
-const EventEmitter2 = require('./../../node_modules/eventemitter2');
+const EventEmitter2 = require('eventemitter2');
 
 
 /**

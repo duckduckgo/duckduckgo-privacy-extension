@@ -1,5 +1,4 @@
-const $ = require('./../../node_modules/jquery');
-const EventEmitter2 = require('./../../node_modules/eventemitter2');
+const $ = require('jquery');
 const mixins = require('./mixins/index.es6.js');
 
 /**
@@ -10,7 +9,6 @@ const mixins = require('./mixins/index.es6.js');
  * into the DOM and a locally scoped find at this.$
  *
  * @constructor
- * @augments EventEmitter2
  * @param {object} ops
  */
 
@@ -37,7 +35,6 @@ const mixins = require('./mixins/index.es6.js');
 
 BaseView.prototype = $.extend(
     {},
-    EventEmitter2.prototype,
     mixins.events,
     {
 

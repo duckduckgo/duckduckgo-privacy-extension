@@ -1,4 +1,4 @@
-const bel = require('./../../node_modules/bel');
+const bel = require('bel');
 
 module.exports = function () {
     return bel`<div class="js-privacy-options">
