@@ -25,6 +25,10 @@ class Site{
         settings.updateSetting('whitelist', globalWhitelist);
     };
 
+    notifyWhitelistChanged(){
+        chrome.runtime.sendMessage({'whitelistChanged': true});
+    };
+
     isWhiteListed(){ return this.whiteListed };
     
     addTracker(tracker){ 
