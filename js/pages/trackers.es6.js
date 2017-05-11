@@ -53,7 +53,7 @@ Trackers.prototype = $.extend({},
             this.views.trackerlist = new ItemMenuView({
                 pageView: this,
                 model: new ItemMenuModel({title: 'Options', id: "options-page",
-                     link: function() { chrome.tabs.create({ url: 'chrome-extension://' + chrome.runtime.id + '/html/options.html' }); }
+                     link: chrome.runtime.openOptionsPage
                 }),
                 appendTo: $parent,
                 template: ItemMenuTemplate

@@ -225,31 +225,31 @@ ul.js-menu-item-list li.site-co:first-child {
 }
 
 .js-site-rating-A {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
 }
 .js-site-rating-B {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
 }
 .js-site-rating-C {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
 }
 
 .js-icon-arrow {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
     width: 16px;
     height: 16px;
 }
 
 .js-site-https-default {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
 }
 
 .js-site-https-upgraded {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
 }
 
 .js-site-https-none {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
 }
 
 
@@ -285,11 +285,12 @@ ul.js-menu-item-list li.site-co:first-child {
 }
 
 #ddg_logo {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/logo-horizontal.png');
+    background-image: url('chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png');
     width: 158px;
     height: 44px;
     background-repeat: no-repeat;
-    margin-bottom:23px;
+    margin-bottom: 23px;
+    background-size: contain;
 }
 
 .js-whitelist-remove {
