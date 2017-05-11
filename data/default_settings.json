@@ -1,6 +1,8 @@
 {
     "extensionIsEnabled": true,
     "socialBlockingIsEnabled": false,
+    "trackerBlockingEnabled": true,
+    "httpsEverywhereEnabled": true,
     "meanings": true,
     "advanced_options": true,
     "last_search": "",
