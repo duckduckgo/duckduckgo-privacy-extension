@@ -28,6 +28,7 @@ Site.prototype = $.extend({},
           if(this.site){
               this.isWhitelisted = !this.isWhitelisted;
               this.site.setWhitelisted(this.isWhitelisted);
+              this.site.notifyWhitelistChanged();
           }
       },
 

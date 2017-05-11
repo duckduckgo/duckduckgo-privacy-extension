@@ -23,7 +23,10 @@ class Site{
         }
 
         settings.updateSetting('whitelist', globalWhitelist);
-        chrome.runtime.sendMessage({'rerenderWhitelist': true});
+    };
+
+    notifyWhitelistChanged(){
+        chrome.runtime.sendMessage({'whitelistChanged': true});
     };
 
     isWhiteListed(){ return this.whiteListed };

@@ -16,7 +16,7 @@ function Whitelist (ops) {
     var thisView = this;
 
     chrome.runtime.onMessage.addListener(function(req){
-        if(req.rerenderWhitelist){
+        if(req.whitelistChanged){
             thisView.model.setWhitelistFromSettings();
             thisView.rerender();
         }
