@@ -53,7 +53,7 @@ Trackers.prototype = $.extend({},
             this.views.trackerlist = new ItemMenuView({
                 pageView: this,
                 model: new ItemMenuModel({title: 'Options', id: "options-page",
-                     link: reloadOrOpenOptionsPage
+                     link: chrome.runtime.openOptionsPage
                 }),
                 appendTo: $parent,
                 template: ItemMenuTemplate
@@ -71,19 +71,6 @@ Trackers.prototype = $.extend({},
 
     }
 );
-
-function reloadOrOpenOptionsPage() {
-    let optionsURL = 'chrome-extension://' + chrome.runtime.id + '/html/options.html';
-    chrome.tabs.query({url: optionsURL}, (tab) => {
-        if(tab && tab.length){
-            chrome.tabs.reload(tab[0].id);
-            chrome.tabs.update(tab[0].id, {active: true});
-        }
-        else{
-            chrome.tabs.create({ url: optionsURL});
-        }
-    });
-}
 
 // kickoff!
 window.DDG = window.DDG || {};
