@@ -7,7 +7,10 @@ function TrackerList (attrs) {
     Parent.call(this, attrs);
     this.companyList = backgroundPage.Companies.getTopBlocked(5);
 
-    var max = this.companyList[0].count;
+    var max = 0;
+    if(this.companyList && this.companyList.length){
+        max = this.companyList[0].count;
+    }
 
     this.companyListM = this.companyList.map(
         (site) => {
