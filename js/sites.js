@@ -7,7 +7,10 @@ var Sites = ( () => {
     };
 
     return {
-        get: (domain) => { return siteContainer[domain] },
+        get: (domain) => { 
+            let site = siteContainer[domain] || Sites.add(domain);
+            return site;
+        },
             
         add: (domain) => {
             if(!siteContainer[domain]){
@@ -18,6 +21,7 @@ var Sites = ( () => {
 
         all: () => { return Object.keys(siteContainer) },
 
-        clearData: () => { siteContainer = {} },
+        clearData: () => { siteContainer = {} }
+
     };
 })();

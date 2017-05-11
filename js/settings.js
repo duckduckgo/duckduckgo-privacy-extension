@@ -3,18 +3,35 @@ var load = require('load');
 require.scopes.settings =(() => {
     var settings = {};
 
+    // external settings defines a function that needs to run when a setting is updated
+    var externalSettings = {
+        'httpsEverywhereEnabled': function(value){ isExtensionEnabled = value }
+    };
+
     function init() {
         buildSettingsFromDefaults();
         buildSettingsFromLocalStorage();
         registerListeners();
     }
 
-    function buildSettingsFromLocalStorage(callback) {
+    function buildSettingsFromLocalStorage() {
         chrome.storage.local.get(['settings'], function(results){
-            savedSettings = results['settings'];
-            Object.assign(settings, savedSettings);
-            syncSettingTolocalStorage();
+            Object.assign(settings, results['settings']);
+            runExternalSettings();
         });
+    }
+
+    function runExternalSettings(){
+        for(var settingName in settings){
+            let value = settings[settingName];
+            runExternalSetting(settingName, value);
+        }
+    }
+
+    function runExternalSetting(name, value){
+        if(externalSettings[name] && typeof(externalSettings[name]) === 'function'){
+            externalSettings[name](value);
+        }
     }
 
     function buildSettingsFromDefaults() {
@@ -37,6 +54,7 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         settings[name] = value;
+        runExternalSetting(name, value);
         syncSettingTolocalStorage();
     }
 
@@ -63,7 +81,7 @@ require.scopes.settings =(() => {
     
     var exports = {
         getSetting: getSetting,
-        updateSetting: updateSetting
+        updateSetting: updateSetting,
     }
     return exports;
 

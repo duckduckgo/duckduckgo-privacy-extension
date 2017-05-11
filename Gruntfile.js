@@ -49,7 +49,8 @@ module.exports = function(grunt) {
                 },
                 files: {
                     '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/base/index.es6.js'],
-                    '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/pages/trackers.es6.js']
+                    '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/pages/trackers.es6.js'],
+                    '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/pages/options.es6.js']
                 }
             }
         },
