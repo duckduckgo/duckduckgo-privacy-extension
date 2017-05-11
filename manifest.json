@@ -43,6 +43,7 @@
                 "js/company.js",
                 "js/load.js",
                 "js/settings.js",
+                "js/atb.js",
                 "js/trackerLists.js",
                 "js/trackers.js",
                 "js/background.js"
