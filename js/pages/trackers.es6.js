@@ -78,7 +78,8 @@ Trackers.prototype = $.extend({},
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
                 model: new AutocompleteModel({suggestions: []}),
-                appendTo: this.views.search.$el,
+                // appendTo: this.views.search.$el,
+                appendTo: null,
                 template: autocompleteTemplate
             });
 
