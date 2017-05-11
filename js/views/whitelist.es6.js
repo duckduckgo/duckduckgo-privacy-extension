@@ -13,7 +13,14 @@ function Whitelist (ops) {
     // bind events
     this.setup();
 
+    var thisView = this;
 
+    chrome.runtime.onMessage.addListener(function(req){
+        if(req.rerenderWhitelist){
+            thisView.model.setWhitelistFromSettings();
+            thisView.rerender();
+        }
+    });
 };
 
 Whitelist.prototype = $.extend({},
