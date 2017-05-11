@@ -1,7 +1,6 @@
 // TODO: README at js/base directory level, point to it from main README
 // TODO: create a state injector for test mocks
 
-
 const minidux = require('minidux');
 const deepFreeze = require('deep-freeze');
 const reducers = require('./reducers.es6.js');
@@ -50,13 +49,15 @@ function register (modelName) {
  * done with model.set() and model.clear() instead of directly here
  * @param {string} modelName
  * @param {object} change - { attribute, value, lastValue }
+ * @param {object} attributes - object representing model's direct properties
  * @api public
  */
-function update (modelName, change) {
+function update (modelName, change, attributes) {
   const actionType = reducers.getActionType(modelName);
   _store.dispatch({
     type: actionType,
-    change: change
+    change: change,
+    attributes: attributes
   });
 }
 
@@ -75,7 +76,7 @@ function _publishChange (state) {
 
   Object.keys(state).forEach((key) => {
       if (state[key].change) {
-          console.info(`STORE PUBLISH change:${key}`, state[key]);
+          console.info(`STORE PUBLISH MODEL change:${key}`, state[key]);
           _publisher.emit(`change:${key}`, state[key]);
       }
   });

@@ -4,9 +4,13 @@ const asyncReducers = {}
 function addReducer (reducerName, reducerFn) {
     const actionType = getActionType(reducerName);
 
-    // auto-generate our reducer functions here,
-    // add to `asyncReducers` object that
-    // gets combine()'d below
+    // Auto-generate our reducer functions here,
+    // add each to `asyncReducers` object that
+    // gets combine()'d below.
+    // NOTE: we aren't using proper "reducers"
+    // that would return an array of past states
+    // since we don't really need state history
+    // at this point.
     asyncReducers[reducerName] = (state, action) => {
         // this will happen during init phase:
         if (state === undefined) state = { change: null }
@@ -14,7 +18,10 @@ function addReducer (reducerName, reducerFn) {
         if (action.type === actionType) {
             let change = null;
             if (action.change) change = action.change;
-            return { change: change };
+            return {
+              change: change,
+              attributes: action.attributes
+            };
         } else {
             return state;
         }

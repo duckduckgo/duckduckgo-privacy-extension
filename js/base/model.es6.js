@@ -59,7 +59,8 @@ BaseModel.prototype = $.extend({},
 
             this.store.update(
                 this.modelName,
-                { attribute: attr, value: val, lastValue: lastValue }
+                { attribute: attr, value: val, lastValue: lastValue },
+                this._toJSON()
             );
         },
 
@@ -83,6 +84,18 @@ BaseModel.prototype = $.extend({},
          destroy: function () {
              this.unbindEvents();
              this.store.remove(this.modelName);
+         },
+
+         /**
+          * Private method for turning `this` into a
+          * JSON object before sending to minidux store
+          * Basically just weeds out properties that
+          * are functions.
+          */
+         _toJSON: function () {
+             let attributes = Object.assign({}, Object.getPrototypeOf(this), this);
+             if (attributes.store) delete attributes.store;
+             return JSON.parse(JSON.stringify(attributes));
          }
 
     }
