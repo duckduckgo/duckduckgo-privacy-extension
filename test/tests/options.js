@@ -17,7 +17,6 @@
       getLoadedTab(testURL).then((tab) => {
           tabsToCleanUp.push(tab);
           let site = Sites.get(utils.extractHostFromURL(testURL));
-          console.log(site);
           assert.ok(site.trackers.length === 0, 'tracking should be off');
 
           // switch blocking back on and reload
