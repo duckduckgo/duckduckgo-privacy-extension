@@ -1,4 +1,4 @@
-const $ = require('./../../node_modules/jquery');
+const $ = require('jquery');
 const mixins = require('./mixins/index.es6.js');
 const store = require('./store.es6.js');
 
