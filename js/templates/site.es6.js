@@ -1,6 +1,7 @@
 const bel = require('./../../node_modules/bel');
 
 module.exports = function () {
+    
     return bel`<div class="js-site js-menu-section">
         <ul class="js-menu-item-list">
             <li class="js-site-item">
