@@ -14,7 +14,7 @@ Whitelist.prototype = $.extend({},
   Parent.prototype,
   {
 
-         modelName: 'whitelist',
+        modelName: 'whitelist',
 
 
         removeDomain(itemIndex) {
