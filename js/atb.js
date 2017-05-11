@@ -61,10 +61,8 @@ var ATB = (() => {
         },
 
         setInitialVersions: () => {
-            console.log("Setting intial versions");
             if(!settings.getSetting('atb')){
                 let versions = ATB.calculateInitialVersions();
-                console.log("Versions: ", versions);
                 if(versions && versions.major && versions.minor){
                     settings.updateSetting('atb', 'v' + versions.major + '-' +versions.minor);
                 }
@@ -92,7 +90,6 @@ var ATB = (() => {
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
-            console.log("Setting atb from success page ", atb);
             if(!settings.getSetting('set_atb')){
                 settings.updateSetting('atb', atb);
                 settings.updateSetting('set_atb', atb);
