@@ -39,7 +39,7 @@ function Background() {
       for(var i = 0; i < savedTabs.length; i++){ 
           var tab = savedTabs[i];
           if(tab.url){
-            tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url, 'dispTotal': 0};
+            tabs[tab.id] = {'trackers': {}, 'total': 0, 'url': tab.url, 'dispTotal': 0};
           }
       }
   });
