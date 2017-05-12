@@ -56,4 +56,27 @@ class Site{
     getTrackers(){ return this.trackers };
     setTrackers(newTrackers){ this.trackers = newTrackers };
     setScore(newScore){ this.score = newScore };
+
+
+
+    /*
+     * specialDomain
+     *
+     * determine if domain is a special page
+     *
+     * returns: a useable special page description string.
+     *          or false if not a special page.
+     */
+    specialDomain() {
+        if (this.domain === 'extensions')
+            return "extensions";
+
+        if (this.domain === chrome.runtime.id)
+            return "options";
+
+        if (this.domain === 'newtab')
+            return "new tab";
+
+        return false;
+    }
 }

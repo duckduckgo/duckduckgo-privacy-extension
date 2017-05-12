@@ -46,7 +46,7 @@ Trackers.prototype = $.extend({},
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel({
-                    domain: "cnn.com",    // FIXME remove dummy data, handle initial/zero case
+                    domain: "-",
                     isWhitelisted: false,
                     siteRating: 'B',
                     trackerCount: 0
