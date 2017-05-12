@@ -1,0 +1,19 @@
+/* Normalize File */
+@import "../node_modules/normalize.scss/normalize";
+
+/* Color Variables */
+@import "../node_modules/duckduckgo-colors/_colors.scss";
+
+/* Links */
+a {
+  color: $blue;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.link-secondary {
+    color: $slate;
+  }
+}
