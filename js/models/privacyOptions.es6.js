@@ -14,6 +14,9 @@ function PrivacyOptions (attrs) {
 PrivacyOptions.prototype = $.extend({},
   Parent.prototype,
   {
+
+      modelName: 'privacyOptions',
+
       toggle: function (k) {
           if (this.hasOwnProperty(k)) {
               this[k] = !this[k];

@@ -10,7 +10,7 @@ const httpsStates = {
     };
 
 function Site (attrs) {
-    
+
     // test FIXME get from httpseverywhere
     attrs.httpsState = 'none';
 
@@ -18,12 +18,16 @@ function Site (attrs) {
     attrs.httpsStatusText = httpsStates[attrs.httpsState];
 
     Parent.call(this, attrs);
+
 };
 
 
 Site.prototype = $.extend({},
   Parent.prototype,
   {
+
+      modelName: 'site',
+
       toggleWhitelist: function () {
           if(this.site){
               this.isWhitelisted = !this.isWhitelisted;
@@ -58,7 +62,7 @@ Site.prototype = $.extend({},
           else{
               let url = backgroundPage.utils.parseURL(tab.url);
               let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
-              
+
               httpsRules.forEach((ruleSet) => {
                   if(ruleSet.active && ruleSet.apply(tab.url)){
                       this.httpsState = 'default'; // figure out if this is upgraded later

@@ -11,9 +11,8 @@ function ItemMenu (attrs) {
 ItemMenu.prototype = $.extend({},
   Parent.prototype,
   {
-      // f: function (s) {
-      //     console.log(`ItemMenu f()`);
-      // }
+
+      modelName: 'itemMenu'
 
   }
 );

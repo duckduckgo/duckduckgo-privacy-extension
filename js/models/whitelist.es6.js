@@ -14,6 +14,9 @@ Whitelist.prototype = $.extend({},
   Parent.prototype,
   {
 
+        modelName: 'whitelist',
+
+
         removeDomain(itemIndex) {
             var domain = this.list[itemIndex];
             console.log(`whitelist: remove ${domain}`);
@@ -33,7 +36,6 @@ Whitelist.prototype = $.extend({},
             this.list = Object.keys(wlist);
             this.list.sort();
         }
-
 
   }
 );

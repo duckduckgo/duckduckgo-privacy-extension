@@ -11,6 +11,8 @@ Search.prototype = $.extend({},
   Parent.prototype,
   {
 
+      modelName: 'search',
+
       doSearch: function (s) {
           this.searchText = s;
           console.log(`doSearch() for ${s}`);

@@ -1,5 +1,5 @@
 // create global $
-window.$ = window.jQuery = require('./../../node_modules/jquery');
+window.$ = window.jQuery = require('jquery');
 
 // base dependencies
 const mixins = require('./mixins/index.es6.js');
@@ -8,7 +8,6 @@ const BasePage = require('./page.es6.js');
 const BaseView = require('./view.es6.js');
 
 // init base
-// TODO: make this a constructor and init from outside of here?
 window.DDG = window.DDG || {};
 window.DDG.base = {
     mixins: mixins,

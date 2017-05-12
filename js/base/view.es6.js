@@ -1,5 +1,4 @@
-const $ = require('./../../node_modules/jquery');
-const EventEmitter2 = require('./../../node_modules/eventemitter2');
+const $ = require('jquery');
 const mixins = require('./mixins/index.es6.js');
 
 /**
@@ -10,7 +9,6 @@ const mixins = require('./mixins/index.es6.js');
  * into the DOM and a locally scoped find at this.$
  *
  * @constructor
- * @augments EventEmitter2
  * @param {object} ops
  */
 
@@ -37,7 +35,6 @@ const mixins = require('./mixins/index.es6.js');
 
 BaseView.prototype = $.extend(
     {},
-    EventEmitter2.prototype,
     mixins.events,
     {
 
@@ -59,6 +56,7 @@ BaseView.prototype = $.extend(
             this.unbindEvents();
             this.destroyChildViews();
             this.$el.remove();
+            if (this.model) this.model.destroy();
         },
 
         /**
@@ -141,10 +139,6 @@ BaseView.prototype = $.extend(
             this.$el.remove();
             delete this.$el;
             this._render();
-            this.emit('rerender');
-
-            // make sure any new links are wrapped
-            // this._wrapLinks();
         },
 
         /**
