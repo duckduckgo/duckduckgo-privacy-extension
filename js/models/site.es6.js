@@ -45,7 +45,10 @@ Site.prototype = $.extend({},
           
           this.disabled = true;
 
-          if (site) {
+          if (!site) {
+              this.domain = '-';    // should not happen
+          }
+          else {
               this.site = site;
               this.isWhitelisted = site.whiteListed;
               
@@ -56,9 +59,6 @@ Site.prototype = $.extend({},
               else {
                   this.disabled = false;
               }
-          }
-          else {
-              this.domain = '-';    // should not happen
           }
       },
 
