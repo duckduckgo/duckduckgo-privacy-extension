@@ -26,6 +26,7 @@ function Site (ops) {
 
                                       
             if (thisModel.disabled) {   // determined in setSiteObj()
+                this.model.disabled = true;
                 thisView.setDisabled();
             }
 
@@ -80,7 +81,6 @@ Site.prototype = $.extend({},
         },
 
         setDisabled: function() {
-            this.model.disabled = true;
             $('body').addClass('disabled');
         }
 
