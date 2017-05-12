@@ -145,10 +145,14 @@ chrome.webRequest.onBeforeRequest.addListener(
           delete tabs[e.tabId];
           return;
       }
-      
+
+      // skip requests to background tabs
+      if(e.tabId === -1){
+          return;
+      }
+
       if(!tabs[e.tabId]){
-          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0}
-          updateBadge(e.tabId, tabs[e.tabId].dispTotal);
+          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0, "status": ""}
       }
 
       var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
@@ -200,10 +204,12 @@ function updateBadge(tabId, numBlocked){
 }
 
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
+    // an existing tab has been reloaded or changed url, clear tab data and set status
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
         tabs[id] = {'trackers': {}, "total": 0, "dispTotal": 0, 'url': tab.url, "status": "loading"};
         updateBadge(id, 0);
     }
+    // existing tab, update the status and url
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
         
@@ -213,6 +219,12 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
 
         Companies.syncToStorage();
     }
+    // this is a new tab, create it
+    else if (!tabs[id]){
+          tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "dispTotal": 0, "status": info.status}
+          updateBadge(id, 0);
+      }
+
 
 });
 
