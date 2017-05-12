@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.View;
 
 
-var backgroundPage = chrome.extension.getBackgroundPage(); // FIXME probably centralize this?
+var backgroundPage = chrome.extension.getBackgroundPage();
 
 function Site (ops) {
 
@@ -23,11 +23,27 @@ function Site (ops) {
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisModel.tabId = tab.id;
             thisModel.setSiteObj();
+
+                                      
+            if (thisModel.disabled) {   // determined in setSiteObj()
+                thisView.setDisabled();
+            }
+
             thisModel.updateTrackerCount();
             thisModel.setHttpsMessage();
             thisView.rerender(); // our custom rerender below
         }
+        else {
+            console.debug('Site view: no tab');
+        }
     });
+
+    // edge case, should not happen
+    // '-' is the domain default in the pages/trackers.es6.js call
+    if (this.domain === '-') {
+        this.model.disabled = true;
+        this.setDisabled();
+    }
 
     chrome.runtime.onMessage.addListener(function(req, sender, res){
         if(req.rerenderPopup){
@@ -62,6 +78,10 @@ Site.prototype = $.extend({},
             this.unbindEvents();
             this._rerender();
             this.setup();
+        },
+
+        setDisabled: function() {
+            $('body').addClass('disabled');
         }
 
     }

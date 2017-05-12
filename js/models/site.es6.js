@@ -6,12 +6,12 @@ var backgroundPage = chrome.extension.getBackgroundPage();
 const httpsStates = {
         'default':  'Secure Connection',
         'upgraded': 'Forced Secure Connection',
-        'none':     'Insecure Connection'
+        'none':     'Secure Connection Unavailable'
     };
 
 function Site (attrs) {
 
-    // test FIXME get from httpseverywhere
+    attrs.disabled = true;     // disabled by default
     attrs.httpsState = 'none';
 
     // set message and icon based on httpsState
@@ -40,9 +40,25 @@ Site.prototype = $.extend({},
           let tab = backgroundPage.tabs[this.tabId];
           let host = backgroundPage.utils.extractHostFromURL(tab.url);
           let site = backgroundPage.Sites.get(host);
-          if(site){
+
+          // Determine if this is a special page, eg extensions, and reset domain and disabled flag.
+          
+          this.disabled = true;
+
+          if (site) {
               this.site = site;
               this.isWhitelisted = site.whiteListed;
+              
+              let special = site.specialDomain();
+              if (special) {
+                  this.domain = special;    // eg "extensions", "options", "new tab"
+              }
+              else {
+                  this.disabled = false;
+              }
+          }
+          else {
+              this.domain = '-';    // should not happen
           }
       },
 
