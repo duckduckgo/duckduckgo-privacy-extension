@@ -152,7 +152,8 @@ chrome.webRequest.onBeforeRequest.addListener(
       }
 
       if(!tabs[e.tabId]){
-          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0, "status": ""}
+          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0, "status": ""};
+          updateBadge(e.tabId, 0);
       }
 
       var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
