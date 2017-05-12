@@ -4,6 +4,14 @@
 /* Color Variables */
 @import "../node_modules/duckduckgo-colors/_colors.scss";
 
+
+body {
+  font-size: 14px;
+  font-weight: bolder;
+  color: $slate;
+}
+
+
 /* Links */
 a {
   color: $blue;

@@ -1,13 +1,5 @@
 @import "../node_modules/duckduckgo-colors/colors";
 
-body {
-    margin: 0;
-    padding: 0;
-    font-size: 14px;
-    font-weight: bolder;
-    color: #333;
-}
-
 #ddg-site-wrapper {
     padding: 0 14px 0 14px;
     width: 242px; /* 270 - 14*2 */
@@ -30,13 +22,13 @@ body {
 }
 
 .js-menu-section, .menu-section {
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $platinum;
 }
 
 .menu-p {
     font-weight: 500;
     margin-bottom: 10px;
-    color: #333;
+    color: $slate;
 }
 
 .js-search-form {
@@ -137,7 +129,7 @@ ul.js-menu-item-list, ul.menu-item-list {
     list-style-type: none;
     padding-left: 0px;
     margin-top: 0;
-    font-weight:500;
+    font-weight: 500;
 }
 
 .js-site-domain {
@@ -183,7 +175,7 @@ ul.js-menu-item-list li.site-co:first-child {
     width: 16px;
     height: 16px;
     border-radius: 16px;
-    background-color: white;
+    background-color: $white;
     margin-top:-2px;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
     cursor: pointer;
@@ -199,8 +191,8 @@ ul.js-menu-item-list li.site-co:first-child {
 /* whitelist true means tracking is off, ie gray */
 /* normal toggle false means off and gray! */
 .js-site-whitelist-true, .js-toggle-bg-false {
-    background-color: #aaa;
-    color: #aaa;
+    background-color: $grey-light;
+    color: $grey-light;
 }
 
 /* whitelist false means tracking is on, ie green */
@@ -265,13 +257,13 @@ ul.js-menu-item-list li.site-co:first-child {
 
 .js-site-trackerCount {
     border-radius: 16px;
-    background: #de5833;
-    color: white;
+    background: $red;
+    color: $white;
     padding: 0px 8px;
 }
 
 .js-site-blocker-bar {
-    background: #e0e0e0;
+    background: $platinum;
     position: absolute;
     height: 2em;
     left: 7px;
@@ -303,25 +295,9 @@ ul.js-menu-item-list li.site-co:first-child {
 }
 
 .js-whitelist-remove {
-    color: #AAA;
+    color: $grey-light;
     font-size: 22px;
     margin-top: -4px; /* (22-14)/2 */
     font-weight: normal;
     cursor: pointer;
 }
-
-
-a {
-    color: #4495d4;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-a.link-secondary {
-    color: #333;
-}
-
-
