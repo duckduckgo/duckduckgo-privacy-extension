@@ -26,7 +26,6 @@ function Site (ops) {
 
                                       
             if (thisModel.disabled) {   // determined in setSiteObj()
-                this.model.disabled = true;
                 thisView.setDisabled();
             }
 
@@ -42,6 +41,7 @@ function Site (ops) {
     // edge case, should not happen
     // '-' is the domain default in the pages/trackers.es6.js call
     if (this.domain === '-') {
+        this.model.disabled = true;
         this.setDisabled();
     }
 
