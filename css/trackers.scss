@@ -170,7 +170,7 @@ ul.js-menu-item-list li.site-co:first-child {
 }
 
 .js-site-whitelist-toggle-bg {
-    right: 50px;
+    right: 14px; // 50px;
 }
 
 .js-toggle-bg {
@@ -225,12 +225,15 @@ ul.js-menu-item-list li.site-co:first-child {
 }
 
 .js-site-rating-A {
+    visibility:hidden;
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
 }
 .js-site-rating-B {
+    visibility:hidden;
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
 }
 .js-site-rating-C {
+    visibility:hidden;
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
 }
 
