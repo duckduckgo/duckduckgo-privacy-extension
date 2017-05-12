@@ -252,6 +252,9 @@ ul.js-menu-item-list li.site-co:first-child {
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
 }
 
+.disabled .js-site {
+    opacity: 0.5;
+}
 
 .js-site-trackerCount {
     border-radius: 16px;
@@ -260,7 +263,6 @@ ul.js-menu-item-list li.site-co:first-child {
     padding: 0px 8px;
 }
 
-/* max width: 270 - (7*2) = 256 */
 .js-site-blocker-bar {
     background: #e0e0e0;
     position: absolute;
