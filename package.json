@@ -38,7 +38,8 @@
     "deep-freeze": "0.0.1",
     "eventemitter2": "^4.1.0",
     "jquery": "^3.2.1",
-    "minidux": "^1.0.1"
+    "minidux": "^1.0.1",
+    "normalize.scss": "^0.1.0"
   },
   "babel": {
     "presets": [
