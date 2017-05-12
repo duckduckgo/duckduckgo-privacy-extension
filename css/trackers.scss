@@ -252,6 +252,10 @@ ul.js-menu-item-list li.site-co:first-child {
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
 }
 
+.js-site-https-status-msg {
+    margin-left: 0.5em;
+}
+
 .disabled .js-site {
     opacity: 0.5;
 }
