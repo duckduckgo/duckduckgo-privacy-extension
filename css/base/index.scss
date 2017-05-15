@@ -1,0 +1,50 @@
+@import "../vars";
+
+/* Normalize File */
+@import "../../node_modules/normalize.scss/normalize";
+
+
+
+/**
+ * DDG Chrome Extension Base Styles
+ */
+
+/* Resets */
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+h1, h2, h3, h4, h5, h5 {
+  font-size: $default-font-size;
+  margin: 0;
+  padding: 0;
+}
+
+/* Fonts */
+
+body,
+input,
+textarea,
+select {
+  font-family: $default-font;
+  font-size: $default-font-size;
+  font-weight: bold;
+  color: $slate;
+}
+
+
+/* Links */
+
+a {
+  color: $blue;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.link-secondary {
+    color: $slate;
+  }
+}
