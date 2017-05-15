@@ -20,7 +20,7 @@ Options.prototype = $.extend({},
 
         ready: function() {
 
-            var $parent = $("#ddg-options-content");
+            var $parent = $("#options-content");
 
             Parent.prototype.ready.call(this);
 
@@ -47,5 +47,5 @@ Options.prototype = $.extend({},
 // kickoff!
 window.DDG = window.DDG || {};
 window.DDG.page = new Options();
- 
+
 
