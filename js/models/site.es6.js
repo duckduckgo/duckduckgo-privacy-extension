@@ -42,7 +42,6 @@ Site.prototype = $.extend({},
           let site = backgroundPage.Sites.get(host);
 
           // Determine if this is a special page, eg extensions, and reset domain and disabled flag.
-          
           this.disabled = true;
 
           if (!site) {
@@ -51,7 +50,7 @@ Site.prototype = $.extend({},
           else {
               this.site = site;
               this.isWhitelisted = site.whiteListed;
-              
+              console.log('[model] isWhitelisted: ' + this.isWhitelisted);
               let special = site.specialDomain();
               if (special) {
                   this.domain = special;    // eg "extensions", "options", "new tab"

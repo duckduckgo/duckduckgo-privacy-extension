@@ -25,7 +25,6 @@
 @mixin toggle () {
 
     /* toggle background */
-    .js-site-whitelist-toggle-bg,
     .js-toggle-bg {
         display: inline-block;
         position: absolute;
@@ -37,24 +36,17 @@
         cursor: pointer;
         right: 0;
 
-        /* whitelist true means tracking is off, ie gray */
-        /* normal toggle false means off and gray! */
-        &.js-site-whitelist-true,
+        /* toggle false means off and gray! */
         &.js-toggle-bg-false {
             background-color: $grey-light;
-            color: $grey-light;
         }
 
-        /* whitelist false means tracking is on, ie green */
         /* normal toggle true means on and green! */
-        &.js-site-whitelist-false,
         &.js-toggle-bg-true {
             background-color: #84ba50;
-            color: #84ba50;
         }
 
         /* foreground control */
-        .js-site-whitelist-toggle-fg,
         .js-toggle-fg {
             display: inline-block;
             width: 16px;
@@ -65,12 +57,10 @@
             box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
             cursor: pointer;
 
-            &.js-site-whitelist-fg-true,
             &.js-toggle-fg-false {
                 margin-left: 0px;
             }
 
-            &.js-site-whitelist-fg-false,
             &.js-toggle-fg-true {
                 margin-left: 16px;
             }

@@ -24,7 +24,7 @@ function Site (ops) {
             thisModel.tabId = tab.id;
             thisModel.setSiteObj();
 
-                                      
+
             if (thisModel.disabled) {   // determined in setSiteObj()
                 thisView.setDisabled();
             }
@@ -58,20 +58,19 @@ Site.prototype = $.extend({},
     Parent.prototype,
     {
         _whitelistClick: function (e) {
-
             this.model.toggleWhitelist();
+            console.log('isWhitelisted: ', this.model.isWhitelisted);
             this.rerender();
         },
 
         setup: function() {
 
-            this._cacheElems('.js-site', [ 'whitelist-toggle-bg', 'whitelist-toggle-fg' ]);
+            this._cacheElems('.js-site', [ 'toggle' ]);
 
             this.bindEvents([
-              [this.$whitelisttogglebg, 'click', this._whitelistClick],
-              [this.$whitelisttogglefg, 'click', this._whitelistClick]
+              [this.$toggle, 'click', this._whitelistClick],
             ]);
-            
+
         },
 
         rerender: function() {
