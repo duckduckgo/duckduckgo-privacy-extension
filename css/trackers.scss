@@ -14,6 +14,7 @@
 }
 
 .menu-title {
+    font-weight: bold;
     padding: 14px 0px 0px 0px;
 }
 
@@ -26,7 +27,7 @@
 }
 
 .menu-p {
-    font-weight: 500;
+    font-weight: bold;
     margin-bottom: 10px;
     color: $slate;
 }
@@ -101,7 +102,6 @@
 
 .js-search-go:hover, .js-search-go.selected{
   background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9InNlYXJjaC1sb3VwZSI+PGc+PGc+PHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6I2ZmZmZmZjsiIGQ9Ik0xOC43LDE2LjJsLTIuOS0yLjlDMTYuNSwxMi4xLDE3LDEwLjYsMTcsOWMwLTQuNC0zLjYtOC04LThTMSw0LjYsMSw5czMuNiw4LDgsOGMxLjYsMCwzLTAuNSw0LjMtMS4ybDIuOSwyLjljMC41LDAuNSwxLjIsMC41LDEuNiwwbDAuOC0wLjhDMTkuMSwxNy40LDE5LjEsMTYuNywxOC43LDE2LjJ6IE05LDE1Yy0zLjMsMC02LTIuNy02LTZjMC0zLjMsMi43LTYsNi02YzMuMywwLDYsMi43LDYsNkMxNSwxMi4zLDEyLjMsMTUsOSwxNXoiLz48L2c+PC9nPjwvZz48L3N2Zz4=) !important;
-
   background-color: $green !important;
 }
 
@@ -111,11 +111,8 @@
   margin-left: -8px;
   height: 27px;
   width: 21px;
-
   background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9ImNsZWFyIj48Zz48Zz48cG9seWdvbiBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojODg4ODg4OyIgcG9pbnRzPSIxNi41LDQuNyAxNS44LDQgMTAuNSw5LjMgNS4yLDQgNC41LDQuNyA5LjgsMTAgNC41LDE1LjMgNS4yLDE2IDEwLjUsMTAuNyAxNS44LDE2IDE2LjUsMTUuMyAxMS4yLDEwIi8+PC9nPjwvZz48L2c+PC9zdmc+) !important;
   background-repeat: no-repeat;
-
-
   display: none;
   cursor: pointer;
 }
@@ -124,19 +121,17 @@
     margin-top: 36px;
 }
 
- // .jsmenu-section ul, .js-site ul
 ul.js-menu-item-list, ul.menu-item-list {
     list-style-type: none;
-    padding-left: 0px;
+    padding-left: 0;
+    padding-bottom: 14px;
     margin-top: 0;
-    font-weight: 500;
 }
 
 .js-site-domain {
-    font-weight:600;
+    font-weight: bold;
 }
 
-// .js-site-item
 ul.js-menu-item-list li, ul.menu-item-list li {
     padding-top: 17px;
 }
@@ -298,6 +293,5 @@ ul.js-menu-item-list li.site-co:first-child {
     color: $grey-light;
     font-size: 22px;
     margin-top: -4px; /* (22-14)/2 */
-    font-weight: normal;
     cursor: pointer;
 }

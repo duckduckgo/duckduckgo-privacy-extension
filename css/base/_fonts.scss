@@ -34,3 +34,12 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'DDG_ProximaNova';
+    src: url('../font/ProximaNova-Sbold-webfont.eot');
+    src: url('../font/ProximaNova-Sbold-webfont.woff') format('woff'),
+         url('../font/ProximaNova-Sbold-webfont.ttf') format('truetype');
+    font-weight: 600;
+    font-style: bold;
+}
