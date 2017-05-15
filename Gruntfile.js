@@ -60,7 +60,8 @@ module.exports = function(grunt) {
                 files: {
                     '<%= dirs.public.css %>/base.css': ['<%= dirs.src.css %>/base/index.scss'],
                     '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.css %>/noatb.scss'],
-                    '<%= dirs.public.css %>/trackers.css': ['<%= dirs.src.css %>/trackers.scss']
+                    '<%= dirs.public.css %>/trackers.css': ['<%= dirs.src.css %>/trackers.scss'],
+                    '<%= dirs.public.css %>/options.css': ['<%= dirs.src.css %>/options.scss']
                 }
             }
         },

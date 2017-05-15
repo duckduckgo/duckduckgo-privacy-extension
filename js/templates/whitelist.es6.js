@@ -6,7 +6,11 @@ module.exports = function () {
 
         if (list.length > 0) {
             var i=0;
-            return bel`${list.map((dom) => bel`<li class="js-whitelist-item"><a class="link-secondary" href="https://${dom}">${dom}</a><span class="js-site-icon-right js-whitelist-remove" data-item="${i++}">×</span></li>`)}`;
+            return bel`${list.map((dom) => bel`
+                <li class="js-whitelist-item">
+                    <a class="link-secondary" href="https://${dom}">${dom}</a>
+                    <span class="js-site-icon-right js-whitelist-remove" data-item="${i++}">×</span>
+                </li>`)}`;
         }
 
         return bel`<li class="js-whitelist-item">No whitelisted sites.</li>`;

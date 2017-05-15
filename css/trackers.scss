@@ -1,8 +1,9 @@
 @import "vars";
+@import "mixins";
 
 #ddg-site-wrapper {
     padding: 0 14px 0 14px;
-    width: $popup-width - 28px; /* 270 - 14*2 */
+    width: $popup-width - 28px; /* 270px - 14*2 */
 }
 
 #ddg-site-info {
@@ -18,18 +19,15 @@
     padding: 14px 0px 0px 0px;
 }
 
+@include menu_item_list();
+@include toggle();
+
 .js-menu-arrow {
     cursor: pointer;
 }
 
 .js-menu-section, .menu-section {
     border-bottom: 1px solid $platinum;
-}
-
-.menu-p {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: $slate;
 }
 
 .js-search-form {
@@ -110,80 +108,8 @@
     margin-top: 36px;
 }
 
-ul.js-menu-item-list, ul.menu-item-list {
-    list-style-type: none;
-    padding-left: 0;
-    padding-bottom: 14px;
-    margin-top: 0;
-}
-
 .js-site-domain {
     font-weight: bold;
-}
-
-ul.js-menu-item-list li, ul.menu-item-list li {
-    padding-top: 17px;
-}
-
-ul.js-menu-item-list li.site-co:first-child {
-    padding-top: 0;
-}
-
-
-/* Whitelist toggle                              */
-/* getting this approximately in place           */
-/* this needs to be replaced with a real control */
-/* background */
-.js-site-whitelist-toggle-bg, .js-toggle-bg {
-    display: inline-block;
-    position: absolute;
-    width: 32px;
-    overflow: visible;
-    height: 12px;
-    border-radius: 12px;
-    margin-top: 0.3em;
-    cursor: pointer;
-}
-
-.js-site-whitelist-toggle-bg {
-    right: 14px; // hiding the site score for now, was: // 50px;
-}
-
-.js-toggle-bg {
-    right: 0px;
-}
-
-/* foreground control */
-.js-site-whitelist-toggle-fg, .js-toggle-fg {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border-radius: 16px;
-    background-color: $white;
-    margin-top:-2px;
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-}
-
-.js-site-whitelist-fg-true, .js-toggle-fg-false {
-    margin-left: 0px;
-}
-.js-site-whitelist-fg-false, .js-toggle-fg-true {
-    margin-left: 16px;
-}
-
-/* whitelist true means tracking is off, ie gray */
-/* normal toggle false means off and gray! */
-.js-site-whitelist-true, .js-toggle-bg-false {
-    background-color: $grey-light;
-    color: $grey-light;
-}
-
-/* whitelist false means tracking is on, ie green */
-/* normal toggle true means on and green! */
-.js-site-whitelist-false, .js-toggle-bg-true {
-    background-color: #84ba50;
-    color: #84ba50;
 }
 
 .js-site-inline-icon {
@@ -201,15 +127,15 @@ ul.js-menu-item-list li.site-co:first-child {
 }
 
 .js-site-rating-A {
-    visibility:hidden;
+    visibility: hidden;
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
 }
 .js-site-rating-B {
-    visibility:hidden;
+    visibility: hidden;
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
 }
 .js-site-rating-C {
-    visibility:hidden;
+    visibility: hidden;
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
 }
 
@@ -262,25 +188,3 @@ ul.js-menu-item-list li.site-co:first-child {
     right: 14px;
 }
 
-
-#ddg-options {
-    width: 400px;
-    margin: 3em auto auto auto;
-    position: relative;
-}
-
-#ddg_logo {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png');
-    width: 158px;
-    height: 44px;
-    background-repeat: no-repeat;
-    margin-bottom: 23px;
-    background-size: contain;
-}
-
-.js-whitelist-remove {
-    color: $grey-light;
-    font-size: 22px;
-    margin-top: -4px; /* (22-14)/2 */
-    cursor: pointer;
-}
