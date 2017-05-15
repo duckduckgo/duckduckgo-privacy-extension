@@ -32,7 +32,7 @@ Trackers.prototype = $.extend({},
 
         ready: function() {
 
-            var $parent = $('#ddg-site-info');
+            var $parent = $('.site-info');
 
             Parent.prototype.ready.call(this);
 

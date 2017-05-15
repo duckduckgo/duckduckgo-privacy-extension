@@ -1,13 +1,9 @@
 @import "vars";
 @import "mixins";
 
-#ddg-site-wrapper {
+.site-container {
     padding: 0 14px 0 14px;
     width: $popup-width - 28px; /* 270px - 14*2 */
-}
-
-#ddg-site-info {
-    padding: 0px;
 }
 
 .js-menu-title {
