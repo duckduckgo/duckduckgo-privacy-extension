@@ -6,11 +6,13 @@
 /* Font definitions */
 @import "fonts";
 
+
 /**
  * DDG Chrome Extension Base Styles
  */
 
-/* Resets */
+
+/* Resets and Base Styles */
 html, body {
     height: 100%;
     min-height: 100%;
@@ -22,10 +24,15 @@ h1, h2, h3, h4, h5, h5 {
     padding: 0;
 }
 
-ul, ol, li {
+section, ul, ol, li {
     margin: 0;
     padding: 0;
 }
+
+.divider-bottom {
+    border-bottom: 1px solid $platinum;
+}
+
 
 /* Fonts */
 
