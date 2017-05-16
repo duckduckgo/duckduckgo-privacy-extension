@@ -14,8 +14,10 @@ module.exports = function () {
                 <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
             </li>
             <li>
-                <span class="site-info__https-status site-info__https-status--${this.model.httpsState}"></span>
-                <span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
+                <h2>
+                    <span class="site-info__https-status site-info__https-status--${this.model.httpsState}"></span>
+                    <span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
+                </h3>
             </li>
             <li>
                 <h2>
