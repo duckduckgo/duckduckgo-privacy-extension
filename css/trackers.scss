@@ -80,7 +80,7 @@
 
 }
 
-@include menu_item_list();
+@include menu_list();
 @include toggle();
 
 .js-menu-arrow {
