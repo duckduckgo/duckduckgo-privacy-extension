@@ -1,19 +1,19 @@
 const Parent = window.DDG.base.Page;
 const TrackerListView = require('./../views/trackerlist.es6.js');
 const TrackerListModel = require('./../models/trackerlist.es6.js');
-const TrackerListTemplate = require('./../templates/trackerlist.es6.js');
+const trackerListTemplate = require('./../templates/trackerlist.es6.js');
 
 const SiteView = require('./../views/site.es6.js');
 const SiteModel = require('./../models/site.es6.js');
-const SiteTemplate = require('./../templates/site.es6.js');
+const siteTemplate = require('./../templates/site.es6.js');
 
 const SearchView = require('./../views/search.es6.js');
 const SearchModel = require('./../models/search.es6.js');
-const SearchTemplate = require('./../templates/search.es6.js');
+const searchTemplate = require('./../templates/search.es6.js');
 
 const ItemMenuView = require('./../views/itemMenu.es6.js');
 const ItemMenuModel = require('./../models/itemMenu.es6.js');
-const ItemMenuTemplate = require('./../templates/itemMenu.es6.js');
+const itemMenuTemplate = require('./../templates/itemMenu.es6.js');
 
 const AutocompleteView = require('./../views/autocomplete.es6.js');
 const AutocompleteModel = require('./../models/autocomplete.es6.js');
@@ -40,7 +40,7 @@ Trackers.prototype = $.extend({},
                 pageView: this,
                 model: new SearchModel({searchText:''}), // TODO proper location of remembered query
                 appendTo: $parent,
-                template: SearchTemplate
+                template: searchTemplate
             });
 
             this.views.site = new SiteView({
@@ -52,7 +52,7 @@ Trackers.prototype = $.extend({},
                     trackerCount: 0
                 }),
                 appendTo: $parent,
-                template: SiteTemplate
+                template: siteTemplate
             });
 
             this.views.trackerlist = new ItemMenuView({
@@ -61,14 +61,14 @@ Trackers.prototype = $.extend({},
                      link: chrome.runtime.openOptionsPage
                 }),
                 appendTo: $parent,
-                template: ItemMenuTemplate
+                template: itemMenuTemplate
             });
 
             this.views.trackerlist = new TrackerListView({
                 pageView: this,
                 model: new TrackerListModel({}),
                 appendTo: $parent,
-                template: TrackerListTemplate
+                template: trackerListTemplate
             });
 
             // TODO: hook up model query to actual ddg ac endpoint.

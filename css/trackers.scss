@@ -80,8 +80,15 @@
 
 }
 
+/* Lists */
 @include menu_list();
+
+/* Toggle controls */
 @include toggle();
+
+
+
+
 
 .js-menu-arrow {
     cursor: pointer;
