@@ -17,7 +17,7 @@ module.exports = function () {
             return bel`${list.map((dom) => bel`
                 <li>
                     <a class="link-secondary" href="https://${dom}">${dom}</a>
-                    <span class="remove pull-right js-whitelist-remove" data-item="${i++}">×</span>
+                    <button class="remove pull-right js-whitelist-remove" data-item="${i++}">×</button>
                 </li>`)}`;
         }
 

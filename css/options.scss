@@ -39,11 +39,19 @@
 
     li {
 
-        .remove {
+        a {
+            line-height: 1.2em;
+        }
+
+        button.remove {
             color: $grey-light;
             font-size: 22px;
+            line-height: 1.2em;
             margin-top: -4px; /* (22-14)/2 */
-            cursor: pointer;
+            background: transparent;
+            border: none;
+            margin: -4px 0 0 0;
+            padding: 0;
         }
     }
 }
