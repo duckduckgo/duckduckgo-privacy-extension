@@ -134,6 +134,14 @@
           margin-left: 0.5em;
       }
 
+      .site-info__tracker-count {
+          border-radius: 16px;
+          background: $red;
+          color: $white;
+          padding: 0px 8px;
+          margin-right: 0.5em;
+      }
+
   }
 }
 
@@ -154,14 +162,6 @@
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
     width: 16px;
     height: 16px;
-}
-
-
-.js-site-trackerCount {
-    border-radius: 16px;
-    background: $red;
-    color: $white;
-    padding: 0px 8px;
 }
 
 .js-site-blocker-bar {
