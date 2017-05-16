@@ -93,6 +93,31 @@
           font-weight: bold;
           overflow: hidden;
       }
+
+      .site-info__rating {
+          background-repeat: no-repeat;
+          background-size: cover;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          vertical-align: middle;
+
+          &.site-info__rating-A {
+              visibility: hidden;
+              background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
+          }
+
+          &.site-info__rating-B {
+              visibility: hidden;
+              background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
+          }
+
+          &.site-info__rating-C {
+              visibility: hidden;
+              background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+          }
+
+      }
   }
 
 }
@@ -109,33 +134,6 @@
 
 
 
-
-.js-site-inline-icon {
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-}
-
-.js-site-icon-right {
-    position: absolute;
-    right: 14px;
-}
-
-.js-site-rating-A {
-    visibility: hidden;
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
-}
-.js-site-rating-B {
-    visibility: hidden;
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
-}
-.js-site-rating-C {
-    visibility: hidden;
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
-}
 
 .js-icon-arrow {
     background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');

@@ -11,7 +11,7 @@ module.exports = function () {
                 <div class="js-site-toggle js-toggle-bg js-toggle-bg-${!this.model.isWhitelisted}">
                     <div class="js-site-toggle js-toggle-fg js-toggle-fg-${!this.model.isWhitelisted}"></div>
                 </div>
-                <div class="js-site-rating-${this.model.siteRating} js-site-inline-icon js-site-icon-right"></div>
+                <div class="site-info__rating site-info__rating-${this.model.siteRating} pull-right"></div>
             </li>
             <li class="https-status-item">
                 <span class="js-site-inline-icon js-site-https-${this.model.httpsState}"></span>
