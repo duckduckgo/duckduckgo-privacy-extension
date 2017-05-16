@@ -71,5 +71,14 @@
 
         }
     }
+}
 
+/* Icons */
+@mixin icon_display () {
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
 }

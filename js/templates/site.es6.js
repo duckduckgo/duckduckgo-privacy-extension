@@ -11,13 +11,13 @@ module.exports = function () {
                 <div class="js-site-toggle js-toggle-bg js-toggle-bg-${!this.model.isWhitelisted}">
                     <div class="js-site-toggle js-toggle-fg js-toggle-fg-${!this.model.isWhitelisted}"></div>
                 </div>
-                <div class="site-info__rating site-info__rating-${this.model.siteRating} pull-right"></div>
+                <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
             </li>
-            <li class="https-status-item">
-                <span class="js-site-inline-icon js-site-https-${this.model.httpsState}"></span>
-                <span class="js-site-https-status-msg">${this.model.httpsStatusText}</span>
+            <li>
+                <span class="site-info__https-status site-info__https-status--${this.model.httpsState}"></span>
+                <span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
             </li>
-            <li class="tracker-count-item">
+            <li>
                 <span class="js-site-trackerCount">${this.model.trackerCount}</span> Trackers Blocked
             </li>
         </ul>

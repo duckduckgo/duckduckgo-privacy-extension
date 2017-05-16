@@ -95,31 +95,46 @@
       }
 
       .site-info__rating {
-          background-repeat: no-repeat;
-          background-size: cover;
-          display: inline-block;
-          width: 20px;
-          height: 20px;
-          vertical-align: middle;
+          @include icon_display();
 
-          &.site-info__rating-A {
+          &.site-info__rating--A {
               visibility: hidden;
               background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
           }
 
-          &.site-info__rating-B {
+          &.site-info__rating--B {
               visibility: hidden;
               background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
           }
 
-          &.site-info__rating-C {
+          &.site-info__rating--C {
               visibility: hidden;
               background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
           }
+      }
+
+      .site-info__https-status {
+          @include icon_display();
+
+          &.site-info__https-status--default {
+              background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
+          }
+
+          &.site-info__https-status--upgraded {
+              background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
+          }
+
+          &.site-info__https-status--none {
+              background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
+          }
 
       }
-  }
 
+      .site-info__https-status-msg {
+          margin-left: 0.5em;
+      }
+
+  }
 }
 
 
@@ -141,21 +156,6 @@
     height: 16px;
 }
 
-.js-site-https-default {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
-}
-
-.js-site-https-upgraded {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
-}
-
-.js-site-https-none {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
-}
-
-.js-site-https-status-msg {
-    margin-left: 0.5em;
-}
 
 .js-site-trackerCount {
     border-radius: 16px;
