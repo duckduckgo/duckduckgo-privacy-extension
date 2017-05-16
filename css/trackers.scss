@@ -80,20 +80,6 @@
 
 }
 
-
-
-
-
-
-.js-menu-title {
-    padding: 14px 0px;
-}
-
-.menu-title {
-    font-weight: bold;
-    padding: 14px 0px 0px 0px;
-}
-
 @include menu_item_list();
 @include toggle();
 

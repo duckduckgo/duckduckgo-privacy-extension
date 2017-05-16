@@ -5,7 +5,7 @@ module.exports = function () {
     var domain = this.model.domain;
 
     return bel`<div class="js-site js-menu-section">
-        <ul class="js-menu-item-list">
+        <ul class="menu-list">
             <li>
                 <span class="js-site-domain">${domain}</span>
                 <div class="js-site-toggle js-toggle-bg js-toggle-bg-${!this.model.isWhitelisted}">

@@ -3,8 +3,7 @@
 /* Menu lists */
 @mixin menu_item_list () {
 
-    ul.js-menu-item-list,
-    ul.menu-item-list {
+    ul.menu-list {
         list-style-type: none;
         padding-left: 0;
         padding-bottom: 14px;
@@ -13,7 +12,7 @@
         li {
             padding-top: 17px;
 
-            &.site-co:first-child {
+            &:first-child {
                 padding-top: 0;
             }
         }
