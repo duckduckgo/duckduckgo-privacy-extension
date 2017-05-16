@@ -85,6 +85,14 @@
 
   .site-info {
 
+      .site-info__domain {
+          max-width: $popup-width - 50;
+          height: 1.2em;
+          line-height: 1.4em;
+          display: inline-block;
+          font-weight: bold;
+          overflow: hidden;
+      }
   }
 
 }
@@ -93,6 +101,7 @@
 /* Lists */
 @include menu_list();
 
+
 /* Toggle controls */
 @include toggle();
 
@@ -100,10 +109,6 @@
 
 
 
-
-.js-site-domain {
-    font-weight: bold;
-}
 
 .js-site-inline-icon {
     background-repeat: no-repeat;
