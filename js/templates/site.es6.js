@@ -4,7 +4,7 @@ module.exports = function () {
 
     var domain = this.model.domain;
 
-    return bel`<div class="js-site js-menu-section">
+    return bel`<section class="site-info divider-bottom">
         <ul class="menu-list">
             <li>
                 <span class="js-site-domain">${domain}</span>
@@ -21,7 +21,7 @@ module.exports = function () {
                 <span class="js-site-trackerCount">${this.model.trackerCount}</span> Trackers Blocked
             </li>
         </ul>
-    </div>`;
+    </section>`;
 
 }
 

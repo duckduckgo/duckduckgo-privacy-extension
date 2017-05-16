@@ -32,7 +32,7 @@ Trackers.prototype = $.extend({},
 
         ready: function() {
 
-            var $parent = $('.site-info');
+            var $parent = $('#trackers-container');
 
             Parent.prototype.ready.call(this);
 
