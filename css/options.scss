@@ -26,7 +26,7 @@
     }
 }
 
-/* Lists */
+/* Menu lists */
 @include menu_item_list();
 
 
@@ -34,14 +34,16 @@
 @include toggle();
 
 
-
-
-
 /* Whitelist */
-.js-whitelist-remove {
-    color: $grey-light;
-    font-size: 22px;
-    margin-top: -4px; /* (22-14)/2 */
-    cursor: pointer;
-}
+.options-content__whitelist {
 
+    li {
+
+        .remove {
+            color: $grey-light;
+            font-size: 22px;
+            margin-top: -4px; /* (22-14)/2 */
+            cursor: pointer;
+        }
+    }
+}

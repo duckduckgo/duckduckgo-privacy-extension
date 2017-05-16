@@ -15,6 +15,11 @@
             &:first-child {
                 padding-top: 0;
             }
+
+            .pull-right {
+                position: absolute;
+                right: 14px;
+            }
         }
     }
 
