@@ -24,47 +24,55 @@
 /* Toggle controls */
 @mixin toggle () {
 
-    /* toggle background */
-    .js-toggle-bg {
-        display: inline-block;
+    .toggle-button {
         position: absolute;
+        right: 14px;
         width: 32px;
-        overflow: visible;
-        height: 12px;
-        border-radius: 12px;
-        margin-top: 0.3em;
-        cursor: pointer;
-        right: 0;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        text-align: left;
 
-        /* toggle false means off and gray! */
-        &.js-toggle-bg-false {
-            background-color: $grey-light;
-        }
+        /* toggle background */
+        .js-toggle-bg {
+            position: absolute;
+            width: 32px;
+            overflow: visible;
+            height: 12px;
+            border-radius: 12px;
+            margin-top: 0.3em;
+            right: 0;
 
-        /* normal toggle true means on and green! */
-        &.js-toggle-bg-true {
-            background-color: #84ba50;
-        }
-
-        /* foreground control */
-        .js-toggle-fg {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border-radius: 16px;
-            background-color: $white;
-            margin-top:-2px;
-            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
-            cursor: pointer;
-
-            &.js-toggle-fg-false {
-                margin-left: 0px;
+            /* toggle false means off and gray! */
+            &.js-toggle-bg-false {
+                background-color: $grey-light;
             }
 
-            &.js-toggle-fg-true {
-                margin-left: 16px;
+            /* normal toggle true means on and green! */
+            &.js-toggle-bg-true {
+                background-color: #84ba50;
             }
 
+            .js-toggle-knob {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+                border-radius: 16px;
+                background-color: $white;
+                margin-top: -2px;
+                box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+
+                &.js-toggle-knob-false {
+                    margin-left: 0px;
+                }
+
+                &.js-toggle-knob-true {
+                    margin-left: 16px;
+                }
+
+            }
         }
     }
 }

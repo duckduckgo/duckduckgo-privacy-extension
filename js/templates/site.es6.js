@@ -8,9 +8,11 @@ module.exports = function () {
         <ul class="menu-list">
             <li>
                 <h1 class="site-info__domain">${domain}</h1>
-                <div class="js-site-toggle js-toggle-bg js-toggle-bg-${!this.model.isWhitelisted}">
-                    <div class="js-site-toggle js-toggle-fg js-toggle-fg-${!this.model.isWhitelisted}"></div>
-                </div>
+                <button class="toggle-button js-site-toggle" type="button">
+                    <div class="js-toggle-bg js-toggle-bg-${!this.model.isWhitelisted}">
+                        <div class="js-toggle-knob js-toggle-knob-${!this.model.isWhitelisted}"></div>
+                    </div>
+                </button>
                 <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
             </li>
             <li>
