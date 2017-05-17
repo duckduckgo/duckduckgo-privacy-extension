@@ -16,5 +16,3 @@ window.DDG.base = {
     utils: {},
     View: BaseView,
 };
-
-console.log(window.DDG.base);

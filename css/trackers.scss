@@ -179,6 +179,13 @@
             .top-blocked__li__blocker-count {
                 display: inline-block;
             }
+
+            .top-blocked__li__company-name {
+                display: inline-block;
+                padding-left: 3px;
+                width: 180px;
+                overflow: hidden;
+            }
         }
     }
 

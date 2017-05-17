@@ -50,7 +50,7 @@ Site.prototype = $.extend({},
           else {
               this.site = site;
               this.isWhitelisted = site.whiteListed;
-              console.log('[model] isWhitelisted: ' + this.isWhitelisted);
+              console.log('[site model] isWhitelisted: ' + this.isWhitelisted);
 
               let special = site.specialDomain();
               if (special) {

@@ -8,8 +8,8 @@ module.exports = function () {
             ${this.model.companyListMap.map((company) => bel`
               <li class="top-blocked__li">
                   <div class="top-blocked__li__blocker-bar" style="width:${company.px}px"></div>
-                  ${company.name}
                   <div class="top-blocked__li__blocker-count pull-right">${company.count}</div>
+                  <span class="top-blocked__li__company-name">${company.name}</span>
               </li>`)}
         </ul>
     </section>`
