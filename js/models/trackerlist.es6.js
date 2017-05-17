@@ -12,14 +12,17 @@ function TrackerList (attrs) {
         max = this.companyList[0].count;
     }
 
-    this.companyListM = this.companyList.map(
-        (site) => {
-            var x = site.count;
+    this.companyListMap = this.companyList.map(
+        (company) => {
+            var x = company.count;
 
             // calc max using pixels instead of % to make margins easier
             // max width: 270 - (7*2) = 256
-            return {name: site.name, count:site.count,
-                p: Math.floor(x * 256 / max)};
+            return {
+              name: company.name,
+              count: company.count,
+              px: Math.floor(x * 256 / max)
+            };
         });
 
 };
