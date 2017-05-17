@@ -151,6 +151,27 @@
         position: relative;
         border-bottom: 1px solid $platinum;
     }
+
+    .top-blocked {
+
+        .top-blocked__li {
+            position: relative;
+
+            .top-blocked__li__blocker-bar {
+                background: $platinum;
+                position: absolute;
+                height: 2em;
+                z-index: -1;
+                margin-top: -0.3em;
+                border-radius: 2px;
+            }
+
+            .top-blocked__li__blocker-count {
+                display: inline-block;
+            }
+        }
+    }
+
 }
 
 
@@ -160,26 +181,3 @@
 
 /* Toggle controls */
 @include toggle();
-
-
-
-
-
-
-
-.js-site-blocker-bar {
-    background: $platinum;
-    position: absolute;
-    height: 2em;
-    left: 7px;
-    z-index:-1;
-    margin-top:-0.3em;
-    border-radius: 2px;
-}
-
-.js-site-blocker-count {
-    display: inline-block;
-    position: absolute;
-    right: 14px;
-}
-

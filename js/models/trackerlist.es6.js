@@ -17,11 +17,11 @@ function TrackerList (attrs) {
             var x = company.count;
 
             // calc max using pixels instead of % to make margins easier
-            // max width: 270 - (7*2) = 256
+            // max width: 270 - (14*2) = 242
             return {
               name: company.name,
               count: company.count,
-              px: Math.floor(x * 256 / max)
+              px: Math.floor(x * 242 / max)
             };
         });
 
