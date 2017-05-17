@@ -1,8 +1,8 @@
 const Parent = window.DDG.base.Page;
 
-const PrivacyOptionsView = require('./../views/privacyOptions.es6.js');
-const PrivacyOptionsModel = require('./../models/privacyOptions.es6.js');
-const privacyOptionsTemplate = require('./../templates/privacyOptions.es6.js');
+const PrivacyOptionsView = require('./../views/privacy-options.es6.js');
+const PrivacyOptionsModel = require('./../models/privacy-options.es6.js');
+const privacyOptionsTemplate = require('./../templates/privacy-options.es6.js');
 
 const WhitelistView = require('./../views/whitelist.es6.js');
 const WhitelistModel = require('./../models/whitelist.es6.js');
