@@ -1,6 +1,6 @@
 const Parent = window.DDG.base.View;
 
-function ItemMenu (ops) {
+function Linkable (ops) {
 
     this.model = ops.model;
     this.pageView = ops.pageView;
@@ -16,7 +16,7 @@ function ItemMenu (ops) {
 
 };
 
-ItemMenu.prototype = $.extend({},
+Linkable.prototype = $.extend({},
     Parent.prototype,
     {
 
@@ -28,4 +28,4 @@ ItemMenu.prototype = $.extend({},
 
 );
 
-module.exports = ItemMenu;
+module.exports = Linkable;

@@ -11,9 +11,9 @@ const SearchView = require('./../views/search.es6.js');
 const SearchModel = require('./../models/search.es6.js');
 const searchTemplate = require('./../templates/search.es6.js');
 
-const ItemMenuView = require('./../views/itemMenu.es6.js');
-const ItemMenuModel = require('./../models/itemMenu.es6.js');
-const itemMenuTemplate = require('./../templates/itemMenu.es6.js');
+const LinkableView = require('./../views/linkable.es6.js');
+const LinkableModel = require('./../models/linkable.es6.js');
+const linkableTemplate = require('./../templates/linkable.es6.js');
 
 const AutocompleteView = require('./../views/autocomplete.es6.js');
 const AutocompleteModel = require('./../models/autocomplete.es6.js');
@@ -55,9 +55,9 @@ Trackers.prototype = $.extend({},
                 template: siteTemplate
             });
 
-            this.views.trackerlist = new ItemMenuView({
+            this.views.options = new LinkableView({
                 pageView: this,
-                model: new ItemMenuModel({
+                model: new LinkableModel({
                     text: 'Options',
                     id: 'options-link',
                     link: chrome.runtime.openOptionsPage,
@@ -65,7 +65,7 @@ Trackers.prototype = $.extend({},
                     spanClass: 'icon pull-right icon--arrow'
                 }),
                 appendTo: $parent,
-                template: itemMenuTemplate
+                template: linkableTemplate
             });
 
             this.views.trackerlist = new TrackerListView({
