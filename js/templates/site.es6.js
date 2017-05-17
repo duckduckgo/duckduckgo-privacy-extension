@@ -1,4 +1,5 @@
 const bel = require('bel');
+const toggleButton = require('./shared/toggle-button');
 
 module.exports = function () {
 
@@ -8,11 +9,7 @@ module.exports = function () {
         <ul class="menu-list">
             <li>
                 <h1 class="site-info__domain">${domain}</h1>
-                <button class="toggle-button js-site-toggle" type="button">
-                    <div class="js-toggle-bg js-toggle-bg-${!this.model.isWhitelisted}">
-                        <div class="js-toggle-knob js-toggle-knob-${!this.model.isWhitelisted}"></div>
-                    </div>
-                </button>
+                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle')}
                 <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
             </li>
             <li>
