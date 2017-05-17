@@ -83,66 +83,74 @@
 
     }
 
-  .site-info {
+    .site-info {
 
-      .site-info__domain {
-          max-width: $popup-width - 50;
-          height: 1.2em;
-          line-height: 1.4em;
-          display: inline-block;
-          font-weight: bold;
-          overflow: hidden;
-      }
+        .site-info__domain {
+            max-width: $popup-width - 50;
+            height: 1.2em;
+            line-height: 1.4em;
+            display: inline-block;
+            font-weight: bold;
+            overflow: hidden;
+        }
 
-      .site-info__rating {
-          @include icon_display();
+        .site-info__rating {
+            @include icon_display();
 
-          &.site-info__rating--A {
-              visibility: hidden;
-              background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
-          }
+            &.site-info__rating--A {
+                visibility: hidden;
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
+            }
 
-          &.site-info__rating--B {
-              visibility: hidden;
-              background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
-          }
+            &.site-info__rating--B {
+                visibility: hidden;
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
+            }
 
-          &.site-info__rating--C {
-              visibility: hidden;
-              background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
-          }
-      }
+            &.site-info__rating--C {
+                visibility: hidden;
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+            }
+        }
 
-      .site-info__https-status {
-          @include icon_display();
+        .site-info__https-status {
+            @include icon_display();
 
-          &.site-info__https-status--default {
-              background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
-          }
+            &.site-info__https-status--default {
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
+            }
 
-          &.site-info__https-status--upgraded {
-              background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
-          }
+            &.site-info__https-status--upgraded {
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
+            }
 
-          &.site-info__https-status--none {
-              background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
-          }
+            &.site-info__https-status--none {
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
+            }
 
-      }
+        }
 
-      .site-info__https-status-msg {
-          margin-left: 0.5em;
-      }
+        .site-info__https-status-msg {
+            margin-left: 0.5em;
+        }
 
-      .site-info__tracker-count {
-          border-radius: 16px;
-          background: $red;
-          color: $white;
-          padding: 0px 8px;
-          margin-right: 0.5em;
-      }
+        .site-info__tracker-count {
+            border-radius: 16px;
+            background: $red;
+            color: $white;
+            padding: 0px 8px;
+            margin-right: 0.5em;
+        }
+    }
 
-  }
+
+    .linkable {
+        font-weight: bold;
+        display: block;
+        padding: 14px 0;
+        position: relative;
+        border-bottom: 1px solid $platinum;
+    }
 }
 
 
@@ -158,11 +166,6 @@
 
 
 
-.js-icon-arrow {
-    background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
-    width: 16px;
-    height: 16px;
-}
 
 .js-site-blocker-bar {
     background: $platinum;

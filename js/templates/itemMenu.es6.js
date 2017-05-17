@@ -1,8 +1,8 @@
 const bel = require('bel');
 
 module.exports = function () {
-    return bel`<div class="js-menu-title" id="js-item-menu-${this.model.id}">
-            <span>${this.model.title}</span>
-            <div class="js-site-inline-icon js-site-icon-right js-icon-arrow"></div>
-        </div>`;
+    return bel`<a class="linkable ${this.model.klass}" id="js-linkable-${this.model.id}" href="javascript:void(0)">
+            ${this.model.text}
+            <span class="${this.model.spanClass}"></div>
+        </a>`;
 }

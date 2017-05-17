@@ -8,13 +8,8 @@ function ItemMenu (ops) {
 
     Parent.call(this, ops);
 
-    console.log("new itemMenu view");
+    this.$linkableItem = $('#js-linkable-' + this.model.id);
 
-    // this._cacheElems('#js-item-menu', [ this.model.id ]);
-
-    this.$linkableItem = $("#js-item-menu-" + this.model.id);
-
-    // this.bindEvents() wires up jQuery selectors to events and their handlers:
     this.bindEvents([
       [this.$linkableItem, 'click', this._handleClick]
     ]);
@@ -26,8 +21,6 @@ ItemMenu.prototype = $.extend({},
     {
 
         _handleClick: function (e) {
-            console.log('ItemMenu _handleClick()');
-
             this.model.link();
         }
 

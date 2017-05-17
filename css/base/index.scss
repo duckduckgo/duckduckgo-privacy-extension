@@ -1,4 +1,5 @@
 @import "../vars";
+@import "../mixins";
 
 /* Normalize File */
 @import "../../node_modules/normalize.scss/normalize";
@@ -68,5 +69,25 @@ a {
 
     &.link-secondary {
         color: $slate;
+    }
+}
+
+
+/* Position */
+.pull-right {
+    position: absolute;
+    right: 14px;
+}
+
+/* Icons */
+/* Standard icon display within the extension */
+.icon {
+    @include icon_display();
+    /* you'll need to set the background image within each instance of .icon */
+
+    &.icon--arrow {
+      background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
+      width: 16px;
+      height: 16px;
     }
 }

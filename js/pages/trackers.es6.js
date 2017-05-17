@@ -46,7 +46,7 @@ Trackers.prototype = $.extend({},
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel({
-                    domain: "-",
+                    domain: '-',
                     isWhitelisted: false,
                     siteRating: 'B',
                     trackerCount: 0
@@ -57,8 +57,12 @@ Trackers.prototype = $.extend({},
 
             this.views.trackerlist = new ItemMenuView({
                 pageView: this,
-                model: new ItemMenuModel({title: 'Options', id: "options-page",
-                     link: chrome.runtime.openOptionsPage
+                model: new ItemMenuModel({
+                    text: 'Options',
+                    id: 'options-link',
+                    link: chrome.runtime.openOptionsPage,
+                    klass: 'link-secondary',
+                    spanClass: 'icon pull-right icon--arrow'
                 }),
                 appendTo: $parent,
                 template: itemMenuTemplate
