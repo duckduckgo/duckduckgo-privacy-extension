@@ -1,6 +1,16 @@
 @import "vars";
 @import "mixins";
 
+
+/* Generic menu list styling */
+@include menu_list();
+
+
+/* Generic options toggle controller styling */
+@include toggle();
+
+
+/* Options page */
 .options-container {
     width: 400px;
     margin: 3em auto auto auto;
@@ -25,14 +35,6 @@
         color: $slate;
     }
 }
-
-
-/* Menu lists */
-@include menu_list();
-
-
-/* Options menu */
-@include toggle();
 
 
 /* Whitelist */

@@ -1,6 +1,16 @@
 @import "vars";
 @import "mixins";
 
+
+/* Generic menu list styling */
+@include menu_list();
+
+
+/* Generic options toggle controller styling */
+@include toggle();
+
+
+/* Trackers page */
 .disabled .site-info {
     opacity: 0.5;
 }
@@ -173,11 +183,3 @@
     }
 
 }
-
-
-/* Lists */
-@include menu_list();
-
-
-/* Toggle controls */
-@include toggle();
