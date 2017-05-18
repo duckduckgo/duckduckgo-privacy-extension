@@ -95,8 +95,19 @@
 
     .site-info {
 
+        .menu-list {
+            li {
+                position: relative;
+
+                .toggle-button {
+                    top: 3px;
+                    right: 0;
+                }
+            }
+        }
+
         .site-info__domain {
-            max-width: $popup-width - 50;
+            max-width: $popup-width - 70;
             height: 1.2em;
             line-height: 1.4em;
             display: inline-block;
