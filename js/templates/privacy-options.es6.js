@@ -1,4 +1,5 @@
 const bel = require('bel');
+const toggleButton = require('./shared/toggle-button');
 
 module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
@@ -6,15 +7,15 @@ module.exports = function () {
         <ul class="menu-list">
             <li>
                 Block Trackers
-                <div class="js-toggle-bg js-toggle-bg-${this.model.trackerBlockingEnabled} js-options-blocktrackers" data-key="trackerBlockingEnabled">
-                    <div class="js-toggle-fg js-toggle-fg-${this.model.trackerBlockingEnabled} js-options-blocktrackers" data-key="trackerBlockingEnabled"></div>
-                </div>
+                ${toggleButton(this.model.trackerBlockingEnabled,
+                               'js-options-blocktrackers',
+                               'trackerBlockingEnabled')}
             </li>
             <li>
                 Force Secure Connection
-                <div class="js-toggle-bg js-toggle-bg-${this.model.httpsEverywhereEnabled} js-options-https-everywhere-enabled" data-key="httpsEverywhereEnabled">
-                    <div class="js-toggle-fg js-toggle-fg-${this.model.httpsEverywhereEnabled} js-options-https-everywhere-enabled" data-key="httpsEverywhereEnabled"></div>
-                </div>
+                ${toggleButton(this.model.httpsEverywhereEnabled,
+                               'js-options-https-everywhere-enabled',
+                               'httpsEverywhereEnabled')}
             </li>
         </ul>
     </section>`;
