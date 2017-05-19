@@ -14,22 +14,40 @@
  * limitations under the License.
  */
 
-// Saves options to localStorage.
+var bg = chrome.extension.getBackgroundPage();
+var settings = bg.settings;
+var load = bg.load;
+
+var elements = load.JSONfromLocalFile("data/popup_data.json");
+var asset_paths = elements.asset_paths;
+
+elements = elements.elements;
+
+var os = elements.os;
+var param = elements.param;
+var css_class = elements.css_class;
+var by_id = elements.id;
+var search_data = by_id.search;
+var bang = by_id.bang;
+var adv = by_id.adv;
+var url = elements.url;
+
+// Saves options to settings.
 function save_options() {
   var dev = document.getElementById("dev").checked;
-  localStorage["dev"] = dev;
+  settings.updateSetting("dev", dev);
   var lastsearch_enabled = document.getElementById("lastsearch_enabled").checked;
-  localStorage["lastsearch_enabled"] = lastsearch_enabled;
+  settings.updateSetting("lastsearch_enabled", lastsearch_enabled);
   var zeroclick_google_right = document.getElementById("zeroclick_google_right").checked;
-  localStorage["zeroclick_google_right"] = zeroclick_google_right;
+  settings.updateSetting("zeroclick_google_right", zeroclick_google_right);
   var use_post = document.getElementById("use_post").checked;
-  localStorage["use_post"] = use_post;
+  settings.updateSetting("use_post", use_post);
   var safesearch = document.getElementById("safesearch").checked;
-  localStorage["safesearch"] = safesearch;
+  settings.updateSetting("safesearch", safesearch);
 
   // setting this to false should also reset the last search.
   if (!lastsearch_enabled)
-    localStorage["last_search"] = '';
+    settings.updateSetting('last_search', '');
 
 
   if (dev)
@@ -51,36 +69,36 @@ function save_options() {
 
 // Restores select box state to saved value from localStorage.
 function restore_options() {
-  var dev = localStorage["dev"];
+  var dev = settings.getSetting("dev");
   if (dev === 'true') {
     document.getElementById("dev").checked = true;
   } else {
     document.getElementById("dev").checked = false;
   }
 
-  var lastsearch_enabled = localStorage["lastsearch_enabled"];
+  var lastsearch_enabled = settings.getSetting("lastsearch_enabled");
   if (lastsearch_enabled === 'true' || lastsearch_enabled == undefined) {
     document.getElementById("lastsearch_enabled").checked = true;
   } else {
     document.getElementById("lastsearch_enabled").checked = false;
   }
 
-  var zeroclick_google_right = localStorage["zeroclick_google_right"];
-  if (zeroclick_google_right === 'true') {
+  var zeroclick_google_right = settings.getSetting("zeroclick_google_right");
+  if (zeroclick_google_right) {
     document.getElementById("zeroclick_google_right").checked = true;
   } else {
     document.getElementById("zeroclick_google_right").checked = false;
   }
 
-  var use_post = localStorage["use_post"];
-  if (use_post === 'true') {
+  var use_post = settings.getSetting("use_post");
+  if (use_post) {
     document.getElementById("use_post").checked = true;
   } else {
     document.getElementById("use_post").checked = false;
   }
 
-  var safesearch = localStorage["safesearch"];
-  if (safesearch === 'true' || safesearch == undefined) {
+  var safesearch = settings.getSetting("safesearch");
+  if (safesearch) {
     document.getElementById("safesearch").checked = true;
   } else {
     document.getElementById("safesearch").checked = false;

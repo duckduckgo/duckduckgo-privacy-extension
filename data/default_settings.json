@@ -1,0 +1,21 @@
+{
+    "extensionIsEnabled": true,
+    "socialBlockingIsEnabled": false,
+    "trackerBlockingEnabled": true,
+    "httpsEverywhereEnabled": true,
+    "meanings": true,
+    "advanced_options": true,
+    "last_search": "",
+    "lastsearch_enabled": true,
+    "safesearch": true,
+    "use_post": false,
+    "ducky": false,
+    "dev": false,
+    "zeroclick_google_right": false,
+    "trackerListLoc": "data/tracker_lists",
+    "blockLists": [
+        "trackersWithParentCompany"
+    ],
+    "entityList": "data/tracker_lists/disconnect-entitylist.json",
+    "blocking": ["Advertising", "Analytics"]
+}

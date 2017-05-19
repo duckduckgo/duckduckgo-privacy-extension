@@ -15,19 +15,18 @@
  */
 
 
-var blockTrackers = require('blockTrackers');
+var trackers = require('trackers');
 var utils = require('utils');
-
+var settings = require('settings');
+var load = require('load');
+var stats = require('stats');
 var tabs = {};
-var isExtensionEnabled = true;
-var isSocialBlockingEnabled = false;
 
 function Background() {
   $this = this;
 
-
   // clearing last search on browser startup
-  localStorage['last_search'] = '';
+  settings.updateSetting('last_search', '');
 
   var os = "o";
   if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
@@ -40,60 +39,16 @@ function Background() {
       for(var i = 0; i < savedTabs.length; i++){ 
           var tab = savedTabs[i];
           if(tab.url){
-            tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
+            tabs[tab.id] = {'trackers': {}, 'total': 0, 'url': tab.url, 'dispTotal': 0};
           }
       }
   });
 
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
-    if (details.reason !== "install") {
-      return;
-    }  
-
-    if (localStorage['blocking'] === undefined) {
-        localStorage['blocking'] = 'true';
-    }
-
-    if (localStorage['atb'] === undefined) {
-        var oneWeek = 604800000,
-            oneDay = 86400000,
-            oneHour = 3600000,
-            oneMinute = 60000,
-            estEpoch = 1456290000000,
-            localDate = new Date(),
-            localTime = localDate.getTime(),
-            utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute),
-            est = new Date(utcTime + (oneHour * -5)),
-            dstStartDay = 13 - ((est.getFullYear() - 2016) % 6),
-            dstStopDay = 6 - ((est.getFullYear() - 2016) % 6),
-            isDST = (est.getMonth() > 2 || (est.getMonth() == 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() == 10 && est.getDate() < dstStopDay)),
-            epoch = isDST ? estEpoch - oneHour : estEpoch,
-            timeSinceEpoch = new Date().getTime() - epoch,
-            majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-            minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);
-
-        localStorage['atb'] = 'v' + majorVersion + '-' + minorVersion;
-    }
-
-    // inject the oninstall script to opened DuckDuckGo tab.
-    chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
-      var i = tabs.length, tab;
-      while (i--) {
-        tab = tabs[i];
-        chrome.tabs.executeScript(tab.id, {
-          file: 'js/oninstall.js'
-        });
-        chrome.tabs.insertCSS(tab.id, {
-          file: 'css/noatb.css'
-        });
-      }
-    });
-    
-    if (!chrome.extension.inIncognitoContext) {
-        chrome.tabs.create({
-            url: "/html/intro.html"
-        });
+    if (details.reason === "install") {
+        ATB.onInstalled();
+        ATB.startUpPage();
     }
   });
 
@@ -112,9 +67,10 @@ function Background() {
                 });
             }
         });
+
   });
 
-  chrome.extension.onMessage.addListener(function(request, sender, callback) {
+  chrome.runtime.onMessage.addListener(function(request, sender, callback) {
     if (request.options) {
       callback(localStorage);
     }
@@ -127,7 +83,7 @@ function Background() {
     }
 
     if (request.whitelist) {
-      var toWhitelist = blockTrackers.extractHostFromURL(request.whitelist);
+      var toWhitelist = utils.extractHostFromURL(request.whitelist);
       chrome.tabs.query({
         'currentWindow': true,
         'active': true
@@ -144,11 +100,6 @@ function Background() {
         tabs[tabId].whitelist.push(toWhitelist);
         callback();
       });
-    }
-
-    if (!localStorage['set_atb'] && request.atb) {
-      localStorage['atb'] = request.atb;
-      localStorage['set_atb'] = request.atb;
     }
 
     return true;
@@ -186,61 +137,43 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (e) {
 
       // Add ATB for DDG URLs, otherwise block trackers
-      if (e.url.search('/duckduckgo\.com') !== -1) {
-          // Only change the URL if there is no ATB param specified.
-          if (e.url.indexOf('atb=') !== -1) {
-            return;
+      let ddgAtbRewrite = ATB.redirectURL(e);
+      if(ddgAtbRewrite)
+          return ddgAtbRewrite;
+      
+      if(e.type === 'main_frame'){
+          delete tabs[e.tabId];
+          return;
+      }
+
+      // skip requests to background tabs
+      if(e.tabId === -1){
+          return;
+      }
+
+      if(!tabs[e.tabId]){
+          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0, "status": ""};
+          updateBadge(e.tabId, 0);
+      }
+
+      var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
+
+      if(block){
+          var name = block.tracker;
+
+          if(!tabs[e.tabId]['trackers'][name]){
+              tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
           }
-
-          // Only change the URL if there is an ATB saved in localStorage
-          if (localStorage['atb'] === undefined) {
-            return;
+          else {
+              tabs[e.tabId]['trackers'][name].count += 1;
           }
-        
-          var newURL = e.url + "&atb=" + localStorage['atb'];
-          return {
-            redirectUrl: newURL
-          };
-      } 
-      else {
+          tabs[e.tabId]['total'] += 1;
+          tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
 
-          if(e.type === 'main_frame'){
-              delete tabs[e.tabId];
-          }
-
-          if(!tabs[e.tabId]){
-              tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url}
-          }
-
-          if(!isExtensionEnabled){
-              return;
-          }
-
-          if (!tabs[e.tabId].whitelist || (tabs[e.tabId].whitelist.indexOf(tabs[e.tabId].url) === -1)) {
-              var block =  blockTrackers.blockTrackers(e.url, tabs[e.tabId].url, e.tabId);
-
-              if(block){
-                var name = block.tracker;
-
-                if(!tabs[e.tabId]){
-                    tabs[e.tabId] = {'trackers': {}, "total": 0};
-                }
-
-                if(!tabs[e.tabId]['trackers'][name]){
-                    tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url};
-                }
-                else {
-                    tabs[e.tabId]['trackers'][name].count += 1;
-                }
-                tabs[e.tabId]['total'] += 1;
-
-                tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
-
-                updateBadge(e.tabId, tabs[e.tabId].dispTotal);
-
-                return {cancel: true};
-              }
-          }
+          updateBadge(e.tabId, tabs[e.tabId].dispTotal);
+          chrome.runtime.sendMessage({"rerenderPopup": true});
+                
+          return {cancel: true};
       }
     },
     {
@@ -271,20 +204,28 @@ function updateBadge(tabId, numBlocked){
     chrome.browserAction.setBadgeText({tabId: tabId, text: numBlocked + ""});
 }
 
-chrome.tabs.onReplaced.addListener(function (addedTabId) {
-    chrome.tabs.get(addedTabId, function(tab) {
-        //tabs[tab.id] = {'trackers': {}, "total": 0, 'url': tab.url};
-        //chrome.browserAction.setBadgeText({tabId: tab.id, text: localStorage[tab.url] + ""});
-    });
-});
-
 chrome.tabs.onUpdated.addListener(function(id, info, tab) {
+    // an existing tab has been reloaded or changed url, clear tab data and set status
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
-        tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "status": "loading"};
+        tabs[id] = {'trackers': {}, "total": 0, "dispTotal": 0, 'url': tab.url, "status": "loading"};
+        updateBadge(id, 0);
     }
+    // existing tab, update the status and url
     else if(tabs[id] && info.status === "complete"){
         tabs[id].status = "complete";
+        
+        if(tab.url){
+            tabs[id].url = tab.url;
+        }
+
+        Companies.syncToStorage();
     }
+    // this is a new tab, create it
+    else if (!tabs[id]){
+          tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "dispTotal": 0, "status": info.status}
+          updateBadge(id, 0);
+      }
+
 
 });
 
@@ -293,34 +234,7 @@ chrome.tabs.onRemoved.addListener(function(id, info) {
 });
 
 chrome.webRequest.onCompleted.addListener(
-      function () {
-          var atb = localStorage['atb'],
-              setATB = localStorage['set_atb'];
-
-          if (!atb || !setATB) {
-            return;
-          }
-
-          var xhr = new XMLHttpRequest();
-
-          xhr.onreadystatechange = function() {
-            if (xhr.readyState == XMLHttpRequest.DONE) {
-               if (xhr.status == 200) {
-                 var curATB = JSON.parse(xhr.responseText);
-                 if(curATB.version !== setATB) {
-                   localStorage['set_atb'] = curATB.version;
-                 }
-               }
-            }
-          };
-
-          xhr.open('GET',
-            'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7)
-              + '&atb=' + atb + '&set_atb=' + setATB,
-            true
-          );
-          xhr.send();
-    },
+        ATB.updateSetAtb,
     {
         urls: [
             "*://duckduckgo.com/?*",

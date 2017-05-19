@@ -1,6 +1,6 @@
 {
-    "name": "DuckDuckGo for Chrome",
-    "version": "42.7.8",
+    "name": "DuckDuckGo for Chrome - V2 Beta",
+    "version": "2017.4.13",
     "description": "DuckDuckGo enhancements for Chrome.",
     "icons": {
         "16": "img/icon_16.png",
@@ -13,7 +13,7 @@
             "19": "img/icon_19.png",
             "38": "img/icon_38.png"
         },
-        "default_popup": "html/popup.html"
+        "default_popup": "html/trackers.html"
     },
     "commands": {
       "_execute_browser_action": {
@@ -29,15 +29,23 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": [
-                "js/require.js",
-                "js/utils.js",
-                "js/load.js",
-                "js/blockTrackers.js",
                 "https-everywhere/chromium/rules.js", 
                 "https-everywhere/chromium/storage.js", 
                 "https-everywhere/chromium/util.js", 
                 "https-everywhere/chromium/background.js", 
                 "https-everywhere/chromium/incognito-cache-clearing.js",
+                "js/require.js",
+                "js/utils.js",
+                "js/topBlocked.js",
+                "js/sites.js",
+                "js/site.js",
+                "js/companies.js",
+                "js/company.js",
+                "js/load.js",
+                "js/settings.js",
+                "js/atb.js",
+                "js/trackerLists.js",
+                "js/trackers.js",
                 "js/background.js"
             ]
     },
@@ -48,7 +56,8 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo Search",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}"
+        "search_url": "https://duckduckgo.com/?q={searchTerms}",
+        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
     "content_scripts": [

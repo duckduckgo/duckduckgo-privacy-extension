@@ -1,6 +1,12 @@
-var bg = chrome.extension.getBackgroundPage();
-
 require.scopes.load = ( () => {
+
+    function JSONfromLocalFile(path){
+        return JSON.parse(loadExtensionFile(path, 'json'));
+    }
+
+    function JSONfromExternalFile(url){
+        return JSON.parse(loadExtensionFile(url, 'json', 'external'))
+    }
 
     function loadExtensionFile(url, returnType, source){
         var xhr = new XMLHttpRequest();
@@ -27,43 +33,10 @@ require.scopes.load = ( () => {
         }
     }
 
-    function processMozillaBlockList(blockList){
-        /* format Mozilla block list for our use
-         * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
-         * "<tracker host>" : { "c": <company name>, "u": "company url" }
-         */
-        var trackers = {};
-        var trackerTypes = ['Advertising', 'Analytics', 'Disconnect'];
-        
-        if (bg.isSocialBlockingEnabled) {
-            trackerTypes.push('Social');
-        }
-
-        trackerTypes.forEach((type) => {
-            blockList.categories[type].forEach((entry) => {
-                for(var name in entry){
-                    for( var domain in entry[name]){
-                        entry[name][domain].forEach((trackerURL) => {
-                        trackers[trackerURL] = {'c': name, 'u': domain};
-                        });
-                    }
-                    
-                    // Facebook and Twitter are listed as Disconnect type
-                    // Remap them to Social
-                    if ((type === 'Disconnect') && (name.match(/(facebook|twitter)/i))) {
-                        blockList.categories.Social.push(entry);
-                        var id = blockList.categories.Disconnect.indexOf(entry);
-                        blockList.categories.Disconnect.splice(id, 1);
-                    }
-                }
-            });
-        });
-
-        return trackers;
+    var exports = {
+        loadExtensionFile: loadExtensionFile,
+        JSONfromLocalFile: JSONfromLocalFile,
+        JSONfromExternalFile: JSONfromExternalFile
     }
-
-    var exports = {};
-    exports.loadExtensionFile = loadExtensionFile;
-    exports.processMozillaBlockList = processMozillaBlockList;
     return exports;
 })();
