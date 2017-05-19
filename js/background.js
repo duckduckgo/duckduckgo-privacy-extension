@@ -40,6 +40,7 @@ function Background() {
           var tab = savedTabs[i];
           if(tab.url){
             tabs[tab.id] = {'trackers': {}, 'total': 0, 'url': tab.url, 'dispTotal': 0};
+            tabsObj.addTab(tab);
           }
       }
   });
@@ -91,6 +92,7 @@ function Background() {
         var tabId = currentTabs[0].id;
         if (!tabs[tabId]) {
             tabs[tabId] = {'trackers': {}, "total": 0, 'url': tab.url};
+            tabsObj.addTab(tab);
         }
 
         if (!tabs[tabId].whitelist) {
@@ -143,6 +145,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       
       if(e.type === 'main_frame'){
           delete tabs[e.tabId];
+          tabsObj.deleteTab(e.tabId);
           return;
       }
 
@@ -153,6 +156,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       if(!tabs[e.tabId]){
           tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0, "status": ""};
+          tabsObj.addTab(e);
           updateBadge(e.tabId, 0);
       }
 
@@ -160,6 +164,9 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       if(block){
           var name = block.tracker;
+
+          let currentTabObj = tabsObj.getTab(e.tabId);
+          currentTabObj.addOrUpdateTracker(name, block.url, block.type);
 
           if(!tabs[e.tabId]['trackers'][name]){
               tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
@@ -208,6 +215,7 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     // an existing tab has been reloaded or changed url, clear tab data and set status
     if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
         tabs[id] = {'trackers': {}, "total": 0, "dispTotal": 0, 'url': tab.url, "status": "loading"};
+        tabsObj.addTab(tab);
         updateBadge(id, 0);
     }
     // existing tab, update the status and url
@@ -223,14 +231,14 @@ chrome.tabs.onUpdated.addListener(function(id, info, tab) {
     // this is a new tab, create it
     else if (!tabs[id]){
           tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "dispTotal": 0, "status": info.status}
+          tabsObj.addTab(tab);
           updateBadge(id, 0);
       }
-
-
 });
 
 chrome.tabs.onRemoved.addListener(function(id, info) {
     delete tabs[id];
+    tabsObj.deleteTab(id);
 });
 
 chrome.webRequest.onCompleted.addListener(
