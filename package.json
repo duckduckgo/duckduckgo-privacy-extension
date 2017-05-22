@@ -38,7 +38,6 @@
     "eventemitter2": "^4.1.0",
     "is-plain-object": "^2.0.1",
     "jquery": "^3.2.1",
-    "minidux": "^1.0.1",
     "normalize.scss": "^0.1.0"
   },
   "babel": {
