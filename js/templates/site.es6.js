@@ -3,6 +3,9 @@ const bel = require('bel');
 module.exports = function () {
 
     var domain = this.model.domain;
+    var countText = "" + this.model.trackerCount;
+    if (this.model.potential > 0)
+        countText = countText + "/" + this.model.potential
 
     return bel`<div class="js-site js-menu-section">
         <ul class="js-menu-item-list">
@@ -18,7 +21,7 @@ module.exports = function () {
                 <span class="js-site-https-status-msg">${this.model.httpsStatusText}</span>
             </li>
             <li class="js-site-item tracker-count-item">
-                <span class="js-site-trackerCount">${this.model.trackerCount}</span> Trackers Blocked
+                <span class="js-site-trackerCount">${countText}</span> Trackers Blocked
             </li>
         </ul>
     </div>`;

@@ -20,11 +20,6 @@ function isTracker(url, currLocation, tabId) {
         var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
         var blockSettings = settings.getSetting('blocking').slice(0);
-        var currSite = Sites.add(utils.extractHostFromURL(currLocation));
-
-        if(currSite.whiteListed) {
-            return;
-        }
 
         if(social_block){
             blockSettings.push('Social');
@@ -32,7 +27,6 @@ function isTracker(url, currLocation, tabId) {
 
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, host, currLocation);
         if(trackerByParentCompany) {
-            currSite.addTracker(host);
             return trackerByParentCompany;
         }
 
@@ -47,7 +41,7 @@ function checkTrackersWithParentCompany(blockSettings, host, currLocation) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][host];
             if(tracker && !isRelatedEntity(tracker.c, currLocation)){
                 Companies.add(tracker.c);
-                return toBlock = {'tracker': tracker.c, 'url': host, 'type': trackerType};
+                return toBlock = {'name': tracker.c, 'url': host, 'type': trackerType};
             }
         }
      });

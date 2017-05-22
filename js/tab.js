@@ -3,7 +3,7 @@ class trackerObj {
         this.name = name,
         this.url = url,
         this.type = type || 'unknown',
-        this.count = 0;
+        this.count = 1;
     };
     
     increment() {
@@ -14,11 +14,13 @@ class trackerObj {
 
 class Tab {
     constructor(tabData) {
-        this.total = tabData['total'] || 0,
-        this.url = tabData['url'],
-        this.dispTotal = tabData['dispTota'] || 0,
-        this.trackers = tabData['trackers'] || {},
-        this.status = tabData['status'];
+        this.id = tabData.id || tabData.tabId,
+        this.total = 0,
+        this.url = tabData.url,
+        this.trackers = {},
+        this.dispTotal = function(){ return Object.keys(this.trackers).length},
+        this.status = tabData.status,
+        this.site = Sites.get(utils.extractHostFromURL(tabData.url));
     };
 
     addOrUpdateTracker(name, url, type) {

@@ -21,7 +21,7 @@ function Site (ops) {
     backgroundPage.utils.getCurrentTab(function(tab) {
         if(tab){
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
-            thisModel.tabId = tab.id;
+            thisModel.tab = backgroundPage.tabManager.get({"tabId": tab.id});
             thisModel.setSiteObj();
 
                                       
