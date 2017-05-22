@@ -9,7 +9,7 @@ function Autocomplete (ops) {
     Parent.call(this, ops);
 
     this.bindEvents([
-      [this.model.store.subscribe, 'change:search', this._handleSearchText],
+      [this.store.subscribe, 'change:search', this._handleSearchText],
     ]);
 
 

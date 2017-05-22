@@ -1,5 +1,38 @@
-// TODO: README at js/base directory level, point to it from main README
-// TODO: create a state injector for test mocks
+/**
+ * Base application `store`.
+ *
+ * This is how models communicate with other models, views, and pages.
+ * It is based on Redux pattern but slimmed down for our purposes.
+ * It emits event notifications that can be subscribed to.
+ *
+ * Its purpose is to be the single source of truth for app-wide event
+ * notifications (to avoid race conditions and spaghetti event tangles
+ * that can result in the infinite loops and zombie states that early
+ * Backbone and Angular 1.0 apps are famous for when components tried
+ * to talk to one other without a single source of truth like this store).
+ *
+ * --> What you need to know as a feature developer: <--
+ *
+ *     - To PUBLISH a notification about a state change from a model to
+ *       another model, view or page just call:
+ *
+ *       `model.set('bar', 1234)`
+ *
+ *     - To SUBSCRIBE to notifications about a published state change to
+ *       a model from another model, view or a page (pretend the modelName is
+ *       `search` that you want to subscribe to):
+ *
+ *          `this.bindEvents([
+ *            [this.store.subscribe, 'change:search', this._handler],
+ *          ]);`
+ *
+ *        The first argument passed to `this._handler()` will be an
+ *        object containing details about the search model's state change.
+ *
+ *
+ * TODO: create a state injector for test mocks
+ */
+
 
 // dependencies
 const isPlainObject = require('is-plain-object');
@@ -145,7 +178,7 @@ function _createStore (notifier) {
 // Public api
 module.exports = {
   register: register, // registers a new notifier to the store (likely a model)
-  remove: remove, // remove a notifier from the store
   publish: publish, // publish a notification from notifier to subscribers
   subscribe: _publisher, // subscribe to notifiers' notifications
+  remove: remove // remove a notifier from the store
 };

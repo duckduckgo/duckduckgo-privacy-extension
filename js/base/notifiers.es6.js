@@ -1,3 +1,6 @@
+/**
+ * Check out store.es6.js to understand what's happening here.
+ */
 const registered = {};
 
 function add (notifierName) {
@@ -23,6 +26,9 @@ function add (notifierName) {
 }
 
 function combine () {
+    // This is based on Redux/Minidux's combineReducers() method
+    // ... only we aren't using full reducers (its overkill for us),
+    // we just send single notifications about state changes to subscribers
     var keys = Object.keys(registered)
 
     return function combination (state, notification) {

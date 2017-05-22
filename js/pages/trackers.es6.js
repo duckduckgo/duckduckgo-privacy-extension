@@ -78,7 +78,7 @@ Trackers.prototype = $.extend({},
             // TODO: hook up model query to actual ddg ac endpoint.
             // For now this is just here to demonstrate how to
             // listen to another component via model.set() +
-            // model.store.subscribe()
+            // store.subscribe()
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
                 model: new AutocompleteModel({suggestions: []}),
