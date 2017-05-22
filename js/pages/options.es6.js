@@ -16,7 +16,7 @@ Options.prototype = $.extend({},
     Parent.prototype,
     {
 
-        pageType: 'options',
+        pageName: 'options',
 
         ready: function() {
 

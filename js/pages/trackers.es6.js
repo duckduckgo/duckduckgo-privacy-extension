@@ -28,7 +28,7 @@ Trackers.prototype = $.extend({},
     Parent.prototype,
     {
 
-        pageType: 'trackers',
+        pageName: 'trackers',
 
         ready: function() {
 
