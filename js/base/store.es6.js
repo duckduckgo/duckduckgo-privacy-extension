@@ -95,50 +95,50 @@ function remove (notifierName) {
  * @api private
  */
 var _store = null;
-
 /**
  * Create the store of notifiers and their notification functions.
- * This basically mimics the Minidux (a Redux variation) init pattern
- * and is liberally borrowed from Minidux but slimmed down for our needs:
+ * This basically mimics a Redux store init pattern
+ * and is liberally borrowed from Minidux
+ * but slimmed down for our needs:
  * https://www.npmjs.com/package/minidux#var-store--createstorereducer-initialstate-enhancer
  * @api private
  */
 function _createStore (notifier) {
-  if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
+    if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
 
-  var state = {}
-  var listener = null
-  var isEmitting = false
+    var state = {};
+    var listener = null;
+    var isEmitting = false;
 
-  function dispatch (notification) {
-    if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object');
-    if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string');
-    if (isEmitting) throw new Error('subscribers may not generate notifications');
+    function dispatch (notification) {
+        if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object');
+        if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string');
+        if (isEmitting) throw new Error('subscribers may not generate notifications');
 
-    isEmitting = true
-    state = notifier(state, notification)
-    if (listener) listener(state)
-    isEmitting = false
-    return notification
-  }
+        isEmitting = true;
+        state = notifier(state, notification);
+        if (listener) listener(state);
+        isEmitting = false;
+        return notification;
+    }
 
-  function subscribe (cb) {
-    if (!cb || typeof cb !== 'function') throw new Error('listener must be a function');
-    listener = cb
-  }
+    function subscribe (cb) {
+        if (!cb || typeof cb !== 'function') throw new Error('listener must be a function');
+        listener = cb;
+    }
 
-  function replaceNotifier (next) {
-    if (typeof next !== 'function') throw new Error('new notifier must be a function');
-    notifier = next
-  }
+    function replaceNotifier (next) {
+        if (typeof next !== 'function') throw new Error('new notifier must be a function');
+        notifier = next;
+    }
 
-  dispatch({ notifierName: '@@createStore/INIT' })
+    dispatch({ notifierName: '@@createStore/INIT' });
 
-  return {
-    dispatch: dispatch,
-    subscribe: subscribe,
-    replaceNotifier: replaceNotifier
-  }
+    return {
+        dispatch: dispatch,
+        subscribe: subscribe,
+        replaceNotifier: replaceNotifier
+    }
 }
 
 
