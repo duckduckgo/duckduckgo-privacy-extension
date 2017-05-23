@@ -1,7 +1,7 @@
 /**
  * Base application `store`.
  *
- * This is how models communicate with other models, views, and pages.
+ * This is how models communicate with other models, views and pages.
  * It is based on Redux pattern but slimmed down for our purposes.
  * It emits event notifications that can be subscribed to.
  *
@@ -34,7 +34,7 @@
  */
 
 
-// dependencies
+// Dependencies
 const isPlainObject = require('is-plain-object');
 const deepFreeze = require('deep-freeze');
 const EventEmitter2 = require('eventemitter2');
@@ -89,7 +89,7 @@ function publish (notification) {
 
 /**
  * Broadcasts state change events out to subscribers
- * @api public, but exposed as `.subscribe()` for clarity
+ * @api private, but exposed as `store.subscribe()` for clarity
  */
 const _publisher = new EventEmitter2();
 _publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
@@ -124,12 +124,12 @@ function remove (notifierName) {
 
 /**
  * `_store` is where notifiers live after they are registered.
- * Its api is not publicly exposed. Developers must use public api above.
+ * Its api is not publicly exposed. Developers must use public api.
  * @api private
  */
 var _store = null;
 /**
- * Create the store of notifiers and their notification functions.
+ * Create the store of notifiers and their notification dispatch functions.
  * This basically mimics a Redux store init pattern
  * and is liberally borrowed from Minidux
  * but slimmed down for our needs:
