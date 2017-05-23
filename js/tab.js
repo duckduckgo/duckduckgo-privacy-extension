@@ -19,7 +19,7 @@ class Tracker {
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId,
-        this.total = 0,
+        this.potentialBlocked = {},
         this.url = tabData.url,
         this.trackers = {},
         this.status = tabData.status,
@@ -32,6 +32,10 @@ class Tab {
             }
             return total;
         };
+    };
+
+    addToPotentialBlocked(url) {
+        this.potentialBlocked[url] = null;
     };
 
     addOrUpdateTracker(name, url, type) {

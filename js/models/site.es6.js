@@ -56,7 +56,7 @@ Site.prototype = $.extend({},
       updateTrackerCount: function() {
           if(this.tab){
             this.trackerCount = this.tab.dispTotal();
-            this.potential = this.tab.site.trackers.length;
+            this.potential = Object.keys(this.tab.potentialBlocked).length;
           }
       },
 

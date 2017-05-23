@@ -101,6 +101,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       }
       else {
           thisTab = tabManager.get(requestData);
+          updateBadge(thisTab.id, thisTab.dispTotal());
       }
 
       var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
@@ -109,6 +110,10 @@ chrome.webRequest.onBeforeRequest.addListener(
           // record all trackers on a site even if we don't block them
           thisTab.site.addTracker(tracker.url);
 
+          // record potential blocked trackers for this tab
+          thisTab.addToPotentialBlocked(tracker.url);
+
+          // block the request, update badge, and rerender popup
           if (!thisTab.site.whiteListed && requestData.type !== "main_frame") {
               thisTab.addOrUpdateTracker(tracker.name, tracker.url, tracker.type);
               updateBadge(thisTab.id, thisTab.dispTotal());
