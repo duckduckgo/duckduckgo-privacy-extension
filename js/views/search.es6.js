@@ -8,8 +8,6 @@ function Search (ops) {
 
     Parent.call(this, ops);
 
-    console.log("new search view");
-
     this._cacheElems('.js-search', [ 'form', 'input', 'go' ]);
 
     this.bindEvents([

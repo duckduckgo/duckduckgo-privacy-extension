@@ -29,7 +29,7 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       toggleWhitelist: function () {
-          if(this.site){
+          if (this.site) {
               this.isWhitelisted = !this.isWhitelisted;
               this.site.setWhitelisted(this.isWhitelisted);
               this.site.notifyWhitelistChanged();
@@ -42,7 +42,6 @@ Site.prototype = $.extend({},
           let site = backgroundPage.Sites.get(host);
 
           // Determine if this is a special page, eg extensions, and reset domain and disabled flag.
-          
           this.disabled = true;
 
           if (!site) {
@@ -51,12 +50,12 @@ Site.prototype = $.extend({},
           else {
               this.site = site;
               this.isWhitelisted = site.whiteListed;
-              
+              console.log('[site model] isWhitelisted: ' + this.isWhitelisted);
+
               let special = site.specialDomain();
               if (special) {
                   this.domain = special;    // eg "extensions", "options", "new tab"
-              }
-              else {
+              } else {
                   this.disabled = false;
               }
           }
@@ -64,7 +63,7 @@ Site.prototype = $.extend({},
 
       updateTrackerCount: function() {
           let tab = backgroundPage.tabs[this.tabId];
-          if(tab){
+          if (tab) {
             this.trackerCount = tab.dispTotal;
           }
       },
@@ -74,8 +73,7 @@ Site.prototype = $.extend({},
 
           if(/^https/.exec(tab.url)){
               this.httpsState = 'default';
-          }
-          else{
+          } else {
               let url = backgroundPage.utils.parseURL(tab.url);
               let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
 

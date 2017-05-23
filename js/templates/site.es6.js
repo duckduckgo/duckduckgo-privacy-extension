@@ -1,27 +1,31 @@
 const bel = require('bel');
+const toggleButton = require('./shared/toggle-button');
 
 module.exports = function () {
 
     var domain = this.model.domain;
 
-    return bel`<div class="js-site js-menu-section">
-        <ul class="js-menu-item-list">
-            <li class="js-site-item">
-                <span class="js-site-domain">${domain}</span>
-                <div class="js-site-whitelist-toggle-bg js-site-whitelist-${this.model.isWhitelisted}">
-                    <div class="js-site-whitelist-toggle-fg js-site-whitelist-fg-${this.model.isWhitelisted}"></div>
-                </div>
-                <div class="js-site-rating-${this.model.siteRating} js-site-inline-icon js-site-icon-right"></div>
+    return bel`<section class="site-info divider-bottom">
+        <ul class="menu-list">
+            <li>
+                <h1 class="site-info__domain">${domain}</h1>
+                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle')}
+                <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
             </li>
-            <li class="js-site-item https-status-item">
-                <span class="js-site-inline-icon js-site-https-${this.model.httpsState}"></span>
-                <span class="js-site-https-status-msg">${this.model.httpsStatusText}</span>
+            <li>
+                <h2>
+                    <span class="site-info__https-status site-info__https-status--${this.model.httpsState}"></span>
+                    <span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
+                </h3>
             </li>
-            <li class="js-site-item tracker-count-item">
-                <span class="js-site-trackerCount">${this.model.trackerCount}</span> Trackers Blocked
+            <li>
+                <h2>
+                    <span class="site-info__tracker-count">${this.model.trackerCount}</span>
+                    Trackers Blocked
+                </h2>
             </li>
         </ul>
-    </div>`;
+    </section>`;
 
 }
 

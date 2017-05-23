@@ -1,0 +1,101 @@
+@import "../vars";
+@import "../mixins";
+
+/* Normalize File */
+@import "../../node_modules/normalize.scss/normalize";
+
+/* Font definitions */
+@import "fonts";
+
+
+/**
+ * DDG Chrome Extension Resets & Base Styles
+ */
+
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+
+h1, h2, h3, h4, h5, h5 {
+    font-size: $default-font-size;
+    margin: 0;
+    padding: 0;
+
+    &.menu-title {
+      font-weight: bold;
+      padding: 14px 0;
+    }
+}
+
+section, ul, ol, li {
+    margin: 0;
+    padding: 0;
+
+    &.divider-bottom {
+        border-bottom: 1px solid $platinum;
+    }
+}
+
+form, input, select, option, button {
+    outline: none;
+
+    * {
+        outline: none;
+    }
+}
+
+
+/* Fonts */
+
+body,
+input,
+textarea,
+select {
+    font-family: $default-font;
+    font-size: $default-font-size;
+    font-weight: normal;
+    color: $slate;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+
+/* Links */
+
+a {
+    color: $blue;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &.link-secondary {
+        color: $slate;
+    }
+}
+
+
+/* Position */
+
+.pull-right {
+    position: absolute;
+    right: 14px;
+}
+
+
+/* Icons */
+/* Standard icon display within the extension */
+.icon {
+    @include icon_display();
+    /* you'll need to set the background image within each instance of .icon */
+
+    &.icon--arrow {
+      background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
+      width: 16px;
+      height: 16px;
+    }
+}

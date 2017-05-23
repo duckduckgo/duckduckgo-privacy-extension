@@ -16,12 +16,11 @@ PrivacyOptions.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _click_setting: function (e) {
-            var k =  $(e.target).data('key');
+        _clickSetting: function (e) {
+            var key =  $(e.target).data('key') || $(e.target).parent().data('key');
+            console.log(`privacyOptions view click for setting "${key}"`);
 
-            console.log(`privacyOptions view click for setting "${k}"`);
-
-            this.model.toggle(k);
+            this.model.toggle(key);
             this.rerender();
         },
 
@@ -30,10 +29,10 @@ PrivacyOptions.prototype = $.extend({},
             this._cacheElems('.js-options', [ 'blocktrackers', 'https-everywhere-enabled' ]);
 
             this.bindEvents([
-              [this.$blocktrackers, 'click', this._click_setting],
-              [this.$httpseverywhereenabled, 'click', this._click_setting]
+              [this.$blocktrackers, 'click', this._clickSetting],
+              [this.$httpseverywhereenabled, 'click', this._clickSetting]
             ]);
-            
+
         },
 
         rerender: function() {

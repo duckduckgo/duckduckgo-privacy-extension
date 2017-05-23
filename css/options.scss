@@ -1,0 +1,65 @@
+@import "vars";
+@import "mixins";
+
+
+/* Generic menu list styling */
+@include menu_list();
+
+
+/* Generic toggle button styling */
+@include toggle_button();
+
+
+/* Options page */
+.options-container {
+    width: 400px;
+    margin: 3em auto auto auto;
+    position: relative;
+
+    .ddg-logo {
+        background-image: url('chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png');
+        width: 158px;
+        height: 44px;
+        background-repeat: no-repeat;
+        margin-bottom: 23px;
+        background-size: contain;
+
+        span {
+          display: none;
+        }
+    }
+
+    .options-info {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: $slate;
+    }
+}
+
+
+/* Whitelist */
+.options-content__whitelist {
+
+    li {
+
+        $whitelist-item-height: 1.2em;
+
+        a {
+            display: inline-block;
+            max-width: 360px;
+            height: $whitelist-item-height;
+            line-height: $whitelist-item-height;
+            overflow: hidden;
+        }
+
+        button.remove {
+            color: $grey-light;
+            font-size: 22px;
+            line-height: $whitelist-item-height;
+            background: transparent;
+            border: none;
+            margin: -4px 0 0 0;
+            padding: 0;
+        }
+    }
+}
