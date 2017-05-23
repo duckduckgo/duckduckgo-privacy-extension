@@ -9,7 +9,7 @@
 
 
 /**
- * DDG Chrome Extension Base Styles
+ * DDG Chrome Extension Resets & Base Styles
  */
 
 html, body {
@@ -34,6 +34,14 @@ section, ul, ol, li {
 
     &.divider-bottom {
         border-bottom: 1px solid $platinum;
+    }
+}
+
+form, input, select, option, button {
+    outline: none;
+
+    * {
+        outline: none;
     }
 }
 
@@ -72,10 +80,12 @@ a {
 
 
 /* Position */
+
 .pull-right {
     position: absolute;
     right: 14px;
 }
+
 
 /* Icons */
 /* Standard icon display within the extension */
