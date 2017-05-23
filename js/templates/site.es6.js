@@ -21,8 +21,10 @@ module.exports = function () {
                     <span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
                 </h3>
             </li>
-            <li class="js-site-item tracker-count-item">
-                <span class="js-site-trackerCount">${countText}</span> Trackers Blocked
+            <li>
+                <h2>
+                    <span class="site-info__tracker-count">${countText}</span> Trackers Blocked
+                </h2>
             </li>
         </ul>
     </section>`;
