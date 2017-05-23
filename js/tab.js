@@ -1,8 +1,7 @@
-class trackerObj {
+class Tracker {
     constructor(name, url, type) {
-        this.name = name,
-        this.url = url,
-        this.type = type || 'unknown',
+        this.parent = Companies.get(name);
+        this.urls = [url],
         this.count = 1;
     };
     
@@ -10,6 +9,11 @@ class trackerObj {
             this.count += 1;
     };
 
+    addURL(url) {
+        if (this.urls.indexOf(url) === -1) {
+            this.urls.push(url);
+        }
+    };
 }
 
 class Tab {
@@ -18,18 +22,26 @@ class Tab {
         this.total = 0,
         this.url = tabData.url,
         this.trackers = {},
-        this.dispTotal = function(){ return Object.keys(this.trackers).length},
         this.status = tabData.status,
         this.site = Sites.get(utils.extractHostFromURL(tabData.url));
+
+        this.dispTotal = function(){
+            let total = 0;
+            for (var tracker in this.trackers) {
+                total += this.trackers[tracker].urls.length;
+            }
+            return total;
+        };
     };
 
     addOrUpdateTracker(name, url, type) {
         let tracker = this.trackers[name];
         if (tracker) {
             tracker.increment();
+            tracker.addURL(url);
         }
         else {
-            let newTracker = new trackerObj(name, url, type);
+            let newTracker = new Tracker(name, url, type);
             this.trackers[name] = newTracker;
             return newTracker;
         }

@@ -106,8 +106,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
       if(tracker){
 
-          // record all trackers on a site even if
-          // we don't block them
+          // record all trackers on a site even if we don't block them
           thisTab.site.addTracker(tracker.url);
 
           if (!thisTab.site.whiteListed && requestData.type !== "main_frame") {
