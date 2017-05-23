@@ -8,8 +8,6 @@ function Whitelist (ops) {
 
     Parent.call(this, ops);
 
-    console.log("new Whitelist");
-
     // bind events
     this.setup();
 

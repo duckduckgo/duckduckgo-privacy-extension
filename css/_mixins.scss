@@ -1,0 +1,94 @@
+@import "vars";
+
+/* Menu lists */
+@mixin menu_list () {
+
+    ul.menu-list {
+        list-style-type: none;
+        padding-left: 0;
+        padding-bottom: 14px;
+        margin-top: 0;
+
+        li {
+            padding-top: 17px;
+
+            &:first-child {
+                padding-top: 0;
+            }
+
+        }
+    }
+
+}
+
+/* Toggle buttons */
+@mixin toggle_button () {
+
+    .toggle-button {
+        position: absolute;
+        right: 14px;
+        width: 32px;
+        height: auto;
+        margin: 0;
+        padding: 0;
+        border: none;
+        background-color: transparent;
+        text-align: left;
+
+        .toggle-button__bg {
+            z-index: -1;
+            position: absolute;
+            right: 0;
+            width: 32px;
+            overflow: visible;
+            height: 12px;
+            border-radius: 12px;
+        }
+
+        .toggle-button__knob {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 16px;
+            background-color: $white;
+            margin-top: -2px;
+            box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.25);
+        }
+
+        &.toggle-button--is-active-false {
+
+            .toggle-button__knob {
+                margin-left: 0px;
+            }
+
+            .toggle-button__bg {
+                background-color: $grey-light;
+            }
+
+        }
+
+        &.toggle-button--is-active-true {
+
+            .toggle-button__knob {
+                margin-left: 16px;
+            }
+
+            .toggle-button__bg {
+                background-color: #84ba50;
+            }
+
+        }
+
+
+    }
+}
+
+/* Icons */
+@mixin icon_display () {
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}

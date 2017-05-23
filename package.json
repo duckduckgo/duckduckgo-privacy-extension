@@ -25,7 +25,6 @@
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-compass": "^0.9.0",
     "grunt-contrib-concat": "^0.4.0",
-    "grunt-contrib-handlebars": "^0.8.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-sass": "^2.0.0",
     "jshint": "^2.9.4",
@@ -38,7 +37,8 @@
     "deep-freeze": "0.0.1",
     "eventemitter2": "^4.1.0",
     "jquery": "^3.2.1",
-    "minidux": "^1.0.1"
+    "minidux": "^1.0.1",
+    "normalize.scss": "^0.1.0"
   },
   "babel": {
     "presets": [

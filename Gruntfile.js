@@ -17,29 +17,6 @@ module.exports = function(grunt) {
             }
         },
 
-        handlebars: {
-            compile: {
-                options: {
-                    namespace: "Handlebars.templates",
-                    processName: function(filepath) {
-                        var parts = filepath.split('/');
-                        return parts[parts.length - 1].replace('.handlebars', '');
-                    }
-                },
-                files: {
-                    '<%= dirs.cache %>/popup.handlebars.tmp': '<%= dirs.src.templates %>/popup/*.handlebars'
-                }
-            }
-        },
-
-        concat: {
-            js: {
-                files: {
-                    '<%= dirs.public.js %>/popup.js': ['<%= dirs.cache %>/popup.handlebars.tmp', '<%= dirs.src.js %>/popup.js']
-                }
-            }
-        },
-
         browserify: {
             dist: {
                 options: {
@@ -58,28 +35,24 @@ module.exports = function(grunt) {
         sass: {
             dist: {
                 files: {
-                    '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.css %>/main.scss'],
-                    '<%= dirs.public.css %>/trackers.css': ['<%= dirs.src.css %>/trackers.scss']
+                    '<%= dirs.public.css %>/base.css': ['<%= dirs.src.css %>/base/base.scss'],
+                    '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.css %>/noatb.scss'],
+                    '<%= dirs.public.css %>/trackers.css': ['<%= dirs.src.css %>/trackers.scss'],
+                    '<%= dirs.public.css %>/options.css': ['<%= dirs.src.css %>/options.scss']
                 }
             }
         },
+
         execute: {
             preProcessLists: {
                 src: ['scripts/buildLists.js']
             }
         },
+
         watch: {
             css: {
                 files: ['<%= dirs.src.css %>/**/*.scss'],
                 tasks: ['sass']
-            },
-            javascript: {
-                files: ['<%= dirs.src.js %>/**/*.js'],
-                tasks: ['concat:js']
-            },
-            templates: {
-                files: ['<%= dirs.src.templates %>/**/*.handlebars'],
-                tasks: ['handlebars:compile', 'concat:js']
             },
             es6: {
                 files: ['<%= dirs.src.js %>/**/*.es6.js'],
@@ -88,7 +61,7 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'handlebars:compile', 'browserify', 'concat', 'execute:preProcessLists']);
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists']);
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('default', 'build');
 }
