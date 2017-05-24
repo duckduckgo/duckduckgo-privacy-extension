@@ -4,49 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
 
-    <title>DuckDuckGo Extension Unit Tests</title>
-
-    <link rel="stylesheet" href="lib/qunit-2.2.0.css"/>
-
-    <script src="lib/jquery/jquery-2.2.4.min.js"></script>
-
-    <script src="lib/qunit-2.2.0.js"></script>
-    <script src="lib/qunit_config.js"></script>
-    <script src="lib/sinon-2.0.0.js"></script>
+    <title>DuckDuckGo Extension Tests</title>
   </head>
   <body>
-    <div id="qunit"></div>
-    <div id="qunit-fixture"></div>
-    
-    <script src="../js/require.js"></script>
-    <script src="../js/utils.js"></script>
-    <script src="../js/topBlocked.js"></script>
-    <script src="../js/sites.js"></script>
-    <script src="../js/site.js"></script>
-    <script src="../js/companies.js"></script>
-    <script src="../js/company.js"></script>
-    <script src="../js/load.js"></script>
-    <script src="../js/settings.js"></script>
-    <script src="../js/atb.js"></script>
-    <script src="../js/tab.js"></script>
-    <script src="../js/tabManager.js"></script>
-    <script src="../js/trackerLists.js"></script>
-    <script src="../js/list_importers/importers.js"></script>
-    <script src="../js/list_importers/disconnect.js"></script>
-    <script src="../js/trackers.js"></script>
-    <script src="../https-everywhere/chromium/rules.js"></script> 
-    <script src="../https-everywhere/chromium/storage.js"></script>
-    <script src="../https-everywhere/chromium/util.js"></script>
-    <script src="../https-everywhere/chromium/background.js"></script>
-    <script src="../https-everywhere/chromium/incognito-cache-clearing.js"></script>
-    <script src="../js/background.js"></script>
+      <a href="/test/unitTests.html">
+             <input type="button" value="Run Unit Tests" />
+      </a>
+      
+      <br>
 
-    <script src="tests/settings.js"></script>
-    <script src="tests/utils.js"></script>
-    <script src="tests/trackers.js"></script>
-    <script src="tests/sites.js"></script>
-    <script src="tests/companies.js"></script>
-    <script src="tests/atb.js"></script>
-    <script src="tests/options.js"></script>
+      <h2>Open a new tab for the top 10 sites</h2>
+
+      <a href="/test/top10.html">
+             <input type="button" value="Open top 10 sites" />
+      </a>
+
+      <h2>Screenshots</h2>
+      
+      <a href="/test/top10Screenshot.html">
+             <input type="button" value="top 10 sites" />
+      </a>
+
   </body>
 </html>

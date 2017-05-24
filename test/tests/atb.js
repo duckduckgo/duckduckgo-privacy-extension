@@ -75,26 +75,4 @@
       });
 
   });
-
-  function cleanUpTabs(tabs){
-      tabs.forEach((tab) => {
-          chrome.tabs.remove(tab.id);
-      });
-  }
-
-  function getLoadedTab(tabUrl){
-      return new Promise ((resolve) => {
-          chrome.tabs.query({url: tabUrl + '*', }, (tabs) => {
-              if(tabs){
-                  let tab = tabs[0];
-                  if(tab.status === 'complete'){
-                    resolve(tab);
-                  }
-                  else{
-                      resolve(getLoadedTab(tabUrl));
-                  }
-              }
-          });
-      });
-  }
 })();

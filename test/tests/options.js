@@ -32,26 +32,4 @@
       });
 
   });
-
-  function getLoadedTab(tabUrl){
-      return new Promise((resolve) => {
-          chrome.tabs.query({url: tabUrl + '*', }, (tabs) => {
-              if(tabs){
-                  let tab = tabs[0];
-                  if(tab && tab.status === "complete"){
-                      resolve(tab);
-                  }
-                  else{
-                      resolve(getLoadedTab(tabUrl));
-                  }
-              }
-          });
-      });
-  }
-
-  function cleanUpTabs(tabsToCleanUp){
-      tabsToCleanUp.forEach((tab) => {
-          chrome.tabs.remove(tab.id);
-      });
-  }
 })();
