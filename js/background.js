@@ -18,9 +18,7 @@
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
-var load = require('load');
 var stats = require('stats');
-var tabs = {};
 
 function Background() {
   $this = this;
@@ -39,7 +37,7 @@ function Background() {
       for(var i = 0; i < savedTabs.length; i++){ 
           var tab = savedTabs[i];
           if(tab.url){
-            tabs[tab.id] = {'trackers': {}, 'total': 0, 'url': tab.url, 'dispTotal': 0};
+            tabManager.create(tab);
           }
       }
   });
@@ -50,59 +48,6 @@ function Background() {
         ATB.onInstalled();
         ATB.startUpPage();
     }
-  });
-
-  chrome.runtime.onMessage.addListener(function (request, sender, response) {
-    if (typeof(request.social) == 'undefined') {
-        return;
-    }
-
-    var code_str = 'localStorage["social"] = ' + request.social;
-   
-    Object.keys(tabs).forEach(function(tabId) {
-            if (tabs[tabId].url && (!tabs[tabId].url.match(/(chrome\:\/\/)|(chrome\-extension\:\/\/)/))) {
-                chrome.tabs.executeScript(Number(tabId), {
-                    code: code_str
-                   // allFrames: true
-                });
-            }
-        });
-
-  });
-
-  chrome.runtime.onMessage.addListener(function(request, sender, callback) {
-    if (request.options) {
-      callback(localStorage);
-    }
-
-    if (request.current_url) {
-      chrome.tabs.getSelected(function(tab) {
-        var url = tab.url;
-        callback(url);
-      });
-    }
-
-    if (request.whitelist) {
-      var toWhitelist = utils.extractHostFromURL(request.whitelist);
-      chrome.tabs.query({
-        'currentWindow': true,
-        'active': true
-      }, function(currentTabs) {
-        var tabId = currentTabs[0].id;
-        if (!tabs[tabId]) {
-            tabs[tabId] = {'trackers': {}, "total": 0, 'url': tab.url};
-        }
-
-        if (!tabs[tabId].whitelist) {
-            tabs[tabId].whitelist = [];
-        }
-        
-        tabs[tabId].whitelist.push(toWhitelist);
-        callback();
-      });
-    }
-
-    return true;
   });
 }
 
@@ -132,64 +77,67 @@ chrome.contextMenus.create({
   }
 });
 
-// Add ATB param
+// Add ATB param and block tracker requests
 chrome.webRequest.onBeforeRequest.addListener(
-    function (e) {
+    function (requestData) {
 
-      // Add ATB for DDG URLs, otherwise block trackers
-      let ddgAtbRewrite = ATB.redirectURL(e);
+      let tabId = requestData.tabId;
+      let thisTab = null;
+
+      // Add ATB for DDG URLs
+      let ddgAtbRewrite = ATB.redirectURL(requestData);
       if(ddgAtbRewrite)
           return ddgAtbRewrite;
-      
-      if(e.type === 'main_frame'){
-          delete tabs[e.tabId];
-          return;
-      }
 
       // skip requests to background tabs
-      if(e.tabId === -1){
+      if(tabId === -1){
           return;
       }
 
-      if(!tabs[e.tabId]){
-          tabs[e.tabId] = {'trackers': {}, "total": 0, 'url': e.url, "dispTotal": 0, "status": ""};
-          updateBadge(e.tabId, 0);
+      // create new tab instance for main_frame requests
+      if (requestData.type === "main_frame") {
+          thisTab = tabManager.create(requestData);
       }
+      else {
+          thisTab = tabManager.get(requestData);
 
-      var block =  trackers.isTracker(e.url, tabs[e.tabId].url, e.tabId);
-
-      if(block){
-          var name = block.tracker;
-
-          if(!tabs[e.tabId]['trackers'][name]){
-              tabs[e.tabId]['trackers'][name] = {'count': 1, 'url': block.url, 'type': block.type};
+          // check that we have a valid tab
+          // there is a chance this tab was closed before
+          // we got the webrequest event
+          if (!(thisTab.url && thisTab.id)) {
+              return;
           }
-          else {
-              tabs[e.tabId]['trackers'][name].count += 1;
-          }
-          tabs[e.tabId]['total'] += 1;
-          tabs[e.tabId]['dispTotal'] = Object.keys(tabs[e.tabId].trackers).length;
 
-          updateBadge(e.tabId, tabs[e.tabId].dispTotal);
+          // update badge here to display a 0 count
+          updateBadge(thisTab.id, thisTab.getBadgeTotal());
           chrome.runtime.sendMessage({"rerenderPopup": true});
-                
-          return {cancel: true};
+      
+          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
+      
+          if (tracker) {
+              // record all trackers on a site even if we don't block them
+              thisTab.site.addTracker(tracker.url);
+              
+              // record potential blocked trackers for this tab
+              thisTab.addToPotentialBlocked(tracker.url);
+              
+              // Block the request if the site is not whitelisted
+              if (!thisTab.site.whiteListed) {
+                  thisTab.addOrUpdateTracker(tracker);
+                  updateBadge(thisTab.id, thisTab.getBadgeTotal());
+                  chrome.runtime.sendMessage({"rerenderPopup": true});
+                  
+                  // tell Chrome to cancel this webrequest
+                  return {cancel: true};
+              }
+          }
       }
     },
     {
         urls: [
             "<all_urls>",
         ],
-        types: [
-        'main_frame',
-        'sub_frame',
-        'stylesheet',
-        'script',
-        'image',
-        'object',
-        'xmlhttprequest',
-        'other'
-      ]
+        types: settings.getSetting('requestListenerTypes')
     },
     ["blocking"]
 );
@@ -204,35 +152,6 @@ function updateBadge(tabId, numBlocked){
     chrome.browserAction.setBadgeText({tabId: tabId, text: numBlocked + ""});
 }
 
-chrome.tabs.onUpdated.addListener(function(id, info, tab) {
-    // an existing tab has been reloaded or changed url, clear tab data and set status
-    if(tabs[id] && info.status === "loading" && tabs[id].status !== "loading"){
-        tabs[id] = {'trackers': {}, "total": 0, "dispTotal": 0, 'url': tab.url, "status": "loading"};
-        updateBadge(id, 0);
-    }
-    // existing tab, update the status and url
-    else if(tabs[id] && info.status === "complete"){
-        tabs[id].status = "complete";
-        
-        if(tab.url){
-            tabs[id].url = tab.url;
-        }
-
-        Companies.syncToStorage();
-    }
-    // this is a new tab, create it
-    else if (!tabs[id]){
-          tabs[id] = {'trackers': {}, "total": 0, 'url': tab.url, "dispTotal": 0, "status": info.status}
-          updateBadge(id, 0);
-      }
-
-
-});
-
-chrome.tabs.onRemoved.addListener(function(id, info) {
-    delete tabs[id];
-});
-
 chrome.webRequest.onCompleted.addListener(
         ATB.updateSetAtb,
     {
@@ -242,4 +161,3 @@ chrome.webRequest.onCompleted.addListener(
         ]
     }
 );
-

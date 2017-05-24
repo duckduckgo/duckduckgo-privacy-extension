@@ -16,7 +16,6 @@ require.scopes.utils = ( () => {
 
     function syncToStorage(data){
         chrome.storage.local.set(data, function() {
-            console.log("updated local storage data");
         });
     }
 

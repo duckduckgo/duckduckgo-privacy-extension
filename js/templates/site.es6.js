@@ -4,6 +4,9 @@ const toggleButton = require('./shared/toggle-button');
 module.exports = function () {
 
     var domain = this.model.domain;
+    var countText = "" + this.model.trackerCount;
+    if (this.model.potential > 0 && this.model.potential != countText)
+        countText = countText + "/" + this.model.potential
 
     return bel`<section class="site-info divider-bottom">
         <ul class="menu-list">
@@ -20,8 +23,7 @@ module.exports = function () {
             </li>
             <li>
                 <h2>
-                    <span class="site-info__tracker-count">${this.model.trackerCount}</span>
-                    Trackers Blocked
+                    <span class="site-info__tracker-count">${countText}</span> Trackers Blocked
                 </h2>
             </li>
         </ul>

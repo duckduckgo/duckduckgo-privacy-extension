@@ -29,56 +29,51 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       toggleWhitelist: function () {
-          if (this.site) {
+          if(this.tab.site){
               this.isWhitelisted = !this.isWhitelisted;
-              this.site.setWhitelisted(this.isWhitelisted);
-              this.site.notifyWhitelistChanged();
+              this.tab.site.setWhitelisted(this.isWhitelisted);
+              this.tab.site.notifyWhitelistChanged();
           }
       },
 
       setSiteObj: function() {
-          let tab = backgroundPage.tabs[this.tabId];
-          let host = backgroundPage.utils.extractHostFromURL(tab.url);
-          let site = backgroundPage.Sites.get(host);
-
-          // Determine if this is a special page, eg extensions, and reset domain and disabled flag.
-          this.disabled = true;
-
-          if (!site) {
+          if (!this.tab) {
               this.domain = '-';    // should not happen
           }
           else {
-              this.site = site;
-              this.isWhitelisted = site.whiteListed;
-              console.log('[site model] isWhitelisted: ' + this.isWhitelisted);
-
-              let special = site.specialDomain();
+              this.isWhitelisted = this.tab.site.whiteListed;
+              
+              let special = this.tab.site.specialDomain();
               if (special) {
                   this.domain = special;    // eg "extensions", "options", "new tab"
-              } else {
+              }
+              else {
                   this.disabled = false;
               }
           }
       },
 
       updateTrackerCount: function() {
-          let tab = backgroundPage.tabs[this.tabId];
-          if (tab) {
-            this.trackerCount = tab.dispTotal;
+          if(this.tab){
+            this.trackerCount = this.tab.getBadgeTotal();
+            this.potential = Object.keys(this.tab.potentialBlocked).length;
           }
       },
 
       setHttpsMessage: function() {
-          let tab = backgroundPage.tabs[this.tabId];
+          if (!this.tab) {
+              return;
+          }
 
-          if(/^https/.exec(tab.url)){
+          if(/^https/.exec(this.tab.url)){
               this.httpsState = 'default';
-          } else {
-              let url = backgroundPage.utils.parseURL(tab.url);
+          }
+          else{
+              let url = backgroundPage.utils.parseURL(this.tab.url);
               let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
 
               httpsRules.forEach((ruleSet) => {
-                  if(ruleSet.active && ruleSet.apply(tab.url)){
+                  if(ruleSet.active && ruleSet.apply(this.tab.url)){
                       this.httpsState = 'default'; // figure out if this is upgraded later
                   }
               });

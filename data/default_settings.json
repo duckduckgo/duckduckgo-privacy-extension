@@ -17,5 +17,6 @@
         "trackersWithParentCompany"
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
-    "blocking": ["Advertising", "Analytics"]
+    "blocking": ["Advertising", "Analytics"],
+    "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"]
 }
