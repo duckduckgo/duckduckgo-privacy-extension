@@ -1,4 +1,4 @@
-var sites = top500Sites.slice(0,20);
+var sites = top500Sites.slice(0,100);
 (function() {
     processSite();
 })();
@@ -10,16 +10,16 @@ function processSite() {
         return;
     }
 
-    let url = "https://" + site + '/';
+    let url = "http://" + site + '/';
     console.log(url);
-    chrome.tabs.create({url: url});
-    
-    getLoadedTab( '*://*.' + site + '/').then((tab) => {
-        console.log("Active ", url);
-        chrome.tabs.captureVisibleTab((data) => {
-            $('#screenshots').prepend('<img id="theImg" src="' + data + '" />');
-            chrome.tabs.remove(tab.id);
-            processSite();
-        }); 
+    chrome.tabs.create({url: url}, (t) => {
+        getLoadedTabById(t.id).then((tab) => {
+            console.log("Active ", url);
+            chrome.tabs.captureVisibleTab((data) => {
+                $('#screenshots').prepend('<img id="theImg" src="' + data + '" />');
+                chrome.tabs.remove(tab.id);
+                processSite();
+            }); 
+        });
     });
 }

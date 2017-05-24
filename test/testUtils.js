@@ -25,6 +25,21 @@ function getLoadedTab(tabURL) {
     });
 }
 
+function getLoadedTabById(id) {
+    return new Promise((resolve) => {
+        chrome.tabs.get(id, (tab) => {
+                if (tab && tab.status === 'complete') {
+                    // return tab
+                    resolve(tab);
+                }
+                else {
+                    // return new promise and wait
+                    resolve(getLoadedTabById(id));
+                }
+        });
+    });
+}
+
 
 function waitForActiveTab(url) {
     return new Promise((resolve) => {
