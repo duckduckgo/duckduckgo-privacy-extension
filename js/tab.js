@@ -20,6 +20,17 @@ class Tracker {
     };
 }
 
+/* This class contains information about what trackers and sites
+ * are on a given tab:
+ *  id: Chrome tab id
+ *  url: url of the tab
+ *  potentialBlocked: a list of all tracker urls seen
+ *  trackers: container of tracker instances 
+ *      parentCompany -> ref to a Company object
+ *      urls: all tracker urls we have seen for this company
+ *      count: total number of requests
+ *  site: ref to a Site object
+ */
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId,
