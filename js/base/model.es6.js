@@ -8,8 +8,9 @@ function BaseModel (attrs) {
     // onto the instance:
     $.extend(this, attrs);
 
-    // register model with `store` of global state
-    // after checking `modelName` property
+    // register model with `store` of
+    // global notifications
+    // (after checking `modelName` property)
     if (!this.modelName || typeof this.modelName !== 'string') {
         throw new Error ('cannot init model without `modelName` property')
     } else {
@@ -57,21 +58,24 @@ BaseModel.prototype = $.extend({},
             const lastValue = this[attr] || null;
             this[attr] = val;
 
-            this.store.update(
-                this.modelName,
-                { attribute: attr, value: val, lastValue: lastValue },
-                this._toJSON()
-            );
+            this.store.publish({
+                notifierName: this.modelName,
+                change: { attribute: attr, value: val, lastValue: lastValue },
+                attributes: this._toJSON()
+            });
         },
 
 
         /**
          * Convenience method for code clarity
          * so we can explicitly call clear()
-         * instead of doing null sets
+         * instead of doing null sets.
+         * Using .clear() broadcasts the change
+         * out to the rest of the app via this.set()
+         * which calls this.store.publish()
          */
-        clear: function(attr, ops) {
-            this.set(attr, null, ops);
+        clear: function(attr) {
+            this.set(attr, null);
         },
 
 
@@ -88,7 +92,7 @@ BaseModel.prototype = $.extend({},
 
          /**
           * Private method for turning `this` into a
-          * JSON object before sending to minidux store
+          * JSON object before sending to application store.
           * Basically just weeds out properties that
           * are functions.
           */

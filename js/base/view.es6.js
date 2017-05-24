@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const mixins = require('./mixins/index.es6.js');
+const store = require('./store.es6.js');
 
 /**
  * Abstract Base class for any type of view.
@@ -13,8 +14,10 @@ const mixins = require('./mixins/index.es6.js');
  */
 
  function BaseView (ops) {
+
     this.model = ops.model;
     this.views = this.views || {};
+    this.store = store;
 
     // A jquery object should be passed in as either 'appendTo', 'before' or 'after'
     // indicating where on the DOM the view should be added. If none is passed

@@ -1,106 +1,184 @@
-// TODO: README at js/base directory level, point to it from main README
-// TODO: create a state injector for test mocks
-
-const minidux = require('minidux');
-const deepFreeze = require('deep-freeze');
-const reducers = require('./reducers.es6.js');
-const EventEmitter2 = require('eventemitter2');
-
-
 /**
- * `_store` is our minidux state machine
- * Its api is not publicly exposed. Developers must use public api below.
- * @api private
+ * Base application `store`.
+ *
+ * This is how models communicate with other models, views and pages.
+ * It is based on Redux pattern but slimmed down for our purposes.
+ * It emits event notifications that can be subscribed to.
+ *
+ * Its purpose is to be the single source of truth for app-wide event
+ * notifications (to avoid race conditions and spaghetti event tangles
+ * that can result in the infinite loops and zombie states that early
+ * Backbone and Angular 1.0 apps are famous for when components tried
+ * to talk to one other without a single source of truth like this store).
+ *
+ * --> What you need to know as a feature developer: <--
+ *
+ *     - To PUBLISH a notification about a state change from a model to
+ *       another model, view or page just call:
+ *
+ *       `model.set('bar', 1234)`
+ *
+ *     - To SUBSCRIBE to notifications about a published state change to
+ *       a model from another model, view or a page (pretend the modelName is
+ *       `search` that you want to subscribe to):
+ *
+ *          `this.bindEvents([
+ *            [this.store.subscribe, 'change:search', this._handler],
+ *          ]);`
+ *
+ *        The first argument passed to `this._handler()` will be an
+ *        object containing details about the search model's state change.
+ *
+ *
+ * TODO: create a state injector for test mocks
  */
-var _store = null;
+
+
+// Dependencies
+const isPlainObject = require('is-plain-object');
+const deepFreeze = require('deep-freeze');
+const EventEmitter2 = require('eventemitter2');
+const notifiers = require('./notifiers.es6.js');
 
 
 /**
- * Creates a minidux reducer for each caller.
- * The base model will be its caller in most cases.
- * @param {string} modelName - must be unique
- * @param {object} initialState - initial state of model
+ * .register() creates a notifier function for each caller.
+ * (models should be the callers in most cases).
+ * @param {string} notifierName - unique name of registrant (i.e. model name)
  * @api public
  */
-function register (modelName) {
-    if (typeof modelName !== 'string') { throw new Error('modelName must be a string'); }
-    if (reducers.asyncReducers[modelName]) { throw new Error ('modelName must be unique, no duplicates'); }
+function register (notifierName) {
+    if (typeof notifierName !== 'string') { throw new Error(`notifierName argument must be a string`); }
+    if (notifiers.registered[notifierName]) { throw new Error (`notifierName argument must be unique to store; ${notifierName} already exists`); }
 
-    reducers.add(modelName);
-    const combinedReducers = reducers.combine();
+    notifiers.add(notifierName);
+    const combinedNotifiers = notifiers.combine();
 
     if (!_store) {
-        _store = minidux.createStore(combinedReducers, {});
+        _store = _createStore(combinedNotifiers);
         _store.subscribe((state) => {
-            state = deepFreeze(state); // make state immutable before publishing
-            _publishChange(state); // publish changes to subscribers
+            state = deepFreeze(state); // make immutable before publishing
+            _publish(state); // publish notif. about state changes to subscribers
         });
     } else {
         // update reducers to include the newest registered here
-        _store.replaceReducer(combinedReducers);
+        _store.replaceNotifier(combinedNotifiers);
     }
 }
 
 
 /**
- * Updates state of store by model name, which is mapped to
- * a corresponding reducer in the store.
- * Although api is public, most of what you need to do can be
- * done with model.set() and model.clear() instead of directly here
- * @param {string} modelName
- * @param {object} change - { attribute, value, lastValue }
- * @param {object} attributes - object representing model's direct properties
+ * .publish() dispatches a notification to the store which can be subscribed to.
+ * Although this api method is public, most of what you need to do can be
+ * done with model.set() and model.clear() instead of directly here.
+ * @param {object} notification {
+ *     {string} notifierName - name of notifier that was registered
+ *     {object} change - { attribute, value, lastValue }
+ *     {object} attributes - state of notifier (all of its direct properties)
+* }
  * @api public
  */
-function update (modelName, change, attributes) {
-  const actionType = reducers.getActionType(modelName);
+function publish (notification) {
   _store.dispatch({
-    type: actionType,
-    change: change,
-    attributes: attributes
+    notifierName: notification.notifierName,
+    change: notification.change,
+    attributes: notification.attributes
   });
 }
 
 
 /**
  * Broadcasts state change events out to subscribers
- * @api public, but exposed as `subscribe` for clarity
+ * @api private, but exposed as `store.subscribe()` for clarity
  */
 const _publisher = new EventEmitter2();
 _publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
 /**
- * Emits state change events via _publisher
+ * Emits notifications via _publisher
  * @api private
  */
-function _publishChange (state) {
+function _publish (state) {
 
-  Object.keys(state).forEach((key) => {
-      if (state[key].change) {
-          console.info(`STORE PUBLISH MODEL change:${key}`, state[key]);
-          _publisher.emit(`change:${key}`, state[key]);
-      }
-  });
+    Object.keys(state).forEach((key) => {
+        if (state[key] && state[key].change) {
+            console.info(`STORE NOTIFICATION change:${key}`, state[key]);
+            _publisher.emit(`change:${key}`, state[key]);
+        }
+    });
 
 }
 
 
 /**
- * Remove reducer that corresponds to modelName from store.
- * @param {string} modelName
+ * Remove notifier from store.
+ * @param {string} notifierName
  * @api public
  */
-function remove (modelName) {
-  if (reducers.remove(modelName)) {
-      const combinedReducers = reducers.combine();
-      _store.replaceReducer(combinedReducers);
+function remove (notifierName) {
+  if (notifiers.remove(notifierName)) {
+      const combinedNotifiers = notifiers.combine();
+      _store.replaceNotifier(combinedNotifiers);
   }
 }
 
 
-// public api
+/**
+ * `_store` is where notifiers live after they are registered.
+ * Its api is not publicly exposed. Developers must use public api.
+ * @api private
+ */
+var _store = null;
+/**
+ * Create the store of notifiers and their notification dispatch functions.
+ * This basically mimics a Redux store init pattern
+ * and is liberally borrowed from Minidux
+ * but slimmed down for our needs:
+ * https://www.npmjs.com/package/minidux#var-store--createstorereducer-initialstate-enhancer
+ * @api private
+ */
+function _createStore (notifier) {
+    if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
+
+    var state = {};
+    var listener = null;
+    var isEmitting = false;
+
+    function dispatch (notification) {
+        if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object');
+        if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string');
+        if (isEmitting) throw new Error('subscribers may not generate notifications');
+
+        isEmitting = true;
+        state = notifier(state, notification);
+        if (listener) listener(state);
+        isEmitting = false;
+        return notification;
+    }
+
+    function subscribe (cb) {
+        if (!cb || typeof cb !== 'function') throw new Error('listener must be a function');
+        listener = cb;
+    }
+
+    function replaceNotifier (next) {
+        if (typeof next !== 'function') throw new Error('new notifier must be a function');
+        notifier = next;
+    }
+
+    dispatch({ notifierName: '@@createStore/INIT' });
+
+    return {
+        dispatch: dispatch,
+        subscribe: subscribe,
+        replaceNotifier: replaceNotifier
+    }
+}
+
+
+// Public api
 module.exports = {
-  register: register,
-  update: update,
-  subscribe: _publisher,
-  remove: remove
+  register: register, // registers a new notifier to the store (likely a model)
+  publish: publish, // publish a notification from notifier to subscribers
+  subscribe: _publisher, // subscribe to notifiers' notifications
+  remove: remove // remove a notifier from the store
 };
