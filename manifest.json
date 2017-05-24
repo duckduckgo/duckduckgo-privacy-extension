@@ -40,7 +40,7 @@
                 "js/sites.js",
                 "js/site.js",
                 "js/tab.js",
-                "js/tabs.js",
+                "js/tabManager.js",
                 "js/companies.js",
                 "js/company.js",
                 "js/load.js",

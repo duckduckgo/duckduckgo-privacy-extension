@@ -55,7 +55,7 @@ Site.prototype = $.extend({},
 
       updateTrackerCount: function() {
           if(this.tab){
-            this.trackerCount = this.tab.dispTotal();
+            this.trackerCount = this.tab.getBadgeTotal();
             this.potential = Object.keys(this.tab.potentialBlocked).length;
           }
       },

@@ -18,7 +18,6 @@
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
-var load = require('load');
 var stats = require('stats');
 
 function Background() {
@@ -101,27 +100,38 @@ chrome.webRequest.onBeforeRequest.addListener(
       }
       else {
           thisTab = tabManager.get(requestData);
-          updateBadge(thisTab.id, thisTab.dispTotal());
-      }
 
-      var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
-      if(tracker){
+          // check that we have a valid tab
+          // there is a chance this tab was closed before
+          // we got the webrequest event
+          if (!(thisTab.url && thisTab.id)) {
+              return;
+          }
 
-          // record all trackers on a site even if we don't block them
-          thisTab.site.addTracker(tracker.url);
-
-          // record potential blocked trackers for this tab
-          thisTab.addToPotentialBlocked(tracker.url);
-
-          // block the request, update badge, and rerender popup
-          if (!thisTab.site.whiteListed && requestData.type !== "main_frame") {
-              thisTab.addOrUpdateTracker(tracker.name, tracker.url, tracker.type);
-              updateBadge(thisTab.id, thisTab.dispTotal());
-              chrome.runtime.sendMessage({"rerenderPopup": true});
-              return {cancel: true};
+          // update badge here to display a 0 count
+          updateBadge(thisTab.id, thisTab.getBadgeTotal());
+          chrome.runtime.sendMessage({"rerenderPopup": true});
+      
+          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
+      
+          if (tracker) {
+              // record all trackers on a site even if we don't block them
+              thisTab.site.addTracker(tracker.url);
+              
+              // record potential blocked trackers for this tab
+              thisTab.addToPotentialBlocked(tracker.url);
+              
+              // Block the request if the site is not whitelisted
+              if (!thisTab.site.whiteListed) {
+                  thisTab.addOrUpdateTracker(tracker);
+                  updateBadge(thisTab.id, thisTab.getBadgeTotal());
+                  chrome.runtime.sendMessage({"rerenderPopup": true});
+                  
+                  // tell Chrome to cancel this webrequest
+                  return {cancel: true};
+              }
           }
       }
-
     },
     {
         urls: [

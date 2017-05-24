@@ -1,6 +1,6 @@
 class Tracker {
     constructor(name, url, type) {
-        this.parent = Companies.get(name);
+        this.parentCompany = Companies.get(name);
         this.urls = [url],
         this.count = 1;
     };
@@ -9,6 +9,10 @@ class Tracker {
             this.count += 1;
     };
 
+    /* A parent company may try
+     * to track you through many different entities.
+     * We store a list of all unique urls here.
+     */
     addURL(url) {
         if (this.urls.indexOf(url) === -1) {
             this.urls.push(url);
@@ -24,29 +28,34 @@ class Tab {
         this.trackers = {},
         this.status = tabData.status,
         this.site = Sites.get(utils.extractHostFromURL(tabData.url));
-
-        this.dispTotal = function(){
-            let total = 0;
-            for (var tracker in this.trackers) {
-                total += this.trackers[tracker].urls.length;
-            }
-            return total;
-        };
     };
 
+    /* Add up all of the unique tracker urls that 
+     * we have see on this tab
+     */
+    getBadgeTotal() {
+        return Object.keys(this.trackers).reduce((total, name) => {
+            return this.trackers[name].urls.length + total;
+        }, 0);
+    };
+
+    /* Store all tracker urls for a given tab even if we
+     * don't block them. This is an object for easy look up
+     * the null value has no meaning.
+     */
     addToPotentialBlocked(url) {
         this.potentialBlocked[url] = null;
     };
 
-    addOrUpdateTracker(name, url, type) {
-        let tracker = this.trackers[name];
+    addOrUpdateTracker(t) {
+        let tracker = this.trackers[t.parentCompany];
         if (tracker) {
             tracker.increment();
-            tracker.addURL(url);
+            tracker.addURL(t.url);
         }
         else {
-            let newTracker = new Tracker(name, url, type);
-            this.trackers[name] = newTracker;
+            let newTracker = new Tracker(t.parentCompany, t.url, t.type);
+            this.trackers[t.parentCompany] = newTracker;
             return newTracker;
         }
     }
