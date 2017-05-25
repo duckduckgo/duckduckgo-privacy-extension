@@ -1,4 +1,6 @@
-const top500Sites = ["facebook.com",
+const top500Sites = [
+"xe.com",    
+"facebook.com",
 "twitter.com",
 "google.com",
 "youtube.com",

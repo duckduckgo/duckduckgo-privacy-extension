@@ -7,23 +7,25 @@
     <title>DuckDuckGo Extension Tests</title>
   </head>
   <body>
-      <a href="/test/unitTests.html">
+      <h2>Unit tests</h2>
+
+      <a href="/test/html/unitTests.html">
              <input type="button" value="Run Unit Tests" />
       </a>
       
-      <br>
 
       <h2>Open a new tab for the top 10 sites</h2>
 
-      <a href="/test/top10.html">
+      <a href="/test/html/top10.html">
              <input type="button" value="Open top 10 sites" />
       </a>
 
       <h2>Screenshots</h2>
-      
-      <a href="/test/top10Screenshot.html">
-             <input type="button" value="top 10 sites" />
-      </a>
+
+      <form action="/test/html/screenshots.html">
+        <input type="text" name="numberToTest" value="# sites to test"/>
+             <input type="submit" value="Run" />
+      </form>
 
   </body>
 </html>
