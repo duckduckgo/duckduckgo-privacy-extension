@@ -1,12 +1,41 @@
-// get the url param for how many sites to test
-var toTest = window.location.href.split('?')[1].split('=')[1] || 10;
-var sites = top500Sites.slice(0,toTest);
+// get the url params
+var params = window.location.href
+    .split('?')[1]
+    .split('&')
+    .reduce((params, line) => { 
+        let parts = line.split('='); 
+        params[parts[0]] = parts[1]; 
+        return params;
+    }, {});
+
+// set default number of sites to test
+if (!params.numberToTest) {
+    params.numberToTest = 10;
+}
+
+// build array of sites to test. Either random or in order
+if (params.random) {
+    var sites = [];
+
+    while (sites.length < params.numberToTest) {
+        let site = top500Sites[Math.floor(Math.random()*top500Sites.length)];
+        
+        // don't add duplicate sites to test
+        if (sites.indexOf(site) === -1) {
+            sites.push(site);
+        }
+    }
+}
+else {
+    var sites = top500Sites.slice(0,params.numberToTest);
+}
 
 // store screenshot images
 var screenshots = [];
 
 const bkg = chrome.extension.getBackgroundPage();
 
+// start taking screenshots
 (function() {
     processSite();
 })();
