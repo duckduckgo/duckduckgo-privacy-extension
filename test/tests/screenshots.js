@@ -12,6 +12,9 @@ var params = window.location.href
 if (!params.numberToTest) {
     params.numberToTest = 10;
 }
+else if(params.numberToTest > top500Sites.length){
+    params.numberToTest = top500Sites.length
+}
 
 // build array of sites to test. Either random or in order
 if (params.random) {
