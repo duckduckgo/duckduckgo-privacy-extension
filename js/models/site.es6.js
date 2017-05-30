@@ -65,18 +65,11 @@ Site.prototype = $.extend({},
               return;
           }
 
-          if(/^https/.exec(this.tab.url)){
-              this.httpsState = 'default';
+          if (this.tab.upgradedHttps) {
+              this.httpsState = 'upgraded';
           }
-          else{
-              let url = backgroundPage.utils.parseURL(this.tab.url);
-              let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
-
-              httpsRules.forEach((ruleSet) => {
-                  if(ruleSet.active && ruleSet.apply(this.tab.url)){
-                      this.httpsState = 'default'; // figure out if this is upgraded later
-                  }
-              });
+          else if (/^https/.exec(this.tab.url)) {
+              this.httpsState = 'default';
           }
 
           this.httpsStatusText = httpsStates[this.httpsState];
