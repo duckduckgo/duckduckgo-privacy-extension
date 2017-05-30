@@ -82,7 +82,6 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) {
 
       let tabId = requestData.tabId;
-      let thisTab = null;
 
       // Add ATB for DDG URLs
       let ddgAtbRewrite = ATB.redirectURL(requestData);
@@ -94,13 +93,16 @@ chrome.webRequest.onBeforeRequest.addListener(
           return;
       }
 
-      // create new tab instance for main_frame requests
+      let thisTab = tabManager.get(requestData);
+
+      // for main_frame requests: create a new tab instance whenever we either
+      // don't have a tab instance for this tabId or this is a new requestId.
       if (requestData.type === "main_frame") {
-          thisTab = tabManager.create(requestData);
+          if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
+            thisTab = tabManager.create(requestData);
+          }
       }
       else {
-          thisTab = tabManager.get(requestData);
-
           // check that we have a valid tab
           // there is a chance this tab was closed before
           // we got the webrequest event
@@ -132,6 +134,19 @@ chrome.webRequest.onBeforeRequest.addListener(
               }
           }
       }
+
+      // check https rules and upgrade if we can
+      if (!thisTab.site.whiteListed) {
+          let upgradeStatus = onBeforeRequest(requestData);
+          
+          // check for an upgraded main_frame request to use
+          // in our site score calculations
+          if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
+              thisTab.upgradedHttps = true;
+          }
+          return upgradeStatus;
+      }
+
     },
     {
         urls: [
