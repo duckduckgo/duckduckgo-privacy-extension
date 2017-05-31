@@ -63,9 +63,13 @@ function parseTitles() {
     let parsedTitles = {};
     
     titles.map((x) => {
-        
-        //replace invalid url authority chars
-        let parts = x.replace(/[^a-zA-Z0-9\.\s\:\/]/g,'').split(' ');
+        // skip titles asking to create new rules
+        if (/^(create|add)/gi.exec(x)) {
+            return;
+        }
+
+        //replace any invalid authority characters
+        let parts = x.replace(/[^a-zA-Z0-9\.\s\:\/-]/g,'').split(' ');
         let url = null;
 
         // find a valid domain somewhere in the title
