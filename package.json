@@ -9,6 +9,7 @@
     "postinstall": "export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "build": "grunt build",
     "dev": "grunt dev",
+    "release": "grunt build && node scripts/httpsWhitelist.js",
     "selenium": "cd selenium-test && node test.js",
     "jshint": "jshint js/ --verbose > jshint_log.txt",
     "test": "concurrently 'npm run jshint' 'npm run selenium'"
@@ -38,7 +39,9 @@
     "eventemitter2": "^4.1.0",
     "is-plain-object": "^2.0.1",
     "jquery": "^3.2.1",
-    "normalize.scss": "^0.1.0"
+    "normalize.scss": "^0.1.0",
+    "parse-link-header": "^1.0.0",
+    "psl": "^1.1.18"
   },
   "babel": {
     "presets": [

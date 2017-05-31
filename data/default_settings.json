@@ -18,5 +18,6 @@
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
     "blocking": ["Advertising", "Analytics"],
-    "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"]
+    "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
+    "httpsWhitelist": "data/httpsWhitelist.json"
 }
