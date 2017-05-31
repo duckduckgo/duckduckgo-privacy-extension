@@ -19,6 +19,7 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
+const httpsWhitelist = load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'));
 
 function Background() {
   $this = this;
@@ -135,8 +136,9 @@ chrome.webRequest.onBeforeRequest.addListener(
           }
       }
 
-      // check https rules and upgrade if we can
-      if (!thisTab.site.whiteListed) {
+      // upgrade to https if the site isn't whitelisted or in our list
+      // of known broken https sites
+      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain])) {
           let upgradeStatus = onBeforeRequest(requestData);
           
           // check for an upgraded main_frame request to use

@@ -71,8 +71,11 @@ function parseTitles() {
         // find a valid domain somewhere in the title
         parts.some((part) => {
             if (psl.isValid(part)) {
-                url = psl.get(part.toLowerCase());
-                return;
+                let domain = part.toLowerCase();
+                if (!skipDomains[domain]) {
+                    url = psl.get(domain);
+                    return;
+                }
             }
         });
 
