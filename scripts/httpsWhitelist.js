@@ -54,8 +54,8 @@ function getTitles(link) {
         
         // use this to only test one page
         //getTitles(null);
-
         getTitles(link.next);
+
     });
 }
 
@@ -70,21 +70,21 @@ function parseTitles() {
 
         //replace any invalid authority characters
         let parts = x.replace(/[^a-zA-Z0-9\.\s\:\/-]/g,'').split(' ');
-        let url = null;
+        let domainToAdd = null;
 
         // find a valid domain somewhere in the title
         parts.some((part) => {
             if (psl.isValid(part)) {
-                let domain = part.toLowerCase();
+                let domain = part.toLowerCase().replace(/^www\./,'');
                 if (!skipDomains[domain]) {
-                    url = psl.get(domain);
+                    domainToAdd = domain;
                     return;
                 }
             }
         });
 
-        if (url)
-            parsedTitles[url] = true;
+        if (domainToAdd)
+            parsedTitles[domainToAdd] = true;
     });
 
     fs.writeFile(httpsWhitelistLoc, JSON.stringify(parsedTitles, null, 4),((err) => { 
