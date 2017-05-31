@@ -1,6 +1,6 @@
 {
+    "active.domains": true,
     "aab.ru": true,
-    "contributing.md": true,
     "llvm.org": true,
     "melpa.org": true,
     "ntop.org": true,
@@ -222,7 +222,6 @@
     "discovery.com": true,
     "senate.gov": true,
     "zamzar.com": true,
-    "google.com": true,
     "firebase.com": true,
     "getwashio.com": true,
     "browserscope.org": true,
@@ -242,7 +241,6 @@
     "maker.tv": true,
     "ok.ru": true,
     "blog.shakirm.com": true,
-    "google.cn": true,
     "rottentomatoes.com": true,
     "stocktwits.com": true,
     "sportschau.de": true,

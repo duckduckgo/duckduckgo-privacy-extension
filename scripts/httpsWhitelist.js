@@ -24,9 +24,9 @@ var options = {
     }
 };
 
-var skip = ['google.com', 'contributing.md'];
+var skip = ['google.cn', 'google.com', 'contributing.md'];
 var skipDomains = {};
-skip.map((x) => skipDomains.x = true);
+skip.map((x) => { skipDomains[x] = true });
 
 // github issue titles
 var titles = [];
