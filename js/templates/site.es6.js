@@ -6,7 +6,7 @@ module.exports = function () {
     var domain = this.model.domain;
     var countText = "" + this.model.trackerCount;
     if (this.model.potential > 0 && this.model.potential != countText)
-        countText = countText + "/" + this.model.potential
+        countText = countText + "/" + this.model.potential;
 
     return bel`<section class="site-info divider-bottom">
         <ul class="menu-list">
