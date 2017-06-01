@@ -7,7 +7,8 @@
   var basicBlocking = [
     { 'url': 'https://doubleclick.net', 'block': true},
     { 'url': 'https://duckduckgo.com', 'block': false},
-    { 'url': 'https://developers.google.com', 'block': true}
+    { 'url': 'https://developers.google.com', 'block': true},
+    { 'url': 'https://x.y.z.doubleclick.net', 'block': true}
   ];
   
   QUnit.test("block url", function (assert) {
