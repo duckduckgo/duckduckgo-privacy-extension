@@ -51,7 +51,8 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
 chrome.webRequest.onCompleted.addListener( (request) => {
     let tab = tabManager.get({tabId: request.tabId});
     if (tab) {
-        tab.url = request.url
+        tab.url = request.url;
+        tab.updateSite();
     }
 }, {urls: ['<all_urls>'], types: ['main_frame']});
 
