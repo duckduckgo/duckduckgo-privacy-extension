@@ -46,13 +46,13 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
     }
     else {
         let tab = tabManager.get({tabId: id});
-        if (info.status) {
+        if (tab && info.status) {
             tab.status = info.status;
             console.log("Status: ", tab.status);
         
             // we have uncompleted upgraded https requests
             // whitelist the site
-            if (tab.status === "complete" && tab.httpsRequests.length) {
+            if (!tab.site.httpsWhitelisted && tab.status === "complete" && tab.httpsRequests.length) {
                 console.log("Whitelisting Site");
                 tab.site.httpsWhitelisted = true;
                 chrome.tabs.reload(tab.id);
