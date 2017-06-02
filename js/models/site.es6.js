@@ -57,8 +57,22 @@ Site.prototype = $.extend({},
           if(this.tab){
             this.trackerCount = this.tab.getBadgeTotal();
             this.potential = Object.keys(this.tab.potentialBlocked).length;
+            this.updateSiteScore();
           }
       },
+
+      updateSiteScore: function() {
+          if (this.trackerCount == 0 && this.potential > 0)
+              this.siteRating = 'B'
+          else if (this.trackerCount > 8 ) // arbitrary demo
+              this.siteRating = 'C';
+          else if (this.trackerCount > 0 )
+              this.siteRating = 'B';
+          else if (this.trackerCount == 0 && this.potential == 0)
+              this.siteRating = 'A';
+          else
+              this.siteRating = 'none';
+      }, 
 
       setHttpsMessage: function() {
           if (!this.tab) {

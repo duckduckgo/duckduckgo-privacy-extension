@@ -101,7 +101,7 @@
 
                 .toggle-button {
                     top: 3px;
-                    right: 0;
+                    right: 50px;
                 }
             }
         }
@@ -118,18 +118,20 @@
         .site-info__rating {
             @include icon_display();
 
+            &.site-info__rating--none {
+                border-radius: 10px;
+                background-color:#e0e0e0;
+            }
+
             &.site-info__rating--A {
-                visibility: hidden;
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
             }
 
             &.site-info__rating--B {
-                visibility: hidden;
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
             }
 
             &.site-info__rating--C {
-                visibility: hidden;
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
             }
         }
