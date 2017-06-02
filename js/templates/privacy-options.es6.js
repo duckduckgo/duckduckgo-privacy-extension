@@ -17,6 +17,12 @@ module.exports = function () {
                                'js-options-https-everywhere-enabled',
                                'httpsEverywhereEnabled')}
             </li>
+            <li>
+                Show Embedded Tweets
+                ${toggleButton(this.model.embeddedTweetsEnabled,
+                               'js-options-embedded-tweets-enabled',
+                               'embeddedTweetsEnabled')}
+            </li>
         </ul>
     </section>`;
 }

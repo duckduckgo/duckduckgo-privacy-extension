@@ -14,6 +14,17 @@ function isTracker(url, currLocation, tabId) {
 
     var toBlock = false;
 
+    // DEMO embedded tweet option
+    // a more robust test for tweet code may need to be used besides just
+    // blocking platform.twitter.com
+    if (settings.getSetting('embeddedTweetsEnabled') === false) {
+        if (/platform.twitter.com/.test(url)) {
+            console.log("blocking tweet embedded code on " + url);
+            return {parentCompany: "twitter", url: "platform.twitter.com", type: "Analytics"};
+        }
+    }
+
+
     if (settings.getSetting('trackerBlockingEnabled')) {
         
         var host = utils.extractHostFromURL(url);
