@@ -64,7 +64,7 @@ Site.prototype = $.extend({},
       updateSiteScore: function() {
           if (this.trackerCount == 0 && this.potential > 0)
               this.siteRating = 'B'
-          else if (this.trackerCount > 6 ) // arbitrary demo
+          else if (this.trackerCount > 8 ) // arbitrary demo
               this.siteRating = 'C';
           else if (this.trackerCount > 0 )
               this.siteRating = 'B';
