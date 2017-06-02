@@ -71,7 +71,7 @@ chrome.webNavigation.onCompleted.addListener( (request) => {
 
     if (tab) {
         tab.url = request.url;
-        
+        tab.updateSite();
     }
 }, {urls: ['<all_urls>'], types: ['main_frame']});
 
