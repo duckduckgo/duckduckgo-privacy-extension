@@ -44,14 +44,34 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         info.id = id;
         tabManager.create(info);
     }
+    else {
+        let tab = tabManager.get({tabId: id});
+        if (info.status) {
+            tab.status = info.status;
+            console.log("Status: ", tab.status);
+        
+            // we have uncompleted upgraded https requests
+            // whitelist the site
+            if (tab.status === "complete" && tab.httpsRequests.length) {
+                console.log("Whitelisting Site");
+                tab.site.httpsWhitelisted = true;
+                chrome.tabs.reload(tab.id);
+            }
+        }
+    }
+
 });
 
 // update tab url after the request is finished. This makes
 // sure we have the correct url after any https rewrites
-chrome.webRequest.onCompleted.addListener( (request) => {
+chrome.webNavigation.onCompleted.addListener( (request) => {
     let tab = tabManager.get({tabId: request.tabId});
+
+    console.log("Tab completed");
+
     if (tab) {
-        tab.url = request.url
+        tab.url = request.url;
+        
     }
 }, {urls: ['<all_urls>'], types: ['main_frame']});
 

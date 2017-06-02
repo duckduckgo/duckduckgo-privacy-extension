@@ -37,6 +37,7 @@ class Tab {
         this.potentialBlocked = {},
         this.url = tabData.url,
         this.upgradedHttps = false,
+        this.httpsRequests = [],
         this.requestId = tabData.requestId,
         this.trackers = {},
         this.status = tabData.status,
@@ -73,3 +74,16 @@ class Tab {
         }
     }
 }
+
+chrome.webRequest.onHeadersReceived.addListener((header) => {
+    let tab = tabManager.get({'tabId': header.tabId});
+
+    // remove successful rewritten requests 
+    if (header.statusCode < 500) {
+        tab.httpsRequests = tab.httpsRequests.filter((url) => {
+            return url !== header.url;
+        });
+    }
+    console.log(tab.httpsRequests);
+
+}, {urls: ['<all_urls>']});
