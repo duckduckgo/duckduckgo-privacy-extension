@@ -123,32 +123,56 @@
                 background-color:#e0e0e0;
             }
 
-            &.site-info__rating--A {
+            &.site-info__rating--A-chrome {
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
             }
 
-            &.site-info__rating--B {
+            &.site-info__rating--B-chrome {
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
             }
 
-            &.site-info__rating--C {
+            &.site-info__rating--C-chrome {
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+            }
+
+            &.site-info__rating--A-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
+            }
+
+            &.site-info__rating--B-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
+            }
+
+            &.site-info__rating--C-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
             }
         }
 
         .site-info__https-status {
             @include icon_display();
 
-            &.site-info__https-status--default {
+            &.site-info__https-status--default-chrome {
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
             }
 
-            &.site-info__https-status--upgraded {
+            &.site-info__https-status--upgraded-chrome {
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
             }
 
-            &.site-info__https-status--none {
+            &.site-info__https-status--none-chrome {
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
+            }
+
+            &.site-info__https-status--default-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
+            }
+
+            &.site-info__https-status--upgraded-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
+            }
+
+            &.site-info__https-status--none-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
             }
 
         }
