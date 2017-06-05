@@ -21,6 +21,19 @@ var settings = require('settings');
 var stats = require('stats');
 const httpsWhitelist = load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'));
 
+// Set browser for popup asset paths
+// chrome doesn't have getBrowserInfo so we'll default to chrome
+// and try to detect if this is firefox
+var browser = "chrome";
+try {
+    chrome.runtime.getBrowserInfo((info) => {
+        if (info.name === "Firefox")
+            browser = "moz";
+    });
+}
+catch(e){
+};
+
 function Background() {
   $this = this;
 
@@ -138,7 +151,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       // upgrade to https if the site isn't whitelisted or in our list
       // of known broken https sites
-      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain])) {
+      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain] || thisTab.site.httpsWhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
           
           // check for an upgraded main_frame request to use
@@ -146,6 +159,10 @@ chrome.webRequest.onBeforeRequest.addListener(
           if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
               thisTab.upgradedHttps = true;
           }
+
+          if (upgradeStatus.redirectUrl)
+              thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
+
           return upgradeStatus;
       }
 
