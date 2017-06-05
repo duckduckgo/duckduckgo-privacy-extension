@@ -27,7 +27,6 @@
     },
     "omnibox": {"keyword": "d"},
     "options_page": "html/options.html",
-    "options_ui": {"page": "html/options.html"},
     "background": {
             "scripts": [
                 "https/chromium/rules.js",
