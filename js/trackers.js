@@ -1,5 +1,7 @@
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
+var abp;
+var parsedEasyList;
 
 require.scopes.trackers = (function() {    
 
@@ -7,10 +9,9 @@ var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists(),
-    blockLists = settings.getSetting('blockLists'),
     entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
-    
-function isTracker(url, currLocation, tabId) {
+
+function isTracker(url, currLocation, tabId, request) {
 
     var toBlock = false;
 
@@ -36,9 +37,19 @@ function isTracker(url, currLocation, tabId) {
             blockSettings.push('Social');
         }
 
+
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, host, currLocation);
         if(trackerByParentCompany) {
             return trackerByParentCompany;
+        }
+
+        var easylistBlock = abp.matches(parsedEasyList, url, {
+            domain: currLocation, 
+            elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+        });
+
+        if (easylistBlock) {
+            return {parentCompany: "unknown", url: host, type: "easylist"};
         }
 
     }

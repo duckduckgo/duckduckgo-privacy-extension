@@ -5,5 +5,11 @@
             "loc": "disconnect-trackerlist.json",
             "gmapping": "disconnect-google-mapping.json",
             "processedName": "trackersWithParentCompany"
+        },
+    {
+            "name": "abp",
+            "type": "abp",
+            "loc": "easyprivacy.txt",
+            "processedName": "processEasyList"
         }
 ]

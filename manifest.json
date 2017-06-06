@@ -48,6 +48,7 @@
                 "js/atb.js",
                 "js/trackerLists.js",
                 "js/trackers.js",
+                "js/abp.js",
                 "js/background.js"
             ]
     },
