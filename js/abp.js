@@ -4,10 +4,26 @@
 abp = require('abp-filter-parser');
 var request = require('request');
 
-request('https://easylist.to/easylist/easyprivacy.txt', function (err, res, body) {
-    parsedEasyList = {};
-    abp.parse(body, parsedEasyList);
-});
+easyLists = {
+    privacy: {
+        url: 'https://easylist.to/easylist/easyprivacy.txt',
+        parsed: {}
+    },
+    general: {
+        url: 'https://easylist.to/easylist/easylist.txt',
+        parsed: {}
+    }
+};
+
+var _loop = function _loop(list) {
+    request(easyLists[list].url, function (err, res, body) {
+        abp.parse(body, easyLists[list].parsed);
+    });
+};
+
+for (var list in easyLists) {
+    _loop(list);
+}
 
 },{"abp-filter-parser":2,"request":267}],2:[function(require,module,exports){
 (function (global, factory) {

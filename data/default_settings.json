@@ -18,7 +18,7 @@
         "trackersWithParentCompany"
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
-    "easyList": "data/tracker_lists/parsedEasyList",
+    "easyLists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "httpsWhitelist": "data/httpsWhitelist.json"

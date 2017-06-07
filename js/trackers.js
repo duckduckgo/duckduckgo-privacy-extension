@@ -1,7 +1,7 @@
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 var abp;
-var parsedEasyList;
+var easyLists;
 
 require.scopes.trackers = (function() {    
 
@@ -37,23 +37,36 @@ function isTracker(url, currLocation, tabId, request) {
             blockSettings.push('Social');
         }
 
-
+        // block trackers by parent company
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, host, currLocation);
         if(trackerByParentCompany) {
             return trackerByParentCompany;
         }
 
-        var easylistBlock = abp.matches(parsedEasyList, url, {
-            domain: currLocation, 
-            elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
-        });
-
+        // block trackers from easylists
+        let easylistBlock = checkEasylists(url, currLocation, host, request);
         if (easylistBlock) {
-            return {parentCompany: "unknown", url: host, type: "easylist"};
+            return easylistBlock;
         }
 
     }
     return toBlock;
+}
+
+function checkEasylists(url, currLocation, host, request){
+    let easylistBlock;
+    settings.getSetting('easyLists').some((listName) => {
+        easylistBlock = abp.matches(easyLists[listName].parsed, url, {
+            domain: currLocation, 
+            elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+        });
+
+        // break loop early if a list matches
+        if(easylistBlock){
+            return easylistBlock = {parentCompany: "unknown", url: host, type: listName};
+        }
+    });
+    return easylistBlock;
 }
 
 function checkTrackersWithParentCompany(blockSettings, host, currLocation) {
