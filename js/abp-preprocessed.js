@@ -1,3 +1,9 @@
+/*
+ * Load the abp-filter-parser node module and 
+ * pre-process the easylists.
+ *
+ * This will be browserifyed and turned into abp.js by running 'grunt'
+ */
 abp = require('abp-filter-parser');
 let request = require('request');
 
