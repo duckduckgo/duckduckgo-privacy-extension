@@ -18,6 +18,11 @@ easyLists = {
     }
 };
 
+/*
+ * Get the list data and use abp to parse.
+ * The parsed list data will be added to 
+ * the easyLists object.
+ */
 for (let list in easyLists) {
     request(easyLists[list].url, ((err, res, body) => {
         abp.parse(body, easyLists[list].parsed);
