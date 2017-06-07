@@ -3,7 +3,7 @@ var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
 // these are defined in abp.js
 var abp,
-    easyLists;
+    easylists;
 
 require.scopes.trackers = (function() {    
 
@@ -57,8 +57,8 @@ function isTracker(url, currLocation, tabId, request) {
 
 function checkEasylists(url, currLocation, host, request){
     let easylistBlock;
-    settings.getSetting('easyLists').some((listName) => {
-        easylistBlock = abp.matches(easyLists[listName].parsed, url, {
+    settings.getSetting('easylists').some((listName) => {
+        easylistBlock = abp.matches(easylists[listName].parsed, url, {
             domain: currLocation, 
             elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
         });

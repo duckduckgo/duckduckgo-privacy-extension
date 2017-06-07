@@ -1,10 +1,16 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+/*
+ * Load the abp-filter-parser node module and 
+ * pre-process the easylists.
+ *
+ * This will be browserifyed and turned into abp.js by running 'grunt'
+ */
 abp = require('abp-filter-parser');
 var request = require('request');
 
-easyLists = {
+easylists = {
     privacy: {
         url: 'https://easylist.to/easylist/easyprivacy.txt',
         parsed: {}
@@ -15,13 +21,19 @@ easyLists = {
     }
 };
 
+/*
+ * Get the list data and use abp to parse.
+ * The parsed list data will be added to 
+ * the easyLists object.
+ */
+
 var _loop = function _loop(list) {
-    request(easyLists[list].url, function (err, res, body) {
-        abp.parse(body, easyLists[list].parsed);
+    request(easylists[list].url, function (err, res, body) {
+        abp.parse(body, easylists[list].parsed);
     });
 };
 
-for (var list in easyLists) {
+for (var list in easylists) {
     _loop(list);
 }
 

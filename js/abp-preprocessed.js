@@ -7,7 +7,7 @@
 abp = require('abp-filter-parser');
 let request = require('request');
 
-easyLists = {
+easylists = {
     privacy: {
         url: 'https://easylist.to/easylist/easyprivacy.txt',
         parsed: {}
@@ -23,9 +23,9 @@ easyLists = {
  * The parsed list data will be added to 
  * the easyLists object.
  */
-for (let list in easyLists) {
-    request(easyLists[list].url, ((err, res, body) => {
-        abp.parse(body, easyLists[list].parsed);
+for (let list in easylists) {
+    request(easylists[list].url, ((err, res, body) => {
+        abp.parse(body, easylists[list].parsed);
     }));
 }
 
