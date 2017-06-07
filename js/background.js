@@ -121,7 +121,8 @@ chrome.webRequest.onBeforeRequest.addListener(
               // record all trackers on a site even if we don't block them
               thisTab.site.addTracker(tracker.url);
 
-              console.info("[" + tracker.parentCompany + "] " + tracker.url);
+              console.info( utils.extractHostFromURL(thisTab.url)
+                           + " [" + tracker.parentCompany + "] " + tracker.url);
               
               // record potential blocked trackers for this tab
               thisTab.addToPotentialBlocked(tracker.url);
