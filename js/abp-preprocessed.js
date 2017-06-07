@@ -1,4 +1,8 @@
 abp = require('abp-filter-parser');
-var easyList = load.loadExtensionFile('data/tracker_lists/easyprivacy.txt');
-parsedEasyList = {};
-abp.parse(easyList, parsedEasyList);
+let request = require('request');
+
+request('https://easylist.to/easylist/easyprivacy.txt', ((err, res, body) => {
+    parsedEasyList = {};
+    abp.parse(body, parsedEasyList);
+}));
+
