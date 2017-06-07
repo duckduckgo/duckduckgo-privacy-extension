@@ -1,7 +1,9 @@
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
-var abp;
-var easyLists;
+
+// these are defined in abp.js
+var abp,
+    easyLists;
 
 require.scopes.trackers = (function() {    
 
