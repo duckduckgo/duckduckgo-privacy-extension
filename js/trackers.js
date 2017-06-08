@@ -1,16 +1,19 @@
 
 var betterList = JSON.parse(load.loadExtensionFile('better-pages.txt', 'json'));
 
+// these are defined in abp.js
+var abp,
+    easylists;
+
 require.scopes.trackers = (function() {    
 
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists(),
-    blockLists = settings.getSetting('blockLists'),
     entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
-    
-function isTracker(url, currLocation, tabId) {
+
+function isTracker(url, currLocation, tabId, request) {
 
     var toBlock = false;
 
@@ -36,13 +39,39 @@ function isTracker(url, currLocation, tabId) {
             blockSettings.push('Social');
         }
 
+        // block trackers by parent company
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, host, currLocation);
         if(trackerByParentCompany) {
             return trackerByParentCompany;
         }
 
+        // block trackers from easylists
+        let easylistBlock = checkEasylists(url, currLocation, host, request);
+        if (easylistBlock) {
+            return easylistBlock;
+        }
+
     }
     return toBlock;
+}
+
+function checkEasylists(url, currLocation, host, request){
+    let easylistBlock;
+    settings.getSetting('easylists').some((listName) => {
+        // lists can take a second or two to load so check that the parsed data exists
+        if (easylists.loaded) {
+            easylistBlock = abp.matches(easylists[listName].parsed, url, {
+                domain: currLocation, 
+                elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+            });
+        }
+
+        // break loop early if a list matches
+        if(easylistBlock){
+            return easylistBlock = {parentCompany: "unknown", url: host, type: listName};
+        }
+    });
+    return easylistBlock;
 }
 
 function checkTrackersWithParentCompany(blockSettings, host, currLocation) {

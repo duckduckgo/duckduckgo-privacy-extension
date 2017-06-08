@@ -48,7 +48,8 @@
                 "js/atb.js",
                 "js/trackerLists.js",
                 "js/trackers.js",
-                "js/background.js"
+                "js/background.js",
+                "js/abp.js"
             ]
     },
     "chrome_settings_overrides": {

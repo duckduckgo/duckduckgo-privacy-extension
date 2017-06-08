@@ -128,7 +128,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           updateBadge(thisTab.id, thisTab.getBadgeTotal());
           chrome.runtime.sendMessage({"rerenderPopup": true});
       
-          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
+          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
       
           if (tracker) {
               // record all trackers on a site even if we don't block them

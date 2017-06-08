@@ -34,6 +34,7 @@
     "selenium-webdriver": "^3.0.1"
   },
   "dependencies": {
+    "abp-filter-parser": "^0.2.0",
     "bel": "^4.6.0",
     "deep-freeze": "0.0.1",
     "eventemitter2": "^4.1.0",
