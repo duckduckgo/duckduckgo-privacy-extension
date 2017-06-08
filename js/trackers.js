@@ -58,10 +58,13 @@ function isTracker(url, currLocation, tabId, request) {
 function checkEasylists(url, currLocation, host, request){
     let easylistBlock;
     settings.getSetting('easylists').some((listName) => {
-        easylistBlock = abp.matches(easylists[listName].parsed, url, {
-            domain: currLocation, 
-            elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
-        });
+        // lists can take a second or two to load so check that the parsed data exists
+        if (easylists.loaded) {
+            easylistBlock = abp.matches(easylists[listName].parsed, url, {
+                domain: currLocation, 
+                elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+            });
+        }
 
         // break loop early if a list matches
         if(easylistBlock){

@@ -29,3 +29,4 @@ for (let list in easylists) {
     }));
 }
 
+easylists.loaded = true;

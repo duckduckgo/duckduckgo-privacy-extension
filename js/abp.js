@@ -37,6 +37,8 @@ for (var list in easylists) {
     _loop(list);
 }
 
+easylists.loaded = true;
+
 },{"abp-filter-parser":2,"request":267}],2:[function(require,module,exports){
 (function (global, factory) {
   if (typeof define === 'function' && define.amd) {
