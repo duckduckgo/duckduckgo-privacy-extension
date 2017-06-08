@@ -1,11 +1,13 @@
 (function() {
   QUnit.module("Sites");
-  Sites.clearData();
-  settings.updateSetting('whitelist', '');
 
   QUnit.test("test sites and site classes", function (assert) {
+      Sites.clearData();
+      settings.updateSetting('whitelist', '');
+
       var domain = "test.com";
       var newSite = Sites.add(domain);
+
       assert.ok(newSite.domain === domain, 'site has correct name');
       assert.ok(newSite.isWhiteListed() === false, 'site is not whitelisted by default');
       
