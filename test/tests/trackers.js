@@ -7,7 +7,8 @@
 
   var basicBlocking = [
     { 'url': 'https://doubleclick.net', 'block': true},
-    { 'url': 'https://duckduckgo.com', 'block': false}
+    { 'url': 'https://duckduckgo.com', 'block': false},
+    { 'url': 'https://logx.optimizely.com/log/event', 'block': true}
   ];
 
   basicBlocking.forEach(function(test) {
