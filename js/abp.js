@@ -26,15 +26,10 @@ easylists = {
  * The parsed list data will be added to 
  * the easyLists object.
  */
-
-var _loop = function _loop(list) {
-    request(easylists[list].url, function (err, res, body) {
-        abp.parse(body, easylists[list].parsed);
-    });
-};
-
 for (var list in easylists) {
-    _loop(list);
+    var url = easylists[list].url;
+    var listData = load.loadExtensionFile(url, '', 'external');
+    abp.parse(listData, easylists[list].parsed);
 }
 
 easylists.loaded = true;

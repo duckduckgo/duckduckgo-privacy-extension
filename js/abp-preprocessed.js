@@ -24,9 +24,9 @@ easylists = {
  * the easyLists object.
  */
 for (let list in easylists) {
-    request(easylists[list].url, ((err, res, body) => {
-        abp.parse(body, easylists[list].parsed);
-    }));
+    let url = easylists[list].url;
+    let listData = load.loadExtensionFile(url, '', 'external');
+    abp.parse(listData, easylists[list].parsed);
 }
 
 easylists.loaded = true;
