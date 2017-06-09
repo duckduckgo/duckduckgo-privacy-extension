@@ -82,7 +82,7 @@ class Tab {
 chrome.webRequest.onHeadersReceived.addListener((header) => {
     let tab = tabManager.get({'tabId': header.tabId});
     // remove successful rewritten requests 
-    if (tab && header.statusCode < 500) {
+    if (tab && header.statusCode < 400) {
         tab.httpsRequests = tab.httpsRequests.filter((url) => {
             return url !== header.url;
         });

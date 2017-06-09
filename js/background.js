@@ -164,8 +164,9 @@ chrome.webRequest.onBeforeRequest.addListener(
               thisTab.upgradedHttps = true;
           }
 
-          if (upgradeStatus.redirectUrl)
+          if (upgradeStatus.redirectUrl){
               thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
+          }
 
           return upgradeStatus;
       }
