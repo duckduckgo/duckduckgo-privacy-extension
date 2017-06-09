@@ -12,7 +12,6 @@ module.exports = function () {
         <ul class="menu-list">
             <li class="border--bottom">
                 <h1 class="site-info__domain">${domain}</h1>
-                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle')}
                 <div class="site-info__rating site-info__rating--${this.model.siteRating}-${this.model.browser} pull-right"></div>
             </li>
             <li class="border--bottom">
@@ -25,6 +24,7 @@ module.exports = function () {
                 <h2>
                     <span class="site-info__tracker-count">${countText}</span> Trackers Blocked
                 </h2>
+                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </li>
         </ul>
     </section>`;
