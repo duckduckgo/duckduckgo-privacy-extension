@@ -15,6 +15,10 @@
 html, body {
     height: 100%;
     min-height: 100%;
+
+    &.body--neutral {
+        background: $color-neutral-bg;
+    }
 }
 
 h1, h2, h3, h4, h5, h5 {
@@ -85,6 +89,21 @@ a {
     position: absolute;
     right: 14px;
 }
+
+
+/* Card Display */
+.card {
+    background-color: $white;
+    border-radius: 2px;
+    box-shadow: 1px 2px 2px $platinum-light;
+    padding: 0;
+    margin: 0 7px 14px 7px;
+
+    .border--bottom {
+        border-bottom: 1px solid $platinum-light;
+    }
+}
+
 
 
 /* Icons */

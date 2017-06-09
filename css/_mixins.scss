@@ -25,6 +25,7 @@
 @mixin toggle_button () {
 
     .toggle-button {
+        z-index: 0;
         position: absolute;
         right: 14px;
         width: 32px;
@@ -46,6 +47,7 @@
         }
 
         .toggle-button__knob {
+            z-index: 2;
             display: inline-block;
             width: 16px;
             height: 16px;
@@ -82,6 +84,7 @@
 
     }
 }
+
 
 /* Icons */
 @mixin icon_display () {

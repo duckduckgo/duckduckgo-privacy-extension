@@ -16,8 +16,8 @@
 }
 
 #trackers-container {
-    padding: 49px 14px 0 14px;
-    width: $popup-width - 28px; /* 270px - 14*2 */
+    padding: 49px 0 0 0;
+    width: $popup-width; /* 270px - 14*2 */
 
     .search-form {
         position: absolute;
@@ -96,8 +96,11 @@
     .site-info {
 
         .menu-list {
+            padding-bottom: 0;
+
             li {
                 position: relative;
+                padding: 7px;
 
                 .toggle-button {
                     top: 3px;
