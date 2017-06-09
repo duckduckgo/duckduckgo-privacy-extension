@@ -21,16 +21,14 @@
 
     .search-form {
         position: absolute;
-        top: 0px;
-        left: 0px;
-        width: $popup-width;
+        top: 7px;
+        left: 7px;
+        right: 7px;
         height: 38px;
         margin: 0;
         font-size: 1.14em;
         border-radius: 2px;
-        border: 1px solid $platinum-dark;
         color: #383838;
-        background-color: $silver-light;
 
         .search-form__input {
             width: $popup-width;
@@ -94,6 +92,7 @@
     }
 
     .site-info {
+        margin-top: 7px;
 
         .menu-list {
             padding-bottom: 0;
