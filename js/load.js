@@ -31,6 +31,8 @@ require.scopes.load = ( () => {
         if (returnType === 'json') {
             return xhr.responseText;
         }
+
+        return xhr.responseText;
     }
 
     var exports = {

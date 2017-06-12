@@ -3,12 +3,14 @@
 
   var trackers = require('trackers');
   var settings = require('settings');
+  var fakeRequest = {type: 'script'};
 
   var basicBlocking = [
     { 'url': 'https://doubleclick.net', 'block': true},
     { 'url': 'https://duckduckgo.com', 'block': false},
     { 'url': 'https://developers.google.com', 'block': true},
-    { 'url': 'https://x.y.z.doubleclick.net', 'block': true}
+    { 'url': 'https://x.y.z.doubleclick.net', 'block': true},
+    { 'url': 'https://logx.optimizely.com/log/event', 'block': true}
   ];
   
   QUnit.test("block url", function (assert) {
@@ -17,7 +19,7 @@
       
       basicBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
-          var toBlock = trackers.isTracker(test.url, '', 0);
+          var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
@@ -26,7 +28,7 @@
   QUnit.test("turn off blocking", function (assert) {
       basicBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', false);
-          var toBlock = trackers.isTracker(test.url, '', 0);
+          var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === false, 'url should not be');
       });
@@ -42,7 +44,7 @@
       thirdPartyTests.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', true);
-          var toBlock = trackers.isTracker(test.url, test.host, 0);
+          var toBlock = trackers.isTracker(test.url, test.host, 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, test.message);
       });
@@ -57,7 +59,7 @@
       socialBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', true);
-          var toBlock = trackers.isTracker(test.url, '', 0);
+          var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
@@ -67,7 +69,7 @@
       socialBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', false);
-          var toBlock = trackers.isTracker(test.url, '', 0);
+          var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
           toBlock = toBlock ? false : true;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
