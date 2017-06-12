@@ -44,6 +44,10 @@
             top: -1px;
             margin-left: 12px;
             margin-top: 5px;
+
+            &::placeholder {
+                color: $platinum-darker;
+            }
         }
 
         .search-form__go {
