@@ -36,9 +36,15 @@ class Tab {
         this.id = tabData.id || tabData.tabId,
         this.potentialBlocked = {},
         this.url = tabData.url,
+        this.upgradedHttps = false,
+        this.requestId = tabData.requestId,
         this.trackers = {},
         this.status = tabData.status,
-        this.site = Sites.get(utils.extractHostFromURL(tabData.url));
+        this.site = Sites.get(utils.extractHostFromURL(this.url));
+    };
+
+    updateSite() {
+        this.site = Sites.get(utils.extractHostFromURL(this.url));
     };
 
     /* Add up all of the unique tracker urls that 

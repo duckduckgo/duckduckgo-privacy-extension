@@ -9,7 +9,7 @@ function Autocomplete (ops) {
     Parent.call(this, ops);
 
     this.bindEvents([
-      [this.model.store.subscribe, 'change:search', this._handleSearchTextUpdate],
+      [this.store.subscribe, 'change:search', this._handleSearchText],
     ]);
 
 
@@ -19,14 +19,15 @@ Autocomplete.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _handleSearchTextUpdate: function (update) {
-            if (update.change && update.change.attribute === 'searchText') {
-                if (!update.change.value) {
+        _handleSearchText: function (notification) {
+            if (notification.change && notification.change.attribute === 'searchText') {
+                if (!notification.change.value) {
                   this.model.suggestions = [];
                   this._rerender();
                   return;
                 }
-                this.model.fetchSuggestions(update.change.value)
+
+                this.model.fetchSuggestions(notification.change.value)
                   .then(() => this._rerender());
             }
         }

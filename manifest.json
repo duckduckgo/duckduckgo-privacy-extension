@@ -29,11 +29,11 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": [
-                "https-everywhere/chromium/rules.js",
-                "https-everywhere/chromium/storage.js",
-                "https-everywhere/chromium/util.js",
-                "https-everywhere/chromium/background.js",
-                "https-everywhere/chromium/incognito-cache-clearing.js",
+                "https/chromium/rules.js",
+                "https/chromium/storage.js",
+                "https/chromium/util.js",
+                "https/chromium/background.js",
+                "https/chromium/incognito-cache-clearing.js",
                 "js/require.js",
                 "js/utils.js",
                 "js/topBlocked.js",
@@ -48,7 +48,8 @@
                 "js/atb.js",
                 "js/trackerLists.js",
                 "js/trackers.js",
-                "js/background.js"
+                "js/background.js",
+                "js/abp.js"
             ]
     },
     "chrome_settings_overrides": {
