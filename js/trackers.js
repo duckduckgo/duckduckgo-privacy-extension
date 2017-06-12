@@ -42,14 +42,12 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
         // block trackers by parent company
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation);
         if(trackerByParentCompany) {
-            console.log("Block disconnect: ", trackerByParentCompany);
             return trackerByParentCompany;
         }
 
         // block trackers from easylists
         let easylistBlock = checkEasylists(urlToCheck, currLocation, request);
         if (easylistBlock) {
-            console.log("Block easylist: ", easylistBlock);
             return easylistBlock;
         }
 
