@@ -21,7 +21,7 @@
 
 #trackers-container {
     padding: 49px 0 0 0;
-    width: $popup-width; /* 270px - 14*2 */
+    width: $popup__width; /* 270px - 14*2 */
 
     .search-form {
         position: absolute;
@@ -35,7 +35,7 @@
         color: #383838;
 
         .search-form__input {
-            width: $popup-width;
+            width: $popup__width;
             -moz-appearance: none;
             font-size: 17px;
             font-weight: normal;
@@ -115,7 +115,7 @@
         }
 
         .site-info__domain {
-            max-width: $popup-width - 70;
+            max-width: $popup__width - 70;
             height: 1.2em;
             line-height: 1.4em;
             display: inline-block;

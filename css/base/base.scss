@@ -17,12 +17,12 @@ html, body {
     min-height: 100%;
 
     &.body--neutral {
-        background: $color-neutral-bg;
+        background: $color--neutral-bg;
     }
 }
 
 h1, h2, h3, h4, h5, h5 {
-    font-size: $default-font-size;
+    font-size: $font__size--default;
     margin: 0;
     padding: 0;
 
@@ -56,8 +56,8 @@ body,
 input,
 textarea,
 select {
-    font-family: $default-font;
-    font-size: $default-font-size;
+    font-family:$font__face--default;
+    font-size: $font__size--default;
     font-weight: normal;
     color: $slate;
 }

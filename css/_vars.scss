@@ -1,13 +1,13 @@
 /* Font variables */
-$default-font-size: 14px;
-$default-font: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
+$font__size--default: 14px;
+$font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
 
 /* Colors */
 @import "../node_modules/duckduckgo-colors/colors";
-$color-neutral-bg: #f5f5f5;
+$color--neutral-bg: #f5f5f5;
 
 /* Popup */
-$popup-width: 270px;
+$popup__width: 270px;
 
 /* Cards */
 $card__bg-color: $white;
