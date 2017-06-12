@@ -1,5 +1,10 @@
 @import "vars";
 
+/* App states */
+@mixin is_disabled () {
+    opacity: 0.5;
+}
+
 /* Menu lists */
 @mixin menu_list () {
 

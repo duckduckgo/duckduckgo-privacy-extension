@@ -11,8 +11,12 @@
 
 
 /* Trackers page */
-.disabled .site-info {
-    opacity: 0.5;
+.disabled {
+
+    .site-info,
+    .top-blocked {
+        @include is_disabled();
+    }
 }
 
 #trackers-container {
@@ -96,7 +100,6 @@
     }
 
     .site-info {
-        margin-top: 7px;
 
         .menu-list {
             padding-bottom: 0;
@@ -200,7 +203,7 @@
         font-weight: bold;
         display: block;
         $settings-padding-lr: 14px + 3px;
-        padding: 7px $settings-padding-lr;
+        padding: $card__margin--top $settings-padding-lr;
         position: relative;
     }
 

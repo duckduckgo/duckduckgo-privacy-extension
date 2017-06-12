@@ -93,14 +93,14 @@ a {
 
 /* Card Display */
 .card {
-    background-color: $white;
-    border-radius: 2px;
-    box-shadow: 1px 1px 1px $platinum-dark;
-    padding: 0;
-    margin: 0 7px 14px 7px;
+    background-color: $card__bg-color;
+    border-radius: $card__border-radius;
+    box-shadow: $card__box-shadow;
+    padding: $card__padding;
+    margin: $card__margin;
 
     .border--bottom {
-        border-bottom: 1px solid $platinum-light;
+        border-bottom: $card__border--bottom;
     }
 }
 

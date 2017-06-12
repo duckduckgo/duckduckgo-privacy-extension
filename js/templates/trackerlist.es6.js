@@ -2,7 +2,7 @@ const bel = require('bel');
 
 module.exports = function () {
 
-    return bel`<section>
+    return bel`<section class="top-blocked card">
         <h3 class="menu-title">Top Blocked</h3>
         <ul class="menu-list top-blocked">
             ${this.model.companyListMap.map((company) => bel`
