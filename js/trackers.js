@@ -80,7 +80,7 @@ function checkTrackersWithParentCompany(blockSettings, url, currLocation) {
     
     // base case
     if (url.length < 2)
-        return;
+        return false;
 
     let trackerURL = url.join('.');
 
