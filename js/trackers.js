@@ -13,7 +13,7 @@ var load = require('load'),
     trackerLists = require('trackerLists').getLists(),
     entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
 
-function isTracker(url, currLocation, tabId, request) {
+function isTracker(urlToCheck, currLocation, tabId, request) {
 
     var toBlock = false;
 
@@ -21,8 +21,8 @@ function isTracker(url, currLocation, tabId, request) {
     // a more robust test for tweet code may need to be used besides just
     // blocking platform.twitter.com
     if (settings.getSetting('embeddedTweetsEnabled') === false) {
-        if (/platform.twitter.com/.test(url)) {
-            console.log("blocking tweet embedded code on " + url);
+        if (/platform.twitter.com/.test(urlToCheck)) {
+            console.log("blocking tweet embedded code on " + urlToCheck);
             return {parentCompany: "twitter", url: "platform.twitter.com", type: "Analytics"};
         }
     }
@@ -30,7 +30,7 @@ function isTracker(url, currLocation, tabId, request) {
 
     if (settings.getSetting('trackerBlockingEnabled')) {
         
-        var trackerURL = utils.parseURL(url).hostname.split('.');
+        let urlSplit = utils.parseURL(urlToCheck).hostname.split('.');
         var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
         var blockSettings = settings.getSetting('blocking').slice(0);
@@ -40,14 +40,16 @@ function isTracker(url, currLocation, tabId, request) {
         }
 
         // block trackers by parent company
-        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, trackerURL, currLocation);
+        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation);
         if(trackerByParentCompany) {
+            console.log("Block disconnect: ", trackerByParentCompany);
             return trackerByParentCompany;
         }
 
         // block trackers from easylists
-        let easylistBlock = checkEasylists(url, currLocation, trackerURL, request);
+        let easylistBlock = checkEasylists(urlToCheck, currLocation, request);
         if (easylistBlock) {
+            console.log("Block easylist: ", easylistBlock);
             return easylistBlock;
         }
 
@@ -55,8 +57,8 @@ function isTracker(url, currLocation, tabId, request) {
     return toBlock;
 }
 
-function checkEasylists(url, currLocation, host, request){
-    let easylistBlock;
+function checkEasylists(url, currLocation, request){
+    let easylistBlock = false;
     settings.getSetting('easylists').some((listName) => {
         // lists can take a second or two to load so check that the parsed data exists
         if (easylists.loaded) {
@@ -68,6 +70,7 @@ function checkEasylists(url, currLocation, host, request){
 
         // break loop early if a list matches
         if(easylistBlock){
+            let host = utils.extractHostFromURL(url);
             return easylistBlock = {parentCompany: "unknown", url: host, type: listName};
         }
     });
