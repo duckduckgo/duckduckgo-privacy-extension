@@ -199,9 +199,9 @@
     .linkable {
         font-weight: bold;
         display: block;
-        padding: 14px 0;
+        $settings-padding-lr: 14px + 3px;
+        padding: 7px $settings-padding-lr;
         position: relative;
-        border-bottom: 1px solid $platinum;
     }
 
     .top-blocked {
