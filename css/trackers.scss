@@ -204,7 +204,7 @@
         font-weight: bold;
         display: block;
         $settings-padding-lr: 14px + 3px;
-        padding: $card__margin--top $settings-padding-lr;
+        padding: $card__margin--top $settings-padding-lr 7px;
         position: relative;
     }
 
@@ -219,16 +219,21 @@
 
                 .top-blocked__li__blocker-bar {
                     z-index: 1;
-                    position: absolute;
-                    height: 2em;
-                    background: $platinum;
-                    margin-top: -0.3em;
+                    position: relative;
+                    height: 3px;
+                    background: $platinum-light;
+                    margin-top: 0;
                     border-radius: 2px;
+
+                    &.top-blocked__li__blocker-bar--fg {
+                        background: $slate;
+                    }
                 }
 
                 .top-blocked__li__blocker-count {
                     display: inline-block;
                     z-index: 2;
+                    right: 3.5px;
                 }
 
                 .top-blocked__li__company-name {
