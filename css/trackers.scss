@@ -117,6 +117,7 @@
         .site-info__domain {
             max-width: $popup__width - 70;
             height: 1.2em;
+            padding-left: 7px;
             line-height: 1.4em;
             display: inline-block;
             font-weight: bold;
@@ -209,27 +210,35 @@
 
     .top-blocked {
 
-        .top-blocked__li {
-            position: relative;
+        .top-blocked__list {
+            margin: 7px;
 
-            .top-blocked__li__blocker-bar {
-                background: $platinum;
-                position: absolute;
-                height: 2em;
-                z-index: -1;
-                margin-top: -0.3em;
-                border-radius: 2px;
-            }
+            .top-blocked__li {
+                position: relative;
+                z-index: 0;
 
-            .top-blocked__li__blocker-count {
-                display: inline-block;
-            }
+                .top-blocked__li__blocker-bar {
+                    z-index: 1;
+                    position: absolute;
+                    height: 2em;
+                    background: $platinum;
+                    margin-top: -0.3em;
+                    border-radius: 2px;
+                }
 
-            .top-blocked__li__company-name {
-                display: inline-block;
-                padding-left: 3px;
-                width: 180px;
-                overflow: hidden;
+                .top-blocked__li__blocker-count {
+                    display: inline-block;
+                    z-index: 2;
+                }
+
+                .top-blocked__li__company-name {
+                    z-index: 2;
+                    position: relative;
+                    display: inline-block;
+                    padding-left: 3px;
+                    width: 180px;
+                    overflow: hidden;
+                }
             }
         }
     }
