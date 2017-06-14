@@ -41,7 +41,7 @@
             background: none repeat scroll 0% 0% transparent;
             outline: medium none;
             border: medium none;
-            padding: 0px;
+            padding: 0 0 0 28px;
             height: 30px;
             z-index: 1;
             top: -1px;
@@ -84,16 +84,14 @@
                 }
         }
 
-        #search_form_input_clear {
-          border: 0 !important;
-          background-color: $silver-light;
-          margin-left: -8px;
-          height: 27px;
-          width: 21px;
-          background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9ImNsZWFyIj48Zz48Zz48cG9seWdvbiBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojODg4ODg4OyIgcG9pbnRzPSIxNi41LDQuNyAxNS44LDQgMTAuNSw5LjMgNS4yLDQgNC41LDQuNyA5LjgsMTAgNC41LDE1LjMgNS4yLDE2IDEwLjUsMTAuNyAxNS44LDE2IDE2LjUsMTUuMyAxMS4yLDEwIi8+PC9nPjwvZz48L2c+PC9zdmc+) !important;
-          background-repeat: no-repeat;
-          display: none;
-          cursor: pointer;
+        .ddg-logo {
+            background-image: url($ddg-logo__url);
+            background-size: cover;
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            top: 7px;
+            left: 7px;
         }
 
     }
