@@ -8,15 +8,20 @@ function TrackerList (ops) {
 
     Parent.call(this, ops);
 
+    window.setTimeout(this._animateBlockerBars.bind(this), 250);
 };
 
 TrackerList.prototype = $.extend({},
     Parent.prototype,
     {
 
-        // _handleClick: function (e) {
-        //     console.log('TrackerList _handleClick()');
-        // }
+        _animateBlockerBars: () => {
+            $('.js-top-blocked-bar-fg').each((i, el) => {
+                let $el = $(el);
+                let w = $el.data().width;
+                $el.css('width', w);
+            })
+        }
 
     }
 
