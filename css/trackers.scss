@@ -84,6 +84,10 @@
                 }
         }
 
+        .search-form__submit {
+            display: none;
+        }
+
         .ddg-logo {
             background-image: url($ddg-logo__url);
             background-size: cover;
