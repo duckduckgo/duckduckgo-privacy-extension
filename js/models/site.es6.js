@@ -57,26 +57,33 @@ Site.prototype = $.extend({},
           if(this.tab){
             this.trackerCount = this.tab.getBadgeTotal();
             this.potential = Object.keys(this.tab.potentialBlocked).length;
+            this.updateSiteScore();
           }
       },
+
+      updateSiteScore: function() {
+          if (this.trackerCount == 0 && this.potential > 0)
+              this.siteRating = 'B'
+          else if (this.trackerCount > 8 ) // arbitrary demo
+              this.siteRating = 'C';
+          else if (this.trackerCount > 0 )
+              this.siteRating = 'B';
+          else if (this.trackerCount == 0 && this.potential == 0)
+              this.siteRating = 'A';
+          else
+              this.siteRating = 'none';
+      }, 
 
       setHttpsMessage: function() {
           if (!this.tab) {
               return;
           }
 
-          if(/^https/.exec(this.tab.url)){
-              this.httpsState = 'default';
+          if (this.tab.upgradedHttps) {
+              this.httpsState = 'upgraded';
           }
-          else{
-              let url = backgroundPage.utils.parseURL(this.tab.url);
-              let httpsRules = backgroundPage.all_rules.potentiallyApplicableRulesets(url.hostname);
-
-              httpsRules.forEach((ruleSet) => {
-                  if(ruleSet.active && ruleSet.apply(this.tab.url)){
-                      this.httpsState = 'default'; // figure out if this is upgraded later
-                  }
-              });
+          else if (/^https/.exec(this.tab.url)) {
+              this.httpsState = 'default';
           }
 
           this.httpsStatusText = httpsStates[this.httpsState];

@@ -46,3 +46,13 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
     }
 });
 
+// update tab url after the request is finished. This makes
+// sure we have the correct url after any https rewrites
+chrome.webRequest.onCompleted.addListener( (request) => {
+    let tab = tabManager.get({tabId: request.tabId});
+    if (tab) {
+        tab.url = request.url;
+        tab.updateSite();
+    }
+}, {urls: ['<all_urls>'], types: ['main_frame']});
+

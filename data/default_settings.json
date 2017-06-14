@@ -3,6 +3,7 @@
     "socialBlockingIsEnabled": false,
     "trackerBlockingEnabled": true,
     "httpsEverywhereEnabled": true,
+    "embeddedTweetsEnabled": false,
     "meanings": true,
     "advanced_options": true,
     "last_search": "",
@@ -17,6 +18,8 @@
         "trackersWithParentCompany"
     ],
     "entityList": "data/tracker_lists/disconnect-entitylist.json",
+    "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
-    "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"]
+    "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
+    "httpsWhitelist": "data/httpsWhitelist.json"
 }

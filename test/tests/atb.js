@@ -13,6 +13,9 @@
       ];
 
       urlTests.forEach(function(testRequest){
+          // make sure we have atb set to something
+          settings.updateSetting('atb', 'testATB');
+
           let toRewrite = ATB.redirectURL(testRequest);
           let rewrite = false;
 

@@ -19,6 +19,20 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
+const httpsWhitelist = load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'));
+
+// Set browser for popup asset paths
+// chrome doesn't have getBrowserInfo so we'll default to chrome
+// and try to detect if this is firefox
+var browser = "chrome";
+try {
+    chrome.runtime.getBrowserInfo((info) => {
+        if (info.name === "Firefox")
+            browser = "moz";
+    });
+}
+catch(e){
+};
 
 function Background() {
   $this = this;
@@ -82,7 +96,6 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) {
 
       let tabId = requestData.tabId;
-      let thisTab = null;
 
       // Add ATB for DDG URLs
       let ddgAtbRewrite = ATB.redirectURL(requestData);
@@ -94,13 +107,16 @@ chrome.webRequest.onBeforeRequest.addListener(
           return;
       }
 
-      // create new tab instance for main_frame requests
+      let thisTab = tabManager.get(requestData);
+
+      // for main_frame requests: create a new tab instance whenever we either
+      // don't have a tab instance for this tabId or this is a new requestId.
       if (requestData.type === "main_frame") {
-          thisTab = tabManager.create(requestData);
+          if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
+            thisTab = tabManager.create(requestData);
+          }
       }
       else {
-          thisTab = tabManager.get(requestData);
-
           // check that we have a valid tab
           // there is a chance this tab was closed before
           // we got the webrequest event
@@ -112,11 +128,12 @@ chrome.webRequest.onBeforeRequest.addListener(
           updateBadge(thisTab.id, thisTab.getBadgeTotal());
           chrome.runtime.sendMessage({"rerenderPopup": true});
       
-          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id);
+          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
       
           if (tracker) {
               // record all trackers on a site even if we don't block them
               thisTab.site.addTracker(tracker.url);
+
               
               // record potential blocked trackers for this tab
               thisTab.addToPotentialBlocked(tracker.url);
@@ -126,12 +143,30 @@ chrome.webRequest.onBeforeRequest.addListener(
                   thisTab.addOrUpdateTracker(tracker);
                   updateBadge(thisTab.id, thisTab.getBadgeTotal());
                   chrome.runtime.sendMessage({"rerenderPopup": true});
+
+                  console.info( utils.extractHostFromURL(thisTab.url)
+                               + " [" + tracker.parentCompany + "] " + tracker.url);
                   
                   // tell Chrome to cancel this webrequest
                   return {cancel: true};
               }
           }
       }
+
+      // upgrade to https if the site isn't whitelisted or in our list
+      // of known broken https sites
+      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain])) {
+          let upgradeStatus = onBeforeRequest(requestData);
+          
+          // check for an upgraded main_frame request to use
+          // in our site score calculations
+          if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
+              thisTab.upgradedHttps = true;
+          }
+
+          return upgradeStatus;
+      }
+
     },
     {
         urls: [
