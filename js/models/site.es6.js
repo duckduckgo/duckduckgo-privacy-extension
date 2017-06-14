@@ -11,14 +11,11 @@ const httpsStates = {
 
 function Site (attrs) {
 
-    attrs.disabled = true;     // disabled by default
+    attrs.disabled = true; // disabled by default
     attrs.httpsState = 'none';
-
-    // set message and icon based on httpsState
     attrs.httpsStatusText = httpsStates[attrs.httpsState];
 
     Parent.call(this, attrs);
-
 };
 
 
@@ -29,7 +26,7 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       toggleWhitelist: function () {
-          if(this.tab.site){
+          if (this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
               this.tab.site.setWhitelisted(this.isWhitelisted);
               this.tab.site.notifyWhitelistChanged();
@@ -42,7 +39,7 @@ Site.prototype = $.extend({},
           }
           else {
               this.isWhitelisted = this.tab.site.whiteListed;
-              
+
               let special = this.tab.site.specialDomain();
               if (special) {
                   this.domain = special;    // eg "extensions", "options", "new tab"
@@ -54,14 +51,14 @@ Site.prototype = $.extend({},
       },
 
       updateTrackerCount: function() {
-          if(this.tab){
+          if (this.tab) {
             this.trackerCount = this.tab.getBadgeTotal();
             this.potential = Object.keys(this.tab.potentialBlocked).length;
-            this.updateSiteScore();
+            this.updateSiteRating();
           }
       },
 
-      updateSiteScore: function() {
+      updateSiteRating: function() {
           if (this.trackerCount == 0 && this.potential > 0)
               this.siteRating = 'B'
           else if (this.trackerCount > 8 ) // arbitrary demo
@@ -72,7 +69,7 @@ Site.prototype = $.extend({},
               this.siteRating = 'A';
           else
               this.siteRating = 'none';
-      }, 
+      },
 
       setHttpsMessage: function() {
           if (!this.tab) {

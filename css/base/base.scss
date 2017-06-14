@@ -92,6 +92,7 @@ a {
 
 
 /* Card Display */
+
 .card {
     background-color: $card__bg-color;
     border-radius: $card__border-radius;
@@ -112,6 +113,7 @@ a {
 
 /* Icons */
 /* Standard icon display within the extension */
+
 .icon {
     @include icon_display();
     /* you'll need to set the background image within each instance of .icon */

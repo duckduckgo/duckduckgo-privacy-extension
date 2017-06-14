@@ -9,3 +9,4 @@ public/js/*.*
 public/css/*.*
 *.swp
 trackersWithParentCompany
+js/abp.js
