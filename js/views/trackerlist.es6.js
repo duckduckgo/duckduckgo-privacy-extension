@@ -1,12 +1,11 @@
 const Parent = window.DDG.base.View;
 const animateBars = require('./mixins/animate-bars.es6.js');
-const trackerListTemplate = require('./../templates/trackerlist.es6.js');
 
 function TrackerList (ops) {
 
     this.model = ops.model;
     this.pageView = ops.pageView;
-    this.template = trackerListTemplate;
+    this.template = ops.template;
 
     Parent.call(this, ops);
 

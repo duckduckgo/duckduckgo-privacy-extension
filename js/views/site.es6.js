@@ -1,6 +1,5 @@
 const Parent = window.DDG.base.View;
 const TrackerListView = require('./../views/trackerlist.es6.js');
-const TrackerListModel = require('./../models/trackerlist.es6.js');
 const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Site (ops) {
@@ -90,11 +89,11 @@ Site.prototype = $.extend({},
 
         _showAllTrackers: function () {
 
-            // this.views.allSiteTrackers = new TrackerListView({
-            //     pageView: this,
-            //     model: new TrackerListModel(),
-            //     appendTo: $parent
-            // });
+            this.views.allSiteTrackers = new TrackerListView({
+                pageView: this,
+                // model: new TrackerListModel(),
+                appendTo: $parent
+            });
 
         }
 

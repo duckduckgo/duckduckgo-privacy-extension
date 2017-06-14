@@ -1,6 +1,7 @@
 const Parent = window.DDG.base.Page;
 const TrackerListView = require('./../views/trackerlist.es6.js');
-const TrackerListModel = require('./../models/trackerlist.es6.js');
+const TrackerListModel = require('./../models/trackerlist-companies.es6.js');
+const trackerListTemplate = require('./../templates/trackerlist-companies.es6.js');
 
 const SiteView = require('./../views/site.es6.js');
 const SiteModel = require('./../models/site.es6.js');
@@ -57,7 +58,8 @@ Trackers.prototype = $.extend({},
             this.views.trackerlist = new TrackerListView({
                 pageView: this,
                 model: new TrackerListModel(),
-                appendTo: $parent
+                appendTo: $parent,
+                template: trackerListTemplate
             });
 
             this.views.options = new LinkableView({

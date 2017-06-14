@@ -1,6 +1,5 @@
 const Parent = window.DDG.base.Model;
-
-var backgroundPage = chrome.extension.getBackgroundPage();
+const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Whitelist (attrs) {
 
