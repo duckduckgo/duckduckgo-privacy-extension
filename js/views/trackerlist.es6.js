@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.View;
+const animateBars = require('./mixins/animate-bars.es6.js');
 const trackerListTemplate = require('./../templates/trackerlist.es6.js');
 
 function TrackerList (ops) {
@@ -15,25 +16,7 @@ function TrackerList (ops) {
 
 TrackerList.prototype = $.extend({},
     Parent.prototype,
-    {
-
-        animateBars: function () {
-            let self = this;
-
-            window.setTimeout(function () {
-                if (!self.$graphbarfg) return;
-                self.$graphbarfg.each(function (i, el) {
-                    let $el = $(el);
-                    let w = $el.data().width;
-                    $el.css('width', w);
-                });
-
-            }, 250);
-
-        }
-
-    }
-
+    animateBars
 );
 
 module.exports = TrackerList;
