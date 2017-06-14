@@ -13,8 +13,7 @@
 /* Trackers page */
 .disabled {
 
-    .site-info,
-    .top-blocked {
+    .site-info {
         @include is_disabled();
     }
 }
@@ -228,6 +227,7 @@
 
                     &.top-blocked__li__blocker-bar--fg {
                         background: $slate;
+                        transition: width 0.5s ease-in-out;
                     }
                 }
 
