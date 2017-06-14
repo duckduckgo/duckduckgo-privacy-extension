@@ -2,15 +2,12 @@
 @import "mixins";
 
 
-/* Generic menu list styling */
-@include menu_list();
-
-
-/* Generic toggle button styling */
-@include toggle_button();
-
-
 /* Trackers page */
+body {
+    width: $popup__width;
+    height: 700px;
+}
+
 .disabled {
 
     .site-info {
@@ -250,5 +247,16 @@
             }
         }
     }
-
 }
+
+
+/* Generic menu list styling */
+@include menu_list();
+
+
+/* Generic toggle button styling */
+@include toggle_button();
+
+
+/* Sliding subviews */
+@include sliding_subviews();

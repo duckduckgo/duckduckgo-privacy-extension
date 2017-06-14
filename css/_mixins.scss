@@ -1,9 +1,11 @@
 @import "vars";
 
+
 /* App states */
 @mixin is_disabled () {
     opacity: 0.5;
 }
+
 
 /* Menu lists */
 @mixin menu_list () {
@@ -23,8 +25,8 @@
 
         }
     }
-
 }
+
 
 /* Toggle buttons */
 @mixin toggle_button () {
@@ -104,4 +106,27 @@
 @mixin ddg_logo () {
     background-image: url($ddg-logo__url);
     background-size: contain;
+}
+
+
+/* Sliding subviews */
+@mixin sliding_subviews () {
+    .sliding-subview {
+        position: absolute;
+        top: 0;
+        left: $popup__width;
+        width: $popup__width;
+        height: 100%;
+
+        &.sliding-subview--root {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.5s ease-in-out;
+
+            &.sliding-subview--open {
+                left: -$popup__width;
+            }
+        }
+    }
 }
