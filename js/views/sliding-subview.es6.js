@@ -4,6 +4,7 @@ const ANIMATION_MS = 300; // milliseconds
 // TODO: use es6 class syntax
 function SlidingSubview (ops) {
 
+    ops.appendTo = $('.sliding-subview--root');
     Parent.call(this, ops);
 
 }
