@@ -47,13 +47,13 @@ Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6
 
 ### Firefox
 
-We're building an embedded Firefox extension using our current extension in firefox-zeroclickinfo and the `beta-firefox` branch of chrome-zeroclickinfo. This allows us to keep the default search engine feature of our current Firefox extension and include all the new features of the chrome extension.
+We're building an embedded Firefox extension using our current extension in firefox-zeroclickinfo and the `beta-firefox` branch of chrome-zeroclickinfo. This allows us to keep the default search engine feature of our current Firefox extension and include all the new features of the chrome extension. 
 
 1. Assuming you have the following directory structure
 
 ```
 └──YourExtensionsDirectory
-        ├── chrome-zeroclickinfo
+        ├── chrome-zeroclickinfo                                         
         ├── firefox-zeroclickinfo
 ```
 
@@ -62,29 +62,25 @@ We're building an embedded Firefox extension using our current extension in fire
 4. bump the version number in package.json. Make sure that the version has "beta" on the end. ex: 1.1.5.beta
 5. sign the extension using JPM
 
+
 ```
-┌───────────────────────────────┐
-│chrome-zeroclickinfo           │                                         ┌───────────────────────────────┐
-│                               │                                         │firefox-zeroclickinfo          │
-│                               │                                         │                               │
-│     ┌─────────────────────┐   │          ┌───────────────────────┐      │                               │
-│  ┌──│        beta         │◀──┼──────────│     new features      │      │                               │
-│  │  └─────────────────────┘   │          └───────────────────────┘      │                               │
-│  │                            │                                         │                               │
-│  │                            │          ┌─────────────────────────┐    │                               │
-│  │merge                       │          │  new firefox specific   │    │    ┌────────────────────────┐ │
-│  │              ┌─────────────┼──────────│        features         │    │    │Legacy extension        │ │
-│  │              ▼             │          └─────────────────────────┘    │    │                        │ │
-│  │   ┌─────────────────────┐  │                                         │    │   ┌─────────────────┐  │ │
-│  │   │                     │  │                                         │    │   │                 │  │ │
-│  │   │beta-firefox         │  │                                         │    │   │    embedded     │  │ │
-│  └──▶│                     │◀─┼─────────────────────────────────────────┼────┼───│  webextension   │  │ │
-│      │                     │  │                         synlinked       │    │   │                 │  │ │
-│      └─────────────────────┘  │                                         │    │   └─────────────────┘  │ │
-│                               │                                         │    │                        │ │
-│                               │                                         │    └────────────────────────┘ │
-│                               │                                         │                               │
-└───────────────────────────────┘                                         │                               │
-                                                                          └───────────────────────────────┘
-                                                                                                                                                    ```
+┌───────────────────────────────┐                                ┌───────────────────────────────┐
+│chrome-zeroclickinfo           │                                │firefox-zeroclickinfo          │
+├───────────────────────────────┤                                ├───────────────────────────────┤
+│                               │                                │                               │
+│     ┌─────────────────────┐   │                                │ Branch: beta-webextension     │
+│  ┌──│Branch: beta         │◀──┼─────── new features            │                               │
+│  │  └─────────────────────┘   │                                │     ┌────────────────────────┐│
+│  │                            │                                │     │Legacy extension        ││
+│  │                            │       new firefox specific     │     │                        ││
+│  │merge         ┌─────────────┼───────      features           │     │                        ││
+│  │              │             │                                │     │    ┌─────────────────┐ ││
+│  │              ▼             │                                │     │    │                 │ ││
+│  │   ┌─────────────────────┐  │                                │     │    │    embedded     │ ││
+│  └──▶│Branch: beta-firefox │◀─┼────────────────────────────────┼─────┼────│  webextension   │ ││
+│      └─────────────────────┘  │                synlinked       │     │    │                 │ ││
+│                               │                                │     │    └─────────────────┘ ││
+└───────────────────────────────┘                                │     └────────────────────────┘│
+                                                                 └───────────────────────────────┘
+
 ```
