@@ -50,38 +50,41 @@ Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6
 We're building an embedded Firefox extension using our current extension in firefox-zeroclickinfo and the `beta-firefox` branch of chrome-zeroclickinfo. This allows us to keep the default search engine feature of our current Firefox extension and include all the new features of the chrome extension.
 
 1. Assuming you have the following directory structure
+
 ```
 └──YourExtensionsDirectory
         ├── chrome-zeroclickinfo
-                ├── firefox-zeroclickinfo
-                ```
-                2. in firefox-zeroclickinfo checkout the branch `beta-webextension`
-                3. checkout the `firefox-beta` branch in chrome-zeroclickinfo by running: `cd webextension && git checkout beta-firefox && cd ..`
-                4. bump the version number in package.json. Make sure that the version has "beta" on the end. ex: 1.1.5.beta
-                5. sign the extension using JPM
-                ```
-                ┌───────────────────────────────┐
-                │chrome-zeroclickinfo           │                                         ┌───────────────────────────────┐
-                │                               │                                         │firefox-zeroclickinfo          │
-                │                               │                                         │                               │
-                │     ┌─────────────────────┐   │          ┌───────────────────────┐      │                               │
-                │  ┌──│        beta         │◀──┼──────────│     new features      │      │                               │
-                │  │  └─────────────────────┘   │          └───────────────────────┘      │                               │
-                │  │                            │                                         │                               │
-                │  │                            │          ┌─────────────────────────┐    │                               │
-                │  │merge                       │          │  new firefox specific   │    │    ┌────────────────────────┐ │
-                │  │              ┌─────────────┼──────────│        features         │    │    │Legacy extension        │ │
-                │  │              ▼             │          └─────────────────────────┘    │    │                        │ │
-                │  │   ┌─────────────────────┐  │                                         │    │   ┌─────────────────┐  │ │
-                │  │   │                     │  │                                         │    │   │                 │  │ │
-                │  │   │beta-firefox         │  │                                         │    │   │    embedded     │  │ │
-                │  └──▶│                     │◀─┼─────────────────────────────────────────┼────┼───│  webextension   │  │ │
-                │      │                     │  │                         synlinked       │    │   │                 │  │ │
-                │      └─────────────────────┘  │                                         │    │   └─────────────────┘  │ │
-                │                               │                                         │    │                        │ │
-                │                               │                                         │    └────────────────────────┘ │
-                │                               │                                         │                               │
-                └───────────────────────────────┘                                         │                               │
-                                                                                          └───────────────────────────────┘
-                                                                                                                                                                    ```
+        ├── firefox-zeroclickinfo
+```
 
+2. in firefox-zeroclickinfo checkout the branch `beta-webextension`
+3. checkout the `firefox-beta` branch in chrome-zeroclickinfo by running: `cd webextension && git checkout beta-firefox && cd ..`
+4. bump the version number in package.json. Make sure that the version has "beta" on the end. ex: 1.1.5.beta
+5. sign the extension using JPM
+
+```
+┌───────────────────────────────┐
+│chrome-zeroclickinfo           │                                         ┌───────────────────────────────┐
+│                               │                                         │firefox-zeroclickinfo          │
+│                               │                                         │                               │
+│     ┌─────────────────────┐   │          ┌───────────────────────┐      │                               │
+│  ┌──│        beta         │◀──┼──────────│     new features      │      │                               │
+│  │  └─────────────────────┘   │          └───────────────────────┘      │                               │
+│  │                            │                                         │                               │
+│  │                            │          ┌─────────────────────────┐    │                               │
+│  │merge                       │          │  new firefox specific   │    │    ┌────────────────────────┐ │
+│  │              ┌─────────────┼──────────│        features         │    │    │Legacy extension        │ │
+│  │              ▼             │          └─────────────────────────┘    │    │                        │ │
+│  │   ┌─────────────────────┐  │                                         │    │   ┌─────────────────┐  │ │
+│  │   │                     │  │                                         │    │   │                 │  │ │
+│  │   │beta-firefox         │  │                                         │    │   │    embedded     │  │ │
+│  └──▶│                     │◀─┼─────────────────────────────────────────┼────┼───│  webextension   │  │ │
+│      │                     │  │                         synlinked       │    │   │                 │  │ │
+│      └─────────────────────┘  │                                         │    │   └─────────────────┘  │ │
+│                               │                                         │    │                        │ │
+│                               │                                         │    └────────────────────────┘ │
+│                               │                                         │                               │
+└───────────────────────────────┘                                         │                               │
+                                                                          └───────────────────────────────┘
+                                                                                                                                                    ```
+```
