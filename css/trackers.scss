@@ -145,6 +145,10 @@
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
             }
 
+            &.site-info__rating--D-chrome {
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
+            }
+
             &.site-info__rating--A-moz {
                 background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
             }
@@ -155,6 +159,10 @@
 
             &.site-info__rating--C-moz {
                 background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+            }
+
+            &.site-info__rating--D-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
             }
         }
 
