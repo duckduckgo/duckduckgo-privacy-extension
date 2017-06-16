@@ -44,6 +44,20 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         info.id = id;
         tabManager.create(info);
     }
+    else {
+        let tab = tabManager.get({tabId: id});
+        if (tab && info.status) {
+            tab.status = info.status;
+        
+            // we have uncompleted upgraded https requests
+            // whitelist the site
+            if (!tab.site.httpsWhitelisted && tab.status === "complete" && tab.httpsRequests.length) {
+                tab.site.httpsWhitelisted = true;
+                chrome.tabs.reload(tab.id);
+            }
+        }
+    }
+
 });
 
 // update tab url after the request is finished. This makes

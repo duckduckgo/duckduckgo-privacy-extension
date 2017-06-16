@@ -155,13 +155,17 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       // upgrade to https if the site isn't whitelisted or in our list
       // of known broken https sites
-      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain])) {
+      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain] || thisTab.site.httpsWhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
           
           // check for an upgraded main_frame request to use
           // in our site score calculations
           if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
               thisTab.upgradedHttps = true;
+          }
+
+          if (upgradeStatus.redirectUrl){
+              thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
           }
 
           return upgradeStatus;

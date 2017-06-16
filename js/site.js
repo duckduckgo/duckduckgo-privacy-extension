@@ -4,7 +4,8 @@ class Site{
         this.trackers = [],
         this.score = null;
         this.scoreFunction = scoreFunction;
-        this.setWhitelistStatusFromGlobal(domain)
+        this.setWhitelistStatusFromGlobal(domain);
+        this.httpsWhitelisted = false;
     }
 
     setWhitelisted(value){ 
