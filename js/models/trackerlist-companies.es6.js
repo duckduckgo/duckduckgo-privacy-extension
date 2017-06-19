@@ -15,11 +15,11 @@ function TrackerList (attrs) {
         (company) => {
             var x = company.count;
             // calc max using pixels instead of % to make margins easier
-            // max width: 270 - (14*2) = 242
+            // max width: 270 - (14*2 <ul> margin) - (7*2 .card margin) = 228
             return {
               name: company.name,
               count: company.count,
-              px: Math.floor(x * 242 / max)
+              px: Math.floor(x * 228 / max)
             };
         });
 

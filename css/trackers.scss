@@ -85,6 +85,7 @@ body {
     }
 
     .site-info {
+        margin-top: 0;
 
         .menu-list {
             padding-bottom: 0;
@@ -204,8 +205,12 @@ body {
     .top-blocked {
         padding-bottom: 3.5px;
 
+        .menu-title {
+            padding-bottom: 14px;
+        }
+
         .top-blocked__list {
-            margin: 7px;
+            margin: 7px 14px;
 
             .top-blocked__li {
                 position: relative;
