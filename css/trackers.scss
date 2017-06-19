@@ -91,7 +91,7 @@ body {
 
             li {
                 position: relative;
-                padding: 7px;
+                padding: 7px 7px 7px 14px;
 
                 .toggle-button {
                     top: 9px;
@@ -102,7 +102,6 @@ body {
         .site-info__domain {
             max-width: $popup__width - 70;
             height: 1.2em;
-            padding-left: 7px;
             line-height: 1.4em;
             display: inline-block;
             font-weight: bold;
@@ -171,7 +170,7 @@ body {
         }
 
         .site-info__https-status-msg {
-            margin-left: 0.5em;
+            margin-left: 3.5px;
         }
 
         .site-info__tracker-count {
@@ -179,15 +178,16 @@ body {
             background: $red;
             color: $white;
             padding: 0px 8px;
-            margin-right: 0.5em;
+            margin-right: 3.5px;
         }
 
         .site-info__see-all-li {
 
             .link-secondary {
                 font-weight: bold;
-                padding-top: 7px;
-                padding-bottom: 7px;
+                padding-top: 3.5px;
+                padding-bottom: 3.5px;
+                display: block;
             }
         }
     }
