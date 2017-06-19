@@ -110,7 +110,8 @@
 
 
 /* Sliding subviews */
-@mixin sliding_subviews () {
+@mixin sliding_subview () {
+
     .sliding-subview {
         position: absolute;
         top: 0;
@@ -122,11 +123,27 @@
             position: fixed;
             top: 0;
             left: 0;
-            transition: left 0.5s ease-in-out;
+            transition: left 0.35s ease-in-out;
 
             &.sliding-subview--open {
                 left: -$popup__width;
             }
+        }
+
+        &.sliding-subview--has-fixed-header {
+            padding: 49px 0 0 0;
+            width: $popup__width; /* 270px - 14*2 */
+        }
+
+        .sliding-subview__header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 42px;
+            margin: 0;
+            font-size: 1.14em;
+            color: #383838;
         }
     }
 }
