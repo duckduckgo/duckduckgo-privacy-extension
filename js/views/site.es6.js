@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.View;
-const TrackerListView = require('./../views/trackerlist.es6.js');
+const TrackerListView = require('./../views/trackerlist-sliding-subview.es6.js');
 const trackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
 const backgroundPage = chrome.extension.getBackgroundPage();
 
@@ -89,12 +89,10 @@ Site.prototype = $.extend({},
         },
 
         _showAllTrackers: function () {
-            if (this.model.disabled) return;
             this.views.siteTrackers = new TrackerListView({
                 pageView: this,
                 // model: TODO,
                 template: trackerListTemplate,
-                isSlidingSubview: true,
                 defaultTab: 'site'
             });
 

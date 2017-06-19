@@ -168,7 +168,6 @@ body {
             &.site-info__https-status--none-moz {
                 background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
             }
-
         }
 
         .site-info__https-status-msg {
@@ -181,6 +180,15 @@ body {
             color: $white;
             padding: 0px 8px;
             margin-right: 0.5em;
+        }
+
+        .site-info__see-all-li {
+
+            .link-secondary {
+                font-weight: bold;
+                padding-top: 7px;
+                padding-bottom: 7px;
+            }
         }
     }
 

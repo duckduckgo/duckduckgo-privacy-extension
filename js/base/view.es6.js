@@ -55,7 +55,7 @@ BaseView.prototype = $.extend(
          * Should be extended to do any cleanup of child views or
          * unbinding of events.
          */
-        destroy: function(){
+        destroy: function () {
             this.unbindEvents();
             this.destroyChildViews();
             this.$el.remove();

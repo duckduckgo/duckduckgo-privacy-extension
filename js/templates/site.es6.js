@@ -26,7 +26,7 @@ module.exports = function () {
                 </h2>
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </li>
-            <li>
+            <li class="site-info__see-all-li">
                 <a href="#" class="js-site-show-all-trackers link-secondary">
                     See all trackers on this page
                 </a>
