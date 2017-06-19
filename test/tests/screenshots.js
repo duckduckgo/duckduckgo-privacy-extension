@@ -1,10 +1,11 @@
-(function() {
-    const bkg = chrome.extension.getBackgroundPage();
-    var params = getTestParams();
-    var screenshots = [];
-    var sites = buildSitesToTest();
-    processSite();
-})();
+var sites;
+var comparisonTest = false;
+const bkg = chrome.extension.getBackgroundPage();
+var params = getTestParams();
+var screenshots = [];
+sites = buildSitesToTest();
+processSite();
+
 
 /*
  * Get test params from the url and set any defaults
@@ -26,6 +27,8 @@ function getTestParams() {
     else if(params.numberToTest > top500Sites.length){
         params.numberToTest = top500Sites.length
     }
+
+    return params;
 }
 
 /*
@@ -33,16 +36,20 @@ function getTestParams() {
  * side by side screenshots
  */
 function buildSummary() {
-    let table = '<table><tr><td><b>Tracking ON</b></td><td><b>Tracking OFF</b></td></tr>';
+    //let table = '<table><tr><td><b>Tracking ON</b></td><td><b>Tracking OFF</b></td></tr>';
+    let text = '';
 
+    /*
     screenshots.forEach((x) => {
-        table += '<tr><td>Trackers: ' + x.score + '<a href="' + x.url + '">' + x.url + '</a></td><td>' + x.blockingTime + '</td></tr>';
-        table += '<tr><td><img id="on" src="' + x.on + '" /></td>';
-        table += '<td><img id="off" src="' + x.off + '" /></td></tr>';
+        //table += '<tr><td>Trackers: ' + x.score + '<a href="' + x.url + '">' + x.url + '</a></td><td>' + x.blockingTime + '</td></tr>';
+        //table += '<tr><td><img id="on" src="' + x.on + '" /></td>';
+        //table += '<td><img id="off" src="' + x.off + '" /></td></tr>';
     });
-    table += '</table>';
+    //table += '</table>';
+*/
 
-    $('#screenshots').prepend(table);
+    $('#screenshots').prepend(JSON.stringify(screenshots, null, 4));
+    
 }
 
 /*
@@ -56,7 +63,7 @@ function processSite() {
 
     // base case, return and build table
     if(!site){
-        buildAndWriteTable();
+        buildSummary();
         return;
     }
 
@@ -69,15 +76,21 @@ function processSite() {
 
     // run test with tracker blocking and https
     runTest(url).then(() => {
-        // turn tracker blocking and https off
-        resetSettings(false);
-        
-        // run test with settings off
-        chrome.browsingData.removeCache({}, (() => {
-            runTest(url).then(() => {
-                processSite();
-            });
-        }));
+
+        if (comparisonTest) {
+            // turn tracker blocking and https off
+            resetSettings(false);
+
+            // run test with settings off
+            chrome.browsingData.removeCache({}, (() => {
+                runTest(url).then(() => {
+                    processSite();
+                });
+            }));
+        }
+        else {
+            processSite();
+        }
     });     
 }
 
@@ -103,7 +116,13 @@ function runTest(url) {
                 newScreenshots.blockingOnLoadTime = Date.now() - blockingOnStartTime;
 
                 takeScreenshot().then(() => {
-                    newScreenshots.score = bkg.tabManager.get({'tabId': tab.id}).getBadgeTotal();
+                    let tabObj = bkg.tabManager.get({'tabId': tab.id});
+                    newScreenshots.score = tabObj.getBadgeTotal();
+                    newScreenshots.trackers = tabObj.trackers;
+                    newScreenshots.https = tabObj.upgradedHttps;
+
+                    screenshots.push(newScreenshots);
+
                     chrome.tabs.remove(tab.id);
                     resolve();
                 });
