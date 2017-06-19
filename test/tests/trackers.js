@@ -8,20 +8,25 @@
   var basicBlocking = [
     { 'url': 'https://doubleclick.net', 'block': true},
     { 'url': 'https://duckduckgo.com', 'block': false},
+    { 'url': 'https://developers.google.com', 'block': true},
+    { 'url': 'https://x.y.z.doubleclick.net', 'block': true},
     { 'url': 'https://logx.optimizely.com/log/event', 'block': true}
   ];
-
-  basicBlocking.forEach(function(test) {
-      QUnit.test("block url", function (assert) {
+  
+  QUnit.test("block url", function (assert) {
+      // turn social blocking on for this test
+      settings.updateSetting('socialBlockingIsEnabled', true);
+      
+      basicBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
-
-  basicBlocking.forEach(function(test) {
-      QUnit.test("turn off blocking", function (assert) {
+  
+  QUnit.test("turn off blocking", function (assert) {
+      basicBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', false);
           var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
           toBlock = toBlock ? true : false;
@@ -34,9 +39,9 @@
       { 'url': 'https://facebook.com', 'host': 'https://reddit.com', 'block': true, 'message': 'should block third party request'},
       { 'url': 'https://facebook.com', 'host': 'https://instagram.com', 'block': false, 'message': 'should not block third party requests owned by same parent company'}
   ];
-
-  thirdPartyTests.forEach(function(test) {
-      QUnit.test("third party blocking", function (assert) {
+  
+  QUnit.test("third party blocking", function (assert) {
+      thirdPartyTests.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', true);
           var toBlock = trackers.isTracker(test.url, test.host, 0, fakeRequest);
@@ -49,9 +54,9 @@
     { 'url': 'https://facebook.com/?q=something&param=a', 'block': true},
     { 'url': 'http://twitter.com/somescript.js', 'block': true}
   ];
-
-  socialBlocking.forEach(function(test) {
-      QUnit.test("social blocking On", function (assert) {
+  
+  QUnit.test("social blocking On", function (assert) {
+      socialBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', true);
           var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);
@@ -59,9 +64,9 @@
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
-
-  socialBlocking.forEach(function(test) {
-      QUnit.test("social blocking Off", function (assert) {
+  
+  QUnit.test("social blocking Off", function (assert) {
+      socialBlocking.forEach(function(test) {
           settings.updateSetting('trackerBlockingEnabled', true);
           settings.updateSetting('socialBlockingIsEnabled', false);
           var toBlock = trackers.isTracker(test.url, '', 0, fakeRequest);

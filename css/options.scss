@@ -17,12 +17,10 @@
     position: relative;
 
     .ddg-logo {
-        background-image: url('chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png');
+        @include ddg_logo()
         width: 158px;
         height: 44px;
-        background-repeat: no-repeat;
         margin-bottom: 23px;
-        background-size: contain;
 
         span {
           display: none;

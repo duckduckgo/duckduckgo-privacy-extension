@@ -1,5 +1,10 @@
 @import "vars";
 
+/* App states */
+@mixin is_disabled () {
+    opacity: 0.5;
+}
+
 /* Menu lists */
 @mixin menu_list () {
 
@@ -25,6 +30,7 @@
 @mixin toggle_button () {
 
     .toggle-button {
+        z-index: 0;
         position: absolute;
         right: 14px;
         width: 32px;
@@ -46,6 +52,7 @@
         }
 
         .toggle-button__knob {
+            z-index: 2;
             display: inline-block;
             width: 16px;
             height: 16px;
@@ -83,7 +90,8 @@
     }
 }
 
-/* Icons */
+
+/* Icons and images */
 @mixin icon_display () {
     background-repeat: no-repeat;
     background-size: cover;
@@ -91,4 +99,9 @@
     width: 20px;
     height: 20px;
     vertical-align: middle;
+}
+
+@mixin ddg_logo () {
+    background-image: url($ddg-logo__url);
+    background-size: contain;
 }

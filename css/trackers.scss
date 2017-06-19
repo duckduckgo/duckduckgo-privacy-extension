@@ -11,41 +11,46 @@
 
 
 /* Trackers page */
-.disabled .site-info {
-    opacity: 0.5;
+.disabled {
+
+    .site-info {
+        @include is_disabled();
+    }
 }
 
 #trackers-container {
-    padding: 49px 14px 0 14px;
-    width: $popup-width - 28px; /* 270px - 14*2 */
+    padding: 49px 0 0 0;
+    width: $popup__width; /* 270px - 14*2 */
 
     .search-form {
         position: absolute;
-        top: 0px;
-        left: 0px;
-        width: $popup-width;
+        top: 7px;
+        left: 7px;
+        right: 7px;
         height: 38px;
         margin: 0;
         font-size: 1.14em;
         border-radius: 2px;
-        border: 1px solid $platinum-dark;
         color: #383838;
-        background-color: $silver-light;
 
         .search-form__input {
-            width: $popup-width;
+            width: $popup__width;
             -moz-appearance: none;
             font-size: 17px;
             font-weight: normal;
             background: none repeat scroll 0% 0% transparent;
             outline: medium none;
             border: medium none;
-            padding: 0px;
+            padding: 0 0 0 28px;
             height: 30px;
             z-index: 1;
             top: -1px;
             margin-left: 12px;
             margin-top: 5px;
+
+            &::placeholder {
+                color: $platinum-darker;
+            }
         }
 
         .search-form__go {
@@ -79,16 +84,18 @@
                 }
         }
 
-        #search_form_input_clear {
-          border: 0 !important;
-          background-color: $silver-light;
-          margin-left: -8px;
-          height: 27px;
-          width: 21px;
-          background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9ImNsZWFyIj48Zz48Zz48cG9seWdvbiBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7ZmlsbDojODg4ODg4OyIgcG9pbnRzPSIxNi41LDQuNyAxNS44LDQgMTAuNSw5LjMgNS4yLDQgNC41LDQuNyA5LjgsMTAgNC41LDE1LjMgNS4yLDE2IDEwLjUsMTAuNyAxNS44LDE2IDE2LjUsMTUuMyAxMS4yLDEwIi8+PC9nPjwvZz48L2c+PC9zdmc+) !important;
-          background-repeat: no-repeat;
-          display: none;
-          cursor: pointer;
+        .search-form__submit {
+            display: none;
+        }
+
+        .ddg-logo {
+            background-image: url($ddg-logo__url);
+            background-size: cover;
+            width: 25px;
+            height: 25px;
+            position: absolute;
+            top: 7px;
+            left: 7px;
         }
 
     }
@@ -96,19 +103,22 @@
     .site-info {
 
         .menu-list {
+            padding-bottom: 0;
+
             li {
                 position: relative;
+                padding: 7px;
 
                 .toggle-button {
-                    top: 3px;
-                    right: 50px;
+                    top: 9px;
                 }
             }
         }
 
         .site-info__domain {
-            max-width: $popup-width - 70;
+            max-width: $popup__width - 70;
             height: 1.2em;
+            padding-left: 7px;
             line-height: 1.4em;
             display: inline-block;
             font-weight: bold;
@@ -135,6 +145,10 @@
                 background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
             }
 
+            &.site-info__rating--D-chrome {
+                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
+            }
+
             &.site-info__rating--A-moz {
                 background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
             }
@@ -145,6 +159,10 @@
 
             &.site-info__rating--C-moz {
                 background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+            }
+
+            &.site-info__rating--D-moz {
+                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
             }
         }
 
@@ -194,34 +212,49 @@
     .linkable {
         font-weight: bold;
         display: block;
-        padding: 14px 0;
+        $settings-padding-lr: 14px + 3px;
+        padding: $card__margin--top $settings-padding-lr 7px;
         position: relative;
-        border-bottom: 1px solid $platinum;
     }
 
     .top-blocked {
+        padding-bottom: 3.5px;
 
-        .top-blocked__li {
-            position: relative;
+        .top-blocked__list {
+            margin: 7px;
 
-            .top-blocked__li__blocker-bar {
-                background: $platinum;
-                position: absolute;
-                height: 2em;
-                z-index: -1;
-                margin-top: -0.3em;
-                border-radius: 2px;
-            }
+            .top-blocked__li {
+                position: relative;
+                z-index: 0;
 
-            .top-blocked__li__blocker-count {
-                display: inline-block;
-            }
+                .top-blocked__li__blocker-bar {
+                    z-index: 1;
+                    position: relative;
+                    height: 3px;
+                    background: $platinum-light;
+                    margin-top: 0;
+                    border-radius: 2px;
 
-            .top-blocked__li__company-name {
-                display: inline-block;
-                padding-left: 3px;
-                width: 180px;
-                overflow: hidden;
+                    &.top-blocked__li__blocker-bar--fg {
+                        background: $slate;
+                        transition: width 0.5s ease-in-out;
+                    }
+                }
+
+                .top-blocked__li__blocker-count {
+                    display: inline-block;
+                    z-index: 2;
+                    right: 3.5px;
+                }
+
+                .top-blocked__li__company-name {
+                    z-index: 2;
+                    position: relative;
+                    display: inline-block;
+                    padding-left: 3px;
+                    width: 180px;
+                    overflow: hidden;
+                }
             }
         }
     }
