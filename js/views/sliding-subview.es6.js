@@ -10,7 +10,7 @@ function SlidingSubview (ops) {
 
     this._cacheElems('.js-sliding-subview', [ 'close' ]);
     this.bindEvents([
-      [this.$close, 'click', this.destroy],
+      [this.$close, 'click', this._destroy],
     ]);
 
 }
@@ -19,12 +19,12 @@ SlidingSubview.prototype = $.extend({},
     Parent.prototype,
     {
 
-        destroy: function () {
+        _destroy: function () {
             var self = this;
             this.$root.removeClass('sliding-subview--open');
-            window.setTimeout(() => {
+            window.setTimeout(function () {
                 self.destroy();
-            }, 500); // 500ms = 0.35s in .sliding-subview--root transition + 150ms
+            }, 400); // 400ms = 0.35s in .sliding-subview--root transition + 50ms padding
         }
 
     }

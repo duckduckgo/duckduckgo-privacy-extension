@@ -47,7 +47,7 @@ function Site (ops) {
     }
 
     chrome.runtime.onMessage.addListener(function(req, sender, res) {
-        if (req.rerenderPopup) {
+        if (req.updateTrackerCount) {
             thisModel.updateTrackerCount();
             thisView.rerender(); // our custom rerender below
         }

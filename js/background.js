@@ -48,7 +48,7 @@ function Background() {
   localStorage['os'] = os;
 
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      for(var i = 0; i < savedTabs.length; i++){ 
+      for(var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
           if(tab.url){
             tabManager.create(tab);
@@ -126,27 +126,27 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           // update badge here to display a 0 count
           updateBadge(thisTab.id, thisTab.getBadgeTotal());
-          chrome.runtime.sendMessage({"rerenderPopup": true});
-      
+          chrome.runtime.sendMessage({"updateTrackerCount": true});
+
           var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
-      
+
           if (tracker) {
               // record all trackers on a site even if we don't block them
               thisTab.site.addTracker(tracker.url);
 
-              
+
               // record potential blocked trackers for this tab
               thisTab.addToPotentialBlocked(tracker.url);
-              
+
               // Block the request if the site is not whitelisted
               if (!thisTab.site.whiteListed) {
                   thisTab.addOrUpdateTracker(tracker);
                   updateBadge(thisTab.id, thisTab.getBadgeTotal());
-                  chrome.runtime.sendMessage({"rerenderPopup": true});
+                  chrome.runtime.sendMessage({"updateTrackerCount": true});
 
                   console.info( utils.extractHostFromURL(thisTab.url)
                                + " [" + tracker.parentCompany + "] " + tracker.url);
-                  
+
                   // tell Chrome to cancel this webrequest
                   return {cancel: true};
               }
@@ -157,7 +157,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       // of known broken https sites
       if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain])) {
           let upgradeStatus = onBeforeRequest(requestData);
-          
+
           // check for an upgraded main_frame request to use
           // in our site score calculations
           if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
@@ -180,7 +180,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 function updateBadge(tabId, numBlocked){
     if(numBlocked === 0){
         chrome.browserAction.setBadgeBackgroundColor({tabId: tabId, color: "#00cc00"});
-    } 
+    }
     else {
         chrome.browserAction.setBadgeBackgroundColor({tabId: tabId, color: "#cc0000"});
     }
