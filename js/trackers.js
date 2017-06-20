@@ -15,6 +15,12 @@ var load = require('load'),
 
 function isTracker(urlToCheck, currLocation, tabId, request) {
 
+    // TODO: easylist is marking some of our requests as trackers. Whitelist us
+    // by default for now until we can figure out why. 
+    if (currLocation.match(/duckduckgo\.com/)) {
+        return false;
+    }
+
     var toBlock = false;
 
     // DEMO embedded tweet option
