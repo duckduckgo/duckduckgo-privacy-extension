@@ -144,6 +144,44 @@
             margin: 0;
             font-size: 1.14em;
             color: #383838;
+            overflow: hidden;
+
+            .sliding-subview__header__title {
+                color: $slate;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 14px 0 0 14px;
+                display: inline-block;
+            }
+
+            .sliding-subview__header__tabbed-nav {
+                position: absolute;
+                right: 7px;
+                top: 0;
+
+                a {
+                    font-size: 14px;
+                    font-weight: normal;
+                    color: $grey-light;
+                    display: inline-block;
+                    padding: 14px 0 10px 0;
+                    margin-right: 7px;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+
+                    &.active {
+                        color: $red;
+                        border-bottom: 1px solid $red;
+
+                        &:hover {
+                            text-decoration: none;
+                        }
+                    }
+                }
+            }
         }
     }
 }
