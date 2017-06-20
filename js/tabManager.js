@@ -30,6 +30,13 @@ class TabManager {
 var tabManager = new TabManager();
 
 chrome.tabs.onRemoved.addListener( (id, info) => {
+    // remove associated site object for this tab
+    let tab = tabManager.get({'tabId': id});
+    
+    if (tab && tab.site)
+        Sites.delete(tab.site);
+
+    // remove the tab object
     tabManager.delete(id);
 });
 

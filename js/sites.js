@@ -19,6 +19,10 @@ var Sites = ( () => {
             return siteContainer[domain];
         },
 
+        delete: (siteObj) => {
+            delete siteContainer[siteObj.domain];
+        },
+
         all: () => { return Object.keys(siteContainer) },
 
         clearData: () => { siteContainer = {} }
