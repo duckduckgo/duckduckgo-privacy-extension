@@ -42,7 +42,8 @@
     "jquery": "^3.2.1",
     "normalize.scss": "^0.1.0",
     "parse-link-header": "^1.0.0",
-    "psl": "^1.1.18"
+    "psl": "^1.1.18",
+    "url-parse": "^1.1.9"
   },
   "babel": {
     "presets": [
