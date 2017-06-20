@@ -113,13 +113,16 @@ function runTest(url) {
         chrome.tabs.create({url: url}, (t) => {
 
             getLoadedTabById(t.id, blockingOnStartTime, 8000).then((tab) => {
-                newScreenshots.blockingOnLoadTime = Date.now() - blockingOnStartTime;
+                //newScreenshots.blockingOnLoadTime = Date.now() - blockingOnStartTime;
 
                 takeScreenshot().then(() => {
                     let tabObj = bkg.tabManager.get({'tabId': tab.id});
-                    newScreenshots.score = tabObj.getBadgeTotal();
+                    newScreenshots.badgeTotal = tabObj.getBadgeTotal();
                     newScreenshots.trackers = tabObj.trackers;
                     newScreenshots.https = tabObj.upgradedHttps;
+
+
+                    newScreenshots.siteScore = siteScore(tabObj);
 
                     screenshots.push(newScreenshots);
 
@@ -164,3 +167,23 @@ function buildSitesToTest() {
     return sites;
 }
 
+function siteScore(tab) {
+    console.log(tab);
+    let total = tab.getBadgeTotal();
+    if (!total)
+        total = 0;
+
+    if(!tab.potential)
+        tab.potential = 0;
+
+          if (total == 0 && tab.potential > 0)
+              return  'B';
+          else if (total > 8 ) // arbitrary demo
+              return  'C';
+          else if (total > 0 )
+              return  'B';
+          else if (total == 0 && tab.potential == 0)
+              return  'A';
+          else
+              return 'none';
+}
