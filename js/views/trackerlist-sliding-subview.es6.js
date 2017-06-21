@@ -9,10 +9,7 @@ function TrackerList (ops) {
 
     Parent__SlidingSubview.call(this, ops);
 
-    this._cacheElems('.js-top-blocked', [
-        'graph-bar-fg',
-        'see-all'
-    ])
+    this._cacheElems('.js-top-blocked', ['graph-bar-fg'])
 
     this.animateBars();
 };
