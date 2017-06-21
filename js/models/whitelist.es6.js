@@ -24,14 +24,14 @@ Whitelist.prototype = $.extend({},
             var site = backgroundPage.Sites.get(domain);
 
             if (site) {
-                site.setWhitelisted(false);
+                site.setWhitelisted('whiteListed', false);
             }
 
             this.setWhitelistFromSettings();
         },
 
         setWhitelistFromSettings: function() {
-            var wlist = backgroundPage.settings.getSetting('whitelist') || {};
+            var wlist = backgroundPage.settings.getSetting('whiteListed') || {};
 
             this.list = Object.keys(wlist);
             this.list.sort();

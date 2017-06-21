@@ -38,14 +38,15 @@ class Tab {
         this.url = tabData.url,
         this.upgradedHttps = false,
         this.httpsRequests = [],
+        this.httpsWhitelisted = false,
         this.requestId = tabData.requestId,
         this.trackers = {},
         this.status = tabData.status,
-        this.site = Sites.get(utils.extractHostFromURL(this.url));
+        this.site = new Site(utils.extractHostFromURL(tabData.url))
     };
 
     updateSite() {
-        this.site = Sites.get(utils.extractHostFromURL(this.url));
+        this.site = new Site(utils.extractHostFromURL(this.url))
     };
 
     /* Add up all of the unique tracker urls that 

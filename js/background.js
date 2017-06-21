@@ -155,7 +155,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       // upgrade to https if the site isn't whitelisted or in our list
       // of known broken https sites
-      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain] || thisTab.site.httpsWhitelisted)) {
+      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhiteListed)) {
           let upgradeStatus = onBeforeRequest(requestData);
           
           // check for an upgraded main_frame request to use

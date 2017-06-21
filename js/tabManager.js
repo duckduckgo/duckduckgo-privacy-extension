@@ -30,12 +30,6 @@ class TabManager {
 var tabManager = new TabManager();
 
 chrome.tabs.onRemoved.addListener( (id, info) => {
-    // remove associated site object for this tab
-    let tab = tabManager.get({'tabId': id});
-    
-    if (tab && tab.site)
-        Sites.delete(tab.site);
-
     // remove the tab object
     tabManager.delete(id);
 });
@@ -59,7 +53,7 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             // we have uncompleted upgraded https requests
             // whitelist the site
             if (!tab.site.httpsWhitelisted && tab.status === "complete" && tab.httpsRequests.length) {
-                tab.site.httpsWhitelisted = true;
+                tab.site.setWhitelisted('HTTPSwhiteListed', true);
                 chrome.tabs.reload(tab.id);
             }
         }

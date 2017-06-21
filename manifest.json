@@ -37,7 +37,6 @@
                 "js/require.js",
                 "js/utils.js",
                 "js/topBlocked.js",
-                "js/sites.js",
                 "js/site.js",
                 "js/tab.js",
                 "js/tabManager.js",

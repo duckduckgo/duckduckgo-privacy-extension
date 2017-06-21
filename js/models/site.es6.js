@@ -31,7 +31,7 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if(this.tab.site){
               this.isWhitelisted = !this.isWhitelisted;
-              this.tab.site.setWhitelisted(this.isWhitelisted);
+              this.tab.site.setWhitelisted('whiteListed', this.isWhitelisted);
               this.tab.site.notifyWhitelistChanged();
           }
       },

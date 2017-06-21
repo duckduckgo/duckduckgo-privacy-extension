@@ -1,31 +1,34 @@
 class Site{
-    constructor(domain, scoreFunction) {
+    constructor(domain) {
         this.domain = domain,
         this.trackers = [],
-        this.score = null;
-        this.scoreFunction = scoreFunction;
         this.setWhitelistStatusFromGlobal(domain);
-        this.httpsWhitelisted = false;
     }
 
-    setWhitelisted(value){ 
-        this.whiteListed = value;
-        this.setGlobalWhitelist();
+    setWhitelisted(name, value){ 
+        this[name] = value;
+        this.setGlobalWhitelist(name);
     };
 
-    setGlobalWhitelist(){
-        let globalWhitelist = settings.getSetting('whitelist') || {};
+    /*
+     * Store an updated whitelist value in settings
+     */
+    setGlobalWhitelist(name){
+        let globalWhitelist = settings.getSetting(name) || {};
 
-        if(this.whiteListed){
+        if(this[name]){
             globalWhitelist[this.domain] = true;
         }
         else {
             delete globalWhitelist[this.domain];
         }
 
-        settings.updateSetting('whitelist', globalWhitelist);
+        settings.updateSetting(name, globalWhitelist);
     };
 
+    /*
+     * Send message to the popup to rerender the whitelist
+     */
     notifyWhitelistChanged(){
         chrome.runtime.sendMessage({'whitelistChanged': true});
     };
@@ -38,27 +41,27 @@ class Site{
         }
     };
 
-    getScore(){
-        this.score = this.scoreFunction();
-        return this.score;
-    };
-
+    /*
+     * When site objects are created we check the stored whitelists
+     * and set the new site whitelist statuses 
+     */
     setWhitelistStatusFromGlobal(domain){
-        let globalWhitelist = settings.getSetting('whitelist') || {};
+        let globalWhiteLists = ['whiteListed', 'HTTPSwhiteListed'];
 
-        if(globalWhitelist[this.domain]){
-            this.setWhitelisted(true);
-        }
-        else{
-            this.setWhitelisted(false);
-        }
+        globalWhiteLists.map((name) => {
+            let list = settings.getSetting(name) || {};
+            
+            if(list[this.domain]){
+                this.setWhitelisted(name, true);
+            }
+            else{
+                this.setWhitelisted(name, false);
+            }
+        }); 
     };
 
     getTrackers(){ return this.trackers };
     setTrackers(newTrackers){ this.trackers = newTrackers };
-    setScore(newScore){ this.score = newScore };
-
-
 
     /*
      * specialDomain
