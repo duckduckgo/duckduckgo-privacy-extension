@@ -1,40 +1,36 @@
 class Score {
     constructor() {
-        this.scoreIndex = 0;
-        this.scoreExplination = {};
+        this.scoreValues = {};
     }
 
     get() {
         let siteScores = ['A', 'B', 'C', 'D', 'F'];
         // return corresponding score or lowest score
-        return siteScores[this.scoreIndex] || siteScores[siteScores.length - 1];
+        let scoreIndex = 0;
+
+        if (this.scoreValues.topCompany) scoreIndex++
+        if (this.scoreValues.noHTTPS) scoreIndex++
+
+        if (this.scoreValues.totalBlocked)
+            scoreIndex += Math.ceil(this.scoreValues.totalBlocked / 10)
+
+        return siteScores[scoreIndex] || siteScores[siteScores.length - 1];
     };
 
     update(event) {
         let topTrackers = {Google:true, Facebook:true, Twitter:true, Amazon:true, AdNexus:true, Oracle:true}
-
+        
         if (event.noHTTPS) { 
-            this.scoreIndex++
-            this.scoreExplination['noHTTPS'] = true;
+            this.scoreValues.noHTTPS = true
         }
         else if (event.trackerBlocked) {
          
             if (topTrackers[event.trackerBlocked.parentCompany]) {
-                this.scoreIndex++
-                this.incrementExplinationCount('topTracker')
+                this.scoreValues.topBlockedCompany = true
             }
 
-            // +1 for first tracker and for every additional 10
-            if (event.total === 1 || ((event.totalBlocked % 10) === 0)){
-                this.scoreIndex++
-                this.incrementExplinationCount('totalTrackers')
-            }
-
+            this.scoreValues.totalBlocked ? this.scoreValues.totalBlocked++ : this.scoreValues.totalBlocked = 1
         }
-    };
-    
-    incrementExplinationCount(key) {
-        this.scoreExplination[key] ? this.scoreExplination[key]++ : this.scoreExplination[key] = 1
     };
 }
 
