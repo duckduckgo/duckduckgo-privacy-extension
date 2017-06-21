@@ -21,16 +21,16 @@ class Site{
      * Store an updated whitelist value in settings
      */
     setGlobalWhitelist(name){
-        let globalWhitelist = settings.getSetting(name) || {};
+        let globalwhitelist = settings.getSetting(name) || {};
 
         if(this[name]){
-            globalWhitelist[this.domain] = true;
+            globalwhitelist[this.domain] = true;
         }
         else {
-            delete globalWhitelist[this.domain];
+            delete globalwhitelist[this.domain];
         }
 
-        settings.updateSetting(name, globalWhitelist);
+        settings.updateSetting(name, globalwhitelist);
     };
 
     /*
@@ -53,9 +53,9 @@ class Site{
      * and set the new site whitelist statuses 
      */
     setWhitelistStatusFromGlobal(domain){
-        let globalWhiteLists = ['whitelisted', 'HTTPSwhitelisted'];
+        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
 
-        globalWhiteLists.map((name) => {
+        globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {};
             this.setWhitelisted(name, list[this.domain]);
         }); 
