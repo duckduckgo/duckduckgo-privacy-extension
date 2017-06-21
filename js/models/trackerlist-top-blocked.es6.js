@@ -3,8 +3,6 @@ const backgroundPage = chrome.extension.getBackgroundPage();
 
 function TrackerListTopBlocked (attrs) {
 
-    // TODO: move this to base model
-    if (attrs.modelName) this.modelName = attrs.modelName;
     Parent.call(this, attrs);
 
     this.companyList = backgroundPage.Companies.getTopBlocked(attrs.numCompanies);
