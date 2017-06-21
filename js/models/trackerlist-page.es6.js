@@ -1,23 +1,22 @@
 const Parent = window.DDG.base.Model;
 const backgroundPage = chrome.extension.getBackgroundPage();
 
-function SiteTrackerList (attrs) {
+function TrackerListCurrentPage (attrs) {
 
-    attrs.trackerList = getTrackerList();
+    this.trackerList = this.getTrackerList();
+    this.trackerListMap = trackerList; // TODO: generate map with counts
     Parent.call(this, attrs);
-
 };
 
 
-SiteTrackerList.prototype = $.extend({},
+TrackerListCurrentPage.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelName: 'siteTrackerList',
+      modelName: 'trackerListCurrentPage',
 
       getTrackerList: function () {
           if (!this.tab) return [];
-
           return Object.keys(this.tab.potentialBlocked);
       }
 
@@ -25,5 +24,5 @@ SiteTrackerList.prototype = $.extend({},
 );
 
 
-module.exports = SiteTrackerList;
+module.exports = TrackerListCurrentPage;
 

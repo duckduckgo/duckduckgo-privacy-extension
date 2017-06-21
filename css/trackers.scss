@@ -207,62 +207,66 @@ body {
         .menu-title {
             padding-bottom: 14px;
         }
+    }
+}
 
-        .top-blocked__list {
-            margin: 7px 0;
-            padding-bottom: 0;
 
-            .top-blocked__li {
-                z-index: 0;
-                position: relative;
-                margin-left: 14px;
-                margin-right: 14px;
+/* Top blocked list (companies) */
 
-                .top-blocked__li__blocker-bar {
-                    z-index: 1;
-                    position: relative;
-                    height: 3px;
-                    background: $platinum-light;
-                    margin-top: 0;
-                    border-radius: 2px;
+.top-blocked__list {
+    margin: 7px 0;
+    padding-bottom: 0;
 
-                    &.top-blocked__li__blocker-bar--fg {
-                        background: $slate;
-                        transition: width 0.5s ease-in-out;
-                    }
-                }
+    .top-blocked__li {
+        z-index: 0;
+        position: relative;
+        margin-left: 14px;
+        margin-right: 14px;
 
-                .top-blocked__li__blocker-count {
-                    display: inline-block;
-                    z-index: 2;
-                    right: 3.5px;
-                }
+        .top-blocked__li__blocker-bar {
+            z-index: 1;
+            position: relative;
+            height: 3px;
+            background: $platinum-light;
+            margin-top: 0;
+            border-radius: 2px;
 
-                .top-blocked__li__company-name {
-                    z-index: 2;
-                    position: relative;
-                    display: inline-block;
-                    padding-left: 3px;
-                    width: 180px;
-                    overflow: hidden;
-                }
+            &.top-blocked__li__blocker-bar--fg {
+                background: $slate;
+                transition: width 0.5s ease-in-out;
+            }
+        }
 
-                &.top-blocked__li--see-all {
-                    padding-top: 7px;
-                    padding-left: 14px;
-                    margin: 28px 0 0 0;
+        .top-blocked__li__blocker-count {
+            display: inline-block;
+            z-index: 2;
+            right: 3.5px;
+        }
 
-                    .link-secondary {
-                        font-weight: bold;
-                        padding-top: 3.5px;
-                        padding-bottom: 3.5px;
-                        display: block;
-                    }
-                }
+        .top-blocked__li__company-name {
+            z-index: 2;
+            position: relative;
+            display: inline-block;
+            padding-left: 3px;
+            width: 180px;
+            overflow: hidden;
+        }
+
+        &.top-blocked__li--see-all {
+            padding-top: 7px;
+            padding-left: 14px;
+            margin: 28px 0 0 0;
+
+            .link-secondary {
+                font-weight: bold;
+                padding-top: 3.5px;
+                padding-bottom: 3.5px;
+                display: block;
             }
         }
     }
 }
+
 
 
 /* Generic menu list styling */

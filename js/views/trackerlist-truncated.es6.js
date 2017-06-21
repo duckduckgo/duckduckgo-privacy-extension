@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.View;
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js');
 const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js');
-const trackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
+const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
 
 function TrackerList (ops) {
 
@@ -25,9 +25,8 @@ TrackerList.prototype = $.extend({},
     {
 
         _seeAllClick: function () {
-            this.views.tabbedTrackerLists = new TrackerListSlidingSubview({
-                // model: TODO,
-                template: trackerListTemplate,
+            this.views.slidingSubview = new TrackerListSlidingSubview({
+                template: tabbedTrackerListTemplate,
                 defaultTab: 'all'
             });
         }

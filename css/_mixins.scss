@@ -10,7 +10,7 @@
 /* Menu lists */
 @mixin menu_list () {
 
-    ul.menu-list {
+    .menu-list {
         list-style-type: none;
         padding-left: 0;
         padding-bottom: 14px;
