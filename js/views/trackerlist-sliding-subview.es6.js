@@ -1,6 +1,6 @@
 const Parent__SlidingSubview = require('./sliding-subview.es6.js');
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js');
-const PageTrackersModel = require('./../models/trackerlist-page.es6.js');
+const SiteTrackersModel = require('./../models/trackerlist-site.es6.js');
 const AllTrackersModel = require('./../models/trackerlist-top-blocked.es6.js');
 
 function TrackerList (ops) {
@@ -34,17 +34,15 @@ TrackerList.prototype = $.extend({},
                     numCompanies: 10
                 })
             } else if (this.selectedTab === 'page') {
-                this.model = new PageTrackersModel();
-                this.model.fetchAsyncData().then(function() {
-                      // TODO: pick up here tomorrow:
-                      console.log('call renderList() <-- pick up here tmro');
+                this.model = new SiteTrackersModel();
+                this.model.fetchAsyncData().then(() => {
                       this.renderList();
                 });
             }
         },
 
         renderList: function () {
-            console.log('RENDER LIST!!!!')
+            console.log('RENDER LIST!!!!  <-- pick up here tmro');
             console.log(this.model)
         }
 

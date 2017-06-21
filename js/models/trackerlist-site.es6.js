@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.Model;
 const backgroundPage = chrome.extension.getBackgroundPage();
 
-function TrackerListCurrentPage (attrs) {
+function SiteTrackerList (attrs) {
 
     attrs = attrs || {};
     attrs.tab = null;
@@ -11,17 +11,17 @@ function TrackerListCurrentPage (attrs) {
 };
 
 
-TrackerListCurrentPage.prototype = $.extend({},
+SiteTrackerList.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelName: 'trackerListCurrentPage',
+      modelName: 'siteTrackerList',
 
       fetchAsyncData: function () {
           const self = this;
 
           return new Promise ((resolve, reject) => {
-              backgroundPage.utils.getCurrentTab(function(rawTab) {
+              backgroundPage.utils.getCurrentTab((rawTab) => {
                   if (rawTab) {
                       self.tab = backgroundPage.tabManager.get({'tabId': rawTab.id});
                       self.potentialBlocked = Object.keys(self.tab.potentialBlocked);
@@ -37,7 +37,7 @@ TrackerListCurrentPage.prototype = $.extend({},
                               }
                           });
                   } else {
-                      console.debug('TrackerListCurrentPage model: no tab');
+                      console.debug('SiteTrackerList model: no tab');
                   }
 
                   resolve();
@@ -48,5 +48,4 @@ TrackerListCurrentPage.prototype = $.extend({},
 );
 
 
-module.exports = TrackerListCurrentPage;
-
+module.exports = SiteTrackerList;
