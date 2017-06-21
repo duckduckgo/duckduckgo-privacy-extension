@@ -33,8 +33,7 @@ function Site (ops) {
             thisModel.updateTrackerCount();
             thisModel.setHttpsMessage();
             thisView.rerender(); // our custom rerender below
-        }
-        else {
+        } else {
             console.debug('Site view: no tab');
         }
     });

@@ -13,7 +13,6 @@ function Site (attrs) {
     attrs.disabled = true; // disabled by default
     attrs.httpsState = 'none';
     attrs.httpsStatusText = httpsStates[attrs.httpsState];
-
     Parent.call(this, attrs);
 };
 

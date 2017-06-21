@@ -3,9 +3,11 @@ const backgroundPage = chrome.extension.getBackgroundPage();
 
 function TrackerListTopBlocked (attrs) {
 
+    // TODO: clean this up a bit
     Parent.call(this, attrs);
 
     this.companyList = backgroundPage.Companies.getTopBlocked(attrs.numCompanies);
+
     var max = 0;
     if (this.companyList && this.companyList.length) {
         max = this.companyList[0].count;
@@ -21,6 +23,7 @@ function TrackerListTopBlocked (attrs) {
               px: Math.floor(x * 228 / max)
             };
         });
+
 };
 
 

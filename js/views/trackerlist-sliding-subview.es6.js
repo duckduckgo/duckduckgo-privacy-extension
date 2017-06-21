@@ -35,7 +35,17 @@ TrackerList.prototype = $.extend({},
                 })
             } else if (this.selectedTab === 'page') {
                 this.model = new PageTrackersModel();
+                this.model.fetchAsyncData().then(function() {
+                      // TODO: pick up here tomorrow:
+                      console.log('call renderList() <-- pick up here tmro');
+                      this.renderList();
+                });
             }
+        },
+
+        renderList: function () {
+            console.log('RENDER LIST!!!!')
+            console.log(this.model)
         }
 
     }

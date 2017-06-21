@@ -3,16 +3,6 @@ const trackerListItems = require('./shared/trackerlist-items.es6.js');
 
 module.exports = function () {
 
-    let renderData;
-    let ulClass;
-    if (this.selectedTab === 'all') {
-        renderData = this.model.companyListMap;
-        ulClass = 'top-blocked__list';
-    } else if (this.selectedTab === 'page') {
-       renderData = this.model.trackerListMap;
-       ulClass = 'page-blocked__list';
-    }
-
     return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
         <nav class="sliding-subview__header card">
           <a href="#" class="sliding-subview__header__title js-sliding-subview-close">
@@ -23,11 +13,22 @@ module.exports = function () {
             <a href="#" class="active">All Time</a>
           </ol>
         </nav>
-
-        <ul class="menu-list ${ulClass}">
-            ${trackerListItems(renderData)}
-        </ul>
+        ${renderList(this.selectedTab, this.model)}
     </section>`
 
+    function renderList (selectedTab, model) {
+        let olClass;
+        if (selectedTab === 'all') {
+            olClass = 'top-blocked__list';
+        } else if (selectedTab === 'page') {
+           olClass = 'page-blocked__list';
+        }
+
+        if (model && model.companyListMap) {
+            return bel`<ol class="menu-list ${olClass}">
+                ${trackerListItems(model.companyListMap)}
+            </ol>`;
+        }
+    }
 }
 
