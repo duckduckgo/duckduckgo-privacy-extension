@@ -2,6 +2,13 @@ class Site{
     constructor(domain) {
         this.domain = domain,
         this.trackers = [],
+
+        // whitelist only HTTPS upgrades
+        this.HTTPSwhitelisted = false;
+
+        // whitelist all privacy features
+        this.whitelisted = false;
+
         this.setWhitelistStatusFromGlobal(domain);
     }
 
@@ -33,7 +40,7 @@ class Site{
         chrome.runtime.sendMessage({'whitelistChanged': true});
     };
 
-    isWhiteListed(){ return this.whiteListed };
+    isWhiteListed(){ return this.whitelisted };
     
     addTracker(tracker){ 
         if(this.trackers.indexOf(tracker) === -1){
@@ -46,7 +53,7 @@ class Site{
      * and set the new site whitelist statuses 
      */
     setWhitelistStatusFromGlobal(domain){
-        let globalWhiteLists = ['whiteListed', 'HTTPSwhiteListed'];
+        let globalWhiteLists = ['whitelisted', 'HTTPSwhitelisted'];
 
         globalWhiteLists.map((name) => {
             let list = settings.getSetting(name) || {};

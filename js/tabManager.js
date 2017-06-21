@@ -52,8 +52,8 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         
             // we have uncompleted upgraded https requests
             // whitelist the site
-            if (!tab.site.httpsWhitelisted && tab.status === "complete" && tab.httpsRequests.length) {
-                tab.site.setWhitelisted('HTTPSwhiteListed', true);
+            if (!tab.site.HTTPSwhitelisted && tab.status === "complete" && tab.httpsRequests.length) {
+                tab.site.setWhitelisted('HTTPSwhitelisted', true);
                 chrome.tabs.reload(tab.id);
             }
         }
