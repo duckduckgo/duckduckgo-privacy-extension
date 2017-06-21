@@ -1,6 +1,6 @@
 const Parent = window.DDG.base.Page;
 const TrackerListView = require('./../views/trackerlist-truncated.es6.js');
-const TrackerListModel = require('./../models/trackerlist-companies.es6.js');
+const TrackerListModel = require('./../models/trackerlist-top-blocked.es6.js');
 const trackerListTemplate = require('./../templates/trackerlist-truncated.es6.js');
 
 const SiteView = require('./../views/site.es6.js');
