@@ -211,6 +211,7 @@ body {
 
         .top-blocked__list {
             margin: 7px 14px;
+            padding-bottom: 7px;
 
             .top-blocked__li {
                 position: relative;
@@ -243,6 +244,16 @@ body {
                     padding-left: 3px;
                     width: 180px;
                     overflow: hidden;
+                }
+
+                &.top-blocked__li--see-all {
+
+                    .link-secondary {
+                        font-weight: bold;
+                        padding-top: 3.5px;
+                        padding-bottom: 3.5px;
+                        display: block;
+                    }
                 }
             }
         }
