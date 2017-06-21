@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.Model;
 const backgroundPage = chrome.extension.getBackgroundPage();
 
-function TrackerList (attrs) {
+function TrackerListTopBlocked (attrs) {
 
     Parent.call(this, attrs);
 
@@ -25,15 +25,15 @@ function TrackerList (attrs) {
 };
 
 
-TrackerList.prototype = $.extend({},
+TrackerListTopBlocked.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelName: 'trackerListByCompany'
+      modelName: 'trackerListTopBlocked'
 
   }
 );
 
 
-module.exports = TrackerList;
+module.exports = TrackerListTopBlocked;
 
