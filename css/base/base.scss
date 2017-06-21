@@ -97,7 +97,11 @@ a {
     margin: $card__margin;
 
     .border--bottom {
-        border-bottom: $card__border--bottom;
+        border-bottom: $card__border;
+    }
+
+    .border--top {
+        border-top: $card__border;
     }
 
     .menu-title {

@@ -17,6 +17,7 @@ $popup__height: 600px;
 /* Cards */
 $card__bg-color: $white;
 $card__border-radius: 2px;
+$card__border: 1px solid $platinum-light;
 $card__box-shadow: 1px 1px 1px $platinum-dark;
 $card__padding: 0;
 $card__margin--top: 3.5px;
@@ -24,4 +25,3 @@ $card__margin--right: 7px;
 $card__margin--bottom: 7px;
 $card__margin--left: 7px;
 $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $card__margin--left;
-$card__border--bottom: 1px solid $platinum-light;

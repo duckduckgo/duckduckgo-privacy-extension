@@ -7,7 +7,7 @@ module.exports = function () {
         <h3 class="menu-title">Top blocked over time</h3>
         <ul class="menu-list top-blocked__list">
             ${trackerListItems(this.model.companyListMap)}
-            <li class="top-blocked__li top-blocked__li--see-all">
+            <li class="top-blocked__li top-blocked__li--see-all border--top">
                 <a href="#" class="link-secondary js-top-blocked-see-all">See all</a></li>
         </ul>
     </section>`

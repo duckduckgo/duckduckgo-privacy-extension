@@ -193,7 +193,6 @@ body {
         }
     }
 
-
     .linkable {
         font-weight: bold;
         display: block;
@@ -210,12 +209,14 @@ body {
         }
 
         .top-blocked__list {
-            margin: 7px 14px;
-            padding-bottom: 7px;
+            margin: 7px 0;
+            padding-bottom: 0;
 
             .top-blocked__li {
-                position: relative;
                 z-index: 0;
+                position: relative;
+                margin-left: 14px;
+                margin-right: 14px;
 
                 .top-blocked__li__blocker-bar {
                     z-index: 1;
@@ -247,6 +248,9 @@ body {
                 }
 
                 &.top-blocked__li--see-all {
+                    padding-top: 7px;
+                    padding-left: 14px;
+                    margin: 28px 0 0 0;
 
                     .link-secondary {
                         font-weight: bold;
