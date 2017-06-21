@@ -1,3 +1,32 @@
+class Score {
+    constructor() {
+        this.scoreIndex = 0;
+    }
+
+    get() {
+        let siteScores = ['A', 'B', 'C', 'D', 'F'];
+        // return corresponding score or lowest score
+        return siteScores[this.scoreIndex] || siteScores[siteScores.length - 1];
+    };
+
+    update(event) {
+        if (event.noHttps) { 
+            this.scoreIndex--
+        }
+        else if (event.trackerBlocked) {
+         
+            if (top10Trackers[event.trackerBlocked]) {
+                this.scoreIndex--
+            }
+            else if (this.isWeirdTracker(event.trackerBlocked)) {
+                this.scoreIndex--
+            }
+
+        }
+    };
+
+}
+
 class Site{
     constructor(domain, scoreFunction) {
         this.domain = domain,
@@ -6,6 +35,7 @@ class Site{
         this.scoreFunction = scoreFunction;
         this.setWhitelistStatusFromGlobal(domain);
         this.httpsWhitelisted = false;
+        this.score = new Score();
     }
 
     setWhitelisted(value){ 
@@ -33,14 +63,10 @@ class Site{
     isWhiteListed(){ return this.whiteListed };
     
     addTracker(tracker){ 
-        if(this.trackers.indexOf(tracker) === -1){
-            this.trackers.push(tracker);
+        if(this.trackers.indexOf(tracker.url) === -1){
+            this.trackers.push(tracker.url);
         }
-    };
-
-    getScore(){
-        this.score = this.scoreFunction();
-        return this.score;
+        this.score.update({blockedTracker: tracker});
     };
 
     setWhitelistStatusFromGlobal(domain){
@@ -55,10 +81,6 @@ class Site{
     };
 
     getTrackers(){ return this.trackers };
-    setTrackers(newTrackers){ this.trackers = newTrackers };
-    setScore(newScore){ this.score = newScore };
-
-
 
     /*
      * specialDomain
