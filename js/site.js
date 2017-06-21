@@ -1,6 +1,7 @@
 class Score {
     constructor() {
         this.scoreIndex = 0;
+        this.scoreExplination = {};
     }
 
     get() {
@@ -10,16 +11,23 @@ class Score {
     };
 
     update(event) {
-        if (event.noHttps) { 
-            this.scoreIndex--
+        let topTrackers = {Google:true, Facebook:true, Twitter:true, Amazon:true, AdNexus:true, Oracle:true}
+        
+        if (event.noHTTPS) { 
+            this.scoreIndex++
+            this.scoreExplination['noHTTPS'] = true;
         }
         else if (event.trackerBlocked) {
          
-            if (top10Trackers[event.trackerBlocked]) {
-                this.scoreIndex--
+            if (topTrackers[event.trackerBlocked.parentCompany]) {
+                this.scoreIndex++
+                this.scoreExplination['topTracker'] = true;
             }
-            else if (this.isWeirdTracker(event.trackerBlocked)) {
-                this.scoreIndex--
+
+            // lower score for every 10 trackers
+            if ((event.totalBlocked % 10) === 0){
+                this.scoreIndex++
+                this.scoreExplination['totalTrackers'] = ceil(event.totalBlocked/10)
             }
 
         }
@@ -65,8 +73,8 @@ class Site{
     addTracker(tracker){ 
         if(this.trackers.indexOf(tracker.url) === -1){
             this.trackers.push(tracker.url);
+            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackers.length});
         }
-        this.score.update({blockedTracker: tracker});
     };
 
     setWhitelistStatusFromGlobal(domain){
