@@ -11,7 +11,7 @@ function TrackerList (ops) {
     this.template = ops.template;
     Parent__SlidingSubview.call(this, ops);
 
-    this._cacheElems('.js-top-blocked', ['graph-bar-fg'])
+    this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
     this.animateGraphBars();
 };
 
