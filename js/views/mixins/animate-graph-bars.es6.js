@@ -1,5 +1,5 @@
 module.exports = {
-    animateBars: function () {
+    animateGraphBars: function () {
         let self = this;
 
         window.setTimeout(function () {

@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.View;
-const animateBars = require('./mixins/animate-bars.es6.js');
+const animateGraphBars = require('./mixins/animate-graph-bars.es6.js');
 const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js');
 const trackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
 
@@ -16,12 +16,12 @@ function TrackerList (ops) {
         [this.$seeall, 'click', this._seeAllClick]
     ]);
 
-    this.animateBars();
+    this.animateGraphBars();
 };
 
 TrackerList.prototype = $.extend({},
     Parent.prototype,
-    animateBars,
+    animateGraphBars,
     {
 
         _seeAllClick: function () {

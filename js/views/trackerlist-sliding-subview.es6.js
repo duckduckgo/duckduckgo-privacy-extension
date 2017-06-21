@@ -1,5 +1,5 @@
 const Parent__SlidingSubview = require('./sliding-subview.es6.js');
-const animateBars = require('./mixins/animate-bars.es6.js');
+const animateGraphBars = require('./mixins/animate-graph-bars.es6.js');
 
 function TrackerList (ops) {
 
@@ -11,12 +11,12 @@ function TrackerList (ops) {
 
     this._cacheElems('.js-top-blocked', ['graph-bar-fg'])
 
-    this.animateBars();
+    this.animateGraphBars();
 };
 
 TrackerList.prototype = $.extend({},
     Parent__SlidingSubview.prototype,
-    animateBars
+    animateGraphBars
 );
 
 module.exports = TrackerList;
