@@ -1,11 +1,14 @@
+
+// url-parse node module. Defined in url-parse.js
+var URLParser;
+
 require.scopes.utils = ( () => {
 
     function extractHostFromURL(url) {
-        var a = parseURL(url)
-        var parts = a.hostname.split('.');
-        // remove subdomains from url
-        var host = parts.slice(-2).join('.');
-        return host;
+        let urlObj = new URLParser(url);
+        let hostname = urlObj.hostname;
+        hostname = hostname.replace(/^www\./,'');
+        return hostname;
     }
 
     function parseURL(url){

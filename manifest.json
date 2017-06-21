@@ -47,6 +47,7 @@
                 "js/atb.js",
                 "js/trackerLists.js",
                 "js/trackers.js",
+                "js/url-parse.js",
                 "js/background.js",
                 "js/abp.js"
             ]
