@@ -57,13 +57,7 @@ class Site{
 
         globalWhiteLists.map((name) => {
             let list = settings.getSetting(name) || {};
-            
-            if(list[this.domain]){
-                this.setWhitelisted(name, true);
-            }
-            else{
-                this.setWhitelisted(name, false);
-            }
+            this.setWhitelisted(name, list[this.domain]);
         }); 
     };
 
