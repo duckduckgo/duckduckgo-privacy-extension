@@ -6,7 +6,7 @@
       settings.updateSetting('whitelist', '');
 
       var domain = "test.com";
-      var newSite = Sites.add(domain);
+      var newSite = new Site(domain);
 
       assert.ok(newSite.domain === domain, 'site has correct name');
       assert.ok(newSite.isWhiteListed() === false, 'site is not whitelisted by default');
