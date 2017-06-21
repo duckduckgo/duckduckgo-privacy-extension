@@ -49,11 +49,20 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         if (tab && info.status) {
             tab.status = info.status;
         
-            // we have uncompleted upgraded https requests
-            // whitelist the site
-            if (!tab.site.httpsWhitelisted && tab.status === "complete" && tab.httpsRequests.length) {
-                tab.site.httpsWhitelisted = true;
-                chrome.tabs.reload(tab.id);
+            // When the tab finishes loading:
+            // 1. check main_frame url for http and update site score
+            // 2. check for uncompleted upgraded https requests and whitlist the site if 
+            // there are any
+            if (tab.status === "complete") {
+
+                if (tab.url.match(/^http:\/\//)) {
+                    tab.site.score.update({noHTTPS: true})
+                }
+
+                if (!tab.site.httpsWhitelisted && tab.httpsRequests.length) {
+                    tab.site.httpsWhitelisted = true;
+                    chrome.tabs.reload(tab.id);
+                }
             }
         }
     }
