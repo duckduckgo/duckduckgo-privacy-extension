@@ -139,7 +139,7 @@ chrome.webRequest.onBeforeRequest.addListener(
               thisTab.addToPotentialBlocked(tracker.url);
               
               // Block the request if the site is not whitelisted
-              if (!thisTab.site.whiteListed) {
+              if (!thisTab.site.whitelisted) {
                   thisTab.addOrUpdateTracker(tracker);
                   updateBadge(thisTab.id, thisTab.getBadgeTotal());
                   chrome.runtime.sendMessage({"rerenderPopup": true});
@@ -155,7 +155,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       // upgrade to https if the site isn't whitelisted or in our list
       // of known broken https sites
-      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain] || thisTab.site.httpsWhitelisted)) {
+      if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
           
           // check for an upgraded main_frame request to use
