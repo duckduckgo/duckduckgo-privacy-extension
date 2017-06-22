@@ -6,10 +6,13 @@ const AllTrackersModel = require('./../models/trackerlist-top-blocked.es6.js');
 function TrackerList (ops) {
 
     this.selectedTab = ops.defaultTab;
+    this.doRenderListOnly = false;
     this.setModel();
     ops.model = this.model;
     this.template = ops.template;
+
     Parent__SlidingSubview.call(this, ops);
+    this.doRenderListOnly = true; // we only need to render full container once
 
     this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
     this.animateGraphBars();
@@ -42,8 +45,11 @@ TrackerList.prototype = $.extend({},
         },
 
         renderList: function () {
-            console.log('RENDER LIST!!!!  <-- pick up here tmro');
-            console.log(this.model)
+            this.$el.find('ol').remove();
+            let ol = this.template.call(this);
+            this.$el.append(ol);
+            this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
+            this.animateGraphBars();
         }
 
     }
