@@ -1,3 +1,13 @@
+/*
+ * Each Site creates its own Score instance. The attributes
+ * of the Score are updated as we process new events e.g. trackers
+ * blocked or https status.
+ *
+ * The Score attributes are then used generate a site
+ * privacy score used in the popup.
+ */
+const siteScores = ['A', 'B', 'C', 'D']
+
 class Score {
     constructor() {
         this.noHTTPS = false;
@@ -6,37 +16,44 @@ class Score {
         this.obscureTracker = false;
     }
 
+    /*
+     * Calculates and returns a site score
+     */
     get() {
-        let siteScores = settings.getSetting('siteScores');
-
-        // return corresponding score or lowest score
         let scoreIndex = 0;
 
         if (this.topCompany) scoreIndex++
         if (this.noHTTPS) scoreIndex++
         if (this.obscureTracker) scoreIndex++
 
+        // decrease score for every 10, round up
         scoreIndex += Math.ceil(this.totalBlocked / 10)
 
+        // return corresponding score or lowest score if outside the array
         return siteScores[scoreIndex] || siteScores[siteScores.length - 1];
     };
 
+    /*
+     * Update the score attruibues as new events come in. The actual
+     * site score is calculated later when you call .get()
+     */
     update(event) {
 
-        // turn topTrackers setting into an object
         let topTrackers = settings.getSetting('topTrackers')
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
+        // the site doesn't support https
         if (event.noHTTPS) { 
             this.noHTTPS = true
         }
         else if (event.trackerBlocked) {
-         
+
+            // tracker is from one of the top blocked companies
             if (topTrackers[event.trackerBlocked.parentCompany]) {
                 this.topCompany = true
             }
 
-            // Trackers with IP address
+            // trackers with IP address
             if (event.trackerBlocked.url.match(IPRegex)) {
                 this.obscureTracker = true
             }
