@@ -45,7 +45,7 @@ TrackerList.prototype = $.extend({},
         },
 
         renderList: function () {
-            this.$el.find('ol').remove();
+            this.$el.find('.js-top-blocked-list').remove();
             let ol = this.template.call(this);
             this.$el.append(ol);
             this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');

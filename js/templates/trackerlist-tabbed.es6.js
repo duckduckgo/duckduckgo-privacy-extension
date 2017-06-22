@@ -9,20 +9,20 @@ module.exports = function () {
 
     return bel`<section class="sliding-subview sliding-subview--trackers-blocked sliding-subview--has-fixed-header">
         <nav class="sliding-subview__header card">
-          <a href="#" class="sliding-subview__header__title js-sliding-subview-close">
-            Trackers
-          </a>
-          <ol class="sliding-subview__header__tabbed-nav">
-            <a href="#">Page</a>
-            <a href="#" class="active">All Time</a>
-          </ol>
+            <a href="#" class="sliding-subview__header__title js-sliding-subview-close">
+                Trackers
+            </a>
+            <ul class="sliding-subview__header__tabbed-nav">
+                <a href="#">Page</a>
+                <a href="#" class="active">All Time</a>
+            </ul>
         </nav>
         ${renderList(this.model)}
     </section>`;
 
     function renderList (model) {
         if (model && model.companyListMap) {
-            return bel`<ol class="menu-list top-blocked__list card">
+            return bel`<ol class="menu-list top-blocked__list card js-top-blocked-list">
                 ${trackerListItems(model.companyListMap)}
             </ol>`;
         }
