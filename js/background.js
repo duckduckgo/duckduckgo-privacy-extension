@@ -132,7 +132,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       
           if (tracker) {
               // record all trackers on a site even if we don't block them
-              thisTab.site.addTracker(tracker.url);
+              thisTab.site.addTracker(tracker);
 
               
               // record potential blocked trackers for this tab
@@ -158,12 +158,6 @@ chrome.webRequest.onBeforeRequest.addListener(
       if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
           
-          // check for an upgraded main_frame request to use
-          // in our site score calculations
-          if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
-              thisTab.upgradedHttps = true;
-          }
-
           if (upgradeStatus.redirectUrl){
               thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
           }

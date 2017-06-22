@@ -1,7 +1,72 @@
+/*
+ * Each Site creates its own Score instance. The attributes
+ * of the Score are updated as we process new events e.g. trackers
+ * blocked or https status.
+ *
+ * The Score attributes are then used generate a site
+ * privacy score used in the popup.
+ */
+const siteScores = ['A', 'B', 'C', 'D']
+
+class Score {
+    constructor() {
+        this.hasHTTPS = false;
+        this.inMajorTrackingNetwork = false;
+        this.totalBlocked = 0;
+        this.hasObscureTracker = false;
+    }
+
+    /*
+     * Calculates and returns a site score
+     */
+    get() {
+        let scoreIndex = 1;
+
+        if (this.inMajorTrackingNetwork) scoreIndex++
+        if (this.hasHTTPS) scoreIndex--
+        if (this.hasObscureTracker) scoreIndex++
+
+        // decrease score for every 10, round up
+        scoreIndex += Math.ceil(this.totalBlocked / 10)
+
+        // return corresponding score or lowest score if outside the array
+        return siteScores[scoreIndex] || siteScores[siteScores.length - 1];
+    };
+
+    /*
+     * Update the score attruibues as new events come in. The actual
+     * site score is calculated later when you call .get()
+     */
+    update(event) {
+
+        let majorTrackingNetworks = settings.getSetting('majorTrackingNetworks')
+        let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
+
+        if (event.hasHTTPS) { 
+            this.hasHTTPS = true
+        }
+        else if (event.trackerBlocked) {
+
+            // tracker is from one of the top blocked companies
+            if (majorTrackingNetworks[event.trackerBlocked.parentCompany]) {
+                this.inMajorTrackingNetwork = true
+            }
+
+            // trackers with IP address
+            if (event.trackerBlocked.url.match(IPRegex)) {
+                this.hasObscureTracker = true
+            }
+
+            this.totalBlocked++;
+        }
+    };
+}
+
 class Site{
     constructor(domain) {
         this.domain = domain,
         this.trackers = [],
+        this.score = new Score();
 
         // whitelist only HTTPS upgrades
         this.HTTPSwhitelisted = false;
@@ -43,8 +108,9 @@ class Site{
     isWhiteListed(){ return this.whitelisted };
     
     addTracker(tracker){ 
-        if(this.trackers.indexOf(tracker) === -1){
-            this.trackers.push(tracker);
+        if(this.trackers.indexOf(tracker.url) === -1){
+            this.trackers.push(tracker.url);
+            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackers.length});
         }
     };
 
@@ -60,9 +126,6 @@ class Site{
             this.setWhitelisted(name, list[this.domain]);
         }); 
     };
-
-    getTrackers(){ return this.trackers };
-    setTrackers(newTrackers){ this.trackers = newTrackers };
 
     /*
      * specialDomain
