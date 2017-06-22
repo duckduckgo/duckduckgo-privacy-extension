@@ -13,6 +13,14 @@ var load = require('load'),
     trackerLists = require('trackerLists').getLists(),
     entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
 
+let entityMap = {};
+
+for (let parent in entityList) {
+    entityList[parent].properties.map(url => {
+        entityMap[url] = parent
+    });
+}
+
 function isTracker(urlToCheck, currLocation, tabId, request) {
 
     // TODO: easylist is marking some of our requests as trackers. Whitelist us
@@ -75,7 +83,24 @@ function checkEasylists(url, currLocation, request){
         // break loop early if a list matches
         if(easylistBlock){
             let host = utils.extractHostFromURL(url);
-            return easylistBlock = {parentCompany: "unknown", url: host, type: listName};
+            let parentCompany = findParent(host.split('.')) || "unknown";
+            return easylistBlock = {parentCompany: parentCompany, url: host, type: listName};
+        }
+
+        // pull off subdomains and look for parent companies
+        function findParent(url) {
+            
+            if (url.length < 2) return null;
+
+            let joinURL = url.join('.')
+
+            if (entityMap[joinURL]) {
+                return entityMap[joinURL]
+            }
+            else{
+                url.shift()
+                return findParent(url)
+            }
         }
     });
     return easylistBlock;
