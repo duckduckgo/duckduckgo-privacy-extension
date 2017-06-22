@@ -8,19 +8,20 @@ function TrackerListTopBlocked (attrs) {
 
     this.companyList = backgroundPage.Companies.getTopBlocked(attrs.numCompanies);
 
-    var max = 0;
+    // find company with largest number of trackers
+    let maxCount = 0;
     if (this.companyList && this.companyList.length) {
-        max = this.companyList[0].count;
+        maxCount = this.companyList[0].count;
     }
+
     this.companyListMap = this.companyList.map(
         (company) => {
-            var x = company.count;
             // calc max using pixels instead of % to make margins easier
             // max width: 270 - (horizontal margin + padding in css) = 228
             return {
               name: company.name,
               count: company.count,
-              px: Math.floor(x * 228 / max)
+              px: Math.floor(company.count * 228 / maxCount)
             };
         });
 
