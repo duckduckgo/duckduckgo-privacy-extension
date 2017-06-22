@@ -10,21 +10,21 @@ const siteScores = ['A', 'B', 'C', 'D']
 
 class Score {
     constructor() {
-        this.noHTTPS = false;
-        this.topCompany = false;
+        this.hasHTTPS = false;
+        this.inMajorTrackingNetwork = false;
         this.totalBlocked = 0;
-        this.obscureTracker = false;
+        this.hasObscureTracker = false;
     }
 
     /*
      * Calculates and returns a site score
      */
     get() {
-        let scoreIndex = 0;
+        let scoreIndex = 1;
 
-        if (this.topCompany) scoreIndex++
-        if (this.noHTTPS) scoreIndex++
-        if (this.obscureTracker) scoreIndex++
+        if (this.inMajorTrackingNetwork) scoreIndex++
+        if (this.hasHTTPS) scoreIndex--
+        if (this.hasObscureTracker) scoreIndex++
 
         // decrease score for every 10, round up
         scoreIndex += Math.ceil(this.totalBlocked / 10)
@@ -39,23 +39,22 @@ class Score {
      */
     update(event) {
 
-        let topTrackers = settings.getSetting('topTrackers')
+        let majorTrackingNetworks = settings.getSetting('majorTrackingNetworks')
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
-        // the site doesn't support https
-        if (event.noHTTPS) { 
-            this.noHTTPS = true
+        if (event.hasHTTPS) { 
+            this.hasHTTPS = true
         }
         else if (event.trackerBlocked) {
 
             // tracker is from one of the top blocked companies
-            if (topTrackers[event.trackerBlocked.parentCompany]) {
-                this.topCompany = true
+            if (majorTrackingNetworks[event.trackerBlocked.parentCompany]) {
+                this.inMajorTrackingNetwork = true
             }
 
             // trackers with IP address
             if (event.trackerBlocked.url.match(IPRegex)) {
-                this.obscureTracker = true
+                this.hasObscureTracker = true
             }
 
             this.totalBlocked++;

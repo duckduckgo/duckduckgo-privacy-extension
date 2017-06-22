@@ -56,8 +56,8 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             // there are any
             if (info.status === "complete") {
 
-                if (tab.url.match(/^http:\/\//)) {
-                    tab.site.score.update({noHTTPS: true})
+                if (tab.url.match(/^https:\/\//)) {
+                    tab.site.score.update({hasHTTPS: true})
                 }
 
                 if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length) {

@@ -35,16 +35,16 @@
   QUnit.test("test site score", function (assert) {
 
       let tests = [
-          { values: {noHTTPS:false, topCompany:false, totalBlocked: 0, obscureTracker: false}, result: 'A'},
-          { values: {noHTTPS:true, topCompany:false, totalBlocked: 0, obscureTracker: false}, result: 'B'},
-          { values: {noHTTPS:true, topCompany:true, totalBlocked: 1, obscureTracker: false}, result: 'D'},
-          { values: {noHTTPS:true, topCompany:true, totalBlocked: 1, obscureTracker: false}, result: 'D'},
-          { values: {noHTTPS:true, topCompany:true, totalBlocked: 11, obscureTracker: false}, result: 'D'},
-          { values: {noHTTPS:false, topCompany:false, totalBlocked: 9, obscureTracker: false}, result: 'B'},
-          { values: {noHTTPS:false, topCompany:true, totalBlocked: 10, obscureTracker: false}, result: 'C'},
-          { values: {noHTTPS:false, topCompany:false, totalBlocked: 20, obscureTracker: false}, result: 'C'},
-          { values: {noHTTPS:false, topCompany:false, totalBlocked: 20, obscureTracker: true}, result: 'D'},
-          { values: {noHTTPS:false, topCompany:false, totalBlocked: 1, obscureTracker: true}, result: 'C'}
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: 'B'},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: 'A'},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: 'C'},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 11, hasObscureTracker: false}, result: 'D'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 9, hasObscureTracker: false}, result: 'C'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:true, totalBlocked: 10, hasObscureTracker: false}, result: 'D'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false}, result: 'D'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: true}, result: 'D'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 1, hasObscureTracker: true}, result: 'D'},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: 'C'}
       ]
 
       tests.map(test => {
