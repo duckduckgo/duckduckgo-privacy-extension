@@ -1,35 +1,39 @@
 class Score {
     constructor() {
-        this.scoreValues = {};
+        this.noHTTPS = false;
+        this.topCompany = false;
+        this.totalBlocked = 0;
     }
 
     get() {
-        let siteScores = ['A', 'B', 'C', 'D', 'F'];
+        let siteScores = settings.getSetting('siteScores');
+
         // return corresponding score or lowest score
         let scoreIndex = 0;
 
-        if (this.scoreValues.topCompany) scoreIndex++
-        if (this.scoreValues.noHTTPS) scoreIndex++
+        if (this.topCompany) scoreIndex++
+        if (this.noHTTPS) scoreIndex++
 
-        if (this.scoreValues.totalBlocked)
-            scoreIndex += Math.ceil(this.scoreValues.totalBlocked / 10)
+        scoreIndex += Math.ceil(this.totalBlocked / 10)
 
         return siteScores[scoreIndex] || siteScores[siteScores.length - 1];
     };
 
     update(event) {
-        let topTrackers = {Google:true, Facebook:true, Twitter:true, Amazon:true, AdNexus:true, Oracle:true}
+
+        // turn topTrackers setting into an object
+        let topTrackers = settings.getSetting('topTrackers')
         
         if (event.noHTTPS) { 
-            this.scoreValues.noHTTPS = true
+            this.noHTTPS = true
         }
         else if (event.trackerBlocked) {
          
             if (topTrackers[event.trackerBlocked.parentCompany]) {
-                this.scoreValues.topBlockedCompany = true
+                this.topBlockedCompany = true
             }
 
-            this.scoreValues.totalBlocked ? this.scoreValues.totalBlocked++ : this.scoreValues.totalBlocked = 1
+            this.totalBlocked++;
         }
     };
 }

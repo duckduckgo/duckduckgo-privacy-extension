@@ -2,20 +2,19 @@
   QUnit.module("Sites");
 
   QUnit.test("test sites and site classes", function (assert) {
-      Sites.clearData();
       settings.updateSetting('whitelist', '');
 
       var domain = "test.com";
       var newSite = new Site(domain);
 
       assert.ok(newSite.domain === domain, 'site has correct name');
-      assert.ok(newSite.isWhiteListed() === false, 'site is not whitelisted by default');
+      assert.ok(newSite.isWhiteListed() === undefined, 'site is not whitelisted by default');
       
-      newSite.setWhitelisted(true);
+      newSite.setWhitelisted('whitelisted', true);
       assert.ok(newSite.isWhiteListed() === true, 'whitelisting a site works');
 
-      newSite.addTracker('doubleclick.net');
-      var trackerList = newSite.getTrackers();
+      newSite.addTracker({url: 'doubleclick.net'});
+      var trackerList = newSite.trackers;
       assert.ok(trackerList.length === 1, "add a tracker and get list");
       assert.ok(trackerList.indexOf('doubleclick.net') !== -1, "tracker list has correct domain");
   });
@@ -28,8 +27,30 @@
       ];
 
       tests.map((test) => {
-          let site = Sites.add(utils.extractHostFromURL(test[0]));
+          let site = new Site(utils.extractHostFromURL(test[0]));
           assert.ok(site.domain === test[1], "site should have the correct domain");
       });
   });
+
+  QUnit.test("test site score", function (assert) {
+
+      let tests = [
+          { values: {noHTTPS:false, topCompany:false, totalBlocked: 0}, result: 'A'},
+          { values: {noHTTPS:true, topCompany:false, totalBlocked: 0}, result: 'B'},
+          { values: {noHTTPS:true, topCompany:true, totalBlocked: 0}, result: 'C'},
+          { values: {noHTTPS:true, topCompany:true, totalBlocked: 1}, result: 'D'},
+          { values: {noHTTPS:true, topCompany:true, totalBlocked: 11}, result: 'F'}
+      ]
+
+      tests.map(test => {
+          let site = new Site('test.com');
+
+          for(var value in test.values) {
+              site.score[value] = test.values[value];
+          }
+
+          assert.ok(site.score.get() === test.result, "site should have the correct site score");
+      });
+  });
+
 })();
