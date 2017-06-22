@@ -5,7 +5,7 @@
 /* Trackers page */
 body {
     width: $popup__width;
-    height: 700px;
+    height: 650px;
 }
 
 .disabled {
@@ -202,10 +202,13 @@ body {
     }
 
     .top-blocked {
-        padding-bottom: 3.5px;
 
         .menu-title {
             padding-bottom: 14px;
+        }
+
+        .top-blocked__list {
+            padding-bottom: 7px;
         }
     }
 }
