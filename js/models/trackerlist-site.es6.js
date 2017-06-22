@@ -29,11 +29,10 @@ SiteTrackerList.prototype = $.extend({},
                       const companyNames = Object.keys(self.trackersBlocked);
 
                       // find company with largest number of trackers
-                      // TODO: look into why self.tab.trackers[companyName].count is wrong
-                      //       for now, we'll just use urls.length instead (!)
                       let maxCount = 0;
                       if (self.trackersBlocked && companyNames.length > 0) {
-                          maxCount = self.trackersBlocked[companyNames[0]].urls.length;
+                          // TODO/FIXME: list is not ordered, need to sort array before this:
+                          maxCount = self.trackersBlocked[companyNames[0]].count;
                       }
 
                       // actual trackers we ended up blocking:
@@ -44,8 +43,8 @@ SiteTrackerList.prototype = $.extend({},
                               // max width: 270 - (horizontal margin + padding in css) = 228
                               return {
                                   name: companyName,
-                                  count: company.urls.length,
-                                  px: Math.floor(company.urls.length * 228 / maxCount),
+                                  count: company.count,
+                                  px: Math.floor(company.count * 228 / maxCount),
                                   urls: company.urls
                               }
                           });
