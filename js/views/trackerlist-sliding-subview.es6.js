@@ -5,7 +5,7 @@ const AllTrackersModel = require('./../models/trackerlist-top-blocked.es6.js');
 
 function TrackerList (ops) {
 
-    this.selectedTab = ops.defaultTab;
+    this.selectedTab = ops.defaultTab; // poss values: `page` or `all`
     this.doRenderListOnly = false;
     this.setModel();
     ops.model = this.model;
@@ -16,12 +16,25 @@ function TrackerList (ops) {
 
     this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
     this.animateGraphBars();
+
+    this.setActiveTab();
+
+    this.$navtab = this.$el.find('.js-nav-tab');
+    this.bindEvents([
+        [this.$navtab, 'click', this.switchTabs]
+    ]);
 };
 
 TrackerList.prototype = $.extend({},
     Parent__SlidingSubview.prototype,
     animateGraphBars,
     {
+
+        setActiveTab: function () {
+            let selector = '.js-nav-tab-' + this.selectedTab;
+            this.$el.find(selector).addClass('active');
+        },
+
         switchTabs: function () {
           // TODO: switch tabs
           // TODO: switch model

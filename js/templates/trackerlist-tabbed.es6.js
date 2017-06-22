@@ -13,8 +13,8 @@ module.exports = function () {
                 Trackers
             </a>
             <ul class="sliding-subview__header__tabbed-nav">
-                <a href="#">Page</a>
-                <a href="#" class="active">All Time</a>
+                <a href="#" class="js-nav-tab js-nav-tab-page">Page</a>
+                <a href="#" class="js-nav-tab js-nav-tab-all">All Time</a>
             </ul>
         </nav>
         ${renderList(this.model)}
