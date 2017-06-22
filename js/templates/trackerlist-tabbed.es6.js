@@ -7,7 +7,7 @@ module.exports = function () {
         return renderList(this.model);
     }
 
-    return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
+    return bel`<section class="sliding-subview sliding-subview--trackers-blocked sliding-subview--has-fixed-header">
         <nav class="sliding-subview__header card">
           <a href="#" class="sliding-subview__header__title js-sliding-subview-close">
             Trackers
@@ -22,7 +22,7 @@ module.exports = function () {
 
     function renderList (model) {
         if (model && model.companyListMap) {
-            return bel`<ol class="menu-list top-blocked__list">
+            return bel`<ol class="menu-list top-blocked__list card">
                 ${trackerListItems(model.companyListMap)}
             </ol>`;
         }
