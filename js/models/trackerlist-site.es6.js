@@ -31,8 +31,10 @@ SiteTrackerList.prototype = $.extend({},
                       // find company with largest number of trackers
                       let maxCount = 0;
                       if (self.trackersBlocked && companyNames.length > 0) {
-                          // TODO/FIXME: list is not ordered, need to sort array before this:
-                          maxCount = self.trackersBlocked[companyNames[0]].count;
+                          companyNames.map((name) => {
+                            let compare = self.trackersBlocked[name].count;
+                            if (compare > maxCount) maxCount = compare;
+                          });
                       }
 
                       // actual trackers we ended up blocking:
