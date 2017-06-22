@@ -3,6 +3,7 @@ class Score {
         this.noHTTPS = false;
         this.topCompany = false;
         this.totalBlocked = 0;
+        this.obscureTracker = false;
     }
 
     get() {
@@ -13,6 +14,7 @@ class Score {
 
         if (this.topCompany) scoreIndex++
         if (this.noHTTPS) scoreIndex++
+        if (this.obscureTracker) scoreIndex++
 
         scoreIndex += Math.ceil(this.totalBlocked / 10)
 
@@ -23,14 +25,20 @@ class Score {
 
         // turn topTrackers setting into an object
         let topTrackers = settings.getSetting('topTrackers')
-        
+        let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
+
         if (event.noHTTPS) { 
             this.noHTTPS = true
         }
         else if (event.trackerBlocked) {
          
             if (topTrackers[event.trackerBlocked.parentCompany]) {
-                this.topBlockedCompany = true
+                this.topCompany = true
+            }
+
+            // Trackers with IP address
+            if (event.trackerBlocked.url.match(IPRegex)) {
+                this.obscureTracker = true
             }
 
             this.totalBlocked++;

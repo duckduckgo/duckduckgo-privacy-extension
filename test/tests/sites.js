@@ -35,11 +35,16 @@
   QUnit.test("test site score", function (assert) {
 
       let tests = [
-          { values: {noHTTPS:false, topCompany:false, totalBlocked: 0}, result: 'A'},
-          { values: {noHTTPS:true, topCompany:false, totalBlocked: 0}, result: 'B'},
-          { values: {noHTTPS:true, topCompany:true, totalBlocked: 0}, result: 'C'},
-          { values: {noHTTPS:true, topCompany:true, totalBlocked: 1}, result: 'D'},
-          { values: {noHTTPS:true, topCompany:true, totalBlocked: 11}, result: 'F'}
+          { values: {noHTTPS:false, topCompany:false, totalBlocked: 0, obscureTracker: false}, result: 'A'},
+          { values: {noHTTPS:true, topCompany:false, totalBlocked: 0, obscureTracker: false}, result: 'B'},
+          { values: {noHTTPS:true, topCompany:true, totalBlocked: 1, obscureTracker: false}, result: 'D'},
+          { values: {noHTTPS:true, topCompany:true, totalBlocked: 1, obscureTracker: false}, result: 'D'},
+          { values: {noHTTPS:true, topCompany:true, totalBlocked: 11, obscureTracker: false}, result: 'F'},
+          { values: {noHTTPS:false, topCompany:false, totalBlocked: 9, obscureTracker: false}, result: 'B'},
+          { values: {noHTTPS:false, topCompany:true, totalBlocked: 10, obscureTracker: false}, result: 'C'},
+          { values: {noHTTPS:false, topCompany:false, totalBlocked: 20, obscureTracker: false}, result: 'C'},
+          { values: {noHTTPS:false, topCompany:false, totalBlocked: 20, obscureTracker: true}, result: 'D'},
+          { values: {noHTTPS:false, topCompany:false, totalBlocked: 1, obscureTracker: true}, result: 'C'}
       ]
 
       tests.map(test => {
