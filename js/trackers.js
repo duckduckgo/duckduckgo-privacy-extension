@@ -11,7 +11,8 @@ var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists(),
-    entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
+    entityList = load.JSONfromLocalFile(settings.getSetting('entityList')),
+    entityMap =  load.JSONfromLocalFile(settings.getSetting('entityMap'));
 
 function isTracker(urlToCheck, currLocation, tabId, request) {
 
@@ -75,7 +76,24 @@ function checkEasylists(url, currLocation, request){
         // break loop early if a list matches
         if(easylistBlock){
             let host = utils.extractHostFromURL(url);
-            return easylistBlock = {parentCompany: "unknown", url: host, type: listName};
+            let parentCompany = findParent(host.split('.')) || "unknown";
+            return easylistBlock = {parentCompany: parentCompany, url: host, type: listName};
+        }
+
+        // pull off subdomains and look for parent companies
+        function findParent(url) {
+            
+            if (url.length < 2) return null;
+
+            let joinURL = url.join('.')
+
+            if (entityMap[joinURL]) {
+                return entityMap[joinURL]
+            }
+            else{
+                url.shift()
+                return findParent(url)
+            }
         }
     });
     return easylistBlock;
