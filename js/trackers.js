@@ -11,15 +11,8 @@ var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists(),
-    entityList = load.JSONfromLocalFile(settings.getSetting('entityList'));
-
-let entityMap = {};
-
-for (let parent in entityList) {
-    entityList[parent].properties.map(url => {
-        entityMap[url] = parent
-    });
-}
+    entityList = load.JSONfromLocalFile(settings.getSetting('entityList')),
+    entityMap =  load.JSONfromLocalFile(settings.getSetting('entityMap'));
 
 function isTracker(urlToCheck, currLocation, tabId, request) {
 
