@@ -28,7 +28,8 @@ module.exports = function(grunt) {
                     '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/base/index.es6.js'],
                     '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/pages/trackers.es6.js'],
                     '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/pages/options.es6.js'],
-                    '<%= dirs.src.js %>/abp.js': ['<%= dirs.src.js %>/abp-preprocessed.js']
+                    '<%= dirs.src.js %>/abp.js': ['<%= dirs.src.js %>/abp-preprocessed.es6.js'],
+                    '<%= dirs.src.js %>/url-parse.js': ['<%= dirs.src.js %>/url-parse.es6.js']
                 }
             }
         },
@@ -46,7 +47,7 @@ module.exports = function(grunt) {
 
         execute: {
             preProcessLists: {
-                src: ['scripts/buildLists.js']
+                src: ['scripts/buildLists.js', 'scripts/buildEntityMap.js']
             }
         },
 

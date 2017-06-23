@@ -26,7 +26,7 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if (this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
-              this.tab.site.setWhitelisted(this.isWhitelisted);
+              this.tab.site.setWhitelisted('whitelisted', this.isWhitelisted);
               this.tab.site.notifyWhitelistChanged();
           }
       },
@@ -36,8 +36,7 @@ Site.prototype = $.extend({},
               this.domain = '-';    // should not happen
           }
           else {
-              this.isWhitelisted = this.tab.site.whiteListed;
-
+              this.isWhitelisted = this.tab.site.whitelisted;
               let special = this.tab.site.specialDomain();
               if (special) {
                   this.domain = special;    // eg "extensions", "options", "new tab"
@@ -52,21 +51,12 @@ Site.prototype = $.extend({},
           if (this.tab) {
             this.trackerCount = this.tab.getBadgeTotal();
             this.potential = Object.keys(this.tab.potentialBlocked).length;
-            this.updateSiteRating();
+            this.updateScore();
           }
       },
 
-      updateSiteRating: function() {
-          if (this.trackerCount == 0 && this.potential > 0)
-              this.siteRating = 'B'
-          else if (this.trackerCount > 8 ) // arbitrary demo
-              this.siteRating = 'C';
-          else if (this.trackerCount > 0 )
-              this.siteRating = 'B';
-          else if (this.trackerCount == 0 && this.potential == 0)
-              this.siteRating = 'A';
-          else
-              this.siteRating = 'none';
+      updateSiteScore: function() {
+          this.siteRating = this.tab.site.score.get()
       },
 
       setHttpsMessage: function() {
