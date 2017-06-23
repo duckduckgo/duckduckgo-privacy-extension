@@ -69,7 +69,7 @@ Trackers.prototype = $.extend({},
                     id: 'options-link',
                     link: chrome.runtime.openOptionsPage,
                     klass: 'link-secondary',
-                    spanClass: 'icon icon__arrow pull-right'
+                    spanClass: 'icon icon__settings pull-right'
                 }),
                 appendTo: $parent,
                 template: linkableTemplate

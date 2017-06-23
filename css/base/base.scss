@@ -135,4 +135,10 @@ a {
             transform: rotate(180deg);
         }
     }
+
+    &.icon__settings {
+        background-image: url('chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png');
+        width: 16px;
+        height: 16px;
+    }
 }
