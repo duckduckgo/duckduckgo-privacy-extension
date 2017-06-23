@@ -28,14 +28,7 @@ SiteTrackerList.prototype = $.extend({},
                       self.trackersBlocked = self.tab.trackers || {};
                       const companyNames = Object.keys(self.trackersBlocked);
 
-                      // bump "unknown" company trackers to end of array
-                      const i = companyNames.indexOf('unknown');
-                      if (i > -1) {
-                          companyNames.splice(i, i+1);
-                          companyNames.push('unknown');
-                      }
-
-                      // find company with largest number of trackers
+                      // find largest number of trackers (by company)
                       let maxCount = 0;
                       if (self.trackersBlocked && companyNames.length > 0) {
                           companyNames.map((name) => {
@@ -49,7 +42,7 @@ SiteTrackerList.prototype = $.extend({},
                           });
                       }
 
-                      // actual trackers we ended up blocking:
+                      // actual trackers we ended up blocking and their metadata:
                       self.companyListMap = companyNames.map(
                           (companyName) => {
                               let company = self.trackersBlocked[companyName];
@@ -57,11 +50,15 @@ SiteTrackerList.prototype = $.extend({},
                               // max width: 270 - (horizontal margin + padding in css) = 228
                               return {
                                   name: companyName,
-                                  count: company.count,
+                                  count: companyName === 'unknown' ? 0 : company.count,
                                   px: Math.floor(company.count * 228 / maxCount),
                                   urls: company.urls
                               }
-                          });
+                          })
+                          .sort((a, b) => {
+                              return a.count - b.count;
+                          })
+                          .reverse();
 
                   } else {
                       console.debug('SiteTrackerList model: no tab');
