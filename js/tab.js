@@ -31,6 +31,13 @@ class Tracker {
  *      count: total number of requests
  *  site: ref to a Site object
  */
+const scoreIconLocations = {
+    "A": "img/toolbar-rating-a@2x.png",
+    "B": "img/toolbar-rating-b@2x.png",
+    "C": "img/toolbar-rating-c@2x.png",
+    "D": "img/toolbar-rating-d@2x.png"
+}
+
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId,
@@ -42,7 +49,14 @@ class Tab {
         this.requestId = tabData.requestId,
         this.trackers = {},
         this.status = tabData.status,
-        this.site = new Site(utils.extractHostFromURL(tabData.url))
+        this.site = new Site(utils.extractHostFromURL(tabData.url));
+    };
+
+    updateBadgeIcon() {
+        if (!this.site.specialDomain()) {
+            let scoreIcon = scoreIconLocations[this.site.score.get()];
+            chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
+        }
     };
 
     updateSite() {

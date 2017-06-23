@@ -64,6 +64,8 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                     tab.site.setWhitelisted('HTTPSwhitelisted', true);
                     chrome.tabs.reload(tab.id);
                 }
+
+                tab.updateBadgeIcon();
             }
         }
     }
