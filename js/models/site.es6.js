@@ -38,7 +38,8 @@ Site.prototype = $.extend({},
 
       setSiteObj: function() {
           if (!this.tab) {
-              this.domain = '-';    // should not happen
+              this.domain = 'new tab'; // tab can be null for firefox new tabs
+              this.siteRating = '';
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted;

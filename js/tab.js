@@ -49,7 +49,10 @@ class Tab {
         this.requestId = tabData.requestId,
         this.trackers = {},
         this.status = tabData.status,
-        this.site = new Site(utils.extractHostFromURL(tabData.url));
+        this.site = new Site(utils.extractHostFromURL(tabData.url)),
+
+        // set the new tab icon to the dax logo
+        chrome.browserAction.setIcon({path: 'img/icon_16.png', tabId: tabData.tabId});
     };
 
     updateBadgeIcon() {
