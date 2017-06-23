@@ -5,7 +5,8 @@
 /* Trackers page */
 body {
     width: $popup__width;
-    height: 650px;
+    height: 500px;
+    overflow: hidden;
 }
 
 .disabled {
