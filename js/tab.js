@@ -64,6 +64,8 @@ class Tab {
 
     updateSite() {
         this.site = new Site(utils.extractHostFromURL(this.url))
+        // reset badge to dax whenever we go to a new site
+        chrome.browserAction.setIcon({path: 'img/icon_16.png', tabId: this.id});
     };
 
     /* Add up all of the unique tracker urls that 
