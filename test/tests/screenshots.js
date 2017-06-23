@@ -114,21 +114,14 @@ function runTest(url) {
 
             getLoadedTabById(t.id, blockingOnStartTime, 8000).then((tab) => {
                 //newScreenshots.blockingOnLoadTime = Date.now() - blockingOnStartTime;
+                let tabObj = bkg.tabManager.get({'tabId': tab.id});
+                newScreenshots.scoreObj = tabObj.site.score;
+                newScreenshots.score = tabObj.site.score.get()
 
-                takeScreenshot().then(() => {
-                    let tabObj = bkg.tabManager.get({'tabId': tab.id});
-                    newScreenshots.badgeTotal = tabObj.getBadgeTotal();
-                    newScreenshots.trackers = tabObj.trackers;
-                    newScreenshots.https = tabObj.upgradedHttps;
+                screenshots.push(newScreenshots);
 
-
-                    newScreenshots.siteScore = siteScore(tabObj);
-
-                    screenshots.push(newScreenshots);
-
-                    chrome.tabs.remove(tab.id);
-                    resolve();
-                });
+                chrome.tabs.remove(tab.id);
+                resolve();
             });
         });
     });

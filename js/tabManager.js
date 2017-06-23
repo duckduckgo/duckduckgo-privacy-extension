@@ -30,6 +30,7 @@ class TabManager {
 var tabManager = new TabManager();
 
 chrome.tabs.onRemoved.addListener( (id, info) => {
+    // remove the tab object
     tabManager.delete(id);
 });
 
@@ -44,6 +45,33 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         info.id = id;
         tabManager.create(info);
     }
+    else {
+        let tab = tabManager.get({tabId: id});
+        if (tab && info.status) {
+            tab.status = info.status;
+        
+            // When the tab finishes loading:
+            // 1. check main_frame url for http and update site score
+            // 2. check for uncompleted upgraded https requests and whitlist the site if 
+            // there are any
+            if (info.status === "complete") {
+
+                if (tab.url.match(/^https:\/\//)) {
+                    tab.site.score.update({hasHTTPS: true})
+                }
+
+                if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length) {
+                    tab.site.setWhitelisted('HTTPSwhitelisted', true);
+                    chrome.tabs.reload(tab.id);
+                }
+
+                console.info(tab.site.score);
+
+                tab.updateBadgeIcon();
+            }
+        }
+    }
+
 });
 
 // update tab url after the request is finished. This makes

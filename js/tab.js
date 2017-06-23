@@ -31,20 +31,36 @@ class Tracker {
  *      count: total number of requests
  *  site: ref to a Site object
  */
+const scoreIconLocations = {
+    "A": "img/toolbar-rating-a@2x.png",
+    "B": "img/toolbar-rating-b@2x.png",
+    "C": "img/toolbar-rating-c@2x.png",
+    "D": "img/toolbar-rating-d@2x.png"
+}
+
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId,
         this.potentialBlocked = {},
         this.url = tabData.url,
         this.upgradedHttps = false,
+        this.httpsRequests = [],
+        this.httpsWhitelisted = false,
         this.requestId = tabData.requestId,
         this.trackers = {},
         this.status = tabData.status,
-        this.site = Sites.get(utils.extractHostFromURL(this.url));
+        this.site = new Site(utils.extractHostFromURL(tabData.url));
+    };
+
+    updateBadgeIcon() {
+        if (!this.site.specialDomain()) {
+            let scoreIcon = scoreIconLocations[this.site.score.get()];
+            chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
+        }
     };
 
     updateSite() {
-        this.site = Sites.get(utils.extractHostFromURL(this.url));
+        this.site = new Site(utils.extractHostFromURL(this.url))
     };
 
     /* Add up all of the unique tracker urls that 
@@ -77,3 +93,13 @@ class Tab {
         }
     }
 }
+
+chrome.webRequest.onHeadersReceived.addListener((header) => {
+    let tab = tabManager.get({'tabId': header.tabId});
+    // remove successful rewritten requests 
+    if (tab && header.statusCode < 400) {
+        tab.httpsRequests = tab.httpsRequests.filter((url) => {
+            return url !== header.url;
+        });
+    }
+}, {urls: ['<all_urls>']});

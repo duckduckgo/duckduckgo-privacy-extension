@@ -124,24 +124,21 @@ chrome.webRequest.onBeforeRequest.addListener(
               return;
           }
 
-          // update badge here to display a 0 count
-          updateBadge(thisTab.id, thisTab.getBadgeTotal());
           chrome.runtime.sendMessage({"rerenderPopup": true});
       
           var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
       
           if (tracker) {
               // record all trackers on a site even if we don't block them
-              thisTab.site.addTracker(tracker.url);
+              thisTab.site.addTracker(tracker);
 
               
               // record potential blocked trackers for this tab
               thisTab.addToPotentialBlocked(tracker.url);
               
               // Block the request if the site is not whitelisted
-              if (!thisTab.site.whiteListed) {
+              if (!thisTab.site.whitelisted) {
                   thisTab.addOrUpdateTracker(tracker);
-                  updateBadge(thisTab.id, thisTab.getBadgeTotal());
                   chrome.runtime.sendMessage({"rerenderPopup": true});
 
                   console.info( utils.extractHostFromURL(thisTab.url)
@@ -155,13 +152,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 
       // upgrade to https if the site isn't whitelisted or in our list
       // of known broken https sites
-      if (!(thisTab.site.whiteListed || httpsWhitelist[thisTab.site.domain])) {
+      if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
           
-          // check for an upgraded main_frame request to use
-          // in our site score calculations
-          if (requestData.type === "main_frame" && upgradeStatus.redirectUrl) {
-              thisTab.upgradedHttps = true;
+          if (upgradeStatus.redirectUrl){
+              thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
           }
 
           return upgradeStatus;
@@ -176,16 +171,6 @@ chrome.webRequest.onBeforeRequest.addListener(
     },
     ["blocking"]
 );
-
-function updateBadge(tabId, numBlocked){
-    if(numBlocked === 0){
-        chrome.browserAction.setBadgeBackgroundColor({tabId: tabId, color: "#00cc00"});
-    } 
-    else {
-        chrome.browserAction.setBadgeBackgroundColor({tabId: tabId, color: "#cc0000"});
-    }
-    chrome.browserAction.setBadgeText({tabId: tabId, text: numBlocked + ""});
-}
 
 chrome.webRequest.onCompleted.addListener(
         ATB.updateSetAtb,

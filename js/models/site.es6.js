@@ -31,7 +31,7 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if(this.tab.site){
               this.isWhitelisted = !this.isWhitelisted;
-              this.tab.site.setWhitelisted(this.isWhitelisted);
+              this.tab.site.setWhitelisted('whitelisted', this.isWhitelisted);
               this.tab.site.notifyWhitelistChanged();
           }
       },
@@ -41,7 +41,7 @@ Site.prototype = $.extend({},
               this.domain = '-';    // should not happen
           }
           else {
-              this.isWhitelisted = this.tab.site.whiteListed;
+              this.isWhitelisted = this.tab.site.whitelisted;
               
               let special = this.tab.site.specialDomain();
               if (special) {
@@ -62,16 +62,7 @@ Site.prototype = $.extend({},
       },
 
       updateSiteScore: function() {
-          if (this.trackerCount == 0 && this.potential > 0)
-              this.siteRating = 'B'
-          else if (this.trackerCount > 8 ) // arbitrary demo
-              this.siteRating = 'C';
-          else if (this.trackerCount > 0 )
-              this.siteRating = 'B';
-          else if (this.trackerCount == 0 && this.potential == 0)
-              this.siteRating = 'A';
-          else
-              this.siteRating = 'none';
+          this.siteRating = this.tab.site.score.get()
       }, 
 
       setHttpsMessage: function() {
