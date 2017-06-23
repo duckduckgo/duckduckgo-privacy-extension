@@ -28,12 +28,24 @@ SiteTrackerList.prototype = $.extend({},
                       self.trackersBlocked = self.tab.trackers || {};
                       const companyNames = Object.keys(self.trackersBlocked);
 
+                      // bump "unknown" company trackers to end of array
+                      const i = companyNames.indexOf('unknown');
+                      if (i > -1) {
+                          companyNames.splice(i, i+1);
+                          companyNames.push('unknown');
+                      }
+
                       // find company with largest number of trackers
                       let maxCount = 0;
                       if (self.trackersBlocked && companyNames.length > 0) {
                           companyNames.map((name) => {
-                            let compare = self.trackersBlocked[name].count;
-                            if (compare > maxCount) maxCount = compare;
+                              // don't count "unknown" trackers since they will
+                              // be listed individually at bottom of graph,
+                              // we don't want "unknown" tracker total as maxCount
+                              if (name !== 'unknown') {
+                                  let compare = self.trackersBlocked[name].count;
+                                  if (compare > maxCount) maxCount = compare;
+                              }
                           });
                       }
 
