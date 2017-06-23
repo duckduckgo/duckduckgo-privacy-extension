@@ -65,6 +65,8 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                     chrome.tabs.reload(tab.id);
                 }
 
+                console.info(tab.site.score);
+
                 tab.updateBadgeIcon();
             }
         }

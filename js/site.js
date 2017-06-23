@@ -9,7 +9,8 @@
 const siteScores = ['A', 'B', 'C', 'D']
 
 class Score {
-    constructor() {
+    constructor(specialPage) {
+        this.specialPage = specialPage;     // see specialDomain() in class Site below
         this.hasHTTPS = false;
         this.inMajorTrackingNetwork = false;
         this.totalBlocked = 0;
@@ -20,6 +21,8 @@ class Score {
      * Calculates and returns a site score
      */
     get() {
+        if (this.specialPage) return 'none';
+
         let scoreIndex = 1;
 
         if (this.inMajorTrackingNetwork) scoreIndex++
@@ -66,7 +69,7 @@ class Site{
     constructor(domain) {
         this.domain = domain,
         this.trackers = [],
-        this.score = new Score();
+        this.score = new Score(this.specialDomain());
 
         // whitelist only HTTPS upgrades
         this.HTTPSwhitelisted = false;
