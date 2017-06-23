@@ -54,7 +54,7 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             // 1. check main_frame url for http and update site score
             // 2. check for uncompleted upgraded https requests and whitlist the site if 
             // there are any
-            if (info.status === "complete") {
+            if (tab.status === "complete") {
 
                 if (tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
