@@ -28,6 +28,7 @@ module.exports = function () {
             </li>
             <li class="site-info__see-all-li">
                 <a href="#" class="js-site-show-all-trackers link-secondary">
+                    <span class="icon icon__arrow pull-right"></span>
                     See all trackers on this page
                 </a>
             </li>

@@ -152,6 +152,10 @@
                 font-weight: bold;
                 padding: 14px 0 0 14px;
                 display: inline-block;
+
+                &.sliding-subview__header__title--has-icon {
+                    padding-left: 35px;
+                }
             }
 
             .sliding-subview__header__tabbed-nav {

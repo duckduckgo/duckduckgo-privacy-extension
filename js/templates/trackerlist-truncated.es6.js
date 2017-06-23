@@ -8,7 +8,11 @@ module.exports = function () {
         <ul class="menu-list top-blocked__list">
             ${trackerListItems(this.model.companyListMap)}
             <li class="top-blocked__li top-blocked__li--see-all border--top">
-                <a href="#" class="link-secondary js-top-blocked-see-all">See all</a></li>
+                <a href="#" class="link-secondary js-top-blocked-see-all">
+                    <span class="icon icon__arrow pull-right"></span>
+                    See all
+                </a>
+            </li>
         </ul>
     </section>`
 }

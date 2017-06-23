@@ -183,10 +183,11 @@ body {
         }
 
         .site-info__see-all-li {
+            position: relative;
 
             .link-secondary {
                 font-weight: bold;
-                padding-top: 3.5px;
+                padding-top: 4.5px;
                 padding-bottom: 3.5px;
                 display: block;
             }
@@ -273,10 +274,15 @@ body {
             margin: 28px 0 0 0;
 
             .link-secondary {
+                position: relative;
                 font-weight: bold;
                 padding-top: 3.5px;
                 padding-bottom: 3.5px;
                 display: block;
+
+                .icon__arrow {
+                    padding-top: 1px;
+                }
             }
         }
     }

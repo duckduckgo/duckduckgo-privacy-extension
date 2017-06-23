@@ -92,6 +92,11 @@ a {
     right: 14px;
 }
 
+.pull-left {
+    position: absolute;
+    left: 14px;
+}
+
 
 /* Card Display */
 .card {
@@ -121,9 +126,13 @@ a {
     @include icon_display();
     /* you'll need to set the background image within each instance of .icon */
 
-    &.icon--arrow {
-      background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
-      width: 16px;
-      height: 16px;
+    &.icon__arrow {
+        background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
+        width: 16px;
+        height: 16px;
+
+        &.icon__arrow--left {
+            transform: rotate(180deg);
+        }
     }
 }
