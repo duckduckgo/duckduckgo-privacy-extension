@@ -10,15 +10,12 @@ const AllTrackersModel = require('./../models/trackerlist-top-blocked.es6.js');
 function TrackerList (ops) {
 
     this.selectedTab = ops.defaultTab; // poss values: `page` or `all`
-    this.doRenderListOnly = false;
-    this.updateModel();
-    ops.model = this.model;
+    ops.model = null;
     this.template = ops.template;
-
     Parent__SlidingSubview.call(this, ops);
-    this.doRenderListOnly = true; // we only need to render full container once
+    this.updateList();
 
-    // tabs
+    // tab clicks
     this.setActiveTab();
     this.$navtab = this.$el.find('.js-nav-tab');
     this.bindEvents([
@@ -50,34 +47,33 @@ TrackerList.prototype = $.extend({},
             if (this.selectedTab === 'all') {
                 if (!$(e.currentTarget).hasClass(selector)) {
                     this.selectedTab = 'page';
-                    this.updateModel();
+                    this.updateList();
                     this.setActiveTab();
                 }
             } else if (this.selectedTab === 'page') {
                 if (!$(e.currentTarget).hasClass(selector)) {
                     this.selectedTab = 'all';
-                    this.updateModel();
-                    this.renderList();
+                    this.updateList();
                     this.setActiveTab();
                 }
             }
 
         },
 
-        updateModel: function () {
-            // so we always have freshest data
+        updateList: function () {
             if (this.selectedTab === 'all') {
                 let num = 10;
                 this.model = new AllTrackersModel({
                     modelName: 'trackerListTop' + num + 'Blocked' + Math.round(Math.random()*100000),
                     numCompanies: 10
-                })
+                });
+                this.renderList();
             } else if (this.selectedTab === 'page') {
                 this.model = new SiteTrackersModel({
                     modelName: 'siteTrackerList-' + Math.round(Math.random()*100000)
                 });
                 this.model.fetchAsyncData().then(() => {
-                      this.renderList();
+                    this.renderList();
                 });
             }
         },
