@@ -1,6 +1,4 @@
-// TODO: refactor so container is only rendered first time thru
 // TODO: edge cases - no data yet, page is empty tab, etc
-// TODO: list each "unknown" page tracker individually
 
 const Parent__SlidingSubview = require('./sliding-subview.es6.js');
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js');
