@@ -33,13 +33,13 @@ Site.prototype = $.extend({},
 
       setSiteObj: function() {
           if (!this.tab) {
-              this.domain = '-';    // should not happen
+              this.domain = '-'; // should not happen
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted;
               let special = this.tab.site.specialDomain();
               if (special) {
-                  this.domain = special;    // eg "extensions", "options", "new tab"
+                  this.domain = special; // eg "extensions", "options", "new tab"
               }
               else {
                   this.disabled = false;
@@ -51,7 +51,7 @@ Site.prototype = $.extend({},
           if (this.tab) {
             this.trackerCount = this.tab.getBadgeTotal();
             this.potential = Object.keys(this.tab.potentialBlocked).length;
-            this.updateScore();
+            this.updateSiteScore();
           }
       },
 
