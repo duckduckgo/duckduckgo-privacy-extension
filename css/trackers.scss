@@ -240,6 +240,13 @@ body {
         margin-left: 14px;
         margin-right: 14px;
 
+        &.top-blocked__li--no-trackers {
+            padding: 7px 7px 28px 7px;
+            font-weight: bold;
+            font-size: 15px;
+            color: $platinum-darker;
+        }
+
         .top-blocked__li__blocker-bar {
             z-index: 1;
             position: relative;
