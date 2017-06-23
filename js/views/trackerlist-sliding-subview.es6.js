@@ -1,3 +1,7 @@
+// TODO: refactor so container is only rendered first time thru
+// TODO: edge cases - no data yet, page is empty tab, etc
+// TODO: list each "unknown" page tracker individually
+
 const Parent__SlidingSubview = require('./sliding-subview.es6.js');
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js');
 const SiteTrackersModel = require('./../models/trackerlist-site.es6.js');
@@ -7,22 +11,23 @@ function TrackerList (ops) {
 
     this.selectedTab = ops.defaultTab; // poss values: `page` or `all`
     this.doRenderListOnly = false;
-    this.setModel();
+    this.updateModel();
     ops.model = this.model;
     this.template = ops.template;
 
     Parent__SlidingSubview.call(this, ops);
     this.doRenderListOnly = true; // we only need to render full container once
 
-    this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
-    this.animateGraphBars();
-
+    // tabs
     this.setActiveTab();
-
     this.$navtab = this.$el.find('.js-nav-tab');
     this.bindEvents([
         [this.$navtab, 'click', this.switchTabs]
     ]);
+
+    // animate graph bars
+    this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
+    this.animateGraphBars();
 };
 
 TrackerList.prototype = $.extend({},
@@ -31,26 +36,46 @@ TrackerList.prototype = $.extend({},
     {
 
         setActiveTab: function () {
-            let selector = '.js-nav-tab-' + this.selectedTab;
+            let selector = '.js-nav-tab';
+            this.$el.find(selector).removeClass('active');
+            selector = selector + '-' + this.selectedTab;
             this.$el.find(selector).addClass('active');
         },
 
-        switchTabs: function () {
-          // TODO: switch tabs
-          // TODO: switch model
-          // TODO: rerender list
+        switchTabs: function (e) {
+            e.preventDefault();
+            let selector = '.js-nav-tab-' + this.selectedTab;
+            let $elHasClass = $(e.currentTarget).hasClass;
+
+            if (this.selectedTab === 'all') {
+                if (!$(e.currentTarget).hasClass(selector)) {
+                    this.selectedTab = 'page';
+                    this.updateModel();
+                    this.setActiveTab();
+                }
+            } else if (this.selectedTab === 'page') {
+                if (!$(e.currentTarget).hasClass(selector)) {
+                    this.selectedTab = 'all';
+                    this.updateModel();
+                    this.renderList();
+                    this.setActiveTab();
+                }
+            }
+
         },
 
-        setModel: function () {
+        updateModel: function () {
             // so we always have freshest data
             if (this.selectedTab === 'all') {
                 let num = 10;
                 this.model = new AllTrackersModel({
-                    modelName: 'trackerListTop' + num + 'Blocked',
+                    modelName: 'trackerListTop' + num + 'Blocked' + Math.round(Math.random()*100000),
                     numCompanies: 10
                 })
             } else if (this.selectedTab === 'page') {
-                this.model = new SiteTrackersModel();
+                this.model = new SiteTrackersModel({
+                    modelName: 'siteTrackerList-' + Math.round(Math.random()*100000)
+                });
                 this.model.fetchAsyncData().then(() => {
                       this.renderList();
                 });
@@ -64,7 +89,6 @@ TrackerList.prototype = $.extend({},
             this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
             this.animateGraphBars();
         }
-
     }
 );
 
