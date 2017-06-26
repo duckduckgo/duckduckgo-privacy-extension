@@ -1,4 +1,6 @@
 const Parent = window.DDG.base.Page;
+const backgroundPage = chrome.extension.getBackgroundPage();
+
 const TrackerListView = require('./../views/trackerlist-truncated.es6.js');
 const TrackerListModel = require('./../models/trackerlist-top-blocked.es6.js');
 const trackerListTemplate = require('./../templates/trackerlist-truncated.es6.js');
@@ -22,6 +24,7 @@ const autocompleteTemplate = require('./../templates/autocomplete.es6.js');
 
 function Trackers (ops) {
     Parent.call(this, ops);
+
 };
 
 Trackers.prototype = $.extend({},
@@ -35,6 +38,8 @@ Trackers.prototype = $.extend({},
             var $parent = $('#trackers-container');
 
             Parent.prototype.ready.call(this);
+
+            this.setBrowserClassOnBodyTag();
 
             this.views.search = new SearchView({
                 pageView: this,
@@ -87,6 +92,11 @@ Trackers.prototype = $.extend({},
                 template: autocompleteTemplate
             });
 
+        },
+
+        setBrowserClassOnBodyTag: function () {
+            let browserClass = 'is-browser__' + backgroundPage.browser;
+            $('body').addClass(browserClass);
         }
 
     }

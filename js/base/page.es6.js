@@ -13,7 +13,7 @@ BasePage.prototype = $.extend({},
 
         // pageName: '' - should be unique, defined by each page subclass
 
-        ready: function() {}
+        ready: function () {}
 
     }
 );
