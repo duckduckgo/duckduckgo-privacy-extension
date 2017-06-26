@@ -50,8 +50,13 @@ function Background() {
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
       for(var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
+          
           if(tab.url){
-            tabManager.create(tab);
+              tabManager.create(tab);
+              // check https status of saved tabs so we have the correct site score
+              if (tab.url.match(/^https:\/\//)) {
+                  tab.site.score.update({hasHTTPS: true})
+              }
           }
       }
   });

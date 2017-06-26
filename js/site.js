@@ -148,6 +148,11 @@ class Site{
         if (this.domain === 'newtab')
             return "new tab";
 
+        // special case for about: firefox tabs
+        if (browser === "moz" && !this.domain) {
+            return "about";
+        }
+
         return false;
     }
 }

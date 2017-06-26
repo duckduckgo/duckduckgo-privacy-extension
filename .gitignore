@@ -7,6 +7,7 @@ npm-debug.log
 *.map
 public/js/*.*
 public/css/*.*
+js/abp.js
 *.swp
 trackersWithParentCompany
 js/abp.js
