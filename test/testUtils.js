@@ -25,19 +25,32 @@ function getLoadedTab(tabURL) {
     });
 }
 
-function getLoadedTabById(id, startTime, timeout) {
+function getLoadedTabById(id, startTime, timeout, delay, delayStart) {
     return new Promise((resolve) => {
         chrome.tabs.get(id, (tab) => {
                 if (tab && tab.status === 'complete') {
-                    // return tab
-                    resolve(tab);
+                   
+                    if (delay && delayStart) {
+                        if ((Date.now() - delayStart) > delay) {
+                            resolve(tab);
+                        }
+                        else {
+                            resolve(getLoadedTabById(id, startTime, timeout, delay, delayStart));
+                        }
+                    }
+                    else if (delay && !delayStart) {
+                        resolve(getLoadedTabById(id, startTime, timeout, delay, Date.now()));
+                    }
+                    else {
+                        resolve(tab);
+                    }
                 }
                 else if((Date.now() - startTime) > timeout){
                     resolve(tab)
                 }
                 else {
                     // return new promise and wait
-                    resolve(getLoadedTabById(id, startTime, timeout));
+                    resolve(getLoadedTabById(id, startTime, timeout, delay));
                 }
         });
     });

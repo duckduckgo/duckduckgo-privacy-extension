@@ -112,7 +112,7 @@ function runTest(url) {
         
         chrome.tabs.create({url: url}, (t) => {
 
-            getLoadedTabById(t.id, blockingOnStartTime, 8000).then((tab) => {
+            getLoadedTabById(t.id, blockingOnStartTime, 8000, 1000).then((tab) => {
                 //newScreenshots.blockingOnLoadTime = Date.now() - blockingOnStartTime;
                 let tabObj = bkg.tabManager.get({'tabId': tab.id});
                 newScreenshots.scoreObj = tabObj.site.score;
