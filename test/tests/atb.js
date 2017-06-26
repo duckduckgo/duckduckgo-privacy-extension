@@ -1,9 +1,24 @@
 (function() {
  
   QUnit.module("ATB");
-  
+  var bkg = chrome.extension.getBackgroundPage();
+
+  QUnit.test("Test ATB migration", function (assert) {
+      // make some fake atb values in localStorage
+      bkg.localStorage['atb'] = 'old-atb-value';
+      bkg.localStorage['set_atb'] = 'old-set-atb-value';
+
+      ATB.migrate();
+
+      assert.ok(settings.getSetting('atb') === "old-atb-value", "ATB value should be migrated to setting");
+      assert.ok(settings.getSetting('set_atb') === "old-set-atb-value", "set ATB value should be migrated to setting");
+
+      assert.ok(localStorage['atb'] === '', "localstorage should be cleared");
+      assert.ok(localStorage['set_atb'] === '', "localstorage should be cleared");
+  });
+
   QUnit.test("Testing ATB module", function (assert) {
-      
+
       // test appending atb value to only ddg urls
       var urlTests = [
       { 'url': 'http://duckduckgo.com/?q=something', 'rewrite': true },
