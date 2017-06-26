@@ -67,6 +67,9 @@ function Background() {
         ATB.onInstalled();
         ATB.startUpPage();
     }
+    else if (details.reason === "upgrade") {
+        ATB.migrate()
+    }
   });
 }
 
