@@ -184,10 +184,14 @@ body {
         }
 
         .site-info__tracker-count {
-            border-radius: 16px;
+            display: inline-block;
+            font-size: 13px;
+            min-height: 18px;
+            line-height: 20px;
+            padding: 0px 6px;
+            border-radius: 20px;
             background: $red;
             color: $white;
-            padding: 0px 8px;
             margin-right: 3.5px;
         }
 
