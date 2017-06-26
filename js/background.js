@@ -146,6 +146,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                   thisTab.addOrUpdateTracker(tracker);
                   chrome.runtime.sendMessage({"updateTrackerCount": true});
 
+                  // update badge icon for any requests that come in after
+                  // the tab has finished loading
+                  if (thisTab.status === "complete") thisTab.updateBadgeIcon()
+
                   console.info( utils.extractHostFromURL(thisTab.url)
                                + " [" + tracker.parentCompany + "] " + tracker.url);
 
