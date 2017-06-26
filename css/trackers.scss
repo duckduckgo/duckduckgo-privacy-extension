@@ -224,10 +224,13 @@ body {
     }
 
     .sliding-subview--trackers-blocked {
+        overflow-y: auto;
 
         .top-blocked__list {
+            z-index: 0;
+            overflow-y: auto;
             padding-top: 14px;
-            padding-bottom: 28px;
+            padding-bottom: 112px;
             margin-right: 7px;
             margin-left: 7px;
         }
