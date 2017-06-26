@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.View;
-
-
-var backgroundPage = chrome.extension.getBackgroundPage();
+const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js');
+const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
+const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Site (ops) {
 
@@ -12,7 +12,7 @@ function Site (ops) {
     Parent.call(this, ops);
 
     // bind events
-    this.setup();
+    this._setup();
 
     // set up messaging to update the tracker count
     var thisView = this,
@@ -21,21 +21,20 @@ function Site (ops) {
     this.model.browser = backgroundPage.browser;
 
     backgroundPage.utils.getCurrentTab(function(tab) {
-        if(tab){
+        if (tab) {
             thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
             thisModel.tab = backgroundPage.tabManager.get({"tabId": tab.id});
             thisModel.setSiteObj();
 
-
             if (thisModel.disabled) {   // determined in setSiteObj()
-                thisView.setDisabled();
+                thisView._setDisabled();
             }
 
             thisModel.updateTrackerCount();
             thisModel.setHttpsMessage();
             thisView.rerender(); // our custom rerender below
-        }
-        else {
+
+        } else {
             console.debug('Site view: no tab');
         }
     });
@@ -44,11 +43,11 @@ function Site (ops) {
     // '-' is the domain default in the pages/trackers.es6.js call
     if (this.domain === '-') {
         this.model.disabled = true;
-        this.setDisabled();
+        this._setDisabled();
     }
 
-    chrome.runtime.onMessage.addListener(function(req, sender, res){
-        if(req.rerenderPopup){
+    chrome.runtime.onMessage.addListener(function(req, sender, res) {
+        if (req.updateTrackerCount) {
             thisModel.updateTrackerCount();
             thisView.rerender(); // our custom rerender below
         }
@@ -59,30 +58,41 @@ function Site (ops) {
 Site.prototype = $.extend({},
     Parent.prototype,
     {
+
+        _setup: function() {
+
+            this._cacheElems('.js-site', [
+                'toggle',
+                'show-all-trackers'
+            ]);
+
+            this.bindEvents([
+              [this.$toggle, 'click', this._whitelistClick],
+              [this.$showalltrackers, 'click', this._showAllTrackers]
+            ]);
+        },
+
         _whitelistClick: function (e) {
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
             this.rerender();
         },
 
-        setup: function() {
-
-            this._cacheElems('.js-site', [ 'toggle' ]);
-
-            this.bindEvents([
-              [this.$toggle, 'click', this._whitelistClick],
-            ]);
-
-        },
-
         rerender: function() {
             this.unbindEvents();
             this._rerender();
-            this.setup();
+            this._setup();
         },
 
-        setDisabled: function() {
+        _setDisabled: function() {
             $('body').addClass('disabled');
+        },
+
+        _showAllTrackers: function () {
+            this.views.slidingSubview = new TrackerListSlidingSubview({
+                template: tabbedTrackerListTemplate,
+                defaultTab: 'page'
+            });
         }
 
     }

@@ -37,8 +37,8 @@ module.exports = function(grunt) {
         sass: {
             dist: {
                 files: {
-                    '<%= dirs.public.css %>/base.css': ['<%= dirs.src.css %>/base/base.scss'],
                     '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.css %>/noatb.scss'],
+                    '<%= dirs.public.css %>/base.css': ['<%= dirs.src.css %>/base/base.scss'],
                     '<%= dirs.public.css %>/trackers.css': ['<%= dirs.src.css %>/trackers.scss'],
                     '<%= dirs.public.css %>/options.css': ['<%= dirs.src.css %>/options.scss']
                 }

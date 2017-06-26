@@ -1,6 +1,6 @@
 const Parent = window.DDG.base.Model;
+const backgroundPage = chrome.extension.getBackgroundPage();
 
-var backgroundPage = chrome.extension.getBackgroundPage();
 function PrivacyOptions (attrs) {
 
     attrs.trackerBlockingEnabled = backgroundPage.settings.getSetting('trackerBlockingEnabled');

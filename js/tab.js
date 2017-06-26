@@ -4,7 +4,7 @@ class Tracker {
         this.urls = [url],
         this.count = 1;
     };
-    
+
     increment() {
             this.count += 1;
     };
@@ -25,7 +25,7 @@ class Tracker {
  *  id: Chrome tab id
  *  url: url of the tab
  *  potentialBlocked: a list of all tracker urls seen
- *  trackers: container of tracker instances 
+ *  trackers: container of tracker instances we blocked in tab
  *      parentCompany -> ref to a Company object
  *      urls: all tracker urls we have seen for this company
  *      count: total number of requests
@@ -68,7 +68,7 @@ class Tab {
         chrome.browserAction.setIcon({path: 'img/icon_16.png', tabId: this.id});
     };
 
-    /* Add up all of the unique tracker urls that 
+    /* Add up all of the unique tracker urls that
      * we have see on this tab
      */
     getBadgeTotal() {

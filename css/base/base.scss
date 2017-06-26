@@ -51,7 +51,6 @@ form, input, select, option, button {
 
 
 /* Fonts */
-
 body,
 input,
 textarea,
@@ -68,7 +67,6 @@ select {
 
 
 /* Links */
-
 a {
     color: $blue;
     text-decoration: none;
@@ -82,12 +80,21 @@ a {
     }
 }
 
+/* Hide element */
+.is-hidden {
+    display: none;
+}
+
 
 /* Position */
-
 .pull-right {
     position: absolute;
     right: 14px;
+}
+
+.pull-left {
+    position: absolute;
+    left: 14px;
 }
 
 
@@ -100,7 +107,11 @@ a {
     margin: $card__margin;
 
     .border--bottom {
-        border-bottom: $card__border--bottom;
+        border-bottom: $card__border;
+    }
+
+    .border--top {
+        border-top: $card__border;
     }
 
     .menu-title {
@@ -109,16 +120,25 @@ a {
 }
 
 
-
 /* Icons */
 /* Standard icon display within the extension */
 .icon {
     @include icon_display();
     /* you'll need to set the background image within each instance of .icon */
 
-    &.icon--arrow {
-      background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
-      width: 16px;
-      height: 16px;
+    &.icon__arrow {
+        background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
+        width: 16px;
+        height: 16px;
+
+        &.icon__arrow--left {
+            transform: rotate(180deg);
+        }
+    }
+
+    &.icon__settings {
+        background-image: url('chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png');
+        width: 16px;
+        height: 16px;
     }
 }

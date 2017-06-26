@@ -2,9 +2,7 @@ const Parent = window.DDG.base.Model;
 
 function Linkable (attrs) {
 
-
     Parent.call(this, attrs);
-
 };
 
 

@@ -48,7 +48,7 @@ function Background() {
   localStorage['os'] = os;
 
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      for(var i = 0; i < savedTabs.length; i++){ 
+      for(var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
           
           if(tab.url){
@@ -129,26 +129,26 @@ chrome.webRequest.onBeforeRequest.addListener(
               return;
           }
 
-          chrome.runtime.sendMessage({"rerenderPopup": true});
-      
+          chrome.runtime.sendMessage({"updateTrackerCount": true});
+
           var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
-      
+
           if (tracker) {
               // record all trackers on a site even if we don't block them
               thisTab.site.addTracker(tracker);
 
-              
+
               // record potential blocked trackers for this tab
               thisTab.addToPotentialBlocked(tracker.url);
-              
+
               // Block the request if the site is not whitelisted
               if (!thisTab.site.whitelisted) {
                   thisTab.addOrUpdateTracker(tracker);
-                  chrome.runtime.sendMessage({"rerenderPopup": true});
+                  chrome.runtime.sendMessage({"updateTrackerCount": true});
 
                   console.info( utils.extractHostFromURL(thisTab.url)
                                + " [" + tracker.parentCompany + "] " + tracker.url);
-                  
+
                   // tell Chrome to cancel this webrequest
                   return {cancel: true};
               }
@@ -159,7 +159,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       // of known broken https sites
       if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
-          
+
           if (upgradeStatus.redirectUrl){
               thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
           }

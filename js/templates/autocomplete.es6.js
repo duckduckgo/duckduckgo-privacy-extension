@@ -9,7 +9,7 @@ module.exports = function () {
 
     return bel`<ul class="js-autocomplete" style="${marginTop}">
                   ${this.model.suggestions.map((suggestion) => bel`
-                      <li><a href="javascript:void(0)">${suggestion}</a></li>`
+                      <li><a href="#">${suggestion}</a></li>`
                   )}
               </ul>`;
 }

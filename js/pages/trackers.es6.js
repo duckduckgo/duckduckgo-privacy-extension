@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.Page;
-const TrackerListView = require('./../views/trackerlist.es6.js');
-const TrackerListModel = require('./../models/trackerlist.es6.js');
-const trackerListTemplate = require('./../templates/trackerlist.es6.js');
+const TrackerListView = require('./../views/trackerlist-truncated.es6.js');
+const TrackerListModel = require('./../models/trackerlist-top-blocked.es6.js');
+const trackerListTemplate = require('./../templates/trackerlist-truncated.es6.js');
 
 const SiteView = require('./../views/site.es6.js');
 const SiteModel = require('./../models/site.es6.js');
@@ -57,9 +57,9 @@ Trackers.prototype = $.extend({},
 
             this.views.trackerlist = new TrackerListView({
                 pageView: this,
-                model: new TrackerListModel({}),
+                model: new TrackerListModel({ numCompanies: 4 }),
                 appendTo: $parent,
-                template: trackerListTemplate
+                template: trackerListTemplate,
             });
 
             this.views.options = new LinkableView({
@@ -69,7 +69,7 @@ Trackers.prototype = $.extend({},
                     id: 'options-link',
                     link: chrome.runtime.openOptionsPage,
                     klass: 'link-secondary',
-                    spanClass: 'icon pull-right icon--arrow'
+                    spanClass: 'icon icon__settings pull-right'
                 }),
                 appendTo: $parent,
                 template: linkableTemplate

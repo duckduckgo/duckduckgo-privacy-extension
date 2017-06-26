@@ -1,14 +1,16 @@
 @import "vars";
 
+
 /* App states */
 @mixin is_disabled () {
     opacity: 0.5;
 }
 
+
 /* Menu lists */
 @mixin menu_list () {
 
-    ul.menu-list {
+    .menu-list {
         list-style-type: none;
         padding-left: 0;
         padding-bottom: 14px;
@@ -23,8 +25,8 @@
 
         }
     }
-
 }
+
 
 /* Toggle buttons */
 @mixin toggle_button () {
@@ -104,4 +106,88 @@
 @mixin ddg_logo () {
     background-image: url($ddg-logo__url);
     background-size: contain;
+}
+
+
+/* Sliding subviews */
+@mixin sliding_subview () {
+
+    .sliding-subview {
+        position: absolute;
+        top: 0;
+        left: $popup__width;
+        width: $popup__width;
+        height: 100%;
+
+        &.sliding-subview--root {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.35s ease-in-out;
+
+            &.sliding-subview--open {
+                left: -$popup__width;
+            }
+        }
+
+        &.sliding-subview--has-fixed-header {
+            padding: 49px 0 0 0;
+            width: $popup__width; /* 270px - 14*2 */
+            margin-bottom: 28px;
+        }
+
+        .sliding-subview__header {
+            z-index: 10;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 42px;
+            margin: 0;
+            font-size: 1.14em;
+            color: #383838;
+            overflow: hidden;
+
+            .sliding-subview__header__title {
+                color: $slate;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 14px 0 0 14px;
+                display: inline-block;
+
+                &.sliding-subview__header__title--has-icon {
+                    padding-left: 35px;
+                }
+            }
+
+            .sliding-subview__header__tabbed-nav {
+                position: absolute;
+                right: 7px;
+                top: 0;
+
+                a {
+                    font-size: 14px;
+                    font-weight: normal;
+                    color: $grey-light;
+                    display: inline-block;
+                    padding: 14px 0 10px 0;
+                    margin-right: 7px;
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+
+                    &.active {
+                        color: $red;
+                        border-bottom: 1px solid $red;
+
+                        &:hover {
+                            text-decoration: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
