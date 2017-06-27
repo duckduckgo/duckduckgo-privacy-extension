@@ -22,7 +22,7 @@ $card__margin--bottom: 7px;
 $card__margin--left: 7px;
 $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $card__margin--left;
 
-/* Icons & images */
+/* Image & icon urls */
 $ddg-logo__url: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 $icon__arrow: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
 
@@ -37,3 +37,12 @@ $icon__rating__C--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-ratin
 
 $icon__rating__D--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
 $icon__rating__D--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
+
+$icon__https-status__default--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png";
+$icon__https-status__default--moz: "moz-extension://__MSG_@@extension_id__/img/lock-green@2x.png";
+
+$icon__https-status__upgraded--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png";
+$icon__https-status__upgraded--moz: "moz-extension://__MSG_@@extension_id__/img/lock-orange@2x.png";
+
+$icon__https-status__none--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png";
+$icon__https-status__none--moz: "moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png";

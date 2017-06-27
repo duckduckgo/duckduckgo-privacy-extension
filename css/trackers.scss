@@ -166,28 +166,38 @@ body {
         .site-info__https-status {
             @include icon_display();
 
-            &.site-info__https-status--default-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
+            &.site-info__https-status--default {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__https-status__default--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__https-status__default--moz);
+                }
             }
 
-            &.site-info__https-status--upgraded-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
+            &.site-info__https-status--upgraded {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__https-status__upgraded--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__https-status__upgraded--moz);
+                }
             }
 
-            &.site-info__https-status--none-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
-            }
+            &.site-info__https-status--none {
 
-            &.site-info__https-status--default-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
-            }
+                .is-browser--chrome & {
+                    background-image: url($icon__https-status__none--chrome);
+                }
 
-            &.site-info__https-status--upgraded-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
-            }
+                .is-browser--moz & {
+                    background-image: url($icon__https-status__none--moz);
+                }
 
-            &.site-info__https-status--none-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
             }
         }
 
