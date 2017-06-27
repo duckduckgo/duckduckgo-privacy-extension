@@ -77,6 +77,9 @@ function checkEasylists(url, currLocation, request){
         if(easylistBlock){
             let host = utils.extractHostFromURL(url);
             let parentCompany = findParent(host.split('.')) || "unknown";
+
+            if (parentCompany !== 'unknown') Companies.add(parentCompany)
+
             return easylistBlock = {parentCompany: parentCompany, url: host, type: listName};
         }
 

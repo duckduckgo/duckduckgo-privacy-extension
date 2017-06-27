@@ -65,7 +65,10 @@ function Background() {
     // only run the following section on install
     if (details.reason === "install") {
         ATB.onInstalled();
-        ATB.startUpPage();
+        
+        // Don't open the intro page. Leaving this here if we want to use it for
+        // something else later on
+        //ATB.startUpPage();
     }
   });
 }
