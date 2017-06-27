@@ -52,7 +52,7 @@ class Tab {
         this.site = new Site(utils.extractHostFromURL(tabData.url)),
 
         // set the new tab icon to the dax logo
-        chrome.browserAction.setIcon({path: 'img/icon_16.png', tabId: tabData.tabId});
+        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId});
     };
 
     updateBadgeIcon() {
@@ -65,7 +65,7 @@ class Tab {
     updateSite() {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
-        chrome.browserAction.setIcon({path: 'img/icon_16.png', tabId: this.id});
+        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
     };
 
     /* Add up all of the unique tracker urls that
