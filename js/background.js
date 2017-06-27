@@ -65,7 +65,6 @@ function Background() {
     // only run the following section on install
     if (details.reason === "install") {
         ATB.onInstalled();
-        ATB.startUpPage();
     }
   });
 }
