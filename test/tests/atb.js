@@ -39,6 +39,13 @@
               assert.ok(settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
       });
 
+      // test anchor tag rewrite
+      settings.updateSetting('atb', 'v70-6')
+      settings.updateSetting('set_atb', 'v70-6')
+
+      let anchorRewrite = ATB.redirectURL({ 'url': 'https://duckduckgo.com/about#newsletter'})
+      assert.ok(anchorRewrite.redirectUrl === 'https://duckduckgo.com/about&atb=v70-6#newsletter', 'rewrite ddg URLs with anchor tags')
+
   });
 
   QUnit.test("Testing ATB Install flow", function (assert) {
