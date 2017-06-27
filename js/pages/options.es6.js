@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.Page;
+const mixins = require('./mixins/index.es6.js');
 
 const PrivacyOptionsView = require('./../views/privacy-options.es6.js');
 const PrivacyOptionsModel = require('./../models/privacy-options.es6.js');
@@ -14,6 +15,7 @@ function Options (ops) {
 
 Options.prototype = $.extend({},
     Parent.prototype,
+    mixins.setBrowserClassOnBodyTag,
     {
 
         pageName: 'options',
@@ -23,6 +25,8 @@ Options.prototype = $.extend({},
             var $parent = $("#options-content");
 
             Parent.prototype.ready.call(this);
+
+            this.setBrowserClassOnBodyTag();
 
             this.views.options = new PrivacyOptionsView({
                 pageView: this,

@@ -17,7 +17,7 @@
     position: relative;
 
     .ddg-logo {
-        @include ddg_logo()
+        @include ddg_logo();
         width: 158px;
         height: 44px;
         margin-bottom: 23px;

@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.Page;
-const backgroundPage = chrome.extension.getBackgroundPage();
+const mixins = require('./mixins/index.es6.js');
 
 const TrackerListView = require('./../views/trackerlist-truncated.es6.js');
 const TrackerListModel = require('./../models/trackerlist-top-blocked.es6.js');
@@ -24,11 +24,11 @@ const autocompleteTemplate = require('./../templates/autocomplete.es6.js');
 
 function Trackers (ops) {
     Parent.call(this, ops);
-
 };
 
 Trackers.prototype = $.extend({},
     Parent.prototype,
+    mixins.setBrowserClassOnBodyTag,
     {
 
         pageName: 'trackers',
@@ -92,13 +92,7 @@ Trackers.prototype = $.extend({},
                 template: autocompleteTemplate
             });
 
-        },
-
-        setBrowserClassOnBodyTag: function () {
-            let browserClass = 'is-browser--' + backgroundPage.browser;
-            $('body').addClass(browserClass);
         }
-
     }
 );
 
