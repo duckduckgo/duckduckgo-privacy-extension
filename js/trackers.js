@@ -9,7 +9,7 @@ var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists(),
-    entityList = load.JSONfromExternalFile(settings.getSetting('entityList')) || {},
+    entityList = load.JSONfromExternalFile(settings.getSetting('entityList')),
     entityMap =  load.JSONfromLocalFile(settings.getSetting('entityMap'));
 
 function isTracker(urlToCheck, currLocation, tabId, request) {
