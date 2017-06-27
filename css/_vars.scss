@@ -23,8 +23,15 @@ $card__margin--left: 7px;
 $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $card__margin--left;
 
 /* Image & icon urls */
-$ddg-logo__url: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
+$img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
+$img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
+
+
+
 $icon__arrow: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
+
+
+
 
 $icon__rating__A--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
 $icon__rating__A--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";

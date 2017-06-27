@@ -75,7 +75,7 @@ body {
         }
 
         .ddg-logo {
-            background-image: url($ddg-logo__url);
+            @include ddg_logo();
             background-size: cover;
             width: 25px;
             height: 25px;
