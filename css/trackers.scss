@@ -5,8 +5,12 @@
 /* Trackers page */
 body {
     width: $popup__width;
-    height: 500px;
+    height: $popup__height;
     overflow: hidden;
+
+    &.is-browser--moz {
+        height: $popup__height--moz;
+    }
 }
 
 .disabled {
