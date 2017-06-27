@@ -9,7 +9,7 @@
       { 'url': 'http://duckduckgo.com/?q=something', 'rewrite': true },
       { 'url': 'https://duckduckgo.com/?q=something', 'rewrite': true },
       { 'url': 'https://twitter.com', 'rewrite': false },
-      { 'url': 'https://twitter.com/?u=duckduckgo.com', 'rewrite': false },
+      { 'url': 'https://twitter.com/?u=duckduckgo.com', 'rewrite': false }
       ];
 
       urlTests.forEach(function(testRequest){
