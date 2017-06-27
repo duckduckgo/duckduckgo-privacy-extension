@@ -95,7 +95,7 @@ Trackers.prototype = $.extend({},
         },
 
         setBrowserClassOnBodyTag: function () {
-            let browserClass = 'is-browser__' + backgroundPage.browser;
+            let browserClass = 'is-browser--' + backgroundPage.browser;
             $('body').addClass(browserClass);
         }
 

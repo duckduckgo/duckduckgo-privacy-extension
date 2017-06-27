@@ -118,36 +118,48 @@ body {
                 background-color:#e0e0e0;
             }
 
-            &.site-info__rating--A-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
+            &.site-info__rating--A {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__A--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__rating__A--moz);
+                }
             }
 
-            &.site-info__rating--B-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
+            &.site-info__rating--B {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__B--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__rating__B--moz);
+                }
             }
 
-            &.site-info__rating--C-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+            &.site-info__rating--C {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__C--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__rating__C--moz);
+                }
             }
 
-            &.site-info__rating--D-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
-            }
+            &.site-info__rating--D {
 
-            &.site-info__rating--A-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
-            }
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__D--chrome);
+                }
 
-            &.site-info__rating--B-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
-            }
-
-            &.site-info__rating--C-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
-            }
-
-            &.site-info__rating--D-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
+                .is-browser--moz & {
+                    background-image: url($icon__rating__D--moz);
+                }
             }
         }
 
