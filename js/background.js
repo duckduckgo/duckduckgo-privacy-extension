@@ -152,6 +152,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                   console.info( utils.extractHostFromURL(thisTab.url)
                                + " [" + tracker.parentCompany + "] " + tracker.url);
 
+                  if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+
                   // tell Chrome to cancel this webrequest
                   return {cancel: true};
               }
