@@ -56,7 +56,7 @@ class Tab {
     };
 
     updateBadgeIcon() {
-        if (!this.site.specialDomain()) {
+        if (!this.site.specialDomain() && !this.site.whitelisted && settings.getSetting('trackerBlockingEnabled')) {
             let scoreIcon = scoreIconLocations[this.site.score.get()];
             chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
         }
