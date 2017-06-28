@@ -18,16 +18,17 @@ module.exports = function(grunt) {
         },
 
         browserify: {
-            dist: {
-                options: {
-                    transform: [
-                        ['babelify']
-                    ]
-                },
+            ui: {
+                options: { transform: [ 'babelify'] },
                 files: {
-                    '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/base/index.es6.js'],
-                    '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/pages/trackers.es6.js'],
-                    '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/pages/options.es6.js'],
+                    '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
+                    '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/ui/pages/trackers.es6.js'],
+                    '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
+                }
+            },
+            background: {
+                options: { transform: [ 'babelify'] },
+                files: {
                     '<%= dirs.src.js %>/abp.js': ['<%= dirs.src.js %>/abp-preprocessed.es6.js'],
                     '<%= dirs.src.js %>/url-parse.js': ['<%= dirs.src.js %>/url-parse.es6.js']
                 }
@@ -56,14 +57,18 @@ module.exports = function(grunt) {
                 files: ['<%= dirs.src.css %>/**/*.scss'],
                 tasks: ['sass']
             },
-            es6: {
-                files: ['<%= dirs.src.js %>/**/*.es6.js'],
-                tasks: ['browserify']
+            ui: {
+                files: ['<%= dirs.src.js %>/ui/**/*.es6.js'],
+                tasks: ['browserify:ui']
+            },
+            background: {
+                files: ['<%= dirs.src.js %>/*.es6.js'],
+                tasks: ['browserify:background']
             }
         }
     });
 
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists']);
-    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
+    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch']);
     grunt.registerTask('default', 'build');
 }
