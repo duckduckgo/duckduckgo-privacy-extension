@@ -6,13 +6,10 @@ $font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe U
 @import "../node_modules/duckduckgo-colors/colors";
 $color--neutral-bg: #f5f5f5;
 
-/* Icons & images */
-$ddg-logo__url: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
-$icon__arrow: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
-
 /* Popup */
 $popup__width: 270px;
-$popup__height: 600px;
+$popup__height: 500px;
+$popup__height--moz: 510px;
 
 /* Cards */
 $card__bg-color: $white;
@@ -25,3 +22,35 @@ $card__margin--right: 7px;
 $card__margin--bottom: 7px;
 $card__margin--left: 7px;
 $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $card__margin--left;
+
+/* Image & icon urls */
+$img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
+$img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
+
+$icon__rating__A--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
+$icon__rating__A--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
+
+$icon__rating__B--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png";
+$icon__rating__B--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png";
+
+$icon__rating__C--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png";
+$icon__rating__C--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png";
+
+$icon__rating__D--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
+$icon__rating__D--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
+
+$icon__https-status__default--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png";
+$icon__https-status__default--moz: "moz-extension://__MSG_@@extension_id__/img/lock-green@2x.png";
+
+$icon__https-status__upgraded--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png";
+$icon__https-status__upgraded--moz: "moz-extension://__MSG_@@extension_id__/img/lock-orange@2x.png";
+
+$icon__https-status__none--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png";
+$icon__https-status__none--moz: "moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png";
+
+$icon__arrow--chrome: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
+$icon__arrow--moz: "moz-extension://__MSG_@@extension_id__/img/arrow@2x.png";
+
+$icon__settings--chrome: "chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
+$icon__settings--moz: "moz-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
+

@@ -127,9 +127,16 @@ a {
     /* you'll need to set the background image within each instance of .icon */
 
     &.icon__arrow {
-        background-image: url('chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png');
         width: 16px;
         height: 16px;
+
+        .is-browser--chrome & {
+            background-image: url($icon__arrow--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__arrow--moz);
+        }
 
         &.icon__arrow--left {
             transform: rotate(180deg);
@@ -137,8 +144,16 @@ a {
     }
 
     &.icon__settings {
-        background-image: url('chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png');
         width: 16px;
         height: 16px;
+
+        .is-browser--chrome & {
+            background-image: url($icon__settings--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__settings--moz);
+        }
+
     }
 }

@@ -5,8 +5,12 @@
 /* Trackers page */
 body {
     width: $popup__width;
-    height: 500px;
+    height: $popup__height;
     overflow: hidden;
+
+    &.is-browser--moz {
+        height: $popup__height--moz;
+    }
 }
 
 .disabled {
@@ -75,7 +79,7 @@ body {
         }
 
         .ddg-logo {
-            background-image: url($ddg-logo__url);
+            @include ddg_logo();
             background-size: cover;
             width: 25px;
             height: 25px;
@@ -118,64 +122,86 @@ body {
                 background-color:#e0e0e0;
             }
 
-            &.site-info__rating--A-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
+            &.site-info__rating--A {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__A--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__rating__A--moz);
+                }
             }
 
-            &.site-info__rating--B-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
+            &.site-info__rating--B {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__B--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__rating__B--moz);
+                }
             }
 
-            &.site-info__rating--C-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
+            &.site-info__rating--C {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__C--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__rating__C--moz);
+                }
             }
 
-            &.site-info__rating--D-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
-            }
+            &.site-info__rating--D {
 
-            &.site-info__rating--A-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png');
-            }
+                .is-browser--chrome & {
+                    background-image: url($icon__rating__D--chrome);
+                }
 
-            &.site-info__rating--B-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png');
-            }
-
-            &.site-info__rating--C-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png');
-            }
-
-            &.site-info__rating--D-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png');
+                .is-browser--moz & {
+                    background-image: url($icon__rating__D--moz);
+                }
             }
         }
 
         .site-info__https-status {
             @include icon_display();
 
-            &.site-info__https-status--default-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
+            &.site-info__https-status--default {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__https-status__default--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__https-status__default--moz);
+                }
             }
 
-            &.site-info__https-status--upgraded-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
+            &.site-info__https-status--upgraded {
+
+                .is-browser--chrome & {
+                    background-image: url($icon__https-status__upgraded--chrome);
+                }
+
+                .is-browser--moz & {
+                    background-image: url($icon__https-status__upgraded--moz);
+                }
             }
 
-            &.site-info__https-status--none-chrome {
-                background-image: url('chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
-            }
+            &.site-info__https-status--none {
 
-            &.site-info__https-status--default-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-green@2x.png');
-            }
+                .is-browser--chrome & {
+                    background-image: url($icon__https-status__none--chrome);
+                }
 
-            &.site-info__https-status--upgraded-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-orange@2x.png');
-            }
+                .is-browser--moz & {
+                    background-image: url($icon__https-status__none--moz);
+                }
 
-            &.site-info__https-status--none-moz {
-                background-image: url('moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png');
             }
         }
 

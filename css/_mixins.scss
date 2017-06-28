@@ -93,7 +93,7 @@
 }
 
 
-/* Icons and images */
+/* Images & icons */
 @mixin icon_display () {
     background-repeat: no-repeat;
     background-size: cover;
@@ -104,8 +104,15 @@
 }
 
 @mixin ddg_logo () {
-    background-image: url($ddg-logo__url);
     background-size: contain;
+
+    .is-browser--chrome & {
+        background-image: url($img__logo--chrome);
+    }
+
+    .is-browser--moz & {
+        background-image: url($img__logo--moz);
+    }
 }
 
 
