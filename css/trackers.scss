@@ -33,10 +33,11 @@ body {
             outline: medium none;
             border: medium none;
             padding: 0;
+            line-height: 24px;
             height: 24px;
             z-index: 1;
             margin-left: 54px;
-            margin-top: 8px;
+            margin-top: 9px;
 
             &::placeholder {
                 color: $platinum-darker;
