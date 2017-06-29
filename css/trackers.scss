@@ -236,8 +236,12 @@ body {
         font-weight: bold;
         display: block;
         $settings-padding-lr: 14px + 3px;
-        padding: $card__margin--top $settings-padding-lr 7px;
+        padding: $card__margin--top $settings-padding-lr 7px 20px;
         position: relative;
+
+        .icon__settings {
+            right: 21px
+        }
     }
 
     .top-blocked {
