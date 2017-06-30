@@ -229,6 +229,14 @@ body {
                 padding-top: 4.5px;
                 padding-bottom: 3.5px;
                 display: block;
+
+                body.disabled & {
+                    cursor: default;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
             }
         }
     }

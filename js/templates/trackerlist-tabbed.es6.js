@@ -19,7 +19,6 @@ module.exports = function () {
         </section>`;
 
     } else if (this.model.companyListMap) {
-
         if (this.model.companyListMap.length > 0) {
             return bel`<ol class="menu-list top-blocked__list card js-top-blocked-list">
                 ${trackerListItems(this.model.companyListMap)}
