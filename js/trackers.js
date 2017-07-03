@@ -40,14 +40,27 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
         var social_block = settings.getSetting('socialBlockingIsEnabled');
         var blockSettings = settings.getSetting('blocking').slice(0);
 
+        // don't block 1st party requests
+        if (utils.extractHostFromURL(currLocation) === utils.extractHostFromURL(urlToCheck)) {
+            return
+        }
+
         if(social_block){
             blockSettings.push('Social');
         }
 
-        // block trackers by parent company
+        // Look up trackers by parent company. This function also checks to see if the poential 
+        // tracker is related to the current site. If this is the case we consider it to be the 
+        // same as a first party requrest and return
         var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation);
         if(trackerByParentCompany) {
-            return trackerByParentCompany;
+            // check cancel to see if this tracker is related to the current site
+            if (trackerByParentCompany.cancel) {
+                return;
+            }
+            else {
+                return trackerByParentCompany;
+            }
         }
 
         // block trackers from easylists
@@ -114,8 +127,13 @@ function checkTrackersWithParentCompany(blockSettings, url, currLocation) {
         // try pulling off the subdomain and checking again.
         if(trackerLists.trackersWithParentCompany[trackerType]) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL];
-            if(tracker && !isRelatedEntity(tracker.c, currLocation)){
-                return toBlock = {parentCompany: tracker.c, url: trackerURL, type: trackerType};
+            if (tracker) {
+                if (!isRelatedEntity(tracker.c, currLocation)) {
+                    return toBlock = {parentCompany: tracker.c, url: trackerURL, type: trackerType};
+                }
+                else {
+                    return toBlock = {cancel: 'relatedEntity'}
+                }
             }
         }
         
