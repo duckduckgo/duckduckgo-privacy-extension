@@ -11,7 +11,7 @@ module.exports = function () {
                     <span class="icon icon__arrow icon__arrow--left pull-left"></span>
                 </a>
                 <ul class="sliding-subview__header__tabbed-nav">
-                    <a href="#" class="js-nav-tab js-nav-tab-page">Page</a>
+                    <a href="#" class="js-nav-tab js-nav-tab-page">This Page</a>
                     <a href="#" class="js-nav-tab js-nav-tab-all">All Time</a>
                 </ul>
             </nav>
