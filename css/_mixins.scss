@@ -115,6 +115,18 @@
     }
 }
 
+@mixin ddg_logo--small () {
+    background-size: contain;
+
+    .is-browser--chrome & {
+        background-image: url($img__logo__small--chrome);
+    }
+
+    .is-browser--moz & {
+        background-image: url($img__logo__small--moz);
+    }
+}
+
 
 /* Sliding subviews */
 @mixin sliding_subview () {
@@ -161,6 +173,8 @@
                 font-weight: bold;
                 padding: 14px 0 0 14px;
                 display: inline-block;
+                height: 26px;
+                width: 14px;
 
                 &.sliding-subview__header__title--has-icon {
                     padding-left: 35px;
@@ -169,7 +183,7 @@
 
             .sliding-subview__header__tabbed-nav {
                 position: absolute;
-                right: 7px;
+                left: 83px;
                 top: 0;
 
                 a {

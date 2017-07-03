@@ -16,13 +16,13 @@ module.exports = function () {
             </li>
             <li class="border--bottom">
                 <h2>
-                    <span class="site-info__https-status site-info__https-status--${this.model.httpsState}"></span>
-                    <span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
+                    <span class="site-info__https-status site-info__https-status--${this.model.httpsState}">
+                    </span><span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
                 </h3>
             </li>
             <li class="border--bottom">
                 <h2>
-                    <span class="site-info__tracker-count">${countText}</span> Trackers Blocked
+                    <span class="site-info__tracker-count">${countText}</span>Trackers Blocked
                 </h2>
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </li>
