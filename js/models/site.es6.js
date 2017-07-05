@@ -50,13 +50,8 @@ Site.prototype = $.extend({},
 
       updateTrackerCount: function() {
           if (this.tab) {
-
-            // this.trackerCount = this.tab.getBadgeTotal();
-            this.trackersBlockedCount = this.tab.getTrackersBlockedCount();
-
-            // this.potential = Object.keys(this.tab.potentialBlocked).length;
-            this.trackersCount = this.tab.getTrackersCount();
-
+            this.trackersCount = this.tab.getUniqueTrackersCount();
+            this.trackersBlockedCount = this.tab.getUniqueTrackersBlockedCount();
             this.updateSiteScore();
           }
       },

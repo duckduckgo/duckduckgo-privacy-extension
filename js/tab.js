@@ -2,7 +2,7 @@ class Tracker {
     constructor(name, url, type) {
         this.parentCompany = Companies.get(name);
         this.urls = [url],
-        this.count = 1;
+        this.count = 1; // request count
     };
 
     increment() {
@@ -71,7 +71,7 @@ class Tab {
     /* Add up all of the unique tracker urls that
      * were requested on this page/tab
      */
-    getTrackersCount () {
+    getUniqueTrackersCount () {
         return Object.keys(this.trackers).reduce((total, name) => {
             return this.trackers[name].urls.length + total;
         }, 0);
@@ -81,7 +81,7 @@ class Tab {
     /* Add up all of the unique tracker urls that
      * were blocked on this page/tab
      */
-    getTrackersBlockedCount () {
+    getUniqueTrackersBlockedCount () {
         return Object.keys(this.trackersBlocked).reduce((total, name) => {
             return this.trackersBlocked[name].urls.length + total;
         }, 0);

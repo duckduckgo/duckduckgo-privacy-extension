@@ -25,14 +25,14 @@ module.exports = function () {
             </li>
             <li class="border--bottom">
                 <h2>
-                    <span class="site-info__tracker-count">${countText}</span>Companies Blocked
+                    <span class="site-info__tracker-count">${countText}</span>Unique Trackers Blocked
                 </h2>
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </li>
             <li class="site-info__see-all-li">
                 <a href="#" class="js-site-show-all-trackers link-secondary">
                     <span class="icon icon__arrow pull-right"></span>
-                    See all trackers on this page
+                    See all tracker requests
                 </a>
             </li>
         </ul>
