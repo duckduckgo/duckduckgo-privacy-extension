@@ -32,7 +32,7 @@ module.exports = function () {
             <li class="site-info__see-all-li">
                 <a href="#" class="js-site-show-all-trackers link-secondary">
                     <span class="icon icon__arrow pull-right"></span>
-                    See all tracker requests
+                    See all tracker counts
                 </a>
             </li>
         </ul>
