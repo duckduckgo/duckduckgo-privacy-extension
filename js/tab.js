@@ -24,12 +24,17 @@ class Tracker {
  * are on a given tab:
  *  id: Chrome tab id
  *  url: url of the tab
- *  trackers: a list of all tracker urls requested on page/tab
- *  trackersBlocked: container of tracker instances we blocked in tab
- *      parentCompany -> ref to a Company object
- *      urls: all tracker urls we have seen for this company
- *      count: total number of requests
  *  site: ref to a Site object
+ *  trackers: {object} all trackers requested on page/tab (listed by company)
+ *  trackersBlocked: {object} tracker instances we blocked in tab (listed by company)
+ *      both `trackers` and `trackersBlocked` objects are in this format:
+ *      {
+ *         '<companyName>': {
+ *              parentCompany: ref to a Company object
+ *              urls: all unique tracker urls we have seen for this company
+ *              count: total number of requests to unique tracker urls for this company
+ *          }
+ *      }
  */
 const scoreIconLocations = {
     "A": "img/toolbar-rating-a@2x.png",
