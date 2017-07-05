@@ -26,7 +26,7 @@ class Tracker {
  *  url: url of the tab
  *  site: ref to a Site object
  *  trackers: {object} all trackers requested on page/tab (listed by company)
- *  trackersBlocked: {object} tracker instances we blocked in tab (listed by company)
+ *  trackersBlocked: {object} tracker instances we blocked on page/tab (listed by company)
  *      both `trackers` and `trackersBlocked` objects are in this format:
  *      {
  *         '<companyName>': {
