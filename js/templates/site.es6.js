@@ -4,9 +4,7 @@ const toggleButton = require('./shared/toggle-button');
 module.exports = function () {
 
     var domain = this.model.domain;
-    // var countText = "" + this.model.trackerCount;
     var countText = this.model.trackersBlockedCount;
-    // if (this.model.potential > 0 && this.model.potential != countText)
     if (this.model.trackersCount > 0 && this.model.trackersCount != countText) {
         countText = countText + "/" + this.model.trackersCount;
     }
@@ -32,7 +30,7 @@ module.exports = function () {
             <li class="site-info__see-all-li">
                 <a href="#" class="js-site-show-all-trackers link-secondary">
                     <span class="icon icon__arrow pull-right"></span>
-                    See all tracker counts
+                    See tracker request counts
                 </a>
             </li>
         </ul>

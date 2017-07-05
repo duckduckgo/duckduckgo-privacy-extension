@@ -12,7 +12,7 @@ module.exports = function () {
                 <li class="top-blocked__li top-blocked__li--see-all border--top">
                     <a href="#" class="link-secondary js-top-blocked-see-all">
                         <span class="icon icon__arrow pull-right"></span>
-                        See all tracker counts
+                        See tracker request counts
                     </a>
                 </li>
             </ul>
