@@ -46,8 +46,8 @@ const scoreIconLocations = {
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId,
-        this.trackers = {}, // was this.potentialBlocked
-        this.trackersBlocked = {}, // was this.trackers
+        this.trackers = {},
+        this.trackersBlocked = {},
         this.url = tabData.url,
         this.upgradedHttps = false,
         this.httpsRequests = [],
@@ -95,7 +95,6 @@ class Tab {
     /* Store all trackers for a given tab even if we
      * don't block them.
      */
-    // addToPotentialBlocked(t) {
     addToTrackers (t) {
         let tracker = this.trackers[t.parentCompany];
         if (tracker) {
@@ -109,7 +108,6 @@ class Tab {
         }
     };
 
-    // addOrUpdateTracker(t)
     addOrUpdateTrackersBlocked (t) {
         let tracker = this.trackersBlocked[t.parentCompany];
         if (tracker) {
