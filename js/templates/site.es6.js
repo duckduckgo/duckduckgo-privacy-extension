@@ -4,9 +4,12 @@ const toggleButton = require('./shared/toggle-button');
 module.exports = function () {
 
     var domain = this.model.domain;
-    var countText = "" + this.model.trackerCount;
-    if (this.model.potential > 0 && this.model.potential != countText)
-        countText = countText + "/" + this.model.potential;
+    // var countText = "" + this.model.trackerCount;
+    var countText = this.model.trackersBlockedCount;
+    // if (this.model.potential > 0 && this.model.potential != countText)
+    if (this.model.trackersCount > 0 && this.model.trackersCount != countText) {
+        countText = countText + "/" + this.model.trackersCount;
+    }
 
     return bel`<section class="site-info card">
         <ul class="menu-list">
@@ -22,7 +25,7 @@ module.exports = function () {
             </li>
             <li class="border--bottom">
                 <h2>
-                    <span class="site-info__tracker-count">${countText}</span>Trackers Blocked
+                    <span class="site-info__tracker-count">${countText}</span>Companies Blocked
                 </h2>
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </li>
