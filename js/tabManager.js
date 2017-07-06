@@ -32,6 +32,8 @@ class TabManager {
      * value: whitelist value, true or false
      */
     whitelistDomain(data) {
+        this.setGlobalWhitelist(data.list, data.domain, data.value)
+        
         for (let tabId in this.tabContainer) {
             let tab = this.tabContainer[tabId];
             if (tab.site && tab.site.domain === data.domain) {
@@ -39,7 +41,6 @@ class TabManager {
             }
         }
 
-        this.setGlobalWhitelist(data.list, data.domain, data.value)
     }
 
     /* Update the whitelists kept in settings
@@ -54,7 +55,7 @@ class TabManager {
             delete globalwhitelist[domain]
         }
 
-        settings.updateSetting(name, globalwhitelist)
+        settings.updateSetting(list, globalwhitelist)
     }
 }
 
