@@ -20,11 +20,11 @@ Whitelist.prototype = $.extend({},
             var domain = this.list[itemIndex];
             console.log(`whitelist: remove ${domain}`);
 
-            var site = backgroundPage.Sites.get(domain);
-
-            if (site) {
-                site.setWhitelisted('whitelisted', false);
-            }
+            backgroundPage.tabManager.whitelistDomain({
+                list: 'whitelisted',
+                domain: domain,
+                value: false
+            });
 
             this.setWhitelistFromSettings();
         },

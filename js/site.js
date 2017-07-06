@@ -82,23 +82,6 @@ class Site {
 
     setWhitelisted(name, value){
         this[name] = value;
-        this.setGlobalWhitelist(name);
-    };
-
-    /*
-     * Store an updated whitelist value in settings
-     */
-    setGlobalWhitelist(name){
-        let globalwhitelist = settings.getSetting(name) || {};
-
-        if(this[name]){
-            globalwhitelist[this.domain] = true;
-        }
-        else {
-            delete globalwhitelist[this.domain];
-        }
-
-        settings.updateSetting(name, globalwhitelist);
     };
 
     /*
