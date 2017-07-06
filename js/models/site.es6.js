@@ -8,8 +8,8 @@ const httpsStates = {
 };
 
 const whitelistStates = {
-    'isWhitelisted': 'Tracker blocking disabled',
-    'notWhitelisted': 'Tracker blocking enabled',
+    'isWhitelisted': 'Blocking off (this domain)',
+    'notWhitelisted': 'Blocking on (this domain)',
 }
 
 function Site (attrs) {
