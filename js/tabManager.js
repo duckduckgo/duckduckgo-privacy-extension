@@ -27,9 +27,9 @@ class TabManager {
     };
 
     /* This will whitelist any open tabs with the same domain
-     * whitelistName: 'whitelisted' or 'httpswhitelisted'
+     * list: name of the whitelist to update
      * domain: domain to whitelist
-     * whitelistValue: whitelist value, true or false
+     * value: whitelist value, true or false
      */
     whitelistDomain(data) {
         for (let tabId in this.tabContainer) {
