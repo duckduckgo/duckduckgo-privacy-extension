@@ -1,12 +1,16 @@
 const Parent = window.DDG.base.Model;
 const backgroundPage = chrome.extension.getBackgroundPage();
 
-// TODO move to settings?
 const httpsStates = {
-        'default':  'Secure Connection',
-        'upgraded': 'Forced Secure Connection',
-        'none':     'Secure Connection Unavailable'
-    };
+    'default':  'Secure Connection',
+    'upgraded': 'Forced Secure Connection',
+    'none':     'Secure Connection Unavailable'
+};
+
+const whitelistStates = {
+    'isWhitelisted': 'Tracker blocking disabled',
+    'notWhitelisted': 'Tracker blocking enabled',
+}
 
 function Site (attrs) {
 
@@ -28,6 +32,7 @@ Site.prototype = $.extend({},
               this.isWhitelisted = !this.isWhitelisted;
               this.tab.site.setWhitelisted('whitelisted', this.isWhitelisted);
               this.tab.site.notifyWhitelistChanged();
+              this.setWhitelistStatusText();
           }
       },
 
@@ -38,6 +43,7 @@ Site.prototype = $.extend({},
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted;
+              this.setWhitelistStatusText();
               let special = this.tab.site.specialDomain();
               if (special) {
                   this.domain = special; // eg "extensions", "options", "new tab"
@@ -73,6 +79,14 @@ Site.prototype = $.extend({},
           }
 
           this.httpsStatusText = httpsStates[this.httpsState];
+      },
+
+      setWhitelistStatusText: function () {
+          if (this.isWhitelisted) {
+              this.whitelistStatusText = whitelistStates['isWhitelisted'];
+          } else {
+              this.whitelistStatusText = whitelistStates['notWhitelisted'];
+          }
       }
   }
 );
