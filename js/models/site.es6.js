@@ -26,7 +26,13 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if (this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
-              this.tab.site.setWhitelisted('whitelisted', this.isWhitelisted);
+              
+              backgroundPage.tabManager.whitelistDomain({
+                  list: 'whitelisted',
+                  domain: this.tab.site.domain, 
+                  value: this.isWhitelisted
+              });
+
               this.tab.site.notifyWhitelistChanged();
           }
       },
