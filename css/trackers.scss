@@ -209,25 +209,11 @@ body {
             margin-right: 7px;
         }
 
-        .site-info__tracker-count {
-            display: inline-block;
-            font-size: 13px;
-            min-height: 18px;
-            line-height: 20px;
-            padding: 0px 6px;
-            border-radius: 20px;
-            background: $red;
-            color: $white;
-            margin-right: 7px;
-        }
-
-        .site-info__see-all-li {
+        .site-info__li--tracker-count {
             position: relative;
 
             .link-secondary {
                 font-weight: bold;
-                padding-top: 4.5px;
-                padding-bottom: 3.5px;
                 display: block;
 
                 body.disabled & {
@@ -237,6 +223,36 @@ body {
                         text-decoration: none;
                     }
                 }
+
+                .site-info__tracker-count {
+                    display: inline-block;
+                    font-size: 13px;
+                    min-height: 18px;
+                    line-height: 20px;
+                    padding: 0px 6px;
+                    border-radius: 20px;
+                    background: $red;
+                    color: $white;
+                    margin-right: 7px;
+                }
+
+                .pull-right {
+                    padding-top: 3px;
+                }
+            }
+        }
+
+        .site-info__li--toggle {
+            height: 24.5px;
+
+            .site-info__toggle-text {
+                font-weight: bold;
+                margin-top: 3.5px;
+                display: inline-block;
+            }
+
+            .pull-right {
+                margin-top: 5px;
             }
         }
     }
@@ -260,7 +276,7 @@ body {
         }
 
         .top-blocked__list {
-            padding-top: 3.5px;
+            padding-top: 14px;
             padding-bottom: 7px;
         }
     }
@@ -332,7 +348,7 @@ body {
         &.top-blocked__li--see-all {
             padding-top: 7px;
             padding-left: 14px;
-            margin: 28px 0 0 0;
+            margin: 21px 0 0 0;
 
             .link-secondary {
                 position: relative;
