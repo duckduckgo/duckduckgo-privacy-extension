@@ -28,6 +28,7 @@ for (let list in easylists) {
     let listData = load.loadExtensionFile(url, '', 'external');
     let whitelistFile = easylists[list].whitelist;
 
+    // append the whitelist entries before we process the list
     if (whitelistFile) {
         let whitelist = load.loadExtensionFile(whitelistFile);
         listData += whitelist;
