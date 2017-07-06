@@ -24,28 +24,30 @@ SiteTrackerList.prototype = $.extend({},
               backgroundPage.utils.getCurrentTab((rawTab) => {
                   if (rawTab) {
                       self.tab = backgroundPage.tabManager.get({'tabId': rawTab.id});
-                      self.potentialBlocked = Object.keys(self.tab.potentialBlocked);
-                      self.trackersBlocked = self.tab.trackers || {};
-                      const companyNames = Object.keys(self.trackersBlocked);
+
+                      // list of all trackers on page (whether we blocked them or not)
+                      self.trackers = self.tab.trackers || {};
+                      const companyNames = Object.keys(self.trackers);
 
                       // find largest number of trackers (by company)
                       let maxCount = 0;
-                      if (self.trackersBlocked && companyNames.length > 0) {
+                      if (self.trackers && companyNames.length > 0) {
                           companyNames.map((name) => {
                               // don't count "unknown" trackers since they will
                               // be listed individually at bottom of graph,
                               // we don't want "unknown" tracker total as maxCount
                               if (name !== 'unknown') {
-                                  let compare = self.trackersBlocked[name].count;
+                                  // let compare = self.trackersBlocked[name].count;
+                                  let compare = self.trackers[name].count;
                                   if (compare > maxCount) maxCount = compare;
                               }
                           });
                       }
 
-                      // actual trackers we ended up blocking and their metadata:
+                      // set trackerlist metadata for list display by company:
                       self.companyListMap = companyNames.map(
                           (companyName) => {
-                              let company = self.trackersBlocked[companyName];
+                              let company = self.trackers[companyName];
                               // calc max using pixels instead of % to make margins easier
                               // max width: 270 - (horizontal margin + padding in css) = 228
                               return {

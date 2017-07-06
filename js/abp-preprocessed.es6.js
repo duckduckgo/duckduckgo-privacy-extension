@@ -5,7 +5,6 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser');
-let request = require('request');
 
 easylists = {
     privacy: {
@@ -14,6 +13,7 @@ easylists = {
     },
     general: {
         url: 'https://easylist.to/easylist/easylist.txt',
+        whitelist: 'data/tracker_lists/general-whitelist.txt',
         parsed: {}
     }
 };
@@ -26,6 +26,14 @@ easylists = {
 for (let list in easylists) {
     let url = easylists[list].url;
     let listData = load.loadExtensionFile(url, '', 'external');
+    let whitelistFile = easylists[list].whitelist;
+
+    // append the whitelist entries before we process the list
+    if (whitelistFile) {
+        let whitelist = load.loadExtensionFile(whitelistFile);
+        listData += whitelist;
+    }
+    
     abp.parse(listData, easylists[list].parsed);
 }
 

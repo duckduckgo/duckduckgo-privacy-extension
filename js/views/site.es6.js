@@ -70,6 +70,8 @@ Site.prototype = $.extend({},
               [this.$toggle, 'click', this._whitelistClick],
               [this.$showalltrackers, 'click', this._showAllTrackers]
             ]);
+
+
         },
 
         _whitelistClick: function (e) {
