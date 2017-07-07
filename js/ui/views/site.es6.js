@@ -11,6 +11,8 @@ function Site (ops) {
 
     Parent.call(this, ops);
 
+    this.$body = $('body');
+
     // bind events
     this._setup();
 
@@ -68,6 +70,8 @@ Site.prototype = $.extend({},
               [this.$toggle, 'click', this._whitelistClick],
               [this.$showalltrackers, 'click', this._showAllTrackers]
             ]);
+
+
         },
 
         _whitelistClick: function (e) {
@@ -83,10 +87,11 @@ Site.prototype = $.extend({},
         },
 
         _setDisabled: function() {
-            $('body').addClass('disabled');
+            this.$body.addClass('disabled');
         },
 
         _showAllTrackers: function () {
+            if (this.$body.hasClass('disabled')) return;
             this.views.slidingSubview = new TrackerListSlidingSubview({
                 template: tabbedTrackerListTemplate,
                 defaultTab: 'page'

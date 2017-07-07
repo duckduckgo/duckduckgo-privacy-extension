@@ -70,6 +70,18 @@ var ATB = (() => {
             }
         },
 
+        // migrate old versions that used localstorage over to use settings and chrome.storage.local
+        migrate: () => {
+            let atbNames = ['atb', 'set_atb']
+            atbNames.map((name) => {
+                let localValue = localStorage[name]
+                let storageValue = settings.getSetting(name)
+                if (localValue && !storageValue) {
+                    settings.updateSetting(name, localValue)
+                }
+            });
+        },
+
         setInitialVersions: () => {
             if(!settings.getSetting('atb')){
                 let versions = ATB.calculateInitialVersions();
@@ -128,6 +140,10 @@ var ATB = (() => {
         },
 
         onInstalled: () => {
+            // we already migrate on update events but just to be
+            // safe lets do this on install too
+            ATB.migrate();
+
             ATB.setInitialVersions();
             ATB.inject();
             

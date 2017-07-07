@@ -1,12 +1,16 @@
 const Parent = window.DDG.base.Model;
 const backgroundPage = chrome.extension.getBackgroundPage();
 
-// TODO move to settings?
 const httpsStates = {
-        'default':  'Secure Connection',
-        'upgraded': 'Forced Secure Connection',
-        'none':     'Secure Connection Unavailable'
-    };
+    'default':  'Secure Connection',
+    'upgraded': 'Forced Secure Connection',
+    'none':     'Secure Connection Unavailable'
+};
+
+const whitelistStates = {
+    'isWhitelisted': 'Blocking off (this domain)',
+    'notWhitelisted': 'Blocking on (this domain)',
+}
 
 function Site (attrs) {
 
@@ -26,8 +30,15 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if (this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
-              this.tab.site.setWhitelisted('whitelisted', this.isWhitelisted);
+              
+              backgroundPage.tabManager.whitelistDomain({
+                  list: 'whitelisted',
+                  domain: this.tab.site.domain, 
+                  value: this.isWhitelisted
+              });
+
               this.tab.site.notifyWhitelistChanged();
+              this.setWhitelistStatusText();
           }
       },
 
@@ -38,6 +49,7 @@ Site.prototype = $.extend({},
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted;
+              this.setWhitelistStatusText();
               let special = this.tab.site.specialDomain();
               if (special) {
                   this.domain = special; // eg "extensions", "options", "new tab"
@@ -50,8 +62,8 @@ Site.prototype = $.extend({},
 
       updateTrackerCount: function() {
           if (this.tab) {
-            this.trackerCount = this.tab.getBadgeTotal();
-            this.potential = Object.keys(this.tab.potentialBlocked).length;
+            this.trackersCount = this.tab.getUniqueTrackersCount();
+            this.trackersBlockedCount = this.tab.getUniqueTrackersBlockedCount();
             this.updateSiteScore();
           }
       },
@@ -73,6 +85,14 @@ Site.prototype = $.extend({},
           }
 
           this.httpsStatusText = httpsStates[this.httpsState];
+      },
+
+      setWhitelistStatusText: function () {
+          if (this.isWhitelisted) {
+              this.whitelistStatusText = whitelistStates['isWhitelisted'];
+          } else {
+              this.whitelistStatusText = whitelistStates['notWhitelisted'];
+          }
       }
   }
 );

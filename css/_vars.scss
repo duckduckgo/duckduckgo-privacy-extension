@@ -8,8 +8,8 @@ $color--neutral-bg: #f5f5f5;
 
 /* Popup */
 $popup__width: 270px;
-$popup__height: 500px;
-$popup__height--moz: 510px;
+$popup__height: 505px;
+$popup__height--moz: 520px;
 
 /* Cards */
 $card__bg-color: $white;
@@ -26,6 +26,9 @@ $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $ca
 /* Image & icon urls */
 $img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 $img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
+
+$img__logo__small--chrome: "chrome-extension://__MSG_@@extension_id__/img/ddg-logo-simple@2x.png";
+$img__logo__small--moz: "moz-extension://__MSG_@@extension_id__/img/ddg-logo-simple@2x.png";
 
 $icon__rating__A--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
 $icon__rating__A--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";

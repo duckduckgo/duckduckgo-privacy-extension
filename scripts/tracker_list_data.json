@@ -1,9 +1,9 @@
 [
     {
-            "name": "disconnect",
-            "type": "disconnect",
-            "loc": "disconnect-trackerlist.json",
-            "gmapping": "disconnect-google-mapping.json",
+            "name": "companyList",
+            "type": "companyList",
+            "loc": "company-trackerlist.json",
+            "gmapping": "remapping.json",
             "processedName": "trackersWithParentCompany"
         }
 ]

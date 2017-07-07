@@ -45,7 +45,7 @@ class Score {
         let majorTrackingNetworks = settings.getSetting('majorTrackingNetworks')
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
-        if (event.hasHTTPS) { 
+        if (event.hasHTTPS) {
             this.hasHTTPS = true
         }
         else if (event.trackerBlocked) {
@@ -65,10 +65,10 @@ class Score {
     };
 }
 
-class Site{
+class Site {
     constructor(domain) {
         this.domain = domain,
-        this.trackers = [],
+        this.trackerUrls = [], // was this.trackers
         this.score = new Score(this.specialDomain());
 
         // whitelist only HTTPS upgrades
@@ -80,46 +80,29 @@ class Site{
         this.setWhitelistStatusFromGlobal(domain);
     }
 
-    setWhitelisted(name, value){ 
+    setWhitelisted(name, value){
         this[name] = value;
-        this.setGlobalWhitelist(name);
-    };
-
-    /*
-     * Store an updated whitelist value in settings
-     */
-    setGlobalWhitelist(name){
-        let globalwhitelist = settings.getSetting(name) || {};
-
-        if(this[name]){
-            globalwhitelist[this.domain] = true;
-        }
-        else {
-            delete globalwhitelist[this.domain];
-        }
-
-        settings.updateSetting(name, globalwhitelist);
     };
 
     /*
      * Send message to the popup to rerender the whitelist
      */
-    notifyWhitelistChanged(){
+    notifyWhitelistChanged () {
         chrome.runtime.sendMessage({'whitelistChanged': true});
     };
 
-    isWhiteListed(){ return this.whitelisted };
-    
-    addTracker(tracker){ 
-        if(this.trackers.indexOf(tracker.url) === -1){
-            this.trackers.push(tracker.url);
-            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackers.length});
+    isWhiteListed () { return this.whitelisted };
+
+    addTracker (tracker) {
+        if (this.trackerUrls.indexOf(tracker.url) === -1){
+            this.trackerUrls.push(tracker.url);
+            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length});
         }
     };
 
     /*
      * When site objects are created we check the stored whitelists
-     * and set the new site whitelist statuses 
+     * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal(domain){
         let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
@@ -127,7 +110,7 @@ class Site{
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {};
             this.setWhitelisted(name, list[this.domain]);
-        }); 
+        });
     };
 
     /*

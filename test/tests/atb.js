@@ -1,9 +1,35 @@
 (function() {
  
   QUnit.module("ATB");
-  
-  QUnit.test("Testing ATB module", function (assert) {
+  var bkg = chrome.extension.getBackgroundPage();
+  QUnit.test("Test ATB migration", function (assert) {
       
+      // clear any existing atb before we start the tests
+      settings.updateSetting('atb', '');
+      settings.updateSetting('set_atb', '');
+
+      // make some fake atb values in localStorage
+      bkg.localStorage['atb'] = 'old-atb-value';
+      bkg.localStorage['set_atb'] = 'old-set-atb-value';
+
+      ATB.migrate();
+
+      assert.ok(settings.getSetting('atb') === "old-atb-value", "ATB value should be migrated to setting");
+      assert.ok(settings.getSetting('set_atb') === "old-set-atb-value", "set ATB value should be migrated to setting");
+
+      // Try to migrate again. This shouldn't overwrite the now existing storage ATB values
+      bkg.localStorage['atb'] = 'some-other-value';
+      bkg.localStorage['set_atb'] = 'some-other-set-atb-value';
+
+      ATB.migrate();
+
+      assert.ok(settings.getSetting('atb') === "old-atb-value", "migrate should not overwrite existing ATB");
+      assert.ok(settings.getSetting('set_atb') === "old-set-atb-value", "migrate should not overwrite existing ATB");
+
+  });
+
+  QUnit.test("Testing ATB module", function (assert) {
+
       // test appending atb value to only ddg urls
       var urlTests = [
       { 'url': 'http://duckduckgo.com/?q=something', 'rewrite': true },

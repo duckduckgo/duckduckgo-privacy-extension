@@ -50,7 +50,7 @@ function Background() {
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
       for(var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
-          
+
           if(tab.url){
               tabManager.create(tab);
               // check https status of saved tabs so we have the correct site score
@@ -65,6 +65,9 @@ function Background() {
     // only run the following section on install
     if (details.reason === "install") {
         ATB.onInstalled();
+    }
+    else if (details.reason === "upgrade") {
+        ATB.migrate()
     }
   });
 }
@@ -133,16 +136,15 @@ chrome.webRequest.onBeforeRequest.addListener(
           var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
           if (tracker) {
-              // record all trackers on a site even if we don't block them
+              // record all tracker urls on a site even if we don't block them
               thisTab.site.addTracker(tracker);
 
-
               // record potential blocked trackers for this tab
-              thisTab.addToPotentialBlocked(tracker.url);
+              thisTab.addToTrackers(tracker);
 
               // Block the request if the site is not whitelisted
               if (!thisTab.site.whitelisted) {
-                  thisTab.addOrUpdateTracker(tracker);
+                  thisTab.addOrUpdateTrackersBlocked(tracker);
                   chrome.runtime.sendMessage({"updateTrackerCount": true});
 
                   // update badge icon for any requests that come in after

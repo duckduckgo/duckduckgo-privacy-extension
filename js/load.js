@@ -5,7 +5,12 @@ require.scopes.load = ( () => {
     }
 
     function JSONfromExternalFile(url){
-        return JSON.parse(loadExtensionFile(url, 'json', 'external'))
+        try {
+            return JSON.parse(loadExtensionFile(url, 'json', 'external'))
+        }
+        catch(e) {
+            return {}
+        }
     }
 
     function loadExtensionFile(url, returnType, source){

@@ -2,11 +2,11 @@ class Tracker {
     constructor(name, url, type) {
         this.parentCompany = Companies.get(name);
         this.urls = [url],
-        this.count = 1;
+        this.count = 1; // request count
     };
 
     increment() {
-            this.count += 1;
+        this.count += 1;
     };
 
     /* A parent company may try
@@ -24,12 +24,17 @@ class Tracker {
  * are on a given tab:
  *  id: Chrome tab id
  *  url: url of the tab
- *  potentialBlocked: a list of all tracker urls seen
- *  trackers: container of tracker instances we blocked in tab
- *      parentCompany -> ref to a Company object
- *      urls: all tracker urls we have seen for this company
- *      count: total number of requests
  *  site: ref to a Site object
+ *  trackers: {object} all trackers requested on page/tab (listed by company)
+ *  trackersBlocked: {object} tracker instances we blocked on page/tab (listed by company)
+ *      both `trackers` and `trackersBlocked` objects are in this format:
+ *      {
+ *         '<companyName>': {
+ *              parentCompany: ref to a Company object
+ *              urls: all unique tracker urls we have seen for this company
+ *              count: total number of requests to unique tracker urls for this company
+ *          }
+ *      }
  */
 const scoreIconLocations = {
     "A": "img/toolbar-rating-a@2x.png",
@@ -41,13 +46,13 @@ const scoreIconLocations = {
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId,
-        this.potentialBlocked = {},
+        this.trackers = {},
+        this.trackersBlocked = {},
         this.url = tabData.url,
         this.upgradedHttps = false,
         this.httpsRequests = [],
         this.httpsWhitelisted = false,
         this.requestId = tabData.requestId,
-        this.trackers = {},
         this.status = tabData.status,
         this.site = new Site(utils.extractHostFromURL(tabData.url)),
 
@@ -56,7 +61,7 @@ class Tab {
     };
 
     updateBadgeIcon() {
-        if (!this.site.specialDomain()) {
+        if (!this.site.specialDomain() && !this.site.whitelisted && settings.getSetting('trackerBlockingEnabled')) {
             let scoreIcon = scoreIconLocations[this.site.score.get()];
             chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
         }
@@ -69,23 +74,28 @@ class Tab {
     };
 
     /* Add up all of the unique tracker urls that
-     * we have see on this tab
+     * were requested on this page/tab
      */
-    getBadgeTotal() {
+    getUniqueTrackersCount () {
         return Object.keys(this.trackers).reduce((total, name) => {
             return this.trackers[name].urls.length + total;
         }, 0);
     };
 
-    /* Store all tracker urls for a given tab even if we
-     * don't block them. This is an object for easy look up
-     * the null value has no meaning.
+
+    /* Add up all of the unique tracker urls that
+     * were blocked on this page/tab
      */
-    addToPotentialBlocked(url) {
-        this.potentialBlocked[url] = null;
+    getUniqueTrackersBlockedCount () {
+        return Object.keys(this.trackersBlocked).reduce((total, name) => {
+            return this.trackersBlocked[name].urls.length + total;
+        }, 0);
     };
 
-    addOrUpdateTracker(t) {
+    /* Store all trackers for a given tab even if we
+     * don't block them.
+     */
+    addToTrackers (t) {
         let tracker = this.trackers[t.parentCompany];
         if (tracker) {
             tracker.increment();
@@ -96,12 +106,25 @@ class Tab {
             this.trackers[t.parentCompany] = newTracker;
             return newTracker;
         }
-    }
+    };
+
+    addOrUpdateTrackersBlocked (t) {
+        let tracker = this.trackersBlocked[t.parentCompany];
+        if (tracker) {
+            tracker.increment();
+            tracker.addURL(t.url);
+        }
+        else {
+            let newTracker = new Tracker(t.parentCompany, t.url, t.type);
+            this.trackersBlocked[t.parentCompany] = newTracker;
+            return newTracker;
+        }
+    };
 }
 
 chrome.webRequest.onHeadersReceived.addListener((header) => {
     let tab = tabManager.get({'tabId': header.tabId});
-    // remove successful rewritten requests 
+    // remove successful rewritten requests
     if (tab && header.statusCode < 400) {
         tab.httpsRequests = tab.httpsRequests.filter((url) => {
             return url !== header.url;
