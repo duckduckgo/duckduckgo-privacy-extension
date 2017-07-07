@@ -51,11 +51,11 @@ function Background() {
       for(var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
 
-          if(tab.url && tab.site){
-              tabManager.create(tab);
+          if(tab.url){
+              let newTab = tabManager.create(tab);
               // check https status of saved tabs so we have the correct site score
-              if (tab.url.match(/^https:\/\//)) {
-                  tab.site.score.update({hasHTTPS: true})
+              if (newTab.url.match(/^https:\/\//)) {
+                  newTab.site.score.update({hasHTTPS: true})
               }
           }
       }
