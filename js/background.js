@@ -51,7 +51,7 @@ function Background() {
       for(var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
 
-          if(tab.url){
+          if(tab.url && tab.site){
               tabManager.create(tab);
               // check https status of saved tabs so we have the correct site score
               if (tab.url.match(/^https:\/\//)) {
@@ -127,7 +127,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           // check that we have a valid tab
           // there is a chance this tab was closed before
           // we got the webrequest event
-          if (!(thisTab.url && thisTab.id)) {
+          if (!(thisTab && thisTab.url && thisTab.id)) {
               return;
           }
 
