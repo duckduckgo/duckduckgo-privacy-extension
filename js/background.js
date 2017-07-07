@@ -52,10 +52,10 @@ function Background() {
           var tab = savedTabs[i];
 
           if(tab.url){
-              tabManager.create(tab);
+              let newTab = tabManager.create(tab);
               // check https status of saved tabs so we have the correct site score
-              if (tab.url.match(/^https:\/\//)) {
-                  tab.site.score.update({hasHTTPS: true})
+              if (newTab.url.match(/^https:\/\//)) {
+                  newTab.site.score.update({hasHTTPS: true})
               }
           }
       }
@@ -127,7 +127,7 @@ chrome.webRequest.onBeforeRequest.addListener(
           // check that we have a valid tab
           // there is a chance this tab was closed before
           // we got the webrequest event
-          if (!(thisTab.url && thisTab.id)) {
+          if (!(thisTab && thisTab.url && thisTab.id)) {
               return;
           }
 
