@@ -150,8 +150,7 @@ function checkTrackersWithParentCompany(blockSettings, url, currLocation) {
     }
 }
 
-/* Check to see if this tracker is related
- * to the the page we're on
+/* Check to see if this tracker is related to the current page through their parent companies
  * Only block request to 3rd parties
  */
 function isRelatedEntity(parentCompany, currLocation) {
@@ -160,8 +159,7 @@ function isRelatedEntity(parentCompany, currLocation) {
 
     if(parentEntity && parentEntity.properties) {
 
-        // join parent entities to use as regex and store 
-        // if we haven't already done this
+        // join parent entities to use as regex and store in parentEntity so we don't have to do this again
         if (!parentEntity.regexProperties) {
             parentEntity.regexProperties = parentEntity.properties.join('|')
         }
