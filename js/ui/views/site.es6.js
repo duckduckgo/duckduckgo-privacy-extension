@@ -30,7 +30,7 @@ function Site (ops) {
                 thisView._setDisabled();
             }
 
-            thisModel.updateTrackerCount();
+            thisModel.update();
             thisModel.setHttpsMessage();
             thisView.rerender(); // our custom rerender below
 
@@ -48,8 +48,7 @@ function Site (ops) {
 
     chrome.runtime.onMessage.addListener(function(req, sender, res) {
         if (req.updateTrackerCount) {
-            thisModel.updateTrackerCount();
-            thisView.rerender(); // our custom rerender below
+            if (thisModel.update()) thisView.rerender();
         }
     });
 
@@ -70,7 +69,6 @@ Site.prototype = $.extend({},
               [this.$toggle, 'click', this._whitelistClick],
               [this.$showalltrackers, 'click', this._showAllTrackers]
             ]);
-
 
         },
 
