@@ -82,18 +82,9 @@ Site.prototype = $.extend({},
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
 
-
             chrome.tabs.reload(this.model.tab.id);
-            // BUG: trackersBlocked doesn't seem to be updating
-            // when going from blocking OFF to ON
-            // it stays at 0
-            // same when going from blocking ON to OFF
-            // but when you completely close and reopen popup,
-            // the counts are correct
-            this.getBackgroundTabData();
-
-
-            this.rerender();
+            const w = chrome.extension.getViews({type: 'popup'})[0];
+            w.close()
         },
 
         rerender: function() {
