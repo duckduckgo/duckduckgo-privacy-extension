@@ -239,7 +239,7 @@ easylists.loaded = true;
     // Check for a regex
     parsedFilterData.isRegex = input[beginIndex] === '/' && input[input.length - 1] === '/' && beginIndex !== input.length - 1;
     if (parsedFilterData.isRegex) {
-        // check for excaped forward slashes
+        // check for escaped forward slashes
         if (input.match(/\/$/)) {
             parsedFilterData.data = input.slice(beginIndex + 1);
         } else {
