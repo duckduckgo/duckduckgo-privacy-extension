@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "abp-filter-parser": "^0.2.0",
+    "ad-block": "^3.0.3",
     "bel": "^4.6.0",
     "deep-freeze": "0.0.1",
     "eventemitter2": "^4.1.0",
