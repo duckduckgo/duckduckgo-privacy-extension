@@ -75,16 +75,16 @@ Site.prototype = $.extend({},
               const updatedSiteRating = this.tab.site.score.get()
 
               if (updatedTrackersCount !== this.trackersCount) {
-                this.trackersCount = updatedTrackersCount
-                rerenderFlag = true
+                  this.trackersCount = updatedTrackersCount
+                  rerenderFlag = true
               }
               if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
-                this.trackersBlockedCount = updatedTrackersBlockedCount
-                rerenderFlag = true
+                  this.trackersBlockedCount = updatedTrackersBlockedCount
+                  rerenderFlag = true
               }
               if (updatedSiteRating !== this.siteRating) {
-                this.siteRating = updatedSiteRating
-                rerenderFlag = true
+                  this.siteRating = updatedSiteRating
+                  rerenderFlag = true
               }
           }
 
