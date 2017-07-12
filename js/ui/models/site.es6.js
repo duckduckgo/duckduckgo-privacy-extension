@@ -71,7 +71,13 @@ Site.prototype = $.extend({},
 
           if (this.tab) {
             const updatedTrackersCount = this.tab.getUniqueTrackersCount()
+            console.log('this.trackersCount: ' + this.trackersCount)
+            console.log('updatedTrackersCount: ' + updatedTrackersCount)
+
             const updatedTrackersBlockedCount = this.tab.getUniqueTrackersBlockedCount()
+            console.log('this.trackersBlockedCount: ' + this.trackersBlockedCount)
+            console.log('updatedTrackersBlockedCount: ' + updatedTrackersBlockedCount)
+
             const updatedSiteRating = this.tab.site.score.get()
 
             if (updatedTrackersCount !== this.trackersCount) {
@@ -86,7 +92,7 @@ Site.prototype = $.extend({},
               this.siteRating = updatedSiteRating
             }
           }
-
+          if (rerenderFlag) console.log('>>>>> rerenderFlag: ' + rerenderFlag)
           return rerenderFlag
       },
 
@@ -98,7 +104,6 @@ Site.prototype = $.extend({},
                   domain: this.tab.site.domain,
                   value: this.isWhitelisted
               });
-
               this.tab.site.notifyWhitelistChanged();
               this.setWhitelistStatusText();
           }

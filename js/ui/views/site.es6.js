@@ -16,28 +16,8 @@ function Site (ops) {
     // bind events
     this._setup();
 
-    // set up messaging to update the tracker count
-    var thisView = this,
-        thisModel = this.model;
-
-    backgroundPage.utils.getCurrentTab(function(tab) {
-        if (tab) {
-            thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
-            thisModel.tab = backgroundPage.tabManager.get({"tabId": tab.id});
-            thisModel.setSiteObj();
-
-            if (thisModel.disabled) {   // determined in setSiteObj()
-                thisView._setDisabled();
-            }
-
-            thisModel.update();
-            thisModel.setHttpsMessage();
-            thisView.rerender(); // our custom rerender below
-
-        } else {
-            console.debug('Site view: no tab');
-        }
-    });
+    // get data from background page tab
+    this.getBackgroundTabData();
 
     // edge case, should not happen
     // '-' is the domain default in the pages/trackers.es6.js call
@@ -46,9 +26,12 @@ function Site (ops) {
         this._setDisabled();
     }
 
+    let self = this;
     chrome.runtime.onMessage.addListener(function(req, sender, res) {
+        console.log('!!!! listener on msg:', req)
         if (req.updateTrackerCount) {
-            if (thisModel.update()) thisView.rerender();
+            console.log('call update() with conditional rerender')
+            if (self.model.update()) thisView.rerender();
         }
     });
 
@@ -72,9 +55,44 @@ Site.prototype = $.extend({},
 
         },
 
+        getBackgroundTabData: function () {
+            let self = this;
+
+            backgroundPage.utils.getCurrentTab(function (tab) {
+                if (tab) {
+                    self.model.domain = backgroundPage.utils.extractHostFromURL(tab.url);
+                    self.model.tab = backgroundPage.tabManager.get({'tabId': tab.id});
+                    self.model.setSiteObj();
+
+                    if (self.model.disabled) {   // determined in setSiteObj()
+                        self._setDisabled();
+                    }
+
+                    self.model.update();
+                    self.model.setHttpsMessage();
+                    self.rerender(); // our custom rerender below
+
+                } else {
+                    console.debug('Site view: no tab');
+                }
+            });
+        },
+
         _whitelistClick: function (e) {
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
+
+
+            chrome.tabs.reload(this.model.tab.id);
+            // BUG: trackersBlocked doesn't seem to be updating
+            // when going from blocking OFF to ON
+            // it stays at 0
+            // same when going from blocking ON to OFF
+            // but when you completely close and reopen popup,
+            // the counts are correct
+            this.getBackgroundTabData();
+
+
             this.rerender();
         },
 
