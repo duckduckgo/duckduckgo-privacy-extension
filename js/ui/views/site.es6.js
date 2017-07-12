@@ -28,9 +28,7 @@ function Site (ops) {
 
     let self = this;
     chrome.runtime.onMessage.addListener(function(req, sender, res) {
-        console.log('!!!! listener on msg:', req)
         if (req.updateTrackerCount) {
-            console.log('call update() with conditional rerender')
             if (self.model.update()) thisView.rerender();
         }
     });

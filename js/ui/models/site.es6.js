@@ -67,32 +67,27 @@ Site.prototype = $.extend({},
       },
 
       update: function () {
-          let rerenderFlag = false;
+          let rerenderFlag = false
 
           if (this.tab) {
-            const updatedTrackersCount = this.tab.getUniqueTrackersCount()
-            console.log('this.trackersCount: ' + this.trackersCount)
-            console.log('updatedTrackersCount: ' + updatedTrackersCount)
+              const updatedTrackersCount = this.tab.getUniqueTrackersCount()
+              const updatedTrackersBlockedCount = this.tab.getUniqueTrackersBlockedCount()
+              const updatedSiteRating = this.tab.site.score.get()
 
-            const updatedTrackersBlockedCount = this.tab.getUniqueTrackersBlockedCount()
-            console.log('this.trackersBlockedCount: ' + this.trackersBlockedCount)
-            console.log('updatedTrackersBlockedCount: ' + updatedTrackersBlockedCount)
-
-            const updatedSiteRating = this.tab.site.score.get()
-
-            if (updatedTrackersCount !== this.trackersCount) {
-              this.trackersCount = updatedTrackersCount
-              rerenderFlag = true
-            }
-            if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
-              this.trackersBlockedCount = updatedTrackersBlockedCount
-              rerenderFlag = true
-            }
-            if (updatedSiteRating !== this.siteRating) {
-              this.siteRating = updatedSiteRating
-            }
+              if (updatedTrackersCount !== this.trackersCount) {
+                this.trackersCount = updatedTrackersCount
+                rerenderFlag = true
+              }
+              if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
+                this.trackersBlockedCount = updatedTrackersBlockedCount
+                rerenderFlag = true
+              }
+              if (updatedSiteRating !== this.siteRating) {
+                this.siteRating = updatedSiteRating
+                rerenderFlag = true
+              }
           }
-          if (rerenderFlag) console.log('>>>>> rerenderFlag: ' + rerenderFlag)
+
           return rerenderFlag
       },
 
