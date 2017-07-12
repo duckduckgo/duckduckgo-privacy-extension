@@ -4,20 +4,17 @@
  *
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
-
-const adBlock = require('ad-block');
+abp = require('abp-filter-parser');
 
 easylists = {
     privacy: {
         url: 'https://easylist.to/easylist/easyprivacy.txt',
-        client: new AdBlockClient(),
-        filterOptions: FilterOptions
+        parsed: {}
     },
     general: {
         url: 'https://easylist.to/easylist/easylist.txt',
         whitelist: 'data/tracker_lists/general-whitelist.txt',
-        client: new AdBlockClient(),
-        filterOptions: FilterOptions
+        parsed: {}
     }
 };
 
@@ -37,7 +34,7 @@ for (let list in easylists) {
         listData += whitelist;
     }
     
-    easylists[client].parse(listData);
+    abp.parse(listData, easylists[list].parsed);
 }
 
 easylists.loaded = true;
