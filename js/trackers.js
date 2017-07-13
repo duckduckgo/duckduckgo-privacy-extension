@@ -41,10 +41,9 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
         var blockSettings = settings.getSetting('blocking').slice(0);
 
         // don't block 1st party requests
-        if (utils.extractHostFromURL(currLocation) === utils.extractHostFromURL(urlToCheck)) {
+        if (isFirstPartyRequest(currLocation, urlToCheck)) {
             return
         }
-
         if(social_block){
             blockSettings.push('Social');
         }
@@ -151,17 +150,42 @@ function checkTrackersWithParentCompany(blockSettings, url, currLocation) {
     }
 }
 
-/* Check to see if this tracker is related
- * to the the page we're on
+/* Check to see if this tracker is related to the current page through their parent companies
  * Only block request to 3rd parties
  */
 function isRelatedEntity(parentCompany, currLocation) {
     var parentEntity = entityList[parentCompany];
     var host = utils.extractHostFromURL(currLocation);
 
-    if(parentEntity && parentEntity.properties && parentEntity.properties.indexOf(host) !== -1){
-        return true;
+    if(parentEntity && parentEntity.properties) {
+
+        // join parent entities to use as regex and store in parentEntity so we don't have to do this again
+        if (!parentEntity.regexProperties) {
+            parentEntity.regexProperties = parentEntity.properties.join('|')
+        }
+
+        if (host.match(parentEntity.regexProperties)) {
+            return true
+        }
+
     }
+    return false;
+}
+
+/* Compare two urls to determine if they came from the same hostname
+ * pull off any subdomains before comparison
+ */
+function isFirstPartyRequest(currLocation, urlToCheck) {
+    let hostname1 = utils.extractHostFromURL(currLocation)
+    hostname1 = hostname1.split('.').slice(-2).join('.')
+
+    let hostname2 = utils.extractHostFromURL(urlToCheck)
+    hostname2 = hostname2.split('.').slice(-2).join('.')
+
+    if (hostname1 === hostname2) {
+        return true
+    }
+
     return false;
 }
 
