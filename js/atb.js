@@ -148,14 +148,6 @@ var ATB = (() => {
             ATB.inject();
             
         }
-
-        /* not being used right now
-        startUpPage: () => {
-            if (!chrome.extension.inIncognitoContext) {
-                chrome.tabs.create({url: "/html/intro.html"});
-            }
-        }
-        */
     }
 })();
 
