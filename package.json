@@ -6,7 +6,8 @@
   },
   "repository": "duckduckgo/chrome-zeroclickinfo",
   "scripts": {
-    "postinstall": "export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+    "abp": "cd node_modules/abp-filter-parser && npm install",
+    "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "build": "grunt build",
     "dev": "grunt dev",
     "release": "grunt build && node scripts/httpsWhitelist.js",
