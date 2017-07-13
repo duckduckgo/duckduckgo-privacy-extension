@@ -6,7 +6,8 @@
   },
   "repository": "duckduckgo/chrome-zeroclickinfo",
   "scripts": {
-    "postinstall": "export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+    "abp": "cd node_modules/abp-filter-parser && npm install",
+    "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "build": "grunt build",
     "dev": "grunt dev",
     "release": "grunt build && node scripts/httpsWhitelist.js",
@@ -34,7 +35,7 @@
     "selenium-webdriver": "^3.0.1"
   },
   "dependencies": {
-    "abp-filter-parser": "^0.2.0",
+    "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git",
     "bel": "^4.6.0",
     "deep-freeze": "0.0.1",
     "eventemitter2": "^4.1.0",

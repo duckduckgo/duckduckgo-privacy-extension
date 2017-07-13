@@ -16,28 +16,8 @@ function Site (ops) {
     // bind events
     this._setup();
 
-    // set up messaging to update the tracker count
-    var thisView = this,
-        thisModel = this.model;
-
-    backgroundPage.utils.getCurrentTab(function(tab) {
-        if (tab) {
-            thisModel.domain = backgroundPage.utils.extractHostFromURL(tab.url);
-            thisModel.tab = backgroundPage.tabManager.get({"tabId": tab.id});
-            thisModel.setSiteObj();
-
-            if (thisModel.disabled) {   // determined in setSiteObj()
-                thisView._setDisabled();
-            }
-
-            thisModel.updateTrackerCount();
-            thisModel.setHttpsMessage();
-            thisView.rerender(); // our custom rerender below
-
-        } else {
-            console.debug('Site view: no tab');
-        }
-    });
+    // get data from background page tab
+    this.getBackgroundTabData();
 
     // edge case, should not happen
     // '-' is the domain default in the pages/trackers.es6.js call
@@ -46,10 +26,10 @@ function Site (ops) {
         this._setDisabled();
     }
 
+    let self = this;
     chrome.runtime.onMessage.addListener(function(req, sender, res) {
         if (req.updateTrackerCount) {
-            thisModel.updateTrackerCount();
-            thisView.rerender(); // our custom rerender below
+            if (self.model.update()) thisView.rerender();
         }
     });
 
@@ -71,13 +51,38 @@ Site.prototype = $.extend({},
               [this.$showalltrackers, 'click', this._showAllTrackers]
             ]);
 
+        },
 
+        getBackgroundTabData: function () {
+            let self = this;
+
+            backgroundPage.utils.getCurrentTab(function (tab) {
+                if (tab) {
+                    self.model.domain = backgroundPage.utils.extractHostFromURL(tab.url);
+                    self.model.tab = backgroundPage.tabManager.get({'tabId': tab.id});
+                    self.model.setSiteObj();
+
+                    if (self.model.disabled) {   // determined in setSiteObj()
+                        self._setDisabled();
+                    }
+
+                    self.model.update();
+                    self.model.setHttpsMessage();
+                    self.rerender(); // our custom rerender below
+
+                } else {
+                    console.debug('Site view: no tab');
+                }
+            });
         },
 
         _whitelistClick: function (e) {
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
-            this.rerender();
+
+            chrome.tabs.reload(this.model.tab.id);
+            const w = chrome.extension.getViews({type: 'popup'})[0];
+            w.close()
         },
 
         rerender: function() {

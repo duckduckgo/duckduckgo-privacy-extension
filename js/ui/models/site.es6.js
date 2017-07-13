@@ -27,21 +27,6 @@ Site.prototype = $.extend({},
 
       modelName: 'site',
 
-      toggleWhitelist: function () {
-          if (this.tab.site) {
-              this.isWhitelisted = !this.isWhitelisted;
-              
-              backgroundPage.tabManager.whitelistDomain({
-                  list: 'whitelisted',
-                  domain: this.tab.site.domain, 
-                  value: this.isWhitelisted
-              });
-
-              this.tab.site.notifyWhitelistChanged();
-              this.setWhitelistStatusText();
-          }
-      },
-
       setSiteObj: function() {
           if (!this.tab) {
               this.domain = 'new tab'; // tab can be null for firefox new tabs
@@ -60,22 +45,8 @@ Site.prototype = $.extend({},
           }
       },
 
-      updateTrackerCount: function() {
-          if (this.tab) {
-            this.trackersCount = this.tab.getUniqueTrackersCount();
-            this.trackersBlockedCount = this.tab.getUniqueTrackersBlockedCount();
-            this.updateSiteScore();
-          }
-      },
-
-      updateSiteScore: function() {
-          this.siteRating = this.tab.site.score.get()
-      },
-
-      setHttpsMessage: function() {
-          if (!this.tab) {
-              return;
-          }
+      setHttpsMessage: function () {
+          if (!this.tab) return
 
           if (this.tab.upgradedHttps) {
               this.httpsState = 'upgraded';
@@ -93,7 +64,46 @@ Site.prototype = $.extend({},
           } else {
               this.whitelistStatusText = whitelistStates['notWhitelisted'];
           }
+      },
+
+      update: function () {
+          let rerenderFlag = false
+
+          if (this.tab) {
+              const updatedTrackersCount = this.tab.getUniqueTrackersCount()
+              const updatedTrackersBlockedCount = this.tab.getUniqueTrackersBlockedCount()
+              const updatedSiteRating = this.tab.site.score.get()
+
+              if (updatedTrackersCount !== this.trackersCount) {
+                  this.trackersCount = updatedTrackersCount
+                  rerenderFlag = true
+              }
+              if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
+                  this.trackersBlockedCount = updatedTrackersBlockedCount
+                  rerenderFlag = true
+              }
+              if (updatedSiteRating !== this.siteRating) {
+                  this.siteRating = updatedSiteRating
+                  rerenderFlag = true
+              }
+          }
+
+          return rerenderFlag
+      },
+
+      toggleWhitelist: function () {
+          if (this.tab && this.tab.site) {
+              this.isWhitelisted = !this.isWhitelisted;
+              backgroundPage.tabManager.whitelistDomain({
+                  list: 'whitelisted',
+                  domain: this.tab.site.domain,
+                  value: this.isWhitelisted
+              });
+              this.tab.site.notifyWhitelistChanged();
+              this.setWhitelistStatusText();
+          }
       }
+
   }
 );
 
