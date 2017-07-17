@@ -20,6 +20,12 @@
              <input type="button" value="Open top 10 sites" />
       </a>
 
+      <h2>Debug a single site</h2>
+      <form action="/test/html/debugSite.html">
+        <input type="text" name="site" value="site to debug"/>
+        <input type="submit" value="Run" />
+      </form>
+
       <h2>Screenshot tests</h2>
 
       <form action="/test/html/screenshots.html">
@@ -27,14 +33,8 @@
         <input type="submit" value="Run" />
         <input type="checkbox" name="random" value="random">random</input>
       </form>
-    <script src="lib/qunit-2.2.0.js"></script>
-    <script src="lib/qunit_config.js"></script>
-    <script src="lib/sinon-2.0.0.js"></script>
   </head>
   <body>
-    <div id="qunit"></div>
-    <div id="qunit-fixture"></div>
-    
     <script src="../js/require.js"></script>
     <script src="../js/utils.js"></script>
     <script src="../js/topBlocked.js"></script>

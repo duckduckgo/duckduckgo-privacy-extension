@@ -1,7 +1,7 @@
 var sites;
 var comparisonTest = false;
 const bkg = chrome.extension.getBackgroundPage();
-var params = getTestParams();
+var params = getParams();
 var screenshots = [];
 sites = buildSitesToTest();
 processSite();
@@ -10,25 +10,11 @@ processSite();
 /*
  * Get test params from the url and set any defaults
  */
-function getTestParams() {
-    
-    params = window.location.href
-        .split('?')[1]
-        .split('&')
-        .reduce((params, line) => { 
-            let parts = line.split('='); 
-            params[parts[0]] = parts[1]; 
-            return params;
-        }, {});
-
-    if (!params.numberToTest) {
-        params.numberToTest = 10;
-    }
-    else if(params.numberToTest > top500Sites.length){
-        params.numberToTest = top500Sites.length
-    }
-
-    return params;
+if (!params.numberToTest) {
+    params.numberToTest = 10;
+}
+else if(params.numberToTest > top500Sites.length){
+    params.numberToTest = top500Sites.length
 }
 
 /*

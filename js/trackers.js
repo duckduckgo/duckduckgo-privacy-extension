@@ -41,7 +41,7 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
         var blockSettings = settings.getSetting('blocking').slice(0);
 
         // don't block 1st party requests
-        if (isFirstPartyRequest(currLocation, urlToCheck)) {
+        if (0 && isFirstPartyRequest(currLocation, urlToCheck)) {
             return
         }
         if(social_block){

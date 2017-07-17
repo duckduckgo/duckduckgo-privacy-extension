@@ -74,3 +74,16 @@ function waitForActiveTab(url) {
         });
     });
 }
+
+function getParams() {
+    let params = window.location.href
+        .split('?')[1]
+        .split('&')
+        .reduce((params, line) => {
+            let parts = line.split('=')
+                params[parts[0]] = parts[1]
+                return params
+        }, {})
+
+    return params;
+}
