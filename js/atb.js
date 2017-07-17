@@ -54,10 +54,32 @@ var ATB = (() => {
                     return;
                 }
 
-                let newURL = request.url + "&atb=" + atbSetting;
+                // handle anchor tags for pages like about#newsletter
+                let urlParts = request.url.split('#');
+                let newURL = request.url
 
-                return {redirectUrl: newURL};
+                // if we have an anchor tag
+                if (urlParts.length === 2) {
+                    newURL = urlParts[0] + "&atb=" + atbSetting + "#" + urlParts[1]
+                }
+                else {
+                    newURL = request.url + "&atb=" + atbSetting
+                }
+
+                return {redirectUrl: newURL}
             }
+        },
+
+        // migrate old versions that used localstorage over to use settings and chrome.storage.local
+        migrate: () => {
+            let atbNames = ['atb', 'set_atb']
+            atbNames.map((name) => {
+                let localValue = localStorage[name]
+                let storageValue = settings.getSetting(name)
+                if (localValue && !storageValue) {
+                    settings.updateSetting(name, localValue)
+                }
+            });
         },
 
         setInitialVersions: () => {
@@ -118,15 +140,13 @@ var ATB = (() => {
         },
 
         onInstalled: () => {
+            // we already migrate on update events but just to be
+            // safe lets do this on install too
+            ATB.migrate();
+
             ATB.setInitialVersions();
             ATB.inject();
             
-        },
-
-        startUpPage: () => {
-            if (!chrome.extension.inIncognitoContext) {
-                chrome.tabs.create({url: "/html/intro.html"});
-            }
         }
     }
 })();

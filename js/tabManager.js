@@ -25,6 +25,38 @@ class TabManager {
     get(tabData) {
         return this.tabContainer[tabData.tabId];
     };
+
+    /* This will whitelist any open tabs with the same domain
+     * list: name of the whitelist to update
+     * domain: domain to whitelist
+     * value: whitelist value, true or false
+     */
+    whitelistDomain(data) {
+        this.setGlobalWhitelist(data.list, data.domain, data.value)
+        
+        for (let tabId in this.tabContainer) {
+            let tab = this.tabContainer[tabId];
+            if (tab.site && tab.site.domain === data.domain) {
+                tab.site.setWhitelisted(data.list, data.value)
+            }
+        }
+
+    }
+
+    /* Update the whitelists kept in settings
+     */
+    setGlobalWhitelist(list, domain, value) {
+        let globalwhitelist = settings.getSetting(list) || {}
+
+        if (value) {
+            globalwhitelist[domain] = true
+        }
+        else {
+            delete globalwhitelist[domain]
+        }
+
+        settings.updateSetting(list, globalwhitelist)
+    }
 }
 
 var tabManager = new TabManager();
@@ -54,14 +86,21 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             // 1. check main_frame url for http and update site score
             // 2. check for uncompleted upgraded https requests and whitlist the site if 
             // there are any
-            if (info.status === "complete") {
+            if (tab.status === "complete") {
 
                 if (tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
 
                 if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length) {
-                    tab.site.setWhitelisted('HTTPSwhitelisted', true);
+                    
+                    // set whitelist for all tabs with this domain
+                    tabManager.whitelistDomain({
+                        list: 'HTTPSwhitelisted',
+                        value: true,
+                        domain: tab.site.domain
+                    });
+                    
                     chrome.tabs.reload(tab.id);
                 }
 

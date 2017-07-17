@@ -17,7 +17,7 @@
     "blockLists": [
         "trackersWithParentCompany"
     ],
-    "entityList": "data/tracker_lists/disconnect-entitylist.json",
+    "entityList": "https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json",
     "entityMap": "data/tracker_lists/entityMap.json",
     "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
