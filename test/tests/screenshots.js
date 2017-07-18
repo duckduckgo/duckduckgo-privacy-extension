@@ -1,5 +1,4 @@
 var sites;
-var comparisonTest = true;
 const bkg = chrome.extension.getBackgroundPage();
 var params = getParams();
 var screenshots = [];
@@ -69,23 +68,15 @@ function processSite() {
     // run test with tracker blocking and https
     runTest(url).then(() => {
 
-        if (comparisonTest) {
-            // turn tracker blocking and https off
-            resetSettings(false);
-
-            // run test with settings off
-            chrome.browsingData.removeCache({}, (() => {
-                runTest(url).then(() => {
-                    screenshots.push(newScreenshots)
-                    processSite();
-                });
-            }));
-        }
-        else {
-            screenshots.push(newScreenshots)        
+        // turn tracker blocking off
+        resetSettings(false);
+        
+        runTest(url).then(() => {
+            
+            screenshots.push(newScreenshots)
             processSite();
-        }
-    });     
+        })
+    })  
 }
 
 /*
