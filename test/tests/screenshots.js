@@ -1,5 +1,5 @@
 var sites;
-var comparisonTest = false;
+var comparisonTest = true;
 const bkg = chrome.extension.getBackgroundPage();
 var params = getParams();
 var screenshots = [];
@@ -22,20 +22,26 @@ else if(params.numberToTest > top500Sites.length){
  * side by side screenshots
  */
 function buildSummary() {
-    //let table = '<table><tr><td><b>Tracking ON</b></td><td><b>Tracking OFF</b></td></tr>';
-    let text = '';
+    let table = '<table><tr><td><b>Tracker Blocking ON</b></td><td><b>Tracker Blocking OFF</b></td></tr>';
 
-    /*
     screenshots.forEach((x) => {
-        //table += '<tr><td>Trackers: ' + x.score + '<a href="' + x.url + '">' + x.url + '</a></td><td>' + x.blockingTime + '</td></tr>';
-        //table += '<tr><td><img id="on" src="' + x.on + '" /></td>';
-        //table += '<td><img id="off" src="' + x.off + '" /></td></tr>';
+        table += '<tr><td>Site Score: ' + x.score + ' <a href="' + x.url + '">' + x.url + '</a></td><td></tr>';
+        table += '<tr><td><img id="on" src="' + x.on + '" /></td>';
+        table += '<td><img id="off" src="' + x.off + '" /></td></tr>';
     });
-    //table += '</table>';
-*/
+    table += '</table>';
 
-    $('#screenshots').prepend(JSON.stringify(screenshots, null, 4));
     
+    $('#screenshots').prepend(table);
+    if (params.json) {
+        // remove image data before printing on the screen
+        screenshots.map((x) => {
+            delete x.on
+            delete x.off
+        })
+
+        $('#screenshots').append(`<h2>JSON Output</h2>\n ${JSON.stringify(screenshots, null, 4)}`);
+    }
 }
 
 /*
@@ -70,11 +76,13 @@ function processSite() {
             // run test with settings off
             chrome.browsingData.removeCache({}, (() => {
                 runTest(url).then(() => {
+                    screenshots.push(newScreenshots)
                     processSite();
                 });
             }));
         }
         else {
+            screenshots.push(newScreenshots)        
             processSite();
         }
     });     
@@ -95,36 +103,29 @@ function runTest(url) {
     return new Promise((resolve) => {
 
         let blockingOnStartTime = Date.now();
-        
+
         chrome.tabs.create({url: url}, (t) => {
 
             getLoadedTabById(t.id, blockingOnStartTime, 8000, 1000).then((tab) => {
-                //newScreenshots.blockingOnLoadTime = Date.now() - blockingOnStartTime;
+                let blocking = bkg.settings.getSetting('trackerBlockingEnabled')
                 let tabObj = bkg.tabManager.get({'tabId': tab.id});
-                newScreenshots.scoreObj = tabObj.site.score;
-                newScreenshots.score = tabObj.site.score.get()
 
-                screenshots.push(newScreenshots);
+                if (blocking) {
+                    newScreenshots.scoreObj = tabObj.site.score;
+                    newScreenshots.score = tabObj.site.score.get()
+                }
 
-                chrome.tabs.remove(tab.id);
-                resolve();
-            });
+                takeScreenshot().then((image) => {
+                    blocking ? newScreenshots.on = image : newScreenshots.off = image
+                    chrome.tabs.remove(tab.id);
+                    resolve();
+                })
+            })
         });
     });
 }
 
-function takeScreenshot() {
-    return new Promise((resolve) => {
-        chrome.tabs.captureVisibleTab((data) => {
-            screenshots.on = data;
-            resolve();
-        });
-    });
-}
-
-/*
- * Build
- */
+/* Build list of sites to test */
 function buildSitesToTest() {
     // build array of sites to test. Either random or in order
     let sites = [];
@@ -144,25 +145,4 @@ function buildSitesToTest() {
         sites = top500Sites.slice(0,params.numberToTest);
     }
     return sites;
-}
-
-function siteScore(tab) {
-    console.log(tab);
-    let total = tab.getBadgeTotal();
-    if (!total)
-        total = 0;
-
-    if(!tab.potential)
-        tab.potential = 0;
-
-          if (total == 0 && tab.potential > 0)
-              return  'B';
-          else if (total > 8 ) // arbitrary demo
-              return  'C';
-          else if (total > 0 )
-              return  'B';
-          else if (total == 0 && tab.potential == 0)
-              return  'A';
-          else
-              return 'none';
 }
