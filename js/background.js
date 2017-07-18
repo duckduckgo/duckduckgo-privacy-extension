@@ -157,9 +157,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                   if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
                   // for debugging specific requests. see test/tests/debugSite.js
-                  if (debugRequest) {
-                      console.log(debugRequest)
-                      if (debugRequest === tracker.url) {
+                  if (debugRequest && debugRequest.length) {
+                      if (debugRequest.includes(tracker.url)) {
                           console.log("UNBLOCKED: ", tracker.url)
                           return
                       }

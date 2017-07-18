@@ -75,15 +75,25 @@ function waitForActiveTab(url) {
     });
 }
 
+/* get url params */
 function getParams() {
     let params = window.location.href
         .split('?')[1]
         .split('&')
         .reduce((params, line) => {
             let parts = line.split('=')
-                params[parts[0]] = parts[1]
+                params[parts[0]] = decodeURIComponent(parts[1])
                 return params
         }, {})
 
     return params;
+}
+
+/* take a screen shot and return the image */
+function takeScreenshot() {
+    return new Promise((resolve) => {
+        chrome.tabs.captureVisibleTab((imageData) => {
+            resolve(imageData)
+        })
+    })
 }
