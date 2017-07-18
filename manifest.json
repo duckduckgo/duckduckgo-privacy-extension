@@ -92,8 +92,7 @@
         "tabs",
         "cookies",
         "storage",
-        "<all_urls>",
-        "browsingData"
+        "<all_urls>"
     ],
     "web_accessible_resources": [
         "img/*"

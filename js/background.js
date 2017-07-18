@@ -175,7 +175,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
 
-          if (upgradeStatus.redirectUrl){
+          if (upgradeStatus && upgradeStatus.redirectUrl){
               thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
           }
 
