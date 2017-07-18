@@ -97,3 +97,9 @@ function takeScreenshot() {
         })
     })
 }
+
+/* set tracker blocking and https state */
+function resetSettings(settingState) {
+    bkg.settings.updateSetting('trackerBlockingEnabled', settingState)
+    bkg.settings.updateSetting('httpsEverywhereEnabled', settingState)
+}

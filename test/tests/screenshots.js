@@ -31,15 +31,15 @@ function buildSummary() {
     });
     table += '</table>';
 
-    
-    $('#screenshots').prepend(table);
+    // add the screenshots to the page
+    params.screenshots ? $('#screenshots').prepend(table) : null
+
     if (params.json) {
         // remove image data before printing on the screen
         screenshots.map((x) => {
             delete x.on
             delete x.off
         })
-
         $('#screenshots').append(`<h2>JSON Output</h2>\n ${JSON.stringify(screenshots, null, 4)}`);
     }
 }
@@ -86,14 +86,6 @@ function processSite() {
             processSite();
         }
     });     
-}
-
-/*
- * update privacy settings to whatever settingState is set to
- */
-function resetSettings(settingState) {
-    bkg.settings.updateSetting('trackerBlockingEnabled', settingState);
-    bkg.settings.updateSetting('httpsEverywhereEnabled', settingState);
 }
 
 /*

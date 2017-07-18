@@ -3,6 +3,9 @@ let bkg = chrome.extension.getBackgroundPage()
 let trackersToTest = []
 let results = []
 
+// make sure tracker blocking in on
+resetSettings(true)
+
 // reset tracker to debug before we start
 bkg.debugRequest = false
 
