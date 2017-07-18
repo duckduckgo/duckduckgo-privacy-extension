@@ -1,5 +1,4 @@
 var sites;
-const bkg = chrome.extension.getBackgroundPage();
 var params = getParams();
 var screenshots = [];
 sites = buildSitesToTest();

@@ -1,5 +1,4 @@
 let params = getParams()
-let bkg = chrome.extension.getBackgroundPage()
 let trackersToTest = []
 let results = []
 
