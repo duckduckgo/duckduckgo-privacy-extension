@@ -25,16 +25,18 @@ easylists = {
  */
 for (let list in easylists) {
     let url = easylists[list].url;
-    let listData = load.loadExtensionFile(url, '', 'external');
+    load.loadExtensionFile(url, '', 'external', (listData) => {
     let whitelistFile = easylists[list].whitelist;
 
-    // append the whitelist entries before we process the list
-    if (whitelistFile) {
-        let whitelist = load.loadExtensionFile(whitelistFile);
-        listData += whitelist;
-    }
-    
-    abp.parse(listData, easylists[list].parsed);
+        // append the whitelist entries before we process the list
+        if (whitelistFile) {
+            load.loadExtensionFile(whitelistFile, '', '', (whitelist) => {
+                listData += whitelist
+                abp.parse(listData, easylists[list].parsed)
+            })
+        } else {
+            abp.parse(listData, easylists[list].parsed)
+        }
+    });
 }
-
 easylists.loaded = true;

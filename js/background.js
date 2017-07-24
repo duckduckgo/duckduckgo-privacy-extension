@@ -19,7 +19,8 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-const httpsWhitelist = load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'));
+let httpsWhitelist
+load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
