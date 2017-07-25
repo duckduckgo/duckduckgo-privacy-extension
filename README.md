@@ -13,8 +13,6 @@ This software is licensed under the terms of the Apache License, Version 2.0 (se
 
 ## Set up development environment
 - `$ npm install` from root directory
-- `$ git submodule init` to pull in EFF's https-everywhere project
-- `$ git submodule update`
 
 ## Build
 - `$ npm run build`
@@ -47,13 +45,13 @@ Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6
 
 ### Firefox
 
-We're building an embedded Firefox extension using our current extension in firefox-zeroclickinfo and the `beta-firefox` branch of chrome-zeroclickinfo. This allows us to keep the default search engine feature of our current Firefox extension and include all the new features of the chrome extension. 
+We're building an embedded Firefox extension using our current extension in firefox-zeroclickinfo and the `beta-firefox` branch of chrome-zeroclickinfo. This allows us to keep the default search engine feature of our current Firefox extension and include all the new features of the chrome extension.
 
 1. Assuming you have the following directory structure
 
 ```
 └──YourExtensionsDirectory
-        ├── chrome-zeroclickinfo                                         
+        ├── chrome-zeroclickinfo
         ├── firefox-zeroclickinfo
 ```
 
