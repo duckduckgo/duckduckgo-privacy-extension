@@ -79,7 +79,7 @@ function checkEasylists(url, currLocation, request){
     let easylistBlock = false;
     settings.getSetting('easylists').some((listName) => {
         // lists can take a second or two to load so check that the parsed data exists
-        if (easylists.loaded) {
+        if (easylists[listName].loaded) {
             easylistBlock = abp.matches(easylists[listName].parsed, url, {
                 domain: currLocation, 
                 elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]

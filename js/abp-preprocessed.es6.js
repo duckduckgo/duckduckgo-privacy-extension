@@ -33,10 +33,11 @@ for (let list in easylists) {
             load.loadExtensionFile(whitelistFile, '', '', (whitelist) => {
                 listData += whitelist
                 abp.parse(listData, easylists[list].parsed)
+                easylists[list].loaded = true;
             })
         } else {
             abp.parse(listData, easylists[list].parsed)
+            easylists[list].loaded = true;
         }
     });
 }
-easylists.loaded = true;

@@ -35,7 +35,7 @@ require.scopes.load = ( () => {
 
         xhr.onreadystatechange = function() {
             let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
-            if (xhr.readyState == done && xhr.status == 200) {
+            if (xhr.readyState === done && xhr.status === 200) {
                 cb(returnResponse(xhr, returnType))
             }
         }
