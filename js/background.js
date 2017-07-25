@@ -163,8 +163,10 @@ chrome.webRequest.onBeforeRequest.addListener(
           }
       }
 
+      // TODO: revisit https upgrade feature... soon
       // upgrade to https if the site isn't whitelisted or in our list
       // of known broken https sites
+      /*
       if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
 
@@ -174,6 +176,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
           return upgradeStatus;
       }
+      */
 
     },
     {

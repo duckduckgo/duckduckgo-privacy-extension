@@ -1,4 +1,4 @@
-ITEMS   := rules html https data public img js manifest.json
+ITEMS   := rules html data public img js manifest.json
 
 release: grunt moveout
 
