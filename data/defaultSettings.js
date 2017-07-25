@@ -1,4 +1,4 @@
-{
+const defaultSettings = {
     "extensionIsEnabled": true,
     "socialBlockingIsEnabled": false,
     "trackerBlockingEnabled": true,

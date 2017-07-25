@@ -4,6 +4,11 @@ var ATB = (() => {
 
     return {
         updateSetAtb: () => {
+            // Just return for now. The legacy portion of the extension
+            // is still taking care of this.
+            // We need to migrate atb values over to the webextension.
+            return;
+
             return new Promise((resolve, reject) => {
                 let atbSetting = settings.getSetting('atb'),
                     setAtbSetting = settings.getSetting('set_atb');
@@ -21,6 +26,12 @@ var ATB = (() => {
         },
 
         getSetAtb: (atbSetting, setAtb, callback) => {
+
+            // Just return for now. The legacy portion of the extension
+            // is still taking care of this.
+            // We need to migrate atb values over to the webextension.
+            return;
+
             return new Promise((resolve, reject) => {
                 var xhr = new XMLHttpRequest();
 

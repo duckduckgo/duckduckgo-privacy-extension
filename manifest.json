@@ -29,6 +29,7 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": [
+                "data/defaultSettings.js",
                 "js/require.js",
                 "js/utils.js",
                 "js/topBlocked.js",

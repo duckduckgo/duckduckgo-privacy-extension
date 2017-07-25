@@ -35,7 +35,7 @@ require.scopes.settings =(() => {
     }
 
     function buildSettingsFromDefaults() {
-        settings = load.JSONfromLocalFile('data/default_settings.json');
+        settings = defaultSettings
     }
 
     function syncSettingTolocalStorage(){
