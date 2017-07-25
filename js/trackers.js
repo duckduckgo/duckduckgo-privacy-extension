@@ -3,14 +3,18 @@
 var abp,
     easylists;
 
-require.scopes.trackers = (function() {    
-
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
-    trackerLists = require('trackerLists').getLists(),
-    entityList = load.JSONfromExternalFile(settings.getSetting('entityList')),
-    entityMap =  load.JSONfromLocalFile(settings.getSetting('entityMap'));
+    trackerLists = require('trackerLists').getLists();
+
+let entityList,
+    entityMap;
+
+load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
+load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
+
+require.scopes.trackers = (function() {    
 
 function isTracker(urlToCheck, currLocation, tabId, request) {
 
@@ -31,7 +35,6 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
             return {parentCompany: "twitter", url: "platform.twitter.com", type: "Analytics"};
         }
     }
-
 
     if (settings.getSetting('trackerBlockingEnabled')) {
         
@@ -76,7 +79,7 @@ function checkEasylists(url, currLocation, request){
     let easylistBlock = false;
     settings.getSetting('easylists').some((listName) => {
         // lists can take a second or two to load so check that the parsed data exists
-        if (easylists.loaded) {
+        if (easylists[listName].loaded) {
             easylistBlock = abp.matches(easylists[listName].parsed, url, {
                 domain: currLocation, 
                 elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
