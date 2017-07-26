@@ -22,6 +22,21 @@ body {
 
 #trackers-container {
 
+    .failover.card {
+        position: absolute;
+        top: 14px;
+        right:  7px;
+        bottom: 63px;
+        left: 7px;
+
+        p {
+            padding: 7px 21px;
+            font-weight: bold;
+            font-size: 15px;
+            color: $platinum-darker;
+        }
+    }
+
     .search-form {
 
         .search-form__input {

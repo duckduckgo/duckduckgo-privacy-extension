@@ -6,9 +6,7 @@ function PrivacyOptions (attrs) {
     attrs.trackerBlockingEnabled = backgroundPage.settings.getSetting('trackerBlockingEnabled');
     attrs.httpsEverywhereEnabled = backgroundPage.settings.getSetting('httpsEverywhereEnabled');
     attrs.embeddedTweetsEnabled = backgroundPage.settings.getSetting('embeddedTweetsEnabled');
-
     Parent.call(this, attrs);
-
 };
 
 
