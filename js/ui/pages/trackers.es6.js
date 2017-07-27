@@ -21,8 +21,12 @@ const AutocompleteView = require('./../views/autocomplete.es6.js');
 const AutocompleteModel = require('./../models/autocomplete.es6.js');
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js');
 
+const FailoverView = require('./../views/failover.es6.js');
+const failoverTemplate = require('./../templates/failover.es6.js');
+const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Trackers (ops) {
+    this.$parent = $('#trackers-container');
     Parent.call(this, ops);
 };
 
@@ -35,16 +39,19 @@ Trackers.prototype = $.extend({},
 
         ready: function() {
 
-            var $parent = $('#trackers-container');
-
             Parent.prototype.ready.call(this);
+
+            // some browsers (Firefox) don't allow access to background
+            // page in private browsing mode
+            // if that's the case, exit here and render failover view
+            if (!backgroundPage) return this.failover();
 
             this.setBrowserClassOnBodyTag();
 
             this.views.search = new SearchView({
                 pageView: this,
                 model: new SearchModel({searchText:''}), // TODO proper location of remembered query
-                appendTo: $parent,
+                appendTo: this.$parent,
                 template: searchTemplate
             });
 
@@ -56,14 +63,14 @@ Trackers.prototype = $.extend({},
                     siteRating: 'B',
                     trackerCount: 0
                 }),
-                appendTo: $parent,
+                appendTo: this.$parent,
                 template: siteTemplate
             });
 
             this.views.trackerlist = new TrackerListView({
                 pageView: this,
                 model: new TrackerListModel({ numCompanies: 4 }),
-                appendTo: $parent,
+                appendTo: this.$parent,
                 template: trackerListTemplate,
             });
 
@@ -76,7 +83,7 @@ Trackers.prototype = $.extend({},
                     klass: 'link-secondary',
                     spanClass: 'icon icon__settings pull-right'
                 }),
-                appendTo: $parent,
+                appendTo: this.$parent,
                 template: linkableTemplate
             });
 
@@ -92,6 +99,14 @@ Trackers.prototype = $.extend({},
                 template: autocompleteTemplate
             });
 
+        },
+
+        failover: function () {
+            this.views.failover = new FailoverView({
+                appendTo: this.$parent,
+                template: failoverTemplate,
+                message: `We cannot display this info in private browsing mode`
+            })
         }
     }
 );
