@@ -63,7 +63,7 @@ function connect () {
         request.onupgradeneeded = (event) => {
             console.log('IndexedDB onupgradeneeded to version ' + this.dbVersion)
             this.db = event.target.result
-            initDatabase.call(this)
+            handleUpgradeNeeded.apply(this, [resolve, reject])
         }
         request.onsuccess = (event) => {
             console.log('IndexedDB onsuccess')
@@ -78,17 +78,17 @@ function connect () {
 
 // TODO: abstract this into an https module of its own, separate from db client
 // this is more about handling db migrations, is specific to https for now
-function initDatabase () {
-    console.log('initDatabase()')
+function handleUpgradeNeeded (resolve, reject) {
+    console.log('handleUpgradeNeeded()', arguments)
     if (this.dbName === 'ddg' && this.dbVersion === '1') {
         // make 'host' field unique
-        let objectStore = db.createObjectStore('https', { keyPath: 'host' })
+        let objectStore = this.db.createObjectStore('https', { keyPath: 'host' })
         // create index on 'simpleUpgrade' field
         objectStore.createIndex('simpleUpgrade', 'simpleUpgrade', { unique: false })
-
         // just do a simple check to confirm for now
         objectStore.transaction.oncomplete = function (event) {
             console.log('IndexedDB init: yassss kween')
+            resolve()
         }
         // TODO: now fetch data from server
         // fetchUpdate.call(this, 'https').then((rawFetchedData) => {
