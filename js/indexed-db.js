@@ -4,7 +4,7 @@
  *
  * const db = new IndexedDBClient(ops)
  * db.ready().then(function () {
- *    db.get('cats', 'mr_wiggles')
+ *    const mr_wiggles = db.get('cats', 'mr_wiggles')
  * })
  *
  */
@@ -12,25 +12,21 @@ class IndexedDBClient {
 
     constructor (ops) {
         this.clientVersion = '1'
-        this.ops = ops || {}
-        this.dbName = ops.dbName
-        this.dbDesc = ops.dbDesc || ''
-        this.db = connect.bind(this)
+        ops = ops || {}
+        this.dbName = ops.dbName || 'ddg'
+        this.dbVersion = ops.dbVersion
+        this.db = null
+        this._ready = connect.call(this)
         return this
     }
 
     // sugar for this.db connect() promise
     ready () {
-        return this.db
+        return this._ready
     }
 
     fetchUpdate (type) {
-        return new Promise((resolve, reject) => {
-            // LATER in Phase 3: do this daily
-            // send xhr request
-            // process xhr response in handleUpdate()
-            handleUpdate.bind(this)
-        })
+      return fetchUpdate (type)
     }
 
     getUpdateTypes () {
@@ -52,8 +48,60 @@ class IndexedDBClient {
 
 // Private
 function connect () {
+    console.log('connect()')
     return new Promise((resolve, reject) => {
-        // return db connection
+        // note: we aren't dealing with vendor prefixed versions
+        // only stable implementations of indexedDB
+        if (!window.indexedDB) reject()
+
+        // make db request
+        let request = window.indexedDB.open(this.dbName, this.dbVersion)
+        request.onerror = (event) => {
+          console.log('IndexedDB error: ' + event.target.errorCode)
+          reject()
+        }
+        request.onupgradeneeded = (event) => {
+            console.log('IndexedDB onupgradeneeded to version ' + this.dbVersion)
+            this.db = event.target.result
+            initDatabase.call(this)
+        }
+        request.onsuccess = (event) => {
+            console.log('IndexedDB onsuccess')
+            this.db = event.target.result
+            db.onerror = function(event2) {
+                console.log('IndexedDB error: ' + event2.target.errorCode)
+            }
+            resolve()
+        }
+    })
+}
+
+// TODO: abstract this into an https module of its own, separate from db client
+// this is more about handling db migrations, is specific to https for now
+function initDatabase () {
+    console.log('initDatabase()')
+    if (this.dbName === 'ddg' && this.dbVersion === '1') {
+        // make 'host' field unique
+        let objectStore = db.createObjectStore('https', { keyPath: 'host' })
+        // create index on 'simpleUpgrade' field
+        objectStore.createIndex('simpleUpgrade', 'simpleUpgrade', { unique: false })
+
+        // just do a simple check to confirm for now
+        objectStore.transaction.oncomplete = function (event) {
+            console.log('IndexedDB init: yassss kween')
+        }
+        // TODO: now fetch data from server
+        // fetchUpdate.call(this, 'https').then((rawFetchedData) => {
+        //     handleUpdate.call(this, rawFetchedData)
+        // })
+    }
+}
+
+function fetchUpdate (type) {
+    return new Promise((resolve, reject) => {
+        // LATER in Phase 3: do this daily
+        // send xhr request
+        // process xhr response in handleUpdate()
     })
 }
 
@@ -63,7 +111,7 @@ function handleUpdate (data) {
     // maybe a timestamp too
 }
 
-const updateEndpointsByType {
-    https: 'https://collect.duckduckgo.com/foo/bar.txt'
+const updateEndpointsByType = {
+    https: 'http://jason.duckduckgo.com/collect.js?type=httpse&callback=cb'
     // LATER: `trackers`
 }

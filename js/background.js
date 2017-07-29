@@ -15,6 +15,20 @@
  */
 
 
+
+
+
+// say hello to my little friend
+// https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
+const db = new IndexedDBClient({ dbName: 'ddg', dbVersion: '1' })
+db.ready().then(function () {
+    console.log('IndexedDB: init complete!')
+})
+
+
+
+
+
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');

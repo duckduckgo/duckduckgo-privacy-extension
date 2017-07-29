@@ -44,6 +44,7 @@
                 "js/trackerLists.js",
                 "js/trackers.js",
                 "js/url-parse.js",
+                "js/indexed-db.js",
                 "js/background.js",
                 "js/abp.js"
             ]
