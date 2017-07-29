@@ -24,6 +24,9 @@ const db = new IndexedDBClient({ dbName: 'ddg', dbVersion: '1' })
 db.ready().then(function () {
     console.log('IndexedDB: init complete!')
 })
+// TODO: perf - check diff between db calls for every http request and just
+// keeping entire dataset in memory for reference. dataset is not as large
+// as i thought it would be (1.6 Mb unzipped)
 
 
 
