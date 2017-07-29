@@ -111,6 +111,7 @@ function handleUpdate (data) {
     // maybe a timestamp too
 }
 
+// TODO: abstract me out into https module
 const updateEndpointsByType = {
     https: 'http://jason.duckduckgo.com/collect.js?type=httpse&callback=cb'
     // LATER: `trackers`
