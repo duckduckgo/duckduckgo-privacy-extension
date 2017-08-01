@@ -38,7 +38,7 @@ class IndexedDBClient {
             console.warn('IndexedDBClient: this.db does not exist')
             return
         }
-        console.log('add() record to objectStore: ', record)
+        // console.log('add() record to objectStore: ', record)
         const _objectStore = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
         _objectStore.add(record)
     }
@@ -91,7 +91,7 @@ function handleUpgradeNeeded (resolve, reject) {
         objectStore.createIndex('simpleUpgrade', 'simpleUpgrade', { unique: false })
         // do a simple check to confirm init is complete
         objectStore.transaction.oncomplete = (event) => {
-            console.log('IndexedDB objectStore oncomplete, call fetchUpdate')
+            console.log('IndexedDB: objectStore `https` oncomplete, call fetchUpdate() from server')
             // now fetch data from server
             fetchUpdate.call(this, 'https', (data) => {
                 console.log('fetch update callback fired, data: ', data)
@@ -108,19 +108,19 @@ function handleUpgradeNeeded (resolve, reject) {
 }
 
 function fetchUpdate (type, cb) {
-    //load.JSONPfromExternalFile(updateTypes[type], (data) => cb(data))
+    load.JSONfromExternalFile(updateTypes[type], (data) => cb(data))
     // TODO: replace fake data with real data from xhr above:
-    const fakeParsedData = {
-        upgrade: ['foo.com', 'bar.org', 'baz.net']
-    }
-    cb(fakeParsedData)
+    // const fakeParsedData = {
+    //     upgrade: ['foo.com', 'bar.org', 'baz.net']
+    // }
+    // cb(fakeParsedData)
 }
 
 function handleUpdate (data, cb) {
     // TODO: maybe set a timestamp too
     console.log('handleUpdate(data)', data)
-    if (data && data.upgrade && data.upgrade.length > 0) {
-        data.upgrade.forEach((host, index) => {
+    if (data && data.simpleUpgrade && data.simpleUpgrade.length > 0) {
+        data.simpleUpgrade.forEach((host, index) => {
             // insert record into IndexedDB
             this.add('https', {
                 'host': host,
@@ -128,7 +128,10 @@ function handleUpdate (data, cb) {
                 'rule': '',
                 'lastUpdated': new Date().toString()
             })
-            if (index === (data.upgrade.length - 1)) cb()
+            if (index === (data.simpleUpgrade.length - 1)) {
+                console.log('IndexedDB: ' + data.simpleUpgrade.length + ' records added to `https` object store')
+                cb()
+            }
         })
     }
 }

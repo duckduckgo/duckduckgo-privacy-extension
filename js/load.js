@@ -8,7 +8,10 @@ require.scopes.load = ( () => {
 
     function JSONfromExternalFile(url, cb){
         try {
-            loadExtensionFile(url, 'json', 'external', (res) => cb(JSON.parse(res)))
+            loadExtensionFile(url, 'json', 'external', (res) => {
+                // if (url === "http://jason.duckduckgo.com/collect.js?type=httpse") debugger;
+                cb(JSON.parse(res))
+            })
         }
         catch(e) {
             return {}
