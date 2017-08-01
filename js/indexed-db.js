@@ -100,7 +100,7 @@ function handleUpgradeNeeded (resolve, reject) {
                 })
             })
         }
-    } else {
+    } else if (this.dbName === 'ddgExtension') {
         // beyond dbVersion=1, we can use previous ruleset already in db
         // and fetch updated server data in the background
         resolve()
