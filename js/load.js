@@ -1,3 +1,5 @@
+// const jsonpCallbacks = {}
+
 require.scopes.load = ( () => {
 
     function JSONfromLocalFile(path, cb){
@@ -12,6 +14,33 @@ require.scopes.load = ( () => {
             return {}
         }
     }
+
+    /* TODO: Extension CSP's don't allow jsonp,
+             ping jason to switch to plain xhr (see manifest.json permissions)
+
+    function JSONPfromExternalFile (url, cb) {
+        const cbName = 'cb' + Math.round(Math.random() * 1000000)
+        const cbParam = 'callback=jsonpCallbacks.' + cbName
+        const _url = new URLParser(url)
+        url = _url.query ? url += '&' + cbParam : url += '?' + cbParam
+        console.log('load JSONPfromExternalFile url = ' + url)
+        jsonpCallbacks[cbName] = function (data) {
+            console.log('_jsonpCb callback, data: ', data)
+            var d = {}
+            try {
+                d = JSON.parse(data)
+            } catch (e) {}
+            cb(d)
+        }
+
+        try {
+            loadExtensionFile(url, 'jsonp', 'external')
+        }
+        catch (e) {
+            return {}
+        }
+    }
+    */
 
     function returnResponse(xhr, returnType) {
         if (returnType === 'xml') {
@@ -36,7 +65,8 @@ require.scopes.load = ( () => {
         xhr.onreadystatechange = function() {
             let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
             if (xhr.readyState === done && xhr.status === 200) {
-                cb(returnResponse(xhr, returnType))
+                if (cb) return cb(returnResponse(xhr, returnType))
+                debugger;
             }
         }
     }
@@ -44,7 +74,8 @@ require.scopes.load = ( () => {
     var exports = {
         loadExtensionFile: loadExtensionFile,
         JSONfromLocalFile: JSONfromLocalFile,
-        JSONfromExternalFile: JSONfromExternalFile
+        JSONfromExternalFile: JSONfromExternalFile//,
+        // JSONPfromExternalFile: JSONPfromExternalFile
     }
     return exports;
 })();

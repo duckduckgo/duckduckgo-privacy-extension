@@ -20,9 +20,12 @@
 
 // say hello to my little friend
 // https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
-const db = new IndexedDBClient({ dbName: 'ddg', dbVersion: '1' })
+const db = new IndexedDBClient({
+    dbName: 'ddgExtension',
+    dbVersion: '1'
+})
 db.ready().then(function () {
-    console.log('IndexedDB: init cycle complete!')
+    console.log('IndexedDB: ready')
 })
 // TODO: perf - check diff between db calls for every http request and just
 // keeping entire dataset in memory for reference. dataset is not as large
