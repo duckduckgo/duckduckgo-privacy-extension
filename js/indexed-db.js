@@ -1,6 +1,7 @@
 // TODO: this is awkward here. move it somewhere else.
+// run `r collect` locally to fire up service from `jd/https-list` branch
 const updateTypes =  {
-    https: 'http://jason.duckduckgo.com/collect.js?type=httpse'
+    https: 'http://lauren.duckduckgo.com/collect.js?type=httpse'
 }
 
 /**
@@ -8,13 +9,19 @@ const updateTypes =  {
  * Usage:
  *
  * const db = new IndexedDBClient(ops)
- * db.ready().then(function () {
- *    const mr_wiggles = db.get('cats', 'mr_wiggles')
+ * db.ready().then(() => {
+ *    db.get('cats', 'mr_wiggles')
+ *        .then(
+ *            (record) => console.log(record), // success
+ *            (event) => console.log(event) // failure
+ *        )
  * })
  *
  * NOTE:
- * db.ready() won't fire until db is populated after extension install.
- * after that, db.ready() fires as soon as db connection is ready!
+ * db.ready() won't fire until db is populated with fetched data
+ * after extension install.
+ * After that, db.ready() fires as soon as db connection is ready!
+ *
  */
 class IndexedDBClient {
 
@@ -44,7 +51,17 @@ class IndexedDBClient {
     }
 
     get (objectStore, record) {
-
+        return new Promise((resolve, reject) => {
+            if (!this.db) {
+                console.warn('IndexedDBClient: this.db does not exist')
+                reject()
+            }
+            // console.log('get() record from objectStore: ', record)
+            const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
+            const _request = _objectStore.get(record)
+            _request.onerror = (event) => reject(event)
+            _request.onsuccess = (event) => resolve(_request.result)
+        })
     }
 }
 
@@ -52,20 +69,20 @@ class IndexedDBClient {
 function connect () {
     console.log('connect()')
     return new Promise((resolve, reject) => {
-        // note: we aren't dealing with vendor prefixed versions
+        // NOTE: we aren't dealing with vendor prefixed versions
         // only stable implementations of indexedDB
         if (!window.indexedDB) reject()
 
-        // make db request
+        // Make db request
         let request = window.indexedDB.open(this.dbName, this.dbVersion)
-        request.onerror = (event) => {
-          console.log('IndexedDB error: ' + event.target.errorCode)
-          reject()
-        }
         request.onupgradeneeded = (event) => {
             console.log('IndexedDB: onupgradeneeded to version ' + this.dbVersion)
             this.db = event.target.result
             handleUpgradeNeeded.apply(this, [resolve, reject])
+        }
+        request.onerror = (event) => {
+          console.log('IndexedDB error: ' + event.target.errorCode)
+          reject()
         }
         request.onsuccess = (event) => {
             console.log('IndexedDB: onsuccess')
@@ -85,18 +102,32 @@ function handleUpgradeNeeded (resolve, reject) {
     // database is populated by server call. Later we can use this promise
     // to build "loading" ui
     if (this.dbName === 'ddgExtension' && this.dbVersion === '1') {
-        // make 'host' field unique
+
+        // Make 'host' field unique
         let objectStore = this.db.createObjectStore('https', { keyPath: 'host' })
-        // create index on 'simpleUpgrade' field
+
+        // Create index on 'simpleUpgrade' field
         objectStore.createIndex('simpleUpgrade', 'simpleUpgrade', { unique: false })
-        // do a simple check to confirm init is complete
+
+        // Do a simple check for when objectStore.createIndex is complete
         objectStore.transaction.oncomplete = (event) => {
-            console.log('IndexedDB: objectStore `https` oncomplete, call fetchUpdate() from server')
-            // now fetch data from server
+            console.log('IndexedDB: `https` object store oncomplete, call fetchUpdate() from server')
+
+            // Now fetch data from server
             fetchUpdate.call(this, 'https', (data) => {
                 console.log('fetch update callback fired, data: ', data)
                 handleUpdate.call(this, data, () => {
-                    resolve()
+
+
+                    // TODO this should probably be in a test:
+                    this.get('https', '*.yelp.com')
+                        .then((r) => console.log(r),
+                              (e) => console.log(e))
+
+
+                    resolve() // db.ready()
+
+
                 })
             })
         }
@@ -109,29 +140,27 @@ function handleUpgradeNeeded (resolve, reject) {
 
 function fetchUpdate (type, cb) {
     load.JSONfromExternalFile(updateTypes[type], (data) => cb(data))
-    // TODO: replace fake data with real data from xhr above:
-    // const fakeParsedData = {
-    //     upgrade: ['foo.com', 'bar.org', 'baz.net']
-    // }
-    // cb(fakeParsedData)
 }
 
 function handleUpdate (data, cb) {
-    // TODO: maybe set a timestamp too
     console.log('handleUpdate(data)', data)
-    if (data && data.simpleUpgrade && data.simpleUpgrade.length > 0) {
-        data.simpleUpgrade.forEach((host, index) => {
-            // insert record into IndexedDB
-            this.add('https', {
-                'host': host,
-                'simpleUpgrade': true,
-                'rule': '',
-                'lastUpdated': new Date().toString()
-            })
-            if (index === (data.simpleUpgrade.length - 1)) {
-                console.log('IndexedDB: ' + data.simpleUpgrade.length + ' records added to `https` object store')
-                cb()
-            }
-        })
-    }
+    if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) return
+
+    // Insert each record into client's IndexedDB
+    data.simpleUpgrade.forEach((host, index) => {
+
+        let record = {
+            host: host,
+            simpleUpgrade: true,
+            lastUpdated: new Date().toString()
+        }
+
+        // add record to db
+        this.add('https', record)
+
+        if (index === (data.simpleUpgrade.length - 1)) {
+            console.log('IndexedDB: ' + data.simpleUpgrade.length + ' records added to `https` object store')
+            cb()
+        }
+    })
 }

@@ -3,7 +3,7 @@ var URLParser;
 
 require.scopes.utils = ( () => {
 
-    function extractHostFromURL(url) {
+    function extractHostFromURL (url) {
         if (!url) return;
 
         let urlObj = new URLParser(url);
@@ -12,18 +12,26 @@ require.scopes.utils = ( () => {
         return hostname;
     }
 
-    function parseURL(url){
+    function extractSubdomainFromHost (host) {
+        if (typeof host !== 'string') return false
+        const rgx = /\./g
+        if (host.match(rgx) && host.match(rgx).length > 1) {
+            return host.split('.')[0]
+        }
+        return false
+    }
+
+    function parseURL (url){
         var a = document.createElement('a');
         a.href = url;
         return a;
     }
 
-    function syncToStorage(data){
-        chrome.storage.local.set(data, function() {
-        });
+    function syncToStorage (data){
+        chrome.storage.local.set(data, function() { });
     }
 
-    function getFromStorage(key, callback){
+    function getFromStorage (key, callback){
         chrome.storage.local.get(key, function(result){
             if(result[key]){
                 callback(result[key]);
@@ -47,12 +55,13 @@ require.scopes.utils = ( () => {
         });
     }
 
-    var exports = {};
-    exports.extractHostFromURL = extractHostFromURL;
-    exports.syncToStorage = syncToStorage;
-    exports.getFromStorage = getFromStorage;
-    exports.getCurrentURL = getCurrentURL;
-    exports.getCurrentTab = getCurrentTab;
-    exports.parseURL = parseURL;
-    return exports;
+    return {
+        extractHostFromURL: extractHostFromURL,
+        extractSubdomainFromHost: extractSubdomainFromHost,
+        parseURL: parseURL,
+        syncToStorage: syncToStorage,
+        getFromStorage: getFromStorage,
+        getCurrentURL: getCurrentURL,
+        getCurrentTab: getCurrentTab
+    }
 })();
