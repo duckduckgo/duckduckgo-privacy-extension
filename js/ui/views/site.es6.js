@@ -80,6 +80,7 @@ Site.prototype = $.extend({},
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
 
+            this.model.set('whitelisted', this.isWhitelisted);
             chrome.tabs.reload(this.model.tab.id);
             const w = chrome.extension.getViews({type: 'popup'})[0];
             w.close()
