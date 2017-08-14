@@ -9,6 +9,7 @@ abp = require('abp-filter-parser');
 easylists = {
     privacy: {
         url: 'https://easylist.to/easylist/easyprivacy.txt',
+        whitelist: 'data/tracker_lists/privacy-whitelist.txt',
         parsed: {}
     },
     general: {
