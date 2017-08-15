@@ -14,32 +14,17 @@
  * limitations under the License.
  */
 
-
-
-
-
-// say hello to my little friend
-let isReadyHTTPSEverywhere = false
-const db = new IndexedDBClient({
-    dbName: 'ddgExtension',
-    dbVersion: '1'
-})
-db.ready().then(function () {
-    console.log('IndexedDB: ready')
-    isReadyHTTPSEverywhere = true
-})
-
-
-
-
-
-
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
+
+// TODO: integrate new httpse with this
 let httpsWhitelist
 load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
+// new httpse 
+let db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
+let httpse = new HTTPSE()
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -200,8 +185,8 @@ chrome.webRequest.onBeforeRequest.addListener(
       }
       */
 
-      if (isReadyHTTPSEverywhere) {
-          
+      if (httpse.isReady) {
+          console.log('YO')
           // TODO: onBeforeRequest
           // set up chrome.webRequest.onBeforeRequest() listener + handler here
           

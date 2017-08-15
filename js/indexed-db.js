@@ -7,8 +7,9 @@ const updateTypes =  {
 /**
  * Public api
  * Usage:
- *
  * const db = new IndexedDBClient(ops)
+ *
+ * You can use promise callbacks to check readiness and do a db.get():
  * db.ready().then(() => {
  *    db.get('cats', 'mr_wiggles')
  *        .then(
@@ -17,10 +18,13 @@ const updateTypes =  {
  *        )
  * })
  *
+ * Or you can use db.isReady property to check readiness:
+ * if (db.isReady) { db.get('cats', 'mr_wiggles') }
+ *
  * NOTE:
- * db.ready() won't fire until db is populated with fetched data
+ * db.ready() won't fire until db is populated with fetched httpse data
  * after extension install.
- * After that, db.ready() fires as soon as db connection is ready!
+ * On subsequent boot ups, db.ready() fires as soon as db connection is ready!
  *
  *
  * MDN Indexed DB Docs:
@@ -34,7 +38,8 @@ class IndexedDBClient {
         this.dbName = ops.dbName
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
         this.db = null
-        this._ready = connect.call(this)
+        this.isReady = false
+        this._ready = connect.call(this).then(() => { this.isReady = true })
         return this
     }
 
@@ -69,7 +74,7 @@ class IndexedDBClient {
     }
 
     update (objectStore, record) {
-        throw 'IndexedDB: update() not yet implemented'
+        throw 'IndexedDBClient: update() not yet implemented'
     }
 
     /* For debugging/development purposes only */
@@ -82,7 +87,7 @@ class IndexedDBClient {
 
 // Private
 function connect () {
-    console.log('connect()')
+    console.log('IndexedDBClient: connect()')
     return new Promise((resolve, reject) => {
         // NOTE: we aren't dealing with vendor prefixed versions
         // only stable implementations of indexedDB
@@ -92,20 +97,20 @@ function connect () {
         let request = window.indexedDB.open(this.dbName, this.dbVersion)
 
         request.onupgradeneeded = (event) => {
-            console.log('IndexedDB: onupgradeneeded to version ' + this.dbVersion)
-            console.log('IndexedDB: current version before upgrade is: ' + event.oldVersion)
+            console.log('IndexedDBClient: onupgradeneeded to version ' + this.dbVersion)
+            console.log('IndexedDBClient: current version before upgrade is: ' + event.oldVersion)
             this.db = event.target.result
             handleUpgradeNeeded.apply(this, [resolve, reject])
         }
         request.onerror = (event) => {
-          console.log('IndexedDB error: ' + event.target.errorCode)
+          console.log('IndexedDBClient error: ' + event.target.errorCode)
           reject()
         }
         request.onsuccess = (event) => {
-            console.log('IndexedDB: onsuccess')
+            console.log('IndexedDBClient: onsuccess')
             this.db = event.target.result
             db.onerror = function(event2) {
-                console.log('IndexedDB error: ' + event2.target.errorCode)
+                console.log('IndexedDBClient error: ' + event2.target.errorCode)
             }
             resolve()
 
@@ -151,7 +156,7 @@ function connect () {
 
 // Handles db init + migrations
 function handleUpgradeNeeded (resolve, reject) {
-    console.log('handleUpgradeNeeded()')
+    console.log('IndexedDBClient: handleUpgradeNeeded()')
     // If this is the first time thru, don't resolve() db.ready promise until
     // database is populated by server call. Later we can use this promise
     // to build "loading" ui
@@ -165,7 +170,7 @@ function handleUpgradeNeeded (resolve, reject) {
 
         // Do a simple check for when objectStore.createIndex is complete
         objectStore.transaction.oncomplete = (event) => {
-            console.log('IndexedDB: `https` object store oncomplete, call fetchUpdate() from server')
+            console.log('IndexedDBClient: `https` object store oncomplete, call fetchUpdate() from server')
 
             // Now fetch data from server
             fetchUpdate.call(this, 'https', (data) => {
@@ -206,7 +211,7 @@ function handleUpdate (data, cb) {
         counter++;
 
         if (index === (data.simpleUpgrade.length - 1)) {
-            console.log('IndexedDB: ' + data.simpleUpgrade.length + ' records added to `https` object store')
+            console.log('IndexedDBClient: ' + data.simpleUpgrade.length + ' records added to `https` object store')
             cb()
         }
     })
