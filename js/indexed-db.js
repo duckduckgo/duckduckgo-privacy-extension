@@ -22,6 +22,9 @@ const updateTypes =  {
  * after extension install.
  * After that, db.ready() fires as soon as db connection is ready!
  *
+ *
+ * MDN Indexed DB Docs:
+ * https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
  */
 class IndexedDBClient {
 

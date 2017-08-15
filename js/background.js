@@ -19,17 +19,16 @@
 
 
 // say hello to my little friend
-// https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
+let isReadyHTTPSEverywhere = false
 const db = new IndexedDBClient({
     dbName: 'ddgExtension',
     dbVersion: '1'
 })
 db.ready().then(function () {
     console.log('IndexedDB: ready')
+    isReadyHTTPSEverywhere = true
 })
-// TODO: perf - check diff between db calls for every http request and just
-// keeping entire dataset in memory for reference. dataset is not as large
-// as i thought it would be (1.6 Mb unzipped)
+
 
 
 
@@ -200,6 +199,18 @@ chrome.webRequest.onBeforeRequest.addListener(
           return upgradeStatus;
       }
       */
+
+      if (isReadyHTTPSEverywhere) {
+          
+          // TODO: onBeforeRequest
+          // set up chrome.webRequest.onBeforeRequest() listener + handler here
+          
+          // TODO: perf - check diff between db calls for every http request and just
+          // keeping entire dataset in memory for reference. dataset is not as large
+          // as i thought it would be (1.6 Mb unzipped)
+      }
+
+
 
 
     },
