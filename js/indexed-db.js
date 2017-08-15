@@ -32,6 +32,7 @@ class IndexedDBClient {
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
         this.db = null
         this._ready = connect.call(this)
+        this._objectStore = {}
         return this
     }
 
@@ -51,14 +52,16 @@ class IndexedDBClient {
     }
 
     get (objectStore, record) {
+        // console.log('get() record from objectStore: ', record)
         return new Promise((resolve, reject) => {
             if (!this.db) {
                 console.warn('IndexedDBClient: this.db does not exist')
                 reject()
             }
-            // console.log('get() record from objectStore: ', record)
-            const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
-            const _request = _objectStore.get(record)
+            if (!this._objectStore[objectStore]) {
+                this._objectStore[objectStore] = this.db.transaction(objectStore).objectStore(objectStore)
+            }
+            const _request = this._objectStore[objectStore].get(record)
             _request.onerror = (event) => reject(event)
             _request.onsuccess = (event) => resolve(_request.result)
         })
