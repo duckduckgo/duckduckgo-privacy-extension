@@ -75,6 +75,7 @@ function connect () {
 
         // Make db request
         let request = window.indexedDB.open(this.dbName, this.dbVersion)
+
         request.onupgradeneeded = (event) => {
             console.log('IndexedDB: onupgradeneeded to version ' + this.dbVersion)
             this.db = event.target.result
@@ -91,6 +92,43 @@ function connect () {
                 console.log('IndexedDB error: ' + event2.target.errorCode)
             }
             resolve()
+
+            // DEBUG/TEST
+            /*
+            const _objectStore = this.db.transaction('https').objectStore('https');
+            _objectStore.openCursor().onsuccess = function (event3) {
+              const cursor = event3.target.result
+              if (cursor) {
+                console.log('IndexedDB cursor.key: ' + cursor.key)
+                cursor.continue()
+              }
+              else {
+                console.log('IndexedDB cursor: No more entries!')
+              }
+            }
+
+            // TODO this should probably be in a test:
+            this.get('https', '1337x.to')
+                .then((r) => console.log(r),
+                      (e) => console.log(e))
+
+            this.get('https', 'submit.pandora.com')
+                .then((r) => console.log(r),
+                      (e) => console.log(e))
+
+            this.get('https', '*.api.roblox.com')
+                .then((r) => console.log(r),
+                      (e) => console.log(e))
+
+            this.get('https', 'thump.vice.com')
+                .then((r) => console.log(r),
+                      (e) => console.log(e))
+
+            this.get('https', 'yts.ag')
+                .then((r) => console.log(r),
+                      (e) => console.log(e))
+             */
+
         }
     })
 }
@@ -117,17 +155,7 @@ function handleUpgradeNeeded (resolve, reject) {
             fetchUpdate.call(this, 'https', (data) => {
                 console.log('fetch update callback fired, data: ', data)
                 handleUpdate.call(this, data, () => {
-
-
-                    // TODO this should probably be in a test:
-                    this.get('https', '*.yelp.com')
-                        .then((r) => console.log(r),
-                              (e) => console.log(e))
-
-
-                    resolve() // db.ready()
-
-
+                    resolve() // resolve db.ready() promise
                 })
             })
         }
@@ -147,6 +175,7 @@ function handleUpdate (data, cb) {
     if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) return
 
     // Insert each record into client's IndexedDB
+    let counter = 1;
     data.simpleUpgrade.forEach((host, index) => {
 
         let record = {
@@ -155,8 +184,10 @@ function handleUpdate (data, cb) {
             lastUpdated: new Date().toString()
         }
 
-        // add record to db
+        // Add record to db
         this.add('https', record)
+        // console.log('IndexedDB: Added record to object store: `https`. Record count: ' + counter)
+        counter++;
 
         if (index === (data.simpleUpgrade.length - 1)) {
             console.log('IndexedDB: ' + data.simpleUpgrade.length + ' records added to `https` object store')
