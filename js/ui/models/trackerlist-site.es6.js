@@ -21,7 +21,7 @@ SiteTrackerList.prototype = $.extend({},
           const self = this;
 
           return new Promise ((resolve, reject) => {
-              backgroundPage.utils.getCurrentTab((rawTab) => {
+              this.fetch({'getCurrentTab': true}).then((rawTab) => {
                   if (rawTab) {
                       self.tab = backgroundPage.tabManager.get({'tabId': rawTab.id});
 

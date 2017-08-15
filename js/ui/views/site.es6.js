@@ -56,7 +56,7 @@ Site.prototype = $.extend({},
         getBackgroundTabData: function () {
             let self = this;
 
-            backgroundPage.utils.getCurrentTab(function (tab) {
+            this.model.fetch({'getCurrentTab': true}).then((tab) => {
                 if (tab) {
                     self.model.domain = backgroundPage.utils.extractHostFromURL(tab.url);
                     self.model.tab = backgroundPage.tabManager.get({'tabId': tab.id});
