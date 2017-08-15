@@ -63,6 +63,10 @@ class IndexedDBClient {
             _request.onsuccess = (event) => resolve(_request.result)
         })
     }
+
+    update (objectStore, record) {
+        throw 'IndexedDB: update() not yet implemented'
+    }
 }
 
 // Private
