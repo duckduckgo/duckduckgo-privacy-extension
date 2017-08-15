@@ -67,6 +67,11 @@ class IndexedDBClient {
     update (objectStore, record) {
         throw 'IndexedDB: update() not yet implemented'
     }
+
+    deleteDB () {
+        console.warn('WARNING: Avoid using .deleteDB() in production! Attempting to delete database: ' + this.dbName)
+        window.indexedDB.deleteDatabase(this.dbName)
+    }
 }
 
 // Private
