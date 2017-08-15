@@ -90,6 +90,7 @@ function connect () {
 
         request.onupgradeneeded = (event) => {
             console.log('IndexedDB: onupgradeneeded to version ' + this.dbVersion)
+            console.log('IndexedDB: current version before upgrade is: ' + event.oldVersion)
             this.db = event.target.result
             handleUpgradeNeeded.apply(this, [resolve, reject])
         }
