@@ -32,7 +32,6 @@ class IndexedDBClient {
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
         this.db = null
         this._ready = connect.call(this)
-        this._objectStore = {}
         return this
     }
 
@@ -42,11 +41,11 @@ class IndexedDBClient {
     }
 
     add (objectStore, record) {
+        // console.log('add() record to objectStore: ', record)
         if (!this.db) {
             console.warn('IndexedDBClient: this.db does not exist')
             return
         }
-        // console.log('add() record to objectStore: ', record)
         const _objectStore = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
         _objectStore.add(record)
     }
@@ -58,10 +57,9 @@ class IndexedDBClient {
                 console.warn('IndexedDBClient: this.db does not exist')
                 reject()
             }
-            if (!this._objectStore[objectStore]) {
-                this._objectStore[objectStore] = this.db.transaction(objectStore).objectStore(objectStore)
-            }
-            const _request = this._objectStore[objectStore].get(record)
+
+            const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
+            const _request = _objectStore.get(record)
             _request.onerror = (event) => reject(event)
             _request.onsuccess = (event) => resolve(_request.result)
         })
