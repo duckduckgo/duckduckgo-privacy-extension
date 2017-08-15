@@ -85,7 +85,7 @@ We're building an embedded Firefox extension using our current extension in fire
 
 #### Troubleshooting Firefox
 
-As a developer who may be using more than one install of Firefox browser locally (for example, you might have the Nightly build installed along with your regular FF instance), you might run across this cryptica error when running the background page of this extension: 
+As a developer who may be using more than one install of Firefox browser locally (for example, you might have the Nightly build installed along with your regular FF instance), you might run across this cryptic error when running the background page of this extension: 
 ```
 "IndexedDB UnknownErr: ActorsParent.cpp:595"
 ```
