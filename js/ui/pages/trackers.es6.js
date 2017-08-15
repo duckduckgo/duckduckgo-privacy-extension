@@ -21,7 +21,7 @@ const AutocompleteView = require('./../views/autocomplete.es6.js');
 const AutocompleteModel = require('./../models/autocomplete.es6.js');
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js');
 
-const MessageModel = require('./../models/message.es6.js');
+const MessageModel = require('./../models/backgroundMessage.es6.js');
 
 const FailoverView = require('./../views/failover.es6.js');
 const failoverTemplate = require('./../templates/failover.es6.js');

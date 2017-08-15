@@ -113,6 +113,12 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
 
 });
 
+chrome.runtime.onMessage.addListener( (req, sender, res) => {
+    if (req.whitelisted) {
+        tabManager.whitelistDomain(req.whitelisted)
+    }
+});
+
 // update tab url after the request is finished. This makes
 // sure we have the correct url after any https rewrites
 chrome.webRequest.onCompleted.addListener( (request) => {
