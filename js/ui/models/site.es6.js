@@ -94,11 +94,13 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if (this.tab && this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
-              backgroundPage.tabManager.whitelistDomain({
+
+              this.set('whitelisted', {
                   list: 'whitelisted',
                   domain: this.tab.site.domain,
                   value: this.isWhitelisted
               });
+
               this.tab.site.notifyWhitelistChanged();
               this.setWhitelistStatusText();
           }
