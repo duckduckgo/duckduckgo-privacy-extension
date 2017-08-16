@@ -75,6 +75,7 @@ require.scopes.settings =(() => {
         if(req.getSetting){
             res(getSetting(req.getSetting.name));
         }
+        return true;
     };
 
     init();

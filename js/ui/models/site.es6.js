@@ -101,8 +101,6 @@ Site.prototype = $.extend({},
                   domain: this.tab.site.domain,
                   value: this.isWhitelisted
               });
-
-              this.tab.site.notifyWhitelistChanged();
               this.setWhitelistStatusText();
           }
       },
