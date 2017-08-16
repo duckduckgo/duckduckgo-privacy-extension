@@ -190,12 +190,7 @@ function fetchServerUpdate (type, cb) {
 function handleServerUpdate (type, data, cb) {
     console.log('IndexedDBClient: handleServerUpdate() for object store type: ' + type)
     
-
-
-    // TODO: figure out why this suddenly isn't working???
-    // if (type === 'httpse' && this.dbVersion === 1) {
-    // if (type === 'httpse') {
-
+    if (type === 'httpse' && this.dbVersion === '1') {
 
         // Don't return cb() if we didn't successfully get update
         if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
@@ -214,7 +209,7 @@ function handleServerUpdate (type, data, cb) {
 
             // Add record to db
             this.add('httpse', record)
-            console.log('IndexedDB: Added record to object store `httpse`. Record count: ' + counter)
+            // console.log('IndexedDB: Added record to object store `httpse`. Record count: ' + counter)
             counter++;
 
             // After we've added last record to db
@@ -224,9 +219,5 @@ function handleServerUpdate (type, data, cb) {
             }
         })
 
-
-    // } 
-
-
-    
+    } 
 }
