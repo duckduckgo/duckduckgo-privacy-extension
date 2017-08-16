@@ -14,13 +14,17 @@ const updateTypes =  {
  *    db.get('cats', 'mr_wiggles')
  *        .then(
  *            (record) => console.log(record), // success
- *            (event) => console.log(event) // failure
+ *            () => console.log('doh') // failure
  *        )
  * })
  *
  * Or you can use db.isReady property to check readiness:
- * if (db.isReady) { db.get('cats', 'mr_wiggles') }
- *
+ * if (db.isReady) { 
+ *     db.get('cats', 'mr_wiggles').then() }
+ *         .then(
+ *             (record) => console.log(record), // success
+ *             () => console.log('doh') // failure
+ *          )
  * NOTE:
  * db.ready() won't fire until db is populated with fetched httpse data
  * after extension install.
@@ -30,6 +34,7 @@ const updateTypes =  {
  * MDN Indexed DB Docs:
  * https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB
  */
+
 class IndexedDBClient {
 
     constructor (ops) {
@@ -68,8 +73,11 @@ class IndexedDBClient {
 
             const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
             const _request = _objectStore.get(record)
-            _request.onerror = (event) => reject(event)
             _request.onsuccess = (event) => resolve(_request.result)
+            _request.onerror = (event) =>  {
+                console.warn('IndexedDBClient: get() record:' + record + '. Error: ' + event)
+                reject()
+            }
         })
     }
 
@@ -77,7 +85,7 @@ class IndexedDBClient {
         throw 'IndexedDBClient: update() not yet implemented'
     }
 
-    /* For debugging/development purposes only */
+    /* For debugging/development/test purposes only */
     deleteDB () {
         console.warn('WARNING: Avoid using .deleteDB() in production! Attempting to delete database: ' + this.dbName)
         window.indexedDB.deleteDatabase(this.dbName)
@@ -127,28 +135,7 @@ function connect () {
                 console.log('IndexedDB cursor: No more entries!')
               }
             }
-
-            // TODO this should probably be in a test:
-            this.get('https', '1337x.to')
-                .then((r) => console.log(r),
-                      (e) => console.log(e))
-
-            this.get('https', 'submit.pandora.com')
-                .then((r) => console.log(r),
-                      (e) => console.log(e))
-
-            this.get('https', '*.api.roblox.com')
-                .then((r) => console.log(r),
-                      (e) => console.log(e))
-
-            this.get('https', 'thump.vice.com')
-                .then((r) => console.log(r),
-                      (e) => console.log(e))
-
-            this.get('https', 'yts.ag')
-                .then((r) => console.log(r),
-                      (e) => console.log(e))
-             */
+            */
 
         }
     })
