@@ -1,17 +1,16 @@
+// TODO: perf open question
+//   - are individual db lookups as fast as holding rules in memory?
+
 class HTTPSE {
 
     constructor () {
         this.isReady = false
         this.db = null
-        this.dbObjectStore = 'https'
+        this.dbObjectStore = 'httpse'
         db.ready().then(() => { 
           this.isReady = true
           this.db = db 
         })
-
-        // TODO: put server endpoint here
-        // TODO: move db onupgradeneeded handler here (fetchUpdate)
-        // TODO: move handleUpdate here
 
         return this
     }  
@@ -20,7 +19,7 @@ class HTTPSE {
         return new Promise((resolve, reject) => {
             if (!this.isReady) {
                 console.warn('HTTPSE: this.db is not ready')
-                return reject()
+                return resolve(reqUrl)
             }
 
             this.db.get(this.dbObjectStore, reqUrl).then(
@@ -75,11 +74,11 @@ class HTTPSE {
             this.getHostRecord(host).then(
                 (record) => {
                     if (record) {
-                        console.log('HTTSE: retrieved record for host: ' + host)
+                        console.log('HTTPSE: retrieved record for host: ' + host)
                         console.log(record)
                         return
                     }
-                    console.warn('HTTSE: could not find record for host: ' + host)
+                    console.warn('HTTPSE: could not find record for host: ' + host)
                 },
                 () => console.error('HTTPSE: testDBKeys() encountered a db error for host: ' + host)
             )
