@@ -96,10 +96,12 @@ Site.prototype = $.extend({},
           if (this.tab && this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
 
-              this.set('whitelisted', {
+              this.fetch({'whitelisted': 
+                  {
                   list: 'whitelisted',
                   domain: this.tab.site.domain,
                   value: this.isWhitelisted
+                  }
               });
               this.setWhitelistStatusText();
           }

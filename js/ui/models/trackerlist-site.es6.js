@@ -19,9 +19,9 @@ SiteTrackerList.prototype = $.extend({},
       fetchAsyncData: function () {
           const self = this;
           return new Promise ((resolve, reject) => {
-              this.fetch({'getCurrentTab': true}).then((tab) => {
+              this.fetch({getCurrentTab: true}).then((tab) => {
                   if (tab) {
-                      self.fetch({'tabManager.get': tab.id}).then((bkgTab) => {
+                      self.fetch({getTab: tab.id}).then((bkgTab) => {
                         self.tab = bkgTab;
                         self._updateCompaniesList()
                         resolve()

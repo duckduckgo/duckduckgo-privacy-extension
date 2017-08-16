@@ -116,9 +116,10 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
 chrome.runtime.onMessage.addListener( (req, sender, res) => {
     if (req.whitelisted) {
         tabManager.whitelistDomain(req.whitelisted)
+        chrome.runtime.sendMessage({whitelistChanged: true});
     }
-    else if (req['tabManager.get']) {
-        res(tabManager.get({'tabId': req['tabManager.get']}))
+    else if (req.getTab) {
+        res(tabManager.get({'tabId': req.getTab}))
     }
     else if (req.getSiteScore) {
         let tab = tabManager.get({tabId: req.getSiteScore})

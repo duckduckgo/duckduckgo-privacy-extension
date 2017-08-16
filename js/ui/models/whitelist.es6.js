@@ -17,10 +17,12 @@ Whitelist.prototype = $.extend({},
             var domain = this.list[itemIndex];
             console.log(`whitelist: remove ${domain}`);
 
-            this.set('whitelisted',{
+            this.fetch({'whitelisted': 
+                {
                 list: 'whitelisted',
                 domain: domain,
                 value: false
+                }
             });
         }
   }
