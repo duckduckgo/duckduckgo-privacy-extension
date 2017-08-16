@@ -35,6 +35,13 @@ try {
 catch(e){
 };
 
+chrome.runtime.onMessage.addListener((req, sender, res) => {
+    if (req.getBrowser) {
+        res(browser);
+    }
+    true;
+});
+
 function Background() {
   $this = this;
 

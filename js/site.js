@@ -78,6 +78,10 @@ class Site {
         this.whitelisted = false;
 
         this.setWhitelistStatusFromGlobal(domain);
+
+        this.isSpecialDomain = this.specialDomain()
+        this.specialFunc = this.specialDomain
+
     }
 
     setWhitelisted(name, value){

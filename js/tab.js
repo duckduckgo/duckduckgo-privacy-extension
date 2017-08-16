@@ -73,25 +73,6 @@ class Tab {
         chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
     };
 
-    /* Add up all of the unique tracker urls that
-     * were requested on this page/tab
-     */
-    getUniqueTrackersCount () {
-        return Object.keys(this.trackers).reduce((total, name) => {
-            return this.trackers[name].urls.length + total;
-        }, 0);
-    };
-
-
-    /* Add up all of the unique tracker urls that
-     * were blocked on this page/tab
-     */
-    getUniqueTrackersBlockedCount () {
-        return Object.keys(this.trackersBlocked).reduce((total, name) => {
-            return this.trackersBlocked[name].urls.length + total;
-        }, 0);
-    };
-
     /* Store all trackers for a given tab even if we
      * don't block them.
      */

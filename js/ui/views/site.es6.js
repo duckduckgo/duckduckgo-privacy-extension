@@ -1,7 +1,6 @@
 const Parent = window.DDG.base.View;
 const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js');
 const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
-const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Site (ops) {
 
@@ -58,17 +57,21 @@ Site.prototype = $.extend({},
 
             this.model.fetch({'getCurrentTab': true}).then((tab) => {
                 if (tab) {
-                    self.model.domain = backgroundPage.utils.extractHostFromURL(tab.url);
-                    self.model.tab = backgroundPage.tabManager.get({'tabId': tab.id});
-                    self.model.setSiteObj();
+                    
+                    this.model.fetch({'tabManager.get': tab.id}).then( (backgroundTabObj) => {
+                        self.model.tab = backgroundTabObj
+                        self.model.domain = backgroundTabObj.site.domain
 
-                    if (self.model.disabled) {   // determined in setSiteObj()
-                        self._setDisabled();
-                    }
+                        self.model.setSiteObj();
 
-                    self.model.update();
-                    self.model.setHttpsMessage();
-                    self.rerender(); // our custom rerender below
+                        if (self.model.disabled) {   // determined in setSiteObj()
+                            self._setDisabled();
+                        }
+
+                        self.model.update();
+                        self.model.setHttpsMessage();
+                        self.rerender(); // our custom rerender below
+                    });
 
                 } else {
                     console.debug('Site view: no tab');

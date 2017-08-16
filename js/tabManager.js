@@ -117,6 +117,14 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     if (req.whitelisted) {
         tabManager.whitelistDomain(req.whitelisted)
     }
+    else if (req['tabManager.get']) {
+        res(tabManager.get({'tabId': req['tabManager.get']}))
+    }
+    else if (req.getSiteScore) {
+        let tab = tabManager.get({tabId: req.getSiteScore})
+        res(tab.site.score.get())
+    }
+    return true;
 });
 
 // update tab url after the request is finished. This makes

@@ -1,10 +1,9 @@
-const backgroundPage = chrome.extension.getBackgroundPage();
-
 module.exports = {
-
     setBrowserClassOnBodyTag: function () {
-        let browserClass = 'is-browser--' + backgroundPage.browser;
-        $('body').addClass(browserClass);
-    }
 
+        chrome.runtime.sendMessage({'getBrowser': true}, (browser) => {
+            let browserClass = 'is-browser--' + browser;
+            $('body').addClass(browserClass);
+        });
+    }
 }
