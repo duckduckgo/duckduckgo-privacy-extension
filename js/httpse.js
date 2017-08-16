@@ -12,7 +12,6 @@ class HTTPSE {
         // TODO: put server endpoint here
         // TODO: move db onupgradeneeded handler here (fetchUpdate)
         // TODO: move handleUpdate here
-        // TODO: move debug/test here for now
 
         return this
     }  
@@ -87,4 +86,8 @@ class HTTPSE {
         })             
     }
 
+    /* For debugging/development/test purposes only */
+    logAllRecords () {
+        this.db.logAllRecords(this.dbObjectStore)      
+    }
 }

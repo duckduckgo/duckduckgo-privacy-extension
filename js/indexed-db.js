@@ -91,6 +91,22 @@ class IndexedDBClient {
         window.indexedDB.deleteDatabase(this.dbName)
     }
 
+    /* For debugging/development/test purposes only */
+    logAllRecords (objectStore) {
+        console.log('IndexedDBClient: logAllRecords() for object store: ' + objectStore)
+        const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
+        _objectStore.openCursor().onsuccess = function (event) {
+            const cursor = event.target.result
+            if (cursor) {
+                console.log('IndexedDBClient: logAllRecords() key: ' + cursor.key)
+                // console.log(cursor.value)
+                cursor.continue()
+            } else {
+                console.log('IndexedDBClient: logAllRecords() No more entries for objectStore: ' + objectStore)
+            }
+        }    
+    }
+
 }
 
 // Private
@@ -104,6 +120,7 @@ function connect () {
         // Make db request
         let request = window.indexedDB.open(this.dbName, this.dbVersion)
 
+        // Handle request events
         request.onupgradeneeded = (event) => {
             console.log('IndexedDBClient: onupgradeneeded to version ' + this.dbVersion)
             console.log('IndexedDBClient: current version before upgrade is: ' + event.oldVersion)
@@ -121,22 +138,6 @@ function connect () {
                 console.log('IndexedDBClient error: ' + event2.target.errorCode)
             }
             resolve()
-
-            // DEBUG/TEST
-            /*
-            const _objectStore = this.db.transaction('https').objectStore('https');
-            _objectStore.openCursor().onsuccess = function (event3) {
-              const cursor = event3.target.result
-              if (cursor) {
-                console.log('IndexedDB cursor.key: ' + cursor.key)
-                cursor.continue()
-              }
-              else {
-                console.log('IndexedDB cursor: No more entries!')
-              }
-            }
-            */
-
         }
     })
 }
