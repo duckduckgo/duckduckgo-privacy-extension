@@ -100,6 +100,7 @@ class HTTPSE {
             'http://thump.vice.com',
             'http://yts.ag'
         ]
+        console.log('HTTPSE: testPipeRequestUrl() for ' + testUrls.length + ' urls')
 
         function _handleDone (r, i) {
             // console.log(r)
