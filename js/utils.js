@@ -42,7 +42,7 @@ require.scopes.utils = ( () => {
 
     function getCurrentTab(callback){
         return new Promise( (resolve, reject) => {
-            chrome.tabs.query({"active": true}, function(tabData) {
+            chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
                 if(tabData.length){
                     resolve(tabData[0])
                 }
