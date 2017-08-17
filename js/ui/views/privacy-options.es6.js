@@ -8,7 +8,9 @@ function PrivacyOptions (ops) {
 
     Parent.call(this, ops);
 
-    this.setup();
+    this.model.getSettings().then(() => {
+        this.rerender()
+    })
 
 };
 
@@ -41,7 +43,6 @@ PrivacyOptions.prototype = $.extend({},
             this._rerender();
             this.setup();
         }
-
     }
 
 );
