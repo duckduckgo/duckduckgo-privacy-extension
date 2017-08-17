@@ -1,3 +1,7 @@
+// TODO: integrate whitelist from user settings
+// let httpsWhitelist
+// load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
+
 class HTTPSE {
 
     constructor () {

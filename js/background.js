@@ -18,11 +18,6 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-
-// TODO: integrate new httpse with this
-let httpsWhitelist
-load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
-// new httpse 
 let db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
 let httpse = new HTTPSE()
 
