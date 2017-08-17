@@ -189,10 +189,6 @@ chrome.webRequest.onBeforeRequest.addListener(
           console.log('YO')
           // TODO: onBeforeRequest
           // set up chrome.webRequest.onBeforeRequest() listener + handler here
-          
-          // TODO: perf - check diff between db calls for every http request and just
-          // keeping entire dataset in memory for reference. dataset is not as large
-          // as i thought it would be (1.6 Mb unzipped)
       }
 
 
