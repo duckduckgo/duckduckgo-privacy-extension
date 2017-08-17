@@ -26,13 +26,13 @@ class HTTPSE {
             if (!protocol.indexOf('http') === 0) resolve(reqUrl)
 
             // Check if host has entry in db
-            let host = utils.extractHostFromURL(reqUrl)
-            let loop = [host]
+            const host = utils.extractHostFromURL(reqUrl)
+            const loop = [host]
 
             // Check if host has an entry as a wildcarded subdomain in db
-            let subdomain = utils.extractSubdomainFromHost(host)
+            const subdomain = utils.extractSubdomainFromHost(host)
             if (subdomain && subdomain !== 'www') {
-                let wildcard = host.replace(subdomain, '*')
+                const wildcard = host.replace(subdomain, '*')
                 loop.push(wildcard)               
             }
 
