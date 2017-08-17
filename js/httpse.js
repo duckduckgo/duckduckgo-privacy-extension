@@ -1,5 +1,5 @@
 // TODO: perf open question
-//   - are individual db lookups as fast as holding rules in memory?
+// - are individual db lookups as fast as holding rules in memory?
 
 class HTTPSE {
 
@@ -18,14 +18,19 @@ class HTTPSE {
     pipeRequestUrl (reqUrl) {
         return new Promise((resolve, reject) => {
             if (!this.isReady) {
-                console.warn('HTTPSE: this.db is not ready')
+                console.warn('HTTPSE: .pipeRequestUrl() this.db is not ready')
                 return resolve(reqUrl)
             }
 
-            this.db.get(this.dbObjectStore, reqUrl).then(
+            const protocol = URLParser.extractProtocol(reqUrl).protocol
+            if (!protocol.indexOf('http') === 0) resolve(reqUrl)
+
+            const host = utils.extractHostFromURL(reqUrl.toLowerCase())
+            this.db.get(this.dbObjectStore, host).then(
                 (record) => {
                     if (record && record.simpleUpgrade) {
-                        return resolve(upgradedUrl)
+                        const upgrade = reqUrl.toLowerCase().replace(/^(http|https):\/\//, 'https://')
+                        return resolve(upgrade)
                     }
                     return resolve(reqUrl)
                 },
