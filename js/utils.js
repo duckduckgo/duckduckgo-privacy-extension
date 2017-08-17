@@ -12,6 +12,15 @@ require.scopes.utils = ( () => {
         return hostname;
     }
 
+    function extractSubdomainFromHost (host) {
+         if (typeof host !== 'string') return false
+         const rgx = /\./g
+         if (host.match(rgx) && host.match(rgx).length > 1) {
+             return host.split('.')[0]
+         }
+         return false
+     }
+
     function parseURL (url){
         var a = document.createElement('a');
         a.href = url;
@@ -48,6 +57,7 @@ require.scopes.utils = ( () => {
 
     return {
         extractHostFromURL: extractHostFromURL,
+        extractSubdomainFromHost: extractSubdomainFromHost,
         parseURL: parseURL,
         syncToStorage: syncToStorage,
         getFromStorage: getFromStorage,

@@ -73,7 +73,7 @@ class IndexedDBClient {
     }
 
     get (objectStore, record) {
-        // console.log('get() record from objectStore: ', record)
+        console.log('get() record from objectStore: ', record)
         return new Promise((resolve, reject) => {
             if (!this.db) {
                 console.warn('IndexedDBClient: this.db does not exist')

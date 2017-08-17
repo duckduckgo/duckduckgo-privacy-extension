@@ -18,25 +18,46 @@ class HTTPSE {
                 console.warn('HTTPSE: .pipeRequestUrl() this.db is not ready')
                 return resolve(reqUrl)
             }
+
             reqUrl = reqUrl.toLowerCase()
+
+            // Only deal with http calls
             const protocol = URLParser.extractProtocol(reqUrl).protocol
             if (!protocol.indexOf('http') === 0) resolve(reqUrl)
 
-            const host = utils.extractHostFromURL(reqUrl)
-            this.db.get(this.dbObjectStore, host).then(
-                (record) => {
-                    if (record && record.simpleUpgrade) {
-                        // TODO: deal with wildcard records in db
-                        const upgrade = reqUrl.replace(/^(http|https):\/\//, 'https://')
-                        return resolve(upgrade)
-                    }
-                    return resolve(reqUrl)
-                },
-                () => {
-                    console.warn('HTTPSE: pipeRequestUrl() encountered a db error')
-                    return resolve(reqUrl)
-                }
-            )
+            // Check if host has entry in db
+            let host = utils.extractHostFromURL(reqUrl)
+            let loop = [host]
+
+            // Check if host has an entry as a wildcarded subdomain in db
+            let subdomain = utils.extractSubdomainFromHost(host)
+            if (subdomain && subdomain !== 'www') {
+                let wildcard = host.replace(subdomain, '*')
+                loop.push(wildcard)               
+            }
+
+            let isResolved = false
+            loop.forEach((r, i) => {
+                if (isResolved) return
+                this.db
+                    .get(this.dbObjectStore, r)
+                    .then(
+                        (record) => {
+                            if (record && record.simpleUpgrade) {
+                                const upgrade = reqUrl.replace(/^(http|https):\/\//, 'https://')
+                                isResolved = true
+                                return resolve(upgrade)
+                            }
+                            if (i === (loop.length - 1)) return resolve(reqUrl)
+                        },
+                        () => {
+                            console.warn('HTTPSE: pipeRequestUrl() encountered a db error')
+                            if (i === (loop.length -1)) return resolve(reqUrl)
+                        }
+                    )
+
+            })
+
         })
     }
 
@@ -90,6 +111,7 @@ class HTTPSE {
         })        
     }
 
+    /* For debugging/development/test purposes only */
     testPipeRequestUrl () {
         // These hosts should always have records that were xhr'd 
         // into the client-side db from server
@@ -120,3 +142,4 @@ class HTTPSE {
         this.db.logAllRecords(this.dbObjectStore)      
     }
 }
+
