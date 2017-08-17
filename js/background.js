@@ -99,96 +99,109 @@ chrome.contextMenus.create({
 });
 
 // Add ATB param and block tracker requests
-chrome.webRequest.onBeforeRequest.addListener(
-    function (requestData) {
+chrome.webRequest.onBeforeRequest.addListener(function (requestData) { 
+    return new Promise ((resolve) => {
 
-      let tabId = requestData.tabId;
-
-      // Add ATB for DDG URLs
-      let ddgAtbRewrite = ATB.redirectURL(requestData);
-      if(ddgAtbRewrite)
-          return ddgAtbRewrite;
-
-      // skip requests to background tabs
-      if(tabId === -1){
-          return;
-      }
-
-      let thisTab = tabManager.get(requestData);
-
-      // for main_frame requests: create a new tab instance whenever we either
-      // don't have a tab instance for this tabId or this is a new requestId.
-      if (requestData.type === "main_frame") {
-          if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
-            thisTab = tabManager.create(requestData);
-          }
-      }
-      else {
-          // check that we have a valid tab
-          // there is a chance this tab was closed before
-          // we got the webrequest event
-          if (!(thisTab && thisTab.url && thisTab.id)) {
-              return;
-          }
-
-          chrome.runtime.sendMessage({"updateTrackerCount": true});
-
-          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
-
-          if (tracker) {
-              // record all tracker urls on a site even if we don't block them
-              thisTab.site.addTracker(tracker);
-
-              // record potential blocked trackers for this tab
-              thisTab.addToTrackers(tracker);
-
-              // Block the request if the site is not whitelisted
-              if (!thisTab.site.whitelisted) {
-                  thisTab.addOrUpdateTrackersBlocked(tracker);
-                  chrome.runtime.sendMessage({"updateTrackerCount": true});
-
-                  // update badge icon for any requests that come in after
-                  // the tab has finished loading
-                  if (thisTab.status === "complete") thisTab.updateBadgeIcon()
-
-                  console.info( utils.extractHostFromURL(thisTab.url)
-                               + " [" + tracker.parentCompany + "] " + tracker.url);
-
-                  if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
-
-                  // tell Chrome to cancel this webrequest
-                  return {cancel: true};
-              }
-          }
-      }
+        /**
+         * TODO: quick refactor of tracker blocking code below
+         * to accomodate Promise api
 
 
-      // TODO: revisit https upgrade feature... soon
-      // upgrade to https if the site isn't whitelisted or in our list
-      // of known broken https sites
-      /*
-      if (!(thisTab.site.whitelisted ||
-            httpsWhitelist[thisTab.site.domain] ||
-            thisTab.site.HTTPSwhitelisted)) {
+        let tabId = requestData.tabId;
 
-          let upgradeStatus = onBeforeRequest(requestData);
-          if (upgradeStatus.redirectUrl){
-              thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
-          }
+        // Add ATB for DDG URLs
+        let ddgAtbRewrite = ATB.redirectURL(requestData);
+        if(ddgAtbRewrite)
+            return ddgAtbRewrite;
 
-          return upgradeStatus;
-      }
-      */
+        // skip requests to background tabs
+        if(tabId === -1){
+            return;
+        }
 
-      if (httpse.isReady) {
-          console.log('YO')
-          // TODO: onBeforeRequest
-          // set up chrome.webRequest.onBeforeRequest() listener + handler here
-      }
+        let thisTab = tabManager.get(requestData);
+
+        // for main_frame requests: create a new tab instance whenever we either
+        // don't have a tab instance for this tabId or this is a new requestId.
+        if (requestData.type === "main_frame") {
+            if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
+              thisTab = tabManager.create(requestData);
+            }
+        }
+        else {
+            // check that we have a valid tab
+            // there is a chance this tab was closed before
+            // we got the webrequest event
+            if (!(thisTab && thisTab.url && thisTab.id)) {
+                return;
+            }
+
+            chrome.runtime.sendMessage({"updateTrackerCount": true});
+
+            var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
+
+            if (tracker) {
+                // record all tracker urls on a site even if we don't block them
+                thisTab.site.addTracker(tracker);
+
+                // record potential blocked trackers for this tab
+                thisTab.addToTrackers(tracker);
+
+                // Block the request if the site is not whitelisted
+                if (!thisTab.site.whitelisted) {
+                    thisTab.addOrUpdateTrackersBlocked(tracker);
+                    chrome.runtime.sendMessage({"updateTrackerCount": true});
+
+                    // update badge icon for any requests that come in after
+                    // the tab has finished loading
+                    if (thisTab.status === "complete") thisTab.updateBadgeIcon()
+
+                    console.info( utils.extractHostFromURL(thisTab.url)
+                                 + " [" + tracker.parentCompany + "] " + tracker.url);
+
+                    if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+
+                    // tell Chrome to cancel this webrequest
+                    return {cancel: true};
+                }
+            }
+        }
+        */
 
 
+        // upgrade to https if the site isn't whitelisted or in our list
+        // of known broken https sites
+        /*
+        if (!(thisTab.site.whitelisted ||
+              httpsWhitelist[thisTab.site.domain] ||
+              thisTab.site.HTTPSwhitelisted)) {
+
+            let upgradeStatus = onBeforeRequest(requestData);
+            if (upgradeStatus.redirectUrl){
+                thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
+            }
+
+            return upgradeStatus;
+        }
+        */
+
+        // TODO: make sure Promise API for this works in Chrome, too
+        // TODO: are we already handling redirect loops anywhere?
+        if (httpse.isReady) {
+            httpse.pipeRequestUrl(requestData.url).then(
+                (url) => {
+                    if (url !== requestData.url.toLowerCase()) {
+                        console.log('background.js: redirect to ' + url)
+                        resolve({redirectUrl: url})
+                    }
+                    resolve()
+                }
+            )
+
+        }
 
 
+    })
     },
     {
         urls: [

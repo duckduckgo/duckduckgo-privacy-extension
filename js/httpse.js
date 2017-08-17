@@ -17,7 +17,7 @@ class HTTPSE {
     }  
 
     pipeRequestUrl (reqUrl) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (!this.isReady) {
                 console.warn('HTTPSE: .pipeRequestUrl() this.db is not ready')
                 return resolve(reqUrl)
