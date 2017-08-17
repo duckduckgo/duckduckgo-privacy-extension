@@ -1,6 +1,3 @@
-// TODO: perf open question
-// - are individual db lookups as fast as holding rules in memory?
-
 class HTTPSE {
 
     constructor () {
