@@ -20,8 +20,7 @@ PrivacyOptions.prototype = $.extend({},
           if (this.hasOwnProperty(k)) {
               this[k] = !this[k];
               console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`);
-
-              backgroundPage.settings.updateSetting(k, this[k]);
+              this.fetch({upddateSetting: {name: k, value: this[k]}});
           }
       }
 
