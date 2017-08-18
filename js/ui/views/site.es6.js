@@ -25,13 +25,6 @@ function Site (ops) {
         this._setDisabled();
     }
 
-    let self = this;
-    chrome.runtime.onMessage.addListener(function(req, sender, res) {
-        if (req.updateTrackerCount) {
-            if (self.model.update()) thisView.rerender();
-        }
-    });
-
 };
 
 Site.prototype = $.extend({},
@@ -47,7 +40,8 @@ Site.prototype = $.extend({},
 
             this.bindEvents([
               [this.$toggle, 'click', this._whitelistClick],
-              [this.$showalltrackers, 'click', this._showAllTrackers]
+              [this.$showalltrackers, 'click', this._showAllTrackers],
+              [this.store.subscribe, 'change:backgroundMessage', this._updateTrackerCount]
             ]);
 
         },
@@ -70,6 +64,7 @@ Site.prototype = $.extend({},
 
                         self.model.update();
                         self.model.setHttpsMessage();
+                        self._getSiteRating()
                         self.rerender(); // our custom rerender below
                     });
 
@@ -104,6 +99,12 @@ Site.prototype = $.extend({},
                 template: tabbedTrackerListTemplate,
                 defaultTab: 'page'
             });
+        },
+
+        _getSiteRating: function () {
+            this.model.fetch({getSiteScore: this.model.tab.id}).then((rating) => {
+                if (rating && this.model.update(rating)) this.rerender();
+            })
         }
 
     }

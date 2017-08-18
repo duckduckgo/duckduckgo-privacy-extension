@@ -64,20 +64,17 @@ Site.prototype = $.extend({},
           }
       },
 
-      update: function () {
+      update: function (updatedSiteRating) {
           let rerenderFlag = false
 
           if (this.tab) {
               const updatedTrackersCount = this._getUniqueTrackersCount()
               const updatedTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
-
-              this.fetch({getSiteScore: this.tab.id}).then((score) => {
-                  const updatedSiteRating = score
-                  if (updatedSiteRating !== this.siteRating) {
+                  
+              if (updatedSiteRating !== this.siteRating) {
                     this.siteRating = updatedSiteRating
                     rerenderFlag = true
                 }
-              });
 
               if (updatedTrackersCount !== this.trackersCount) {
                   this.trackersCount = updatedTrackersCount
