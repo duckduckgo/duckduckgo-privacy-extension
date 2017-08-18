@@ -17,12 +17,7 @@
  * })
  *
  * Or you can use db.isReady property to check readiness:
- * if (db.isReady) { 
- *     db.get('cats', 'mr_wiggles').then() }
- *         .then(
- *             (record) => console.log(record), // success
- *             () => console.log('doh') // failure
- *          )
+ * if (db.isReady) db.get('cats', 'mr_wiggles').then((r) => { // do stuff}))
  *
  * NOTE:
  * db.ready() won't fire until db is populated with fetched httpse data
