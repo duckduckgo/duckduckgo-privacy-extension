@@ -6,10 +6,7 @@ require.scopes.load = ( () => {
 
     function JSONfromExternalFile(url, cb){
         try {
-            loadExtensionFile(url, 'json', 'external', (res) => {
-                // if (url === "http://jason.duckduckgo.com/collect.js?type=httpse") debugger;
-                cb(JSON.parse(res))
-            })
+            loadExtensionFile(url, 'json', 'external', (res) => cb(JSON.parse(res)))
         }
         catch(e) {
             return {}
@@ -39,8 +36,7 @@ require.scopes.load = ( () => {
         xhr.onreadystatechange = function() {
             let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
             if (xhr.readyState === done && xhr.status === 200) {
-                if (cb) return cb(returnResponse(xhr, returnType))
-                debugger;
+                cb(returnResponse(xhr, returnType))
             }
         }
     }
