@@ -99,7 +99,8 @@ chrome.contextMenus.create({
 });
 
 // Add ATB param, block tracker requests and upgrade http -> https per rules
-chrome.webRequest.onBeforeRequest.addListener(function (requestData) { 
+chrome.webRequest.onBeforeRequest.addListener(
+    function (requestData) { 
 
         let tabId = requestData.tabId;
 
