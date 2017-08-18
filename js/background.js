@@ -98,30 +98,21 @@ chrome.contextMenus.create({
   }
 });
 
-// Add ATB param and block tracker requests
+// Add ATB param, block tracker requests and upgrade http -> https per rules
 chrome.webRequest.onBeforeRequest.addListener(function (requestData) { 
-    return new Promise ((resolve) => {
-
-        /**
-         * TODO: quick refactor of tracker blocking code below
-         * to accomodate Promise api
-
 
         let tabId = requestData.tabId;
 
         // Add ATB for DDG URLs
         let ddgAtbRewrite = ATB.redirectURL(requestData);
-        if(ddgAtbRewrite)
-            return ddgAtbRewrite;
+        if (ddgAtbRewrite) return ddgAtbRewrite;
 
-        // skip requests to background tabs
-        if(tabId === -1){
-            return;
-        }
+        // Skip requests to background tabs
+        if (tabId === -1) { return }
 
         let thisTab = tabManager.get(requestData);
 
-        // for main_frame requests: create a new tab instance whenever we either
+        // For main_frame requests: create a new tab instance whenever we either
         // don't have a tab instance for this tabId or this is a new requestId.
         if (requestData.type === "main_frame") {
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
@@ -129,12 +120,20 @@ chrome.webRequest.onBeforeRequest.addListener(function (requestData) {
             }
         }
         else {
-            // check that we have a valid tab
-            // there is a chance this tab was closed before
-            // we got the webrequest event
+
+            /**
+             * Check that we have a valid tab
+             * there is a chance this tab was closed before
+             * we got the webrequest event
+             */
             if (!(thisTab && thisTab.url && thisTab.id)) {
                 return;
             }
+
+            /**
+             * Tracker blocking 
+             * If request is a tracker, cancel the request 
+             */
 
             chrome.runtime.sendMessage({"updateTrackerCount": true});
 
@@ -166,9 +165,9 @@ chrome.webRequest.onBeforeRequest.addListener(function (requestData) {
                 }
             }
         }
-        */
+        
 
-
+        // LEGACY HTTPS Everywhere:
         // upgrade to https if the site isn't whitelisted or in our list
         // of known broken https sites
         /*
@@ -185,23 +184,26 @@ chrome.webRequest.onBeforeRequest.addListener(function (requestData) {
         }
         */
 
-        // TODO: make sure Promise API for this works in Chrome, too
+
+        /**
+         * HTTPS Everywhere rules
+         * If an upgrade rule is found, request is upgraded from http to https 
+         */
+
         // TODO: are we already handling redirect loops anywhere?
-        if (httpse.isReady) {
-            httpse.pipeRequestUrl(requestData.url).then(
-                (url) => {
-                    if (url !== requestData.url.toLowerCase()) {
-                        console.log('background.js: redirect to ' + url)
-                        resolve({redirectUrl: url})
+        return new Promise ((resolve) => {
+            if (httpse.isReady) {
+                httpse.pipeRequestUrl(requestData.url).then(
+                    (url) => {
+                        if (url !== requestData.url.toLowerCase()) {
+                            console.log('background.js: httpse upgrade request url to ' + url)
+                            resolve({redirectUrl: url})
+                        }
+                        resolve()
                     }
-                    resolve()
-                }
-            )
-
-        }
-
-
-    })
+                )
+            }
+        })
     },
     {
         urls: [

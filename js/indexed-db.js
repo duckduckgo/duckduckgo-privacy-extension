@@ -2,7 +2,6 @@
 //  - interrupted db connections
 //  - server update calls that 404 on first try
 
-
 /**
  * Public api
  * Usage:
