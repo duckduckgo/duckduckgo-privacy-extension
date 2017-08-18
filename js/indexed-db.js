@@ -36,7 +36,6 @@
 class IndexedDBClient {
 
     constructor (ops) {
-        this.clientVersion = '1'
         ops = ops || {}
         this.dbName = ops.dbName
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
