@@ -36,11 +36,8 @@ TrackerList.prototype = $.extend({},
         },
 
         rerenderList: function() {
-            this.$el.find('.js-top-blocked').remove()
-            let ul = this.template.call(this)
-            this.$el.replaceWith(ul)
+            this._rerender()
             this._setup()
-            this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
             this.animateGraphBars()
         }
     }
