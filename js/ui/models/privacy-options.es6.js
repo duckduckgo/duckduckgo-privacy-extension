@@ -1,6 +1,7 @@
 const Parent = window.DDG.base.Model;
 
 function PrivacyOptions (attrs) {
+    // set some default values for the toggle switches in the template
     attrs.trackerBlockingEnabled = true;
     attrs.httpsEverywhereEnabled = true;
     attrs.embeddedTweetsEnabled = false;

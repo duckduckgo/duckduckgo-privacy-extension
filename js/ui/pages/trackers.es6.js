@@ -21,7 +21,7 @@ const AutocompleteView = require('./../views/autocomplete.es6.js');
 const AutocompleteModel = require('./../models/autocomplete.es6.js');
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js');
 
-const MessageModel = require('./../models/backgroundMessage.es6.js');
+const BackgroundMessageModel = require('./../models/backgroundMessage.es6.js');
 
 function Trackers (ops) {
     this.$parent = $('#trackers-container');
@@ -92,7 +92,7 @@ Trackers.prototype = $.extend({},
                 template: autocompleteTemplate
             });
 
-            this.message = new MessageModel({})
+            this.message = new BackgroundMessageModel()
 
         }
     }

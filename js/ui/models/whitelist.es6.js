@@ -1,7 +1,9 @@
 const Parent = window.DDG.base.Model;
 
 function Whitelist (attrs) {
+    // placeholder until we get whitelist data from background
     this.list = {}
+
     Parent.call(this, attrs);
 };
 
