@@ -50,7 +50,6 @@ Site.prototype = $.extend({},
 
             this.model.fetch({getCurrentTab: true}).then((tab) => {
                 if (tab) {
-                    
                     this.model.fetch({getTab: tab.id}).then( (backgroundTabObj) => {
                         self.model.tab = backgroundTabObj
                         self.model.domain = backgroundTabObj.site.domain

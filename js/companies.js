@@ -68,5 +68,5 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getTopBlocked) {
         res(Companies.getTopBlocked(req.getTopBlocked))
     }
-    true;
+    return true;
 });

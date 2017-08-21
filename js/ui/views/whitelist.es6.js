@@ -42,7 +42,7 @@ Whitelist.prototype = $.extend({},
             this.setup();
         },
 
-        // watch for changes in site model and rerender
+        // watch for changes in the whitelist and rerender
         update: function(message) {
             if (message.change.attribute === 'whitelistChanged') {
                 this.setWhitelistFromSettings()
