@@ -40,7 +40,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getBrowser) {
         res(browser);
     }
-    true;
+    return true;
 });
 
 function Background() {
@@ -140,6 +140,8 @@ chrome.webRequest.onBeforeRequest.addListener(
               return;
           }
 
+          chrome.runtime.sendMessage({"updateTrackerCount": true});
+
           var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
           if (tracker) {
@@ -152,6 +154,7 @@ chrome.webRequest.onBeforeRequest.addListener(
               // Block the request if the site is not whitelisted
               if (!thisTab.site.whitelisted) {
                   thisTab.addOrUpdateTrackersBlocked(tracker);
+                  chrome.runtime.sendMessage({"updateTrackerCount": true});
 
                   // update badge icon for any requests that come in after
                   // the tab has finished loading

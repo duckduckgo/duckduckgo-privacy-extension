@@ -40,8 +40,7 @@ Site.prototype = $.extend({},
 
             this.bindEvents([
               [this.$toggle, 'click', this._whitelistClick],
-              [this.$showalltrackers, 'click', this._showAllTrackers],
-              [this.store.subscribe, 'change:backgroundMessage', this._updateTrackerCount]
+              [this.$showalltrackers, 'click', this._showAllTrackers]
             ]);
 
         },
@@ -106,7 +105,6 @@ Site.prototype = $.extend({},
                 if (rating && this.model.update(rating)) this.rerender();
             })
         }
-
     }
 
 );
