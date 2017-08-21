@@ -27,4 +27,3 @@ TopBlocked.prototype = {
         this.data = data;
     }
 }
-

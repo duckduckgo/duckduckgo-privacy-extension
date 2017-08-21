@@ -103,8 +103,8 @@ BaseModel.prototype = $.extend({},
          },
 
         /**
-         * Send messages to background process through
-         * browser.sendMessage
+         * Send messages to background
+         * this.model.fetch({"messageName": messageValue}).then((response) ..
          **/
         fetch: function(message) {
             return new Promise( (resolve, reject) => {
