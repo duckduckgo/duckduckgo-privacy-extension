@@ -79,8 +79,9 @@ class Site {
 
         this.setWhitelistStatusFromGlobal(domain);
 
+        // set isSpecial when the site is created. This may change 
+        // later if the url is updated by the onComplete listener
         this.isSpecialDomain = this.specialDomain()
-        this.specialFunc = this.specialDomain
 
     }
 
