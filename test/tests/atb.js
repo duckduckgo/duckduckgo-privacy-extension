@@ -95,19 +95,19 @@
           assert.ok(atb, "got new atb value from success page");
           assert.ok(set_atb, "got new set_atb value from success page");
           tabsToCleanUp.push(tab);
-          done();
-      });
-
-      var ddgTestUrl = "https://duckduckgo.com/?q=test"
-      // check new tab url
-      chrome.tabs.create({url: ddgTestUrl});
+          
+          var ddgTestUrl = "https://duckduckgo.com/?q=test"
       
-      getLoadedTab(ddgTestUrl).then((tab) => {
-          let atbRegex = new RegExp('&atb=' + bkg.settings.getSetting('atb'),'g');
-          assert.ok(atbRegex.exec(tab.url), "new tab url has atb param");
-          tabsToCleanUp.push(tab);
-          cleanUpTabs(tabsToCleanUp);
+          // check new tab url
+          chrome.tabs.create({url: ddgTestUrl});
+          
+          getLoadedTab(ddgTestUrl).then((tab) => {
+              let atbRegex = new RegExp('&atb=' + bkg.settings.getSetting('atb'),'g');
+              assert.ok(atbRegex.exec(tab.url), "new tab url has atb param");
+              tabsToCleanUp.push(tab);
+              cleanUpTabs(tabsToCleanUp);
+          });
+          done()
       });
-
   });
 })();
