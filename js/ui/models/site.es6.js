@@ -105,7 +105,7 @@ Site.prototype = $.extend({},
       },
 
       _getUniqueTrackersCount: function () {
-          return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
+          return Object.keys(this.tab.trackers).reduce((total, name) => {
               return this.tab.trackers[name].urls.length + total
           }, 0)
       },
