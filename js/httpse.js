@@ -1,5 +1,4 @@
-// TODO: integrate whitelist from user settings
-// let httpsWhitelist
+// TODO: get this other whitelist too, update when it changes
 // load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
 
 class HTTPSE {
@@ -27,7 +26,7 @@ class HTTPSE {
 
             // Only deal with http calls
             const protocol = URLParser.extractProtocol(reqUrl).protocol
-            if (!protocol.indexOf('http') === 0) resolve(reqUrl)
+            if (!protocol.indexOf('http') === 0) return resolve(reqUrl)
 
             // Check if host has entry in db
             const host = utils.extractHostFromURL(reqUrl)
@@ -39,6 +38,10 @@ class HTTPSE {
                 const wildcard = host.replace(subdomain, '*')
                 loop.push(wildcard)               
             }
+
+            // Check if user has whitelisted this host before checking db
+            if (this.isHostWhitelistedByUser(host)) return resolve(reqUrl)
+            if (this.isHostWhitelistedByUser(subdomain)) return resolve(reqUrl)
 
             let isResolved = false
             loop.forEach((r, i) => {
@@ -63,6 +66,12 @@ class HTTPSE {
             })
 
         })
+    }
+
+    isHostWhitelistedByUser (host) {
+        const userWhitelist = settings.getSetting('whitelisted')
+        if (userWhitelist && userWhitelist[host]) return true
+        return false
     }
 
     /* For debugging/development/test purposes only */
@@ -146,4 +155,3 @@ class HTTPSE {
         this.db.logAllRecords(this.dbObjectStore)      
     }
 }
-
