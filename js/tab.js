@@ -51,6 +51,7 @@ class Tab {
         this.url = tabData.url,
         this.upgradedHttps = false,
         this.httpsRequests = [],
+        this.httpsRedirects = {},
         this.httpsWhitelisted = false,
         this.requestId = tabData.requestId,
         this.status = tabData.status,
@@ -120,14 +121,34 @@ class Tab {
             return newTracker;
         }
     };
+
+    addHTTPSRequest (url) {
+        this.httpsRequests.push(url)
+    }
 }
 
 chrome.webRequest.onHeadersReceived.addListener((header) => {
-    let tab = tabManager.get({'tabId': header.tabId});
-    // remove successful rewritten requests
+    let tab = tabManager.get({'tabId': header.tabId})
+    console.log('onHeadersReceived ' + header.statusCode + ': ' + header.url)
+    
+    // Remove successful rewritten requests    
     if (tab && header.statusCode < 400) {
         tab.httpsRequests = tab.httpsRequests.filter((url) => {
             return url !== header.url;
         });
     }
+
 }, {urls: ['<all_urls>']});
+
+chrome.webRequest.onBeforeRedirect.addListener((req) => {
+    console.log('----onBeforeRedirect---- request:')
+    console.log(req)
+    let tab = tabManager.get({'tabId': req.tabId})
+    if (tab.httpsRedirects[req.requestId]) {
+        tab.httpsRedirects[req.requestId] += 1
+        console.log(tab.httpsRedirects)
+    } else {
+        tab.httpsRedirects[req.requestId] = 1
+        console.log(tab.httpsRedirects)
+    }
+}, {urls: ["*://*/*"]})

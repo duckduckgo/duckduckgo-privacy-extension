@@ -191,18 +191,26 @@ chrome.webRequest.onBeforeRequest.addListener(
          * If an upgrade rule is found, request is upgraded from http to https 
          */
 
-        // TODO: are we already handling redirect loops anywhere?
+        // Cancel after a request makes too many redirects
+        if (thisTab.httpsRedirects[requestData.requestId] >= 8) {
+            console.log('background: redirect limit hit for url ' + requestData.url)
+            return {cancel: true}
+        }
+
         return new Promise ((resolve) => {
             if (httpse.isReady) {
                 httpse.pipeRequestUrl(requestData.url).then(
                     (url) => {
                         if (url !== requestData.url.toLowerCase()) {
                             console.log('background.js: httpse upgrade request url to ' + url)
+                            thisTab.addHTTPSRequest(url)
                             resolve({redirectUrl: url})
                         }
                         resolve()
                     }
                 )
+            } else {
+              resolve()
             }
         })
     },
