@@ -28,7 +28,7 @@ class HTTPSE {
             const protocol = URLParser.extractProtocol(reqUrl).protocol
             if (!protocol.indexOf('http') === 0) return resolve(reqUrl)
 
-            // Check if host has entry in db
+            // Determine host
             const host = utils.extractHostFromURL(reqUrl)
             const loop = [host]
 
@@ -43,6 +43,7 @@ class HTTPSE {
             if (this.isHostWhitelistedByUser(host)) return resolve(reqUrl)
             if (this.isHostWhitelistedByUser(subdomain)) return resolve(reqUrl)
 
+            // Check db
             let isResolved = false
             loop.forEach((r, i) => {
                 if (isResolved) return
