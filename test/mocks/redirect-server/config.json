@@ -9,7 +9,7 @@
             "code": 301
         },
         "redirect.local3": {
-            "host": "http://redirect.local:8070",
+            "host": "https://duckduckgo.com",
             "code": 302
         }
     }
