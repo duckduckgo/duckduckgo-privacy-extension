@@ -61,14 +61,14 @@ class Tab {
         chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId});
     };
 
-    updateBadgeIcon() {
+    updateBadgeIcon () {
         if (!this.site.specialDomain() && !this.site.whitelisted && settings.getSetting('trackerBlockingEnabled')) {
             let scoreIcon = scoreIconLocations[this.site.score.get()];
             chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
         }
     };
 
-    updateSite() {
+    updateSite () {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
         chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});

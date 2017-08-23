@@ -200,7 +200,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {cancel: true}
         }
 
-        // Fetch https rule from db and upgrade request if necessary
+        // Fetch upgrade rule from db
         return new Promise ((resolve) => {
             if (httpse.isReady) {
                 httpse.pipeRequestUrl(requestData.url).then(

@@ -83,33 +83,27 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             tab.status = info.status;
         
             // When the tab finishes loading:
-            // 1. check main_frame url for http and update site score
+            // 1. check main_frame url (via tab.url) for http, update site score
             // 2. check for incomplete upgraded httpse requests and whitelist 
-            // the site if there are any
-            if (tab.status === "complete") {
+            // the entire site if there are any, notify tabManager, 
+            if (tab.status === 'complete') {
 
                 if (tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
 
-
-                /* TODO: turn this back on
                 if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length) {
-                    
                     // set whitelist for all tabs with this domain
                     tabManager.whitelistDomain({
                         list: 'HTTPSwhitelisted',
                         value: true,
                         domain: tab.site.domain
                     });
-                    
+                    // then reload this tab
                     chrome.tabs.reload(tab.id);
                 }
-                */
-
-
+                
                 console.info(tab.site.score);
-
                 tab.updateBadgeIcon();
             }
         }
