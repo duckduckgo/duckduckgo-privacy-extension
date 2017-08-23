@@ -1,9 +1,8 @@
 const Parent = window.DDG.base.Model;
-const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Whitelist (attrs) {
-
-    this.setWhitelistFromSettings();
+    // placeholder until we get whitelist data from background
+    this.list = {}
 
     Parent.call(this, attrs);
 };
@@ -20,22 +19,14 @@ Whitelist.prototype = $.extend({},
             var domain = this.list[itemIndex];
             console.log(`whitelist: remove ${domain}`);
 
-            backgroundPage.tabManager.whitelistDomain({
+            this.fetch({'whitelisted': 
+                {
                 list: 'whitelisted',
                 domain: domain,
                 value: false
+                }
             });
-
-            this.setWhitelistFromSettings();
-        },
-
-        setWhitelistFromSettings: function() {
-            var wlist = backgroundPage.settings.getSetting('whitelisted') || {};
-
-            this.list = Object.keys(wlist);
-            this.list.sort();
         }
-
   }
 );
 

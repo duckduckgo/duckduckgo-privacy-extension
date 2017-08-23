@@ -1,7 +1,6 @@
 const Parent = window.DDG.base.View;
 const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js');
 const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
-const backgroundPage = chrome.extension.getBackgroundPage();
 
 function Site (ops) {
 
@@ -26,13 +25,6 @@ function Site (ops) {
         this._setDisabled();
     }
 
-    let self = this;
-    chrome.runtime.onMessage.addListener(function(req, sender, res) {
-        if (req.updateTrackerCount) {
-            if (self.model.update()) thisView.rerender();
-        }
-    });
-
 };
 
 Site.prototype = $.extend({},
@@ -56,19 +48,23 @@ Site.prototype = $.extend({},
         getBackgroundTabData: function () {
             let self = this;
 
-            backgroundPage.utils.getCurrentTab(function (tab) {
+            this.model.fetch({getCurrentTab: true}).then((tab) => {
                 if (tab) {
-                    self.model.domain = backgroundPage.utils.extractHostFromURL(tab.url);
-                    self.model.tab = backgroundPage.tabManager.get({'tabId': tab.id});
-                    self.model.setSiteObj();
+                    this.model.fetch({getTab: tab.id}).then( (backgroundTabObj) => {
+                        self.model.tab = backgroundTabObj
+                        self.model.domain = backgroundTabObj.site.domain
 
-                    if (self.model.disabled) {   // determined in setSiteObj()
-                        self._setDisabled();
-                    }
+                        self.model.setSiteObj();
 
-                    self.model.update();
-                    self.model.setHttpsMessage();
-                    self.rerender(); // our custom rerender below
+                        if (self.model.disabled) {   // determined in setSiteObj()
+                            self._setDisabled();
+                        }
+
+                        self.model.update();
+                        self.model.setHttpsMessage();
+                        self._getSiteRating()
+                        self.rerender(); // our custom rerender below
+                    });
 
                 } else {
                     console.debug('Site view: no tab');
@@ -79,7 +75,7 @@ Site.prototype = $.extend({},
         _whitelistClick: function (e) {
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
-
+            this.model.set('whitelisted', this.isWhitelisted);
             chrome.tabs.reload(this.model.tab.id);
             const w = chrome.extension.getViews({type: 'popup'})[0];
             w.close()
@@ -101,8 +97,13 @@ Site.prototype = $.extend({},
                 template: tabbedTrackerListTemplate,
                 defaultTab: 'page'
             });
-        }
+        },
 
+        _getSiteRating: function () {
+            this.model.fetch({getSiteScore: this.model.tab.id}).then((rating) => {
+                if (rating && this.model.update(rating)) this.rerender();
+            })
+        }
     }
 
 );

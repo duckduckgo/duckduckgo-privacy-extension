@@ -1,5 +1,4 @@
 const Parent = window.DDG.base.Model;
-const backgroundPage = chrome.extension.getBackgroundPage();
 
 const httpsStates = {
     'default':  'Secure Connection',
@@ -35,9 +34,8 @@ Site.prototype = $.extend({},
           else {
               this.isWhitelisted = this.tab.site.whitelisted;
               this.setWhitelistStatusText();
-              let special = this.tab.site.specialDomain();
-              if (special) {
-                  this.domain = special; // eg "extensions", "options", "new tab"
+              if (this.tab.site.isSpecialDomain) {
+                  this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
               }
               else {
                   this.disabled = false;
@@ -66,13 +64,17 @@ Site.prototype = $.extend({},
           }
       },
 
-      update: function () {
+      update: function (updatedSiteRating) {
           let rerenderFlag = false
 
           if (this.tab) {
-              const updatedTrackersCount = this.tab.getUniqueTrackersCount()
-              const updatedTrackersBlockedCount = this.tab.getUniqueTrackersBlockedCount()
-              const updatedSiteRating = this.tab.site.score.get()
+              const updatedTrackersCount = this._getUniqueTrackersCount()
+              const updatedTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
+                  
+              if (updatedSiteRating !== this.siteRating) {
+                    this.siteRating = updatedSiteRating
+                    rerenderFlag = true
+                }
 
               if (updatedTrackersCount !== this.trackersCount) {
                   this.trackersCount = updatedTrackersCount
@@ -80,10 +82,6 @@ Site.prototype = $.extend({},
               }
               if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
                   this.trackersBlockedCount = updatedTrackersBlockedCount
-                  rerenderFlag = true
-              }
-              if (updatedSiteRating !== this.siteRating) {
-                  this.siteRating = updatedSiteRating
                   rerenderFlag = true
               }
           }
@@ -94,16 +92,29 @@ Site.prototype = $.extend({},
       toggleWhitelist: function () {
           if (this.tab && this.tab.site) {
               this.isWhitelisted = !this.isWhitelisted;
-              backgroundPage.tabManager.whitelistDomain({
+
+              this.fetch({'whitelisted': 
+                  {
                   list: 'whitelisted',
                   domain: this.tab.site.domain,
                   value: this.isWhitelisted
+                  }
               });
-              this.tab.site.notifyWhitelistChanged();
               this.setWhitelistStatusText();
           }
-      }
+      },
 
+      _getUniqueTrackersCount: function () {
+          return Object.keys(this.tab.trackers).reduce((total, name) => {
+              return this.tab.trackers[name].urls.length + total
+          }, 0)
+      },
+
+      _getUniqueTrackersBlockedCount: function (tab) {
+          return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
+              return this.tab.trackersBlocked[name].urls.length + total
+          }, 0)
+      }
   }
 );
 

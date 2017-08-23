@@ -78,6 +78,11 @@ class Site {
         this.whitelisted = false;
 
         this.setWhitelistStatusFromGlobal(domain);
+
+        // set isSpecialDomain when the site is created. This value may be
+        // updated later by the onComplete listener
+        this.isSpecialDomain = this.specialDomain()
+
     }
 
     setWhitelisted(name, value){

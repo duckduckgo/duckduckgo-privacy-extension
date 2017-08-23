@@ -11,12 +11,9 @@ function TrackerList (ops) {
 
     Parent.call(this, ops);
 
-    this._cacheElems('.js-top-blocked', ['graph-bar-fg', 'see-all'])
-    this.bindEvents([
-        [this.$seeall, 'click', this._seeAllClick]
-    ]);
-
-    this.animateGraphBars();
+    this.model.getTopBlocked().then(() => {
+        this.rerenderList()
+    })
 };
 
 TrackerList.prototype = $.extend({},
@@ -29,8 +26,20 @@ TrackerList.prototype = $.extend({},
                 template: tabbedTrackerListTemplate,
                 defaultTab: 'all'
             });
-        }
+        },
 
+        _setup: function () {
+            this._cacheElems('.js-top-blocked', ['graph-bar-fg', 'see-all'])
+            this.bindEvents([
+                    [this.$seeall, 'click', this._seeAllClick]
+            ]);
+        },
+
+        rerenderList: function() {
+            this._rerender()
+            this._setup()
+            this.animateGraphBars()
+        }
     }
 );
 

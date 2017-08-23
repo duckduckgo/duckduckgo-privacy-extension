@@ -9,6 +9,8 @@ const WhitelistView = require('./../views/whitelist.es6.js');
 const WhitelistModel = require('./../models/whitelist.es6.js');
 const whitelistTemplate = require('./../templates/whitelist.es6.js');
 
+const BackgroundMessageModel = require('./../models/backgroundMessage.es6.js');
+
 function Options (ops) {
     Parent.call(this, ops);
 };
@@ -41,6 +43,8 @@ Options.prototype = $.extend({},
                 appendTo: $parent,
                 template: whitelistTemplate
             });
+            
+            this.message = new BackgroundMessageModel({})
 
         }
 
