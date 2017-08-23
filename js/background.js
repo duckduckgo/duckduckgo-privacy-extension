@@ -30,9 +30,7 @@ try {
         if (info.name === "Firefox")
             browser = "moz";
     });
-}
-catch(e){
-};
+} catch (e) {};
 
 function Background() {
   $this = this;
@@ -85,8 +83,8 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   });
 });
 
-//This adds Context Menu when user select some text.
-//create context menu
+// This adds Context Menu when user select some text.
+// Create context menu:
 chrome.contextMenus.create({
   title: 'Search DuckDuckGo for "%s"',
   contexts: ["selection"],
@@ -98,7 +96,12 @@ chrome.contextMenus.create({
   }
 });
 
-// Add ATB param, block tracker requests and upgrade http -> https per rules
+/** 
+ * Before each request:
+ * - Add ATB param
+ * - Block tracker requests
+ * - Upgrade http -> https per HTTPS Everywhere rules
+ */
 chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) { 
 
@@ -191,12 +194,13 @@ chrome.webRequest.onBeforeRequest.addListener(
          * If an upgrade rule is found, request is upgraded from http to https 
          */
 
-        // Avoid redirect loops, cancel if too many redirects counted
+        // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
-            console.log('backgound.js: CANCEL REQUEST. redirect limit hit for url: ' + requestData.url)
+            console.log('backgound.js: CANCEL REQUEST. redirect limit exceeded for url: ' + requestData.url)
             return {cancel: true}
         }
 
+        // Fetch https rule from db and upgrade request if necessary
         return new Promise ((resolve) => {
             if (httpse.isReady) {
                 httpse.pipeRequestUrl(requestData.url).then(
