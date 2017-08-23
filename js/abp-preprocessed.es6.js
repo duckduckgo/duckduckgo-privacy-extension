@@ -8,14 +8,14 @@ abp = require('abp-filter-parser');
 
 easylists = {
     privacy: {
-        url: 'https://easylist.to/easylist/easyprivacy.txt',
-        whitelist: 'data/tracker_lists/privacy-whitelist.txt',
-        parsed: {}
+        url: 'https://duckduckgo.com/contentblocking.js?l=easyprivacy',
+        parsed: {},
+        etag: settings.getSetting('easyprivacy-etag')
     },
     general: {
-        url: 'https://easylist.to/easylist/easylist.txt',
-        whitelist: 'data/tracker_lists/general-whitelist.txt',
-        parsed: {}
+        url: 'https://duckduckgo.com/contentblocking.js?l=easylist',
+        parsed: {},
+        etag: settings.getSetting('easylist-etag')
     }
 };
 
@@ -26,19 +26,8 @@ easylists = {
  */
 for (let list in easylists) {
     let url = easylists[list].url;
-    load.loadExtensionFile(url, '', 'external', (listData) => {
-    let whitelistFile = easylists[list].whitelist;
-
-        // append the whitelist entries before we process the list
-        if (whitelistFile) {
-            load.loadExtensionFile(whitelistFile, '', '', (whitelist) => {
-                listData += whitelist
-                abp.parse(listData, easylists[list].parsed)
-                easylists[list].loaded = true;
-            })
-        } else {
-            abp.parse(listData, easylists[list].parsed)
-            easylists[list].loaded = true;
-        }
+    load.loadExtensionFile({url: url, source: 'external'}, (listData, hdrs) => {
+        abp.parse(listData, easylists[list].parsed)
+        easylists[list].loaded = true;
     });
 }

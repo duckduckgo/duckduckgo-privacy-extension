@@ -1,12 +1,12 @@
 require.scopes.load = ( () => {
 
     function JSONfromLocalFile(path, cb){
-        loadExtensionFile(path, 'json', null, (res) => cb(JSON.parse(res)))
+        loadExtensionFile({url: path, returnType: 'json'}, (res) => cb(JSON.parse(res)))
     }
 
     function JSONfromExternalFile(url, cb){
         try {
-            loadExtensionFile(url, 'json', 'external', (res) => cb(JSON.parse(res)))
+            loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res) => cb(JSON.parse(res)))
         }
         catch(e) {
             return {}
@@ -21,14 +21,14 @@ require.scopes.load = ( () => {
         }
     }
 
-    function loadExtensionFile(url, returnType, source, cb){
+    function loadExtensionFile(params, cb){
         var xhr = new XMLHttpRequest();
 
-        if(source === 'external'){
-            xhr.open("GET", url);
+        if(params.source === 'external'){
+            xhr.open("GET", params.url);
         }
         else {
-            xhr.open("GET", chrome.extension.getURL(url));
+            xhr.open("GET", chrome.extension.getURL(params.url));
         }
 
         xhr.send(null);
@@ -36,7 +36,7 @@ require.scopes.load = ( () => {
         xhr.onreadystatechange = function() {
             let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
             if (xhr.readyState === done && xhr.status === 200) {
-                cb(returnResponse(xhr, returnType))
+                cb(returnResponse(xhr, params.returnType), xhr)
             }
         }
     }
