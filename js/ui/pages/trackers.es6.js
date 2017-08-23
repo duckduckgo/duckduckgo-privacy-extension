@@ -38,6 +38,20 @@ Trackers.prototype = $.extend({},
         ready: function() {
 
             Parent.prototype.ready.call(this);
+            
+            this.message = new BackgroundMessageModel()
+
+            this.openOptionsPage = (() => {
+                this.message.fetch({getBrowser:true}).then(browser => {
+                    if (browser === 'moz') {
+                        this.message.fetch({firefoxOptionPage:true}).then(page => {
+                                chrome.tabs.create({url: page})
+                        });
+                    }else {
+                        chrome.runtime.openOptionsPage()
+                    }
+                })
+            });
 
             this.setBrowserClassOnBodyTag();
 
@@ -72,7 +86,7 @@ Trackers.prototype = $.extend({},
                 model: new LinkableModel({
                     text: 'Settings',
                     id: 'options-link',
-                    link: chrome.runtime.openOptionsPage,
+                    link: this.openOptionsPage,
                     klass: 'link-secondary',
                     spanClass: 'icon icon__settings pull-right'
                 }),
@@ -91,8 +105,6 @@ Trackers.prototype = $.extend({},
                 appendTo: null,
                 template: autocompleteTemplate
             });
-
-            this.message = new BackgroundMessageModel()
 
         }
     }

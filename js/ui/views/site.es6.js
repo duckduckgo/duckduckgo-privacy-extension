@@ -51,8 +51,11 @@ Site.prototype = $.extend({},
             this.model.fetch({getCurrentTab: true}).then((tab) => {
                 if (tab) {
                     this.model.fetch({getTab: tab.id}).then( (backgroundTabObj) => {
-                        self.model.tab = backgroundTabObj
-                        self.model.domain = backgroundTabObj.site.domain
+                        if (backgroundTabObj) {
+                            self.model.tab = backgroundTabObj
+                            self.model.domain = backgroundTabObj.site.domain
+                            self._getSiteRating()
+                        }
 
                         self.model.setSiteObj();
 
@@ -62,7 +65,6 @@ Site.prototype = $.extend({},
 
                         self.model.update();
                         self.model.setHttpsMessage();
-                        self._getSiteRating()
                         self.rerender(); // our custom rerender below
                     });
 
