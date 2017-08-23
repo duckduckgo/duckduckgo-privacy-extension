@@ -21,5 +21,12 @@ http://redirect.local:8070
 
 The default config.json file in this library will redirect you three times and then finally end at http://duckduckgo.com
 
-
+### Simulating redirect loops
+In config.json, set the last redirect `host` value to be the first one, plus the port number. If you're using the default config that would be:
+```
+"redirect.local3": {
+    "host": "http://redirect.local:8070",
+    "code": 302
+}
+```
 

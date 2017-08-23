@@ -191,9 +191,9 @@ chrome.webRequest.onBeforeRequest.addListener(
          * If an upgrade rule is found, request is upgraded from http to https 
          */
 
-        // Cancel after a request makes too many redirects
-        if (thisTab.httpsRedirects[requestData.requestId] >= 8) {
-            console.log('background: redirect limit hit for url ' + requestData.url)
+        // Avoid redirect loops, cancel if too many redirects counted
+        if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
+            console.log('backgound.js: CANCEL REQUEST. redirect limit hit for url: ' + requestData.url)
             return {cancel: true}
         }
 
