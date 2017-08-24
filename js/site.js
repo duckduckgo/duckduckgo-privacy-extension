@@ -73,6 +73,11 @@ class Site {
         this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
         this.setWhitelistStatusFromGlobal(domain);
+
+        // set isSpecialDomain when the site is created. This value may be
+        // updated later by the onComplete listener
+        this.isSpecialDomain = this.specialDomain()
+
     }
 
     /*

@@ -33,6 +33,14 @@ try {
     });
 } catch (e) {};
 
+// popup will ask for the browser type then it is created
+chrome.runtime.onMessage.addListener((req, sender, res) => {
+    if (req.getBrowser) {
+        res(browser);
+    }
+    return true;
+});
+
 function Background() {
   $this = this;
 

@@ -44,6 +44,9 @@ require.scopes.settings =(() => {
     }
 
     function getSetting(name) {
+        // let all and null return all settings
+        if (name === 'all') name = null;
+
         if(name){
             return settings[name];
         }
@@ -75,6 +78,7 @@ require.scopes.settings =(() => {
         if(req.getSetting){
             res(getSetting(req.getSetting.name));
         }
+        return true;
     };
 
     init();

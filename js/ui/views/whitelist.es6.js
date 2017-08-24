@@ -11,14 +11,7 @@ function Whitelist (ops) {
     // bind events
     this.setup();
 
-    var thisView = this;
-
-    chrome.runtime.onMessage.addListener(function(req){
-        if (req.whitelistChanged) {
-            thisView.model.setWhitelistFromSettings();
-            thisView.rerender();
-        }
-    });
+    this.setWhitelistFromSettings()
 };
 
 Whitelist.prototype = $.extend({},
@@ -30,7 +23,7 @@ Whitelist.prototype = $.extend({},
             var itemIndex = $(e.target).data("item");
 
             this.model.removeDomain(itemIndex);
-            this.rerender();
+            this.setWhitelistFromSettings()
 
         },
 
@@ -38,7 +31,8 @@ Whitelist.prototype = $.extend({},
             this._cacheElems('.js-whitelist', [ 'remove' ]);
 
             this.bindEvents([
-              [this.$remove, 'click', this._removeItem]
+              [this.$remove, 'click', this._removeItem],
+              [this.store.subscribe, 'change:backgroundMessage', this.update]
             ]);
         },
 
@@ -46,8 +40,24 @@ Whitelist.prototype = $.extend({},
             this.unbindEvents();
             this._rerender();
             this.setup();
-        }
+        },
 
+        // watch for changes in the whitelist and rerender
+        update: function(message) {
+            if (message.change.attribute === 'whitelistChanged') {
+                this.setWhitelistFromSettings()
+            }
+        },
+
+        setWhitelistFromSettings: function() {
+            let self = this
+            this.model.fetch({getSetting: {name: 'whitelisted'}}).then((list) => {
+                let wlist = list || {}
+                self.model.list = Object.keys(wlist)
+                self.model.list.sort()
+                self.rerender()
+            });
+        }
     },
 
 

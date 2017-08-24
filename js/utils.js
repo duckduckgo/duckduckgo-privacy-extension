@@ -48,12 +48,23 @@ require.scopes.utils = ( () => {
     }
 
     function getCurrentTab(callback){
-        chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
-            if(tabData.length){
-                callback(tabData[0])
-            }
-        });
+        return new Promise( (resolve, reject) => {
+            chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
+                if(tabData.length){
+                    resolve(tabData[0])
+                }
+            });
+        })
     }
+
+    chrome.runtime.onMessage.addListener( (req, sender, res) => {
+        if (req.getCurrentTab) {
+            getCurrentTab().then((tab) => {
+                res(tab)
+            })
+        }
+        return true;
+    })
 
     return {
         extractHostFromURL: extractHostFromURL,

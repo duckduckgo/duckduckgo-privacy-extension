@@ -63,7 +63,11 @@ TrackerList.prototype = $.extend({},
                     modelName: 'trackerListTop' + num + 'Blocked' + Math.round(Math.random()*100000),
                     numCompanies: 10
                 });
-                this.renderList();
+                this.model.getTopBlocked().then(() => {
+                    console.log("Render list");
+                    this.renderList()
+                });
+
             } else if (this.selectedTab === 'page') {
                 this.model = new SiteTrackersModel({
                     modelName: 'siteTrackerList-' + Math.round(Math.random()*100000)
