@@ -40,9 +40,25 @@ Site.prototype = $.extend({},
 
             this.bindEvents([
               [this.$toggle, 'click', this._whitelistClick],
-              [this.$showalltrackers, 'click', this._showAllTrackers]
+              [this.$showalltrackers, 'click', this._showAllTrackers],
+              [this.store.subscribe, 'change:backgroundMessage', this.updateTrackerCount]
             ]);
 
+        },
+
+        updateTrackerCount: function (message) {
+            let self = this
+            if (message.change.attribute === 'updateTrackerCount') {
+                if (!this.model.tab) return
+                
+                let tabID = this.model.tab.id;
+                
+                this.model.fetch({getTab: tabID}).then( (backgroundTabObj) => {
+                    self.model.tab = backgroundTabObj
+                    self.model.update()
+                    self._getSiteRating()
+                })
+            }
         },
 
         getBackgroundTabData: function () {

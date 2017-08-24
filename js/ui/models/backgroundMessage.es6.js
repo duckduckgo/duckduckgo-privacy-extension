@@ -26,6 +26,9 @@ function BackgroundMessage (attrs) {
             // notify subscribers that the whitelist has changed
             this.set('whitelistChanged', true)
         }
+        else if (req.updateTrackerCount) {
+            this.set('updateTrackerCount', true)
+        }
     });
 }
 
