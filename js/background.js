@@ -18,8 +18,10 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-let db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
-let httpse = new HTTPSE()
+const db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
+const httpse = new HTTPSE()
+let bundledHTTPSWhitelist
+load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => bundledHTTPSWhitelist = wl)
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -27,8 +29,7 @@ let httpse = new HTTPSE()
 var browser = "chrome";
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === "Firefox")
-            browser = "moz";
+        if (info.name === "Firefox") browser = "moz";
     });
 } catch (e) {};
 
@@ -130,9 +131,7 @@ chrome.webRequest.onBeforeRequest.addListener(
              * there is a chance this tab was closed before
              * we got the webrequest event
              */
-            if (!(thisTab && thisTab.url && thisTab.id)) {
-                return;
-            }
+            if (!(thisTab && thisTab.url && thisTab.id)) return
 
             /**
              * Tracker blocking 
@@ -170,33 +169,29 @@ chrome.webRequest.onBeforeRequest.addListener(
             }
         }
         
-
-        // LEGACY HTTPS Everywhere:
-        // upgrade to https if the site isn't whitelisted or in our list
-        // of known broken https sites
-        /*
-        if (!(thisTab.site.whitelisted ||
-              httpsWhitelist[thisTab.site.domain] ||
-              thisTab.site.HTTPSwhitelisted)) {
-
-            let upgradeStatus = onBeforeRequest(requestData);
-            if (upgradeStatus.redirectUrl){
-                thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
-            }
-
-            return upgradeStatus;
-        }
-        */
-
-
         /**
          * HTTPS Everywhere rules
          * If an upgrade rule is found, request is upgraded from http to https 
          */
 
+         if (!thisTab.site) return
+
+        // Skip upgrading sites that have been whitelisted by user
+        if (thisTab.site.whitelisted) {
+            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site is whitelisted: \n' + requestData.url)  
+            return
+        }
+
+        // Skip upgrading sites that have been 'HTTPSwhitelisted'
+        // bc they contain mixed https content when forced to upgrade
+        if (thisTab.site.HTTPSwhitelisted || (bundledHTTPSWhitelist && bundledHTTPSWhitelist[thisTab.site.domain])) {
+            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site is HTTPSwhitelisted: \n' + requestData.url)  
+            return
+        }
+
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
-            console.log('backgound.js: CANCEL REQUEST. redirect limit exceeded for url: ' + requestData.url)
+            console.log('backgound.js: CANCEL REQUEST. redirect limit exceeded for url: \n' + requestData.url)
             return {cancel: true}
         }
 

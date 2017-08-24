@@ -1,6 +1,3 @@
-// TODO: get this other whitelist too, update when it changes
-// load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
-
 class HTTPSE {
 
     constructor () {
@@ -39,10 +36,6 @@ class HTTPSE {
                 loop.push(wildcard)               
             }
 
-            // Check if user has whitelisted this host before checking db
-            if (this.isHostWhitelistedByUser(host)) return resolve(reqUrl)
-            if (this.isHostWhitelistedByUser(subdomain)) return resolve(reqUrl)
-
             // Check db
             let isResolved = false
             loop.forEach((r, i) => {
@@ -67,12 +60,6 @@ class HTTPSE {
             })
 
         })
-    }
-
-    isHostWhitelistedByUser (host) {
-        const userWhitelist = settings.getSetting('whitelisted')
-        if (userWhitelist && userWhitelist[host]) return true
-        return false
     }
 
     /* For debugging/development/test purposes only */

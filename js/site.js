@@ -68,17 +68,33 @@ class Score {
 class Site {
     constructor(domain) {
         this.domain = domain,
-        this.trackerUrls = [], // was this.trackers
+        this.trackerUrls = [], 
         this.score = new Score(this.specialDomain());
-
-        // whitelist only HTTPS upgrades
-        this.HTTPSwhitelisted = false;
-
-        // whitelist all privacy features
-        this.whitelisted = false;
-
+        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
+        this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
         this.setWhitelistStatusFromGlobal(domain);
     }
+
+    /*
+     * When site objects are created we check the stored whitelists
+     * and set the new site whitelist statuses
+     */
+    setWhitelistStatusFromGlobal(domain){
+        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
+
+        globalwhitelists.map((name) => {
+            let list = settings.getSetting(name) || {};
+            this.setWhitelisted(name, list[this.domain]);
+
+            
+            // TODO: remove me, for debug only
+            if (name === 'HTTPSwhitelisted' && list[this.domain]) {
+                console.log('site.js: site is HTTPSwhitelisted: ' + this.domain)
+                debugger
+            }
+
+        });
+    };
 
     setWhitelisted(name, value){
         this[name] = value;
@@ -98,19 +114,6 @@ class Site {
             this.trackerUrls.push(tracker.url);
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length});
         }
-    };
-
-    /*
-     * When site objects are created we check the stored whitelists
-     * and set the new site whitelist statuses
-     */
-    setWhitelistStatusFromGlobal(domain){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
-
-        globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {};
-            this.setWhitelisted(name, list[this.domain]);
-        });
     };
 
     /*

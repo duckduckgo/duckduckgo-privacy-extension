@@ -82,18 +82,26 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         if (tab && info.status) {
             tab.status = info.status;
         
-            // When the tab finishes loading:
-            // 1. check main_frame url (via tab.url) for http, update site score
-            // 2. check for incomplete upgraded httpse requests and whitelist 
-            // the entire site if there are any, notify tabManager, 
+            /**
+             * When the tab finishes loading:
+             * 1. check main_frame url (via tab.url) for http, update site score
+             * 2. check for incomplete upgraded httpse requests and whitelist 
+             * the entire site if there are any, notify tabManager
+             *
+             * NOTE: we aren't making a distinction between active and passive
+             * content when https content is mixed after a forced upgrade
+             */
             if (tab.status === 'complete') {
 
                 if (tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
 
-                if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length) {
+                if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length > 0) {
                     // set whitelist for all tabs with this domain
+                    console.log('HTTPSwhitelisting bc of MIXED CONTENT on domain: ' + tab.site.domain)
+                    console.log('bad upgrades remaining:')
+                    console.log(tab.httpsRequests)
                     tabManager.whitelistDomain({
                         list: 'HTTPSwhitelisted',
                         value: true,
@@ -102,9 +110,10 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                     // then reload this tab
                     chrome.tabs.reload(tab.id);
                 }
-                
                 console.info(tab.site.score);
                 tab.updateBadgeIcon();
+            } else if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length === 0) {
+                tab.upgradedHttps = true
             }
         }
     }

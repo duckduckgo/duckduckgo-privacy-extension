@@ -45,20 +45,19 @@ const scoreIconLocations = {
 
 class Tab {
     constructor(tabData) {
-        this.id = tabData.id || tabData.tabId,
-        this.trackers = {},
-        this.trackersBlocked = {},
-        this.url = tabData.url,
-        this.upgradedHttps = false,
-        this.httpsRequests = [],
-        this.httpsRedirects = {},
-        this.httpsWhitelisted = false,
-        this.requestId = tabData.requestId,
-        this.status = tabData.status,
-        this.site = new Site(utils.extractHostFromURL(tabData.url)),
+        this.id = tabData.id || tabData.tabId
+        this.trackers = {}
+        this.trackersBlocked = {}
+        this.url = tabData.url
+        this.upgradedHttps = false
+        this.httpsRequests = []
+        this.httpsRedirects = {}
+        this.requestId = tabData.requestId
+        this.status = tabData.status
+        this.site = new Site(utils.extractHostFromURL(tabData.url))
 
         // set the new tab icon to the dax logo
-        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId});
+        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
     };
 
     updateBadgeIcon () {
@@ -129,7 +128,7 @@ class Tab {
 
 chrome.webRequest.onHeadersReceived.addListener((header) => {
     let tab = tabManager.get({'tabId': header.tabId})
-    console.log('onHeadersReceived ' + header.statusCode + ': ' + header.url)
+    // console.log('onHeadersReceived ' + header.statusCode + ': ' + header.url)
     
     // Remove successful & rewritten requests    
     if (tab && header.statusCode < 400) {
@@ -141,13 +140,14 @@ chrome.webRequest.onHeadersReceived.addListener((header) => {
 }, {urls: ['<all_urls>']});
 
 chrome.webRequest.onBeforeRedirect.addListener((req) => {
-    console.log('onBeforeRedirect request url:' + req.url)
+    // console.log('onBeforeRedirect request url:' + req.url)
     let tab = tabManager.get({'tabId': req.tabId})
+    if (!tab) return
     if (tab.httpsRedirects[req.requestId]) {
         tab.httpsRedirects[req.requestId] += 1
     } else {
         tab.httpsRedirects[req.requestId] = 1        
     }
-    console.log('onBeforeRedirect tab.httpsRedirects:')
-    console.log(tab.httpsRedirects)
+    // console.log('onBeforeRedirect tab.httpsRedirects:')
+    // console.log(tab.httpsRedirects)
 }, {urls: ["*://*/*"]})
