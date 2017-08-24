@@ -175,7 +175,6 @@ chrome.webRequest.onBeforeRequest.addListener(
          */
 
          if (!thisTab.site) return
-         // TODO: don't bother checking urls that are already https
 
         // Skip upgrading sites that have been whitelisted by user
         if (thisTab.site.whitelisted) {

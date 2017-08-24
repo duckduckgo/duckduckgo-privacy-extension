@@ -23,7 +23,7 @@ class HTTPSE {
 
             // Only deal with http calls
             const protocol = URLParser.extractProtocol(reqUrl).protocol
-            if (!protocol.indexOf('http') === 0) return resolve(reqUrl)
+            if (!protocol.indexOf('http:') === 0) return resolve(reqUrl)
 
             // Determine host
             const host = utils.extractHostFromURL(reqUrl)
