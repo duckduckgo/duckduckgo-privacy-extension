@@ -21,6 +21,9 @@ class HTTPSE {
 
             reqUrl = reqUrl.toLowerCase()
 
+            // Obey global settings (options page)
+            if (!settings.getSetting('httpsEverywhereEnabled')) return resolve (reqUrl)
+
             // Only deal with http calls
             const protocol = URLParser.extractProtocol(reqUrl).protocol
             if (!protocol.indexOf('http:') === 0) return resolve(reqUrl)
