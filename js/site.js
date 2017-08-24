@@ -85,14 +85,6 @@ class Site {
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {};
             this.setWhitelisted(name, list[this.domain]);
-
-            
-            // TODO: remove me, for debug only
-            if (name === 'HTTPSwhitelisted' && list[this.domain]) {
-                console.log('site.js: site is HTTPSwhitelisted: ' + this.domain)
-                debugger
-            }
-
         });
     };
 

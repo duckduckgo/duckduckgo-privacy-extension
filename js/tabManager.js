@@ -99,19 +99,19 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
 
                 if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length > 0) {
                     // set whitelist for all tabs with this domain
-                    console.log('HTTPSwhitelisting bc of MIXED CONTENT on domain: ' + tab.site.domain)
-                    console.log('bad upgrades remaining:')
-                    console.log(tab.httpsRequests)
                     tabManager.whitelistDomain({
                         list: 'HTTPSwhitelisted',
                         value: true,
                         domain: tab.site.domain
                     });
-                    // then reload this tab 
-                    // TODO: downgrade to https
-                    chrome.tabs.reload(tab.id);
+
+                    // then reload this tab, downgraded from https to http
+                    const downgrade = tab.url.replace(/^https:\/\//, 'http://')
+                    chrome.tabs.update(tab.id, { url: downgrade })
 
                 } else if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length === 0) {
+                    // TODO/FIXME: ^^ check above is not quite enough 
+                    // to determine if we actually upgraded the call
                     tab.upgradedHttps = true
                 }
 

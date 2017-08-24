@@ -175,17 +175,19 @@ chrome.webRequest.onBeforeRequest.addListener(
          */
 
          if (!thisTab.site) return
+         // TODO: don't bother checking urls that are already https
 
         // Skip upgrading sites that have been whitelisted by user
         if (thisTab.site.whitelisted) {
-            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site is whitelisted: \n' + requestData.url)  
+            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site was whitelisted by user.')  
             return
         }
 
         // Skip upgrading sites that have been 'HTTPSwhitelisted'
         // bc they contain mixed https content when forced to upgrade
+        // Also check bundled https whitelist for list of known mixed content sites
         if (thisTab.site.HTTPSwhitelisted || (bundledHTTPSWhitelist && bundledHTTPSWhitelist[thisTab.site.domain])) {
-            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site is HTTPSwhitelisted: \n' + requestData.url)  
+            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site has known mixed content.')  
             return
         }
 
@@ -194,23 +196,6 @@ chrome.webRequest.onBeforeRequest.addListener(
             console.log('backgound.js: CANCEL REQUEST. redirect limit exceeded for url: \n' + requestData.url)
             return {cancel: true}
         }
-
-
-
-
-        // Simulate upgrade attempt on mixed content site jstor.org
-        // console.log('**** requestData.url: ' + requestData.url)
-        if (requestData.url.indexOf('http://www.jstor.org') > -1) {
-            console.log('**** force upgrade of http://jstor.org')
-            thisTab.addHTTPSRequest('https://www.jstor.org')
-            return {redirectUrl: 'https://www.jstor.org'}
-        }
-
-
-
-
-
-
 
         // Fetch upgrade rule from db
         return new Promise ((resolve) => {
