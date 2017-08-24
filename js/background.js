@@ -184,7 +184,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
          if (!thisTab.site) return
 
-        // Skip upgrading sites that have been whitelisted by user
+        // Skip upgrading sites that have been whitelisted by user 
+        // via on/off toggle in popup
         if (thisTab.site.whitelisted) {
             console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site was whitelisted by user.')  
             return
