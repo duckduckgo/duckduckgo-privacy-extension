@@ -105,14 +105,11 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                         domain: tab.site.domain
                     });
 
+                    tab.upgradedHttps = false
+
                     // then reload this tab, downgraded from https to http
                     const downgrade = tab.url.replace(/^https:\/\//, 'http://')
                     chrome.tabs.update(tab.id, { url: downgrade })
-
-                } else if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length === 0) {
-                    // TODO/FIXME: ^^ check above is not quite enough 
-                    // to determine if we actually upgraded the call
-                    tab.upgradedHttps = true
                 }
 
                 console.info(tab.site.score);

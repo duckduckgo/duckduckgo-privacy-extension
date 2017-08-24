@@ -121,7 +121,7 @@ class Tab {
         }
     };
 
-    addHTTPSRequest (url) {
+    addHTTPSUpgradeRequest (url) {
         this.httpsRequests.push(url)
     }
 }
