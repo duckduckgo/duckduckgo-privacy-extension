@@ -8,11 +8,11 @@ abp = require('abp-filter-parser');
 
 easylists = {
     privacy: {
-        url: 'https://jason.duckduckgo.com/contentblocking.js?l=easyprivacy',
+        url: 'https://duckduckgo.com/contentblocking.js?l=easyprivacy',
         parsed: {},
     },
     general: {
-        url: 'https://jason.duckduckgo.com/contentblocking.js?l=easylist',
+        url: 'https://duckduckgo.com/contentblocking.js?l=easylist',
         parsed: {},
     }
 };
