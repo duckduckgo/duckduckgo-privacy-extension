@@ -24,6 +24,10 @@ require.scopes.load = ( () => {
     function loadExtensionFile(params, cb){
         var xhr = new XMLHttpRequest();
 
+        if (params.etag) {
+            xhr.setRequestHeader('If-None-Match', params.etag)
+        }
+
         if(params.source === 'external'){
             xhr.open("GET", params.url);
         }
