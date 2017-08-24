@@ -195,6 +195,23 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {cancel: true}
         }
 
+
+
+
+        // Simulate upgrade attempt on mixed content site jstor.org
+        // console.log('**** requestData.url: ' + requestData.url)
+        if (requestData.url.indexOf('http://www.jstor.org') > -1) {
+            console.log('**** force upgrade of http://jstor.org')
+            thisTab.addHTTPSRequest('https://www.jstor.org')
+            return {redirectUrl: 'https://www.jstor.org'}
+        }
+
+
+
+
+
+
+
         // Fetch upgrade rule from db
         return new Promise ((resolve) => {
             if (httpse.isReady) {

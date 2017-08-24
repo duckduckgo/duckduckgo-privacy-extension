@@ -107,14 +107,17 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                         value: true,
                         domain: tab.site.domain
                     });
-                    // then reload this tab
+                    // then reload this tab 
+                    // TODO: downgrade to https
                     chrome.tabs.reload(tab.id);
+
+                } else if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length === 0) {
+                    tab.upgradedHttps = true
                 }
+
                 console.info(tab.site.score);
                 tab.updateBadgeIcon();
-            } else if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length === 0) {
-                tab.upgradedHttps = true
-            }
+            } 
         }
     }
 
