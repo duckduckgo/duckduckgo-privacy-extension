@@ -25,20 +25,14 @@ easylists = {
 function updateLists () {
     for (let list in easylists) {
         let url = easylists[list].url
+        console.log("Checking for list update: ", list)
 
-        load.loadExtensionFile({url: url, source: 'external', etag: list.etag}, (listData, response) => {
-            let etag = settings.getSetting(list + '-etag')
+        load.loadExtensionFile({url: url, source: 'external', etag: settings.getSetting(list + '-etag')}, (listData, response) => {
             let newEtag = response.getResponseHeader('etag')
-            
-            // return if we got a cached etag and we already have processed data
-            if ((etag === newEtag) && (Object.keys(easylists[list].parsed).length !== 0)) {
-                console.log("Got cached list: ", list)
-                return
-            }
 
             console.log("Updating list: ", list)
         
-            // sync to storage
+            // sync new etag to storage
             settings.updateSetting(list + '-etag', newEtag)
 
             abp.parse(listData, easylists[list].parsed)
@@ -57,4 +51,4 @@ chrome.alarms.onAlarm.addListener(alarm => {
 });
 
 // set an alarm to recheck the lists
-chrome.alarms.create('updateEasyLists', {periodInMinutes: 60})
+chrome.alarms.create('updateEasyLists', {periodInMinutes: 1})
