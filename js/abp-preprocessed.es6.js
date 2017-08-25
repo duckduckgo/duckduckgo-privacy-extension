@@ -25,6 +25,12 @@ easylists = {
 function updateLists () {
     for (let list in easylists) {
         let url = easylists[list].url
+        let atb = settings.getSetting('atb')
+        let set_atb = settings.getSetting('set_atb')
+
+        if (atb) url = url + '&atb=' + atb
+        if (set_atb) url = url + '&set_atb=' + set_atb
+
         console.log("Checking for list update: ", list)
 
         load.loadExtensionFile({url: url, source: 'external', etag: settings.getSetting(list + '-etag')}, (listData, response) => {
@@ -51,4 +57,5 @@ chrome.alarms.onAlarm.addListener(alarm => {
 });
 
 // set an alarm to recheck the lists
-chrome.alarms.create('updateEasyLists', {periodInMinutes: 1})
+// update every 6hrs
+chrome.alarms.create('updateEasyLists', {periodInMinutes: 360})
