@@ -36,8 +36,7 @@ class IndexedDBClient {
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
         this.db = null
         this.isReady = false
-        this._ready = connect.call(this).then(() => { this.isReady = true })
-
+        this._ready = init.call(this).then(() => this.isReady = true)
         this.serverUpdateUrls = {
             httpse: 'http://lauren.duckduckgo.com/collect.js?type=httpse' 
             // ...add more here
@@ -46,19 +45,17 @@ class IndexedDBClient {
         return this
     }
 
-    // sugar for this.db connect() promise
+    // .ready() is sugar for this.db init() promise
     ready () {
         return this._ready
     }
 
     add (objectStore, record) {
-        // console.log('add() record to objectStore: ', record)
         if (!this.db) {
-            console.warn('IndexedDBClient: this.db does not exist')
-            return
+            return console.warn('IndexedDBClient: this.db does not exist')
         }
-        const _objectStore = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
-        _objectStore.add(record)
+        const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
+        _store.add(record)
     }
 
     update (objectStore, record) {
@@ -66,41 +63,46 @@ class IndexedDBClient {
     }
 
     get (objectStore, record) {
-        // console.log('get() record from objectStore: ', record)
         return new Promise((resolve, reject) => {
             if (!this.db) {
                 console.warn('IndexedDBClient: this.db does not exist')
                 reject()
             }
-
-            const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
-            const _request = _objectStore.get(record)
+            const _store = this.db.transaction(objectStore).objectStore(objectStore)
+            const _request = _store.get(record)
             _request.onsuccess = (event) => resolve(_request.result)
             _request.onerror = (event) =>  {
-                console.warn('IndexedDBClient: get() record:' + record + '. Error: ' + event)
+                console.warn(`IndexedDBClient: get() record: ${record}. 
+                              Error: {event}`)
                 reject()
             }
         })
     }
 
-    /* For debugging/development/test purposes only */
+    getObjectStore (objectStore) {
+        console.log(`IndexedDBClient: getObjectStore: ${objectStore}`)
+        return this.db.transaction(objectStore).objectStore(objectStore)
+    }
+
     deleteDB () {
-        console.warn('WARNING: Avoid using .deleteDB() in production! Attempting to delete database: ' + this.dbName)
+        console.warn('WARNING: Attempting to delete IndexedDB: ' + this.dbName)
         window.indexedDB.deleteDatabase(this.dbName)
     }
 
     /* For debugging/development/test purposes only */
     logAllRecords (objectStore) {
-        console.log('IndexedDBClient: logAllRecords() for object store: ' + objectStore)
-        const _objectStore = this.db.transaction(objectStore).objectStore(objectStore)
-        _objectStore.openCursor().onsuccess = function (event) {
+        console.log(`IndexedDBClient: logAllRecords() for 
+                     object store: ${objectStore}`)
+        const _store = this.db.transaction(objectStore).objectStore(objectStore)
+        _store.openCursor().onsuccess = function (event) {
             const cursor = event.target.result
             if (cursor) {
                 console.log('IndexedDBClient: logAllRecords() key: ' + cursor.key)
                 // console.log(cursor.value)
                 cursor.continue()
             } else {
-                console.log('IndexedDBClient: logAllRecords() No more entries for objectStore: ' + objectStore)
+                console.log(`IndexedDBClient: logAllRecords() No more entries 
+                             for objectStore: ${objectStore}`)
             }
         }    
     }
@@ -108,37 +110,40 @@ class IndexedDBClient {
 }
 
 // Private 
-function connect () {
-    console.log('IndexedDBClient: connect()')
+function init () {
+    console.log('IndexedDBClient: init()')
     return new Promise((resolve, reject) => {
         // NOTE: we aren't dealing with vendor prefixed versions
         // only stable implementations of indexedDB
-        if (!window.indexedDB) reject()
+        if (!window.indexedDB) {
+            console.warn('IndexedDBClient: window.indexedDB not found')
+            reject()
+        }
 
-        // Make db request
-        let request = window.indexedDB.open(this.dbName, this.dbVersion)
+        // Make initial db request
+        let _request = window.indexedDB.open(this.dbName, this.dbVersion)
 
-        // Handle db request events
-        request.onupgradeneeded = (event) => {
+        _request.onsuccess = (event) => {
+            console.log('IndexedDBClient: onsuccess')
+            this.db = event.target.result
+            this.db.onerror = function(event2) {
+                console.warn('IndexedDBClient: db error ' + event2.target.errorCode)
+            }
+            checkServerUpdateSuccess.call(this).then(() => resolve())
+        }
+
+        _request.onerror = (event) => {
+            console.warn('IndexedDBClient: error ' + event.target.errorCode)
+            reject()
+        }
+
+        _request.onupgradeneeded = (event) => {
             console.log('IndexedDBClient: onupgradeneeded to version ' + this.dbVersion)
             console.log('IndexedDBClient: current version before upgrade is: ' + event.oldVersion)
             this.db = event.target.result
             handleUpgradeNeeded.apply(this, [resolve, reject])
         }
 
-        request.onerror = (event) => {
-            console.log('IndexedDBClient error: ' + event.target.errorCode)
-            reject()
-        }
-        
-        request.onsuccess = (event) => {
-            console.log('IndexedDBClient: onsuccess')
-            this.db = event.target.result
-            db.onerror = function(event2) {
-                console.log('IndexedDBClient error: ' + event2.target.errorCode)
-            }
-            resolve()
-        }
     })
 }
 
@@ -149,30 +154,33 @@ function handleUpgradeNeeded (resolve, reject) {
     // If this is the first time thru after install, 
     // don't resolve() the db.ready() promise until
     // database is populated by server update.
-
     if (this.dbName === 'ddgExtension' && this.dbVersion === '1') {
     
         // Make 'host' field unique
-        let objectStore = this.db.createObjectStore('httpse', { keyPath: 'host' })
+        const store = this.db.createObjectStore('httpse', { keyPath: 'host' })
     
-        // Do a simple check for when objectStore init is complete
-        objectStore.transaction.oncomplete = (event) => {
-            console.log('IndexedDBClient: `httpse` object store oncomplete, call fetchServerUpdate() from server')
+        // Do a simple check for when objectStore has been created 
+        store.transaction.oncomplete = (event) => {
+            console.log(`IndexedDBClient: httpse object store oncomplete, 
+                         call fetchServerUpdate() from server`)
 
             fetchServerUpdate.call(this, 'httpse', (data) => {
-                console.log('IndexedDBClient: fetchServerUpdate() callback fired, data fetched: ', data)
+                console.log(`IndexedDBClient: fetchServerUpdate() callback
+                             fired, data fetched: ${data}`)
                 
+                // If something went wrong with xhr call or data(!)
+                if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
+                    return reject()
+                }
+
                 handleServerUpdate.call(this, 'httpse', data, () => {
                     resolve() // resolve this.ready() promise
                 })
             })
         }
-    } else if (this.dbName === 'ddgExtension') {
-        // beyond dbVersion=1, we can use previous ruleset already in db
-        // and fetch updated server data in the background
-        resolve()
     } else {
-        throw 'IndexedDBClient not currently handling this.dbName: ' + this.dbName
+        throw `IndexedDBClient handleUpgradeNeeded() not yet
+               handling this database and/or database version`
     }
 }
 
@@ -181,14 +189,10 @@ function fetchServerUpdate (type, cb) {
 }
 
 function handleServerUpdate (type, data, cb) {
-    console.log('IndexedDBClient: handleServerUpdate() for object store type: ' + type)
+    console.log(`IndexedDBClient: handleServerUpdate() for 
+                 object store type: ${type}`)
     
     if (type === 'httpse' && this.dbVersion === '1') {
-
-        // Don't return cb() if we didn't successfully get update
-        if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
-            return 
-        }
 
         // Insert each record into client's IndexedDB
         let counter = 1;
@@ -200,17 +204,45 @@ function handleServerUpdate (type, data, cb) {
                 lastUpdated: new Date().toString()
             }
 
-            // Add record to db
             this.add('httpse', record)
-            // console.log('IndexedDB: Added record to object store `httpse`. Record count: ' + counter)
+            // console.log(`IndexedDB: Added record to object store httpse. 
+            //              Record count: ${counter}`)
             counter++;
 
             // After we've added last record to db
             if (index === (data.simpleUpgrade.length - 1)) {
-                console.log('IndexedDBClient: ' + data.simpleUpgrade.length + ' records added to `httpse` object store')
+                console.log(`IndexedDBClient: ${data.simpleUpgrade.length} 
+                             records added to httpse object store`)
                 cb()
             }
         })
 
     } 
+}
+
+function checkServerUpdateSuccess () {
+    console.log('checkServerUpdateSuccess()')
+    return new Promise((resolve) => {
+        let timer = null
+        let timerCount = 0
+        let maxTimerCount = 120
+        let intervalMS = 1000
+        timer = window.setInterval(() => {
+            console.log('TIMER FN EXECUTING')
+            const _request = this.getObjectStore('httpse').count()
+            _request.onerror = () => console.log(`IndexedDBClient: checkServerUpdateSuccess() error`)
+            _request.onsuccess = (event) => {
+                const recordCount = event.target.result
+                if (recordCount && recordCount > 0) {
+                    window.clearInterval(timer)
+                    console.log('TIMER SUCCESS/RESOLVE')
+                    resolve()
+                } else {
+                    delete _request
+                }
+                timerCount++
+                if (timerCount > maxTimerCount) window.clearInterval(timer)
+            }
+        }, intervalMS)
+    })
 }
