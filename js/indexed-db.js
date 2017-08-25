@@ -206,7 +206,6 @@ function fetchServerUpdate (type, cb) {
 }
 
 function checkServerUpdateSuccess () {
-    console.log('checkServerUpdateSuccess()')
     return new Promise((resolve) => {
         let timer = null
         let timerCount = 0

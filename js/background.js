@@ -187,7 +187,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         // Skip upgrading sites that have been whitelisted by user 
         // via on/off toggle in popup
         if (thisTab.site.whitelisted) {
-            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site was whitelisted by user.')  
+            console.log('HTTPSE: skip check. site was whitelisted by user.')  
             return
         }
 
@@ -195,13 +195,13 @@ chrome.webRequest.onBeforeRequest.addListener(
         // bc they contain mixed https content when forced to upgrade
         // Also check bundled https whitelist for list of known mixed content sites
         if (thisTab.site.HTTPSwhitelisted || (bundledHTTPSWhitelist && bundledHTTPSWhitelist[thisTab.site.domain])) {
-            console.log('backgound.js: SKIP HTTPSE UPGRADE check. tab.site has known mixed content.')  
+            console.log('HTTPSE: skip upgrade check. tab.site has known mixed content.')  
             return
         }
 
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
-            console.log('backgound.js: CANCEL REQUEST. redirect limit exceeded for url: \n' + requestData.url)
+            console.log('HTTPSE: cancel request. redirect limit exceeded for url: \n' + requestData.url)
             return {cancel: true}
         }
 
