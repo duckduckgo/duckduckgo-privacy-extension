@@ -108,7 +108,7 @@ class IndexedDBClient {
 
 // Private 
 function init () {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
 
         // NOTE: we aren't dealing with vendor prefixed versions
         // only stable implementations of indexedDB
