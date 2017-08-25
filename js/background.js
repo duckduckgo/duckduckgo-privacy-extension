@@ -20,6 +20,7 @@ var settings = require('settings');
 var stats = require('stats');
 const db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
 const httpse = new HTTPSE()
+// TODO: move this into httpse.js
 let bundledHTTPSWhitelist
 load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => bundledHTTPSWhitelist = wl)
 
