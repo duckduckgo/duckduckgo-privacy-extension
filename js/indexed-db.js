@@ -80,12 +80,11 @@ class IndexedDBClient {
     }
 
     getObjectStore (objectStore) {
-        console.log(`IndexedDBClient: getObjectStore: ${objectStore}`)
         return this.db.transaction(objectStore).objectStore(objectStore)
     }
 
     deleteDB () {
-        console.warn('WARNING: Attempting to delete IndexedDB: ' + this.dbName)
+        console.warn('WARNING: Attempting to delete IndexedDB ' + this.dbName)
         window.indexedDB.deleteDatabase(this.dbName)
     }
 
@@ -109,8 +108,8 @@ class IndexedDBClient {
 
 // Private 
 function init () {
-    console.log('IndexedDBClient: init()')
     return new Promise((resolve, reject) => {
+
         // NOTE: we aren't dealing with vendor prefixed versions
         // only stable implementations of indexedDB
         if (!window.indexedDB) {
@@ -160,20 +159,9 @@ function handleUpgradeNeeded (resolve) {
         // Do a simple check for when objectStore has been created 
         store.transaction.oncomplete = (event) => {
             console.log(`IndexedDBClient: httpse object store oncomplete, call fetchServerUpdate() from server`)
-
-            fetchServerUpdate.call(this, 'httpse', (data) => {
-                console.log(`IndexedDBClient: fetchServerUpdate() callback fired, data fetched: ${data}`)
-                
-                // If something went wrong with xhr call or data(!)
-                if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
-                    console.warn('IndexedDBClient: invalid response')
-                    return
-                }
-
-                handleServerUpdate.call(this, 'httpse', data, () => {
-                    resolve() // resolve this.ready() promise
-                })
-            })
+            fetchServerUpdate.apply(this, ['httpse', () => { // success callback
+                resolve()
+            }])
         }
     } else {
         throw `IndexedDBClient: handleUpgradeNeeded() not yet handling this database and/or database version`
@@ -181,36 +169,40 @@ function handleUpgradeNeeded (resolve) {
 }
 
 function fetchServerUpdate (type, cb) {
-    load.JSONfromExternalFile(this.serverUpdateUrls[type], (data) => cb(data))
-}
+    load.JSONfromExternalFile(
+        this.serverUpdateUrls[type], 
+        (data) => {
+            // LATER: handle other server update types here (ex: trackers)
+            if (type === 'httpse' && this.dbVersion === '1') {
+                
+                if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
+                    console.warn('IndexedDBClient: invalid server response')
+                    return
+                }
 
-function handleServerUpdate (type, data, cb) {
-    console.log(`IndexedDBClient: handleServerUpdate() for object store type: ${type}`)
-    
-    if (type === 'httpse' && this.dbVersion === '1') {
+                // Insert each record into db
+                let counter = 1;
+                data.simpleUpgrade.forEach((host, index) => {
 
-        // Insert each record into client's IndexedDB
-        let counter = 1;
-        data.simpleUpgrade.forEach((host, index) => {
+                    let record = {
+                        host: host,
+                        simpleUpgrade: true,
+                        lastUpdated: new Date().toString()
+                    }
 
-            let record = {
-                host: host,
-                simpleUpgrade: true,
-                lastUpdated: new Date().toString()
+                    this.add('httpse', record)
+                    // console.log(`IndexedDB: Added record to object store httpse. Record count: ${counter}`)
+                    counter++;
+
+                    // After we've added last record to db
+                    if (index === (data.simpleUpgrade.length - 1)) {
+                        console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to httpse object store`)
+                        cb()
+                    }
+                })
             }
-
-            this.add('httpse', record)
-            // console.log(`IndexedDB: Added record to object store httpse. Record count: ${counter}`)
-            counter++;
-
-            // After we've added last record to db
-            if (index === (data.simpleUpgrade.length - 1)) {
-                console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to httpse object store`)
-                cb()
-            }
-        })
-
-    } 
+        }
+    )
 }
 
 function checkServerUpdateSuccess () {
@@ -223,6 +215,7 @@ function checkServerUpdateSuccess () {
 
         timer = window.setInterval(() => {
             console.log('TIMER FN EXECUTING')
+            // LATER: check other server updated types here (ex: trackers)
             const _request = this.getObjectStore('httpse').count()
             _request.onerror = () => console.log(`IndexedDBClient: checkServerUpdateSuccess() error`)
             _request.onsuccess = (event) => {
