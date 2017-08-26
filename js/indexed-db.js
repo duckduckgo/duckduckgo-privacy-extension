@@ -1,6 +1,5 @@
 // TODO: handle server update interruptions:
 //  - interrupted db connections
-//  - server update calls that 404 on first try
 //  - profile mismatches in Firefox
 
 /**
