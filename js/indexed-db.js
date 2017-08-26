@@ -121,7 +121,7 @@ function init () {
 
         _request.onsuccess = (event) => {
             console.log('IndexedDBClient: onsuccess')
-            this.db = event.target.result
+            if (!this.db) this.db = event.target.result
             this.db.onerror = function (event2) {
                 // This complains about duplicate keys in `httpse` data call:
                 // console.warn('IndexedDBClient: db error ' + event2.target.errorCode)
@@ -135,74 +135,74 @@ function init () {
         }
 
         _request.onupgradeneeded = (event) => {
-            console.log('IndexedDBClient: onupgradeneeded to version ' + this.dbVersion)
-            console.log('IndexedDBClient: current version before upgrade is: ' + event.oldVersion)
-            this.db = event.target.result
-            handleUpgradeNeeded.apply(this, [resolve])
-        }
+            console.log('IndexedDBClient: current db version is: ' + event.oldVersion)
+            console.log('IndexedDBClient: db onupgradeneeded to version: ' + this.dbVersion)
+            if (!this.db) this.db = event.target.result
 
+            // LATER: when is more than one db version, this will
+            // need to loop thru migrations before fetching server update
+            migrate[this.dbName][this.dbVersion]
+                .call(this)
+                .then(() => {
+                    fetchServerUpdate['httpse'][this.dbVersion].call(this)
+                })
+
+        }
     })
 }
 
-// Handles db init on extension install + future db migrations
-function handleUpgradeNeeded (resolve) {
-    console.log('IndexedDBClient: handleUpgradeNeeded()')
-
-    // If this is the first time thru after install, 
-    // don't resolve() the db.ready() promise until
-    // database is populated by server update.
-    if (this.dbName === 'ddgExtension' && this.dbVersion === '1') {
-    
-        // Make 'host' field unique
-        const store = this.db.createObjectStore('httpse', { keyPath: 'host' })
-    
-        // Do a simple check for when objectStore has been created 
-        store.transaction.oncomplete = (event) => {
-            console.log(`IndexedDBClient: httpse object store oncomplete, call fetchServerUpdate() from server`)
-            fetchServerUpdate.apply(this, ['httpse', () => { // success callback
-                resolve()
-            }])
-        }
-    } else {
-        throw `IndexedDBClient: handleUpgradeNeeded() not yet handling this database and/or database version`
+const migrate = {
+'ddgExtension': { // db name
+    '1': function () { // db version
+        console.log('IndexedDBClient: migrate() to version 1')
+        return new Promise((resolve) => {
+            const _store = this.db.createObjectStore('httpse', { keyPath: 'host' })
+            _store.transaction.oncomplete = (event) => resolve()
+        })
     }
 }
+}
 
-function fetchServerUpdate (type, cb) {
-    load.JSONfromExternalFile(
-        this.serverUpdateUrls[type], 
-        (data) => {
-            // LATER: handle other server update types here (ex: trackers)
-            if (type === 'httpse' && this.dbVersion === '1') {
-                
-                if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
-                    console.warn('IndexedDBClient: invalid server response')
-                    return
+const fetchServerUpdate = {
+'httpse': { // object store
+    '1': function () { // db version
+        console.log('IndexedDBClient: fetchServerUpdate() for version 1')
+        return new Promise((resolve) => {
+            load.JSONfromExternalFile(
+                this.serverUpdateUrls['httpse'], 
+                (data) => {
+                     
+                    if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
+                        console.warn('IndexedDBClient: invalid server response')
+                        return
+                    }
+
+                    // Insert each record into db
+                    let counter = 1;
+                    data.simpleUpgrade.forEach((host, index) => {
+
+                        let record = {
+                            host: host,
+                            simpleUpgrade: true,
+                            lastUpdated: new Date().toString()
+                        }
+
+                        this.add('httpse', record)
+                        // console.log(`IndexedDB: Added record to object store httpse. Record count: ${counter}`)
+                        counter++;
+
+                        // After we've added last record to db
+                        if (index === (data.simpleUpgrade.length - 1)) {
+                            console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to httpse object store`)
+                            resolve()
+                        }
+                    })
+
                 }
-
-                // Insert each record into db
-                let counter = 1;
-                data.simpleUpgrade.forEach((host, index) => {
-
-                    let record = {
-                        host: host,
-                        simpleUpgrade: true,
-                        lastUpdated: new Date().toString()
-                    }
-
-                    this.add('httpse', record)
-                    // console.log(`IndexedDB: Added record to object store httpse. Record count: ${counter}`)
-                    counter++;
-
-                    // After we've added last record to db
-                    if (index === (data.simpleUpgrade.length - 1)) {
-                        console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to httpse object store`)
-                        cb()
-                    }
-                })
-            }
-        }
-    )
+            )
+        })
+    }
+}
 }
 
 function checkServerUpdateSuccess () {
