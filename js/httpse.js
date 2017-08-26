@@ -1,3 +1,6 @@
+let knownMixedContentList
+load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => knownMixedContentList = wl)
+
 class HTTPSE {
 
     constructor () {
@@ -12,7 +15,7 @@ class HTTPSE {
         return this
     }  
 
-    pipeRequestUrl (reqUrl) {
+    pipeRequestUrl (reqUrl, tab) {
         return new Promise((resolve) => {
             if (!this.isReady) {
                 console.warn('HTTPSE: .pipeRequestUrl() this.db is not ready')
@@ -21,12 +24,32 @@ class HTTPSE {
 
             reqUrl = reqUrl.toLowerCase()
 
-            // Obey global settings (options page)
-            if (!settings.getSetting('httpsEverywhereEnabled')) return resolve (reqUrl)
-
             // Only deal with http calls
             const protocol = URLParser.extractProtocol(reqUrl).protocol
             if (!protocol.indexOf('http:') === 0) return resolve(reqUrl)
+
+            // Obey global settings (options page)
+            if (!settings.getSetting('httpsEverywhereEnabled')) return resolve (reqUrl)
+
+            // Check bundled https whitelist of known mixed content sites
+            if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
+                console.log('HTTPSE: skip upgrade check. tab.site has known mixed content.')  
+                return resolve(reqUrl)
+            }
+
+            // Skip upgrading sites that have been whitelisted by user 
+            // via on/off toggle in popup
+            if (tab.site.whitelisted) {
+                console.log('HTTPSE: skip check. site was whitelisted by user.')  
+                return resolve(reqUrl)
+            }
+
+            // Skip upgrading sites that have been 'HTTPSwhitelisted'
+            // bc they contain mixed https content when forced to upgrade
+            if (tab.site.HTTPSwhitelisted) {
+                console.log('HTTPSE: skip upgrade check. tab.site has known mixed content.')  
+                return resolve(reqUrl)
+            }
 
             // Determine host
             const host = utils.extractHostFromURL(reqUrl)

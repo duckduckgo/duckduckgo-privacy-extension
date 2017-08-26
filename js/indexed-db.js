@@ -1,6 +1,7 @@
-// TODO: handle server update interruptions:
-//  - interrupted db connections
+// TODO: handle db interruptions:
+//  - interrupted db connections (private mode in FF)
 //  - profile mismatches in Firefox
+// TODO: version the server xhr req url
 
 /**
  * Public api

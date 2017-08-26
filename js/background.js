@@ -20,9 +20,6 @@ var settings = require('settings');
 var stats = require('stats');
 const db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
 const httpse = new HTTPSE()
-// TODO: move this into httpse.js
-let bundledHTTPSWhitelist
-load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => bundledHTTPSWhitelist = wl)
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -185,21 +182,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
          if (!thisTab.site) return
 
-        // Skip upgrading sites that have been whitelisted by user 
-        // via on/off toggle in popup
-        if (thisTab.site.whitelisted) {
-            console.log('HTTPSE: skip check. site was whitelisted by user.')  
-            return
-        }
-
-        // Skip upgrading sites that have been 'HTTPSwhitelisted'
-        // bc they contain mixed https content when forced to upgrade
-        // Also check bundled https whitelist for list of known mixed content sites
-        if (thisTab.site.HTTPSwhitelisted || (bundledHTTPSWhitelist && bundledHTTPSWhitelist[thisTab.site.domain])) {
-            console.log('HTTPSE: skip upgrade check. tab.site has known mixed content.')  
-            return
-        }
-
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
             console.log('HTTPSE: cancel request. redirect limit exceeded for url: \n' + requestData.url)
@@ -209,7 +191,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         // Fetch upgrade rule from db
         return new Promise ((resolve) => {
             if (httpse.isReady) {
-                httpse.pipeRequestUrl(requestData.url).then(
+                httpse.pipeRequestUrl(requestData.url, thisTab).then(
                     (url) => {
                         if (url !== requestData.url.toLowerCase()) {
                             console.log('background.js: httpse upgrade request url to ' + url)
