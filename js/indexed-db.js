@@ -36,12 +36,16 @@ class IndexedDBClient {
         this.dbName = ops.dbName
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
         this.db = null
-        this.isReady = false
-        this._ready = init.call(this).then(() => this.isReady = true)
+ 
         this.serverUpdateUrls = {
             httpse: 'http://lauren.duckduckgo.com/collect.js?type=httpse' 
             // ...add more here
         }
+        this.serverUpdateFails = 0
+        this.serverUpdateMaxRetries = 2
+
+        this.isReady = false
+        this._ready = init.call(this).then(() => this.isReady = true)
 
         return this
     }
@@ -122,12 +126,25 @@ function init () {
         _request.onsuccess = (event) => {
             console.log('IndexedDBClient: onsuccess')
             if (!this.db) this.db = event.target.result
-            this.db.onerror = function (event2) {
+
+            // Start polling for successful xhr call, db install of rules
+            checkServerUpdateSuccess.call(this).then(
+                () => resolve(),
+                () => {
+                    this.serverUpdateFails++
+                    if (this.serverUpdateFails < this.serverUpdateMaxRetries) {
+                        // Try again(!)
+                        fetchServerUpdate['httpse'][this.dbVersion].call(this)   
+                        checkServerUpdateSuccess.call(this).then(() => resolve())
+                    }
+                }
+            )
+
+            // DEBUG:
+            // this.db.onerror = function (event2) {
                 // This complains about duplicate keys in `httpse` data call:
                 // console.warn('IndexedDBClient: db error ' + event2.target.errorCode)
-            }
-            // Start polling for successful xhr call, db install
-            checkServerUpdateSuccess.call(this).then(() => resolve())
+            // }
         }
 
         _request.onerror = (event) => {
@@ -206,10 +223,10 @@ const fetchServerUpdate = {
 }
 
 function checkServerUpdateSuccess () {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         let timer = null
         let timerCount = 0
-        let maxTimerCount = 120
+        let maxTimerCount = 180
         let intervalMS = 1000
 
         timer = window.setInterval(() => {
@@ -227,7 +244,10 @@ function checkServerUpdateSuccess () {
                     delete _request
                 }
                 timerCount++
-                if (timerCount > maxTimerCount) window.clearInterval(timer)
+                if (timerCount > maxTimerCount) {
+                    window.clearInterval(timer)
+                    reject()
+                }
             }
         }, intervalMS)
     })
