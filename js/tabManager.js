@@ -96,22 +96,7 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                 if (tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
-
-                if (!tab.site.HTTPSwhitelisted && tab.httpsRequests.length > 0) {
-                    // set whitelist for all tabs with this domain
-                    tabManager.whitelistDomain({
-                        list: 'HTTPSwhitelisted',
-                        value: true,
-                        domain: tab.site.domain
-                    });
-
-                    tab.upgradedHttps = false
-
-                    // then reload this tab, downgraded from https to http
-                    const downgrade = tab.url.replace(/^https:\/\//, 'http://')
-                    chrome.tabs.update(tab.id, { url: downgrade })
-                }
-
+                tab.checkHttpsRequestsOnComplete()
                 console.info(tab.site.score);
                 tab.updateBadgeIcon();
             } 

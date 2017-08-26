@@ -102,8 +102,27 @@ class Tab {
         }
     };
 
-    addHTTPSUpgradeRequest (url) {
+    addHttpsUpgradeRequest (url) {
         this.httpsRequests.push(url)
+    }
+
+    checkHttpsRequestsOnComplete () {
+        if (!this.site.HTTPSwhitelisted && this.httpsRequests.length > 0) {
+            
+            // set whitelist for all tabs with this domain
+            tabManager.whitelistDomain({
+                list: 'HTTPSwhitelisted',
+                value: true,
+                domain: this.site.domain
+            });
+
+            this.upgradedHttps = false
+
+            // then reload this tab, downgraded from https to http
+            const downgrade = this.url.replace(/^https:\/\//, 'http://')
+            chrome.tabs.update(this.id, { url: downgrade })
+        }
+
     }
 }
 
