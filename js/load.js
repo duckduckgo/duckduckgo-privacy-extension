@@ -21,6 +21,12 @@ require.scopes.load = ( () => {
         }
     }
 
+    /*
+     * Params:
+     *  - url: request URL
+     *  - source: requests are internal by default. set source to 'external' for non-extension URLs
+     *  - etag: set an if-none-match header
+     */
     function loadExtensionFile(params, cb){
         var xhr = new XMLHttpRequest();
 
