@@ -57,5 +57,5 @@ chrome.alarms.onAlarm.addListener(alarm => {
 });
 
 // set an alarm to recheck the lists
-// update every 6hrs
-chrome.alarms.create('updateEasyLists', {periodInMinutes: 360})
+// update every 3 hours
+chrome.alarms.create('updateEasyLists', {periodInMinutes: 180})
