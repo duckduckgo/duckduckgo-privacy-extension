@@ -90,7 +90,8 @@
         "tabs",
         "cookies",
         "storage",
-        "<all_urls>"
+        "<all_urls>",
+        "alarms"
     ],
     "web_accessible_resources": [
         "img/*"
