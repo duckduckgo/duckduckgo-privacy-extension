@@ -1,6 +1,7 @@
 // TODO: handle db interruptions:
 //  - profile mismatches (versions) in Firefox
-// TODO: version the server xhr req url
+// TODO: 
+// - version the server xhr req url
 // - sync with etag
 // - add "top 500" designation to data from server, add as field to db
 

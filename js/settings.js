@@ -61,6 +61,12 @@ require.scopes.settings =(() => {
         syncSettingTolocalStorage();
     }
 
+    function logSettings () {
+        chrome.storage.local.get(['settings'], function (s) { 
+            console.log(s.settings) 
+        })
+    }
+
     function registerListeners(){
         chrome.runtime.onMessage.addListener(onUpdateSetting);
         chrome.runtime.onMessage.addListener(onGetSetting);
@@ -83,10 +89,10 @@ require.scopes.settings =(() => {
 
     init();
     
-    var exports = {
+    return {
         getSetting: getSetting,
         updateSetting: updateSetting,
+        logSettings: logSettings
     }
-    return exports;
 
 })();
