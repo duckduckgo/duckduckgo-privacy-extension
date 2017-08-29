@@ -1,5 +1,3 @@
-// TODO: handle db interruptions:
-//  - profile mismatches (versions) in Firefox
 // TODO: 
 // - version the server xhr req url
 // - sync with etag
