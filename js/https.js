@@ -33,21 +33,21 @@ class HTTPS {
 
             // Check bundled https whitelist of known mixed content sites
             if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
-                console.log('HTTPS: skip upgrade check. tab.site has known mixed content.')  
+                console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)  
                 return resolve(reqUrl)
             }
 
             // Skip upgrading sites that have been whitelisted by user 
             // via on/off toggle in popup
             if (tab.site.whitelisted) {
-                console.log('HTTPS: skip check. site was whitelisted by user.')  
+                console.log('HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.')  
                 return resolve(reqUrl)
             }
 
             // Skip upgrading sites that have been 'HTTPSwhitelisted'
             // bc they contain mixed https content when forced to upgrade
             if (tab.site.HTTPSwhitelisted) {
-                console.log('HTTPS: skip upgrade check. tab.site has known mixed content.')  
+                console.log('HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.')  
                 return resolve(reqUrl)
             }
 
