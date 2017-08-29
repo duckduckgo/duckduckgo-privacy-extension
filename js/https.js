@@ -1,12 +1,12 @@
 let knownMixedContentList
 load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => knownMixedContentList = wl)
 
-class HTTPSE {
+class HTTPS {
 
     constructor () {
         this.isReady = false
         this.db = null
-        this.dbObjectStore = 'httpse'
+        this.dbObjectStore = 'https'
         db.ready().then(() => { 
           this.isReady = true
           this.db = db 
@@ -18,7 +18,7 @@ class HTTPSE {
     pipeRequestUrl (reqUrl, tab) {
         return new Promise((resolve) => {
             if (!this.isReady) {
-                console.warn('HTTPSE: .pipeRequestUrl() this.db is not ready')
+                console.warn('HTTPS: .pipeRequestUrl() this.db is not ready')
                 return resolve(reqUrl)
             }
 
@@ -33,21 +33,21 @@ class HTTPSE {
 
             // Check bundled https whitelist of known mixed content sites
             if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
-                console.log('HTTPSE: skip upgrade check. tab.site has known mixed content.')  
+                console.log('HTTPS: skip upgrade check. tab.site has known mixed content.')  
                 return resolve(reqUrl)
             }
 
             // Skip upgrading sites that have been whitelisted by user 
             // via on/off toggle in popup
             if (tab.site.whitelisted) {
-                console.log('HTTPSE: skip check. site was whitelisted by user.')  
+                console.log('HTTPS: skip check. site was whitelisted by user.')  
                 return resolve(reqUrl)
             }
 
             // Skip upgrading sites that have been 'HTTPSwhitelisted'
             // bc they contain mixed https content when forced to upgrade
             if (tab.site.HTTPSwhitelisted) {
-                console.log('HTTPSE: skip upgrade check. tab.site has known mixed content.')  
+                console.log('HTTPS: skip upgrade check. tab.site has known mixed content.')  
                 return resolve(reqUrl)
             }
 
@@ -78,7 +78,7 @@ class HTTPSE {
                             if (i === (loop.length - 1)) return resolve(reqUrl)
                         },
                         () => {
-                            console.warn('HTTPSE: pipeRequestUrl() encountered a db error')
+                            console.warn('HTTPS: pipeRequestUrl() encountered a db error')
                             if (i === (loop.length -1)) return resolve(reqUrl)
                         }
                     )
@@ -92,7 +92,7 @@ class HTTPSE {
     getHostRecord (host) {
         return new Promise ((resolve, reject) => {
             if (!this.isReady) {
-                console.warn('HTTPSE: this.db is not ready')
+                console.warn('HTTPS: this.db is not ready')
                 return reject()
             } 
           
@@ -102,7 +102,7 @@ class HTTPSE {
                     return resolve()
                 },
                 () => {
-                    console.warn('HTTPSE: getHostRecord() encountered a db error.')
+                    console.warn('HTTPS: getHostRecord() encountered a db error.')
                     return reject()
                 }
             )
@@ -127,13 +127,13 @@ class HTTPSE {
             this.getHostRecord(host).then(
                 (record) => {
                     if (record) {
-                        console.log('HTTPSE: retrieved record for host: ' + host)
+                        console.log('HTTPS: retrieved record for host: ' + host)
                         console.log(record)
                         return
                     }
-                    console.warn('HTTPSE: could not find record for host: ' + host)
+                    console.warn('HTTPS: could not find record for host: ' + host)
                 },
-                () => console.error('HTTPSE: testDBKeys() encountered a db error for host: ' + host)
+                () => console.error('HTTPS: testDBKeys() encountered a db error for host: ' + host)
             )
         })        
     }
@@ -149,7 +149,7 @@ class HTTPSE {
             'http://thump.vice.com',
             'http://yts.ag'
         ]
-        console.log('HTTPSE: testPipeRequestUrl() for ' + testUrls.length + ' urls')
+        console.log('HTTPS: testPipeRequestUrl() for ' + testUrls.length + ' urls')
 
         function _handleDone (r, i) {
             // console.log(r)
@@ -158,7 +158,7 @@ class HTTPSE {
 
         console.time('testPipeRequestUrlTimer')
         testUrls.forEach((url, i) => {
-            this.pipeRequestUrl(url)
+            this.pipeRequestUrl(url, { site: {}} )
                 .then((r) => _handleDone(r, i),
                       (r) => _handleDone(r, i))
         })     

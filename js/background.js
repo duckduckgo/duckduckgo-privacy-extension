@@ -19,7 +19,7 @@ var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
 const db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
-const httpse = new HTTPSE()
+const https = new HTTPS()
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -184,17 +184,17 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
-            console.log('HTTPSE: cancel request. redirect limit exceeded for url: \n' + requestData.url)
+            console.log('HTTPS: cancel request. redirect limit exceeded for url: \n' + requestData.url)
             return {cancel: true}
         }
 
         // Fetch upgrade rule from db
         return new Promise ((resolve) => {
-            if (httpse.isReady) {
-                httpse.pipeRequestUrl(requestData.url, thisTab).then(
+            if (https.isReady) {
+                https.pipeRequestUrl(requestData.url, thisTab).then(
                     (url) => {
                         if (url !== requestData.url.toLowerCase()) {
-                            console.log('httpse upgrade request url to ' + url)
+                            console.log('HTTPS: upgrade request url to ' + url)
                             if (requestData.type === 'main_frame') thisTab.upgradedHttps = true
                             thisTab.addHttpsUpgradeRequest(url)
                             resolve({redirectUrl: url})

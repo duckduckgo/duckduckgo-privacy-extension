@@ -16,7 +16,7 @@
  * if (db.isReady) db.get('cats', 'mr_wiggles').then((r) => { // do stuff}))
  *
  * NOTE:
- * db.ready() won't fire until db is populated with fetched httpse data
+ * db.ready() won't fire until db is populated with fetched https data
  * after extension install.
  * On subsequent boot ups, db.ready() fires as soon as db connection is ready!
  *
@@ -33,7 +33,7 @@ class IndexedDBClient {
         this.db = null
  
         this.serverUpdateUrls = {
-            httpse: 'http://lauren.duckduckgo.com/contentblocking.js?l=https' 
+            https: 'http://lauren.duckduckgo.com/contentblocking.js?l=https' 
             // ...add more here
         }
         this.serverUpdateFails = 0
@@ -129,7 +129,7 @@ function init () {
                     this.serverUpdateFails++
                     if (this.serverUpdateFails < this.serverUpdateMaxRetries) {
                         // Try again(!)
-                        fetchServerUpdate['httpse'][this.dbVersion].call(this)   
+                        fetchServerUpdate['https'][this.dbVersion].call(this)   
                         checkServerUpdateSuccess.call(this).then(() => resolve())
                     }
                 }
@@ -155,7 +155,7 @@ function init () {
             migrate[this.dbName][this.dbVersion]
                 .call(this)
                 .then(() => {
-                    fetchServerUpdate['httpse'][this.dbVersion].call(this)
+                    fetchServerUpdate['https'][this.dbVersion].call(this)
                 })
 
         }
@@ -167,7 +167,7 @@ const migrate = {
     '1': function () { // db version
         console.log('IndexedDBClient: migrate() to version 1')
         return new Promise((resolve) => {
-            const _store = this.db.createObjectStore('httpse', { keyPath: 'host' })
+            const _store = this.db.createObjectStore('https', { keyPath: 'host' })
             _store.transaction.oncomplete = (event) => resolve()
         })
     }
@@ -175,12 +175,12 @@ const migrate = {
 }
 
 const fetchServerUpdate = {
-'httpse': { // object store
+'https': { // object store
     '1': function () { // db version
         console.log('IndexedDBClient: fetchServerUpdate() for version 1')
         return new Promise((resolve) => {
             load.JSONfromExternalFile(
-                this.serverUpdateUrls['httpse'], 
+                this.serverUpdateUrls['https'], 
                 (data, response) => {
                      
                     if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
@@ -200,13 +200,13 @@ const fetchServerUpdate = {
                             lastUpdated: new Date().toString()
                         }
 
-                        this.put('httpse', record)
-                        // console.log(`IndexedDB: Added record to object store httpse. Record count: ${counter}`)
+                        this.put('https', record)
+                        // console.log(`IndexedDB: Added record to object store https. Record count: ${counter}`)
                         counter++;
 
                         // After we've added last record to db
                         if (index === (data.simpleUpgrade.length - 1)) {
-                            console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to httpse object store`)
+                            console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to https object store`)
                             // sync new etag to storage
                             const etag = response.getResponseHeader('etag')
                             if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
@@ -231,7 +231,7 @@ function checkServerUpdateSuccess () {
         timer = window.setInterval(() => {
             console.log('TIMER FN EXECUTING')
             // LATER: check other server updated types here (ex: trackers)
-            const _request = this.getObjectStore('httpse').count()
+            const _request = this.getObjectStore('https').count()
             _request.onerror = () => console.log(`IndexedDBClient: checkServerUpdateSuccess() error`)
             _request.onsuccess = (event) => {
                 const recordCount = event.target.result

@@ -84,9 +84,9 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         
             /**
              * When the tab finishes loading:
-             * 1. check main_frame url (via tab.url) for http, update site score
-             * 2. check for incomplete upgraded httpse requests and whitelist 
-             * the entire site if there are any, notify tabManager
+             * 1. check main_frame url (via tab.url) for http/s, update site score
+             * 2. check for incomplete upgraded https upgrade requests, whitelist 
+             * the entire site if there are any then notify tabManager
              *
              * NOTE: we aren't making a distinction between active and passive
              * content when https content is mixed after a forced upgrade
