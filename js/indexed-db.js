@@ -1,5 +1,4 @@
 // TODO: 
-// - version the server xhr req url
 // - sync with etag
 // - add "top 500" designation to data from server, add as field to db
 
@@ -38,7 +37,7 @@ class IndexedDBClient {
         this.db = null
  
         this.serverUpdateUrls = {
-            httpse: 'http://lauren.duckduckgo.com/collect.js?type=httpse' 
+            httpse: 'http://lauren.duckduckgo.com/contentblocking.js?l=https' 
             // ...add more here
         }
         this.serverUpdateFails = 0
