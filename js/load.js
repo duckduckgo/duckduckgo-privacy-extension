@@ -6,7 +6,7 @@ require.scopes.load = ( () => {
 
     function JSONfromExternalFile(url, cb){
         try {
-            loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res) => cb(JSON.parse(res)))
+            loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res, xhr) => cb(JSON.parse(res), xhr))
         }
         catch(e) {
             return {}

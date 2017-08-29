@@ -186,12 +186,13 @@ const fetchServerUpdate = {
         return new Promise((resolve) => {
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['httpse'], 
-                (data) => {
+                (data, response) => {
                      
                     if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
                         console.warn('IndexedDBClient: invalid server response')
                         return
                     }
+                    console.log('Updating list: https everywhere')
 
                     // Insert each record into db
                     let counter = 1;
@@ -210,6 +211,9 @@ const fetchServerUpdate = {
                         // After we've added last record to db
                         if (index === (data.simpleUpgrade.length - 1)) {
                             console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to httpse object store`)
+                            // sync new etag to storage
+                            const etag = response.getResponseHeader('etag')
+                            if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
                             resolve()
                         }
                     })
