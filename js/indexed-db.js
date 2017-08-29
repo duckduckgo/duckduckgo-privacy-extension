@@ -1,6 +1,3 @@
-// TODO: 
-// - add "top 500" designation to data from server, add as field to db
-
 /**
  * Public api
  * Usage:
