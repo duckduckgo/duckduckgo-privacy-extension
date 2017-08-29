@@ -53,12 +53,12 @@ class IndexedDBClient {
         return this._ready
     }
 
-    add (objectStore, record) {
+    put (objectStore, record) {
         if (!this.db) {
             return console.warn('IndexedDBClient: this.db does not exist')
         }
         const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
-        _store.add(record)
+        _store.put(record)
     }
 
     update (objectStore, record) {
@@ -139,10 +139,9 @@ function init () {
             )
 
             // DEBUG:
-            // this.db.onerror = function (event2) {
-                // This complains about duplicate keys in `httpse` data call:
-                // console.warn('IndexedDBClient: db error ' + event2.target.errorCode)
-            // }
+            this.db.onerror = function (event2) {
+                console.warn('IndexedDBClient: db onerror ' + event2.target.errorCode)
+            }
         }
 
         _request.onerror = (event) => {
@@ -204,7 +203,7 @@ const fetchServerUpdate = {
                             lastUpdated: new Date().toString()
                         }
 
-                        this.add('httpse', record)
+                        this.put('httpse', record)
                         // console.log(`IndexedDB: Added record to object store httpse. Record count: ${counter}`)
                         counter++;
 
