@@ -40,14 +40,14 @@ class HTTPS {
             // Skip upgrading sites that have been whitelisted by user 
             // via on/off toggle in popup
             if (tab.site.whitelisted) {
-                console.log('HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.')  
+                console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.`)  
                 return resolve(reqUrl)
             }
 
             // Skip upgrading sites that have been 'HTTPSwhitelisted'
             // bc they contain mixed https content when forced to upgrade
             if (tab.site.HTTPSwhitelisted) {
-                console.log('HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.')  
+                console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)  
                 return resolve(reqUrl)
             }
 
