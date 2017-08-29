@@ -33,7 +33,7 @@ class IndexedDBClient {
         this.db = null
  
         this.serverUpdateUrls = {
-            https: 'http://lauren.duckduckgo.com/contentblocking.js?l=https' 
+            https: 'http://duckduckgo.com/contentblocking.js?l=https' 
             // ...add more here
         }
         this.serverUpdateFails = 0
