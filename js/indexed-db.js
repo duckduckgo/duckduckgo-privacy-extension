@@ -200,6 +200,7 @@ const fetchServerUpdate = {
                         let record = {
                             host: host,
                             simpleUpgrade: true,
+                            top500: true,
                             lastUpdated: new Date().toString()
                         }
 
