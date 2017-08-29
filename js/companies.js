@@ -102,7 +102,10 @@ chrome.tabs.onUpdated.addListener( (id,info) => {
 
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getTopBlocked) {
-        res(Companies.getTopBlockedByPages(req.getTopBlocked))
+        res(Companies.getTopBlocked(req.getTopBlocked))
+    }
+    else if (req.getTopBlockedByPages) {
+        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
     }
     return true;
 });
