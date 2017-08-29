@@ -194,7 +194,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 httpse.pipeRequestUrl(requestData.url, thisTab).then(
                     (url) => {
                         if (url !== requestData.url.toLowerCase()) {
-                            console.log('background.js: httpse upgrade request url to ' + url)
+                            console.log('httpse upgrade request url to ' + url)
                             if (requestData.type === 'main_frame') thisTab.upgradedHttps = true
                             thisTab.addHttpsUpgradeRequest(url)
                             resolve({redirectUrl: url})
