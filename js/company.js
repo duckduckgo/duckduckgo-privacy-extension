@@ -2,17 +2,18 @@ class Company{
     constructor(name) {
         this.name = name;
         this.count = 0;
+        this.pagesSeenOn = 0;
     };
 
-    incrementCount(){
-        this.count += 1;
+    increment(name){
+        this[name] += 1;
     };
 
-    getCount(){
-        return this.count;
+    get(name){
+        return this[name];
     };
 
-    setCount(newCount){
-        this.count = newCount;
+    set(name, val){
+        this[name] = val;
     }
 }
