@@ -112,8 +112,16 @@ function init () {
         // NOTE: we aren't dealing with vendor prefixed versions
         // only stable implementations of indexedDB
         if (!window.indexedDB) {
-            console.warn('IndexedDBClient: window.indexedDB not found')
+            return console.warn('IndexedDBClient: window.indexedDB not found')
         }
+
+        // NOTE: we aren't dealing with Firefox version <55 because of 
+        // backwards-incompatible storage issues with IndexedDB
+        // https://bugzilla.mozilla.org/show_bug.cgi?id=1246615
+        const ua = utils.parseUserAgentString()
+        if (ua.browser === 'Firefox' && parseInt(ua.majorVersion) < 55) {
+            return console.warn('IndexedDBClient: browser is Firefox < 55, skip db init')
+        } 
 
         // Make initial db request
         let _request = window.indexedDB.open(this.dbName, this.dbVersion)
@@ -165,7 +173,6 @@ function init () {
 const migrate = {
 'ddgExtension': { // db name
     '1': function () { // db version
-        console.log('IndexedDBClient: migrate() to version 1')
         return new Promise((resolve) => {
             const _store = this.db.createObjectStore('https', { keyPath: 'host' })
             _store.transaction.oncomplete = (event) => resolve()
@@ -177,7 +184,6 @@ const migrate = {
 const fetchServerUpdate = {
 'https': { // object store
     '1': function () { // db version
-        console.log('IndexedDBClient: fetchServerUpdate() for version 1')
         return new Promise((resolve) => {
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'], 
@@ -229,7 +235,6 @@ function checkServerUpdateSuccess () {
         let intervalMS = 1000
 
         timer = window.setInterval(() => {
-            console.log('TIMER FN EXECUTING')
             // LATER: check other server updated types here (ex: trackers)
             const _request = this.getObjectStore('https').count()
             _request.onerror = () => console.log(`IndexedDBClient: checkServerUpdateSuccess() error`)
@@ -237,7 +242,6 @@ function checkServerUpdateSuccess () {
                 const recordCount = event.target.result
                 if (recordCount && recordCount > 0) {
                     window.clearInterval(timer)
-                    console.log('TIMER SUCCESS/RESOLVE')
                     resolve()
                 } else {
                     delete _request

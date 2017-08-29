@@ -27,6 +27,15 @@ require.scopes.utils = ( () => {
         return a;
     }
 
+    function parseUserAgentString (uaString) {
+        if (!uaString) uaString = window.navigator.userAgent
+        const rgx = uaString.match(/(Firefox|Chrome)\/([0-9]+)/)
+        return {
+            browser: rgx[1],
+            majorVersion: rgx[2]
+        }
+    }
+
     function syncToStorage (data){
         chrome.storage.local.set(data, function() { });
     }
@@ -70,6 +79,7 @@ require.scopes.utils = ( () => {
         extractHostFromURL: extractHostFromURL,
         extractSubdomainFromHost: extractSubdomainFromHost,
         parseURL: parseURL,
+        parseUserAgentString: parseUserAgentString,
         syncToStorage: syncToStorage,
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
