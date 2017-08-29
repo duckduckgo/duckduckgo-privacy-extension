@@ -1,5 +1,4 @@
 // TODO: 
-// - sync with etag
 // - add "top 500" designation to data from server, add as field to db
 
 /**
@@ -123,7 +122,7 @@ function init () {
         let _request = window.indexedDB.open(this.dbName, this.dbVersion)
 
         _request.onsuccess = (event) => {
-            console.log('IndexedDBClient: onsuccess')
+            console.log('IndexedDBClient: open db onsuccess')
             if (!this.db) this.db = event.target.result
 
             // Start polling for successful xhr call, db install of rules
@@ -147,7 +146,7 @@ function init () {
         }
 
         _request.onerror = (event) => {
-            console.warn('IndexedDBClient: error ' + event.target.error)
+            console.warn('IndexedDBClient: open db onerror ' + event.target.error)
         }
 
         _request.onupgradeneeded = (event) => {
@@ -188,7 +187,7 @@ const fetchServerUpdate = {
                 this.serverUpdateUrls['httpse'], 
                 (data, response) => {
                      
-                    if (!(data && data.simpleUpgrade && data.simpleUpgrade.length)) {
+                    if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
                         console.warn('IndexedDBClient: invalid server response')
                         return
                     }
@@ -196,7 +195,7 @@ const fetchServerUpdate = {
 
                     // Insert each record into db
                     let counter = 1;
-                    data.simpleUpgrade.forEach((host, index) => {
+                    data.simpleUpgrade.top500.forEach((host, index) => {
 
                         let record = {
                             host: host,
