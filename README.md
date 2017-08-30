@@ -82,15 +82,3 @@ We're building an embedded Firefox extension using our current extension in fire
                                                                  └───────────────────────────────┘
 
 ```
-
-#### Troubleshooting Firefox
-
-As a developer who may be using more than one install of Firefox browser locally (for example, you might have the Nightly build installed along with your regular FF instance), you might run across this cryptic error when running the background page of this extension: 
-```
-"IndexedDB UnknownErr: ActorsParent.cpp:595"
-```
-If this should happen to you, you'll need to create a new (empty) Firefox profile on your machine to develop against. Here is a link that describes how to create a new empty profile:
-https://support.mozilla.org/en-US/kb/profile-manager-create-and-remove-firefox-profiles
-
-...And here is a link to the open bug in Mozilla's bug tracking system about this:
-https://bugzilla.mozilla.org/show_bug.cgi?id=1246615
