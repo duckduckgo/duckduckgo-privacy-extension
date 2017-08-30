@@ -7,12 +7,11 @@ const httpsStates = {
 };
 
 const whitelistStates = {
-    'isWhitelisted': 'Blocking off (this domain)',
-    'notWhitelisted': 'Blocking on (this domain)',
+    'isWhitelisted': 'Off',
+    'notWhitelisted': 'On',
 }
 
 function Site (attrs) {
-
     attrs.disabled = true; // disabled by default
     attrs.httpsState = 'none';
     attrs.httpsStatusText = httpsStates[attrs.httpsState];

@@ -12,7 +12,14 @@ module.exports = function () {
         <ul class="default-list">
             <li class="border--bottom">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
-                <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
+                <div class="site-info__toggle-container">
+                    <span class="site-info__toggle-text">${this.model.whitelistStatusText}</span>
+                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}  
+                </div>              
+            </li>
+            <li class="border--bottom">
+                <p class="site-info__rating-label">Privacy Grade</p>
+                <div class="site-info__rating site-info__rating--${this.model.siteRating}"></div>
             </li>
             <li class="border--bottom">
                 <h2>
@@ -28,12 +35,7 @@ module.exports = function () {
                     </a>
                 </h2>
             </li>
-            <li class="site-info__li--toggle">
-                <span class="site-info__toggle-text">${this.model.whitelistStatusText}</span>
-                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
-            </li>
         </ul>
     </section>`;
-
 }
 
