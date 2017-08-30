@@ -107,7 +107,7 @@ body {
     .site-info {
         margin-top: 0;
 
-        .menu-list {
+        .default-list {
             padding-bottom: 0;
 
             li {
@@ -382,7 +382,7 @@ body {
 
 
 /* Generic menu list styling */
-@include menu_list();
+@include default_list();
 
 
 /* Generic toggle button styling */

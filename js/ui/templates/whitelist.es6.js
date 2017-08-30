@@ -4,7 +4,7 @@ module.exports = function () {
 
     return bel`<section class="options-content__whitelist">
             <h2 class="menu-title">Whitelisted Sites</h2>
-            <ul class="menu-list">
+            <ul class="default-list">
                 ${listItems(this.model.list)}
             </ul>
         </section>`;

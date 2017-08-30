@@ -20,11 +20,11 @@ module.exports = function () {
     } else if (this.model.companyListMap) {
         if (this.model.companyListMap.length > 0) {
             return bel`
-            <ol class="menu-list top-blocked__list card js-top-blocked-list">
+            <ol class="default-list top-blocked__list card js-top-blocked-list">
                 ${trackerListItems(this.model.companyListMap)}
             </ol>`;
         } else {
-            return bel`<ol class="menu-list top-blocked__list card js-top-blocked-list">
+            return bel`<ol class="default-list top-blocked__list card js-top-blocked-list">
                 <li class="top-blocked__li top-blocked__li--no-trackers">No trackers found here... <br />Phew!</li>
             </ol>`;
         }

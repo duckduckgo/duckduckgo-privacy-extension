@@ -9,7 +9,7 @@ module.exports = function () {
     }
 
     return bel`<section class="site-info card">
-        <ul class="menu-list">
+        <ul class="default-list">
             <li class="border--bottom">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
                 <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
