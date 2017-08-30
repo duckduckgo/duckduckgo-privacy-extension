@@ -212,7 +212,7 @@ const fetchServerUpdate = {
 
                         // After we've added last record to db
                         if (index === (data.simpleUpgrade.top500.length - 1)) {
-                            console.log(`IndexedDBClient: ${data.simpleUpgrade.length} records added to https object store`)
+                            console.log(`IndexedDBClient: ${data.simpleUpgrade.top500.length} records added to https object store`)
                             // sync new etag to storage
                             const etag = response.getResponseHeader('etag')
                             if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
