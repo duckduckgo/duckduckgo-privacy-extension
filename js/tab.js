@@ -128,7 +128,6 @@ class Tab {
 
 chrome.webRequest.onHeadersReceived.addListener((header) => {
     let tab = tabManager.get({'tabId': header.tabId})
-    // console.log('onHeadersReceived ' + header.statusCode + ': ' + header.url)
     
     // Remove successful & rewritten requests    
     if (tab && header.statusCode < 400) {
@@ -140,7 +139,6 @@ chrome.webRequest.onHeadersReceived.addListener((header) => {
 }, {urls: ['<all_urls>']});
 
 chrome.webRequest.onBeforeRedirect.addListener((req) => {
-    // console.log('onBeforeRedirect request url:' + req.url)
     let tab = tabManager.get({'tabId': req.tabId})
     if (!tab) return
     if (tab.httpsRedirects[req.requestId]) {
@@ -148,6 +146,4 @@ chrome.webRequest.onBeforeRedirect.addListener((req) => {
     } else {
         tab.httpsRedirects[req.requestId] = 1        
     }
-    // console.log('onBeforeRedirect tab.httpsRedirects:')
-    // console.log(tab.httpsRedirects)
 }, {urls: ["*://*/*"]})
