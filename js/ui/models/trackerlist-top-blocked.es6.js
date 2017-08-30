@@ -4,9 +4,7 @@ function TrackerListTopBlocked (attrs) {
 
     this.numCompanies = attrs.numCompanies
 
-    // TODO: clean this up a bit
     Parent.call(this, attrs);
-
 };
 
 
@@ -20,8 +18,8 @@ TrackerListTopBlocked.prototype = $.extend({},
           return new Promise((resolve, reject) => {
           this.fetch({getTopBlocked: this.numCompanies}).then((list) => {
               this.companyList = list
+
               // find company with largest number of trackers
-    
               let maxCount = 0;
               if (this.companyList && this.companyList.length) {
                   maxCount = this.companyList[0].count;
