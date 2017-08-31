@@ -60,11 +60,11 @@ SiteTrackerList.prototype = $.extend({},
               (companyName) => {
                   let company = self.trackers[companyName];
                   // calc max using pixels instead of % to make margins easier
-                  // max width: 300 - (horizontal padding in css) = 272
+                  // max width: 300 - (horizontal padding in css) = 260
                   return {
                       name: companyName,
                       count: companyName === 'unknown' ? 0 : company.count,
-                      px: Math.floor(company.count * 272 / maxCount),
+                      px: Math.floor(company.count * 260 / maxCount),
                       urls: company.urls
                   }
               })

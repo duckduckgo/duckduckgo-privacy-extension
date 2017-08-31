@@ -89,12 +89,12 @@ a {
 /* Position */
 .pull-right {
     position: absolute;
-    right: 14px;
+    right: 20px;
 }
 
 .pull-left {
     position: absolute;
-    left: 14px;
+    left: 20px;
 }
 
 
@@ -117,10 +117,6 @@ a {
 
     .border--top {
         border-top: $card__border;
-    }
-
-    .menu-title {
-        padding: 14px 7px 7px 14px;
     }
 }
 
