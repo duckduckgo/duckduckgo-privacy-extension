@@ -21,13 +21,13 @@ module.exports = function () {
                 <p class="site-info__rating-label">Privacy Grade</p>
                 <div class="site-info__rating site-info__rating--${this.model.siteRating}"></div>
             </li>
-            <li class="border--bottom">
+            <li class="padded">
                 <h2>
                     <span class="site-info__https-status site-info__https-status--${this.model.httpsState}">
                     </span><span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
                 </h3>
             </li>
-            <li class="site-info__li--tracker-count border--bottom">
+            <li class="site-info__li--tracker-count padded border--bottom">
                 <h2>
                     <a href="#" class="js-site-show-all-trackers link-secondary">
                         <span class="site-info__tracker-count">${countText}</span>Unique Trackers Blocked
