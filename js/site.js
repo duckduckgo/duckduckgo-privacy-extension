@@ -21,7 +21,25 @@ class Score {
         this.hasObscureTracker = false;
         this.domain = domain;
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork();
+        this.tosdr = this.getTosdr();
     }
+
+    getTosdr() {
+        let result = {}
+        tosdrRegexList.some(tosdrSite => {
+            let match = tosdrSite.exec(this.domain)
+            if (match) {
+                // remove period at end for lookup in pagesSeenOn
+                let name = match[0].slice(0,-1)
+                let tosdrData = tosdr[name]
+                return result = {
+                    score: tosdrData.score,
+                    reasons: tosdrData.match
+                }
+            }
+        })
+        return result;
+    };
 
     /* is the parent site itself a major tarcking network?
      * minus one grade for each 10% of the top pages this
@@ -49,6 +67,7 @@ class Score {
         let scoreIndex = 1;
 
         if (this.isaMajorTrackingNetwork) scoreIndex += this.isaMajorTrackingNetwork
+        if (this.tosdr) scoreIndex += this.tosdr.score
         if (this.inMajorTrackingNetwork) scoreIndex++
         if (this.hasHTTPS) scoreIndex--
         if (this.hasObscureTracker) scoreIndex++

@@ -1,4 +1,5 @@
 const request = require('request')
+const topics = require('./tosdr-topics.json')
 const fs = require('fs')
 
 let processed = {}
@@ -25,13 +26,27 @@ function getSitePoints (sites) {
     console.log(`GET: ${name}`)
 
     request.get(url, (err, res, body) => {
-        let points = {bad: [], good: []}
+        let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
         let pointsData = JSON.parse(body).pointsData
             for (point in pointsData) {
-                if (pointsData[point].tosdr.point === "bad") 
-                    points['bad'].push(pointsData[point].tosdr.case)
-                else if (pointsData[point].tosdr.point === "good") 
-                    points['good'].push(pointsData[point].tosdr.case)
+                if (!pointsData[point].tosdr.case) continue
+
+                if (pointsData[point].tosdr.point === "bad") {
+                    points['all']['bad'].push(pointsData[point].tosdr.case)
+
+                    if (topics.bad.indexOf(pointsData[point].tosdr.case) !== -1){
+                            points['match']['bad'].push(pointsData[point].tosdr.case)
+                            points.score -= 1
+                    }
+                }
+                else if (pointsData[point].tosdr.point === "good") {
+                    points['all']['good'].push(pointsData[point].tosdr.case)
+                    
+                    if (topics.good.indexOf(pointsData[point].tosdr.case) !== -1){
+                        points['match']['good'].push(pointsData[point].tosdr.case)
+                        points.score += 1
+                    }
+                }
             }
         processed[name] = points;
         resolve(getSitePoints(sites))

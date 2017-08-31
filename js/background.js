@@ -19,8 +19,14 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-let httpsWhitelist
+let httpsWhitelist, tosdr, tosdrRegexList
+
 load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
+
+load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
+    tosdr = data
+    tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
+})
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
