@@ -99,10 +99,21 @@ Site.prototype = $.extend({},
             w.close()
         },
 
-        rerender: function() {
+        rerender: function() {     
             this.unbindEvents();
             this._rerender();
             this._setup();
+
+
+            
+
+
+            // DEBUG/FIXME
+            this._rerender = function () {}
+
+
+
+
         },
 
         _setDisabled: function() {

@@ -119,27 +119,29 @@ body {
             }
         }
 
-        @mixin site_top_line () {
+        @mixin site_info_top_line () {
             line-height: 1.4em;
             height: 1.2em;
             display: inline-block;
         }
+
         .site-info__domain {
-            @include site_top_line();
-            max-width: $popup__width - 70;
+            @include site_info_top_line();
+            max-width: $popup__width - 100;
             font-weight: bold;
             overflow: hidden;
             background: yellow;
         }
 
         .site-info__toggle-container {
-            display: inline-block;
-            width: 60px;
-            background: pink;
-            text-align: right;
+            float: right;
+            margin-right: 50px;
+            background: red;
 
             .site-info__toggle-text {
-                @include site_top_line();
+                @include site_info_top_line();
+                @include uppercase_label();
+                text-align: right;
             }
 
         }
