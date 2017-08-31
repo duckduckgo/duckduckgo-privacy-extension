@@ -95,7 +95,6 @@ class Tab {
 
     addOrUpdateTrackersBlocked (t) {
         let tracker = this.trackersBlocked[t.parentCompany];
-        
         if (tracker) {
             tracker.increment();
             tracker.addURL(t.url);
