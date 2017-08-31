@@ -108,15 +108,6 @@ body {
 
         .default-list {
             padding-bottom: 0;
-
-            li {
-                position: relative;
-                padding: 7px 7px 7px 14px;
-
-                .toggle-button {
-                    top: 9px;
-                }
-            }
         }
 
         @mixin site_info_top_line () {
@@ -127,21 +118,27 @@ body {
 
         .site-info__domain {
             @include site_info_top_line();
-            max-width: $popup__width - 100;
+            max-width: $popup__width - 125;
             font-weight: bold;
             overflow: hidden;
-            background: yellow;
+            text-overflow: ellipsis;
         }
 
         .site-info__toggle-container {
+            position: relative;
             float: right;
-            margin-right: 50px;
-            background: red;
+            padding-right: 40px;
 
             .site-info__toggle-text {
                 @include site_info_top_line();
                 @include uppercase_label();
                 text-align: right;
+            }
+
+            .toggle-button {
+                position: absolute;
+                top: 3px;
+                right: 0;
             }
 
         }

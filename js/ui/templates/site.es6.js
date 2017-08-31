@@ -10,7 +10,7 @@ module.exports = function () {
 
     return bel`<section class="site-info card">
         <ul class="default-list">
-            <li class="border--bottom">
+            <li class="padded border--bottom">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
                 <div class="site-info__toggle-container">
                     <span class="site-info__toggle-text">${this.model.whitelistStatusText}</span>
