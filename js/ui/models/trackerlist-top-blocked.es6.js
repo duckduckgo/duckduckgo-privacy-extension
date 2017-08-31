@@ -28,11 +28,11 @@ TrackerListTopBlocked.prototype = $.extend({},
               this.companyListMap = this.companyList.map(
                   (company) => {
                       // calc max using pixels instead of % to make margins easier
-                      // max width: 270 - (horizontal margin + padding in css) = 228
+                      // max width: 300 - (horizontal padding in css) = 272
                       return {
                         name: company.name,
                         count: company.count,
-                        px: Math.floor(company.count * 228 / maxCount)
+                        px: Math.floor(company.count * 272 / maxCount)
                       };
                   });
               resolve();
