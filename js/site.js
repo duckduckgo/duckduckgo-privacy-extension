@@ -10,7 +10,7 @@ const siteScores = ['A', 'B', 'C', 'D']
 
 class Score {
     constructor(specialPage) {
-        this.specialPage = specialPage;     // see specialDomain() in class Site below
+        this.specialPage = specialPage; // see specialDomain() in class Site below
         this.hasHTTPS = false;
         this.inMajorTrackingNetwork = false;
         this.totalBlocked = 0;

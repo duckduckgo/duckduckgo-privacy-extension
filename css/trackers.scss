@@ -157,59 +157,35 @@ body {
         .site-info__rating-label {
             @include uppercase_label();
             text-align: center;
-            padding-top: 10px;
+            padding-top: 15px;
+        }
+
+        .site-info__rating-flex {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-content: center;
+            align-items: center;
         }
 
         .site-info__rating {
             @include icon_display();
+            @include uppercase_label();
+            margin-top: 18px;
+            flex: 0 1 auto;
+            align-self: auto;
+            min-width: 40px;
+            height: 48px;
+            line-height: 48px;
+            text-align: center;
 
-            &.site-info__rating--none {
-                border-radius: 10px;
-                background-color:#e0e0e0;
-            }
-
-            &.site-info__rating--A {
-
-                .is-browser--chrome & {
-                    background-image: url($icon__rating__A--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__rating__A--moz);
-                }
-            }
-
-            &.site-info__rating--B {
-
-                .is-browser--chrome & {
-                    background-image: url($icon__rating__B--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__rating__B--moz);
-                }
-            }
-
-            &.site-info__rating--C {
-
-                .is-browser--chrome & {
-                    background-image: url($icon__rating__C--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__rating__C--moz);
-                }
-            }
-
-            &.site-info__rating--D {
-
-                .is-browser--chrome & {
-                    background-image: url($icon__rating__D--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__rating__D--moz);
-                }
+            &.is-active {
+                font-size: 20px;
+                font-weight: bold;
+                width: 48px;
+                border-radius: 48px;
+                color: $white;
+                background: orange;
             }
         }
 

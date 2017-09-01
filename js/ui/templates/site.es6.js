@@ -20,7 +20,12 @@ module.exports = function () {
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container">
                     <p class="site-info__rating-label">Privacy Grade</p>
-                    <div class="site-info__rating site-info__rating--${this.model.siteRating}"></div>
+                    <div class="site-info__rating-flex">
+                        ${renderSiteRating('A', this.model.siteRating)}
+                        ${renderSiteRating('B', this.model.siteRating)}
+                        ${renderSiteRating('C', this.model.siteRating)}
+                        ${renderSiteRating('D', this.model.siteRating)}
+                    </div>
                 </div>
             </li>
             <li class="padded">
@@ -38,6 +43,11 @@ module.exports = function () {
                 </h2>
             </li>
         </ul>
-    </section>`;
+    </section>`
+
+    function renderSiteRating (letter, siteRating) {
+        const isActive = siteRating === letter ? 'is-active' : ''
+        return bel`<div class="site-info__rating ${isActive}">${letter}</div>`
+    }
 }
 
