@@ -184,8 +184,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
-            console.log('HTTPS: cancel request. redirect limit exceeded for url: \n' + requestData.url)
-            return {cancel: true}
+            console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + requestData.url)
+            return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
         // Fetch upgrade rule from db

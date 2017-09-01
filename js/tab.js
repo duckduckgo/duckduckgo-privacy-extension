@@ -106,6 +106,13 @@ class Tab {
         this.httpsRequests.push(url)
     }
 
+    downgradeHttpsUpgradeRequest (reqData) {
+        if (requestData.type === 'main_frame') this.upgradedHttps = false
+        delete this.httpsRedirects[reqData.requestId]
+        const downgrade = reqUrl.replace(/^https:\/\//, 'http://')
+        return downgrade
+    }
+
     checkHttpsRequestsOnComplete () {
         if (!this.site.HTTPSwhitelisted && this.httpsRequests.length > 0) {
             
@@ -122,7 +129,6 @@ class Tab {
             const downgrade = this.url.replace(/^https:\/\//, 'http://')
             chrome.tabs.update(this.id, { url: downgrade })
         }
-
     }
 }
 
@@ -139,6 +145,7 @@ chrome.webRequest.onHeadersReceived.addListener((header) => {
 }, {urls: ['<all_urls>']});
 
 chrome.webRequest.onBeforeRedirect.addListener((req) => {
+    // count redirects
     let tab = tabManager.get({'tabId': req.tabId})
     if (!tab) return
     if (tab.httpsRedirects[req.requestId]) {
