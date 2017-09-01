@@ -10,16 +10,18 @@ module.exports = function () {
 
     return bel`<section class="site-info card">
         <ul class="default-list">
-            <li class="padded border--bottom">
+            <li class="padded">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
                 <div class="site-info__toggle-container">
                     <span class="site-info__toggle-text">${this.model.whitelistStatusText}</span>
                     ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}  
                 </div>              
             </li>
-            <li class="border--bottom">
-                <p class="site-info__rating-label">Privacy Grade</p>
-                <div class="site-info__rating site-info__rating--${this.model.siteRating}"></div>
+            <li class="site-info__rating-li">
+                <div class="site-info__rating-container">
+                    <p class="site-info__rating-label">Privacy Grade</p>
+                    <div class="site-info__rating site-info__rating--${this.model.siteRating}"></div>
+                </div>
             </li>
             <li class="padded">
                 <h2>

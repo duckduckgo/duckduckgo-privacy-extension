@@ -143,6 +143,17 @@ body {
 
         }
 
+        .site-info__rating-li {
+            padding-top: 0;
+        }
+
+        .site-info__rating-container {
+            margin: 0 10px;
+            padding: 0 20px 15px 20px;
+            border-radius: $card__border-radius;
+            box-shadow: 0 0 10px $color--default-box-shadow;
+        }
+
         .site-info__rating-label {
             @include uppercase_label();
             text-align: center;
