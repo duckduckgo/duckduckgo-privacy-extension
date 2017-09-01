@@ -109,7 +109,7 @@ Site.prototype = $.extend({},
 
 
             // DEBUG/FIXME
-            this._rerender = function () {}
+            // this._rerender = function () {}
 
 
 
