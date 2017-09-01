@@ -107,9 +107,9 @@ class Tab {
     }
 
     downgradeHttpsUpgradeRequest (reqData) {
-        if (requestData.type === 'main_frame') this.upgradedHttps = false
+        if (reqData.type === 'main_frame') this.upgradedHttps = false
         delete this.httpsRedirects[reqData.requestId]
-        const downgrade = reqUrl.replace(/^https:\/\//, 'http://')
+        const downgrade = reqData.url.replace(/^https:\/\//, 'http://')
         return downgrade
     }
 
