@@ -137,8 +137,12 @@ chrome.webRequest.onHeadersReceived.addListener((header) => {
     
     // Remove successful & rewritten requests    
     if (tab && header.statusCode < 400) {
+
         tab.httpsRequests = tab.httpsRequests.filter((url) => {
-            return url !== header.url;
+            // disregard diff between 'https://www.foo.com' and 'https://foo.com'
+            const _url = url.replace('https://www.', 'https://')
+            const _headerUrl = header.url.replace('https://www.', 'https://')
+            return _url !== _headerUrl
         });
     }
 
