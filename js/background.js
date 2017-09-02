@@ -190,12 +190,14 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         // Fetch upgrade rule from db
         return new Promise ((resolve) => {
+            const isMainFrame = requestData.type === 'main_frame' ? true : false
+
             if (https.isReady) {
-                https.pipeRequestUrl(requestData.url, thisTab).then(
+                https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
                         if (url !== requestData.url.toLowerCase()) {
                             console.log('HTTPS: upgrade request url to ' + url)
-                            if (requestData.type === 'main_frame') thisTab.upgradedHttps = true
+                            if (isMainFrame) thisTab.upgradedHttps = true
                             thisTab.addHttpsUpgradeRequest(url)
                             resolve({redirectUrl: url})
                         }

@@ -15,7 +15,7 @@ class HTTPS {
         return this
     }  
 
-    pipeRequestUrl (reqUrl, tab) {
+    pipeRequestUrl (reqUrl, tab, isMainFrame) {
         return new Promise((resolve) => {
             if (!this.isReady) {
                 console.warn('HTTPS: .pipeRequestUrl() this.db is not ready')
@@ -45,10 +45,13 @@ class HTTPS {
                 return resolve(reqUrl)
             }
 
-            // Check bundled https whitelist of known mixed content sites
-            if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
-                console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)  
-                return resolve(reqUrl)
+            // If `isMainFrame` requset and host has known mixed content, 
+            // skip db check (don't force upgrade)
+            if (isMainFrame) {
+                if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
+                    console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)  
+                    return resolve(reqUrl)
+                }
             }
 
             // Determine host
