@@ -227,6 +227,13 @@ const fetchServerUpdate = {
 }
 }
 
+/**
+ * Poll on an interval to check success of: 
+ * - `https` object store creation in window.indexedDB
+ * - rule retrieval via `https` xhr server call
+ * - at least one rule from server installed in db
+ * - ...more to come
+ */
 function checkServerUpdateSuccess () {
     return new Promise((resolve, reject) => {
         let timer = null
