@@ -45,7 +45,7 @@ class HTTPS {
                 return resolve(reqUrl)
             }
 
-            // If `isMainFrame` requset and host has known mixed content, 
+            // If `isMainFrame` request and host has known mixed content, 
             // skip db check (don't force upgrade)
             if (isMainFrame) {
                 if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
