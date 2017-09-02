@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+
+var debugRequest = false;
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
@@ -168,6 +170,14 @@ chrome.webRequest.onBeforeRequest.addListener(
                                  + " [" + tracker.parentCompany + "] " + tracker.url);
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+
+                    // for debugging specific requests. see test/tests/debugSite.js
+                    if (debugRequest && debugRequest.length) {
+                        if (debugRequest.includes(tracker.url)) {
+                            console.log("UNBLOCKED: ", tracker.url)
+                            return
+                        }
+                    }
 
                     // tell Chrome to cancel this webrequest
                     return {cancel: true};
