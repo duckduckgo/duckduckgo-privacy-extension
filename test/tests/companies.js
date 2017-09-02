@@ -2,15 +2,15 @@
   QUnit.module("Companies");
   
   QUnit.test("test companies and company classes", function (assert) {
-      Companies.clearData();
+      bkg.Companies.clearData();
       
-      var company = Companies.add('Twitter');
+      var company = bkg.Companies.add('Twitter');
       assert.ok(company.getCount() === 1, "has correct initial count");
 
       company.incrementCount();
       assert.ok(company.getCount() === 2, "increment count");
       
-      Companies.clearData();
+      bkg.Companies.clearData();
 
       var sortedData = {
           "Facebook": 10,
@@ -21,12 +21,12 @@
       var sortedList = ["Facebook", "MSN", "Reddit"];
 
       sortedList.forEach(function(c){
-          var newCompany = Companies.add(c);
+          var newCompany = bkg.Companies.add(c);
           newCompany.setCount(sortedData[c]);
       });
 
       var sortedTopBlocked = [];
-      Companies.getTopBlocked().forEach((c) => {
+      bkg.Companies.getTopBlocked().forEach((c) => {
           sortedTopBlocked.push(c.name);
       });
 
