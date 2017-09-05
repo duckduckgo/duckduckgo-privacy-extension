@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-
+var debugRequest = false;
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
@@ -171,6 +171,14 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                   if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
+                  // for debugging specific requests. see test/tests/debugSite.js
+                  if (debugRequest && debugRequest.length) {
+                      if (debugRequest.includes(tracker.url)) {
+                          console.log("UNBLOCKED: ", tracker.url)
+                          return
+                      }
+                  }
+
                   // tell Chrome to cancel this webrequest
                   return {cancel: true};
               }
@@ -184,7 +192,7 @@ chrome.webRequest.onBeforeRequest.addListener(
       if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
           let upgradeStatus = onBeforeRequest(requestData);
 
-          if (upgradeStatus.redirectUrl){
+          if (upgradeStatus && upgradeStatus.redirectUrl){
               thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
           }
 

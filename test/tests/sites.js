@@ -2,10 +2,10 @@
   QUnit.module("Sites");
 
   QUnit.test("test sites and site classes", function (assert) {
-      settings.updateSetting('whitelist', '');
+      bkg.settings.updateSetting('whitelist', '');
 
       var domain = "test.com";
-      var newSite = new Site(domain);
+      var newSite = new bkg.site()
 
       assert.ok(newSite.domain === domain, 'site has correct name');
       assert.ok(newSite.isWhiteListed() === undefined, 'site is not whitelisted by default');
