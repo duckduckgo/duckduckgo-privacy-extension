@@ -3,12 +3,13 @@ const topics = require('./tosdr-topics.json')
 const fs = require('fs')
 
 let processed = {}
+let nProcessed = 0
 
 function getSites() {
         request.get('https://tosdr.org/index/services.json', (err, res, body) => {
                 let sites = Object.keys(JSON.parse(body))
                 getSitePoints(sites).then(result => {
-                    fs.writeFile('data/tosdr.json', JSON.stringify(processed, null, 4), err => console.log(err))
+                    fs.writeFile('data/tosdr.json', JSON.stringify(processed, null, 4), err => { if(err) console.log(err)} )
                 })
          })
 }
@@ -21,9 +22,11 @@ function getSitePoints (sites) {
     }
 
     let name = sites.pop()
+    nProcessed += 1
+
     let url = `https://tosdr.org/api/1/service/${name}.json`
 
-    console.log(`GET: ${name}`)
+    if (nProcessed % 5 === 0) process.stdout.write('.')
 
     request.get(url, (err, res, body) => {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
