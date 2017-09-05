@@ -20,6 +20,7 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
+var db = require('db')
 var https = require('https')
 
 // Set browser for popup asset paths
