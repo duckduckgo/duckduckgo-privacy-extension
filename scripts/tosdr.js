@@ -8,7 +8,7 @@ function getSites() {
         request.get('https://tosdr.org/index/services.json', (err, res, body) => {
                 let sites = Object.keys(JSON.parse(body))
                 getSitePoints(sites).then(result => {
-                    fs.writeFile('tosdr.json', JSON.stringify(processed, null, 4), err => console.log(err))
+                    fs.writeFile('data/tosdr.json', JSON.stringify(processed, null, 4), err => console.log(err))
                 })
          })
 }
@@ -27,7 +27,11 @@ function getSitePoints (sites) {
 
     request.get(url, (err, res, body) => {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
-        let pointsData = JSON.parse(body).pointsData
+        let allData = JSON.parse(body)
+        let pointsData = allData.pointsData
+
+            points.class = allData.class
+
             for (point in pointsData) {
                 if (!pointsData[point].tosdr.case) continue
 
@@ -36,7 +40,7 @@ function getSitePoints (sites) {
 
                     if (topics.bad.indexOf(pointsData[point].tosdr.case) !== -1){
                             points['match']['bad'].push(pointsData[point].tosdr.case)
-                            points.score -= 1
+                            points.score -= pointsData[point].tosdr.score
                     }
                 }
                 else if (pointsData[point].tosdr.point === "good") {
@@ -44,7 +48,7 @@ function getSitePoints (sites) {
                     
                     if (topics.good.indexOf(pointsData[point].tosdr.case) !== -1){
                         points['match']['good'].push(pointsData[point].tosdr.case)
-                        points.score += 1
+                        points.score += pointsData[point].tosdr.score
                     }
                 }
             }

@@ -11,6 +11,7 @@ const siteScores = ['A', 'B', 'C', 'D']
 // percent of the top 500 sites a major tracking network is seen on
 const pagesSeenOn = {"google":55,"amazon":23,"facebook":20,"comscore":19,"twitter":11,"criteo":9,"quantcast":9,"adobe":8,"newrelic":7,"appnexus":7}
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
+const tosdrClassMap = {'A': 1, 'B': 0, 'C': -1, 'D': -2, 'E': -3} // map tosdr class rankings to increase/decrease in grade
 
 class Score {
     constructor(specialPage, domain) {
@@ -32,8 +33,10 @@ class Score {
                 // remove period at end for lookup in pagesSeenOn
                 let name = match[0].slice(0,-1)
                 let tosdrData = tosdr[name]
+
                 return result = {
                     score: tosdrData.score,
+                    class: tosdrData.class,
                     reasons: tosdrData.match
                 }
             }
@@ -67,7 +70,18 @@ class Score {
         let scoreIndex = 1;
 
         if (this.isaMajorTrackingNetwork) scoreIndex += this.isaMajorTrackingNetwork
-        if (this.tosdr) scoreIndex += this.tosdr.score
+        
+        // If tosdr already determined a class ranking then we map that to increase or
+        // decrease the grade accordingly. Otherwise we apply a +/- to the grade based 
+        // on the cumulative total of all the points we care about. see: scripts/tosdr-topics.json
+        if (this.tosdr) {
+            if (this.tosdr.class) {
+                scoreIndex += tosdrClassMap[this.tosdr.class]
+            } else {
+                scoreIndex += Math.sign(this.tosdr.score)
+            }
+        }
+
         if (this.inMajorTrackingNetwork) scoreIndex++
         if (this.hasHTTPS) scoreIndex--
         if (this.hasObscureTracker) scoreIndex++

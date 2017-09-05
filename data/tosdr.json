@@ -8,7 +8,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "youtube": {
         "score": 0,
@@ -25,7 +26,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": "D"
     },
     "yahoo": {
         "score": 0,
@@ -42,7 +44,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "xing": {
         "score": 0,
@@ -55,7 +58,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "xfire": {
         "score": 0,
@@ -66,7 +70,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "world-of-warcraft": {
         "score": 0,
@@ -77,7 +82,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "wordpress-com": {
         "score": 0,
@@ -92,7 +98,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "wordfeud": {
         "score": 0,
@@ -103,7 +110,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "wikipedia": {
         "score": 0,
@@ -119,7 +127,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "whatsapp": {
         "score": 0,
@@ -132,7 +141,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "videobb": {
         "score": 0,
@@ -143,7 +153,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "vbulletin": {
         "score": 0,
@@ -154,7 +165,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "twitter": {
         "score": 0,
@@ -174,10 +186,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "twitpic": {
-        "score": -1,
+        "score": -85,
         "all": {
             "bad": [
                 "they can license to third parties",
@@ -191,7 +204,8 @@
                 "they can license to third parties"
             ],
             "good": []
-        }
+        },
+        "class": "E"
     },
     "tumblr": {
         "score": 0,
@@ -209,10 +223,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "steam": {
-        "score": 1,
+        "score": 65,
         "all": {
             "bad": [
                 "they can delete your account without prior notice and without a reason",
@@ -236,10 +251,11 @@
                 "personal data is not sold",
                 "you can request access and deletion of personal data"
             ]
-        }
+        },
+        "class": false
     },
     "spotify": {
-        "score": -1,
+        "score": -10,
         "all": {
             "bad": [
                 "no promise to inform/notify",
@@ -262,10 +278,11 @@
                 "personal data is given to third parties"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "soundcloud": {
-        "score": -1,
+        "score": -20,
         "all": {
             "bad": [
                 "may sell your data in merger",
@@ -286,7 +303,8 @@
                 "may sell your data in merger"
             ],
             "good": []
-        }
+        },
+        "class": "B"
     },
     "sonic-net": {
         "score": 0,
@@ -299,7 +317,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "skype": {
         "score": 0,
@@ -313,7 +332,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "seenthis": {
         "score": 0,
@@ -328,7 +348,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": "A"
     },
     "runescape": {
         "score": 0,
@@ -339,10 +360,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "rapidshare": {
-        "score": 1,
+        "score": 50,
         "all": {
             "bad": [],
             "good": [
@@ -358,7 +380,8 @@
             "good": [
                 "no third-party access without a warrant"
             ]
-        }
+        },
+        "class": false
     },
     "phpbb": {
         "score": 0,
@@ -369,10 +392,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "owncube": {
-        "score": 1,
+        "score": 25,
         "all": {
             "bad": [
                 "user needs to check tosback.org"
@@ -386,7 +410,8 @@
             "good": [
                 "personal data is not sold"
             ]
-        }
+        },
+        "class": false
     },
     "olx": {
         "score": 0,
@@ -397,10 +422,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "netflix": {
-        "score": 0,
+        "score": 20,
         "all": {
             "bad": [
                 "they can delete your account without prior notice and without a reason",
@@ -423,7 +449,8 @@
             "good": [
                 "you can request access and deletion of personal data"
             ]
-        }
+        },
+        "class": false
     },
     "nabble": {
         "score": 0,
@@ -436,10 +463,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "mint.com": {
-        "score": -1,
+        "score": -20,
         "all": {
             "bad": [
                 "may sell your data in merger",
@@ -452,7 +480,8 @@
                 "may sell your data in merger"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "microsoft-store": {
         "score": 0,
@@ -465,10 +494,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "microsoft": {
-        "score": -1,
+        "score": -60,
         "all": {
             "bad": [
                 "tracks you on other websites",
@@ -486,10 +516,11 @@
                 "tracks you on other websites"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "lastpass": {
-        "score": 1,
+        "score": 50,
         "all": {
             "bad": [
                 "no quality guarantee",
@@ -514,10 +545,11 @@
             "good": [
                 "no third-party access without a warrant"
             ]
-        }
+        },
+        "class": "B"
     },
     "kolabnow": {
-        "score": 3,
+        "score": 125,
         "all": {
             "bad": [],
             "good": [
@@ -536,7 +568,8 @@
                 "no third-party access without a warrant",
                 "personal data is not sold"
             ]
-        }
+        },
+        "class": "A"
     },
     "kippt": {
         "score": 0,
@@ -549,7 +582,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "jagex": {
         "score": 0,
@@ -562,7 +596,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "instagram": {
         "score": 0,
@@ -578,7 +613,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "informe": {
         "score": 0,
@@ -591,7 +627,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "ifttt": {
         "score": 0,
@@ -604,7 +641,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "identi-ca": {
         "score": 0,
@@ -617,7 +655,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "hypster": {
         "score": 0,
@@ -628,7 +667,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "habbo": {
         "score": 0,
@@ -639,7 +679,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "gravatar": {
         "score": 0,
@@ -652,10 +693,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "grammarly": {
-        "score": -1,
+        "score": -20,
         "all": {
             "bad": [
                 "no promise to inform/notify",
@@ -670,10 +712,11 @@
                 "may sell your data in merger"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "google": {
-        "score": -3,
+        "score": -220,
         "all": {
             "bad": [
                 "your content stays licensed",
@@ -697,7 +740,8 @@
                 "logs are kept forever"
             ],
             "good": []
-        }
+        },
+        "class": "C"
     },
     "github": {
         "score": 0,
@@ -718,7 +762,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": "B"
     },
     "freeforums": {
         "score": 0,
@@ -731,7 +776,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "flickr": {
         "score": 0,
@@ -746,7 +792,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "flattr": {
         "score": 0,
@@ -759,7 +806,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "faranow": {
         "score": 0,
@@ -772,10 +820,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "facebook": {
-        "score": -2,
+        "score": -100,
         "all": {
             "bad": [
                 "tracks you on other websites",
@@ -796,7 +845,8 @@
                 "your data is used for many purposes"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "evernote": {
         "score": 0,
@@ -807,7 +857,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "envato": {
         "score": 0,
@@ -818,7 +869,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "ebuddy": {
         "score": 0,
@@ -829,7 +881,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "duckduckgo": {
         "score": 0,
@@ -842,7 +895,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": "A"
     },
     "dropbox": {
         "score": 0,
@@ -853,7 +907,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "disqus": {
         "score": 0,
@@ -868,10 +923,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "delicious": {
-        "score": -1,
+        "score": -20,
         "all": {
             "bad": [
                 "only for your individual and non-commercial use",
@@ -888,7 +944,8 @@
                 "may sell your data in merger"
             ],
             "good": []
-        }
+        },
+        "class": "D"
     },
     "coursera": {
         "score": 0,
@@ -901,10 +958,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "couchsurfing": {
-        "score": -1,
+        "score": -20,
         "all": {
             "bad": [
                 "keep a license even after you close your account",
@@ -923,10 +981,11 @@
                 "may sell your data in merger"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "cloudant": {
-        "score": -1,
+        "score": -20,
         "all": {
             "bad": [
                 "sets third-party cookies and/or ads",
@@ -949,7 +1008,8 @@
                 "may sell your data in merger"
             ],
             "good": []
-        }
+        },
+        "class": "B"
     },
     "bit-ly": {
         "score": 0,
@@ -960,7 +1020,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "bearshare": {
         "score": 0,
@@ -971,7 +1032,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "apple-icloud": {
         "score": 0,
@@ -982,7 +1044,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "apple": {
         "score": 0,
@@ -995,7 +1058,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "app-net": {
         "score": 0,
@@ -1016,10 +1080,11 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "amazon": {
-        "score": -3,
+        "score": -110,
         "all": {
             "bad": [
                 "may sell your data in merger",
@@ -1036,7 +1101,8 @@
                 "targeted third-party advertising"
             ],
             "good": []
-        }
+        },
+        "class": false
     },
     "allrecipes": {
         "score": 0,
@@ -1049,7 +1115,8 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": false
     },
     "500px": {
         "score": 0,
@@ -1068,6 +1135,7 @@
         "match": {
             "bad": [],
             "good": []
-        }
+        },
+        "class": "D"
     }
 }
