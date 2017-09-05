@@ -1,3 +1,4 @@
+(function () {
 const db = require('db')
 const settings = require('settings')
 let knownMixedContentList
@@ -176,3 +177,4 @@ class HTTPS {
 }
 
 require.scopes.https = new HTTPS()
+})()

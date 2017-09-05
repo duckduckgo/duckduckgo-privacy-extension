@@ -1,3 +1,4 @@
+(function () {
 const utils = require('utils')
 
 /**
@@ -266,3 +267,4 @@ function checkServerUpdateSuccess () {
 }
 
 require.scopes.db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
+})()
