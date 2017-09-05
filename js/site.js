@@ -8,14 +8,37 @@
  */
 const siteScores = ['A', 'B', 'C', 'D']
 
+// percent of the top 500 sites a major tracking network is seen on
+const pagesSeenOn = {"google":55,"amazon":23,"facebook":20,"comscore":19,"twitter":11,"criteo":9,"quantcast":9,"adobe":8,"newrelic":7,"appnexus":7}
+const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
+
 class Score {
-    constructor(specialPage) {
+    constructor(specialPage, domain) {
         this.specialPage = specialPage;     // see specialDomain() in class Site below
         this.hasHTTPS = false;
         this.inMajorTrackingNetwork = false;
         this.totalBlocked = 0;
         this.hasObscureTracker = false;
+        this.domain = domain;
+        this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork();
     }
+
+    /* is the parent site itself a major tarcking network?
+     * minus one grade for each 10% of the top pages this
+     * network is found on.
+     */
+    isaMajorTrackingNetwork() {
+        let result = 0
+        pagesSeenOnRegexList.some(network => {
+            let match = network.exec(this.domain)
+            if (match) {
+                // remove period at end for lookup in pagesSeenOn
+                let name = match[0].slice(0,-1)
+                return result = Math.ceil(pagesSeenOn[name] / 10)
+            }
+        })
+        return result;
+    };
 
     /*
      * Calculates and returns a site score
@@ -25,6 +48,7 @@ class Score {
 
         let scoreIndex = 1;
 
+        if (this.isaMajorTrackingNetwork) scoreIndex += this.isaMajorTrackingNetwork
         if (this.inMajorTrackingNetwork) scoreIndex++
         if (this.hasHTTPS) scoreIndex--
         if (this.hasObscureTracker) scoreIndex++
@@ -69,7 +93,7 @@ class Site {
     constructor(domain) {
         this.domain = domain,
         this.trackerUrls = [], // was this.trackers
-        this.score = new Score(this.specialDomain());
+        this.score = new Score(this.specialDomain(), this.domain);
 
         // whitelist only HTTPS upgrades
         this.HTTPSwhitelisted = false;
