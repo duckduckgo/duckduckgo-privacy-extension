@@ -77,7 +77,7 @@ class Score {
         if (this.tosdr) {
             if (this.tosdr.class) {
                 scoreIndex += tosdrClassMap[this.tosdr.class]
-            } else {
+            } else if (this.tosdr.score) {
                 scoreIndex += Math.sign(this.tosdr.score)
             }
         }
@@ -88,6 +88,9 @@ class Score {
 
         // decrease score for every 10, round up
         scoreIndex += Math.ceil(this.totalBlocked / 10)
+
+        // negative scoreIndex should return the highest score
+        if (scoreIndex < 0) scoreIndex = 0
 
         // return corresponding score or lowest score if outside the array
         return siteScores[scoreIndex] || siteScores[siteScores.length - 1];
