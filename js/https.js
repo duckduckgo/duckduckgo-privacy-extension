@@ -1,3 +1,5 @@
+const db = require('db')
+const settings = require('settings')
 let knownMixedContentList
 load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => knownMixedContentList = wl)
 
@@ -172,3 +174,5 @@ class HTTPS {
         this.db.logAllRecords(this.dbObjectStore)      
     }
 }
+
+require.scopes.https = new HTTPS()

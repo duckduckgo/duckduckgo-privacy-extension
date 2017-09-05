@@ -20,8 +20,7 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-const db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
-const https = new HTTPS()
+var https = require('https')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome

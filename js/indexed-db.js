@@ -1,3 +1,5 @@
+const utils = require('utils')
+
 /**
  * Public api
  * Usage:
@@ -262,3 +264,5 @@ function checkServerUpdateSuccess () {
         }, intervalMS)
     })
 }
+
+require.scopes.db = new IndexedDBClient({ dbName: 'ddgExtension', dbVersion: '1' })
