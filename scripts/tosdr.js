@@ -40,7 +40,7 @@ function getSitePoints (sites) {
 
                     if (topics.bad.indexOf(pointsData[point].tosdr.case) !== -1){
                             points['match']['bad'].push(pointsData[point].tosdr.case)
-                            points.score -= pointsData[point].tosdr.score
+                            points.score += pointsData[point].tosdr.score
                     }
                 }
                 else if (pointsData[point].tosdr.point === "good") {
@@ -48,7 +48,7 @@ function getSitePoints (sites) {
                     
                     if (topics.good.indexOf(pointsData[point].tosdr.case) !== -1){
                         points['match']['good'].push(pointsData[point].tosdr.case)
-                        points.score += pointsData[point].tosdr.score
+                        points.score -= pointsData[point].tosdr.score
                     }
                 }
             }

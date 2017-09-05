@@ -190,7 +190,7 @@
         "class": false
     },
     "twitpic": {
-        "score": -85,
+        "score": 85,
         "all": {
             "bad": [
                 "they can license to third parties",
@@ -227,7 +227,7 @@
         "class": false
     },
     "steam": {
-        "score": 65,
+        "score": -65,
         "all": {
             "bad": [
                 "they can delete your account without prior notice and without a reason",
@@ -255,7 +255,7 @@
         "class": false
     },
     "spotify": {
-        "score": -10,
+        "score": 10,
         "all": {
             "bad": [
                 "no promise to inform/notify",
@@ -282,7 +282,7 @@
         "class": false
     },
     "soundcloud": {
-        "score": -20,
+        "score": 20,
         "all": {
             "bad": [
                 "may sell your data in merger",
@@ -364,7 +364,7 @@
         "class": false
     },
     "rapidshare": {
-        "score": 50,
+        "score": -50,
         "all": {
             "bad": [],
             "good": [
@@ -396,7 +396,7 @@
         "class": false
     },
     "owncube": {
-        "score": 25,
+        "score": -25,
         "all": {
             "bad": [
                 "user needs to check tosback.org"
@@ -426,7 +426,7 @@
         "class": false
     },
     "netflix": {
-        "score": 20,
+        "score": -20,
         "all": {
             "bad": [
                 "they can delete your account without prior notice and without a reason",
@@ -467,7 +467,7 @@
         "class": false
     },
     "mint.com": {
-        "score": -20,
+        "score": 20,
         "all": {
             "bad": [
                 "may sell your data in merger",
@@ -498,7 +498,7 @@
         "class": false
     },
     "microsoft": {
-        "score": -60,
+        "score": 60,
         "all": {
             "bad": [
                 "tracks you on other websites",
@@ -520,7 +520,7 @@
         "class": false
     },
     "lastpass": {
-        "score": 50,
+        "score": -50,
         "all": {
             "bad": [
                 "no quality guarantee",
@@ -549,7 +549,7 @@
         "class": "B"
     },
     "kolabnow": {
-        "score": 125,
+        "score": -125,
         "all": {
             "bad": [],
             "good": [
@@ -697,7 +697,7 @@
         "class": false
     },
     "grammarly": {
-        "score": -20,
+        "score": 20,
         "all": {
             "bad": [
                 "no promise to inform/notify",
@@ -716,7 +716,7 @@
         "class": false
     },
     "google": {
-        "score": -220,
+        "score": 220,
         "all": {
             "bad": [
                 "your content stays licensed",
@@ -824,7 +824,7 @@
         "class": false
     },
     "facebook": {
-        "score": -100,
+        "score": 100,
         "all": {
             "bad": [
                 "tracks you on other websites",
@@ -927,7 +927,7 @@
         "class": false
     },
     "delicious": {
-        "score": -20,
+        "score": 20,
         "all": {
             "bad": [
                 "only for your individual and non-commercial use",
@@ -962,7 +962,7 @@
         "class": false
     },
     "couchsurfing": {
-        "score": -20,
+        "score": 20,
         "all": {
             "bad": [
                 "keep a license even after you close your account",
@@ -985,7 +985,7 @@
         "class": false
     },
     "cloudant": {
-        "score": -20,
+        "score": 20,
         "all": {
             "bad": [
                 "sets third-party cookies and/or ads",
@@ -1084,7 +1084,7 @@
         "class": false
     },
     "amazon": {
-        "score": -110,
+        "score": 110,
         "all": {
             "bad": [
                 "may sell your data in merger",

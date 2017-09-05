@@ -11,7 +11,7 @@ const siteScores = ['A', 'B', 'C', 'D']
 // percent of the top 500 sites a major tracking network is seen on
 const pagesSeenOn = {"google":55,"amazon":23,"facebook":20,"comscore":19,"twitter":11,"criteo":9,"quantcast":9,"adobe":8,"newrelic":7,"appnexus":7}
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
-const tosdrClassMap = {'A': 1, 'B': 0, 'C': -1, 'D': -2, 'E': -3} // map tosdr class rankings to increase/decrease in grade
+const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 
 class Score {
     constructor(specialPage, domain) {
