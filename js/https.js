@@ -138,7 +138,7 @@ class HTTPS {
                         if (cb && i === (testHosts.length - 1)) return cb()
                         return
                     }
-                    console.warn('HTTPS: could not find record for host: ' + host)
+                    console.error('HTTPS: could not find record for host: ' + host)
                     if (cb) cb(new Error('HTTPS: could not find record for host: ' + host))
                 },
                 () => {

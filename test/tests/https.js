@@ -5,7 +5,9 @@
 
       var done = assert.async()
       bkg.db.ready().then(() => {
-          debugger
+          bkg.https.testGetHostRecord(function(e) { 
+            assert.ok(e === undefined, 'https.testGetHostRecord() works')
+          })
       })
 
   })
