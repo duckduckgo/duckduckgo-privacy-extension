@@ -117,7 +117,7 @@ class HTTPS {
     }
 
     /* For debugging/development/test purposes only */
-    testGetHostRecord () {
+    testGetHostRecord (cb) {
         // These hosts should always have records that were xhr'd 
         // into the client-side db from server
         const testHosts = [
@@ -129,17 +129,22 @@ class HTTPS {
         ]
 
         // Test that host records exist after db install from server
-        testHosts.forEach((host) => {
-            this.getHostRecord(host).then(
+        testHosts.forEach((host, i) => {
+            this.getHostRecord(host, { site: {} } ).then(
                 (record) => {
                     if (record) {
                         console.log('HTTPS: retrieved record for host: ' + host)
                         console.log(record)
+                        if (cb && i === (testHosts.length - 1)) return cb()
                         return
                     }
                     console.warn('HTTPS: could not find record for host: ' + host)
+                    if (cb) cb(new Error('HTTPS: could not find record for host: ' + host))
                 },
-                () => console.error('HTTPS: testDBKeys() encountered a db error for host: ' + host)
+                () => {
+                    console.error('HTTPS: testDBKeys() encountered a db error for host: ' + host)
+                    if (cb) cb(new Error('HTTPS: testDBKeys() encountered a db error for host: ' + host))
+                }
             )
         })        
     }
