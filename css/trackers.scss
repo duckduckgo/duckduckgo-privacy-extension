@@ -190,9 +190,31 @@ body {
         }
 
         .site-info__https-status {
+            font-weight: bold;
+        }
+
+        .site-info__https-status__msg {
+            @include uppercase_label();
+            margin-right: 3px;
+            font-weight: normal;
+
+            &.secure {
+                color: $color--green;
+            }
+
+            &.upgraded {
+                color: $color--orange;
+            }
+
+            &.insecure {
+                color: $color--red;
+            }
+        }
+
+        .site-info__https-status__icon {
             @include icon_display();
 
-            &.site-info__https-status--default {
+            &.site-info__https-status__icon--default {
 
                 .is-browser--chrome & {
                     background-image: url($icon__https-status__default--chrome);
@@ -203,7 +225,7 @@ body {
                 }
             }
 
-            &.site-info__https-status--upgraded {
+            &.site-info__https-status__icon--upgraded {
 
                 .is-browser--chrome & {
                     background-image: url($icon__https-status__upgraded--chrome);
@@ -214,7 +236,7 @@ body {
                 }
             }
 
-            &.site-info__https-status--none {
+            &.site-info__https-status__icon--none {
 
                 .is-browser--chrome & {
                     background-image: url($icon__https-status__none--chrome);
@@ -225,10 +247,6 @@ body {
                 }
 
             }
-        }
-
-        .site-info__https-status {
-            margin-right: 7px;
         }
 
         .site-info__li--tracker-count {

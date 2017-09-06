@@ -98,6 +98,16 @@ a {
 }
 
 
+/* Floats */
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+
 /* Card Display */
 .card {
     background-color: $card__bg-color;

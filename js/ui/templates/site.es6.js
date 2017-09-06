@@ -29,15 +29,24 @@ module.exports = function () {
                 </div>
             </li>
             <li class="padded">
-                <h2>
-                    <span class="site-info__https-status site-info__https-status--${this.model.httpsState}">
-                    </span><span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
+                <h2 class="site-info__https-status">
+                    Connection:
+                    <div class="float-right">
+                        <span class="site-info__https-status__msg 
+                            ${this.model.httpsStatusText.toLowerCase()}">
+                            ${this.model.httpsStatusText}
+                        </span>
+                        <span class="site-info__https-status__icon 
+                            site-info__https-status__icon--${this.model.httpsState}">
+                        </span>
+                    </div>
                 </h3>
             </li>
             <li class="site-info__li--tracker-count padded border--bottom">
                 <h2>
                     <a href="#" class="js-site-show-all-trackers link-secondary">
-                        <span class="site-info__tracker-count">${countText}</span>Unique Trackers Blocked
+                        <span class="site-info__tracker-count">${countText}</span>
+                        Unique Trackers Blocked
                         <span class="icon icon__arrow pull-right"></span>
                     </a>
                 </h2>

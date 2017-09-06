@@ -1,9 +1,9 @@
 const Parent = window.DDG.base.Model;
 
 const httpsStates = {
-    'default':  'Secure Connection',
-    'upgraded': 'Forced Secure Connection',
-    'none':     'Secure Connection Unavailable'
+    'default':  'Secure',
+    'upgraded': 'Upgraded',
+    'none':     'Insecure'
 };
 
 const whitelistStates = {
