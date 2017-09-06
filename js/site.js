@@ -92,15 +92,10 @@ class Score {
 class Site {
     constructor(domain) {
         this.domain = domain,
-        this.trackerUrls = [], // was this.trackers
+        this.trackerUrls = [], 
         this.score = new Score(this.specialDomain(), this.domain);
-
-        // whitelist only HTTPS upgrades
-        this.HTTPSwhitelisted = false;
-
-        // whitelist all privacy features
-        this.whitelisted = false;
-
+        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
+        this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
         this.setWhitelistStatusFromGlobal(domain);
 
         // set isSpecialDomain when the site is created. This value may be
@@ -108,6 +103,19 @@ class Site {
         this.isSpecialDomain = this.specialDomain()
 
     }
+
+    /*
+     * When site objects are created we check the stored whitelists
+     * and set the new site whitelist statuses
+     */
+    setWhitelistStatusFromGlobal(domain){
+        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
+
+        globalwhitelists.map((name) => {
+            let list = settings.getSetting(name) || {};
+            this.setWhitelisted(name, list[this.domain]);
+        });
+    };
 
     setWhitelisted(name, value){
         this[name] = value;
@@ -127,19 +135,6 @@ class Site {
             this.trackerUrls.push(tracker.url);
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length});
         }
-    };
-
-    /*
-     * When site objects are created we check the stored whitelists
-     * and set the new site whitelist statuses
-     */
-    setWhitelistStatusFromGlobal(domain){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
-
-        globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {};
-            this.setWhitelisted(name, list[this.domain]);
-        });
     };
 
     /*
