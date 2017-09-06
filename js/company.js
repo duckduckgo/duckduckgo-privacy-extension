@@ -5,15 +5,19 @@ class Company{
         this.pagesSeenOn = 0;
     };
 
-    increment(name){
-        this[name] += 1;
+    incrementCount(){
+        this.count += 1;
+    };
+
+    incrementPagesSeenOn(){
+        this.pagesSeenOn += 1;
     };
 
     get(name){
         return this[name];
     };
 
-    set(name, val){
-        this[name] = val;
+    set(property, val){
+        this[property] = val;
     }
 }

@@ -2,8 +2,8 @@ var Companies = ( () => {
     var companyContainer = {};
     var topBlocked = new TopBlocked();
     var utils = require('utils');
-    var storageName = "companyData";
-    var pages = 0; // used for percent calculation
+    var storageName = 'companyData';
+    var totalPages = 0; // used for percent calculation
 
     function sortByCount(a, b){
         return companyContainer[b].count - companyContainer[a].count;
@@ -21,7 +21,7 @@ var Companies = ( () => {
                 companyContainer[name] = new Company(name);
                 topBlocked.add(name);
             }
-            companyContainer[name].increment('count');
+            companyContainer[name].incrementCount();
             return companyContainer[name];
         },
 
@@ -33,7 +33,7 @@ var Companies = ( () => {
                 companyContainer[name] = new Company(name);
                 topBlocked.add(name);
             }
-            if (name !== 'unknown') companyContainer[name].increment('pagesSeenOn');
+            if (name !== 'unknown') companyContainer[name].incrementPagesSeenOn();
         },
 
         all: () => { return Object.keys(companyContainer) },
@@ -42,7 +42,7 @@ var Companies = ( () => {
             var topBlockedData = [];
             topBlocked.getTop(n, sortByCount).forEach((name) => {
                 let c = Companies.get(name);
-                topBlockedData.push({"name": c.name, "count": c.count});
+                topBlockedData.push({name: c.name, count: c.count});
             });
             return topBlockedData;
             
@@ -52,7 +52,7 @@ var Companies = ( () => {
             var topBlockedData = [];
             topBlocked.getTop(n, sortByPages).forEach((name) => {
                 let c = Companies.get(name);
-                topBlockedData.push({"name": c.name, count: Math.round((c.pagesSeenOn/pages)*100)});
+                topBlockedData.push({name: c.name, count: Math.round((c.pagesSeenOn/totalPages)*100)});
             });
             return topBlockedData;
         },
@@ -63,18 +63,18 @@ var Companies = ( () => {
         },
 
         setPages: (n) => {
-            if (n) pages = n;
+            if (n) totalPages = n;
         },
 
         incrementPages: () => {
-            pages += 1
+            totalPages += 1
         },
 
         syncToStorage: () => {
             var toSync = {};
             toSync[storageName] = companyContainer;
             utils.syncToStorage(toSync);
-            utils.syncToStorage({'pages': pages})
+            utils.syncToStorage({'totalPages': totalPages})
         },
 
         buildFromStorage: () => {
@@ -86,7 +86,7 @@ var Companies = ( () => {
                  }
              });
 
-             utils.getFromStorage('pages', n => Companies.setPages(n))
+             utils.getFromStorage('totalPages', n => Companies.setPages(n))
          }
      };
 })();
