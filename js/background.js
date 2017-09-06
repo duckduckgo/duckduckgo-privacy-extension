@@ -15,12 +15,13 @@
  */
 
 
+var debugRequest = false;
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-let httpsWhitelist
-load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => httpsWhitelist = whitelist);
+var db = require('db')
+var https = require('https')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -28,12 +29,9 @@ load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (whitelist) => htt
 var browser = "chrome";
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === "Firefox")
-            browser = "moz";
+        if (info.name === "Firefox") browser = "moz";
     });
-}
-catch(e){
-};
+} catch (e) {};
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
@@ -94,8 +92,8 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   });
 });
 
-//This adds Context Menu when user select some text.
-//create context menu
+// This adds Context Menu when user select some text.
+// Create context menu:
 chrome.contextMenus.create({
   title: 'Search DuckDuckGo for "%s"',
   contexts: ["selection"],
@@ -107,85 +105,119 @@ chrome.contextMenus.create({
   }
 });
 
-// Add ATB param and block tracker requests
+/** 
+ * Before each request:
+ * - Add ATB param
+ * - Block tracker requests
+ * - Upgrade http -> https per HTTPS Everywhere rules
+ */
 chrome.webRequest.onBeforeRequest.addListener(
-    function (requestData) {
+    function (requestData) { 
 
-      let tabId = requestData.tabId;
+        let tabId = requestData.tabId;
 
-      // Add ATB for DDG URLs
-      let ddgAtbRewrite = ATB.redirectURL(requestData);
-      if(ddgAtbRewrite)
-          return ddgAtbRewrite;
+        // Add ATB for DDG URLs
+        let ddgAtbRewrite = ATB.redirectURL(requestData);
+        if (ddgAtbRewrite) return ddgAtbRewrite;
 
-      // skip requests to background tabs
-      if(tabId === -1){
-          return;
-      }
+        // Skip requests to background tabs
+        if (tabId === -1) { return }
 
-      let thisTab = tabManager.get(requestData);
+        let thisTab = tabManager.get(requestData);
 
-      // for main_frame requests: create a new tab instance whenever we either
-      // don't have a tab instance for this tabId or this is a new requestId.
-      if (requestData.type === "main_frame") {
-          if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
-            thisTab = tabManager.create(requestData);
-          }
-      }
-      else {
-          // check that we have a valid tab
-          // there is a chance this tab was closed before
-          // we got the webrequest event
-          if (!(thisTab && thisTab.url && thisTab.id)) {
-              return;
-          }
+        // For main_frame requests: create a new tab instance whenever we either
+        // don't have a tab instance for this tabId or this is a new requestId.
+        if (requestData.type === "main_frame") {
+            if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
+              thisTab = tabManager.create(requestData);
+            }
+        }
+        else {
 
-          chrome.runtime.sendMessage({"updateTrackerCount": true});
+            /**
+             * Check that we have a valid tab
+             * there is a chance this tab was closed before
+             * we got the webrequest event
+             */
+            if (!(thisTab && thisTab.url && thisTab.id)) return
 
-          var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
+            /**
+             * Tracker blocking 
+             * If request is a tracker, cancel the request 
+             */
 
-          if (tracker) {
-              // record all tracker urls on a site even if we don't block them
-              thisTab.site.addTracker(tracker);
+            chrome.runtime.sendMessage({"updateTrackerCount": true});
 
-              // record potential blocked trackers for this tab
-              thisTab.addToTrackers(tracker);
+            var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
-              // Block the request if the site is not whitelisted
-              if (!thisTab.site.whitelisted) {
-                  thisTab.addOrUpdateTrackersBlocked(tracker);
-                  chrome.runtime.sendMessage({"updateTrackerCount": true});
+            if (tracker) {
+                // record all tracker urls on a site even if we don't block them
+                thisTab.site.addTracker(tracker);
 
-                  // update badge icon for any requests that come in after
-                  // the tab has finished loading
-                  if (thisTab.status === "complete") thisTab.updateBadgeIcon()
+                // record potential blocked trackers for this tab
+                thisTab.addToTrackers(tracker);
 
-                  console.info( utils.extractHostFromURL(thisTab.url)
-                               + " [" + tracker.parentCompany + "] " + tracker.url);
+                // Block the request if the site is not whitelisted
+                if (!thisTab.site.whitelisted) {
+                    thisTab.addOrUpdateTrackersBlocked(tracker);
+                    chrome.runtime.sendMessage({"updateTrackerCount": true});
 
-                  if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+                    // update badge icon for any requests that come in after
+                    // the tab has finished loading
+                    if (thisTab.status === "complete") thisTab.updateBadgeIcon()
 
-                  // tell Chrome to cancel this webrequest
-                  return {cancel: true};
-              }
-          }
-      }
+                    console.info( utils.extractHostFromURL(thisTab.url)
+                                 + " [" + tracker.parentCompany + "] " + tracker.url);
 
-      // TODO: revisit https upgrade feature... soon
-      // upgrade to https if the site isn't whitelisted or in our list
-      // of known broken https sites
-      /*
-      if (!(thisTab.site.whitelisted || httpsWhitelist[thisTab.site.domain] || thisTab.site.HTTPSwhitelisted)) {
-          let upgradeStatus = onBeforeRequest(requestData);
+                    if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
-          if (upgradeStatus.redirectUrl){
-              thisTab.httpsRequests.push(upgradeStatus.redirectUrl);
-          }
+                    // for debugging specific requests. see test/tests/debugSite.js
+                    if (debugRequest && debugRequest.length) {
+                        if (debugRequest.includes(tracker.url)) {
+                            console.log("UNBLOCKED: ", tracker.url)
+                            return
+                        }
+                    }
 
-          return upgradeStatus;
-      }
-      */
+                    // tell Chrome to cancel this webrequest
+                    return {cancel: true};
+                }
+            }
+        }
+        
+        /**
+         * HTTPS Everywhere rules
+         * If an upgrade rule is found, request is upgraded from http to https 
+         */
 
+         if (!thisTab.site) return
+
+        // Avoid redirect loops
+        if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
+            console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + requestData.url)
+            return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
+        }
+
+        // Fetch upgrade rule from db
+        return new Promise ((resolve) => {
+            const isMainFrame = requestData.type === 'main_frame' ? true : false
+
+            if (https.isReady) {
+                https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
+                    (url) => {
+                        if (url !== requestData.url.toLowerCase()) {
+                            console.log('HTTPS: upgrade request url to ' + url)
+                            if (isMainFrame) thisTab.upgradedHttps = true
+                            thisTab.addHttpsUpgradeRequest(url)
+                            resolve({redirectUrl: url})
+                        }
+                        resolve()
+                    }
+                )
+            } else {
+              resolve()
+            }
+        })
     },
     {
         urls: [

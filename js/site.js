@@ -8,14 +8,38 @@
  */
 const siteScores = ['A', 'B', 'C', 'D']
 
+// percent of the top 500 sites a major tracking network is seen on
+const pagesSeenOn = {"google":55,"amazon":23,"facebook":20,"comscore":19,"twitter":11,"criteo":9,"quantcast":9,"adobe":8,"newrelic":7,"appnexus":7}
+const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
+
 class Score {
-    constructor(specialPage) {
-        this.specialPage = specialPage; // see specialDomain() in class Site below
+
+    constructor(specialPage, domain) {
+        this.specialPage = specialPage;     // see specialDomain() in class Site below
         this.hasHTTPS = false;
         this.inMajorTrackingNetwork = false;
         this.totalBlocked = 0;
         this.hasObscureTracker = false;
+        this.domain = domain;
+        this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork();
     }
+
+    /* is the parent site itself a major tarcking network?
+     * minus one grade for each 10% of the top pages this
+     * network is found on.
+     */
+    isaMajorTrackingNetwork() {
+        let result = 0
+        pagesSeenOnRegexList.some(network => {
+            let match = network.exec(this.domain)
+            if (match) {
+                // remove period at end for lookup in pagesSeenOn
+                let name = match[0].slice(0,-1)
+                return result = Math.ceil(pagesSeenOn[name] / 10)
+            }
+        })
+        return result;
+    };
 
     /*
      * Calculates and returns a site score
@@ -25,6 +49,7 @@ class Score {
 
         let scoreIndex = 1;
 
+        if (this.isaMajorTrackingNetwork) scoreIndex += this.isaMajorTrackingNetwork
         if (this.inMajorTrackingNetwork) scoreIndex++
         if (this.hasHTTPS) scoreIndex--
         if (this.hasObscureTracker) scoreIndex++
@@ -68,15 +93,10 @@ class Score {
 class Site {
     constructor(domain) {
         this.domain = domain,
-        this.trackerUrls = [], // was this.trackers
-        this.score = new Score(this.specialDomain());
-
-        // whitelist only HTTPS upgrades
-        this.HTTPSwhitelisted = false;
-
-        // whitelist all privacy features
-        this.whitelisted = false;
-
+        this.trackerUrls = [], 
+        this.score = new Score(this.specialDomain(), this.domain);
+        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
+        this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
         this.setWhitelistStatusFromGlobal(domain);
 
         // set isSpecialDomain when the site is created. This value may be
@@ -84,6 +104,19 @@ class Site {
         this.isSpecialDomain = this.specialDomain()
 
     }
+
+    /*
+     * When site objects are created we check the stored whitelists
+     * and set the new site whitelist statuses
+     */
+    setWhitelistStatusFromGlobal(domain){
+        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
+
+        globalwhitelists.map((name) => {
+            let list = settings.getSetting(name) || {};
+            this.setWhitelisted(name, list[this.domain]);
+        });
+    };
 
     setWhitelisted(name, value){
         this[name] = value;
@@ -103,19 +136,6 @@ class Site {
             this.trackerUrls.push(tracker.url);
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length});
         }
-    };
-
-    /*
-     * When site objects are created we check the stored whitelists
-     * and set the new site whitelist statuses
-     */
-    setWhitelistStatusFromGlobal(domain){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
-
-        globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {};
-            this.setWhitelisted(name, list[this.domain]);
-        });
     };
 
     /*
