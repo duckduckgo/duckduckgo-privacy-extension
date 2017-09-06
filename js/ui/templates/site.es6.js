@@ -51,6 +51,12 @@ module.exports = function () {
                     </a>
                 </h2>
             </li>
+            <li class="padded border--bottom">
+                <a href="#" class="js-site-show-all-trackers link-secondary bold">
+                    More details
+                    <span class="icon icon__arrow pull-right"></span>
+                </a>
+            </li>
         </ul>
     </section>`
 
