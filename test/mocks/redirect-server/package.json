@@ -1,0 +1,13 @@
+{
+  "name": "redirect-server",
+  "version": "1.0.0",
+  "description": "Simple test server that generates redirects",
+  "main": "index.js",
+  "scripts": {
+    "start": "node bin/server --port=8070",
+    "test": "test"
+  },
+  "dependencies": {
+    "nconf": "0.6.x"
+  }
+}
