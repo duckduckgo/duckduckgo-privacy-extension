@@ -255,14 +255,7 @@ body {
             .link-secondary {
                 font-weight: bold;
                 display: block;
-
-                body.disabled & {
-                    cursor: default;
-
-                    &:hover {
-                        text-decoration: none;
-                    }
-                }
+                @include is_disableable_link();
 
                 .site-info__tracker-count {
                     display: inline-block;
@@ -279,6 +272,12 @@ body {
                 .pull-right {
                     padding-top: 3px;
                 }
+            }
+        }
+
+        .site-info__li--more-details {
+            .link-secondary {
+                @include is_disableable_link();
             }
         }
     }

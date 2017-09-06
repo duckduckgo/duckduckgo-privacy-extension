@@ -32,6 +32,15 @@
     opacity: 0.5;
 }
 
+@mixin is_disableable_link () {
+    body.disabled & {
+        cursor: default;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
 
 /* Font groupings */
 @mixin uppercase_label () {

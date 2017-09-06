@@ -1,15 +1,25 @@
 const Parent = window.DDG.base.Model;
 
+const whitelistStates = {
+    'isWhitelisted': 'Off',
+    'notWhitelisted': 'On',
+}
+
 const httpsStates = {
     'default':  'Secure',
     'upgraded': 'Upgraded',
     'none':     'Insecure'
 };
 
-const whitelistStates = {
-    'isWhitelisted': 'Off',
-    'notWhitelisted': 'On',
-}
+const majorTrackerNetworks = [
+    'amazon',
+    'appnexus',
+    'facebook',
+    'google',
+    'oracle',
+    'twitter'
+]
+
 
 function Site (attrs) {
     attrs.disabled = true; // disabled by default
@@ -105,6 +115,7 @@ Site.prototype = $.extend({},
 
       _getUniqueTrackersCount: function () {
           return Object.keys(this.tab.trackers).reduce((total, name) => {
+              console.log(name)
               return this.tab.trackers[name].urls.length + total
           }, 0)
       },
@@ -113,7 +124,12 @@ Site.prototype = $.extend({},
           return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
               return this.tab.trackersBlocked[name].urls.length + total
           }, 0)
+      },
+
+      _getMajorTrackerNetworksOnPage: function () {
+        
       }
+
   }
 );
 

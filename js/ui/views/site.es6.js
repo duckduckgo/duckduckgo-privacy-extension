@@ -22,7 +22,7 @@ function Site (ops) {
     // '-' is the domain default in the pages/trackers.es6.js call
     if (this.domain === '-') {
         this.model.disabled = true;
-        this._setDisabled();
+        this._disableUI();
     }
 
 };
@@ -76,7 +76,7 @@ Site.prototype = $.extend({},
                         self.model.setSiteObj();
 
                         if (self.model.disabled) {   // determined in setSiteObj()
-                            self._setDisabled();
+                            self._disableUI();
                         }
 
                         self.model.update();
@@ -116,7 +116,7 @@ Site.prototype = $.extend({},
 
         },
 
-        _setDisabled: function() {
+        _disableUI: function () {
             this.$body.addClass('disabled');
         },
 
