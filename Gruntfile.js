@@ -49,6 +49,9 @@ module.exports = function(grunt) {
         execute: {
             preProcessLists: {
                 src: ['scripts/buildLists.js', 'scripts/buildEntityMap.js']
+            },
+            tosdr: {
+                src: ['scripts/tosdr.js']
             }
         },
 

@@ -14,6 +14,7 @@ const defaultSettings = {
     "dev": false,
     "zeroclick_google_right": false,
     "trackerListLoc": "data/tracker_lists",
+    "tosdr": "data/tosdr.json",
     "blockLists": [
         "trackersWithParentCompany"
     ],
