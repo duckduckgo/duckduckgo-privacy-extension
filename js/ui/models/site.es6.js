@@ -6,9 +6,9 @@ const whitelistStates = {
 }
 
 const httpsStates = {
-    'default':  'Secure',
+    'default': 'Secure',
     'upgraded': 'Upgraded',
-    'none':     'Insecure'
+    'none': 'Insecure'
 };
 
 const majorTrackerNetworks = [
@@ -101,7 +101,6 @@ Site.prototype = $.extend({},
                   (updatedTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
                   (updatedTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
                 this.trackerNetworks = updatedTrackerNetworks
-                console.log(this)
                 rerenderFlag = true
               }
           }

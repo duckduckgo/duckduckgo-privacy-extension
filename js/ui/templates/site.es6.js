@@ -3,11 +3,6 @@ const toggleButton = require('./shared/toggle-button');
 
 module.exports = function () {
 
-    let countText = this.model.trackersBlockedCount || 0;
-    if (this.model.trackersCount > 0 && this.model.trackersCount != countText) {
-        countText = countText + '/' + this.model.trackersCount;
-    }
-
     return bel`<section class="site-info card">
         <ul class="default-list">
             <li class="padded">
@@ -42,16 +37,14 @@ module.exports = function () {
                     </div>
                 </h3>
             </li>
-            <li class="site-info__li--tracker-count padded border--bottom">
-                <h2>
-                    <a href="#" class="js-site-show-all-trackers link-secondary">
-                        <span class="site-info__tracker-count">${countText}</span>
-                        Unique Trackers Blocked
-                        <span class="icon icon__arrow pull-right"></span>
-                    </a>
+            <li class="site-info__li--trackers padded border--bottom">
+                <h2 class="site-info__trackers">
+                    Tracker networks
+                    <div class="float-right">
+                        ${renderTrackerNetworks(this.model.trackerNetworks)}
+                        ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
+                    </div>
                 </h2>
-                ${renderTrackerNetworks(this.model.trackerNetworks)}
-                ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
             </li>
             <li class="site-info__li--more-details padded border--bottom">
                 <a href="#" class="js-site-show-all-trackers link-secondary bold">
@@ -77,7 +70,9 @@ module.exports = function () {
 
     function renderNumOtherTrackerNetworks (trackerNetworks) {
         if (trackerNetworks && trackerNetworks.numOthers) {
-            return bel`<span>${trackerNetworks.numOthers}</span>`
+            return bel`<span class="site-info__trackers__others">
+                + ${trackerNetworks.numOthers} others
+            </span>`
         }
     }
 }

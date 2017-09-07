@@ -249,28 +249,18 @@ body {
             }
         }
 
-        .site-info__li--tracker-count {
-            position: relative;
+        .site-info__li--trackers {
+            .site-info__trackers {
+                .float-right {
+                    max-width: 120px;
+                    background: yellow;
 
-            .link-secondary {
-                font-weight: bold;
-                display: block;
-                @include is_disableable_link();
-
-                .site-info__tracker-count {
-                    display: inline-block;
-                    font-size: 13px;
-                    min-height: 18px;
-                    line-height: 20px;
-                    padding: 0px 6px;
-                    border-radius: 20px;
-                    background: $red;
-                    color: $white;
-                    margin-right: 7px;
-                }
-
-                .pull-right {
-                    padding-top: 3px;
+                    .site-info__trackers__others {
+                        @include uppercase_label();
+                        font-weight: normal;
+                        display: block;
+                        text-align: right;
+                    }
                 }
             }
         }
