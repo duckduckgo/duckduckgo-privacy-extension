@@ -1,6 +1,5 @@
-function TopBlocked(sortFunc){
-    this.data = [],
-    this.sortFunc = sortFunc;
+function TopBlocked(){
+    this.data = []
 }
 
 TopBlocked.prototype = {
@@ -9,14 +8,14 @@ TopBlocked.prototype = {
        this.data.push(element);
    },
 
-   getTop: function(n){
-       this.sort();
+   getTop: function(n, sortFunc){
+       this.sort(sortFunc);
        n = n ? n : 10;
        return this.data.slice(0, n);
    },
 
-   sort: function(){
-       this.data.sort(this.sortFunc);
+   sort: function(sortFunc){
+       this.data.sort(sortFunc);
    },
 
     clear: function(){
