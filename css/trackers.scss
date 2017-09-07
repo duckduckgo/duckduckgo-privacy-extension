@@ -2,10 +2,13 @@
 @import "mixins";
 
 
-/* Trackers page */
-body {
+/* Trackers popup */
+html, body {
     width: $popup__width;
     height: $popup__height;
+}
+
+body {
     overflow: hidden;
 
     &.is-browser--moz {
