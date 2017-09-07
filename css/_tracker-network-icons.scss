@@ -1,0 +1,65 @@
+@import "vars";
+
+@mixin tracker_network_icons () {
+
+    &.amazoncom {
+
+        .is-browser--chrome & {
+            background-image: url($icon__tn__amazoncom--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__tn__amazoncom--moz);
+        }
+    }
+
+    &.appnexus {
+        .is-browser--chrome & {
+            background-image: url($icon__tn__appnexus--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__tn__appnexus--moz);
+        }   
+    }
+
+    &.facebook {
+        .is-browser--chrome & {
+            background-image: url($icon__tn__facebook--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__tn__facebook--moz);
+        }   
+    }   
+
+    &.google {
+        .is-browser--chrome & {
+            background-image: url($icon__tn__google--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__tn__google--moz);
+        }   
+    }
+
+    &.oracle {
+        .is-browser--chrome & {
+            background-image: url($icon__tn__oracle--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__tn__oracle--moz);
+        }   
+    }
+
+    &.twitter {
+        .is-browser--chrome & {
+            background-image: url($icon__tn__twitter--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__tn__twitter--moz);
+        }   
+    }
+}
