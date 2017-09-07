@@ -127,6 +127,7 @@ chrome.webRequest.onCompleted.addListener( (request) => {
     if (tab) {
         tab.url = request.url;
         tab.updateSite();
+        Companies.incrementPages();
     }
 }, {urls: ['<all_urls>'], types: ['main_frame']});
 

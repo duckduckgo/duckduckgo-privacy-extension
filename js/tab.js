@@ -85,6 +85,10 @@ class Tab {
         else {
             let newTracker = new Tracker(t.parentCompany, t.url, t.type);
             this.trackers[t.parentCompany] = newTracker;
+            
+            // first time we have seen this network tracker on the page
+            if (t.parentCompany !== 'unknown') Companies.countCompanyOnPage(t.parentCompany)
+            
             return newTracker;
         }
     };
