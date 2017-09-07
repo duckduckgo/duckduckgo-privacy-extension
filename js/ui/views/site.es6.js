@@ -47,6 +47,7 @@ Site.prototype = $.extend({},
         },
 
         updateTrackerCount: function (message) {
+            console.log('[view] updateTrackerCount()')
             let self = this
             if (message.change.attribute === 'updateTrackerCount') {
                 if (!this.model.tab) return
@@ -61,7 +62,9 @@ Site.prototype = $.extend({},
             }
         },
 
+        // TODO: I should be in model
         getBackgroundTabData: function () {
+            console.log('[view] getBackgroundTabData()')
             let self = this;
 
             this.model.fetch({getCurrentTab: true}).then((tab) => {
@@ -75,7 +78,7 @@ Site.prototype = $.extend({},
 
                         self.model.setSiteObj();
 
-                        if (self.model.disabled) {   // determined in setSiteObj()
+                        if (self.model.disabled) { // determined in setSiteObj()
                             self._disableUI();
                         }
 
@@ -103,17 +106,6 @@ Site.prototype = $.extend({},
             this.unbindEvents();
             this._rerender();
             this._setup();
-
-
-            
-
-
-            // DEBUG/FIXME
-            // this._rerender = function () {}
-
-
-
-
         },
 
         _disableUI: function () {
@@ -128,7 +120,9 @@ Site.prototype = $.extend({},
             });
         },
 
+        // TODO: I should be in model
         _getSiteRating: function () {
+            console.log('[view] _getSiteRating()')
             this.model.fetch({getSiteScore: this.model.tab.id}).then((rating) => {
                 if (rating && this.model.update(rating)) this.rerender();
             })

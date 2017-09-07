@@ -50,6 +50,8 @@ module.exports = function () {
                         <span class="icon icon__arrow pull-right"></span>
                     </a>
                 </h2>
+                ${renderTrackerNetworks(this.model.trackerNetworks)}
+                ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
             </li>
             <li class="site-info__li--more-details padded border--bottom">
                 <a href="#" class="js-site-show-all-trackers link-secondary bold">
@@ -63,6 +65,20 @@ module.exports = function () {
     function renderSiteRating (letter, siteRating) {
         const isActive = siteRating === letter ? 'is-active' : ''
         return bel`<div class="site-info__rating ${isActive}">${letter}</div>`
+    }
+
+    function renderTrackerNetworks (trackerNetworks) {
+        if (trackerNetworks && trackerNetworks.major) {
+            return trackerNetworks.major.map((tn) => {
+                return bel`<span>${tn}</span>`
+            })
+        }
+    }
+
+    function renderNumOtherTrackerNetworks (trackerNetworks) {
+        if (trackerNetworks && trackerNetworks.numOthers) {
+            return bel`<span>${trackerNetworks.numOthers}</span>`
+        }
     }
 }
 
