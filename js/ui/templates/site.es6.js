@@ -73,8 +73,9 @@ module.exports = function () {
 
     function renderNumOtherTrackerNetworks (trackerNetworks) {
         if (trackerNetworks && trackerNetworks.numOthers) {
+            const label = trackerNetworks.numOthers === 1 ? 'other' : 'others' 
             return bel`<span class="site-info__trackers__others">
-                + ${trackerNetworks.numOthers} others
+                + ${trackerNetworks.numOthers} ${label}
             </span>`
         }
     }
