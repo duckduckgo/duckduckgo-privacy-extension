@@ -25,10 +25,8 @@ var Companies = ( () => {
             return companyContainer[name];
         },
 
-        /* addByPages is used by tab.js to count only unique 
-         * tracking networks on a tab
-         */
-        addByPages: (name) => {
+        // This is used by tab.js to count only unique tracking networks on a tab
+        countCompanyOnPage: (name) => {
             if(!companyContainer[name]){
                 companyContainer[name] = new Company(name);
                 topBlocked.add(name);

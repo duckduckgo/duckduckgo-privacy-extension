@@ -87,7 +87,7 @@ class Tab {
             this.trackers[t.parentCompany] = newTracker;
             
             // first time we have seen this network tracker on the page
-            if (t.parentCompany !== 'unknown') Companies.addByPages(t.parentCompany)
+            if (t.parentCompany !== 'unknown') Companies.countCompanyOnPage(t.parentCompany)
             
             return newTracker;
         }

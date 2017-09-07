@@ -13,8 +13,8 @@ class Company{
         this.pagesSeenOn += 1;
     };
 
-    get(name){
-        return this[name];
+    get(property){
+        return this[property];
     };
 
     set(property, val){
