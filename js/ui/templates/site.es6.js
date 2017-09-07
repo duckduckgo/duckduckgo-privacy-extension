@@ -25,7 +25,7 @@ module.exports = function () {
             </li>
             <li class="padded">
                 <h2 class="site-info__https-status">
-                    Connection:
+                    Connection
                     <div class="float-right">
                         <span class="site-info__https-status__msg 
                             ${this.model.httpsStatusText.toLowerCase()}">
