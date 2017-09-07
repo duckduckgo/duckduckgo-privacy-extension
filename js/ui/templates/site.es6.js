@@ -21,6 +21,7 @@ module.exports = function () {
                         ${renderSiteRating('C', this.model.siteRating)}
                         ${renderSiteRating('D', this.model.siteRating)}
                     </div>
+                    ${renderUserPrivacyMsg(this.model.isUserPrivacyUpgraded)}
                 </div>
             </li>
             <li class="padded">
@@ -77,5 +78,14 @@ module.exports = function () {
             </span>`
         }
     }
-}
 
+    function renderUserPrivacyMsg (upgraded) {
+        if (upgraded) {
+            return bel`<p class="site-info__user-privacy-msg">
+                       ...but we have <span class="is-upgraded">improved the site!</span></p>`
+        } else {
+            return bel`<p class="site-info__user-privacy-msg">
+                       ...for the <span>following reasons:</span></p>`
+        }
+    }
+}

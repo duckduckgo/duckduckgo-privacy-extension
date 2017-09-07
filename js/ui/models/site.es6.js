@@ -20,11 +20,11 @@ const majorTrackerNetworks = [
     'twitter'
 ]
 
-
 function Site (attrs) {
     attrs.disabled = true; // disabled by default
     attrs.httpsState = 'none';
     attrs.httpsStatusText = httpsStates[attrs.httpsState];
+    attrs.isUserPrivacyUpgraded = false;
     Parent.call(this, attrs);
 };
 
@@ -81,6 +81,7 @@ Site.prototype = $.extend({},
               const updatedTrackersCount = this._getUniqueTrackersCount()
               const updatedTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
               const updatedTrackerNetworks = this._getTrackerNetworksOnPage()
+              const updatedUserPrivacy = this._getIsUserPrivacyUpgraded() 
 
               if (updatedSiteRating !== this.siteRating) {
                     this.siteRating = updatedSiteRating
@@ -101,6 +102,11 @@ Site.prototype = $.extend({},
                   (updatedTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
                   (updatedTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
                 this.trackerNetworks = updatedTrackerNetworks
+                rerenderFlag = true
+              }
+
+              if (updatedUserPrivacy !== this.isUserPrivacyUpgraded) {
+                this.isUserPrivacyUpgraded = updatedUserPrivacy
                 rerenderFlag = true
               }
           }
@@ -151,7 +157,20 @@ Site.prototype = $.extend({},
               major: major,
               numOthers: networks.length - major.length
           }
+      },
+
+      _getIsUserPrivacyUpgraded: function () {
+          console.log('setIsUserPrivacyUpgraded()')
+          if (!this.tab) return false
+
+          if (this.tab.upgradedHttps || 
+              Object.keys(this.tab.trackersBlocked).length > 0) {
+              return true
+          } 
+
+          return false
       }
+
 
   }
 );

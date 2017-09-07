@@ -192,6 +192,20 @@ body {
             }
         }
 
+        .site-info__user-privacy-msg {
+            text-align: center;
+            margin-top: 15px;
+            
+            span {
+                font-weight: bold;
+                color: $color--red;
+
+                &.is-upgraded {
+                    color: $color--green;
+                }
+            }
+        }
+
         .site-info__https-status {
             font-weight: bold;
         }
