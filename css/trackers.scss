@@ -251,11 +251,19 @@ body {
 
         .site-info__li--trackers {
             padding-top: 7.5px;
-            
+
             .site-info__trackers {
+
                 .float-right {
-                    max-width: 120px;
+                    max-width: 140px;
                     background: yellow;
+
+                    .site-info__tracker__icon {
+                        @include icon_display();
+                        width: 24px;
+                        height: 24px;
+                        overflow: hidden;
+                    }
 
                     .site-info__trackers__others {
                         @include uppercase_label();

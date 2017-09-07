@@ -107,6 +107,12 @@ a {
     float: right;
 }
 
+.clearfix {
+    clear: both;
+    height: 0;
+    line-height: 0;
+}
+
 
 /* Card Display */
 .card {

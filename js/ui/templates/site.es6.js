@@ -44,6 +44,7 @@ module.exports = function () {
                         ${renderTrackerNetworks(this.model.trackerNetworks)}
                         ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
                     </div>
+                    <div class="clearfix"></div>
                 </h2>
             </li>
             <li class="site-info__li--more-details padded border--bottom">
@@ -63,7 +64,8 @@ module.exports = function () {
     function renderTrackerNetworks (trackerNetworks) {
         if (trackerNetworks && trackerNetworks.major) {
             return trackerNetworks.major.map((tn) => {
-                return bel`<span>${tn}</span>`
+                return bel`<span class="site-info__tracker__icon ${tn.replace('.', '')}">
+                    ${tn}</span>`
             })
         }
     }
