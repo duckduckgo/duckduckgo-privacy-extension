@@ -1,3 +1,8 @@
+/* Collect ToSDR data and process the privacy related points in defined in scripts/tosdr-topics.json 
+ * We will use this processed data in our grade calculation. The process data is written to data/tosdr.json
+ *
+ * The list is updated when you run `make` or `make release`
+ */
 const request = require('request')
 const topics = require('./tosdr-topics.json')
 const fs = require('fs')
@@ -6,12 +11,16 @@ let processed = {}
 let nProcessed = 0
 
 function getSites() {
-        request.get('https://tosdr.org/index/services.json', (err, res, body) => {
-                let sites = Object.keys(JSON.parse(body))
-                getSitePoints(sites).then(result => {
-                    fs.writeFile('data/tosdr.json', JSON.stringify(processed, null, 4), err => { if(err) console.log(err)} )
-                })
-         })
+    // get the full list of tosdr sites. This does not include points data. We will
+    // have to make a separate request for that.
+    request.get('https://tosdr.org/index/services.json', (err, res, body) => {
+            let sites = Object.keys(JSON.parse(body))
+
+            // recurse through sites list. Get and process the detailed points data for each
+            getSitePoints(sites).then(result => {
+                fs.writeFile('data/tosdr.json', JSON.stringify(processed, null, 4), err => { if(err) console.log(err)} )
+            })
+    })
 }
 
 function getSitePoints (sites) {
@@ -21,44 +30,52 @@ function getSitePoints (sites) {
         return resolve()
     }
 
-    let name = sites.pop()
+    let site = sites.pop()
     nProcessed += 1
 
-    let url = `https://tosdr.org/api/1/service/${name}.json`
+    let url = `https://tosdr.org/api/1/service/${site}.json`
 
     if (nProcessed % 5 === 0) process.stdout.write('.')
 
+    // get the detailed points data for this site
     request.get(url, (err, res, body) => {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
         let allData = JSON.parse(body)
         let pointsData = allData.pointsData
+        
+        points.class = allData.class
+        
+        for (pointName in pointsData) {
+            let point = pointsData[pointName]
+            let pointCase = point.tosdr.case
+            if (!pointCase) continue
+            
+            let type = point.tosdr.point
 
-            points.class = allData.class
+            if (type === 'good' || type === 'bad')
+                addPoint(points, type, pointCase, point.tosdr.score)
+        }
 
-            for (point in pointsData) {
-                if (!pointsData[point].tosdr.case) continue
-
-                if (pointsData[point].tosdr.point === "bad") {
-                    points['all']['bad'].push(pointsData[point].tosdr.case)
-
-                    if (topics.bad.indexOf(pointsData[point].tosdr.case) !== -1){
-                            points['match']['bad'].push(pointsData[point].tosdr.case)
-                            points.score += pointsData[point].tosdr.score
-                    }
-                }
-                else if (pointsData[point].tosdr.point === "good") {
-                    points['all']['good'].push(pointsData[point].tosdr.case)
-                    
-                    if (topics.good.indexOf(pointsData[point].tosdr.case) !== -1){
-                        points['match']['good'].push(pointsData[point].tosdr.case)
-                        points.score -= pointsData[point].tosdr.score
-                    }
-                }
-            }
-        processed[name] = points;
+        processed[site] = points;
         resolve(getSitePoints(sites))
-    });
     })
+    })
+}
+
+function addPoint(points, type, pointCase, score) {
+    
+    points['all'][type].push(pointCase)
+    
+    // is this a point we care about
+    if (topics[type].indexOf(pointCase) !== -1){
+        points['match'][type].push(pointCase)
+
+        if (type === 'bad') {
+            points.score += score
+        } else {
+            points.score -= score
+        }
+    }
 }
 
 getSites()

@@ -885,7 +885,7 @@
         "class": false
     },
     "duckduckgo": {
-        "score": 0,
+        "score": -100,
         "all": {
             "bad": [],
             "good": [
@@ -894,7 +894,9 @@
         },
         "match": {
             "bad": [],
-            "good": []
+            "good": [
+                "no tracking"
+            ]
         },
         "class": "A"
     },
