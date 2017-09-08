@@ -82,11 +82,6 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         if (tab && info.status) {
             tab.status = info.status;
 
-            utils.getCurrentURL((url) => {
-                tab.url = url
-                tab.updateSite();
-            })
-        
             /**
              * When the tab finishes loading:
              * 1. check main_frame url (via tab.url) for http/s, update site score
@@ -127,7 +122,7 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
 
 // update tab url after the request is finished. This makes
 // sure we have the correct url after any https rewrites
-chrome.webRequest.onCompleted.addListener( (request) => {
+chrome.webRequest.onResponseStarted.addListener( (request) => {
     let tab = tabManager.get({tabId: request.tabId});
     if (tab) {
         tab.url = request.url;
