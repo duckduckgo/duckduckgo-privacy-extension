@@ -122,7 +122,7 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
 
 // update tab url after the request is finished. This makes
 // sure we have the correct url after any https rewrites
-chrome.webRequest.onResponseStarted.addListener( (request) => {
+chrome.webRequest.onHeadersReceived.addListener( (request) => {
     let tab = tabManager.get({tabId: request.tabId});
     if (tab) {
         tab.url = request.url;

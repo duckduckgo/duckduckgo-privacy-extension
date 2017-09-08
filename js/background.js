@@ -235,7 +235,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     ["blocking"]
 );
 
-chrome.webRequest.onResponseStarted.addListener(
+chrome.webRequest.onHeadersReceived.addListener(
         ATB.updateSetAtb,
     {
         urls: [
