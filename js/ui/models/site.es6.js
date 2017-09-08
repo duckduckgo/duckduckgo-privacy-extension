@@ -26,6 +26,11 @@ function Site (attrs) {
     attrs.httpsStatusText = httpsStates[attrs.httpsState];
     attrs.isUserPrivacyUpgraded = false;
     Parent.call(this, attrs);
+
+    this.bindEvents([
+        [this.store.subscribe, 'change:backgroundMessage', this.updateTrackerCount]
+    ]);
+
 };
 
 
@@ -35,7 +40,30 @@ Site.prototype = $.extend({},
 
       modelName: 'site',
 
-      setSiteObj: function() {
+      getBackgroundTabData: function () {
+          console.log('[view] getBackgroundTabData()')
+          let self = this;
+
+          this.fetch({getCurrentTab: true}).then((tab) => {
+              if (tab) {
+                  this.fetch({getTab: tab.id}).then((backgroundTabObj) => {
+                      if (backgroundTabObj) {
+                          self.tab = backgroundTabObj
+                          self.domain = backgroundTabObj.site.domain
+                          self._getSiteRating()
+                      }
+                      self.setSiteProperties();
+                      self.setHttpsMessage();
+                      self.update();
+                  });
+
+              } else {
+                  console.debug('Site view: no tab');
+              }
+          });
+      },
+
+      setSiteProperties: function() {
           if (!this.tab) {
               this.domain = 'new tab'; // tab can be null for firefox new tabs
               this.siteRating = '';
@@ -45,11 +73,12 @@ Site.prototype = $.extend({},
               this.setWhitelistStatusText();
               if (this.tab.site.isSpecialDomain) {
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
-              }
-              else {
-                  this.disabled = false;
+              } else {
+                  this.set('disabled', false);
               }
           }
+
+          if (this.domain && this.domain === '-') this.set('disabled', true);
       },
 
       setHttpsMessage: function () {
@@ -73,9 +102,8 @@ Site.prototype = $.extend({},
           }
       },
 
-      update: function (updatedSiteRating) {
+      update: function (ops) {
           console.log('[model] update()')
-          let rerenderFlag = false
 
           if (this.tab) {
               const updatedTrackersCount = this._getUniqueTrackersCount()
@@ -83,48 +111,27 @@ Site.prototype = $.extend({},
               const updatedTrackerNetworks = this._getTrackerNetworksOnPage()
               const updatedUserPrivacy = this._getIsUserPrivacyUpgraded() 
 
-              if (updatedSiteRating !== this.siteRating) {
-                    this.siteRating = updatedSiteRating
-                    rerenderFlag = true
-                }
+              if (ops && ops.siteRating && (ops.siteRating !== this.siteRating)) {
+                  this.set('siteRating', ops.siteRating)
+              }
 
               if (updatedTrackersCount !== this.trackersCount) {
-                  this.trackersCount = updatedTrackersCount
-                  rerenderFlag = true
+                  this.set('trackersCount', updatedTrackersCount)
               }
 
               if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
-                  this.trackersBlockedCount = updatedTrackersBlockedCount
-                  rerenderFlag = true
+                  this.set('trackersBlockedCount', updatedTrackersBlockedCount)
               }
 
               if (!this.trackerNetworks || 
                   (updatedTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
                   (updatedTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
-                this.trackerNetworks = updatedTrackerNetworks
-                rerenderFlag = true
+                  this.set('trackerNetworks', updatedTrackerNetworks)
               }
 
               if (updatedUserPrivacy !== this.isUserPrivacyUpgraded) {
-                this.isUserPrivacyUpgraded = updatedUserPrivacy
-                rerenderFlag = true
+                  this.set('isUserPrivacyUpgraded', updatedUserPrivacy)
               }
-          }
-
-          return rerenderFlag
-      },
-
-      toggleWhitelist: function () {
-          if (this.tab && this.tab.site) {
-              this.isWhitelisted = !this.isWhitelisted;
-
-              this.fetch({'whitelisted': {
-                  list: 'whitelisted',
-                  domain: this.tab.site.domain,
-                  value: this.isWhitelisted
-              }
-              });
-              this.setWhitelistStatusText();
           }
       },
 
@@ -169,8 +176,46 @@ Site.prototype = $.extend({},
           } 
 
           return false
-      }
+      },
 
+      _getSiteRating: function () {
+          console.log('[model] _getSiteRating()')
+          if (this.tab) {
+            this.fetch({getSiteScore: this.tab.id}).then((rating) => {
+                if (rating) this.update({siteRating: rating})
+            })
+          }
+      },      
+
+      updateTrackerCount: function (message) {
+          console.log('[model] updateTrackerCount()')
+          let self = this
+          if (message.change.attribute === 'updateTrackerCount') {
+              if (!this.tab) return
+              let tabID = this.tab.id
+              
+              this.fetch({getTab: tabID}).then((backgroundTabObj) => {
+                  self.tab = backgroundTabObj
+                  self._getSiteRating()
+              })
+          }
+      },
+
+      toggleWhitelist: function () {
+          if (this.tab && this.tab.site) {
+              this.isWhitelisted = !this.isWhitelisted;
+              this.set('whitelisted', this.isWhitelisted);
+
+              this.fetch({'whitelisted': {
+                  list: 'whitelisted',
+                  domain: this.tab.site.domain,
+                  value: this.isWhitelisted
+              }
+              });
+
+              this.setWhitelistStatusText();
+          }
+      }      
 
   }
 );

@@ -16,15 +16,8 @@ function Site (ops) {
     this._setup();
 
     // get data from background page tab
-    this.getBackgroundTabData();
-
-    // edge case, should not happen
-    // '-' is the domain default in the pages/trackers.es6.js call
-    if (this.domain === '-') {
-        this.model.disabled = true;
-        this._disableUI();
-    }
-
+    this.model.getBackgroundTabData();
+    this.rerender();
 };
 
 Site.prototype = $.extend({},
@@ -39,77 +32,32 @@ Site.prototype = $.extend({},
             ]);
 
             this.bindEvents([
-              [this.$toggle, 'click', this._whitelistClick],
-              [this.$showalltrackers, 'click', this._showAllTrackers],
-              [this.store.subscribe, 'change:backgroundMessage', this.updateTrackerCount]
+                [this.$toggle, 'click', this._whitelistClick],
+                [this.$showalltrackers, 'click', this._showAllTrackers],
+                [this.store.subscribe, 'change:site', this.rerender]
             ]);
 
-        },
-
-        updateTrackerCount: function (message) {
-            console.log('[view] updateTrackerCount()')
-            let self = this
-            if (message.change.attribute === 'updateTrackerCount') {
-                if (!this.model.tab) return
-                
-                let tabID = this.model.tab.id;
-                
-                this.model.fetch({getTab: tabID}).then( (backgroundTabObj) => {
-                    self.model.tab = backgroundTabObj
-                    self.model.update()
-                    self._getSiteRating()
-                })
-            }
-        },
-
-        // TODO: I should be in model
-        getBackgroundTabData: function () {
-            console.log('[view] getBackgroundTabData()')
-            let self = this;
-
-            this.model.fetch({getCurrentTab: true}).then((tab) => {
-                if (tab) {
-                    this.model.fetch({getTab: tab.id}).then( (backgroundTabObj) => {
-                        if (backgroundTabObj) {
-                            self.model.tab = backgroundTabObj
-                            self.model.domain = backgroundTabObj.site.domain
-                            self._getSiteRating()
-                        }
-
-                        self.model.setSiteObj();
-
-                        if (self.model.disabled) { // determined in setSiteObj()
-                            self._disableUI();
-                        }
-
-                        self.model.update();
-                        self.model.setHttpsMessage();
-                        self.rerender(); // our custom rerender below
-                    });
-
-                } else {
-                    console.debug('Site view: no tab');
-                }
-            });
         },
 
         _whitelistClick: function (e) {
             this.model.toggleWhitelist();
             console.log('isWhitelisted: ', this.model.isWhitelisted);
-            this.model.set('whitelisted', this.isWhitelisted);
             chrome.tabs.reload(this.model.tab.id);
             const w = chrome.extension.getViews({type: 'popup'})[0];
             w.close()
         },
 
-        rerender: function() {     
-            this.unbindEvents();
-            this._rerender();
-            this._setup();
-        },
+        rerender: function () {    
+            console.log('[view] rerender()') 
 
-        _disableUI: function () {
-            this.$body.addClass('disabled');
+            if (this.model.disabled) {
+                this.$body.addClass('disabled');
+            } else {
+                this.$body.removeClass('disabled');
+                this.unbindEvents();
+                this._rerender();
+                this._setup();
+            }
         },
 
         _showAllTrackers: function () {
@@ -118,15 +66,8 @@ Site.prototype = $.extend({},
                 template: tabbedTrackerListTemplate,
                 defaultTab: 'page'
             });
-        },
-
-        // TODO: I should be in model
-        _getSiteRating: function () {
-            console.log('[view] _getSiteRating()')
-            this.model.fetch({getSiteScore: this.model.tab.id}).then((rating) => {
-                if (rating && this.model.update(rating)) this.rerender();
-            })
         }
+
     }
 
 );
