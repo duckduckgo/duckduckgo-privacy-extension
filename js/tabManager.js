@@ -81,7 +81,11 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
         let tab = tabManager.get({tabId: id});
         if (tab && info.status) {
             tab.status = info.status;
-            tab.updateSite();
+
+            utils.getCurrentURL((url) => {
+                tab.url = url
+                tab.updateSite();
+            })
         
             /**
              * When the tab finishes loading:
