@@ -85,26 +85,26 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             utils.getCurrentURL((url) => {
                 tab.url = url
                 tab.updateSite();
-            })
-        
-            /**
-             * When the tab finishes loading:
-             * 1. check main_frame url (via tab.url) for http/s, update site score
-             * 2. check for incomplete upgraded https upgrade requests, whitelist 
-             * the entire site if there are any then notify tabManager
-             *
-             * NOTE: we aren't making a distinction between active and passive
-             * content when https content is mixed after a forced upgrade
-             */
-            if (tab.status === 'complete') {
+            
+                /**
+                 * When the tab finishes loading:
+                 * 1. check main_frame url (via tab.url) for http/s, update site score
+                 * 2. check for incomplete upgraded https upgrade requests, whitelist 
+                 * the entire site if there are any then notify tabManager
+                 *
+                 * NOTE: we aren't making a distinction between active and passive
+                 * content when https content is mixed after a forced upgrade
+                 */
+                if (tab.status === 'complete') {
 
-                if (tab.url.match(/^https:\/\//)) {
-                    tab.site.score.update({hasHTTPS: true})
-                }
-                tab.checkHttpsRequestsOnComplete()
-                console.info(tab.site.score);
-                tab.updateBadgeIcon();
-            } 
+                    if (tab.url.match(/^https:\/\//)) {
+                        tab.site.score.update({hasHTTPS: true})
+                    }
+                    tab.checkHttpsRequestsOnComplete()
+                    console.info(tab.site.score);
+                    tab.updateBadgeIcon();
+                } 
+            })
         }
     }
 
