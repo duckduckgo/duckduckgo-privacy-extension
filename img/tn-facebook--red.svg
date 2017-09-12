@@ -1,0 +1,18 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>tn-facebook</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-11422 -1013)">
+<g id="tn-facebook">
+<g id="dot">
+<use xlink:href="#path0_fill" transform="translate(11422 1013)" fill="#de5833"/>
+</g>
+<g id="f">
+<use xlink:href="#path1_fill" transform="translate(11431 1020.11)" fill="#FFFFFF"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 24 12C 24 18.6274 18.6274 24 12 24C 5.37258 24 0 18.6274 0 12C 0 5.37258 5.37258 0 12 0C 18.6274 0 24 5.37258 24 12Z"/>
+<path id="path1_fill" d="M 3.37078 10L 3.37078 5.43852L 4.90185 5.43852L 5.1311 3.66082L 3.37078 3.66082L 3.37078 2.52588C 3.37078 2.0112 3.5137 1.66046 4.25174 1.66046L 5.19308 1.66005L 5.19308 0.0700655C 5.03028 0.0484014 4.47149 4.74233e-08 3.82139 4.74233e-08C 2.46418 4.74233e-08 1.535 0.828447 1.535 2.34983L 1.535 3.66082L -1.31111e-07 3.66082L -1.31111e-07 5.43852L 1.535 5.43852L 1.535 10L 3.37078 10Z"/>
+</defs>
+</svg>
