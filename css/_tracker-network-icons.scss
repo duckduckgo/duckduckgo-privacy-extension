@@ -4,62 +4,86 @@
 
     &.amazoncom {
 
-        .is-browser--chrome & {
-            background-image: url($icon__tn__amazoncom--chrome);
-        }
+        &.is-active {
 
-        .is-browser--moz & {
-            background-image: url($icon__tn__amazoncom--moz);
+            .is-browser--chrome & {
+                background-image: url($icon__tn__amazoncom__isactive--chrome);
+            }
+
+            .is-browser--moz & {
+                background-image: url($icon__tn__amazoncom__isactive--moz);
+            }
+
         }
     }
 
     &.appnexus {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__appnexus--chrome);
-        }
 
-        .is-browser--moz & {
-            background-image: url($icon__tn__appnexus--moz);
+        &.is-active {
+        
+            .is-browser--chrome & {
+                background-image: url($icon__tn__appnexus__isactive--chrome);
+            }
+
+            .is-browser--moz & {
+                background-image: url($icon__tn__appnexus__isactive--moz);
+            }
         }   
     }
 
     &.facebook {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__facebook--chrome);
-        }
 
-        .is-browser--moz & {
-            background-image: url($icon__tn__facebook--moz);
-        }   
+        &.is-active {
+
+            .is-browser--chrome & {
+                background-image: url($icon__tn__facebook__isactive--chrome);
+            }
+
+            .is-browser--moz & {
+                background-image: url($icon__tn__facebook__isactive--moz);
+            }   
+        }
     }   
 
     &.google {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__google--chrome);
-        }
 
-        .is-browser--moz & {
-            background-image: url($icon__tn__google--moz);
-        }   
+        &.is-active {
+    
+            .is-browser--chrome & {
+                background-image: url($icon__tn__google__isactive--chrome);
+            }
+
+            .is-browser--moz & {
+                background-image: url($icon__tn__google__isactive--moz);
+            }   
+        }
     }
 
     &.oracle {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__oracle--chrome);
-        }
 
-        .is-browser--moz & {
-            background-image: url($icon__tn__oracle--moz);
-        }   
+        &.is-active {
+
+            .is-browser--chrome & {
+                background-image: url($icon__tn__oracle__isactive--chrome);
+            }
+
+            .is-browser--moz & {
+                background-image: url($icon__tn__oracle__isactive--moz);
+            }   
+        }
     }
 
     &.twitter {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__twitter--chrome);
-        }
 
-        .is-browser--moz & {
-            background-image: url($icon__tn__twitter--moz);
-        }   
+        &.is-active {
+
+            .is-browser--chrome & {
+                background-image: url($icon__tn__twitter__isactive--chrome);
+            }
+
+            .is-browser--moz & {
+                background-image: url($icon__tn__twitter__isactive--moz);
+            }   
+        }
     }
 }

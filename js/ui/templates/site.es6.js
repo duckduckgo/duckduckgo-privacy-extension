@@ -42,7 +42,7 @@ module.exports = function () {
                 <h2 class="site-info__trackers">
                     Tracker networks
                     <div class="float-right">
-                        ${renderTrackerNetworks(this.model.trackerNetworks)}
+                        ${renderTrackerNetworks(this.model.trackerNetworks, !this.model.isWhitelisted)}
                         ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
                     </div>
                     <div class="clearfix"></div>
@@ -62,10 +62,13 @@ module.exports = function () {
         return bel`<div class="site-info__rating ${isActive}">${letter}</div>`
     }
 
-    function renderTrackerNetworks (trackerNetworks) {
+    function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
         if (trackerNetworks && trackerNetworks.major) {
+            const isActive = isWhitelisted ? 'is-active' : ''
             return trackerNetworks.major.map((tn) => {
-                return bel`<span class="site-info__tracker__icon ${tn.replace('.', '')}">
+                return bel`<span class="site-info__tracker__icon 
+                               ${tn.replace('.', '')}
+                               ${isActive}">
                     ${tn}</span>`
             })
         }
