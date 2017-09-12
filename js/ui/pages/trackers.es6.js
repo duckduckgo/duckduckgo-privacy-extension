@@ -47,7 +47,7 @@ Trackers.prototype = $.extend({},
                         this.message.fetch({firefoxOptionPage:true}).then(page => {
                                 chrome.tabs.create({url: page})
                         });
-                    }else {
+                    } else {
                         chrome.runtime.openOptionsPage()
                     }
                 })

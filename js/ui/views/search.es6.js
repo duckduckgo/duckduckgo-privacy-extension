@@ -16,6 +16,10 @@ function Search (ops) {
       [this.$form, 'submit', this._handleSubmit]
     ]);
 
+    window.setTimeout(() => {
+        this.$input.focus()
+    }, 200)
+
 };
 
 Search.prototype = $.extend({},
