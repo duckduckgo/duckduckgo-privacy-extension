@@ -188,7 +188,23 @@ body {
                 width: 48px;
                 border-radius: 48px;
                 color: $white;
-                background: orange;
+             
+
+                &.site-info__rating--a {
+                    background-color: $color--green;
+                }  
+
+                &.site-info__rating--b {
+                    background-color: $color--light-green;
+                }  
+                
+                &.site-info__rating--c {
+                    background-color: $color--orange;
+                }  
+                
+                &.site-info__rating--d {
+                    background-color: $color--red;
+                }  
             }
         }
 

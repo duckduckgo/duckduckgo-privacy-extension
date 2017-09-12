@@ -59,7 +59,11 @@ module.exports = function () {
 
     function renderSiteRating (letter, siteRating) {
         const isActive = siteRating === letter ? 'is-active' : ''
-        return bel`<div class="site-info__rating ${isActive}">${letter}</div>`
+        return bel`<div class="site-info__rating 
+                               site-info__rating--${letter.toLowerCase()} 
+                               ${isActive}">
+                                   ${letter}
+                                </div>`
     }
 
     function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
