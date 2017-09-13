@@ -1,4 +1,8 @@
 {
+    "bbc.co.uk": true,
+    "bbc.com": true,
+    "static.bbc.co.uk": true,
+    "clevelandbrowns.com": true,
     "msnbc.com": true,
     "active.domains": true,
     "aab.ru": true,
