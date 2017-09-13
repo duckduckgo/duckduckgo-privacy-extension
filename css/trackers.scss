@@ -308,7 +308,7 @@ body {
                     .site-info__trackers__others {
                         @include uppercase_label();
                         font-weight: normal;
-                        display: block;
+                        display: inline-block;
                         text-align: right;
                     }
                 }

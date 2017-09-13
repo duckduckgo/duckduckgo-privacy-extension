@@ -45,7 +45,6 @@ module.exports = function () {
                         ${renderTrackerNetworks(this.model.trackerNetworks, !this.model.isWhitelisted)}
                         ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
                     </div>
-                    <div class="clearfix"></div>
                 </h2>
             </li>
             <li class="site-info__li--more-details padded border--bottom">
@@ -59,11 +58,11 @@ module.exports = function () {
 
     function renderSiteRating (letter, siteRating) {
         const isActive = siteRating === letter ? 'is-active' : ''
-        return bel`<div class="site-info__rating 
-                               site-info__rating--${letter.toLowerCase()} 
-                               ${isActive}">
-                                   ${letter}
-                                </div>`
+        return bel`<div 
+            class="site-info__rating site-info__rating--${letter.toLowerCase()} 
+            ${isActive}">
+                ${letter}
+            </div>`
     }
 
     function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
@@ -71,19 +70,15 @@ module.exports = function () {
             const isActive = isWhitelisted ? 'is-active' : ''
             return trackerNetworks.major.map((tn) => {
                 return bel`<span class="site-info__tracker__icon 
-                               ${tn.replace('.', '')}
-                               ${isActive}">
-                    ${tn}</span>`
+                    ${tn.replace('.', '')} ${isActive}">${tn}</span>`
             })
         }
     }
 
     function renderNumOtherTrackerNetworks (trackerNetworks) {
         if (trackerNetworks && trackerNetworks.numOthers) {
-            const label = trackerNetworks.numOthers === 1 ? 'other' : 'others' 
             return bel`<span class="site-info__trackers__others">
-                + ${trackerNetworks.numOthers} ${label}
-            </span>`
+                + ${trackerNetworks.numOthers}</span>`
         }
     }
 
