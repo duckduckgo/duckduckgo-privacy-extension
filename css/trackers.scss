@@ -295,10 +295,12 @@ body {
                         @include icon_display();
                         width: 24px;
                         height: 24px;
-                        margin-left: 4px;
+                        margin-left: -4px;
                         margin-bottom: 8px;
                         overflow: hidden;
                         line-height: 100px;
+                        border: 1px solid #fff;
+                        border-radius: 24px;
 
                         @include tracker_network_icons();
                     }
