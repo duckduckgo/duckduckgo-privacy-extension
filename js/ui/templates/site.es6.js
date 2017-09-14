@@ -1,5 +1,6 @@
 const bel = require('bel');
 const toggleButton = require('./shared/toggle-button');
+const popover = require('./shared/popover');
 
 module.exports = function () {
 
@@ -24,7 +25,7 @@ module.exports = function () {
                     ${renderUserPrivacyMsg(this.model.isUserPrivacyUpgraded)}
                 </div>
             </li>
-            <li class="padded">
+            <li class="site-info__https-status__li padded">
                 <h2 class="site-info__https-status">
                     Connection
                     <div class="float-right">
@@ -35,6 +36,10 @@ module.exports = function () {
                         <span class="site-info__https-status__icon 
                             site-info__https-status__icon--${this.model.httpsState}">
                         </span>
+                        ${popover(
+                            'site_info__https-status__popover js-https-popover',
+                            renderHttpsMsg(this.model.httpsState)
+                        )}
                     </div>
                 </h3>
             </li>
@@ -65,6 +70,10 @@ module.exports = function () {
             </div>`
     }
 
+    function renderHttpsMsg (httpsState) {
+        return bel`<p>foo https msg</p>`
+    }
+
     function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
         if (trackerNetworks && trackerNetworks.major) {
             const isActive = isWhitelisted ? 'is-active' : ''
@@ -85,10 +94,12 @@ module.exports = function () {
     function renderUserPrivacyMsg (upgraded) {
         if (upgraded) {
             return bel`<p class="site-info__user-privacy-msg">
-                       ...but we have <span class="is-upgraded">improved the site!</span></p>`
+               ...but we have 
+               <span class="is-upgraded">improved the site!</span>
+               </p>`
         } else {
             return bel`<p class="site-info__user-privacy-msg">
-                       ...for the <span>following reasons:</span></p>`
+                ...for the <span>following reasons:</span></p>`
         }
     }
 }

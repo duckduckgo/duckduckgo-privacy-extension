@@ -30,6 +30,15 @@ $card__margin--bottom: 0;
 $card__margin--left: 0;
 $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $card__margin--left;
 
+/* Popover */
+$popover__color: $white;
+$popover__bg-color: $slate;
+$popover__border-radius: 3px;
+
+/* Arrow */
+$arrow__bg-color: $slate;
+$arrow__border-radius: 3px;
+
 /* Image & icon urls */
 $img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 $img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";

@@ -174,3 +174,53 @@ a {
 
     }
 }
+
+
+/* Popover */ 
+.popover {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+
+    .popover__inner {
+        padding: 10px;
+        color: $popover__color;
+        font-size: 12px;
+        font-weight: normal;
+        background-color: $popover__bg-color;
+        border-radius: $popover__border-radius;
+    }
+
+    .arrow.arrow--down {
+        &:after {
+            left: 240px;
+        }
+    }
+}
+
+
+/* Arrow */
+.arrow {
+    background-color: $arrow__bg-color;
+
+    &.arrow--down {
+        position: absolute;
+        bottom: -10px;
+        display: inline-block;
+        width: 0;
+        
+        &:after {
+            position: relative;
+            content: '';
+            display: block;  
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid $arrow__bg-color;
+            border-bottom: 0px solid transparent;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+        }
+    }
+}
