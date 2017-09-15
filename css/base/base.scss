@@ -178,15 +178,17 @@ a {
 
 /* Popover */ 
 .popover {
+    display: none;
     position: absolute;
     top: 0;
     left: 20px;
     right: 20px;
+    opacity: 0.9;
 
     .popover__inner {
         padding: 10px;
         color: $popover__color;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: normal;
         background-color: $popover__bg-color;
         border-radius: $popover__border-radius;

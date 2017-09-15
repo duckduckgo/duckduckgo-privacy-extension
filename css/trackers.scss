@@ -224,6 +224,10 @@ body {
 
         .site-info__https-status__li {
             position: relative;
+
+            .popover.site_info__https-status__popover {
+                top: -40px;
+            }
         }
 
         .site-info__https-status {
@@ -287,7 +291,15 @@ body {
         }
 
         .site-info__li--trackers {
+            position: relative;
             padding-top: 7.5px;
+
+            &:hover {
+                .popover.site_info__trackers__popover {
+                    display: block;
+                    top: -40px;
+                }
+            }
 
             .site-info__trackers {
 
