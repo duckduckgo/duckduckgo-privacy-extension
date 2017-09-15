@@ -22,7 +22,6 @@ var settings = require('settings');
 var stats = require('stats');
 
 let tosdr, tosdrRegexList
-let whitelistRegExp 
 
 var db = require('db')
 var https = require('https')
