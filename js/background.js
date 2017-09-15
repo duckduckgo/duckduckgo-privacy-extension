@@ -20,7 +20,9 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
+
 let tosdr, tosdrRegexList
+let whitelistRegExp 
 
 var db = require('db')
 var https = require('https')
@@ -28,6 +30,16 @@ var https = require('https')
 load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
     tosdr = data
     tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
+})
+
+// Load the tracker whitelist
+load.JSONfromLocalFile(settings.getSetting('trackerWhitelist'), (data) => {
+
+    // quote regex special chars
+    let quoted = data.trackers.map(d => d.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&"));
+    whitelistRegExp = new RegExp(quoted.join('|'));
+
+    console.log("tracker whitelist: ", whitelistRegExp);
 })
 
 // Set browser for popup asset paths
@@ -173,10 +185,15 @@ chrome.webRequest.onBeforeRequest.addListener(
                     // the tab has finished loading
                     if (thisTab.status === "complete") thisTab.updateBadgeIcon()
 
-                    console.info( utils.extractHostFromURL(thisTab.url)
-                                 + " [" + tracker.parentCompany + "] " + tracker.url);
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+
+                    // Check whitelist after trackers have counted against the grade
+                    if (requestData.url.match(whitelistRegExp)) {
+                        console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
+                                 + " [" + tracker.parentCompany + "] " + requestData.url);
+                        return
+                    }
 
                     // for debugging specific requests. see test/tests/debugSite.js
                     if (debugRequest && debugRequest.length) {
@@ -185,6 +202,9 @@ chrome.webRequest.onBeforeRequest.addListener(
                             return
                         }
                     }
+
+                    console.info( "blocked " + utils.extractHostFromURL(thisTab.url)
+                                 + " [" + tracker.parentCompany + "] " + requestData.url);
 
                     // tell Chrome to cancel this webrequest
                     return {cancel: true};
