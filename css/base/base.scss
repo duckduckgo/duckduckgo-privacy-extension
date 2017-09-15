@@ -192,9 +192,14 @@ a {
         border-radius: $popover__border-radius;
     }
 
-    .arrow.arrow--down {
-        &:after {
-            left: 240px;
+    .arrow {
+        background-color: $popover__bg-color;
+
+        &.arrow--down {
+            &:after {
+                left: 240px;
+                border-top: 10px solid $popover__bg-color;
+            }
         }
     }
 }
@@ -202,7 +207,7 @@ a {
 
 /* Arrow */
 .arrow {
-    background-color: $arrow__bg-color;
+    border-top: 10px solid $arrow__bg-color;
 
     &.arrow--down {
         position: absolute;
