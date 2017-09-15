@@ -32,15 +32,15 @@ load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
     tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
 })
 
-// Load the tracker whitelist
-load.JSONfromLocalFile(settings.getSetting('trackerWhitelist'), (data) => {
+// // Load the tracker whitelist
+// load.JSONfromLocalFile(settings.getSetting('trackerWhitelist'), (data) => {
 
-    // quote regex special chars
-    let quoted = data.trackers.map(d => d.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&"));
-    whitelistRegExp = new RegExp(quoted.join('|'));
+//     // quote regex special chars
+//     let quoted = data.trackers.map(d => d.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&"));
+//     whitelistRegExp = new RegExp(quoted.join('|'));
 
-    console.log("tracker whitelist: ", whitelistRegExp);
-})
+//     console.log("tracker whitelist: ", whitelistRegExp);
+// })
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -188,11 +188,13 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
-                    // Check whitelist after trackers have counted against the grade
-                    if (requestData.url.match(whitelistRegExp)) {
+                    // Check tracker whitelist -- after trackers have counted against the grade
+                    if (abp.matches(trackerWhitelist, requestData.url)) {
+
                         console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
                                  + " [" + tracker.parentCompany + "] " + requestData.url);
                         return
+
                     }
 
                     // for debugging specific requests. see test/tests/debugSite.js
