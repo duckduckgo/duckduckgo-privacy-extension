@@ -228,7 +228,8 @@ body {
             &:hover {
                 .popover.site_info__https-status__popover {
                     display: block;
-                    top: -40px;
+                    top: initial;
+                    bottom: 45px;
                 }
             }
         }
@@ -300,7 +301,8 @@ body {
             &:hover {
                 .popover.site_info__trackers__popover {
                     display: block;
-                    top: -40px;
+                    top: initial;
+                    bottom: 45px;
                 }
             }
 
