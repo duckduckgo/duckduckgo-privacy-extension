@@ -31,16 +31,6 @@ load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
     tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
 })
 
-// // Load the tracker whitelist
-// load.JSONfromLocalFile(settings.getSetting('trackerWhitelist'), (data) => {
-
-//     // quote regex special chars
-//     let quoted = data.trackers.map(d => d.replace(/[.?*+^$[\]\\(){}|-]/g, "\\$&"));
-//     whitelistRegExp = new RegExp(quoted.join('|'));
-
-//     console.log("tracker whitelist: ", whitelistRegExp);
-// })
-
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox
