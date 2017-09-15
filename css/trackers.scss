@@ -222,11 +222,14 @@ body {
             }
         }
 
-        .site-info__https-status__li {
+        .site-info__li--https-status {
             position: relative;
 
-            .popover.site_info__https-status__popover {
-                top: -40px;
+            &:hover {
+                .popover.site_info__https-status__popover {
+                    display: block;
+                    top: -40px;
+                }
             }
         }
 

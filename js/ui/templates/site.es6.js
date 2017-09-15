@@ -25,7 +25,7 @@ module.exports = function () {
                     ${renderUserPrivacyMsg(this.model.isUserPrivacyUpgraded)}
                 </div>
             </li>
-            <li class="site-info__https-status__li padded">
+            <li class="site-info__li--https-status padded">
                 <h2 class="site-info__https-status">
                     Connection
                     <div class="float-right">
@@ -39,7 +39,7 @@ module.exports = function () {
                     </div>
                 </h2>
                 ${popover(
-                    'site_info__https-status__popover js-https-popover',
+                    'site_info__https-status__popover',
                     httpsMsg(this.model.httpsState)
                 )}
             </li>
@@ -52,7 +52,7 @@ module.exports = function () {
                     </div>
                 </h2>
                 ${popover(
-                    'site_info__trackers__popover js-trackers-popover',
+                    'site_info__trackers__popover',
                     trackersMsg(this.model.trackerNetworks)
                 )}
             </li>
