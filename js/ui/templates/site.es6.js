@@ -76,20 +76,18 @@ module.exports = function () {
 
     function httpsMsg (httpsState) {
         let msg = ''
+        
         if (httpsState === 'Secure') {
-            return bel`<span>This page is securely using <em>HTTPS Encryption</em>.</span>`
+            return bel`<span>Connection is securely using <em>HTTPS Encryption</em>.</span>`
         }
         if (httpsState === 'Upgraded') {
-            return bel`<span>We have upgraded this page to use <em>HTTPS Encryption</em>.</span>`
+            return bel`<span>Connection has been upgraded to using <em>HTTPS Encryption</em>.</span>`
         }
         if (httpsState === 'Insecure') {
-            return bel`<span>There is no <em>HTTPS Encryption</em> available for this page.</span>`
+            return bel`<span>There is no <em>HTTPS Encryption</em> available for this connection.</span>`
         }
-        if (!msg) {
-            return bel`<span>
-                There is no <em>HTTPS Encryption</em> 
-                status available for this tab.</span>`
-        }
+
+        return bel`<span>There is no <em>HTTPS Encryption</em> available for this tab.</span>`
     }
 
     function trackersMsg (trackerNetworks) {
