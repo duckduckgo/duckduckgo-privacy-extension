@@ -192,6 +192,11 @@ a {
         font-weight: normal;
         background-color: $popover__bg-color;
         border-radius: $popover__border-radius;
+
+        em {
+            font-style: normal;
+            font-weight: bold;
+        }
     }
 
     .arrow {

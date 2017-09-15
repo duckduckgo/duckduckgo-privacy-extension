@@ -40,7 +40,7 @@ module.exports = function () {
                 </h2>
                 ${popover(
                     'site_info__https-status__popover',
-                    httpsMsg(this.model.httpsState)
+                    httpsMsg(this.model.httpsStatusText)
                 )}
             </li>
             <li class="site-info__li--trackers padded border--bottom">
@@ -75,7 +75,21 @@ module.exports = function () {
     }
 
     function httpsMsg (httpsState) {
-        return `foo https msg sldkfl ghhg sdkdk dkdkdk dkdkdkd kdkd d dkd dd`
+        let msg = ''
+        if (httpsState === 'Secure') {
+            return bel`<span>This page is securely using <em>HTTPS Encryption</em>.</span>`
+        }
+        if (httpsState === 'Upgraded') {
+            return bel`<span>We have upgraded this page to use <em>HTTPS Encryption</em>.</span>`
+        }
+        if (httpsState === 'Insecure') {
+            return bel`<span>There is no <em>HTTPS Encryption</em> available for this page.</span>`
+        }
+        if (!msg) {
+            return bel`<span>
+                There is no <em>HTTPS Encryption</em> 
+                status available for this tab.</span>`
+        }
     }
 
     function trackersMsg (trackerNetworks) {
