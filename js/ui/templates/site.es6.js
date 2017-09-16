@@ -129,7 +129,7 @@ module.exports = function () {
             if (trackerNetworks.major.length > 1) isPlural = true            
             trackerNetworks.major.map((tn, i) => {
                 msg += titleize(tn)
-                if (isPlural) msg += `,`
+                if (isPlural && i < trackerNetworks.major.length - 1) msg += `,`
                 msg += ` `
             })
             if (trackerNetworks.numOthers) {
