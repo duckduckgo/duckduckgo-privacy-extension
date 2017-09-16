@@ -53,7 +53,7 @@ module.exports = function () {
                 </h2>
                 ${popover(
                     'site_info__trackers__popover',
-                    trackersMsg(this.model.trackerNetworks)
+                    trackersMsg(this.model.trackerNetworks, this.model.isWhitelisted)
                 )}
             </li>
             <li class="site-info__li--more-details padded border--bottom">
@@ -74,9 +74,21 @@ module.exports = function () {
             </div>`
     }
 
+    function renderUserPrivacyMsg (upgraded) {
+        if (upgraded) {
+            return bel`<p class="site-info__user-privacy-msg">
+               ...but we have 
+               <span class="is-upgraded">improved the site!</span>
+               </p>`
+        } else {
+            return bel`<p class="site-info__user-privacy-msg">
+                ...for the <span>following reasons:</span></p>`
+        }
+    }
+
     function httpsMsg (httpsState) {
         let msg = ''
-        
+
         if (httpsState === 'Secure') {
             return bel`<span>Connection is securely using <em>HTTPS Encryption</em>.</span>`
         }
@@ -88,10 +100,6 @@ module.exports = function () {
         }
 
         return bel`<span>There is no <em>HTTPS Encryption</em> available for this tab.</span>`
-    }
-
-    function trackersMsg (trackerNetworks) {
-        return `foo trackers msg`
     }
 
     function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
@@ -111,15 +119,45 @@ module.exports = function () {
         }
     }
 
-    function renderUserPrivacyMsg (upgraded) {
-        if (upgraded) {
-            return bel`<p class="site-info__user-privacy-msg">
-               ...but we have 
-               <span class="is-upgraded">improved the site!</span>
-               </p>`
-        } else {
-            return bel`<p class="site-info__user-privacy-msg">
-                ...for the <span>following reasons:</span></p>`
+    function trackersMsg (trackerNetworks, isWhitelisted) {
+        if (!trackerNetworks) return
+
+        let msg = ``
+        let isPlural = false
+        if (trackerNetworks.major && trackerNetworks.major.length > 0) {
+            if (trackerNetworks.major.length > 1) isPlural = true            
+            trackerNetworks.major.map((tn, i) => {
+                msg += `${tn}`
+                if (isPlural) msg += `,`
+                msg += ` `
+            })
+            if (trackerNetworks.numOthers) {
+                msg += `and ${trackerNetworks.numOthers} other`
+                if (trackerNetworks.numOthers > 1) {
+                    msg += `s`
+                    isPlural = true
+                }
+                msg += ` `
+            }
+        } else if (trackerNetworks.numOthers) {
+            msg = `${numOthers} network`
+            if (trackerNetworks.numOthers.length > 1) {
+                msg += `s`
+                isPlural = true
+            }
+            msg += ` `
         }
+
+        if (!msg) {
+            return bel`<span>There are no tracker networks on this page.</span>`
+        }
+
+        const isOrAre = isPlural ? `are` : `is`
+        if (isWhitelisted) {
+            return bel`<span>${msg} ${isOrAre} <em>currently tracking</em> you.</span>`
+        } else {
+            return bel`<span>${msg} ${isOrAre} <em>blocked</em> from tracking you.</span>`            
+        }
+
     }
 }
