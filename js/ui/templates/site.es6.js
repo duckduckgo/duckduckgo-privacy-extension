@@ -1,4 +1,5 @@
 const bel = require('bel')
+const titleize = require('titleize')
 const toggleButton = require('./shared/toggle-button')
 const popover = require('./shared/popover.es6.js')
 
@@ -127,7 +128,7 @@ module.exports = function () {
         if (trackerNetworks.major && trackerNetworks.major.length > 0) {
             if (trackerNetworks.major.length > 1) isPlural = true            
             trackerNetworks.major.map((tn, i) => {
-                msg += `${tn}`
+                msg += titleize(tn)
                 if (isPlural) msg += `,`
                 msg += ` `
             })
