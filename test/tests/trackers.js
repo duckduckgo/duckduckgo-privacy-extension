@@ -33,7 +33,7 @@
 
   var thirdPartyTests = [
       { url: 'https://facebook.com', potentialTracker: 'https://facebook.com', block: false, message: 'don\'t block first party requests'},
-      { url: 'https://amazon.co.uk', potentialTracker: 'https://sometracker.co.uk', block: true, message: 'handle two part tld'},
+      { url: 'https://independent.co.uk', potentialTracker: 'https://amazon.co.uk', block: true, message: 'handle two part tld'},
       { url: 'https://amazon.co.uk', potentialTracker: 'https://subdomain.amazon.co.uk', block: false, message: 'handle two part tld'},
       { url: 'https://facebook.com', potentialTracker: 'https://reddit.com', block: true, message: 'should block third party request'},
       { url: 'https://facebook.com', potentialTracker: 'https://instagram.com', block: false, message: 'should not block third party requests owned by same parent company'}
@@ -43,7 +43,7 @@
       thirdPartyTests.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-          var toBlock = bkg.trackers.isTracker(test.url, test.potentialTracker, 0, fakeRequest);
+          var toBlock = bkg.trackers.isTracker(test.potentialTracker, test.url, 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, test.message);
       });
