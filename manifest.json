@@ -43,7 +43,7 @@
                 "js/atb.js",
                 "js/trackerLists.js",
                 "js/trackers.js",
-                "js/url-parse.js",
+                "js/tldjs.js",
                 "js/indexed-db.js",
                 "js/https.js",
                 "js/background.js",

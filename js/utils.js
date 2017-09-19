@@ -6,7 +6,7 @@ require.scopes.utils = ( () => {
     function extractHostFromURL (url) {
         if (!url) return;
 
-        let urlObj = new URLParser(url);
+        let urlObj = URLParser.parse(url);
         let hostname = urlObj.hostname;
         hostname = hostname.replace(/^www\./,'');
         return hostname;
