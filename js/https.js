@@ -62,7 +62,7 @@ class HTTPS {
             const loop = [host]
 
             // Check if host has an entry as a wildcarded subdomain in db
-            const subdomain = utils.extractSubdomainFromHost(host)
+            const subdomain = utils.extractTopSubdomainFromHost(host)
             if (subdomain && subdomain !== 'www') {
                 const wildcard = host.replace(subdomain, '*')
                 loop.push(wildcard)               
