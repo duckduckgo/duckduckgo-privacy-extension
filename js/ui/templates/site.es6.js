@@ -28,14 +28,14 @@ module.exports = function () {
             </li>
             <li class="site-info__li--https-status padded">
                 <h2 class="site-info__https-status">
+                    <span class="site-info__https-status__icon 
+                        ${this.model.httpsState}">
+                    </span>
                     Connection
                     <div class="float-right">
                         <span class="site-info__https-status__msg 
                             ${this.model.httpsStatusText.toLowerCase()}">
                             ${this.model.httpsStatusText}
-                        </span>
-                        <span class="site-info__https-status__icon 
-                            site-info__https-status__icon--${this.model.httpsState}">
                         </span>
                     </div>
                 </h2>

@@ -258,37 +258,31 @@ body {
 
         .site-info__https-status__icon {
             @include icon_display();
+            width: 10px;
+            height: 12px;
+            vertical-align: initial;
+            margin-right: 5px;
 
-            &.site-info__https-status__icon--default {
+            &.default, // default = secure, https
+            &.upgraded {
 
                 .is-browser--chrome & {
-                    background-image: url($icon__https-status__default--chrome);
+                    background-image: url($icon__https-status__locked--chrome);
                 }
 
                 .is-browser--moz & {
-                    background-image: url($icon__https-status__default--moz);
+                    background-image: url($icon__https-status__locked--moz);
                 }
             }
 
-            &.site-info__https-status__icon--upgraded {
+            &.none { // none = insecure, http
 
                 .is-browser--chrome & {
-                    background-image: url($icon__https-status__upgraded--chrome);
+                    background-image: url($icon__https-status__unlocked--chrome);
                 }
 
                 .is-browser--moz & {
-                    background-image: url($icon__https-status__upgraded--moz);
-                }
-            }
-
-            &.site-info__https-status__icon--none {
-
-                .is-browser--chrome & {
-                    background-image: url($icon__https-status__none--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__https-status__none--moz);
+                    background-image: url($icon__https-status__unlocked--moz);
                 }
 
             }

@@ -36,17 +36,18 @@ $popover__color: $white;
 $popover__bg-color: $slate;
 $popover__border-radius: 3px;
 
-/* Arrow */
+/* CSS Arrow */
 $arrow__bg-color: $white;
 $arrow__border-radius: 3px;
 
-/* Image & icon urls */
+/* Logo images */
 $img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 $img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 
 $img__logo__small--chrome: "chrome-extension://__MSG_@@extension_id__/img/ddg-logo-simple@2x.png";
 $img__logo__small--moz: "moz-extension://__MSG_@@extension_id__/img/ddg-logo-simple@2x.png";
 
+/* Rating icons */
 $icon__rating__A--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
 $icon__rating__A--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
 
@@ -59,17 +60,18 @@ $icon__rating__C--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-ratin
 $icon__rating__D--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
 $icon__rating__D--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
 
-$icon__https-status__default--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-green@2x.png";
-$icon__https-status__default--moz: "moz-extension://__MSG_@@extension_id__/img/lock-green@2x.png";
+/* HTTPS status icons */
+$icon__https-status__locked--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock--locked.svg";
+$icon__https-status__locked--moz: "moz-extension://__MSG_@@extension_id__/img/lock--locked.svg";
 
-$icon__https-status__upgraded--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-orange@2x.png";
-$icon__https-status__upgraded--moz: "moz-extension://__MSG_@@extension_id__/img/lock-orange@2x.png";
+$icon__https-status__unlocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock--unlocked.svg";
+$icon__https-status__unlocked--moz: "moz-extension://__MSG_@@extension_id__/img/lock--unlocked.svg";
 
-$icon__https-status__none--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock-red@2x.png";
-$icon__https-status__none--moz: "moz-extension://__MSG_@@extension_id__/img/lock-red@2x.png";
-
+/* Left carat/arrow icons */
 $icon__arrow--chrome: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
 $icon__arrow--moz: "moz-extension://__MSG_@@extension_id__/img/arrow@2x.png";
 
+/* Settings cog icon */
 $icon__settings--chrome: "chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
 $icon__settings--moz: "moz-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
+
