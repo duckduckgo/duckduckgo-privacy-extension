@@ -70,6 +70,11 @@
               assert.ok(site.score.tosdr.score === tosdr[tosdrUrl].score, 'site object has correct tosdr score')
           }
       }
+
+      // this should not have a tosdr entry
+      let site = new Site('instagram.x.com')
+      assert.ok(Object.keys(site.score.tosdr).length === 0, 'site should not have tosdr data')
+
   });
 
 })();
