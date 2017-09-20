@@ -124,7 +124,10 @@ module.exports = function () {
     }
 
     function trackersMsg (trackerNetworks, isWhitelisted) {
-        if (!trackerNetworks) return
+        const noTrackersMsg = `No tracker networks found on this page.`
+        if (!trackerNetworks) {
+            return bel`<span>${noTrackersMsg}</span>`
+        }
 
         let msg = ``
         let isPlural = false
@@ -153,7 +156,7 @@ module.exports = function () {
         }
 
         if (!msg) {
-            return bel`<span>There are no tracker networks on this page.</span>`
+            return bel`<span>${noTrackersMsg}</span>`
         }
 
         const isOrAre = isPlural ? `are` : `is`
