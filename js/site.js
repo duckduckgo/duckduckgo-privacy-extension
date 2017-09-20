@@ -27,6 +27,10 @@ class Score {
 
     getTosdr() {
         let result = {}
+
+        // return if the list hasn't been built yet
+        if (!tosdrRegexList) return result;
+
         tosdrRegexList.some(tosdrSite => {
             let match = tosdrSite.exec(this.domain)
             if (match) {
