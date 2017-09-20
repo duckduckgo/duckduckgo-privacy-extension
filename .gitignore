@@ -11,4 +11,5 @@ js/abp.js
 *.swp
 trackersWithParentCompany
 js/abp.js
+js/tldjs.js
 release
