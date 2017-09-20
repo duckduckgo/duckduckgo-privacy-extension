@@ -38,7 +38,6 @@ function getSitePoints (sites) {
 
     if (nProcessed % 5 === 0) process.stdout.write('.')
 
-    console.log(`GET: ${url}`)
     // get the detailed points data for this site
     request.get(url, (err, res, body) => {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
@@ -60,7 +59,6 @@ function getSitePoints (sites) {
 
         // get site url
         let servicesUrl = `${githubRepo}/services/${site}.json`
-        console.log(`GET: ${servicesUrl}`)
         request.get(servicesUrl, (err, res, body) => {
             let data = JSON.parse(body)
             if (data.url) {
