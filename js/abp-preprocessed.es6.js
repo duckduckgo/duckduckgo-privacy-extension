@@ -17,8 +17,6 @@ easylists = {
     }
 };
 
-trackerWhitelist = { };
-
 /*
  * Get the list data and use abp to parse.
  * The parsed list data will be added to 
@@ -47,12 +45,15 @@ function updateLists () {
             easylists[list].loaded = true;
         });
 
-        load.loadExtensionFile({url: settings.getSetting("trackerWhitelist")}, function(listData, response) {
-            console.log("loaded tracker whitelist: " + listData);
-            abp.parse(listData, trackerWhitelist);
-
-        });
     }
+
+    // Load tracker whitelist
+    // trackerWhitelist declared in trackers.js
+    load.loadExtensionFile({url: settings.getSetting("trackerWhitelist")}, function(listData, response) {
+        console.log("loaded tracker whitelist: " + listData);
+        abp.parse(listData, trackerWhitelist);
+
+    });
 }
 
 // Make sure the list updater runs on start up
