@@ -2,7 +2,7 @@
 // these are defined in abp.js
 var abp,
     easylists,
-    trackerWhitelist;
+    trackerWhitelist = {};
 
 var load = require('load'),
     settings = require('settings'),
