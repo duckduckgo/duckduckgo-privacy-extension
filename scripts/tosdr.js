@@ -6,7 +6,7 @@
 const request = require('request')
 const topics = require('./tosdr-topics.json')
 const fs = require('fs')
-
+const parser = require('tldjs')
 let processed = {}
 let nProcessed = 0
 
@@ -33,10 +33,12 @@ function getSitePoints (sites) {
     let site = sites.pop()
     nProcessed += 1
 
-    let url = `https://tosdr.org/api/1/service/${site}.json`
+    let githubRepo = 'https://raw.githubusercontent.com/tosdr/tosdr.org/master'
+    let url = `${githubRepo}/api/1/service/${site}.json`
 
     if (nProcessed % 5 === 0) process.stdout.write('.')
 
+    console.log(`GET: ${url}`)
     // get the detailed points data for this site
     request.get(url, (err, res, body) => {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
@@ -56,8 +58,17 @@ function getSitePoints (sites) {
                 addPoint(points, type, pointCase, point.tosdr.score)
         }
 
-        processed[site] = points;
-        resolve(getSitePoints(sites))
+        // get site url
+        let servicesUrl = `${githubRepo}/services/${site}.json`
+        console.log(`GET: ${servicesUrl}`)
+        request.get(servicesUrl, (err, res, body) => {
+            let data = JSON.parse(body)
+            if (data.url) {
+                let parsedUrl = parser.parse(data.url)
+                processed[parsedUrl.domain] = points
+            }
+            resolve(getSitePoints(sites))
+        })
     })
     })
 }
