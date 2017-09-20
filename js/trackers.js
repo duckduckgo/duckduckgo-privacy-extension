@@ -38,7 +38,7 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
 
     if (settings.getSetting('trackerBlockingEnabled')) {
         
-        let urlSplit = utils.parseURL(urlToCheck).hostname.split('.');
+        let urlSplit = tldjs.parse(urlToCheck).hostname.split('.');
         var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
         var blockSettings = settings.getSetting('blocking').slice(0);
@@ -179,8 +179,8 @@ function isRelatedEntity(parentCompany, currLocation) {
  * pull off any subdomains before comparison
  */
 function isFirstPartyRequest(currLocation, urlToCheck) {
-    let currentLocationParsed = URLParser.parse(currLocation)
-    let urlToCheckParsed = URLParser.parse(urlToCheck)
+    let currentLocationParsed = tldjs.parse(currLocation)
+    let urlToCheckParsed = tldjs.parse(urlToCheck)
 
     if (currentLocationParsed.domain === urlToCheckParsed.domain) {
         return true

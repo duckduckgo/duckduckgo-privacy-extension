@@ -1,12 +1,12 @@
-// url-parse node module. Defined in url-parse.js
-var URLParser;
+// node module defined in tldjs.js
+let tldjs
 
 require.scopes.utils = ( () => {
 
     function extractHostFromURL (url) {
         if (!url) return;
 
-        let urlObj = URLParser.parse(url);
+        let urlObj = tldjs.parse(url);
         let hostname = urlObj.hostname;
         hostname = hostname.replace(/^www\./,'');
         return hostname;
@@ -21,10 +21,10 @@ require.scopes.utils = ( () => {
          return false
      }
 
-    function parseURL (url){
+    function getProtocol (url){
         var a = document.createElement('a');
         a.href = url;
-        return a;
+        return a.protocol;
     }
 
     function parseUserAgentString (uaString) {
@@ -78,11 +78,11 @@ require.scopes.utils = ( () => {
     return {
         extractHostFromURL: extractHostFromURL,
         extractSubdomainFromHost: extractSubdomainFromHost,
-        parseURL: parseURL,
         parseUserAgentString: parseUserAgentString,
         syncToStorage: syncToStorage,
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
-        getCurrentTab: getCurrentTab
+        getCurrentTab: getCurrentTab,
+        getProtocol: getProtocol
     }
 })();

@@ -9,7 +9,7 @@
 
   tests.forEach(function(test) {
           var host = bkg.utils.extractHostFromURL(test.url);
-          var protocol = bkg.utils.parseURL(test.url).protocol
+          var protocol = bkg.utils.getProtocol(test.url)
           assert.ok(host === test.hostname, 'extracted correct host from url');
           assert.ok(protocol === test.protocol, 'extracted correct protocol from url');
   });
