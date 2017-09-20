@@ -245,8 +245,8 @@ body {
             @include icon_display();
             @include site_status_icons();
 
-            &.default, // default = secure, https
-            &.upgraded {
+            &.is-default, // default = secure, https
+            &.is-upgraded {
 
                 .is-browser--chrome & {
                     background-image: url($icon__https-status__locked--chrome);
@@ -257,7 +257,7 @@ body {
                 }
             }
 
-            &.none { // none = insecure, http
+            &.is-none { // none = insecure, http
 
                 .is-browser--chrome & {
                     background-image: url($icon__https-status__unlocked--chrome);
@@ -275,15 +275,15 @@ body {
             margin-right: 3px;
             font-weight: normal;
 
-            &.secure {
+            &.is-secure {
                 color: $color--green;
             }
 
-            &.upgraded {
+            &.is-upgraded {
                 color: $color--orange;
             }
 
-            &.insecure {
+            &.is-insecure {
                 color: $color--red;
             }
         }
@@ -301,6 +301,37 @@ body {
             }
 
             .site-info__trackers {
+
+                .site-info__trackers-status__icon {
+                    @include icon_display();
+                    @include site_status_icons();
+                    width: 14px;
+                    height: 9px;
+                    margin-left: -2px;
+
+                    &.is-blocking--true {
+
+                        .is-browser--chrome & {
+                            background-image: url($icon__trackers__blocked--chrome);
+                        }
+
+                        .is-browser--moz & {
+                            background-image: url($icon__trackers__blocked--moz);
+                        }
+                    }
+
+                    &.is-blocking--false { 
+
+                        .is-browser--chrome & {
+                            background-image: url($icon__trackers__unblocked--chrome);
+                        }
+
+                        .is-browser--moz & {
+                            background-image: url($icon__trackers__unblocked--moz);
+                        }
+
+                    }
+                }
 
                 .float-right {
                     max-width: 140px;

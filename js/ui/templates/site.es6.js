@@ -29,12 +29,12 @@ module.exports = function () {
             <li class="site-info__li--https-status padded">
                 <h2 class="site-info__https-status bold">
                     <span class="site-info__https-status__icon 
-                        ${this.model.httpsState}">
+                        is-${this.model.httpsState}">
                     </span>
                     Connection
                     <div class="float-right">
                         <span class="site-info__https-status__msg 
-                            ${this.model.httpsStatusText.toLowerCase()}">
+                            is-${this.model.httpsStatusText.toLowerCase()}">
                             ${this.model.httpsStatusText}
                         </span>
                     </div>
@@ -46,6 +46,9 @@ module.exports = function () {
             </li>
             <li class="site-info__li--trackers padded border--bottom">
                 <h2 class="site-info__trackers bold">
+                    <span class="site-info__trackers-status__icon 
+                        is-blocking--${!this.model.isWhitelisted}">
+                    </span>                
                     Tracker networks
                     <div class="float-right">
                         ${renderTrackerNetworks(this.model.trackerNetworks, !this.model.isWhitelisted)}

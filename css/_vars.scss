@@ -67,6 +67,13 @@ $icon__https-status__locked--moz: "moz-extension://__MSG_@@extension_id__/img/lo
 $icon__https-status__unlocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock--unlocked.svg";
 $icon__https-status__unlocked--moz: "moz-extension://__MSG_@@extension_id__/img/lock--unlocked.svg";
 
+/* Tracker network status icons */
+$icon__trackers__blocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/eye--see.svg";
+$icon__trackers__blocked--moz: "moz-extension://__MSG_@@extension_id__/img/eye--see.svg";
+
+$icon__trackers__unblocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/eye--dont-see.svg";
+$icon__trackers__unblocked--moz: "moz-extension://__MSG_@@extension_id__/img/eye--dont-see.svg";
+
 /* Left carat/arrow icons */
 $icon__arrow--chrome: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
 $icon__arrow--moz: "moz-extension://__MSG_@@extension_id__/img/arrow@2x.png";
