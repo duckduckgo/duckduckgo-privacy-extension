@@ -234,16 +234,16 @@ body {
             }
         }
 
-        .site-info__https-status {
-            font-weight: bold;
+        @mixin site_status_icons () {
+            width: 10px;
+            height: 12px;
+            vertical-align: initial;
+            margin-right: 5px;            
         }
 
         .site-info__https-status__icon {
             @include icon_display();
-            width: 10px;
-            height: 12px;
-            vertical-align: initial;
-            margin-right: 5px;
+            @include site_status_icons();
 
             &.default, // default = secure, https
             &.upgraded {

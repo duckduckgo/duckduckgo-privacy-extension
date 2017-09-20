@@ -27,7 +27,7 @@ module.exports = function () {
                 </div>
             </li>
             <li class="site-info__li--https-status padded">
-                <h2 class="site-info__https-status">
+                <h2 class="site-info__https-status bold">
                     <span class="site-info__https-status__icon 
                         ${this.model.httpsState}">
                     </span>
@@ -45,7 +45,7 @@ module.exports = function () {
                 )}
             </li>
             <li class="site-info__li--trackers padded border--bottom">
-                <h2 class="site-info__trackers">
+                <h2 class="site-info__trackers bold">
                     Tracker networks
                     <div class="float-right">
                         ${renderTrackerNetworks(this.model.trackerNetworks, !this.model.isWhitelisted)}
