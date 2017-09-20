@@ -20,7 +20,7 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-let tosdr, tosdrRegexList
+let tosdr, tosdrRegexList, tosdrListLoaded
 
 var db = require('db')
 var https = require('https')
@@ -28,6 +28,7 @@ var https = require('https')
 load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
     tosdr = data
     tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
+    tosdrListLoaded = true
 })
 
 // Set browser for popup asset paths
