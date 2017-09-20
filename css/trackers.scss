@@ -238,24 +238,6 @@ body {
             font-weight: bold;
         }
 
-        .site-info__https-status__msg {
-            @include uppercase_label();
-            margin-right: 3px;
-            font-weight: normal;
-
-            &.secure {
-                color: $color--green;
-            }
-
-            &.upgraded {
-                color: $color--orange;
-            }
-
-            &.insecure {
-                color: $color--red;
-            }
-        }
-
         .site-info__https-status__icon {
             @include icon_display();
             width: 10px;
@@ -285,6 +267,24 @@ body {
                     background-image: url($icon__https-status__unlocked--moz);
                 }
 
+            }
+        }
+
+        .site-info__https-status__msg {
+            @include uppercase_label();
+            margin-right: 3px;
+            font-weight: normal;
+
+            &.secure {
+                color: $color--green;
+            }
+
+            &.upgraded {
+                color: $color--orange;
+            }
+
+            &.insecure {
+                color: $color--red;
             }
         }
 
