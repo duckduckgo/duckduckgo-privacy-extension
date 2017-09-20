@@ -1,4 +1,4 @@
-// node module defined in tldjs.js
+// npm module defined in tldjs.js
 let tldjs
 
 require.scopes.utils = ( () => {
