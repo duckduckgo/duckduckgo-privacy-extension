@@ -1,8 +1,11 @@
 ITEMS   := rules html data public img js manifest.json
 
-release: grunt tosdr moveout
+release: npm grunt tosdr moveout
 
 dev: grunt moveout
+
+npm:
+	npm install --tldjs-update-rules
 
 grunt:
 	grunt build
