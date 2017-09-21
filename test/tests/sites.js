@@ -66,7 +66,7 @@
   QUnit.test('test tosdr site scores', function(assert) {
       for (var tosdrUrl in tosdr) {
           let site = new Site(tosdrUrl)
-          if (tosdr[tosdrUrl].score) {
+          if (tosdr[tosdrUrl].hasOwnProperty('score')) {
               assert.ok(site.score.tosdr.score === tosdr[tosdrUrl].score, 'site object has correct tosdr score')
           }
       }

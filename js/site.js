@@ -14,7 +14,7 @@ let tosdrRegexList
 let tosdrListLoaded
 load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
     tosdr = data
-    tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
+    tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
     tosdrListLoaded = true
 })
 

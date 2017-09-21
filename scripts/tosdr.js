@@ -6,7 +6,7 @@
 const request = require('request')
 const topics = require('./tosdr-topics.json')
 const fs = require('fs')
-const parser = require('tldjs')
+const tldjs = require('tldjs')
 let processed = {}
 let nProcessed = 0
 
@@ -62,7 +62,7 @@ function getSitePoints (sites) {
         request.get(servicesUrl, (err, res, body) => {
             let data = JSON.parse(body)
             if (data.url) {
-                let parsedUrl = parser.parse(data.url)
+                let parsedUrl = tldjs.parse(data.url)
                 processed[parsedUrl.domain] = points
             }
             resolve(getSitePoints(sites))
