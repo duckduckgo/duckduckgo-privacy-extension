@@ -14,7 +14,7 @@ let tosdrRegexList
 let tosdrListLoaded
 load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
     tosdr = data
-    tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`${x}\\.`))
+    tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
     tosdrListLoaded = true
 })
 
@@ -47,8 +47,7 @@ class Score {
             let match = tosdrSite.exec(this.domain)
             if (match) {
                 // remove period at end for lookup in pagesSeenOn
-                let name = match[0].slice(0,-1)
-                let tosdrData = tosdr[name]
+                let tosdrData = tosdr[match[0]]
 
                 return result = {
                     score: tosdrData.score,
