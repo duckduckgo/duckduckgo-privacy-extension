@@ -1,17 +1,5 @@
 {
-    "zoosk": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "youtube": {
+    "youtube.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -29,7 +17,7 @@
         },
         "class": "D"
     },
-    "yahoo": {
+    "yahoo.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -47,7 +35,7 @@
         },
         "class": false
     },
-    "xing": {
+    "xing.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -61,31 +49,7 @@
         },
         "class": false
     },
-    "xfire": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "world-of-warcraft": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "wordpress-com": {
+    "wordpress.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -101,19 +65,7 @@
         },
         "class": false
     },
-    "wordfeud": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "wikipedia": {
+    "wikipedia.org": {
         "score": 0,
         "all": {
             "bad": [],
@@ -130,21 +82,7 @@
         },
         "class": false
     },
-    "whatsapp": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to check tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "videobb": {
+    "vbulletin.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -156,19 +94,7 @@
         },
         "class": false
     },
-    "vbulletin": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "twitter": {
+    "twitter.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -189,7 +115,7 @@
         },
         "class": false
     },
-    "twitpic": {
+    "twitpic.com": {
         "score": 85,
         "all": {
             "bad": [
@@ -207,7 +133,7 @@
         },
         "class": "E"
     },
-    "tumblr": {
+    "tumblr.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -226,7 +152,7 @@
         },
         "class": false
     },
-    "steam": {
+    "steampowered.com": {
         "score": -65,
         "all": {
             "bad": [
@@ -254,7 +180,7 @@
         },
         "class": false
     },
-    "spotify": {
+    "spotify.com": {
         "score": 10,
         "all": {
             "bad": [
@@ -281,7 +207,7 @@
         },
         "class": false
     },
-    "soundcloud": {
+    "soundcloud.com": {
         "score": 20,
         "all": {
             "bad": [
@@ -306,7 +232,7 @@
         },
         "class": "B"
     },
-    "sonic-net": {
+    "sonic.net": {
         "score": 0,
         "all": {
             "bad": [],
@@ -320,7 +246,7 @@
         },
         "class": false
     },
-    "skype": {
+    "skype.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -335,7 +261,7 @@
         },
         "class": false
     },
-    "seenthis": {
+    "seenthis.net": {
         "score": 0,
         "all": {
             "bad": [],
@@ -351,7 +277,7 @@
         },
         "class": "A"
     },
-    "runescape": {
+    "phpbb.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -363,39 +289,7 @@
         },
         "class": false
     },
-    "rapidshare": {
-        "score": -50,
-        "all": {
-            "bad": [],
-            "good": [
-                "user is notified a month or more in advance",
-                "your personal data is used for limited purposes",
-                "they do not index or open files",
-                "99.X% availability",
-                "no third-party access without a warrant"
-            ]
-        },
-        "match": {
-            "bad": [],
-            "good": [
-                "no third-party access without a warrant"
-            ]
-        },
-        "class": false
-    },
-    "phpbb": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "owncube": {
+    "owncube.com": {
         "score": -25,
         "all": {
             "bad": [
@@ -413,19 +307,7 @@
         },
         "class": false
     },
-    "olx": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "netflix": {
+    "netflix.com": {
         "score": -20,
         "all": {
             "bad": [
@@ -452,52 +334,7 @@
         },
         "class": false
     },
-    "nabble": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to check tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "mint.com": {
-        "score": 20,
-        "all": {
-            "bad": [
-                "may sell your data in merger",
-                "user needs to rely on tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [
-                "may sell your data in merger"
-            ],
-            "good": []
-        },
-        "class": false
-    },
-    "microsoft-store": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to check tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "microsoft": {
+    "microsoft.com": {
         "score": 60,
         "all": {
             "bad": [
@@ -519,87 +356,7 @@
         },
         "class": false
     },
-    "lastpass": {
-        "score": -50,
-        "all": {
-            "bad": [
-                "no quality guarantee",
-                "promotional communications are not opt-out",
-                "no quality guarantee",
-                "user needs to check tosback.org",
-                "they can delete your account without prior notice and without a reason",
-                "responsible and indemnify",
-                "they become the owner of ideas you give them"
-            ],
-            "good": [
-                "pseudonyms allowed",
-                "info given about security practices",
-                "no third-party access without a warrant",
-                "only necessary logs are kept",
-                "only temporary session cookies",
-                "legal documents published under reusable license"
-            ]
-        },
-        "match": {
-            "bad": [],
-            "good": [
-                "no third-party access without a warrant"
-            ]
-        },
-        "class": "B"
-    },
-    "kolabnow": {
-        "score": -125,
-        "all": {
-            "bad": [],
-            "good": [
-                "no third-party access without a warrant",
-                "free software; you can run your own instance",
-                "only necessary logs are kept",
-                "no third-party access without a warrant",
-                "suspension will be fair and proportionate",
-                "personal data is not sold"
-            ]
-        },
-        "match": {
-            "bad": [],
-            "good": [
-                "no third-party access without a warrant",
-                "no third-party access without a warrant",
-                "personal data is not sold"
-            ]
-        },
-        "class": "A"
-    },
-    "kippt": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to rely on tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "jagex": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": [
-                "user is notified a week or more in advance"
-            ]
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "instagram": {
+    "instagram.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -616,7 +373,7 @@
         },
         "class": false
     },
-    "informe": {
+    "ifttt.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -630,21 +387,7 @@
         },
         "class": false
     },
-    "ifttt": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to check tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "identi-ca": {
+    "identi.ca": {
         "score": 0,
         "all": {
             "bad": [],
@@ -658,7 +401,7 @@
         },
         "class": false
     },
-    "hypster": {
+    "hypster.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -670,7 +413,7 @@
         },
         "class": false
     },
-    "habbo": {
+    "habbo.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -682,7 +425,7 @@
         },
         "class": false
     },
-    "gravatar": {
+    "gravatar.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -696,7 +439,7 @@
         },
         "class": false
     },
-    "grammarly": {
+    "grammarly.com": {
         "score": 20,
         "all": {
             "bad": [
@@ -715,7 +458,7 @@
         },
         "class": false
     },
-    "google": {
+    "google.com": {
         "score": 220,
         "all": {
             "bad": [
@@ -743,7 +486,7 @@
         },
         "class": "C"
     },
-    "github": {
+    "github.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -765,7 +508,7 @@
         },
         "class": "B"
     },
-    "freeforums": {
+    "freeforums.org": {
         "score": 0,
         "all": {
             "bad": [
@@ -779,7 +522,7 @@
         },
         "class": false
     },
-    "flickr": {
+    "flickr.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -795,7 +538,7 @@
         },
         "class": false
     },
-    "flattr": {
+    "flattr.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -809,21 +552,7 @@
         },
         "class": false
     },
-    "faranow": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to check tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "facebook": {
+    "facebook.com": {
         "score": 100,
         "all": {
             "bad": [
@@ -848,7 +577,7 @@
         },
         "class": false
     },
-    "evernote": {
+    "evernote.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -860,7 +589,7 @@
         },
         "class": false
     },
-    "envato": {
+    "ebuddy.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -872,19 +601,7 @@
         },
         "class": false
     },
-    "ebuddy": {
-        "score": 0,
-        "all": {
-            "bad": [],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "duckduckgo": {
+    "duckduckgo.com": {
         "score": -100,
         "all": {
             "bad": [],
@@ -900,7 +617,7 @@
         },
         "class": "A"
     },
-    "dropbox": {
+    "dropbox.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -912,7 +629,7 @@
         },
         "class": false
     },
-    "disqus": {
+    "disqus.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -928,7 +645,7 @@
         },
         "class": false
     },
-    "delicious": {
+    "delicious.com": {
         "score": 20,
         "all": {
             "bad": [
@@ -949,21 +666,7 @@
         },
         "class": "D"
     },
-    "coursera": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to rely on tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "couchsurfing": {
+    "couchsurfing.org": {
         "score": 20,
         "all": {
             "bad": [
@@ -986,7 +689,7 @@
         },
         "class": false
     },
-    "cloudant": {
+    "cloudant.com": {
         "score": 20,
         "all": {
             "bad": [
@@ -1013,7 +716,7 @@
         },
         "class": "B"
     },
-    "bit-ly": {
+    "bitly.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -1025,7 +728,7 @@
         },
         "class": false
     },
-    "bearshare": {
+    "bearshare.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -1037,7 +740,7 @@
         },
         "class": false
     },
-    "apple-icloud": {
+    "icloud.com": {
         "score": 0,
         "all": {
             "bad": [],
@@ -1049,7 +752,7 @@
         },
         "class": false
     },
-    "apple": {
+    "apple.com": {
         "score": 0,
         "all": {
             "bad": [
@@ -1063,7 +766,7 @@
         },
         "class": false
     },
-    "app-net": {
+    "app.net": {
         "score": 0,
         "all": {
             "bad": [
@@ -1085,7 +788,7 @@
         },
         "class": false
     },
-    "amazon": {
+    "amazon.com": {
         "score": 110,
         "all": {
             "bad": [
@@ -1106,21 +809,7 @@
         },
         "class": false
     },
-    "allrecipes": {
-        "score": 0,
-        "all": {
-            "bad": [
-                "user needs to check tosback.org"
-            ],
-            "good": []
-        },
-        "match": {
-            "bad": [],
-            "good": []
-        },
-        "class": false
-    },
-    "500px": {
+    "500px.com": {
         "score": 0,
         "all": {
             "bad": [

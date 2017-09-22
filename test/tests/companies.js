@@ -5,10 +5,10 @@
       bkg.Companies.clearData();
       
       var company = bkg.Companies.add('Twitter');
-      assert.ok(company.getCount() === 1, "has correct initial count");
+      assert.ok(company.get('count') === 1, "has correct initial count");
 
       company.incrementCount();
-      assert.ok(company.getCount() === 2, "increment count");
+      assert.ok(company.get('count') === 2, "increment count");
       
       bkg.Companies.clearData();
 
@@ -22,7 +22,7 @@
 
       sortedList.forEach(function(c){
           var newCompany = bkg.Companies.add(c);
-          newCompany.setCount(sortedData[c]);
+          newCompany.set('count', sortedData[c]);
       });
 
       var sortedTopBlocked = [];

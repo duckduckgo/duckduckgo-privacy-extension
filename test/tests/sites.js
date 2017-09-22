@@ -5,7 +5,7 @@
       bkg.settings.updateSetting('whitelist', '');
 
       var domain = "test.com";
-      var newSite = new bkg.site()
+      var newSite = new Site(domain)
 
       assert.ok(newSite.domain === domain, 'site has correct name');
       assert.ok(newSite.isWhiteListed() === undefined, 'site is not whitelisted by default');
@@ -14,7 +14,7 @@
       assert.ok(newSite.isWhiteListed() === true, 'whitelisting a site works');
 
       newSite.addTracker({url: 'doubleclick.net'});
-      var trackerList = newSite.trackers;
+      var trackerList = newSite.trackerUrls;
       assert.ok(trackerList.length === 1, "add a tracker and get list");
       assert.ok(trackerList.indexOf('doubleclick.net') !== -1, "tracker list has correct domain");
   });
@@ -44,7 +44,12 @@
           { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false}, result: 'D'},
           { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: true}, result: 'D'},
           { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 1, hasObscureTracker: true}, result: 'D'},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: 'C'}
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: 'C'},
+
+      // test tosdr scores
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 100}}, result: 'C'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: -100}}, result: 'A'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 0}}, result: 'B'}
       ]
 
       tests.map(test => {
@@ -56,6 +61,20 @@
 
           assert.ok(site.score.get() === test.result, "site should have the correct site score");
       });
+  });
+
+  QUnit.test('test tosdr site scores', function(assert) {
+      for (var tosdrUrl in tosdr) {
+          let site = new Site(tosdrUrl)
+          if (tosdr[tosdrUrl].hasOwnProperty('score')) {
+              assert.ok(site.score.tosdr.score === tosdr[tosdrUrl].score, 'site object has correct tosdr score')
+          }
+      }
+
+      // this should not have a tosdr entry
+      let site = new Site('instagram.x.com')
+      assert.ok(Object.keys(site.score.tosdr).length === 0, 'site should not have tosdr data')
+
   });
 
 })();

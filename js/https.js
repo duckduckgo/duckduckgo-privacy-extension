@@ -28,7 +28,7 @@ class HTTPS {
             reqUrl = reqUrl.toLowerCase()
 
             // Only deal with http calls
-            const protocol = URLParser.extractProtocol(reqUrl).protocol
+            const protocol = utils.getProtocol(reqUrl)
             if (!protocol.indexOf('http:') === 0) return resolve(reqUrl)
 
             // Obey global settings (options page)
@@ -62,7 +62,7 @@ class HTTPS {
             const loop = [host]
 
             // Check if host has an entry as a wildcarded subdomain in db
-            const subdomain = utils.extractSubdomainFromHost(host)
+            const subdomain = utils.extractTopSubdomainFromHost(host)
             if (subdomain && subdomain !== 'www') {
                 const wildcard = host.replace(subdomain, '*')
                 loop.push(wildcard)               
