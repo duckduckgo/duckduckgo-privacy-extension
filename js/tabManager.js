@@ -138,7 +138,7 @@ chrome.webRequest.onHeadersReceived.addListener( (request) => {
         tab.updateSite();
         Companies.incrementPages();
     }
-    // NOTE: this counts all pages, even request response codes in 300s, 400s:
+    // NOTE: this counts all pages visited, even those with 
+    // request response codes in 300s, 400s:
     tabManager.incrementTotalPagesVisited()
 }, {urls: ['<all_urls>'], types: ['main_frame']});
-
