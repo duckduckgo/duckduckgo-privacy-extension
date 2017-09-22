@@ -44,7 +44,16 @@ function updateLists () {
             abp.parse(listData, easylists[list].parsed)
             easylists[list].loaded = true;
         });
+
     }
+
+    // Load tracker whitelist
+    // trackerWhitelist declared in trackers.js
+    load.loadExtensionFile({url: settings.getSetting('trackerWhitelist')}, function(listData, response) {
+        console.log('loaded tracker whitelist: ' + listData);
+        abp.parse(listData, trackerWhitelist);
+
+    });
 }
 
 // Make sure the list updater runs on start up

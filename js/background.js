@@ -20,7 +20,6 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 var stats = require('stats');
-
 var db = require('db')
 var https = require('https')
 
@@ -167,10 +166,17 @@ chrome.webRequest.onBeforeRequest.addListener(
                     // the tab has finished loading
                     if (thisTab.status === "complete") thisTab.updateBadgeIcon()
 
-                    console.info( utils.extractHostFromURL(thisTab.url)
-                                 + " [" + tracker.parentCompany + "] " + tracker.url);
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+
+                    // Check tracker whitelist -- after trackers have counted against the grade
+                    if (abp.matches(trackerWhitelist, requestData.url)) {
+
+                        console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
+                                 + " [" + tracker.parentCompany + "] " + requestData.url);
+                        return
+
+                    }
 
                     // for debugging specific requests. see test/tests/debugSite.js
                     if (debugRequest && debugRequest.length) {
@@ -179,6 +185,9 @@ chrome.webRequest.onBeforeRequest.addListener(
                             return
                         }
                     }
+
+                    console.info( "blocked " + utils.extractHostFromURL(thisTab.url)
+                                 + " [" + tracker.parentCompany + "] " + requestData.url);
 
                     // tell Chrome to cancel this webrequest
                     return {cancel: true};
