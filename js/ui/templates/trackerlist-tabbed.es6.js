@@ -15,6 +15,11 @@ module.exports = function () {
                     <a href="#" class="js-nav-tab js-nav-tab-all">All Time</a>
                 </ul>
             </nav>
+            <div class="sliding-subview__privacy-footer">
+                <h3>Data Privacy</h3>
+                <p>These stats are only stored locally on your device,
+                and are not sent anywhere, ever.</p>
+            </div>
         </section>`;
 
     } else if (this.model.companyListMap) {

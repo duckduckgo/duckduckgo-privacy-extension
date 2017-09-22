@@ -397,6 +397,20 @@ body {
             padding-top: 15px;
             padding-bottom: 112px;
             margin-top: 15px;
+            max-height: 315px;
+        }
+
+        .sliding-subview__privacy-footer {
+            position: fixed;
+            height: 50px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 20px;
+
+            p {
+                margin-top: 7.5px;
+            }
         }
     }
 
