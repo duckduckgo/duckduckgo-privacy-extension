@@ -11,11 +11,13 @@ function TrackerList (ops) {
     Parent__SlidingSubview.call(this, ops);
     this.updateList();
 
-    // tab clicks
     this.setActiveTab();
     this.$navtab = this.$el.find('.js-nav-tab');
+    this.$reset = this.$el.find('.js-reset-trackers-data');
+
     this.bindEvents([
-        [this.$navtab, 'click', this.switchTabs]
+        [this.$navtab, 'click', this.switchTabs],
+        [this.$reset, 'click', this.resetTrackersStats]
     ]);
 
     // animate graph bars
@@ -64,7 +66,6 @@ TrackerList.prototype = $.extend({},
                     numCompanies: 10
                 });
                 this.model.getTopBlocked().then(() => {
-                    console.log("Render list");
                     this.renderList()
                 });
 
@@ -73,7 +74,7 @@ TrackerList.prototype = $.extend({},
                     modelName: 'siteTrackerList-' + Math.round(Math.random()*100000)
                 });
                 this.model.fetchAsyncData().then(() => {
-                    this.renderList();
+                    this.renderList()
                 });
             }
         },
@@ -84,6 +85,12 @@ TrackerList.prototype = $.extend({},
             this.$el.append(ol);
             this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg');
             this.animateGraphBars();
+        },
+
+        resetTrackersStats: function () {
+            this.model.fetch({resetTrackersData: true}).then(() =>{
+                console.log('TODO: pick up here on Monday, re-render lists')
+            })
         }
     }
 );

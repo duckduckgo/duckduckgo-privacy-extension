@@ -400,13 +400,21 @@ body {
             max-height: 315px;
         }
 
-        .sliding-subview__privacy-footer {
+        .sliding-subview__reset-stats {
             position: fixed;
             height: 50px;
             bottom: 0;
             left: 0;
             right: 0;
             padding: 15px 20px;
+
+            h3, a {
+                display: inline-block;
+            }
+
+            a { 
+                float: right;
+            }
 
             p {
                 margin-top: 7.5px;

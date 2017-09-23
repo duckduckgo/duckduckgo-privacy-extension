@@ -56,16 +56,24 @@ var Companies = ( () => {
         },
 
         clearData: () => { 
-            companyContainer = {};
-            topBlocked.clear();
+            companyContainer = {}
+            topBlocked.clear()
+            Companies.resetTotalPages()
+            Companies.syncToStorage()
         },
 
-        setPages: (n) => {
+        setTotalPagesFromStorage: (n) => {
             if (n) totalPages = n;
         },
 
-        incrementPages: () => {
+        incrementTotalPages: () => {
             totalPages += 1
+            Companies.syncToStorage()
+        },
+
+        resetTotalPages: () => {
+            totalPages = 0
+            Companies.syncToStorage()
         },
 
         syncToStorage: () => {
@@ -77,14 +85,14 @@ var Companies = ( () => {
 
         buildFromStorage: () => {
              utils.getFromStorage(storageName, function(storageData){
-                 for(company in storageData){
+                 for (company in storageData) {
                      let newCompany = Companies.add(company);
-                     newCompany.set('count',storageData[company].count || 0);
-                     newCompany.set('pagesSeenOn',storageData[company].pagesSeenOn || 0);
+                     newCompany.set('count', storageData[company].count || 0);
+                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0);
                  }
              });
 
-             utils.getFromStorage('totalPages', n => Companies.setPages(n))
+             utils.getFromStorage('totalPages', n => Companies.setTotalPagesFromStorage(n))
          }
      };
 })();
@@ -101,9 +109,10 @@ chrome.tabs.onUpdated.addListener( (id,info) => {
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getTopBlocked) {
         res(Companies.getTopBlocked(req.getTopBlocked))
-    }
-    else if (req.getTopBlockedByPages) {
+    } else if (req.getTopBlockedByPages) {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
+    } else if (req.resetTrackersData) {
+        Companies.clearData()
     }
     return true;
 });

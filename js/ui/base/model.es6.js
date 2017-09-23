@@ -104,9 +104,9 @@ BaseModel.prototype = $.extend({},
 
         /**
          * Send messages to background
-         * this.model.fetch({"messageName": messageValue}).then((response) ..
+         * this.model.fetch({'messageName': messageValue}).then((response) ..
          **/
-        fetch: function(message) {
+        fetch: function (message) {
             return new Promise( (resolve, reject) => {
                 chrome.runtime.sendMessage(message, ((result) => {
                         resolve(result)

@@ -15,8 +15,9 @@ module.exports = function () {
                     <a href="#" class="js-nav-tab js-nav-tab-all">All Time</a>
                 </ul>
             </nav>
-            <div class="sliding-subview__privacy-footer">
+            <div class="sliding-subview__reset-stats">
                 <h3>Data Privacy</h3>
+                <a href="#" class="js-reset-trackers-data">Reset stats</a>
                 <p>These stats are only stored locally on your device,
                 and are not sent anywhere, ever.</p>
             </div>

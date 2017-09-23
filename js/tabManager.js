@@ -57,15 +57,6 @@ class TabManager {
 
         settings.updateSetting(list, globalwhitelist)
     }
-
-    incrementTotalPagesVisited () {
-        const count = settings.getSetting('total_pages_count') + 1 || 1 
-        settings.updateSetting('total_pages_count', count)
-    }
-
-    resetTotalPagesVisited () {
-        settings.updateSetting('total_pages_count', 0)
-    }
 }
 
 var tabManager = new TabManager();
@@ -136,9 +127,6 @@ chrome.webRequest.onHeadersReceived.addListener( (request) => {
     if (tab) {
         tab.url = request.url;
         tab.updateSite();
-        Companies.incrementPages();
+        Companies.incrementTotalPages();
     }
-    // NOTE: this counts all pages visited, even those with 
-    // request response codes in 300s, 400s:
-    tabManager.incrementTotalPagesVisited()
 }, {urls: ['<all_urls>'], types: ['main_frame']});
