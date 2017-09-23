@@ -59,12 +59,12 @@ class TabManager {
     }
 
     incrementTotalPagesVisited () {
-        const count = settings.getSetting('total_pages') + 1 || 1 
-        settings.updateSetting('total_pages', count)
+        const count = settings.getSetting('total_pages_count') + 1 || 1 
+        settings.updateSetting('total_pages_count', count)
     }
 
     resetTotalPagesVisited () {
-        settings.updateSetting('total_pages', 0)
+        settings.updateSetting('total_pages_count', 0)
     }
 }
 
