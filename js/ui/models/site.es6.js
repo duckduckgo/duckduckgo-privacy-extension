@@ -41,7 +41,7 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       getBackgroundTabData: function () {
-          console.log('[view] getBackgroundTabData()')
+          // console.log('[view] getBackgroundTabData()')
           let self = this;
 
           this.fetch({getCurrentTab: true}).then((tab) => {
@@ -103,7 +103,7 @@ Site.prototype = $.extend({},
       },
 
       update: function (ops) {
-          console.log('[model] update()')
+          // console.log('[model] update()')
 
           if (this.tab) {
               const updatedTrackersCount = this._getUniqueTrackersCount()
@@ -136,22 +136,21 @@ Site.prototype = $.extend({},
       },
 
       _getUniqueTrackersCount: function () {
-          console.log('[model] _getUniqueTrackersCount()')
+          // console.log('[model] _getUniqueTrackersCount()')
           return Object.keys(this.tab.trackers).reduce((total, name) => {
               return this.tab.trackers[name].urls.length + total
           }, 0)
       },
 
       _getUniqueTrackersBlockedCount: function () {
-          console.log('[model] _getUniqueTrackersBlockedCount()')
+          // console.log('[model] _getUniqueTrackersBlockedCount()')
           return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
               return this.tab.trackersBlocked[name].urls.length + total
           }, 0)
       },
 
       _getTrackerNetworksOnPage: function () {
-          console.log('[model] _getMajorTrackerNetworksOnPage()')
-
+          // console.log('[model] _getMajorTrackerNetworksOnPage()')
           // all tracker networks found on this page/tab
           const networks = Object.keys(this.tab.trackers)
                               .map((t) => t.toLowerCase())
@@ -167,7 +166,7 @@ Site.prototype = $.extend({},
       },
 
       _getIsUserPrivacyUpgraded: function () {
-          console.log('setIsUserPrivacyUpgraded()')
+          // console.log('setIsUserPrivacyUpgraded()')
           if (!this.tab) return false
 
           if (this.tab.upgradedHttps || 
@@ -179,7 +178,7 @@ Site.prototype = $.extend({},
       },
 
       _getSiteRating: function () {
-          console.log('[model] _getSiteRating()')
+          // console.log('[model] _getSiteRating()')
           if (this.tab) {
             this.fetch({getSiteScore: this.tab.id}).then((rating) => {
                 if (rating) this.update({siteRating: rating})
@@ -188,7 +187,7 @@ Site.prototype = $.extend({},
       },      
 
       updateTrackerCount: function (message) {
-          console.log('[model] updateTrackerCount()')
+          // console.log('[model] updateTrackerCount()')
           let self = this
           if (message.change.attribute === 'updateTrackerCount') {
               if (!this.tab) return

@@ -22,7 +22,7 @@ module.exports = function () {
                 and are not sent anywhere, ever.</p>
             </div>
         </section>`
-    } else if (this.model.companyListMap) {
+    } else if (this.model && this.model.companyListMap) {
         if (this.model.companyListMap.length > 0) {
             return bel`<ol class="default-list top-blocked__list card js-top-blocked-list">
                 ${trackerListItems(this.model.companyListMap)}

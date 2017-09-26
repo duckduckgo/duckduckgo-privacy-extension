@@ -42,8 +42,7 @@ var Companies = ( () => {
                 let c = Companies.get(name);
                 topBlockedData.push({name: c.name, count: c.count});
             });
-            return topBlockedData;
-            
+            return topBlockedData;    
         },
 
         getTopBlockedByPages: (n) => {
@@ -58,7 +57,7 @@ var Companies = ( () => {
         clearData: () => { 
             companyContainer = {}
             topBlocked.clear()
-            Companies.resetTotalPages()
+            totalPages = 0
             Companies.syncToStorage()
         },
 
@@ -68,11 +67,6 @@ var Companies = ( () => {
 
         incrementTotalPages: () => {
             totalPages += 1
-            Companies.syncToStorage()
-        },
-
-        resetTotalPages: () => {
-            totalPages = 0
             Companies.syncToStorage()
         },
 
@@ -113,6 +107,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
     } else if (req.resetTrackersData) {
         Companies.clearData()
+        res()
     }
     return true;
 });

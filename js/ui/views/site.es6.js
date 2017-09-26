@@ -48,8 +48,7 @@ Site.prototype = $.extend({},
         },
 
         rerender: function () {    
-            console.log('[view] rerender()') 
-
+            // console.log('[view] rerender()') 
             if (this.model.disabled) {
                 this.$body.addClass('disabled');
             } else {
