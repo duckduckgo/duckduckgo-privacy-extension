@@ -28,7 +28,7 @@ module.exports = function () {
                 ${trackerListItems(this.model.companyListMap)}
             </ol>`
         } else {
-            return bel`<ol class="default-list top-blocked__list">
+            return bel`<ol class="default-list top-blocked__list js-top-blocked-list">
                 <li class="top-blocked__li top-blocked__li--no-data">
                     ${trackerListNoData()}
                 </li>
