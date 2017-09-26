@@ -1,33 +1,31 @@
 const fs = require('fs');
-const webdriver = require('selenium-webdriver');
-const By = webdriver.By;
-const until = webdriver.until;
+const {Builder, By, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
 
 const EXT_PATH = '../build/chrome-zeroclick-latest.crx',
-    BASE_URL = 'chrome-extension://ifojdgcpkiaobdlcoalkcahfjfkhjnhm/html/';
+    BASE_URL = 'chrome-extension://ifojdgcpkiaobdlcoalkcahfjfkhjnhm/';
 
-const chromeCapabilities = webdriver.Capabilities.chrome();
-chromeCapabilities.set('chromeOptions', {args: ['--headless']});
+// const chromeCapabilities = webdriver.Capabilities.chrome();
+// chromeCapabilities.set('chromeOptions', {args: ['--headless']});
 
-const options =  new chrome.Options().addExtensions(EXT_PATH);
-
-const driver = new webdriver.Builder()
+const driver = new Builder()
   .forBrowser('chrome')
-  // .setChromeOptions(options)
-  .withCapabilities(chromeCapabilities)
+  .setChromeOptions(new chrome.Options().addArguments("load-extension=./"))
   .build();
 
+const numPages = 2;
+const url = `${BASE_URL}/test/html/screenshots.html?numberToTest=${numPages}&json=true`;
+
+console.log(url);
+
 // Navigate to google.com, enter a search.
-driver.get('https://www.duckduckgo.com/');
-driver.findElement(By.name('q')).sendKeys('webdriver');
-driver.findElement(By.id('search_button_homepage')).click();
-driver.wait(until.titleIs('webdriver at DuckDuckGo'), 1000);
+driver.get(url);
+driver.wait(until.elementLocated(By.id('screenshots')));
 
 // Take screenshot of results page. Save to disk.
 driver.takeScreenshot().then(base64png => {
   fs.writeFileSync('screenshot.png', new Buffer(base64png, 'base64'));
 });
 
-driver.quit();
+// driver.quit();
