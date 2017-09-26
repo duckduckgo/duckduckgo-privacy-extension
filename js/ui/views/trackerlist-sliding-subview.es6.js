@@ -88,8 +88,8 @@ TrackerList.prototype = $.extend({},
         },
 
         resetTrackersStats: function () {
-            this.model.fetch({resetTrackersData: true}).then(() =>{
-                console.log('TODO: pick up here on Monday, re-render lists')
+            this.model.fetch({resetTrackersData: true}).then(() => {
+                this.updateList()
             })
         }
     }
