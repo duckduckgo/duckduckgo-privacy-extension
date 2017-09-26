@@ -1,10 +1,10 @@
-const bel = require('bel');
-const trackerListItems = require('./shared/trackerlist-items.es6.js');
+const bel = require('bel')
+const trackerListItems = require('./shared/trackerlist-items.es6.js')
+const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
 
 module.exports = function () {
 
     if (!this.model) {
-
         return bel`<section class="sliding-subview sliding-subview--trackers-blocked sliding-subview--has-fixed-header">
             <nav class="sliding-subview__header card">
                 <a href="#" class="sliding-subview__header__title sliding-subview__header__title--has-icon js-sliding-subview-close">
@@ -21,18 +21,18 @@ module.exports = function () {
                 <p>These stats are only stored locally on your device,
                 and are not sent anywhere, ever.</p>
             </div>
-        </section>`;
-
+        </section>`
     } else if (this.model.companyListMap) {
         if (this.model.companyListMap.length > 0) {
-            return bel`
-            <ol class="default-list top-blocked__list card js-top-blocked-list">
-                ${trackerListItems(this.model.companyListMap)}
-            </ol>`;
-        } else {
             return bel`<ol class="default-list top-blocked__list card js-top-blocked-list">
-                <li class="top-blocked__li top-blocked__li--no-trackers">No trackers found here... <br />Phew!</li>
-            </ol>`;
+                ${trackerListItems(this.model.companyListMap)}
+            </ol>`
+        } else {
+            return bel`<ol class="default-list top-blocked__list">
+                <li class="top-blocked__li top-blocked__li--no-data">
+                    ${trackerListNoData()}
+                </li>
+            </ol>`
         }
     }
 

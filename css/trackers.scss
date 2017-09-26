@@ -437,11 +437,49 @@ body {
         margin-left: 20px;
         margin-right: 20px;
 
-        &.top-blocked__li--no-trackers {
-            padding: 7px 7px 28px 7px;
-            font-weight: bold;
-            font-size: 15px;
-            color: $platinum-darker;
+        &.top-blocked__li--no-data {
+            text-align: center;
+            padding-top: 0;
+
+            p {
+                color: $grey;
+                font-size: 15px;
+                margin-bottom: 15px;
+            }
+
+            .top-blocked__no-data__graph {
+                width: 80px;
+                height: 50px;
+                padding: 10px 15px;
+                margin: 0 auto 15px auto;
+                border-radius: 5px;
+                background: $platinum-light;
+
+                .top-blocked__no-data__graph__bar {
+                    width: 5px;
+                    background-color: #F1F2F6;
+                    border-radius: 5px;
+                    display: inline-block;
+                    margin-right: 10px;
+                    vertical-align: bottom;
+
+                    &.one {
+                        height: 100%;
+                    }
+
+                    &.two {
+                        height: 75%;
+                    }
+
+                    &.three {
+                        height: 50%;
+                    }
+
+                    &.four {
+                        height: 25%;
+                    }
+                }
+            }
         }
 
         .top-blocked__li__blocker-bar {
