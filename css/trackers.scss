@@ -449,7 +449,7 @@ body {
 
             .top-blocked__no-data__graph {
                 width: 80px;
-                height: 50px;
+                height: 40px;
                 padding: 10px 15px;
                 margin: 0 auto 15px auto;
                 border-radius: 5px;
@@ -460,7 +460,7 @@ body {
                     background-color: #F1F2F6;
                     border-radius: 5px;
                     display: inline-block;
-                    margin-right: 10px;
+                    margin-right: 15px;
                     vertical-align: bottom;
 
                     &.one {
@@ -477,6 +477,10 @@ body {
 
                     &.four {
                         height: 25%;
+                    }
+
+                    &:last-child {
+                        margin-right: 0;
                     }
                 }
             }
