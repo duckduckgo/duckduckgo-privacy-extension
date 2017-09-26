@@ -15,8 +15,8 @@ const options =  new chrome.Options().addExtensions(EXT_PATH);
 
 const driver = new webdriver.Builder()
   .forBrowser('chrome')
+  // .setChromeOptions(options)
   .withCapabilities(chromeCapabilities)
-  .setChromeOptions(options)
   .build();
 
 // Navigate to google.com, enter a search.
