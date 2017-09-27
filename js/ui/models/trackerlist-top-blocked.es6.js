@@ -24,8 +24,8 @@ TrackerListTopBlocked.prototype = $.extend({},
                             percent: company.percent,
                             // calc graph bars using pixels instead of % to
                             // make margins easier
-                            // max width: 300 - (horizontal css padding) = 260
-                            px: Math.floor(company.percent / 100 * 260)
+                            // max width: 165px
+                            px: Math.floor(company.percent / 100 * 165)
                           }
                       })
                       resolve()
