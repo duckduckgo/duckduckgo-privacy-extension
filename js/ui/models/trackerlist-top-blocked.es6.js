@@ -15,28 +15,22 @@ TrackerListTopBlocked.prototype = $.extend({},
 
       getTopBlocked: function () {
           return new Promise((resolve, reject) => {
-              this.fetch({getTopBlocked: this.numCompanies}).then((list) => {
-                  this.companyList = list
-
-                  // find company with largest number of trackers
-                  let maxCount = 0;
-                  if (this.companyList && this.companyList.length) {
-                      maxCount = this.companyList[0].count;
-                  }
-
-                  this.companyListMap = this.companyList.map((company) => {
-                          // calc max using pixels instead of % to
-                          // make margins easier
-                          // max width: 300 - (horizontal padding in css) = 260
+              this.fetch({getTopBlockedByPages: this.numCompanies})
+                  .then((list) => {
+                      this.companyList = list
+                      this.companyListMap = this.companyList.map((company) => {
                           return {
                             name: company.name,
-                            count: company.count,
-                            px: Math.floor(company.count * 260 / maxCount)
+                            percent: company.percent,
+                            // calc graph bars using pixels instead of % to
+                            // make margins easier
+                            // max width: 300 - (horizontal css padding) = 260
+                            px: Math.floor(company.percent / 100 * 260)
                           }
-                  })
-                  resolve()
+                      })
+                      resolve()
                 })
-            })
+          })
       }
   }
 )

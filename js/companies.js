@@ -8,7 +8,7 @@ var Companies = ( () => {
     function sortByCount(a, b){
         return companyContainer[b].count - companyContainer[a].count;
     }
-    
+
     function sortByPages(a, b){
         return companyContainer[b].pagesSeenOn - companyContainer[a].pagesSeenOn;
     }
@@ -42,19 +42,22 @@ var Companies = ( () => {
                 let c = Companies.get(name);
                 topBlockedData.push({name: c.name, count: c.count});
             });
-            return topBlockedData;    
+            return topBlockedData;
         },
 
         getTopBlockedByPages: (n) => {
             var topBlockedData = [];
             topBlocked.getTop(n, sortByPages).forEach((name) => {
                 let c = Companies.get(name);
-                topBlockedData.push({name: c.name, count: Math.round((c.pagesSeenOn/totalPages)*100)});
+                topBlockedData.push({
+                    name: c.name,
+                    percent: Math.round((c.pagesSeenOn/totalPages)*100)
+                });
             });
             return topBlockedData;
         },
 
-        clearData: () => { 
+        clearData: () => {
             companyContainer = {}
             topBlocked.clear()
             totalPages = 0
