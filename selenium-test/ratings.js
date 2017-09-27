@@ -2,6 +2,7 @@ const fs = require('fs');
 const {Builder, By, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
+require('runtimer');
 
 const EXT_PATH = '../build/chrome-zeroclick-latest.crx',
       EXTENSIONS_URL = 'chrome://extensions';
