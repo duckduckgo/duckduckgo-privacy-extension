@@ -38,7 +38,7 @@ function buildSummary() {
             delete x.on
             delete x.off
         })
-        $('#screenshots').append(`<h2>JSON Output</h2>\n ${JSON.stringify(screenshots, null, 4)}`);
+        $('#screenshots').append(`<h2>JSON Output</h2> <p id="json-data">${JSON.stringify(screenshots, null, 4)}</p>`);
     }
 }
 
