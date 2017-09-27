@@ -7,7 +7,6 @@ function TrackerListTopBlocked (attrs) {
     Parent.call(this, attrs)
 }
 
-
 TrackerListTopBlocked.prototype = $.extend({},
   Parent.prototype,
   {
@@ -24,9 +23,9 @@ TrackerListTopBlocked.prototype = $.extend({},
                   if (this.companyList && this.companyList.length) {
                       maxCount = this.companyList[0].count;
                   }
-                  
+
                   this.companyListMap = this.companyList.map((company) => {
-                          // calc max using pixels instead of % to 
+                          // calc max using pixels instead of % to
                           // make margins easier
                           // max width: 300 - (horizontal padding in css) = 260
                           return {
@@ -35,8 +34,6 @@ TrackerListTopBlocked.prototype = $.extend({},
                             px: Math.floor(company.count * 260 / maxCount)
                           }
                   })
-                  console.log('MODEL: getTopBlocked() this.companyListMap')
-                  console.log(this.companyListMap)
                   resolve()
                 })
             })

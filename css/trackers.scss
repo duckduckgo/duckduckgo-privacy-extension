@@ -188,30 +188,30 @@ body {
                 width: 48px;
                 border-radius: 48px;
                 color: $white;
-             
+
 
                 &.site-info__rating--a {
                     background-color: $color--green;
-                }  
+                }
 
                 &.site-info__rating--b {
                     background-color: $color--light-green;
-                }  
-                
+                }
+
                 &.site-info__rating--c {
                     background-color: $color--orange;
-                }  
-                
+                }
+
                 &.site-info__rating--d {
                     background-color: $color--red;
-                }  
+                }
             }
         }
 
         .site-info__user-privacy-msg {
             text-align: center;
             margin-top: 15px;
-            
+
             span {
                 font-weight: bold;
                 color: $color--red;
@@ -238,7 +238,7 @@ body {
             width: 10px;
             height: 12px;
             vertical-align: initial;
-            margin-right: 5px;            
+            margin-right: 5px;
         }
 
         .site-info__https-status__icon {
@@ -320,7 +320,7 @@ body {
                         }
                     }
 
-                    &.is-blocking--false { 
+                    &.is-blocking--false {
 
                         .is-browser--chrome & {
                             background-image: url($icon__trackers__unblocked--chrome);
@@ -372,7 +372,7 @@ body {
         font-weight: bold;
         display: block;
         $settings-padding-lr: 14px + 3px;
-        padding: $card__margin--top $settings-padding-lr 7px 20px;
+        padding: 0 $settings-padding-lr 7px 20px;
         position: relative;
 
         .icon__settings {
@@ -385,6 +385,10 @@ body {
         .top-blocked__list {
             padding-top: 10px;
             padding-bottom: 10px;
+
+            .top-blocked__li--no-data {
+                margin-top: 15px;
+            }
         }
     }
 
@@ -412,7 +416,7 @@ body {
                 display: inline-block;
             }
 
-            a { 
+            a {
                 float: right;
             }
 

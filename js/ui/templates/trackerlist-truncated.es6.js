@@ -1,12 +1,14 @@
-const bel = require('bel');
-const trackerListItems = require('./shared/trackerlist-items.es6.js');
+const bel = require('bel')
+const trackerListItems = require('./shared/trackerlist-items.es6.js')
+const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
 
 module.exports = function () {
 
     if (this.model.companyListMap && this.model.companyListMap.length > 0) {
-
         return bel`<section class="top-blocked card">
-            <h3 class="menu-title padded border--bottom">Top blocked companies over time</h3>
+            <h3 class="menu-title padded border--bottom">
+                Top blocked companies over time
+            </h3>
             <ul class="default-list top-blocked__list">
                 ${trackerListItems(this.model.companyListMap)}
                 <li class="top-blocked__li top-blocked__li--see-all border--top">
@@ -16,20 +18,15 @@ module.exports = function () {
                     </a>
                 </li>
             </ul>
-        </section>`;
-
+        </section>`
     } else {
-
-        return bel`<section class="top-blocked card">
-                    <h3 class="menu-title">Top blocked over time</h3>
-                    <ul class="default-list top-blocked__list">
-                        <li class="top-blocked__li top-blocked__li--no-trackers">
-                            No data collected yet... <br />
-                            Start browsing the web and check back in a bit!
-                        </li>
-                    </ul>
-            </section>`;
-
+        return bel`<section class="top-blocked">
+            <ol class="default-list top-blocked__list">
+                <li class="top-blocked__li top-blocked__li--no-data">
+                    ${trackerListNoData()}
+                </li>
+            </ol>
+        </section>`
     }
 }
 
