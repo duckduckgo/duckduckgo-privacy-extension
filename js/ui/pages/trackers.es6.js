@@ -76,7 +76,7 @@ Trackers.prototype = $.extend({},
 
             this.views.trackerlist = new TrackerListView({
                 pageView: this,
-                model: new TrackerListModel({ numCompanies: 2 }),
+                model: new TrackerListModel({ numCompanies: 3 }),
                 appendTo: this.$parent,
                 template: trackerListTemplate,
             });
