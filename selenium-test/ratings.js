@@ -19,13 +19,12 @@ const url = `${BASE_URL}/test/html/screenshots.html?numberToTest=${numPages}&jso
 
 console.log(url);
 
-// Navigate to google.com, enter a search.
 driver.get(url);
 driver.wait(until.elementLocated(By.id('screenshots')));
 
 // Take screenshot of results page. Save to disk.
 driver.takeScreenshot().then(base64png => {
-  fs.writeFileSync('screenshot.png', new Buffer(base64png, 'base64'));
+  fs.writeFileSync('screenshots/screenshot.png', new Buffer(base64png, 'base64'));
 });
 
 // driver.quit();
