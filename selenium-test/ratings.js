@@ -12,26 +12,34 @@ const driver = new Builder()
     .build();
 
 const numPages = 2;
+var EXT_ID;
 
-driver.get(EXTENSIONS_URL);
 console.log(`Requesting: ${EXTENSIONS_URL}`);
-driver.wait(until.elementLocated(By.className('options-link'), 'Options button should exist'), 4000).then(optionsLink => {
-    driver.findElement(By.className('options-link')).click();
-    driver.wait(until.titleIs('DuckDuckGo Options'), 1000);
-    const url = driver.getCurrentUrl().then(value => {
-        console.log(value);
+driver.get(EXTENSIONS_URL);
+driver.wait(until.elementLocated(By.linkText('Options')), 4000).then(optionsLink => {
+
+    optionsLink.getAttribute('href').then(href => {
+        EXT_ID = href.replace('chrome-extension://', '').replace('/html/options.html', '');
+        console.log(`Found Extension ID: ${EXT_ID}`);
+
+        const TEST_URL = `chrome-extension://${EXT_ID}/test/html/screenshots.html?numberToTest=${numPages}&json=true`;
+
+        console.log(`Running Tests...`);
+        driver.get(TEST_URL);
+        driver.wait(until.elementLocated(By.id('json-data'))).then(jsonData => {
+            console.log(`JSON Data:`);
+            jsonData.getText().then(text => {
+                console.log(text);
+                fs.writeFileSync('test-result.json', text);
+                console.log(`JSON Data written to file: test-result.json`);
+            });
+        });
+
+        // Take screenshot of results page. Save to disk.
+        // driver.takeScreenshot().then(base64png => {
+        //     fs.writeFileSync('screenshots/screenshot.png', new Buffer(base64png, 'base64'));
+        // });
     });
 });
-
-const EXT_ID = 'jkedpfmglkofeglhlegkmoagmiapgdab',
-    BASE_URL = `chrome-extension://${EXT_ID}`,
-    TEST_URL = `${BASE_URL}/test/html/screenshots.html?numberToTest=${numPages}&json=true`;
-
-driver.wait(until.elementLocated(By.id('screenshots')));
-
-// Take screenshot of results page. Save to disk.
-// driver.takeScreenshot().then(base64png => {
-//     fs.writeFileSync('screenshots/screenshot.png', new Buffer(base64png, 'base64'));
-// });
 
 driver.quit();
