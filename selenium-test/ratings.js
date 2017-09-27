@@ -4,12 +4,11 @@ const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
 require('runtimer');
 
-const EXT_PATH = '../build/chrome-zeroclick-latest.crx',
-      EXTENSIONS_URL = 'chrome://extensions';
+const EXTENSIONS_URL = 'chrome://extensions';
 
 const driver = new Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().addArguments("load-extension=./"))
+    .setChromeOptions(new chrome.Options().addArguments("load-extension=" + process.cwd()))
     .build();
 
 const numPages = 2;
