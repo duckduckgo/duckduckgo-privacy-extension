@@ -440,6 +440,7 @@ body {
         position: relative;
         margin-left: 20px;
         margin-right: 20px;
+        clear: both;
 
         &.top-blocked__li--no-data {
             text-align: center;
@@ -492,7 +493,7 @@ body {
 
         .top-blocked__li__company-name {
             position: relative;
-            display: inline-block;
+            float: left;
             width: 50px;
             margin-right: 10px;
             overflow: hidden;
@@ -503,23 +504,18 @@ body {
         .top-blocked__li__blocker-bar {
             position: relative;
             top: 5px;
-            display: inline-block;
+            float: left;
             max-width: 165px;
             height: 5px;
+            margin-right: 10px;
             vertical-align: top;
             border-radius: 5px;
-            background: $platinum-light;
-
-            &.top-blocked__li__blocker-bar--fg {
-                position: absolute;
-                top: 0;
-                background: $slate;
-                transition: width 0.5s ease-in-out;
-            }
+            background: $slate;
+            transition: width 0.5s ease-in-out;
         }
 
         .top-blocked__li__blocker-pct {
-            display: inline-block;
+            float: left;
             font-size: 13px;
         }
 

@@ -29,7 +29,7 @@ TrackerList.prototype = $.extend({},
         },
 
         _setup: function () {
-            this._cacheElems('.js-top-blocked', ['graph-bar-fg', 'see-all'])
+            this._cacheElems('.js-top-blocked', ['graph-bar', 'see-all'])
             this.bindEvents([
                 [this.$seeall, 'click', this._seeAllClick]
             ]);

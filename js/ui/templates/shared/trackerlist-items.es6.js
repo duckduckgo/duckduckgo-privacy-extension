@@ -14,23 +14,17 @@ module.exports = function (trackerListMap) {
             // return generateLi(obj)
         // }
 
-
         // function generateLi (data) {
-
             // TODO: remove isUnknownCompany/isHidden to page-leve tracker list
             // let isHidden = ''
             // if (isUnknownCompany) isHidden = 'is-hidden'
 
             return bel`<li class="top-blocked__li">
-              <span class="top-blocked__li__company-name">${data.name}</span>
-              <div class="top-blocked__li__blocker-bar">
-                  <div class="top-blocked__li__blocker-bar
-                              top-blocked__li__blocker-bar--fg
-                              js-top-blocked-graph-bar-fg"
-                      style="width: 0px" data-width="${data.px}px">
-                  </div>
+              <div class="top-blocked__li__company-name">${data.name}</div>
+              <div class="top-blocked__li__blocker-bar js-top-blocked-graph-bar"
+                  style="width: 0px" data-width="${data.px}px">
               </div>
-              <div class="top-blocked__li__blocker-pct pull-right">
+              <div class="top-blocked__li__blocker-pct">
                   ${data.percent}%
               </div>
             </li>`
