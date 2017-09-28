@@ -6,7 +6,7 @@ module.exports = function () {
 
     if (this.model.companyListMap && this.model.companyListMap.length > 0) {
         return bel`<section class="top-blocked card">
-            <h3 class="menu-title padded border--bottom">
+            <h3 class="menu-title padded">
                 Top trackers across all sites
             </h3>
             <ul class="default-list top-blocked__list">
