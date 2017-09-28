@@ -114,10 +114,10 @@ module.exports = function () {
             available for this tab.</span>`
     }
 
-    function renderTrackerNetworks (trackerNetworks, limit, isWhitelisted) {
-        if (trackerNetworks && trackerNetworks.major) {
+    function renderTrackerNetworks (tn, limit, isWhitelisted) {
+        if (tn && tn.major) {
             const isActive = isWhitelisted ? 'is-active' : ''
-            return trackerNetworks.major.map((tn, i) => {
+            return tn.major.map((tn, i) => {
                 if (i > (limit - 1)) return ''
                 return bel`<span class="site-info__tracker__icon
                     ${tn.replace('.', '')} ${isActive}">${tn}</span>`
@@ -125,10 +125,13 @@ module.exports = function () {
         }
     }
 
-    function renderNumOtherTrackerNetworks (trackerNetworks) {
-        if (trackerNetworks && trackerNetworks.numOthers) {
+    function renderNumOtherTrackerNetworks (tn) {
+        if (!tn) return
+        let plus = ''
+        if (tn.major && tn.major.length > 0) plus = '+'
+        if (tn.numOthers) {
             return bel`<span class="site-info__trackers__others">
-                + ${trackerNetworks.numOthers}</span>`
+                ${plus} ${tn.numOthers}</span>`
         }
     }
 
