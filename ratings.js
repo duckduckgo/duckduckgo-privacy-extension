@@ -10,10 +10,10 @@ const testRatings = require('./selenium-test/ratings.js');
 
 const program = require('commander');
 
-function _init() {
+function _initXvfb() {
     execSync('export DISPLAY=:99.0');
     fs.exists('/tmp/.X99-lock', (exists) => {
-        if (exists) {
+        if (!exists) {
             log(chalk.green.bold('Creating Xvfb...'));
             execSync('Xvfb :99 -screen 0 1280x1024x24 &');
         }
@@ -25,10 +25,14 @@ program
   .option('-n, --number <n>', 'Number of top 500 sites to test', parseInt)
   .option('-f, --file <file>', 'File containing list of domains to test')
   .option('-u, --url <path>', 'URL to test')
+  .option('-x, --xvbf', 'Use Xvbf')
   .parse(process.argv);
 
 // if (!program.args.length) program.help();
 
+if (program.xvbf) {
+    _initXvfb();
+}
 
 if (program.number) {
     testRatings.testTopSites(program.number);
