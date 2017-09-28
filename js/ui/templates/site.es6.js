@@ -55,6 +55,7 @@ module.exports = function () {
                     <div class="float-right">
                         ${renderTrackerNetworks(
                             this.model.trackerNetworks,
+                            this.model.numTrackerIconsToDisplay,
                             !this.model.isWhitelisted)}
                         ${renderNumOtherTrackerNetworks(
                             this.model.trackerNetworks
@@ -113,10 +114,11 @@ module.exports = function () {
             available for this tab.</span>`
     }
 
-    function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
+    function renderTrackerNetworks (trackerNetworks, limit, isWhitelisted) {
         if (trackerNetworks && trackerNetworks.major) {
             const isActive = isWhitelisted ? 'is-active' : ''
-            return trackerNetworks.major.map((tn) => {
+            return trackerNetworks.major.map((tn, i) => {
+                if (i > (limit - 1)) return ''
                 return bel`<span class="site-info__tracker__icon
                     ${tn.replace('.', '')} ${isActive}">${tn}</span>`
             })

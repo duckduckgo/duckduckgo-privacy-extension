@@ -1,4 +1,4 @@
-const Parent = window.DDG.base.Model;
+const Parent = window.DDG.base.Model
 
 const whitelistStates = {
     'isWhitelisted': 'Off',
@@ -21,17 +21,17 @@ const majorTrackerNetworks = [
 ]
 
 function Site (attrs) {
-    attrs.disabled = true; // disabled by default
-    attrs.httpsState = 'none';
-    attrs.httpsStatusText = httpsStates[attrs.httpsState];
-    attrs.isUserPrivacyUpgraded = false;
+    attrs.disabled = true // disabled by default
+    attrs.httpsState = 'none'
+    attrs.httpsStatusText = httpsStates[attrs.httpsState]
+    attrs.isUserPrivacyUpgraded = false
+    attrs.numTrackerIconsToDisplay = 2
     Parent.call(this, attrs);
 
     this.bindEvents([
         [this.store.subscribe, 'change:backgroundMessage', this.updateTrackerCount]
-    ]);
-
-};
+    ])
+}
 
 
 Site.prototype = $.extend({},
