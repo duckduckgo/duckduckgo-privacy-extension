@@ -54,7 +54,10 @@ var Companies = ( () => {
                     percent: Math.round((c.pagesSeenOn/totalPages)*100)
                 });
             });
-            return topBlockedData;
+            return {
+                topBlocked: topBlockedData,
+                totalPages: totalPages
+            }
         },
 
         clearData: () => {
