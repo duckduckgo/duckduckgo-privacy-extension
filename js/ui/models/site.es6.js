@@ -7,7 +7,7 @@ const whitelistStates = {
 
 const httpsStates = {
     'default': 'Secure',
-    'upgraded': 'Upgraded',
+    'upgraded': 'Secure', // was 'Upgraded'
     'none': 'Insecure'
 };
 
@@ -109,7 +109,7 @@ Site.prototype = $.extend({},
               const updatedTrackersCount = this._getUniqueTrackersCount()
               const updatedTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
               const updatedTrackerNetworks = this._getTrackerNetworksOnPage()
-              const updatedUserPrivacy = this._getIsUserPrivacyUpgraded() 
+              const updatedUserPrivacy = this._getIsUserPrivacyUpgraded()
 
               if (ops && ops.siteRating && (ops.siteRating !== this.siteRating)) {
                   this.set('siteRating', ops.siteRating)
@@ -123,7 +123,7 @@ Site.prototype = $.extend({},
                   this.set('trackersBlockedCount', updatedTrackersBlockedCount)
               }
 
-              if (!this.trackerNetworks || 
+              if (!this.trackerNetworks ||
                   (updatedTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
                   (updatedTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
                   this.set('trackerNetworks', updatedTrackerNetworks)
@@ -169,10 +169,10 @@ Site.prototype = $.extend({},
           // console.log('setIsUserPrivacyUpgraded()')
           if (!this.tab) return false
 
-          if (this.tab.upgradedHttps || 
+          if (this.tab.upgradedHttps ||
               Object.keys(this.tab.trackersBlocked).length > 0) {
               return true
-          } 
+          }
 
           return false
       },
@@ -184,7 +184,7 @@ Site.prototype = $.extend({},
                 if (rating) this.update({siteRating: rating})
             })
           }
-      },      
+      },
 
       updateTrackerCount: function (message) {
           // console.log('[model] updateTrackerCount()')
@@ -192,7 +192,7 @@ Site.prototype = $.extend({},
           if (message.change.attribute === 'updateTrackerCount') {
               if (!this.tab) return
               let tabID = this.tab.id
-              
+
               this.fetch({getTab: tabID}).then((backgroundTabObj) => {
                   self.tab = backgroundTabObj
                   self._getSiteRating()
@@ -214,7 +214,7 @@ Site.prototype = $.extend({},
 
               this.setWhitelistStatusText();
           }
-      }      
+      }
 
   }
 );

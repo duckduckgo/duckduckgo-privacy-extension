@@ -275,12 +275,9 @@ body {
             margin-right: 3px;
             font-weight: normal;
 
-            &.is-secure {
+            &.is-secure,
+            &.is_upgraded {
                 color: $color--green;
-            }
-
-            &.is-upgraded {
-                color: $color--orange;
             }
 
             &.is-insecure {

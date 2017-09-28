@@ -10,9 +10,11 @@ module.exports = function () {
             <li class="padded">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
                 <div class="site-info__toggle-container">
-                    <span class="site-info__toggle-text">${this.model.whitelistStatusText}</span>
-                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}  
-                </div>              
+                    <span class="site-info__toggle-text">
+                        ${this.model.whitelistStatusText}
+                    </span>
+                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
+                </div>
             </li>
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container">
@@ -28,12 +30,12 @@ module.exports = function () {
             </li>
             <li class="site-info__li--https-status padded">
                 <h2 class="site-info__https-status bold">
-                    <span class="site-info__https-status__icon 
+                    <span class="site-info__https-status__icon
                         is-${this.model.httpsState}">
                     </span>
                     Connection
                     <div class="float-right">
-                        <span class="site-info__https-status__msg 
+                        <span class="site-info__https-status__msg
                             is-${this.model.httpsStatusText.toLowerCase()}">
                             ${this.model.httpsStatusText}
                         </span>
@@ -46,13 +48,17 @@ module.exports = function () {
             </li>
             <li class="site-info__li--trackers padded border--bottom">
                 <h2 class="site-info__trackers bold">
-                    <span class="site-info__trackers-status__icon 
+                    <span class="site-info__trackers-status__icon
                         is-blocking--${!this.model.isWhitelisted}">
-                    </span>                
+                    </span>
                     Tracker networks
                     <div class="float-right">
-                        ${renderTrackerNetworks(this.model.trackerNetworks, !this.model.isWhitelisted)}
-                        ${renderNumOtherTrackerNetworks(this.model.trackerNetworks)}
+                        ${renderTrackerNetworks(
+                            this.model.trackerNetworks,
+                            !this.model.isWhitelisted)}
+                        ${renderNumOtherTrackerNetworks(
+                            this.model.trackerNetworks
+                        )}
                     </div>
                 </h2>
                 ${popover(
@@ -71,8 +77,8 @@ module.exports = function () {
 
     function renderSiteRating (letter, siteRating) {
         const isActive = siteRating === letter ? 'is-active' : ''
-        return bel`<div 
-            class="site-info__rating site-info__rating--${letter.toLowerCase()} 
+        return bel`<div
+            class="site-info__rating site-info__rating--${letter.toLowerCase()}
             ${isActive}">
                 ${letter}
             </div>`
@@ -81,7 +87,7 @@ module.exports = function () {
     function renderUserPrivacyMsg (upgraded) {
         if (upgraded) {
             return bel`<p class="site-info__user-privacy-msg">
-               ...but we have 
+               ...but we have
                <span class="is-upgraded">improved the site!</span>
                </p>`
         } else {
@@ -93,24 +99,25 @@ module.exports = function () {
     function httpsMsg (httpsState) {
         let msg = ''
 
-        if (httpsState === 'Secure') {
-            return bel`<span>Connection is securely using <em>HTTPS Encryption</em>.</span>`
-        }
-        if (httpsState === 'Upgraded') {
-            return bel`<span>Connection has been upgraded to using <em>HTTPS Encryption</em>.</span>`
-        }
-        if (httpsState === 'Insecure') {
-            return bel`<span>There is no <em>HTTPS Encryption</em> available for this connection.</span>`
+        if (httpsState === 'Secure' || httpsState === 'Upgraded') {
+            return bel`<span>Connection is securely using
+                <em>HTTPS Encryption</em>.</span>`
         }
 
-        return bel`<span>There is no <em>HTTPS Encryption</em> available for this tab.</span>`
+        if (httpsState === 'Insecure') {
+            return bel`<span>There is no <em>HTTPS Encryption</em>
+                available for this connection.</span>`
+        }
+
+        return bel`<span>There is no <em>HTTPS Encryption</em>
+            available for this tab.</span>`
     }
 
     function renderTrackerNetworks (trackerNetworks, isWhitelisted) {
         if (trackerNetworks && trackerNetworks.major) {
             const isActive = isWhitelisted ? 'is-active' : ''
             return trackerNetworks.major.map((tn) => {
-                return bel`<span class="site-info__tracker__icon 
+                return bel`<span class="site-info__tracker__icon
                     ${tn.replace('.', '')} ${isActive}">${tn}</span>`
             })
         }
@@ -132,7 +139,7 @@ module.exports = function () {
         let msg = ``
         let isPlural = false
         if (trackerNetworks.major && trackerNetworks.major.length > 0) {
-            if (trackerNetworks.major.length > 1) isPlural = true            
+            if (trackerNetworks.major.length > 1) isPlural = true
             trackerNetworks.major.map((tn, i) => {
                 msg += titleize(tn)
                 if (isPlural && i < trackerNetworks.major.length - 1) msg += `,`
@@ -163,7 +170,7 @@ module.exports = function () {
         if (isWhitelisted) {
             return bel`<span>${msg} ${isOrAre} <em>currently tracking</em> you.</span>`
         } else {
-            return bel`<span>${msg} ${isOrAre} <em>blocked</em> from tracking you.</span>`            
+            return bel`<span>${msg} ${isOrAre} <em>blocked</em> from tracking you.</span>`
         }
 
     }
