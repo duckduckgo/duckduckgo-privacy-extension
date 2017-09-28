@@ -51,7 +51,7 @@ function _testUrl(_path) {
 }
 
 function _teardown () {
-    WD.quit();
+    return WD.quit();
 }
 
 
@@ -62,7 +62,7 @@ exports.testTopSites = async function(num) {
 
     log(chalk.green.bold('Running Tests...'));
     await _testUrl(TEST_URL);
-    _teardown();
+    await _teardown();
 };
 
 exports.testUrl = async function(path) {
@@ -70,11 +70,11 @@ exports.testUrl = async function(path) {
     let TEST_URL = `chrome-extension://${EXT_ID}/test/html/screenshots.html?numberToTest=${numPages}&json=true`;
 
     log(chalk.green.bold('Running Tests...'));
-
+    await _teardown();
 };
 
-exports.testUrls = (array) => {
-
+exports.testUrls = async function(array) {
+    await _teardown();
 }
 
 // Take screenshot of results page. Save to disk.

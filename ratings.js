@@ -52,5 +52,5 @@ else if (program.file) {
 }
 
 else if (program.url) {
-
+    testRatings.getUrls(program.url);
 }
