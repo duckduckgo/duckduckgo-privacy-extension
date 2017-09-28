@@ -3,8 +3,8 @@ module.exports = {
         let self = this;
 
         window.setTimeout(function () {
-            if (!self.$graphbar) return
-            self.$graphbar.each(function (i, el) {
+            if (!self.$graphbarfg) return
+            self.$graphbarfg.each(function (i, el) {
                 let $el = $(el)
                 let w = $el.data().width
                 $el.css('width', w)

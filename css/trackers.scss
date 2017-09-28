@@ -512,13 +512,22 @@ body {
             position: relative;
             top: 5px;
             float: left;
-            max-width: 165px;
+            width: 165px;
             height: 5px;
             margin-right: 10px;
             vertical-align: top;
             border-radius: 5px;
-            background: $slate;
-            transition: width 0.5s ease-in-out;
+            background: $platinum-light;
+
+            .top-blocked__li__blocker-bar__fg {
+                background: $slate;
+                border-radius: 5px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 5px;
+                transition: width 0.5s ease-in-out;
+            }
         }
 
         .top-blocked__li__blocker-pct {
