@@ -20,8 +20,8 @@ function TrackerList (ops) {
         [this.$reset, 'click', this.resetTrackersStats]
     ]);
 
-    // animate graph bars
-    this.$graphbar = this.$el.find('.js-top-blocked-graph-bar')
+    this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
+    this.$pct = this.$el.find('.js-top-blocked-pct')
     this.animateGraphBars()
 };
 
@@ -82,7 +82,8 @@ TrackerList.prototype = $.extend({},
             this.$el.find('.js-top-blocked-list').remove()
             let ol = this.template()
             this.$el.append(ol)
-            this.$graphbar = this.$el.find('.js-top-blocked-graph-bar')
+            this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
+            this.$pct = this.$el.find('.js-top-blocked-pct')
             this.animateGraphBars()
         },
 

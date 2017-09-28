@@ -27,7 +27,7 @@ module.exports = function (trackerListMap) {
                       style="width: 0px" data-width="${data.px}px">
                   </div>
               </div>
-              <div class="top-blocked__li__blocker-pct">
+              <div class="top-blocked__li__blocker-pct js-top-blocked-pct">
                   ${data.percent}%
               </div>
             </li>`
