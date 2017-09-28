@@ -2,44 +2,75 @@ const fs = require('fs');
 const {Builder, By, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
+const chalk = require('chalk');
+const log = console.log;
 require('runtimer');
 
+// VARS
 const EXTENSIONS_URL = 'chrome://extensions';
 
-const driver = new Builder()
+let _ext_id,
+    _driver,
+    _initialized = false;
+
+// PRIVATE
+function _init () {
+    if (_initialized) {
+        return;
+    }
+
+    _driver = new Builder()
     .forBrowser('chrome')
     .setChromeOptions(new chrome.Options().addArguments("load-extension=" + process.cwd()))
     .build();
 
-const numPages = 2;
-var EXT_ID;
-
-console.log(`Requesting: ${EXTENSIONS_URL}`);
-driver.get(EXTENSIONS_URL);
-driver.wait(until.elementLocated(By.linkText('Options')), 4000).then(optionsLink => {
-
-    optionsLink.getAttribute('href').then(href => {
-        EXT_ID = href.replace('chrome-extension://', '').replace('/html/options.html', '');
-        console.log(`Found Extension ID: ${EXT_ID}`);
-
-        const TEST_URL = `chrome-extension://${EXT_ID}/test/html/screenshots.html?numberToTest=${numPages}&json=true`;
-
-        console.log(`Running Tests...`);
-        driver.get(TEST_URL);
-        driver.wait(until.elementLocated(By.id('json-data'))).then(jsonData => {
-            console.log(`JSON Data:`);
-            jsonData.getText().then(text => {
-                console.log(text);
-                fs.writeFileSync('test-result.json', text);
-                console.log(`JSON Data written to file: test-result.json`);
-            });
+    log(chalk.green.bold(`Requesting: ${EXTENSIONS_URL}`));
+    _driver.get(EXTENSIONS_URL);
+    return _driver.wait(until.elementLocated(By.linkText('Options')), 4000).then(optionsLink => {
+        optionsLink.getAttribute('href').then(href => {
+            _ext_id = href.replace('chrome-extension://', '').replace('/html/options.html', '');
+            log(chalk.blue(`Found Extension ID: ${_ext_id}`));
+            _initialized = true;
         });
-
-        // Take screenshot of results page. Save to disk.
-        // driver.takeScreenshot().then(base64png => {
-        //     fs.writeFileSync('screenshots/screenshot.png', new Buffer(base64png, 'base64'));
-        // });
     });
-});
+};
 
-driver.quit();
+function _testUrl(_path) {
+    _driver.get(_path);
+    _driver.wait(until.elementLocated(By.id('json-data'))).then(jsonData => {
+        log(chalk.underline('JSON Data:'));
+        jsonData.getText().then(jsonText => {
+            log(jsonText);
+            let filename = new Date().toJSON();
+            fs.writeFileSync(`${filename}.json`, jsonText);
+            log(chalk.blue('JSON Data written to file:') + chalk.blue.bold(`${filename}.json`));
+        });
+    });
+}
+
+
+// EXPORTS
+exports.testTopSites = async function(num) {
+    await _init();
+    let TEST_URL = `chrome-extension://${_ext_id}/test/html/screenshots.html?numberToTest=${num}&json=true`;
+    log(chalk.green.bold('Running Tests...'));
+    await _testUrl(TEST_URL);
+    _driver.quit()
+};
+
+exports.testUrl = async function(path) {
+    await _init();
+    let TEST_URL = `chrome-extension://${_ext_id}/test/html/screenshots.html?url=${path}&json=true`;
+
+    log(chalk.green.bold('Running Tests...'));
+
+};
+
+exports.testUrls = (array) => {
+
+}
+
+// Take screenshot of results page. Save to disk.
+// _driver.takeScreenshot().then(base64png => {
+//     fs.writeFileSync('screenshots/screenshot.png', new Buffer(base64png, 'base64'));
+// });
