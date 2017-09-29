@@ -35,21 +35,16 @@ if (program.xvbf) {
 
 if (program.number) {
     testRatings.testTopSites(program.number);
-}
-
-else if (program.file) {
+} else if (program.file) {
     fs.exists(program.file, (exists) => {
         if (exists) {
-            let text = fs.readFileSync(fileName, "utf8");
+            let text = fs.readFileSync(program.file, "utf8");
             let urlArray = text.split(/\r?\n/);
-            testRatings.getUrls(urlArray);
-        }
-        else {
+            testRatings.testUrls(urlArray);
+        } else {
             console.error(`File ${program.file} does not exist.`);
         }
     });
-}
-
-else if (program.url) {
-    testRatings.getUrls(program.url);
+} else if (program.url) {
+    testRatings.testUrl(program.url);
 }
