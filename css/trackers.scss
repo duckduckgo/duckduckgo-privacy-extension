@@ -533,6 +533,8 @@ body {
         .top-blocked__li__blocker-pct {
             float: left;
             font-size: 13px;
+            opacity: 0.1;
+            transition: opacity 0.2s ease-in-out;
         }
 
         &.top-blocked__li--see-all {
