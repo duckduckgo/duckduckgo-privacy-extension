@@ -3,23 +3,14 @@
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 const chalk = require('chalk');
+const Xvfb = require('xvfb');
+const program = require('commander');
+const testRatings = require('./selenium-test/ratings.js');
+
 const log = console.log;
 const error = console.error;
 
-const testRatings = require('./selenium-test/ratings.js');
-
-const program = require('commander');
-
-function _initXvfb() {
-    execSync('export DISPLAY=:99.0');
-    try {
-        fs.accessSync('/tmp/.X99-lock');
-    } catch (e) {
-        log(chalk.green.bold('Creating Xvfb...'));
-        execSync('Xvfb :99 -screen 0 1280x1024x24 &');
-        log(chalk.green.bold('Done'));
-    }
-}
+let xvbf;
 
 program
     .option('-n, --number <n>', 'Number of top 500 sites to test', parseInt)
@@ -28,11 +19,17 @@ program
     .option('-x, --xvbf', 'Use Xvbf')
     .parse(process.argv);
 
-// if (!program.args.length) program.help();
-
 if (program.xvbf) {
-    _initXvfb();
+    execSync('export DISPLAY=:99.0');
+    xvfb = new Xvfb({
+        reuse: true,
+        xvfb_args: '-screen 0 1280x1024x24'
+    });
+    log(chalk.green.bold("Starting xvfb..."));
+    xvfb.startSync();
+    log(chalk.green.bold("xvfb started"));
 }
+
 
 if (program.number) {
     testRatings.testTopSites(program.number);
@@ -46,4 +43,12 @@ if (program.number) {
     }
 } else if (program.url) {
     testRatings.testUrl(program.url);
+} else {
+    program.help();
+}
+
+if (program.xvbf) {
+    log(chalk.green.bold("Stopping xvfb..."));
+    xvfb.stopSync();
+    log(chalk.green.bold("Xvfb stopped"));
 }

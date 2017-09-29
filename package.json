@@ -49,7 +49,8 @@
     "parse-link-header": "^1.0.0",
     "psl": "^1.1.18",
     "runtimer": "^1.0.3",
-    "tldjs": "^2.2.0"
+    "tldjs": "^2.2.0",
+    "xvfb": "^0.2.3"
   },
   "babel": {
     "presets": [
