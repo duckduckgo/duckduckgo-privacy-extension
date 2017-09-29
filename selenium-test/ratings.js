@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {Builder, By, until} = require('selenium-webdriver');
+const {Builder, By, until, promise} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
 const chalk = require('chalk');
