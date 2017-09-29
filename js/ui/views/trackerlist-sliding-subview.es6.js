@@ -1,14 +1,13 @@
-const Parent__SlidingSubview = require('./sliding-subview.es6.js')
+const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
 const SiteTrackersModel = require('./../models/trackerlist-site.es6.js')
 const TopBlockedTrackersModel = require('./../models/trackerlist-top-blocked.es6.js')
 
 function TrackerList (ops) {
-
     this.selectedTab = ops.defaultTab // poss values: `page` or `all`
     ops.model = null
     this.template = ops.template
-    Parent__SlidingSubview.call(this, ops)
+    ParentSlidingSubview.call(this, ops)
     this.updateList()
 
     this.setActiveTab()
@@ -23,10 +22,10 @@ function TrackerList (ops) {
     this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
     this.$pct = this.$el.find('.js-top-blocked-pct')
     this.animateGraphBars()
-};
+}
 
 TrackerList.prototype = $.extend({},
-    Parent__SlidingSubview.prototype,
+    ParentSlidingSubview.prototype,
     animateGraphBars,
     {
 
@@ -79,7 +78,7 @@ TrackerList.prototype = $.extend({},
         },
 
         renderList: function () {
-            this.$el.find('.js-top-blocked-list').remove()
+            this.$el.find('.js-trackerlist-tab').remove()
             let ol = this.template()
             this.$el.append(ol)
             this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
@@ -94,6 +93,6 @@ TrackerList.prototype = $.extend({},
             })
         }
     }
-);
+)
 
-module.exports = TrackerList;
+module.exports = TrackerList

@@ -5,7 +5,9 @@ const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
 module.exports = function () {
 
     if (!this.model) {
-        return bel`<section class="sliding-subview sliding-subview--trackers-blocked sliding-subview--has-fixed-header">
+        return bel`<section class="sliding-subview
+            sliding-subview--trackers-blocked
+            sliding-subview--has-fixed-header">
             <nav class="sliding-subview__header card">
                 <a href="#" class="sliding-subview__header__title sliding-subview__header__title--has-icon js-sliding-subview-close">
                     <span class="icon icon__arrow icon__arrow--left pull-left"></span>
@@ -22,19 +24,25 @@ module.exports = function () {
                 and are not sent anywhere, ever.</p>
             </div>
         </section>`
+
+
+    // TODO: break these else-if cases out into sub-templates:
+    } else if (this.model.modelName.indexOf('siteTrackerList') > -1) {
+        return bel`<div class="js-trackerlist-tab card">TODO: Grade Details</div>`
     } else if (this.model && this.model.companyListMap) {
         if (this.model.companyListMap.length > 0) {
-            return bel`<ol class="default-list top-blocked__list card js-top-blocked-list">
+            return bel`<ol class="default-list top-blocked__list card js-trackerlist-tab">
                 ${trackerListItems(this.model.companyListMap)}
             </ol>`
         } else {
-            return bel`<ol class="default-list top-blocked__list js-top-blocked-list">
+            return bel`<ol class="default-list top-blocked__list js-trackerlist-tab">
                 <li class="top-blocked__li top-blocked__li--no-data">
                     ${trackerListNoData()}
                 </li>
             </ol>`
         }
     }
+
 
 }
 
