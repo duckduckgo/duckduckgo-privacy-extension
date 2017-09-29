@@ -104,33 +104,32 @@ Site.prototype = $.extend({},
 
       update: function (ops) {
           // console.log('[model] update()')
-
           if (this.tab) {
-              const updatedTrackersCount = this._getUniqueTrackersCount()
-              const updatedTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
-              const updatedTrackerNetworks = this._getTrackerNetworksOnPage()
-              const updatedUserPrivacy = this._getIsUserPrivacyUpgraded()
+              const newTrackersCount = this._getUniqueTrackersCount()
+              const newTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
+              const newTrackerNetworks = this._getTrackerNetworksOnPage()
+              const newUserPrivacy = this._getIsUserPrivacyUpgraded()
 
               if (ops && ops.siteRating && (ops.siteRating !== this.siteRating)) {
                   this.set('siteRating', ops.siteRating)
               }
 
-              if (updatedTrackersCount !== this.trackersCount) {
-                  this.set('trackersCount', updatedTrackersCount)
+              if (newTrackersCount !== this.trackersCount) {
+                  this.set('trackersCount', newTrackersCount)
               }
 
-              if (updatedTrackersBlockedCount !== this.trackersBlockedCount) {
-                  this.set('trackersBlockedCount', updatedTrackersBlockedCount)
+              if (newTrackersBlockedCount !== this.trackersBlockedCount) {
+                  this.set('trackersBlockedCount', newTrackersBlockedCount)
               }
 
               if (!this.trackerNetworks ||
-                  (updatedTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
-                  (updatedTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
-                  this.set('trackerNetworks', updatedTrackerNetworks)
+                  (newTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
+                  (newTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
+                  this.set('trackerNetworks', newTrackerNetworks)
               }
 
-              if (updatedUserPrivacy !== this.isUserPrivacyUpgraded) {
-                  this.set('isUserPrivacyUpgraded', updatedUserPrivacy)
+              if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
+                  this.set('isUserPrivacyUpgraded', newUserPrivacy)
               }
           }
       },

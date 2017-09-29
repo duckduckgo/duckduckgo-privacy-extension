@@ -1,23 +1,23 @@
-const Parent = window.DDG.base.View;
-const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js');
-const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js');
+const Parent = window.DDG.base.View
+const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js')
+const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js')
 
 function Site (ops) {
 
-    this.model = ops.model;
-    this.pageView = ops.pageView;
-    this.template = ops.template;
+    this.model = ops.model
+    this.pageView = ops.pageView
+    this.template = ops.template
 
-    Parent.call(this, ops);
+    Parent.call(this, ops)
 
-    this.$body = $('body');
+    this.$body = $('body')
 
     // bind events
-    this._setup();
+    this._setup()
 
     // get data from background page tab
-    this.model.getBackgroundTabData();
-    this.rerender();
+    this.model.getBackgroundTabData()
+    this.rerender()
 };
 
 Site.prototype = $.extend({},
@@ -35,40 +35,40 @@ Site.prototype = $.extend({},
                 [this.$toggle, 'click', this._whitelistClick],
                 [this.$showalltrackers, 'click', this._showAllTrackers],
                 [this.store.subscribe, 'change:site', this.rerender]
-            ]);
+            ])
 
         },
 
         _whitelistClick: function (e) {
-            this.model.toggleWhitelist();
-            console.log('isWhitelisted: ', this.model.isWhitelisted);
-            chrome.tabs.reload(this.model.tab.id);
-            const w = chrome.extension.getViews({type: 'popup'})[0];
+            this.model.toggleWhitelist()
+            console.log('isWhitelisted: ', this.model.isWhitelisted)
+            chrome.tabs.reload(this.model.tab.id)
+            const w = chrome.extension.getViews({type: 'popup'})[0]
             w.close()
         },
 
-        rerender: function () {    
-            // console.log('[view] rerender()') 
+        rerender: function () {
+            // console.log('[view] rerender()')
             if (this.model.disabled) {
-                this.$body.addClass('disabled');
+                this.$body.addClass('disabled')
             } else {
                 this.$body.removeClass('disabled');
-                this.unbindEvents();
-                this._rerender();
-                this._setup();
+                this.unbindEvents()
+                this._rerender()
+                this._setup()
             }
         },
 
         _showAllTrackers: function () {
-            if (this.$body.hasClass('disabled')) return;
+            if (this.$body.hasClass('disabled')) return
             this.views.slidingSubview = new TrackerListSlidingSubview({
                 template: tabbedTrackerListTemplate,
                 defaultTab: 'page'
-            });
+            })
         }
 
     }
 
-);
+)
 
-module.exports = Site;
+module.exports = Site
