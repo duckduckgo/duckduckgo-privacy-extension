@@ -12,12 +12,13 @@ const program = require('commander');
 
 function _initXvfb() {
     execSync('export DISPLAY=:99.0');
-    fs.exists('/tmp/.X99-lock', (exists) => {
-        if (!exists) {
-            log(chalk.green.bold('Creating Xvfb...'));
-            execSync('Xvfb :99 -screen 0 1280x1024x24 &');
-        }
-    });
+    try {
+        fs.accessSync('/tmp/.X99-lock');
+    } catch (e) {
+        log(chalk.green.bold('Creating Xvfb...'));
+        execSync('Xvfb :99 -screen 0 1280x1024x24 &');
+        log(chalk.green.bold('Done'));
+    }
 }
 
 program
@@ -36,15 +37,13 @@ if (program.xvbf) {
 if (program.number) {
     testRatings.testTopSites(program.number);
 } else if (program.file) {
-    fs.exists(program.file, (exists) => {
-        if (exists) {
-            let text = fs.readFileSync(program.file, "utf8");
-            let urlArray = text.split(/\r?\n/);
-            testRatings.testUrls(urlArray);
-        } else {
-            console.error(`File ${program.file} does not exist.`);
-        }
-    });
+    if (fs.existsSync(program.file)) {
+        let text = fs.readFileSync(program.file, "utf8");
+        let urlArray = text.split(/\r?\n/);
+        testRatings.testUrls(urlArray);
+    } else {
+        console.error(`Could not read ${program.file}`);
+    }
 } else if (program.url) {
     testRatings.testUrl(program.url);
 }
