@@ -1,5 +1,5 @@
 const fs = require('fs');
-const {Builder, By, until, promise} = require('selenium-webdriver');
+const {Builder, By, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
 const chalk = require('chalk');
@@ -55,7 +55,7 @@ exports.testTopSites = async function(num) {
     await _init();
     let url = `${TEST_URL}?numberToTest=${num}&json=true`;
 
-    log(chalk.green.bold('Running Tests...'));
+    log(chalk.green.bold(`Running ${num} Tests on Alex Top 500 Sites`));
     var jsonText = await _testUrl(url);
 
     log(chalk.underline('JSON Data:'));
@@ -92,7 +92,7 @@ exports.testUrls = async function(urlArray) {
     for (let path of urlArray) {
         if (path == '') continue;
         let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
-        log(chalk.green.bold(`Running Tests on URL: ${url}`));
+        log(chalk.green.bold(`Running Test on URL: ${url}`));
         let jsonText = await _testUrl(url);
         log( jsonText );
         let jsonData = JSON.parse(jsonText);
