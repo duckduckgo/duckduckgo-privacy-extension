@@ -69,7 +69,9 @@ function processSite(url) {
         resetSettings(false);
 
         runTest(url).then(() => {
-            screenshots.push(newScreenshots)
+            screenshots.push(newScreenshots);
+            buildSummary();
+            return;
         });
     });
 }
