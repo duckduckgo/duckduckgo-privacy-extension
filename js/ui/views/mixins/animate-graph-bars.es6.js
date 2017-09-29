@@ -15,7 +15,7 @@ module.exports = {
             if (!self.$pct) return
             self.$pct.each(function (i, el) {
                 let $el = $(el)
-                $el.css('opacity', '1')
+                $el.css('color', '#333333')
             })
         }, 700)
     }
