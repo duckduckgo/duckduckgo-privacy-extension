@@ -21,12 +21,11 @@ function _initXvfb() {
 }
 
 program
-  .version('0.1.0')
-  .option('-n, --number <n>', 'Number of top 500 sites to test', parseInt)
-  .option('-f, --file <file>', 'File containing list of domains to test')
-  .option('-u, --url <path>', 'URL to test')
-  .option('-x, --xvbf', 'Use Xvbf')
-  .parse(process.argv);
+    .option('-n, --number <n>', 'Number of top 500 sites to test', parseInt)
+    .option('-f, --file <file>', 'File containing list of domains to test')
+    .option('-u, --url <path>', 'URL to test')
+    .option('-x, --xvbf', 'Use Xvbf')
+    .parse(process.argv);
 
 // if (!program.args.length) program.help();
 
