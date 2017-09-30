@@ -10,8 +10,6 @@ const testRatings = require('./selenium-test/ratings.js');
 const log = console.log;
 const error = console.error;
 
-let xvbf;
-
 program
     .option('-n, --number <n>', 'Number of top 500 sites to test', parseInt)
     .option('-f, --file <file>', 'File containing list of domains to test')
@@ -37,18 +35,15 @@ async function runTest() {
     }
 }
 
-
-if (program.xvbf) {
-    xvfb = new Xvfb({ reuse: true });
-    log(chalk.green.bold("Starting xvfb..."));
-    xvfb.startSync();
-    log(chalk.green.bold("xvfb started"));
-
-    runTest().then(() => {
+(async run () => {
+    if (program.xvbf) {
+        let xvfb = new Xvfb({ reuse: true });
+        log(chalk.green.bold("Starting xvfb..."));
+        xvfb.startSync();
+        await runTest();
         log(chalk.green.bold("Stopping xvfb..."));
         xvfb.stopSync();
-        log(chalk.green.bold("Xvfb stopped"));
-    });
-} else {
-    runTest();
-}
+    } else {
+        runTest();
+    }
+}();
