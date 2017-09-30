@@ -52,64 +52,73 @@ function _flatten(arr) {
 
 // EXPORTS
 exports.testTopSites = async function(num) {
-    await _init();
-    let url = `${TEST_URL}?numberToTest=${num}&json=true`;
+    return new Promise (async (resolve, reject) => {
+        await _init();
+        let url = `${TEST_URL}?numberToTest=${num}&json=true`;
 
-    log(chalk.green.bold(`Running ${num} Tests on Alex Top 500 Sites`));
-    var jsonText = await _testUrl(url);
+        log(chalk.green.bold(`Running ${num} Tests on Alex Top 500 Sites`));
+        var jsonText = await _testUrl(url);
 
-    log(chalk.underline('JSON Data:'));
-    log(jsonText);
+        log(chalk.underline('JSON Data:'));
+        log(jsonText);
 
-    let filename = new Date().toJSON();
-    fs.writeFileSync(`${filename}.json`, jsonText);
-    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+        let filename = new Date().toJSON();
+        fs.writeFileSync(`${filename}.json`, jsonText);
+        log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
 
-    await _teardown();
+        await _teardown();
+        resolve();
+    });
 };
 
-exports.testUrl = async function(path) {
-    await _init();
-    let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
-    log(chalk.green.bold(`Running Tests on URL: ${url}`));
+exports.testUrl = function(path) {
+    return new Promise (async (resolve, reject) => {
+        await _init();
+        let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
+        log(chalk.green.bold(`Running Tests on URL: ${url}`));
 
-    var jsonText = await _testUrl(url);
-    log(chalk.underline('JSON Data:'));
-    log(jsonText);
+        var jsonText = await _testUrl(url);
+        log(chalk.underline('JSON Data:'));
+        log(jsonText);
 
-    let filename = new Date().toJSON();
-    fs.writeFileSync(`${filename}.json`, jsonText);
-    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+        let filename = new Date().toJSON();
+        fs.writeFileSync(`${filename}.json`, jsonText);
+        log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
 
-    await _teardown();
+        await _teardown();
+        resolve();
+    });
 };
 
 exports.testUrls = async function(urlArray) {
-    await _init();
-    var jsonArray = [];
+    return new Promise (async (resolve, reject) => {
+        await _init();
+        var jsonArray = [];
 
-    // for loop forces synchronous execution
-    for (let path of urlArray) {
-        if (path == '') continue;
-        let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
-        log(chalk.green.bold(`Running Test on URL: ${url}`));
-        let jsonText = await _testUrl(url);
-        log( jsonText );
-        let jsonData = JSON.parse(jsonText);
-        log( jsonData );
-        log( jsonData[0] );
-        jsonArray.push(jsonData[0]);
-    }
+        // for loop forces synchronous execution
+        for (let path of urlArray) {
+            if (path == '') continue;
+            let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
+            log(chalk.green.bold(`Running Test on URL: ${url}`));
+            let jsonText = await _testUrl(url);
+            log( jsonText );
+            let jsonData = JSON.parse(jsonText);
+            log( jsonData );
+            log( jsonData[0] );
+            jsonArray.push(jsonData[0]);
+        }
 
-    log(chalk.underline('JSON Data:'));
-    let jsonText = JSON.stringify(jsonArray);
-    log(jsonText);
+        log(chalk.underline('JSON Data:'));
+        let jsonText = JSON.stringify(jsonArray);
+        log(jsonText);
 
-    let filename = new Date().toJSON();
-    fs.writeFileSync(`${filename}.json`, jsonText);
-    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+        let filename = new Date().toJSON();
+        fs.writeFileSync(`${filename}.json`, jsonText);
+        log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
 
-    await _teardown();
+        await _teardown();
+        resolve();
+    });
 }
 
 // Take screenshot of results page. Save to disk.
