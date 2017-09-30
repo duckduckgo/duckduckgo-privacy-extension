@@ -35,7 +35,7 @@ async function runTest() {
     }
 }
 
-(async run () => {
+(async () => {
     if (program.xvbf) {
         let xvfb = new Xvfb({ reuse: true });
         log(chalk.green.bold("Starting xvfb..."));
@@ -46,4 +46,4 @@ async function runTest() {
     } else {
         runTest();
     }
-}();
+})();
