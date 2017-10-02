@@ -17,12 +17,6 @@ module.exports = function () {
                     <a href="#" class="js-nav-tab js-nav-tab-all">All Time</a>
                 </div>
             </nav>
-            <div class="sliding-subview__reset-stats">
-                <h3>Data Privacy</h3>
-                <a href="#" class="js-reset-trackers-data">Reset stats</a>
-                <p>These stats are only stored locally on your device,
-                and are not sent anywhere, ever.</p>
-            </div>
         </section>`
 
     } else if (this.model.modelName.indexOf('siteTrackerList') > -1) {
@@ -35,6 +29,12 @@ module.exports = function () {
         // all-time tracker list
         return bel`<div class="js-trackerlist-tab">
             ${trackerListFull(this.model)}
+            <div class="sliding-subview__reset-stats">
+                <h3>Data Privacy</h3>
+                <a href="#" class="js-reset-trackers-data">Reset stats</a>
+                <p>These stats are only stored locally on your device,
+                and are not sent anywhere, ever.</p>
+            </div>
         </div>`
     }
 }

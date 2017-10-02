@@ -12,16 +12,14 @@ function TrackerList (ops) {
 
     this.setActiveTab()
     this.$navtab = this.$el.find('.js-nav-tab')
-    this.$reset = this.$el.find('.js-reset-trackers-data')
 
     this.bindEvents([
-        [this.$navtab, 'click', this.switchTabs],
-        [this.$reset, 'click', this.resetTrackersStats]
-    ]);
+        [this.$navtab, 'click', this.switchTabs]
+    ])
 
-    this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
-    this.$pct = this.$el.find('.js-top-blocked-pct')
-    this.animateGraphBars()
+    // this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
+    // this.$pct = this.$el.find('.js-top-blocked-pct')
+    // this.animateGraphBars()
 }
 
 TrackerList.prototype = $.extend({},
@@ -81,9 +79,19 @@ TrackerList.prototype = $.extend({},
             this.$el.find('.js-trackerlist-tab').remove()
             let ol = this.template()
             this.$el.append(ol)
-            this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
-            this.$pct = this.$el.find('.js-top-blocked-pct')
-            this.animateGraphBars()
+
+            // all-time tracker list
+            if (this.model.modelName.indexOf('trackerListTop') > -1) {
+                // animate graph bars and pct
+                this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
+                this.$pct = this.$el.find('.js-top-blocked-pct')
+                this.animateGraphBars()
+                // listener for reset stats click
+                this.$reset = this.$el.find('.js-reset-trackers-data')
+                this.bindEvents([
+                    [this.$reset, 'click', this.resetTrackersStats]
+                ])
+            }
         },
 
         resetTrackersStats: function () {
