@@ -103,8 +103,6 @@ exports.testUrls = async function(urlArray) {
             let jsonText = await _testUrl(url);
             log( jsonText );
             let jsonData = JSON.parse(jsonText);
-            log( jsonData );
-            log( jsonData[0] );
             jsonArray.push(jsonData[0]);
         }
 
