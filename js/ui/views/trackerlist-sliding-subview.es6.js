@@ -16,10 +16,6 @@ function TrackerList (ops) {
     this.bindEvents([
         [this.$navtab, 'click', this.switchTabs]
     ])
-
-    // this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
-    // this.$pct = this.$el.find('.js-top-blocked-pct')
-    // this.animateGraphBars()
 }
 
 TrackerList.prototype = $.extend({},
