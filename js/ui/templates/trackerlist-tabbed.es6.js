@@ -1,10 +1,12 @@
 const bel = require('bel')
+const gradeDetails = require('./grade-details.es6.js')
 const trackerListItems = require('./shared/trackerlist-items.es6.js')
 const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
 
 module.exports = function () {
 
     if (!this.model) {
+        // fist pass thru render function - just render tab nav
         return bel`<section class="sliding-subview
             sliding-subview--trackers-blocked
             sliding-subview--has-fixed-header">
@@ -25,11 +27,14 @@ module.exports = function () {
             </div>
         </section>`
 
-
-    // TODO: break these else-if cases out into sub-templates:
     } else if (this.model.modelName.indexOf('siteTrackerList') > -1) {
-        return bel`<div class="js-trackerlist-tab card">TODO: Grade Details</div>`
+        // site level tracker list
+        return bel`<div class="js-trackerlist-tab card">
+            ${gradeDetails(this.model)}
+        </div>`
+
     } else if (this.model && this.model.companyListMap) {
+        // all-time tracker list
         if (this.model.companyListMap.length > 0) {
             return bel`<ol class="default-list top-blocked__list card js-trackerlist-tab">
                 ${trackerListItems(this.model.companyListMap)}
