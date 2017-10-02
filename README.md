@@ -25,6 +25,22 @@ Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6
 - Do steps in "Set up development environment" above
 - `$ npm test`
 
+### Selenium Testing (ratings.js)
+
+**Setup**
+1. Run `setup.sh`
+2. `npm install`
+3. `grunt`
+
+**Testing Single Site**
+`./ratings.js -x -u https://website.com`
+
+**Testing Alex Top 500**
+`./ratings.js -x -n 2` (where n = [1 - 500])
+
+**Testing Multiple Sites**
+`./ratings.js -x -f urls.txt` (file should have 1 url on each line)
+
 # Extension Development and Release Plan
 
 ## Adding New Features
