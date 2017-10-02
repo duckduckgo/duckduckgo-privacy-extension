@@ -1,10 +1,8 @@
 const bel = require('bel')
 const gradeDetails = require('./grade-details.es6.js')
-const trackerListItems = require('./shared/trackerlist-items.es6.js')
-const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
+const trackerListFull = require('./trackerlist-full.es6.js')
 
 module.exports = function () {
-
     if (!this.model) {
         // fist pass thru render function - just render tab nav
         return bel`<section class="sliding-subview
@@ -33,21 +31,11 @@ module.exports = function () {
             ${gradeDetails(this.model)}
         </div>`
 
-    } else if (this.model && this.model.companyListMap) {
+    } else if (this.model.modelName.indexOf('trackerListTop') > -1) {
         // all-time tracker list
-        if (this.model.companyListMap.length > 0) {
-            return bel`<ol class="default-list top-blocked__list card js-trackerlist-tab">
-                ${trackerListItems(this.model.companyListMap)}
-            </ol>`
-        } else {
-            return bel`<ol class="default-list top-blocked__list js-trackerlist-tab">
-                <li class="top-blocked__li top-blocked__li--no-data">
-                    ${trackerListNoData()}
-                </li>
-            </ol>`
-        }
+        return bel`<div class="js-trackerlist-tab">
+            ${trackerListFull(this.model)}
+        </div>`
     }
-
-
 }
 
