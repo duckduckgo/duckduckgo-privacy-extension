@@ -21,16 +21,17 @@ const majorTrackerNetworks = [
 ]
 
 function Site (attrs) {
-    this.disabled = true // disabled by default
-    this.domain = '-'
-    this.isWhitelisted = false
-    this.siteRating = ''
-    this.httpsState = 'none'
-    this.httpsStatusText = ''
-    this.isUserPrivacyUpgraded = false
-    this.trackerCount = 0
-    this.trackerNetworks
-    this.numTrackerIconsToDisplay = 4
+    attrs = attrs || {}
+    attrs.disabled = true // disabled by default
+    attrs.domain = '-'
+    attrs.isWhitelisted = false
+    attrs.siteRating = ''
+    attrs.httpsState = 'none'
+    attrs.httpsStatusText = ''
+    attrs.isUserPrivacyUpgraded = false
+    attrs.trackerCount = 0
+    attrs.trackerNetworks
+    attrs.numTrackerIconsToDisplay = 4
     Parent.call(this, attrs);
 
     this.bindEvents([
@@ -46,64 +47,64 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       getBackgroundTabData: function () {
-          // console.log('[view] getBackgroundTabData()')
-          let self = this;
-
-          this.fetch({getCurrentTab: true}).then((tab) => {
-              if (tab) {
-                  this.fetch({getTab: tab.id}).then((backgroundTabObj) => {
-                      if (backgroundTabObj) {
-                          self.tab = backgroundTabObj
-                          self.domain = backgroundTabObj.site.domain
-                          self._getSiteRating()
-                      }
-                      self.setSiteProperties();
-                      self.setHttpsMessage();
-                      self.update();
-                  });
-
-              } else {
-                  console.debug('Site view: no tab');
-              }
-          });
+          console.log('[view] getBackgroundTabData()')
+          return new Promise((resolve, reject) => {
+              this.fetch({getCurrentTab: true}).then((tab) => {
+                  if (tab) {
+                      this.fetch({getTab: tab.id}).then((backgroundTabObj) => {
+                          if (backgroundTabObj) {
+                              this.tab = backgroundTabObj
+                              this.domain = backgroundTabObj.site.domain
+                              this._getSiteRating()
+                          }
+                          this.setSiteProperties()
+                          this.setHttpsMessage()
+                          this.update()
+                          resolve()
+                      })
+                  } else {
+                      console.debug('Site model: no tab')
+                      resolve()
+                  }
+              })
+          })
       },
 
       setSiteProperties: function() {
           if (!this.tab) {
-              this.domain = 'new tab'; // tab can be null for firefox new tabs
-              this.siteRating = '';
+              this.domain = 'new tab' // tab can be null for firefox new tabs
+              this.siteRating = ''
           }
           else {
-              this.isWhitelisted = this.tab.site.whitelisted;
-              this.setWhitelistStatusText();
+              this.isWhitelisted = this.tab.site.whitelisted
+              this.setWhitelistStatusText()
               if (this.tab.site.isSpecialDomain) {
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
               } else {
-                  this.set('disabled', false);
+                  this.set('disabled', false)
               }
           }
 
-          if (this.domain && this.domain === '-') this.set('disabled', true);
+          if (this.domain && this.domain === '-') this.set('disabled', true)
       },
 
       setHttpsMessage: function () {
           if (!this.tab) return
 
           if (this.tab.upgradedHttps) {
-              this.httpsState = 'upgraded';
-          }
-          else if (/^https/.exec(this.tab.url)) {
-              this.httpsState = 'default';
+              this.httpsState = 'upgraded'
+          } else if (/^https/.exec(this.tab.url)) {
+              this.httpsState = 'default'
           }
 
-          this.httpsStatusText = httpsStates[this.httpsState];
+          this.httpsStatusText = httpsStates[this.httpsState]
       },
 
       setWhitelistStatusText: function () {
           if (this.isWhitelisted) {
-              this.whitelistStatusText = whitelistStates['isWhitelisted'];
+              this.whitelistStatusText = whitelistStates['isWhitelisted']
           } else {
-              this.whitelistStatusText = whitelistStates['notWhitelisted'];
+              this.whitelistStatusText = whitelistStates['notWhitelisted']
           }
       },
 
@@ -206,21 +207,20 @@ Site.prototype = $.extend({},
 
       toggleWhitelist: function () {
           if (this.tab && this.tab.site) {
-              this.isWhitelisted = !this.isWhitelisted;
-              this.set('whitelisted', this.isWhitelisted);
+              this.isWhitelisted = !this.isWhitelisted
+              this.set('whitelisted', this.isWhitelisted)
 
               this.fetch({'whitelisted': {
                   list: 'whitelisted',
                   domain: this.tab.site.domain,
                   value: this.isWhitelisted
               }
-              });
+              })
 
-              this.setWhitelistStatusText();
+              this.setWhitelistStatusText()
           }
       }
-
   }
-);
+)
 
-module.exports = Site;
+module.exports = Site

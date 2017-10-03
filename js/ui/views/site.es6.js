@@ -16,8 +16,7 @@ function Site (ops) {
     this._setup()
 
     // get data from background page tab
-    this.model.getBackgroundTabData()
-    this.rerender()
+    this.model.getBackgroundTabData().then(() => this.rerender())
 };
 
 Site.prototype = $.extend({},

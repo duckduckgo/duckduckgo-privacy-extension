@@ -1,9 +1,10 @@
 const Parent = window.DDG.base.Model
 
 function TrackerListTopBlocked (attrs) {
-    this.numCompanies = attrs.numCompanies
-    this.companyList = []
-    this.companyListMap = []
+    attrs = attrs || {}
+    attrs.numCompanies = attrs.numCompanies
+    attrs.companyList = []
+    attrs.companyListMap = []
     Parent.call(this, attrs)
 }
 

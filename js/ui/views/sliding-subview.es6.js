@@ -1,7 +1,6 @@
 const Parent = window.DDG.base.View
 
 function SlidingSubview (ops) {
-
     ops.appendTo = $('.sliding-subview--root')
     Parent.call(this, ops)
 
@@ -12,7 +11,6 @@ function SlidingSubview (ops) {
     this.bindEvents([
       [this.$close, 'click', this._destroy],
     ])
-
 }
 
 SlidingSubview.prototype = $.extend({},

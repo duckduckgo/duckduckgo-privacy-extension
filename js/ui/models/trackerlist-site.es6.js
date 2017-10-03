@@ -1,14 +1,12 @@
 const Parent = window.DDG.base.Model;
 
 function SiteTrackerList (attrs) {
-
-    attrs = attrs || {};
-    attrs.tab = null;
-    attrs.potentialBlocked = [];
-    attrs.companyListMap = [];
-    Parent.call(this, attrs);
-};
-
+    attrs = attrs || {}
+    attrs.tab = null
+    attrs.potentialBlocked = []
+    attrs.companyListMap = []
+    Parent.call(this, attrs)
+}
 
 SiteTrackerList.prototype = $.extend({},
   Parent.prototype,
@@ -17,7 +15,7 @@ SiteTrackerList.prototype = $.extend({},
       modelName: 'siteTrackerList',
 
       fetchAsyncData: function () {
-          const self = this;
+          const self = this
           return new Promise ((resolve, reject) => {
               this.fetch({getCurrentTab: true}).then((tab) => {
                   if (tab) {
@@ -25,20 +23,20 @@ SiteTrackerList.prototype = $.extend({},
                         self.tab = bkgTab;
                         self._updateCompaniesList()
                         resolve()
-                      });
+                      })
                   } else {
                       console.debug('SiteTrackerList model: no tab');
                       resolve()
                   }
-              });
-          });
+              })
+          })
       },
 
       _updateCompaniesList: function () {
           let self = this
           // list of all trackers on page (whether we blocked them or not)
-          self.trackers = self.tab.trackers || {};
-          const companyNames = Object.keys(self.trackers);
+          self.trackers = self.tab.trackers || {}
+          const companyNames = Object.keys(self.trackers)
 
           // find largest number of trackers (by company)
           let maxCount = 0;
@@ -48,16 +46,15 @@ SiteTrackerList.prototype = $.extend({},
                   // be listed individually at bottom of graph,
                   // we don't want "unknown" tracker total as maxCount
                   if (name !== 'unknown') {
-                      // let compare = self.trackersBlocked[name].count;
-                      let compare = self.trackers[name].count;
+                      let compare = self.trackers[name].count
                       if (compare > maxCount) maxCount = compare;
                   }
-              });
+              })
           }
 
           // set trackerlist metadata for list display by company:
-          self.companyListMap = companyNames.map(
-              (companyName) => {
+          self.companyListMap = companyNames
+              .map((companyName) => {
                   let company = self.trackers[companyName];
                   // calc max using pixels instead of % to make margins easier
                   // max width: 300 - (horizontal padding in css) = 260
@@ -73,7 +70,6 @@ SiteTrackerList.prototype = $.extend({},
               })
       }
   }
-);
+)
 
-
-module.exports = SiteTrackerList;
+module.exports = SiteTrackerList

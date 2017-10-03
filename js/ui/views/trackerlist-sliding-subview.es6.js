@@ -67,12 +67,10 @@ TrackerList.prototype = $.extend({},
                     modelName: 'siteTrackerList-' + random
                 })
                 this.model.fetchAsyncData().then(() => {
-                    // TODO: pick up here for rendering site detail data
-                    // this.model.site = new SiteModel({
-                    //     modelName: 'site' + random
-                    // })
-                    // this.model.getBackgroundTabData()
-                    this.renderList()
+                    this.model.site = new SiteModel({
+                        modelName: 'site' + random // needs unique model name
+                    })
+                    this.model.site.getBackgroundTabData().then(() => this.renderList())
                 })
             }
         },
