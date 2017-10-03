@@ -21,19 +21,19 @@ TrackerList.prototype = $.extend({},
     animateGraphBars,
     {
 
+        setActiveTab: function () {
+            let selector = '.js-nav-tab'
+            this.$el.find(selector).removeClass('active')
+            selector = selector + '-' + this.selectedTab
+            this.$el.find(selector).addClass('active')
+        },
+
         setupNav: function () {
             this.$navtab = this.$el.find('.js-nav-tab')
             this.bindEvents([
                 [this.$navtab, 'click', this.switchTabs]
             ])
             this.setupClose()
-        },
-
-        setActiveTab: function () {
-            let selector = '.js-nav-tab'
-            this.$el.find(selector).removeClass('active')
-            selector = selector + '-' + this.selectedTab
-            this.$el.find(selector).addClass('active')
         },
 
         switchTabs: function (e) {
