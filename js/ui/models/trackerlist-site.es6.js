@@ -1,4 +1,4 @@
-const Parent = window.DDG.base.Model;
+const Parent = window.DDG.base.Model
 
 function SiteTrackerList (attrs) {
     attrs = attrs || {}

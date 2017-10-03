@@ -12,19 +12,22 @@ function TrackerList (ops) {
     this.template = ops.template
     ParentSlidingSubview.call(this, ops)
     this.updateTab()
-
     this.setActiveTab()
-    this.$navtab = this.$el.find('.js-nav-tab')
-
-    this.bindEvents([
-        [this.$navtab, 'click', this.switchTabs]
-    ])
+    this.setupNav()
 }
 
 TrackerList.prototype = $.extend({},
     ParentSlidingSubview.prototype,
     animateGraphBars,
     {
+
+        setupNav: function () {
+            this.$navtab = this.$el.find('.js-nav-tab')
+            this.bindEvents([
+                [this.$navtab, 'click', this.switchTabs]
+            ])
+            this.setupClose()
+        },
 
         setActiveTab: function () {
             let selector = '.js-nav-tab'
@@ -91,15 +94,13 @@ TrackerList.prototype = $.extend({},
 
             // all-time tracker list tab
             if (this.model.modelName.indexOf('trackerListTop') > -1) {
+                this.unbindEvents()
+                this.setupNav()
+
                 // animate graph bars and pct
                 this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
                 this.$pct = this.$el.find('.js-top-blocked-pct')
                 this.animateGraphBars()
-
-
-                // TODO: destroy prev view
-                // this.unbindEvents()
-
 
                 // listener for reset stats click
                 this.$reset = this.$el.find('.js-reset-trackers-data')
@@ -110,13 +111,10 @@ TrackerList.prototype = $.extend({},
 
             // site-level details tab
             if (this.model.modelName.indexOf('siteTrackerList') > -1) {
-
-
-                // TODO: destroy prev view
-                // this.unbindEvents()
+                this.unbindEvents()
+                this.setupNav()
 
                 if (this.model.site) {
-                    console.log(`BIND this.model.site to change:${this.currentSiteModelName}`)
                     this.bindEvents([
                         [this.store.subscribe, `change:${this.currentSiteModelName}` , this.renderTabContent]
                     ])

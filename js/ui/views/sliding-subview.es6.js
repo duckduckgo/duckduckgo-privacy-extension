@@ -7,15 +7,19 @@ function SlidingSubview (ops) {
     this.$root = $('.sliding-subview--root')
     this.$root.addClass('sliding-subview--open')
 
-    this._cacheElems('.js-sliding-subview', [ 'close' ])
-    this.bindEvents([
-      [this.$close, 'click', this._destroy],
-    ])
+    this.setupClose()
 }
 
 SlidingSubview.prototype = $.extend({},
     Parent.prototype,
     {
+
+        setupClose: function () {
+            this._cacheElems('.js-sliding-subview', ['close'])
+            this.bindEvents([
+              [this.$close, 'click', this._destroy],
+            ])
+        },
 
         _destroy: function () {
             this.$root.removeClass('sliding-subview--open')
