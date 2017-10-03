@@ -35,7 +35,7 @@ function Site (attrs) {
     Parent.call(this, attrs);
 
     this.bindEvents([
-        [this.store.subscribe, 'change:backgroundMessage', this.updateTrackerCount]
+        [this.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg]
     ])
 }
 
@@ -105,6 +105,27 @@ Site.prototype = $.extend({},
               this.whitelistStatusText = whitelistStates['isWhitelisted']
           } else {
               this.whitelistStatusText = whitelistStates['notWhitelisted']
+          }
+      },
+
+      handleBackgroundMsg: function (message) {
+          // console.log('[model] handleBackgroundMsg()')
+          if (!message || !message.change) return
+          const attr = message.change.attribute
+
+          if (attr === 'updateTrackerCount') {
+              if (!this.tab) return
+              let tabID = this.tab.id
+
+              this.fetch({getTab: tabID}).then((backgroundTabObj) => {
+                  this.tab = backgroundTabObj
+                  this._getSiteRating()
+              })
+          }
+
+          if (attr === 'siteRating') {
+            const rating = message.change.value || null
+            if (rating) this.update({siteRating: rating})
           }
       },
 
@@ -188,20 +209,6 @@ Site.prototype = $.extend({},
             this.fetch({getSiteScore: this.tab.id}).then((rating) => {
                 if (rating) this.update({siteRating: rating})
             })
-          }
-      },
-
-      updateTrackerCount: function (message) {
-          // console.log('[model] updateTrackerCount()')
-          let self = this
-          if (message.change.attribute === 'updateTrackerCount') {
-              if (!this.tab) return
-              let tabID = this.tab.id
-
-              this.fetch({getTab: tabID}).then((backgroundTabObj) => {
-                  self.tab = backgroundTabObj
-                  self._getSiteRating()
-              })
           }
       },
 

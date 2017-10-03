@@ -7,9 +7,11 @@ const TopBlockedTrackersModel = require('./../models/trackerlist-top-blocked.es6
 function TrackerList (ops) {
     this.selectedTab = ops.defaultTab // poss values: `page` or `all`
     this.model = null // model is set below, keys off this.selectedTab
+    this.currentModelName = null
+    this.currentSiteModelName = null
     this.template = ops.template
     ParentSlidingSubview.call(this, ops)
-    this.updateList()
+    this.updateTab()
 
     this.setActiveTab()
     this.$navtab = this.$el.find('.js-nav-tab')
@@ -39,65 +41,93 @@ TrackerList.prototype = $.extend({},
             if (this.selectedTab === 'all') {
                 if (!$(e.currentTarget).hasClass(selector)) {
                     this.selectedTab = 'page'
-                    this.updateList()
+                    this.updateTab()
                     this.setActiveTab()
                 }
             } else if (this.selectedTab === 'page') {
                 if (!$(e.currentTarget).hasClass(selector)) {
                     this.selectedTab = 'all'
-                    this.updateList()
+                    this.updateTab()
                     this.setActiveTab()
                 }
             }
         },
 
-        updateList: function () {
+        updateTab: function () {
             const random = Math.round(Math.random()*100000)
+
             if (this.selectedTab === 'all') {
                 const numItems = 10
+                this.currentModelName = 'trackerListTop' + numItems + 'Blocked' + random
+                this.currentSiteModelName = null
                 this.model = new TopBlockedTrackersModel({
-                    modelName: 'trackerListTop' + numItems + 'Blocked' + random,
+                    modelName: this.currentModelName,
                     numCompanies: numItems
                 })
                 this.model.getTopBlocked().then(() => {
-                    this.renderList()
+                    this.renderTabContent()
                 })
             } else if (this.selectedTab === 'page') {
+                this.currentModelName = 'siteTrackerList' + random
+                this.currentSiteModelName = 'site' + random
                 this.model = new SiteTrackersModel({
-                    modelName: 'siteTrackerList-' + random
+                    modelName: this.currentModelName
                 })
                 this.model.fetchAsyncData().then(() => {
                     this.model.site = new SiteModel({
-                        modelName: 'site' + random // needs unique model name
+                        modelName: this.currentSiteModelName
                     })
-                    this.model.site.getBackgroundTabData().then(() => this.renderList())
+                    this.model.site.getBackgroundTabData().then(() => {
+                        this.renderTabContent()
+                    })
                 })
             }
         },
 
-        renderList: function () {
+        renderTabContent: function () {
             this.$el.find('.js-trackerlist-tab').remove()
-            let ol = this.template()
-            this.$el.append(ol)
+            let tabContent = this.template()
+            this.$el.append(tabContent)
 
-            // all-time tracker list
+            // all-time tracker list tab
             if (this.model.modelName.indexOf('trackerListTop') > -1) {
                 // animate graph bars and pct
                 this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
                 this.$pct = this.$el.find('.js-top-blocked-pct')
                 this.animateGraphBars()
+
+
+                // TODO: destroy prev view
+                // this.unbindEvents()
+
+
                 // listener for reset stats click
                 this.$reset = this.$el.find('.js-reset-trackers-data')
                 this.bindEvents([
                     [this.$reset, 'click', this.resetTrackersStats]
                 ])
             }
+
+            // site-level details tab
+            if (this.model.modelName.indexOf('siteTrackerList') > -1) {
+
+
+                // TODO: destroy prev view
+                // this.unbindEvents()
+
+                if (this.model.site) {
+                    console.log(`BIND this.model.site to change:${this.currentSiteModelName}`)
+                    this.bindEvents([
+                        [this.store.subscribe, `change:${this.currentSiteModelName}` , this.renderTabContent]
+                    ])
+                }
+            }
         },
 
         resetTrackersStats: function () {
             let self = this
             this.model.fetch({resetTrackersData: true}).then(() => {
-                self.updateList()
+                self.updateTab()
             })
         }
     }

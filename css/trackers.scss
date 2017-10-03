@@ -107,7 +107,8 @@ body {
         }
     }
 
-    .site-info {
+    .site-info,
+    .site-info--details {
 
         .default-list {
             padding-bottom: 0;
@@ -363,6 +364,10 @@ body {
                 @include is_disableable_link();
             }
         }
+    }
+
+    .site-info--details {
+
     }
 
     .linkable {
