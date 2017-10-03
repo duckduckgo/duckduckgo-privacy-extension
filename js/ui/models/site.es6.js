@@ -21,11 +21,16 @@ const majorTrackerNetworks = [
 ]
 
 function Site (attrs) {
-    attrs.disabled = true // disabled by default
-    attrs.httpsState = 'none'
-    attrs.httpsStatusText = httpsStates[attrs.httpsState]
-    attrs.isUserPrivacyUpgraded = false
-    attrs.numTrackerIconsToDisplay = 2
+    this.disabled = true // disabled by default
+    this.domain = '-'
+    this.isWhitelisted = false
+    this.siteRating = ''
+    this.httpsState = 'none'
+    this.httpsStatusText = ''
+    this.isUserPrivacyUpgraded = false
+    this.trackerCount = 0
+    this.trackerNetworks
+    this.numTrackerIconsToDisplay = 4
     Parent.call(this, attrs);
 
     this.bindEvents([

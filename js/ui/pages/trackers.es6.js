@@ -58,12 +58,7 @@ Trackers.prototype = $.extend({},
 
             this.views.site = new SiteView({
                 pageView: this,
-                model: new SiteModel({
-                    domain: '-',
-                    isWhitelisted: false,
-                    siteRating: '',
-                    trackerCount: 0
-                }),
+                model: new SiteModel(),
                 appendTo: this.$parent,
                 template: siteTemplate
             });
