@@ -21,7 +21,7 @@ module.exports = function () {
 
     } else if (this.model.modelName.indexOf('siteTrackerList') > -1) {
         // site level tracker list
-        return bel`<div class="js-trackerlist-tab card">
+        return bel`<div class="js-trackerlist-tab">
             ${gradeDetails(this.model)}
         </div>`
 

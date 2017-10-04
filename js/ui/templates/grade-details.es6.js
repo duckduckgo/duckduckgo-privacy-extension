@@ -1,13 +1,16 @@
 const bel = require('bel')
 
 module.exports = function (model) {
-  // if (!model) return
 
   return bel`<section class="site-info site-info--details">
       <h1 class="site-info__domain">${model.site.domain}</h1>
-      <div class="site-info__rating
-        site-info__rating--${model.site.siteRating}">
+      <div class="site-info__rating is-active
+        site-info__rating--${model.site.siteRating.toLowerCase()}">
         ${model.site.siteRating}
       </div>
+      <p class="site-info--details__explainer">
+        This received a "${model.site.siteRating.toUpperCase()}"
+        Privacy Grade for the reasons below.
+      </p>
   </div>`
 }
