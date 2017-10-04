@@ -176,7 +176,24 @@ a {
 }
 
 
-/* Popover */ 
+/* Popover */
+
+/**
+ * Popover template is in templates/shread/popover.es6.js
+ * Sample usage:
+ *    .site-info__li--trackers {
+ *        position: relative;
+ *
+ *        &:hover {
+ *            .popover.site_info__trackers__popover {
+ *                display: block;
+ *                top: initial;
+ *                bottom: 45px;
+ *            }
+ *        }
+ *
+ */
+
 .popover {
     display: none;
     position: absolute;
@@ -221,11 +238,11 @@ a {
         bottom: -10px;
         display: inline-block;
         width: 0;
-        
+
         &:after {
             position: relative;
             content: '';
-            display: block;  
+            display: block;
             left: 20px;
             width: 0;
             height: 0;

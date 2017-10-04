@@ -225,14 +225,6 @@ body {
 
         .site-info__li--https-status {
             position: relative;
-
-            &:hover {
-                .popover.site_info__https-status__popover {
-                    display: block;
-                    top: initial;
-                    bottom: 45px;
-                }
-            }
         }
 
         @mixin site_status_icons () {
@@ -289,14 +281,6 @@ body {
         .site-info__li--trackers {
             position: relative;
             padding-top: 7.5px;
-
-            &:hover {
-                .popover.site_info__trackers__popover {
-                    display: block;
-                    top: initial;
-                    bottom: 45px;
-                }
-            }
 
             .site-info__trackers {
 

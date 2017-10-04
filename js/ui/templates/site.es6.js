@@ -1,7 +1,6 @@
 const bel = require('bel')
 const titleize = require('titleize')
 const toggleButton = require('./shared/toggle-button')
-const popover = require('./shared/popover.es6.js')
 
 module.exports = function () {
 
@@ -41,10 +40,6 @@ module.exports = function () {
                         </span>
                     </div>
                 </h2>
-                ${popover(
-                    'site_info__https-status__popover',
-                    httpsMsg(this.model.httpsStatusText)
-                )}
             </li>
             <li class="site-info__li--trackers padded border--bottom">
                 <h2 class="site-info__trackers bold">
@@ -62,10 +57,6 @@ module.exports = function () {
                         )}
                     </div>
                 </h2>
-                ${popover(
-                    'site_info__trackers__popover',
-                    trackersMsg(this.model.trackerNetworks, this.model.isWhitelisted)
-                )}
             </li>
             <li class="site-info__li--more-details padded border--bottom">
                 <a href="#" class="js-site-show-all-trackers link-secondary bold">
