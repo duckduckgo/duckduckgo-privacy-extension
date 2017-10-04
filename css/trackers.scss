@@ -536,10 +536,11 @@ body {
             position: relative;
             float: left;
             width: 50px;
+            height: 1.2em;
             margin-right: 10px;
-            overflow: hidden;
             font-size: 13px;
-            // TODO: truncation ellipses
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .top-blocked__li__blocker-bar {
