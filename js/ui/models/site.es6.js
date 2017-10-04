@@ -6,10 +6,10 @@ const whitelistStates = {
 }
 
 const httpsStates = {
-    'default': 'Secure',
+    'secure': 'Secure',
     'upgraded': 'Secure', // was 'Upgraded'
     'none': 'Insecure'
-};
+}
 
 const majorTrackerNetworks = [
     'amazon.com',
@@ -32,7 +32,7 @@ function Site (attrs) {
     attrs.trackerCount = 0
     attrs.trackerNetworks
     attrs.numTrackerIconsToDisplay = 4
-    Parent.call(this, attrs);
+    Parent.call(this, attrs)
 
     this.bindEvents([
         [this.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg]
@@ -94,7 +94,9 @@ Site.prototype = $.extend({},
           if (this.tab.upgradedHttps) {
               this.httpsState = 'upgraded'
           } else if (/^https/.exec(this.tab.url)) {
-              this.httpsState = 'default'
+              this.httpsState = 'secure'
+          } else {
+            this.httpsState = 'none'
           }
 
           this.httpsStatusText = httpsStates[this.httpsState]

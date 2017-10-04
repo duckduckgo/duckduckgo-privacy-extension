@@ -88,23 +88,6 @@ module.exports = function () {
         }
     }
 
-    function httpsMsg (httpsState) {
-        let msg = ''
-
-        if (httpsState === 'Secure' || httpsState === 'Upgraded') {
-            return bel`<span>Connection is securely using
-                <em>HTTPS Encryption</em>.</span>`
-        }
-
-        if (httpsState === 'Insecure') {
-            return bel`<span>There is no <em>HTTPS Encryption</em>
-                available for this connection.</span>`
-        }
-
-        return bel`<span>There is no <em>HTTPS Encryption</em>
-            available for this tab.</span>`
-    }
-
     function renderTrackerNetworks (tn, limit, isWhitelisted) {
         if (tn && tn.major) {
             const isActive = isWhitelisted ? 'is-active' : ''
