@@ -16,6 +16,12 @@ module.exports = function (model) {
             ${httpsMsg(model.site.httpsState)}
             <div class="float-right"></div>
         </h2>
+        <h3 class="card card--padded border--bottom">
+            Trackers found
+        </h3>
+        <ol class="default-list page-blocked__list">
+            ${renderTrackerDetails(model.companyListMap)}
+        </ol>
     </section>`
 }
 
@@ -24,4 +30,19 @@ function httpsMsg (httpsState) {
         return bel`<span>Connection is secure (HTTPS)</span>`
     }
     return bel`<span>Connection is insecure (HTTP)</span>`
+}
+
+function renderTrackerDetails (companyListMap) {
+    // TODO: handle list length = 0
+    // TODO: handle "others"
+    if (companyListMap && companyListMap.length > 0) {
+        return companyListMap.map((c, i) => {
+            return bel`<li>
+                ${c.name}
+                <ol class="default-list">
+                    <li>foo</li>
+                </ol>
+            </li>`
+        })
+    }
 }

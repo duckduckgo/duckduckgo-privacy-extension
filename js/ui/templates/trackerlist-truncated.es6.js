@@ -9,7 +9,7 @@ module.exports = function () {
             <h3 class="menu-title padded">
                 Top trackers across all sites
             </h3>
-            <ul class="default-list top-blocked__list">
+            <ol class="default-list top-blocked__list">
                 ${trackerListItems(this.model.companyListMap)}
                 <li class="top-blocked__li top-blocked__li--see-all border--top">
                     <a href="#" class="link-secondary js-top-blocked-see-all">
@@ -17,7 +17,7 @@ module.exports = function () {
                         All trackers
                     </a>
                 </li>
-            </ul>
+            </ol>
         </section>`
     } else {
         return bel`<section class="top-blocked">

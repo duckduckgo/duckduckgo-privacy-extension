@@ -91,10 +91,10 @@ module.exports = function () {
     function renderTrackerNetworks (tn, limit, isWhitelisted) {
         if (tn && tn.major) {
             const isActive = isWhitelisted ? 'is-active' : ''
-            return tn.major.map((tn, i) => {
+            return tn.major.map((t, i) => {
                 if (i > (limit - 1)) return ''
                 return bel`<span class="site-info__tracker__icon
-                    ${tn.replace('.', '')} ${isActive}">${tn}</span>`
+                    ${t.replace('.', '')} ${isActive}">${t}</span>`
             })
         }
     }
