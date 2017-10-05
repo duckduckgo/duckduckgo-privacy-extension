@@ -417,7 +417,7 @@ body {
         }
     }
 
-    .sliding-subview--trackers-blocked {
+    .sliding-subview--tabbed {
         overflow-y: auto;
 
         .top-blocked__list {
@@ -455,7 +455,6 @@ body {
 
 
 /* Top blocked lists */
-
 .top-blocked__list {
     margin: 0;
     padding-bottom: 0;

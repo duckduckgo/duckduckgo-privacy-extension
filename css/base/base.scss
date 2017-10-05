@@ -127,10 +127,12 @@ a {
         padding: $card--padded;
     }
 
+    &.border--bottom,
     .border--bottom {
         border-bottom: $card__border;
     }
 
+    &.border--top,
     .border--top {
         border-top: $card__border;
     }
@@ -176,10 +178,8 @@ a {
 }
 
 
-/* Popover */
-
-/**
- * Popover template is in templates/shread/popover.es6.js
+/* Popover
+ * Template is in templates/shread/popover.es6.js
  * Sample usage:
  *    .site-info__li--trackers {
  *        position: relative;
@@ -191,7 +191,6 @@ a {
  *                bottom: 45px;
  *            }
  *        }
- *
  */
 
 .popover {

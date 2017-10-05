@@ -19,7 +19,7 @@ module.exports = function (model) {
         <h3 class="card card--padded border--bottom">
             Trackers found
         </h3>
-        <ol class="default-list page-blocked__list">
+        <ol class="default-list page-blocked__list card card--padded">
             ${renderTrackerDetails(model.companyListMap)}
         </ol>
     </section>`
@@ -38,9 +38,9 @@ function renderTrackerDetails (companyListMap) {
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
             return bel`<li>
-                ${c.name}
+                <strong>${c.name}</strong>
                 <ol class="default-list">
-                    <li>foo</li>
+                  ${c.urls.map((url) => bel`<li>${url}</li>`)}
                 </ol>
             </li>`
         })

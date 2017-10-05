@@ -6,7 +6,7 @@ module.exports = function () {
     if (!this.model) {
         // fist pass thru render function - just render tab nav
         return bel`<section class="sliding-subview
-            sliding-subview--trackers-blocked
+            sliding-subview--tabbed
             sliding-subview--has-fixed-header">
             <nav class="sliding-subview__header card">
                 <a href="#" class="sliding-subview__header__title sliding-subview__header__title--has-icon js-sliding-subview-close">
