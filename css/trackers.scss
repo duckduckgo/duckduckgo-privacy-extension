@@ -42,6 +42,16 @@ body {
 
     .search-form {
 
+        .ddg-logo {
+            @include ddg_logo--small();
+            background-size: cover;
+            width: 21px;
+            height: 20px;
+            position: absolute;
+            top: 10px;
+            left: 21px;
+        }
+
         .search-form__input {
             width: 160px;
             -moz-appearance: none;
@@ -65,7 +75,7 @@ body {
         .search-form__go {
             position: absolute;
             top: 4px;
-            right: 6px;
+            right: 30px;
             background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9InNlYXJjaC1sb3VwZSI+PGc+PGc+PHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6Izg4ODg4ODsiIGQ9Ik0xOC43LDE2LjJsLTIuOS0yLjlDMTYuNSwxMi4xLDE3LDEwLjYsMTcsOWMwLTQuNC0zLjYtOC04LThTMSw0LjYsMSw5czMuNiw4LDgsOGMxLjYsMCwzLTAuNSw0LjMtMS4ybDIuOSwyLjljMC41LDAuNSwxLjIsMC41LDEuNiwwbDAuOC0wLjhDMTkuMSwxNy40LDE5LjEsMTYuNywxOC43LDE2LjJ6IE05LDE1Yy0zLjMsMC02LTIuNy02LTZjMC0zLjMsMi43LTYsNi02YzMuMywwLDYsMi43LDYsNkMxNSwxMi4zLDEyLjMsMTUsOSwxNXoiLz48L2c+PC9nPjwvZz48L3N2Zz4=);
             background-position: 47% 46%;
             background-size: 18px 18px;
@@ -96,14 +106,9 @@ body {
             display: none;
         }
 
-        .ddg-logo {
-            @include ddg_logo--small();
-            background-size: cover;
-            width: 21px;
-            height: 20px;
-            position: absolute;
-            top: 10px;
-            left: 21px;
+        .icon__settings {
+            top: 12px;
+            right: 12.5px;
         }
     }
 
@@ -346,18 +351,6 @@ body {
             .link-secondary {
                 @include is_disableable_link();
             }
-        }
-    }
-
-    .linkable {
-        font-weight: bold;
-        display: block;
-        $settings-padding-lr: 14px + 3px;
-        padding: 0 $settings-padding-lr 7px 20px;
-        position: relative;
-
-        .icon__settings {
-            right: 21px
         }
     }
 
