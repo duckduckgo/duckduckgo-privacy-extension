@@ -419,7 +419,10 @@ body {
             }
 
             .site-info__trackers__company-list {
+                overflow-y: auto;
+                height: 300px;
                 padding-top: 0;
+                padding-bottom: 60px;
 
                     li.is-empty {
                         padding: 15px 0 120px 0;
