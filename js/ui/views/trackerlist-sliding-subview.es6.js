@@ -77,12 +77,20 @@ TrackerList.prototype = $.extend({},
                     modelName: this.currentModelName
                 })
                 this.model.fetchAsyncData().then(() => {
+
+                    // TODO: site model is shoe-horned in here
+                    // because site.siteRating arrives async from
+                    // background via `change:backgroundMessage`
+                    // need to refactor SiteTrackersModel to use
+                    // store.subscribe like Site Model to get
+                    // rating
                     this.model.site = new SiteModel({
                         modelName: this.currentSiteModelName
                     })
                     this.model.site.getBackgroundTabData().then(() => {
                         this.renderTabContent()
                     })
+
                 })
             }
         },
