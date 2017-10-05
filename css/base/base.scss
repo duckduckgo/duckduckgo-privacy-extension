@@ -113,6 +113,15 @@ a {
     line-height: 0;
 }
 
+/* Borders */
+.border--top {
+    border-top: $card__border;
+}
+
+.border--bottom {
+    border-bottom: $card__border;
+}
+
 
 /* Card Display */
 .card {

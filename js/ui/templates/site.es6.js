@@ -16,7 +16,7 @@ module.exports = function () {
                 </div>
             </li>
             <li class="site-info__rating-li">
-                <div class="site-info__rating-container">
+                <div class="site-info__rating-container border--top border--bottom">
                     <p class="site-info__rating-label">Privacy Grade</p>
                     <div class="site-info__rating-flex">
                         ${renderSiteRating('A', this.model.siteRating)}
