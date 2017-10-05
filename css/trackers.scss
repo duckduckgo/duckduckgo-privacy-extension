@@ -417,6 +417,22 @@ body {
                 font-size: 13px;
                 margin: 7.5px 20px 15px 20px;
             }
+
+            .page-blocked__company-list {
+                padding-top: 0;
+
+                    li.is-empty {
+                        padding: 15px 0 120px 0;
+                    }
+
+                .page-blocked__company-list__url-list {
+
+                    li {
+                        padding-top: 3.5px;
+                        font-size: 13px;
+                    }
+                }
+            }
         }
 
         .top-blocked__list {
