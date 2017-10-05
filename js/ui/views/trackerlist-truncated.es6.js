@@ -4,7 +4,6 @@ const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subvie
 const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js')
 
 function TrackerList (ops) {
-
     this.model = ops.model
     this.pageView = ops.pageView
     this.template = ops.template
@@ -14,7 +13,11 @@ function TrackerList (ops) {
     this.model.getTopBlocked().then(() => {
         this.rerenderList()
     })
-};
+
+    this.bindEvents([
+        [this.model.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg]
+    ])
+}
 
 TrackerList.prototype = $.extend({},
     Parent.prototype,
@@ -35,10 +38,20 @@ TrackerList.prototype = $.extend({},
             ]);
         },
 
-        rerenderList: function() {
+        rerenderList: function () {
             this._rerender()
             this._setup()
             this.animateGraphBars()
+        },
+
+        handleBackgroundMsg: function (message) {
+            if (!message || !message.change) return
+
+            const attr = message.change.attribute
+            if (attr === 'didResetTrackersData') {
+                this.model.reset()
+                this.rerenderList()
+            }
         }
     }
 );

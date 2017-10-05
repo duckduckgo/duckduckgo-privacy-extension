@@ -18,7 +18,6 @@ TrackerListTopBlocked.prototype = $.extend({},
           return new Promise((resolve, reject) => {
               this.fetch({getTopBlockedByPages: this.numCompanies})
                   .then((data) => {
-                      // only show top blocked chart after 10 pages visited
                       if (!data.totalPages || data.totalPages < 10) return resolve()
                       if (!data.topBlocked || data.topBlocked.length < 1) return resolve()
                       this.companyList = data.topBlocked
@@ -35,7 +34,13 @@ TrackerListTopBlocked.prototype = $.extend({},
                       resolve()
                 })
           })
+      },
+
+      reset: function () {
+          this.companyList = []
+          this.companyListMap = []
       }
+
   }
 )
 

@@ -33,7 +33,6 @@ function httpsMsg (httpsState) {
 }
 
 function renderTrackerDetails (companyListMap) {
-    // TODO: handle "others"
     if (companyListMap.length === 0) {
         return bel`<li class="is-empty">None</li>`
     }

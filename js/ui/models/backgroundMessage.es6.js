@@ -11,7 +11,7 @@ const Parent = window.DDG.base.Model;
  *
  * 2. Two-way messaging using this.model.fetch() as a passthrough
  *
- *    Each model can use a fetch method to send and receive a response from the background. 
+ *    Each model can use a fetch method to send and receive a response from the background.
  *    Ex: this.model.fetch({'name': 'value'}).then((response) => console.log(response))
  *    Listeners must be registered in the background to respond to messages with this 'name'.
  *
@@ -20,23 +20,26 @@ const Parent = window.DDG.base.Model;
 function BackgroundMessage (attrs) {
     Parent.call(this, attrs);
 
-    // listen for messages from background 
+    // listen for messages from background and
+    // notify subscribers
     chrome.runtime.onMessage.addListener((req) => {
         if (req.whitelistChanged) {
-            // notify subscribers that the whitelist has changed
             this.set('whitelistChanged', true)
         }
-        else if (req.updateTrackerCount) {
+        if (req.updateTrackerCount) {
             this.set('updateTrackerCount', true)
         }
-    });
+        if (req.didResetTrackersData) {
+            this.set('didResetTrackersData', true)
+        }
+    })
 }
 
-BackgroundMessage.prototype = $.extend({}, 
+BackgroundMessage.prototype = $.extend({},
     Parent.prototype,
     {
-        modelName: 'backgroundMessage',
+        modelName: 'backgroundMessage'
     }
-);
+)
 
-module.exports = BackgroundMessage;
+module.exports = BackgroundMessage

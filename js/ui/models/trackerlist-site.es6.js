@@ -14,13 +14,12 @@ SiteTrackerList.prototype = $.extend({},
       modelName: 'siteTrackerList',
 
       fetchAsyncData: function () {
-          const self = this
           return new Promise ((resolve, reject) => {
               this.fetch({getCurrentTab: true}).then((tab) => {
                   if (tab) {
-                      self.fetch({getTab: tab.id}).then((bkgTab) => {
-                        self.tab = bkgTab;
-                        self._updateCompaniesList()
+                      this.fetch({getTab: tab.id}).then((bkgTab) => {
+                        this.tab = bkgTab;
+                        this._updateCompaniesList()
                         resolve()
                       })
                   } else {
@@ -32,34 +31,33 @@ SiteTrackerList.prototype = $.extend({},
       },
 
       _updateCompaniesList: function () {
-          let self = this
           // list of all trackers on page (whether we blocked them or not)
-          self.trackers = self.tab.trackers || {}
-          const companyNames = Object.keys(self.trackers)
+          this.trackers = this.tab.trackers || {}
+          const companyNames = Object.keys(this.trackers)
 
           // find largest number of trackers (by company)
           let maxCount = 0;
-          if (self.trackers && companyNames.length > 0) {
+          if (this.trackers && companyNames.length > 0) {
               companyNames.map((name) => {
-                  // don't count "unknown" trackers since they will
+                  // don't sort "unknown" trackers since they will
                   // be listed individually at bottom of graph,
                   // we don't want "unknown" tracker total as maxCount
                   if (name !== 'unknown') {
-                      let compare = self.trackers[name].count
+                      let compare = this.trackers[name].count
                       if (compare > maxCount) maxCount = compare;
                   }
               })
           }
 
           // set trackerlist metadata for list display by company:
-          self.companyListMap = companyNames
+          this.companyListMap = companyNames
               .map((companyName) => {
-                  let company = self.trackers[companyName];
+                  let company = this.trackers[companyName];
                   // calc max using pixels instead of % to make margins easier
                   // max width: 300 - (horizontal padding in css) = 260
                   return {
                       name: companyName,
-                      count: companyName === 'unknown' ? 0 : company.count,
+                      count: companyName === 'unknown' ? 1 : company.count,
                       px: Math.floor(company.count * 260 / maxCount),
                       urls: company.urls
                   }

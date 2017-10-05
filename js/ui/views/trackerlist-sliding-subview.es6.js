@@ -131,9 +131,8 @@ TrackerList.prototype = $.extend({},
         },
 
         resetTrackersStats: function () {
-            let self = this
             this.model.fetch({resetTrackersData: true}).then(() => {
-                self.updateTab()
+                this.updateTab()
             })
         }
     }

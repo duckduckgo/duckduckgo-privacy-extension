@@ -113,8 +113,8 @@ Site.prototype = $.extend({},
       handleBackgroundMsg: function (message) {
           // console.log('[model] handleBackgroundMsg()')
           if (!message || !message.change) return
-          const attr = message.change.attribute
 
+          const attr = message.change.attribute
           if (attr === 'updateTrackerCount') {
               if (!this.tab) return
               let tabID = this.tab.id
@@ -183,6 +183,7 @@ Site.prototype = $.extend({},
           const networks = Object.keys(this.tab.trackers)
                               .map((t) => t.toLowerCase())
                               .filter((t) => t !== 'unknown')
+
 
           // major tracker networks found on this page/tab
           const major = networks.filter((t) => majorTrackerNetworks.includes(t))

@@ -104,7 +104,7 @@ chrome.tabs.onUpdated.addListener( (id,info) => {
     if (info.status === "complete") {
         Companies.syncToStorage();
     }
-});
+})
 
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getTopBlocked) {
@@ -113,7 +113,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
     } else if (req.resetTrackersData) {
         Companies.clearData()
+        chrome.runtime.sendMessage({'didResetTrackersData': true})
         res()
     }
-    return true;
-});
+    return true
+})
