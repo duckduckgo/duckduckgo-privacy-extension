@@ -29,7 +29,7 @@ module.exports = function () {
         // all-time tracker list
         return bel`<div class="js-trackerlist-tab">
             ${trackerListFull(this.model)}
-            <div class="sliding-subview__reset-stats">
+            <div class="top-blocked__reset-stats">
                 <h3>Data Privacy</h3>
                 <a href="#" class="js-reset-trackers-data">Reset stats</a>
                 <p>These stats are only stored locally on your device,

@@ -107,8 +107,7 @@ body {
         }
     }
 
-    .site-info,
-    .site-info--details {
+    .site-info {
 
         .default-list {
             padding-bottom: 0;
@@ -350,39 +349,6 @@ body {
         }
     }
 
-    .site-info--details {
-        padding-top: 15px;
-
-        .site-info__domain {
-            margin-left: 20px;
-            line-height: 20px;
-            height: 21px;
-            max-width: 225px;
-        }
-
-        .site-info__rating {
-
-            &.is-active {
-                /* override styles above */
-                display: block;
-                float: right;
-                margin: 0;
-                margin-right: 20px;
-                font-size: 13px;
-                width: 20px;
-                height: 20px;
-                line-height: 20px;
-                min-width: 0;
-            }
-        }
-
-        .site-info--details__explainer {
-            color: $grey;
-            font-size: 13px;
-            margin: 7.5px 20px 15px 20px;
-        }
-    }
-
     .linkable {
         font-weight: bold;
         display: block;
@@ -420,6 +386,39 @@ body {
     .sliding-subview--tabbed {
         overflow-y: auto;
 
+        .site-info--details {
+            padding-top: 15px;
+
+            .site-info__domain {
+                margin-left: 20px;
+                line-height: 20px;
+                height: 21px;
+                max-width: 225px;
+            }
+
+            .site-info__rating {
+
+                &.is-active {
+                    /* override styles above */
+                    display: block;
+                    float: right;
+                    margin: 0;
+                    margin-right: 20px;
+                    font-size: 13px;
+                    width: 20px;
+                    height: 20px;
+                    line-height: 20px;
+                    min-width: 0;
+                }
+            }
+
+            .site-info--details__explainer {
+                color: $grey;
+                font-size: 13px;
+                margin: 7.5px 20px 15px 20px;
+            }
+        }
+
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
@@ -429,7 +428,7 @@ body {
             max-height: 315px;
         }
 
-        .sliding-subview__reset-stats {
+        .top-blocked__reset-stats {
             position: absolute;
             height: 50px;
             top: 510px;
