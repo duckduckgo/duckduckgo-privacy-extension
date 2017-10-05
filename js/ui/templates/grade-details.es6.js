@@ -41,6 +41,9 @@ function renderTrackerDetails (companyListMap) {
         return companyListMap.map((c, i) => {
             return bel`<li>
                 <strong>${c.name}</strong>
+                <span class="site-info__tracker__icon
+                    ${c.name.replace('.', '').toLowerCase()}
+                    float-right"></span>
                 <ol class="default-list site-info__trackers__company-list__url-list">
                     ${c.urls.map((url) => bel`<li>${url}</li>`)}
                 </ol>
