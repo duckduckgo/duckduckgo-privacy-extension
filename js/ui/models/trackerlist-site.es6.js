@@ -3,7 +3,6 @@ const Parent = window.DDG.base.Model
 function SiteTrackerList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
-    attrs.potentialBlocked = []
     attrs.companyListMap = []
     Parent.call(this, attrs)
 }
