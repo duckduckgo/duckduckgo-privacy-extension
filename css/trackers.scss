@@ -177,6 +177,7 @@ body {
         .site-info__rating {
             @include icon_display();
             @include uppercase_label();
+            letter-spacing: initial; /* override */
             margin-top: 18px;
             flex: 0 1 auto;
             align-self: auto;
