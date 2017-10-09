@@ -5,6 +5,7 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser');
+const ONEDAY = 1000*60*60*24
 
 easylists = {
     privacy: {
@@ -27,9 +28,11 @@ function updateLists () {
         let url = easylists[list].url
         let atb = settings.getSetting('atb')
         let set_atb = settings.getSetting('set_atb')
+        let versionParam = getVersionParam()
 
-        if (atb) url = url + '&atb=' + atb
-        if (set_atb) url = url + '&set_atb=' + set_atb
+        if (atb) url += '&atb=' + atb
+        if (set_atb) url += '&set_atb=' + set_atb
+        if (versionParam) url += versionParam
 
         console.log("Checking for list update: ", list)
 
@@ -68,3 +71,28 @@ chrome.alarms.onAlarm.addListener(alarm => {
 // set an alarm to recheck the lists
 // update every 3 hours
 chrome.alarms.create('updateEasyLists', {periodInMinutes: 180})
+
+// add version param to url on the first install and
+// only once a day after than
+function getVersionParam () {
+    let version = settings.getSetting('version') || 'v1'
+    let lastUpdate = settings.getSetting('lastUpdate')
+    let now = Date.now()
+    let versionParam
+
+    // check delta for last update or if lastUpdate does
+    // not exist then this is the initial install
+    if (lastUpdate) {
+        let delta = now - new Date(lastUpdate)
+            
+        if (delta > ONEDAY) {
+            versionParam = `&v=${version}`
+        }
+    } else {
+        versionParam = `&v=${version}`
+    }
+            
+    settings.updateSetting('lastUpdate', now)
+
+    return versionParam
+}

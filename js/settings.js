@@ -2,6 +2,7 @@ var load = require('load');
 
 require.scopes.settings =(() => {
     var settings = {};
+    let isReady = false
 
     // external settings defines a function that needs to run when a setting is updated
     var externalSettings = {
@@ -9,15 +10,22 @@ require.scopes.settings =(() => {
     };
 
     function init() {
-        buildSettingsFromDefaults();
-        buildSettingsFromLocalStorage();
-        registerListeners();
+        return new Promise ((resolve, reject) => {
+            buildSettingsFromDefaults();
+            buildSettingsFromLocalStorage(resolve);
+            registerListeners();
+        })
     }
 
-    function buildSettingsFromLocalStorage() {
+    function ready () {
+        return isReady
+    }
+
+    function buildSettingsFromLocalStorage(resolve) {
         chrome.storage.local.get(['settings'], function(results){
             Object.assign(settings, results['settings']);
             runExternalSettings();
+            resolve()
         });
     }
 
@@ -40,7 +48,6 @@ require.scopes.settings =(() => {
 
     function syncSettingTolocalStorage(){
         chrome.storage.local.set({'settings': settings});
-        return true;
     }
 
     function getSetting(name) {
@@ -56,6 +63,11 @@ require.scopes.settings =(() => {
     }
 
     function updateSetting(name, value) {
+        if (!isReady) {
+            console.error('Settings: tried to update before settings is loaded')
+            return
+        }
+
         settings[name] = value;
         runExternalSetting(name, value);
         syncSettingTolocalStorage();
@@ -86,13 +98,14 @@ require.scopes.settings =(() => {
         }
         return true;
     };
-
-    init();
     
+    init().then(() => isReady = true)
+
     return {
         getSetting: getSetting,
         updateSetting: updateSetting,
-        logSettings: logSettings
+        logSettings: logSettings,
+        ready: ready
     }
 
 })();
