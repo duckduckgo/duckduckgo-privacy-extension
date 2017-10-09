@@ -15,7 +15,7 @@ const linkableTemplate = require('./../templates/linkable.es6.js')
 const AutocompleteView = require('./../views/autocomplete.es6.js')
 const AutocompleteModel = require('./../models/autocomplete.es6.js')
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
-const BackgroundMessageModel = require('./../models/backgroundMessage.es6.js')
+const BackgroundMessageModel = require('./../models/background-message.es6.js')
 
 function Trackers (ops) {
     this.$parent = $('#trackers-container')
