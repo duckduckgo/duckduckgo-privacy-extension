@@ -1,6 +1,6 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
-const SiteTrackersModel = require('./../models/trackerlist-site.es6.js')
+const SiteDetailsModel = require('./../models/site-details.es6.js')
 const SiteModel = require('./../models/site.es6.js')
 const TopBlockedTrackersModel = require('./../models/trackerlist-top-blocked.es6.js')
 
@@ -11,6 +11,7 @@ function TrackerList (ops) {
     this.currentSiteModelName = null
     this.template = ops.template
     ParentSlidingSubview.call(this, ops)
+
     this.updateTab()
     this.setActiveTab()
     this.setupNav()
@@ -71,9 +72,9 @@ TrackerList.prototype = $.extend({},
                     this.renderTabContent()
                 })
             } else if (this.selectedTab === 'page') {
-                this.currentModelName = 'siteTrackerList' + random
+                this.currentModelName = 'siteDetails' + random
                 this.currentSiteModelName = 'site' + random
-                this.model = new SiteTrackersModel({
+                this.model = new SiteDetailsModel({
                     modelName: this.currentModelName
                 })
                 this.model.fetchAsyncData().then(() => {
@@ -111,7 +112,7 @@ TrackerList.prototype = $.extend({},
             }
 
             // site-level details tab
-            if (this.model.modelName.indexOf('siteTrackerList') > -1) {
+            if (this.model.modelName.indexOf('siteDetails') > -1) {
                 this.unbindEvents()
                 this.setupNav()
 

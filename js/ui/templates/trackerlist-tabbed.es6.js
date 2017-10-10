@@ -19,7 +19,7 @@ module.exports = function () {
             </nav>
         </section>`
 
-    } else if (this.model.modelName.indexOf('siteTrackerList') > -1) {
+    } else if (this.model.modelName.indexOf('siteDetails') > -1) {
         // site level tracker list
         return bel`<div class="js-trackerlist-tab">
             ${gradeDetails(this.model)}

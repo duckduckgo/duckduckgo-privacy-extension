@@ -1,17 +1,17 @@
 const Parent = window.DDG.base.Model
 
-function SiteTrackerList (attrs) {
+function SiteDetails (attrs) {
     attrs = attrs || {}
     attrs.tab = null
     attrs.companyListMap = []
     Parent.call(this, attrs)
 }
 
-SiteTrackerList.prototype = $.extend({},
+SiteDetails.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelName: 'siteTrackerList',
+      modelName: 'siteDetails',
 
       fetchAsyncData: function () {
           return new Promise ((resolve, reject) => {
@@ -23,7 +23,7 @@ SiteTrackerList.prototype = $.extend({},
                         resolve()
                       })
                   } else {
-                      console.debug('SiteTrackerList model: no tab');
+                      console.debug('SiteDetails model: no tab');
                       resolve()
                   }
               })
@@ -69,4 +69,4 @@ SiteTrackerList.prototype = $.extend({},
   }
 )
 
-module.exports = SiteTrackerList
+module.exports = SiteDetails
