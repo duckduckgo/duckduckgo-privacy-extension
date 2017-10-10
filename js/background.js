@@ -45,7 +45,7 @@ function Background() {
   $this = this;
 
   // clearing last search on browser startup
-  settings.updateSetting('last_search', '');
+  settings.ready().then(() => settings.updateSetting('last_search', ''))
 
   var os = "o";
   if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";

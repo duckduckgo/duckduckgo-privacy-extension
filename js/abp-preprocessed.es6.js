@@ -60,11 +60,11 @@ function updateLists () {
 }
 
 // Make sure the list updater runs on start up
-updateLists()
+settings.ready().then(() => updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateEasyLists') {
-        updateLists()
+        setitngs.ready().then(() => updateLists())
     }
 });
 
@@ -76,14 +76,14 @@ chrome.alarms.create('updateEasyLists', {periodInMinutes: 180})
 // only once a day after than
 function getVersionParam () {
     let version = settings.getSetting('version') || 'v1'
-    let lastUpdate = settings.getSetting('lastUpdate')
+    let lastEasylistUpdate = settings.getSetting('lastEasylistUpdate')
     let now = Date.now()
     let versionParam
 
-    // check delta for last update or if lastUpdate does
+    // check delta for last update or if lastEasylistUpdate does
     // not exist then this is the initial install
-    if (lastUpdate) {
-        let delta = now - new Date(lastUpdate)
+    if (lastEasylistUpdate) {
+        let delta = now - new Date(lastEasylistUpdate)
             
         if (delta > ONEDAY) {
             versionParam = `&v=${version}`
@@ -91,8 +91,8 @@ function getVersionParam () {
     } else {
         versionParam = `&v=${version}`
     }
-            
-    settings.updateSetting('lastUpdate', now)
+
+    if (versionParam) settings.updateSetting('lastEasylistUpdate', now)
 
     return versionParam
 }
