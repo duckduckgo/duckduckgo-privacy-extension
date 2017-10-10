@@ -1,3 +1,4 @@
+// TODO: break me in two, then delete this view
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
 const SiteDetailsModel = require('./../models/site-details.es6.js')

@@ -1,10 +1,17 @@
 const bel = require('bel')
+const header = require('./shared/sliding-subview-header.es6.js')
 const trackerListItems = require('./shared/trackerlist-items.es6.js')
 const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
 
 module.exports = function (model) {
-    if (!model || !model.companyListMap) return
 
+    bel`<section class="sliding-subview
+    sliding-subview--has-fixed-header">
+        ${renderList(model)}
+    </section`
+}
+
+function renderList (model) {
     if (model.companyListMap.length > 0) {
         return bel`<ol class="default-list top-blocked__list card">
             ${trackerListItems(model.companyListMap)}
@@ -17,5 +24,4 @@ module.exports = function (model) {
         </ol>`
     }
 }
-
 

@@ -182,6 +182,7 @@
             color: #383838;
             overflow: hidden;
 
+            .sliding-subview__header__back,
             .sliding-subview__header__title {
                 color: $slate;
                 font-size: 14px;
@@ -191,37 +192,19 @@
                 height: 26px;
                 width: 14px;
 
-                &.sliding-subview__header__title--has-icon {
+                &.sliding-subview__header__back--is-icon {
                     padding-left: 35px;
                 }
-            }
 
-            .sliding-subview__header__tabbed-nav {
-                position: absolute;
-                left: 83px;
-                top: 0;
-
-                a {
-                    font-size: 14px;
+                .sliding-subview__header__title--center {
+                    position: absolute;
+                    left: 83px;
+                    top: 0;
                     font-weight: normal;
                     color: $grey-light;
-                    display: inline-block;
                     padding: 14px 0 10px 0;
                     margin-right: 7px;
                     text-decoration: none;
-
-                    &:hover {
-                        text-decoration: none;
-                    }
-
-                    &.active {
-                        color: $color--blue;
-                        border-bottom: 1px solid $color--blue;
-
-                        &:hover {
-                            text-decoration: none;
-                        }
-                    }
                 }
             }
         }
