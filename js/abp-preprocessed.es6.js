@@ -6,16 +6,28 @@
  */
 abp = require('abp-filter-parser');
 
-easylists = {
-    privacy: {
-        url: 'https://duckduckgo.com/contentblocking.js?l=easyprivacy',
-        parsed: {},
+let lists = {
+    easylists : {
+        privacy: {
+            url: 'https://duckduckgo.com/contentblocking.js?l=easyprivacy',
+            parsed: {},
+        },
+        general: {
+            url: 'https://duckduckgo.com/contentblocking.js?l=easylist',
+            parsed: {},
+        }
     },
-    general: {
-        url: 'https://duckduckgo.com/contentblocking.js?l=easylist',
-        parsed: {},
+    whitelists: {
+        preWhitelist: {
+            url: '',
+            parsed: {}
+        },
+        postWhitelist: {
+            url: '',
+            parsed: {}
+        }
     }
-};
+}
 
 /*
  * Get the list data and use abp to parse.
@@ -23,28 +35,29 @@ easylists = {
  * the easyLists object.
  */
 function updateLists () {
-    for (let list in easylists) {
-        let url = easylists[list].url
-        let atb = settings.getSetting('atb')
-        let set_atb = settings.getSetting('set_atb')
-
-        if (atb) url = url + '&atb=' + atb
-        if (set_atb) url = url + '&set_atb=' + set_atb
-
-        console.log("Checking for list update: ", list)
-
-        load.loadExtensionFile({url: url, source: 'external', etag: settings.getSetting(list + '-etag')}, (listData, response) => {
-            let newEtag = response.getResponseHeader('etag')
-
-            console.log("Updating list: ", list)
-        
-            // sync new etag to storage
-            settings.updateSetting(list + '-etag', newEtag)
-
-            abp.parse(listData, easylists[list].parsed)
-            easylists[list].loaded = true;
-        });
-
+    let atb = settings.getSetting('atb')
+    let set_atb = settings.getSetting('set_atb')
+    
+    for (let listType in lists) {
+        for (let name in lists[listType]) {
+            let url = lists[listType][name].url
+            
+            if (atb) url = url + '&atb=' + atb
+            if (set_atb) url = url + '&set_atb=' + set_atb
+            
+            console.log("Checking for list update: ", name)
+                
+            load.loadExtensionFile({url: url, source: 'external', etag: settings.getSetting(name + '-etag')}, (listData, response) => {
+                let newEtag = response.getResponseHeader('etag')
+                console.log("Updating list: ", name)
+                // sync new etag to storage
+            
+                settings.updateSetting(name + '-etag', newEtag)
+                
+                abp.parse(listData, lists[listType][name].parsed)
+                lists[listType][name].loaded = true;
+            });
+        }
     }
 
     // Load tracker whitelist
@@ -59,6 +72,9 @@ function updateLists () {
 // Make sure the list updater runs on start up
 updateLists()
 
+function getList () {
+
+}
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateEasyLists') {
         updateLists()
