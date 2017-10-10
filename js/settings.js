@@ -1,5 +1,10 @@
 var load = require('load');
-
+/**
+ * Public api
+ * Usage:
+ * You can use promise callbacks to check readyness before getting and updating
+ * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
+ */
 require.scopes.settings =(() => {
     var settings = {};
     let isReady = false
@@ -59,6 +64,11 @@ require.scopes.settings =(() => {
     }
 
     function getSetting(name) {
+        if (!isReady) {
+            console.warn('Settings: getSetting() Settings not loaded')
+            return
+        }
+
         // let all and null return all settings
         if (name === 'all') name = null;
 
@@ -72,7 +82,7 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         if (!isReady) {
-            console.warn('Settings: tried to update before settings is loaded')
+            console.warn('Settings: updateSetting() Setting not loaded')
             return
         }
 

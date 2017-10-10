@@ -2,7 +2,6 @@ require.scopes.trackerLists = ( function() {
     var settings = require('settings');
     var load = require('load');
     var lists = {};
-    var listLocation = settings.getSetting('trackerListLoc');
 
     function getLists() {
         return lists;
@@ -13,6 +12,7 @@ require.scopes.trackerLists = ( function() {
     }
 
     function loadLists(){
+        var listLocation = settings.getSetting('trackerListLoc')
         var blockLists = settings.getSetting('blockLists');
         blockLists.forEach( function(listName) {
             load.JSONfromLocalFile(listLocation + "/" + listName, (listJSON) => {
@@ -21,7 +21,7 @@ require.scopes.trackerLists = ( function() {
         });
     }
 
-    loadLists();
+    settings.ready().then(() => loadLists())
 
     var exports = {
         getLists: getLists,

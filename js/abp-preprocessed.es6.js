@@ -29,6 +29,7 @@ function updateLists () {
         let atb = settings.getSetting('atb')
         let set_atb = settings.getSetting('set_atb')
         let versionParam = getVersionParam()
+        let etag = settings.getSetting(list + '-etag')
 
         if (atb) url += '&atb=' + atb
         if (set_atb) url += '&set_atb=' + set_atb
@@ -36,7 +37,11 @@ function updateLists () {
 
         console.log("Checking for list update: ", list)
 
-        load.loadExtensionFile({url: url, source: 'external', etag: settings.getSetting(list + '-etag')}, (listData, response) => {
+        // if we don't have parsed list data skip the etag to make sure we
+        // get a fresh copy of the list to process
+        if (Object.keys(easylists[list].parsed).length === 0) etag = ''
+
+        load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
             let newEtag = response.getResponseHeader('etag')
 
             console.log("Updating list: ", list)
@@ -64,7 +69,7 @@ settings.ready().then(() => updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateEasyLists') {
-        setitngs.ready().then(() => updateLists())
+        settings.ready().then(() => updateLists())
     }
 });
 

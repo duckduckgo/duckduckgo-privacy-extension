@@ -12,10 +12,13 @@ var settings = require('settings')
 let tosdr 
 let tosdrRegexList
 let tosdrListLoaded
-load.JSONfromLocalFile(settings.getSetting('tosdr'), (data) => {
-    tosdr = data
-    tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
-    tosdrListLoaded = true
+
+settings.ready().then(() => {
+    load.JSONfromLocalFile(settings.getSetting('tosdr'),(data) => {
+        tosdr = data
+        tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
+        tosdrListLoaded = true
+    })
 })
 
 const siteScores = ['A', 'B', 'C', 'D']
