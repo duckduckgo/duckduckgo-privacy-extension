@@ -1,6 +1,7 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const CompanyListModel = require('./../models/company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
+const ratingTemplate = require('./../templates/shared/site-rating.es6.js')
 const ratingExplainerTemplate = require('./../templates/shared/site-rating-explainer.es6.js')
 
 function GradeDetails (ops) {
@@ -27,6 +28,7 @@ GradeDetails.prototype = $.extend({},
                 `change:${this.currentSiteModelName}`,
                 this.renderSiteRating
             ]])
+            this.$rating = this.$el.find('.js-rating')
             this.$explainer = this.$el.find('.js-rating-explainer')
         },
 
@@ -51,9 +53,12 @@ GradeDetails.prototype = $.extend({},
         },
 
         renderSiteRating: function () {
+            // rating bubble
+            const rating = ratingTemplate(this.model.site.siteRating, true)
+            this.$rating.replaceWith(rating)
+            // rating explainer message
             const msg = ratingExplainerTemplate(this.model.site.siteRating)
             this.$explainer.replaceWith(msg)
-            // TODO: rating bubble
         }
     }
 )

@@ -1,5 +1,6 @@
 const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
+const siteRating = require('./shared/site-rating.es6.js')
 const siteRatingExplainer = require('./shared/site-rating-explainer.es6.js')
 
 module.exports = function () {
@@ -12,7 +13,7 @@ module.exports = function () {
     } else {
         return bel`<div class="site-info site-info--details">
             <h1 class="site-info__domain">${this.model.site.domain}</h1>
-            ${siteRating(this.model.site.siteRating)}
+            ${siteRating(this.model.site.siteRating, true)}
             ${siteRatingExplainer(this.model.site.siteRating)}
             <h2 class="site-info__https-status card card--padded border--bottom">
                 ${httpsMsg(this.model.site.httpsState)}
@@ -25,16 +26,6 @@ module.exports = function () {
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
         </div>`
-    }
-}
-
-function siteRating (rating) {
-    if (rating) {
-      return bel`<div class="site-info__rating
-          site-info__rating--${rating.toLowerCase()}
-          is-active">
-          ${rating}
-      </div>`
     }
 }
 

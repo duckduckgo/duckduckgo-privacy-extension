@@ -1,6 +1,7 @@
 const bel = require('bel')
 const titleize = require('titleize')
-const toggleButton = require('./shared/toggle-button')
+const toggleButton = require('./shared/toggle-button') // TODO: git mv to .es6.js
+const siteRating = require('./shared/site-rating.es6.js')
 
 module.exports = function () {
 
@@ -19,10 +20,10 @@ module.exports = function () {
                 <div class="site-info__rating-container border--top border--bottom">
                     <p class="site-info__rating-label">Privacy Grade</p>
                     <div class="site-info__rating-flex">
-                        ${renderSiteRating('A', this.model.siteRating)}
-                        ${renderSiteRating('B', this.model.siteRating)}
-                        ${renderSiteRating('C', this.model.siteRating)}
-                        ${renderSiteRating('D', this.model.siteRating)}
+                        ${siteRating('A', this.model.siteRating === 'A')}
+                        ${siteRating('B', this.model.siteRating === 'B')}
+                        ${siteRating('C', this.model.siteRating === 'C')}
+                        ${siteRating('D', this.model.siteRating === 'D')}
                     </div>
                     ${renderUserPrivacyMsg(this.model.isUserPrivacyUpgraded)}
                 </div>
@@ -66,15 +67,6 @@ module.exports = function () {
             </li>
         </ul>
     </section>`
-
-    function renderSiteRating (letter, siteRating) {
-        const isActive = siteRating === letter ? 'is-active' : ''
-        return bel`<div
-            class="site-info__rating site-info__rating--${letter.toLowerCase()}
-            ${isActive}">
-                ${letter}
-            </div>`
-    }
 
     function renderUserPrivacyMsg (upgraded) {
         if (upgraded) {
