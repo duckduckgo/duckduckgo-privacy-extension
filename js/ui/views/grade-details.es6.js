@@ -5,7 +5,6 @@ const ratingTemplate = require('./../templates/shared/site-rating.es6.js')
 const ratingExplainerTemplate = require('./../templates/shared/site-rating-explainer.es6.js')
 
 function GradeDetails (ops) {
-
     // model data is async
     this.model = null
     this.currentModelName = null

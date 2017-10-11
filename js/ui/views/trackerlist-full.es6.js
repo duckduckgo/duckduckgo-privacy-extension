@@ -1,25 +1,16 @@
-
-
-// TODO: break me in two, then delete this view
-
-
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
-// const SiteDetailsModel = require('./../models/site-details.es6.js')
-// const SiteModel = require('./../models/site.es6.js')
 const TopBlockedTrackersModel = require('./../models/trackerlist-top-blocked.es6.js')
 
 function TrackerList (ops) {
-    // this.selectedTab = ops.defaultTab // poss values: `page` or `all`
-    // this.model = null // model is set below, keys off this.selectedTab
-    // this.currentModelName = null
-    // this.currentSiteModelName = null
-    // this.template = ops.template
+    // model data is async
+    this.model = null
+    this.numItems = ops.numItems
+    this.template = ops.template
     ParentSlidingSubview.call(this, ops)
 
-    // this.updateTab()
-    // this.setActiveTab()
-    // this.setupNav()
+    this.setupClose()
+    this.renderAsyncContent()
 }
 
 TrackerList.prototype = $.extend({},
@@ -27,40 +18,40 @@ TrackerList.prototype = $.extend({},
     animateGraphBars,
     {
 
-        // setActiveTab: function () {
-        //     let selector = '.js-nav-tab'
-        //     this.$el.find(selector).removeClass('active')
-        //     selector = selector + '-' + this.selectedTab
-        //     this.$el.find(selector).addClass('active')
-        // },
+        setup: function () {
+            // listener for reset stats click
+            this.$reset = this.$el.find('.js-reset-trackers-data')
+            this.bindEvents([
+                [this.$reset, 'click', this.resetTrackersStats]
+            ])
+        },
 
-        // setupNav: function () {
-        //     this.$navtab = this.$el.find('.js-nav-tab')
-        //     this.bindEvents([
-        //         [this.$navtab, 'click', this.switchTabs]
-        //     ])
-        //     this.setupClose()
-        // },
+        renderAsyncContent: function () {
+            const random = Math.round(Math.random()*100000)
+            this.model = new TopBlockedTrackersModel({
+                modelName: 'trackerListTopBlocked' + random,
+                numCompanies: this.numItems
+            })
+            this.model.getTopBlocked().then(() => {
+                const content = this.template()
+                this.$el.append(content)
+                this.setup()
 
-        // switchTabs: function (e) {
-        //     e.preventDefault()
-        //     let selector = '.js-nav-tab-' + this.selectedTab
-        //     let $elHasClass = $(e.currentTarget).hasClass
+                // animate graph bars and pct
+                this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
+                this.$pct = this.$el.find('.js-top-blocked-pct')
+                this.animateGraphBars()
+            })
+        },
 
-        //     if (this.selectedTab === 'all') {
-        //         if (!$(e.currentTarget).hasClass(selector)) {
-        //             this.selectedTab = 'page'
-        //             this.updateTab()
-        //             this.setActiveTab()
-        //         }
-        //     } else if (this.selectedTab === 'page') {
-        //         if (!$(e.currentTarget).hasClass(selector)) {
-        //             this.selectedTab = 'all'
-        //             this.updateTab()
-        //             this.setActiveTab()
-        //         }
-        //     }
-        // },
+        // TODO
+        resetTrackersStats: function () {
+            this.model.fetch({resetTrackersData: true}).then(() => {
+                //this.updateTab()
+                const content = this.template()
+                this.$el.append(content)
+            })
+        }
 
         // updateTab: function () {
         //     const random = Math.round(Math.random()*100000)
@@ -127,12 +118,6 @@ TrackerList.prototype = $.extend({},
         //         }
         //     }
         // },
-
-        // resetTrackersStats: function () {
-        //     this.model.fetch({resetTrackersData: true}).then(() => {
-        //         this.updateTab()
-        //     })
-        // }
     }
 )
 
