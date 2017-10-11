@@ -9,8 +9,9 @@ var load = require('load'),
     utils = require('utils'),
     trackerLists = require('trackerLists').getLists();
 
-let entityList,
-    entityMap;
+let entityList
+let entityMap
+let whitelists
 
 load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
 load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
@@ -52,6 +53,11 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
             blockSettings.push('Social');
         }
 
+        var whitelistedTracker = checkWhitelist(urlToCheck, currLocation, request)
+        if (whitelistedTracker) {
+            return whitelistedTracker
+        }
+
         // Look up trackers by parent company. This function also checks to see if the poential 
         // tracker is related to the current site. If this is the case we consider it to be the 
         // same as a first party requrest and return
@@ -76,40 +82,38 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
     return toBlock;
 }
 
+function checkWhitelist(url, currLocation, request) {
+    let result = false
+    let match
+    
+    if (whitelists.preWhitelist.loaded) {
+        match = checkABPParsedList(whitelists.preWhitelist.parsed, url, currLocation, request)
+    }
+    
+    if(match){
+        result = getTrackerDetails(url, 'preWhitelist')
+        result.block = false
+    }
+
+    return result
+}
+
 function checkEasylists(url, currLocation, request){
     let easylistBlock = false;
     settings.getSetting('easylists').some((listName) => {
+        let match
         // lists can take a second or two to load so check that the parsed data exists
         if (easylists[listName].loaded) {
-            easylistBlock = abp.matches(easylists[listName].parsed, url, {
-                domain: currLocation, 
-                elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
-            });
+            match = checkABPParsedList(easylists[listName].parsed, url, currLocation, request)
         }
 
         // break loop early if a list matches
-        if(easylistBlock){
-            let host = utils.extractHostFromURL(url);
-            let parentCompany = findParent(host.split('.')) || "unknown";
-            return easylistBlock = {parentCompany: parentCompany, url: host, type: listName};
-        }
-
-        // pull off subdomains and look for parent companies
-        function findParent(url) {
-            
-            if (url.length < 2) return null;
-
-            let joinURL = url.join('.')
-
-            if (entityMap[joinURL]) {
-                return entityMap[joinURL]
-            }
-            else{
-                url.shift()
-                return findParent(url)
-            }
+        if(match){
+            easylistBlock = getTrackerDetails(url, listName);
+            easylistBlock.block = true
         }
     });
+
     return easylistBlock;
 }
 
@@ -132,7 +136,7 @@ function checkTrackersWithParentCompany(blockSettings, url, currLocation) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL];
             if (tracker) {
                 if (!isRelatedEntity(tracker.c, currLocation)) {
-                    return toBlock = {parentCompany: tracker.c, url: trackerURL, type: trackerType};
+                    return toBlock = {parentCompany: tracker.c, url: trackerURL, type: trackerType, block: true};
                 }
                 else {
                     return toBlock = {cancel: 'relatedEntity'}
@@ -188,6 +192,35 @@ function isFirstPartyRequest(currLocation, urlToCheck) {
     }
 
     return false;
+}
+
+function getTrackerDetails(trackerUrl, listName) {
+    let host = utils.extractHostFromURL(trackerUrl)
+    let parentCompany = findParent(host.split('.')) || "unknown"
+    return {parentCompany: parentCompany, url: host, type: listName}
+}
+
+    
+// pull off subdomains and look for parent companies
+function findParent(url) {
+    if (url.length < 2) return null
+    let joinURL = url.join('.')
+    
+    if (entityMap[joinURL]) {
+        return entityMap[joinURL]
+    } else {
+        url.shift()
+        return findParent(url)
+    }
+}
+
+function checkABPParsedList(list, url, currLocation, request) {
+    let match = abp.matches(list, url, 
+            { 
+                domain: currLocation, 
+                elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+            });
+    return match
 }
 
 var exports = {};

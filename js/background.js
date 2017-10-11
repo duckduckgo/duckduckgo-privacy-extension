@@ -158,7 +158,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 thisTab.addToTrackers(tracker);
 
                 // Block the request if the site is not whitelisted
-                if (!thisTab.site.whitelisted) {
+                if (!thisTab.site.whitelisted && tracker.block) {
                     thisTab.addOrUpdateTrackersBlocked(tracker);
                     chrome.runtime.sendMessage({"updateTrackerCount": true});
 
@@ -168,15 +168,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
-
-                    // Check tracker whitelist -- after trackers have counted against the grade
-                    if (abp.matches(trackerWhitelist, requestData.url)) {
-
-                        console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
-                                 + " [" + tracker.parentCompany + "] " + requestData.url);
-                        return
-
-                    }
 
                     // for debugging specific requests. see test/tests/debugSite.js
                     if (debugRequest && debugRequest.length) {

@@ -19,15 +19,14 @@ let lists = {
     },
     whitelists: {
         preWhitelist: {
-            url: '',
-            parsed: {}
-        },
-        postWhitelist: {
-            url: '',
+            url: 'https://github.com/easylist/easylist/blob/master/easylist/easylist_whitelist.txt',
             parsed: {}
         }
     }
 }
+
+easylists = lists.easylists
+whitelists = lists.whitelists
 
 /*
  * Get the list data and use abp to parse.
@@ -41,9 +40,12 @@ function updateLists () {
     for (let listType in lists) {
         for (let name in lists[listType]) {
             let url = lists[listType][name].url
-            
-            if (atb) url = url + '&atb=' + atb
-            if (set_atb) url = url + '&set_atb=' + set_atb
+
+            // for now bail if we don't have a url
+            if (!url) return 
+
+            //if (atb) url = url + '&atb=' + atb
+            //if (set_atb) url = url + '&set_atb=' + set_atb
             
             console.log("Checking for list update: ", name)
                 
