@@ -10,6 +10,8 @@ global.companyList = function(listData){
     var request = require('request');
     var remapData, companyList;
     
+    // FIXME -- use settings data in the future.
+    // (but settings data needs to be read in a different way than it currently can.)
     let majorNetworks = {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true};
 
     return new Promise ((resolve) => {
