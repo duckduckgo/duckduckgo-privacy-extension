@@ -1,6 +1,6 @@
 const bel = require('bel')
 const titleize = require('titleize')
-const toggleButton = require('./shared/toggle-button') // TODO: git mv to .es6.js
+const toggleButton = require('./shared/toggle-button.es6.js')
 const siteRating = require('./shared/site-rating.es6.js')
 
 module.exports = function () {
