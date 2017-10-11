@@ -184,29 +184,33 @@
 
             .sliding-subview__header__back,
             .sliding-subview__header__title {
+                height: 26px;
+                width: 14px;
                 color: $slate;
                 font-size: 14px;
                 font-weight: bold;
                 padding: 14px 0 0 14px;
                 display: inline-block;
-                height: 26px;
-                width: 14px;
 
                 &.sliding-subview__header__back--is-icon {
                     padding-left: 35px;
                 }
-
-                .sliding-subview__header__title--center {
-                    position: absolute;
-                    left: 83px;
-                    top: 0;
-                    font-weight: normal;
-                    color: $grey-light;
-                    padding: 14px 0 10px 0;
-                    margin-right: 7px;
-                    text-decoration: none;
-                }
             }
+
+            .sliding-subview__header__title {
+                z-index: -1;
+                position: absolute;
+                top: 0;
+                right: 0;
+                left: 0;
+                width: auto;
+                text-align: center;
+                font-weight: bold;
+                color: $slate;
+                padding: 14px 0 10px 0;
+                text-decoration: none;
+            }
+
         }
     }
 }

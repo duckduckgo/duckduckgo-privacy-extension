@@ -1,33 +1,36 @@
 const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
 
-module.exports = function (model) {
+module.exports = function () {
 
-    return bel`<section class="sliding-subview
-    sliding-subview--has-fixed-header">
-        ${header('Grade Details')}
-        <div class="site-info site-info--details">
-            <h1 class="site-info__domain">${model.site.domain}</h1>
+    if (!this.model) {
+        return bel`<section class="sliding-subview
+        sliding-subview--has-fixed-header">
+            ${header('Grade Details')}
+        </section>`
+    } else {
+        return bel`<div class="site-info site-info--details">
+            <h1 class="site-info__domain">${this.model.site.domain}</h1>
             <div class="site-info__rating is-active
-              site-info__rating--${model.site.siteRating.toLowerCase()}">
-              ${model.site.siteRating}
+              site-info__rating--${this.model.site.siteRating.toLowerCase()}">
+              ${this.model.site.siteRating}
             </div>
             <p class="site-info--details__explainer">
-              This received a "${model.site.siteRating.toUpperCase()}"
+              This received a "${this.model.site.siteRating.toUpperCase()}"
               Privacy Grade for the reasons below.
             </p>
             <h2 class="site-info__https-status card card--padded border--bottom">
-                ${httpsMsg(model.site.httpsState)}
+                ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>
             </h2>
             <h3 class="card card--padded border--bottom">
                 Trackers found
             </h3>
             <ol class="default-list site-info__trackers__company-list card card--padded">
-                ${renderTrackerDetails(model.companyListMap)}
+                ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
-        </div>
-    </section>`
+        </div>`
+    }
 }
 
 function httpsMsg (httpsState) {

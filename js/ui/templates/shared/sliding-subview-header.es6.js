@@ -9,10 +9,8 @@ module.exports = function (title) {
             <span class="icon icon__arrow icon__arrow--left pull-left">
             </span>
         </a>
-        <div class="sliding-subview__header__tabbed-nav">
-            <h2 class="sliding-subview__header__title">
-                ${title}
-            </h2>
-        </div>
-        </nav>`
+        <h2 class="sliding-subview__header__title">
+            ${title}
+        </h2>
+    </nav>`
 }

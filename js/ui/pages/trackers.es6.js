@@ -80,7 +80,7 @@ Trackers.prototype = $.extend({},
                 pageView: this,
                 model: new TrackerListModel({ numCompanies: 3 }),
                 appendTo: this.$parent,
-                template: trackerListTemplate,
+                template: trackerListTemplate
             })
 
             // TODO: hook up model query to actual ddg ac endpoint.

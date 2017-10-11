@@ -1,6 +1,6 @@
 const Parent = window.DDG.base.View
-const TrackerListSlidingSubview = require('./../views/trackerlist-sliding-subview.es6.js')
-const tabbedTrackerListTemplate = require('./../templates/trackerlist-tabbed.es6.js')
+const GradeDetailsView = require('./../views/grade-details.es6.js')
+const gradeDetailsTemplate = require('./../templates/grade-details.es6.js')
 
 function Site (ops) {
 
@@ -60,9 +60,8 @@ Site.prototype = $.extend({},
 
         _showAllTrackers: function () {
             if (this.$body.hasClass('disabled')) return
-            this.views.slidingSubview = new TrackerListSlidingSubview({
-                template: tabbedTrackerListTemplate,
-                defaultTab: 'page'
+            this.views.slidingSubview = new GradeDetailsView({
+                template: gradeDetailsTemplate
             })
         }
 
