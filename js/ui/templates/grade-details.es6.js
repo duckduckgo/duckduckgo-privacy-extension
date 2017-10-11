@@ -1,5 +1,6 @@
 const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
+const siteRatingExplainer = require('./shared/site-rating-explainer.es6.js')
 
 module.exports = function () {
 
@@ -11,14 +12,8 @@ module.exports = function () {
     } else {
         return bel`<div class="site-info site-info--details">
             <h1 class="site-info__domain">${this.model.site.domain}</h1>
-            <div class="site-info__rating is-active
-              site-info__rating--${this.model.site.siteRating.toLowerCase()}">
-              ${this.model.site.siteRating}
-            </div>
-            <p class="site-info--details__explainer">
-              This received a "${this.model.site.siteRating.toUpperCase()}"
-              Privacy Grade for the reasons below.
-            </p>
+            ${siteRating(this.model.site.siteRating)}
+            ${siteRatingExplainer(this.model.site.siteRating)}
             <h2 class="site-info__https-status card card--padded border--bottom">
                 ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>
@@ -30,6 +25,16 @@ module.exports = function () {
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
         </div>`
+    }
+}
+
+function siteRating (rating) {
+    if (rating) {
+      return bel`<div class="site-info__rating
+          site-info__rating--${rating.toLowerCase()}
+          is-active">
+          ${rating}
+      </div>`
     }
 }
 

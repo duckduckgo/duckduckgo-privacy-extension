@@ -1,3 +1,5 @@
+// TODO: delete this file
+
 const bel = require('bel')
 const gradeDetails = require('./grade-details.es6.js')
 const trackerListFull = require('./trackerlist-full.es6.js')

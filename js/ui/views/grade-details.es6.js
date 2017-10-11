@@ -1,6 +1,7 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const CompanyListModel = require('./../models/company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
+const ratingExplainerTemplate = require('./../templates/shared/site-rating-explainer.es6.js')
 
 function GradeDetails (ops) {
 
@@ -8,7 +9,6 @@ function GradeDetails (ops) {
     this.model = null
     this.currentModelName = null
     this.currentSiteModelName = null
-
     this.template = ops.template
     ParentSlidingSubview.call(this, ops)
 
@@ -19,6 +19,16 @@ function GradeDetails (ops) {
 GradeDetails.prototype = $.extend({},
     ParentSlidingSubview.prototype,
     {
+
+        setup: function () {
+            // site rating arrives async
+            this.bindEvents([[
+                this.store.subscribe,
+                `change:${this.currentSiteModelName}`,
+                this.renderSiteRating
+            ]])
+            this.$explainer = this.$el.find('.js-rating-explainer')
+        },
 
         renderAsyncContent: function () {
             const random = Math.round(Math.random()*100000)
@@ -35,19 +45,15 @@ GradeDetails.prototype = $.extend({},
                 this.model.site.getBackgroundTabData().then(() => {
                     let content = this.template()
                     this.$el.append(content)
-
-                    // TODO: wrap a setTimeout around this so it doesn't
-                    // re-render too often
-                    // if (this.model.site) {
-                    //     this.bindEvents([[
-                    //         this.store.subscribe,
-                    //         `change:${this.currentSiteModelName}`,
-                    //         this.renderAsyncContent
-                    //     ]])
-                    // }
-
+                    this.setup()
                 })
             })
+        },
+
+        renderSiteRating: function () {
+            const msg = ratingExplainerTemplate(this.model.site.siteRating)
+            this.$explainer.replaceWith(msg)
+            // TODO: rating bubble
         }
     }
 )
