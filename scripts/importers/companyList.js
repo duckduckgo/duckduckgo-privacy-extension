@@ -5,11 +5,13 @@ global.companyList = function(listData){
      */
     var companyListLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json';
     var remapDataLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/google_mapping.json'
-    var trackerList = {};
+    var trackerList = { TopTrackerDomains:{ }};
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social'];
     var request = require('request');
     var remapData, companyList;
     
+    let majorNetworks = {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true};
+
     return new Promise ((resolve) => {
         
         request.get(remapDataLoc, (err, res, body) => {
@@ -20,14 +22,20 @@ global.companyList = function(listData){
 
                 trackerTypes.forEach((type) => {
                     companyList.categories[type].forEach((entry) => {
-                
+
                         for(var name in entry){
+                            let fixedName = name;
+
+                            // Fix Amazon
+                            if (name === "Amazon.com")
+                                fixedName = "Amazon";
+
                             // itisAtracker is not a real entry in the list 
                             if (name !== 'ItIsATracker') {
                                 for( var domain in entry[name]){
                                     if (entry[name][domain].length) {
                                         entry[name][domain].forEach((trackerURL) => {
-                                            addToList(type, trackerURL, {'c': name, 'u': domain});
+                                            addToList(type, trackerURL, {'c': fixedName, 'u': domain});
                                         });
                                     }
                                 }
@@ -45,6 +53,12 @@ global.companyList = function(listData){
         type = applyRemapping(type, data.c, url);
         trackerList[type] = trackerList[type] ? trackerList[type] : {};
         trackerList[type][url] = data;
+
+
+        // if this is a major network, add to reverse mapping
+        if (majorNetworks[data.c]) {
+            trackerList.TopTrackerDomains[url] = {'c': data.c, 't': type};
+        }
     }
 
     function applyRemapping(type, name, url) {
