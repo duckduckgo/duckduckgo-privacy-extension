@@ -53,6 +53,9 @@ var ATB = (() => {
         },
 
         redirectURL: (request) => {
+            // just return until we revisit this module
+            return
+
             if(request.url.search(ddgRegex) !== -1){
                 
                 if(request.url.indexOf('atb=') !== -1){
