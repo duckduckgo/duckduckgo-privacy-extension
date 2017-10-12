@@ -1,9 +1,9 @@
 const Parent = window.DDG.base.View
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
-const TrackerListFullView = require('./top-blocked.es6.js')
-const trackerListFullTemplate = require('./../templates/top-blocked.es6.js')
+const TopBlockedFullView = require('./top-blocked.es6.js')
+const topBlockedFullTemplate = require('./../templates/top-blocked.es6.js')
 
-function TrackerList (ops) {
+function TruncatedList (ops) {
     this.model = ops.model
     this.pageView = ops.pageView
     this.template = ops.template
@@ -18,14 +18,14 @@ function TrackerList (ops) {
     ])
 }
 
-TrackerList.prototype = $.extend({},
+TruncatedList.prototype = $.extend({},
     Parent.prototype,
     animateGraphBars,
     {
 
         _seeAllClick: function () {
-            this.views.slidingSubview = new TrackerListFullView({
-                template: trackerListFullTemplate,
+            this.views.slidingSubview = new TopBlockedFullView({
+                template: topBlockedFullTemplate,
                 numItems: 10
             })
         },
@@ -55,4 +55,4 @@ TrackerList.prototype = $.extend({},
     }
 );
 
-module.exports = TrackerList
+module.exports = TruncatedList

@@ -1,7 +1,7 @@
 const bel = require('bel')
 
-module.exports = function (trackerListMap) {
-    return trackerListMap.map((data) => {
+module.exports = function (companyListMap) {
+    return companyListMap.map((data) => {
 
         return bel`<li class="top-blocked__li">
           <div class="top-blocked__li__company-name">${data.name}</div>

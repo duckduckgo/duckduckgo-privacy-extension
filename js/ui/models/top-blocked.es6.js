@@ -1,6 +1,6 @@
 const Parent = window.DDG.base.Model
 
-function TrackerListTopBlocked (attrs) {
+function TopBlocked (attrs) {
     attrs = attrs || {}
     attrs.numCompanies = attrs.numCompanies
     attrs.companyList = []
@@ -8,11 +8,11 @@ function TrackerListTopBlocked (attrs) {
     Parent.call(this, attrs)
 }
 
-TrackerListTopBlocked.prototype = $.extend({},
+TopBlocked.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelName: 'trackerListTopBlocked',
+      modelName: 'topBlocked',
 
       getTopBlocked: function () {
           return new Promise((resolve, reject) => {
@@ -44,4 +44,4 @@ TrackerListTopBlocked.prototype = $.extend({},
   }
 )
 
-module.exports = TrackerListTopBlocked
+module.exports = TopBlocked

@@ -1,8 +1,8 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
-const TopBlockedTrackersModel = require('./../models/top-blocked.es6.js')
+const TopBlockedModel = require('./../models/top-blocked.es6.js')
 
-function TrackerList (ops) {
+function TopBlocked (ops) {
     // model data is async
     this.model = null
     this.numItems = ops.numItems
@@ -17,7 +17,7 @@ function TrackerList (ops) {
     ])
 }
 
-TrackerList.prototype = $.extend({},
+TopBlocked.prototype = $.extend({},
     ParentSlidingSubview.prototype,
     animateGraphBars,
     {
@@ -33,8 +33,8 @@ TrackerList.prototype = $.extend({},
 
         renderAsyncContent: function () {
             const random = Math.round(Math.random()*100000)
-            this.model = new TopBlockedTrackersModel({
-                modelName: 'trackerListTopBlocked' + random,
+            this.model = new TopBlockedModel({
+                modelName: 'topBlocked' + random,
                 numCompanies: this.numItems
             })
             this.model.getTopBlocked().then(() => {
@@ -66,4 +66,4 @@ TrackerList.prototype = $.extend({},
     }
 )
 
-module.exports = TrackerList
+module.exports = TopBlocked

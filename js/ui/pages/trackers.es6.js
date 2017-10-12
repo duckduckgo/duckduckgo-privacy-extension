@@ -1,8 +1,9 @@
+// TODO: rename me "popup.es6.js", rename main #trackers-container to #popup-container
 const Parent = window.DDG.base.Page
 const mixins = require('./mixins/index.es6.js')
-const TrackerListView = require('./../views/top-blocked-truncated.es6.js')
-const TrackerListModel = require('./../models/top-blocked.es6.js')
-const trackerListTemplate = require('./../templates/top-blocked-truncated.es6.js')
+const TopBlockedView = require('./../views/top-blocked-truncated.es6.js')
+const TopBlockedModel = require('./../models/top-blocked.es6.js')
+const topBlockedTemplate = require('./../templates/top-blocked-truncated.es6.js')
 const SiteView = require('./../views/site.es6.js')
 const SiteModel = require('./../models/site.es6.js')
 const siteTemplate = require('./../templates/site.es6.js')
@@ -76,11 +77,11 @@ Trackers.prototype = $.extend({},
                 template: siteTemplate
             })
 
-            this.views.trackerlist = new TrackerListView({
+            this.views.topblocked = new TopBlockedView({
                 pageView: this,
-                model: new TrackerListModel({ numCompanies: 3 }),
+                model: new TopBlockedModel({ numCompanies: 3 }),
                 appendTo: this.$parent,
-                template: trackerListTemplate
+                template: topBlockedTemplate
             })
 
             // TODO: hook up model query to actual ddg ac endpoint.
