@@ -1,5 +1,5 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
-const CompanyListModel = require('./../models/company-list.es6.js')
+const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
 const ratingTemplate = require('./../templates/shared/site-rating.es6.js')
 const ratingExplainerTemplate = require('./../templates/shared/site-rating-explainer.es6.js')
@@ -33,7 +33,7 @@ GradeDetails.prototype = $.extend({},
 
         renderAsyncContent: function () {
             const random = Math.round(Math.random()*100000)
-            this.currentModelName = 'companyList' + random
+            this.currentModelName = 'siteCompanyList' + random
             this.currentSiteModelName = 'site' + random
 
             this.model = new CompanyListModel({

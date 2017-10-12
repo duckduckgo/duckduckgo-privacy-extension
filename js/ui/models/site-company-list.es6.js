@@ -1,22 +1,17 @@
-
-
-// TODO: rename this model to SiteCompanyList
-
-
 const Parent = window.DDG.base.Model
 
-function CompanyList (attrs) {
+function SiteCompanyList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
     attrs.companyListMap = []
     Parent.call(this, attrs)
 }
 
-CompanyList.prototype = $.extend({},
+SiteCompanyList.prototype = $.extend({},
   Parent.prototype,
   {
 
-      modelName: 'companyList',
+      modelName: 'siteCompanyList',
 
       fetchAsyncData: function () {
           return new Promise ((resolve, reject) => {
@@ -74,4 +69,4 @@ CompanyList.prototype = $.extend({},
   }
 )
 
-module.exports = CompanyList
+module.exports = SiteCompanyList
