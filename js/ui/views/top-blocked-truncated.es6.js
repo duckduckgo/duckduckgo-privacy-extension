@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.View
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
-const TrackerListFullView = require('./trackerlist-full.es6.js')
-const trackerListFullTemplate = require('./../templates/trackerlist-full.es6.js')
+const TrackerListFullView = require('./top-blocked.es6.js')
+const trackerListFullTemplate = require('./../templates/top-blocked.es6.js')
 
 function TrackerList (ops) {
     this.model = ops.model

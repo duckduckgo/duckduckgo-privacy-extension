@@ -1,6 +1,6 @@
 const bel = require('bel')
-const trackerListItems = require('./shared/trackerlist-items.es6.js')
-const trackerListNoData = require('./shared/trackerlist-no-data.es6.js')
+const listItems = require('./shared/top-blocked-list-items.es6.js')
+const noData = require('./shared/top-blocked-no-data.es6.js')
 
 module.exports = function () {
 
@@ -10,7 +10,7 @@ module.exports = function () {
                 Top trackers across all sites
             </h3>
             <ol class="default-list top-blocked__list">
-                ${trackerListItems(this.model.companyListMap)}
+                ${listItems(this.model.companyListMap)}
                 <li class="top-blocked__li top-blocked__li--see-all border--top">
                     <a href="#" class="link-secondary js-top-blocked-see-all">
                         <span class="icon icon__arrow pull-right"></span>
@@ -23,7 +23,7 @@ module.exports = function () {
         return bel`<section class="top-blocked">
             <ol class="default-list top-blocked__list">
                 <li class="top-blocked__li top-blocked__li--no-data">
-                    ${trackerListNoData()}
+                    ${noData()}
                 </li>
             </ol>
         </section>`

@@ -1,6 +1,6 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
-const TopBlockedTrackersModel = require('./../models/trackerlist-top-blocked.es6.js')
+const TopBlockedTrackersModel = require('./../models/top-blocked.es6.js')
 
 function TrackerList (ops) {
     // model data is async
