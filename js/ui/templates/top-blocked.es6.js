@@ -13,12 +13,7 @@ module.exports = function () {
     } else {
         return bel`<div class="js-top-blocked-content">
             ${renderList(this.model)}
-            <div class="top-blocked__reset-stats">
-                <h3>Data Privacy</h3>
-                <a href="#" class="js-reset-trackers-data">Reset stats</a>
-                <p>These stats are only stored locally on your device,
-                and are not sent anywhere, ever.</p>
-            </div>
+            ${renderResetButton(this.model)}
         </div>`
     }
 }
@@ -37,3 +32,13 @@ function renderList (model) {
     }
 }
 
+function renderResetButton (model) {
+    if (model.companyListMap.length > 0) {
+        return bel`<div class="top-blocked__reset-stats">
+            <h3>Data Privacy</h3>
+            <a href="#" class="js-reset-trackers-data">Reset stats</a>
+            <p>These stats are only stored locally on your device,
+            and are not sent anywhere, ever.</p>
+        </div>`
+    }
+}

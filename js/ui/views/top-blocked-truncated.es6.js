@@ -3,7 +3,7 @@ const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
 const TopBlockedFullView = require('./top-blocked.es6.js')
 const topBlockedFullTemplate = require('./../templates/top-blocked.es6.js')
 
-function TruncatedList (ops) {
+function TruncatedTopBlocked (ops) {
     this.model = ops.model
     this.pageView = ops.pageView
     this.template = ops.template
@@ -18,7 +18,7 @@ function TruncatedList (ops) {
     ])
 }
 
-TruncatedList.prototype = $.extend({},
+TruncatedTopBlocked.prototype = $.extend({},
     Parent.prototype,
     animateGraphBars,
     {
@@ -55,4 +55,4 @@ TruncatedList.prototype = $.extend({},
     }
 );
 
-module.exports = TruncatedList
+module.exports = TruncatedTopBlocked
