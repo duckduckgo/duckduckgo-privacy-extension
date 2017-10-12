@@ -117,9 +117,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         let tabId = requestData.tabId;
 
+        /* revisit atb module first
         // Add ATB for DDG URLs
         let ddgAtbRewrite = ATB.redirectURL(requestData);
         if (ddgAtbRewrite) return ddgAtbRewrite;
+        */
 
         // Skip requests to background tabs
         if (tabId === -1) { return }
