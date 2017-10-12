@@ -11,7 +11,7 @@ module.exports = function () {
             ${header('All Trackers')}
         </section>`
     } else {
-        return bel`<div>
+        return bel`<div class="js-top-blocked-content">
             ${renderList(this.model)}
             <div class="top-blocked__reset-stats">
                 <h3>Data Privacy</h3>
