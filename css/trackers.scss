@@ -81,7 +81,7 @@ body {
             background-size: 18px 18px;
             height: 34px;
             width: 42px;
-            color: #838383;
+            color: $color--dark-gray;
             padding: 0px 0.64em;
             min-height: 1.8em;
             margin-bottom: 2px;
@@ -113,7 +113,6 @@ body {
     }
 
     .hamburger-button {
-
     }
 
     .hamburger-menu {

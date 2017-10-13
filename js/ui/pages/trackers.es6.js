@@ -13,9 +13,6 @@ const siteTemplate = require('./../templates/site.es6.js')
 const SearchView = require('./../views/search.es6.js')
 const SearchModel = require('./../models/search.es6.js')
 const searchTemplate = require('./../templates/search.es6.js')
-const LinkableView = require('./../views/linkable.es6.js')
-const LinkableModel = require('./../models/linkable.es6.js')
-const linkableTemplate = require('./../templates/linkable.es6.js')
 const AutocompleteView = require('./../views/autocomplete.es6.js')
 const AutocompleteModel = require('./../models/autocomplete.es6.js')
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
@@ -24,7 +21,7 @@ const BackgroundMessageModel = require('./../models/background-message.es6.js')
 function Trackers (ops) {
     this.$parent = $('#trackers-container')
     Parent.call(this, ops)
-};
+}
 
 Trackers.prototype = $.extend({},
     Parent.prototype,
@@ -39,23 +36,11 @@ Trackers.prototype = $.extend({},
 
             this.message = new BackgroundMessageModel()
 
-            this.openOptionsPage = (() => {
-                this.message.fetch({getBrowser:true}).then(browser => {
-                    if (browser === 'moz') {
-                        this.message.fetch({firefoxOptionPage:true}).then(page => {
-                                chrome.tabs.create({url: page})
-                        });
-                    } else {
-                        chrome.runtime.openOptionsPage()
-                    }
-                })
-            })
-
-            this.setBrowserClassOnBodyTag();
+            this.setBrowserClassOnBodyTag()
 
             this.views.search = new SearchView({
                 pageView: this,
-                model: new SearchModel({searchText: ''}), // TODO proper location of remembered query
+                model: new SearchModel({searchText: ''}),
                 appendTo: this.$parent,
                 template: searchTemplate
             })
@@ -65,19 +50,6 @@ Trackers.prototype = $.extend({},
                 model: new HamburgerMenuModel(),
                 appendTo: this.$parent,
                 template: hamburgerMenuTemplate
-            })
-
-            this.views.options = new LinkableView({
-                pageView: this,
-                model: new LinkableModel({
-                    text: '',
-                    id: 'options-link',
-                    link: this.openOptionsPage,
-                    klass: 'link-secondary',
-                    spanClass: 'icon icon__settings pull-right'
-                }),
-                appendTo: this.$parent.find('.search-form'),
-                template: linkableTemplate
             })
 
             this.views.site = new SiteView({

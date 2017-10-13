@@ -16,7 +16,21 @@ HamburgerMenu.prototype = $.extend({},
     {
 
         closeMenu: function () {
+            this.model.isOpen = false
+            this._rerender()
+        },
 
+        openOptionsPage: function () {
+          this.model.fetch({getBrowser: true}).then(browser => {
+              if (browser === 'moz') {
+                  this.model.fetch({firefoxOptionPage: true})
+                      .then(page => {
+                          chrome.tabs.create({url: page})
+                      })
+              } else {
+                  chrome.runtime.openOptionsPage()
+              }
+          })
         }
 
     }

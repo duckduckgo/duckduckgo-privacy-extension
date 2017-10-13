@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.Model
 
 function Autocomplete (attrs) {
-    Parent.call(this, attrs);
+    Parent.call(this, attrs)
 }
 
 

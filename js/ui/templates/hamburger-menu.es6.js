@@ -1,11 +1,11 @@
-const bel = require('bel');
+const bel = require('bel')
 
 module.exports = function () {
     const isHidden = this.model.isOpen ? '' : 'is-hidden'
     return bel`<nav class="hamburger-menu js-hamburger-menu ${isHidden}">
         <div class="hamburger-menu__bg"></div>
         <div class="hamburger-menu__content card padded">
-            <h2>More Options</h2>
+            <h2 class="menu-title padded border--bottom">More Options</h2>
             <ul>
                 <li>
                     <a href="javascript:void(0)">

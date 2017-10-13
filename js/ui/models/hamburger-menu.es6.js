@@ -11,6 +11,7 @@ HamburgerMenu.prototype = $.extend({},
   Parent.prototype,
   {
       modelName: 'hamburgerMenu'
+
   }
 )
 

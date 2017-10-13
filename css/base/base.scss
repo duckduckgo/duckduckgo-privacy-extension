@@ -49,6 +49,12 @@ form, input, select, option, button {
     }
 }
 
+button {
+    border: none;
+    background-color: $white;
+    padding: 0;
+}
+
 
 /* Fonts */
 body,
@@ -113,6 +119,7 @@ a {
     line-height: 0;
 }
 
+
 /* Borders */
 .border--top {
     border-top: $card__border;
@@ -120,6 +127,26 @@ a {
 
 .border--bottom {
     border-bottom: $card__border;
+}
+
+
+/* Hamburger Button */
+.hamburger-button {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-size: 20px;
+    width: 20px;
+    height: 30px;
+
+    span {
+        display: block;
+        margin: 2px auto 0 auto;
+        width: 15px;
+        height: 2px;
+        background-color: $hamburger-button__color;
+        border-radius: 5px;
+    }
 }
 
 
