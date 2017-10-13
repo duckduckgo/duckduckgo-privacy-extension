@@ -47,7 +47,7 @@ BaseModel.prototype = $.extend({},
             // this.set({
             //   title: 'something',
             //   description: 'something described'
-            // });
+            // })
             if (typeof attr === 'object') {
                 for (var key in attr) {
                     this.set(key, attr[key], val);

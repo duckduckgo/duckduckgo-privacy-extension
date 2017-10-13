@@ -1,4 +1,5 @@
 const bel = require('bel')
+const hamburgerButton = require('./hamburger-button.es6.js')
 
 module.exports = function (title) {
 
@@ -12,5 +13,6 @@ module.exports = function (title) {
         <h2 class="sliding-subview__header__title">
             ${title}
         </h2>
+        ${hamburgerButton()}
     </nav>`
 }
