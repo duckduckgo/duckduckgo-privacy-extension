@@ -5,6 +5,7 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser');
+const ONEDAY = 1000*60*60*24
 
 let lists = {
     easylists : {
@@ -36,6 +37,7 @@ whitelists = lists.whitelists
 function updateLists () {
     let atb = settings.getSetting('atb')
     let set_atb = settings.getSetting('set_atb')
+    let versionParam = getVersionParam()
     
     for (let listType in lists) {
         for (let name in lists[listType]) {
@@ -43,13 +45,20 @@ function updateLists () {
 
             // for now bail if we don't have a url
             if (!url) return 
-
-            //if (atb) url = url + '&atb=' + atb
-            //if (set_atb) url = url + '&set_atb=' + set_atb
-            
-            console.log("Checking for list update: ", name)
                 
-            load.loadExtensionFile({url: url, source: 'external', etag: settings.getSetting(name + '-etag')}, (listData, response) => {
+            let etag = settings.getSetting(name + '-etag')
+
+            //if (atb) url += '&atb=' + atb
+            //if (set_atb) url += '&set_atb=' + set_atb
+            //if (versionParam) url += versionParam
+
+            console.log("Checking for list update: ", name)
+
+            // if we don't have parsed list data skip the etag to make sure we
+            // get a fresh copy of the list to process
+            if (Object.keys(lists[listType][name].parsed).length === 0) etag = ''
+                
+            load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
                 let newEtag = response.getResponseHeader('etag')
                 console.log("Updating list: ", name)
                 // sync new etag to storage
@@ -72,17 +81,42 @@ function updateLists () {
 }
 
 // Make sure the list updater runs on start up
-updateLists()
+settings.ready().then(() => updateLists())
 
 function getList () {
 
 }
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateEasyLists') {
-        updateLists()
+        settings.ready().then(() => updateLists())
     }
 });
 
 // set an alarm to recheck the lists
 // update every 3 hours
 chrome.alarms.create('updateEasyLists', {periodInMinutes: 180})
+
+// add version param to url on the first install and
+// only once a day after than
+function getVersionParam () {
+    let version = settings.getSetting('version') || 'v1'
+    let lastEasylistUpdate = settings.getSetting('lastEasylistUpdate')
+    let now = Date.now()
+    let versionParam
+
+    // check delta for last update or if lastEasylistUpdate does
+    // not exist then this is the initial install
+    if (lastEasylistUpdate) {
+        let delta = now - new Date(lastEasylistUpdate)
+            
+        if (delta > ONEDAY) {
+            versionParam = `&v=${version}`
+        }
+    } else {
+        versionParam = `&v=${version}`
+    }
+
+    if (versionParam) settings.updateSetting('lastEasylistUpdate', now)
+
+    return versionParam
+}

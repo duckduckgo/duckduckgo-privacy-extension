@@ -45,7 +45,7 @@ function Background() {
   $this = this;
 
   // clearing last search on browser startup
-  settings.updateSetting('last_search', '');
+  settings.updateSetting('last_search', '')
 
   var os = "o";
   if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
@@ -79,7 +79,8 @@ function Background() {
   });
 }
 
-var background = new Background();
+var background
+settings.ready().then(() => new Background())
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
   chrome.tabs.query({
@@ -116,9 +117,11 @@ chrome.webRequest.onBeforeRequest.addListener(
 
         let tabId = requestData.tabId;
 
+        /* revisit atb module first
         // Add ATB for DDG URLs
         let ddgAtbRewrite = ATB.redirectURL(requestData);
         if (ddgAtbRewrite) return ddgAtbRewrite;
+        */
 
         // Skip requests to background tabs
         if (tabId === -1) { return }
@@ -224,7 +227,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         urls: [
             "<all_urls>",
         ],
-        types: settings.getSetting('requestListenerTypes')
+        types: defaultSettings.requestListenerTypes
     },
     ["blocking"]
 );

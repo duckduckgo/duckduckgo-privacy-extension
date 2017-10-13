@@ -13,8 +13,10 @@ let entityList
 let entityMap
 let whitelists
 
-load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
-load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
+settings.ready().then(() => {
+    load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
+    load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
+})
 
 require.scopes.trackers = (function() {    
 
