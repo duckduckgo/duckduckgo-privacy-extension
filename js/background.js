@@ -144,6 +144,11 @@ chrome.webRequest.onBeforeRequest.addListener(
              */
             if (!(thisTab && thisTab.url && thisTab.id)) return
 
+            /*
+             * skip any broken sites
+             */
+             if (thisTab.site.brokenSite) return
+
             /**
              * Tracker blocking 
              * If request is a tracker, cancel the request 

@@ -12,12 +12,17 @@ var settings = require('settings')
 let tosdr 
 let tosdrRegexList
 let tosdrListLoaded
+let brokenSiteList = []
 
 settings.ready().then(() => {
     load.JSONfromLocalFile(settings.getSetting('tosdr'),(data) => {
         tosdr = data
         tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
         tosdrListLoaded = true
+    })
+
+    load.loadExtensionFile({url: settings.getSetting('brokenSiteList'), source: 'external'}, (listData, response) => {
+        brokenSiteList = listData.split('\n')
     })
 })
 
@@ -151,6 +156,7 @@ class Site {
         this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
         this.setWhitelistStatusFromGlobal(domain);
+        this.brokenSite = this.checkBrokenSites(domain); // broken sites reported to github repo
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
@@ -159,6 +165,13 @@ class Site {
     }
 
     /*
+     * check to see if this is a broken site reported on github
+    */
+     checkBrokenSites (domain) {
+         return brokenSiteList.indexOf(domain) !== -1 ? true : false
+     };
+
+     /*
      * When site objects are created we check the stored whitelists
      * and set the new site whitelist statuses
      */

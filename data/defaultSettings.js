@@ -27,5 +27,6 @@ const defaultSettings = {
     "httpsWhitelist": "data/httpsWhitelist.json",
     "majorTrackingNetworks": {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true},
     "version": null,
-    "atb": null
+    "atb": null,
+    "brokenSiteList": "https://raw.githubusercontent.com/duckduckgo/content-blocking-whitelist/jd/broken-sites/broken-sites.txt"
 }
