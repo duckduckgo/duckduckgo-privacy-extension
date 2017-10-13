@@ -90,6 +90,20 @@ BaseModel.prototype = $.extend({},
              this.store.remove(this.modelName);
          },
 
+
+        /**
+         * Fetch data from background
+         * this.model.fetch({'messageName': messageValue}).then((response) ..
+         **/
+        fetch: function (message) {
+            return new Promise((resolve, reject) => {
+                chrome.runtime.sendMessage(message, ((result) => {
+                        resolve(result)
+                    })
+                )
+            })
+        },
+
          /**
           * Private method for turning `this` into a
           * JSON object before sending to application store.
@@ -100,20 +114,8 @@ BaseModel.prototype = $.extend({},
              let attributes = Object.assign({}, Object.getPrototypeOf(this), this);
              if (attributes.store) delete attributes.store;
              return JSON.parse(JSON.stringify(attributes));
-         },
+         }
 
-        /**
-         * Send messages to background
-         * this.model.fetch({'messageName': messageValue}).then((response) ..
-         **/
-        fetch: function (message) {
-            return new Promise((resolve, reject) => {
-                chrome.runtime.sendMessage(message, ((result) => {
-                        resolve(result)
-                    })
-                )
-            })
-        }
     }
 );
 
