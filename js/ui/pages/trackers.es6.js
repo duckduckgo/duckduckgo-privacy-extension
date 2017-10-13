@@ -1,6 +1,9 @@
 // TODO: rename me "popup.es6.js", rename main #trackers-container to #popup-container
 const Parent = window.DDG.base.Page
 const mixins = require('./mixins/index.es6.js')
+const HamburgerMenuView = require('./../views/hamburger-menu.es6.js')
+const HamburgerMenuModel = require('./../models/hamburger-menu.es6.js')
+const hamburgerMenuTemplate = require('./../templates/hamburger-menu.es6.js')
 const TopBlockedView = require('./../views/top-blocked-truncated.es6.js')
 const TopBlockedModel = require('./../models/top-blocked.es6.js')
 const topBlockedTemplate = require('./../templates/top-blocked-truncated.es6.js')
@@ -32,7 +35,7 @@ Trackers.prototype = $.extend({},
 
         ready: function() {
 
-            Parent.prototype.ready.call(this);
+            Parent.prototype.ready.call(this)
 
             this.message = new BackgroundMessageModel()
 
@@ -46,7 +49,7 @@ Trackers.prototype = $.extend({},
                         chrome.runtime.openOptionsPage()
                     }
                 })
-            });
+            })
 
             this.setBrowserClassOnBodyTag();
 
@@ -55,6 +58,13 @@ Trackers.prototype = $.extend({},
                 model: new SearchModel({searchText: ''}), // TODO proper location of remembered query
                 appendTo: this.$parent,
                 template: searchTemplate
+            })
+
+            this.views.hamburgerMenu = new HamburgerMenuView({
+                pageView: this,
+                model: new HamburgerMenuModel(),
+                appendTo: this.$parent,
+                template: hamburgerMenuTemplate
             })
 
             this.views.options = new LinkableView({

@@ -112,6 +112,35 @@ body {
         }
     }
 
+    .hamburger-button {
+
+    }
+
+    .hamburger-menu {
+        z-index: 20;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        &__bg {
+            z-index: -1;
+            background-color: $hamburger-menu__bg-color;
+            opacity: 0.9;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        &__content {
+            z-index: 1;
+            margin-top: 20px;
+        }
+    }
+
     .site-info {
 
         .default-list {
