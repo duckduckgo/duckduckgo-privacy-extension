@@ -19,7 +19,7 @@ let lists = {
     },
     whitelists: {
         preWhitelist: {
-            url: 'https://github.com/easylist/easylist/blob/master/easylist/easylist_whitelist.txt',
+            url: 'https://raw.githubusercontent.com/duckduckgo/content-blocking-whitelist/master/whitelist.txt',
             parsed: {}
         }
     }
