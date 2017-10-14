@@ -70,17 +70,15 @@ function combine () {
     var keys = Object.keys(registered)
 
     return function combination (state, notification) {
-      var hasChanged = false
       var nextState = {}
 
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i]
         if (typeof registered[key] !== 'function') throw new Error('notifier ' + key + 'must be a function')
         nextState[key] = registered[key](state[key], notification)
-        hasChanged = hasChanged || nextState[key] !== state[key]
       }
 
-      return hasChanged ? nextState : state
+      return nextState
     }
 
 }

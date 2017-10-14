@@ -58,9 +58,9 @@ function register (notifierName) {
 
     if (!_store) {
         _store = _createStore(combinedNotifiers);
-        _store.subscribe((state) => {
-            state = deepFreeze(state); // make immutable before publishing
-            _publish(state); // publish notif. about state changes to subscribers
+        _store.subscribe((notification) => {
+            notification = deepFreeze(notification); // make immutable before publishing
+            _publish(notification); // publish notif. about state changes to subscribers
         });
     } else {
         // update reducers to include the newest registered here
@@ -92,17 +92,15 @@ _publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
  * @api private
  */
 
-function _publish (state) {
-    Object.keys(state).forEach((key) => {
-        if (state[key] && state[key].change) {
-            console.info(`STORE NOTIFICATION change:${key}`, state[key]);
-            _publisher.emit(`change:${key}`, state[key]);
-        }
-        if (state[key] && state[key].action) {
-            console.info(`STORE NOTIFICATION action:${key}`, state[key]);
-            _publisher.emit(`action:${key}`, state[key]);
-        }
-    });
+function _publish (notification) {
+    if (notification && notification.change) {
+        console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification)
+        _publisher.emit(`change:${notification.notifierName}`, notification)
+    }
+    if (notification && notification.action) {
+        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification);
+        _publisher.emit(`action:${notification.notifierName}`, notification);
+    }
 }
 
 
@@ -148,7 +146,7 @@ function _createStore (notifier) {
 
         isEmitting = true;
         state = notifier(state, notification);
-        if (listener) listener(state);
+        if (listener) listener(notification);
         isEmitting = false;
         return notification;
     }
