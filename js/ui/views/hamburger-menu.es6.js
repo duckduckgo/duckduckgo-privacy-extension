@@ -23,12 +23,12 @@ HamburgerMenu.prototype = $.extend({},
         },
 
         _openMenu: function () {
-            debugger
+            this.model.isOpen = true
+            this._rerender()
         },
 
-        _handleAction: function (a) {
-            debugger
-            if (a === 'burgerClick') this._openMenu()
+        _handleAction: function (notification) {
+            if (notification.action === 'burgerClick') this._openMenu()
         },
 
         openOptionsPage: function () {
