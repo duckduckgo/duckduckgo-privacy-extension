@@ -39,7 +39,7 @@ BaseModel.prototype = $.extend({},
          * @param {*} val
          * @api public
          */
-        set: function(attr, val) {
+        set: function (attr, val) {
 
             // support passing a hash of values to set instead of
             // single attribute/value pair, i.e.:
@@ -103,6 +103,23 @@ BaseModel.prototype = $.extend({},
                 )
             })
         },
+
+        /**
+         * Send a user action
+         * Broadcasts an action to other UI components
+         * via notification store
+         * @param action {string}
+         * @param event {jquery event; optional}
+         */
+        send: function (action, event) {
+            this.store.publish({
+                notifierName: this.modelName,
+                action: action,
+                event: event || undefined,
+                attributes: this._toJSON()
+            })
+        },
+
 
          /**
           * Private method for turning `this` into a

@@ -35,6 +35,7 @@ h1, h2, h3, h4, h5, h5, p, div {
 section, ul, ol, li {
     margin: 0;
     padding: 0;
+    position: relative;
 
     &.divider-bottom {
         border-bottom: 1px solid $platinum;
