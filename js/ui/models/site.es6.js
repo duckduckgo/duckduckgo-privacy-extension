@@ -35,7 +35,8 @@ function Site (attrs) {
     Parent.call(this, attrs)
 
     this.bindEvents([
-        [this.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg]
+        [this.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg],
+        [this.store.subscribe, 'action:backgroundMessage', this.handleBackgroundMsg]
     ])
 }
 
@@ -112,10 +113,16 @@ Site.prototype = $.extend({},
 
       handleBackgroundMsg: function (message) {
           // console.log('[model] handleBackgroundMsg()')
-          if (!message || !message.change) return
+          if (!message || !message.change || !message.action) return
 
-          const attr = message.change.attribute
-          if (attr === 'updateTrackerCount') {
+          if (message.change) {
+              if (message.change.attribute === 'siteRating') {
+                const rating = message.change.value || null
+                if (rating) this.update({siteRating: rating})
+              }
+          }
+
+          if (message.action === 'updateTrackerCount') {
               if (!this.tab) return
               let tabID = this.tab.id
 
@@ -123,11 +130,6 @@ Site.prototype = $.extend({},
                   this.tab = backgroundTabObj
                   this._getSiteRating()
               })
-          }
-
-          if (attr === 'siteRating') {
-            const rating = message.change.value || null
-            if (rating) this.update({siteRating: rating})
           }
       },
 

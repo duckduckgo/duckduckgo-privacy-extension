@@ -6,7 +6,8 @@ const Parent = window.DDG.base.Model;
  * 1. Passive messages from background -> backgroundMessage model -> subscribing model
  *
  *    The background sends these messages using chrome.runtime.sendMessage({'name': 'value'})
- *    The backgroundMessage model (here) receives the message and sets the value
+ *    The backgroundMessage model (here) receives the message and forwards the
+ *    it to the global event store via model.send(msg)
  *    Other modules that are subscribed to state changes in backgroundMessage are notified
  *
  * 2. Two-way messaging using this.model.fetch() as a passthrough
@@ -23,15 +24,9 @@ function BackgroundMessage (attrs) {
     // listen for messages from background and
     // notify subscribers
     chrome.runtime.onMessage.addListener((req) => {
-        if (req.whitelistChanged) {
-            this.set('whitelistChanged', true)
-        }
-        if (req.updateTrackerCount) {
-            this.set('updateTrackerCount', true)
-        }
-        if (req.didResetTrackersData) {
-            this.set('didResetTrackersData', true)
-        }
+        if (req.whitelistChanged) this.send('whitelistChanged')
+        if (req.updateTrackerCount) this.send('updateTrackerCount')
+        if (req.didResetTrackersData) this.send('didResetTrackersData')
     })
 }
 

@@ -14,7 +14,7 @@ function TruncatedTopBlocked (ops) {
     })
 
     this.bindEvents([
-        [this.model.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg]
+        [this.model.store.subscribe, 'action:backgroundMessage', this.handleBackgroundMsg]
     ])
 }
 
@@ -44,10 +44,9 @@ TruncatedTopBlocked.prototype = $.extend({},
         },
 
         handleBackgroundMsg: function (message) {
-            if (!message || !message.change) return
+            if (!message || !message.action) return
 
-            const attr = message.change.attribute
-            if (attr === 'didResetTrackersData') {
+            if (message.action === 'didResetTrackersData') {
                 this.model.reset()
                 this.rerenderList()
             }
