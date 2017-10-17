@@ -5,6 +5,7 @@ $font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe U
 /* Colors */
 @import "../node_modules/duckduckgo-colors/colors";
 $color--neutral-bg: #f5f5f5;
+$color--grey: $grey;
 $color--dark-gray: #838383;
 $color--default-box-shadow: $platinum-dark;
 $color--green: $green;
@@ -85,4 +86,8 @@ $icon__arrow--moz: "moz-extension://__MSG_@@extension_id__/img/arrow@2x.png";
 /* Settings cog icon */
 $icon__settings--chrome: "chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
 $icon__settings--moz: "moz-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
+
+/* Close modal "x" icon */
+$icon__close--chrome: "chrome-extension://__MSG_@@extension_id__/img/close.svg";
+$icon__close--moz: "moz-extension://__MSG_@@extension_id__/img/close.svg";
 

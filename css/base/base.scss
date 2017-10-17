@@ -182,6 +182,20 @@ a {
     @include icon_display();
     /* you'll need to set the background image within each instance of .icon */
 
+    &.icon__close {
+        width: 14px;
+        height: 14px;
+
+        .is-browser--chrome & {
+            background-image: url($icon__close--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__close--moz);
+        }
+
+    }
+
     &.icon__arrow {
         width: 16px;
         height: 16px;

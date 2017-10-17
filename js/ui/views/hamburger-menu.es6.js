@@ -5,11 +5,10 @@ function HamburgerMenu (ops) {
     this.template = ops.template
     Parent.call(this, ops)
 
-    this._cacheElems('.js-hamburger-menu', [ 'close'])
-
+    this._cacheElems('.js-hamburger-menu', ['close'])
     this.bindEvents([
-      [this.$close, 'click', this.closeMenu],
-      [this.model.store.subscribe, 'action:search', this._handleAction]
+        [this.$close, 'click', this.closeMenu],
+        [this.model.store.subscribe, 'action:search', this.handleAction]
     ])
 }
 
@@ -17,18 +16,17 @@ HamburgerMenu.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _closeMenu: function () {
-            this.model.isOpen = false
-            this._rerender()
+        handleAction: function (notification) {
+            if (notification.action === 'burgerClick') this.openMenu()
         },
 
-        _openMenu: function () {
-            this.model.isOpen = true
-            this._rerender()
+        openMenu: function (e) {
+            this.$el.removeClass('is-hidden')
         },
 
-        _handleAction: function (notification) {
-            if (notification.action === 'burgerClick') this._openMenu()
+        closeMenu: function (e) {
+            if (e) e.preventDefault()
+            this.$el.addClass('is-hidden')
         },
 
         openOptionsPage: function () {
@@ -43,9 +41,7 @@ HamburgerMenu.prototype = $.extend({},
                 }
             })
         }
-
     }
-
 )
 
 module.exports = HamburgerMenu

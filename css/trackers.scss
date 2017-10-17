@@ -137,6 +137,36 @@ body {
         &__content {
             z-index: 1;
             margin-top: 20px;
+            position: relative;
+
+            .hamburger-menu__close-container {
+                top: 15px;
+
+                .icon__close {
+                    top: 15px;
+                }
+            }
+
+            .hamburger-menu__links {
+                padding-top: 0;
+
+                .menu-title {
+                    padding-top: 0;
+                    color: $slate;
+                    font-weight: bold;
+
+                    span {
+                        font-size: 14px;
+                        color: $color--grey;
+                        display: block;
+                        font-weight: normal;
+                    }
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
         }
     }
 
