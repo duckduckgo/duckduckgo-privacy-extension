@@ -1,6 +1,11 @@
 (function() {
-  QUnit.module("Options");
-  
+  bkg.settings.ready().then(() => {
+      QUnit.module("Options");
+      testOptions()
+  })
+})()
+
+function testOptions () {
   QUnit.test("global blocking off/on", function (assert) {
       let tabsToCleanUp = [];
       let testURL = "https://www.reddit.com/";
@@ -35,5 +40,5 @@
           });
       });
 
-  });
-})();
+  })
+}

@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "1.26.1beta",
+    "version": "1.26.1",
     "description": "DuckDuckGo",
     "icons": {
         "16": "img/icon_16.png",
@@ -32,9 +32,7 @@
       }
     },
     "omnibox": {"keyword": "d"},
-    "options_ui": {
-          "page": "html/options.html"
-    },
+    "options_page": "html/options.html",
     "background": {
             "scripts": [
                 "data/defaultSettings.js",
@@ -55,7 +53,8 @@
                 "js/indexed-db.js",
                 "js/https.js",
                 "js/background.js",
-                "js/abp.js"
+                "js/abp.js",
+                "js/atb.js"
             ]
     },
     "chrome_settings_overrides": {

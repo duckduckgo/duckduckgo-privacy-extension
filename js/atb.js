@@ -1,14 +1,11 @@
 var ATB = (() => {
-    var ddgRegex = '/duckduckgo\.com';
-    var ddgAtbURL = 'https://duckduckgo.com/atb.js?';
+    // regex to match ddg urls to add atb params to.
+    // Matching subdomains, searches, and newsletter page
+    var ddgRegex = new RegExp(/^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?q=.*|about#newsletter)/)
+    var ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
         updateSetAtb: () => {
-            // Just return for now. The legacy portion of the extension
-            // is still taking care of this.
-            // We need to migrate atb values over to the webextension.
-            return;
-
             return new Promise((resolve, reject) => {
                 let atbSetting = settings.getSetting('atb'),
                     setAtbSetting = settings.getSetting('set_atb');
@@ -26,12 +23,6 @@ var ATB = (() => {
         },
 
         getSetAtb: (atbSetting, setAtb, callback) => {
-
-            // Just return for now. The legacy portion of the extension
-            // is still taking care of this.
-            // We need to migrate atb values over to the webextension.
-            return;
-
             return new Promise((resolve, reject) => {
                 var xhr = new XMLHttpRequest();
 
@@ -53,9 +44,6 @@ var ATB = (() => {
         },
 
         redirectURL: (request) => {
-            // just return until we revisit this module
-            return
-
             if(request.url.search(ddgRegex) !== -1){
                 
                 if(request.url.indexOf('atb=') !== -1){
