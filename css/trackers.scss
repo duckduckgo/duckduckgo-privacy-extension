@@ -270,20 +270,6 @@ body {
             }
         }
 
-        .site-info__user-privacy-msg {
-            text-align: center;
-            margin-top: 15px;
-
-            span {
-                font-weight: bold;
-                color: $color--red;
-
-                &.is-upgraded {
-                    color: $color--green;
-                }
-            }
-        }
-
         .site-info__li--https-status {
             position: relative;
         }

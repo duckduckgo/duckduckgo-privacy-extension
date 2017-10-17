@@ -18,14 +18,13 @@ module.exports = function () {
             </li>
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container border--top border--bottom">
-                    <p class="site-info__rating-label">Privacy Grade</p>
                     <div class="site-info__rating-flex">
                         ${siteRating('A', this.model.siteRating === 'A')}
                         ${siteRating('B', this.model.siteRating === 'B')}
                         ${siteRating('C', this.model.siteRating === 'C')}
                         ${siteRating('D', this.model.siteRating === 'D')}
                     </div>
-                    ${renderUserPrivacyMsg(this.model.isUserPrivacyUpgraded)}
+                    <p class="site-info__rating-label">Privacy Grade</p>
                 </div>
             </li>
             <li class="site-info__li--https-status padded">
@@ -67,18 +66,6 @@ module.exports = function () {
             </li>
         </ul>
     </section>`
-
-    function renderUserPrivacyMsg (upgraded) {
-        if (upgraded) {
-            return bel`<p class="site-info__user-privacy-msg">
-               ...but we have
-               <span class="is-upgraded">improved the site!</span>
-               </p>`
-        } else {
-            return bel`<p class="site-info__user-privacy-msg">
-                ...for the <span>following reasons:</span></p>`
-        }
-    }
 
     function renderTrackerNetworks (tn, limit, isWhitelisted) {
         if (tn && tn.major) {
