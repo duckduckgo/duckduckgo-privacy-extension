@@ -11,18 +11,18 @@ module.exports = function () {
             ${header('Grade Details')}
         </section>`
     } else {
-        return bel`<div class="site-info site-info--details">
+        return bel`<div class="site-info site-info--details card border--bottom">
             <h1 class="site-info__domain">${this.model.site.domain}</h1>
             ${siteRating(this.model.site.siteRating, true)}
             ${siteRatingExplainer(this.model.site.siteRating)}
-            <h2 class="site-info__https-status card card--padded border--bottom">
+            <h2 class="site-info__https-status padded border--bottom">
                 ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>
             </h2>
-            <h3 class="card card--padded border--bottom">
+            <h3 class="padded border--bottom">
                 Trackers found
             </h3>
-            <ol class="default-list site-info__trackers__company-list card card--padded">
+            <ol class="default-list site-info__trackers__company-list padded">
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
         </div>`

@@ -6,7 +6,8 @@ module.exports = function (rating) {
         msg = `This received a "${rating.toUpperCase()}" Privacy Grade
           for the reasons below.`
     }
-    return bel`<p class="site-info--details__explainer js-rating-explainer">
-        ${msg}
+    return bel`<p class="site-info--details__explainer
+        js-rating-explainer border--bottom">
+            ${msg}
     </p>`
 }
