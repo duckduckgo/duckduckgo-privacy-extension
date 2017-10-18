@@ -182,7 +182,8 @@ body {
             display: inline-block;
         }
 
-        .site-info__domain {
+        .site-info__domain,
+        .site-info__protection {
             @include site_info_top_line();
             max-width: $popup__width - 125;
             font-weight: bold;
@@ -214,7 +215,6 @@ body {
         }
 
         .site-info__rating-container {
-            margin: 0 10px;
             padding: 0 20px 15px 20px;
         }
 

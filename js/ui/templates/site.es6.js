@@ -9,12 +9,6 @@ module.exports = function () {
         <ul class="default-list">
             <li class="padded">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
-                <div class="site-info__toggle-container">
-                    <span class="site-info__toggle-text">
-                        ${this.model.whitelistStatusText}
-                    </span>
-                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
-                </div>
             </li>
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container border--top border--bottom">
@@ -25,6 +19,15 @@ module.exports = function () {
                         ${siteRating('D', this.model.siteRating === 'D')}
                     </div>
                     <p class="site-info__rating-label">Privacy Grade</p>
+                </div>
+            </li>
+            <li class="padded border--bottom">
+                <h2 class="site-info__protection">Privacy Protection</h2>
+                <div class="site-info__toggle-container">
+                    <span class="site-info__toggle-text">
+                        ${this.model.whitelistStatusText}
+                    </span>
+                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
                 </div>
             </li>
             <li class="site-info__li--https-status padded">
