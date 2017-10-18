@@ -19,13 +19,17 @@ module.exports = function () {
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="menu-title">
+                    <a href="https://www.surveymonkey.com/r/feedback_firefox"
+                        class="menu-title"
+                        target="_blank">
                         Send feedback
                         <span>Got issues or suggestions? Let us know!</span>
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="menu-title">
+                    <a href="https://www.surveymonkey.com/r/V6L5ZY2"
+                        class="menu-title"
+                        target="_blank">
                         Report broken site
                         <span>If a site's not working, please tell us.</span>
                     </a>
