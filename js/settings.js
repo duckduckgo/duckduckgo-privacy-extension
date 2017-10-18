@@ -65,7 +65,7 @@ require.scopes.settings =(() => {
 
     function getSetting(name) {
         if (!isReady) {
-            console.warn('Settings: getSetting() Settings not loaded')
+            console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
             return
         }
 
@@ -82,7 +82,7 @@ require.scopes.settings =(() => {
 
     function updateSetting(name, value) {
         if (!isReady) {
-            console.warn('Settings: updateSetting() Setting not loaded')
+            console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
             return
         }
 

@@ -152,7 +152,10 @@ chrome.runtime.onMessage.addListener((request) => {
     }
 });
 
-chrome.alarms.create('updateUninstallURL', {periodInMinutes: 1});
+
+// set uninstall survey url
+settings.ready().then(() => chrome.runtime.setUninstallURL(ATB.getSurveyURL()))
+chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10});
 chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
     if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL());
