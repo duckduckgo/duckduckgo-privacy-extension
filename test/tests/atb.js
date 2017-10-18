@@ -3,8 +3,6 @@
       QUnit.module("ATB");
       testATBrewrite()
       testATBInstall()
-      testATBparse()
-      testATBdelta()
   })
 })()
 
@@ -103,42 +101,4 @@ function testATBInstall () {
           done()
       });
   })
-}
-
-function testATBparse () {
-    QUnit.test("ATB parse", ((assert) => {
-        let tests = [
-        {atb: 'v45-3', major: '45', minor: '3'},
-        {atb: 'v45-3__', major: '45', minor: '3', variant: '__'},
-        {atb: 'v45-3_h', major: '45', minor: '3', variant: '_h'},
-        {atb: 'v45-3hh', major: '45', minor: '3', variant: 'hh'},
-        {atb: 'v45-3h_', major: '45', minor: '3', variant: 'h_'},
-        {atb: 'v110-3h_', major: '110', minor: '3', variant: 'h_'}
-        ]
-       
-        tests.forEach((test) => {
-            let parsed = ATB.parse(test.atb)
-            assert.ok(parsed.major === test.major, 'parsed correct major version')
-            assert.ok(parsed.minor === test.minor, 'parsed correct minor version')
-            assert.ok(parsed.variant === test.variant, 'parsed correct variant')
-        })
-    }))
-}
-
-function testATBdelta () {
-    QUnit.test("ATB delta", ((assert) => {
-        let tests = [
-        {start: 'v45-3', end: 'v46-3', delta: 7},
-        {start: 'v45-3', end: 'v55-4', delta: 71},
-        {start: 'v45-3', end: 'v85-3', delta: 280},
-        {start: 'v45-3__', end: 'v46-3', delta: 7}
-        ]
-
-        tests.forEach((test) => {
-            // set start atb in settings
-            settings.updateSetting('atb', test.start)
-            let delta = ATB.delta( ATB.parse(test.end))
-            assert.ok(delta === test.delta, 'correct atb delta')
-        })
-    }))
 }

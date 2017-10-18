@@ -81,28 +81,6 @@ var ATB = (() => {
             }
         },
 
-        /* Return the major and minor versions for an ATB string
-         */
-        parse: (atbString) => {
-            let versions = {}
-            if (atbString) {
-                [, versions.major, versions.minor, versions.variant] = atbString.match(/^v(\d+)-(\d+)(\w+)?/)
-            }
-            return versions
-        },
-
-        /* Return the Number of days between two ATB 
-         * endVersion is an ATB.parse obj or defaults to today's atb
-         * startVersions is the current ATB in settings
-         */
-        delta: (endVersion) => {
-            let startVersion = ATB.parse(settings.getSetting('atb'))
-            if (!endVersion) endVersion = ATB.calculateInitialVersions()
-            let majorDiff = Number(endVersion.major) - Number(startVersion.major)
-            let minorDiff = Math.abs(Number(endVersion.minor) - Number(startVersion.minor))
-            return majorDiff > 0 ? (7 * majorDiff) + minorDiff : minorDiff
-        },
-
         calculateInitialVersions: () => {
             let oneWeek = 604800000,
                 oneDay = 86400000,
