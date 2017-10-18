@@ -17,6 +17,7 @@ module.exports = function () {
                         ${siteRating('B', this.model.siteRating === 'B')}
                         ${siteRating('C', this.model.siteRating === 'C')}
                         ${siteRating('D', this.model.siteRating === 'D')}
+                        ${siteRating('F', this.model.siteRating === 'F')}
                     </div>
                     <p class="site-info__rating-label">Privacy Grade</p>
                 </div>
