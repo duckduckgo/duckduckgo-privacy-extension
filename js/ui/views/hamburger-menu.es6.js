@@ -5,9 +5,13 @@ function HamburgerMenu (ops) {
     this.template = ops.template
     Parent.call(this, ops)
 
-    this._cacheElems('.js-hamburger-menu', ['close'])
+    this._cacheElems('.js-hamburger-menu', [
+        'close',
+        'options-link'
+    ])
     this.bindEvents([
         [this.$close, 'click', this.closeMenu],
+        [this.$optionslink, 'click', this.openOptionsPage],
         [this.model.store.subscribe, 'action:search', this.handleAction]
     ])
 }
