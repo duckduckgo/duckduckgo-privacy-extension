@@ -73,9 +73,6 @@ function Background() {
     if (details.reason === "install") {
         ATB.onInstalled();
     }
-    else if (details.reason === "upgrade") {
-        ATB.migrate()
-    }
   });
 }
 
