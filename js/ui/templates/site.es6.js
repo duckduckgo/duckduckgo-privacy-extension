@@ -7,11 +7,11 @@ module.exports = function () {
 
     return bel`<section class="site-info card">
         <ul class="default-list">
-            <li class="padded">
+            <li class="padded padded__bottom--none">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
             </li>
             <li class="site-info__rating-li">
-                <div class="site-info__rating-container border--top border--bottom">
+                <div class="site-info__rating-container border--bottom">
                     <div class="site-info__rating-flex">
                         ${siteRating('A', this.model.siteRating === 'A')}
                         ${siteRating('B', this.model.siteRating === 'B')}

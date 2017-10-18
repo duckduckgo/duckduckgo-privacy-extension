@@ -191,6 +191,12 @@ body {
             text-overflow: ellipsis;
         }
 
+        .site-info__domain {
+            text-align: center;
+            width: 100%;
+            max-width: 100%;
+        }
+
         .site-info__toggle-container {
             position: relative;
             float: right;
@@ -431,6 +437,7 @@ body {
                 line-height: 20px;
                 height: 21px;
                 max-width: 225px;
+                text-align: left;
             }
 
             .site-info__rating {

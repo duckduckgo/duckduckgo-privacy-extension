@@ -164,6 +164,10 @@ a {
         padding: $card--padded;
     }
 
+    .padded__bottom--none {
+        padding-bottom: 0;
+    }
+
     &.border--bottom,
     .border--bottom {
         border-bottom: $card__border;
