@@ -433,6 +433,10 @@ body {
     .sliding-subview {
         overflow-y: auto;
 
+        .hamburger-button { // TODO: revive this at some point!
+            display: none;
+        }
+
         .site-info--details {
             padding-top: 15px;
 
