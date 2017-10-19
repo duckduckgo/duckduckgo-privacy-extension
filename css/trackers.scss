@@ -508,7 +508,7 @@ body {
             z-index: 0;
             overflow-y: auto;
             padding-top: 15px;
-            padding-bottom: 112px;
+            padding-bottom: 15px;
             margin-top: 15px;
             max-height: 315px;
         }
@@ -516,21 +516,23 @@ body {
         .top-blocked__reset-stats {
             position: absolute;
             height: 50px;
-            top: 510px;
+            top: 470px;
             left: 0;
             right: 0;
             padding: 15px 20px;
+            text-align: center;
 
-            h3, a {
+            button {
                 display: inline-block;
-            }
-
-            a {
-                float: right;
+                border: 1px solid $slate-light;
+                padding: 7.5px 15px;
+                border-radius: 3px;
+                background-color: $color--neutral-bg;
             }
 
             p {
-                margin-top: 7.5px;
+                margin-top: 15px;
+                color: $color--dark-gray;
             }
         }
     }

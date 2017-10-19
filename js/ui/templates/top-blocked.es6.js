@@ -35,8 +35,10 @@ function renderList (model) {
 function renderResetButton (model) {
     if (model.companyListMap.length > 0) {
         return bel`<div class="top-blocked__reset-stats">
-            <h3>Data Privacy</h3>
-            <a href="#" class="js-reset-trackers-data">Reset stats</a>
+            <button class="top-blocked__reset-stats__button block
+                js-reset-trackers-data">
+                Reset Global Stats
+            </button>
             <p>These stats are only stored locally on your device,
             and are not sent anywhere, ever.</p>
         </div>`
