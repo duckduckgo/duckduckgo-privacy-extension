@@ -12,9 +12,19 @@ module.exports = function () {
         </section>`
     } else {
         return bel`<div class="js-top-blocked-content">
+            ${renderPctPagesWithTrackers(this.model)}
             ${renderList(this.model)}
             ${renderResetButton(this.model)}
         </div>`
+    }
+}
+
+function renderPctPagesWithTrackers (model) {
+    if (model.pctPagesWithTrackers) {
+        return bel`<p class="top-blocked__pct card">
+            Trackers were found on ${model.pctPagesWithTrackers}%
+            of web sites you've visited.
+        </p>`
     }
 }
 

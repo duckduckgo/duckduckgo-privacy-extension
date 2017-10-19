@@ -507,10 +507,16 @@ body {
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            margin-top: 15px;
+            padding-top: 0;
+            padding-bottom: 30px;
+            margin-top: 0;
             max-height: 315px;
+        }
+
+        .top-blocked__pct {
+            margin: 0;
+            padding: 15px 20px 7.5px 20px;
+            color: $color--dark-gray;
         }
 
         .top-blocked__reset-stats {

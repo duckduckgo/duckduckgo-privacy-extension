@@ -40,7 +40,8 @@ const scoreIconLocations = {
     "A": "img/toolbar-rating-a@2x.png",
     "B": "img/toolbar-rating-b@2x.png",
     "C": "img/toolbar-rating-c@2x.png",
-    "D": "img/toolbar-rating-d@2x.png"
+    "D": "img/toolbar-rating-d@2x.png",
+    "F": "img/toolbar-rating-f@2x.png"
 }
 
 class Tab {
@@ -85,10 +86,10 @@ class Tab {
         else {
             let newTracker = new Tracker(t.parentCompany, t.url, t.type);
             this.trackers[t.parentCompany] = newTracker;
-            
+
             // first time we have seen this network tracker on the page
             if (t.parentCompany !== 'unknown') Companies.countCompanyOnPage(t.parentCompany)
-            
+
             return newTracker;
         }
     };
@@ -119,7 +120,7 @@ class Tab {
 
     checkHttpsRequestsOnComplete () {
         if (!this.site.HTTPSwhitelisted && this.httpsRequests.length > 0) {
-            
+
             // set whitelist for all tabs with this domain
             tabManager.whitelistDomain({
                 list: 'HTTPSwhitelisted',
@@ -138,8 +139,8 @@ class Tab {
 
 chrome.webRequest.onHeadersReceived.addListener((header) => {
     let tab = tabManager.get({'tabId': header.tabId})
-    
-    // Remove successful & rewritten requests    
+
+    // Remove successful & rewritten requests
     if (tab && header.statusCode < 400) {
 
         tab.httpsRequests = tab.httpsRequests.filter((url) => {
@@ -159,6 +160,6 @@ chrome.webRequest.onBeforeRedirect.addListener((req) => {
     if (tab.httpsRedirects[req.requestId]) {
         tab.httpsRedirects[req.requestId] += 1
     } else {
-        tab.httpsRedirects[req.requestId] = 1        
+        tab.httpsRedirects[req.requestId] = 1
     }
 }, {urls: ["*://*/*"]})

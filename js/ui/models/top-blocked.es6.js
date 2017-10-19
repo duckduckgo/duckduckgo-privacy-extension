@@ -5,6 +5,7 @@ function TopBlocked (attrs) {
     attrs.numCompanies = attrs.numCompanies
     attrs.companyList = []
     attrs.companyListMap = []
+    attrs.pctPagesWithTrackers = null
     Parent.call(this, attrs)
 }
 
@@ -31,6 +32,9 @@ TopBlocked.prototype = $.extend({},
                             px: Math.floor(company.percent / 100 * 145)
                           }
                       })
+                      if (data.pctPagesWithTrackers) {
+                        this.pctPagesWithTrackers = data.pctPagesWithTrackers
+                      }
                       resolve()
                 })
           })
@@ -39,6 +43,7 @@ TopBlocked.prototype = $.extend({},
       reset: function () {
           this.companyList = []
           this.companyListMap = []
+          this.pctPagesWithTrackers = null
       }
 
   }
