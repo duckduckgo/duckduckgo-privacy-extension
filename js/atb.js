@@ -131,7 +131,8 @@ var ATB = (() => {
 
         onInstalled: () => {
             ATB.setInitialVersions();
-            ATB.inject();
+            // wait until settings is ready to try and get atb from the page
+            settings.ready().then(() => ATB.inject())
         },
 
         getSurveyURL: () => {
