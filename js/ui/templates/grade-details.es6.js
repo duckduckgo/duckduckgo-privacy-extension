@@ -19,9 +19,7 @@ module.exports = function () {
                 ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>
             </h2>
-            <h3 class="padded border--bottom">
-                Trackers found
-            </h3>
+            ${trackersBlockedOrFound(this.model)}
             <ol class="default-list site-info__trackers__company-list padded">
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
@@ -36,6 +34,16 @@ function httpsMsg (httpsState) {
     return bel`<span>Connection is insecure (HTTP)</span>`
 }
 
+function trackersBlockedOrFound (model) {
+    let msg = ''
+    if (model.site && model.site.isWhitelisted) {
+        msg = 'Trackers found'
+    } else {
+        msg = 'Trackers blocked'
+    }
+    return bel`<h3 class="padded">${msg}</h3>`
+}
+
 function renderTrackerDetails (companyListMap) {
     if (companyListMap.length === 0) {
         return bel`<li class="is-empty">None</li>`
@@ -43,7 +51,7 @@ function renderTrackerDetails (companyListMap) {
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
             return bel`<li>
-                <strong>${c.name}</strong>
+                <span class="block">${c.name}</span>
                 <span class="site-info__tracker__icon
                     ${c.name.replace('.', '').toLowerCase()}
                     float-right"></span>
