@@ -37,7 +37,7 @@ function add (notifierName) {
             if (notification.change) {
                 return {
                     change: notification.change,
-                    attributes: notification.attributes || undefined
+                    attributes: notification.attributes
                 }
             }
 
@@ -48,8 +48,8 @@ function add (notifierName) {
             if (notification.action) {
                 return {
                     action: notification.action,
-                    event: event || undefined,
-                    attributes: notification.attributes || undefined
+                    event: notification.event,
+                    attributes: notification.attributes
                 }
             }
 

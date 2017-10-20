@@ -60,7 +60,7 @@ BaseModel.prototype = $.extend({},
 
             this.store.publish({
                 notifierName: this.modelName,
-                change: { attribute: attr, value: val, lastValue: lastValue },
+                change: {attribute: attr, value: val, lastValue: lastValue},
                 attributes: this._toJSON()
             });
         },
@@ -112,10 +112,12 @@ BaseModel.prototype = $.extend({},
          * @param event {jquery event; optional}
          */
         send: function (action, event) {
+            if (!action) throw new Error('model.send() requires an action argument')
+            event = event || null
             this.store.publish({
                 notifierName: this.modelName,
                 action: action,
-                event: event || undefined,
+                event: event,
                 attributes: this._toJSON()
             })
         },
