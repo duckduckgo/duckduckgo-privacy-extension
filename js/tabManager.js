@@ -91,13 +91,13 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
              * content when https content is mixed after a forced upgrade
              */
             if (tab.status === 'complete') {
-                if (tab.url.match(/^https:\/\//)) {
+                if (tab.url && tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
                 tab.checkHttpsRequestsOnComplete()
                 console.info(tab.site.score)
                 tab.updateBadgeIcon()
-                if (Object.keys(tab.trackersBlocked).length > 0) {
+                if (tab.trackersBlocked && Object.keys(tab.trackersBlocked).length > 0) {
                     Companies.incrementTotalPagesWithTrackers()
                 }
             }
