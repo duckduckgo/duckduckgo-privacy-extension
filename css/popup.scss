@@ -2,7 +2,7 @@
 @import "mixins";
 
 
-/* Trackers popup */
+/* Popup */
 html, body {
     width: $popup__width;
     height: $popup__height;
@@ -23,7 +23,7 @@ body {
     }
 }
 
-#trackers-container {
+#popup-container {
 
     .failover.card {
         position: absolute;

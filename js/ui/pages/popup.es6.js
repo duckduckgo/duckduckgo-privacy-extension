@@ -1,4 +1,3 @@
-// TODO: rename me "popup.es6.js", rename main #trackers-container to #popup-container
 const Parent = window.DDG.base.Page
 const mixins = require('./mixins/index.es6.js')
 const HamburgerMenuView = require('./../views/hamburger-menu.es6.js')
@@ -19,7 +18,7 @@ const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
 
 function Trackers (ops) {
-    this.$parent = $('#trackers-container')
+    this.$parent = $('#popup-container')
     Parent.call(this, ops)
 }
 
@@ -28,9 +27,9 @@ Trackers.prototype = $.extend({},
     mixins.setBrowserClassOnBodyTag,
     {
 
-        pageName: 'trackers',
+        pageName: 'popup',
 
-        ready: function() {
+        ready: function () {
 
             Parent.prototype.ready.call(this)
 
