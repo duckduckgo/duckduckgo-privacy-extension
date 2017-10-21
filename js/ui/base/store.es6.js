@@ -98,8 +98,8 @@ function _publish (notification) {
         _publisher.emit(`change:${notification.notifierName}`, notification)
     }
     if (notification && notification.action) {
-        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification);
-        _publisher.emit(`action:${notification.notifierName}`, notification);
+        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification)
+        _publisher.emit(`action:${notification.notifierName}`, notification)
     }
 }
 

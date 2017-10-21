@@ -1,4 +1,4 @@
-const Parent = window.DDG.base.Model;
+const Parent = window.DDG.base.Model
 
 /**
  * Background messaging is done via two methods:
@@ -19,13 +19,13 @@ const Parent = window.DDG.base.Model;
  *    The common fetch method is defined in base/model.es6.js
  */
 function BackgroundMessage (attrs) {
-    Parent.call(this, attrs);
+    Parent.call(this, attrs)
 
     // listen for messages from background and
     // notify subscribers
     chrome.runtime.onMessage.addListener((req) => {
         if (req.whitelistChanged) this.send('whitelistChanged')
-        if (req.updateTrackerCount) this.send('updateTrackerCount')
+        if (req.updateTabData) this.send('updateTabData')
         if (req.didResetTrackersData) this.send('didResetTrackersData')
     })
 }

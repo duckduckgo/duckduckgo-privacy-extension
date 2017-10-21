@@ -48,7 +48,7 @@ function add (notifierName) {
             if (notification.action) {
                 return {
                     action: notification.action,
-                    event: notification.event,
+                    data: notification.data,
                     attributes: notification.attributes
                 }
             }

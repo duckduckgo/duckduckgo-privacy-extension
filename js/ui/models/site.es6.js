@@ -23,6 +23,7 @@ const majorTrackerNetworks = [
 function Site (attrs) {
     attrs = attrs || {}
     attrs.disabled = true // disabled by default
+    attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
     attrs.siteRating = ''
@@ -35,7 +36,6 @@ function Site (attrs) {
     Parent.call(this, attrs)
 
     this.bindEvents([
-        [this.store.subscribe, 'change:backgroundMessage', this.handleBackgroundMsg],
         [this.store.subscribe, 'action:backgroundMessage', this.handleBackgroundMsg]
     ])
 }
@@ -48,7 +48,7 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       getBackgroundTabData: function () {
-          console.log('[view] getBackgroundTabData()')
+          // console.log('[view] getBackgroundTabData()')
           return new Promise((resolve, reject) => {
               this.fetch({getCurrentTab: true}).then((tab) => {
                   if (tab) {
@@ -56,7 +56,7 @@ Site.prototype = $.extend({},
                           if (backgroundTabObj) {
                               this.tab = backgroundTabObj
                               this.domain = backgroundTabObj.site.domain
-                              this._getSiteRating()
+                              this.fetchSiteRating()
                           }
                           this.setSiteProperties()
                           this.setHttpsMessage()
@@ -69,6 +69,16 @@ Site.prototype = $.extend({},
                   }
               })
           })
+      },
+
+      fetchSiteRating: function () {
+          // console.log('[model] fetchSiteRating()')
+          if (this.tab) {
+              this.fetch({getSiteScore: this.tab.id}).then((rating) => {
+                  console.log('fetchSiteRating: ' + rating)
+                  if (rating) this.update({siteRating: rating})
+              })
+          }
       },
 
       setSiteProperties: function() {
@@ -113,22 +123,12 @@ Site.prototype = $.extend({},
 
       handleBackgroundMsg: function (message) {
           // console.log('[model] handleBackgroundMsg()')
-          if (!message || !message.change || !message.action) return
-
-          if (message.change) {
-              if (message.change.attribute === 'siteRating') {
-                const rating = message.change.value || null
-                if (rating) this.update({siteRating: rating})
-              }
-          }
-
-          if (message.action === 'updateTrackerCount') {
-              if (!this.tab) return
-              let tabID = this.tab.id
-
-              this.fetch({getTab: tabID}).then((backgroundTabObj) => {
+          if (!this.tab) return
+          if (message.action && message.action === 'updateTabData') {
+              this.fetch({getTab: this.tab.id}).then((backgroundTabObj) => {
                   this.tab = backgroundTabObj
-                  this._getSiteRating()
+                  this.update()
+                  this.fetchSiteRating()
               })
           }
       },
@@ -136,51 +136,51 @@ Site.prototype = $.extend({},
       update: function (ops) {
           // console.log('[model] update()')
           if (this.tab) {
-              const newTrackersCount = this._getUniqueTrackersCount()
-              const newTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
-              const newTrackerNetworks = this._getTrackerNetworksOnPage()
-              const newUserPrivacy = this._getIsUserPrivacyUpgraded()
 
               if (ops && ops.siteRating && (ops.siteRating !== this.siteRating)) {
                   this.set('siteRating', ops.siteRating)
               }
 
+              const newTrackersCount = this.getUniqueTrackersCount()
               if (newTrackersCount !== this.trackersCount) {
                   this.set('trackersCount', newTrackersCount)
               }
 
+              const newTrackersBlockedCount = this.getUniqueTrackersBlockedCount()
               if (newTrackersBlockedCount !== this.trackersBlockedCount) {
                   this.set('trackersBlockedCount', newTrackersBlockedCount)
               }
 
+              const newTrackerNetworks = this.getTrackerNetworksOnPage()
               if (!this.trackerNetworks ||
                   (newTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
                   (newTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
                   this.set('trackerNetworks', newTrackerNetworks)
               }
 
+              const newUserPrivacy = this.getIsUserPrivacyUpgraded()
               if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
                   this.set('isUserPrivacyUpgraded', newUserPrivacy)
               }
           }
       },
 
-      _getUniqueTrackersCount: function () {
-          // console.log('[model] _getUniqueTrackersCount()')
+      getUniqueTrackersCount: function () {
+          // console.log('[model] getUniqueTrackersCount()')
           return Object.keys(this.tab.trackers).reduce((total, name) => {
               return this.tab.trackers[name].urls.length + total
           }, 0)
       },
 
-      _getUniqueTrackersBlockedCount: function () {
-          // console.log('[model] _getUniqueTrackersBlockedCount()')
+      getUniqueTrackersBlockedCount: function () {
+          // console.log('[model] getUniqueTrackersBlockedCount()')
           return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
               return this.tab.trackersBlocked[name].urls.length + total
           }, 0)
       },
 
-      _getTrackerNetworksOnPage: function () {
-          // console.log('[model] _getMajorTrackerNetworksOnPage()')
+      getTrackerNetworksOnPage: function () {
+          // console.log('[model] getMajorTrackerNetworksOnPage()')
           // all tracker networks found on this page/tab
           const networks = Object.keys(this.tab.trackers)
                               .map((t) => t.toLowerCase())
@@ -196,8 +196,8 @@ Site.prototype = $.extend({},
           }
       },
 
-      _getIsUserPrivacyUpgraded: function () {
-          // console.log('setIsUserPrivacyUpgraded()')
+      getIsUserPrivacyUpgraded: function () {
+          // console.log('getIsUserPrivacyUpgraded()')
           if (!this.tab) return false
 
           if (this.tab.upgradedHttps ||
@@ -206,15 +206,6 @@ Site.prototype = $.extend({},
           }
 
           return false
-      },
-
-      _getSiteRating: function () {
-          // console.log('[model] _getSiteRating()')
-          if (this.tab) {
-            this.fetch({getSiteScore: this.tab.id}).then((rating) => {
-                if (rating) this.update({siteRating: rating})
-            })
-          }
       },
 
       toggleWhitelist: function () {

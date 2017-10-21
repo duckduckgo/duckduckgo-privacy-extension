@@ -106,14 +106,14 @@ chrome.contextMenus.create({
   }
 });
 
-/** 
+/**
  * Before each request:
  * - Add ATB param
  * - Block tracker requests
  * - Upgrade http -> https per HTTPS Everywhere rules
  */
 chrome.webRequest.onBeforeRequest.addListener(
-    function (requestData) { 
+    function (requestData) {
 
         let tabId = requestData.tabId;
 
@@ -143,11 +143,10 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (!(thisTab && thisTab.url && thisTab.id)) return
 
             /**
-             * Tracker blocking 
-             * If request is a tracker, cancel the request 
+             * Tracker blocking
+             * If request is a tracker, cancel the request
              */
-
-            chrome.runtime.sendMessage({"updateTrackerCount": true});
+            chrome.runtime.sendMessage({'updateTabData': true})
 
             var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
@@ -161,7 +160,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 // Block the request if the site is not whitelisted
                 if (!thisTab.site.whitelisted) {
                     thisTab.addOrUpdateTrackersBlocked(tracker);
-                    chrome.runtime.sendMessage({"updateTrackerCount": true});
+                    chrome.runtime.sendMessage({'updateTabData': true})
 
                     // update badge icon for any requests that come in after
                     // the tab has finished loading
@@ -185,10 +184,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
             }
         }
-        
+
         /**
          * HTTPS Everywhere rules
-         * If an upgrade rule is found, request is upgraded from http to https 
+         * If an upgrade rule is found, request is upgraded from http to https
          */
 
          if (!thisTab.site) return

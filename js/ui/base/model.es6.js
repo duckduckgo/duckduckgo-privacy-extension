@@ -109,15 +109,15 @@ BaseModel.prototype = $.extend({},
          * Broadcasts an action to other UI components
          * via notification store
          * @param action {string}
-         * @param event {jquery event; optional}
+         * @param data {could be a jquery event or other data; is optional}
          */
-        send: function (action, event) {
+        send: function (action, data) {
             if (!action) throw new Error('model.send() requires an action argument')
-            event = event || null
+            data = data || null
             this.store.publish({
                 notifierName: this.modelName,
                 action: action,
-                event: event,
+                data: data,
                 attributes: this._toJSON()
             })
         },
