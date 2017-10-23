@@ -20,12 +20,17 @@ module.exports = function () {
 }
 
 function renderPctPagesWithTrackers (model) {
+    return
+    /*
+    DISABLED; TBD: how to roll out this feature properly
+    see: https://app.asana.com/0/0/460622849089890/f
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
             Trackers were found on ${model.pctPagesWithTrackers}%
             of web sites you've visited.
         </p>`
     }
+    */
 }
 
 function renderList (model) {

@@ -97,9 +97,12 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                 tab.checkHttpsRequestsOnComplete()
                 console.info(tab.site.score)
                 tab.updateBadgeIcon()
+                /* DISABLED; TBD: how to roll out this feature properly
+                see: https://app.asana.com/0/0/460622849089890/f
                 if (tab.trackersBlocked && Object.keys(tab.trackersBlocked).length > 0) {
                     Companies.incrementTotalPagesWithTrackers()
                 }
+                */
             }
         }
     }

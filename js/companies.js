@@ -61,6 +61,7 @@ var Companies = (() => {
                 topBlocked: topBlockedData,
                 totalPages: totalPages,
                 pctPagesWithTrackers: Math.round((totalPagesWithTrackers/totalPages) * 100)
+
             }
         },
 
@@ -68,9 +69,12 @@ var Companies = (() => {
             if (n) totalPages = n
         },
 
+        /* DISABLED; TBD: how to roll out this feature properly
+        see: https://app.asana.com/0/0/460622849089890/f
         setTotalPagesWithTrackersFromStorage: (n) => {
             if (n) totalPagesWithTrackers = n
         },
+        */
 
         clearData: () => {
             companyContainer = {}
@@ -85,17 +89,23 @@ var Companies = (() => {
             Companies.syncToStorage()
         },
 
+        /* DISABLED; TBD: how to roll out this feature properly
+        see: https://app.asana.com/0/0/460622849089890/f
         incrementTotalPagesWithTrackers: () => {
             totalPagesWithTrackers += 1
             Companies.syncToStorage()
         },
+        */
 
         syncToStorage: () => {
             var toSync = {};
             toSync[storageName] = companyContainer;
             utils.syncToStorage(toSync)
             utils.syncToStorage({'totalPages': totalPages})
+             /* DISABLED; TBD: how to roll out this feature properly
+             see: https://app.asana.com/0/0/460622849089890/f
             utils.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
+            */
         },
 
         buildFromStorage: () => {
@@ -108,7 +118,10 @@ var Companies = (() => {
              })
 
              utils.getFromStorage('totalPages', (n) => Companies.setTotalPagesFromStorage(n))
+             /* DISABLED; TBD: how to roll out this feature properly
+             see: https://app.asana.com/0/0/460622849089890/f
              utils.getFromStorage('totalPagesWithTrackers', (n) => Companies.setTotalPagesWithTrackersFromStorage(n))
+             */
          }
      }
 })()
