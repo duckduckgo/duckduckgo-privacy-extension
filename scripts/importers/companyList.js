@@ -9,37 +9,37 @@ global.companyList = function(listData){
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social'];
     var request = require('request');
     var remapData, companyList;
+    
+    return new Promise ((resolve) => {
+        
+        request.get(remapDataLoc, (err, res, body) => {
+            remapData = JSON.parse(body).categories;
 
-    request.get(remapDataLoc, (err, res, body) => {
-        remapData = JSON.parse(body).categories;
+            request.get(companyListLoc, (err, res, body) => {
+                companyList = JSON.parse(body);
 
-    request.get(companyListLoc, (err, res, body) => {
-        companyList = JSON.parse(body);
-
-        trackerTypes.forEach((type) => {
-            companyList.categories[type].forEach((entry) => {
+                trackerTypes.forEach((type) => {
+                    companyList.categories[type].forEach((entry) => {
                 
-                for(var name in entry){
-                   // itisAtracker is not a real entry in the list 
-                    if (name !== 'ItIsATracker') {
-
-                        for( var domain in entry[name]){
-                            if (entry[name][domain].length) {
-                                entry[name][domain].forEach((trackerURL) => {
-                                    addToList(type, trackerURL, {'c': name, 'u': domain});
-                                });
+                        for(var name in entry){
+                            // itisAtracker is not a real entry in the list 
+                            if (name !== 'ItIsATracker') {
+                                for( var domain in entry[name]){
+                                    if (entry[name][domain].length) {
+                                        entry[name][domain].forEach((trackerURL) => {
+                                            addToList(type, trackerURL, {'c': name, 'u': domain});
+                                        });
+                                    }
+                                }
                             }
                         }
+                    });
+                });
 
-                    }
-                }
-            });
-        });
-
-        return {"name": 'trackersWithParentCompany', "data": trackerList};
-
-    });
-    });
+                resolve({"name": 'trackersWithParentCompany', "data": trackerList})
+            })
+        })
+    })
 
     function addToList(type, url, data) {
         type = applyRemapping(type, data.c, url);

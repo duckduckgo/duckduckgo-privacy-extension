@@ -1,7 +1,8 @@
 
 // these are defined in abp.js
 var abp,
-    easylists;
+    easylists,
+    trackerWhitelist = {};
 
 var load = require('load'),
     settings = require('settings'),
@@ -11,8 +12,10 @@ var load = require('load'),
 let entityList,
     entityMap;
 
-load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
-load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
+settings.ready().then(() => {
+    load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
+    load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
+})
 
 require.scopes.trackers = (function() {    
 
