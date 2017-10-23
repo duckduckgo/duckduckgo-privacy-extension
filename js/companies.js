@@ -93,7 +93,7 @@ var Companies = (() => {
         syncToStorage: () => {
             var toSync = {};
             toSync[storageName] = companyContainer;
-            utils.syncToStorage(toSync);
+            utils.syncToStorage(toSync)
             utils.syncToStorage({'totalPages': totalPages})
             utils.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
         },
@@ -107,8 +107,8 @@ var Companies = (() => {
                  }
              })
 
-             utils.getFromStorage('totalPages', n => Companies.setTotalPagesFromStorage(totalPages, n))
-             utils.getFromStorage('totalPagesWithTrackers', n => Companies.setTotalPagesWithTrackersFromStorage(totalPagesWithTrackers, n))
+             utils.getFromStorage('totalPages', (n) => Companies.setTotalPagesFromStorage(n))
+             utils.getFromStorage('totalPagesWithTrackers', (n) => Companies.setTotalPagesWithTrackersFromStorage(n))
          }
      }
 })()
