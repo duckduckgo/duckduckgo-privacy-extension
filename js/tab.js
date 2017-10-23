@@ -62,7 +62,7 @@ class Tab {
 
     updateBadgeIcon () {
         if (!this.site.specialDomain() ) {
-            let scoreIcon = scoreIconLocations[this.site.score.get()];
+            let scoreIcon = scoreIconLocations[this.site.score.get().after];
             chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
         }
     };

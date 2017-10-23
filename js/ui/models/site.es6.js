@@ -71,7 +71,7 @@ Site.prototype = $.extend({},
               const updatedTrackersCount = this._getUniqueTrackersCount()
               const updatedTrackersBlockedCount = this._getUniqueTrackersBlockedCount()
                   
-              if (updatedSiteRating !== this.siteRating) {
+              if (updatedSiteRating && (updatedSiteRating.after !== this.siteRating.after)) {
                     this.siteRating = updatedSiteRating
                     rerenderFlag = true
                 }

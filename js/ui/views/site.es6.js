@@ -119,7 +119,7 @@ Site.prototype = $.extend({},
 
         _getSiteRating: function () {
             this.model.fetch({getSiteScore: this.model.tab.id}).then((rating) => {
-                if (rating && this.model.update(rating)) this.rerender();
+                if (rating && rating.after && this.model.update(rating)) this.rerender();
             })
         }
     }

@@ -12,7 +12,8 @@ module.exports = function () {
         <ul class="menu-list">
             <li class="border--bottom">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
-                <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
+                Before <div class="site-info__rating site-info__rating--${this.model.siteRating.before}"></div>
+                After <div class="site-info__rating site-info__rating--${this.model.siteRating.after}"></div>
             </li>
             <li class="border--bottom">
                 <h2>
