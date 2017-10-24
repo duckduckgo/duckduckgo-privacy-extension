@@ -4,7 +4,7 @@
  *
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
-abp = require('abp-filter-parser');
+abp = require('abp-filter-parser')
 const ONEDAY = 1000*60*60*24
 
 let lists = {
@@ -48,9 +48,9 @@ function updateLists () {
                 
             let etag = settings.getSetting(name + '-etag')
 
-            //if (atb) url += '&atb=' + atb
-            //if (set_atb) url += '&set_atb=' + set_atb
-            //if (versionParam) url += versionParam
+            if (atb) url += '&atb=' + atb
+            if (set_atb) url += '&set_atb=' + set_atb
+            if (versionParam) url += versionParam
 
             console.log("Checking for list update: ", name)
 
@@ -61,36 +61,33 @@ function updateLists () {
             load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
                 let newEtag = response.getResponseHeader('etag')
                 console.log("Updating list: ", name)
+                
                 // sync new etag to storage
-            
                 settings.updateSetting(name + '-etag', newEtag)
                 
                 abp.parse(listData, lists[listType][name].parsed)
-                lists[listType][name].loaded = true;
-            });
+                lists[listType][name].loaded = true
+            })
         }
     }
 
     // Load tracker whitelist
     // trackerWhitelist declared in trackers.js
-    load.loadExtensionFile({url: settings.getSetting('trackerWhitelist')}, function(listData, response) {
-        console.log('loaded tracker whitelist: ' + listData);
-        abp.parse(listData, trackerWhitelist);
+    load.loadExtensionFile({url: settings.getSetting('trackerWhitelist')}, function(listData) {
+        console.log('loaded tracker whitelist: ' + listData)
+        abp.parse(listData, trackerWhitelist)
 
-    });
+    })
 }
 
 // Make sure the list updater runs on start up
 settings.ready().then(() => updateLists())
 
-function getList () {
-
-}
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateEasyLists') {
         settings.ready().then(() => updateLists())
     }
-});
+})
 
 // set an alarm to recheck the lists
 // update every 3 hours
