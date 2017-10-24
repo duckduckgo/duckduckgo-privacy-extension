@@ -51,7 +51,7 @@ function _flatten(arr) {
 }
 
 // EXPORTS
-exports.testTopSites = async function(num) {
+exports.testTopSites = async function(num, opts) {
     return new Promise (async (resolve, reject) => {
         await _init();
         let url = `${TEST_URL}?numberToTest=${num}&json=true`;
@@ -71,7 +71,7 @@ exports.testTopSites = async function(num) {
     });
 };
 
-exports.testUrl = function(path) {
+exports.testUrl = function(path, opts) {
     return new Promise (async (resolve, reject) => {
         await _init();
         let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
@@ -90,10 +90,10 @@ exports.testUrl = function(path) {
     });
 };
 
-exports.testUrls = async function(urlArray) {
+exports.testUrls = async function(urlArray, opts) {
     return new Promise (async (resolve, reject) => {
         await _init();
-        var jsonArray = [];
+        let jsonArray = [];
 
         // for loop forces synchronous execution
         for (let path of urlArray) {
