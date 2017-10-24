@@ -99,10 +99,7 @@ class Score {
         if (this.tosdr) {
             if (this.tosdr.class) {
                 beforeIndex += tosdrClassMap[this.tosdr.class]
-
-                // only apply 'A' tosdr to result index
-                if(this.tosdr.class === 'A')
-                    afterIndex += tosdrClassMap[this.tosdr.class]
+                afterIndex += tosdrClassMap[this.tosdr.class]
 
             } else if (this.tosdr.score) {
                 let tosdrScore =  Math.sign(this.tosdr.score)
