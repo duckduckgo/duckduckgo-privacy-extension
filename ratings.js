@@ -45,7 +45,7 @@ async function runTest(opts) {
         let xvfb = new Xvfb({ reuse: true });
         log(chalk.green.bold("Starting xvfb..."));
         xvfb.startSync();
-        await runTest();
+        await runTest(opts);
         log(chalk.green.bold("Stopping xvfb..."));
         xvfb.stopSync();
     } else {
