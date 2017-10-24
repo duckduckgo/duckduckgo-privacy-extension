@@ -105,7 +105,13 @@ class Score {
                     afterIndex += tosdrClassMap[this.tosdr.class]
 
             } else if (this.tosdr.score) {
-                beforeIndex += Math.sign(this.tosdr.score)
+                let tosdrScore =  Math.sign(this.tosdr.score)
+                beforeIndex += tosdrScore
+
+                // only apply a positive tosdr score
+                if (tosdrScore > 0) {
+                    afterIndex += tosdrScore
+                }
             }
         }
 
