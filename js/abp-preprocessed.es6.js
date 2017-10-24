@@ -20,7 +20,7 @@ let lists = {
     },
     whitelists: {
         preWhitelist: {
-            url: 'https://raw.githubusercontent.com/duckduckgo/content-blocking-whitelist/master/whitelist.txt',
+            url: 'https://duckduckgo.com/contentblocking.js?l=trackers-whitelist',
             parsed: {}
         }
     }
