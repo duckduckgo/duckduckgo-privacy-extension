@@ -4,6 +4,8 @@ const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
 const chalk = require('chalk');
 const log = console.log;
+const tabular = require('tabular-json');
+
 require('runtimer');
 
 // VARS
@@ -57,14 +59,45 @@ exports.testTopSites = async function(num, opts) {
         let url = `${TEST_URL}?numberToTest=${num}&json=true`;
 
         log(chalk.green.bold(`Running ${num} Tests on Alex Top 500 Sites`));
-        var jsonText = await _testUrl(url);
+        let jsonText = await _testUrl(url);
 
         log(chalk.underline('JSON Data:'));
         log(jsonText);
 
+        // TODO: Audit Data
+        // check for:
+        //  - before == after
+        //  - after < before
+        //  Report issues
+
+        // JSON File Output
         let filename = new Date().toJSON();
         fs.writeFileSync(`${filename}.json`, jsonText);
         log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+
+        // HTML File Output
+        let htmlTable = tabular.html(JSON.parse(jsonText), {classes: {table: "dataTable display"} });
+        let htmlDoc =
+        `<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css"/>
+                <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+                <style type='text/css'>* { font-family: sans-serif }</style>
+            </head>
+            <body>
+                ${htmlTable}
+                <script type="application/javascript">
+                    $(document).ready(function(){ $('table').DataTable() });
+                </script>
+            </body>
+        </html>`;
+
+        let path = opts.output.replace(/\/$/, '');
+        console.log(`PATH IS: ${path}`);
+        fs.writeFileSync(`${path}/${filename}.html`, htmlDoc);
+        log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${filename}.html`));
 
         await _teardown();
         resolve();
@@ -77,12 +110,13 @@ exports.testUrl = function(path, opts) {
         let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
         log(chalk.green.bold(`Running Tests on URL: ${url}`));
 
-        var jsonText = await _testUrl(url);
+        let jsonText = await _testUrl(url);
         log(chalk.underline('JSON Data:'));
         log(jsonText);
 
         let filename = new Date().toJSON();
         fs.writeFileSync(`${filename}.json`, jsonText);
+
         log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
 
         await _teardown();
