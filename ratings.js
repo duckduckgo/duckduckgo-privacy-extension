@@ -15,7 +15,7 @@ program
     .option('-f, --file <file>', 'File containing list of domains to test')
     .option('-u, --url <path>', 'URL to test')
     .option('-x, --xvbf', 'Use Xvbf')
-    .option('-o, --output', 'Output location')
+    .option('-o, --output <path>', 'Output location')
     .parse(process.argv);
 
 async function runTest(opts) {
