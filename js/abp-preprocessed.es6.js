@@ -70,14 +70,6 @@ function updateLists () {
             })
         }
     }
-
-    // Load tracker whitelist
-    // trackerWhitelist declared in trackers.js
-    load.loadExtensionFile({url: settings.getSetting('trackerWhitelist')}, function(listData) {
-        console.log('loaded tracker whitelist: ' + listData)
-        abp.parse(listData, trackerWhitelist)
-
-    })
 }
 
 // Make sure the list updater runs on start up
