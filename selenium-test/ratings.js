@@ -77,6 +77,9 @@ exports.testTopSites = async function(num, opts) {
 
         // HTML File Output
         let htmlTable = tabular.html(JSON.parse(jsonText), {classes: {table: "dataTable display"} });
+
+        // TODO:
+        // Stash datatables js/css in repo?
         let htmlDoc =
         `<!DOCTYPE html>
         <html>
@@ -95,9 +98,8 @@ exports.testTopSites = async function(num, opts) {
         </html>`;
 
         let path = opts.output.replace(/\/$/, '');
-        console.log(`PATH IS: ${path}`);
         fs.writeFileSync(`${path}/${filename}.html`, htmlDoc);
-        log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${filename}.html`));
+        log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${path}/${filename}.html`));
 
         await _teardown();
         resolve();
