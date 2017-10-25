@@ -72,11 +72,34 @@ exports.testTopSites = async function(num, opts) {
 
         // JSON File Output
         let filename = new Date().toJSON();
+        let jsonData = JSON.parse(jsonText);
+
+        // Cleanup data for HTML table
+        Object.keys(jsonData).forEach(function (key) {
+            delete jsonData[key].scoreObj.specialPage;
+            delete jsonData[key].scoreObj.domain;
+            Object.keys(jsonData[key].scoreObj).forEach(function (k) {
+                jsonData[key][k] = jsonData[key].scoreObj[k];
+            });
+            delete jsonData[key].scoreObj;
+            if (jsonData[key].tosdr.length && jsonData[key].tosdr.reasons){
+                let reasons = jsonData[key].tosdr.reasons;
+
+                if (reasons.bad) {
+                    jsonData[key].tosdr.reasons.bad = reasons.bad.join(', ');
+                }
+
+                if (reasons.good) {
+                    jsonData[key].tosdr.reasons.good = reasons.good.join(', ');
+                }
+            }
+        });
+
         fs.writeFileSync(`${filename}.json`, jsonText);
         log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
 
         // HTML File Output
-        let htmlTable = tabular.html(JSON.parse(jsonText), {classes: {table: "dataTable display"} });
+        let htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
 
         // TODO:
         // Stash datatables js/css in repo?
