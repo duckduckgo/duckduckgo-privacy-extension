@@ -26,7 +26,7 @@ function BackgroundMessage (attrs) {
     chrome.runtime.onMessage.addListener((req) => {
         if (req.whitelistChanged) this.send('whitelistChanged')
         if (req.updateTabData) this.send('updateTabData')
-        if (req.didResetTrackersData) this.send('didResetTrackersData')
+        if (req.didResetTrackersData) this.send('didResetTrackersData', req.didResetTrackersData)
     })
 }
 

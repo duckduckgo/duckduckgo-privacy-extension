@@ -58,7 +58,7 @@ TopBlocked.prototype = $.extend({},
             if (!message || !message.action) return
 
             if (message.action === 'didResetTrackersData') {
-                this.model.reset()
+                this.model.reset(message.data)
                 const content = this.template()
                 this.$content.replaceWith(content)
             }

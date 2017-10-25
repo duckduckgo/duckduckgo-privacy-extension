@@ -20,17 +20,17 @@ module.exports = function () {
 }
 
 function renderPctPagesWithTrackers (model) {
-    return
-    /*
-    DISABLED; TBD: how to roll out this feature properly
-    see: https://app.asana.com/0/0/460622849089890/f
+    let msg = ''
+    if (model.lastStatsResetDate) {
+        const d = new Date(model.lastStatsResetDate).toDateString()
+        if (d) msg = ` since ${d}`
+    }
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
             Trackers were found on ${model.pctPagesWithTrackers}%
-            of web sites you've visited.
+            of web sites you've visited${msg}.
         </p>`
     }
-    */
 }
 
 function renderList (model) {

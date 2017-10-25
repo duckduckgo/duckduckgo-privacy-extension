@@ -5,6 +5,7 @@ var Companies = (() => {
     var storageName = 'companyData'
     var totalPages = 0
     var totalPagesWithTrackers = 0
+    var lastStatsResetDate = null
 
     function sortByCount (a, b) {
         return companyContainer[b].count - companyContainer[a].count
@@ -60,8 +61,8 @@ var Companies = (() => {
             return {
                 topBlocked: topBlockedData,
                 totalPages: totalPages,
-                pctPagesWithTrackers: Math.round((totalPagesWithTrackers/totalPages) * 100)
-
+                pctPagesWithTrackers: Math.round((totalPagesWithTrackers/totalPages) * 100),
+                lastStatsResetDate: lastStatsResetDate
             }
         },
 
@@ -69,59 +70,60 @@ var Companies = (() => {
             if (n) totalPages = n
         },
 
-        /* DISABLED; TBD: how to roll out this feature properly
-        see: https://app.asana.com/0/0/460622849089890/f
         setTotalPagesWithTrackersFromStorage: (n) => {
             if (n) totalPagesWithTrackers = n
         },
-        */
 
-        clearData: () => {
+        resetData: () => {
             companyContainer = {}
             topBlocked.clear()
             totalPages = 0
             totalPagesWithTrackers = 0
+            lastStatsResetDate = Date.now()
             Companies.syncToStorage()
         },
+
+        getLastResetDate: ()  => lastStatsResetDate,
 
         incrementTotalPages: () => {
             totalPages += 1
             Companies.syncToStorage()
         },
 
-        /* DISABLED; TBD: how to roll out this feature properly
-        see: https://app.asana.com/0/0/460622849089890/f
         incrementTotalPagesWithTrackers: () => {
             totalPagesWithTrackers += 1
             Companies.syncToStorage()
         },
-        */
 
         syncToStorage: () => {
             var toSync = {};
             toSync[storageName] = companyContainer;
             utils.syncToStorage(toSync)
             utils.syncToStorage({'totalPages': totalPages})
-             /* DISABLED; TBD: how to roll out this feature properly
-             see: https://app.asana.com/0/0/460622849089890/f
             utils.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
-            */
+            utils.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
         },
 
         buildFromStorage: () => {
-             utils.getFromStorage(storageName, function (storageData) {
-                 for (company in storageData) {
-                     let newCompany = Companies.add(company)
-                     newCompany.set('count', storageData[company].count || 0)
-                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
-                 }
-             })
+            utils.getFromStorage(storageName, function (storageData) {
+                for (company in storageData) {
+                    let newCompany = Companies.add(company)
+                    newCompany.set('count', storageData[company].count || 0)
+                    newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
+                }
+            })
 
-             utils.getFromStorage('totalPages', (n) => Companies.setTotalPagesFromStorage(n))
-             /* DISABLED; TBD: how to roll out this feature properly
-             see: https://app.asana.com/0/0/460622849089890/f
-             utils.getFromStorage('totalPagesWithTrackers', (n) => Companies.setTotalPagesWithTrackersFromStorage(n))
-             */
+            utils.getFromStorage('totalPages', (n) => totalPages = n)
+            utils.getFromStorage('totalPagesWithTrackers', (n) => totalPagesWithTrackers = n)
+            utils.getFromStorage('lastStatsResetDate', (d) => {
+                if (d.lastStatsResetDate) {
+                    lastStatsResetDate = d.lastStatsResetDate
+                } else {
+                    // if 'lastStatsResetDate' not found, reset all data
+                    // https://app.asana.com/0/0/460622849089890/f
+                    this.resetData()
+                }
+            })
          }
      }
 })()
@@ -141,8 +143,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     } else if (req.getTopBlockedByPages) {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
     } else if (req.resetTrackersData) {
-        Companies.clearData()
-        chrome.runtime.sendMessage({'didResetTrackersData': true})
+        Companies.resetData()
+        chrome.runtime.sendMessage({'didResetTrackersData': Companies.getLastResetDate()})
         res()
     }
     return true

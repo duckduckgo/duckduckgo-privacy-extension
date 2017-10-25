@@ -6,6 +6,7 @@ function TopBlocked (attrs) {
     attrs.companyList = []
     attrs.companyListMap = []
     attrs.pctPagesWithTrackers = null
+    attrs.lastStatsResetDate = null
     Parent.call(this, attrs)
 }
 
@@ -34,16 +35,21 @@ TopBlocked.prototype = $.extend({},
                       })
                       if (data.pctPagesWithTrackers) {
                         this.pctPagesWithTrackers = data.pctPagesWithTrackers
+
+                        if (data.lastStatsResetDate) {
+                            this.lastStatsResetDate = data.lastStatsResetDate
+                        }
                       }
                       resolve()
                 })
           })
       },
 
-      reset: function () {
+      reset: function (resetDate) {
           this.companyList = []
           this.companyListMap = []
           this.pctPagesWithTrackers = null
+          this.lastStatsResetDate = resetDate
       }
 
   }
