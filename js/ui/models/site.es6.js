@@ -37,9 +37,6 @@ Site.prototype = $.extend({},
               if (this.tab.site.isSpecialDomain) {
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
               }
-              else if (this.tab.site.isBroken) {
-                  this.disabled = true;
-              }
               else {
                   this.disabled = false;
               }
