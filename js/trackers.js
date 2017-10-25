@@ -21,9 +21,9 @@ settings.ready().then(() => {
 require.scopes.trackers = (function() {    
 
     function isTracker(urlToCheck, currLocation, tabId, request) {
-
-    // TODO: easylist is marking some of our requests as trackers. Whitelist us
-    // by default for now until we can figure out why. 
+        
+        // TODO: easylist is marking some of our requests as trackers. Whitelist us
+        // // by default for now until we can figure out why. 
         if (currLocation.match(/duckduckgo\.com/)) {
             return false
         }
@@ -126,11 +126,11 @@ require.scopes.trackers = (function() {
         let trackerURL = url.join('.')
 
         blockSettings.some( function(trackerType) {
-        // Some trackers are listed under just the host name of their parent company without
-        // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
-        // Other trackers are listed using their subdomains. Ex: developers.google.com.
-        // We'll start by checking the full host with subdomains and then if no match is found
-        // try pulling off the subdomain and checking again.
+            // Some trackers are listed under just the host name of their parent company without
+            // // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
+            // Other trackers are listed using their subdomains. Ex: developers.google.com.
+            // We'll start by checking the full host with subdomains and then if no match is found
+            // try pulling off the subdomain and checking again.
             if(trackerLists.trackersWithParentCompany[trackerType]) {
                 var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
                 if (tracker) {
@@ -149,17 +149,17 @@ require.scopes.trackers = (function() {
             return toBlock
         }
         else {
-        // remove the subdomain and recheck for trackers. This is recursive, we'll continue
-        // to pull off subdomains until we either find a match or have no url to check.
-        // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
+            // remove the subdomain and recheck for trackers. This is recursive, we'll continue
+            // to pull off subdomains until we either find a match or have no url to check.
+            // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
             url.shift()
             return checkTrackersWithParentCompany(blockSettings, url, currLocation)
         }
     }
 
     /* Check to see if this tracker is related to the current page through their parent companies
- * Only block request to 3rd parties
- */
+    * Only block request to 3rd parties
+    */
     function isRelatedEntity(parentCompany, currLocation) {
         var parentEntity = entityList[parentCompany]
         var host = utils.extractHostFromURL(currLocation)
@@ -180,8 +180,8 @@ require.scopes.trackers = (function() {
     }
 
     /* Compare two urls to determine if they came from the same hostname
- * pull off any subdomains before comparison
- */
+    * pull off any subdomains before comparison
+    */
     function isFirstPartyRequest(currLocation, urlToCheck) {
         let currentLocationParsed = tldjs.parse(currLocation)
         let urlToCheckParsed = tldjs.parse(urlToCheck)
