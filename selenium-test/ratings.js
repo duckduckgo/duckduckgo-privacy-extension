@@ -122,14 +122,7 @@ function _writeToFile (jsonText, opts) {
     log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(htmlFile));
 
     // Open file
-    const hostname = process.env.HOSTNAME;
-    let url;
-    if (hostname) {
-        url = `${hostname}/${htmlFile}`;
-    } else {
-        url = fileUrl(htmlFile);
-    }
-    opn(url);
+    opn(fileUrl(htmlFile));
 }
 
 
