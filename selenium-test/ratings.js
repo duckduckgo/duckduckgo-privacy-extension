@@ -128,11 +128,10 @@ function _writeToFile (jsonText, opts) {
 exports.testTopSites = async function(num, opts) {
     return new Promise (async (resolve, reject) => {
         await _init();
-        let url = `${TEST_URL}?numberToTest=${num}&json=true`;
-
+        const url = `${TEST_URL}?numberToTest=${num}&json=true`;
         log(chalk.green.bold(`Running ${num} Tests on Alex Top 500 Sites`));
-        let jsonText = await _testUrl(url);
 
+        const jsonText = await _testUrl(url);
         log(chalk.underline('JSON Data:'));
         log(jsonText);
 
@@ -152,7 +151,7 @@ exports.testTopSites = async function(num, opts) {
 exports.testUrl = function(path, opts) {
     return new Promise (async (resolve, reject) => {
         await _init();
-        let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
+        const url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
         log(chalk.green.bold(`Running Tests on URL: ${url}`));
 
         let jsonText = await _testUrl(url);
@@ -174,16 +173,16 @@ exports.testUrls = async function(urlArray, opts) {
         // for loop forces synchronous execution
         for (let path of urlArray) {
             if (path == '') continue;
-            let url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
+            const url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
             log(chalk.green.bold(`Running Test on URL: ${url}`));
-            let jsonText = await _testUrl(url);
+            const jsonText = await _testUrl(url);
             log( jsonText );
-            let jsonData = JSON.parse(jsonText);
+            const jsonData = JSON.parse(jsonText);
             jsonArray.push(jsonData[0]);
         }
 
         log(chalk.underline('JSON Data:'));
-        let jsonText = JSON.stringify(jsonArray);
+        const jsonText = JSON.stringify(jsonArray);
         log(jsonText);
 
         _writeToFile(jsonText, opts);
