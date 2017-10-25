@@ -5,6 +5,8 @@ const chromedriver = require('chromedriver');
 const chalk = require('chalk');
 const log = console.log;
 const tabular = require('tabular-json');
+const opn = require ('opn');
+const fileUrl = require('file-url');
 
 require('runtimer');
 
@@ -87,8 +89,9 @@ function _writeToFile (jsonText, opts) {
     const path = opts.output.replace(/\/$/, '');
 
     // JSON File Output
-    fs.writeFileSync(`${path}/${filename}.json`, jsonText);
-    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${path}/${filename}.json`));
+    const jsonFile = `${path}/${filename}.html`;
+    fs.writeFileSync(jsonFile, jsonText);
+    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(jsonFile));
 
     // Cleanup data for HTML table
     Object.keys(jsonData).forEach(function (key) {
@@ -114,8 +117,19 @@ function _writeToFile (jsonText, opts) {
     // HTML File Output
     const htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
     const htmlDoc = _buildHtmlDoc(htmlTable);
-    fs.writeFileSync(`${path}/${filename}.html`, htmlDoc);
-    log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${path}/${filename}.html`));
+    const htmlFile = `${path}/${filename}.html`;
+    fs.writeFileSync(htmlFile, htmlDoc);
+    log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(htmlFile));
+
+    // Open file
+    const hostname = process.env.HOSTNAME;
+    let url;
+    if (hostname) {
+        url = `${hostname}/${htmlFile}`;
+    } else {
+        url = fileUrl(htmlFile);
+    }
+    opn(url);
 }
 
 
