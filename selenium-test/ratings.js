@@ -122,7 +122,7 @@ function _writeToFile (jsonText, opts) {
     log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(htmlFile));
 
     // Open file
-    opn(fileUrl(htmlFile));
+    opn(fileUrl(htmlFile), { wait: false });
 }
 
 
