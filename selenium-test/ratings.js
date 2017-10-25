@@ -84,10 +84,11 @@ function _buildHtmlDoc(htmlTable) {
 function _writeToFile (jsonText, opts) {
     const filename = new Date().toJSON();
     const jsonData = JSON.parse(jsonText);
+    const path = opts.output.replace(/\/$/, '');
 
     // JSON File Output
-    fs.writeFileSync(`${filename}.json`, jsonText);
-    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+    fs.writeFileSync(`${path}/${filename}.json`, jsonText);
+    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${path}/${filename}.json`));
 
     // Cleanup data for HTML table
     Object.keys(jsonData).forEach(function (key) {
@@ -117,8 +118,6 @@ function _writeToFile (jsonText, opts) {
     // HTML File Output
     const htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
     const htmlDoc = _buildHtmlDoc(htmlTable);
-
-    const path = opts.output.replace(/\/$/, '');
     fs.writeFileSync(`${path}/${filename}.html`, htmlDoc);
     log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${path}/${filename}.html`));
 }
