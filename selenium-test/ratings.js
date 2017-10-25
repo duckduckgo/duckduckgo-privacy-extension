@@ -52,6 +52,78 @@ function _flatten(arr) {
     return Array.prototype.concat(...arr);
 }
 
+// TODO:
+// Stash datatables js/css in repo?
+function _buildHtmlDoc(htmlTable) {
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css" />
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+        <style type='text/css'>
+            * {
+                font-family: sans-serif
+            }
+        </style>
+    </head>
+    <body>
+        ${htmlTable}
+        <script type="application/javascript">
+            $(document).ready(function() {
+                $('table').DataTable()
+            });
+        </script>
+    </body>
+    </html>
+    `;
+}
+
+
+function _writeToFile (jsonText, opts) {
+    const filename = new Date().toJSON();
+    const jsonData = JSON.parse(jsonText);
+
+    // JSON File Output
+    fs.writeFileSync(`${filename}.json`, jsonText);
+    log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+
+    // Cleanup data for HTML table
+    Object.keys(jsonData).forEach(function (key) {
+        delete jsonData[key].scoreObj.specialPage;
+        delete jsonData[key].scoreObj.domain;
+        Object.keys(jsonData[key].scoreObj).forEach(function (k) {
+            jsonData[key][k] = jsonData[key].scoreObj[k];
+        });
+        delete jsonData[key].scoreObj;
+
+        log("TOSDR LENGTH: ", Object.keys(jsonData[key].tosdr).length)
+        log("REASONS? ", jsonData[key].tosdr.reasons)
+        if (Object.keys(jsonData[key].tosdr).length && jsonData[key].tosdr.reasons){
+            const reasons = jsonData[key].tosdr.reasons;
+            log(reasons);
+
+            if (reasons.bad) {
+                jsonData[key].tosdr.reasons.bad = reasons.bad.join(', ');
+            }
+            if (reasons.good) {
+                jsonData[key].tosdr.reasons.good = reasons.good.join(', ');
+            }
+            log(jsonData[key].tosdr.reasons);
+        }
+    });
+
+    // HTML File Output
+    const htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
+    const htmlDoc = _buildHtmlDoc(htmlTable);
+
+    const path = opts.output.replace(/\/$/, '');
+    fs.writeFileSync(`${path}/${filename}.html`, htmlDoc);
+    log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${path}/${filename}.html`));
+}
+
+
 // EXPORTS
 exports.testTopSites = async function(num, opts) {
     return new Promise (async (resolve, reject) => {
@@ -70,59 +142,7 @@ exports.testTopSites = async function(num, opts) {
         //  - after < before
         //  Report issues
 
-        // JSON File Output
-        let filename = new Date().toJSON();
-        let jsonData = JSON.parse(jsonText);
-
-        // Cleanup data for HTML table
-        Object.keys(jsonData).forEach(function (key) {
-            delete jsonData[key].scoreObj.specialPage;
-            delete jsonData[key].scoreObj.domain;
-            Object.keys(jsonData[key].scoreObj).forEach(function (k) {
-                jsonData[key][k] = jsonData[key].scoreObj[k];
-            });
-            delete jsonData[key].scoreObj;
-            if (jsonData[key].tosdr.length && jsonData[key].tosdr.reasons){
-                let reasons = jsonData[key].tosdr.reasons;
-
-                if (reasons.bad) {
-                    jsonData[key].tosdr.reasons.bad = reasons.bad.join(', ');
-                }
-
-                if (reasons.good) {
-                    jsonData[key].tosdr.reasons.good = reasons.good.join(', ');
-                }
-            }
-        });
-
-        fs.writeFileSync(`${filename}.json`, jsonText);
-        log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
-
-        // HTML File Output
-        let htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
-
-        // TODO:
-        // Stash datatables js/css in repo?
-        let htmlDoc =
-        `<!DOCTYPE html>
-        <html>
-            <head>
-                <meta charset="UTF-8">
-                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.css"/>
-                <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
-                <style type='text/css'>* { font-family: sans-serif }</style>
-            </head>
-            <body>
-                ${htmlTable}
-                <script type="application/javascript">
-                    $(document).ready(function(){ $('table').DataTable() });
-                </script>
-            </body>
-        </html>`;
-
-        let path = opts.output.replace(/\/$/, '');
-        fs.writeFileSync(`${path}/${filename}.html`, htmlDoc);
-        log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(`${path}/${filename}.html`));
+        _writeToFile(jsonText, opts);
 
         await _teardown();
         resolve();
@@ -139,10 +159,7 @@ exports.testUrl = function(path, opts) {
         log(chalk.underline('JSON Data:'));
         log(jsonText);
 
-        let filename = new Date().toJSON();
-        fs.writeFileSync(`${filename}.json`, jsonText);
-
-        log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+        _writeToFile(jsonText, opts);
 
         await _teardown();
         resolve();
@@ -169,9 +186,7 @@ exports.testUrls = async function(urlArray, opts) {
         let jsonText = JSON.stringify(jsonArray);
         log(jsonText);
 
-        let filename = new Date().toJSON();
-        fs.writeFileSync(`${filename}.json`, jsonText);
-        log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(`${filename}.json`));
+        _writeToFile(jsonText, opts);
 
         await _teardown();
         resolve();
