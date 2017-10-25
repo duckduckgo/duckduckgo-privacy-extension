@@ -99,19 +99,15 @@ function _writeToFile (jsonText, opts) {
         });
         delete jsonData[key].scoreObj;
 
-        log("TOSDR LENGTH: ", Object.keys(jsonData[key].tosdr).length)
-        log("REASONS? ", jsonData[key].tosdr.reasons)
         if (Object.keys(jsonData[key].tosdr).length && jsonData[key].tosdr.reasons){
             const reasons = jsonData[key].tosdr.reasons;
-            log(reasons);
 
             if (reasons.bad) {
-                jsonData[key].tosdr.reasons.bad = reasons.bad.join(', ');
+                reasons.bad = reasons.bad.join(', ');
             }
             if (reasons.good) {
-                jsonData[key].tosdr.reasons.good = reasons.good.join(', ');
+                reasons.good = reasons.good.join(', ');
             }
-            log(jsonData[key].tosdr.reasons);
         }
     });
 
