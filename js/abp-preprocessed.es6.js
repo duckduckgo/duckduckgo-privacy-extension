@@ -76,9 +76,13 @@ function updateLists () {
         }
     }
 
+    const brokenSiteEtag = settings.getSetting('brokenSite-etag') || ''
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
-    load.loadExtensionFile({url: settings.getSetting('brokenSiteList'), source: 'external'}, (listData) => {
+    load.loadExtensionFile({url: settings.getSetting('brokenSiteList'), etag: brokenSiteEtag, source: 'external'}, (listData, response) => {
+        const newBrokenSiteEtag = response.getResponseHeader('etag') || ''
+        settings.updateSetting('brokenSite-etag', newBrokenSiteEtag);
+
         // brokenSiteList is defined in trackers.js
         brokenSiteList = listData.split('\n')
     })
@@ -95,7 +99,7 @@ chrome.alarms.onAlarm.addListener(alarm => {
 
 // set an alarm to recheck the lists
 // update every 3 hours
-chrome.alarms.create('updateLists', {periodInMinutes: 180})
+chrome.alarms.create('updateLists', {periodInMinutes: 1})
 
 // add version param to url on the first install and
 // only once a day after than
