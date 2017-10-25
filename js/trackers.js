@@ -28,8 +28,6 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
         return false;
     }
 
-    var toBlock = false;
-
     // DEMO embedded tweet option
     // a more robust test for tweet code may need to be used besides just
     // blocking platform.twitter.com
@@ -43,7 +41,6 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
     if (settings.getSetting('trackerBlockingEnabled')) {
         
         let urlSplit = tldjs.parse(urlToCheck).hostname.split('.');
-        var isWhiteListed = false;
         var social_block = settings.getSetting('socialBlockingIsEnabled');
         var blockSettings = settings.getSetting('blocking').slice(0);
 
@@ -81,19 +78,19 @@ function isTracker(urlToCheck, currLocation, tabId, request) {
         }
 
     }
-    return toBlock;
+    return false
 }
 
 function checkWhitelist(url, currLocation, request) {
     let result = false
     let match
     
-    if (whitelists.preWhitelist.loaded) {
-        match = checkABPParsedList(whitelists.preWhitelist.parsed, url, currLocation, request)
+    if (whitelists.ddgWhitelist.isLoaded) {
+        match = checkABPParsedList(whitelists.ddgWhitelist.parsed, url, currLocation, request)
     }
     
     if(match){
-        result = getTrackerDetails(url, 'preWhitelist')
+        result = getTrackerDetails(url, 'ddgWhitelist')
         result.block = false
     }
 
@@ -101,22 +98,22 @@ function checkWhitelist(url, currLocation, request) {
 }
 
 function checkEasylists(url, currLocation, request){
-    let easylistBlock = false;
+    let toBlock = false;
     settings.getSetting('easylists').some((listName) => {
         let match
         // lists can take a second or two to load so check that the parsed data exists
-        if (easylists[listName].loaded) {
+        if (easylists[listName].isLoaded) {
             match = checkABPParsedList(easylists[listName].parsed, url, currLocation, request)
         }
 
         // break loop early if a list matches
         if(match){
-            easylistBlock = getTrackerDetails(url, listName);
-            easylistBlock.block = true
+            toBlock = getTrackerDetails(url, listName);
+            toBlock.block = true
         }
     });
 
-    return easylistBlock;
+    return toBlock;
 }
 
 function checkTrackersWithParentCompany(blockSettings, url, currLocation) {

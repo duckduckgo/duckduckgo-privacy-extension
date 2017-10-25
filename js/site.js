@@ -20,10 +20,6 @@ settings.ready().then(() => {
         tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
         tosdrListLoaded = true
     })
-
-    load.loadExtensionFile({url: settings.getSetting('brokenSiteList'), source: 'external'}, (listData, response) => {
-        brokenSiteList = listData.split('\n')
-    })
 })
 
 const siteScores = ['A', 'B', 'C', 'D']
@@ -156,7 +152,7 @@ class Site {
         this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
         this.setWhitelistStatusFromGlobal(domain);
-        this.brokenSite = this.checkBrokenSites(domain); // broken sites reported to github repo
+        this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener

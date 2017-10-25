@@ -93,12 +93,6 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
              */
             if (tab.status === 'complete') {
 
-                // reset the badge icon and return for broken sites
-                if (tab.site.brokenSite) {
-                    chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tab.id})
-                    return
-                }
-
                 if (tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
