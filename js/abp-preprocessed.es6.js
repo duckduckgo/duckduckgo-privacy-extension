@@ -76,15 +76,18 @@ function updateLists () {
         }
     }
 
-    const brokenSiteEtag = settings.getSetting('brokenSite-etag') || ''
+    let brokenSiteEtag = settings.getSetting('brokenSite-etag') || ''
+    // reset etag to get a new list copy if we don't have brokenSiteList data
+    if (!brokenSiteList) brokenSiteEtag = ''
+
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
     load.loadExtensionFile({url: settings.getSetting('brokenSiteList'), etag: brokenSiteEtag, source: 'external'}, (listData, response) => {
         const newBrokenSiteEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('brokenSite-etag', newBrokenSiteEtag);
 
-        // brokenSiteList is defined in trackers.js
-        brokenSiteList = listData.split('\n')
+        // brokenSiteList is defined in site.js
+        brokenSiteList = listData.trim().split('\n')
     })
 }
 

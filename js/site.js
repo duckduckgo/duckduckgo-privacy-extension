@@ -12,7 +12,7 @@ var settings = require('settings')
 let tosdr 
 let tosdrRegexList
 let tosdrListLoaded
-let brokenSiteList = []
+let brokenSiteList
 
 settings.ready().then(() => {
     load.JSONfromLocalFile(settings.getSetting('tosdr'),(data) => {
@@ -164,7 +164,11 @@ class Site {
      * check to see if this is a broken site reported on github
     */
      checkBrokenSites (domain) {
-         return brokenSiteList.indexOf(domain) !== -1 ? true : false
+         if (!brokenSiteList) {
+             return
+         } else {
+             return brokenSiteList.indexOf(domain) !== -1 ? true : false
+         }
      };
 
      /*
