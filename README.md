@@ -60,10 +60,10 @@ Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6
 ### Chrome
 
 - The chrome version is built from the `beta` branch in chrome-zeroclickinfo
-1. remove any unneeded directories. Specifically the .git and node_modules.
-2. bump the version number in `manifest.json`
-3. zip the directory. `zip chrome-zeroclickinfo.zip -r ./*`
-4. submit to the chrome store
+- remove any unneeded directories. Specifically the .git and node_modules.
+- bump the version number in `manifest.json`
+- zip the directory. `zip chrome-zeroclickinfo.zip -r ./*`
+- submit to the chrome store
 
 ### Firefox
 
@@ -77,11 +77,10 @@ We're building an embedded Firefox extension using our current extension in fire
         ├── firefox-zeroclickinfo
 ```
 
-2. in firefox-zeroclickinfo checkout the branch `beta-webextension`
-3. checkout the `firefox-beta` branch in chrome-zeroclickinfo by running: `cd webextension && git checkout beta-firefox && cd ..`
-4. bump the version number in package.json. Make sure that the version has "beta" on the end. ex: 1.1.5.beta
-5. sign the extension using JPM
-
+1. in firefox-zeroclickinfo checkout the branch `beta-webextension`
+2. checkout the `firefox-beta` branch in chrome-zeroclickinfo by running: `cd webextension && git checkout beta-firefox && cd ..`
+3. bump the version number in package.json. Make sure that the version has "beta" on the end. ex: 1.1.5.beta
+4. sign the extension using JPM
 
 ```
 ┌───────────────────────────────┐                                ┌───────────────────────────────┐
@@ -102,5 +101,4 @@ We're building an embedded Firefox extension using our current extension in fire
 │                               │                                │     │    └─────────────────┘ ││
 └───────────────────────────────┘                                │     └────────────────────────┘│
                                                                  └───────────────────────────────┘
-
 ```
