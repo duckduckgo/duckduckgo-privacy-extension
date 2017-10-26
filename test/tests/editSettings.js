@@ -38,10 +38,10 @@ function buildTable (newSettings) {
 }
 
 
-function resetSettings (userSettings) {
-    let settings = userSettings || defaultSettings
-    for(let setting in defaultSettings) {
-        bkg.settings.updateSetting(setting, defaultSettings[setting])
+function resetSettings (data) {
+    let settings = data.userSettings || defaultSettings
+    for(let setting in settings) {
+        bkg.settings.updateSetting(setting, settings[setting])
     }
     window.location.reload()
 }
@@ -53,9 +53,10 @@ function exportSettings () {
 function loadSettingsFromUser () {
     let userSettings = $('#load-settings').val()
     if (userSettings) {
-        resetSettings(userSettings)
+        let parsed = JSON.parse(userSettings)
+        resetSettings({userSettings: parsed})
         $('#settings').empty()
-        buildTable(JSON.parse(userSettings))
+        buildTable(parsed)
     }
 }
 
