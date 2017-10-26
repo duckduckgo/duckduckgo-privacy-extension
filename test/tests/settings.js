@@ -17,7 +17,15 @@ elements.forEach((element) => {
     let el = `#${element}`
     $(el).change(() => {
         let name = element
-        bkg.settings.updateSetting(name, JSON.parse($(el).val()))
+        let value
+        try {
+            value = JSON.parse($(el).val())
+        }
+        catch(e) {
+            value = $(el).val()
+        }
+
+        bkg.settings.updateSetting(name,value)
         $(el).addClass('saved')
         window.setInterval(() => $(el).removeClass('saved'), 500)
     });
