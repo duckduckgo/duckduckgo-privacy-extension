@@ -27,5 +27,8 @@ const defaultSettings = {
     "majorTrackingNetworks": {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true},
     "version": null,
     "atb": null,
-    "brokenSiteList": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt"
+    "brokenSiteList": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
+    "ddgWhitelist": "https://duckduckgo.com/contentblocking.js?l=trackers-whitelist",
+    "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
+    "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy"
 }

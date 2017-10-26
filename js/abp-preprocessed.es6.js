@@ -10,12 +10,12 @@ const ONEDAY = 1000*60*60*24
 let lists = {
     easylists : {
         privacy: {
-            url: 'https://duckduckgo.com/contentblocking.js?l=easyprivacy',
+            settingsName: 'privacyEasylist',
             parsed: {},
             isLoaded: false
         },
         general: {
-            url: 'https://duckduckgo.com/contentblocking.js?l=easylist',
+            settingsName: 'generalEasylist',
             parsed: {},
             isLoaded: false
         }
@@ -23,7 +23,7 @@ let lists = {
     whitelists: {
         // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
         ddgWhitelist: {
-            url: 'https://duckduckgo.com/contentblocking.js?l=trackers-whitelist',
+            settingsName: 'ddgWhitelist',
             parsed: {},
             isLoaded: false
         }
@@ -43,12 +43,13 @@ function updateLists () {
     const atb = settings.getSetting('atb')
     const set_atb = settings.getSetting('set_atb')
     const versionParam = getVersionParam()
-    
+
     for (let listType in lists) {
         for (let name in lists[listType]) {
-            let url = lists[listType][name].url
 
-            // for now bail if we don't have a url
+            const settingsName = lists[listType][name].settingsName
+            
+            let url = settings.getSetting(settingsName)
             if (!url) return 
                 
             let etag = settings.getSetting(name + '-etag') || ''
