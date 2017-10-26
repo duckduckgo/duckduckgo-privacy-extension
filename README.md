@@ -35,7 +35,7 @@ Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6
 
 **Setup**
 
-1. `source selenium-test/setup.sh`
+1. For remote linux machine, first setup xvbf: `source selenium-test/setup.sh`
 2. `npm install`
 3. `grunt`
 
