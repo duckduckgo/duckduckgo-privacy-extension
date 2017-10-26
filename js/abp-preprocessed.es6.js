@@ -53,9 +53,12 @@ function updateLists () {
                 
             let etag = settings.getSetting(name + '-etag') || ''
 
-            if (atb) url += '&atb=' + atb
-            if (set_atb) url += '&set_atb=' + set_atb
-            if (versionParam) url += versionParam
+            // only add url params to duckduckgo urls
+            if(url.match(/^https?:\/\/(.+)?duckduckgo.com/)) {
+                if (atb) url += '&atb=' + atb
+                if (set_atb) url += '&set_atb=' + set_atb
+                if (versionParam) url += versionParam
+            }
 
             console.log('Checking for list update: ', name)
 
