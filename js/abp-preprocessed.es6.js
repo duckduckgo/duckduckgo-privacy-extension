@@ -52,7 +52,7 @@ function updateLists () {
             let url = settings.getSetting(settingsName)
             if (!url) return 
                 
-            let etag = settings.getSetting(name + '-etag') || ''
+            let etag = settings.getSetting(settingsName + '-etag') || ''
 
             // only add url params to duckduckgo urls
             if(url.match(/^https?:\/\/(.+)?duckduckgo.com/)) {
@@ -72,7 +72,7 @@ function updateLists () {
                 console.log('Updating list: ', name)
                 
                 // sync new etag to storage
-                settings.updateSetting(name + '-etag', newEtag)
+                settings.updateSetting(settingsName + '-etag', newEtag)
                 
                 abp.parse(listData, lists[listType][name].parsed)
                 lists[listType][name].isLoaded = true
