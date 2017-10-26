@@ -1,18 +1,17 @@
 let settings = bkg.settings.getSetting()
-const settingsToShow = ['blocking', 'ddgWhitelist', 'ddgWhitelist-etag']
 let elements = []
 
+// generate output table
 let output = '<h2>Settings</h2><table><th>Name</th><th>Value</th>'
 for(let setting in settings) {
     let value = JSON.stringify(settings[setting])
     output += `<tr><td>${setting}</td><td><input type='text' id=${setting} value='${value}'></td></tr>`
     elements.push(setting)
 }
-
 output += '</table>'
-
 $('#settings').append(output)
 
+// add on change to each element in the table
 elements.forEach((element) => {
     let el = `#${element}`
     $(el).change(() => {
