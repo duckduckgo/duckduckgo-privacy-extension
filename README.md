@@ -7,39 +7,45 @@ This software is licensed under the terms of the Apache License, Version 2.0 (se
 # Contributing
 
 ## Pre-Requisites
+
 - [Node.js](https://nodejs.org) installation
 - Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html) and require:
 - A Google Chrome executable (you must have the browser installed on your machine)
 
 ## Set up development environment
+
 - `$ npm install` from root directory
 
 ## Build
+
 - `$ npm run build`
 
 ## Development flow
+
 Runs build task and then watch task that watches /css/**/*.scss and /js/**/*.es6.js files
+
 - `$ npm run dev`
 
 ## Testing
+
 - Do steps in "Set up development environment" above
 - `$ npm test`
 
 ### Selenium Testing (ratings.js)
 
 **Setup**
-1. Run `setup.sh`
+
+1. `source selenium-test/setup.sh`
 2. `npm install`
 3. `grunt`
 
-**Testing Single Site**
-`./ratings.js -x -u https://website.com`
+**Testing Single Site** `./selenium-test/ratings.js -u https://website.com`
 
-**Testing Alex Top 500**
-`./ratings.js -x -n 2` (where n = [1 - 500])
+**Testing Top 500** `./selenium-test/ratings.js -n 2` (where n = [1 - 500])
 
-**Testing Multiple Sites**
-`./ratings.js -x -f urls.txt` (file should have 1 url on each line)
+**Testing Multiple Sites** `./selenium-test/ratings.js -f urls.txt` (file should have 1 url on each line)
+
+**Using XVFB** To test on a remote server with XVBF installed, add `-x` flag: `./selenium-test/ratings.js -x -u https://website.com`
 
 # Extension Development and Release Plan
 
