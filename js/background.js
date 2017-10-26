@@ -106,14 +106,14 @@ chrome.contextMenus.create({
   }
 });
 
-/** 
+/**
  * Before each request:
  * - Add ATB param
  * - Block tracker requests
  * - Upgrade http -> https per HTTPS Everywhere rules
  */
 chrome.webRequest.onBeforeRequest.addListener(
-    function (requestData) { 
+    function (requestData) {
 
         let tabId = requestData.tabId;
 
@@ -147,11 +147,16 @@ chrome.webRequest.onBeforeRequest.addListener(
             /*
              * skip any broken sites
              */
-             if (thisTab.site.isBroken) return
+            if (thisTab.site.isBroken) {
+                console.log('temporarily skip tracker blocking for site: '
+                  + utils.extractHostFromURL(thisTab.url) + '\n'
+                  + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+                return
+            }
 
             /**
-             * Tracker blocking 
-             * If request is a tracker, cancel the request 
+             * Tracker blocking
+             * If request is a tracker, cancel the request
              */
 
             chrome.runtime.sendMessage({"updateTrackerCount": true});
@@ -193,10 +198,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
             }
         }
-        
+
         /**
          * HTTPS Everywhere rules
-         * If an upgrade rule is found, request is upgraded from http to https 
+         * If an upgrade rule is found, request is upgraded from http to https
          */
 
          if (!thisTab.site) return
