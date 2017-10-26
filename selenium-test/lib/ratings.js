@@ -51,10 +51,6 @@ function _teardown () {
     return WD.quit();
 }
 
-function _flatten(arr) {
-    return Array.prototype.concat(...arr);
-}
-
 // TODO:
 // Stash datatables js/css in repo?
 function _buildHtmlDoc(htmlTable) {
