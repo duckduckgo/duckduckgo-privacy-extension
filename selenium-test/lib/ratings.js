@@ -18,7 +18,8 @@ let EXT_ID,
     WD,
     INITIALIZED = false;
 
-// REMOVE
+// REMOVE LATER
+// See https://github.com/SeleniumHQ/selenium/wiki/WebDriverJs#moving-to-asyncawait
 promise.USE_PROMISE_MANAGER = false;
 
 // PRIVATE
