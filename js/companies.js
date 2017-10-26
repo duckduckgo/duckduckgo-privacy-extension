@@ -113,15 +113,15 @@ var Companies = (() => {
                 }
             })
 
-            utils.getFromStorage('totalPages', (n) => totalPages = n)
-            utils.getFromStorage('totalPagesWithTrackers', (n) => totalPagesWithTrackers = n)
+            utils.getFromStorage('totalPages', (n) => { if (n) totalPages = n })
+            utils.getFromStorage('totalPagesWithTrackers', (n) => { if (n) totalPagesWithTrackers = n })
             utils.getFromStorage('lastStatsResetDate', (d) => {
-                if (d.lastStatsResetDate) {
-                    lastStatsResetDate = d.lastStatsResetDate
+                if (d) {
+                    lastStatsResetDate = d
                 } else {
                     // if 'lastStatsResetDate' not found, reset all data
                     // https://app.asana.com/0/0/460622849089890/f
-                    this.resetData()
+                    Companies.resetData()
                 }
             })
          }
