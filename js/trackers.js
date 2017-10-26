@@ -85,12 +85,12 @@ require.scopes.trackers = (function() {
         let result = false
         let match
     
-        if (whitelists.ddgWhitelist.isLoaded) {
-            match = checkABPParsedList(whitelists.ddgWhitelist.parsed, url, currLocation, request)
+        if (whitelists.trackersWhitelist.isLoaded) {
+            match = checkABPParsedList(whitelists.trackersWhitelist.parsed, url, currLocation, request)
         }
     
         if(match){
-            result = getTrackerDetails(url, 'ddgWhitelist')
+            result = getTrackerDetails(url, 'trackersWhitelist')
             result.block = false
         }
 

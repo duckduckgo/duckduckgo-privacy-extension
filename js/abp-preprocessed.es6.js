@@ -22,8 +22,8 @@ let lists = {
     },
     whitelists: {
         // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
-        ddgWhitelist: {
-            settingsName: 'ddgWhitelist',
+        trackersWhitelist: {
+            settingsName: 'trackersWhitelist',
             parsed: {},
             isLoaded: false
         }
@@ -80,18 +80,18 @@ function updateLists () {
         }
     }
 
-    let brokenSiteEtag = settings.getSetting('brokenSite-etag') || ''
+    let trackersWhitelistTemporaryEtag = settings.getSetting('trackersWhitelistTemporary-etag') || ''
     // reset etag to get a new list copy if we don't have brokenSiteList data
-    if (!brokenSiteList) brokenSiteEtag = ''
+    if (!trackersWhitelistTemporaryEtag) trackersWhitelistTemporaryEtag = ''
 
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
-    load.loadExtensionFile({url: settings.getSetting('brokenSiteList'), etag: brokenSiteEtag, source: 'external'}, (listData, response) => {
-        const newBrokenSiteEtag = response.getResponseHeader('etag') || ''
-        settings.updateSetting('brokenSite-etag', newBrokenSiteEtag);
+    load.loadExtensionFile({url: settings.getSetting('trackersWhitelistTemporary'), etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
+        const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
+        settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 
-        // brokenSiteList is defined in site.js
-        brokenSiteList = listData.trim().split('\n')
+        // defined in site.js
+        trackersWhitelistTemporary = listData.trim().split('\n')
     })
 }
 
