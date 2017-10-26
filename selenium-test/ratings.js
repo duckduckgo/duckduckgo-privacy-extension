@@ -89,7 +89,7 @@ function _writeToFile (jsonText, opts) {
     const path = opts.output.replace(/\/$/, '');
 
     // JSON File Output
-    const jsonFile = `${path}/${filename}.html`;
+    const jsonFile = `${path}/${filename}.json`;
     fs.writeFileSync(jsonFile, jsonText);
     log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(jsonFile));
 
