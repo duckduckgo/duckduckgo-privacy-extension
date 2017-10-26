@@ -29,3 +29,12 @@ elements.forEach((element) => {
         window.setInterval(() => $(el).removeClass('saved'), 500)
     });
 })
+
+$('#reset').on('click', resetSettings)
+
+function resetSettings () {
+    for(let setting in defaultSettings) {
+        bkg.settings.updateSetting(setting, defaultSettings[setting])
+    }
+    window.location.reload()
+}
