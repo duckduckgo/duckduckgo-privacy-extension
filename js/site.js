@@ -12,6 +12,7 @@ var settings = require('settings')
 let tosdr 
 let tosdrRegexList
 let tosdrListLoaded
+let trackersWhitelistTemporary
 
 settings.ready().then(() => {
     load.JSONfromLocalFile(settings.getSetting('tosdr'),(data) => {
@@ -167,10 +168,11 @@ class Site {
     constructor(domain) {
         this.domain = domain,
         this.trackerUrls = [], 
-        this.score = new Score(this.specialDomain(), this.domain)
-        this.HTTPSwhitelisted = false // when forced https upgrades create mixed content situations
-        this.whitelisted = false // user-whitelisted sites applies to all privacy features 
-        this.setWhitelistStatusFromGlobal(domain)
+        this.score = new Score(this.specialDomain(), this.domain);
+        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
+        this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
+        this.setWhitelistStatusFromGlobal(domain);
+        this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
@@ -179,6 +181,17 @@ class Site {
     }
 
     /*
+     * check to see if this is a broken site reported on github
+    */
+     checkBrokenSites (domain) {
+         if (!trackersWhitelistTemporary) {
+             return
+         } else {
+             return trackersWhitelistTemporary.indexOf(domain) !== -1 ? true : false
+         }
+     };
+
+     /*
      * When site objects are created we check the stored whitelists
      * and set the new site whitelist statuses
      */

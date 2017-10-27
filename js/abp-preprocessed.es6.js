@@ -4,19 +4,35 @@
  *
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
-abp = require('abp-filter-parser');
+abp = require('abp-filter-parser')
 const ONEDAY = 1000*60*60*24
 
-easylists = {
-    privacy: {
-        url: 'https://duckduckgo.com/contentblocking.js?l=easyprivacy',
-        parsed: {},
+let lists = {
+    easylists : {
+        privacy: {
+            settingsName: 'privacyEasylist',
+            parsed: {},
+            isLoaded: false
+        },
+        general: {
+            settingsName: 'generalEasylist',
+            parsed: {},
+            isLoaded: false
+        }
     },
-    general: {
-        url: 'https://duckduckgo.com/contentblocking.js?l=easylist',
-        parsed: {},
+    whitelists: {
+        // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
+        trackersWhitelist: {
+            settingsName: 'trackersWhitelist',
+            parsed: {},
+            isLoaded: false
+        }
     }
-};
+}
+
+// these are defined in trackers.js
+easylists = lists.easylists
+whitelists = lists.whitelists
 
 /*
  * Get the list data and use abp to parse.
@@ -24,58 +40,73 @@ easylists = {
  * the easyLists object.
  */
 function updateLists () {
-    for (let list in easylists) {
-        let url = easylists[list].url
-        let atb = settings.getSetting('atb')
-        let set_atb = settings.getSetting('set_atb')
-        let versionParam = getVersionParam()
-        let etag = settings.getSetting(list + '-etag')
+    const atb = settings.getSetting('atb')
+    const set_atb = settings.getSetting('set_atb')
+    const versionParam = getVersionParam()
 
-        if (atb) url += '&atb=' + atb
-        if (set_atb) url += '&set_atb=' + set_atb
-        if (versionParam) url += versionParam
+    for (let listType in lists) {
+        for (let name in lists[listType]) {
 
-        console.log("Checking for list update: ", list)
+            const settingsName = lists[listType][name].settingsName
+            
+            let url = settings.getSetting(settingsName)
+            if (!url) return 
+                
+            let etag = settings.getSetting(settingsName + '-etag') || ''
 
-        // if we don't have parsed list data skip the etag to make sure we
-        // get a fresh copy of the list to process
-        if (Object.keys(easylists[list].parsed).length === 0) etag = ''
+            // only add url params to duckduckgo urls
+            if(url.match(/^https?:\/\/(.+)?duckduckgo.com/)) {
+                if (atb) url += '&atb=' + atb
+                if (set_atb) url += '&set_atb=' + set_atb
+                if (versionParam) url += versionParam
+            }
 
-        load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
-            let newEtag = response.getResponseHeader('etag')
+            console.log('Checking for list update: ', name)
 
-            console.log("Updating list: ", list)
-        
-            // sync new etag to storage
-            settings.updateSetting(list + '-etag', newEtag)
-
-            abp.parse(listData, easylists[list].parsed)
-            easylists[list].loaded = true;
-        });
-
+            // if we don't have parsed list data skip the etag to make sure we
+            // get a fresh copy of the list to process
+            if (Object.keys(lists[listType][name].parsed).length === 0) etag = ''
+                
+            load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
+                const newEtag = response.getResponseHeader('etag') || ''
+                console.log('Updating list: ', name)
+                
+                // sync new etag to storage
+                settings.updateSetting(settingsName + '-etag', newEtag)
+                
+                abp.parse(listData, lists[listType][name].parsed)
+                lists[listType][name].isLoaded = true
+            })
+        }
     }
 
-    // Load tracker whitelist
-    // trackerWhitelist declared in trackers.js
-    load.loadExtensionFile({url: settings.getSetting('trackerWhitelist')}, function(listData, response) {
-        console.log('loaded tracker whitelist: ' + listData);
-        abp.parse(listData, trackerWhitelist);
+    let trackersWhitelistTemporaryEtag = settings.getSetting('trackersWhitelistTemporary-etag') || ''
+    // reset etag to get a new list copy if we don't have brokenSiteList data
+    if (!trackersWhitelistTemporaryEtag) trackersWhitelistTemporaryEtag = ''
 
-    });
+    // load broken site list
+    // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
+    load.loadExtensionFile({url: settings.getSetting('trackersWhitelistTemporary'), etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
+        const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
+        settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
+
+        // defined in site.js
+        trackersWhitelistTemporary = listData.trim().split('\n')
+    })
 }
 
 // Make sure the list updater runs on start up
 settings.ready().then(() => updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'updateEasyLists') {
+    if (alarm.name === 'updateLists') {
         settings.ready().then(() => updateLists())
     }
-});
+})
 
 // set an alarm to recheck the lists
 // update every 3 hours
-chrome.alarms.create('updateEasyLists', {periodInMinutes: 180})
+chrome.alarms.create('updateLists', {periodInMinutes: 180})
 
 // add version param to url on the first install and
 // only once a day after than

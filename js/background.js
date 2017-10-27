@@ -106,14 +106,14 @@ chrome.contextMenus.create({
   }
 });
 
-/** 
+/**
  * Before each request:
  * - Add ATB param
  * - Block tracker requests
  * - Upgrade http -> https per HTTPS Everywhere rules
  */
 chrome.webRequest.onBeforeRequest.addListener(
-    function (requestData) { 
+    function (requestData) {
 
         let tabId = requestData.tabId;
 
@@ -144,9 +144,19 @@ chrome.webRequest.onBeforeRequest.addListener(
              */
             if (!(thisTab && thisTab.url && thisTab.id)) return
 
+            /*
+             * skip any broken sites
+             */
+            if (thisTab.site.isBroken) {
+                console.log('temporarily skip tracker blocking for site: '
+                  + utils.extractHostFromURL(thisTab.url) + '\n'
+                  + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+                return
+            }
+
             /**
-             * Tracker blocking 
-             * If request is a tracker, cancel the request 
+             * Tracker blocking
+             * If request is a tracker, cancel the request
              */
 
             chrome.runtime.sendMessage({"updateTrackerCount": true});
@@ -161,7 +171,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 thisTab.addToTrackers(tracker);
 
                 // Block the request if the site is not whitelisted
-                if (!thisTab.site.whitelisted) {
+                if (!thisTab.site.whitelisted && tracker.block) {
                     thisTab.addOrUpdateTrackersBlocked(tracker);
                     chrome.runtime.sendMessage({"updateTrackerCount": true});
 
@@ -171,15 +181,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
-
-                    // Check tracker whitelist -- after trackers have counted against the grade
-                    if (abp.matches(trackerWhitelist, requestData.url)) {
-
-                        console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
-                                 + " [" + tracker.parentCompany + "] " + requestData.url);
-                        return
-
-                    }
 
                     // for debugging specific requests. see test/tests/debugSite.js
                     if (debugRequest && debugRequest.length) {
@@ -197,10 +198,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
             }
         }
-        
+
         /**
          * HTTPS Everywhere rules
-         * If an upgrade rule is found, request is upgraded from http to https 
+         * If an upgrade rule is found, request is upgraded from http to https
          */
 
          if (!thisTab.site) return
