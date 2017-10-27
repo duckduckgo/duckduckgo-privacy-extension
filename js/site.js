@@ -9,7 +9,7 @@
 var load = require('load')
 var settings = require('settings')
 
-let tosdr 
+let tosdr
 let tosdrRegexList
 let tosdrListLoaded
 
@@ -89,9 +89,9 @@ class Score {
         let scoreIndex = 1;
 
         if (this.isaMajorTrackingNetwork) scoreIndex += this.isaMajorTrackingNetwork
-        
+
         // If tosdr already determined a class ranking then we map that to increase or
-        // decrease the grade accordingly. Otherwise we apply a +/- to the grade based 
+        // decrease the grade accordingly. Otherwise we apply a +/- to the grade based
         // on the cumulative total of all the points we care about. see: scripts/tosdr-topics.json
         if (this.tosdr) {
             if (this.tosdr.class) {
@@ -146,11 +146,12 @@ class Score {
 
 class Site {
     constructor(domain) {
+        if (domain) domain = domain.toLowerCase()
         this.domain = domain,
-        this.trackerUrls = [], 
+        this.trackerUrls = [],
         this.score = new Score(this.specialDomain(), this.domain);
         this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
-        this.whitelisted = false; // user-whitelisted sites; applies to all privacy features 
+        this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
 
         // set isSpecialDomain when the site is created. This value may be

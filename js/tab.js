@@ -114,7 +114,7 @@ class Tab {
     downgradeHttpsUpgradeRequest (reqData) {
         if (reqData.type === 'main_frame') this.upgradedHttps = false
         delete this.httpsRedirects[reqData.requestId]
-        const downgrade = reqData.url.replace(/^https:\/\//, 'http://')
+        const downgrade = reqData.url.replace(/^https:\/\//i, 'http://')
         return downgrade
     }
 
@@ -131,7 +131,7 @@ class Tab {
             this.upgradedHttps = false
 
             // then reload this tab, downgraded from https to http
-            const downgrade = this.url.replace(/^https:\/\//, 'http://')
+            const downgrade = this.url.replace(/^https:\/\//i, 'http://')
             chrome.tabs.update(this.id, { url: downgrade })
         }
     }

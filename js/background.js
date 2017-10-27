@@ -217,7 +217,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (https.isReady) {
                 https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
-                        if (url !== requestData.url.toLowerCase()) {
+                        if (url.toLowerCase() !== requestData.url.toLowerCase()) {
                             console.log('HTTPS: upgrade request url to ' + url)
                             if (isMainFrame) thisTab.upgradedHttps = true
                             thisTab.addHttpsUpgradeRequest(url)
