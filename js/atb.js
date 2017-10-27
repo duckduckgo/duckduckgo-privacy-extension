@@ -1,7 +1,7 @@
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
-    var ddgRegex = new RegExp(/^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?q=.*|about#newsletter)/)
+    var ddgRegex = new RegExp(/^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/)
     var ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
