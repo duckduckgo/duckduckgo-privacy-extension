@@ -5,7 +5,7 @@ const siteRating = require('./shared/site-rating.es6.js')
 
 module.exports = function () {
 
-    return bel`<section class="site-info card">
+    return bel`<section class="site-info card card--no-top-margin">
         <ul class="default-list">
             <li class="padded padded__bottom--none">
                 <h1 class="site-info__domain">${this.model.domain}</h1>

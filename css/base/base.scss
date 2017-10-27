@@ -171,13 +171,12 @@ a {
     padding: $card__padding;
     margin: $card__margin;
 
-    &.card--padded,
-    .padded {
-        padding: $card--padded;
+    &.card--transparent {
+        background-color: transparent;
     }
 
-    .padded__bottom--none {
-        padding-bottom: 0;
+    &.card--no-top-margin {
+        margin-top: 0;
     }
 
     &.border--bottom,
@@ -188,6 +187,15 @@ a {
     &.border--top,
     .border--top {
         border-top: $card__border;
+    }
+
+    &.card--padded,
+    .padded {
+        padding: $card--padded;
+    }
+
+    .padded__bottom--none {
+        padding-bottom: 0;
     }
 }
 
