@@ -259,23 +259,23 @@ body {
 
 
                 &.site-info__rating--a {
-                    background-color: $color--blue;
+                    background-color: $color--site-rating--a;
                 }
 
                 &.site-info__rating--b {
-                    background-color: $color--yellow;
+                    background-color: $color--site-rating--b;
                 }
 
                 &.site-info__rating--c {
-                    background-color: $color--orange;
+                    background-color: $color--site-rating--c;
                 }
 
                 &.site-info__rating--d {
-                    background-color: $color--red;
+                    background-color: $color--site-rating--d;
                 }
 
                 &.site-info__rating--f {
-                    background-color: $color--dark-red;
+                    background-color: $color--site-rating--f;
                 }
             }
         }
@@ -405,6 +405,11 @@ body {
             .link-secondary {
                 @include is_disableable_link();
             }
+        }
+
+        .site-info__li--toggle {
+            color: $color--white;
+            background-color: $color--green;
         }
     }
 

@@ -4,21 +4,24 @@ $font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe U
 
 /* Colors */
 @import "../node_modules/duckduckgo-colors/colors";
-
-$color--blue: #2d9cdb;
-$color--yellow: #f7b94d;
-$color--orange: #fd882a;
-$color--red: $red;
-$color--dark-red: #c22D0c;
-
-$color--green: $green;
-$color--light-green: #84ba50;
+$color--green: #3fa248;
+$color--dark-green: #29521f;
+$color--orange: #f89f22;
+$color--red: #ce2929;
+$color--white: #fff;
 
 /* Neutral Colors */
 $color--neutral-bg: #f5f5f5;
 $color--grey: $grey; /* #999 */
 $color--dark-gray: #838383;
-$color--default-box-shadow: $platinum-dark;
+$color--default-box-shadow: $platinum-dark; /* #d0d0d0 */
+
+/* Rating Colors */
+$color--site-rating--a: $color--green;
+$color--site-rating--b: $color--green;
+$color--site-rating--c: $color--orange;
+$color--site-rating--d: $color--orange;
+$color--site-rating--f: $color--red;
 
 /* Popup */
 $popup__width: 300px;

@@ -22,16 +22,7 @@ module.exports = function () {
                     <p class="site-info__rating-label">Privacy Grade</p>
                 </div>
             </li>
-            <li class="padded border--bottom">
-                <h2 class="site-info__protection">Privacy Protection</h2>
-                <div class="site-info__toggle-container">
-                    <span class="site-info__toggle-text">
-                        ${this.model.whitelistStatusText}
-                    </span>
-                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
-                </div>
-            </li>
-            <li class="site-info__li--https-status padded">
+            <li class="site-info__li--https-status padded border--bottom">
                 <h2 class="site-info__https-status bold">
                     <span class="site-info__https-status__icon
                         is-${this.model.httpsState}">
@@ -67,6 +58,15 @@ module.exports = function () {
                     More details
                     <span class="icon icon__arrow pull-right"></span>
                 </a>
+            </li>
+            <li class="site-info__li--toggle padded">
+                <h2 class="site-info__protection">Privacy Protection</h2>
+                <div class="site-info__toggle-container">
+                    <span class="site-info__toggle-text">
+                        ${this.model.whitelistStatusText}
+                    </span>
+                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
+                </div>
             </li>
         </ul>
     </section>`
