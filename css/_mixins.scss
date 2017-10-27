@@ -48,8 +48,12 @@
     color: $grey-dark;
     text-transform: uppercase;
     letter-spacing: 0.1em;
+    font-weight: bold;
 }
 
+.uppercase {
+    @include uppercase_label();
+}
 
 /* Lists */
 @mixin default_list () {

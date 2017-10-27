@@ -225,8 +225,6 @@ body {
         }
 
         .site-info__rating-label {
-            @include uppercase_label();
-            text-align: center;
             padding-top: 15px;
         }
 

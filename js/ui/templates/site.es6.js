@@ -19,7 +19,9 @@ module.exports = function () {
                         ${siteRating('D', this.model.siteRating === 'D')}
                         ${siteRating('F', this.model.siteRating === 'F')}
                     </div>
-                    <p class="site-info__rating-label">Privacy Grade</p>
+                    <p class="site-info__rating-label uppercase text--center">
+                        Privacy Grade
+                    </p>
                 </div>
             </li>
             <li class="site-info__li--https-status padded border--bottom">

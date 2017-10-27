@@ -6,8 +6,8 @@ module.exports = function () {
 
     if (this.model.companyListMap && this.model.companyListMap.length > 0) {
         return bel`<section class="top-blocked card">
-            <h3 class="menu-title padded">
-                Top trackers across all sites
+            <h3 class="padded uppercase text--center">
+                Tracker Network Hall of Shame
             </h3>
             <ol class="default-list top-blocked__list">
                 ${listItems(this.model.companyListMap)}
