@@ -30,11 +30,12 @@ function testOptions () {
           chrome.tabs.reload(tab.id, () => {
               
               getLoadedTab(testURL).then((tab) => {
-                
-                let tabObj = bkg.tabManager.get({tabId: tab.id})
-                assert.ok(tabObj.site.trackerUrls.length !== 0, 'should be blocking trackers');
-                done();
-                cleanUpTabs(tabsToCleanUp);
+                window.setTimeout(() => {
+                    let tabObj = bkg.tabManager.get({tabId: tab.id})
+                    assert.ok(tabObj.site.trackerUrls.length !== 0, 'should be blocking trackers');
+                    done();
+                    cleanUpTabs(tabsToCleanUp);
+                }, 2000)
               });
 
           });
