@@ -70,11 +70,8 @@ function Background() {
 
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
-    if (details.reason === "install") {
+    if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
-    }
-    else if (details.reason === "upgrade") {
-        ATB.migrate()
     }
   });
 }
@@ -116,13 +113,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) {
 
         let tabId = requestData.tabId;
-
-        /* revisit atb module first
-        // Add ATB for DDG URLs
-        let ddgAtbRewrite = ATB.redirectURL(requestData);
-        if (ddgAtbRewrite) return ddgAtbRewrite;
-        */
-
+        
         // Skip requests to background tabs
         if (tabId === -1) { return }
 
@@ -134,6 +125,11 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
               thisTab = tabManager.create(requestData);
             }
+            
+            // add atb params only to main_frame
+            let ddgAtbRewrite = ATB.redirectURL(requestData);
+            if (ddgAtbRewrite) return ddgAtbRewrite;
+
         }
         else {
 
