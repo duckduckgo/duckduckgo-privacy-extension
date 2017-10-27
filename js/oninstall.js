@@ -13,6 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-var atbParam = document.querySelector('html').getAttribute('data-chromeatb');
-chrome.runtime.sendMessage({atb: atbParam});
+var ATB = document.querySelector('html').getAttribute('data-chromeatb') || document.querySelector('html').getAttribute('data-atb');
+chrome.runtime.sendMessage({atb: ATB});

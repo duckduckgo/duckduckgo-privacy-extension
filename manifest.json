@@ -1,7 +1,13 @@
 {
-    "name": "DuckDuckGo for Chrome - V2 Beta",
-    "version": "2017.4.13",
-    "description": "DuckDuckGo enhancements for Chrome.",
+    "name": "DuckDuckGo - V2 Beta",
+    "applications": {
+        "gecko": {
+              "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
+              "strict_min_version": "57.0"
+        }
+    },
+    "version": "1.26.1",
+    "description": "DuckDuckGo",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -47,7 +53,8 @@
                 "js/indexed-db.js",
                 "js/https.js",
                 "js/background.js",
-                "js/abp.js"
+                "js/abp.js",
+                "js/atb.js"
             ]
     },
     "chrome_settings_overrides": {
@@ -85,7 +92,6 @@
         "webRequestBlocking",
         "*://*/*",
         "webNavigation",
-        "webRequestBlocking",
         "activeTab",
         "tabs",
         "cookies",

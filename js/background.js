@@ -70,11 +70,8 @@ function Background() {
 
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
-    if (details.reason === "install") {
+    if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
-    }
-    else if (details.reason === "upgrade") {
-        ATB.migrate()
     }
   });
 }
@@ -116,13 +113,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) {
 
         let tabId = requestData.tabId;
-
-        /* revisit atb module first
-        // Add ATB for DDG URLs
-        let ddgAtbRewrite = ATB.redirectURL(requestData);
-        if (ddgAtbRewrite) return ddgAtbRewrite;
-        */
-
+        
         // Skip requests to background tabs
         if (tabId === -1) { return }
 
@@ -134,6 +125,11 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
               thisTab = tabManager.create(requestData);
             }
+            
+            // add atb params only to main_frame
+            let ddgAtbRewrite = ATB.redirectURL(requestData);
+            if (ddgAtbRewrite) return ddgAtbRewrite;
+
         }
         else {
 
@@ -143,6 +139,16 @@ chrome.webRequest.onBeforeRequest.addListener(
              * we got the webrequest event
              */
             if (!(thisTab && thisTab.url && thisTab.id)) return
+
+            /*
+             * skip any broken sites
+             */
+            if (thisTab.site.isBroken) {
+                console.log('temporarily skip tracker blocking for site: '
+                  + utils.extractHostFromURL(thisTab.url) + '\n'
+                  + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+                return
+            }
 
             /**
              * Tracker blocking
@@ -160,7 +166,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 thisTab.addToTrackers(tracker);
 
                 // Block the request if the site is not whitelisted
-                if (!thisTab.site.whitelisted) {
+                if (!thisTab.site.whitelisted && tracker.block) {
                     thisTab.addOrUpdateTrackersBlocked(tracker);
                     chrome.runtime.sendMessage({'updateTabData': true})
 
@@ -170,15 +176,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 
                     if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
-
-                    // Check tracker whitelist -- after trackers have counted against the grade
-                    if (abp.matches(trackerWhitelist, requestData.url)) {
-
-                        console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
-                                 + " [" + tracker.parentCompany + "] " + requestData.url);
-                        return
-
-                    }
 
                     // for debugging specific requests. see test/tests/debugSite.js
                     if (debugRequest && debugRequest.length) {

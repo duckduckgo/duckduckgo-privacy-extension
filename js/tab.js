@@ -63,8 +63,12 @@ class Tab {
 
     updateBadgeIcon () {
         if (!this.site.specialDomain() ) {
-            let scoreIcon = scoreIconLocations[this.site.score.get()];
-            chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
+            if(this.site.isBroken) {
+                chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
+            } else {
+                let scoreIcon = scoreIconLocations[this.site.score.get()];
+                chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
+            }
         }
     };
 
