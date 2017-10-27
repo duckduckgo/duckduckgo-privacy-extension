@@ -11,7 +11,7 @@ module.exports = function () {
             ${header('Grade Details')}
         </section>`
     } else {
-        return bel`<div class="site-info site-info--details card border--bottom">
+        return bel`<div class="site-info site-info--details card card--no-top-margin">
             <h1 class="site-info__domain">${this.model.site.domain}</h1>
             ${siteRating(this.model.site.siteRating, true)}
             ${siteRatingExplainer(this.model.site.siteRating)}
