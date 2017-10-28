@@ -9,7 +9,7 @@
 
 
 /**
- * DDG Chrome Extension Resets & Base Styles
+ * DDG Extension Resets & Base Styles
  */
 
 html, body {
@@ -87,6 +87,12 @@ a {
     }
 }
 
+
+/**
+ * DDG Extension Helper Classes
+ */
+
+
 /* Hide element */
 .is-hidden {
     display: none;
@@ -104,10 +110,12 @@ a {
     left: 20px;
 }
 
+
 /* Display */
 .block {
     display: block;
 }
+
 
 /* Floats */
 .float-left {
@@ -124,6 +132,7 @@ a {
     line-height: 0;
 }
 
+
 /* Text Centering */
 .text--center {
     text-align: center;
@@ -133,6 +142,7 @@ a {
     text-align: left;
 }
 
+
 /* Borders */
 .border--top {
     border-top: $card__border;
@@ -140,6 +150,16 @@ a {
 
 .border--bottom {
     border-bottom: $card__border;
+}
+
+
+/* Padding */
+.padded {
+    padding: $card--padded;
+}
+
+.padded--no-bottom-padding {
+    padding-bottom: 0;
 }
 
 
@@ -173,29 +193,11 @@ a {
 
     &.card--transparent {
         background-color: transparent;
+        box-shadow: none;
     }
 
     &.card--no-top-margin {
         margin-top: 0;
-    }
-
-    &.border--bottom,
-    .border--bottom {
-        border-bottom: $card__border;
-    }
-
-    &.border--top,
-    .border--top {
-        border-top: $card__border;
-    }
-
-    &.card--padded,
-    .padded {
-        padding: $card--padded;
-    }
-
-    .padded__bottom--none {
-        padding-bottom: 0;
     }
 }
 

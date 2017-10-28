@@ -20,7 +20,7 @@ module.exports = function () {
                 <div class="float-right"></div>
             </h2>
             ${trackersBlockedOrFound(this.model)}
-            <ol class="default-list site-info__trackers__company-list padded">
+            <ol class="default-list site-info__trackers__company-list">
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
         </div>`

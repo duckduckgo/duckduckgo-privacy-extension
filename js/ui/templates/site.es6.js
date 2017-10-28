@@ -7,7 +7,7 @@ module.exports = function () {
 
     return bel`<section class="site-info card card--no-top-margin">
         <ul class="default-list">
-            <li class="padded padded__bottom--none">
+            <li class="padded padded--no-bottom-padding">
                 <h1 class="site-info__domain">${this.model.domain}</h1>
             </li>
             <li class="site-info__rating-li">
