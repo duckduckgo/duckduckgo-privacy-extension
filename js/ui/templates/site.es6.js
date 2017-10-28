@@ -5,11 +5,8 @@ const siteRating = require('./shared/site-rating.es6.js')
 
 module.exports = function () {
 
-    return bel`<section class="site-info card card--no-top-margin">
+    return bel`<section class="site-info card">
         <ul class="default-list">
-            <li class="padded padded--no-bottom-padding">
-                <h1 class="site-info__domain">${this.model.domain}</h1>
-            </li>
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container border--bottom">
                     <div class="site-info__rating-flex">
@@ -19,6 +16,7 @@ module.exports = function () {
                         ${siteRating('D', this.model.siteRating === 'D')}
                         ${siteRating('F', this.model.siteRating === 'F')}
                     </div>
+                    <h1 class="site-info__domain">${this.model.domain}</h1>
                     <p class="site-info__rating-label uppercase text--center">
                         Privacy Grade
                     </p>
