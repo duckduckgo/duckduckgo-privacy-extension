@@ -176,15 +176,11 @@ body {
             padding-bottom: 0;
         }
 
-        @mixin site_info_top_line () {
+        .site-info__domain,
+        .site-info__protection {
             line-height: 1.4em;
             height: 1.2em;
             display: inline-block;
-        }
-
-        .site-info__domain,
-        .site-info__protection {
-            @include site_info_top_line();
             max-width: $popup__width - 125;
             font-weight: bold;
             overflow: hidden;
@@ -201,12 +197,6 @@ body {
             position: relative;
             float: right;
             padding-right: 40px;
-
-            .site-info__toggle-text {
-                @include site_info_top_line();
-                @include uppercase_label();
-                text-align: right;
-            }
 
             .toggle-button {
                 position: absolute;

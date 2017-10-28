@@ -25,7 +25,7 @@ module.exports = function () {
                 </div>
             </li>
             <li class="site-info__li--toggle padded border--bottom">
-                <h2 class="site-info__protection">Privacy Protection</h2>
+                <h2 class="site-info__protection">Site Privacy Protection</h2>
                 <div class="site-info__toggle-container">
                     <span class="site-info__toggle-text">
                         ${this.model.whitelistStatusText}

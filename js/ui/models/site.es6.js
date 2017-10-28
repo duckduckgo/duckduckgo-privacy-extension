@@ -1,10 +1,5 @@
 const Parent = window.DDG.base.Model
 
-const whitelistStates = {
-    'isWhitelisted': 'Off',
-    'notWhitelisted': 'On',
-}
-
 const httpsStates = {
     'secure': 'Secure',
     'upgraded': 'Secure', // was 'Upgraded'
@@ -88,7 +83,6 @@ Site.prototype = $.extend({},
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted
-              this.setWhitelistStatusText()
               if (this.tab.site.isSpecialDomain) {
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
               } else {
@@ -111,14 +105,6 @@ Site.prototype = $.extend({},
           }
 
           this.httpsStatusText = httpsStates[this.httpsState]
-      },
-
-      setWhitelistStatusText: function () {
-          if (this.isWhitelisted) {
-              this.whitelistStatusText = whitelistStates['isWhitelisted']
-          } else {
-              this.whitelistStatusText = whitelistStates['notWhitelisted']
-          }
       },
 
       handleBackgroundMsg: function (message) {
@@ -219,8 +205,6 @@ Site.prototype = $.extend({},
                   value: this.isWhitelisted
               }
               })
-
-              this.setWhitelistStatusText()
           }
       }
   }
