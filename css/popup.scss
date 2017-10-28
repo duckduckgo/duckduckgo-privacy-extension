@@ -139,6 +139,10 @@ body {
             margin-top: 20px;
             position: relative;
 
+            .hamburger-menu__content__more-options {
+                padding: 15px 20px;
+            }
+
             .hamburger-menu__close-container {
                 top: 15px;
 
@@ -152,6 +156,7 @@ body {
 
                 .menu-title {
                     padding-top: 0;
+                    padding-left: 20px;
                     color: $slate;
                     font-weight: bold;
 
@@ -160,6 +165,7 @@ body {
                         color: $color--grey;
                         display: block;
                         font-weight: normal;
+                        padding-left: 20px;
                     }
 
                     &:hover {

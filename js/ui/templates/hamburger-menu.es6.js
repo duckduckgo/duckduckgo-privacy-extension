@@ -5,7 +5,7 @@ module.exports = function () {
     return bel`<nav class="hamburger-menu js-hamburger-menu ${isHidden}">
         <div class="hamburger-menu__bg"></div>
         <div class="hamburger-menu__content card padded">
-            <h2 class="menu-title padded border--bottom">
+            <h2 class="menu-title border--bottom hamburger-menu__content__more-options">
                 More Options
             </h2>
             <nav class="pull-right hamburger-menu__close-container">
