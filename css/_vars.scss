@@ -78,18 +78,18 @@ $icon__rating__F--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar
 $icon__rating__F--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-f@2x.png";
 
 /* HTTPS status icons */
-$icon__https-status__locked--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock--locked.svg";
-$icon__https-status__locked--moz: "moz-extension://__MSG_@@extension_id__/img/lock--locked.svg";
+$icon__https-status__locked--chrome: "chrome-extension://__MSG_@@extension_id__/img/https--on.svg";
+$icon__https-status__locked--moz: "moz-extension://__MSG_@@extension_id__/img/https--on.svg";
 
-$icon__https-status__unlocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/lock--unlocked.svg";
-$icon__https-status__unlocked--moz: "moz-extension://__MSG_@@extension_id__/img/lock--unlocked.svg";
+$icon__https-status__unlocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/https--off.svg";
+$icon__https-status__unlocked--moz: "moz-extension://__MSG_@@extension_id__/img/https--off.svg";
 
 /* Tracker network status icons */
-$icon__trackers__blocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/eye--see.svg";
-$icon__trackers__blocked--moz: "moz-extension://__MSG_@@extension_id__/img/eye--see.svg";
+$icon__trackers__blocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/blocking--on.svg";
+$icon__trackers__blocked--moz: "moz-extension://__MSG_@@extension_id__/img/blocking--on.svg";
 
-$icon__trackers__unblocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/eye--dont-see.svg";
-$icon__trackers__unblocked--moz: "moz-extension://__MSG_@@extension_id__/img/eye--dont-see.svg";
+$icon__trackers__unblocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/blocking--off.svg";
+$icon__trackers__unblocked--moz: "moz-extension://__MSG_@@extension_id__/img/blocking--off.svg";
 
 /* Left carat/arrow icons */
 $icon__arrow--chrome: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";

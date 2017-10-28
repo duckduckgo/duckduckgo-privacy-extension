@@ -275,15 +275,17 @@ body {
         }
 
         @mixin site_status_icons () {
-            width: 10px;
-            height: 12px;
-            vertical-align: initial;
+            width: 17px;
+            height: 21px;
+            vertical-align: middle;
             margin-right: 5px;
         }
 
         .site-info__https-status__icon {
             @include icon_display();
             @include site_status_icons();
+            width: 15px;
+            height: 22px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
@@ -328,15 +330,12 @@ body {
 
         .site-info__li--trackers {
             position: relative;
-            padding-top: 7.5px;
 
             .site-info__trackers {
 
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    width: 14px;
-                    height: 9px;
                     margin-left: -2px;
 
                     &.is-blocking--true {
