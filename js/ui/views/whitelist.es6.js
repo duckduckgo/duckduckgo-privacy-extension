@@ -32,7 +32,7 @@ Whitelist.prototype = $.extend({},
 
             this.bindEvents([
               [this.$remove, 'click', this._removeItem],
-              [this.store.subscribe, 'change:backgroundMessage', this.update]
+              [this.store.subscribe, 'action:backgroundMessage', this.update]
             ]);
         },
 
@@ -44,7 +44,7 @@ Whitelist.prototype = $.extend({},
 
         // watch for changes in the whitelist and rerender
         update: function(message) {
-            if (message.change.attribute === 'whitelistChanged') {
+            if (message.action === 'whitelistChanged') {
                 this.setWhitelistFromSettings()
             }
         },

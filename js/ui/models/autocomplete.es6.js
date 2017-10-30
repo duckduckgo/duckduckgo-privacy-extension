@@ -1,10 +1,8 @@
-const Parent = window.DDG.base.Model;
+const Parent = window.DDG.base.Model
 
 function Autocomplete (attrs) {
-
-    Parent.call(this, attrs);
-
-};
+    Parent.call(this, attrs)
+}
 
 
 Autocomplete.prototype = $.extend({},
@@ -18,13 +16,11 @@ Autocomplete.prototype = $.extend({},
               // TODO: ajax call here to ddg autocomplete service
               // for now we'll just mock up an async xhr query result:
               this.suggestions = [`${searchText} world`, `${searchText} united`, `${searchText} famfam`]
-              resolve();
-          });
+              resolve()
+          })
       }
-
   }
-);
+)
 
 
-module.exports = Autocomplete;
-
+module.exports = Autocomplete

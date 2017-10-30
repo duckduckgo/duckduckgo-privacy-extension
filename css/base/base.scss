@@ -9,7 +9,7 @@
 
 
 /**
- * DDG Chrome Extension Resets & Base Styles
+ * DDG Extension Resets & Base Styles
  */
 
 html, body {
@@ -21,7 +21,7 @@ html, body {
     }
 }
 
-h1, h2, h3, h4, h5, h5 {
+h1, h2, h3, h4, h5, h5, p, div {
     font-size: $font__size--default;
     margin: 0;
     padding: 0;
@@ -35,6 +35,7 @@ h1, h2, h3, h4, h5, h5 {
 section, ul, ol, li {
     margin: 0;
     padding: 0;
+    position: relative;
 
     &.divider-bottom {
         border-bottom: 1px solid $platinum;
@@ -47,6 +48,12 @@ form, input, select, option, button {
     * {
         outline: none;
     }
+}
+
+button {
+    border: none;
+    background-color: $white;
+    padding: 0;
 }
 
 
@@ -80,6 +87,12 @@ a {
     }
 }
 
+
+/**
+ * DDG Extension Helper Classes
+ */
+
+
 /* Hide element */
 .is-hidden {
     display: none;
@@ -89,12 +102,84 @@ a {
 /* Position */
 .pull-right {
     position: absolute;
-    right: 14px;
+    right: 20px;
 }
 
 .pull-left {
     position: absolute;
-    left: 14px;
+    left: 20px;
+}
+
+
+/* Display */
+.block {
+    display: block;
+}
+
+
+/* Floats */
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.clearfix {
+    clear: both;
+    height: 0;
+    line-height: 0;
+}
+
+
+/* Text Centering */
+.text--center {
+    text-align: center;
+}
+
+.text--left {
+    text-align: left;
+}
+
+
+/* Borders */
+.border--top {
+    border-top: $card__border;
+}
+
+.border--bottom {
+    border-bottom: $card__border;
+}
+
+
+/* Padding */
+.padded {
+    padding: $card--padded;
+}
+
+.padded--no-bottom-padding {
+    padding-bottom: 0;
+}
+
+
+/* Hamburger Button */
+.hamburger-button {
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-size: 20px;
+    width: 20px;
+    height: 30px;
+
+    span {
+        display: block;
+        margin: 2px auto 0 auto;
+        width: 15px;
+        height: 2px;
+        background-color: $hamburger-button__color;
+        border-radius: 5px;
+    }
 }
 
 
@@ -106,16 +191,13 @@ a {
     padding: $card__padding;
     margin: $card__margin;
 
-    .border--bottom {
-        border-bottom: $card__border;
+    &.card--transparent {
+        background-color: transparent;
+        box-shadow: none;
     }
 
-    .border--top {
-        border-top: $card__border;
-    }
-
-    .menu-title {
-        padding: 14px 7px 7px 14px;
+    &.card--no-top-margin {
+        margin-top: 0;
     }
 }
 
@@ -125,6 +207,20 @@ a {
 .icon {
     @include icon_display();
     /* you'll need to set the background image within each instance of .icon */
+
+    &.icon__close {
+        width: 14px;
+        height: 14px;
+
+        .is-browser--chrome & {
+            background-image: url($icon__close--chrome);
+        }
+
+        .is-browser--moz & {
+            background-image: url($icon__close--moz);
+        }
+
+    }
 
     &.icon__arrow {
         width: 16px;
@@ -155,5 +251,81 @@ a {
             background-image: url($icon__settings--moz);
         }
 
+    }
+}
+
+
+/* Popover
+ * Template is in templates/shread/popover.es6.js
+ * Sample usage:
+ *    .site-info__li--trackers {
+ *        position: relative;
+ *
+ *        &:hover {
+ *            .popover.site_info__trackers__popover {
+ *                display: block;
+ *                top: initial;
+ *                bottom: 45px;
+ *            }
+ *        }
+ */
+
+.popover {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    opacity: 0.9;
+
+    .popover__inner {
+        padding: 10px;
+        color: $popover__color;
+        font-size: 13px;
+        font-weight: normal;
+        background-color: $popover__bg-color;
+        border-radius: $popover__border-radius;
+
+        em {
+            font-style: normal;
+            font-weight: bold;
+        }
+    }
+
+    .arrow {
+        background-color: $popover__bg-color;
+
+        &.arrow--down {
+            &:after {
+                left: 240px;
+                border-top: 10px solid $popover__bg-color;
+            }
+        }
+    }
+}
+
+
+/* Arrow */
+.arrow {
+    border-top: 10px solid $arrow__bg-color;
+
+    &.arrow--down {
+        position: absolute;
+        bottom: -10px;
+        display: inline-block;
+        width: 0;
+
+        &:after {
+            position: relative;
+            content: '';
+            display: block;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-top: 10px solid $arrow__bg-color;
+            border-bottom: 0px solid transparent;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+        }
     }
 }

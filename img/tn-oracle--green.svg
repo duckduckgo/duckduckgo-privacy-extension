@@ -1,0 +1,18 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>tn-oracle</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-11358 -1013)">
+<g id="tn-oracle">
+<g id="dot">
+<use xlink:href="#path0_fill" transform="translate(11358 1013)" fill="#5B9E4D"/>
+</g>
+<g id="oracle">
+<use xlink:href="#path1_fill" transform="translate(11363 1020)" fill="#FFFFFF"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 24 12C 24 18.6274 18.6274 24 12 24C 5.37258 24 0 18.6274 0 12C 0 5.37258 5.37258 0 12 0C 18.6274 0 24 5.37258 24 12Z"/>
+<path id="path1_fill" d="M 4.42742 10C 1.98336 10 0 7.76537 0 5.00399C 0 2.24262 1.98336 0 4.42742 0L 9.57333 0C 12.0181 0 14 2.24262 14 5.00399C 14 7.76537 12.0181 10 9.57333 10L 4.42742 10ZM 9.45886 8.23623C 11.0423 8.23623 12.3247 6.7917 12.3247 5.00399C 12.3247 3.21628 11.0423 1.76377 9.45886 1.76377L 4.54115 1.76377C 2.95843 1.76377 1.67527 3.21628 1.67527 5.00399C 1.67527 6.7917 2.95843 8.23623 4.54115 8.23623L 9.45886 8.23623Z"/>
+</defs>
+</svg>

@@ -1,0 +1,18 @@
+<svg width="24" height="24" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>tn-google</title>
+<desc>Created using Figma</desc>
+<g id="Canvas" transform="translate(-11390 -1013)">
+<g id="tn-google">
+<g id="dot">
+<use xlink:href="#path0_fill" transform="translate(11390 1013)" fill="#de5833"/>
+</g>
+<g id="google">
+<use xlink:href="#path1_fill" transform="translate(11397 1020)" fill="#FFFFFF"/>
+</g>
+</g>
+</g>
+<defs>
+<path id="path0_fill" d="M 24 12C 24 18.6274 18.6274 24 12 24C 5.37258 24 0 18.6274 0 12C 0 5.37258 5.37258 0 12 0C 18.6274 0 24 5.37258 24 12Z"/>
+<path id="path1_fill" fill-rule="evenodd" d="M 4.995 5.95L 4.995 4.09L 9.675 4.09C 9.745 4.405 9.8 4.7 9.8 5.115C 9.8 7.97 7.885 10 5 10C 2.24 10 1.27157e-07 7.76 1.27157e-07 5C 1.27157e-07 2.24 2.24 0 5 0C 6.35 0 7.48 0.495001 8.345 1.305L 6.925 2.685C 6.565 2.345 5.935 1.945 5 1.945C 3.345 1.945 1.995 3.32 1.995 5.005C 1.995 6.69 3.345 8.065 5 8.065C 6.915 8.065 7.62 6.74 7.75 5.955L 4.995 5.955L 4.995 5.95Z"/>
+</defs>
+</svg>

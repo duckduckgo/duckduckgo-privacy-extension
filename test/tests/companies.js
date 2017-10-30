@@ -1,16 +1,16 @@
 (function() {
   QUnit.module("Companies");
-  
+
   QUnit.test("test companies and company classes", function (assert) {
-      bkg.Companies.clearData();
-      
+      bkg.Companies.resetData();
+
       var company = bkg.Companies.add('Twitter');
       assert.ok(company.get('count') === 1, "has correct initial count");
 
       company.incrementCount();
       assert.ok(company.get('count') === 2, "increment count");
-      
-      bkg.Companies.clearData();
+
+      bkg.Companies.resetData();
 
       var sortedData = {
           "Facebook": 10,

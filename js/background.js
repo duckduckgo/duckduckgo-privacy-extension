@@ -154,8 +154,7 @@ chrome.webRequest.onBeforeRequest.addListener(
              * Tracker blocking
              * If request is a tracker, cancel the request
              */
-
-            chrome.runtime.sendMessage({"updateTrackerCount": true});
+            chrome.runtime.sendMessage({'updateTabData': true})
 
             var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
@@ -174,7 +173,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 // Block the request if the site is not whitelisted
                 if (!thisTab.site.whitelisted && tracker.block) {
                     thisTab.addOrUpdateTrackersBlocked(tracker);
-                    chrome.runtime.sendMessage({"updateTrackerCount": true});
+                    chrome.runtime.sendMessage({'updateTabData': true})
 
                     // update badge icon for any requests that come in after
                     // the tab has finished loading
@@ -222,7 +221,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (https.isReady) {
                 https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
-                        if (url !== requestData.url.toLowerCase()) {
+                        if (url.toLowerCase() !== requestData.url.toLowerCase()) {
                             console.log('HTTPS: upgrade request url to ' + url)
                             if (isMainFrame) thisTab.upgradedHttps = true
                             thisTab.addHttpsUpgradeRequest(url)

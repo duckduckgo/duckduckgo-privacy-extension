@@ -1,6 +1,6 @@
 module.exports = function(grunt) {
-    require('load-grunt-tasks')(grunt);
-    grunt.loadNpmTasks('grunt-execute');
+    require('load-grunt-tasks')(grunt)
+    grunt.loadNpmTasks('grunt-execute')
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -19,15 +19,15 @@ module.exports = function(grunt) {
 
         browserify: {
             ui: {
-                options: { transform: [ 'babelify'] },
+                options: { transform: ['babelify'] },
                 files: {
                     '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
-                    '<%= dirs.public.js %>/trackers.js': ['<%= dirs.src.js %>/ui/pages/trackers.es6.js'],
+                    '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
                     '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
                 }
             },
             background: {
-                options: { transform: [ 'babelify'] },
+                options: { transform: ['babelify'] },
                 files: {
                     '<%= dirs.src.js %>/abp.js': ['<%= dirs.src.js %>/abp-preprocessed.es6.js'],
                     '<%= dirs.src.js %>/tldjs.js': ['<%= dirs.src.js %>/tldjs.es6.js']
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
                 files: {
                     '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.css %>/noatb.scss'],
                     '<%= dirs.public.css %>/base.css': ['<%= dirs.src.css %>/base/base.scss'],
-                    '<%= dirs.public.css %>/trackers.css': ['<%= dirs.src.css %>/trackers.scss'],
+                    '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.css %>/popup.scss'],
                     '<%= dirs.public.css %>/options.css': ['<%= dirs.src.css %>/options.scss']
                 }
             }
@@ -69,9 +69,9 @@ module.exports = function(grunt) {
                 tasks: ['browserify:background']
             }
         }
-    });
+    })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists']);
-    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch']);
-    grunt.registerTask('default', 'build');
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists'])
+    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
+    grunt.registerTask('default', 'build')
 }

@@ -1,4 +1,30 @@
 @import "vars";
+@import "tracker-network-icons";
+
+/* Logo */
+@mixin ddg_logo () {
+    background-size: contain;
+
+    .is-browser--chrome & {
+        background-image: url($img__logo--chrome);
+    }
+
+    .is-browser--moz & {
+        background-image: url($img__logo--moz);
+    }
+}
+
+@mixin ddg_logo--small () {
+    background-size: contain;
+
+    .is-browser--chrome & {
+        background-image: url($img__logo__small--chrome);
+    }
+
+    .is-browser--moz & {
+        background-image: url($img__logo__small--moz);
+    }
+}
 
 
 /* App states */
@@ -6,23 +32,40 @@
     opacity: 0.5;
 }
 
+@mixin is_disableable_link () {
+    body.disabled & {
+        cursor: default;
 
-/* Menu lists */
-@mixin menu_list () {
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
 
-    .menu-list {
+/* Font groupings */
+@mixin uppercase_label () {
+    font-size: 12px;
+    color: $grey-dark;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: bold;
+}
+
+.uppercase {
+    @include uppercase_label();
+}
+
+/* Lists */
+@mixin default_list () {
+
+    .default-list {
         list-style-type: none;
         padding-left: 0;
         padding-bottom: 14px;
         margin-top: 0;
 
         li {
-            padding-top: 17px;
-
-            &:first-child {
-                padding-top: 0;
-            }
-
+            padding-top: 15px;
         }
     }
 }
@@ -71,7 +114,7 @@
             }
 
             .toggle-button__bg {
-                background-color: $grey-light;
+                background-color: $color--grey;
             }
 
         }
@@ -83,7 +126,7 @@
             }
 
             .toggle-button__bg {
-                background-color: #84ba50;
+                background-color: $color--green;
             }
 
         }
@@ -101,30 +144,6 @@
     width: 20px;
     height: 20px;
     vertical-align: middle;
-}
-
-@mixin ddg_logo () {
-    background-size: contain;
-
-    .is-browser--chrome & {
-        background-image: url($img__logo--chrome);
-    }
-
-    .is-browser--moz & {
-        background-image: url($img__logo--moz);
-    }
-}
-
-@mixin ddg_logo--small () {
-    background-size: contain;
-
-    .is-browser--chrome & {
-        background-image: url($img__logo__small--chrome);
-    }
-
-    .is-browser--moz & {
-        background-image: url($img__logo__small--moz);
-    }
 }
 
 
@@ -150,7 +169,7 @@
         }
 
         &.sliding-subview--has-fixed-header {
-            padding: 49px 0 0 0;
+            padding: 42px 0 0 0;
             width: $popup__width; /* 270px - 14*2 */
             margin-bottom: 28px;
         }
@@ -167,48 +186,35 @@
             color: #383838;
             overflow: hidden;
 
+            .sliding-subview__header__back,
             .sliding-subview__header__title {
+                height: 26px;
+                width: 14px;
                 color: $slate;
                 font-size: 14px;
                 font-weight: bold;
                 padding: 14px 0 0 14px;
                 display: inline-block;
-                height: 26px;
-                width: 14px;
 
-                &.sliding-subview__header__title--has-icon {
+                &.sliding-subview__header__back--is-icon {
                     padding-left: 35px;
                 }
             }
 
-            .sliding-subview__header__tabbed-nav {
+            .sliding-subview__header__title {
+                z-index: -1;
                 position: absolute;
-                left: 83px;
                 top: 0;
-
-                a {
-                    font-size: 14px;
-                    font-weight: normal;
-                    color: $grey-light;
-                    display: inline-block;
-                    padding: 14px 0 10px 0;
-                    margin-right: 7px;
-                    text-decoration: none;
-
-                    &:hover {
-                        text-decoration: none;
-                    }
-
-                    &.active {
-                        color: $red;
-                        border-bottom: 1px solid $red;
-
-                        &:hover {
-                            text-decoration: none;
-                        }
-                    }
-                }
+                right: 0;
+                left: 0;
+                width: auto;
+                text-align: center;
+                font-weight: bold;
+                color: $slate;
+                padding: 14px 0 10px 0;
+                text-decoration: none;
             }
+
         }
     }
 }
