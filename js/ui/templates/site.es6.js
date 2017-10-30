@@ -9,13 +9,7 @@ module.exports = function () {
         <ul class="default-list">
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container border--bottom">
-                    <div class="site-info__rating-flex">
-                        ${siteRating('A', this.model.siteRating === 'A')}
-                        ${siteRating('B', this.model.siteRating === 'B')}
-                        ${siteRating('C', this.model.siteRating === 'C')}
-                        ${siteRating('D', this.model.siteRating === 'D')}
-                        ${siteRating('F', this.model.siteRating === 'F')}
-                    </div>
+                    ${siteRating(this.model.siteRating, this.model.isWhitelisted)}
                     <h1 class="site-info__domain">${this.model.domain}</h1>
                     <p class="site-info__rating-label uppercase text--center">
                         Privacy Grade

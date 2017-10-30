@@ -1,0 +1,30 @@
+/* Site Rating Icons in Popup (aka "hero icons") */
+
+$icon__hero_rating__a: "hero-rating__a.svg";
+$icon__hero_rating__a--is-active: "hero-rating__a--is-active.svg";
+
+
+@mixin site_rating_icons () {
+
+    &.site-info__rating--a {
+
+        .is-browser--chrome & {
+            background-image: url(chrome-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__a});
+        }
+
+        .is-browser--moz & {
+            background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__a});
+        }
+
+        &.is-active {
+
+            .is-browser--chrome & {
+                background-image: url(chrome-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__a--is-active});
+            }
+
+            .is-browser--moz & {
+                background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__a--is-active});
+            }
+        }
+    }
+}
