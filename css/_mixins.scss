@@ -34,7 +34,7 @@
 }
 
 @mixin is_disableable_link () {
-    body.disabled & {
+    body.is-disabled & {
         cursor: default;
 
         &:hover {

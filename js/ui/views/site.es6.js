@@ -49,9 +49,9 @@ Site.prototype = $.extend({},
         rerender: function () {
             // console.log('[view] rerender()')
             if (this.model.disabled) {
-                this.$body.addClass('disabled')
+                this.$body.addClass('is-disabled')
             } else {
-                this.$body.removeClass('disabled');
+                this.$body.removeClass('is-disabled');
                 this.unbindEvents()
                 this._rerender()
                 this._setup()
@@ -59,7 +59,7 @@ Site.prototype = $.extend({},
         },
 
         _showAllTrackers: function () {
-            if (this.$body.hasClass('disabled')) return
+            if (this.$body.hasClass('is-disabled')) return
             this.views.slidingSubview = new GradeDetailsView({
                 template: gradeDetailsTemplate
             })

@@ -16,7 +16,7 @@ body {
     }
 }
 
-.disabled {
+.is-disabled {
 
     .site-info {
         @include is_disabled();
