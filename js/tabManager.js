@@ -129,9 +129,9 @@ chrome.webRequest.onHeadersReceived.addListener( (request) => {
         tab.statusCode = request.statusCode
 
         if (tab.statusCode === 200) {
-            tab.url = request.url;
-            tab.updateSite();
-            Companies.incrementPages();
+            tab.url = request.url
+            tab.updateSite()
+            Companies.incrementPages()
         }
     }
 }, {urls: ['<all_urls>'], types: ['main_frame']});

@@ -165,10 +165,10 @@ chrome.webRequest.onBeforeRequest.addListener(
                 // blocked below but not counted toward company stats
                 if (thisTab.statusCode === 200) {
                     // record all tracker urls on a site even if we don't block them
-                    thisTab.site.addTracker(tracker);
+                    thisTab.site.addTracker(tracker)
 
                     // record potential blocked trackers for this tab
-                    thisTab.addToTrackers(tracker);
+                    thisTab.addToTrackers(tracker)
                 }
 
                 // Block the request if the site is not whitelisted
