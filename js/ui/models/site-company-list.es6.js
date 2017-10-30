@@ -57,6 +57,7 @@ SiteCompanyList.prototype = $.extend({},
                   // max width: 300 - (horizontal padding in css) = 260
                   return {
                       name: companyName,
+                      // hack to bump 'unknown' trackers to bottom of list
                       count: companyName === 'unknown' ? -1 : company.count,
                       px: Math.floor(company.count * 260 / maxCount),
                       urls: company.urls
