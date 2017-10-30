@@ -46,18 +46,9 @@ module.exports = function () {
                 </h2>
             </li>
             <li class="site-info__li--trackers padded border--bottom">
-                <h2 class="site-info__trackers bold">
-                    <span class="site-info__trackers-status__icon
-                        is-blocking--${!this.model.isWhitelisted}">
-                    </span>
-                    Tracker networks
-                    <div class="float-right">
-                        ${renderTrackerNetworks(
-                            this.model.trackerNetworks,
-                            this.model.numTrackerIconsToDisplay,
-                            !this.model.isWhitelisted)}
-                    </div>
-                </h2>
+                ${renderTrackerNetworks(
+                    this.model.trackerNetworks,
+                    this.model.isWhitelisted)}
             </li>
             <li class="site-info__li--more-details padded border--bottom">
                 <a href="#" class="js-site-show-all-trackers link-secondary bold">
@@ -68,59 +59,17 @@ module.exports = function () {
         </ul>
     </section>`
 
-    function renderTrackerNetworks (tn, limit, isWhitelisted) {
-        if (tn && tn.major) {
-            const isActive = isWhitelisted ? 'is-active' : ''
-            return tn.major.map((t, i) => {
-                if (i > (limit - 1)) return ''
-                return bel`<span class="site-info__tracker__icon
-                    ${t.replace('.', '')} ${isActive}">${t}</span>`
-            })
-        }
-    }
-
-    function trackersMsg (trackerNetworks, isWhitelisted) {
-        const noTrackersMsg = `No tracker networks found on this page.`
-        if (!trackerNetworks) {
-            return bel`<span>${noTrackersMsg}</span>`
-        }
-
-        let msg = ``
-        let isPlural = false
-        if (trackerNetworks.major && trackerNetworks.major.length > 0) {
-            if (trackerNetworks.major.length > 1) isPlural = true
-            trackerNetworks.major.map((tn, i) => {
-                msg += titleize(tn)
-                if (isPlural && i < trackerNetworks.major.length - 1) msg += `,`
-                msg += ` `
-            })
-            if (trackerNetworks.numOthers) {
-                msg += `and ${trackerNetworks.numOthers} other`
-                if (trackerNetworks.numOthers > 1) {
-                    msg += `s`
-                    isPlural = true
-                }
-                msg += ` `
-            }
-        } else if (trackerNetworks.numOthers) {
-            msg = `${numOthers} network`
-            if (trackerNetworks.numOthers.length > 1) {
-                msg += `s`
-                isPlural = true
-            }
-            msg += ` `
-        }
-
-        if (!msg) {
-            return bel`<span>${noTrackersMsg}</span>`
-        }
-
-        const isOrAre = isPlural ? `are` : `is`
-        if (isWhitelisted) {
-            return bel`<span>${msg} ${isOrAre} <em>currently tracking</em> you.</span>`
-        } else {
-            return bel`<span>${msg} ${isOrAre} <em>blocked</em> from tracking you.</span>`
-        }
-
+    function renderTrackerNetworks (tn, isWhitelisted) {
+        let count = '0'
+        if (tn && tn.major) count = tn.major.length
+        const isActive = !isWhitelisted ? 'is-active' : ''
+        const foundOrBlocked = isWhitelisted ? 'found' : 'blocked'
+        return bel`<h2 class="site-info__trackers bold">
+            <span class="site-info__trackers-status__icon
+                is-blocking--${!isWhitelisted}">
+            </span>
+            Tracker networks ${foundOrBlocked}
+            <div class="float-right uppercase ${isActive}">${count}</div>
+        </h2>`
     }
 }

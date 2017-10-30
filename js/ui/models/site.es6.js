@@ -27,7 +27,6 @@ function Site (attrs) {
     attrs.isUserPrivacyUpgraded = false
     attrs.trackerCount = 0
     attrs.trackerNetworks
-    attrs.numTrackerIconsToDisplay = 4
     Parent.call(this, attrs)
 
     this.bindEvents([
