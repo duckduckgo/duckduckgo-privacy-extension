@@ -278,13 +278,15 @@ body {
 
         .site-info__li--https-status {
             position: relative;
+            padding-left: 45px;
         }
 
         @mixin site_status_icons () {
+            position: absolute;
             width: 17px;
             height: 21px;
-            vertical-align: middle;
-            margin-right: 5px;
+            top: 10px;
+            left: 20px;
         }
 
         .site-info__https-status__icon {
@@ -336,13 +338,14 @@ body {
 
         .site-info__li--trackers {
             position: relative;
+            padding-left: 45px;
 
             .site-info__trackers {
 
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    margin-left: -2px;
+                    top: 12.5px;
 
                     &.is-blocking--true {
 
