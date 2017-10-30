@@ -41,7 +41,7 @@
       const totalPages = sites.length
       
       // clear company data
-      bkg.Companies.clearData()
+      bkg.Companies.resetData()
 
       var done = assert.async()
       var openTabs = 0
@@ -56,11 +56,11 @@
                   
                   chrome.tabs.remove(tab.id)
                   
-                  let topBlocked = bkg.Companies.getTopBlockedByPages()
-                  let googleEntry = topBlocked.find(e => e.name === 'Google');
+                  let byPages = bkg.Companies.getTopBlockedByPages()
+                  let googleEntry = byPages.topBlocked.find(e => e.name === 'Google');
 
                   assert.ok(googleEntry, 'Site has google tracker')
-                  assert.ok(googleEntry.count === 100, 'google is on 100% of test pages')
+                  assert.ok(googleEntry.percent === 100, 'google is on 100% of test pages')
 
                   openTabs--
 
