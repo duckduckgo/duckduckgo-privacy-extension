@@ -56,9 +56,6 @@ module.exports = function () {
                             this.model.trackerNetworks,
                             this.model.numTrackerIconsToDisplay,
                             !this.model.isWhitelisted)}
-                        ${renderNumOtherTrackerNetworks(
-                            this.model.trackerNetworks
-                        )}
                     </div>
                 </h2>
             </li>
@@ -79,16 +76,6 @@ module.exports = function () {
                 return bel`<span class="site-info__tracker__icon
                     ${t.replace('.', '')} ${isActive}">${t}</span>`
             })
-        }
-    }
-
-    function renderNumOtherTrackerNetworks (tn) {
-        if (!tn) return
-        let plus = ''
-        if (tn.major && tn.major.length > 0) plus = '+'
-        if (tn.numOthers) {
-            return bel`<span class="site-info__trackers__others">
-                ${plus} ${tn.numOthers}</span>`
         }
     }
 
