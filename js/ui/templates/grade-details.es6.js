@@ -50,6 +50,7 @@ function renderTrackerDetails (companyListMap) {
     }
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
+            if (c.name && c.name === 'unknown') c.name = '(Tracker network unknown)'
             return bel`<li>
                 <span class="site-info__tracker__icon
                     ${c.name.replace('.', '').toLowerCase()}
