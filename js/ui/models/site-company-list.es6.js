@@ -57,7 +57,7 @@ SiteCompanyList.prototype = $.extend({},
                   // max width: 300 - (horizontal padding in css) = 260
                   return {
                       name: companyName,
-                      count: companyName === 'unknown' ? 1 : company.count,
+                      count: companyName === 'unknown' ? -1 : company.count,
                       px: Math.floor(company.count * 260 / maxCount),
                       urls: company.urls
                   }
