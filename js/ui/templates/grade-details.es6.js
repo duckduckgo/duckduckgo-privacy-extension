@@ -51,10 +51,10 @@ function renderTrackerDetails (companyListMap) {
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
             return bel`<li>
-                <span class="block">${c.name}</span>
                 <span class="site-info__tracker__icon
                     ${c.name.replace('.', '').toLowerCase()}
                     float-right"></span>
+                <span class="block">${c.name}</span>
                 <ol class="default-list site-info__trackers__company-list__url-list">
                     ${c.urls.map((url) => bel`<li>${url}</li>`)}
                 </ol>
