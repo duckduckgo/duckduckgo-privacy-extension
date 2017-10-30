@@ -113,7 +113,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) {
 
         let tabId = requestData.tabId;
-        
+   
         // Skip requests to background tabs
         if (tabId === -1) { return }
 
@@ -160,11 +160,16 @@ chrome.webRequest.onBeforeRequest.addListener(
             var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
             if (tracker) {
-                // record all tracker urls on a site even if we don't block them
-                thisTab.site.addTracker(tracker);
 
-                // record potential blocked trackers for this tab
-                thisTab.addToTrackers(tracker);
+                // only count trackers on pages with 200 response. Trackers on these sites are still 
+                // blocked below but not counted toward company stats
+                if (thisTab.statusCode === 200) {
+                    // record all tracker urls on a site even if we don't block them
+                    thisTab.site.addTracker(tracker);
+
+                    // record potential blocked trackers for this tab
+                    thisTab.addToTrackers(tracker);
+                }
 
                 // Block the request if the site is not whitelisted
                 if (!thisTab.site.whitelisted && tracker.block) {
@@ -176,7 +181,9 @@ chrome.webRequest.onBeforeRequest.addListener(
                     if (thisTab.status === "complete") thisTab.updateBadgeIcon()
 
 
-                    if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
+                    if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200){
+                        Companies.add(tracker.parentCompany)
+                    }
 
                     // for debugging specific requests. see test/tests/debugSite.js
                     if (debugRequest && debugRequest.length) {

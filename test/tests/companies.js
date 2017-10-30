@@ -32,5 +32,46 @@
 
       assert.ok(sortedTopBlocked.join(',') === sortedList.join(','), "top blocked returns correct sorted list");
 
-  });
+      // load a bunch of sites with known trackers. Check that the total number
+      // of pages is correct and that we have the correct company percents. This 
+      // could fail if a site has changed what company trackers it has. We'll just
+      // look at google trackers to minimize that chance.
+
+      const sites = ['https://lifehacker.com/', 'https://gizmodo.com/', 'https://www.theverge.com/']
+      const totalPages = sites.length
+      
+      // clear company data
+      bkg.Companies.clearData()
+
+      var done = assert.async()
+      var openTabs = 0
+      // visit sites, wait to load, then close
+      sites.forEach((site) => {
+          chrome.tabs.create({url: site})
+          openTabs++
+
+          getLoadedTab(site).then((tab) => {
+              // wait to let trackers load
+              window.setTimeout(() => {
+                  
+                  chrome.tabs.remove(tab.id)
+                  
+                  let topBlocked = bkg.Companies.getTopBlockedByPages()
+                  let googleEntry = topBlocked.find(e => e.name === 'Google');
+
+                  assert.ok(googleEntry, 'Site has google tracker')
+                  assert.ok(googleEntry.count === 100, 'google is on 100% of test pages')
+
+                  openTabs--
+
+                  if (!openTabs) {
+                      let pages = bkg.Companies.getTotalPages()
+                      assert.ok(totalPages === pages, 'has correct number of total pages')
+                      done()
+                  }
+
+              }, 1000)
+          })
+      })
+  })
 })();

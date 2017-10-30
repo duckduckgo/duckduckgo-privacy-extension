@@ -16,6 +16,8 @@ var Companies = ( () => {
     return {
         get: (name) => { return companyContainer[name] },
 
+        getTotalPages: () => { return totalPages },
+
         add: (name) => {
             if(!companyContainer[name]){
                 companyContainer[name] = new Company(name);
@@ -57,6 +59,7 @@ var Companies = ( () => {
 
         clearData: () => { 
             companyContainer = {};
+            totalPages = 0
             topBlocked.clear();
         },
 
