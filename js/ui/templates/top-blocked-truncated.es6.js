@@ -11,7 +11,7 @@ module.exports = function () {
             </h3>
             <ol class="default-list top-blocked__list">
                 ${listItems(this.model.companyListMap)}
-                <li class="top-blocked__li top-blocked__li--see-all">
+                <li class="top-blocked__li top-blocked__li--see-all border--top">
                     <a href="#" class="link-secondary js-top-blocked-see-all">
                         <span class="icon icon__arrow pull-right"></span>
                         All trackers
