@@ -16,13 +16,6 @@ body {
     }
 }
 
-.is-disabled {
-
-    .site-info {
-        @include is_disabled();
-    }
-}
-
 #popup-container {
 
     .failover.card {
@@ -201,6 +194,12 @@ body {
             font-size: 17px;
         }
 
+        .site-info__li--toggle {
+            .is-disabled & {
+                @include is_disabled();
+            }
+        }
+
         .site-info__toggle-container {
             position: relative;
             float: right;
@@ -238,6 +237,10 @@ body {
         .site-info__li--https-status {
             position: relative;
             padding-left: 45px;
+
+            .is-disabled & {
+                @include is_disabled();
+            }
         }
 
         @mixin site_status_icons () {
@@ -297,6 +300,10 @@ body {
         .site-info__li--trackers {
             position: relative;
             padding-left: 45px;
+
+            .is-disabled & {
+                @include is_disabled();
+            }
 
             .site-info__trackers {
 

@@ -39,6 +39,7 @@ Site.prototype = $.extend({},
         },
 
         _whitelistClick: function (e) {
+            if (this.$body.hasClass('is-disabled')) return
             this.model.toggleWhitelist()
             console.log('isWhitelisted: ', this.model.isWhitelisted)
             chrome.tabs.reload(this.model.tab.id)
