@@ -386,6 +386,7 @@ body {
         .site-info__li--more-details {
             .link-secondary {
                 @include is_disableable_link();
+                display: block;
             }
         }
 
