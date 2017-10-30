@@ -97,7 +97,7 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                 tab.checkHttpsRequestsOnComplete()
                 console.info(tab.site.score)
                 tab.updateBadgeIcon()
-                if (tab.trackersBlocked && Object.keys(tab.trackersBlocked).length > 0) {
+                if (tab.statusCode === 200 && tab.trackersBlocked && Object.keys(tab.trackersBlocked).length > 0) {
                     Companies.incrementTotalPagesWithTrackers()
                 }
             }
@@ -123,11 +123,16 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
 
 // Update tab data. This makes
 // sure we have the correct url after any https rewrites
-chrome.webRequest.onHeadersReceived.addListener((request) => {
-    let tab = tabManager.get({tabId: request.tabId})
+chrome.webRequest.onHeadersReceived.addListener( (request) => {
+    
+    let tab = tabManager.get({tabId: request.tabId});
     if (tab) {
-        tab.url = request.url;
-        tab.updateSite()
-        Companies.incrementTotalPages()
+        tab.statusCode = request.statusCode
+
+        if (tab.statusCode === 200) {
+            tab.url = request.url
+            tab.updateSite()
+            Companies.incrementTotalPages()
+        }
     }
 }, {urls: ['<all_urls>'], types: ['main_frame']})
