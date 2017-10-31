@@ -1,9 +1,12 @@
 const bel = require('bel')
 
-module.exports = function (rating) {
+module.exports = function (ratings, isWhitelisted) {
+    console.log(ratings)
     let msg = ``
-    if (rating) {
-        msg = `This received a "${rating.toUpperCase()}" Privacy Grade
+    let _rating = isWhitelisted ? ratings.before : ratings.after
+    
+    if (_rating) {
+        msg = `This received a "${_rating.toUpperCase()}" Privacy Grade
           for the reasons below.`
     }
     return bel`<p class="site-info--details__explainer
