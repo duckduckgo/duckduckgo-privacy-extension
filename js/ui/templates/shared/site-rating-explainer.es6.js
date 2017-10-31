@@ -1,7 +1,6 @@
 const bel = require('bel')
 
 module.exports = function (ratings, isWhitelisted) {
-    console.log(ratings)
     let msg = ``
     let _rating = isWhitelisted ? ratings.before : ratings.after
     
