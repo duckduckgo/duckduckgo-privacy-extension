@@ -66,7 +66,7 @@ Trackers.prototype = $.extend({},
                 model: new SiteModel({
                     domain: '-',
                     isWhitelisted: false,
-                    siteRating: 'B',
+                    siteRating: {before: 'b', after: 'b'},
                     trackerCount: 0
                 }),
                 appendTo: this.$parent,
