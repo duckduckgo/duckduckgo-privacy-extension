@@ -39,7 +39,7 @@ BaseModel.prototype = $.extend({},
          * @param {*} val
          * @api public
          */
-        set: function(attr, val) {
+        set: function (attr, val) {
 
             // support passing a hash of values to set instead of
             // single attribute/value pair, i.e.:
@@ -47,7 +47,7 @@ BaseModel.prototype = $.extend({},
             // this.set({
             //   title: 'something',
             //   description: 'something described'
-            // });
+            // })
             if (typeof attr === 'object') {
                 for (var key in attr) {
                     this.set(key, attr[key], val);
@@ -60,7 +60,7 @@ BaseModel.prototype = $.extend({},
 
             this.store.publish({
                 notifierName: this.modelName,
-                change: { attribute: attr, value: val, lastValue: lastValue },
+                change: {attribute: attr, value: val, lastValue: lastValue},
                 attributes: this._toJSON()
             });
         },
@@ -90,6 +90,39 @@ BaseModel.prototype = $.extend({},
              this.store.remove(this.modelName);
          },
 
+
+        /**
+         * Fetch data from background
+         * this.model.fetch({'messageName': messageValue}).then((response) ..
+         **/
+        fetch: function (message) {
+            return new Promise((resolve, reject) => {
+                chrome.runtime.sendMessage(message, ((result) => {
+                        resolve(result)
+                    })
+                )
+            })
+        },
+
+        /**
+         * Send a user action
+         * Broadcasts an action to other UI components
+         * via notification store
+         * @param action {string}
+         * @param data {could be a jquery event or other data; is optional}
+         */
+        send: function (action, data) {
+            if (!action) throw new Error('model.send() requires an action argument')
+            data = data || null
+            this.store.publish({
+                notifierName: this.modelName,
+                action: action,
+                data: data,
+                attributes: this._toJSON()
+            })
+        },
+
+
          /**
           * Private method for turning `this` into a
           * JSON object before sending to application store.
@@ -100,20 +133,8 @@ BaseModel.prototype = $.extend({},
              let attributes = Object.assign({}, Object.getPrototypeOf(this), this);
              if (attributes.store) delete attributes.store;
              return JSON.parse(JSON.stringify(attributes));
-         },
+         }
 
-        /**
-         * Send messages to background
-         * this.model.fetch({"messageName": messageValue}).then((response) ..
-         **/
-        fetch: function(message) {
-            return new Promise( (resolve, reject) => {
-                chrome.runtime.sendMessage(message, ((result) => {
-                        resolve(result)
-                    })
-                );
-            })
-        }
     }
 );
 

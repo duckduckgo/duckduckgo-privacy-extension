@@ -1,106 +1,82 @@
 var ATB = (() => {
-    var ddgRegex = '/duckduckgo\.com';
-    var ddgAtbURL = 'https://duckduckgo.com/atb.js?';
+    // regex to match ddg urls to add atb params to.
+    // Matching subdomains, searches, and newsletter page
+    var ddgRegex = new RegExp(/^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/)
+    var ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
         updateSetAtb: () => {
-            // Just return for now. The legacy portion of the extension
-            // is still taking care of this.
-            // We need to migrate atb values over to the webextension.
-            return;
-
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 let atbSetting = settings.getSetting('atb'),
-                    setAtbSetting = settings.getSetting('set_atb');
+                    setAtbSetting = settings.getSetting('set_atb')
 
                 if(!atbSetting || !setAtbSetting)
-                    resolve(null);
+                    resolve(null)
 
                 ATB.getSetAtb(atbSetting, setAtbSetting).then((newAtb) => {
                     if(newAtb !== setAtbSetting){
-                        settings.updateSetting('set_atb', newAtb);
+                        settings.updateSetting('set_atb', newAtb)
                     }
-                    resolve(newAtb);
-                });
-            });
+                    resolve(newAtb)
+                })
+            })
         },
 
-        getSetAtb: (atbSetting, setAtb, callback) => {
-
-            // Just return for now. The legacy portion of the extension
-            // is still taking care of this.
-            // We need to migrate atb values over to the webextension.
-            return;
-
-            return new Promise((resolve, reject) => {
-                var xhr = new XMLHttpRequest();
+        getSetAtb: (atbSetting, setAtb) => {
+            return new Promise((resolve) => {
+                var xhr = new XMLHttpRequest()
 
                 xhr.onreadystatechange = function() {
                     if(xhr.readyState === XMLHttpRequest.DONE){
                         if(xhr.status == 200){
-                            let curATB = JSON.parse(xhr.responseText);
-                            resolve(curATB.version);
+                            let curATB = JSON.parse(xhr.responseText)
+                            resolve(curATB.version)
                         }
                     }
-                };
+                }
 
-                let randomValue = Math.ceil(Math.random() * 1e7);
-                let AtbRequestURL = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtb;
+                let randomValue = Math.ceil(Math.random() * 1e7)
+                let AtbRequestURL = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtb
 
-                xhr.open('GET', AtbRequestURL, true );
-                xhr.send();
-            });
+                xhr.open('GET', AtbRequestURL, true )
+                xhr.send()
+            })
         },
 
         redirectURL: (request) => {
-            // just return until we revisit this module
-            return
-
             if(request.url.search(ddgRegex) !== -1){
                 
                 if(request.url.indexOf('atb=') !== -1){
-                    return;
+                    return
                 }
 
-                let atbSetting = settings.getSetting('atb');
+                let atbSetting = settings.getSetting('atb')
 
                 if(!atbSetting){
-                    return;
+                    return
                 }
 
                 // handle anchor tags for pages like about#newsletter
-                let urlParts = request.url.split('#');
+                let urlParts = request.url.split('#')
                 let newURL = request.url
 
                 // if we have an anchor tag
                 if (urlParts.length === 2) {
-                    newURL = urlParts[0] + "&atb=" + atbSetting + "#" + urlParts[1]
+                    newURL = urlParts[0] + '&atb=' + atbSetting + '#' + urlParts[1]
                 }
                 else {
-                    newURL = request.url + "&atb=" + atbSetting
+                    newURL = request.url + '&atb=' + atbSetting
                 }
 
                 return {redirectUrl: newURL}
             }
         },
 
-        // migrate old versions that used localstorage over to use settings and chrome.storage.local
-        migrate: () => {
-            let atbNames = ['atb', 'set_atb']
-            atbNames.map((name) => {
-                let localValue = localStorage[name]
-                let storageValue = settings.getSetting(name)
-                if (localValue && !storageValue) {
-                    settings.updateSetting(name, localValue)
-                }
-            });
-        },
-
         setInitialVersions: () => {
             if(!settings.getSetting('atb')){
-                let versions = ATB.calculateInitialVersions();
+                let versions = ATB.calculateInitialVersions()
                 if(versions && versions.major && versions.minor){
-                    settings.updateSetting('atb', 'v' + versions.major + '-' +versions.minor);
+                    settings.updateSetting('atb', `v${versions.major}-${versions.minor}`)
                 }
             }
         },
@@ -121,53 +97,68 @@ var ATB = (() => {
                 epoch = isDST ? estEpoch - oneHour : estEpoch,
                 timeSinceEpoch = new Date().getTime() - epoch,
                 majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay);        
-            return {"major": majorVersion, "minor": minorVersion};
+                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)        
+            return {'major': majorVersion, 'minor': minorVersion}
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
             if(!settings.getSetting('set_atb')){
-                settings.updateSetting('atb', atb);
-                settings.updateSetting('set_atb', atb);
+                settings.updateSetting('atb', atb)
+                settings.updateSetting('set_atb', atb)
             }
 
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true);
-            xhr.send();
+            let xhr = new XMLHttpRequest()
+            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true)
+            xhr.send()
         },
 
         inject: () => {
             chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
-                var i = tabs.length, tab;
+                var i = tabs.length, tab
                 while (i--) {
-                    tab = tabs[i];
+                    tab = tabs[i]
                     
                     chrome.tabs.executeScript(tab.id, {
                         file: 'js/oninstall.js'
-                    });
+                    })
                     
                     chrome.tabs.insertCSS(tab.id, {
                         file: 'css/noatb.css'
-                    });
+                    })
                 }
-            });
+            })
         },
 
         onInstalled: () => {
-            // we already migrate on update events but just to be
-            // safe lets do this on install too
-            ATB.migrate();
+            ATB.setInitialVersions()
+            // wait until settings is ready to try and get atb from the page
+            settings.ready().then(() => ATB.inject())
+        },
 
-            ATB.setInitialVersions();
-            ATB.inject();
-            
+        getSurveyURL: () => {
+            let url = 'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
+            let atb = settings.getSetting('atb')
+            let set_atb = settings.getSetting('set_atb')
+            if (atb) url += `&atb=${atb}`
+            if (set_atb) url += `&set_atb=${set_atb}`
+            return url
         }
     }
-})();
+})()
 
 // register message listener
 chrome.runtime.onMessage.addListener((request) => {
     if(request.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb);
+        ATB.setAtbValuesFromSuccessPage(request.atb)
     }
-});
+})
+
+
+// set uninstall survey url
+settings.ready().then(() => chrome.runtime.setUninstallURL(ATB.getSurveyURL()))
+chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
+chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
+    if (alarmEvent.name === 'updateUninstallURL') {
+        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    }
+}))
