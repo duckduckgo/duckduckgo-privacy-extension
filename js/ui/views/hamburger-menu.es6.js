@@ -36,10 +36,8 @@ HamburgerMenu.prototype = $.extend({},
         openOptionsPage: function () {
             this.model.fetch({getBrowser: true}).then(browser => {
                 if (browser === 'moz') {
-                    this.model.fetch({firefoxOptionPage: true})
-                        .then(page => {
-                            chrome.tabs.create({url: page})
-                        })
+                    chrome.tabs.create({url: chrome.extension.getURL("/html/options.html")})
+                    window.close()
                 } else {
                     chrome.runtime.openOptionsPage()
                 }
