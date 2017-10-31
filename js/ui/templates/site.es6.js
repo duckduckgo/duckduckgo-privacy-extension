@@ -11,9 +11,7 @@ module.exports = function () {
                 <div class="site-info__rating-container border--bottom">
                     ${siteRating(this.model.siteRating, this.model.isWhitelisted)}
                     <h1 class="site-info__domain">${this.model.domain}</h1>
-                    <p class="site-info__rating-label uppercase text--center">
-                        Privacy Grade
-                    </p>
+                    ${ratingUpgrade(this.model.siteRating, this.model.isWhitelisted)}
                 </div>
             </li>
             <li class="site-info__li--toggle padded border--bottom">
@@ -52,6 +50,27 @@ module.exports = function () {
             </li>
         </ul>
     </section>`
+
+    function ratingUpgrade (rating, isWhitelisted) {
+        const isActive = isWhitelisted ? false : true
+        let msg = 'Privacy Grade'
+        // site is whitelisted
+        if (!isActive) {
+            msg = `Privacy Protection Disabled`
+        }
+        // site grade was upgraded by extension
+        if (isActive && rating.before && rating.after) {
+            if (rating.before !== rating.after) {
+                msg = `Upgraded from ${rating.before} to ${rating.after}`
+            }
+        }
+        // "null" state (empty tab, browser's "about:" pages)
+        if (!rating.before && !rating.after) {
+            msg = `We only grade regular websites.`
+        }
+        return bel`<p class="site-info__rating-upgrade uppercase text--center">
+            ${msg}</p>`
+    }
 
     function renderTrackerNetworks (tn, isWhitelisted) {
         let count = '0'

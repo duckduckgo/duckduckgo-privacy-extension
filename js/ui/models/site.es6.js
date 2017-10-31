@@ -21,7 +21,7 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
-    attrs.siteRating = ''
+    attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
     attrs.isUserPrivacyUpgraded = false
@@ -69,7 +69,7 @@ Site.prototype = $.extend({},
           // console.log('[model] fetchSiteRating()')
           if (this.tab) {
               this.fetch({getSiteScore: this.tab.id}).then((rating) => {
-                  console.log('fetchSiteRating: ' + rating)
+                  console.log('fetchSiteRating: ',  rating)
                   if (rating) this.update({siteRating: rating})
               })
           }
@@ -78,7 +78,7 @@ Site.prototype = $.extend({},
       setSiteProperties: function() {
           if (!this.tab) {
               this.domain = 'new tab' // tab can be null for firefox new tabs
-              this.siteRating = ''
+              this.siteRating = {}
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted
@@ -121,7 +121,7 @@ Site.prototype = $.extend({},
       update: function (ops) {
           // console.log('[model] update()')
           if (this.tab) {
-              
+
               if (ops && ops.siteRating && (ops.siteRating.after !== this.siteRating.after)) {
                   this.set('siteRating', ops.siteRating)
               }
