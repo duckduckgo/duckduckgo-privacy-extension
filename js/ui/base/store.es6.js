@@ -13,21 +13,23 @@
  *
  * --> What you need to know as a feature developer: <--
  *
- *     - To PUBLISH a notification about a state change from a model to
- *       another model, view or page just call:
+ *     - To PUBLISH a notification from a model:
  *
  *       `model.set('bar', 1234)`
+ *        or
+ *       `model.send('somethingClicked')`
  *
- *     - To SUBSCRIBE to notifications about a published state change to
- *       a model from another model, view or a page (pretend the modelName is
- *       `search` that you want to subscribe to):
+ *     - To SUBSCRIBE to notifications about a model's published state change:
  *
  *          `this.bindEvents([
- *            [this.store.subscribe, 'change:search', this._handler],
+ *              [this.store.subscribe, 'change:search', this._handler],
+ *              [this.store.subscribe, 'action:search', this._clickHandler]
  *          ]);`
  *
  *        The first argument passed to `this._handler()` will be an
  *        object containing details about the search model's state change.
+ *        The first argument passed to `this._clickHandler()` will be
+ *        be the action name, second argument will be optional jQuery event.
  *
  *
  * TODO: create a state injector for test mocks
@@ -56,9 +58,9 @@ function register (notifierName) {
 
     if (!_store) {
         _store = _createStore(combinedNotifiers);
-        _store.subscribe((state) => {
-            state = deepFreeze(state); // make immutable before publishing
-            _publish(state); // publish notif. about state changes to subscribers
+        _store.subscribe((notification) => {
+            notification = deepFreeze(notification); // make immutable before publishing
+            _publish(notification); // publish notif. about state changes to subscribers
         });
     } else {
         // update reducers to include the newest registered here
@@ -70,20 +72,11 @@ function register (notifierName) {
 /**
  * .publish() dispatches a notification to the store which can be subscribed to.
  * Although this api method is public, most of what you need to do can be
- * done with model.set() and model.clear() instead of directly here.
- * @param {object} notification {
- *     {string} notifierName - name of notifier that was registered
- *     {object} change - { attribute, value, lastValue }
- *     {object} attributes - state of notifier (all of its direct properties)
-* }
+ * done with model.set(), model.clear(), model.send() instead of directly here.
  * @api public
  */
 function publish (notification) {
-  _store.dispatch({
-    notifierName: notification.notifierName,
-    change: notification.change,
-    attributes: notification.attributes
-  });
+    _store.dispatch(notification)
 }
 
 
@@ -93,19 +86,21 @@ function publish (notification) {
  */
 const _publisher = new EventEmitter2();
 _publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
+
 /**
  * Emits notifications via _publisher
  * @api private
  */
-function _publish (state) {
 
-    Object.keys(state).forEach((key) => {
-        if (state[key] && state[key].change) {
-            console.info(`STORE NOTIFICATION change:${key}`, state[key]);
-            _publisher.emit(`change:${key}`, state[key]);
-        }
-    });
-
+function _publish (notification) {
+    if (notification && notification.change) {
+        console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification)
+        _publisher.emit(`change:${notification.notifierName}`, notification)
+    }
+    if (notification && notification.action) {
+        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification)
+        _publisher.emit(`action:${notification.notifierName}`, notification)
+    }
 }
 
 
@@ -127,7 +122,8 @@ function remove (notifierName) {
  * Its api is not publicly exposed. Developers must use public api.
  * @api private
  */
-var _store = null;
+var _store = null
+
 /**
  * Create the store of notifiers and their notification dispatch functions.
  * This basically mimics a Redux store init pattern
@@ -150,7 +146,7 @@ function _createStore (notifier) {
 
         isEmitting = true;
         state = notifier(state, notification);
-        if (listener) listener(state);
+        if (listener) listener(notification);
         isEmitting = false;
         return notification;
     }

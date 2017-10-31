@@ -1,13 +1,13 @@
-const bel = require('bel');
+const bel = require('bel')
 
 module.exports = function () {
 
     return bel`<section class="options-content__whitelist">
             <h2 class="menu-title">Whitelisted Sites</h2>
-            <ul class="menu-list">
+            <ul class="default-list">
                 ${listItems(this.model.list)}
             </ul>
-        </section>`;
+        </section>`
 
 
     function listItems (list) {
@@ -18,10 +18,10 @@ module.exports = function () {
                 <li>
                     <a class="link-secondary" href="https://${dom}">${dom}</a>
                     <button class="remove pull-right js-whitelist-remove" data-item="${i++}">×</button>
-                </li>`)}`;
+                </li>`)}`
         }
 
-        return bel`<li>No whitelisted sites.</li>`;
+        return bel`<li>No whitelisted sites.</li>`
 
     };
 }

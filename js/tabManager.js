@@ -33,7 +33,7 @@ class TabManager {
      */
     whitelistDomain(data) {
         this.setGlobalWhitelist(data.list, data.domain, data.value)
-        
+
         for (let tabId in this.tabContainer) {
             let tab = this.tabContainer[tabId];
             if (tab.site && tab.site.domain === data.domain) {
@@ -66,7 +66,7 @@ chrome.tabs.onRemoved.addListener( (id, info) => {
     tabManager.delete(id);
 });
 
-/* This handles the new tab case. You have clicked to 
+/* This handles the new tab case. You have clicked to
  * open a new tab and haven't typed in a url yet.
  * This will fire an onUpdated event and we can create
  * an intital tab instance here. We'll update this instance
@@ -83,23 +83,24 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
             tab.status = info.status;
 
             /**
-             * When the tab finishes loading:
+             * Re: HTTPS. When the tab finishes loading:
              * 1. check main_frame url (via tab.url) for http/s, update site score
-             * 2. check for incomplete upgraded https upgrade requests, whitelist 
+             * 2. check for incomplete upgraded https upgrade requests, whitelist
              * the entire site if there are any then notify tabManager
-             *
              * NOTE: we aren't making a distinction between active and passive
              * content when https content is mixed after a forced upgrade
              */
             if (tab.status === 'complete') {
-
-                if (tab.url.match(/^https:\/\//)) {
+                if (tab.url && tab.url.match(/^https:\/\//)) {
                     tab.site.score.update({hasHTTPS: true})
                 }
                 tab.checkHttpsRequestsOnComplete()
-                console.info(tab.site.score);
-                tab.updateBadgeIcon();
-            } 
+                console.info(tab.site.score)
+                tab.updateBadgeIcon()
+                if (tab.statusCode === 200 && tab.trackersBlocked && Object.keys(tab.trackersBlocked).length > 0) {
+                    Companies.incrementTotalPagesWithTrackers()
+                }
+            }
         }
     }
 
@@ -118,16 +119,20 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
         res(tab.site.score.get())
     }
     return true;
-});
+})
 
-// update tab url after the request is finished. This makes
+// Update tab data. This makes
 // sure we have the correct url after any https rewrites
 chrome.webRequest.onHeadersReceived.addListener( (request) => {
+    
     let tab = tabManager.get({tabId: request.tabId});
     if (tab) {
-        tab.url = request.url;
-        tab.updateSite();
-        Companies.incrementPages();
-    }
-}, {urls: ['<all_urls>'], types: ['main_frame']});
+        tab.statusCode = request.statusCode
 
+        if (tab.statusCode === 200) {
+            tab.url = request.url
+            tab.updateSite()
+            Companies.incrementTotalPages()
+        }
+    }
+}, {urls: ['<all_urls>'], types: ['main_frame']})

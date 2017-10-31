@@ -40,12 +40,10 @@ require.scopes.utils = ( () => {
         chrome.storage.local.set(data, function() { });
     }
 
-    function getFromStorage (key, callback){
-        chrome.storage.local.get(key, function(result){
-            if(result[key]){
-                callback(result[key]);
-            }
-        });
+    function getFromStorage (key, callback) {
+        chrome.storage.local.get(key, function (result) {
+            callback(result[key])
+        })
     }
 
     function getCurrentURL(callback){
