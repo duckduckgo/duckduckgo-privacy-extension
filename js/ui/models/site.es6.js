@@ -21,7 +21,7 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
-    attrs.siteRating = {before: 'b', after: 'b'}
+    attrs.siteRating = ''
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
     attrs.isUserPrivacyUpgraded = false
