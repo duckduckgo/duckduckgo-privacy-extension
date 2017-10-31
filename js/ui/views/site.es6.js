@@ -60,16 +60,9 @@ Site.prototype = $.extend({},
         },
 
         _showAllTrackers: function () {
-            if (this.$body.hasClass('disabled')) return;
-            this.views.slidingSubview = new TrackerListSlidingSubview({
-                template: tabbedTrackerListTemplate,
-                defaultTab: 'page'
-            });
-        },
-
-        _getSiteRating: function () {
-            this.model.fetch({getSiteScore: this.model.tab.id}).then((rating) => {
-                if (rating && rating.after && this.model.update(rating)) this.rerender();
+            if (this.$body.hasClass('is-disabled')) return
+            this.views.slidingSubview = new GradeDetailsView({
+                template: gradeDetailsTemplate
             })
         }
 

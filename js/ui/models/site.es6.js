@@ -121,6 +121,7 @@ Site.prototype = $.extend({},
       update: function (ops) {
           // console.log('[model] update()')
           if (this.tab) {
+              
               if (ops && ops.siteRating && (ops.siteRating !== this.siteRating)) {
                   this.set('siteRating', ops.siteRating)
               }

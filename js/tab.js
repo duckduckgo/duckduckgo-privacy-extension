@@ -71,7 +71,7 @@ class Tab {
                 let scoreIcon
                 if (this.site.whitelisted) {
                     scoreIcon = scoreIconLocations[this.site.score.get().before]
-                }else {
+                } else {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
                 
