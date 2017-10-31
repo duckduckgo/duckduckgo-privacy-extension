@@ -246,7 +246,7 @@ class Site {
             return 'new tab'
 
         // special case for about: firefox tabs
-        if (browser === 'moz' && !this.domain) {
+        if (this.domain === 'about') {
             return 'about'
         }
 
