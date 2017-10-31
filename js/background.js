@@ -113,7 +113,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     function (requestData) {
 
         let tabId = requestData.tabId;
-   
+
         // Skip requests to background tabs
         if (tabId === -1) { return }
 
@@ -123,9 +123,9 @@ chrome.webRequest.onBeforeRequest.addListener(
         // don't have a tab instance for this tabId or this is a new requestId.
         if (requestData.type === "main_frame") {
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
-              thisTab = tabManager.create(requestData);
+                thisTab = tabManager.create(requestData);
             }
-            
+
             // add atb params only to main_frame
             let ddgAtbRewrite = ATB.redirectURL(requestData);
             if (ddgAtbRewrite) return ddgAtbRewrite;
@@ -140,7 +140,7 @@ chrome.webRequest.onBeforeRequest.addListener(
              */
             if (!(thisTab && thisTab.url && thisTab.id)) return
 
-            /*
+            /**
              * skip any broken sites
              */
             if (thisTab.site.isBroken) {
@@ -160,7 +160,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
             if (tracker) {
 
-                // only count trackers on pages with 200 response. Trackers on these sites are still 
+                // only count trackers on pages with 200 response. Trackers on these sites are still
                 // blocked below but not counted toward company stats
                 if (thisTab.statusCode === 200) {
                     // record all tracker urls on a site even if we don't block them
