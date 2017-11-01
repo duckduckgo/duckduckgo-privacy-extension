@@ -12,8 +12,7 @@ $color--white: #fff;
 
 /* Neutral Colors */
 $color--neutral-bg: #f5f5f5;
-$color--grey: $grey; /* #999 */
-$color--dark-gray: #838383;
+$color--grey: $grey-dark; /* #888 */
 $color--default-box-shadow: $platinum-dark; /* #d0d0d0 */
 
 /* Rating Colors */
@@ -29,7 +28,7 @@ $popup__height: 600px;
 $popup__height--moz: 600px;
 
 /* Hamburger Button & Menu */
-$hamburger-button__color: $color--dark-gray;
+$hamburger-button__color: $color--grey;
 $hamburger-menu__bg-color: $slate;
 
 /* Cards */
