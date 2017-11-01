@@ -1,13 +1,13 @@
 {
-    "name": "DuckDuckGo - V2 Beta",
+    "name": "DuckDuckGo Plus",
     "applications": {
         "gecko": {
               "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
               "strict_min_version": "57.0"
         }
     },
-    "version": "1.26.12beta",
-    "description": "DuckDuckGo",
+    "version": "2017.11.1",
+    "description": "DuckDuckGo Privacy Protection",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
