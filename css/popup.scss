@@ -285,7 +285,6 @@ body {
 
         .site-info__https-status__msg {
             @include uppercase_label();
-            margin-right: 3px;
 
             &.is-secure,
             &.is_upgraded {
