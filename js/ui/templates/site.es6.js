@@ -78,9 +78,10 @@ module.exports = function () {
 
     function renderTrackerNetworks (tn, isWhitelisted) {
         let count = '0'
-        if (tn && tn.major) count = tn.major.length
+        if (tn && tn.length) count = tn.length
         const isActive = !isWhitelisted ? 'is-active' : ''
         const foundOrBlocked = isWhitelisted ? 'found' : 'blocked'
+
         return bel`<h2 class="site-info__trackers bold">
             <span class="site-info__trackers-status__icon
                 is-blocking--${!isWhitelisted}">

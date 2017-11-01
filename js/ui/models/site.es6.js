@@ -6,15 +6,6 @@ const httpsStates = {
     'none': 'Insecure'
 }
 
-const majorTrackerNetworks = [
-    'amazon.com',
-    'appnexus',
-    'facebook',
-    'google',
-    'oracle',
-    'twitter'
-]
-
 function Site (attrs) {
     attrs = attrs || {}
     attrs.disabled = true // disabled by default
@@ -138,8 +129,7 @@ Site.prototype = $.extend({},
 
               const newTrackerNetworks = this.getTrackerNetworksOnPage()
               if (!this.trackerNetworks ||
-                  (newTrackerNetworks.major.length !== this.trackerNetworks.major.length) ||
-                  (newTrackerNetworks.numOthers !== this.trackerNetworks.numOthers)) {
+                  (newTrackerNetworks.length !== this.trackerNetworks.length)) {
                   this.set('trackerNetworks', newTrackerNetworks)
               }
 
@@ -171,14 +161,7 @@ Site.prototype = $.extend({},
                               .map((t) => t.toLowerCase())
                               .filter((t) => t !== 'unknown')
 
-
-          // major tracker networks found on this page/tab
-          const major = networks.filter((t) => majorTrackerNetworks.includes(t))
-
-          return {
-              major: major,
-              numOthers: networks.length - major.length
-          }
+          return networks
       },
 
       getIsUserPrivacyUpgraded: function () {
