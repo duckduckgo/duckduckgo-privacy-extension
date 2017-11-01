@@ -32,8 +32,10 @@ Search.prototype = $.extend({},
         },
 
         _handleSubmit: function (e) {
-            console.log(`Search submit for ${this.$input.val()}`)
-            this.model.doSearch(this.$input.val());
+            let searchVal = encodeURIComponent(this.$input.val())
+            console.log(`Search submit for ${searchVal}`)
+            this.model.doSearch(searchVal)
+            window.close()
         },
 
         _handleBurgerClick: function (e) {
