@@ -53,18 +53,14 @@
           getLoadedTab(site).then((tab) => {
               // wait to let trackers load
               window.setTimeout(() => {
-                  
                   chrome.tabs.remove(tab.id)
-                  
-                  let byPages = bkg.Companies.getTopBlockedByPages()
-                  let googleEntry = byPages.topBlocked.find(e => e.name === 'Google');
-
-                  assert.ok(googleEntry, 'Site has google tracker')
-                  assert.ok(googleEntry.percent === 100, 'google is on 100% of test pages')
-
                   openTabs--
 
                   if (!openTabs) {
+                      let byPages = bkg.Companies.getTopBlockedByPages()
+                      let googleEntry = byPages.topBlocked.find(e => e.name === 'Google');
+                      assert.ok(googleEntry, 'Site has google tracker')
+                      assert.ok(googleEntry.percent === 100, 'google is on 100% of test pages')
                       let pages = bkg.Companies.getTotalPages()
                       assert.ok(totalPages === pages, 'has correct number of total pages')
                       done()

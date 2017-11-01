@@ -14,7 +14,7 @@ module.exports = function () {
         return bel`<div class="site-info site-info--details card card--no-top-margin">
             <h1 class="site-info__domain">${this.model.site.domain}</h1>
             ${siteRating(this.model.site.siteRating, this.model.site.isWhitelisted)}
-            ${siteRatingExplainer(this.model.site.siteRating)}
+            ${siteRatingExplainer(this.model.site.siteRating, this.model.site.isWhitelisted)}
             <h2 class="site-info__https-status padded border--bottom">
                 ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>

@@ -25,28 +25,28 @@ settings.ready().then(() => {
 const siteScores = ['A', 'B', 'C', 'D']
 
 // percent of the top 500 sites a major tracking network is seen on
-const pagesSeenOn = {"google":55,"amazon":23,"facebook":20,"comscore":19,"twitter":11,"criteo":9,"quantcast":9,"adobe":8,"newrelic":7,"appnexus":7}
+const pagesSeenOn = {'google':55,'amazon':23,'facebook':20,'comscore':19,'twitter':11,'criteo':9,'quantcast':9,'adobe':8,'newrelic':7,'appnexus':7}
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 
 class Score {
 
     constructor(specialPage, domain) {
-        this.specialPage = specialPage;     // see specialDomain() in class Site below
-        this.hasHTTPS = false;
-        this.inMajorTrackingNetwork = false;
-        this.totalBlocked = 0;
-        this.hasObscureTracker = false;
-        this.domain = domain;
-        this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork();
-        this.tosdr = this.getTosdr();
+        this.specialPage = specialPage     // see specialDomain() in class Site below
+        this.hasHTTPS = false
+        this.inMajorTrackingNetwork = false
+        this.totalBlocked = 0
+        this.hasObscureTracker = false
+        this.domain = domain
+        this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
+        this.tosdr = this.getTosdr()
     }
 
     getTosdr() {
         let result = {}
 
         // return if the list hasn't been built yet
-        if (!tosdrListLoaded) return result;
+        if (!tosdrListLoaded) return result
 
         tosdrRegexList.some(tosdrSite => {
             let match = tosdrSite.exec(this.domain)
@@ -61,8 +61,8 @@ class Score {
                 }
             }
         })
-        return result;
-    };
+        return result
+    }
 
     /* is the parent site itself a major tarcking network?
      * minus one grade for each 10% of the top pages this
@@ -78,43 +78,63 @@ class Score {
                 return result = Math.ceil(pagesSeenOn[name] / 10)
             }
         })
-        return result;
-    };
+        return result
+    }
 
     /*
      * Calculates and returns a site score
      */
     get() {
-        if (this.specialPage) return 'none';
+        if (this.specialPage) return 'none'
 
-        let scoreIndex = 1;
+        let beforeIndex = 1
+        let afterIndex = 1
 
-        if (this.isaMajorTrackingNetwork) scoreIndex += this.isaMajorTrackingNetwork
-
+        if (this.isaMajorTrackingNetwork) {
+            beforeIndex += this.isaMajorTrackingNetwork
+            afterIndex += this.isaMajorTrackingNetwork
+        }
+        
         // If tosdr already determined a class ranking then we map that to increase or
         // decrease the grade accordingly. Otherwise we apply a +/- to the grade based
         // on the cumulative total of all the points we care about. see: scripts/tosdr-topics.json
         if (this.tosdr) {
             if (this.tosdr.class) {
-                scoreIndex += tosdrClassMap[this.tosdr.class]
+                beforeIndex += tosdrClassMap[this.tosdr.class]
+                afterIndex += tosdrClassMap[this.tosdr.class]
+
             } else if (this.tosdr.score) {
-                scoreIndex += Math.sign(this.tosdr.score)
+                let tosdrScore =  Math.sign(this.tosdr.score)
+                beforeIndex += tosdrScore
+
+                // only apply a positive tosdr score
+                if (tosdrScore > 0) {
+                    afterIndex += tosdrScore
+                }
             }
         }
 
-        if (this.inMajorTrackingNetwork) scoreIndex++
-        if (this.hasHTTPS) scoreIndex--
-        if (this.hasObscureTracker) scoreIndex++
+        if (this.inMajorTrackingNetwork) beforeIndex++
+        if (!this.hasHTTPS) {
+            beforeIndex++
+            afterIndex++
+        }
+
+        if (this.hasObscureTracker) beforeIndex++
 
         // decrease score for every 10, round up
-        scoreIndex += Math.ceil(this.totalBlocked / 10)
+        beforeIndex += Math.ceil(this.totalBlocked / 10)
 
         // negative scoreIndex should return the highest score
-        if (scoreIndex < 0) scoreIndex = 0
+        if (beforeIndex < 0) beforeIndex = 0
+        if (afterIndex < 0) afterIndex = 0
 
         // return corresponding score or lowest score if outside the array
-        return siteScores[scoreIndex] || siteScores[siteScores.length - 1];
-    };
+        let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
+        let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
+
+        return {before: beforeGrade, after: afterGrade}
+    }
 
     /*
      * Update the score attruibues as new events come in. The actual
@@ -140,9 +160,9 @@ class Score {
                 this.hasObscureTracker = true
             }
 
-            this.totalBlocked++;
+            this.totalBlocked++
         }
-    };
+    }
 }
 
 class Site {
@@ -178,34 +198,34 @@ class Site {
      * When site objects are created we check the stored whitelists
      * and set the new site whitelist statuses
      */
-    setWhitelistStatusFromGlobal(domain){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted'];
+    setWhitelistStatusFromGlobal(){
+        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted']
 
         globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {};
-            this.setWhitelisted(name, list[this.domain]);
-        });
-    };
+            let list = settings.getSetting(name) || {}
+            this.setWhitelisted(name, list[this.domain])
+        })
+    }
 
     setWhitelisted(name, value){
-        this[name] = value;
-    };
+        this[name] = value
+    }
 
     /*
      * Send message to the popup to rerender the whitelist
      */
     notifyWhitelistChanged () {
-        chrome.runtime.sendMessage({'whitelistChanged': true});
-    };
+        chrome.runtime.sendMessage({'whitelistChanged': true})
+    }
 
-    isWhiteListed () { return this.whitelisted };
+    isWhiteListed () { return this.whitelisted }
 
     addTracker (tracker) {
         if (this.trackerUrls.indexOf(tracker.url) === -1){
-            this.trackerUrls.push(tracker.url);
-            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length});
+            this.trackerUrls.push(tracker.url)
+            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
         }
-    };
+    }
 
     /*
      * specialDomain
@@ -217,19 +237,22 @@ class Site {
      */
     specialDomain() {
         if (this.domain === 'extensions')
-            return "extensions";
+            return 'extensions'
 
         if (this.domain === chrome.runtime.id)
-            return "options";
+            return 'options'
 
         if (this.domain === 'newtab')
-            return "new tab";
+            return 'new tab'
 
-        // special case for about: firefox tabs
-        if (browser === "moz" && !this.domain) {
-            return "about";
+        if (this.domain === 'about') {
+            return 'about'
         }
 
-        return false;
+        if (browser === 'moz' && !this.domain) {
+            return 'new tab'
+        }
+
+        return false
     }
 }

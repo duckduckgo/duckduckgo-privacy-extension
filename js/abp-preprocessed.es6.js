@@ -82,7 +82,7 @@ function updateLists () {
 
     let trackersWhitelistTemporaryEtag = settings.getSetting('trackersWhitelistTemporary-etag') || ''
     // reset etag to get a new list copy if we don't have brokenSiteList data
-    if (!trackersWhitelistTemporaryEtag) trackersWhitelistTemporaryEtag = ''
+    if (!trackersWhitelistTemporary || !trackersWhitelistTemporaryEtag) trackersWhitelistTemporaryEtag = ''
 
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt

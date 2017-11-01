@@ -47,7 +47,7 @@
 /* Font groupings */
 @mixin uppercase_label () {
     font-size: 12px;
-    color: $grey-dark;
+    color: $color--grey;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: bold;
@@ -68,6 +68,10 @@
 
         li {
             padding-top: 15px;
+
+            .icon__arrow {
+                right: 15px;
+            }
         }
     }
 }
@@ -132,8 +136,6 @@
             }
 
         }
-
-
     }
 }
 

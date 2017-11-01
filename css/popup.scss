@@ -74,7 +74,7 @@ body {
             background-size: 18px 18px;
             height: 34px;
             width: 42px;
-            color: $color--dark-gray;
+            color: $color--grey;
             padding: 0px 0.64em;
             min-height: 1.8em;
             margin-bottom: 2px;
@@ -222,7 +222,7 @@ body {
             text-align: center;
         }
 
-        .site-info__rating-label {
+        .site-info__rating-upgrade {
             padding-top: 7.5px;
         }
 
@@ -285,7 +285,6 @@ body {
 
         .site-info__https-status__msg {
             @include uppercase_label();
-            margin-right: 3px;
 
             &.is-secure,
             &.is_upgraded {
@@ -293,7 +292,7 @@ body {
             }
 
             &.is-insecure {
-                color: $color--red;
+                color: $color--grey;
             }
         }
 
@@ -407,7 +406,7 @@ body {
             }
 
             .site-info--details__explainer {
-                color: $grey;
+                color: $color--grey;
                 font-size: 13px;
                 padding: 7.5px 20px 15px 20px;
             }
@@ -443,7 +442,7 @@ body {
                     li {
                         padding-top: 3.5px;
                         font-size: 13px;
-                        color: $color--dark-gray;
+                        color: $color--grey;
                     }
                 }
             }
@@ -461,7 +460,7 @@ body {
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
-            color: $color--dark-gray;
+            color: $color--grey;
         }
 
         .top-blocked__reset-stats {
@@ -483,7 +482,7 @@ body {
 
             p {
                 margin-top: 15px;
-                color: $color--dark-gray;
+                color: $color--grey;
             }
         }
     }
@@ -508,7 +507,7 @@ body {
             padding-top: 30px;
 
             p {
-                color: $grey;
+                color: $color--grey;
                 font-size: 15px;
                 margin-bottom: 15px;
             }

@@ -11,9 +11,7 @@ module.exports = function () {
                 <div class="site-info__rating-container border--bottom">
                     ${siteRating(this.model.siteRating, this.model.isWhitelisted)}
                     <h1 class="site-info__domain">${this.model.domain}</h1>
-                    <p class="site-info__rating-label uppercase text--center">
-                        Privacy Grade
-                    </p>
+                    ${ratingUpgrade(this.model.siteRating, this.model.isWhitelisted)}
                 </div>
             </li>
             <li class="site-info__li--toggle padded border--bottom">
@@ -52,6 +50,31 @@ module.exports = function () {
             </li>
         </ul>
     </section>`
+
+    function ratingUpgrade (rating, isWhitelisted) {
+        const isActive = isWhitelisted ? false : true
+        // site grade/rating was upgraded by extension
+        if (isActive && rating && rating.before && rating.after) {
+            if (rating.before !== rating.after) {
+                return bel`<p class="site-info__rating-upgrade uppercase text--center">
+                    Upgraded from
+                    <span class="rating__text-only ${rating.before.toLowerCase()}">
+                    ${rating.before}</span> to
+                    <span class="rating__text-only ${rating.after.toLowerCase()}">
+                    ${rating.after}</span>
+                </p>`
+            }
+        }
+        // deal with other states
+        let msg = 'Privacy Grade'
+        // site is whitelisted
+        if (!isActive) msg = `Privacy Protection Disabled`
+        // "null" state (empty tab, browser's "about:" pages)
+        if (!rating.before && !rating.after) msg = `We only grade regular websites`
+
+        return bel`<p class="site-info__rating-upgrade uppercase text--center">
+            ${msg}</p>`
+    }
 
     function renderTrackerNetworks (tn, isWhitelisted) {
         let count = '0'

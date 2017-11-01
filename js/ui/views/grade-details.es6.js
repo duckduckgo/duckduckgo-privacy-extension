@@ -56,7 +56,7 @@ GradeDetails.prototype = $.extend({},
             const rating = ratingTemplate(this.model.site.siteRating, this.model.site.isWhitelisted)
             this.$rating.replaceWith(rating)
             // rating explainer message
-            const msg = ratingExplainerTemplate(this.model.site.siteRating)
+            const msg = ratingExplainerTemplate(this.model.site.siteRating, this.model.site.isWhitelisted)
             this.$explainer.replaceWith(msg)
         }
     }
