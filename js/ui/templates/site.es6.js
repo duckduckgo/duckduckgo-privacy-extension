@@ -53,21 +53,25 @@ module.exports = function () {
 
     function ratingUpgrade (rating, isWhitelisted) {
         const isActive = isWhitelisted ? false : true
-        let msg = 'Privacy Grade'
-        // site is whitelisted
-        if (!isActive) {
-            msg = `Privacy Protection Disabled`
-        }
-        // site grade was upgraded by extension
-        if (isActive && rating.before && rating.after) {
+        // site grade/rating was upgraded by extension
+        if (isActive && rating && rating.before && rating.after) {
             if (rating.before !== rating.after) {
-                msg = `Upgraded from ${rating.before} to ${rating.after}`
+                return bel`<p class="site-info__rating-upgrade uppercase text--center">
+                    Upgraded from
+                    <span class="rating__text-only ${rating.before.toLowerCase()}">
+                    ${rating.before}</span> to
+                    <span class="rating__text-only ${rating.after.toLowerCase()}">
+                    ${rating.after}</span>
+                </p>`
             }
         }
+        // deal with other states
+        let msg = 'Privacy Grade'
+        // site is whitelisted
+        if (!isActive) msg = `Privacy Protection Disabled`
         // "null" state (empty tab, browser's "about:" pages)
-        if (!rating.before && !rating.after) {
-            msg = `We only grade regular websites.`
-        }
+        if (!rating.before && !rating.after) msg = `We only grade regular websites`
+
         return bel`<p class="site-info__rating-upgrade uppercase text--center">
             ${msg}</p>`
     }
