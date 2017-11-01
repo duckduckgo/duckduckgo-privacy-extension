@@ -208,6 +208,16 @@ chrome.webRequest.onBeforeRequest.addListener(
 
          if (!thisTab.site) return
 
+         /**
+          * Skip https upgrade on broken sites
+          */
+        if (thisTab.site.isBroken) {
+            console.log('temporarily skip https upgrades for site: '
+                  + utils.extractHostFromURL(thisTab.url) + '\n'
+                  + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
+
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
             console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + requestData.url)
