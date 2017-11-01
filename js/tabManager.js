@@ -129,6 +129,9 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     return true;
 })
 
+// message popup to close when the active tab changes
+chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({closePopup: true}))
+
 // Update tab data. This makes
 // sure we have the correct url after any https rewrites
 chrome.webRequest.onHeadersReceived.addListener((request) => {
