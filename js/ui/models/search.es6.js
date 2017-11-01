@@ -15,11 +15,13 @@ Search.prototype = $.extend({},
 
       doSearch: function (s) {
           this.searchText = s;
-          console.log(`doSearch() for ${s}`);
+          s = encodeURIComponent(s)
 
-            chrome.tabs.create({
+          console.log(`doSearch() for ${s}`);
+          
+          chrome.tabs.create({
               url: "https://duckduckgo.com/?q=" + s + "&bext=" + localStorage['os'] + "cr"
-            });
+          });
       }
 
   }

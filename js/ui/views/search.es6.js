@@ -32,9 +32,8 @@ Search.prototype = $.extend({},
         },
 
         _handleSubmit: function (e) {
-            let searchVal = encodeURIComponent(this.$input.val())
-            console.log(`Search submit for ${searchVal}`)
-            this.model.doSearch(searchVal)
+            console.log(`Search submit for ${this.$input.val()}`)
+            this.model.doSearch(this.$input.val());
             window.close()
         },
 
