@@ -111,7 +111,8 @@ chrome.alarms.create('updateLists', {periodInMinutes: 180})
 // add version param to url on the first install and
 // only once a day after than
 function getVersionParam () {
-    let version = settings.getSetting('version') || 'v1'
+    const manifest = chrome.runtime.getManifest()
+    let version = manifest.version || ''
     let lastEasylistUpdate = settings.getSetting('lastEasylistUpdate')
     let now = Date.now()
     let versionParam
