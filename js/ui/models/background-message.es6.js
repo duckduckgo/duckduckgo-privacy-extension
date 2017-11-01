@@ -27,6 +27,7 @@ function BackgroundMessage (attrs) {
         if (req.whitelistChanged) this.send('whitelistChanged')
         if (req.updateTabData) this.send('updateTabData')
         if (req.didResetTrackersData) this.send('didResetTrackersData', req.didResetTrackersData)
+        if (req.closePopup) window.close()
     })
 }
 
