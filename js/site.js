@@ -24,8 +24,9 @@ settings.ready().then(() => {
 
 const siteScores = ['A', 'B', 'C', 'D']
 
-// percent of the top 500 sites a major tracking network is seen on
-const pagesSeenOn = {'google':55,'amazon':23,'facebook':20,'comscore':19,'twitter':11,'criteo':9,'quantcast':9,'adobe':8,'newrelic':7,'appnexus':7}
+// percent of the top 1 million sites a tracking network has been seen on. 
+// see: https://webtransparency.cs.princeton.edu/webcensus/
+const pagesSeenOn = {'google':84,'facebook':36,'twitter':14,'amazon':14,'appnexus':10,'oracle':10,'mediamath':9,'yahoo':9,'maxcdn':7,'automattic':7}
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 
