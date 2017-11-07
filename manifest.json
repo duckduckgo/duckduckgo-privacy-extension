@@ -63,7 +63,7 @@
         "favicon_url": "https://duckduckgo.com/favicon.ico",
         "is_default": true,
         "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo Search",
+        "name": "DuckDuckGo",
         "search_url": "https://duckduckgo.com/?q={searchTerms}",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
