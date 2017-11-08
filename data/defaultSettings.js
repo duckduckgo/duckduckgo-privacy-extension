@@ -41,7 +41,6 @@ const defaultSettings = {
     }
 }
 
-
 if (typeof window === 'undefined' && module && module.exports)  {
     module.exports = defaultSettings
 }
