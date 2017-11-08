@@ -55,7 +55,7 @@ function updateLists () {
             let etag = settings.getSetting(settingsName + '-etag') || ''
 
             // only add url params to duckduckgo urls
-            if(url.match(/^https?:\/\/(.+)?duckduckgo.com/)) {
+            if(url.match(/^https?:\/\/(.+)?duckduckgo.com\/contentblocking\.js/)) {
                 if (atb) url += '&atb=' + atb
                 if (set_atb) url += '&set_atb=' + set_atb
                 if (versionParam) url += versionParam
