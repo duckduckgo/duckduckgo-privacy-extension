@@ -29,7 +29,7 @@ const defaultSettings = {
     "atb": null,
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelistTemporary-etag": null,
-    "trackersWhitelist": "https://duckduckgo.com/contentblocking.js?l=trackers-whitelist",
+    "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
     "trackersWhitelist-etag": null,
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "generalEasylist-etag": null,
