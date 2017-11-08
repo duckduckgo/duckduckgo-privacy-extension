@@ -1,4 +1,6 @@
 const defaultSettings = {
+    "version": null,
+    "atb": null,
     "extensionIsEnabled": true,
     "socialBlockingIsEnabled": false,
     "trackerBlockingEnabled": true,
@@ -15,9 +17,7 @@ const defaultSettings = {
     "zeroclick_google_right": false,
     "trackerListLoc": "data/tracker_lists",
     "tosdr": "data/tosdr.json",
-    "blockLists": [
-        "trackersWithParentCompany"
-    ],
+    "blockLists": [ "trackersWithParentCompany.json"],
     "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist",
     "entityMap": "data/tracker_lists/entityMap.json",
     "easylists": ["privacy", "general"],
@@ -25,8 +25,6 @@ const defaultSettings = {
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "httpsWhitelist": "data/httpsWhitelist.json",
     "majorTrackingNetworks": {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true},
-    "version": null,
-    "atb": null,
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelistTemporary-etag": null,
     "trackersWhitelist": "https://duckduckgo.com/contentblocking.js?l=trackers-whitelist",

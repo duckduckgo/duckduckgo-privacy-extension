@@ -50,7 +50,7 @@ global.companyList = function(listData){
                     });
                 });
 
-                resolve({'name': 'trackersWithParentCompany', 'data': trackerList})
+                resolve({'name': 'trackersWithParentCompany.json', 'data': trackerList})
             })
         })
     })
