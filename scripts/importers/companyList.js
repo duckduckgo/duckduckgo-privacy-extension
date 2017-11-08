@@ -9,13 +9,19 @@ global.companyList = function(listData){
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social'];
     var request = require('request');
     var remapData, companyList;
-    
+
     // FIXME -- use settings data in the future.
     // (but settings data needs to be read in a different way than it currently can.)
-    let majorNetworks = {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true};
+    let majorNetworks = {
+        'Google': true,
+        'Facebook': true,
+        'Twitter': true,
+        'Amazon': true,
+        'AppNexus': true
+    }
 
     return new Promise ((resolve) => {
-        
+
         request.get(remapDataLoc, (err, res, body) => {
             remapData = JSON.parse(body).categories;
 
@@ -32,7 +38,7 @@ global.companyList = function(listData){
                             if (name === "Amazon.com")
                                 fixedName = "Amazon";
 
-                            // itisAtracker is not a real entry in the list 
+                            // itisAtracker is not a real entry in the list
                             if (name !== 'ItIsATracker') {
                                 for( var domain in entry[name]){
                                     if (entry[name][domain].length) {
@@ -56,7 +62,6 @@ global.companyList = function(listData){
         trackerList[type] = trackerList[type] ? trackerList[type] : {};
         trackerList[type][url] = data;
 
-
         // if this is a major network, add to domain mapping
         if (majorNetworks[data.c]) {
             trackerList.TopTrackerDomains[url] = {'c': data.c, 't': type};
@@ -69,7 +74,7 @@ global.companyList = function(listData){
             if(socialRemap){
                 return socialRemap;
             }
-            
+
             var googleReMap = remapGoogle(type,name,url);
             if(googleReMap){
                 return googleReMap;
