@@ -23,8 +23,8 @@ $icon__tn__chartbeat--moz: "moz-extension://__MSG_@@extension_id__/img/tn-chartb
 $icon__tn__comscore--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-comscore.svg";
 $icon__tn__comscore--moz: "moz-extension://__MSG_@@extension_id__/img/tn-comscore.svg";
 
-$icon__tn__critero--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-critero.svg";
-$icon__tn__critero--moz: "moz-extension://__MSG_@@extension_id__/img/tn-critero.svg";
+$icon__tn__criteo--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-criteo.svg";
+$icon__tn__criteo--moz: "moz-extension://__MSG_@@extension_id__/img/tn-criteo.svg";
 
 $icon__tn__facebook--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-facebook.svg";
 $icon__tn__facebook--moz: "moz-extension://__MSG_@@extension_id__/img/tn-facebook.svg";
@@ -142,12 +142,12 @@ $icon__tn__yandex--moz: "moz-extension://__MSG_@@extension_id__/img/tn-yandex.sv
         }
     }
 
-    &.critero {
+    &.criteo {
         .is-browser--chrome & {
-            background-image: url($icon__tn__critero--chrome);
+            background-image: url($icon__tn__criteo--chrome);
         }
         .is-browser--moz & {
-            background-image: url($icon__tn__critero--moz);
+            background-image: url($icon__tn__criteo--moz);
         }
     }
 
