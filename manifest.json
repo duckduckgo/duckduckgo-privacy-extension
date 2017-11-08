@@ -1,7 +1,13 @@
 {
-    "name": "DuckDuckGo for Chrome - V2 Beta",
-    "version": "2017.4.13",
-    "description": "DuckDuckGo enhancements for Chrome.",
+    "name": "DuckDuckGo Plus",
+    "applications": {
+        "gecko": {
+              "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
+              "strict_min_version": "57.0"
+        }
+    },
+    "version": "2017.11.1",
+    "description": "DuckDuckGo Privacy Protection",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -13,7 +19,7 @@
             "19": "img/icon_19.png",
             "38": "img/icon_38.png"
         },
-        "default_popup": "html/trackers.html"
+        "default_popup": "html/popup.html"
     },
     "commands": {
       "_execute_browser_action": {
@@ -47,7 +53,8 @@
                 "js/indexed-db.js",
                 "js/https.js",
                 "js/background.js",
-                "js/abp.js"
+                "js/abp.js",
+                "js/atb.js"
             ]
     },
     "chrome_settings_overrides": {
@@ -56,7 +63,7 @@
         "favicon_url": "https://duckduckgo.com/favicon.ico",
         "is_default": true,
         "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo Search",
+        "name": "DuckDuckGo",
         "search_url": "https://duckduckgo.com/?q={searchTerms}",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
@@ -85,7 +92,6 @@
         "webRequestBlocking",
         "*://*/*",
         "webNavigation",
-        "webRequestBlocking",
         "activeTab",
         "tabs",
         "cookies",

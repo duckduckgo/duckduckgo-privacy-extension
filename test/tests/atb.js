@@ -1,79 +1,70 @@
 (function() {
- 
-  QUnit.module("ATB");
-  QUnit.test("Test ATB migration", function (assert) {
-      
-      // clear any existing atb before we start the tests
-      bkg.settings.updateSetting('atb', '');
-      bkg.settings.updateSetting('set_atb', '');
+  bkg.settings.ready().then(() => {
+      QUnit.module("ATB");
+      testATBrewrite()
+      testATBInstall()
+  })
+})()
 
-      // make some fake atb values in localStorage
-      bkg.localStorage['atb'] = 'old-atb-value';
-      bkg.localStorage['set_atb'] = 'old-set-atb-value';
-
-      bkg.ATB.migrate();
-
-      assert.ok(bkg.settings.getSetting('atb') === "old-atb-value", "ATB value should be migrated to setting");
-      assert.ok(bkg.settings.getSetting('set_atb') === "old-set-atb-value", "set ATB value should be migrated to setting");
-
-      // Try to migrate again. This shouldn't overwrite the now existing storage ATB values
-      bkg.localStorage['atb'] = 'some-other-value';
-      bkg.localStorage['set_atb'] = 'some-other-set-atb-value';
-
-      bkg.ATB.migrate();
-
-      assert.ok(bkg.settings.getSetting('atb') === "old-atb-value", "migrate should not overwrite existing ATB");
-      assert.ok(bkg.settings.getSetting('set_atb') === "old-set-atb-value", "migrate should not overwrite existing ATB");
-
-  });
-
-  QUnit.test("Testing ATB module", function (assert) {
-
-      // test appending atb value to only ddg urls
+function testATBrewrite() {
+  QUnit.test("ATB module url rewrite", function (assert) {
       var urlTests = [
-      { 'url': 'http://duckduckgo.com/?q=something', 'rewrite': true },
-      { 'url': 'https://duckduckgo.com/?q=something', 'rewrite': true },
-      { 'url': 'https://twitter.com', 'rewrite': false },
-      { 'url': 'https://twitter.com/?u=duckduckgo.com', 'rewrite': false }
+      {url: 'http://duckduckgo.com/?q=something', rewrite: true },
+      {url: 'https://duckduckgo.com/?q=something', rewrite: true },
+      {url: 'https://duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
+      {url: 'https://duckduckgo.com/?q=atb', rewrite: true},
+      {url: 'https://duckduckgo.com/js/spice/forecast/Denver%20Colorado%20United%20States/en', rewrite: false},
+      {url: 'https://twitter.com', rewrite: false },
+      {url: 'https://twitter.com/?u=duckduckgo.com', rewrite: false },
+      {url: 'https://icons.duckduckgo.com/ip2/weather.com.ico', rewrite: false},
+      {url: 'https://duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false},
+      {url: 'https://duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false},
+      {url: 'https://duckduckgo.com/t/iaui?7725756&oi=forecast&r0=forecast&r1=forecast&r2=forecast&r5=en_wikipedia_queries,nlp_fathead,nlp_wiki&r8=news&r16=news&r19=forecast&r28=apps_domains&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false},
+      {url: 'https://www.reddit.com/search?q=duckduckgo', rewrite: false},
+      {url: 'https://duckduckgo.com/?q=whois+https://duckduckgo.com/?q=whois', rewrite: true},
+      {url: 'https://beta.duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false},
+      {url: 'https://beta.duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false},
+      {url: 'http://beta.duckduckgo.com/?q=something', rewrite: true },
+      {url: 'https://beta.duckduckgo.com/?q=something', rewrite: true },
+      {url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
       ];
-
+      
       urlTests.forEach(function(testRequest){
           // make sure we have atb set to something
           bkg.settings.updateSetting('atb', 'testATB');
-
           let toRewrite = bkg.ATB.redirectURL(testRequest);
           let rewrite = false;
-
+          
           if(toRewrite && toRewrite['redirectUrl']){
-              rewrite = true;
+            rewrite = true;
           }
-
           assert.ok(rewrite === testRequest.rewrite, "correctly rewrite only ddg URLs: " + testRequest.url);   
       });
-
+      
       // don't update atb values if they don't already exist
       bkg.settings.updateSetting('set_atb', null);
       bkg.ATB.updateSetAtb().then().catch((message) => {
           assert.ok(message, 'should not set a new atb if one doesnt exist already: ' + message);
       });
-
+      
       // test getting new atb values from atb.js
       var fakeSetAtb = "fakeatbvalue";
       bkg.settings.updateSetting('set_atb', fakeSetAtb);
       bkg.ATB.updateSetAtb().then((res) => {
-              assert.ok(settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
+          assert.ok(settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
       });
-
+      
       // test anchor tag rewrite
       bkg.settings.updateSetting('atb', 'v70-6')
       bkg.settings.updateSetting('set_atb', 'v70-6')
-
+      
       let anchorRewrite = bkg.ATB.redirectURL({ 'url': 'https://duckduckgo.com/about#newsletter'})
       assert.ok(anchorRewrite.redirectUrl === 'https://duckduckgo.com/about&atb=v70-6#newsletter', 'rewrite ddg URLs with anchor tags')
-
   });
+}
 
-  QUnit.test("Testing ATB Install flow", function (assert) {
+function testATBInstall () {
+  QUnit.test("ATB install flow", function (assert) {
       // test atb rewrite in new tab    
       var done = assert.async();
       var tabsToCleanUp = [];
@@ -92,8 +83,8 @@
           let atb = bkg.settings.getSetting('atb');
           let set_atb = bkg.settings.getSetting('set_atb');
 
-          assert.ok(atb, "got new atb value from success page");
-          assert.ok(set_atb, "got new set_atb value from success page");
+          assert.ok(atb, `got new atb value from success page ${atb}`);
+          assert.ok(set_atb, `got new set_atb value from success page ${set_atb}`);
           tabsToCleanUp.push(tab);
           
           var ddgTestUrl = "https://duckduckgo.com/?q=test"
@@ -109,5 +100,5 @@
           });
           done()
       });
-  });
-})();
+  })
+}

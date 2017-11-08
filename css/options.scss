@@ -3,7 +3,7 @@
 
 
 /* Generic menu list styling */
-@include menu_list();
+@include default_list();
 
 
 /* Generic toggle button styling */
@@ -51,7 +51,7 @@
         }
 
         button.remove {
-            color: $grey-light;
+            color: $color--grey;
             font-size: 22px;
             line-height: $whitelist-item-height;
             background: transparent;

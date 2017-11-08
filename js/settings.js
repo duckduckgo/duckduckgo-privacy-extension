@@ -1,7 +1,17 @@
 var load = require('load');
-
+/**
+ * Public api
+ * Usage:
+ * You can use promise callbacks to check readyness before getting and updating
+ * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
+ */
 require.scopes.settings =(() => {
     var settings = {};
+    let isReady = false
+    let _ready = init().then(() => {
+        isReady = true
+        console.log("Settings are loaded")
+    })
 
     // external settings defines a function that needs to run when a setting is updated
     var externalSettings = {
@@ -9,16 +19,27 @@ require.scopes.settings =(() => {
     };
 
     function init() {
-        buildSettingsFromDefaults();
-        buildSettingsFromLocalStorage();
-        registerListeners();
+        return new Promise ((resolve, reject) => {
+            buildSettingsFromDefaults();
+            buildSettingsFromLocalStorage().then(() => {
+                registerListeners()
+                resolve()
+            })
+        })
+    }
+
+    function ready () {
+        return _ready
     }
 
     function buildSettingsFromLocalStorage() {
-        chrome.storage.local.get(['settings'], function(results){
-            Object.assign(settings, results['settings']);
-            runExternalSettings();
-        });
+        return new Promise ((resolve) => {
+            chrome.storage.local.get(['settings'], function(results){
+                Object.assign(settings, results['settings']);
+                runExternalSettings();
+                resolve()
+            })
+        })
     }
 
     function runExternalSettings(){
@@ -40,10 +61,14 @@ require.scopes.settings =(() => {
 
     function syncSettingTolocalStorage(){
         chrome.storage.local.set({'settings': settings});
-        return true;
     }
 
     function getSetting(name) {
+        if (!isReady) {
+            console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
+            return
+        }
+
         // let all and null return all settings
         if (name === 'all') name = null;
 
@@ -56,6 +81,11 @@ require.scopes.settings =(() => {
     }
 
     function updateSetting(name, value) {
+        if (!isReady) {
+            console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
+            return
+        }
+
         settings[name] = value;
         runExternalSetting(name, value);
         syncSettingTolocalStorage();
@@ -86,13 +116,13 @@ require.scopes.settings =(() => {
         }
         return true;
     };
-
-    init();
     
+
     return {
         getSetting: getSetting,
         updateSetting: updateSetting,
-        logSettings: logSettings
+        logSettings: logSettings,
+        ready: ready
     }
 
 })();

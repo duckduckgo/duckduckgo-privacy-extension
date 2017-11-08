@@ -35,21 +35,21 @@
   QUnit.test("test site score", function (assert) {
 
       let tests = [
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: 'B'},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: 'A'},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: 'C'},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 11, hasObscureTracker: false}, result: 'D'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 9, hasObscureTracker: false}, result: 'C'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:true, totalBlocked: 10, hasObscureTracker: false}, result: 'D'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false}, result: 'D'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: true}, result: 'D'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 1, hasObscureTracker: true}, result: 'D'},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: 'C'},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: {before: 'C', after: 'C'}},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: {before: 'B', after: 'B'}},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: {before: 'D', after: 'B'}},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 11, hasObscureTracker: false}, result: {before: 'D', after: 'B'}},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 9, hasObscureTracker: false}, result: {before: 'D', after: 'C'}},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:true, totalBlocked: 10, hasObscureTracker: false}, result: {before: 'D', after: 'C'}},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false}, result: {before: 'D', after: 'C'}},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: true}, result: {before: 'D', after: 'C'}},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 1, hasObscureTracker: true}, result: {before: 'D', after: 'C'}},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: {before: 'D', after: 'B'}},
 
       // test tosdr scores
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 100}}, result: 'C'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: -100}}, result: 'A'},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 0}}, result: 'B'}
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 100}}, result: {before: 'D', after: 'D'}},
+          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {class: 'A'}}, result: {before: 'A', after: 'A'}},
+          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 0}}, result: {before: 'C', after: 'C'}}
       ]
 
       tests.map(test => {
@@ -59,7 +59,8 @@
               site.score[value] = test.values[value];
           }
 
-          assert.ok(site.score.get() === test.result, "site should have the correct site score");
+          assert.ok(site.score.get().after === test.result.after, `site should have the correct after site score: got: ${site.score.get().after}, expected: ${test.result.after}`);
+          assert.ok(site.score.get().before === test.result.before, `site should have the correct before site score: got: ${site.score.get().before}, expected: ${test.result.before}`);
       });
   });
 

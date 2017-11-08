@@ -1,39 +1,93 @@
-const bel = require('bel');
-const toggleButton = require('./shared/toggle-button');
+const bel = require('bel')
+const titleize = require('titleize')
+const toggleButton = require('./shared/toggle-button.es6.js')
+const siteRating = require('./shared/site-rating.es6.js')
 
 module.exports = function () {
 
-    let countText = this.model.trackersBlockedCount || 0;
-    if (this.model.trackersCount > 0 && this.model.trackersCount != countText) {
-        countText = countText + '/' + this.model.trackersCount;
-    }
-
     return bel`<section class="site-info card">
-        <ul class="menu-list">
-            <li class="border--bottom">
-                <h1 class="site-info__domain">${this.model.domain}</h1>
-                <div class="site-info__rating site-info__rating--${this.model.siteRating} pull-right"></div>
+        <ul class="default-list">
+            <li class="site-info__rating-li">
+                <div class="site-info__rating-container border--bottom">
+                    ${siteRating(this.model.siteRating, this.model.isWhitelisted)}
+                    <h1 class="site-info__domain">${this.model.domain}</h1>
+                    ${ratingUpgrade(this.model.siteRating, this.model.isWhitelisted)}
+                </div>
             </li>
-            <li class="border--bottom">
-                <h2>
-                    <span class="site-info__https-status site-info__https-status--${this.model.httpsState}">
-                    </span><span class="site-info__https-status-msg bold">${this.model.httpsStatusText}</span>
-                </h3>
+            <li class="site-info__li--toggle padded border--bottom">
+                <h2 class="site-info__protection">Site Privacy Protection</h2>
+                <div class="site-info__toggle-container">
+                    <span class="site-info__toggle-text">
+                        ${this.model.whitelistStatusText}
+                    </span>
+                    ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
+                </div>
             </li>
-            <li class="site-info__li--tracker-count border--bottom">
-                <h2>
-                    <a href="#" class="js-site-show-all-trackers link-secondary">
-                        <span class="site-info__tracker-count">${countText}</span>Unique Trackers Blocked
-                        <span class="icon icon__arrow pull-right"></span>
-                    </a>
+            <li class="site-info__li--https-status padded border--bottom">
+                <h2 class="site-info__https-status bold">
+                    <span class="site-info__https-status__icon
+                        is-${this.model.httpsState}">
+                    </span>
+                    Connection
+                    <div class="float-right">
+                        <span class="site-info__https-status__msg
+                            is-${this.model.httpsStatusText.toLowerCase()}">
+                            ${this.model.httpsStatusText}
+                        </span>
+                    </div>
                 </h2>
             </li>
-            <li class="site-info__li--toggle">
-                <span class="site-info__toggle-text">${this.model.whitelistStatusText}</span>
-                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
+            <li class="site-info__li--trackers padded border--bottom">
+                ${renderTrackerNetworks(
+                    this.model.trackerNetworks,
+                    this.model.isWhitelisted)}
+            </li>
+            <li class="site-info__li--more-details padded border--bottom">
+                <a href="#" class="js-site-show-all-trackers link-secondary bold">
+                    More details
+                    <span class="icon icon__arrow pull-right"></span>
+                </a>
             </li>
         </ul>
-    </section>`;
+    </section>`
 
+    function ratingUpgrade (rating, isWhitelisted) {
+        const isActive = isWhitelisted ? false : true
+        // site grade/rating was upgraded by extension
+        if (isActive && rating && rating.before && rating.after) {
+            if (rating.before !== rating.after) {
+                return bel`<p class="site-info__rating-upgrade uppercase text--center">
+                    Upgraded from
+                    <span class="rating__text-only ${rating.before.toLowerCase()}">
+                    ${rating.before}</span> to
+                    <span class="rating__text-only ${rating.after.toLowerCase()}">
+                    ${rating.after}</span>
+                </p>`
+            }
+        }
+        // deal with other states
+        let msg = 'Privacy Grade'
+        // site is whitelisted
+        if (!isActive) msg = `Privacy Protection Disabled`
+        // "null" state (empty tab, browser's "about:" pages)
+        if (!rating.before && !rating.after) msg = `We only grade regular websites`
+
+        return bel`<p class="site-info__rating-upgrade uppercase text--center">
+            ${msg}</p>`
+    }
+
+    function renderTrackerNetworks (tn, isWhitelisted) {
+        let count = '0'
+        if (tn && tn.length) count = tn.length
+        const isActive = !isWhitelisted ? 'is-active' : ''
+        const foundOrBlocked = isWhitelisted ? 'found' : 'blocked'
+
+        return bel`<h2 class="site-info__trackers bold">
+            <span class="site-info__trackers-status__icon
+                is-blocking--${!isWhitelisted}">
+            </span>
+            Tracker networks ${foundOrBlocked}
+            <div class="float-right uppercase ${isActive}">${count}</div>
+        </h2>`
+    }
 }
-

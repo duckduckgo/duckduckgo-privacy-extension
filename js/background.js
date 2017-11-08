@@ -45,7 +45,7 @@ function Background() {
   $this = this;
 
   // clearing last search on browser startup
-  settings.updateSetting('last_search', '');
+  settings.updateSetting('last_search', '')
 
   var os = "o";
   if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
@@ -70,16 +70,14 @@ function Background() {
 
   chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install
-    if (details.reason === "install") {
+    if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
-    }
-    else if (details.reason === "upgrade") {
-        ATB.migrate()
     }
   });
 }
 
-var background = new Background();
+var background
+settings.ready().then(() => new Background())
 
 chrome.omnibox.onInputEntered.addListener(function(text) {
   chrome.tabs.query({
@@ -105,20 +103,16 @@ chrome.contextMenus.create({
   }
 });
 
-/** 
+/**
  * Before each request:
  * - Add ATB param
  * - Block tracker requests
  * - Upgrade http -> https per HTTPS Everywhere rules
  */
 chrome.webRequest.onBeforeRequest.addListener(
-    function (requestData) { 
+    function (requestData) {
 
         let tabId = requestData.tabId;
-
-        // Add ATB for DDG URLs
-        let ddgAtbRewrite = ATB.redirectURL(requestData);
-        if (ddgAtbRewrite) return ddgAtbRewrite;
 
         // Skip requests to background tabs
         if (tabId === -1) { return }
@@ -129,8 +123,13 @@ chrome.webRequest.onBeforeRequest.addListener(
         // don't have a tab instance for this tabId or this is a new requestId.
         if (requestData.type === "main_frame") {
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
-              thisTab = tabManager.create(requestData);
+                thisTab = tabManager.create(requestData);
             }
+
+            // add atb params only to main_frame
+            let ddgAtbRewrite = ATB.redirectURL(requestData);
+            if (ddgAtbRewrite) return ddgAtbRewrite;
+
         }
         else {
 
@@ -142,40 +141,48 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (!(thisTab && thisTab.url && thisTab.id)) return
 
             /**
-             * Tracker blocking 
-             * If request is a tracker, cancel the request 
+             * skip any broken sites
              */
+            if (thisTab.site.isBroken) {
+                console.log('temporarily skip tracker blocking for site: '
+                  + utils.extractHostFromURL(thisTab.url) + '\n'
+                  + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+                return
+            }
 
-            chrome.runtime.sendMessage({"updateTrackerCount": true});
+            /**
+             * Tracker blocking
+             * If request is a tracker, cancel the request
+             */
+            chrome.runtime.sendMessage({'updateTabData': true})
 
             var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
 
-            if (tracker) {
-                // record all tracker urls on a site even if we don't block them
-                thisTab.site.addTracker(tracker);
+            // count and block trackers. Skip things that matched in the trackersWhitelist
+            if (tracker && !(tracker.type === 'trackersWhitelist')) {
 
-                // record potential blocked trackers for this tab
-                thisTab.addToTrackers(tracker);
+                // only count trackers on pages with 200 response. Trackers on these sites are still
+                // blocked below but not counted toward company stats
+                if (thisTab.statusCode === 200) {
+                    // record all tracker urls on a site even if we don't block them
+                    thisTab.site.addTracker(tracker)
+
+                    // record potential blocked trackers for this tab
+                    thisTab.addToTrackers(tracker)
+                }
 
                 // Block the request if the site is not whitelisted
-                if (!thisTab.site.whitelisted) {
+                if (!thisTab.site.whitelisted && tracker.block) {
                     thisTab.addOrUpdateTrackersBlocked(tracker);
-                    chrome.runtime.sendMessage({"updateTrackerCount": true});
+                    chrome.runtime.sendMessage({'updateTabData': true})
 
                     // update badge icon for any requests that come in after
                     // the tab has finished loading
                     if (thisTab.status === "complete") thisTab.updateBadgeIcon()
 
 
-                    if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
-
-                    // Check tracker whitelist -- after trackers have counted against the grade
-                    if (abp.matches(trackerWhitelist, requestData.url)) {
-
-                        console.info( "UNBLOCKED " + utils.extractHostFromURL(thisTab.url)
-                                 + " [" + tracker.parentCompany + "] " + requestData.url);
-                        return
-
+                    if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200){
+                        Companies.add(tracker.parentCompany)
                     }
 
                     // for debugging specific requests. see test/tests/debugSite.js
@@ -194,13 +201,23 @@ chrome.webRequest.onBeforeRequest.addListener(
                 }
             }
         }
-        
+
         /**
          * HTTPS Everywhere rules
-         * If an upgrade rule is found, request is upgraded from http to https 
+         * If an upgrade rule is found, request is upgraded from http to https
          */
 
          if (!thisTab.site) return
+
+         /**
+          * Skip https upgrade on broken sites
+          */
+        if (thisTab.site.isBroken) {
+            console.log('temporarily skip https upgrades for site: '
+                  + utils.extractHostFromURL(thisTab.url) + '\n'
+                  + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
 
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
@@ -215,7 +232,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (https.isReady) {
                 https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
-                        if (url !== requestData.url.toLowerCase()) {
+                        if (url.toLowerCase() !== requestData.url.toLowerCase()) {
                             console.log('HTTPS: upgrade request url to ' + url)
                             if (isMainFrame) thisTab.upgradedHttps = true
                             thisTab.addHttpsUpgradeRequest(url)
@@ -233,7 +250,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         urls: [
             "<all_urls>",
         ],
-        types: settings.getSetting('requestListenerTypes')
+        types: defaultSettings.requestListenerTypes
     },
     ["blocking"]
 );
