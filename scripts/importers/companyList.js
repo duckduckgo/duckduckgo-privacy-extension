@@ -1,4 +1,7 @@
-global.companyList = function(listData){
+const defaultSettings = require('./../../data/defaultSettings.js')
+const majorNetworks = defaultSettings.majorTrackingNetworks
+
+global.companyList = function (listData) {
     /* format Mozilla block list for our use
      * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
      * "<tracker host>" : { "c": <company name>, "u": "company url" }
@@ -10,16 +13,6 @@ global.companyList = function(listData){
     var request = require('request')
     var remapData
     var companyList
-
-    // FIXME -- use settings data in the future.
-    // (but settings data needs to be read in a different way than it currently can.)
-    let majorNetworks = {
-        'Google': true,
-        'Facebook': true,
-        'Twitter': true,
-        'Amazon': true,
-        'AppNexus': true
-    }
 
     return new Promise ((resolve) => {
 

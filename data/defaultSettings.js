@@ -24,7 +24,6 @@ const defaultSettings = {
     "blocking": ["Advertising", "Analytics"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "httpsWhitelist": "data/httpsWhitelist.json",
-    "majorTrackingNetworks": {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true},
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelistTemporary-etag": null,
     "trackersWhitelist": "https://duckduckgo.com/contentblocking.js?l=trackers-whitelist",
@@ -32,5 +31,17 @@ const defaultSettings = {
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "generalEasylist-etag": null,
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
-    "privacyEasylist-etag": null
+    "privacyEasylist-etag": null,
+    "majorTrackingNetworks": {
+        "Google": true,
+        "Facebook": true,
+        "Twitter": true,
+        "Amazon": true,
+        "AppNexus": true
+    }
+}
+
+
+if (typeof window === 'undefined' && module && module.exports)  {
+    module.exports = defaultSettings
 }
