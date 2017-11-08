@@ -223,15 +223,6 @@ $icon__tn__yandex--moz: "moz-extension://__MSG_@@extension_id__/img/tn-yandex.sv
         }
     }
 
-    &.oracle {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__oracle--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__oracle--moz);
-        }
-    }
-
     &.outbrain {
         .is-browser--chrome & {
             background-image: url($icon__tn__outbrain--chrome);
