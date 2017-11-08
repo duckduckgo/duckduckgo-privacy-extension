@@ -107,11 +107,7 @@ class Score {
             } else if (this.tosdr.score) {
                 let tosdrScore =  Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
-
-                // only apply a positive tosdr score
-                if (tosdrScore > 0) {
-                    afterIndex += tosdrScore
-                }
+                afterIndex += tosdrScore
             }
         }
 
@@ -133,6 +129,11 @@ class Score {
         // return corresponding score or lowest score if outside the array
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
         let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
+        
+        // only sites with a tosdr.class "A" can get a final after grade of "A"
+        if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
+        if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
+
 
         return {before: beforeGrade, after: afterGrade}
     }
