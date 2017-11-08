@@ -130,7 +130,7 @@ class Score {
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
         let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
         
-        // only sites with a tosdr.class "A" can get a final after grade of "A"
+        // only sites with a tosdr.class "A" can get a final grade of "A"
         if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
         if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
 
