@@ -18,6 +18,7 @@ function Site (attrs) {
     attrs.isUserPrivacyUpgraded = false
     attrs.trackerCount = 0
     attrs.trackerNetworks
+    attrs.tosdr = {}
     Parent.call(this, attrs)
 
     this.bindEvents([
@@ -45,6 +46,7 @@ Site.prototype = $.extend({},
                           }
                           this.setSiteProperties()
                           this.setHttpsMessage()
+                          this.tosdr = backgroundTabObj.site.score.tosdr
                           this.update()
                           resolve()
                       })
