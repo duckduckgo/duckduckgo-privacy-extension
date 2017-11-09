@@ -7,6 +7,8 @@
 abp = require('abp-filter-parser')
 deepFreeze = require('deep-freeze')
 
+// these are defined in data/ and loaded in the manifest. 
+// Make them immutable with deep-freeze
 constants = deepFreeze(constants)
 defaultSettings = deepFreeze(defaultSettings)
 
