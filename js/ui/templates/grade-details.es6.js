@@ -2,6 +2,7 @@ const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
 const siteRating = require('./shared/site-rating.es6.js')
 const siteRatingExplainer = require('./shared/site-rating-explainer.es6.js')
+const tosdrMessages = {'A': 'Good', 'B': 'Mixed', 'C': 'Poor', 'D': 'Poor'}
 
 module.exports = function () {
 
@@ -19,12 +20,26 @@ module.exports = function () {
                 ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>
             </h2>
+            <h2 class="site-info__tosdr-status">
+                ${tosdrMsg(this.model.site.tosdr)}
+            </h2>
+            <p class="site-info__tosdr-msg padded border--bottom">
+                Using privacy policy analysis from TOSDR
+            </p>
             ${trackersBlockedOrFound(this.model)}
             <ol class="default-list site-info__trackers__company-list">
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
         </div>`
     }
+}
+
+function tosdrMsg (tosdr) {
+    let msg = "Unknown"
+    if (tosdr.class) {
+        msg = tosdrMessages[tosdr.class]
+    }
+    return bel`<span>${msg} Privacy Practices</span>`
 }
 
 function httpsMsg (httpsState) {

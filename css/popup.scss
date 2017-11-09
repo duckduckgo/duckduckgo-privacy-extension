@@ -194,6 +194,16 @@ body {
             font-size: 17px;
         }
 
+        .site-info__tosdr-status {
+            padding: 15px 20px 0px 20px
+        }
+
+        .site-info__tosdr-msg {
+            color: $color--grey;
+            font-size: 13px;
+            padding: 7.5px 20px 15px 20px;
+        }
+
         .site-info__li--toggle {
             .is-disabled & {
                 @include is_disabled();
