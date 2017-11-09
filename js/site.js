@@ -24,7 +24,7 @@ settings.ready().then(() => {
 
 const siteScores = ['A', 'B', 'C', 'D']
 
-// percent of the top 1 million sites a tracking network has been seen on. 
+// percent of the top 1 million sites a tracking network has been seen on.
 // see: https://webtransparency.cs.princeton.edu/webcensus/
 const pagesSeenOn = {'google':84,'facebook':36,'twitter':16,'amazon':14,'appnexus':10,'oracle':10,'mediamath':9,'yahoo':9,'maxcdn':7,'automattic':7}
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
@@ -86,7 +86,7 @@ class Score {
      * Calculates and returns a site score
      */
     get() {
-        if (this.specialPage) return 'none'
+        if (this.specialPage) return {}
 
         let beforeIndex = 1
         let afterIndex = 1
@@ -95,7 +95,7 @@ class Score {
             beforeIndex += this.isaMajorTrackingNetwork
             afterIndex += this.isaMajorTrackingNetwork
         }
-        
+
         // If tosdr already determined a class ranking then we map that to increase or
         // decrease the grade accordingly. Otherwise we apply a +/- to the grade based
         // on the cumulative total of all the points we care about. see: scripts/tosdr-topics.json
@@ -107,11 +107,7 @@ class Score {
             } else if (this.tosdr.score) {
                 let tosdrScore =  Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
-
-                // only apply a positive tosdr score
-                if (tosdrScore > 0) {
-                    afterIndex += tosdrScore
-                }
+                afterIndex += tosdrScore
             }
         }
 
@@ -133,6 +129,11 @@ class Score {
         // return corresponding score or lowest score if outside the array
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
         let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
+
+        // only sites with a tosdr.class "A" can get a final grade of "A"
+        if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
+        if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
+
 
         return {before: beforeGrade, after: afterGrade}
     }
