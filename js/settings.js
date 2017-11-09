@@ -5,10 +5,6 @@ var load = require('load');
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
-
-// required in abp.js
-let deepFreeze = ''
-
 require.scopes.settings =(() => {
     var settings = {};
     let isReady = false
