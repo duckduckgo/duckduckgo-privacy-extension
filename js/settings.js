@@ -35,7 +35,13 @@ require.scopes.settings =(() => {
     function buildSettingsFromLocalStorage() {
         return new Promise ((resolve) => {
             chrome.storage.local.get(['settings'], function(results){
+                // copy over saved settings from storage
                 Object.assign(settings, results['settings']);
+
+                // copy over constants last. This will replace any setting
+                // with the value in data/constants.js
+                Object.assign(settings, constants);
+
                 runExternalSettings();
                 resolve()
             })
@@ -56,7 +62,8 @@ require.scopes.settings =(() => {
     }
 
     function buildSettingsFromDefaults() {
-        settings = defaultSettings
+        // initial settings are a copy of default settings
+        settings = Object.assign({}, defaultSettings)
     }
 
     function syncSettingTolocalStorage(){

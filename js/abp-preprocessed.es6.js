@@ -5,6 +5,13 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser')
+const deepFreeze = require('deep-freeze')
+
+// these are defined in data/ and loaded in the manifest. 
+// Make them immutable with deep-freeze
+constants = deepFreeze(constants)
+defaultSettings = deepFreeze(defaultSettings)
+
 const ONEDAY = 1000*60*60*24
 
 let lists = {
@@ -54,8 +61,8 @@ function updateLists () {
                 
             let etag = settings.getSetting(settingsName + '-etag') || ''
 
-            // only add url params to duckduckgo urls
-            if(url.match(/^https?:\/\/(.+)?duckduckgo.com/)) {
+            // only add url params to contentblocking.js duckduckgo urls
+            if(url.match(/^https?:\/\/(.+)?duckduckgo.com\/contentblocking\.js/)) {
                 if (atb) url += '&atb=' + atb
                 if (set_atb) url += '&set_atb=' + set_atb
                 if (versionParam) url += versionParam
