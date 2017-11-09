@@ -12,7 +12,9 @@ function HamburgerMenu (ops) {
     this.bindEvents([
         [this.$close, 'click', this.closeMenu],
         [this.$optionslink, 'click', this.openOptionsPage],
-        [this.model.store.subscribe, 'action:search', this.handleAction]
+        [this.model.store.subscribe, 'action:search', this._handleAction],
+        [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
+
     ])
 }
 
@@ -20,7 +22,7 @@ HamburgerMenu.prototype = $.extend({},
     Parent.prototype,
     {
 
-        handleAction: function (notification) {
+        _handleAction: function (notification) {
             if (notification.action === 'burgerClick') this.openMenu()
         },
 
@@ -31,6 +33,13 @@ HamburgerMenu.prototype = $.extend({},
         closeMenu: function (e) {
             if (e) e.preventDefault()
             this.$el.addClass('is-hidden')
+        },
+
+        _handleSiteUpdate: function (notif) {
+              if (notif && notif.change.attribute === 'tab') {
+                  this.model.domain = notif.change.value.site.domain
+                  this._rerender()
+              }
         },
 
         openOptionsPage: function () {

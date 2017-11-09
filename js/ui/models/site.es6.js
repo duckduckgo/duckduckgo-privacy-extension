@@ -40,7 +40,7 @@ Site.prototype = $.extend({},
                   if (tab) {
                       this.fetch({getTab: tab.id}).then((backgroundTabObj) => {
                           if (backgroundTabObj) {
-                              this.tab = backgroundTabObj
+                              this.set('tab', backgroundTabObj)
                               this.domain = backgroundTabObj.site.domain
                               this.fetchSiteRating()
                               this.tosdr = backgroundTabObj.site.score.tosdr
