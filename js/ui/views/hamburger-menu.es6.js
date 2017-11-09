@@ -37,7 +37,7 @@ HamburgerMenu.prototype = $.extend({},
 
         _handleSiteUpdate: function (notif) {
               if (notif && notif.change.attribute === 'tab') {
-                  this.model.domain = notif.change.value.site.domain
+                  this.model.tabUrl = notif.change.value.url
                   this._rerender()
               }
         },
