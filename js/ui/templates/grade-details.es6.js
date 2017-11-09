@@ -51,7 +51,8 @@ function httpsMsg (httpsState) {
 
 function trackersBlockedOrFound (model) {
     let msg = ''
-    if (model.site && model.site.isWhitelisted) {
+    if (model.site &&
+       (model.site.isWhitelisted || model.site.trackerNetworks.length === 0)) {
         msg = 'Trackers found'
     } else {
         msg = 'Trackers blocked'
