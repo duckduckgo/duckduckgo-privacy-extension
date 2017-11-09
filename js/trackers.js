@@ -18,12 +18,12 @@ settings.ready().then(() => {
     load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
 })
 
-require.scopes.trackers = (function() {    
+require.scopes.trackers = (function() {
 
     function isTracker(urlToCheck, currLocation, tabId, request) {
-        
+
         // TODO: easylist is marking some of our requests as trackers. Whitelist us
-        // // by default for now until we can figure out why. 
+        // by default for now until we can figure out why.
         if (currLocation.match(/duckduckgo\.com/)) {
             return false
         }
@@ -39,7 +39,7 @@ require.scopes.trackers = (function() {
         }
 
         if (settings.getSetting('trackerBlockingEnabled')) {
-        
+
             let urlSplit = tldjs.parse(urlToCheck).hostname.split('.')
             var social_block = settings.getSetting('socialBlockingIsEnabled')
             var blockSettings = settings.getSetting('blocking').slice(0)
@@ -48,7 +48,7 @@ require.scopes.trackers = (function() {
             if (isFirstPartyRequest(currLocation, urlToCheck)) {
                 return
             }
-            if(social_block){
+            if (social_block) {
                 blockSettings.push('Social')
             }
 
@@ -57,16 +57,15 @@ require.scopes.trackers = (function() {
                 return whitelistedTracker
             }
 
-            // Look up trackers by parent company. This function also checks to see if the poential 
-            // tracker is related to the current site. If this is the case we consider it to be the 
+            // Look up trackers by parent company. This function also checks to see if the poential
+            // tracker is related to the current site. If this is the case we consider it to be the
             // same as a first party requrest and return
             var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
-            if(trackerByParentCompany) {
+            if (trackerByParentCompany) {
             // check cancel to see if this tracker is related to the current site
                 if (trackerByParentCompany.cancel) {
                     return
-                }
-                else {
+                } else {
                     return trackerByParentCompany
                 }
             }
@@ -84,12 +83,12 @@ require.scopes.trackers = (function() {
     function checkWhitelist(url, currLocation, request) {
         let result = false
         let match
-    
+
         if (whitelists.trackersWhitelist.isLoaded) {
             match = checkABPParsedList(whitelists.trackersWhitelist.parsed, url, currLocation, request)
         }
-    
-        if(match){
+
+        if (match) {
             result = getTrackerDetails(url, 'trackersWhitelist')
             result.block = false
         }
@@ -107,7 +106,7 @@ require.scopes.trackers = (function() {
             }
 
             // break loop early if a list matches
-            if(match){
+            if (match) {
                 toBlock = getTrackerDetails(url, listName)
                 toBlock.block = true
             }
@@ -116,33 +115,40 @@ require.scopes.trackers = (function() {
         return toBlock
     }
 
-    function checkTrackersWithParentCompany(blockSettings, url, currLocation) {
+    function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
         var toBlock
-    
+
         // base case
         if (url.length < 2)
             return false
 
         let trackerURL = url.join('.')
 
-        blockSettings.some( function(trackerType) {
+        console.log('blockSettings: ', blockSettings)
+        blockSettings.some(function (trackerType) {
+            console.log('checkTrackersWithParentCompany() trackerType: ' + trackerType)
             // Some trackers are listed under just the host name of their parent company without
-            // // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
+            // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
             // Other trackers are listed using their subdomains. Ex: developers.google.com.
             // We'll start by checking the full host with subdomains and then if no match is found
             // try pulling off the subdomain and checking again.
-            if(trackerLists.trackersWithParentCompany[trackerType]) {
+            if (trackerLists.trackersWithParentCompany[trackerType]) {
                 var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
                 if (tracker) {
                     if (!isRelatedEntity(tracker.c, currLocation)) {
-                        return toBlock = {parentCompany: tracker.c, url: trackerURL, type: trackerType, block: true}
+                        return toBlock = {
+                            parentCompany: tracker.c,
+                            url: trackerURL,
+                            type: trackerType,
+                            block: true
+                        }
                     }
                     else {
                         return toBlock = {cancel: 'relatedEntity'}
                     }
                 }
             }
-        
+
         })
 
         if (toBlock) {
@@ -193,18 +199,26 @@ require.scopes.trackers = (function() {
         return false
     }
 
-    function getTrackerDetails(trackerUrl, listName) {
+    function getTrackerDetails (trackerUrl, listName) {
         let host = utils.extractHostFromURL(trackerUrl)
+        console.log('-----getTrackerDetails()')
+        console.log(host)
         let parentCompany = findParent(host.split('.')) || 'unknown'
-        return {parentCompany: parentCompany, url: host, type: listName}
+        // if (parentCompany !== 'unknown') debugger
+        console.log('----parentCompany: ' + parentCompany)
+        return {
+            parentCompany: parentCompany,
+            url: host,
+            type: listName
+        }
     }
 
-    
     // pull off subdomains and look for parent companies
-    function findParent(url) {
-        if (url.length < 2) return null
+    function findParent (url) {
+        console.log('findParent() url: ' + url)
+        if (url.length < 2) return
         let joinURL = url.join('.')
-    
+        console.log('joinURL: ' + joinURL )
         if (entityMap[joinURL]) {
             return entityMap[joinURL]
         } else {
@@ -214,15 +228,16 @@ require.scopes.trackers = (function() {
     }
 
     function checkABPParsedList(list, url, currLocation, request) {
-        let match = abp.matches(list, url, 
-            { 
-                domain: currLocation, 
+        let match = abp.matches(list, url,
+            {
+                domain: currLocation,
                 elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
             })
         return match
     }
 
-    var exports = {}
-    exports.isTracker = isTracker
-    return exports
+    return {
+        isTracker: isTracker
+    }
+
 })()

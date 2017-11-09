@@ -8,7 +8,7 @@ global.companyList = function (listData) {
      */
     var companyListLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json'
     var remapDataLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/google_mapping.json'
-    var trackerList = { TopTrackerDomains:{} }
+    var trackerList = { TopTrackerDomains: {} }
     var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social']
     var request = require('request')
     var remapData

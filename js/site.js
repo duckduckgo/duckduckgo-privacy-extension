@@ -24,7 +24,7 @@ settings.ready().then(() => {
 
 const siteScores = ['A', 'B', 'C', 'D']
 
-// percent of the top 1 million sites a tracking network has been seen on. 
+// percent of the top 1 million sites a tracking network has been seen on.
 // see: https://webtransparency.cs.princeton.edu/webcensus/
 const pagesSeenOn = {'google':84,'facebook':36,'twitter':16,'amazon':14,'appnexus':10,'oracle':10,'mediamath':9,'yahoo':9,'maxcdn':7,'automattic':7}
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
@@ -65,7 +65,7 @@ class Score {
         return result
     }
 
-    /* is the parent site itself a major tarcking network?
+    /* is the parent site itself a major tracking network?
      * minus one grade for each 10% of the top pages this
      * network is found on.
      */
@@ -95,7 +95,7 @@ class Score {
             beforeIndex += this.isaMajorTrackingNetwork
             afterIndex += this.isaMajorTrackingNetwork
         }
-        
+
         // If tosdr already determined a class ranking then we map that to increase or
         // decrease the grade accordingly. Otherwise we apply a +/- to the grade based
         // on the cumulative total of all the points we care about. see: scripts/tosdr-topics.json
