@@ -22,11 +22,9 @@ module.exports = function () {
             </h2>
             <h2 class="site-info__tosdr-status">
                 ${tosdrMsg(this.model.site.tosdr)}
-                <div class="float-right"></div>
             </h2>
             <p class="site-info__tosdr-msg padded border--bottom">
                 Using privacy policy analysis from TOSDR
-                <div class="float-right"></div>
             </p>
             ${trackersBlockedOrFound(this.model)}
             <ol class="default-list site-info__trackers__company-list">

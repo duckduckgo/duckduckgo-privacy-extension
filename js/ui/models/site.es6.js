@@ -43,10 +43,10 @@ Site.prototype = $.extend({},
                               this.tab = backgroundTabObj
                               this.domain = backgroundTabObj.site.domain
                               this.fetchSiteRating()
+                              this.tosdr = backgroundTabObj.site.score.tosdr
                           }
                           this.setSiteProperties()
                           this.setHttpsMessage()
-                          this.tosdr = backgroundTabObj.site.score.tosdr
                           this.update()
                           resolve()
                       })
