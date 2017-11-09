@@ -5,7 +5,7 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser')
-deepFreeze = require('deep-freeze')
+const deepFreeze = require('deep-freeze')
 
 // these are defined in data/ and loaded in the manifest. 
 // Make them immutable with deep-freeze
