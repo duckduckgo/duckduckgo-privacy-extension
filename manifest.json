@@ -36,6 +36,7 @@
     "background": {
             "scripts": [
                 "data/defaultSettings.js",
+                "data/constants.js",
                 "js/require.js",
                 "js/load.js",
                 "js/utils.js",
