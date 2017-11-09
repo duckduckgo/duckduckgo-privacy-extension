@@ -1,4 +1,4 @@
-const constants = {
+let constants = {
     "trackerListLoc": "data/tracker_lists",
     "tosdr": "data/tosdr.json",
     "blockLists": [

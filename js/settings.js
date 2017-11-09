@@ -5,6 +5,10 @@ var load = require('load');
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
+
+// required in abp.js
+let deepFreeze = ''
+
 require.scopes.settings =(() => {
     var settings = {};
     let isReady = false
@@ -38,7 +42,8 @@ require.scopes.settings =(() => {
                 // copy over saved settings from storage
                 Object.assign(settings, results['settings']);
 
-                // copy over constants last
+                // copy over constants last. This will replace any setting
+                // with the value in data/constants.js
                 Object.assign(settings, constants);
 
                 runExternalSettings();
@@ -61,7 +66,8 @@ require.scopes.settings =(() => {
     }
 
     function buildSettingsFromDefaults() {
-        settings = defaultSettings
+        // initial settings are a copy of default settings
+        settings = Object.assign({}, defaultSettings)
     }
 
     function syncSettingTolocalStorage(){

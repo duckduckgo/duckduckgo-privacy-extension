@@ -1,4 +1,4 @@
-const defaultSettings = {
+let defaultSettings = {
     "extensionIsEnabled": true,
     "socialBlockingIsEnabled": false,
     "trackerBlockingEnabled": true,

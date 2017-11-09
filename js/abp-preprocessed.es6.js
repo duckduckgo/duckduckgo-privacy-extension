@@ -5,6 +5,11 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser')
+deepFreeze = require('deep-freeze')
+
+constants = deepFreeze(constants)
+defaultSettings = deepFreeze(defaultSettings)
+
 const ONEDAY = 1000*60*60*24
 
 let lists = {
