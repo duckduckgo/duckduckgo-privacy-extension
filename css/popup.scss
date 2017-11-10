@@ -450,6 +450,13 @@ body {
 
                             @include tracker_network_icons();
                         }
+
+                        &:last-child {
+
+                            .site-info__trackers__company-list__url-list {
+                                margin-bottom: 60px;
+                            }
+                        }
                     }
 
                 .site-info__trackers__company-list__url-list {
