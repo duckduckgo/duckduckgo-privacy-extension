@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2017.11.1",
+    "version": "2017.11.9",
     "description": "DuckDuckGo Privacy Protection",
     "icons": {
         "16": "img/icon_16.png",
