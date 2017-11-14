@@ -12,6 +12,7 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
+    attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
@@ -34,7 +35,7 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       getBackgroundTabData: function () {
-          // console.log('[view] getBackgroundTabData()')
+          // console.log('[site view] getBackgroundTabData()')
           return new Promise((resolve, reject) => {
               this.fetch({getCurrentTab: true}).then((tab) => {
                   if (tab) {
@@ -71,14 +72,16 @@ Site.prototype = $.extend({},
       setSiteProperties: function() {
           if (!this.tab) {
               this.domain = 'new tab' // tab can be null for firefox new tabs
-              this.siteRating = {}
+              this.set({isCalculatingSiteRating: false})
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted
               if (this.tab.site.isSpecialDomain) {
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
+                  this.set({isCalculatingSiteRating: false})
               } else {
                   this.set('disabled', false)
+                  this.set({isCalculatingSiteRating: false})
               }
           }
 
@@ -111,12 +114,22 @@ Site.prototype = $.extend({},
           }
       },
 
+      // calls `this.set()` to trigger view re-rendering
       update: function (ops) {
           // console.log('[model] update()')
           if (this.tab) {
 
+              // got siteRating back fr/ background process,
+              // 'after' rating changed, template needs re-render
               if (ops && ops.siteRating && (ops.siteRating.after !== this.siteRating.after)) {
+                  this.isCalculatingSiteRating = false
                   this.set('siteRating', ops.siteRating)
+              // got site rating from background process,
+              // but no change in 'after' rating
+              } else if (ops && ops.siteRating) {
+                  if (this.isCalculatingSiteRating) {
+                      this.set('isCalculatingSiteRating', false)
+                  }
               }
 
               const newTrackersCount = this.getUniqueTrackersCount()

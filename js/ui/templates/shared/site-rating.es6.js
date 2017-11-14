@@ -1,13 +1,21 @@
 const bel = require('bel')
 
-module.exports = function (rating, isWhitelisted) {
-    const isActive = isWhitelisted ? '' : 'is-active'
-
+module.exports = function (isCalculating, rating, isWhitelisted) {
+    // console.log('[site-rating template] isCalculating: ' + isCalculating)
     let _rating
-    if (isActive) {
-        _rating = rating.after ? rating.after.toLowerCase() : 'null'
+    let isActive = ''
+
+    if (isCalculating) {
+        _rating = 'calculating'
     } else {
-        _rating = rating.before ? rating.before.toLowerCase() : 'null'
+        isActive = isWhitelisted ? '' : 'is-active'
+        if (isActive && rating && rating.after) {
+            _rating = rating.after.toLowerCase()
+        } else if (rating && rating.before) {
+            _rating = rating.before.toLowerCase()
+        } else {
+            _rating = 'null'
+        }
     }
 
     return bel`<div class="site-info__rating

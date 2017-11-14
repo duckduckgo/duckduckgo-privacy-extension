@@ -8,21 +8,52 @@ function Site (ops) {
     this.pageView = ops.pageView
     this.template = ops.template
 
+    // render template for the first time here
+    // in `this.model.isCalculatingSiteRating` state
     Parent.call(this, ops)
 
     this.$body = $('body')
 
-    // bind events
-    this._setup()
-
-    // get data from background page tab
-    this.model.getBackgroundTabData().then(() => this.rerender())
-};
+    // get data from background process, then re-render for the first time
+    // after a timeout; this helps buffer the render cycle during heavy
+    // page loads with lots of trackers
+    this.model.getBackgroundTabData().then(() => {
+        // console.log('[site view] call first rerender() of site data in popup')
+        setTimeout(() => this.rerender(), 750)
+    })
+}
 
 Site.prototype = $.extend({},
     Parent.prototype,
     {
 
+        _whitelistClick: function (e) {
+            if (this.$body.hasClass('is-disabled')) return
+            this.model.toggleWhitelist()
+            console.log('isWhitelisted: ', this.model.isWhitelisted)
+            chrome.tabs.reload(this.model.tab.id)
+            const w = chrome.extension.getViews({type: 'popup'})[0]
+            w.close()
+        },
+
+        rerender: function () {
+            // console.log('[site view] rerender()')
+            if (this.model && this.model.disabled) {
+                console.log('.addClass is-disabled')
+                this.$body.addClass('is-disabled')
+                this._rerender()
+                this._setup()
+            } else {
+                this.$body.removeClass('is-disabled');
+                this.unbindEvents()
+                this._rerender()
+                this._setup()
+            }
+        },
+
+        // NOTE: ._setup() is not called until after first this.rerender() call!
+        // after ._setup() is called this view listens for changes to
+        // site model and re-renders every time
         _setup: function() {
 
             this._cacheElems('.js-site', [
@@ -36,27 +67,6 @@ Site.prototype = $.extend({},
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
 
-        },
-
-        _whitelistClick: function (e) {
-            if (this.$body.hasClass('is-disabled')) return
-            this.model.toggleWhitelist()
-            console.log('isWhitelisted: ', this.model.isWhitelisted)
-            chrome.tabs.reload(this.model.tab.id)
-            const w = chrome.extension.getViews({type: 'popup'})[0]
-            w.close()
-        },
-
-        rerender: function () {
-            // console.log('[view] rerender()')
-            if (this.model.disabled) {
-                this.$body.addClass('is-disabled')
-            } else {
-                this.$body.removeClass('is-disabled');
-                this.unbindEvents()
-                this._rerender()
-                this._setup()
-            }
         },
 
         _showAllTrackers: function () {
