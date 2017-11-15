@@ -4,7 +4,7 @@ const settings = require('settings')
 let knownMixedContentList
 
 settings.ready().then(() => {
-    load.JSONfromLocalFile(settings.getSetting('httpsWhitelist'), (wl) => knownMixedContentList = wl)
+    load.JSONfromLocalFile(constants.httpsWhitelist, (wl) => knownMixedContentList = wl)
 })
 
 class HTTPS {
