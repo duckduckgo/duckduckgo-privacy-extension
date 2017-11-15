@@ -14,8 +14,8 @@ let entityMap
 let whitelists
 
 settings.ready().then(() => {
-    load.JSONfromExternalFile(settings.getSetting('entityList'), (list) => entityList = list)
-    load.JSONfromExternalFile(settings.getSetting('entityMap'), (list) => entityMap = list)
+    load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
+    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
 })
 
 require.scopes.trackers = (function() {    
@@ -42,7 +42,7 @@ require.scopes.trackers = (function() {
         
             let urlSplit = tldjs.parse(urlToCheck).hostname.split('.')
             var social_block = settings.getSetting('socialBlockingIsEnabled')
-            var blockSettings = settings.getSetting('blocking').slice(0)
+            var blockSettings = constants.blocking.slice(0)
 
             // don't block 1st party requests
             if (isFirstPartyRequest(currLocation, urlToCheck)) {
@@ -99,7 +99,7 @@ require.scopes.trackers = (function() {
 
     function checkEasylists(url, currLocation, request){
         let toBlock = false
-        settings.getSetting('easylists').some((listName) => {
+        constants.easylists.some((listName) => {
             let match
             // lists can take a second or two to load so check that the parsed data exists
             if (easylists[listName].isLoaded) {

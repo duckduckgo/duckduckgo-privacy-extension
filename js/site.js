@@ -15,7 +15,7 @@ let tosdrListLoaded
 let trackersWhitelistTemporary
 
 settings.ready().then(() => {
-    load.JSONfromLocalFile(settings.getSetting('tosdr'),(data) => {
+    load.JSONfromLocalFile(constants.tosdr,(data) => {
         tosdr = data
         tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
         tosdrListLoaded = true
@@ -144,7 +144,7 @@ class Score {
      */
     update(event) {
 
-        let majorTrackingNetworks = settings.getSetting('majorTrackingNetworks')
+        let majorTrackingNetworks = constants.majorTrackingNetworks
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
         if (event.hasHTTPS) {

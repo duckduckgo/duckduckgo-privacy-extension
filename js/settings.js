@@ -38,10 +38,6 @@ require.scopes.settings =(() => {
                 // copy over saved settings from storage
                 Object.assign(settings, results['settings']);
 
-                // copy over constants last. This will replace any setting
-                // with the value in data/constants.js
-                Object.assign(settings, constants);
-
                 runExternalSettings();
                 resolve()
             })
