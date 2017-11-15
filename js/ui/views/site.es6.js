@@ -23,6 +23,7 @@ function Site (ops) {
         } else {
             // the timeout helps buffer the re-render cycle during heavy
             // page loads with lots of trackers
+            this.rerender({skipSetup: true})
             setTimeout(() => this.rerender(), 750)
         }
     })
@@ -41,26 +42,26 @@ Site.prototype = $.extend({},
             w.close()
         },
 
-        rerender: function () {
+        rerender: function (ops) {
             // console.log('[site view] rerender()')
+            ops = ops || {}
             if (this.model && this.model.disabled) {
                 console.log('.addClass is-disabled')
                 this.$body.addClass('is-disabled')
                 this._rerender()
-                this._setup()
+                if (!ops.skipSetup) this._setup()
             } else {
                 this.$body.removeClass('is-disabled');
                 this.unbindEvents()
                 this._rerender()
-                this._setup()
+                if (!ops.skipSetup) this._setup()
             }
         },
 
-        // NOTE: ._setup() is not called until after first this.rerender() call!
-        // after ._setup() is called this view listens for changes to
-        // site model and re-renders every time
+        // NOTE: after ._setup() is called this view listens for changes to
+        // site model and re-renders every time model properties change
         _setup: function() {
-
+            // console.log('[site view] _setup()')
             this._cacheElems('.js-site', [
                 'toggle',
                 'show-all-trackers'

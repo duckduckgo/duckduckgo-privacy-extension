@@ -80,8 +80,7 @@ Site.prototype = $.extend({},
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
                   this.set({isCalculatingSiteRating: false})
               } else {
-                  this.set('disabled', false)
-                  this.set({isCalculatingSiteRating: false})
+                  this.set({'disabled': false})
               }
           }
 
@@ -121,9 +120,13 @@ Site.prototype = $.extend({},
 
               // got siteRating back fr/ background process,
               // 'after' rating changed, template needs re-render
-              if (ops && ops.siteRating && (ops.siteRating.after !== this.siteRating.after)) {
-                  this.isCalculatingSiteRating = false
-                  this.set('siteRating', ops.siteRating)
+              if (ops && ops.siteRating &&
+                  (ops.siteRating.after !== this.siteRating.after)) {
+                  this.set({
+                    'siteRating': ops.siteRating,
+                    'isCalculatingSiteRating': false
+              })
+
               // got site rating from background process,
               // but no change in 'after' rating
               } else if (ops && ops.siteRating) {

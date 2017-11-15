@@ -72,17 +72,18 @@ module.exports = function () {
                 </p>`
             }
         }
+
         // deal with other states
         let msg = 'Privacy Grade'
-        // rating is still calculating
-        if (isCalculating) {
-            msg = `Calculating...`
         // site is whitelisted
-        } else if (!isActive) {
+        if (!isActive) {
             msg = `Privacy Protection Disabled`
         // "null" state (empty tab, browser's "about:" pages)
-        } else if (!rating.before && !rating.after) {
+        } else if (!isCalculating && !rating.before && !rating.after) {
             msg = `We only grade regular websites`
+        // rating is still calculating
+        } else if (isCalculating) {
+            msg = `Calculating...`
         }
 
         return bel`<p class="site-info__rating-upgrade uppercase text--center">
