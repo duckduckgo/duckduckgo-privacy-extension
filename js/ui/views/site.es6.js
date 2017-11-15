@@ -9,17 +9,22 @@ function Site (ops) {
     this.template = ops.template
 
     // render template for the first time here
-    // in `this.model.isCalculatingSiteRating` state
+    // in default `this.model.isCalculatingSiteRating` state
     Parent.call(this, ops)
 
+    // cache 'body' selector
     this.$body = $('body')
 
-    // get data from background process, then re-render for the first time
-    // after a timeout; this helps buffer the render cycle during heavy
-    // page loads with lots of trackers
+    // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
-        // console.log('[site view] call first rerender() of site data in popup')
-        setTimeout(() => this.rerender(), 750)
+        if (this.model.tab &&
+           (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
+            this.rerender()
+        } else {
+            // the timeout helps buffer the re-render cycle during heavy
+            // page loads with lots of trackers
+            setTimeout(() => this.rerender(), 750)
+        }
     })
 }
 
