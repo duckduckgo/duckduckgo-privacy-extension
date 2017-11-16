@@ -1,13 +1,18 @@
 (function() {
   QUnit.module("trackers");
   var fakeRequest = {type: 'script'};
+  let fakeTab = {
+      tabId: 0,
+      url: 'http://test.com',
+      site: {domain: 'test.com'}
+  }
 
   var basicBlocking = [
     { url: 'https://doubleclick.net', block: true},
     { url: 'https://duckduckgo.com', block: false},
     { url: 'https://developers.google.com', block: true},
     { url: 'https://x.y.z.doubleclick.net', block: true},
-    { url: 'https://logx.optimizely.com/log/event', block: true}
+    { url: 'https://logx.optimizely.com/log/event', block: true},
   ];
   
   QUnit.test("block url", function (assert) {
@@ -16,7 +21,8 @@
       
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          var toBlock = bkg.trackers.isTracker(test.url, 'http://test.com', 0, fakeRequest);
+          
+          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
@@ -25,7 +31,7 @@
   QUnit.test("turn off blocking", function (assert) {
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', false);
-          var toBlock = bkg.trackers.isTracker(test.url, '', 0, fakeRequest);
+          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, 0, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === false, 'url should not be');
       });
@@ -44,7 +50,14 @@
       thirdPartyTests.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-          var toBlock = bkg.trackers.isTracker(test.potentialTracker, test.url, 0, fakeRequest);
+
+          let testTab = {
+              tabId: 0,
+              url: test.url,
+              site: {domain: utils.extractHostFromURL(test.url)}
+          }
+
+          var toBlock = bkg.trackers.isTracker(test.potentialTracker, testTab, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, test.message);
       });
@@ -59,7 +72,7 @@
       socialBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-          var toBlock = bkg.trackers.isTracker(test.url, 'http://test.com', 0, fakeRequest);
+          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
@@ -69,10 +82,38 @@
       socialBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', false);
-          var toBlock = bkg.trackers.isTracker(test.url, 'http://test.com', 0, fakeRequest);
+          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
           toBlock = toBlock ? false : true;
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
+
+  QUnit.test("Test abp matching", (assert) => {
+      let testBlockList = [
+          {tracker: 'some.tracker.com', block: ['foo.com', 'othersite.net'], dontBlock: []},
+          {tracker: 'some.othertracker.com^$domain=othersite.net', block: ['othersite.net'], dontBlock: ['foo.com']}
+      ]
+      
+      let fakeEasylist = testBlockList.map((e) => {
+          return e.tracker
+      }).join('\n')
+
+      let parsedList = {}
+      abp.parse(fakeEasylist, parsedList)
+
+      testBlockList.forEach((e) => {
+          e.block.forEach((url) => {
+              let match = abp.matches(parsedList, e.tracker, {
+                  domain: url, elementTypeMaskMap:abp.elementTypes['SCRIPT']})
+              assert.ok(match, 'Tracker should be blocked')
+          })
+
+          e.dontBlock.forEach((url) => {
+              let match = abp.matches(parsedList, e.tracker, {
+                  domain: url, elementTypeMaskMap:abp.elementTypes['SCRIPT']})
+              assert.ok(!match, 'Tracker should not be blocked')
+          })
+      })
+  })
 
 })();

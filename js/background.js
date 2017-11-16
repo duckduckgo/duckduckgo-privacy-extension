@@ -156,7 +156,7 @@ chrome.webRequest.onBeforeRequest.addListener(
              */
             chrome.runtime.sendMessage({'updateTabData': true})
 
-            var tracker =  trackers.isTracker(requestData.url, thisTab.url, thisTab.id, requestData);
+            var tracker =  trackers.isTracker(requestData.url, thisTab, requestData);
 
             // count and block trackers. Skip things that matched in the trackersWhitelist
             if (tracker && !(tracker.type === 'trackersWhitelist')) {
