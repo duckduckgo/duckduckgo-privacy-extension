@@ -88,10 +88,12 @@
       });
   });
 
+  // Some basic tests for the abp module. These should be expanded to cover all abp filter options
   QUnit.test("Test abp matching", (assert) => {
       let testBlockList = [
           {tracker: 'some.tracker.com', block: ['foo.com', 'othersite.net'], dontBlock: []},
-          {tracker: 'some.othertracker.com^$domain=othersite.net', block: ['othersite.net'], dontBlock: ['foo.com']}
+          {tracker: 'some.othertracker.com^$domain=othersite.net', block: ['othersite.net'], dontBlock: ['foo.com']},
+          {tracker: 'some.othertracker2.com^$domain=~othersite.net', block: ['foo.com'], dontBlock: ['othersite.net']}
       ]
       
       let fakeEasylist = testBlockList.map((e) => {
