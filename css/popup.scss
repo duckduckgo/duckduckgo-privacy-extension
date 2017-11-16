@@ -381,6 +381,8 @@ body {
     .top-blocked {
         position: absolute;
         top: 395px;
+        left: 0;
+        right: 0;
 
         .top-blocked__list {
             padding-top: 10px;
