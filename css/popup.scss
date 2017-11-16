@@ -170,6 +170,10 @@ body {
     }
 
     .site-info {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        right: 0;
 
         .default-list {
             padding-bottom: 0;
@@ -375,6 +379,8 @@ body {
     }
 
     .top-blocked {
+        position: absolute;
+        top: 395px;
 
         .top-blocked__list {
             padding-top: 10px;
@@ -401,6 +407,7 @@ body {
             position: relative;
             padding-top: 15px;
             padding-bottom: 15px;
+            top: initial;
 
             .site-info__domain {
                 margin-left: 20px;
