@@ -183,7 +183,7 @@ body {
         .site-info__protection {
             line-height: 1.4em;
             height: 1.2em;
-            display: inline-block;
+            display: block;
             max-width: $popup__width - 125;
             font-weight: bold;
             overflow: hidden;
@@ -220,13 +220,12 @@ body {
         }
 
         .site-info__toggle-container {
-            position: relative;
-            float: right;
-            padding-right: 40px;
+            position: absolute;
+            right: 20px;
+            top: 18px;
 
             .toggle-button {
                 position: absolute;
-                top: 3px;
                 right: 0;
             }
 
@@ -380,7 +379,7 @@ body {
 
     .top-blocked {
         position: absolute;
-        top: 395px;
+        top: 390px;
         left: 0;
         right: 0;
 
