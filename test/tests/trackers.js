@@ -93,7 +93,7 @@
       let testBlockList = [
           {tracker: 'some.tracker.com', block: ['foo.com', 'othersite.net'], dontBlock: []},
           {tracker: 'some.othertracker.com^$domain=othersite.net', block: ['othersite.net'], dontBlock: ['foo.com']},
-          {tracker: 'some.othertracker2.com^$domain=~othersite.net', block: ['foo.com'], dontBlock: ['othersite.net']}
+          {tracker: 'some.othertracker2.com^$domain=~othersite.net|blockthis.com', block: ['blockthis.com'], dontBlock: ['othersite.net', 'foo.com']}
       ]
       
       let fakeEasylist = testBlockList.map((e) => {
