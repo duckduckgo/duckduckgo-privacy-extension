@@ -171,9 +171,10 @@ body {
 
     .site-info {
         position: absolute;
-        top: 40px;
+        top: 50px;
         left: 0;
         right: 0;
+        margin-top: 0;
 
         .default-list {
             padding-bottom: 0;
@@ -379,9 +380,10 @@ body {
 
     .top-blocked {
         position: absolute;
-        top: 390px;
+        top: 400px;
         left: 0;
         right: 0;
+        margin-top: 0;
 
         .top-blocked__list {
             padding-top: 10px;
