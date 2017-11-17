@@ -31,12 +31,12 @@
   // the easylist. These tests could fail in the future if the easylist
   // entries are changed or whitelisted.
   var abpBlocking = [
-    { url: 'https://somesite.com/_ad6.', block: true},
-    { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true}, // /googleads.
-    { url: 'https://www.redditstatic.com/moat/moatframe.js', block: true},
-    { url: 'http://ads.rubiconproject.com/header/11078.js', block: true},
     { url: 'https://s.yimg.com/rq/darla/boot.js', block: false}, // ||yimg.com/rq/darla/$domain=yahoo.com
     { url: 'https://s.yimg.com/rq/darla/boot.js', block: true, domain: 'yahoo.com'}, // ||yimg.com/rq/darla/$domain=yahoo.com
+    { url: 'https://somesite.com/_ad6.', block: true}, // _ad6.
+    { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true}, // /googleads.
+    { url: 'https://www.redditstatic.com/moat/moatframe.js', block: true}, // ||redditstatic.com/moat/
+    { url: 'http://ads.rubiconproject.com/header/11078.js', block: true}, //  ||rubiconproject.com^$third-party
     { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, domain: 'yahoo.com'}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
     { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
     { url: 'https://aax.amazon-adsystem.com/', block: true}, // ||amazon-adsystem.com^$third-party
