@@ -8,23 +8,60 @@ function Site (ops) {
     this.pageView = ops.pageView
     this.template = ops.template
 
+    // render template for the first time here
+    // in default `this.model.isCalculatingSiteRating` state
     Parent.call(this, ops)
 
+    // cache 'body' selector
     this.$body = $('body')
 
-    // bind events
-    this._setup()
-
-    // get data from background page tab
-    this.model.getBackgroundTabData().then(() => this.rerender())
-};
+    // get data from background process, then re-render template with it
+    this.model.getBackgroundTabData().then(() => {
+        if (this.model.tab &&
+           (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
+            this.rerender()
+        } else {
+            // the timeout helps buffer the re-render cycle during heavy
+            // page loads with lots of trackers
+            this.rerender({skipSetup: true})
+            setTimeout(() => this.rerender(), 750)
+        }
+    })
+}
 
 Site.prototype = $.extend({},
     Parent.prototype,
     {
 
-        _setup: function() {
+        _whitelistClick: function (e) {
+            if (this.$body.hasClass('is-disabled')) return
+            this.model.toggleWhitelist()
+            console.log('isWhitelisted: ', this.model.isWhitelisted)
+            chrome.tabs.reload(this.model.tab.id)
+            const w = chrome.extension.getViews({type: 'popup'})[0]
+            w.close()
+        },
 
+        rerender: function (ops) {
+            // console.log('[site view] rerender()')
+            ops = ops || {}
+            if (this.model && this.model.disabled) {
+                console.log('.addClass is-disabled')
+                this.$body.addClass('is-disabled')
+                this._rerender()
+                if (!ops.skipSetup) this._setup()
+            } else {
+                this.$body.removeClass('is-disabled');
+                this.unbindEvents()
+                this._rerender()
+                if (!ops.skipSetup) this._setup()
+            }
+        },
+
+        // NOTE: after ._setup() is called this view listens for changes to
+        // site model and re-renders every time model properties change
+        _setup: function() {
+            // console.log('[site view] _setup()')
             this._cacheElems('.js-site', [
                 'toggle',
                 'show-all-trackers'
@@ -36,27 +73,6 @@ Site.prototype = $.extend({},
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
 
-        },
-
-        _whitelistClick: function (e) {
-            if (this.$body.hasClass('is-disabled')) return
-            this.model.toggleWhitelist()
-            console.log('isWhitelisted: ', this.model.isWhitelisted)
-            chrome.tabs.reload(this.model.tab.id)
-            const w = chrome.extension.getViews({type: 'popup'})[0]
-            w.close()
-        },
-
-        rerender: function () {
-            // console.log('[view] rerender()')
-            if (this.model.disabled) {
-                this.$body.addClass('is-disabled')
-            } else {
-                this.$body.removeClass('is-disabled');
-                this.unbindEvents()
-                this._rerender()
-                this._setup()
-            }
         },
 
         _showAllTrackers: function () {

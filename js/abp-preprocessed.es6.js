@@ -5,17 +5,24 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser')
+const deepFreeze = require('deep-freeze')
+
+// these are defined in data/ and loaded in the manifest. 
+// Make them immutable with deep-freeze
+constants = deepFreeze(constants)
+defaultSettings = deepFreeze(defaultSettings)
+
 const ONEDAY = 1000*60*60*24
 
 let lists = {
     easylists : {
         privacy: {
-            settingsName: 'privacyEasylist',
+            constantsName: 'privacyEasylist',
             parsed: {},
             isLoaded: false
         },
         general: {
-            settingsName: 'generalEasylist',
+            constantsName: 'generalEasylist',
             parsed: {},
             isLoaded: false
         }
@@ -23,7 +30,7 @@ let lists = {
     whitelists: {
         // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
         trackersWhitelist: {
-            settingsName: 'trackersWhitelist',
+            constantsName: 'trackersWhitelist',
             parsed: {},
             isLoaded: false
         }
@@ -47,15 +54,15 @@ function updateLists () {
     for (let listType in lists) {
         for (let name in lists[listType]) {
 
-            const settingsName = lists[listType][name].settingsName
+            const constantsName = lists[listType][name].constantsName
             
-            let url = settings.getSetting(settingsName)
+            let url = constants[constantsName]
             if (!url) return 
                 
-            let etag = settings.getSetting(settingsName + '-etag') || ''
+            let etag = settings.getSetting(constantsName + '-etag') || ''
 
-            // only add url params to duckduckgo urls
-            if(url.match(/^https?:\/\/(.+)?duckduckgo.com/)) {
+            // only add url params to contentblocking.js duckduckgo urls
+            if(url.match(/^https?:\/\/(.+)?duckduckgo.com\/contentblocking\.js/)) {
                 if (atb) url += '&atb=' + atb
                 if (set_atb) url += '&set_atb=' + set_atb
                 if (versionParam) url += versionParam
@@ -72,7 +79,7 @@ function updateLists () {
                 console.log('Updating list: ', name)
                 
                 // sync new etag to storage
-                settings.updateSetting(settingsName + '-etag', newEtag)
+                settings.updateSetting(constantsName + '-etag', newEtag)
                 
                 abp.parse(listData, lists[listType][name].parsed)
                 lists[listType][name].isLoaded = true
@@ -86,7 +93,7 @@ function updateLists () {
 
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
-    load.loadExtensionFile({url: settings.getSetting('trackersWhitelistTemporary'), etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
+    load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 

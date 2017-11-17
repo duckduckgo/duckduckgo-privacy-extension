@@ -2,6 +2,7 @@ const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
 const siteRating = require('./shared/site-rating.es6.js')
 const siteRatingExplainer = require('./shared/site-rating-explainer.es6.js')
+const tosdrMessages = {'A': 'Good', 'B': 'Mixed', 'C': 'Poor', 'D': 'Poor'}
 
 module.exports = function () {
 
@@ -13,18 +14,38 @@ module.exports = function () {
     } else {
         return bel`<div class="site-info site-info--details card card--no-top-margin">
             <h1 class="site-info__domain">${this.model.site.domain}</h1>
-            ${siteRating(this.model.site.siteRating, this.model.site.isWhitelisted)}
-            ${siteRatingExplainer(this.model.site.siteRating, this.model.site.isWhitelisted)}
+            ${siteRating(
+                this.model.isCalculatingSiteRating,
+                this.model.site.siteRating,
+                this.model.site.isWhitelisted)}
+            ${siteRatingExplainer(
+                this.model.isCalculatingSiteRating,
+                this.model.site.siteRating,
+                this.model.site.isWhitelisted)}
             <h2 class="site-info__https-status padded border--bottom">
                 ${httpsMsg(this.model.site.httpsState)}
                 <div class="float-right"></div>
             </h2>
+            <h2 class="site-info__tosdr-status">
+                ${tosdrMsg(this.model.site.tosdr)}
+            </h2>
+            <p class="site-info__tosdr-msg padded border--bottom">
+                Using privacy policy analysis from <a target="_blank" href="https://tosdr.org">tosdr.org</a>
+            </p>
             ${trackersBlockedOrFound(this.model)}
             <ol class="default-list site-info__trackers__company-list">
                 ${renderTrackerDetails(this.model.companyListMap)}
             </ol>
         </div>`
     }
+}
+
+function tosdrMsg (tosdr) {
+    let msg = "Unknown"
+    if (tosdr.class) {
+        msg = tosdrMessages[tosdr.class]
+    }
+    return bel`<span>${msg} Privacy Practices</span>`
 }
 
 function httpsMsg (httpsState) {
@@ -36,7 +57,8 @@ function httpsMsg (httpsState) {
 
 function trackersBlockedOrFound (model) {
     let msg = ''
-    if (model.site && model.site.isWhitelisted) {
+    if (model.site &&
+       (model.site.isWhitelisted || model.site.trackerNetworks.length === 0)) {
         msg = 'Trackers found'
     } else {
         msg = 'Trackers blocked'

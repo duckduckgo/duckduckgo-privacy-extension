@@ -15,7 +15,7 @@ let tosdrListLoaded
 let trackersWhitelistTemporary
 
 settings.ready().then(() => {
-    load.JSONfromLocalFile(settings.getSetting('tosdr'),(data) => {
+    load.JSONfromLocalFile(constants.tosdr,(data) => {
         tosdr = data
         tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
         tosdrListLoaded = true
@@ -86,7 +86,7 @@ class Score {
      * Calculates and returns a site score
      */
     get() {
-        if (this.specialPage) return 'none'
+        if (this.specialPage) return {}
 
         let beforeIndex = 1
         let afterIndex = 1
@@ -107,11 +107,7 @@ class Score {
             } else if (this.tosdr.score) {
                 let tosdrScore =  Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
-
-                // only apply a positive tosdr score
-                if (tosdrScore > 0) {
-                    afterIndex += tosdrScore
-                }
+                afterIndex += tosdrScore
             }
         }
 
@@ -134,6 +130,11 @@ class Score {
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
         let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
 
+        // only sites with a tosdr.class "A" can get a final grade of "A"
+        if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
+        if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
+
+
         return {before: beforeGrade, after: afterGrade}
     }
 
@@ -143,7 +144,7 @@ class Score {
      */
     update(event) {
 
-        let majorTrackingNetworks = settings.getSetting('majorTrackingNetworks')
+        let majorTrackingNetworks = constants.majorTrackingNetworks
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
         if (event.hasHTTPS) {

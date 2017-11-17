@@ -1,10 +1,12 @@
 const bel = require('bel')
 
-module.exports = function (rating, isWhitelisted) {
+module.exports = function (isCalculating, rating, isWhitelisted) {
     let msg = ``
-    let _rating = isWhitelisted ? rating.before : rating.after
 
-    if (_rating) {
+    if (isCalculating) {
+        msg = `Calculating...`
+    } else if (rating && (rating.before || rating.after)) {
+        const _rating = isWhitelisted ? rating.before : rating.after
         msg = `This received a "${_rating.toUpperCase()}" Privacy Grade
           for the reasons below.`
     }

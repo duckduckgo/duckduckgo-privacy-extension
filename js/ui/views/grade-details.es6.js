@@ -53,10 +53,17 @@ GradeDetails.prototype = $.extend({},
 
         renderSiteRating: function () {
             // rating bubble
-            const rating = ratingTemplate(this.model.site.siteRating, this.model.site.isWhitelisted)
+            const rating = ratingTemplate(
+                this.model.site.isCalculating,
+                this.model.site.siteRating,
+                this.model.site.isWhitelisted
+            )
             this.$rating.replaceWith(rating)
             // rating explainer message
-            const msg = ratingExplainerTemplate(this.model.site.siteRating, this.model.site.isWhitelisted)
+            const msg = ratingExplainerTemplate(
+                this.model.site.isCalculating,
+                this.model.site.siteRating,
+                this.model.site.isWhitelisted)
             this.$explainer.replaceWith(msg)
         }
     }

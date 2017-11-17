@@ -194,6 +194,21 @@ body {
             font-size: 17px;
         }
 
+        .site-info__tosdr-status {
+            padding: 15px 20px 0px 20px
+        }
+
+        .site-info__tosdr-msg {
+            color: $color--grey;
+            font-size: 13px;
+            padding: 7.5px 20px 15px 20px;
+
+            a {
+                padding: 0px;
+                color: $color--grey;
+            }
+        }
+
         .site-info__li--toggle {
             .is-disabled & {
                 @include is_disabled();
@@ -385,7 +400,7 @@ body {
         .site-info--details {
             position: relative;
             padding-top: 15px;
-            padding-bottom: 30px;
+            padding-bottom: 15px;
 
             .site-info__domain {
                 margin-left: 20px;
@@ -413,7 +428,7 @@ body {
 
             .site-info__trackers__company-list {
                 overflow-y: auto;
-                height: 300px;
+                height: 230px;
                 padding: 0 20px 60px 20px;
 
                     li {
@@ -434,6 +449,13 @@ body {
                             border-radius: 24px;
 
                             @include tracker_network_icons();
+                        }
+
+                        &:last-child {
+
+                            .site-info__trackers__company-list__url-list {
+                                margin-bottom: 60px;
+                            }
                         }
                     }
 

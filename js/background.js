@@ -249,7 +249,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         urls: [
             "<all_urls>",
         ],
-        types: defaultSettings.requestListenerTypes
+        types: constants.requestListenerTypes
     },
     ["blocking"]
 );

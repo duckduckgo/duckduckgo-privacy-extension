@@ -1,5 +1,5 @@
-const defaultSettings = require('./../../data/defaultSettings.js')
-const majorNetworks = defaultSettings.majorTrackingNetworks
+const constants = require('./../../data/constants.js')
+const majorNetworks = constants.majorTrackingNetworks
 
 global.companyList = function (listData) {
     /* format Mozilla block list for our use

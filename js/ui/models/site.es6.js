@@ -12,12 +12,14 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
+    attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
     attrs.isUserPrivacyUpgraded = false
     attrs.trackerCount = 0
     attrs.trackerNetworks
+    attrs.tosdr = {}
     Parent.call(this, attrs)
 
     this.bindEvents([
@@ -33,15 +35,16 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       getBackgroundTabData: function () {
-          // console.log('[view] getBackgroundTabData()')
+          // console.log('[site view] getBackgroundTabData()')
           return new Promise((resolve, reject) => {
               this.fetch({getCurrentTab: true}).then((tab) => {
                   if (tab) {
                       this.fetch({getTab: tab.id}).then((backgroundTabObj) => {
                           if (backgroundTabObj) {
-                              this.tab = backgroundTabObj
+                              this.set('tab', backgroundTabObj)
                               this.domain = backgroundTabObj.site.domain
                               this.fetchSiteRating()
+                              this.tosdr = backgroundTabObj.site.score.tosdr
                           }
                           this.setSiteProperties()
                           this.setHttpsMessage()
@@ -69,14 +72,15 @@ Site.prototype = $.extend({},
       setSiteProperties: function() {
           if (!this.tab) {
               this.domain = 'new tab' // tab can be null for firefox new tabs
-              this.siteRating = {}
+              this.set({isCalculatingSiteRating: false})
           }
           else {
               this.isWhitelisted = this.tab.site.whitelisted
               if (this.tab.site.isSpecialDomain) {
                   this.domain = this.tab.site.isSpecialDomain; // eg "extensions", "options", "new tab"
+                  this.set({isCalculatingSiteRating: false})
               } else {
-                  this.set('disabled', false)
+                  this.set({'disabled': false})
               }
           }
 
@@ -109,12 +113,26 @@ Site.prototype = $.extend({},
           }
       },
 
+      // calls `this.set()` to trigger view re-rendering
       update: function (ops) {
           // console.log('[model] update()')
           if (this.tab) {
 
-              if (ops && ops.siteRating && (ops.siteRating.after !== this.siteRating.after)) {
-                  this.set('siteRating', ops.siteRating)
+              // got siteRating back fr/ background process,
+              // 'after' rating changed, template needs re-render
+              if (ops && ops.siteRating &&
+                  (ops.siteRating.after !== this.siteRating.after)) {
+                  this.set({
+                    'siteRating': ops.siteRating,
+                    'isCalculatingSiteRating': false
+              })
+
+              // got site rating from background process,
+              // but no change in 'after' rating
+              } else if (ops && ops.siteRating) {
+                  if (this.isCalculatingSiteRating) {
+                      this.set('isCalculatingSiteRating', false)
+                  }
               }
 
               const newTrackersCount = this.getUniqueTrackersCount()

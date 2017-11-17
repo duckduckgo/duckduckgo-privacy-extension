@@ -1,5 +1,8 @@
 /* Site Rating Icons in Popup (aka "hero icons") */
 
+$icon__hero_rating__null: "hero-rating__null-state.svg";
+$icon__hero_rating__calculating: "hero-rating__calculating-state.svg";
+
 $icon__hero_rating__a: "hero-rating__a.svg";
 $icon__hero_rating__a--is-active: "hero-rating__a--is-active.svg";
 
@@ -15,10 +18,30 @@ $icon__hero_rating__d--is-active: "hero-rating__d--is-active.svg";
 $icon__hero_rating__f: "hero-rating__f.svg";
 $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
-$icon__hero_rating__null: "hero-rating__null-state.svg";
-
 
 @mixin site_rating_icons () {
+
+    &.site-info__rating--calculating {
+
+        .is-browser--chrome & {
+            background-image: url(chrome-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__calculating});
+        }
+
+        .is-browser--moz & {
+            background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__calculating});
+        }
+    }
+
+    &.site-info__rating--null {
+
+        .is-browser--chrome & {
+            background-image: url(chrome-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__null});
+        }
+
+        .is-browser--moz & {
+            background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__null});
+        }
+    }
 
     &.site-info__rating--a {
 
@@ -129,16 +152,4 @@ $icon__hero_rating__null: "hero-rating__null-state.svg";
             }
         }
     }
-
-    &.site-info__rating--null {
-
-        .is-browser--chrome & {
-            background-image: url(chrome-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__null});
-        }
-
-        .is-browser--moz & {
-            background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__null});
-        }
-    }
-
 }

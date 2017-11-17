@@ -9,9 +9,15 @@ module.exports = function () {
         <ul class="default-list">
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container border--bottom">
-                    ${siteRating(this.model.siteRating, this.model.isWhitelisted)}
+                    ${siteRating(
+                        this.model.isCalculatingSiteRating,
+                        this.model.siteRating,
+                        this.model.isWhitelisted)}
                     <h1 class="site-info__domain">${this.model.domain}</h1>
-                    ${ratingUpgrade(this.model.siteRating, this.model.isWhitelisted)}
+                    ${ratingUpgrade(
+                        this.model.isCalculatingSiteRating,
+                        this.model.siteRating,
+                        this.model.isWhitelisted)}
                 </div>
             </li>
             <li class="site-info__li--toggle padded border--bottom">
@@ -51,7 +57,8 @@ module.exports = function () {
         </ul>
     </section>`
 
-    function ratingUpgrade (rating, isWhitelisted) {
+    function ratingUpgrade (isCalculating, rating, isWhitelisted) {
+        // console.log('[site template] isCalculating: ' + isCalculating)
         const isActive = isWhitelisted ? false : true
         // site grade/rating was upgraded by extension
         if (isActive && rating && rating.before && rating.after) {
@@ -65,22 +72,29 @@ module.exports = function () {
                 </p>`
             }
         }
+
         // deal with other states
         let msg = 'Privacy Grade'
         // site is whitelisted
-        if (!isActive) msg = `Privacy Protection Disabled`
+        if (!isActive) {
+            msg = `Privacy Protection Disabled`
         // "null" state (empty tab, browser's "about:" pages)
-        if (!rating.before && !rating.after) msg = `We only grade regular websites`
+        } else if (!isCalculating && !rating.before && !rating.after) {
+            msg = `We only grade regular websites`
+        // rating is still calculating
+        } else if (isCalculating) {
+            msg = `Calculating...`
+        }
 
         return bel`<p class="site-info__rating-upgrade uppercase text--center">
             ${msg}</p>`
     }
 
     function renderTrackerNetworks (tn, isWhitelisted) {
-        let count = '0'
+        let count = 0
         if (tn && tn.length) count = tn.length
         const isActive = !isWhitelisted ? 'is-active' : ''
-        const foundOrBlocked = isWhitelisted ? 'found' : 'blocked'
+        const foundOrBlocked = isWhitelisted || count === 0 ? 'found' : 'blocked'
 
         return bel`<h2 class="site-info__trackers bold">
             <span class="site-info__trackers-status__icon

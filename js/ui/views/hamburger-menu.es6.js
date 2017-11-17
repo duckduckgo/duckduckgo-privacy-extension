@@ -5,35 +5,50 @@ function HamburgerMenu (ops) {
     this.template = ops.template
     Parent.call(this, ops)
 
-    this._cacheElems('.js-hamburger-menu', [
-        'close',
-        'options-link'
-    ])
-    this.bindEvents([
-        [this.$close, 'click', this.closeMenu],
-        [this.$optionslink, 'click', this.openOptionsPage],
-        [this.model.store.subscribe, 'action:search', this.handleAction]
-    ])
+    this._setup()
 }
 
 HamburgerMenu.prototype = $.extend({},
     Parent.prototype,
     {
 
-        handleAction: function (notification) {
-            if (notification.action === 'burgerClick') this.openMenu()
+        _setup: function () {
+
+            this._cacheElems('.js-hamburger-menu', [
+                'close',
+                'options-link'
+            ])
+
+            this.bindEvents([
+                [this.$close, 'click', this._closeMenu],
+                [this.$optionslink, 'click', this._openOptionsPage],
+                [this.model.store.subscribe, 'action:search', this._handleAction],
+                [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
+            ])
         },
 
-        openMenu: function (e) {
+        _handleAction: function (notification) {
+            if (notification.action === 'burgerClick') this._openMenu()
+        },
+
+        _openMenu: function (e) {
             this.$el.removeClass('is-hidden')
         },
 
-        closeMenu: function (e) {
+        _closeMenu: function (e) {
             if (e) e.preventDefault()
             this.$el.addClass('is-hidden')
         },
 
-        openOptionsPage: function () {
+        _handleSiteUpdate: function (notification) {
+              if (notification && notification.change.attribute === 'tab') {
+                  this.model.tabUrl = notification.change.value.url
+                  this._rerender()
+                  this._setup()
+              }
+        },
+
+        _openOptionsPage: function () {
             this.model.fetch({getBrowser: true}).then(browser => {
                 if (browser === 'moz') {
                     chrome.tabs.create({url: chrome.extension.getURL("/html/options.html")})
