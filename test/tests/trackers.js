@@ -12,7 +12,7 @@
     { url: 'https://duckduckgo.com', block: false},
     { url: 'https://developers.google.com', block: true},
     { url: 'https://x.y.z.doubleclick.net', block: true},
-    { url: 'https://logx.optimizely.com/log/event', block: true},
+    { url: 'https://logx.optimizely.com/log/event', block: true}
   ];
   
   QUnit.test("block url", function (assert) {
@@ -21,7 +21,6 @@
       
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          
           var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === test.block, 'url should be blocked');
@@ -68,7 +67,7 @@
   QUnit.test("turn off blocking", function (assert) {
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', false);
-          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, 0, fakeRequest);
+          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
           toBlock = toBlock ? true : false;
           assert.ok(toBlock === false, 'url should not be');
       });
