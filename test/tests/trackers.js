@@ -27,7 +27,44 @@
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
+ 
+  // These abp blocking tests are based on actual entries from 
+  // the easylist. These tests could fail in the future if the easylist
+  // entries are changed or whitelisted.
+  var abpBlocking = [
+    { url: 'https://somesite.com/_ad6.', block: true},
+    { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true}, // /googleads.
+    { url: 'https://www.redditstatic.com/moat/moatframe.js', block: true},
+    { url: 'http://ads.rubiconproject.com/header/11078.js', block: true},
+    { url: 'https://s.yimg.com/rq/darla/boot.js', block: false}, // ||yimg.com/rq/darla/$domain=yahoo.com
+    { url: 'https://s.yimg.com/rq/darla/boot.js', block: true, domain: 'yahoo.com'}, // ||yimg.com/rq/darla/$domain=yahoo.com
+    { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, domain: 'yahoo.com'}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
+    { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
+    { url: 'https://aax.amazon-adsystem.com/', block: true}, // ||amazon-adsystem.com^$third-party
+    { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false}, // whitelisted by @@||fastly.net/ad2/$script
+    { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true}, // /securepubads.
+  ];
   
+  QUnit.test("abp blocking url", function (assert) {
+      // turn social blocking on for this test
+      bkg.settings.updateSetting('socialBlockingIsEnabled', true);
+      
+      abpBlocking.forEach(function(test) {
+          bkg.settings.updateSetting('trackerBlockingEnabled', true);
+
+          let testTab = Object.assign({}, fakeTab)
+
+          if(test.domain) {
+              testTab.url = test.domain
+              testTab.site.domain = test.domain
+          }
+
+          var toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest);
+          toBlock = toBlock ? true : false;
+          assert.ok(toBlock === test.block, `abp blocking decision.. url: ${test.url} ${toBlock} === ${test.block}`);
+      });
+  });
+
   QUnit.test("turn off blocking", function (assert) {
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', false);
