@@ -1,21 +1,19 @@
+var request = require('request')
+/* format Mozilla block list for our use
+ * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
+ * "<tracker host>" : { "c": <company name>, "u": "company url" }
+ */
+var remapDataLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/google_mapping.json'
+var companyListLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json'
 const constants = require('./../../data/constants.js')
 const majorNetworks = constants.majorTrackingNetworks
+var trackerList = { TopTrackerDomains: {} }
+var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social']
+var remapData
+var companyList
 
 global.companyList = function (listData) {
-    /* format Mozilla block list for our use
-     * https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json
-     * "<tracker host>" : { "c": <company name>, "u": "company url" }
-     */
-    var companyListLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json'
-    var remapDataLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/google_mapping.json'
-    var trackerList = { TopTrackerDomains: {} }
-    var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social']
-    var request = require('request')
-    var remapData
-    var companyList
-
     return new Promise ((resolve) => {
-
         request.get(remapDataLoc, (err, res, body) => {
             remapData = JSON.parse(body).categories;
 
@@ -93,4 +91,4 @@ global.companyList = function (listData) {
         }
         return newType;
     }
-};
+}
