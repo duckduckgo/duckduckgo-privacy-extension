@@ -23,7 +23,9 @@ require.scopes.trackers = (function() {
     function isTracker(urlToCheck, thisTab, request) {
         let currLocation = thisTab.url
         let tabId = thisTab.id
-        let siteDomain = thisTab.site.domain
+
+        let siteDomain = thisTab.site ? thisTab.site.domain : ''
+        if(!siteDomain) return
 
         // TODO: easylist is marking some of our requests as trackers. Whitelist us
         // // by default for now until we can figure out why. 
