@@ -42,6 +42,7 @@
     { url: 'https://aax.amazon-adsystem.com/', block: true}, // ||amazon-adsystem.com^$third-party
     { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false}, // whitelisted by @@||fastly.net/ad2/$script
     { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true}, // /securepubads.
+    { url: 'https://shim.btrll.com/', block: true}, // ||btrll.com^$third-party
   ];
   
   QUnit.test("abp blocking url", function (assert) {
