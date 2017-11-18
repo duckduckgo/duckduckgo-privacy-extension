@@ -261,7 +261,7 @@ body {
         @mixin site_status_icons () {
             position: absolute;
             width: 17px;
-            height: 21px;
+            height: 22px;
             top: 10px;
             left: 20px;
         }
@@ -270,7 +270,6 @@ body {
             @include icon_display();
             @include site_status_icons();
             width: 15px;
-            height: 22px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
