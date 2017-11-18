@@ -9,12 +9,28 @@ let constants = {
     "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
     "httpsWhitelist": "data/httpsWhitelist.json",
-    "majorTrackingNetworks": {"Google":true, "Facebook":true, "Twitter":true, "Amazon":true, "AppNexus":true, "Oracle":true},
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
-    "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy"
+    "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
+    /**
+     * Major tracking networks data:
+     * percent of the top 1 million sites a tracking network has been seen on.
+     * see: https://webtransparency.cs.princeton.edu/webcensus/
+     */
+    "majorTrackingNetworks": {
+        "google": 84,
+        "facebook": 36,
+        "twitter": 16,
+        "amazon": 14,
+        "appnexus": 10,
+        "oracle": 10,
+        "mediamath": 9,
+        "yahoo": 9,
+        "maxcdn": 7,
+        "automattic": 7
+    }
 }
 
 if (typeof window === 'undefined' && module && module.exports)  {
