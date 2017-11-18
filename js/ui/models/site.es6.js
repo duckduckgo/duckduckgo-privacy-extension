@@ -178,7 +178,6 @@ Site.prototype = $.extend({},
           const networks = Object.keys(this.tab.trackers)
                               .map((t) => t.toLowerCase())
                               .filter((t) => t !== 'unknown')
-
           return networks
       },
 

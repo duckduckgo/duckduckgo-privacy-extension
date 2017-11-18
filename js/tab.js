@@ -1,23 +1,24 @@
 class Tracker {
-    constructor(name, url, type) {
-        this.parentCompany = Companies.get(name);
-        this.urls = [url],
-        this.count = 1; // request count
-    };
+    constructor (name, url, type) {
+        this.parentCompany = Companies.get(name)
+        this.urls = [url]
+        this.count = 1 // request count
+        this.type = type || ''
+    }
 
-    increment() {
-        this.count += 1;
-    };
+    increment () {
+        this.count += 1
+    }
 
     /* A parent company may try
      * to track you through many different entities.
      * We store a list of all unique urls here.
      */
-    addURL(url) {
+    addURL (url) {
         if (this.urls.indexOf(url) === -1) {
-            this.urls.push(url);
+            this.urls.push(url)
         }
-    };
+    }
 }
 
 /* This class contains information about what trackers and sites
@@ -64,7 +65,7 @@ class Tab {
 
     updateBadgeIcon () {
         if (!this.site.specialDomain() ) {
-            
+
             if(this.site.isBroken) {
                 chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
             } else {
@@ -74,7 +75,7 @@ class Tab {
                 } else {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
-                
+
                 chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
             }
         }

@@ -199,11 +199,7 @@ require.scopes.trackers = (function() {
 
     function getTrackerDetails (trackerUrl, listName) {
         let host = utils.extractHostFromURL(trackerUrl)
-        console.log('-----getTrackerDetails()')
-        console.log(host)
         let parentCompany = findParent(host.split('.')) || 'unknown'
-        // if (parentCompany !== 'unknown') debugger
-        console.log('----parentCompany: ' + parentCompany)
         return {
             parentCompany: parentCompany,
             url: host,
@@ -213,10 +209,8 @@ require.scopes.trackers = (function() {
 
     // pull off subdomains and look for parent companies
     function findParent (url) {
-        console.log('findParent() url: ' + url)
         if (url.length < 2) return
         let joinURL = url.join('.')
-        console.log('joinURL: ' + joinURL )
         if (entityMap[joinURL]) {
             return entityMap[joinURL]
         } else {
