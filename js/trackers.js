@@ -124,9 +124,7 @@ require.scopes.trackers = (function() {
 
         let trackerURL = url.join('.')
 
-        console.log('blockSettings: ', blockSettings)
         blockSettings.some(function (trackerType) {
-            console.log('checkTrackersWithParentCompany() trackerType: ' + trackerType)
             // Some trackers are listed under just the host name of their parent company without
             // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
             // Other trackers are listed using their subdomains. Ex: developers.google.com.
