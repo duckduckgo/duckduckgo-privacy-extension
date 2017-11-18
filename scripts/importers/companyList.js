@@ -46,13 +46,13 @@ global.companyList = function (listData) {
         })
     })
 
-    function addToList(type, url, data) {
+    function addToList (type, url, data) {
         type = applyRemapping(type, data.c, url);
         trackerList[type] = trackerList[type] ? trackerList[type] : {};
         trackerList[type][url] = data;
 
         // if this is a major network, add to domain mapping
-        if (majorNetworks[data.c]) {
+        if (majorNetworks[data.c.toLowerCase()]) {
             trackerList.TopTrackerDomains[url] = {'c': data.c, 't': type};
         }
     }
