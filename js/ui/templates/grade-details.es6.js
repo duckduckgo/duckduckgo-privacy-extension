@@ -34,7 +34,10 @@ module.exports = function () {
             </p>
             ${trackersBlockedOrFound(this.model)}
             <ol class="default-list site-info__trackers__company-list">
-                ${renderTrackerDetails(this.model.companyListMap)}
+                ${renderTrackerDetails(
+                    this.model.companyListMap,
+                    this.model.DOMAIN_MAPPINGS
+                )}
             </ol>
         </div>`
     }
@@ -66,7 +69,7 @@ function trackersBlockedOrFound (model) {
     return bel`<h3 class="padded">${msg}</h3>`
 }
 
-function renderTrackerDetails (companyListMap) {
+function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
     if (companyListMap.length === 0) {
         return bel`<li class="is-empty">None</li>`
     }
@@ -79,7 +82,13 @@ function renderTrackerDetails (companyListMap) {
                     float-right"></span>
                 <span class="block">${c.name}</span>
                 <ol class="default-list site-info__trackers__company-list__url-list">
-                    ${c.urls.map((url) => bel`<li>${url}</li>`)}
+                    ${c.urls.map((url) => {
+                        let category = ''
+                        if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
+                            category = DOMAIN_MAPPINGS[url.toLowerCase()].t
+                        }
+                        return bel`<li>${url} <span>${category}</span></li>`
+                    })}
                 </ol>
             </li>`
         })
