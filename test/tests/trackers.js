@@ -127,31 +127,24 @@
 
   // Some basic tests for the abp module. These should be expanded to cover all abp filter options
   QUnit.test("Test abp matching", (assert) => {
-      let testBlockList = [
-          {tracker: 'some.tracker.com', block: ['foo.com', 'othersite.net'], dontBlock: []},
-          {tracker: 'some.othertracker.com^$domain=othersite.net', block: ['othersite.net'], dontBlock: ['foo.com']},
-          {tracker: 'some.othertracker2.com^$domain=~othersite.net|blockthis.com', block: ['blockthis.com'], dontBlock: ['othersite.net', 'foo.com']}
-      ]
       
-      let fakeEasylist = testBlockList.map((e) => {
-          return e.tracker
-      }).join('\n')
+      // testEasylist is defined in testEasylist.js
+      let fakeEasylist = testEasylist.join('\n')
 
       let parsedList = {}
       abp.parse(fakeEasylist, parsedList)
 
-      testBlockList.forEach((e) => {
-          e.block.forEach((url) => {
-              let match = abp.matches(parsedList, e.tracker, {
-                  domain: url, elementTypeMaskMap:abp.elementTypes['SCRIPT']})
-              assert.ok(match, 'Tracker should be blocked')
+      easylistTestCases.forEach((e) => {
+          let domain = e.options.domain || 'test.com'
+          let type = e.options.type || 'SCRIPT'
+
+          let match = abp.matches(parsedList, e.url, {
+              domain: domain,
+              elementTypeMask:abp.elementTypes[type]
           })
 
-          e.dontBlock.forEach((url) => {
-              let match = abp.matches(parsedList, e.tracker, {
-                  domain: url, elementTypeMaskMap:abp.elementTypes['SCRIPT']})
-              assert.ok(!match, 'Tracker should not be blocked')
-          })
+              assert.ok(match === e.block, `Got correct blocking decision. ${match} === ${e.block}, ${e.url} ${JSON.stringify(e.options)}`)
+
       })
   })
 
