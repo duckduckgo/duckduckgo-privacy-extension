@@ -25,8 +25,18 @@ const easylistTestCases = [
 
     // blocking options
     // ||ads.somesite.com^$script,image,domain=example.com|~foo.example.info
+    {'url': 'https://ads.somesite.com/foo.gif', 'block': true, 'options': {'type': 'IMAGE', 'domain': 'somesite.com'}},
     {'url': 'http://ads.somesite.com/foo.gif', 'block': true, 'options': {'type': 'IMAGE', 'domain': 'somesite.com'}},
     {'url': 'http://ads.somesite.com/foo.gif', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'foo.somesite.info'}},
     {'url': 'http://ads.somesite.com/foo.gif', 'block': false, 'options': {'type': 'STYLESHEET', 'domain': 'somesite.com'}},
     {'url': 'http://ads.somesite.com/foo.gif', 'block': false, 'options': {'type': 'OBJECT', 'domain': 'somesite.com'}},
+
+    // exception rules
+    //  @@||ads.somesite.com/notbanner^ 
+    {'url': 'https://ad.somesiteothersite.com/notbanner', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.com'}},
+    {'url': 'https://ad.somesiteothersite.com/notbanner?q=1', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.com'}},
+    
+    // exception options
+    {'url': 'https://ads.anothersite.com/notbanner/', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.com'}},
+    //{'url': 'https://ads.anothersite.com/notbanner/', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite2.com'}},
 ]
