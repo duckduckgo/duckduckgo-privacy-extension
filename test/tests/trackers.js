@@ -31,18 +31,20 @@
   // the easylist. These tests could fail in the future if the easylist
   // entries are changed or whitelisted.
   var abpBlocking = [
-    { url: 'https://s.yimg.com/rq/darla/boot.js', block: false}, // ||yimg.com/rq/darla/$domain=yahoo.com
-    { url: 'https://s.yimg.com/rq/darla/boot.js', block: true, domain: 'yahoo.com'}, // ||yimg.com/rq/darla/$domain=yahoo.com
-    { url: 'https://somesite.com/_ad6.', block: true}, // _ad6.
-    { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true}, // /googleads.
-    { url: 'https://www.redditstatic.com/moat/moatframe.js', block: true}, // ||redditstatic.com/moat/
-    { url: 'http://ads.rubiconproject.com/header/11078.js', block: true}, //  ||rubiconproject.com^$third-party
-    { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, domain: 'yahoo.com'}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
-    { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
-    { url: 'https://aax.amazon-adsystem.com/', block: true}, // ||amazon-adsystem.com^$third-party
-    { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false}, // whitelisted by @@||fastly.net/ad2/$script
-    { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true}, // /securepubads.
-    { url: 'https://shim.btrll.com/', block: true}, // ||btrll.com^$third-party
+    { url: 'https://s.yimg.com/rq/darla/boot.js', block: false, options:{}}, // ||yimg.com/rq/darla/$domain=yahoo.com
+    { url: 'https://s.yimg.com/rq/darla/boot.js', block: true, options:{domain: 'yahoo.com'}}, // ||yimg.com/rq/darla/$domain=yahoo.com
+    { url: 'https://somesite.com/_ad6.', block: true, options:{}}, // _ad6.
+    { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true, options:{}}, // /googleads.
+    { url: 'https://www.redditstatic.com/moat/moatframe.js', block: true, options:{}}, // ||redditstatic.com/moat/
+    { url: 'http://ads.rubiconproject.com/header/11078.js', block: true, options:{}}, //  ||rubiconproject.com^$third-party
+    { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, options: {domain: 'yahoo.com'}}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
+    { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false, options:{}}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
+    { url: 'https://aax.amazon-adsystem.com/', block: true, options:{}}, // ||amazon-adsystem.com^$third-party
+    { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false, options:{}}, // whitelisted by @@||fastly.net/ad2/$script
+    { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true, options:{}}, // /securepubads.
+    { url: 'https://shim.btrll.com/', block: true, options:{}}, // ||btrll.com^$third-party
+    { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: true, options: {type: 'SCRIPT'}}, // /webservices/jsparselinks.aspx?$script
+    { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: false, options: {type: 'OBJECT'}}, // /webservices/jsparselinks.aspx?$script
   ];
   
   QUnit.test("abp blocking url", function (assert) {
@@ -54,10 +56,13 @@
 
           let testTab = Object.assign({}, fakeTab)
 
-          if(test.domain) {
-              testTab.url = test.domain
-              testTab.site.domain = test.domain
+          if(test.options.domain) {
+              testTab.url = test.options.domain
+              testTab.site.domain = test.options.domain
           }
+
+          if (test.options.type) 
+              fakeRequest.type = test.options.type
 
           var toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest);
           toBlock = toBlock ? true : false;

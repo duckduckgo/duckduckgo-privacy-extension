@@ -222,7 +222,7 @@ require.scopes.trackers = (function() {
         let match = abp.matches(list, url, 
             { 
                 domain: siteDomain, 
-                elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+                elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
             })
         return match
     }
