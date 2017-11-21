@@ -50,5 +50,6 @@ const easylistTestCases = [
     
     // wildcard filter
     {'url': 'https://asdf.com/?q=asdfd&param=q', 'block': true, 'options': {}},
-    {'url': 'https://asdf.com/?q=asdfsdfaparam=a', 'block': false, 'options': {}}
+    {'url': 'https://asdf.com/?q=asdfsdfaparam=a', 'block': false, 'options': {}},
+    //{'url': 'https://v.shopify.com/storefront/page?referrer=stuff&eventtype=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventty
 ]

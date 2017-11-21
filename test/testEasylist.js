@@ -11,7 +11,8 @@ const testEasylist = [
   '@@||ads.twitter.com/notbanner^$~script',
   'svf|',
   '! wildcard filters',
-  'asdf.com/?q=*&param='
+  'asdf.com/?q=*&param=',
+  '||shopify.com/storefront/page?*&eventtype='
 ]
 
 const regexList = [
