@@ -45,6 +45,7 @@
     { url: 'https://shim.btrll.com/', block: true, options:{}}, // ||btrll.com^$third-party
     { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: true, options: {type: 'SCRIPT'}}, // /webservices/jsparselinks.aspx?$script
     { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: false, options: {type: 'OBJECT'}}, // /webservices/jsparselinks.aspx?$script
+    { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'OBJECT'}}, // /webservices/jsparselinks.aspx?$script
   ];
   
   QUnit.test("abp blocking url", function (assert) {
@@ -135,9 +136,11 @@
       
       // testEasylist is defined in testEasylist.js
       let fakeEasylist = testEasylist.join('\n')
+      let fakeRegexList = regexList.join('\n')
 
       let parsedList = {}
       abp.parse(fakeEasylist, parsedList)
+      abp.parse(fakeRegexList, parsedList)
 
       easylistTestCases.forEach((e) => {
           let domain = e.options.domain || 'test.com'
@@ -147,9 +150,8 @@
               domain: domain,
               elementTypeMask:abp.elementTypes[type]
           })
-
-              assert.ok(match === e.block, `Got correct blocking decision. ${match} === ${e.block}, ${e.url} ${JSON.stringify(e.options)}`)
-
+          
+          assert.ok(match === e.block, `Got correct blocking decision. ${match} === ${e.block}, ${e.url} ${JSON.stringify(e.options)}`)
       })
   })
 
