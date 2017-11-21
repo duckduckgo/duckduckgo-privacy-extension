@@ -49,6 +49,7 @@
     { url: 'https://radar.cedexis.com/1/14290/radar.js', block: true, options: {type: 'OBJECT'}}, // from easy privacy, ||cedexis.com^$third-party
     { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'OBJECT'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
     { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
+    //{ url: 'https://v.shopify.com/storefront/page?referrer=https%3A%2F%2Fwww.pinkbike.com&eventType=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventtype=
   ];
   
   QUnit.test("abp blocking url", function (assert) {

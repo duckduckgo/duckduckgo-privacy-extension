@@ -47,4 +47,8 @@ const easylistTestCases = [
     // Need to find and fix a bug in regex filter parsing
     //{'url': 'https://somesite.com/1234/', 'block': true, 'options': {}},
     //{'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}}
+    
+    // wildcard filter
+    {'url': 'https://asdf.com/?q=asdfd&param=q', 'block': true, 'options': {}},
+    {'url': 'https://asdf.com/?q=asdfsdfaparam=a', 'block': false, 'options': {}}
 ]

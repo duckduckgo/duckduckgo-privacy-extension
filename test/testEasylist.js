@@ -10,6 +10,8 @@ const testEasylist = [
   '||ads.twitter.com/notbanner^',
   '@@||ads.twitter.com/notbanner^$~script',
   'svf|',
+  '! wildcard filters',
+  'asdf.com/?q=*&param='
 ]
 
 const regexList = [
