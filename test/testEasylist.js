@@ -8,12 +8,12 @@ const testEasylist = [
   '! block this, then whitelist all but script requests',
   '||ads.twitter.com/notbanner^',
   '@@||ads.twitter.com/notbanner^$~script',
-  'svf|',
   '! wildcard filters',
   'asdf.com/?q=*&param=',
   '||shopify.com/storefront/page?*&eventtype=',
   '! anchors',
   '|http://$third-party,script,domain=somesite.net',
+  'svf|',
 ]
 
 const regexList = [

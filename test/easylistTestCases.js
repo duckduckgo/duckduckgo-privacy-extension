@@ -38,15 +38,11 @@ const easylistTestCases = [
     // https://github.com/duckduckgo/abp-filter-parser/blob/master/src/abp-filter-parser.js#L588
     //{'url': 'https://ads.twitter.com/notbanner/', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite2.com'}},
 
-    // end of line options
-    // svf|
-    {'url': 'https://ads.trackersite.net?t=a.svf', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
-    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
-    
     // regex filters
     // Need to find and fix a bug in regex filter parsing
     //{'url': 'https://somesite.com/1234/', 'block': true, 'options': {}},
-    //{'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}}
+    //{'url': 'https://somesite.com/1234/', 'block': false, 'options': {'type': 'IMAGE'}},
+    //{'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
     
     // wildcard filter
     {'url': 'https://asdf.com/?q=asdfd&param=q', 'block': true, 'options': {}},
@@ -55,6 +51,10 @@ const easylistTestCases = [
 
     // anchors
     // block all third party scripts on a site
+    // |http://$third-party,script,domain=somesite.net'
     {'url': 'http://tracker.asdf.net', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.net'}},
-    {'url': 'http://tracker.asdf.net', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.net'}}
+    {'url': 'http://tracker.asdf.net', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.net'}},
+    // svf|
+    {'url': 'https://ads.trackersite.net?t=a.svf', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
+    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
 ]
