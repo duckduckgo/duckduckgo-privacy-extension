@@ -1,7 +1,6 @@
 const testEasylist = [
   '/banner/*/img^',
   '||ads.example.com^',
-  '|http://wtf.asdf.net|',
   '||ads.somesite.com^$script,image,domain=somesite.com|~foo.somesite.info',
   '!block this, then whitelist',
   '||ad.someothersite.com/notbanner^',
@@ -12,7 +11,9 @@ const testEasylist = [
   'svf|',
   '! wildcard filters',
   'asdf.com/?q=*&param=',
-  '||shopify.com/storefront/page?*&eventtype='
+  '||shopify.com/storefront/page?*&eventtype=',
+  '! anchors',
+  '|http://$third-party,script,domain=somesite.net',
 ]
 
 const regexList = [

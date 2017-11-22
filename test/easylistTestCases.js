@@ -52,4 +52,9 @@ const easylistTestCases = [
     {'url': 'https://asdf.com/?q=asdfd&param=q', 'block': true, 'options': {}},
     {'url': 'https://asdf.com/?q=asdfsdfaparam=a', 'block': false, 'options': {}},
     //{'url': 'https://v.shopify.com/storefront/page?referrer=stuff&eventtype=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventty
+
+    // anchors
+    // block all third party scripts on a site
+    {'url': 'http://tracker.asdf.net', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.net'}},
+    {'url': 'http://tracker.asdf.net', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.net'}}
 ]
