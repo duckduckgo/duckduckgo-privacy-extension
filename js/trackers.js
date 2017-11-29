@@ -20,7 +20,10 @@ settings.ready().then(() => {
 
 require.scopes.trackers = (function() {
 
-    function isTracker(urlToCheck, currLocation, tabId, request) {
+    function isTracker(urlToCheck, thisTab, request) {
+        let currLocation = thisTab.url || ''
+        let siteDomain = thisTab.site ? thisTab.site.domain : ''
+        if(!siteDomain) return
 
         // TODO: easylist is marking some of our requests as trackers. Whitelist us
         // by default for now until we can figure out why.
@@ -52,7 +55,7 @@ require.scopes.trackers = (function() {
                 blockSettings.push('Social')
             }
 
-            var whitelistedTracker = checkWhitelist(urlToCheck, currLocation, request)
+            var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
             if (whitelistedTracker) {
                 return whitelistedTracker
             }
@@ -71,7 +74,7 @@ require.scopes.trackers = (function() {
             }
 
             // block trackers from easylists
-            let easylistBlock = checkEasylists(urlToCheck, currLocation, request)
+            let easylistBlock = checkEasylists(urlToCheck, siteDomain, request)
             if (easylistBlock) {
                 return easylistBlock
             }
@@ -96,13 +99,13 @@ require.scopes.trackers = (function() {
         return result
     }
 
-    function checkEasylists(url, currLocation, request){
+    function checkEasylists(url, siteDomain, request){
         let toBlock = false
         constants.easylists.some((listName) => {
             let match
             // lists can take a second or two to load so check that the parsed data exists
             if (easylists[listName].isLoaded) {
-                match = checkABPParsedList(easylists[listName].parsed, url, currLocation, request)
+                match = checkABPParsedList(easylists[listName].parsed, url, siteDomain, request)
             }
 
             // break loop early if a list matches
@@ -219,11 +222,11 @@ require.scopes.trackers = (function() {
         }
     }
 
-    function checkABPParsedList(list, url, currLocation, request) {
+    function checkABPParsedList(list, url, siteDomain, request) {
         let match = abp.matches(list, url,
             {
-                domain: currLocation,
-                elementTypeMaskMap: abp.elementTypes[request.type.toUpperCase()]
+                domain: siteDomain,
+                elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
             })
         return match
     }
