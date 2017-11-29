@@ -65,17 +65,17 @@ function processSite(url) {
     resetSettings(true);
 
     // run test with tracker blocking and https
-    runTest(url).then(() => {
+    clearCache().then(runTest(url).then(() => {
 
         // turn tracker blocking off
         resetSettings(false);
 
-        runTest(url).then(() => {
+        clearCache().then(runTest(url).then(() => {
             screenshots.push(newScreenshots);
             buildSummary();
             return;
-        });
-    });
+        }));
+    }));
 }
 
 /*
@@ -107,7 +107,6 @@ function processTopSites() {
         resetSettings(false);
 
         runTest(url).then(() => {
-
             screenshots.push(newScreenshots)
             processTopSites();
         });
@@ -115,7 +114,7 @@ function processTopSites() {
 }
 
 /*
- * Navigate to a url, take a screenshot and record the page load time
+ * Navigate to a url, take a screenshot and record tab oncomplete time
  */
 function runTest(url) {
     return new Promise((resolve) => {

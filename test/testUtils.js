@@ -5,7 +5,7 @@ function cleanUpTabs(tabs) {
     tabs.forEach((tab) => chrome.tabs.remove(tab.id));
 }
 
-/* Wait for a tab to finish loading and return the chrome tab object 
+/* Wait for a tab to finish loading and return the chrome tab object
  * getLoadedTab(<url>).then( do stuff );
  */
 
@@ -31,7 +31,7 @@ function getLoadedTabById(id, startTime, timeout, delay, delayStart) {
     return new Promise((resolve) => {
         chrome.tabs.get(id, (tab) => {
                 if (tab && tab.status === 'complete') {
-                   
+
                     if (delay && delayStart) {
                         if ((Date.now() - delayStart) > delay) {
                             resolve(tab);
@@ -104,4 +104,12 @@ function takeScreenshot() {
 function resetSettings(settingState) {
     bkg.settings.updateSetting('trackerBlockingEnabled', settingState)
     bkg.settings.updateSetting('httpsEverywhereEnabled', settingState)
+}
+
+function clearCache () {
+    return new Promise((resolve) => {
+        const millisecondsPerWeek = 1000 * 60 * 60 * 24 * 7
+        const oneWeek = (new Date()).getTime() - millisecondsPerWeek
+        chrome.browsingData.remove({'since': oneWeek}, {'cache': true}, () => resolve())
+    })
 }
