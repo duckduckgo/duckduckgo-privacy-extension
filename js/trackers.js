@@ -223,9 +223,9 @@ require.scopes.trackers = (function() {
     }
 
     function checkABPParsedList(list, url, siteDomain, request) {
-        let match = abp.matches(list, url, 
-            { 
-                domain: siteDomain, 
+        let match = abp.matches(list, url,
+            {
+                domain: siteDomain,
                 elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
             })
         return match
