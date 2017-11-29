@@ -21,9 +21,7 @@ settings.ready().then(() => {
 require.scopes.trackers = (function() {    
 
     function isTracker(urlToCheck, thisTab, request) {
-        let currLocation = thisTab.url
-        let tabId = thisTab.id
-
+        let currLocation = thisTab.url || ''
         let siteDomain = thisTab.site ? thisTab.site.domain : ''
         if(!siteDomain) return
 
