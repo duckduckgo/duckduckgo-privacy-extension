@@ -30,7 +30,9 @@ function buildSummary() {
     let table = '<table><tr><td><b>Tracker Blocking ON</b></td><td><b>Tracker Blocking OFF</b></td></tr>';
 
     screenshots.forEach((x) => {
-        table += '<tr><td>Site Score: ' + x.score + ' <a href="' + x.url + '">' + x.url + '</a></td><td></tr>';
+        table += '<tr><td><a href="' + x.url + '">' + x.url + '</a> - <b>Site Score:</b> ' + JSON.stringify(x.score) + '</td><td></td></tr>';
+        table += '<tr><td>Tab took <b>' + x.enabledOnComplete +'</b> to complete.</td>'
+        table += '<td>Tab took <b>' + x.disabledOnComplete +'</b> to complete.</td></tr>'
         table += '<tr><td><img id="on" src="' + x.on + '" /></td>';
         table += '<td><img id="off" src="' + x.off + '" /></td></tr>';
     });
@@ -122,13 +124,16 @@ function runTest(url) {
 
         chrome.tabs.create({url}, (t) => {
 
-            getLoadedTabById(t.id, blockingOnStartTime, 8000, 1000).then((tab) => {
+            getLoadedTabById(t.id, blockingOnStartTime, 9000, 3000).then((tab) => {
                 let blocking = bkg.settings.getSetting('trackerBlockingEnabled')
                 let tabObj = bkg.tabManager.get({'tabId': tab.id});
 
                 if (blocking) {
-                    newScreenshots.scoreObj = tabObj.site.score;
+                    newScreenshots.scoreObj = tabObj.site.score
                     newScreenshots.score = tabObj.site.score.get()
+                    newScreenshots.enabledOnComplete = tabObj.stopwatch.completeMs/1000 + ' seconds'
+                } else {
+                    newScreenshots.disabledOnComplete = tabObj.stopwatch.completeMs/1000 + ' seconds'
                 }
 
                 takeScreenshot().then((image) => {
