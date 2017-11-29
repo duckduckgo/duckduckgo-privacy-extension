@@ -2,7 +2,7 @@
  * Test cases for the abp-filter-parser match function.
  * Test filters are located in test/testEasylist.js
  *
- * For more info on writing filter see:
+ * For more info on writing filters see:
  * https://adblockplus.org/filters
  * https://adblockplus.org/filter-cheatsheet
  */
@@ -21,13 +21,14 @@ const easylistTestCases = [
     // asdf.com/?q=*&param=
     {'url': 'https://asdf.com/?q=asdfd&param=q', 'block': true, 'options': {}},
     {'url': 'https://asdf.com/?q=asdfsdfaparam=a', 'block': false, 'options': {}},
+    // This test fails. Still need to look into it.
     //{'url': 'https://v.shopify.com/storefront/page?referrer=stuff&eventtype=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventty
 
     /*
      * blocking by domain
      */
     // ||ads.example.com^
-    // Domain anchor '||' so the domain must match
+    // Domain anchor '||' so the domain must start with ads.example.com
     {'url': 'http://ads.example.com/foo.gif', 'block': true, 'options': {}},
     {'url': 'http://server1.ads.example.com/foo.gif', 'block': true, 'options': {}},
     {'url': 'http://ads.example.com:8000/', 'block': true, 'options': {}},
