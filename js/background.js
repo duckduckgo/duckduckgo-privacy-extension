@@ -160,7 +160,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
             // count and block trackers. Skip things that matched in the trackersWhitelist
             if (tracker && !(tracker.type === 'trackersWhitelist')) {
-
                 // only count trackers on pages with 200 response. Trackers on these sites are still
                 // blocked below but not counted toward company stats
                 if (thisTab.statusCode === 200) {

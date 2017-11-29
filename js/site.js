@@ -1,4 +1,4 @@
-/*
+/**
  * Each Site creates its own Score instance. The attributes
  * of the Score are updated as we process new events e.g. trackers
  * blocked or https status.
@@ -23,10 +23,7 @@ settings.ready().then(() => {
 })
 
 const siteScores = ['A', 'B', 'C', 'D']
-
-// percent of the top 1 million sites a tracking network has been seen on.
-// see: https://webtransparency.cs.princeton.edu/webcensus/
-const pagesSeenOn = {'google':84,'facebook':36,'twitter':16,'amazon':14,'appnexus':10,'oracle':10,'mediamath':9,'yahoo':9,'maxcdn':7,'automattic':7}
+const pagesSeenOn = constants.majorTrackingNetworks
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 
@@ -65,7 +62,7 @@ class Score {
         return result
     }
 
-    /* is the parent site itself a major tarcking network?
+    /* is the parent site itself a major tracking network?
      * minus one grade for each 10% of the top pages this
      * network is found on.
      */

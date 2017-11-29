@@ -1,9 +1,11 @@
+const DOMAIN_MAPPINGS = require('./../../../data/tracker_lists/trackersWithParentCompany.json').TopTrackerDomains
 const Parent = window.DDG.base.Model
 
 function SiteCompanyList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
     attrs.companyListMap = []
+    attrs.DOMAIN_MAPPINGS = DOMAIN_MAPPINGS
     Parent.call(this, attrs)
 }
 
