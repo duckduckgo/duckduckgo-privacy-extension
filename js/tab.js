@@ -58,7 +58,11 @@ class Tab {
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
         this.statusCode // statusCode is set when headers are recieved in tabManager.js
-
+        this.stopwatch = {
+            begin: Date.now(),
+            end: null,
+            completeMs: null
+        }
         // set the new tab icon to the dax logo
         chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
     };
@@ -147,6 +151,12 @@ class Tab {
             const downgrade = this.url.replace(/^https:\/\//i, 'http://')
             chrome.tabs.update(this.id, { url: downgrade })
         }
+    }
+
+    endStopwatch () {
+        this.stopwatch.end = Date.now()
+        this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
+        console.log(`tab.status: complete. site took ${this.stopwatch.completeMs/1000} seconds to load.`)
     }
 }
 
