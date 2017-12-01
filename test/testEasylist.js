@@ -14,6 +14,9 @@ const testEasylist = [
   '! anchors',
   '|http://$third-party,script,domain=somesite.net',
   'svf|',
+  '!domain anchor with wildcard and options',
+  '||site.bar.com^',
+  '@@||site.bar.com/*/test.img$image,domain=yahoo.com'
 ]
 
 const regexList = [

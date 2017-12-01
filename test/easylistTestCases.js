@@ -36,14 +36,17 @@ const easylistTestCases = [
     {'url': 'http://example.com/redirect/http://ads.example.com/', 'block': false, 'options': {}},
     {'url': 'http://example.com/stuff', 'block': false, 'options': {}},
 
-    // domain anchors with wildcard
+    // whitelisted domain anchors with wildcard
     // we block site.bar.com with
     // '||site.bar.com^'
-    // then whitelist */test.img on notthisone.com with 
-    // '@@||site.bar.com/*/test.img$domain=butnotthisone.com'
-    {'url': 'https://foo.site.bar.com/image.gif', 'block': true, 'options':{}},
-    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': false, 'options':{'domain': 'blockthis.com'}},
-    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': true, 'options':{'domain': 'butnothisone.com'}},
+    // then whitelist */test.img for yahoo.com, only for image requests
+    // '@@||site.bar.com/*/test.img$image,domain=yahoo.com'
+    {'url': 'https://foo.site.bar.com/image.gif', 'block': true, 'options': {}},
+    {'url': 'https://foo.site.bar.com/fasfasdf/image.gif', 'block': true, 'options': {}},
+    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'yahoo.com'}}, // shouldn't block, fits domain and request type
+    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'yahoo.com'}}, // block, doesn't match correct request type
+    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': true, 'options': {'type': 'IMAGE', 'domain': 'anydomain.com'}}, // block, doesn't match domain
+    {'url': 'https://foo.site.bar.com/test.img', 'block': true, 'options': {'domain': 'anydomain.com'}},
 
     /*
      * blocking options
@@ -79,7 +82,11 @@ const easylistTestCases = [
     // Need to find and fix a bug in regex filter parsing
     // /\.com\/[0-9]{2,9}\/$/$script,stylesheet,third-party,xmlhttprequest'
     {'url': 'https://somesite.com/1234/', 'block': true, 'options': {}},
+    {'url': 'https://somesite.com/12345/', 'block': true, 'options': {}},
+    {'url': 'https://somesite.com/123456/', 'block': true, 'options': {}},
     {'url': 'https://somesite.com/1234/', 'block': false, 'options': {'type': 'IMAGE'}},
+    {'url': 'https://somesite.com/1/', 'block': false, 'options': {}},
+    {'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
     {'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
 
     /*
@@ -94,5 +101,5 @@ const easylistTestCases = [
     // Right anchor so request must end with svf
     // svf|
     {'url': 'https://ads.trackersite.net?t=a.svf', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
-    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
+    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}}
 ]
