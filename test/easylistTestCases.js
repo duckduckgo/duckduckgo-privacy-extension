@@ -88,6 +88,10 @@ const easylistTestCases = [
     {'url': 'https://somesite.com/1/', 'block': false, 'options': {}},
     {'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
     {'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
+    // regex filter with multiple $ characters
+    // yahoo\.com\/ads\/[0-9]{2,5}\/q=\$param\/$/$domain=~yahoo.com'
+    {'url': 'http://yahoo.com/ads/123/q=$param/', 'block': false, 'options': {'domain': 'yahoo.com'}}, // shouldn't block on yahoo.com
+    {'url': 'http://yahoo.com/ads/123/q=$param/', 'block': true, 'options': {'domain': 'someothersite.com'}},
 
     /*
      * anchors

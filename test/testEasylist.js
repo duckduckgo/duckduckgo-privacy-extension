@@ -21,4 +21,6 @@ const testEasylist = [
 
 const regexList = [
   '/\.com\/[0-9]{2,9}\/$/$script,stylesheet,third-party,xmlhttprequest',
+  '! filter with multiple $ characters to test regex parsing. This is hypothetical a filter like this doesnt exist yet',
+  '/yahoo\.com\/ads\/[0-9]{2,5}\/q=\\$param\/$/$domain=~yahoo.com'
 ]
