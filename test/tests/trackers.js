@@ -73,7 +73,8 @@
               fakeRequest.type = test.options.type
 
           let toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest);
-          assert.ok(!!toBlock === test.block, `abp blocking decision.. url: ${test.url} ${toBlock} === ${test.block}`);
+          toBlock = toBlock ? toBlock.block : false;
+          assert.ok(toBlock === test.block, `abp blocking decision.. url: ${test.url} ${toBlock} === ${test.block}`);
       });
   });
 
@@ -81,7 +82,7 @@
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', false);
           var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? true : false;
+          toBlock = toBlock ? toBlock.block : false;
           assert.ok(toBlock === false, 'url should not be');
       });
   });
@@ -107,7 +108,7 @@
           }
 
           var toBlock = bkg.trackers.isTracker(test.potentialTracker, testTab, fakeRequest);
-          toBlock = toBlock ? true : false;
+          toBlock = toBlock ? toBlock.block : false;
           assert.ok(toBlock === test.block, test.message);
       });
   });
@@ -122,6 +123,7 @@
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', true);
           let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+          toBlock = toBlock ? toBlock.block : false;
           assert.ok(!!toBlock === true, 'url should be blocked');
       });
   
@@ -129,7 +131,8 @@
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', false);
           let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          assert.ok(!!toBlock === false, 'url should be blocked');
+          toBlock = toBlock ? toBlock.block : false;
+          assert.ok(toBlock === false, 'url should be blocked');
       });
   });
 
