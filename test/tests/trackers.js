@@ -124,7 +124,7 @@
           bkg.settings.updateSetting('socialBlockingIsEnabled', true);
           let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
           toBlock = toBlock ? toBlock.block : false;
-          assert.ok(!!toBlock === true, 'url should be blocked');
+          assert.ok(toBlock === true, 'url should be blocked');
       });
   
       socialBlocking.forEach(function(test) {
