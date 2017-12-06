@@ -50,7 +50,9 @@
     { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'OBJECT'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
     { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
     { url: 'https://www.facebook.com/rsrc.php/v3/y6/r/69R6jxYtiKN.js', block: true, options: {domain: 'up-4ever.com', type: 'OBJECT'}}, // |https://$third-party,script,domain=up-4ever.com
-    //{ url: 'https://v.shopify.com/storefront/page?referrer=https%3A%2F%2Fwww.pinkbike.com&eventType=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventtype=
+    { url: 'https://v.shopify.com/storefront/page?referrer=https%3A%2F%2Fwww.pinkbike.com&eventType=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventtype=
+    { url: 'https://secureinclude.ebaystatic.com/js/v/us/pulsar.js', block: true, options: {type: 'SCRIPT', domain: 'ebay.com'}}, // easy privacy, ||ebaystatic.com^*/pulsar.js, tests domain anchor and wildcard
+    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'SCRIPT', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
   ];
   
   QUnit.test("abp blocking url", function (assert) {
@@ -60,7 +62,7 @@
       abpBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
 
-          let testTab = Object.assign({}, fakeTab)
+          let testTab = Object.assign({}, JSON.parse(JSON.stringify(fakeTab)))
 
           if(test.options.domain) {
               testTab.url = test.options.domain
@@ -70,8 +72,8 @@
           if (test.options.type) 
               fakeRequest.type = test.options.type
 
-          var toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest);
-          toBlock = toBlock ? true : false;
+          let toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest);
+          toBlock = toBlock ? toBlock.block : false;
           assert.ok(toBlock === test.block, `abp blocking decision.. url: ${test.url} ${toBlock} === ${test.block}`);
       });
   });
@@ -80,7 +82,7 @@
       basicBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', false);
           var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? true : false;
+          toBlock = toBlock ? toBlock.block : false;
           assert.ok(toBlock === false, 'url should not be');
       });
   });
@@ -106,33 +108,31 @@
           }
 
           var toBlock = bkg.trackers.isTracker(test.potentialTracker, testTab, fakeRequest);
-          toBlock = toBlock ? true : false;
+          toBlock = toBlock ? toBlock.block : false;
           assert.ok(toBlock === test.block, test.message);
       });
   });
 
   var socialBlocking = [
-    { url: 'https://facebook.com/?q=something&param=a', block: true},
-    { url: 'http://twitter.com/somescript.js', block: true}
+    { url: 'https://facebook.com/?q=something&param=a'},
+    { url: 'http://twitter.com/somescript.js'}
   ];
   
-  QUnit.test("social blocking On", function (assert) {
+  QUnit.test("social blocking", function (assert) {
       socialBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? true : false;
-          assert.ok(toBlock === test.block, 'url should be blocked');
+          let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+          toBlock = toBlock ? toBlock.block : false;
+          assert.ok(toBlock === true, 'url should be blocked');
       });
-  });
   
-  QUnit.test("social blocking Off", function (assert) {
       socialBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
           bkg.settings.updateSetting('socialBlockingIsEnabled', false);
-          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? false : true;
-          assert.ok(toBlock === test.block, 'url should be blocked');
+          let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+          toBlock = toBlock ? toBlock.block : false;
+          assert.ok(toBlock === false, 'url should be blocked');
       });
   });
 

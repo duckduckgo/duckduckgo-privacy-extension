@@ -21,8 +21,6 @@ const easylistTestCases = [
     // asdf.com/?q=*&param=
     {'url': 'https://asdf.com/?q=asdfd&param=q', 'block': true, 'options': {}},
     {'url': 'https://asdf.com/?q=asdfsdfaparam=a', 'block': false, 'options': {}},
-    // This test fails. Still need to look into it.
-    //{'url': 'https://v.shopify.com/storefront/page?referrer=stuff&eventtype=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}}, // from easy privacy ||shopify.com/storefront/page?*&eventty
 
     /*
      * blocking by domain
@@ -36,6 +34,19 @@ const easylistTestCases = [
     {'url': 'http://example2.com/foo.gif', 'block': false, 'options': {}},
     {'url': 'http://example.info/redirect/http://example.com/', 'block': false, 'options': {}},
     {'url': 'http://example.com/redirect/http://ads.example.com/', 'block': false, 'options': {}},
+    {'url': 'http://example.com/stuff', 'block': false, 'options': {}},
+
+    // whitelisted domain anchors with wildcard
+    // we block site.bar.com with
+    // '||site.bar.com^'
+    // then whitelist */test.img for yahoo.com, only for image requests
+    // '@@||site.bar.com/*/test.img$image,domain=yahoo.com'
+    {'url': 'https://foo.site.bar.com/image.gif', 'block': true, 'options': {}},
+    {'url': 'https://foo.site.bar.com/fasfasdf/image.gif', 'block': true, 'options': {}},
+    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'yahoo.com'}}, // shouldn't block, fits domain and request type
+    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'yahoo.com'}}, // block, doesn't match correct request type
+    {'url': 'https://foo.site.bar.com/asdf/test.img', 'block': true, 'options': {'type': 'IMAGE', 'domain': 'anydomain.com'}}, // block, doesn't match domain
+    {'url': 'https://foo.site.bar.com/test.img', 'block': true, 'options': {'domain': 'anydomain.com'}},
 
     /*
      * blocking options
@@ -63,20 +74,24 @@ const easylistTestCases = [
     // @@||ads.twitter.com/notbanner^$~script'
     // Do not block script requests from ads.twitter.com/notbanner
     {'url': 'https://ads.twitter.com/notbanner/', 'block': false, 'options': {'type': 'IMAGE', 'domain': 'somesite.com'}},
-    // comment this test out. I'm pretty sure this is a bug in the match function but need to look into it more
-    // This line needs to check that the url is in the bloom filter and has a matching filter, && not ||
-    // https://github.com/duckduckgo/abp-filter-parser/blob/master/src/abp-filter-parser.js#L588
-    //{'url': 'https://ads.twitter.com/notbanner/', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite2.com'}},
+    {'url': 'https://ads.twitter.com/notbanner/', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite2.com'}},
 
     /*
      * regex filters
      */
     // Need to find and fix a bug in regex filter parsing
     // /\.com\/[0-9]{2,9}\/$/$script,stylesheet,third-party,xmlhttprequest'
-    //{'url': 'https://somesite.com/1234/', 'block': true, 'options': {}},
-    //{'url': 'https://somesite.com/1234/', 'block': false, 'options': {'type': 'IMAGE'}},
-    //{'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
-    
+    {'url': 'https://somesite.com/1234/', 'block': true, 'options': {}},
+    {'url': 'https://somesite.com/12345/', 'block': true, 'options': {}},
+    {'url': 'https://somesite.com/123456/', 'block': true, 'options': {}},
+    {'url': 'https://somesite.com/1234/', 'block': false, 'options': {'type': 'IMAGE'}},
+    {'url': 'https://somesite.com/1/', 'block': false, 'options': {}},
+    {'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
+    {'url': 'https://somesite.com/1234/asfas', 'block': false, 'options': {}},
+    // regex filter with multiple $ characters
+    // yahoo\.com\/ads\/[0-9]{2,5}\/q=\$param\/$/$domain=~yahoo.com'
+    {'url': 'http://yahoo.com/ads/123/q=$param/', 'block': false, 'options': {'domain': 'yahoo.com'}}, // shouldn't block on yahoo.com
+    {'url': 'http://yahoo.com/ads/123/q=$param/', 'block': true, 'options': {'domain': 'someothersite.com'}},
 
     /*
      * anchors
@@ -90,5 +105,5 @@ const easylistTestCases = [
     // Right anchor so request must end with svf
     // svf|
     {'url': 'https://ads.trackersite.net?t=a.svf', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
-    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
+    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}}
 ]

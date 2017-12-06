@@ -14,8 +14,13 @@ const testEasylist = [
   '! anchors',
   '|http://$third-party,script,domain=somesite.net',
   'svf|',
+  '!domain anchor with wildcard and options',
+  '||site.bar.com^',
+  '@@||site.bar.com/*/test.img$image,domain=yahoo.com'
 ]
 
 const regexList = [
   '/\.com\/[0-9]{2,9}\/$/$script,stylesheet,third-party,xmlhttprequest',
+  '! filter with multiple $ characters to test regex parsing. This is hypothetical a filter like this doesnt exist yet',
+  '/yahoo\.com\/ads\/[0-9]{2,5}\/q=\\$param\/$/$domain=~yahoo.com'
 ]
