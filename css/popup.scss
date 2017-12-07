@@ -387,6 +387,7 @@ body {
         left: 0;
         right: 0;
         margin-top: 0;
+        padding-bottom: 15px;
 
         .top-blocked__list {
             padding-top: 10px;
@@ -515,7 +516,7 @@ body {
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
-            color: $color--grey;
+            color: $white;
         }
 
         .top-blocked__reset-stats {
@@ -550,12 +551,43 @@ body {
     margin: 0;
     padding-bottom: 0;
 
+    .icon__arrow {
+        margin-top: 4px;
+    }
+
     .top-blocked__li {
         z-index: 0;
+        float: left;
         position: relative;
         margin-left: 20px;
-        margin-right: 20px;
-        clear: both;
+        //margin-right: 20px;
+        padding-top: 0;
+        //clear: both;
+       
+       .top-blocked__pill {
+           border-radius: 1em;
+           background-color: $grey-light;
+           padding: 0.2em 0.2em 0;
+       }
+
+	
+       .top-blocked__li-site__icon {
+	    @include icon_display();
+	    // width: 22px;
+	    // height: 22px;
+	    margin-top: -1px;
+	    // margin-left: -4px;
+	    margin-bottom: 2px;
+	    // overflow: hidden;
+	    // line-height: 100px;
+	    border: 1px solid $grey-light;
+	    // border-radius: 24px;
+            background-color: white;
+            border-radius: 100%;
+	    
+            @include tracker_network_icons();
+	}
+
 
         &.top-blocked__li--no-data {
             text-align: center;
@@ -640,10 +672,16 @@ body {
         }
 
         .top-blocked__li__blocker-pct {
-            float: left;
+            float: right;
             font-size: 13px;
             color: $white;
             transition: all 0.5s ease-in-out;
+	    padding-left: 0.5em;
+	    margin-left: 0.5em;
+	    border-left: 1px solid $white;
+	    vertical-align: middle;
+            margin-top: 2px;
+            margin-bottom: 2px;
         }
 
         &.top-blocked__li--see-all {

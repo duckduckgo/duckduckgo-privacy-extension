@@ -20,7 +20,7 @@ function TruncatedTopBlocked (ops) {
 
 TruncatedTopBlocked.prototype = $.extend({},
     Parent.prototype,
-    animateGraphBars,
+    //animateGraphBars,
     {
 
         _seeAllClick: function () {
@@ -40,7 +40,7 @@ TruncatedTopBlocked.prototype = $.extend({},
         rerenderList: function () {
             this._rerender()
             this._setup()
-            this.animateGraphBars()
+            // this.animateGraphBars()
         },
 
         handleBackgroundMsg: function (message) {
