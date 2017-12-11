@@ -5,7 +5,9 @@ module.exports = function (companyListMap) {
 
         return bel`<li class="top-blocked__li">
           <div class="top-blocked__pill">
-	    <div class="top-blocked__li-site__icon ${data.name.replace('.', '').toLowerCase()}"></div>
+            <div class="top-blocked__li-site__icon ${data.name.replace('.', '').toLowerCase()}">
+                <div class="top-blocked__li-ring"></div>
+            </div>
 	    <div class="top-blocked__li__blocker-pct js-top-blocked-pct">
 	        ${data.percent}%
 	    </div>

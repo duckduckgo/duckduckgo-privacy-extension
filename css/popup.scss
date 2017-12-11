@@ -573,21 +573,24 @@ body {
 	
        .top-blocked__li-site__icon {
 	    @include icon_display();
-	    // width: 22px;
-	    // height: 22px;
 	    margin-top: -1px;
-	    // margin-left: -4px;
 	    margin-bottom: 2px;
-	    // overflow: hidden;
-	    // line-height: 100px;
 	    border: 1px solid $grey-light;
-	    // border-radius: 24px;
             background-color: white;
             border-radius: 100%;
 	    
             @include tracker_network_icons();
 	}
 
+        .top-blocked__li-ring {
+            background-color: transparent;
+            border: 3px solid $grey-light;
+            border-radius: 100%;
+            width: 18px;
+            height: 18px;
+            margin-left: -2px;
+            margin-top: -2px;
+        }
 
         &.top-blocked__li--no-data {
             text-align: center;
