@@ -553,23 +553,24 @@ body {
 
     .icon__arrow {
         margin-top: 4px;
+        right: 15px;
     }
 
     .top-blocked__li {
-        z-index: 0;
         float: left;
         position: relative;
-        margin-left: 20px;
-        //margin-right: 20px;
+        margin-left: 16px;
         padding-top: 0;
-        //clear: both;
-       
+
        .top-blocked__pill {
            border-radius: 1em;
            background-color: $grey-light;
            padding: 0.2em 0.2em 0;
        }
 
+       &:first-child {
+           margin-left: 23px;
+       }
 	
        .top-blocked__li-site__icon {
 	    @include icon_display();
@@ -679,12 +680,10 @@ body {
             font-size: 13px;
             color: $white;
             transition: all 0.5s ease-in-out;
-	    padding-left: 0.5em;
-	    margin-left: 0.5em;
+	    padding-left: 5px;
 	    border-left: 1px solid $white;
 	    vertical-align: middle;
-            margin-top: 2px;
-            margin-bottom: 2px;
+            margin: 2px 5px;
         }
 
         &.top-blocked__li--see-all {
