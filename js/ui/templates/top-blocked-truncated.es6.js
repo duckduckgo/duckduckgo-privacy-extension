@@ -9,7 +9,7 @@ module.exports = function () {
             <h3 class="padded uppercase text--center">
                 Tracker Networks Top Offenders
             </h3>
-            <ol class="default-list top-blocked__list">
+            <ol class="default-list top-blocked__list top-blocked__list--truncated">
                 ${listItems(this.model.companyListMap)}
 	        <a href="#" class="link-secondary js-top-blocked-see-all">
 		  <span class="icon icon__arrow pull-right"></span>
@@ -18,7 +18,7 @@ module.exports = function () {
         </section>`
     } else {
         return bel`<section class="top-blocked card card--transparent">
-            <ol class="default-list top-blocked__list">
+            <ol class="default-list top-blocked__list top-blocked__list--truncated">
                 <li class="top-blocked__li top-blocked__li--no-data">
                     ${noData()}
                 </li>

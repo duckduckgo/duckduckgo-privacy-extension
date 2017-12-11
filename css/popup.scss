@@ -391,7 +391,11 @@ body {
 
         .top-blocked__list {
             padding-top: 0;
-            padding-bottom: 10px;
+            padding-bottom: 30px;
+
+            &.top-blocked__list--truncated {
+                padding-bottom: 10px;
+            }
 
             .top-blocked__li:first-child {
                 padding-top: 0;
@@ -507,6 +511,7 @@ body {
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
+            padding-top: 0;
             padding-bottom: 30px;
             margin-top: 0;
             max-height: 315px;
@@ -515,7 +520,6 @@ body {
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
-            color: $white;
         }
 
         .top-blocked__reset-stats {
@@ -556,21 +560,38 @@ body {
     }
 
     .top-blocked__li {
-        float: left;
+        z-index: 0;
         position: relative;
-        margin-left: 16px;
-        padding-top: 0;
+        margin-left: 20px;
+        margin-right: 20px;
+        clear: both;
+
+       &.top-blocked__li--truncated {
+           float: left;
+           clear: none;
+           margin-left: 16px;
+           margin-right: 0;
+           padding-top: 0;
+       }
+
+       &.top-blocked__li--truncated:first-child {
+           margin-left: 23px;
+       }
 
        .top-blocked__pill {
            border-radius: 1em;
            background-color: $grey-light;
            padding: 0.2em 0.2em 0;
+
+           .top-blocked__li__blocker-pct {
+	       float: right;
+	       color: $white;
+	       padding-left: 5px;
+	       border-left: 1px solid $white;
+	       margin: 2px 5px;
+           }
        }
 
-       &:first-child {
-           margin-left: 23px;
-       }
-	
        .top-blocked__li-site__icon {
 	    @include icon_display();
 	    margin-top: -1px;
@@ -675,14 +696,10 @@ body {
         }
 
         .top-blocked__li__blocker-pct {
-            float: right;
             font-size: 13px;
-            color: $white;
             transition: all 0.5s ease-in-out;
 	    padding-left: 5px;
-	    border-left: 1px solid $white;
 	    vertical-align: middle;
-            margin: 2px 5px;
         }
 
         &.top-blocked__li--see-all {
