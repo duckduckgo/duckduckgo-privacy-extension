@@ -390,7 +390,7 @@ body {
         padding-bottom: 15px;
 
         .top-blocked__list {
-            padding-top: 10px;
+            padding-top: 0;
             padding-bottom: 10px;
 
             .top-blocked__li:first-child {
@@ -507,7 +507,6 @@ body {
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
-            padding-top: 0;
             padding-bottom: 30px;
             margin-top: 0;
             max-height: 315px;
