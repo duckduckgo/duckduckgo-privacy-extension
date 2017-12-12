@@ -9,7 +9,7 @@ public/js/*.*
 public/css/*.*
 js/abp.js
 *.swp
-trackersWithParentCompany
+shared/data/tracker_lists/trackersWithParentCompany.json
 js/abp.js
 js/tldjs.js
 release
