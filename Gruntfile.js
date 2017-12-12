@@ -3,12 +3,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-execute')
     
     let browser = grunt.option('browser')
+    let buildType = grunt.option('type')
+    let buildPath = `build/${browser}/${buildType}`
 
     let baseFileMap = {
         ui: {
             '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
             '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
-            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
+            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js']
         },
         background: {
             '<%= dirs.src.js %>/abp.js': ['<%= dirs.src.js %>/abp-preprocessed.es6.js'],
@@ -28,7 +30,7 @@ module.exports = function(grunt) {
     let browserMap = {
         firefox: {},
         chrome: {},
-        safari: {},
+        safari: {}
     }
 
     let fileMap = {
@@ -49,6 +51,15 @@ module.exports = function(grunt) {
         },
     }
 
+    /* watch any base files and browser specific files */
+    let watch = {
+        sass: [['<%= dirs.src.scss %>/**/*.scss'], Object.values(fileMap[browser].sass || {})].join().split(','),
+        ui: [['<%= dirs.src.js %>/ui/**/*.es6.js'], Object.values(fileMap[browser].ui || {})].join().split(','),
+        background: [['<%= dirs.src.js %>/*.es6.js'], Object.values(fileMap[browser].background || {})].join().split(',')
+    }
+
+    console.log(watch)
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         dirs: {
@@ -59,8 +70,8 @@ module.exports = function(grunt) {
                 templates: 'shared/templates'
             },
             public: {
-                js: `public/js`,
-                css: `public/css`
+                js: `${buildPath}/public/js`,
+                css: `${buildPath}/public/css`
             }
         },
 
@@ -91,16 +102,17 @@ module.exports = function(grunt) {
         },
 
         watch: {
-            css: {
-                files: ['<%= dirs.src.css %>/**/*.scss'],
+            scss: {
+                files: watch.sass,
                 tasks: ['sass']
             },
             ui: {
-                files: ['<%= dirs.src.js %>/ui/**/*.es6.js'],
+                files: watch.ui, 
                 tasks: ['browserify:ui']
+
             },
             background: {
-                files: ['<%= dirs.src.js %>/*.es6.js'],
+                files: watch.background,
                 tasks: ['browserify:background']
             }
         }
