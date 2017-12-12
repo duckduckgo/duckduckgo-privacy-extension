@@ -15,7 +15,9 @@
     "release": "grunt build && node scripts/httpsWhitelist.js",
     "selenium": "cd selenium-test && node test.js",
     "jshint": "jshint js/ --verbose > jshint_log.txt",
-    "test": "concurrently 'npm run jshint' 'npm run selenium'"
+    "test": "concurrently 'npm run jshint' 'npm run selenium'",
+    "dev-firefox": "make dev browser=firefox type=dev",
+    "release-firefox": "make browser=firefox type=release"
   },
   "devDependencies": {
     "babel-preset-env": "^1.4.0",

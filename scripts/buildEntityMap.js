@@ -16,5 +16,5 @@ request('https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/ma
           });
       }
 
-      fs.writeFile('data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if(err) console.log(err)} );
+      fs.writeFile('shared/data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if(err) console.log(err)} );
 });

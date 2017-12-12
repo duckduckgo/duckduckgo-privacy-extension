@@ -5,7 +5,7 @@ var request = require('request')
  */
 var remapDataLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/google_mapping.json'
 var companyListLoc = 'https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-blacklist.json'
-const constants = require('./../../data/constants.js')
+const constants = require('./../../shared/data/constants.js')
 const majorNetworks = constants.majorTrackingNetworks
 var trackerList = { TopTrackerDomains: {} }
 var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social']

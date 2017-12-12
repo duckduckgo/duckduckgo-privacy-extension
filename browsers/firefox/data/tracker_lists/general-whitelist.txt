@@ -1,0 +1,2 @@
+@@||wp.com/_static/
+@@||duckduckgo.com
