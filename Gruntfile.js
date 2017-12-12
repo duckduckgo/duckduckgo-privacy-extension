@@ -6,6 +6,8 @@ module.exports = function(grunt) {
     let buildType = grunt.option('type')
     let buildPath = `build/${browser}/${buildType}`
 
+    /* These are files common to all browsers. To add or override any of these files
+     * see the browserMap object below */
     let baseFileMap = {
         ui: {
             '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
@@ -25,40 +27,39 @@ module.exports = function(grunt) {
     }
 
     /* Browser specific files here
-     * Ex: safari: { ui: { '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/yourfile.es6.js']}}
+     * Ex: safari: { ui: { '<%= dirs.public.js %>/yourFile.js': ['<%= dirs.src.js %>/ui/base/yourfile.es6.js']}}
      */
     let browserMap = {
-        firefox: {},
-        chrome: {},
-        safari: {}
+        firefox: {ui: {}, background: {}, sass: {}},
+        chrome: {ui: {}, background: {}, sass: {}},
+        safari: {ui: {}, background: {}, sass: {}}
     }
 
+    /* final file mapping used by grunt */
     let fileMap = {
         firefox: {
-            ui: Object.assign(baseFileMap.ui, browserMap.firefox.ui || {}),
-            background: Object.assign(baseFileMap.background, browserMap.firefox.background || {}),
-            sass: Object.assign(baseFileMap.sass, browserMap.firefox.sass || {})
+            ui: Object.assign(baseFileMap.ui, browserMap.firefox.ui),
+            background: Object.assign(baseFileMap.background, browserMap.firefox.background),
+            sass: Object.assign(baseFileMap.sass, browserMap.firefox.sass)
         },
         chrome: {
-            ui: Object.assign(baseFileMap.ui, browserMap.chrome.ui || {}),
-            background: Object.assign(baseFileMap.background, browserMap.chrome.background || {}),
-            sass: Object.assign(baseFileMap.sass, browserMap.chrome.sass || {})
+            ui: Object.assign(baseFileMap.ui, browserMap.chrome.ui),
+            background: Object.assign(baseFileMap.background, browserMap.chrome.background),
+            sass: Object.assign(baseFileMap.sass, browserMap.chrome.sass)
         },
         safari: {
-            ui: Object.assign(baseFileMap.ui, browserMap.safari.ui || {}),
-            background: Object.assign(baseFileMap.background, browserMap.safari.background || {}),
-            sass: Object.assign(baseFileMap.sass, browserMap.safari.sass || {})
+            ui: Object.assign(baseFileMap.ui, browserMap.safari.ui),
+            background: Object.assign(baseFileMap.background, browserMap.safari.background),
+            sass: Object.assign(baseFileMap.sass, browserMap.safari.sass)
         },
     }
 
     /* watch any base files and browser specific files */
     let watch = {
-        sass: [['<%= dirs.src.scss %>/**/*.scss'], Object.values(fileMap[browser].sass || {})].join().split(','),
-        ui: [['<%= dirs.src.js %>/ui/**/*.es6.js'], Object.values(fileMap[browser].ui || {})].join().split(','),
-        background: [['<%= dirs.src.js %>/*.es6.js'], Object.values(fileMap[browser].background || {})].join().split(',')
+        sass: [['<%= dirs.src.scss %>/**/*.scss'], Object.values(fileMap[browser].sass)].join().split(','),
+        ui: [['<%= dirs.src.js %>/ui/**/*.es6.js'], Object.values(fileMap[browser].ui)].join().split(','),
+        background: [['<%= dirs.src.js %>/*.es6.js'], Object.values(fileMap[browser].background)].join().split(',')
     }
-
-    console.log(watch)
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),

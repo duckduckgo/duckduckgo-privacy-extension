@@ -23,6 +23,10 @@ setup-build-dir:
 	rm -rf build/$(browser)/$(type)
 	mkdir build/$(browser)/$(type)
 
+chrome-release-zip:
+	rm -f build/chrome/release/chrome-release-*.zip
+	zip -r build/chrome/release/chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip build/chrome/release
+
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
 	cp -r $(ITEMS) build/$(browser)/$(type)
