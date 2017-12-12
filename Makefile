@@ -1,8 +1,8 @@
 ITEMS   := shared/font shared/html shared/data shared/img shared/js
 
-release: npm setup-build-dir grunt tosdr make-build
+release: npm setup-build-dir grunt tosdr moveout
 
-dev: grunt-dev make-build
+dev: setup-build-dir moveout grunt-dev
 
 npm:
 	npm install --tldjs-update-rules
@@ -11,13 +11,11 @@ grunt:
 	grunt build --browser=$(browser) --type=$(type)
 
 grunt-dev:
+	cp -r test build/$(browser)/dev/
 	grunt dev --browser=$(browser) --type=$(type)
 
 tosdr:
 	grunt execute:tosdr --browser=$(browser) --type=$(type)
-
-make-build: moveout
-	rm -rf build/$(browser)/release/test/
 
 setup-build-dir:
 	rm -rf build/$(browser)/$(type)
