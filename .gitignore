@@ -7,9 +7,10 @@ npm-debug.log
 *.map
 public/js/*.*
 public/css/*.*
-js/abp.js
+shared/js/abp.js
 *.swp
 shared/data/tracker_lists/trackersWithParentCompany.json
-js/abp.js
-js/tldjs.js
-release
+shared/js/tldjs.js
+build/firefox
+build/chrome
+build/safari
