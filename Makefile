@@ -18,6 +18,7 @@ tosdr:
 	grunt execute:tosdr --browser=$(browser) --type=$(type)
 
 setup-build-dir:
+	mkdir -p build/$(browser)
 	rm -rf build/$(browser)/$(type)
 	mkdir build/$(browser)/$(type)
 
