@@ -389,13 +389,13 @@ body {
         margin-top: 0;
         padding-bottom: 15px;
 
-        &.top-blocked__list--truncated {
-            padding-bottom: 10px;
-        }
-
         .top-blocked__list {
             padding-top: 0;
             padding-bottom: 30px;
+
+            &.top-blocked__list--truncated {
+                padding-bottom: 10px;
+            }
 
             .top-blocked__li:first-child {
                 padding-top: 0;
@@ -572,10 +572,10 @@ body {
            margin-left: 16px;
            margin-right: 0;
            padding-top: 0;
-       }
-
-       &.top-blocked__li--truncated:first-child {
-           margin-left: 23px;
+       
+           &:first-child {
+               margin-left: 23px;
+           }
        }
 
        .top-blocked__pill {
