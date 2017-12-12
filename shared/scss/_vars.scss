@@ -3,7 +3,7 @@ $font__size--default: 14px;
 $font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
 
 /* Colors */
-@import "../node_modules/duckduckgo-colors/colors";
+@import "../../node_modules/duckduckgo-colors/colors";
 $color--green: #3fa248;
 $color--dark-green: #29521f;
 $color--orange: #f89f22;
