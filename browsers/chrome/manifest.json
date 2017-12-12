@@ -1,11 +1,5 @@
 {
     "name": "DuckDuckGo Plus",
-    "applications": {
-        "gecko": {
-              "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
-              "strict_min_version": "57.0"
-        }
-    },
     "version": "2017.11.9",
     "description": "DuckDuckGo Privacy Protection",
     "icons": {
