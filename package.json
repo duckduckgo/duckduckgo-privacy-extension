@@ -17,7 +17,9 @@
     "jshint": "jshint js/ --verbose > jshint_log.txt",
     "test": "concurrently 'npm run jshint' 'npm run selenium'",
     "dev-firefox": "make dev browser=firefox type=dev",
-    "release-firefox": "make browser=firefox type=release"
+    "release-firefox": "make browser=firefox type=release",
+    "dev-chrome": "make dev browser=chrome type=dev",
+    "release-chrome": "make browser=chrome type=release"
   },
   "devDependencies": {
     "babel-preset-env": "^1.4.0",

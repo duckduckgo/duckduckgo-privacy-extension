@@ -59,8 +59,8 @@ module.exports = function(grunt) {
                 templates: 'shared/templates'
             },
             public: {
-                js: `browsers/${browser}/public/js`,
-                css: `browsers/${browser}/public/css`
+                js: `public/js`,
+                css: `public/css`
             }
         },
 
