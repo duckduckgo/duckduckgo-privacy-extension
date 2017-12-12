@@ -389,13 +389,13 @@ body {
         margin-top: 0;
         padding-bottom: 15px;
 
+        &.top-blocked__list--truncated {
+            padding-bottom: 10px;
+        }
+
         .top-blocked__list {
             padding-top: 0;
             padding-bottom: 30px;
-
-            &.top-blocked__list--truncated {
-                padding-bottom: 10px;
-            }
 
             .top-blocked__li:first-child {
                 padding-top: 0;
@@ -579,9 +579,9 @@ body {
        }
 
        .top-blocked__pill {
-           border-radius: 1em;
+           border-radius: 25px;
            background-color: $grey-light;
-           padding: 0.2em 0.2em 0;
+           padding: 2px 2px 0;
 
            .top-blocked__li__blocker-pct {
 	       float: right;
