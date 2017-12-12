@@ -19,7 +19,7 @@
     "dev-firefox": "make dev browser=firefox type=dev",
     "release-firefox": "make browser=firefox type=release",
     "dev-chrome": "make dev browser=chrome type=dev",
-    "release-chrome": "make browser=chrome type=release"
+    "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
   },
   "devDependencies": {
     "babel-preset-env": "^1.4.0",
