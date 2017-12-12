@@ -32,7 +32,6 @@
       }
     },
     "omnibox": {"keyword": "d"},
-    "options_page": "html/options.html",
     "background": {
             "scripts": [
                 "data/defaultSettings.js",
@@ -60,7 +59,6 @@
     },
     "chrome_settings_overrides": {
       "search_provider": {
-        "encoding": "UTF-8",
         "favicon_url": "https://duckduckgo.com/favicon.ico",
         "is_default": true,
         "keyword": "duckduckgo.com",
