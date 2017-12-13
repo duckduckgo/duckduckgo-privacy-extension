@@ -581,7 +581,7 @@ body {
        .top-blocked__pill {
            border-radius: 25px;
            background-color: $grey-light;
-           padding: 2px 2px 0;
+           padding: 2px 5px 0;
 
            .top-blocked__li__blocker-pct {
 	       float: right;
@@ -589,29 +589,20 @@ body {
 	       padding-left: 5px;
 	       border-left: 1px solid $white;
 	       margin: 2px 5px;
+               font-size: 16px;
            }
        }
 
        .top-blocked__li-site__icon {
 	    @include icon_display();
-	    margin-top: -1px;
-	    margin-bottom: 2px;
-	    border: 1px solid $grey-light;
-            background-color: white;
-            border-radius: 100%;
-	    
             @include tracker_network_icons();
+	    
+            margin-top: -1px;
+	    margin-bottom: 2px;
+            background-size: contain;
+            height: 16px;
+            width: 16px;
 	}
-
-        .top-blocked__li-ring {
-            background-color: transparent;
-            border: 3px solid $grey-light;
-            border-radius: 100%;
-            width: 18px;
-            height: 18px;
-            margin-left: -2px;
-            margin-top: -2px;
-        }
 
         &.top-blocked__li--no-data {
             text-align: center;
