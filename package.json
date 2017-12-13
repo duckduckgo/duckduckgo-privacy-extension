@@ -52,6 +52,7 @@
     "is-plain-object": "^2.0.1",
     "jquery": "^3.2.1",
     "normalize.scss": "^0.1.0",
+    "object.values": "^1.0.4",
     "opn": "^5.1.0",
     "parse-link-header": "^1.0.0",
     "psl": "^1.1.18",

@@ -1,7 +1,12 @@
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
-    
+    var values = require('object.values');
+
+    if(!Object.values) {
+        values.shim()
+    }
+
     let browser = grunt.option('browser')
     let buildType = grunt.option('type')
     let buildPath = `build/${browser}/${buildType}`
