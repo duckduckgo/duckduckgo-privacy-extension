@@ -10,7 +10,7 @@
     "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "update:tldjs": "npm install --tldjs-update-rules",
     "update": "npm run update:tldjs",
-    "build": "grunt build",
+    "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
     "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
     "release": "grunt build && node scripts/httpsWhitelist.js",
     "selenium": "cd selenium-test && node test.js",
