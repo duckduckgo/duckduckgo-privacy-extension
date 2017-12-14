@@ -24,7 +24,7 @@ setup-build-dir:
 
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
-	zip -r build/chrome/release/chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip build/chrome/release
+	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
 
 fonts:
 	mkdir -p build/$(browser)/$(type)/public
