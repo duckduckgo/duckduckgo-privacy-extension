@@ -109,7 +109,7 @@ module.exports = function(grunt) {
 
         // used by watch to copy shared/js to build dir
         exec: {
-            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/`
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`
         },
 
         watch: {
