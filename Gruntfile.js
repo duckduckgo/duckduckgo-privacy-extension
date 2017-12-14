@@ -11,6 +11,11 @@ module.exports = function(grunt) {
     let buildType = grunt.option('type')
     let buildPath = `build/${browser}/${buildType}`
 
+    if(!(browser && buildType)) {
+        console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
+        process.exit(1)
+    }
+
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
     let baseFileMap = {
