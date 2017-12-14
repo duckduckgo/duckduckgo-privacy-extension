@@ -107,6 +107,11 @@ module.exports = function(grunt) {
             }
         },
 
+        // used by watch to copy shared/js to build dir
+        exec: {
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/`
+        },
+
         watch: {
             scss: {
                 files: watch.sass,
@@ -117,9 +122,13 @@ module.exports = function(grunt) {
                 tasks: ['browserify:ui']
 
             },
-            background: {
+            backgroundES6JS: {
                 files: watch.background,
                 tasks: ['browserify:background']
+            },
+            backgroundJS: {
+                files: ['<%= dirs.src.js %>/*.js'],
+                tasks: ['exec:copyjs']
             }
         }
     })
