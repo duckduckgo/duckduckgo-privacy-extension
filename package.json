@@ -1,10 +1,9 @@
 {
-  "name": "chrome_zeroclickinfo",
-  "version": "0.100.0",
+  "name": "duckduckgo-privacy-extension",
   "engines": {
-    "node": ">=4.2"
+    "node": ">=6.2.2"
   },
-  "repository": "duckduckgo/chrome-zeroclickinfo",
+  "repository": "duckduckgo/duckduckgo-privacy-extension",
   "scripts": {
     "abp": "cd node_modules/abp-filter-parser && npm install",
     "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
@@ -24,7 +23,6 @@
   "devDependencies": {
     "babel-preset-env": "^1.4.0",
     "babelify": "^7.3.0",
-    "bower": "^1.8.0",
     "chromedriver": "^2.32.3",
     "concurrently": "^3.1.0",
     "duckduckgo-colors": "0.0.1",
