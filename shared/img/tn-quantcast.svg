@@ -1,1 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 83 83"><defs><style>.cls-1{fill:#a8a8ab;}</style></defs><title>quantcast</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M45.76,24.26a14.38,14.38,0,0,0-16.41,7.38,15.21,15.21,0,0,0,3.52,19c4.83,4,10.32,4.67,16.05,2.25,4.9-2.07,8-5.4,6.61-11.25-.13-2.07-.12-4.16-.41-6.21C54.32,29.73,50.71,25.48,45.76,24.26Z"/><path class="cls-1" d="M41.5,0a41.5,41.5,0,1,0,14,80.57V59C48.8,63.42,42.15,64.68,35,62.65a24.53,24.53,0,0,1,8-48c12.07.39,21.5,9.07,22,21.85s.3,25.86.2,39A41.5,41.5,0,0,0,41.5,0Z"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="16px" viewBox="0 0 10 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: sketchtool 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>7D861A62-11FE-4F25-8746-EA1836FA3E3A</title>
+    <desc>Created with sketchtool.</desc>
+    <defs></defs>
+    <g id="V4--RC-Updates" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ASSETS--Pill-Icons" transform="translate(-183.000000, -60.000000)" fill-rule="nonzero" fill="#FFFFFF">
+            <g id="quantcast" transform="translate(183.000000, 60.000000)">
+                <path d="M5.26,0.5 C2.67571675,0.396922971 0.432055837,2.26484086 0.065,4.825 C-0.322209194,7.31758257 1.18556288,9.71466293 3.6,10.445 C5.05862773,10.8632126 6.62875662,10.5805894 7.85,9.68 L7.85,15.355 L9.85,15.355 C9.85,11.855 9.95,8.435 9.815,5.03 C9.79581005,2.52639309 7.76367461,0.50541097 5.26,0.5 Z M6.5,8.43 C5.39882133,8.95657369 4.08947443,8.77346202 3.175,7.965 C1.99828508,6.99906343 1.68238182,5.32898823 2.425,4 C3.0749376,2.77374402 4.4811383,2.15336136 5.825,2.5 C6.89355134,2.79412409 7.66698677,3.72105057 7.765,4.825 C7.825,5.25 7.825,5.68 7.85,6.11 C8.13,7.315 7.5,8 6.5,8.43 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

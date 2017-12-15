@@ -387,10 +387,15 @@ body {
         left: 0;
         right: 0;
         margin-top: 0;
+        padding-bottom: 15px;
 
         .top-blocked__list {
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 0;
+            padding-bottom: 30px;
+
+            &.top-blocked__list--truncated {
+                padding-bottom: 10px;
+            }
 
             .top-blocked__li:first-child {
                 padding-top: 0;
@@ -515,7 +520,6 @@ body {
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
-            color: $color--grey;
         }
 
         .top-blocked__reset-stats {
@@ -550,12 +554,55 @@ body {
     margin: 0;
     padding-bottom: 0;
 
+    .icon__arrow {
+        margin-top: 4px;
+        right: 15px;
+    }
+
     .top-blocked__li {
         z-index: 0;
         position: relative;
         margin-left: 20px;
         margin-right: 20px;
         clear: both;
+
+       &.top-blocked__li--truncated {
+           float: left;
+           clear: none;
+           margin-left: 16px;
+           margin-right: 0;
+           padding-top: 0;
+       
+           &:first-child {
+               margin-left: 23px;
+           }
+       }
+
+       .top-blocked__pill {
+           border-radius: 25px;
+           background-color: $grey-light;
+           padding: 2px 5px 0;
+
+           .top-blocked__li__blocker-pct {
+	       float: right;
+	       color: $white;
+	       padding-left: 5px;
+	       border-left: 1px solid $white;
+	       margin: 2px 5px;
+               font-size: 16px;
+           }
+       }
+
+       .top-blocked__li-site__icon {
+	    @include icon_display();
+            @include tracker_network_icons();
+	    
+            margin-top: -1px;
+	    margin-bottom: 2px;
+            background-size: contain;
+            height: 16px;
+            width: 16px;
+	}
 
         &.top-blocked__li--no-data {
             text-align: center;
@@ -640,10 +687,10 @@ body {
         }
 
         .top-blocked__li__blocker-pct {
-            float: left;
             font-size: 13px;
-            color: $white;
             transition: all 0.5s ease-in-out;
+	    padding-left: 5px;
+	    vertical-align: middle;
         }
 
         &.top-blocked__li--see-all {
