@@ -1,17 +1,16 @@
 {
-  "name": "chrome_zeroclickinfo",
-  "version": "0.100.0",
+  "name": "duckduckgo-privacy-extension",
   "engines": {
-    "node": ">=4.2"
+    "node": ">=6.2.2"
   },
-  "repository": "duckduckgo/chrome-zeroclickinfo",
+  "repository": "duckduckgo/duckduckgo-privacy-extension",
   "scripts": {
     "abp": "cd node_modules/abp-filter-parser && npm install",
     "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "update:tldjs": "npm install --tldjs-update-rules",
     "update": "npm run update:tldjs",
-    "build": "grunt build",
-    "dev": "grunt dev",
+    "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
+    "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
     "release": "grunt build && node scripts/httpsWhitelist.js",
     "selenium": "cd selenium-test && node test.js",
     "jshint": "jshint js/ --verbose > jshint_log.txt",
@@ -25,7 +24,6 @@
   "devDependencies": {
     "babel-preset-env": "^1.4.0",
     "babelify": "^7.3.0",
-    "bower": "^1.8.0",
     "chromedriver": "^2.32.3",
     "concurrently": "^3.1.0",
     "duckduckgo-colors": "0.0.1",
@@ -34,6 +32,7 @@
     "grunt-contrib-compass": "^0.9.0",
     "grunt-contrib-concat": "^0.4.0",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-exec": "^3.0.0",
     "grunt-execute": "^0.2.2",
     "grunt-sass": "^2.0.0",
     "jshint": "^2.9.4",

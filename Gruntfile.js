@@ -11,6 +11,12 @@ module.exports = function(grunt) {
     let buildType = grunt.option('type')
     let buildPath = `build/${browser}/${buildType}`
 
+    
+    if(!(browser && buildType)) {
+        console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
+        process.exit(1)
+    }
+
     if (browser === 'duckduckgo.safariextension') browser = 'safari'
 
     /* These are files common to all browsers. To add or override any of these files
@@ -120,6 +126,11 @@ module.exports = function(grunt) {
             }
         },
 
+        // used by watch to copy shared/js to build dir
+        exec: {
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`
+        },
+
         watch: {
             scss: {
                 files: watch.sass,
@@ -130,9 +141,13 @@ module.exports = function(grunt) {
                 tasks: ['browserify:ui']
 
             },
-            background: {
+            backgroundES6JS: {
                 files: watch.background,
                 tasks: ['browserify:background']
+            },
+            backgroundJS: {
+                files: ['<%= dirs.src.js %>/*.js'],
+                tasks: ['exec:copyjs']
             }
         }
     })

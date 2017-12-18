@@ -1,14 +1,17 @@
-ITEMS   := shared/font shared/html shared/data shared/img shared/js
+ITEMS   := shared/html shared/data shared/img shared/js
 
-release: npm setup-build-dir grunt tosdr moveout
+release: npm setup-build-dir grunt tosdr moveout fonts
 
-dev: setup-build-dir moveout grunt-dev
+dev: setup-build-dir grunt-process-lists moveout fonts grunt-dev
 
 npm:
 	npm install --tldjs-update-rules
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)
+
+grunt-process-lists:
+	grunt execute:preProcessLists --browser=$(browser) --type=$(type)
 
 grunt-dev:
 	cp -r test build/$(browser)/dev/
@@ -24,7 +27,11 @@ setup-build-dir:
 
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
-	zip -r build/chrome/release/chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip build/chrome/release
+	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
+
+fonts:
+	mkdir -p build/$(browser)/$(type)/public
+	cp -r shared/font build/$(browser)/$(type)/public/
 
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'

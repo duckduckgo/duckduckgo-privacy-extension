@@ -14,3 +14,4 @@ shared/js/tldjs.js
 build/firefox
 build/chrome
 build/duckduckgo.safariextension
+package-lock.json
