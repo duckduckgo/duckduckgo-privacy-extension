@@ -11,6 +11,8 @@ module.exports = function(grunt) {
     let buildType = grunt.option('type')
     let buildPath = `build/${browser}/${buildType}`
 
+    if (browser === 'duckduckgo.safariextension') browser = 'safari'
+
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
     let baseFileMap = {
@@ -37,7 +39,16 @@ module.exports = function(grunt) {
     let browserMap = {
         firefox: {ui: {}, background: {}, sass: {}},
         chrome: {ui: {}, background: {}, sass: {}},
-        safari: {ui: {}, background: {}, sass: {}}
+        safari: {
+            ui: {}, 
+            background: {
+                '<%= dirs.src.js %>/background.js': ['browsers/duckduckgo.safariextension/background.js'],
+                '<%= dirs.src.js %>/load.js': ['browsers/duckduckgo.safariextension/load.js'],
+                '<%= dirs.src.js %>/tabManager.js': ['browsers/duckduckgo.safariextension/tabManager.js'],
+                '<%= dirs.src.js %>/utils.js': ['browsers/duckduckgo.safariextension/utils.js']
+            }, 
+            sass: {}
+        }
     }
 
     /* final file mapping used by grunt */
@@ -58,6 +69,8 @@ module.exports = function(grunt) {
             sass: Object.assign(baseFileMap.sass, browserMap.safari.sass)
         },
     }
+
+    console.log(fileMap.safari.background)
 
     /* watch any base files and browser specific files */
     let watch = {
