@@ -45,16 +45,7 @@ module.exports = function(grunt) {
     let browserMap = {
         firefox: {ui: {}, background: {}, sass: {}},
         chrome: {ui: {}, background: {}, sass: {}},
-        safari: {
-            ui: {}, 
-            background: {
-                '<%= dirs.src.js %>/background.js': ['browsers/duckduckgo.safariextension/background.js'],
-                '<%= dirs.src.js %>/load.js': ['browsers/duckduckgo.safariextension/load.js'],
-                '<%= dirs.src.js %>/tabManager.js': ['browsers/duckduckgo.safariextension/tabManager.js'],
-                '<%= dirs.src.js %>/utils.js': ['browsers/duckduckgo.safariextension/utils.js']
-            }, 
-            sass: {}
-        }
+        safari: {ui: {}, background: {}, sass: {}}
     }
 
     /* final file mapping used by grunt */
@@ -75,8 +66,6 @@ module.exports = function(grunt) {
             sass: Object.assign(baseFileMap.sass, browserMap.safari.sass)
         },
     }
-
-    console.log(fileMap.safari.background)
 
     /* watch any base files and browser specific files */
     let watch = {
@@ -128,7 +117,8 @@ module.exports = function(grunt) {
 
         // used by watch to copy shared/js to build dir
         exec: {
-            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
+            copySafari: `cp browsers/duckduckgo.safariextension/js/*.js ${buildPath}/js`
         },
 
         watch: {
@@ -152,7 +142,12 @@ module.exports = function(grunt) {
         }
     })
 
+    let tasks = {
+        dev : ['build', 'watch']
+    }
+    if (browser === 'safari') tasks.dev = ['build', 'exec:copySafari', 'watch']
+
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists'])
-    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
+    grunt.registerTask('dev', 'Build and watch files for development', tasks.dev)
     grunt.registerTask('default', 'build')
 }
