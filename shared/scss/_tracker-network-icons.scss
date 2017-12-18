@@ -32,6 +32,9 @@ $icon__tn__facebook--moz: "moz-extension://__MSG_@@extension_id__/img/tn-faceboo
 $icon__tn__fox--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-fox.svg";
 $icon__tn__fox--moz: "moz-extension://__MSG_@@extension_id__/img/tn-fox.svg";
 
+$icon__tn__generic--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-generic.svg";
+$icon__tn__generic--moz: "moz-extension://__MSG_@@extension_id__/img/tn-generic.svg";
+
 $icon__tn__google--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-google.svg";
 $icon__tn__google--moz: "moz-extension://__MSG_@@extension_id__/img/tn-google.svg";
 
@@ -166,6 +169,15 @@ $icon__tn__yandex--moz: "moz-extension://__MSG_@@extension_id__/img/tn-yandex.sv
         }
         .is-browser--moz & {
             background-image: url($icon__tn__fox--moz);
+        }
+    }
+
+    &.generic {
+        .is-browser--chrome & {
+            background-image: url($icon__tn__generic--chrome);
+        }
+        .is-browser--moz & {
+            background-image: url($icon__tn__generic--moz);
         }
     }
 
