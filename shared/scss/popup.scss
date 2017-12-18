@@ -584,25 +584,25 @@ body {
            padding: 2px 5px 0;
 
            .top-blocked__li__blocker-pct {
-	       float: right;
-	       color: $white;
-	       padding-left: 5px;
-	       border-left: 1px solid $white;
-	       margin: 2px 5px;
+               float: right;
+               color: $white;
+               padding-left: 5px;
+               border-left: 1px solid $white;
+               margin: 2px 5px;
                font-size: 16px;
            }
        }
 
        .top-blocked__li-site__icon {
-	    @include icon_display();
+        @include icon_display();
             @include tracker_network_icons();
-	    
+        
             margin-top: -1px;
-	    margin-bottom: 2px;
+            margin-bottom: 2px;
             background-size: contain;
             height: 16px;
             width: 16px;
-	}
+    }
 
         &.top-blocked__li--no-data {
             text-align: center;
@@ -689,8 +689,8 @@ body {
         .top-blocked__li__blocker-pct {
             font-size: 13px;
             transition: all 0.5s ease-in-out;
-	    padding-left: 5px;
-	    vertical-align: middle;
+            padding-left: 5px;
+            vertical-align: middle;
         }
 
         &.top-blocked__li--see-all {
