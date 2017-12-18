@@ -1,14 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="8px" height="15px" viewBox="0 0 8 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: sketchtool 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
-    <title>54096FF8-350E-4024-8B2D-C850A36B1BA4</title>
-    <desc>Created with sketchtool.</desc>
-    <defs></defs>
-    <g id="V4--RC-Updates" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="ASSETS--Pill-Icons" transform="translate(-184.000000, -122.000000)" fill-rule="nonzero" fill="#FFFFFF">
-            <g id="facebook" transform="translate(184.000000, 122.000000)">
-                <path d="M2.15713331,14.4099998 L2.15713331,7.96916658 L0,7.96916658 L0,5.41029994 L2.15713331,5.41029994 L2.15713331,3.39726663 C2.15713331,1.21393332 3.4933333,0.0130999999 5.44959994,0.0130999999 C6.10883794,0.0110799963 6.76770538,0.0446064367 7.42333325,0.113533332 L7.42333325,2.40166664 L6.0696666,2.40166664 C5.00419995,2.40166664 4.79896662,2.90819997 4.79896662,3.65053329 L4.79896662,5.39719994 L7.19626659,5.39719994 L6.86876659,7.95606658 L4.80333328,7.95606658 L4.80333328,14.4099998" id="Shape"></path>
-            </g>
-        </g>
-    </g>
-</svg>
+<svg width="8" height="15" xmlns="http://www.w3.org/2000/svg"><path d="M2.157 14.41V7.97H0V5.41h2.157V3.397C2.157 1.214 3.493.013 5.45.013a18.34 18.34 0 0 1 1.973.1v2.289H6.07c-1.066 0-1.271.506-1.271 1.249v1.746h2.397l-.327 2.56H4.803v6.453" fill-rule="nonzero" fill="#FFF"/></svg>

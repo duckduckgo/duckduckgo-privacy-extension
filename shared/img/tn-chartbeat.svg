@@ -1,17 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="17px" height="12px" viewBox="0 0 17 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: sketchtool 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
-    <title>434E1380-4044-4EBB-8F41-4CCE4DF01FEE</title>
-    <desc>Created with sketchtool.</desc>
-    <defs></defs>
-    <g id="V4--RC-Updates" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="ASSETS--Pill-Icons" transform="translate(-179.000000, -470.000000)" fill-rule="nonzero" fill="#FFFFFF">
-            <g id="chartbeat" transform="translate(179.000000, 470.000000)">
-                <polygon id="Shape" points="8.93916667 5.5675 3.10722222 5.5675 3.10722222 7.57916667 6.64888889 7.57916667"></polygon>
-                <polygon id="Shape" points="12.0605556 2.78138889 0 2.78138889 0 4.79305556 9.77027778 4.79305556"></polygon>
-                <polygon id="Shape" points="15.1819444 0 2.26666667 0 2.26666667 2.01166667 12.8916667 2.01166667"></polygon>
-                <path d="M16.7119444,0.155833333 C16.5888041,0.034625509 16.3911959,0.034625509 16.2680556,0.155833333 L5.94527778,9.79388889 L5.94527778,9.79388889 L5.89333333,9.83638889 C5.64777778,10.0913889 5.75166667,10.5966667 6.12944444,10.965 C6.50722222,11.3333333 7.0125,11.4372222 7.26277778,11.1727778 L7.30527778,11.1208333 L7.30527778,11.1208333 L16.7072222,0.580833333 C16.8157404,0.460625556 16.8177649,0.278422651 16.7119444,0.155833333 L16.7119444,0.155833333 Z" id="Shape"></path>
-            </g>
-        </g>
-    </g>
-</svg>
+<svg width="17" height="12" xmlns="http://www.w3.org/2000/svg"><g fill-rule="nonzero" fill="#FFF"><path d="M8.94 5.567H3.106V7.58H6.65zM12.06 2.781H0v2.012h9.77zM15.182 0H2.267v2.012h10.625zM16.712.156a.316.316 0 0 0-.444 0L5.945 9.794l-.052.042c-.245.255-.141.76.236 1.129.378.368.884.472 1.134.208l.042-.052L16.707.58a.321.321 0 0 0 .005-.425z"/></g></svg>

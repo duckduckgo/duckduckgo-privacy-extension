@@ -1,16 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="14px" height="13px" viewBox="0 0 14 13" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: sketchtool 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
-    <title>FAD7CE56-0615-445B-BC75-E276F7E23F34</title>
-    <desc>Created with sketchtool.</desc>
-    <defs></defs>
-    <g id="V4--RC-Updates" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="ASSETS--Pill-Icons" transform="translate(-181.000000, -350.000000)" fill-rule="nonzero" fill="#FFFFFF">
-            <g id="adobe" transform="translate(181.000000, 350.000000)">
-                <polygon id="Shape" points="8.71733333 0 13.8273333 12.2406667 13.8273333 0"></polygon>
-                <polygon id="Shape" points="0 0 0 12.2406667 5.11466667 0"></polygon>
-                <polygon id="Shape" points="4.68066667 9.77666667 7.06533333 9.77666667 8.04066667 12.236 10.1733333 12.236 6.916 4.508"></polygon>
-            </g>
-        </g>
-    </g>
-</svg>
+<svg width="14" height="13" xmlns="http://www.w3.org/2000/svg"><g fill-rule="nonzero" fill="#FFF"><path d="M8.717 0l5.11 12.24V0zM0 0v12.24L5.115 0zM4.68 9.777h2.385l.976 2.459h2.132L6.916 4.508z"/></g></svg>
