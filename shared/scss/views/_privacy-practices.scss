@@ -1,0 +1,47 @@
+.privacy-practices {
+    min-height: 100%;
+    box-sizing: border-box;
+}
+
+.privacy-practices__overview,
+.privacy-practices__explainer,
+.privacy-practices__attrib {
+    text-align: center;
+}
+
+.privacy-practices__attrib {
+    a,
+    a:visited,
+    a:hover,
+    a:focus {
+        font-weight: 600;
+        color: inherit;
+    }
+}
+
+.privacy-practices__details {
+}
+
+.privacy-practices__detail-item {
+    font-weight: 600;
+    padding-left: 20px;
+    list-style-type: none;
+
+    &:before {
+        content: "X";
+        position: absolute;
+        left: 0;
+    }
+}
+
+.privacy-practices__detail-item--good {
+    &:before {
+        color: green;
+    }
+}
+
+.privacy-practices__detail-item--bad {
+    &:before {
+        color: red;
+    }
+}
