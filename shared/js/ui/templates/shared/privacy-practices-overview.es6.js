@@ -1,13 +1,17 @@
 const bel = require('bel')
 
-module.exports = function () {
+module.exports = function (domain, tosdr) {
+    let subtitle = tosdr ?
+        `Privacy Practices` :
+        `Unknown Privacy Practices`
+
     return bel`<div>
         <img class="privacy-practices__overview__ribbon">
         <h1 class="privacy-practices__overview__domain">
-            dodgysite.tk
+            ${domain}
         </h1>
-        <h2 class="privacy-practices__overview__practices">
-            Privacy Practices
+        <h2 class="privacy-practices__overview__subtitle">
+            ${subtitle}
         </h2>
     </div>`
 }

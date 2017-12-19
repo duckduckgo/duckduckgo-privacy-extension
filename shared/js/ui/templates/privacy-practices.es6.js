@@ -4,13 +4,16 @@ const overview = require('./shared/privacy-practices-overview.es6.js')
 const details = require('./shared/privacy-practices-details.es6.js')
 
 module.exports = function () {
+    let domain = this.model && this.model.domain;
+    let tosdr = this.model && this.model.tosdr;
+
     return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
         ${header('Privacy Practices')}
         <div class="privacy-practices site-info site-info--details
             card card--no-top-margin">
             <div class="privacy-practices__overview padded border--bottom
                 js-privacy-practices-overview">
-                ${overview(this.model)}
+                ${overview(domain, tosdr)}
             </div>
             <div class="privacy-practices__explainer padded border--bottom">
                 Privacy practices indicate how much the personal information
@@ -18,7 +21,7 @@ module.exports = function () {
             </div>
             <div class="privacy-practices__details padded border--bottom
                 js-privacy-practices-details">
-                ${details(this.model)}
+                ${details(tosdr)}
             </div>
             <div class="privacy-practices__attrib padded">
                 Privacy Practice results from <a href="https://tosdr.org/">TOSDR</a>
