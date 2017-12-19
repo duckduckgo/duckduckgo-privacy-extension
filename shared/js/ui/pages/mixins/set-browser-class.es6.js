@@ -1,10 +1,9 @@
 module.exports = {
-    setBrowserClassOnBodyTag: function () {
-
-        chrome.runtime.sendMessage({'getBrowser': true}, (browser) => {
-            let browserClass = 'is-browser--' + browser;
-            $('html').addClass(browserClass);
-            $('body').addClass(browserClass);
-        });
-    }
+  setBrowserClassOnBodyTag: function () {
+    window.chrome.runtime.sendMessage({'getBrowser': true}, (browser) => {
+      let browserClass = 'is-browser--' + browser
+      window.$('html').addClass(browserClass)
+      window.$('body').addClass(browserClass)
+    })
+  }
 }
