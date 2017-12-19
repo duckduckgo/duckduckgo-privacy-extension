@@ -13,6 +13,10 @@
     .is-browser--moz & {
         background-image: url($img__logo--moz);
     }
+
+    .is-browser--safari & {
+        background-image: url($img__logo--safari);
+    }
 }
 
 @mixin ddg_logo--small () {
@@ -24,6 +28,10 @@
 
     .is-browser--moz & {
         background-image: url($img__logo__small--moz);
+    }
+
+    .is-browser--safari & {
+        background-image: url($img__logo__small--safari);
     }
 }
 

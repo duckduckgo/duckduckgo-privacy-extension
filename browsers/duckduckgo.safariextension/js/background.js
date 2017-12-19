@@ -57,8 +57,8 @@ var onBeforeRequest = function (requestData) {
         thisTab = tabManager.create(requestData)
         console.log(`CREATED TABID: ${thisTab}`)
     }
-
-    var tracker =  trackers.isTracker(potentialTracker, currentURL, 0, requestData);
+    
+    var tracker = trackers.isTracker(potentialTracker, thisTab, requestData);
     
     if (tracker) {
         thisTab.site.addTracker(tracker)
@@ -70,7 +70,7 @@ var onBeforeRequest = function (requestData) {
             if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
             console.info(`${thisTab.site.domain} [${tracker.parentCompany }] ${tracker.url}`);
-            safari.extension.popovers[0].contentWindow.location.reload()
+            //safari.extension.popovers[0].contentWindow.location.reload()
             requestData.message = {cancel: true}
             return
         }

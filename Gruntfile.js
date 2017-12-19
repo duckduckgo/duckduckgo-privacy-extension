@@ -44,8 +44,18 @@ module.exports = function(grunt) {
      */
     let browserMap = {
         firefox: {ui: {}, background: {}, sass: {}},
-        chrome: {ui: {}, background: {}, sass: {}},
-        safari: {ui: {}, background: {}, sass: {}}
+        chrome: {ui: {}, 
+            background: { 
+            }, 
+            sass: {}
+        },
+        safari: {ui: {
+                '<%= dirs.public.js %>/base.js': ['browsers/duckduckgo.safariextension/js/ui/base/index.es6.js'],
+        }, 
+        background: { 
+            '<%= dirs.src.js %>/abp.js': ['browsers/duckduckgo.safariextension/js/abp-preprocessed.es6.js'],
+        }, 
+        sass: {}}
     }
 
     /* final file mapping used by grunt */

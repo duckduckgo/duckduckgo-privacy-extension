@@ -4,6 +4,14 @@ release: npm setup-build-dir grunt tosdr moveout fonts
 
 dev: setup-build-dir grunt-process-lists moveout fonts grunt-dev
 
+safari: setup-build-dir grunt-process-lists moveout fonts grunt-dev
+
+clean-safari:
+	rm -rf build/duckduckgo.safariextension/*
+
+mv-safari:
+	mv build/duckduckgo.safariextension/dev/* build/duckduckgo.safariextension/
+
 npm:
 	npm install --tldjs-update-rules
 
@@ -15,7 +23,7 @@ grunt-process-lists:
 
 grunt-dev:
 	cp -r test build/$(browser)/dev/
-	grunt dev --browser=$(browser) --type=$(type)
+	grunt dev --browser=$(browser) --type=$(type) --verbose
 
 tosdr:
 	grunt execute:tosdr --browser=$(browser) --type=$(type)

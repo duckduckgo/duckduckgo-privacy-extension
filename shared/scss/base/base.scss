@@ -255,6 +255,9 @@ a {
             background-image: url($icon__close--moz);
         }
 
+        .is-browser--safari & {
+            background-image: url($icon__close--safari);
+        }
     }
 
     &.icon__arrow {
@@ -267,6 +270,10 @@ a {
 
         .is-browser--moz & {
             background-image: url($icon__arrow--moz);
+        }
+
+        .is-browser--safari & {
+            background-image: url($icon__arrow--safari);
         }
 
         &.icon__arrow--left {
@@ -284,6 +291,10 @@ a {
 
         .is-browser--moz & {
             background-image: url($icon__settings--moz);
+        }
+
+        .is-browser--safari & {
+            background-image: url($icon__settings--safari);
         }
 
     }
