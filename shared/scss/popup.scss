@@ -569,40 +569,44 @@ body {
        &.top-blocked__li--truncated {
            float: left;
            clear: none;
-           margin-left: 16px;
+           margin-left: 12px;
            margin-right: 0;
            padding-top: 0;
        
            &:first-child {
-               margin-left: 23px;
+               margin-left: 18px;
            }
        }
 
        .top-blocked__pill {
-           border-radius: 25px;
-           background-color: $grey-light;
-           padding: 2px 5px 0;
+           border-radius: 100px;
+           background-color: $color--medium-slate;
+           height: 27px;
 
            .top-blocked__li__blocker-pct {
                float: right;
                color: $white;
                padding-left: 5px;
                border-left: 1px solid $white;
-               margin: 2px 5px;
                font-size: 16px;
+               letter-spacing: 1.2px;
+               font-weight: bold;
+               text-align: right;
+               width: 34px;
+               height: 19px;
+               margin: 4px 9px 3px 5px;
            }
        }
 
        .top-blocked__li-site__icon {
-        @include icon_display();
+            @include icon_display();
             @include tracker_network_icons();
         
-            margin-top: -1px;
-            margin-bottom: 2px;
             background-size: contain;
-            height: 16px;
-            width: 16px;
-    }
+            height: 13px;
+            width: 13px;
+            margin: 7px 5px 7px 9px;
+        }
 
         &.top-blocked__li--no-data {
             text-align: center;
