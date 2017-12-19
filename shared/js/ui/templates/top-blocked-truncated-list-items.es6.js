@@ -1,11 +1,12 @@
 const bel = require('bel')
-const majorTrackingNetworks = require('./../../../data/constants.js').majorTrackingNetworks
+// TODO/FIXME: this is a hack:
+const _constants = require('./../../../data/constants.js')
+const majorTrackingNetworks = window.constants.majorTrackingNetworks
 
 module.exports = function (companyListMap) {
-   function getScssTrackerName(trackerName) { 
+   function getScssTrackerName(trackerName) {
         var genericName = 'generic'
 
-console.log(constants);
         if (majorTrackingNetworks[trackerName]) {
             return trackerName
         } else {
