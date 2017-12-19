@@ -1,6 +1,3 @@
-const constants = require('../data/constants.js')
-const majorNetworks = constants.majorTrackingNetworks
-
 // npm module defined in tldjs.js
 let tldjs
 
@@ -67,16 +64,6 @@ require.scopes.utils = ( () => {
         })
     }
 
-    function getScssTrackerName(trackerName) {    
-        var genericName = 'generic'
-
-        if (majorNetworks[trackerName]) {
-            return trackerName
-        } else {
-            return genericName
-        }
-    }
-
     chrome.runtime.onMessage.addListener( (req, sender, res) => {
         if (req.getCurrentTab) {
             getCurrentTab().then((tab) => {
@@ -94,7 +81,6 @@ require.scopes.utils = ( () => {
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
         getCurrentTab: getCurrentTab,
-        getProtocol: getProtocol,
-        getScssTrackerName: getScssTrackerName
+        getProtocol: getProtocol
     }
 })();
