@@ -458,20 +458,28 @@ body {
                         &:first-child {
                             padding-top: 7.5px;
                         }
-
-                        .site-info__tracker__icon {
-                            @include icon_display();
-                            width: 22px;
-                            height: 22px;
+                        
+                        .site-info__tracker__wrapper {
+                            width: 24px;
+                            height: 24px;
                             margin-top: -6px;
                             margin-left: -4px;
                             margin-bottom: 8px;
+                            border-radius: 100px;
+                            background-color: #a8a8ab;
+                        }
+
+                        .site-info__tracker__icon {
+                            @include icon_display();
+                            width: 16px;
+                            height: 16px;
                             overflow: hidden;
                             line-height: 100px;
-                            border: 1px solid #fff;
-                            border-radius: 24px;
 
                             @include tracker_network_icons();
+                            background-size:contain;
+                            margin: 4px;
+                            background-position: center;
                         }
 
                         &:last-child {
