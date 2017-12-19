@@ -1,6 +1,8 @@
 const Parent = window.DDG.base.View
 const GradeDetailsView = require('./../views/grade-details.es6.js')
+const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const gradeDetailsTemplate = require('./../templates/grade-details.es6.js')
+const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 
 function Site (ops) {
     this.model = ops.model
@@ -46,11 +48,13 @@ Site.prototype = $.extend({},
             // console.log('[site view] _setup()')
             this._cacheElems('.js-site', [
                 'toggle',
-                'show-all-trackers'
+                'show-all-trackers',
+                'privacy-practices',
             ]);
 
             this.bindEvents([
                 [this.$toggle, 'click', this._whitelistClick],
+                [this.$privacypractices, 'click', this._showPrivacyPractices],
                 [this.$showalltrackers, 'click', this._showAllTrackers],
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
@@ -76,6 +80,12 @@ Site.prototype = $.extend({},
             if (this.$body.hasClass('is-disabled')) return
             this.views.slidingSubview = new GradeDetailsView({
                 template: gradeDetailsTemplate
+            })
+        },
+
+        _showPrivacyPractices: function () {
+            this.views.privacyPractices = new PrivacyPracticesView({
+                template: privacyPracticesTemplate
             })
         }
 

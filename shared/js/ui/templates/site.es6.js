@@ -48,6 +48,12 @@ module.exports = function () {
                     this.model.trackerNetworks,
                     this.model.isWhitelisted)}
             </li>
+            <li class="site-info__li--privacy-practices padded border--bottom">
+                <a href="#" class="js-site-privacy-practices link-secondary bold">
+                    Privacy Practices
+                    <span class="icon icon__arrow pull-right"></span>
+                </a>
+            </li>
             <li class="site-info__li--more-details padded border--bottom">
                 <a href="#" class="js-site-show-all-trackers link-secondary bold">
                     More details
