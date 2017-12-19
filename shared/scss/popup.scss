@@ -574,7 +574,7 @@ body {
            padding-top: 0;
        
            &:first-child {
-               margin-left: 18px;
+               margin-left: 24px;
            }
        }
 
@@ -583,30 +583,46 @@ body {
            background-color: $color--medium-slate;
            height: 27px;
 
-           .top-blocked__li__blocker-pct {
-               float: right;
+           .top-blocked__pill__blocker-pct {
+               float: left;
                color: $white;
-               padding-left: 5px;
-               border-left: 1px solid $white;
                font-size: 16px;
                letter-spacing: 1.2px;
                font-weight: bold;
                text-align: right;
                width: 34px;
                height: 19px;
-               margin: 4px 9px 3px 5px;
+               margin: 4px 9px 3px 0;
+           }
+
+           .top-blocked__pill__divider {
+               width: 1px;
+               height: 17px;
+               opacity: 0.4;
+               border-radius: 0.5px;
+               background-color: $white;
+               margin: 5px 5px 6px 5px;
+               float: left;
+           }
+
+           .top-blocked__pill-site__icon-container {
+                margin: 7px 0 7px 9px;
+                float: left;
+                box-sizing: border-box;
+           }
+           
+           .top-blocked__pill-site__icon {
+                @include icon_display();
+                @include tracker_network_icons();
+            
+                background-size: contain;
+                margin: auto;
+                background-position-x: center;
+                vertical-align: unset;
+                height: 13px;
+                width: 13.5px;
            }
        }
-
-       .top-blocked__li-site__icon {
-            @include icon_display();
-            @include tracker_network_icons();
-        
-            background-size: contain;
-            height: 13px;
-            width: 13px;
-            margin: 7px 5px 7px 9px;
-        }
 
         &.top-blocked__li--no-data {
             text-align: center;

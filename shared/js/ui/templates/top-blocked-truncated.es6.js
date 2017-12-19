@@ -11,9 +11,12 @@ module.exports = function () {
             </h3>
             <ol class="default-list top-blocked__list top-blocked__list--truncated">
                 ${listItems(this.model.companyListMap)}
-	        <a href="#" class="link-secondary js-top-blocked-see-all">
-		  <span class="icon icon__arrow pull-right"></span>
-	        </a>
+                <li class="top-blocked__li top-blocked__li--see-all border--top">
+                    <a href="#" class="link-secondary js-top-blocked-see-all">
+                        <span class="icon icon__arrow pull-right"></span>
+                        All Tracker Networks
+                    </a>
+                </li>
             </ol>
         </section>`
     } else {
