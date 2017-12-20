@@ -4,15 +4,6 @@ const _constants = require('./../../../data/constants.js')
 const majorTrackingNetworks = window.constants.majorTrackingNetworks
 
 module.exports = function (companyListMap) {
-   function getScssTrackerName(trackerName) {
-        var genericName = 'generic'
-
-        if (majorTrackingNetworks[trackerName]) {
-            return trackerName
-        } else {
-            return genericName
-        }
-    }
 
     return companyListMap.map((data) => {
         return bel`<li class="top-blocked__li top-blocked__li--truncated">
@@ -27,5 +18,15 @@ module.exports = function (companyListMap) {
             </div>
       </li>`
     })
+   
+    function getScssTrackerName(trackerName) {
+        var genericName = 'generic'
+
+        if (majorTrackingNetworks[trackerName]) {
+            return trackerName
+        } else {
+            return genericName
+        }
+    }
 }
 
