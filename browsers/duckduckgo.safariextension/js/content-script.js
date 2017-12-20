@@ -1,4 +1,14 @@
 var mainFrameURL
+var requestTypes = {
+    'iframe': 'sub_frame',
+    'frame': 'sub_frame',
+    'script': 'script',
+    'img': 'image',
+    'input': 'image',
+    'object': 'object',
+    'embed': 'object',
+    'link': 'stylesheet'
+};
 
 var onBeforeLoad = (e) => {
     let frame = (window === window.top) ? "main_frame" : "sub_frame"
@@ -10,6 +20,14 @@ var onBeforeLoad = (e) => {
 
     if (e.url) {
         if (!e.url.match(/^https?:\/\/|^\/\//)) return
+
+        let requestDetails = {
+            currentURL: e.target.baseURI,
+            potentialTracker: e.url,
+            frame: frame,
+            mainFrameURL: mainFrameURL,
+            type: requestTypes[e.target.nodeName.toLowerCase()] || 'other'
+        }
 
         console.log(`MAYBE BLOCK ${e.url}`)
         let block = safari.self.tab.canLoad(e, {currentURL: e.target.baseURI, potentialTracker: e.url, frame: frame, mainFrameURL: mainFrameURL})
