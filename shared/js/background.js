@@ -15,11 +15,11 @@
  */
 
 
-var debugRequest = false;
-var trackers = require('trackers');
-var utils = require('utils');
-var settings = require('settings');
-var stats = require('stats');
+var debugRequest = false
+var trackers = require('trackers')
+var utils = require('utils')
+var settings = require('settings')
+var stats = require('stats')
 var db = require('db')
 var https = require('https')
 
@@ -27,13 +27,9 @@ var https = require('https')
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox
 var browser = 'chrome'
-var isBrowserDetected = false
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') {
-            browser = 'moz'
-            isBrowserDetected = true
-        }
+        if (info.name === 'Firefox') browser = 'moz'
     })
 } catch (e) {}
 
@@ -212,9 +208,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
          if (!thisTab.site) return
 
-         /**
-          * Skip https upgrade on broken sites
-          */
+
+        // Skip https upgrade on broken sites
         if (thisTab.site.isBroken) {
             console.log('temporarily skip https upgrades for site: '
                   + utils.extractHostFromURL(thisTab.url) + '\n'
@@ -228,21 +223,22 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
-        // If browser has not been detected yet during init cycle, just return.
-        // We need browser info to decide whether to check https upgrades
-        // synchronously (chrome) or asynchronously (firefox a.k.a 'moz')
-        if (!isBrowserDetected) return
+        // Make sure https module is ready, check synchronous .isReady property
+        // since we aren't sure if we're in Chrome or Firefox at this point
+        if (!https.isReady) return
+
+        const isMainFrame = requestData.type === 'main_frame' ? true : false
 
         // Fetch upgrade rule from db (synchronous -- Chrome only)
-        if (browser === 'chrome') {
+        if (utils.isChromeBrowser()) {
+            console.log('IS CHROME BROWSER')
             // TODO
-        }
 
-        // Fetch upgrade rule from db (asynchronous)
-        return new Promise ((resolve) => {
-            const isMainFrame = requestData.type === 'main_frame' ? true : false
+        // Fetch upgrade rule from db (asynchronous -- Firefox/Mozilla)
+        } else {
+            console.log('IS FIREFOX BROWSER')
 
-            if (https.isReady) {
+            return new Promise ((resolve) => {
                 https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
                         if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -254,26 +250,25 @@ chrome.webRequest.onBeforeRequest.addListener(
                         resolve()
                     }
                 )
-            } else {
-              resolve()
-            }
-        })
+            })
+
+        }
     },
     {
         urls: [
-            "<all_urls>",
+            '<all_urls>',
         ],
         types: constants.requestListenerTypes
     },
-    ["blocking"]
+    ['blocking']
 );
 
 chrome.webRequest.onHeadersReceived.addListener(
         ATB.updateSetAtb,
     {
         urls: [
-            "*://duckduckgo.com/?*",
-            "*://*.duckduckgo.com/?*"
+            '*://duckduckgo.com/?*',
+            '*://*.duckduckgo.com/?*'
         ]
     }
 );
