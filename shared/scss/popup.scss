@@ -655,25 +655,32 @@ body {
             padding-top: 30px;
 
             p {
-                color: $color--grey;
-                font-size: 15px;
-                margin-bottom: 15px;
+                color: $color--medium-dark-slate;
+                font-size: 12px;
+                margin-top: 8px;
+            }
+
+            p.top-blocked__no-data__lead {
+                margin-bottom: 2px;
+                font-size: 16px;
+                font-weight: 600;
+                margin-top: 11px;
             }
 
             .top-blocked__no-data__graph {
-                width: 80px;
-                height: 40px;
-                padding: 10px 15px;
-                margin: 0 auto 15px auto;
-                border-radius: 5px;
-                background: $platinum-light;
+                width: 71px;
+                height: 47px;
+                padding: 9px 11px;
+                margin: 0 auto;
+                border-radius: 3px;
+                background: $color--light-slate;
 
                 .top-blocked__no-data__graph__bar {
                     width: 5px;
                     background-color: #F1F2F6;
                     border-radius: 5px;
                     display: inline-block;
-                    margin-right: 15px;
+                    margin-right: 12px;
                     vertical-align: bottom;
 
                     &.one {
