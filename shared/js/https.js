@@ -10,15 +10,41 @@ settings.ready().then(() => {
 class HTTPS {
 
     constructor () {
-        this.isReady = false
         this.db = null
         this.dbObjectStore = 'https'
-        db.ready().then(() => {
-          this.isReady = true
-          this.db = db
-        })
+        this.syncRuleCache = {} // Chrome-only synchronous https rule lookups
+
+        this.isReady = false
+        this._ready = this.init().then(() => this.isReady = true)
 
         return this
+    }
+
+    init () {
+        return new Promise((resolve) => {
+            db.ready().then(() => {
+                this.db = db
+
+                if (utils.isChromeBrowser()) {
+                    this.initSync().then(() => {
+                        resolve()
+                    })
+                } else {
+                    resolve()
+                }
+            })
+        })
+    }
+
+    initSync () {
+        console.log('INIT SYNC')
+        return new Promise((resolve) => {
+            resolve()
+        })
+    }
+
+    ready () {
+        return this._ready
     }
 
     pipeRequestUrl (reqUrl, tab, isMainFrame) {

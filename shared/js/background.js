@@ -232,7 +232,6 @@ chrome.webRequest.onBeforeRequest.addListener(
         // Fetch upgrade rule from db (synchronous -- Chrome only)
         if (utils.isChromeBrowser()) {
             console.log('IS CHROME BROWSER')
-            // TODO
 
         // Fetch upgrade rule from db (asynchronous -- Firefox/Mozilla)
         } else {
