@@ -1,12 +1,22 @@
 const bel = require('bel')
 
 module.exports = function (domain, tosdr) {
-    let subtitle = tosdr ?
-        `Privacy Practices` :
-        `Unknown Privacy Practices`
+    let knownPractices = tosdr && tosdr.message && tosdr.message !== 'Unknown',
+        subtitle,
+        status
+
+    if (knownPractices) {
+        subtitle = `Privacy Practices`
+        status = tosdr.message.toLowerCase()
+    } else {
+        subtitle = `Unknown Privacy Practices`
+        status = `unknown`
+    }
 
     return bel`<div>
-        <img class="privacy-practices__overview__ribbon">
+        <div class="privacy-practices__overview__icon
+            privacy-practices__overview__icon--${status}">
+        </div>
         <h1 class="privacy-practices__overview__domain">
             ${domain}
         </h1>

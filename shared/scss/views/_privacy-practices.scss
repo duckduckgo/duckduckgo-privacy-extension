@@ -9,6 +9,67 @@
     text-align: center;
 }
 
+// the domain duplicate the same styles
+// as the ones in the main view, but they aren't reusable
+// because of some overriding rules for the subviews
+// TODO DRY this up
+.privacy-practices__overview__domain {
+    line-height: 1.4em;
+    height: 1.2em;
+    display: block;
+    max-width: $popup__width - 125;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 7.5px;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    font-size: 17px;
+}
+
+.privacy-practices__overview__subtitle {
+    padding-top: 7.5px;
+    @include uppercase_label();
+}
+
+.privacy-practices__overview__icon {
+    width: 48px;
+    height: 65px;
+    margin: 0 auto;
+    background-repeat: no-repeat;
+}
+
+// TODO dry these up also
+.privacy-practices__overview__icon--good {
+    .is-browser--chrome & {
+        background-image: url($icon__hero_ribbon__good--chrome);
+    }
+    .is-browser--moz & {
+        background-image: url($icon__hero_ribbon__good--moz);
+    }
+}
+
+.privacy-practices__overview__icon--bad {
+    .is-browser--chrome & {
+        background-image: url($icon__hero_ribbon__bad--chrome);
+    }
+    .is-browser--moz & {
+        background-image: url($icon__hero_ribbon__bad--moz);
+    }
+}
+
+.privacy-practices__overview__icon--mixed,
+// TODO doublechecked unknown should look the same as mixed
+.privacy-practices__overview__icon--unknown {
+    .is-browser--chrome & {
+        background-image: url($icon__hero_ribbon__mixed--chrome);
+    }
+    .is-browser--moz & {
+        background-image: url($icon__hero_ribbon__mixed--moz);
+    }
+}
+
 .privacy-practices__attrib {
     a,
     a:visited,
