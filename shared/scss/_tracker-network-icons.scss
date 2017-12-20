@@ -11,11 +11,6 @@ $icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", 
             .is-browser--moz & {
                 background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-#{$name}.svg");
             }
-
-            // trackers subview
-            &.site-info__tracker__wrapper {
-                background-color: $color--light-grey;
-            }
         }
     }
 }
