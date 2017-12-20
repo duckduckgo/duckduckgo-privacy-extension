@@ -49,7 +49,7 @@ module.exports = function () {
                     this.model.isWhitelisted)}
             </li>
             <li class="site-info__li--more-details padded border--bottom">
-                <a href="#" class="js-site-show-all-trackers link-secondary bold">
+                <a href="javascript: void(0)" class="js-site-show-all-trackers link-secondary bold">
                     More details
                     <span class="icon icon__arrow pull-right"></span>
                 </a>

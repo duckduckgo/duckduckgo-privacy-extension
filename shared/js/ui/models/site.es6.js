@@ -35,28 +35,20 @@ Site.prototype = $.extend({},
       modelName: 'site',
 
       getBackgroundTabData: function () {
+          let thisModel = this
+          return new Promise((resolve) => {
           // console.log('[site view] getBackgroundTabData()')
-          return new Promise((resolve, reject) => {
-              this.fetch({getCurrentTab: true}).then((tab) => {
-                  if (tab) {
-                      this.fetch({getTab: tab.id}).then((backgroundTabObj) => {
-                          if (backgroundTabObj) {
-                              this.set('tab', backgroundTabObj)
-                              this.domain = backgroundTabObj.site.domain
-                              this.fetchSiteRating()
-                              this.tosdr = backgroundTabObj.site.score.tosdr
-                          }
-                          this.setSiteProperties()
-                          this.setHttpsMessage()
-                          this.update()
-                          resolve()
-                      })
-                  } else {
-                      console.debug('Site model: no tab')
-                      resolve()
-                  }
-              })
-          })
+          let backgroundTabObj = JSON.parse(JSON.stringify(safari.extension.globalPage.contentWindow.tabManager.getActiveTab()))
+          if (backgroundTabObj) {
+              thisModel.set('tab', backgroundTabObj)
+              thisModel.domain = backgroundTabObj.site.domain
+              thisModel.fetchSiteRating()
+              thisModel.tosdr = backgroundTabObj.site.score.tosdr
+          }
+          thisModel.setSiteProperties()
+          thisModel.setHttpsMessage()
+          thisModel.update()
+          resolve() })
       },
 
       fetchSiteRating: function () {

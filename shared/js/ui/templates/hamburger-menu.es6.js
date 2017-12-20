@@ -12,7 +12,7 @@ module.exports = function () {
             </nav>
             <ul class="hamburger-menu__links padded default-list">
                 <li>
-                    <a href="#" class="menu-title js-hamburger-menu-options-link">
+                    <a href="javascript: void(0)" class="menu-title js-hamburger-menu-options-link">
                         Settings
                         <span>Manage whitelist and other options</span>
                     </a>
