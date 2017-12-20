@@ -35,13 +35,13 @@
 		<array>
 			<dict>
 				<key>Filename</key>
-				<string>html/trackers.html</string>
+				<string>html/popup.html</string>
 				<key>Height</key>
-				<integer>490</integer>
+				<integer>600</integer>
 				<key>Identifier</key>
 				<string>popup</string>
 				<key>Width</key>
-				<integer>270</integer>
+				<integer>300</integer>
 			</dict>
 		</array>
 		<key>Toolbar Items</key>
@@ -50,7 +50,7 @@
 				<key>Identifier</key>
 				<string>popup_button</string>
 				<key>Image</key>
-				<string>img/ddg-icon@3x.png</string>
+				<string>img/settings-gear@2x.png</string>
 				<key>Label</key>
 				<string>DuckDuckGo</string>
 				<key>Palette Label</key>

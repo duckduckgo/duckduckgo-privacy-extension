@@ -182,7 +182,7 @@ safari.application.addEventListener('message', ( (request) => {
     }
     else if (request.name === 'tabLoaded') {
         updateTabBadge(request)
-
+        
         let tab = tabManager.get({tabId: request.target.ddgTabId})
         
         // update site https status. We should move this out 
@@ -192,6 +192,10 @@ safari.application.addEventListener('message', ( (request) => {
 
         if (tab) {
             tab.updateBadgeIcon()
+            if (!tab.site.didIncrementCompaniesData) {
+                Companies.incrementTotalPages()
+                tab.site.didIncrementCompaniesData = true
+            }
         }
         else {
             safari.extension.toolbarItems[0].image = safari.extension.baseURI + 'img/ddg-icon.png'

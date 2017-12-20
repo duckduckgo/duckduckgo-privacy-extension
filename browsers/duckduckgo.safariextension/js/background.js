@@ -70,7 +70,7 @@ var onBeforeRequest = function (requestData) {
             if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
             console.info(`${thisTab.site.domain} [${tracker.parentCompany }] ${tracker.url}`);
-            //safari.extension.popovers[0].contentWindow.location.reload()
+            safari.extension.popovers[0].contentWindow.location.reload()
             requestData.message = {cancel: true}
             return
         }

@@ -6,7 +6,7 @@ dev: setup-build-dir grunt-process-lists moveout fonts grunt-dev
 
 safari: setup-build-dir grunt-process-lists moveout fonts grunt-dev
 
-clean-safari:
+rm-safari:
 	rm -rf build/duckduckgo.safariextension/*
 
 mv-safari:
