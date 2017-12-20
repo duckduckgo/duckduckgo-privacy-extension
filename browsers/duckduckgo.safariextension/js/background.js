@@ -57,7 +57,14 @@ var onBeforeRequest = function (requestData) {
         thisTab = tabManager.create(requestData)
         console.log(`CREATED TABID: ${thisTab}`)
     }
-    
+
+    if(thisTab.site.isBroken) {
+        console.log('temporarily skip tracker blocking for site: '
+                    + utils.extractHostFromURL(thisTab.url) + '\n'
+                    + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+        return
+    }
+
     var tracker = trackers.isTracker(potentialTracker, thisTab, requestData);
     
     if (tracker) {

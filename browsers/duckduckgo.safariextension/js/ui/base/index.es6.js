@@ -4,7 +4,7 @@ window.DDG.base.Model.prototype.fetch = function(message) {
            console.log(`Safari Fetch: ${JSON.stringify(message)}`)
            // adapt message for safari
            if (message.getCurrentTab) {
-               resolve(safari.extension.globalPage.contentWindow.tabManager.get({ tabId: safari.application.activeBrowserWindow.tabs[0].url }))
+               resolve(safari.extension.globalPage.contentWindow.tabManager.getActiveTab())
            }
            else if (message.getTopBlocked) {
                resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlocked(message.getTopBlocked))
