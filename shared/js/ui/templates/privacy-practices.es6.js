@@ -7,6 +7,7 @@ module.exports = function () {
     let domain = this.model && this.model.domain;
     let tosdr = this.model && this.model.tosdr;
 
+    // TODO does there need to be a "calculating" state?
     return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
         ${header('Privacy Practices')}
         <div class="privacy-practices site-info site-info--details
