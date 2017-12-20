@@ -1,291 +1,33 @@
 /* Tracker Network Icons */
-$icon__tn__adobe--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-adobe.svg";
-$icon__tn__adobe--moz: "moz-extension://__MSG_@@extension_id__/img/tn-adobe.svg";
-
-$icon__tn__adtech--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-adtech.svg";
-$icon__tn__adtech--moz: "moz-extension://__MSG_@@extension_id__/img/tn-adtech.svg";
-
-$icon__tn__amazon--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-amazon.svg";
-$icon__tn__amazon--moz: "moz-extension://__MSG_@@extension_id__/img/tn-amazon.svg";
-
-$icon__tn__aol--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-aol.svg";
-$icon__tn__aol--moz: "moz-extension://__MSG_@@extension_id__/img/tn-aol.svg";
-
-$icon__tn__appnexus--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-appnexus.svg";
-$icon__tn__appnexus--moz: "moz-extension://__MSG_@@extension_id__/img/tn-appnexus.svg";
-
-$icon__tn__casale--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-casale.svg";
-$icon__tn__casale--moz: "moz-extension://__MSG_@@extension_id__/img/tn-casale.svg";
-
-$icon__tn__chartbeat--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-chartbeat.svg";
-$icon__tn__chartbeat--moz: "moz-extension://__MSG_@@extension_id__/img/tn-chartbeat.svg";
-
-$icon__tn__comscore--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-comscore.svg";
-$icon__tn__comscore--moz: "moz-extension://__MSG_@@extension_id__/img/tn-comscore.svg";
-
-$icon__tn__criteo--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-criteo.svg";
-$icon__tn__criteo--moz: "moz-extension://__MSG_@@extension_id__/img/tn-criteo.svg";
-
-$icon__tn__facebook--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-facebook.svg";
-$icon__tn__facebook--moz: "moz-extension://__MSG_@@extension_id__/img/tn-facebook.svg";
-
-$icon__tn__fox--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-fox.svg";
-$icon__tn__fox--moz: "moz-extension://__MSG_@@extension_id__/img/tn-fox.svg";
-
-$icon__tn__generic--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-generic.svg";
-$icon__tn__generic--moz: "moz-extension://__MSG_@@extension_id__/img/tn-generic.svg";
-
-$icon__tn__google--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-google.svg";
-$icon__tn__google--moz: "moz-extension://__MSG_@@extension_id__/img/tn-google.svg";
-
-$icon__tn__mixpanel--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-mixpanel.svg";
-$icon__tn__mixpanel--moz: "moz-extension://__MSG_@@extension_id__/img/tn-mixpanel.svg";
-
-$icon__tn__moat--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-moat.svg";
-$icon__tn__moat--moz: "moz-extension://__MSG_@@extension_id__/img/tn-moat.svg";
-
-$icon__tn__newrelic--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-newrelic.svg";
-$icon__tn__newrelic--moz: "moz-extension://__MSG_@@extension_id__/img/tn-newrelic.svg";
-
-$icon__tn__nielsen--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-nielsen.svg";
-$icon__tn__nielsen--moz: "moz-extension://__MSG_@@extension_id__/img/tn-nielsen.svg";
-
-$icon__tn__openx--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-openx.svg";
-$icon__tn__openx--moz: "moz-extension://__MSG_@@extension_id__/img/tn-openx.svg";
-
-$icon__tn__outbrain--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-outbrain.svg";
-$icon__tn__outbrain--moz: "moz-extension://__MSG_@@extension_id__/img/tn-outbrain.svg";
-
-$icon__tn__quantcast--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-quantcast.svg";
-$icon__tn__quantcast--moz: "moz-extension://__MSG_@@extension_id__/img/tn-quantcast.svg";
-
-$icon__tn__salesforce--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-salesforce.svg";
-$icon__tn__salesforce--moz: "moz-extension://__MSG_@@extension_id__/img/tn-salesforce.svg";
-
-$icon__tn__taboola--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-taboola.svg";
-$icon__tn__taboola--moz: "moz-extension://__MSG_@@extension_id__/img/tn-taboola.svg";
-
-$icon__tn__twitter--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-twitter.svg";
-$icon__tn__twitter--moz: "moz-extension://__MSG_@@extension_id__/img/tn-twitter.svg";
-
-$icon__tn__yandex--chrome: "chrome-extension://__MSG_@@extension_id__/img/tn-yandex.svg";
-$icon__tn__yandex--moz: "moz-extension://__MSG_@@extension_id__/img/tn-yandex.svg";
+$icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", "comscore", "criteo", "facebook", "fox", "generic", "google", "mixpanel", "moat", "newrelic", "nielsen", "openx", "outbrain", "quantcast", "salesforce", "taboola", "twitter", "yandex");
 
 @mixin tracker_network_icons () {
 
-    &.adobe {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__adobe--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__adobe--moz);
+    @each $name in $icons {
+        &.#{$name} {
+            .is-browser--chrome & {
+                background-image: url("chrome-extension://__MSG_@@extension_id__/img/tn-#{$name}.svg");
+            }
+            .is-browser--moz & {
+                background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-#{$name}.svg");
+            }
+
+            // trackers subview
+            &.site-info__tracker__wrapper {
+                background-color: $color--light-grey;
+            }
         }
     }
+}
 
-    &.adtech {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__adtech--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__adtech--moz);
-        }
-    }
-
-    &.amazon {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__amazon--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__amazon--moz);
-        }
-    }
-
-    &.aol {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__aol--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__aol--moz);
-        }
-    }
-
-    &.appnexus {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__appnexus--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__appnexus--moz);
-        }
-    }
-
-    &.casale {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__casale--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__casale--moz);
-        }
-    }
-
-    &.chartbeat {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__chartbeat--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__chartbeat--moz);
-        }
-    }
-
-    &.comscore {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__comscore--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__comscore--moz);
-        }
-    }
-
-    &.criteo {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__criteo--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__criteo--moz);
-        }
-    }
-
-    &.facebook {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__facebook--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__facebook--moz);
-        }
-    }
-
-    &.fox {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__fox--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__fox--moz);
-        }
-    }
-
-    &.generic {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__generic--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__generic--moz);
-        }
-    }
-
-    &.google {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__google--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__google--moz);
-        }
-    }
-
-    &.mixpanel {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__mixpanel--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__mixpanel--moz);
-        }
-    }
-
-    &.moat {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__moat--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__moat--moz);
-        }
-    }
-
-    &.newrelic {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__newrelic--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__newrelic--moz);
-        }
-    }
-
-    &.nielsen {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__nielsen--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__nielsen--moz);
-        }
-    }
-
-    &.openx {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__openx--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__openx--moz);
-        }
-    }
-
-    &.outbrain {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__outbrain--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__outbrain--moz);
-        }
-    }
-
-    &.quantcast {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__quantcast--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__quantcast--moz);
-        }
-    }
-
-    &.salesforce {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__salesforce--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__salesforce--moz);
-        }
-    }
-
-    &.taboola {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__taboola--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__taboola--moz);
-        }
-    }
-
-    &.twitter {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__twitter--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__twitter--moz);
-        }
-    }
-
-    &.yandex {
-        .is-browser--chrome & {
-            background-image: url($icon__tn__yandex--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__tn__yandex--moz);
+@mixin tracker_network_icons_bg () {
+    
+    @each $name in $icons {
+        &.#{$name} {
+            // trackers subview
+            &.site-info__tracker__wrapper {
+                background-color: $color--light-grey;
+            }
         }
     }
 }

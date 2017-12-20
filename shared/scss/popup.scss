@@ -466,7 +466,7 @@ body {
                             margin-left: -4px;
                             margin-bottom: 8px;
                             border-radius: 100px;
-                            background-color: #a8a8ab;
+                            @include tracker_network_icons_bg();
                         }
 
                         .site-info__tracker__icon {
