@@ -26,12 +26,16 @@ var https = require('https')
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox
-var browser = "chrome";
+var browser = 'chrome'
+var isBrowserDetected = false
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === "Firefox") browser = "moz";
-    });
-} catch (e) {};
+        if (info.name === 'Firefox') {
+            browser = 'moz'
+            isBrowserDetected = true
+        }
+    })
+} catch (e) {}
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
@@ -224,7 +228,17 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
-        // Fetch upgrade rule from db
+        // If browser has not been detected yet during init cycle, just return.
+        // We need browser info to decide whether to check https upgrades
+        // synchronously (chrome) or asynchronously (firefox a.k.a 'moz')
+        if (!isBrowserDetected) return
+
+        // Fetch upgrade rule from db (synchronous -- Chrome only)
+        if (browser === 'chrome') {
+            // TODO
+        }
+
+        // Fetch upgrade rule from db (asynchronous)
         return new Promise ((resolve) => {
             const isMainFrame = requestData.type === 'main_frame' ? true : false
 
