@@ -65,7 +65,7 @@ class Score {
                 } else {
                     if (tosdrData.score < 0) {
                         message = constants.tosdrMessages.good  
-                    } else if (tosdrData.score === 0) {
+                    } else if (tosdrData.score === 0 && (tosdrData.match.good.length || tosdrData.match.bad.length)) {
                         message = constants.tosdrMessages.mixed
                     } else if (tosdrData.score > 0 ) {
                         message = constants.tosdrMessages.bad
