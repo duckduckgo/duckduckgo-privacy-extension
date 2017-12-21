@@ -8,6 +8,7 @@
  */
 var load = require('load')
 var settings = require('settings')
+var utils = require('utils')
 
 let tosdr
 let tosdrRegexList
@@ -72,10 +73,20 @@ class Score {
                     }
                 }
 
+                let reasons = tosdrData.match
+
+                if (reasons.good) {
+                    reasons.good = reasons.good.map(utils.capitalizeFirstLetter)
+                }
+
+                if (reasons.bad) {
+                    reasons.bad = reasons.bad.map(utils.capitalizeFirstLetter)
+                }
+
                 return result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
-                    reasons: tosdrData.match,
+                    reasons: reasons,
                     message: message
                 }
             }

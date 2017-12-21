@@ -36,6 +36,12 @@ require.scopes.utils = ( () => {
         }
     }
 
+    function capitalizeFirstLetter (string) {
+        if (typeof string !== 'string') { return '' }
+
+        return string[0].toUpperCase() + string.substring(1)
+    }
+
     function syncToStorage (data){
         chrome.storage.local.set(data, function() { });
     }
@@ -77,6 +83,7 @@ require.scopes.utils = ( () => {
         extractHostFromURL: extractHostFromURL,
         extractTopSubdomainFromHost: extractTopSubdomainFromHost,
         parseUserAgentString: parseUserAgentString,
+        capitalizeFirstLetter: capitalizeFirstLetter,
         syncToStorage: syncToStorage,
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
