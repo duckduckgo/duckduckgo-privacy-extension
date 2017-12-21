@@ -96,12 +96,17 @@ class IndexedDBClient {
         _store.openCursor().onsuccess = function (event) {
             const cursor = event.target.result
             if (cursor) {
-                console.log('IndexedDBClient: logAllRecords() key: ' + cursor.key)
-                // console.log(cursor.value)
-                if (optionalLogObject) optionalLogObject[cursor.key] = cursor.value
+                if (optionalLogObject) {
+                    optionalLogObject[cursor.key] = cursor.value
+                } else {
+                    console.log('IndexedDBClient: logAllRecords() key: ' + cursor.key)
+                    // console.log(cursor.value)
+                }
                 cursor.continue()
             } else {
-                console.log(`IndexedDBClient: logAllRecords() No more entries for objectStore: ${objectStore}`)
+                if (!optionalLogObject) {
+                    console.log(`IndexedDBClient: logAllRecords() No more entries for objectStore: ${objectStore}`)
+                }
             }
         }
     }

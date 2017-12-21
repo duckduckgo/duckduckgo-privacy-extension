@@ -50,7 +50,6 @@ class HTTPS {
 
     pipeRequestUrl (reqUrl, tab, isMainFrame) {
 
-
         function checkDb (resolve) {
             if (!this.isReady) {
                 console.warn('HTTPS: .pipeRequestUrl() this.db is not ready')
@@ -109,20 +108,13 @@ class HTTPS {
                 if (isResolved) return
 
                 if (this.isSync) {
-
-
-
                     if (this.syncRuleCache[r] &&
                         this.syncRuleCache[r].simpleUpgrade &&
                         this.syncRuleCache[r].simpleUpgrade === true) {
-
                         const upgrade = reqUrl.replace(/^(http|https):\/\//i, 'https://')
                         isResolved = true
                         return syncUrlResolution = upgrade
                     }
-
-
-
                 } else {
                     this.db
                         .get(this.dbObjectStore, r.toLowerCase())
@@ -140,29 +132,22 @@ class HTTPS {
                                 if (i === (loop.length -1)) return resolve(reqUrl)
                             }
                         )
-
                 }
-
-
             })
 
             if (this.isSync) return syncUrlResolution
         }
-
-
-
-
-
-
 
         if (this.isSync) {
             return checkDb.call(this)
         } else {
             return new Promise((resolve) => checkDb.call(this, resolve))
         }
+    }
 
-
-
+    /* For debugging/development/test purposes only */
+    logAllRecords () {
+        this.db.logAllRecords(this.dbObjectStore)
     }
 
     /* For debugging/development/test purposes only */
@@ -252,11 +237,6 @@ class HTTPS {
                           (r) => _handleDone(r, i))
             })
         }
-    }
-
-    /* For debugging/development/test purposes only */
-    logAllRecords () {
-        this.db.logAllRecords(this.dbObjectStore)
     }
 }
 
