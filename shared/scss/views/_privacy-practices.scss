@@ -97,9 +97,14 @@
         position: absolute;
         left: 0;
         width: 22px;
-        height: 100%;
         background-repeat: no-repeat;
         background-position-y: center;
+
+        // doing the height this way allows it to be centered for one-line items
+        // but flush with the top of the text for longer items
+        min-height: 22px;
+        height: 50%;
+        max-height: 30px;
     }
 }
 
