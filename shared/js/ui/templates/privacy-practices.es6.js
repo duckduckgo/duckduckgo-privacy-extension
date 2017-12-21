@@ -16,11 +16,11 @@ module.exports = function () {
                 js-privacy-practices-overview">
                 ${overview(domain, tosdr)}
             </div>
-            <div class="privacy-practices__explainer padded border--bottom">
+            <div class="privacy-practices__explainer padded border--bottom--inner">
                 Privacy practices indicate how much the personal information
                 that you share with a website is protected.
             </div>
-            <div class="privacy-practices__details padded border--bottom
+            <div class="privacy-practices__details padded border--bottom--inner
                 js-privacy-practices-details">
                 ${details(tosdr)}
             </div>

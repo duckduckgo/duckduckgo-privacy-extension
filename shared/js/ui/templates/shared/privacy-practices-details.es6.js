@@ -4,8 +4,12 @@ module.exports = function (tosdr) {
     if (!tosdr || !tosdr.reasons) {
         return bel`<div class="text--center">
             <div class="privacy-practices__details__no-detail-icon"></div>
-            <h1>No Privacy Practices Found</h1>
-            The Privacy practices of this website have not been reviewed
+            <h1 class="privacy-practices__details__title">
+                No Privacy Practices Found
+            </h1>
+            <div class="privacy-practices__details__msg">
+                The Privacy practices of this website have not been reviewed
+            </div>
         </div>`
     }
 

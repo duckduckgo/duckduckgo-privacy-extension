@@ -2,6 +2,10 @@
     min-height: 100%;
     box-sizing: border-box;
     padding-top: 9px;
+
+    .padded {
+        padding: 20px;
+    }
 }
 
 .privacy-practices__overview,
@@ -55,25 +59,26 @@
     @include cross_platform_bg_image("hero-ribbon__mixed.svg");
 }
 
-.privacy-practices__attrib {
-    a,
-    a:visited,
-    a:hover,
-    a:focus {
-        font-weight: 600;
-        color: inherit;
-        text-decoration: underline;
-    }
-}
-
-.privacy-practices__details {
+.privacy-practices__explainer {
+    line-height: 18px;
 }
 
 .privacy-practices__details__no-detail-icon {
     @include cross_platform_bg_image("unknown.svg");
     width: 53px;
     height: 53px;
-    margin: 0 auto 15px;
+    margin: 10px auto 15px;
+}
+
+.privacy-practices__details__title {
+    font-size: 16px;
+    line-height: 18px;
+    margin-bottom: 5px;
+}
+
+.privacy-practices__details__msg {
+    margin-bottom: 53px;
+    line-height: 18px;
 }
 
 .privacy-practices__detail-item {
@@ -104,5 +109,16 @@
 .privacy-practices__detail-item--bad {
     &:before {
         @include cross_platform_bg_image("status--bad.svg");
+    }
+}
+
+.privacy-practices__attrib {
+    a,
+    a:visited,
+    a:hover,
+    a:focus {
+        font-weight: 600;
+        color: inherit;
+        text-decoration: underline;
     }
 }
