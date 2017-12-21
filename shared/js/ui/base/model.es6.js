@@ -4,6 +4,8 @@ const store = require('./store.es6.js');
 
 function BaseModel (attrs) {
 
+    attrs.uuid = this._getUUID()
+
     // attributes are applied directly
     // onto the instance:
     $.extend(this, attrs);
@@ -14,6 +16,8 @@ function BaseModel (attrs) {
     if (!this.modelName || typeof this.modelName !== 'string') {
         throw new Error ('cannot init model without `modelName` property')
     } else {
+        this.modelName += '-' + this.uuid
+
         this.store = store;
         this.store.register(this.modelName);
     }
@@ -123,17 +127,30 @@ BaseModel.prototype = $.extend({},
         },
 
 
-         /**
-          * Private method for turning `this` into a
-          * JSON object before sending to application store.
-          * Basically just weeds out properties that
-          * are functions.
-          */
-         _toJSON: function () {
-             let attributes = Object.assign({}, Object.getPrototypeOf(this), this);
-             if (attributes.store) delete attributes.store;
-             return JSON.parse(JSON.stringify(attributes));
-         }
+        /**
+         * Private method for turning `this` into a
+         * JSON object before sending to application store.
+         * Basically just weeds out properties that
+         * are functions.
+         */
+        _toJSON: function () {
+            let attributes = Object.assign({}, Object.getPrototypeOf(this), this);
+            if (attributes.store) delete attributes.store;
+            return JSON.parse(JSON.stringify(attributes));
+        },
+
+        /**
+         * Generate unique identifier
+         * (from http://stackoverflow.com/a/2117523)
+         */
+        _getUUID: function () {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                let r = Math.random() * 16 | 0
+                let v = c == 'x' ? r : (r & 0x3 | 0x8)
+
+                return v.toString(16)
+            })
+        }
 
     }
 );
