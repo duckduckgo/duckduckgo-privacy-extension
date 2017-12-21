@@ -4,11 +4,11 @@ const store = require('./store.es6.js');
 
 function BaseModel (attrs) {
 
-    attrs.uuid = this._getUUID()
-
     // attributes are applied directly
     // onto the instance:
     $.extend(this, attrs)
+
+    this.uuid = this._getUUID()
 
     // register model with `store` of
     // global notifications
