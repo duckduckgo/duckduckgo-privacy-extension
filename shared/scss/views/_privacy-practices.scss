@@ -1,6 +1,7 @@
 .privacy-practices {
     min-height: 100%;
     box-sizing: border-box;
+    padding-top: 9px;
 }
 
 .privacy-practices__overview,
@@ -14,14 +15,13 @@
 // because of some overriding rules for the subviews
 // TODO DRY this up
 .privacy-practices__overview__domain {
-    line-height: 1.4em;
-    height: 1.2em;
+    line-height: 24px;
+    height: 24px;
     display: block;
-    max-width: $popup__width - 125;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 7.5px;
+    margin-top: 11px;
     text-align: center;
     width: 100%;
     max-width: 100%;
@@ -77,6 +77,7 @@
     a:focus {
         font-weight: 600;
         color: inherit;
+        text-decoration: underline;
     }
 }
 
