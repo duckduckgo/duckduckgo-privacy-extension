@@ -73,7 +73,7 @@ An easy way to find your extension ID is to go to the `settings` page for the ex
 - Build a release version: `npm run release-chrome`
 - Test `build/chrome/release` locally
 - A date versioned zip file is automatically built  `build/chrome/release/chrome-release-YYYYMMDD-hhmmss.zip`
-- Merge the release branch to master
+- Merge the release branch into master
 - Upload the zip file to the Chrome store
 
 ### Firefox
@@ -84,4 +84,3 @@ An easy way to find your extension ID is to go to the `settings` page for the ex
 - Move to the release directory: `cd build/firefox/release`
 - Use `web-ext` to package, sign, and upload to the Firefox Addon store
 - `web-ext sign --api-key=$JWT_ISSUER --api-secret=$JWT_SECRET`
-
