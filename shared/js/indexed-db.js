@@ -34,9 +34,9 @@ class IndexedDBClient {
         this.dbName = ops.dbName
         this.dbVersion = ops.dbVersion // no floats (decimals) in version #
         this.db = null
- 
+
         this.serverUpdateUrls = {
-            https: 'http://duckduckgo.com/contentblocking.js?l=https' 
+            https: 'http://duckduckgo.com/contentblocking.js?l=https'
             // ...add more here
         }
         this.serverUpdateFails = 0
@@ -90,8 +90,7 @@ class IndexedDBClient {
         window.indexedDB.deleteDatabase(this.dbName)
     }
 
-    /* For debugging/development/test purposes only */
-    logAllRecords (objectStore) {
+    logAllRecords (objectStore, optionalLogObject) {
         console.log(`IndexedDBClient: logAllRecords() for object store: ${objectStore}`)
         const _store = this.db.transaction(objectStore).objectStore(objectStore)
         _store.openCursor().onsuccess = function (event) {
@@ -99,16 +98,17 @@ class IndexedDBClient {
             if (cursor) {
                 console.log('IndexedDBClient: logAllRecords() key: ' + cursor.key)
                 // console.log(cursor.value)
+                if (optionalLogObject) optionalLogObject[cursor.key] = cursor.value
                 cursor.continue()
             } else {
                 console.log(`IndexedDBClient: logAllRecords() No more entries for objectStore: ${objectStore}`)
             }
-        }    
+        }
     }
 
 }
 
-// Private 
+// Private
 function init () {
     return new Promise((resolve) => {
 
@@ -118,13 +118,13 @@ function init () {
             return console.warn('IndexedDBClient: window.indexedDB not found')
         }
 
-        // NOTE: we aren't dealing with Firefox version <55 because of 
+        // NOTE: we aren't dealing with Firefox version <55 because of
         // backwards-incompatible storage issues with IndexedDB
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1246615
         const ua = utils.parseUserAgentString()
         if (ua.browser === 'Firefox' && parseInt(ua.majorVersion) < 55) {
             return console.warn('IndexedDBClient: browser is Firefox < 55, skip db init')
-        } 
+        }
 
         // Make initial db request
         let _request = window.indexedDB.open(this.dbName, this.dbVersion)
@@ -140,7 +140,7 @@ function init () {
                     this.serverUpdateFails++
                     if (this.serverUpdateFails < this.serverUpdateMaxRetries) {
                         // Try again(!)
-                        fetchServerUpdate['https'][this.dbVersion].call(this)   
+                        fetchServerUpdate['https'][this.dbVersion].call(this)
                         checkServerUpdateSuccess.call(this).then(() => resolve())
                     }
                 }
@@ -189,9 +189,9 @@ const fetchServerUpdate = {
     '1': function () { // db version
         return new Promise((resolve) => {
             load.JSONfromExternalFile(
-                this.serverUpdateUrls['https'], 
+                this.serverUpdateUrls['https'],
                 (data, response) => {
-                     
+
                     if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
                         console.warn('IndexedDBClient: invalid server response')
                         return
@@ -231,7 +231,7 @@ const fetchServerUpdate = {
 }
 
 /**
- * Poll on an interval to check success of: 
+ * Poll on an interval to check success of:
  * - `https` object store creation in window.indexedDB
  * - rule retrieval via `https` xhr server call
  * - at least one rule from server installed in db

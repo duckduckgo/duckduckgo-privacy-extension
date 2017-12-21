@@ -12,7 +12,10 @@ class HTTPS {
     constructor () {
         this.db = null
         this.dbObjectStore = 'https'
-        this.syncRuleCache = {} // Chrome-only synchronous https rule lookups
+
+        // if isSync: load Chrome-only synchronous rules object into memory
+        this.isSync = utils.isChromeBrowser() ? true : false
+        this.syncRuleCache = {}
 
         this.isReady = false
         this._ready = this.init().then(() => this.isReady = true)
@@ -25,10 +28,8 @@ class HTTPS {
             db.ready().then(() => {
                 this.db = db
 
-                if (utils.isChromeBrowser()) {
-                    this.initSync().then(() => {
-                        resolve()
-                    })
+                if (this.isSync) {
+                    this.initSync().then(() => resolve())
                 } else {
                     resolve()
                 }
@@ -37,8 +38,8 @@ class HTTPS {
     }
 
     initSync () {
-        console.log('INIT SYNC')
         return new Promise((resolve) => {
+            this.db.logAllRecords(this.dbObjectStore, this.syncRuleCache)
             resolve()
         })
     }
