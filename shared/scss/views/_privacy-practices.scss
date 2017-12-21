@@ -69,6 +69,13 @@
 .privacy-practices__details {
 }
 
+.privacy-practices__details__no-detail-icon {
+    @include cross_platform_bg_image("unknown.svg");
+    width: 53px;
+    height: 53px;
+    margin: 0 auto 15px;
+}
+
 .privacy-practices__detail-item {
     font-weight: 600;
     padding-left: 40px;
