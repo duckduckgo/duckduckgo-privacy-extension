@@ -42,32 +42,17 @@
 
 // TODO dry these up also
 .privacy-practices__overview__icon--good {
-    .is-browser--chrome & {
-        background-image: url($icon__hero_ribbon__good--chrome);
-    }
-    .is-browser--moz & {
-        background-image: url($icon__hero_ribbon__good--moz);
-    }
+    @include cross_platform_bg_image("hero-ribbon__good.svg");
 }
 
 .privacy-practices__overview__icon--bad {
-    .is-browser--chrome & {
-        background-image: url($icon__hero_ribbon__bad--chrome);
-    }
-    .is-browser--moz & {
-        background-image: url($icon__hero_ribbon__bad--moz);
-    }
+    @include cross_platform_bg_image("hero-ribbon__bad.svg");
 }
 
 .privacy-practices__overview__icon--mixed,
 // TODO doublechecked unknown should look the same as mixed
 .privacy-practices__overview__icon--unknown {
-    .is-browser--chrome & {
-        background-image: url($icon__hero_ribbon__mixed--chrome);
-    }
-    .is-browser--moz & {
-        background-image: url($icon__hero_ribbon__mixed--moz);
-    }
+    @include cross_platform_bg_image("hero-ribbon__mixed.svg");
 }
 
 .privacy-practices__attrib {
@@ -105,22 +90,12 @@
 
 .privacy-practices__detail-item--good {
     &:before {
-        .is-browser--chrome & {
-            background-image: url($icon__status__good--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__status__good--moz);
-        }
+        @include cross_platform_bg_image("status--good.svg");
     }
 }
 
 .privacy-practices__detail-item--bad {
     &:before {
-        .is-browser--chrome & {
-            background-image: url($icon__status__bad--chrome);
-        }
-        .is-browser--moz & {
-            background-image: url($icon__status__bad--moz);
-        }
+        @include cross_platform_bg_image("status--bad.svg");
     }
 }
