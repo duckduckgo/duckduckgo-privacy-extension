@@ -35,4 +35,6 @@ let constants = {
 
 if (typeof window === 'undefined' && module && module.exports)  {
     module.exports = constants
+} else if (typeof window === 'object') {
+    window.constants = constants
 }

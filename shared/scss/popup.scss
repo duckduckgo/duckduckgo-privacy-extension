@@ -387,10 +387,15 @@ body {
         left: 0;
         right: 0;
         margin-top: 0;
+        padding-bottom: 15px;
 
+        &.top-blocked--truncated {
+            padding-top: 15px;
+        }
+            
         .top-blocked__list {
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 0;
+            padding-bottom: 30px;
 
             .top-blocked__li:first-child {
                 padding-top: 0;
@@ -453,20 +458,28 @@ body {
                         &:first-child {
                             padding-top: 7.5px;
                         }
-
-                        .site-info__tracker__icon {
-                            @include icon_display();
+                        
+                        .site-info__tracker__wrapper {
                             width: 22px;
                             height: 22px;
                             margin-top: -6px;
                             margin-left: -4px;
                             margin-bottom: 8px;
+                            border-radius: 100px;
+                            @include tracker_network_icons_bg();
+                        }
+
+                        .site-info__tracker__icon {
+                            @include icon_display();
+                            width: 14px;
+                            height: 14px;
                             overflow: hidden;
                             line-height: 100px;
-                            border: 1px solid #fff;
-                            border-radius: 24px;
 
                             @include tracker_network_icons();
+                            background-size:contain;
+                            margin: 4px;
+                            background-position: center;
                         }
 
                         &:last-child {
@@ -515,7 +528,6 @@ body {
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
-            color: $color--grey;
         }
 
         .top-blocked__reset-stats {
@@ -546,9 +558,32 @@ body {
 
 
 /* Top blocked lists */
+.top-blocked__see-all {
+   padding-top: 14px;
+   padding-left: 20px;
+   margin: 30px 0 0 0;
+
+   .link-secondary {
+       position: relative;
+       font-weight: bold;
+       padding-top: 3.5px;
+       padding-bottom: 3.5px;
+       display: block;
+
+       .icon__arrow {
+           padding-top: 1px;
+       }
+   }
+}
+
 .top-blocked__list {
     margin: 0;
     padding-bottom: 0;
+
+    .icon__arrow {
+        margin-top: 4px;
+        right: 15px;
+    }
 
     .top-blocked__li {
         z-index: 0;
@@ -557,30 +592,95 @@ body {
         margin-right: 20px;
         clear: both;
 
+       &.top-blocked__li--truncated {
+           float: left;
+           clear: none;
+           margin-left: 12px;
+           margin-right: 0;
+           padding-top: 0;
+       
+           &:first-child {
+               margin-left: 24px;
+           }
+       }
+
+       .top-blocked__pill {
+           border-radius: 100px;
+           background-color: $color--medium-slate;
+           height: 27px;
+
+           .top-blocked__pill__blocker-pct {
+               float: left;
+               color: $white;
+               font-size: 16px;
+               letter-spacing: 1.2px;
+               font-weight: bold;
+               text-align: right;
+               width: 34px;
+               height: 19px;
+               margin: 4px 9px 3px 0;
+           }
+
+           .top-blocked__pill__divider {
+               width: 1px;
+               height: 17px;
+               opacity: 0.4;
+               border-radius: 0.5px;
+               background-color: $white;
+               margin: 5px 5px 6px 5px;
+               float: left;
+           }
+
+           .top-blocked__pill-site__icon-container {
+                margin: 7px 0 7px 9px;
+                float: left;
+                box-sizing: border-box;
+           }
+           
+           .top-blocked__pill-site__icon {
+                @include icon_display();
+                @include tracker_network_icons();
+            
+                background-size: contain;
+                margin: auto;
+                background-position-x: center;
+                vertical-align: unset;
+                height: 13px;
+                width: 13.5px;
+           }
+       }
+
         &.top-blocked__li--no-data {
             text-align: center;
             padding-top: 30px;
 
             p {
-                color: $color--grey;
-                font-size: 15px;
-                margin-bottom: 15px;
+                color: $color--medium-dark-slate;
+                font-size: 12px;
+                margin-top: 8px;
+            }
+
+            p.top-blocked__no-data__lead {
+                margin-bottom: 2px;
+                font-size: 16px;
+                font-weight: 600;
+                margin-top: 11px;
             }
 
             .top-blocked__no-data__graph {
-                width: 80px;
-                height: 40px;
-                padding: 10px 15px;
-                margin: 0 auto 15px auto;
-                border-radius: 5px;
-                background: $platinum-light;
+                width: 71px;
+                height: 47px;
+                padding: 9px 11px;
+                margin: 0 auto;
+                border-radius: 3px;
+                background: $color--light-slate;
 
                 .top-blocked__no-data__graph__bar {
                     width: 5px;
                     background-color: #F1F2F6;
                     border-radius: 5px;
                     display: inline-block;
-                    margin-right: 15px;
+                    margin-right: 12px;
                     vertical-align: bottom;
 
                     &.one {
@@ -640,28 +740,10 @@ body {
         }
 
         .top-blocked__li__blocker-pct {
-            float: left;
             font-size: 13px;
-            color: $white;
             transition: all 0.5s ease-in-out;
-        }
-
-        &.top-blocked__li--see-all {
-            padding-top: 10px;
-            padding-left: 20px;
-            margin: 30px 0 0 0;
-
-            .link-secondary {
-                position: relative;
-                font-weight: bold;
-                padding-top: 3.5px;
-                padding-bottom: 3.5px;
-                display: block;
-
-                .icon__arrow {
-                    padding-top: 1px;
-                }
-            }
+            padding-left: 5px;
+            vertical-align: middle;
         }
     }
 }
