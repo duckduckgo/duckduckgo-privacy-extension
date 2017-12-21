@@ -68,7 +68,7 @@ BaseView.prototype = $.extend(
      *
      */
     destroyChildViews: function () {
-      !function destroyViews (views) {
+      !function destroyViews (views) { // eslint-disable-line
         if (!views) { return }
         var v
         if ($.isArray(views)) {
@@ -92,7 +92,7 @@ BaseView.prototype = $.extend(
             delete views[c]
           }
         }
-      }(this.views)
+      }(this.views) // eslint-disable-line
       delete this.views
     },
 

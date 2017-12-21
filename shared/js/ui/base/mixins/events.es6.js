@@ -5,8 +5,7 @@ module.exports = {
       this._bEvents = []
     }
 
-    var evt
-    for (var i = 0; evt = events[i]; i++) {
+    for (var i=0,evt; evt=events[i]; i++) { // eslint-disable-line
       if (evt.length < 2 || !evt[0] || !evt[1] || !evt[2]) {
         continue
       }
