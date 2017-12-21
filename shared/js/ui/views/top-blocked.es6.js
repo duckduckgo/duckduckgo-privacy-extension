@@ -32,9 +32,7 @@ TopBlocked.prototype = $.extend({},
         },
 
         renderAsyncContent: function () {
-            const random = Math.round(Math.random()*100000)
             this.model = new TopBlockedModel({
-                modelName: 'topBlocked' + random,
                 numCompanies: this.numItems
             })
             this.model.getTopBlocked().then(() => {

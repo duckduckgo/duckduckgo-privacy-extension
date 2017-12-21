@@ -24,7 +24,7 @@ GradeDetails.prototype = $.extend({},
             // site rating arrives async
             this.bindEvents([[
                 this.store.subscribe,
-                `change:${this.currentSiteModelName}`,
+                `change:${this.model.modelName}`,
                 this.renderSiteRating
             ]])
             this.$rating = this.$el.find('.js-rating')
@@ -32,17 +32,9 @@ GradeDetails.prototype = $.extend({},
         },
 
         renderAsyncContent: function () {
-            const random = Math.round(Math.random()*100000)
-            this.currentModelName = 'siteCompanyList' + random
-            this.currentSiteModelName = 'site' + random
-
-            this.model = new CompanyListModel({
-                modelName: this.currentModelName
-            })
+            this.model = new CompanyListModel()
             this.model.fetchAsyncData().then(() => {
-                this.model.site = new SiteModel({
-                    modelName: this.currentSiteModelName
-                })
+                this.model.site = new SiteModel()
                 this.model.site.getBackgroundTabData().then(() => {
                     let content = this.template()
                     this.$el.append(content)
