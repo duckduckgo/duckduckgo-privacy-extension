@@ -63,6 +63,10 @@
     line-height: 18px;
 }
 
+.privacy-practices__details {
+    min-height: 190px;
+}
+
 .privacy-practices__details__no-detail-icon {
     @include cross_platform_bg_image("unknown.svg");
     width: 53px;
@@ -77,7 +81,6 @@
 }
 
 .privacy-practices__details__msg {
-    margin-bottom: 53px;
     line-height: 18px;
 }
 
