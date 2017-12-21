@@ -13,8 +13,8 @@ module.exports = function (tosdr) {
         </div>`
     }
 
-    let good = tosdr.reasons.good || [],
-        bad = tosdr.reasons.bad || []
+    let good = tosdr.reasons.good || []
+    let bad = tosdr.reasons.bad || []
 
     return bel`<ul>
         ${good.map(renderItem.bind(null, 'good'))}

@@ -15,8 +15,8 @@ function PrivacyPractices (ops) {
         'details',
     ])
 
-    this.setupClose();
-    this.renderAsyncContent();
+    this.setupClose()
+    this.renderAsyncContent()
 }
 
 PrivacyPractices.prototype = $.extend({},
