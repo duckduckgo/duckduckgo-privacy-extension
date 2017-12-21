@@ -78,15 +78,13 @@ class Score {
                     }
                 }
 
-                let reasons = {
-                    good: matchGood.map(utils.capitalizeFirstLetter),
-                    bad: matchBad.map(utils.capitalizeFirstLetter)
-                }
-
                 return result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
-                    reasons: reasons,
+                    reasons: {
+                        good: matchGood,
+                        bad: matchBad
+                    },
                     message: message
                 }
             }

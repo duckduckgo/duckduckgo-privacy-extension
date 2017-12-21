@@ -1,4 +1,5 @@
 const bel = require('bel')
+const utils = require('utils')
 
 module.exports = function (tosdr) {
     if (tosdr && tosdr.reasons) {
@@ -19,7 +20,7 @@ module.exports = function (tosdr) {
 function renderItem (modifier, item) {
     return bel`<li class="privacy-practices__detail-item
         privacy-practices__detail-item--${modifier} bold">
-        ${item}
+        ${utils.capitalizeFirstLetter(item)}
     </li>`
 }
 
