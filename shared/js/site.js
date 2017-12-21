@@ -8,7 +8,6 @@
  */
 var load = require('load')
 var settings = require('settings')
-var utils = require('utils')
 
 let tosdr
 let tosdrRegexList
