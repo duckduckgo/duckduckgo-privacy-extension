@@ -12,11 +12,12 @@ module.exports = function () {
         ${header('Privacy Practices')}
         <div class="privacy-practices site-info site-info--details
             card card--no-top-margin">
-            <div class="privacy-practices__overview padded border--bottom
+            <div class="privacy-practices__overview padded border--bottom text--center
                 js-privacy-practices-overview">
                 ${overview(domain, tosdr)}
             </div>
-            <div class="privacy-practices__explainer padded border--bottom--inner">
+            <div class="privacy-practices__explainer padded border--bottom--inner
+                text--center">
                 Privacy practices indicate how much the personal information
                 that you share with a website is protected.
             </div>
@@ -24,8 +25,8 @@ module.exports = function () {
                 js-privacy-practices-details">
                 ${details(tosdr)}
             </div>
-            <div class="privacy-practices__attrib padded">
-                Privacy Practice results from <a href="https://tosdr.org/" target="_blank">ToS;DR</a>
+            <div class="privacy-practices__attrib padded text--center">
+                Privacy Practice results from <a href="https://tosdr.org/" class="bold" target="_blank">ToS;DR</a>
             </div>
         </div>
      </section>`

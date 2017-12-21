@@ -24,7 +24,7 @@ module.exports = function (tosdr) {
 
 function renderItem (modifier, item) {
     return bel`<li class="privacy-practices__detail-item
-        privacy-practices__detail-item--${modifier}">
+        privacy-practices__detail-item--${modifier} bold">
         ${item}
     </li>`
 }

@@ -8,16 +8,9 @@
     }
 }
 
-.privacy-practices__overview,
-.privacy-practices__explainer,
-.privacy-practices__attrib {
-    text-align: center;
-}
-
 // the domain duplicate the same styles
 // as the ones in the main view, but they aren't reusable
 // because of some overriding rules for the subviews
-// TODO DRY this up
 .privacy-practices__overview__domain {
     line-height: 24px;
     height: 24px;
@@ -44,7 +37,6 @@
     background-repeat: no-repeat;
 }
 
-// TODO dry these up also
 .privacy-practices__overview__icon--good {
     @include cross_platform_bg_image("hero-ribbon__good.svg");
 }
@@ -85,7 +77,6 @@
 }
 
 .privacy-practices__detail-item {
-    font-weight: 600;
     padding-left: 40px;
     list-style-type: none;
     line-height: 22px;
@@ -125,7 +116,6 @@
     a:visited,
     a:hover,
     a:focus {
-        font-weight: 600;
         color: inherit;
         text-decoration: underline;
     }
