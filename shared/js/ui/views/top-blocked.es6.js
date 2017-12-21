@@ -33,6 +33,7 @@ TopBlocked.prototype = $.extend({},
 
         renderAsyncContent: function () {
             this.model = new TopBlockedModel({
+                uniqueModelName: true,
                 numCompanies: this.numItems
             })
             this.model.getTopBlocked().then(() => {

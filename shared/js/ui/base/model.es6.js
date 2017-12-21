@@ -8,8 +8,6 @@ function BaseModel (attrs) {
     // onto the instance:
     $.extend(this, attrs)
 
-    this.uuid = this._getUUID()
-
     // register model with `store` of
     // global notifications
     // (after checking `modelName` property)
@@ -18,7 +16,9 @@ function BaseModel (attrs) {
     } else {
         // make sure there's no collisions between different instances
         // of the same model
-        this.modelName += `-${this.uuid}`
+        if (this.uniqueModelName) {
+            this.modelName += `-${this._getUUID()}`
+        }
 
         this.store = store
         this.store.register(this.modelName)

@@ -32,9 +32,13 @@ GradeDetails.prototype = $.extend({},
         },
 
         renderAsyncContent: function () {
-            this.model = new CompanyListModel()
+            this.model = new CompanyListModel({
+                uniqueModelName: true
+            })
             this.model.fetchAsyncData().then(() => {
-                this.model.site = new SiteModel()
+                this.model.site = new SiteModel({
+                    uniqueModelName: true
+                })
                 this.model.site.getBackgroundTabData().then(() => {
                     let content = this.template()
                     this.$el.append(content)
