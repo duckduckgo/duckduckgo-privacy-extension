@@ -8,7 +8,7 @@ function BaseModel (attrs) {
 
     // attributes are applied directly
     // onto the instance:
-    $.extend(this, attrs);
+    $.extend(this, attrs)
 
     // register model with `store` of
     // global notifications
@@ -16,10 +16,12 @@ function BaseModel (attrs) {
     if (!this.modelName || typeof this.modelName !== 'string') {
         throw new Error ('cannot init model without `modelName` property')
     } else {
-        this.modelName += '-' + this.uuid
+        // make sure there's no collisions between different instances
+        // of the same model
+        this.modelName += `-${this.uuid}`
 
-        this.store = store;
-        this.store.register(this.modelName);
+        this.store = store
+        this.store.register(this.modelName)
     }
 
 };
