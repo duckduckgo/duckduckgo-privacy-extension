@@ -24,7 +24,7 @@ GradeDetails.prototype = $.extend({},
             // site rating arrives async
             this.bindEvents([[
                 this.store.subscribe,
-                `change:${this.model.modelName}`,
+                `change:${this.model.site.modelName}`,
                 this.renderSiteRating
             ]])
             this.$rating = this.$el.find('.js-rating')
