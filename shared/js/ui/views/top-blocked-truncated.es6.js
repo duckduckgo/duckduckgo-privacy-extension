@@ -1,5 +1,4 @@
 const Parent = window.DDG.base.View
-const animateGraphBars = require('./mixins/animate-graph-bars.es6.js')
 const TopBlockedFullView = require('./top-blocked.es6.js')
 const topBlockedFullTemplate = require('./../templates/top-blocked.es6.js')
 
@@ -20,7 +19,6 @@ function TruncatedTopBlocked (ops) {
 
 TruncatedTopBlocked.prototype = $.extend({},
     Parent.prototype,
-    animateGraphBars,
     {
 
         _seeAllClick: function () {
@@ -40,7 +38,6 @@ TruncatedTopBlocked.prototype = $.extend({},
         rerenderList: function () {
             this._rerender()
             this._setup()
-            this.animateGraphBars()
         },
 
         handleBackgroundMsg: function (message) {
