@@ -53,6 +53,11 @@ class Score {
                 // remove period at end for lookup in pagesSeenOn
                 let tosdrData = tosdr[match[0]]
 
+                if (!tosdrData) { return }
+
+                let matchGood = (tosdrData.match && tosdrData.match.good) || []
+                let matchBad = (tosdrData.match && tosdrData.match.bad) || []
+
                 // tosdr message
                 // 1. If we have a defined tosdr class look up the message in constants
                 //    for the corresponding letter class
@@ -61,26 +66,21 @@ class Score {
                 let message = constants.tosdrMessages.unknown
                 if (tosdrData.class) {
                     message = constants.tosdrMessages[tosdrData.class]
-                } else if (tosdrData.match.good.length && tosdrData.match.bad.length) {
+                } else if (matchGood.length && matchBad.length) {
                     message = constants.tosdrMessages.mixed
                 } else {
                     if (tosdrData.score < 0) {
                         message = constants.tosdrMessages.good  
-                    } else if (tosdrData.score === 0 && (tosdrData.match.good.length || tosdrData.match.bad.length)) {
+                    } else if (tosdrData.score === 0 && (matchGood.length || matchBad.length)) {
                         message = constants.tosdrMessages.mixed
                     } else if (tosdrData.score > 0 ) {
                         message = constants.tosdrMessages.bad
                     }
                 }
 
-                let reasons = tosdrData.match
-
-                if (reasons.good) {
-                    reasons.good = reasons.good.map(utils.capitalizeFirstLetter)
-                }
-
-                if (reasons.bad) {
-                    reasons.bad = reasons.bad.map(utils.capitalizeFirstLetter)
+                let reasons = {
+                    good: matchGood.map(utils.capitalizeFirstLetter),
+                    bad: matchBad.map(utils.capitalizeFirstLetter)
                 }
 
                 return result = {
