@@ -4,7 +4,7 @@ const overviewTemplate = require('./../templates/shared/privacy-practices-overvi
 const detailsTemplate = require('./../templates/shared/privacy-practices-details.es6.js')
 
 function PrivacyPractices (ops) {
-    this.model = null
+    this.model = ops.model
     this.currentModelName = null
     this.template = ops.template
 
@@ -14,29 +14,24 @@ function PrivacyPractices (ops) {
         'overview',
         'details',
     ])
+    this.bindEvents([[
+        this.store.subscribe,
+        'change:site',
+        this._onSiteChange
+    ]])
 
     this.setupClose()
-    this.renderAsyncContent()
 }
 
 PrivacyPractices.prototype = $.extend({},
     ParentSlidingSubview.prototype,
     {
-        renderAsyncContent: function () {
-            const random = Math.round(Math.random()*100000)
-            this.currentModelName = 'site' + random
-
-            this.model = new SiteModel({
-                modelName: this.currentModelName
-            })
-
-            this.model.getBackgroundTabData().then(() => {
-                this.$overview.html(overviewTemplate(
-                    this.model.domain,
-                    this.model.tosdr
-                ))
-                this.$details.html(detailsTemplate(this.model.tosdr))
-            })
+        _onSiteChange: function () {
+            this.$overview.html(overviewTemplate(
+                this.model.domain,
+                this.model.tosdr
+            ))
+            this.$details.html(detailsTemplate(this.model.tosdr))
         }
     }
 )

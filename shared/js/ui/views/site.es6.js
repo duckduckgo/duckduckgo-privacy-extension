@@ -85,7 +85,8 @@ Site.prototype = $.extend({},
 
         _showPrivacyPractices: function () {
             this.views.privacyPractices = new PrivacyPracticesView({
-                template: privacyPracticesTemplate
+                template: privacyPracticesTemplate,
+                model: this.model
             })
         }
 
