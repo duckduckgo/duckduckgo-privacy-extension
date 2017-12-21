@@ -25,7 +25,7 @@ module.exports = function () {
                 ${details(tosdr)}
             </div>
             <div class="privacy-practices__attrib padded">
-                Privacy Practice results from <a href="https://tosdr.org/">TOSDR</a>
+                Privacy Practice results from <a href="https://tosdr.org/" target="_blank">ToS;DR</a>
             </div>
         </div>
      </section>`
