@@ -1,6 +1,7 @@
 (function () {
 const db = require('db')
 const settings = require('settings')
+const utils = require('utils')
 let knownMixedContentList
 
 settings.ready().then(() => {
