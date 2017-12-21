@@ -87,8 +87,24 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
               category = DOMAIN_MAPPINGS[url.toLowerCase()].t
             }
             return bel`<li>
-              <span class="url">${url}</span>
-              <span class="category pull-right">${category}</span>
+                <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
+                    <span class="site-info__tracker__icon
+                        ${c.name.toLowerCase()}">
+                    </span>
+                </div>
+                <span class="block">${c.name}</span>
+                <ol class="default-list site-info__trackers__company-list__url-list">
+                    ${c.urls.map((url) => {
+                        let category = ''
+                        if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
+                            category = DOMAIN_MAPPINGS[url.toLowerCase()].t
+                        }
+                        return bel`<li>
+                            <span class="url">${url}</span>
+                            <span class="category pull-right">${category}</span>
+                        </li>`
+                    })}
+                </ol>
             </li>`
           })}
         </ol>

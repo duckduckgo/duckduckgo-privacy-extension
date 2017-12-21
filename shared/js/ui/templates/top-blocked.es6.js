@@ -1,6 +1,6 @@
 const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
-const listItems = require('./shared/top-blocked-list-items.es6.js')
+const listItems = require('./top-blocked-list-items.es6.js')
 const noData = require('./shared/top-blocked-no-data.es6.js')
 
 module.exports = function () {
