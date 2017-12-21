@@ -227,16 +227,23 @@ chrome.webRequest.onBeforeRequest.addListener(
         // since we aren't sure if we're in Chrome or Firefox at this point
         if (!https.isReady) return
 
+        // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false
 
         // Fetch upgrade rule from db (synchronous -- Chrome only)
         if (utils.isChromeBrowser()) {
-            console.log('IS CHROME BROWSER')
+            const url = https.pipeRequestUrl(requestData.url, thisTab, isMainFrame)
+            if (url.toLowerCase() !== requestData.url.toLowerCase()) {
+                console.log('HTTPS: upgrade request url to ' + url)
+                if (isMainFrame) thisTab.upgradedHttps = true
+                thisTab.addHttpsUpgradeRequest(url)
+                return {redirectUrl: url}
+            } else {
+              return
+            }
 
         // Fetch upgrade rule from db (asynchronous -- Firefox/Mozilla)
         } else {
-            console.log('IS FIREFOX BROWSER')
-
             return new Promise ((resolve) => {
                 https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
@@ -250,7 +257,6 @@ chrome.webRequest.onBeforeRequest.addListener(
                     }
                 )
             })
-
         }
     },
     {
