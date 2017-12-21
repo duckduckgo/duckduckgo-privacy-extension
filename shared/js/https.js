@@ -145,12 +145,19 @@ class HTTPS {
         }
     }
 
-    /* For debugging/development/test purposes only */
+    /**
+     * For debugging/development/test purposes only
+     * Logs all records in indexed db to console
+     */
     logAllRecords () {
         this.db.logAllRecords(this.dbObjectStore)
     }
 
-    /* For debugging/development/test purposes only */
+    /**
+     * For debugging/development/test purposes only
+     * This only tests ability to retrieve record from indexed db
+     * Usage: .getHostRecord('goodreads.com').then((r) => console.log(r))
+     */
     getHostRecord (host) {
         return new Promise ((resolve, reject) => {
             if (!this.isReady) {
@@ -172,7 +179,10 @@ class HTTPS {
         })
     }
 
-    /* For debugging/development/test purposes only */
+    /* For debugging/development/test purposes only
+     * Tests the .getHostRecord() method against an array of test hosts
+     * defined below
+     */
     testGetHostRecord (cb) {
         // These hosts should always have records that were xhr'd
         // into the client-side db from server
@@ -205,7 +215,12 @@ class HTTPS {
         })
     }
 
-    /* For debugging/development/test purposes only */
+    /**
+     * For debugging/development/test purposes only
+     * Tests the .pipeRequestUrl() method in both synchronous (Chrome) and
+     * asynchronous modes (depending on browser it is run in) for
+     * array of test urls defined below
+     */
     testPipeRequestUrl () {
         // These hosts should always have records that were xhr'd
         // into the client-side db from server
