@@ -1,6 +1,8 @@
 const Parent = window.DDG.base.View
 const GradeDetailsView = require('./../views/grade-details.es6.js')
+const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const gradeDetailsTemplate = require('./../templates/grade-details.es6.js')
+const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 
 function Site (ops) {
   this.model = ops.model
