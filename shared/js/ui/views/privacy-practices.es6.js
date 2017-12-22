@@ -1,5 +1,4 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
-const SiteModel = require('./../models/site.es6.js')
 const overviewTemplate = require('./../templates/shared/privacy-practices-overview.es6.js')
 const detailsTemplate = require('./../templates/shared/privacy-practices-details.es6.js')
 
@@ -23,14 +22,14 @@ function PrivacyPractices (ops) {
   this.setupClose()
 }
 
-PrivacyPractices.prototype = $.extend({},
-    ParentSlidingSubview.prototype,
+PrivacyPractices.prototype = window.$.extend({},
+  ParentSlidingSubview.prototype,
   {
     _onSiteChange: function () {
       this.$overview.html(overviewTemplate(
-                this.model.domain,
-                this.model.tosdr
-            ))
+        this.model.domain,
+        this.model.tosdr
+      ))
       this.$details.html(detailsTemplate(this.model.tosdr))
     }
   }
