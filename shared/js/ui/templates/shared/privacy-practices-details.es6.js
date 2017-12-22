@@ -1,5 +1,5 @@
 const bel = require('bel')
-const utils = require('utils')
+const changeCase = require('change-case')
 
 module.exports = function (tosdr) {
   if (tosdr && tosdr.reasons) {
@@ -20,7 +20,7 @@ module.exports = function (tosdr) {
 function renderItem (modifier, item) {
   return bel`<li class="privacy-practices__detail-item
       privacy-practices__detail-item--${modifier} bold">
-    ${utils.capitalizeFirstLetter(item)}
+    ${changeCase.upperCaseFirst(item)}
   </li>`
 }
 
