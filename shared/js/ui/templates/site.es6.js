@@ -4,8 +4,7 @@ const toggleButton = require('./shared/toggle-button.es6.js')
 const siteRating = require('./shared/site-rating.es6.js')
 
 module.exports = function () {
-
-    return bel`<section class="site-info card">
+  return bel`<section class="site-info card">
         <ul class="default-list">
             <li class="site-info__rating-li">
                 <div class="site-info__rating-container border--bottom">
@@ -64,51 +63,51 @@ module.exports = function () {
         </ul>
     </section>`
 
-    function ratingUpgrade (isCalculating, rating, isWhitelisted) {
+  function ratingUpgrade (isCalculating, rating, isWhitelisted) {
         // console.log('[site template] isCalculating: ' + isCalculating)
-        const isActive = isWhitelisted ? false : true
+    const isActive = !isWhitelisted
         // site grade/rating was upgraded by extension
-        if (isActive && rating && rating.before && rating.after) {
-            if (rating.before !== rating.after) {
-                return bel`<p class="site-info__rating-upgrade uppercase text--center">
+    if (isActive && rating && rating.before && rating.after) {
+      if (rating.before !== rating.after) {
+        return bel`<p class="site-info__rating-upgrade uppercase text--center">
                     Upgraded from
                     <span class="rating__text-only ${rating.before.toLowerCase()}">
                     ${rating.before}</span> to
                     <span class="rating__text-only ${rating.after.toLowerCase()}">
                     ${rating.after}</span>
                 </p>`
-            }
-        }
-
-        // deal with other states
-        let msg = 'Privacy Grade'
-        // site is whitelisted
-        if (!isActive) {
-            msg = `Privacy Protection Disabled`
-        // "null" state (empty tab, browser's "about:" pages)
-        } else if (!isCalculating && !rating.before && !rating.after) {
-            msg = `We only grade regular websites`
-        // rating is still calculating
-        } else if (isCalculating) {
-            msg = `Calculating...`
-        }
-
-        return bel`<p class="site-info__rating-upgrade uppercase text--center">
-            ${msg}</p>`
+      }
     }
 
-    function renderTrackerNetworks (tn, isWhitelisted) {
-        let count = 0
-        if (tn && tn.length) count = tn.length
-        const isActive = !isWhitelisted ? 'is-active' : ''
-        const foundOrBlocked = isWhitelisted || count === 0 ? 'found' : 'blocked'
+        // deal with other states
+    let msg = 'Privacy Grade'
+        // site is whitelisted
+    if (!isActive) {
+      msg = `Privacy Protection Disabled`
+        // "null" state (empty tab, browser's "about:" pages)
+    } else if (!isCalculating && !rating.before && !rating.after) {
+      msg = `We only grade regular websites`
+        // rating is still calculating
+    } else if (isCalculating) {
+      msg = `Calculating...`
+    }
 
-        return bel`<h2 class="site-info__trackers bold">
+    return bel`<p class="site-info__rating-upgrade uppercase text--center">
+            ${msg}</p>`
+  }
+
+  function renderTrackerNetworks (tn, isWhitelisted) {
+    let count = 0
+    if (tn && tn.length) count = tn.length
+    const isActive = !isWhitelisted ? 'is-active' : ''
+    const foundOrBlocked = isWhitelisted || count === 0 ? 'found' : 'blocked'
+
+    return bel`<h2 class="site-info__trackers bold">
             <span class="site-info__trackers-status__icon
                 is-blocking--${!isWhitelisted}">
             </span>
             Tracker networks ${foundOrBlocked}
             <div class="float-right uppercase ${isActive}">${count}</div>
         </h2>`
-    }
+  }
 }

@@ -4,11 +4,11 @@ const overview = require('./shared/privacy-practices-overview.es6.js')
 const details = require('./shared/privacy-practices-details.es6.js')
 
 module.exports = function () {
-    let domain = this.model && this.model.domain
-    let tosdr = this.model && this.model.tosdr
+  let domain = this.model && this.model.domain
+  let tosdr = this.model && this.model.tosdr
 
     // TODO does there need to be a "calculating" state?
-    return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
+  return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
         ${header('Privacy Practices')}
         <div class="privacy-practices site-info site-info--details
             card card--no-top-margin">

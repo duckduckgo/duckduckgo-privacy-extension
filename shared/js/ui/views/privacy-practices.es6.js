@@ -4,36 +4,36 @@ const overviewTemplate = require('./../templates/shared/privacy-practices-overvi
 const detailsTemplate = require('./../templates/shared/privacy-practices-details.es6.js')
 
 function PrivacyPractices (ops) {
-    this.model = ops.model
-    this.currentModelName = null
-    this.template = ops.template
+  this.model = ops.model
+  this.currentModelName = null
+  this.template = ops.template
 
-    ParentSlidingSubview.call(this, ops)
+  ParentSlidingSubview.call(this, ops)
 
-    this._cacheElems('.js-privacy-practices', [
-        'overview',
-        'details',
-    ])
-    this.bindEvents([[
-        this.store.subscribe,
-        'change:site',
-        this._onSiteChange
-    ]])
+  this._cacheElems('.js-privacy-practices', [
+    'overview',
+    'details'
+  ])
+  this.bindEvents([[
+    this.store.subscribe,
+    'change:site',
+    this._onSiteChange
+  ]])
 
-    this.setupClose()
+  this.setupClose()
 }
 
 PrivacyPractices.prototype = $.extend({},
     ParentSlidingSubview.prototype,
-    {
-        _onSiteChange: function () {
-            this.$overview.html(overviewTemplate(
+  {
+    _onSiteChange: function () {
+      this.$overview.html(overviewTemplate(
                 this.model.domain,
                 this.model.tosdr
             ))
-            this.$details.html(detailsTemplate(this.model.tosdr))
-        }
+      this.$details.html(detailsTemplate(this.model.tosdr))
     }
+  }
 )
 
 module.exports = PrivacyPractices
