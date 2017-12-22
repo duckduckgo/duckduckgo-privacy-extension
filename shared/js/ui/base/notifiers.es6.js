@@ -20,76 +20,71 @@ const registered = {}
 * from the store (see store.es6.js file).
 */
 function add (notifierName) {
+  registered[notifierName] = (state, notification) => {
+    if (state === undefined) state = {}
+    if (notification.notifierName === notifierName) {
+      /**
+       * Define global notification types here
+       */
 
-    registered[notifierName] = (state, notification) => {
-        if (state === undefined) state = {}
-
-        if (notification.notifierName === notifierName) {
-
-            /**
-             * Define global notification types here
-             */
-
-             /**
-             * Model changes
-             * Sent here for broadcast by model.set()
-             */
-            if (notification.change) {
-                return {
-                    change: notification.change,
-                    attributes: notification.attributes
-                }
-            }
-
-            /**
-             * Model actions
-             * Sent here for broadcast via model.send()
-             */
-            if (notification.action) {
-                return {
-                    action: notification.action,
-                    data: notification.data,
-                    attributes: notification.attributes
-                }
-            }
-
-        } else {
-          return state
+       /**
+       * Model changes
+       * Sent here for broadcast by model.set()
+       */
+      if (notification.change) {
+        return {
+          change: notification.change,
+          attributes: notification.attributes
         }
+      }
+
+      /**
+       * Model actions
+       * Sent here for broadcast via model.send()
+       */
+      if (notification.action) {
+        return {
+          action: notification.action,
+          data: notification.data,
+          attributes: notification.attributes
+        }
+      }
+    } else {
+      return state
     }
+  }
 }
 
 function combine () {
-    /*
-    * This is based on Redux/Minidux's combineReducers() method
-    * ... only we aren't using full reducers (overkill for us).
-    * We just send single notifications about state changes to
-    * store event subscribers. This function is a slimmer version of:
-    * https://www.npmjs.com/package/minidux#combinereducersreducers
-    */
-    var keys = Object.keys(registered)
+  /*
+  * This is based on Redux/Minidux's combineReducers() method
+  * ... only we aren't using full reducers (overkill for us).
+  * We just send single notifications about state changes to
+  * store event subscribers. This function is a slimmer version of:
+  * https://www.npmjs.com/package/minidux#combinereducersreducers
+  */
+  var keys = Object.keys(registered)
+  return function combination (state, notification) {
+    var nextState = {}
 
-    return function combination (state, notification) {
-      var nextState = {}
-
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i]
-        if (typeof registered[key] !== 'function') throw new Error('notifier ' + key + 'must be a function')
-        nextState[key] = registered[key](state[key], notification)
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i]
+      if (typeof registered[key] !== 'function') {
+        throw new Error('notifier ' + key + 'must be a function')
       }
-
-      return nextState
+      nextState[key] = registered[key](state[key], notification)
     }
 
+    return nextState
+  }
 }
 
 function remove (notifier) {
-    if (registered[notifier]) {
-        delete registered[notifier]
-        return true
-    }
+  if (registered[notifier]) {
+    delete registered[notifier]
+    return true
+  }
 }
-
 
 // Public api
 module.exports = {
