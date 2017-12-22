@@ -135,15 +135,16 @@ BaseModel.prototype = $.extend({},
 
     /**
      * Generate unique identifier
-     * (from http://stackoverflow.com/a/2117523)
+     * (wizardry from https://gist.github.com/jed/982883)
      */
     _getUUID: function () {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        let r = Math.random() * 16 | 0
-        let v = c == 'x' ? r : (r & 0x3 | 0x8)
+      function b (a) {
+        return a
+          ? (a ^ Math.random() * 16 >> a / 4).toString(16)
+          : ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, b)
+      }
 
-        return v.toString(16)
-      })
+      return b()
     }
   }
 )
