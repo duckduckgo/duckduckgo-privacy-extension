@@ -13,4 +13,3 @@ module.exports = function () {
     <p>Please check back again soon.</p>
   </div>`
 }
-
