@@ -31,6 +31,10 @@ PrivacyPractices.prototype = window.$.extend({},
         this.model.tosdr
       ))
       this.$details.html(detailsTemplate(this.model.tosdr))
+
+      // the close button is contained in the overview,
+      // make sure it still works
+      this.setupClose()
     }
   }
 )
