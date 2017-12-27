@@ -69,7 +69,7 @@ class Score {
                     message = constants.tosdrMessages.mixed
                 } else {
                     if (tosdrData.score < 0) {
-                        message = constants.tosdrMessages.good  
+                        message = constants.tosdrMessages.good
                     } else if (tosdrData.score === 0 && (matchGood.length || matchBad.length)) {
                         message = constants.tosdrMessages.mixed
                     } else if (tosdrData.score > 0 ) {
