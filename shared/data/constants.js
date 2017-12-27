@@ -20,6 +20,8 @@ let constants = {
         "C": "Bad",
         "D": "Bad",
         "E": "Bad",
+        "good": "Good",
+        "bad": "Bad",
         "unknown": "Unknown",
         "mixed": "Mixed"
     },
