@@ -1,5 +1,5 @@
 .privacy-practices {
-    min-height: 100%;
+    min-height: calc(100% - 50px);
     box-sizing: border-box;
     padding-top: 9px;
 
@@ -11,6 +11,10 @@
 // the domain duplicate the same styles
 // as the ones in the main view, but they aren't reusable
 // because of some overriding rules for the subviews
+.privacy-practices__overview {
+    position: relative;
+}
+
 .privacy-practices__overview__domain {
     line-height: 24px;
     height: 24px;
@@ -28,6 +32,12 @@
 .privacy-practices__overview__subtitle {
     padding-top: 7.5px;
     @include uppercase_label();
+}
+
+.privacy-practices__overview__close {
+    position: absolute;
+    left: 10px;
+    top: calc(50% - 20px);
 }
 
 .privacy-practices__overview__icon {

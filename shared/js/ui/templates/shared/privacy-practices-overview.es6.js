@@ -13,8 +13,11 @@ module.exports = function (domain, tosdr) {
     status = `unknown`
   }
 
-  // TODO can this reuse the template that the main view uses?
   return bel`<div>
+    <a href="#" class="privacy-practices__overview__close js-sliding-subview-close">
+      <span class="icon icon__arrow icon__arrow--left">
+      </span>
+    </a>
     <div class="privacy-practices__overview__icon
       privacy-practices__overview__icon--${status}">
     </div>
