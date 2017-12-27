@@ -6,7 +6,7 @@ module.exports = function (domain, tosdr) {
   let status
 
   if (knownPractices) {
-    subtitle = `Privacy Practices`
+    subtitle = `${tosdr.message} Privacy Practices`
     status = tosdr.message.toLowerCase()
   } else {
     subtitle = `Unknown Privacy Practices`

@@ -49,7 +49,7 @@ module.exports = function () {
     <!-- remove is-hidden to show the privacy practices section -->
     <li class="site-info__li--privacy-practices padded border--bottom is-hidden">
       <a href="#" class="js-site-privacy-practices link-secondary bold">
-        Privacy Practices
+        ${this.model.tosdr && this.model.tosdr.message} Privacy Practices
         <span class="icon icon__arrow pull-right"></span>
       </a>
     </li>
