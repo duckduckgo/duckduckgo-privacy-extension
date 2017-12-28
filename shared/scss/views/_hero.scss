@@ -5,18 +5,12 @@
 }
 
 .hero__icon {
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
+    @include icon_display();
     margin-top: 15px;
 }
 
 .hero__title {
-    line-height: 24px;
-    height: 24px;
+    line-height: 17px;
     display: block;
     font-weight: bold;
     overflow: hidden;
@@ -29,6 +23,6 @@
 }
 
 .hero__subtitle {
-    padding-top: 7.5px;
+    padding-top: 6px;
     @include uppercase_label();
 }

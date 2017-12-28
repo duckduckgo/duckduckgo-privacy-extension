@@ -6,12 +6,12 @@ module.exports = function () {
   return bel`<section class="site-info card">
     <ul class="default-list">
     <li class="site-info__rating-li">
-    <div class="site-info__rating-container border--bottom">
+    <div class="hero border--bottom">
         ${siteRating(
       this.model.isCalculatingSiteRating,
       this.model.siteRating,
       this.model.isWhitelisted)}
-        <h1 class="site-info__domain">${this.model.domain}</h1>
+        <h1 class="hero__title">${this.model.domain}</h1>
         ${ratingUpgrade(
       this.model.isCalculatingSiteRating,
       this.model.siteRating,
@@ -69,7 +69,7 @@ module.exports = function () {
     // site grade/rating was upgraded by extension
     if (isActive && rating && rating.before && rating.after) {
       if (rating.before !== rating.after) {
-        return bel`<p class="site-info__rating-upgrade uppercase text--center">
+        return bel`<p class="hero__subtitle">
           Upgraded from
           <span class="rating__text-only ${rating.before.toLowerCase()}">
           ${rating.before}</span> to

@@ -184,7 +184,6 @@ body {
             padding-bottom: 0;
         }
 
-        .site-info__domain,
         .site-info__protection {
             line-height: 1.4em;
             height: 1.2em;
@@ -193,14 +192,6 @@ body {
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        .site-info__domain {
-            margin-top: 7.5px;
-            text-align: center;
-            width: 100%;
-            max-width: 100%;
-            font-size: 17px;
         }
 
         .site-info__tosdr-status {
@@ -240,21 +231,10 @@ body {
             padding-top: 0;
         }
 
-        .site-info__rating-container {
-            padding: 0 20px 15px 20px;
-            text-align: center;
-        }
-
-        .site-info__rating-upgrade {
-            padding-top: 7.5px;
-        }
-
         .site-info__rating {
-            @include icon_display();
             @include site_rating_icons();
             width: 80px;
             height: 64px;
-            margin-top: 15px;
         }
 
         .site-info__li--https-status {
