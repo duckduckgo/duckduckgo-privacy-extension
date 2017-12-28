@@ -1,0 +1,49 @@
+.status-items {
+}
+
+.status-items--right {
+  .status-items__item {
+    padding-left: 0;
+    padding-right: 40px;
+
+    &:before {
+      left: auto;
+      right: 0;
+    }
+  }
+}
+
+.status-items__item {
+    padding-left: 40px;
+    list-style-type: none;
+    line-height: 22px;
+    margin-bottom: 20px;
+
+    &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 22px;
+        background-repeat: no-repeat;
+        background-position-y: center;
+
+        // doing the height this way allows it to be centered for one-line items
+        // but flush with the top of the text for longer items
+        min-height: 22px;
+        height: 50%;
+        max-height: 30px;
+    }
+}
+
+.status-items__item--good {
+    &:before {
+        @include cross_platform_bg_image("status--good.svg");
+    }
+}
+
+.status-items__item--bad {
+    &:before {
+        @include cross_platform_bg_image("status--bad.svg");
+    }
+}
+

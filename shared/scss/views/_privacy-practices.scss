@@ -31,6 +31,7 @@
 
 .privacy-practices__details {
     min-height: 190px;
+    font-size: 16px;
 }
 
 .privacy-practices__details__no-detail-icon {
@@ -48,41 +49,6 @@
 
 .privacy-practices__details__msg {
     line-height: 18px;
-}
-
-.privacy-practices__detail-item {
-    padding-left: 40px;
-    list-style-type: none;
-    line-height: 22px;
-    margin-bottom: 20px;
-    font-size: 16px;
-
-    &:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        width: 22px;
-        background-repeat: no-repeat;
-        background-position-y: center;
-
-        // doing the height this way allows it to be centered for one-line items
-        // but flush with the top of the text for longer items
-        min-height: 22px;
-        height: 50%;
-        max-height: 30px;
-    }
-}
-
-.privacy-practices__detail-item--good {
-    &:before {
-        @include cross_platform_bg_image("status--good.svg");
-    }
-}
-
-.privacy-practices__detail-item--bad {
-    &:before {
-        @include cross_platform_bg_image("status--bad.svg");
-    }
 }
 
 .privacy-practices__attrib {

@@ -7,7 +7,7 @@ module.exports = function (tosdr) {
     let bad = tosdr.reasons.bad || []
 
     if (good.length || bad.length) {
-      return bel`<ul>
+      return bel`<ul class="status-items">
         ${good.map(renderItem.bind(null, 'good'))}
         ${bad.map(renderItem.bind(null, 'bad'))}
       </ul>`
@@ -18,8 +18,8 @@ module.exports = function (tosdr) {
 }
 
 function renderItem (modifier, item) {
-  return bel`<li class="privacy-practices__detail-item
-      privacy-practices__detail-item--${modifier} bold">
+  return bel`<li class="status-items__item
+      status-items__item--${modifier} bold">
     ${changeCase.upperCaseFirst(item)}
   </li>`
 }
