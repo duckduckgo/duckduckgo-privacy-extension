@@ -237,6 +237,12 @@ body {
             height: 64px;
         }
 
+        .site-info__rating__open {
+            position: absolute;
+            right: 10px;
+            top: calc(50% - 20px);
+        }
+
         .site-info__li--https-status {
             position: relative;
             padding-left: 45px;
