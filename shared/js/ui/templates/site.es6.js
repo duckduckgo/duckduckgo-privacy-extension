@@ -92,7 +92,7 @@ module.exports = function () {
       msg = `Calculating...`
     }
 
-    return bel`<p class="site-info__rating-upgrade uppercase text--center">${msg}</p>`
+    return bel`<p class="hero__subtitle">${msg}</p>`
   }
 
   function renderTrackerNetworks (tn, isWhitelisted) {
