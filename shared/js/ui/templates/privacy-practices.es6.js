@@ -8,7 +8,7 @@ module.exports = function () {
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
     <div class="privacy-practices site-info card">
-      <div class="privacy-practices__overview padded border--bottom text--center
+      <div class="hero privacy-practices__overview border--bottom text--center
         js-privacy-practices-overview">
         ${overview(domain, tosdr)}
       </div>

@@ -1,0 +1,34 @@
+.hero {
+    padding: 0 20px 15px 20px;
+    text-align: center;
+    position: relative;
+}
+
+.hero__icon {
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin-top: 15px;
+}
+
+.hero__title {
+    line-height: 24px;
+    height: 24px;
+    display: block;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 11px;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    font-size: 17px;
+}
+
+.hero__subtitle {
+    padding-top: 7.5px;
+    @include uppercase_label();
+}

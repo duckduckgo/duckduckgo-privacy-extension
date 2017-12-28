@@ -18,13 +18,12 @@ module.exports = function (domain, tosdr) {
       <span class="icon icon__arrow icon__arrow--left">
       </span>
     </a>
-    <div class="privacy-practices__overview__icon
-      privacy-practices__overview__icon--${status}">
+    <div class="hero__icon privacy-practices__icon--${status}">
     </div>
-    <h1 class="privacy-practices__overview__domain">
+    <h1 class="hero__title">
       ${domain}
     </h1>
-    <h2 class="privacy-practices__overview__subtitle">
+    <h2 class="hero__subtitle">
       ${subtitle}
     </h2>
   </div>`
