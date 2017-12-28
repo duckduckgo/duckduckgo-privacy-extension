@@ -11,7 +11,7 @@ module.exports = function () {
   detailItems.push(renderItem('mixed', 'Mixed privacy practices'))
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
-   <div class="site-info card">
+   <div class="site-info site-info--full-height card">
      <div class="hero border--bottom">
       <a href="#" class="hero__close js-sliding-subview-close">
         <span class="icon icon__arrow icon__arrow--left">

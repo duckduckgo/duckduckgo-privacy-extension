@@ -7,7 +7,7 @@ module.exports = function () {
   let tosdr = this.model && this.model.tosdr
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
-    <div class="privacy-practices site-info card">
+    <div class="privacy-practices site-info site-info--full-height card">
       <div class="hero privacy-practices__overview border--bottom text--center
         js-privacy-practices-overview">
         ${overview(domain, tosdr)}
