@@ -1,6 +1,7 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
 const siteRating = require('./shared/site-rating.es6.js')
+const siteRatingSubtitle = require('./shared/site-rating-subtitle.es6.js')
 
 module.exports = function () {
   return bel`<section class="site-info card">
@@ -12,7 +13,7 @@ module.exports = function () {
       this.model.siteRating,
       this.model.isWhitelisted)}
         <h1 class="hero__title">${this.model.domain}</h1>
-        ${ratingUpgrade(
+        ${siteRatingSubtitle(
       this.model.isCalculatingSiteRating,
       this.model.siteRating,
       this.model.isWhitelisted)}
@@ -65,39 +66,6 @@ module.exports = function () {
     </li>
   </ul>
   </section>`
-
-  function ratingUpgrade (isCalculating, rating, isWhitelisted) {
-    // console.log('[site template] isCalculating: ' + isCalculating)
-    let isActive = true
-    if (isWhitelisted) isActive = false
-    // site grade/rating was upgraded by extension
-    if (isActive && rating && rating.before && rating.after) {
-      if (rating.before !== rating.after) {
-        return bel`<p class="hero__subtitle">
-          Upgraded from
-          <span class="rating__text-only ${rating.before.toLowerCase()}">
-          ${rating.before}</span> to
-          <span class="rating__text-only ${rating.after.toLowerCase()}">
-          ${rating.after}</span>
-        </p>`
-      }
-    }
-
-    // deal with other states
-    let msg = 'Privacy Grade'
-    // site is whitelisted
-    if (!isActive) {
-      msg = `Privacy Protection Disabled`
-    // "null" state (empty tab, browser's "about:" pages)
-    } else if (!isCalculating && !rating.before && !rating.after) {
-      msg = `We only grade regular websites`
-    // rating is still calculating
-    } else if (isCalculating) {
-      msg = `Calculating...`
-    }
-
-    return bel`<p class="hero__subtitle">${msg}</p>`
-  }
 
   function renderTrackerNetworks (tn, isWhitelisted) {
     let count = 0
