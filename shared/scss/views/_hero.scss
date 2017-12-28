@@ -26,3 +26,9 @@
     padding-top: 6px;
     @include uppercase_label();
 }
+
+.hero__close {
+    position: absolute;
+    left: 10px;
+    top: calc(50% - 20px);
+}

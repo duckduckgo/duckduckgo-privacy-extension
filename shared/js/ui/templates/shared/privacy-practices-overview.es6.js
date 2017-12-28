@@ -14,7 +14,7 @@ module.exports = function (domain, tosdr) {
   }
 
   return bel`<div>
-    <a href="#" class="privacy-practices__overview__close js-sliding-subview-close">
+    <a href="#" class="hero__close js-sliding-subview-close">
       <span class="icon icon__arrow icon__arrow--left">
       </span>
     </a>

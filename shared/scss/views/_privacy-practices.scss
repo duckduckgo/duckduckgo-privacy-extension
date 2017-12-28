@@ -25,12 +25,6 @@
     @include cross_platform_bg_image("hero-ribbon__mixed.svg");
 }
 
-.privacy-practices__overview__close {
-    position: absolute;
-    left: 10px;
-    top: calc(50% - 20px);
-}
-
 .privacy-practices__explainer {
     line-height: 18px;
 }
