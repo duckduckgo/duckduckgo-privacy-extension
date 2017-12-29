@@ -58,7 +58,9 @@ function getReasons (model) {
     detailItems.push(renderItem('bad', `${model.trackerNetworks.length} Major Tracker Networks Blocked`))
   }
 
-  // TODO handle case where the site is a major tracker network
+  if (model.isaMajorTrackingNetwork) {
+    detailItems.push(renderItem('bad', `Site Is Part Of A Major Tracker Network`))
+  }
 
   // privacy practices from tosdr
   if (model.tosdr &&

@@ -20,6 +20,7 @@ function Site (attrs) {
   attrs.trackerCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
+  attrs.isaMajorTrackingNetwork = false
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -44,6 +45,7 @@ Site.prototype = window.$.extend({},
                 this.domain = backgroundTabObj.site.domain
                 this.fetchSiteRating()
                 this.tosdr = backgroundTabObj.site.score.tosdr
+                this.isaMajorTrackingNetwork = backgroundTabObj.site.score.isaMajorTrackingNetwork
               }
               this.setSiteProperties()
               this.setHttpsMessage()
