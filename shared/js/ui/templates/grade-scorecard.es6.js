@@ -72,7 +72,7 @@ function getReasons (model) {
     detailItems.push(renderItem(modifier, `${msg} Privacy Practices`))
   }
 
-  return bel`<ul class="status-items status-items--right padded border--bottom--inner">
+  return bel`<ul class="status-list status-list--right padded border--bottom--inner">
     ${detailItems}
   </ul>`
 }
@@ -93,13 +93,13 @@ function getGrades (model) {
     detailItems.push(renderItem(after.toLowerCase(), 'Enhanced Grade', true))
   }
 
-  return bel`<ul class="status-items status-items--right padded">
+  return bel`<ul class="status-list status-list--right padded">
     ${detailItems}
   </ul>`
 }
 
 function renderItem (modifier, item, highlight) {
-  return bel`<li class="status-items__item status-items__item--${modifier}
+  return bel`<li class="status-list__item status-list__item--${modifier}
       bold ${highlight ? 'is-highlighted' : ''}">
     ${item}
   </li>`

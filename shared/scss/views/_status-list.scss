@@ -1,8 +1,8 @@
-.status-items {
+.status-list {
 }
 
-.status-items--right {
-  .status-items__item {
+.status-list--right {
+  .status-list__item {
     padding-left: 0;
     padding-right: 40px;
 
@@ -13,7 +13,7 @@
   }
 }
 
-.status-items__item {
+.status-list__item {
     padding-left: 40px;
     list-style-type: none;
     line-height: 22px;
@@ -46,7 +46,7 @@
 $statuses: ("good", "bad", "mixed", "a", "b", "c", "d", "f");
 
 @each $status in $statuses {
-    .status-items__item--#{$status} {
+    .status-list__item--#{$status} {
         &:before {
             @include cross_platform_bg_image("status--#{$status}.svg");
         }
