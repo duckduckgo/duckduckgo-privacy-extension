@@ -47,7 +47,7 @@ module.exports = function () {
         this.model.isWhitelisted)}
     </li>
     <!-- remove is-hidden to show the privacy practices section -->
-    <li class="site-info__li--privacy-practices padded border--bottom">
+    <li class="site-info__li--privacy-practices padded border--bottom is-hidden">
       <a href="#" class="js-site-privacy-practices link-secondary bold">
         ${this.model.tosdr && this.model.tosdr.message} Privacy Practices
         <span class="icon icon__arrow pull-right"></span>
