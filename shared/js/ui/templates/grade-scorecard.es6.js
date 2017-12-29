@@ -90,7 +90,7 @@ function getGrades (model) {
   detailItems.push(renderItem(before.toLowerCase(), 'Privacy Grade'))
 
   if (before !== after) {
-    detailItems.push(renderItem(after.toLowerCase(), 'Enhanced Grade'))
+    detailItems.push(renderItem(after.toLowerCase(), 'Enhanced Grade', true))
   }
 
   return bel`<ul class="status-items status-items--right padded">
@@ -98,9 +98,9 @@ function getGrades (model) {
   </ul>`
 }
 
-function renderItem (modifier, item) {
-  return bel`<li class="status-items__item
-      status-items__item--${modifier} bold">
+function renderItem (modifier, item, highlight) {
+  return bel`<li class="status-items__item status-items__item--${modifier}
+      bold ${highlight ? 'is-highlighted' : ''}">
     ${item}
   </li>`
 }

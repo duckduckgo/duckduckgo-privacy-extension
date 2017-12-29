@@ -37,6 +37,10 @@
         height: 50%;
         max-height: 30px;
     }
+
+    &.is-highlighted {
+        color: $color--green;
+    }
 }
 
 $statuses: ("good", "bad", "mixed", "a", "b", "c", "d", "f");
