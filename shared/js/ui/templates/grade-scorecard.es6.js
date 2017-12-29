@@ -48,14 +48,17 @@ function getReasons (model) {
 
   // tracking networks blocked,
   // only show a message if there's trackers blocked
-  if (model.trackersBlockedCount) {
-    detailItems.push(renderItem('bad', `${model.trackersBlockedCount} Tracker Networks Blocked`))
+  if (model.trackerNetworks.length) {
+    detailItems.push(renderItem('bad', `${model.trackerNetworks.length} Tracker Networks Blocked`))
   }
 
   // major tracking networks,
   // only show a message if it's bad
-  if (model.trackerNetworks.length) {
-    detailItems.push(renderItem('bad', `${model.trackerNetworks.length} Major Tracker Networks Blocked`))
+  let majorTrackers = model.trackerNetworks.filter((tracker) => {
+    return constants.majorTrackingNetworks[tracker]
+  })
+  if (majorTrackers.length) {
+    detailItems.push(renderItem('bad', `${majorTrackers.length} Major Tracker Networks Blocked`))
   }
 
   if (model.isaMajorTrackingNetwork) {
