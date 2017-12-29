@@ -35,7 +35,7 @@ function getReasons (model) {
 
   // encryption status
   if (model.httpsStatusText) {
-    let connectionMsg = 'Unncrypted'
+    let connectionMsg = 'Unencrypted'
     let modifier = 'bad'
 
     if (model.httpsStatusText === 'Secure') {
