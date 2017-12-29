@@ -22,61 +22,17 @@ module.exports = function () {
         this.model.isWhitelisted
       )}
     </div>
-    ${getReasons(this.model)}
+    ${getReasons(this.reasons)}
     ${getGrades(this.model)}
   </div>
   </section>`
 }
 
-function getReasons (model) {
-  let detailItems = []
-
-  // grab all the data from the items and create a status item for each of them
-
-  // encryption status
-  if (model.httpsStatusText) {
-    let connectionMsg = 'Unencrypted'
-    let modifier = 'bad'
-
-    if (model.httpsStatusText === 'Secure') {
-      connectionMsg = 'Encrypted'
-      modifier = 'good'
-    }
-
-    detailItems.push(renderItem(modifier, `${connectionMsg} Connection`))
-  }
-
-  // tracking networks blocked,
-  // only show a message if there's trackers blocked
-  if (model.trackerNetworks.length) {
-    detailItems.push(renderItem('bad', `${model.trackerNetworks.length} Tracker Networks Blocked`))
-  }
-
-  // major tracking networks,
-  // only show a message if it's bad
-  let majorTrackers = model.trackerNetworks.filter((tracker) => {
-    return constants.majorTrackingNetworks[tracker]
-  })
-  if (majorTrackers.length) {
-    detailItems.push(renderItem('bad', `${majorTrackers.length} Major Tracker Networks Blocked`))
-  }
-
-  if (model.isaMajorTrackingNetwork) {
-    detailItems.push(renderItem('bad', `Site Is Part Of A Major Tracker Network`))
-  }
-
-  // privacy practices from tosdr
-  if (model.tosdr &&
-      model.tosdr.message &&
-      model.tosdr.message !== 'Unknown') {
-    let msg = model.tosdr.message
-    let modifier = msg.toLowerCase()
-
-    detailItems.push(renderItem(modifier, `${msg} Privacy Practices`))
-  }
+function getReasons (reasons) {
+  if (!reasons.length) { return }
 
   return bel`<ul class="status-list status-list--right padded border--bottom--inner">
-    ${detailItems}
+    ${reasons.map(item => { return renderItem(item.modifier, item.msg) })}
   </ul>`
 }
 
