@@ -56,20 +56,15 @@ GradeScorecard.prototype = window.$.extend({},
 
       // major tracking networks,
       // only show a message if it's bad
-      let majorTrackers = this.model.trackerNetworks.filter((tracker) => {
-        return window.constants.majorTrackingNetworks[tracker]
-      })
-      if (majorTrackers.length) {
-        reasons.push({
-          modifier: 'bad',
-          msg: `${majorTrackers.length} Major Tracker Networks Blocked`
+      let isPartOfMajorTrackingNetwork = this.model.isaMajorTrackingNetwork ||
+        this.model.trackerNetworks.some((tracker) => {
+          return window.constants.majorTrackingNetworks[tracker]
         })
-      }
 
-      if (this.model.isaMajorTrackingNetwork) {
+      if (isPartOfMajorTrackingNetwork) {
         reasons.push({
           modifier: 'bad',
-          msg: `Site Is Part Of A Major Tracker Network`
+          msg: `Site Is Part of a Major Tracker Network`
         })
       }
 
