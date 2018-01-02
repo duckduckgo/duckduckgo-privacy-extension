@@ -36,7 +36,8 @@ class TabManager {
     create(tabData) {
         console.log(`CREATE TAB: ${tabData.url}`)
         let createTabData = {url: tabData.message.currentURL, id: tabManager.getTabId(tabData)}
-
+        createTabData.target = tabData.target
+        
         console.log(createTabData)
 
         let newTab = new Tab(createTabData);
@@ -181,8 +182,6 @@ safari.application.addEventListener('message', ( (request) => {
         closeHandler(request)
     }
     else if (request.name === 'tabLoaded') {
-        updateTabBadge(request)
-        
         let tab = tabManager.get({tabId: request.target.ddgTabId})
         
         // update site https status. We should move this out 
@@ -198,49 +197,21 @@ safari.application.addEventListener('message', ( (request) => {
             }
         }
         else {
-            safari.extension.toolbarItems[0].image = safari.extension.baseURI + 'img/ddg-icon.png'
+            safari.extension.toolbarItems[tab.browserWindowId].image = safari.extension.baseURI + 'img/ddg-icon.png'
+            safari.extension.popovers[0].contentWindow.location.reload()
         }
         
     }
     else if (request.name === 'whitelisted') {
         tabManager.whitelistDomain(request.message.whitelisted)
     }
-    /*
-    let tab = tabManager.get({tabId: request.tabId});
-    if (tab) {
-        tab.url = request.url;
-        tab.updateSite();
-        Companies.incrementPages();
-    }
-    */
 }), true);
 
-
-// temp hack to show site score as badge icon number
-var updateTabBadge = function(e, val) {
-    let tabId = tabManager.getTabId(e)
-    console.log(`UPDATE BADGE: ${e.target.ddgTabId}`)
-
-    if (val === 0) {
-        safari.extension.toolbarItems[0].badge = val
-    }
-    else {
-        let map = {A: 1, B: 2, C: 3, D: 4}
-        let tab = tabManager.get({tabId: e.target.ddgTabId})
-
-        console.log("UPDATE BADGE FOR TAB")
-        console.log(tab)
-
-        if (!tab) {
-            safari.extension.toolbarItems[0].badge = 0
-                return
-        }
-        console.log(`GRADE: ${tab.site.score.get()}`)
-
-        tab.updateBadgeIcon()
-        safari.extension.popovers[0].contentWindow.location.reload()
-    }
-}
+// update the popup when switching browser windows
+safari.application.addEventListener('activate', ((e) => {
+    let activeTab = tabManager.getActiveTab()
+    activeTab.updateBadgeIcon()
+}), true)
 
 safari.application.addEventListener('beforeSearch', (e) => {
     if (e.target && e.target.ddgTabId) {

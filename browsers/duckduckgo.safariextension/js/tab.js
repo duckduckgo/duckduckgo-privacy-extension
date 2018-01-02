@@ -64,16 +64,28 @@ class Tab {
             end: null,
             completeMs: null
         }
+
+        // which safari browser window is this tab in
+        this.browserWindowId = this.getSafariBrowserWindow(tabData.target)
+
         // set the new tab icon to the dax logo
-        safari.extension.toolbarItems[0].image = safari.extension.baseURI + defaultIcon
+        this.setBadgeIcon(defaultIcon)
+
     };
+
+    getSafariBrowserWindow(target) {
+        for(let i = 0; i < safari.extension.toolbarItems.length; i++) {
+            if (safari.extension.toolbarItems[i].browserWindow.activeTab === target) {
+                return i
+            }
+        }
+    }
 
     updateBadgeIcon () {
         if (!this.site.specialDomain() ) {
 
             if(this.site.isBroken) {
-                safari.extension.toolbarItems[0].image = safari.extension.baseURI + defaultIcon
-                //chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
+                this.setBadgeIcon(defaultIcon)
             } else {
                 let scoreIcon
                 if (this.site.whitelisted) {
@@ -81,18 +93,22 @@ class Tab {
                 } else {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
-
-                //chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
-                safari.extension.toolbarItems[0].image = safari.extension.baseURI + scoreIcon
+                this.setBadgeIcon(scoreIcon)
             }
         }
     };
 
+    setBadgeIcon (iconPath) {
+        if (iconPath) {
+            safari.extension.toolbarItems[this.browserWindowId].image = safari.extension.baseURI + iconPath
+            safari.extension.popovers[0].contentWindow.location.reload()
+        }
+    }
+
     updateSite () {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
-        //chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
-        safari.extension.toolbarItems[0].image = safari.extension.baseURI + defaultIcon
+        this.setBadgeIcon(defaultIcon)
     };
 
     /* Store all trackers for a given tab even if we
