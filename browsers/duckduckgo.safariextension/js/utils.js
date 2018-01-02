@@ -44,9 +44,14 @@ require.scopes.utils = ( () => {
     }
 
     function getFromStorage (key, callback) {
-        let dataFromStorage = JSON.parse(localStorage[key])
+        let setting = localStorage[key]
         console.log(`Data from storage: ${localStorage[key]}`)
-        callback(JSON.parse(localStorage[key]));
+        // try to parse json
+        try {
+            callback(JSON.parse(setting))
+        } catch (e) {
+            callback(setting)
+        }
     }
 
     function getCurrentURL(callback){

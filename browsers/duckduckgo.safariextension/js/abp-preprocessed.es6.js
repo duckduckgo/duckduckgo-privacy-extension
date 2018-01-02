@@ -68,7 +68,7 @@ function updateLists () {
                 if (versionParam) url += versionParam
             }
 
-            console.log('Checking for list update: ', name)
+            console.log(`Checking for list update: ${name} ${url} ${etag}`)
 
             // if we don't have parsed list data skip the etag to make sure we
             // get a fresh copy of the list to process
@@ -77,7 +77,9 @@ function updateLists () {
             load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
                 const newEtag = response.getResponseHeader('etag') || ''
                 console.log('Updating list: ', name)
-                
+
+                if(name === 'trackersWhitelist') console.log(listData)
+
                 // sync new etag to storage
                 settings.updateSetting(constantsName + '-etag', newEtag)
                 

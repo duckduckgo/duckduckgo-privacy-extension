@@ -52,7 +52,7 @@
 				<key>Identifier</key>
 				<string>popup_button</string>
 				<key>Image</key>
-				<string>img/settings-gear@2x.png</string>
+				<string>img/ddg-icon@2x.png</string>
 				<key>Label</key>
 				<string>DuckDuckGo</string>
 				<key>Palette Label</key>

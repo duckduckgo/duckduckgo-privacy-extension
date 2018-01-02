@@ -38,13 +38,13 @@ class Tracker {
  *      }
  */
 const scoreIconLocations = {
-    "A": "img/toolbar-rating-a@2x.png",
-    "B": "img/toolbar-rating-b@2x.png",
-    "C": "img/toolbar-rating-c@2x.png",
-    "D": "img/toolbar-rating-d@2x.png",
-    "F": "img/toolbar-rating-f@2x.png"
+    "A": "img/Grade-A-gray@2x.png",
+    "B": "img/Grade-B-gray@2x.png",
+    "C": "img/Grade-C-gray@2x.png",
+    "D": "img/Grade-D-gray@2x.png",
+    "F": "img/Grade-F-gray@2x.png"
 }
-const defaultIcon = 'img/ddg-icon.png'
+const defaultIcon = 'img/ddg-icon@2x.png'
 
 class Tab {
     constructor(tabData) {
@@ -65,7 +65,7 @@ class Tab {
             completeMs: null
         }
         // set the new tab icon to the dax logo
-        //safari.extension.toolbarItems[0].image = safari.extension.baseURI + defaultIcon
+        safari.extension.toolbarItems[0].image = safari.extension.baseURI + defaultIcon
     };
 
     updateBadgeIcon () {
@@ -83,7 +83,7 @@ class Tab {
                 }
 
                 //chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
-                //safari.extension.toolbarItems[0].image = safari.extension.baseURI + scoreIcon
+                safari.extension.toolbarItems[0].image = safari.extension.baseURI + scoreIcon
             }
         }
     };
