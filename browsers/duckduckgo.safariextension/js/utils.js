@@ -37,15 +37,16 @@ require.scopes.utils = ( () => {
     }
 
     function syncToStorage (data){
-        //chrome.storage.local.set(data, function() { });
+        if(data) {
+            let key = Object.keys(data)[0]
+            localStorage[key] = JSON.stringify(data[key])
+        }
     }
 
-    function getFromStorage (key, callback){
-        //chrome.storage.local.get(key, function(result){
-        //    if(result[key]){
-        //        callback(result[key]);
-        //    }
-        //});
+    function getFromStorage (key, callback) {
+        let dataFromStorage = JSON.parse(localStorage[key])
+        console.log(`Data from storage: ${localStorage[key]}`)
+        callback(JSON.parse(localStorage[key]));
     }
 
     function getCurrentURL(callback){

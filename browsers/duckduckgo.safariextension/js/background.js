@@ -71,7 +71,7 @@ var onBeforeRequest = function (requestData) {
         thisTab.site.addTracker(tracker)
         thisTab.addToTrackers(tracker)
 
-        if (!thisTab.site.whitelisted) {
+        if (!thisTab.site.whitelisted && tracker.block) {
             thisTab.addOrUpdateTrackersBlocked(tracker)
 
             if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)

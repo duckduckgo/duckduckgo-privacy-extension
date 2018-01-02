@@ -29,6 +29,8 @@
 				<string>Ask Dax</string>
 			</dict>
 		</array>
+		<key>Database Quota</key>
+		<integer>104857600</integer>
 		<key>Global Page</key>
 		<string>html/global.html</string>
 		<key>Popovers</key>

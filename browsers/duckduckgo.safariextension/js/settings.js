@@ -35,7 +35,10 @@ require.scopes.settings =(() => {
     function buildSettingsFromLocalStorage() {
         return new Promise ((resolve) => {
             // copy over saved settings from storage
-            Object.assign(settings, JSON.parse(localStorage['settings']));
+            let storedSettings = localStorage['settings']
+            if (storedSettings) {
+                Object.assign(settings, JSON.parse(storedSettings))
+            }
             //runExternalSettings();
             resolve()
         })
