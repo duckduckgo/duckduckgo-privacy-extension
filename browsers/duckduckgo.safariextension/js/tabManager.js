@@ -4,25 +4,25 @@ class TabManager {
     };
 
     getActiveTab () {
-
-        let active = safari.application.activeBrowserWindow.activeTab
-        console.log(active)
-        if (active.ddgTabId) {
-            return tabManager.get({tabId: active.ddgTabId})
+        let activeTab = safari.application.activeBrowserWindow.activeTab
+        if (activeTab.ddgTabId) {
+            return tabManager.get({tabId: activeTab.ddgTabId})
         } else {
-            let id = tabManager.getTabId({target: active})
+            let id = tabManager.getTabId({target: activeTab})
             return tabManager.get({tabId: id})
         }   
     }
-    // send safari event, get tab id
+
+    // creates (if needed) a tabId for a given safari tab (e)
     getTabId (e) {
         if (e.target.ddgTabId) return e.target.ddgTabId
 
         for (let id in safari.application.activeBrowserWindow.tabs) {
             if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
-                // also add the id to this safari tab
-                safari.application.activeBrowserWindow.tabs[id].ddgTabId = id
-                return id
+                let tabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10;
+                console.log(`CREATE TABID: ${tabId}`)
+                safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+                return tabId
             }
         }
     }
@@ -98,13 +98,6 @@ class TabManager {
 
 var tabManager = new TabManager();
 
-/*
-chrome.tabs.onRemoved.addListener( (id, info) => {
-    // remove the tab object
-    tabManager.delete(id);
-});
-*/
-
 var closeHandler = function (e) {
     let tabId = tabManager.getTabId(e)
     if (tabId) tabManager.delete(tabId)
@@ -112,67 +105,6 @@ var closeHandler = function (e) {
 }
 
 safari.application.addEventListener("close", closeHandler, true);
-
-/* This handles the new tab case. You have clicked to 
- * open a new tab and haven't typed in a url yet.
- * This will fire an onUpdated event and we can create
- * an intital tab instance here. We'll update this instance
- * later on when webrequests start coming in.
- */
-/*
-safari.application.addEventListener('open', ( (tabEvent) => {
-    if (!tabManager.get({'tabId': tabEvent.url})) {
-        // adapt safari tabevent data to work with tabManager.create
-        // safari doesn't have unique IDs for each tab so we'll use the url for now
-        let createData = {id: tabEvent.url, url: tabEvent.url, requestId: 0, status: 'complete'}
-
-        tabManager.create(info);
-    }
-    else {
-        let tab = tabManager.get({tabId: id});
-        if (tab && info.status) {
-            tab.status = info.status;
-
-            if (tab.status === 'complete') {
-
-                if (tab.url.match(/^https:\/\//)) {
-                    tab.site.score.update({hasHTTPS: true})
-                }
-                tab.checkHttpsRequestsOnComplete()
-                console.info(tab.site.score);
-                tab.updateBadgeIcon();
-            } 
-        }
-    }
-
-}), true);
-*/
-/*
-chrome.runtime.onMessage.addListener( (req, sender, res) => {
-    if (req.whitelisted) {
-        tabManager.whitelistDomain(req.whitelisted)
-        chrome.runtime.sendMessage({whitelistChanged: true});
-    }
-    else if (req.getTab) {
-        res(tabManager.get({'tabId': req.getTab}))
-    }
-    else if (req.getSiteScore) {
-        let tab = tabManager.get({tabId: req.getSiteScore})
-        res(tab.site.score.get())
-    }
-    return true;
-});
-*/
-
-function getDuplicateTabCount (tabs, url) {
-    let count = 0
-    tabs.forEach((tab) => {
-        if(tab.url === url) {
-            count += 1
-        }
-    })
-    return count
-}
 
 // update tab url after the request is finished. This makes
 // sure we have the correct url after any https rewrites
@@ -190,15 +122,14 @@ safari.application.addEventListener('message', ( (request) => {
         }
 
         if (tab) {
-            tab.updateBadgeIcon()
+            tab.updateBadgeIcon(request.target)
             if (!tab.site.didIncrementCompaniesData) {
                 Companies.incrementTotalPages()
                 tab.site.didIncrementCompaniesData = true
             }
         }
         else {
-            safari.extension.toolbarItems[tab.browserWindowId].image = safari.extension.baseURI + 'img/ddg-icon.png'
-            safari.extension.popovers[0].contentWindow.location.reload()
+            utils.setBadgeIcon('img/ddg-icon.png', request.target)
         }
         
     }
@@ -210,7 +141,9 @@ safari.application.addEventListener('message', ( (request) => {
 // update the popup when switching browser windows
 safari.application.addEventListener('activate', ((e) => {
     let activeTab = tabManager.getActiveTab()
-    activeTab.updateBadgeIcon()
+    if (activeTab) {
+        activeTab.updateBadgeIcon(e.target)
+    }
 }), true)
 
 safari.application.addEventListener('beforeSearch', (e) => {

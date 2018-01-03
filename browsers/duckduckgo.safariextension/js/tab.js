@@ -65,27 +65,17 @@ class Tab {
             completeMs: null
         }
 
-        // which safari browser window is this tab in
-        this.browserWindowId = this.getSafariBrowserWindow(tabData.target)
-
         // set the new tab icon to the dax logo
-        this.setBadgeIcon(defaultIcon)
+        utils.setBadgeIcon(defaultIcon, tabData.target)
 
     };
 
-    getSafariBrowserWindow(target) {
-        for(let i = 0; i < safari.extension.toolbarItems.length; i++) {
-            if (safari.extension.toolbarItems[i].browserWindow.activeTab === target) {
-                return i
-            }
-        }
-    }
-
-    updateBadgeIcon () {
+    // update badge icon needs a safari target tab so we can find the correct tab and window
+    updateBadgeIcon (target) {
         if (!this.site.specialDomain() ) {
 
             if(this.site.isBroken) {
-                this.setBadgeIcon(defaultIcon)
+                utils.setBadgeIcon(defaultIcon, target)
             } else {
                 let scoreIcon
                 if (this.site.whitelisted) {
@@ -93,22 +83,15 @@ class Tab {
                 } else {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
-                this.setBadgeIcon(scoreIcon)
+                utils.setBadgeIcon(scoreIcon, target)
             }
         }
     };
 
-    setBadgeIcon (iconPath) {
-        if (iconPath) {
-            safari.extension.toolbarItems[this.browserWindowId].image = safari.extension.baseURI + iconPath
-            safari.extension.popovers[0].contentWindow.location.reload()
-        }
-    }
-
     updateSite () {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
-        this.setBadgeIcon(defaultIcon)
+        utils.setBadgeIcon(defaultIcon, target)
     };
 
     /* Store all trackers for a given tab even if we
