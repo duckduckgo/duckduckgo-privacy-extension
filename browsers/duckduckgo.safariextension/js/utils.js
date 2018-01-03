@@ -62,6 +62,24 @@ require.scopes.utils = ( () => {
         callback(safari.application.activeBrowserWindow.activeTab)
     }
 
+    function setBadgeIcon (iconPath, target) {
+        if (target.activeTab) target = target.activeTab
+
+        let windowId = _getSafariWindowId(target)
+        if (iconPath && windowId !== undefined) {
+            safari.extension.toolbarItems[windowId].image = safari.extension.baseURI + iconPath
+            safari.extension.popovers[0].contentWindow.location.reload()
+        }
+    }
+
+    function _getSafariWindowId (target) {
+        for(let i = 0; i < safari.extension.toolbarItems.length; i++) {
+            if (safari.extension.toolbarItems[i].browserWindow.activeTab === target) {
+                return i
+            }
+        }
+    }
+
     return {
         extractHostFromURL: extractHostFromURL,
         extractSubdomainFromHost: extractSubdomainFromHost,
@@ -70,6 +88,7 @@ require.scopes.utils = ( () => {
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
         getCurrentTab: getCurrentTab,
-        getProtocol: getProtocol
+        getProtocol: getProtocol,
+        setBadgeIcon: setBadgeIcon
     }
 })();
