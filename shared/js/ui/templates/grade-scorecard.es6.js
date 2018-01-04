@@ -7,7 +7,7 @@ module.exports = function () {
    <div class="site-info site-info--full-height card">
      <div class="hero border--bottom">
       <a href="#" class="hero__close js-sliding-subview-close">
-        <span class="icon icon__arrow icon__arrow--left">
+        <span class="icon icon__arrow icon__arrow--large icon__arrow--left">
         </span>
       </a>
       ${siteRating(

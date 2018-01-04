@@ -18,7 +18,7 @@ module.exports = function () {
       this.model.siteRating,
       this.model.isWhitelisted)}
       <a href="#" class="site-info__rating__open js-site-grade-scorecard">
-        <span class="icon icon__arrow icon__arrow--right">
+        <span class="icon icon__arrow icon__arrow--large icon__arrow--right">
         </span>
       </a>
     </div>
