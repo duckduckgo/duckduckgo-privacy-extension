@@ -128,3 +128,27 @@ require.scopes.settings =(() => {
     }
 
 })();
+
+// safari message passing to options page
+var handleSettingsMessage = ((e) => {
+    if (e.message.getSetting) {
+        let settingName = e.message.getSetting.name || ''
+        let setting = settings.getSetting(settingName) || {}
+        
+        // sender creates a timestamp in the message
+        // add timestamp to the response so sender knows which requests
+        // this goes with
+        setting.timestamp = e.message.timestamp
+        
+        e.target.page.dispatchMessage('getSetting', setting)
+    }
+    else if (e.message.updateSetting) {
+        let name = e.message.updateSetting.name
+        let val = e.message.updateSetting.value
+        if (name && val) {
+            settings.updateSetting(name, val)
+        }
+    }
+})
+
+safari.application.addEventListener('message', handleSettingsMessage, false)

@@ -19,7 +19,7 @@ Whitelist.prototype = window.$.extend({},
         list: 'whitelisted',
         domain: domain,
         value: false
-      }
+      }, context: 'options'
       })
     }
   }

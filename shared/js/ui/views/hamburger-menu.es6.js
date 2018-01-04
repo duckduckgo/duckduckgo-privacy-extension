@@ -51,8 +51,11 @@ HamburgerMenu.prototype = window.$.extend({},
         if (browser === 'moz') {
           window.chrome.tabs.create({url: window.chrome.extension.getURL('/html/options.html')})
           window.close()
-        } else {
+        } else if (browser === 'chrome'){
           window.chrome.runtime.openOptionsPage()
+        } else if (browser === 'safari') {
+            safari.application.activeBrowserWindow.openTab().url = safari.extension.baseURI + 'html/options.html'
+            safari.self.hide()
         }
       })
     }
