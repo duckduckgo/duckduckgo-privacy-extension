@@ -76,11 +76,9 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
     return companyListMap.map((c, i) => {
       if (c.name && c.name === 'unknown') c.name = '(Tracker network unknown)'
       return bel`<li>
-        <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
-          <span class="site-info__tracker__icon
-            ${c.name.toLowerCase()}">
-          </span>
-        </div>
+        <span class="site-info__tracker__icon
+          ${c.name.toLowerCase()} float-right">
+        </span>
         <span class="block">${c.name}</span>
         <ol class="default-list site-info__trackers__company-list__url-list">
           ${c.urls.map((url) => {
