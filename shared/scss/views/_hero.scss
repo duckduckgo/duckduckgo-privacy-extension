@@ -27,9 +27,8 @@
     @include uppercase_label();
 }
 
-// TODO this needs a bigger icon
 .hero__close {
     position: absolute;
-    left: 10px;
-    top: calc(50% - 20px);
+    left: 20px;
+    top: 51px;
 }

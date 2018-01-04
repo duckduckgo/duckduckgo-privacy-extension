@@ -15,7 +15,7 @@ module.exports = function (domain, tosdr) {
 
   return bel`<div>
     <a href="#" class="hero__close js-sliding-subview-close">
-      <span class="icon icon__arrow icon__arrow--left">
+      <span class="icon icon__arrow icon__arrow--large icon__arrow--left">
       </span>
     </a>
     <div class="hero__icon privacy-practices__icon--${status}">
