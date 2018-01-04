@@ -30,5 +30,5 @@
 .hero__close {
     position: absolute;
     left: 20px;
-    top: 51px;
+    top: calc(50% - 12px);
 }

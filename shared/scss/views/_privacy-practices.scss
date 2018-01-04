@@ -10,6 +10,10 @@
         width: 48px;
         height: 65px;
     }
+
+    .hero__close: {
+        top: calc(50% - 16px);
+    }
 }
 
 .privacy-practices__icon--good {
