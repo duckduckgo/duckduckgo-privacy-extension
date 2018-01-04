@@ -11,19 +11,19 @@ module.exports = function () {
         </span>
       </a>
       ${siteRating(
-        this.model.isCalculatingSiteRating,
-        this.model.siteRating,
-        this.model.isWhitelisted
+        this.model.site.isCalculatingSiteRating,
+        this.model.site.siteRating,
+        this.model.site.isWhitelisted
       )}
-      <h1 class="hero__title">${this.model.domain}</h1>
+      <h1 class="hero__title">${this.model.site.domain}</h1>
       ${siteRatingSubtitle(
-        this.model.isCalculatingSiteRating,
-        this.model.siteRating,
-        this.model.isWhitelisted
+        this.model.site.isCalculatingSiteRating,
+        this.model.site.siteRating,
+        this.model.site.isWhitelisted
       )}
     </div>
-    ${getReasons(this.reasons)}
-    ${getGrades(this.model)}
+    ${getReasons(this.model.reasons)}
+    ${getGrades(this.model.site.siteRating)}
   </div>
   </section>`
 }
@@ -36,9 +36,9 @@ function getReasons (reasons) {
   </ul>`
 }
 
-function getGrades (model) {
-  let before = model.siteRating.before
-  let after = model.siteRating.after
+function getGrades (rating) {
+  const before = rating.before
+  const after = rating.after
 
   if (!before || !after) {
     return

@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.View
+const GradeScorecardModel = require('./../models/grade-scorecard.es6.js')
 const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const GradeDetailsView = require('./../views/grade-details.es6.js')
 const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
@@ -93,9 +94,13 @@ Site.prototype = window.$.extend({},
     },
 
     _showGradeScorecard: function () {
+      const model = new GradeScorecardModel({
+        site: this.model
+      })
+
       this.views.gradeScorecard = new GradeScorecardView({
         template: gradeScorecardTemplate,
-        model: this.model
+        model
       })
     }
   }
