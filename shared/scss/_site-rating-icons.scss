@@ -47,7 +47,7 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
         }
 
         .is-browser--safari & {
-            background-image: url(../..//img/#{$icon__hero_rating__null});
+            background-image: url(../../img/#{$icon__hero_rating__null});
         }
     }
 

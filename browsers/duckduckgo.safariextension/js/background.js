@@ -20,6 +20,8 @@ var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
 let browser = 'safari'
+var db = require('db')
+var https = require('https')
 
 function Background() {
   $this = this;

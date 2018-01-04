@@ -38,12 +38,14 @@ Site.prototype = $.extend({},
           let thisModel = this
           return new Promise((resolve) => {
           // console.log('[site view] getBackgroundTabData()')
-          let backgroundTabObj = JSON.parse(JSON.stringify(safari.extension.globalPage.contentWindow.tabManager.getActiveTab()))
-          if (backgroundTabObj) {
+          let backgroundTabObj = JSON.parse(JSON.stringify(safari.extension.globalPage.contentWindow.tabManager.getActiveTab() || {}))
+          if (backgroundTabObj && backgroundTabObj.site) {
               thisModel.set('tab', backgroundTabObj)
               thisModel.domain = backgroundTabObj.site.domain
               thisModel.fetchSiteRating()
               thisModel.tosdr = backgroundTabObj.site.score.tosdr
+          } else {
+              thisModel.domain = ''
           }
           thisModel.setSiteProperties()
           thisModel.setHttpsMessage()

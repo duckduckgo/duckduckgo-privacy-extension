@@ -6,12 +6,15 @@ window.DDG.base.Model.prototype.fetch = function(message) {
            if (message.getCurrentTab) {
                resolve(safari.extension.globalPage.contentWindow.tabManager.getActiveTab())
            }
+
            else if (message.getTopBlocked) {
                resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlocked(message.getTopBlocked))
            }
+
            else if (message.getBrowser) {
                resolve('safari')
            }
+
            else if (message.whitelisted) {
                if (message.context && message.context === 'options') {
                    resolve(safari.self.tab.dispatchMessage('whitelisted', message))
@@ -19,10 +22,12 @@ window.DDG.base.Model.prototype.fetch = function(message) {
                    resolve(safari.extension.globalPage.contentWindow.tabManager.whitelistDomain(message.whitelisted))
                }
            }
+
            else if (message.getSiteScore) {
                let tab = safari.extension.globalPage.contentWindow.tabManager.get({tabId: message.getSiteScore})
                if (tab) resolve(tab.site.score.get())
            }
+
            else if (message.getSetting) {
                if (message.context && message.context === 'options') {
                    // send message with time stamp
@@ -38,13 +43,19 @@ window.DDG.base.Model.prototype.fetch = function(message) {
                    }, false);
                }
            }
+
            else if (message.updateSetting) {
                if (message.context && message.context === 'options') {
                    resolve(safari.self.tab.dispatchMessage('updateSetting', message))
                }
            }
+
            else if (message.getTopBlockedByPages) {
                resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlockedByPages(message.getTopBlockedByPages))
+           }
+
+           else if (message.resetTrackersData) {
+               safari.extension.globalPage.contentWindow.Companies.resetData()
            }
        })
 }
