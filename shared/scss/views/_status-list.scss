@@ -37,18 +37,34 @@
         height: 50%;
         max-height: 30px;
     }
-
-    &.is-highlighted {
-        color: $color--green;
-    }
 }
 
-$statuses: ("good", "bad", "mixed", "a", "b", "c", "d", "f");
+$statuses: ("good", "bad", "mixed");
 
 @each $status in $statuses {
     .status-list__item--#{$status} {
         &:before {
             @include cross_platform_bg_image("status--#{$status}.svg");
+        }
+    }
+}
+
+$ratings: (
+  "a": $color--site-rating--a,
+  "b": $color--site-rating--b,
+  "c": $color--site-rating--c,
+  "d": $color--site-rating--d,
+  "f": $color--site-rating--f
+);
+
+@each $rating, $color in $ratings {
+    .status-list__item--#{$rating} {
+        &:before {
+            @include cross_platform_bg_image("status--#{$rating}.svg");
+        }
+
+        &.is-highlighted {
+            color: $color;
         }
     }
 }
