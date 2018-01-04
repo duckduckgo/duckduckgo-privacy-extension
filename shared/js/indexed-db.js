@@ -36,7 +36,7 @@ class IndexedDBClient {
         this.db = null
 
         this.serverUpdateUrls = {
-            https: 'http://brian.duckduckgo.com/contentblocking.js?l=https-200k'
+            https: 'http://duckduckgo.com/contentblocking.js?l=https'
             // ...add more here
         }
         this.serverUpdateFails = 0
@@ -246,7 +246,7 @@ const fetchServerUpdate = {
 
                         putNextRecord.call(this).then(() => {
                             counter++
-                            console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
+                            //console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
                             putRecords.call(this)
                         }, () => {
                             // on error, just skip and go to the next record
