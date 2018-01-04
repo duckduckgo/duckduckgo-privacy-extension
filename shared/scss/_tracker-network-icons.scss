@@ -1,6 +1,6 @@
 /* Tracker Network Icons */
 $icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "chartbeat", "comscore", "facebook", "fox", "generic", "google", "mixpanel", "moat", "nielsen", "outbrain", "quantcast", "taboola", "twitter", "yahoo", "yandex");
-$grey-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", "comscore", "criteo", "facebook", "fox", "google", "mixpanel", "moat", "newrelic", "nielsen", "openx", "outbrain", "quantcast", "salesforce", "taboola", "twitter", "yahoo", "yandex");
+$subview-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", "comscore", "criteo", "facebook", "fox", "google", "mixpanel", "moat", "newrelic", "nielsen", "openx", "outbrain", "quantcast", "salesforce", "taboola", "twitter", "yahoo", "yandex");
 
 @mixin tracker_network_icons () {
 
@@ -18,7 +18,7 @@ $grey-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbe
 
 @mixin tracker_network_icons_subview () {
     
-    @each $name in $grey-icons {
+    @each $name in $subview-icons {
         &.#{$name} {
             // trackers subview
             .is-browser--chrome & {
