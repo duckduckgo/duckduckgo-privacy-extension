@@ -7,7 +7,11 @@ function GradeScorecard (attrs) {
     throw new Error('The GradeScorecard model needs a Site model to be passed in')
   }
 
-  this.reasons = this._getReasons()
+  this._updateReasons()
+
+  this.bindEvents([
+    [this.store.subscribe, 'site:change', this._updateReasons]
+  ])
 }
 
 GradeScorecard.prototype = window.$.extend({},
@@ -15,7 +19,7 @@ GradeScorecard.prototype = window.$.extend({},
   {
     modelName: 'gradeScorecard',
 
-    _getReasons: function () {
+    _updateReasons: function () {
       let reasons = []
 
       // grab all the data from the site to create
@@ -71,7 +75,7 @@ GradeScorecard.prototype = window.$.extend({},
         })
       }
 
-      return reasons
+      this.set('reasons', reasons)
     }
 })
 
