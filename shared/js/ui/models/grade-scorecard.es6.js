@@ -3,6 +3,10 @@ const Parent = window.DDG.base.Model
 function GradeScorecard (attrs) {
   Parent.call(this, attrs)
 
+  if (!this.site) {
+    throw new Error('The GradeScorecard model needs a Site model to be passed in')
+  }
+
   this.reasons = this._getReasons()
 }
 
