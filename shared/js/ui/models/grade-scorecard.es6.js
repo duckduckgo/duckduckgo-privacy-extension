@@ -68,7 +68,7 @@ GradeScorecard.prototype = window.$.extend({},
 
       // privacy practices from tosdr
       let privacyMessage = this.site.tosdr && this.site.tosdr.message
-      if (privacyMessage && privacyMessage !== 'Unknown') {
+      if (privacyMessage && privacyMessage !== constants.tosdrMessages.unknown) {
         reasons.push({
           modifier: privacyMessage.toLowerCase(),
           msg: `${privacyMessage} Privacy Practices`
