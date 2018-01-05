@@ -29,7 +29,7 @@ module.exports = function () {
 }
 
 function getReasons (reasons) {
-  if (!reasons.length) { return }
+  if (!reasons || !reasons.length) return
 
   return bel`<ul class="status-list status-list--right padded border--bottom--inner">
     ${reasons.map(item => { return renderItem(item.modifier, item.msg) })}
@@ -40,9 +40,7 @@ function getGrades (rating) {
   const before = rating.before
   const after = rating.after
 
-  if (!before || !after) {
-    return
-  }
+  if (!before || !after) return
 
   let detailItems = []
 
