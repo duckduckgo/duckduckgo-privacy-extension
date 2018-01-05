@@ -101,7 +101,6 @@ var tabManager = new TabManager();
 var closeHandler = function (e) {
     let tabId = tabManager.getTabId(e)
     if (tabId) tabManager.delete(tabId)
-    //updateTabBadge(e, 0)
 }
 
 safari.application.addEventListener("close", closeHandler, true);
@@ -116,17 +115,22 @@ safari.application.addEventListener('message', ( (request) => {
     else if (request.name === 'tabLoaded') {
         let tab = tabManager.get({tabId: request.target.ddgTabId})
         
-        // update site https status. We should move this out 
-        if (request.message.mainFrameURL && request.message.mainFrameURL.match(/^https:\/\//)) {
-            tab.site.score.update({hasHTTPS: true})
-        }
-
         if (tab) {
+            
+            // update site https status. We should move this out 
+            if (request.message.mainFrameURL && request.message.mainFrameURL.match(/^https:\/\//)) {
+                tab.site.score.update({hasHTTPS: true})
+            }
+
             tab.updateBadgeIcon(request.target)
             if (!tab.site.didIncrementCompaniesData) {
                 Companies.incrementTotalPages()
                 tab.site.didIncrementCompaniesData = true
             }
+
+            // stash data in safari tab to handle cached pages
+            if(!request.target.ddgCache) request.target.ddgCache = {}
+            request.target.ddgCache[tab.url] = tab
         }
         else {
             utils.setBadgeIcon('img/ddg-icon.png', request.target)
@@ -152,4 +156,22 @@ safari.application.addEventListener('beforeSearch', (e) => {
     }
 }, false)
 
+// rebuild cached tabs
+safari.application.addEventListener('navigate', ((e) => {
+    let tabId = e.target.ddgTabId
+    let tab = tabManager.get({tabId: tabId})
 
+    // if we don't have a tab with this tabId then we are in a cached page
+    // use the target url to find the correct cached tab obj
+    if (!tab) {
+        console.log("REBUILDING CACHED TAB")
+        if (e.target.ddgCache) {
+            let cachedTab = e.target.ddgCache[e.target.url]
+            if (cachedTab) {
+                tabManager.tabContainer[tabId] = cachedTab
+                safari.extension.popovers[0].contentWindow.location.reload()
+                cachedTab.updateBadgeIcon(e.target)
+            }
+        }
+    }
+}))
