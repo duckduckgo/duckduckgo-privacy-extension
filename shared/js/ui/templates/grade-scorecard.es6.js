@@ -32,7 +32,7 @@ function getReasons (reasons) {
   if (!reasons || !reasons.length) return
 
   return bel`<ul class="status-list status-list--right padded border--bottom--inner">
-    ${reasons.map(item => { return renderItem(item.modifier, item.msg) })}
+    ${reasons.map(item => renderItem(item.modifier, item.msg))}
   </ul>`
 }
 
