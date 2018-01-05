@@ -6,6 +6,12 @@ function GradeScorecard (ops) {
 
   Parent.call(this, ops)
 
+  this.bindEvents([[
+    this.store.subscribe,
+    `change:${this.model.modelName}`,
+    this._rerender
+  ]])
+
   this.setupClose()
 }
 
