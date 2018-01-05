@@ -77,6 +77,7 @@ GradeScorecard.prototype = window.$.extend({},
 
       this.set('reasons', reasons)
     }
-})
+  }
+)
 
 module.exports = GradeScorecard
