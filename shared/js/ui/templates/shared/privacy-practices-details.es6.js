@@ -1,27 +1,30 @@
 const bel = require('bel')
+const statusList = require('./status-list.es6.js')
 const changeCase = require('change-case')
 
 module.exports = function (tosdr) {
-  if (tosdr && tosdr.reasons) {
-    let good = tosdr.reasons.good || []
-    let bad = tosdr.reasons.bad || []
+  if (!tosdr || !tosdr.reasons) return renderNoDetails()
 
-    if (good.length || bad.length) {
-      return bel`<ul class="status-list">
-        ${good.map(renderItem.bind(null, 'good'))}
-        ${bad.map(renderItem.bind(null, 'bad'))}
-      </ul>`
-    }
-  }
+  let good = tosdr.reasons.good || []
+  let bad = tosdr.reasons.bad || []
 
-  return renderNoDetails()
-}
+  if (!good.length && !bad.length) return renderNoDetails()
 
-function renderItem (modifier, item) {
-  return bel`<li class="status-list__item
-      status-list__item--${modifier} bold">
-    ${changeCase.upperCaseFirst(item)}
-  </li>`
+  // convert arrays to work for the statusList template,
+  // which use objects
+
+  good = good.map(item => ({
+    msg: changeCase.upperCaseFirst(item),
+    modifier: 'good'
+  }))
+
+  bad = bad.map(item => ({
+    msg: changeCase.upperCaseFirst(item),
+    modifier: 'bad'
+  }))
+
+  // list good first, then bad
+  return statusList(good.concat(bad))
 }
 
 function renderNoDetails () {

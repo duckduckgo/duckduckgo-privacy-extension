@@ -1,4 +1,5 @@
 const bel = require('bel')
+const statusList = require('./shared/status-list.es6.js')
 const siteRating = require('./shared/site-rating.es6.js')
 const siteRatingSubtitle = require('./shared/site-rating-subtitle.es6.js')
 
@@ -31,9 +32,7 @@ module.exports = function () {
 function getReasons (reasons) {
   if (!reasons || !reasons.length) return
 
-  return bel`<ul class="status-list status-list--right padded border--bottom--inner">
-    ${reasons.map(item => renderItem(item.modifier, item.msg))}
-  </ul>`
+  return statusList(reasons, 'status-list--right padded border--bottom--inner')
 }
 
 function getGrades (rating) {
@@ -44,20 +43,18 @@ function getGrades (rating) {
 
   let detailItems = []
 
-  detailItems.push(renderItem(before.toLowerCase(), 'Privacy Grade'))
+  detailItems.push({
+    msg: 'Privacy Grade',
+    modifier: before.toLowerCase()
+  })
 
   if (before !== after) {
-    detailItems.push(renderItem(after.toLowerCase(), 'Enhanced Grade', true))
+    detailItems.push({
+      msg: 'Enhanced Grade',
+      modifier: after.toLowerCase(),
+      highlight: true
+    })
   }
 
-  return bel`<ul class="status-list status-list--right padded">
-    ${detailItems}
-  </ul>`
-}
-
-function renderItem (modifier, item, highlight) {
-  return bel`<li class="status-list__item status-list__item--${modifier}
-      bold ${highlight ? 'is-highlighted' : ''}">
-    ${item}
-  </li>`
+  return statusList(detailItems, 'status-list--right padded')
 }
