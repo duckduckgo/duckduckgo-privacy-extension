@@ -11,13 +11,16 @@ function GradeScorecard (ops) {
     `change:${this.model.modelName}`,
     this._rerender
   ]])
-
-  this.setupClose()
 }
 
 GradeScorecard.prototype = window.$.extend({},
   Parent.prototype,
   {
+    _render: function (ops) {
+      Parent.prototype._render.call(this, ops)
+
+      this.setupClose()
+    }
   }
 )
 
