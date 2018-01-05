@@ -26,7 +26,7 @@ GradeScorecard.prototype = window.$.extend({},
       // a list of reasons behind the grade
 
       // encryption status
-      let httpsStatusText = this.site.httpsStatusText
+      const httpsStatusText = this.site.httpsStatusText
       if (httpsStatusText) {
         let connectionMsg = 'Unencrypted'
         let modifier = 'bad'
@@ -44,7 +44,7 @@ GradeScorecard.prototype = window.$.extend({},
 
       // tracking networks blocked,
       // only show a message if there's any blocked
-      let numTrackerNetworks = this.site.trackerNetworks.length
+      const numTrackerNetworks = this.site.trackerNetworks.length
       if (numTrackerNetworks) {
         reasons.push({
           modifier: 'bad',
@@ -54,7 +54,7 @@ GradeScorecard.prototype = window.$.extend({},
 
       // major tracking networks,
       // only show a message if it's bad
-      let isPartOfMajorTrackingNetwork = this.site.isaMajorTrackingNetwork ||
+      const isPartOfMajorTrackingNetwork = this.site.isaMajorTrackingNetwork ||
         this.site.trackerNetworks.some((tracker) =>
           window.constants.majorTrackingNetworks[tracker]
         )
@@ -67,7 +67,7 @@ GradeScorecard.prototype = window.$.extend({},
       }
 
       // privacy practices from tosdr
-      let privacyMessage = this.site.tosdr && this.site.tosdr.message
+      const privacyMessage = this.site.tosdr && this.site.tosdr.message
       if (privacyMessage && privacyMessage !== constants.tosdrMessages.unknown) {
         reasons.push({
           modifier: privacyMessage.toLowerCase(),
