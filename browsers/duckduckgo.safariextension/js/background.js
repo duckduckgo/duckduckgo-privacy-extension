@@ -33,6 +33,31 @@ var handleMessage = function (message) {
     }
 }
 
+// when the extension first installs, check for any existing tabs
+// and create a background tab so we can show the correct site in the popup
+if(!localStorage['installed']) {
+    console.log('checking for existing tabs')
+
+    safari.application.browserWindows.forEach((safariWindow) => {
+        safariWindow.tabs.forEach((safariTab) => {
+            // create a tab id and store in safari tab
+            safariTab.ddgTabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10
+
+            // make a fake request obj so we can use tabManager to handle creating and storing the tab
+            let req = {
+                url: safariTab.url,
+                target: safariTab,
+                message: {currentURL: safariTab.url},
+            }
+
+            console.log('create existing tab: ' + safariTab.url)
+
+            tabManager.create(req)
+        })
+    })
+    localStorage['installed'] = true
+}
+
 /** 
  * Before each request:
  * - Add ATB param
@@ -40,6 +65,10 @@ var handleMessage = function (message) {
  * - Upgrade http -> https per HTTPS Everywhere rules
  */
 var onBeforeRequest = function (requestData) { 
+
+    // autocomplete requests from a new tab come through with no url, we want to skip these
+    if (!requestData.target.url) return
+
     let potentialTracker = requestData.message.potentialTracker
     let currentURL = requestData.message.mainFrameURL
 
