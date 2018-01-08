@@ -43,7 +43,7 @@ Site.prototype = window.$.extend({},
                 this.set('tab', backgroundTabObj)
                 this.domain = backgroundTabObj.site.domain
                 this.fetchSiteRating()
-                this.tosdr = backgroundTabObj.site.score.tosdr
+                this.set('tosdr', backgroundTabObj.site.score.tosdr)
               }
               this.setSiteProperties()
               this.setHttpsMessage()

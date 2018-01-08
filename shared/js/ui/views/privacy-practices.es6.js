@@ -25,7 +25,9 @@ function PrivacyPractices (ops) {
 PrivacyPractices.prototype = window.$.extend({},
   ParentSlidingSubview.prototype,
   {
-    _onSiteChange: function () {
+    _onSiteChange: function (e) {
+      if (e.change.attribute !== 'tosdr') return
+
       let tosdrMsg = (this.model.tosdr && this.model.tosdr.message) || 'Unknown'
       let tosdrStatus = tosdrMsg.toLowerCase()
 
