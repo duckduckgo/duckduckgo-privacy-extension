@@ -215,6 +215,7 @@ const fetchServerUpdate = {
                     
                     let records = data.simpleUpgrade.top500 // shorthand alias
                     let counter = 0 // counter is just for logging
+                    let throttleMS = 20 // amount to wait between puts
                     let finishUpdate = function() {
                         // sync new etag to storage
                         const etag = response.getResponseHeader('etag')
@@ -247,7 +248,9 @@ const fetchServerUpdate = {
                         putNextRecord.call(this).then(() => {
                             counter++
                             //console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
-                            putRecords.call(this)
+                            window.setTimeout(() => {
+                              putRecords.call(this)
+                            }, throttleMS)
                         }, () => {
                             // on error, just skip and go to the next record
                             putRecords.call(this)
