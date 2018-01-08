@@ -6,7 +6,7 @@ module.exports = function (ops) {
       <span class="icon icon__arrow icon__arrow--large icon__arrow--left">
       </span>
     </a>
-    <div class="hero__icon hero__icon--${ops.id} hero__icon--${ops.status}">
+    <div class="hero__icon hero__icon--${ops.status}">
     </div>
     <h1 class="hero__title">
       ${ops.title}
