@@ -1,16 +1,24 @@
 const bel = require('bel')
-const overview = require('./shared/privacy-practices-overview.es6.js')
+const hero = require('./shared/hero.es6.js')
 const details = require('./shared/privacy-practices-details.es6.js')
 
 module.exports = function () {
   let domain = this.model && this.model.domain
   let tosdr = this.model && this.model.tosdr
 
+  let tosdrMsg = (tosdr && tosdr.message) || 'Unknown'
+  let tosdrStatus = tosdrMsg.toLowerCase()
+
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
     <div class="privacy-practices site-info site-info--full-height card">
-      <div class="hero privacy-practices__overview border--bottom text--center
-        js-privacy-practices-overview">
-        ${overview(domain, tosdr)}
+      <div class="border--bottom text--center
+          js-privacy-practices-hero">
+        ${hero({
+          id: 'privacy-practices',
+          status: tosdrStatus,
+          title: domain,
+          subtitle: `${tosdrMsg} Privacy Practices`
+        })}
       </div>
       <div class="privacy-practices__explainer padded border--bottom--inner
           text--center">

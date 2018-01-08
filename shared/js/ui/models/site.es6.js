@@ -45,7 +45,11 @@ Site.prototype = window.$.extend({},
                 this.domain = backgroundTabObj.site.domain
                 this.fetchSiteRating()
                 this.tosdr = backgroundTabObj.site.score.tosdr
-                this.isaMajorTrackingNetwork = backgroundTabObj.site.score.isaMajorTrackingNetwork
+                this.set('tosdr', backgroundTabObj.site.score.tosdr)
+                this.set(
+                  'isaMajorTrackingNetwork',
+                  backgroundTabObj.site.score.isaMajorTrackingNetwork
+                )
               }
               this.setSiteProperties()
               this.setHttpsMessage()
