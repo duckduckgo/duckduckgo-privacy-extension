@@ -20,7 +20,7 @@ require.scopes.settings =(() => {
 
     function init() {
         return new Promise ((resolve, reject) => {
-            buildSettingsFromDefaults();
+            buildSettingsFromDefaults()
             buildSettingsFromLocalStorage().then(() => {
                 registerListeners()
                 resolve()
@@ -95,8 +95,8 @@ require.scopes.settings =(() => {
     }
 
     function logSettings () {
-        chrome.storage.local.get(['settings'], function (s) { 
-            console.log(s.settings) 
+        chrome.storage.local.get(['settings'], function (s) {
+            console.log(s.settings)
         })
     }
 
@@ -119,7 +119,7 @@ require.scopes.settings =(() => {
         }
         return true;
     };
-    
+
 
     return {
         getSetting: getSetting,
