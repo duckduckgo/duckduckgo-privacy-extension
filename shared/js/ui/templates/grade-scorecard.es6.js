@@ -1,31 +1,33 @@
 const bel = require('bel')
 const statusList = require('./shared/status-list.es6.js')
-const siteRating = require('./shared/site-rating.es6.js')
+const hero = require('./shared/hero.es6.js')
+const siteRatingStatus = require('./shared/site-rating-status.es6.js')
 const siteRatingSubtitle = require('./shared/site-rating-subtitle.es6.js')
 
 module.exports = function () {
+  const status = siteRatingStatus(
+    this.model.site.isCalculatingSiteRating,
+    this.model.site.siteRating,
+    this.model.site.isWhitelisted
+  )
+  const subtitle = siteRatingSubtitle(
+    this.model.site.isCalculatingSiteRating,
+    this.model.site.siteRating,
+    this.model.site.isWhitelisted
+  )
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
-   <div class="site-info site-info--full-height card">
-     <div class="hero border--bottom">
-      <a href="#" class="hero__close js-sliding-subview-close">
-        <span class="icon icon__arrow icon__arrow--large icon__arrow--left">
-        </span>
-      </a>
-      ${siteRating(
-        this.model.site.isCalculatingSiteRating,
-        this.model.site.siteRating,
-        this.model.site.isWhitelisted
-      )}
-      <h1 class="hero__title">${this.model.site.domain}</h1>
-      ${siteRatingSubtitle(
-        this.model.site.isCalculatingSiteRating,
-        this.model.site.siteRating,
-        this.model.site.isWhitelisted
-      )}
+    <div class="site-info site-info--full-height card">
+      <div class="rating-hero-container">
+         ${hero({
+           status: status,
+           title: this.model.site.domain,
+           subtitle: subtitle,
+           showClose: true
+         })}
+      </div>
+      ${getReasons(this.model.reasons)}
+      ${getGrades(this.model.site.siteRating)}
     </div>
-    ${getReasons(this.model.reasons)}
-    ${getGrades(this.model.site.siteRating)}
-  </div>
   </section>`
 }
 
