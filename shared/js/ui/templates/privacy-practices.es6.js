@@ -15,7 +15,8 @@ module.exports = function () {
         ${hero({
           status: tosdrStatus,
           title: domain,
-          subtitle: `${tosdrMsg} Privacy Practices`
+          subtitle: `${tosdrMsg} Privacy Practices`,
+          showClose: true
         })}
       </div>
       <div class="privacy-practices__explainer padded border--bottom--inner
