@@ -36,8 +36,6 @@ var handleMessage = function (message) {
 // when the extension first installs, check for any existing tabs
 // and create a background tab so we can show the correct site in the popup
 if(!localStorage['installed']) {
-    console.log('checking for existing tabs')
-
     safari.application.browserWindows.forEach((safariWindow) => {
         safariWindow.tabs.forEach((safariTab) => {
             // create a tab id and store in safari tab
@@ -49,9 +47,6 @@ if(!localStorage['installed']) {
                 target: safariTab,
                 message: {currentURL: safariTab.url},
             }
-
-            console.log('create existing tab: ' + safariTab.url)
-
             tabManager.create(req)
         })
     })

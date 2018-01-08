@@ -20,7 +20,6 @@ class TabManager {
         for (let id in safari.application.activeBrowserWindow.tabs) {
             if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
                 let tabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10;
-                console.log(`CREATE TABID: ${tabId}`)
                 safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
                 return tabId
             }
@@ -126,6 +125,11 @@ safari.application.addEventListener('message', ( (request) => {
             if (!tab.site.didIncrementCompaniesData) {
                 Companies.incrementTotalPages()
                 tab.site.didIncrementCompaniesData = true
+                
+                if (tab.trackers && Object.keys(tab.trackers).length > 0) {
+                    Companies.incrementTotalPagesWithTrackers()
+                }
+
             }
 
             // stash data in safari tab to handle cached pages

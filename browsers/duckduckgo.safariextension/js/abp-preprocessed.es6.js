@@ -78,8 +78,6 @@ function updateLists () {
                 const newEtag = response.getResponseHeader('etag') || ''
                 console.log('Updating list: ', name)
 
-                if(name === 'trackersWhitelist') console.log(listData)
-
                 // sync new etag to storage
                 settings.updateSetting(constantsName + '-etag', newEtag)
                 
@@ -107,17 +105,8 @@ function updateLists () {
 // Make sure the list updater runs on start up
 settings.ready().then(() => updateLists())
 
-/*
-chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'updateLists') {
-        settings.ready().then(() => updateLists())
-    }
-})
-*/
-
-// set an alarm to recheck the lists
-// update every 3 hours
-//chrome.alarms.create('updateLists', {periodInMinutes: 180})
+// 3 hour update interval
+setInterval(updateLists, 3*60*60*1000)
 
 // add version param to url on the first install and
 // only once a day after than
