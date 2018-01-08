@@ -32,10 +32,10 @@ PrivacyPractices.prototype = window.$.extend({},
       let tosdrStatus = tosdrMsg.toLowerCase()
 
       this.$hero.html(heroTemplate({
-        id: 'privacy-practices',
         status: tosdrStatus,
         title: this.model.domain,
-        subtitle: `${tosdrMsg} Privacy Practices`
+        subtitle: `${tosdrMsg} Privacy Practices`,
+        showClose: true
       }))
       this.$details.html(detailsTemplate(this.model.tosdr))
 

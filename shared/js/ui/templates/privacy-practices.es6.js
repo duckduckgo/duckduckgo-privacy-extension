@@ -11,13 +11,12 @@ module.exports = function () {
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
     <div class="privacy-practices site-info site-info--full-height card">
-      <div class="border--bottom text--center
-          js-privacy-practices-hero">
+      <div class="js-privacy-practices-hero">
         ${hero({
-          id: 'privacy-practices',
           status: tosdrStatus,
           title: domain,
-          subtitle: `${tosdrMsg} Privacy Practices`
+          subtitle: `${tosdrMsg} Privacy Practices`,
+          showClose: true
         })}
       </div>
       <div class="privacy-practices__explainer padded border--bottom--inner
