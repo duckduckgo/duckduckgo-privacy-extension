@@ -1,12 +1,11 @@
 const bel = require('bel')
-const heroTemplate = require('./shared/hero.es6.js')
 const header = require('./shared/sliding-subview-header.es6.js')
 
 module.exports = function () {
   if (!this.model) {
     return bel`<section class="sliding-subview
     sliding-subview--has-fixed-header">
-      ${header('Grade Details')}
+      ${header('Tracker Networks')}
     </section>`
   } else {
     return bel`<div class="site-info site-info--details card card--no-top-margin">
