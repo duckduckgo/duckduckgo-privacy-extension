@@ -2,7 +2,7 @@ const bel = require('bel')
 
 module.exports = function (ops) {
   return bel`<div class="hero border--bottom text--center">
-    ${if (showClose) { renderCloseButton() }}
+    ${(ops.showClose) ? renderCloseButton() : ''}
     <div class="hero__icon hero__icon--${ops.status}">
     </div>
     <h1 class="hero__title">
