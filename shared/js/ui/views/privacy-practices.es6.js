@@ -1,5 +1,5 @@
 const ParentSlidingSubview = require('./sliding-subview.es6.js')
-const overviewTemplate = require('./../templates/shared/privacy-practices-overview.es6.js')
+const heroTemplate = require('./../templates/shared/hero.es6.js')
 const detailsTemplate = require('./../templates/shared/privacy-practices-details.es6.js')
 
 function PrivacyPractices (ops) {
@@ -10,7 +10,7 @@ function PrivacyPractices (ops) {
   ParentSlidingSubview.call(this, ops)
 
   this._cacheElems('.js-privacy-practices', [
-    'overview',
+    'hero',
     'details'
   ])
   this.bindEvents([[
@@ -26,10 +26,15 @@ PrivacyPractices.prototype = window.$.extend({},
   ParentSlidingSubview.prototype,
   {
     _onSiteChange: function () {
-      this.$overview.html(overviewTemplate(
-        this.model.domain,
-        this.model.tosdr
-      ))
+      let tosdrMsg = (this.model.tosdr && this.model.tosdr.message) || 'Unknown'
+      let tosdrStatus = tosdrMsg.toLowerCase()
+
+      this.$hero.html(heroTemplate({
+        id: 'privacy-practices',
+        status: tosdrStatus,
+        title: this.model.domain,
+        subtitle: `${tosdrMsg} Privacy Practices`
+      }))
       this.$details.html(detailsTemplate(this.model.tosdr))
 
       // the close button is contained in the overview,
