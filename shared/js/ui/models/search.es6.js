@@ -15,10 +15,8 @@ Search.prototype = window.$.extend({},
       s = encodeURIComponent(s)
 
       console.log(`doSearch() for ${s}`)
-
-      window.chrome.tabs.create({
-        url: 'https://duckduckgo.com/?q=' + s + '&bext=' + window.localStorage['os'] + 'cr'
-      })
+      safari.application.activeBrowserWindow.openTab().url = 'https://duckduckgo.com/?q=' + s + '&bext=safari'
+      safari.extension.popovers[0].hide()
     }
 
   }

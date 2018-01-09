@@ -11,6 +11,7 @@ rm-safari:
 
 mv-safari:
 	mv build/duckduckgo.safariextension/dev/* build/duckduckgo.safariextension/
+	cp browsers/duckduckgo.safariextension/Icon.png build/duckduckgo.safariextension/Icon.png
 
 npm:
 	npm install --tldjs-update-rules
