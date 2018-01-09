@@ -47,9 +47,11 @@ module.exports = function () {
     </h2>
     </li>
     <li class="site-info__li--trackers padded border--bottom">
-    ${renderTrackerNetworks(
-        this.model.trackerNetworks,
-        this.model.isWhitelisted)}
+      <a href="#" class="js-site-tracker-networks link-secondary bold">
+        ${renderTrackerNetworks(
+            this.model.trackerNetworks,
+            this.model.isWhitelisted)}
+      </a>
     </li>
     <!-- remove is-hidden to show the privacy practices section -->
     <li class="site-info__li--privacy-practices padded border--bottom is-hidden">

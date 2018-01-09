@@ -6,12 +6,12 @@ module.exports = function () {
   if (!this.model) {
     return bel`<section class="sliding-subview
     sliding-subview--has-fixed-header">
-      ${header('Tracker Networks')}
     </section>`
   } else {
-  return bel`<div class="tracker-networks site-info card">
+  return bel`<div class="tracker-networks site-info site-info--full-height card">
       <div class="js-tracker-networks-hero">
         ${hero({
+          status: 'tracker-networks',
           title: this.model.site.domain,
           subtitle: `${this.model.site.trackerNetworks.length} Tracker Networks ${trackersBlockedOrFound(this.model)}`,
           showClose: true

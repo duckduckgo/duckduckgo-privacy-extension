@@ -53,6 +53,7 @@ TrackerNetworks.prototype = window.$.extend({},
         })
       })
       this.$hero.html(heroTemplate({
+        status: 'tracker-networks',
         title: this.currentSiteModelName,
         subtitle: `this.model.count Tracker Networks Blocked`,
         showClose: true
