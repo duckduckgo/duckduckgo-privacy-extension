@@ -51,9 +51,10 @@ Site.prototype = window.$.extend({},
       this._cacheElems('.js-site', [
         'toggle',
         'show-all-trackers',
-        'privacy-practices',
-        'grade-scorecard'
+        'privacy-practices'
       ])
+
+      this.$gradescorecard = this.$('.js-hero-open')
 
       this.bindEvents([
         [this.$toggle, 'click', this._whitelistClick],

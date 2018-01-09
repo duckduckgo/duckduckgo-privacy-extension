@@ -1,35 +1,14 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
-const hero = require('./shared/hero.es6.js')
-const siteRating = require('./shared/site-rating.es6.js')
-const siteRatingStatus = require('./shared/site-rating-status.es6.js')
-const siteRatingSubtitle = require('./shared/site-rating-subtitle.es6.js')
+const ratingHero = require('./shared/rating-hero.es6.js')
 
 module.exports = function () {
-  const status = siteRatingStatus(
-    this.model.isCalculatingSiteRating,
-    this.model.siteRating,
-    this.model.isWhitelisted
-  )
-  const subtitle = siteRatingSubtitle(
-    this.model.isCalculatingSiteRating,
-    this.model.siteRating,
-    this.model.isWhitelisted
-  )
   return bel`<section class="site-info card">
     <ul class="default-list">
     <li class="site-info__rating-li">
-      <div class="rating-hero-container">
-        ${hero({
-          status: status,
-          title: this.model.domain,
-          subtitle: subtitle,
-        })}
-        <a href="#" class="site-info__rating__open js-site-grade-scorecard">
-          <span class="icon icon__arrow icon__arrow--large icon__arrow--right">
-          </span>
-        </a>
-      </div>
+      ${ratingHero(this.model, {
+        showOpen: true
+      })}
     </li>
     <li class="site-info__li--toggle padded border--bottom">
     <h2 class="site-info__protection">Site Privacy Protection</h2>
