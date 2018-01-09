@@ -22,10 +22,10 @@ $subview-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "char
         &.#{$name} {
             // trackers subview
             .is-browser--chrome & {
-                background-image: url("chrome-extension://__MSG_@@extension_id__/img/tn-g-#{$name}.svg");
+                background-image: url("chrome-extension://__MSG_@@extension_id__/img/tn-subview-#{$name}.svg");
             }
             .is-browser--moz & {
-                background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-g-#{$name}.svg");
+                background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-subview-#{$name}.svg");
             }
         }
     }
