@@ -51,12 +51,13 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
   // site grade/rating was upgraded by extension
   if (isActive && rating && rating.before && rating.after) {
     if (rating.before !== rating.after) {
-      return bel`Upgraded from
+      // wrap this in a single root span otherwise bel complains
+      return bel`<span>Upgraded from
         <span class="rating__text-only ${rating.before.toLowerCase()}">
         ${rating.before}</span> to
         <span class="rating__text-only ${rating.after.toLowerCase()}">
         ${rating.after}</span>
-      `
+      </span>`
     }
   }
 
