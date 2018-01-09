@@ -1,9 +1,7 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
 const header = require('./shared/sliding-subview-header.es6.js')
-const majorTrackingNetworks = window.constants.majorTrackingNetworks
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
-const bg = chrome.extension.getBackgroundPage()
 
 module.exports = function () {
   if (!this.model) {
@@ -14,7 +12,7 @@ module.exports = function () {
   return bel`<div class="tracker-networks site-info site-info--full-height card">
       <div class="js-tracker-networks-hero">
         ${hero({
-          status: `${trackerNetworksIcon}`,
+          status: trackerNetworksIcon(),
           title: this.model.site.domain,
           subtitle: `${this.model.site.trackerNetworks.length} Tracker Networks ${trackersBlockedOrFound(this.model)}`,
           showClose: true

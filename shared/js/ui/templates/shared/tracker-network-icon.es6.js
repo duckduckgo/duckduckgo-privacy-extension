@@ -1,12 +1,15 @@
 const bel = require('bel')
-const majorTrackingNetworks = window.constants.majorTrackingNetworks
 const bg = chrome.extension.getBackgroundPage()
 
 module.exports = function () {
-    var iconNameModifier = 'on'
-    if (!bg.isWhitelisted && bg.siteRating.before == 'D') {
+    var iconNameModifier = 'blocked',
+        site = bg.tab? bg.tab.site : undefined,
+        inaMajorTrackingNetwork = (site && site.score)? site.score.inaMajorTrackingNetwork : false
+
+    if (bg.isWhitelisted && (bg.isaMajorTrackingNetwork || inaMajorTrackingNetwork)) {
             iconNameModifier = 'warning'
     }
+    var iconName = 'major-networks-' + iconNameModifier
 
-    return bel`hero-${iconNameModifier}-major-networks`
+    return bel`${iconName}`
 }
