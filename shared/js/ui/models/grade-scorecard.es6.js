@@ -8,9 +8,10 @@ function GradeScorecard (attrs) {
   }
 
   this._updateReasons()
+  this._updateGrades()
 
   this.bindEvents([
-    [this.store.subscribe, 'site:change', this._updateReasons]
+    [this.store.subscribe, 'site:change', this._onSiteChange]
   ])
 }
 
@@ -19,7 +20,7 @@ GradeScorecard.prototype = window.$.extend({},
   {
     modelName: 'gradeScorecard',
 
-    _updateReasons: function () {
+    _updateReasons: function (e) {
       let reasons = []
 
       // grab all the data from the site to create
@@ -76,6 +77,46 @@ GradeScorecard.prototype = window.$.extend({},
       }
 
       this.set('reasons', reasons)
+    },
+
+    _updateGrades: function () {
+      const rating = this.site.siteRating
+      if (!rating || !rating.before || !rating.after) return
+
+      // transform site ratings into grades
+      // that the template can display more easily
+      const before = rating.before
+      const after = rating.after
+
+      let grades = []
+
+      grades.push({
+        msg: 'Privacy Grade',
+        modifier: before.toLowerCase()
+      })
+
+      if (before !== after) {
+        grades.push({
+          msg: 'Enhanced Grade',
+          modifier: after.toLowerCase(),
+          highlight: true
+        })
+      }
+
+      this.set('grades', grades)
+    },
+
+    _onSiteChange: function (e) {
+      // all the other stuff we use in the reasons
+      // (e.g. isaMajorTrackingNetwork, https, tosdr)
+      // doesn't change dynamically
+      if (e.change.attribute === 'trackerNetworks') {
+        this._updateReasons()
+      }
+
+      if (e.change.attribute === 'siteRating') {
+        this._updateGrades()
+      }
     }
   }
 )

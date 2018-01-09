@@ -8,7 +8,7 @@ module.exports = function () {
     <div class="site-info site-info--full-height card">
       ${ratingHero(this.model.site, { showClose: true })}
       ${reasons(this.model.reasons)}
-      ${grades(this.model.site.siteRating)}
+      ${grades(this.model.grades)}
     </div>
   </section>`
 }

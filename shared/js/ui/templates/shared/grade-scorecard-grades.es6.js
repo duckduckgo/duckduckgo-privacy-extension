@@ -1,25 +1,7 @@
 const statusList = require('./status-list.es6.js')
 
-module.exports = function (rating) {
-  const before = rating.before
-  const after = rating.after
+module.exports = function (grades) {
+  if (!grades || !grades.length) return
 
-  if (!before || !after) return
-
-  let detailItems = []
-
-  detailItems.push({
-    msg: 'Privacy Grade',
-    modifier: before.toLowerCase()
-  })
-
-  if (before !== after) {
-    detailItems.push({
-      msg: 'Enhanced Grade',
-      modifier: after.toLowerCase(),
-      highlight: true
-    })
-  }
-
-  return statusList(detailItems, 'status-list--right padded js-grade-scorecard-grades')
+  return statusList(grades, 'status-list--right padded js-grade-scorecard-grades')
 }
