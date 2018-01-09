@@ -37,7 +37,7 @@ require.scopes.trackers = (function() {
         if (settings.getSetting('embeddedTweetsEnabled') === false) {
             if (/platform.twitter.com/.test(urlToCheck)) {
                 console.log('blocking tweet embedded code on ' + urlToCheck)
-                return {parentCompany: 'twitter', url: 'platform.twitter.com', type: 'Analytics'}
+                return {parentCompany: 'Twitter', url: 'platform.twitter.com', type: 'Analytics'}
             }
         }
 
