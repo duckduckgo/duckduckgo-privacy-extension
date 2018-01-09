@@ -58,7 +58,15 @@ class IndexedDBClient {
             return console.warn('IndexedDBClient: this.db does not exist')
         }
         const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
-        _store.put(record)
+
+        return new Promise((resolve, reject) => {
+            let request = _store.put(record)
+            request.onsuccess = (event) => resolve()
+            request.onerror = (event) => {
+                console.warn(`IndexedDBClient: put() record: ${record}. Error: {event}`)
+                reject()
+            }
+        })
     }
 
     update (objectStore, record) {
@@ -193,20 +201,32 @@ const fetchServerUpdate = {
 'https': { // object store
     '1': function () { // db version
         return new Promise((resolve) => {
+            console.log("IndexedDBClient: Requesting https list from server");
+
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
                 (data, response) => {
-
                     if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
                         console.warn('IndexedDBClient: invalid server response')
                         return
                     }
-                    console.log('Updating list: https everywhere')
 
-                    // Insert each record into db
-                    let counter = 1;
-                    data.simpleUpgrade.top500.forEach((host, index) => {
+                    console.log("IndexedDBClient: Received https list from server, inserting into db.")
+                    
+                    let records = data.simpleUpgrade.top500 // shorthand alias
+                    let counter = 0 // counter is just for logging
+                    let throttleMS = 20 // amount to wait between puts
+                    let finishUpdate = function() {
+                        // sync new etag to storage
+                        const etag = response.getResponseHeader('etag')
+                        if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
+                        console.log("IndexedDBClient: Finished updating https list");
+                        resolve()
+                    }
 
+                    // function we'll call recursively to add each record
+                    let putNextRecord = function() {
+                        let host = records.shift()
                         let record = {
                             host: host,
                             simpleUpgrade: true,
@@ -214,20 +234,30 @@ const fetchServerUpdate = {
                             lastUpdated: new Date().toString()
                         }
 
-                        this.put('https', record)
-                        // console.log(`IndexedDB: Added record to object store https. Record count: ${counter}`)
-                        counter++;
+                        return this.put('https', record)
+                    }
 
-                        // After we've added last record to db
-                        if (index === (data.simpleUpgrade.top500.length - 1)) {
-                            console.log(`IndexedDBClient: ${data.simpleUpgrade.top500.length} records added to https object store`)
-                            // sync new etag to storage
-                            const etag = response.getResponseHeader('etag')
-                            if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
-                            resolve()
+                    // recursively call putNextRecord asynchronously, until
+                    // all of the records from the response have been inserted.
+                    // - any errors are just skipped, not retried
+                    let putRecords = function() {
+                        if (!records.length) {
+                            return finishUpdate.call(this)
                         }
-                    })
 
+                        putNextRecord.call(this).then(() => {
+                            counter++
+                            //console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
+                            window.setTimeout(() => {
+                              putRecords.call(this)
+                            }, throttleMS)
+                        }, () => {
+                            // on error, just skip and go to the next record
+                            putRecords.call(this)
+                        })
+                    }
+
+                    putRecords.call(this)
                 }
             )
         })
