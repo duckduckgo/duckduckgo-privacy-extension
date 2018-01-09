@@ -19,6 +19,10 @@ settings.ready().then(() => {
         tosdr = data
         tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
         tosdrListLoaded = true
+
+        // need to wait for this list to be loaded before checking for saved tabs
+        onInstalled()
+
     })
 })
 

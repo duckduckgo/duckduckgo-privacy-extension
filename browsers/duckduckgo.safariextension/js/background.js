@@ -35,22 +35,24 @@ var handleMessage = function (message) {
 
 // when the extension first installs, check for any existing tabs
 // and create a background tab so we can show the correct site in the popup
-if(!localStorage['installed']) {
-    safari.application.browserWindows.forEach((safariWindow) => {
-        safariWindow.tabs.forEach((safariTab) => {
-            // create a tab id and store in safari tab
-            safariTab.ddgTabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10
+function onInstalled () {
+    if(!localStorage['installed']) {
+        safari.application.browserWindows.forEach((safariWindow) => {
+            safariWindow.tabs.forEach((safariTab) => {
+                // create a tab id and store in safari tab
+                safariTab.ddgTabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10
 
-            // make a fake request obj so we can use tabManager to handle creating and storing the tab
-            let req = {
-                url: safariTab.url,
-                target: safariTab,
-                message: {currentURL: safariTab.url},
-            }
-            tabManager.create(req)
+                // make a fake request obj so we can use tabManager to handle creating and storing the tab
+                let req = {
+                    url: safariTab.url,
+                    target: safariTab,
+                    message: {currentURL: safariTab.url},
+                }
+                tabManager.create(req)
+            })
         })
-    })
-    localStorage['installed'] = true
+        localStorage['installed'] = true
+    }
 }
 
 /** 
