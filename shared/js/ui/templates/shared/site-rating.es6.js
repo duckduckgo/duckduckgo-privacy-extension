@@ -18,7 +18,7 @@ module.exports = function (isCalculating, rating, isWhitelisted) {
     }
   }
 
-  return bel`<div class="hero__icon
+  return bel`<div class="hero__icon site-info__rating
     site-info__rating--${_rating}
     ${isActive}
     js-rating"></div>`
