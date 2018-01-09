@@ -16,7 +16,6 @@ function TrackerNetworks (ops) {
     'details'
   ])
 
-  this.setupClose()
   this.renderAsyncContent()
 }
 
@@ -50,6 +49,7 @@ TrackerNetworks.prototype = window.$.extend({},
           let content = this.template()
           this.$el.append(content)
           this.setup()
+          this.setupClose()
         })
       })
       this.$hero.html(heroTemplate({
