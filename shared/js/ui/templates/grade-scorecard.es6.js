@@ -7,8 +7,8 @@ module.exports = function () {
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
     <div class="site-info site-info--full-height card">
       ${ratingHero(this.model.site, { showClose: true })}
-      ${reasons(this.model.reasons)}
-      ${grades(this.model.grades)}
+      ${reasons(this.model.getReasons())}
+      ${grades(this.model.getGrades())}
     </div>
   </section>`
 }

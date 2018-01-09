@@ -13,8 +13,8 @@ function GradeScorecard (ops) {
 
   this.bindEvents([[
     this.store.subscribe,
-    `change:${this.model.modelName}`,
-    this._onScoreCardChange
+    `change:site`,
+    this._onSiteChange
   ]])
 
   this.setupClose()
@@ -40,23 +40,26 @@ GradeScorecard.prototype = window.$.extend({},
 
     _rerenderGrades: function () {
       this.$grades.replaceWith(gradesTemplate(
-        this.model.grades
+        this.model.getGrades()
       ))
     },
 
     _rerenderReasons: function () {
-      this.$grades.replaceWith(reasonsTemplate(
-        this.model.reasons
+      this.$reasons.replaceWith(reasonsTemplate(
+        this.model.getReasons()
       ))
     },
 
-    _onScoreCardChange: function (e) {
-      if (e.change.attribute === 'grades') {
+    _onSiteChange: function (e) {
+      if (e.change.attribute === 'siteRating') {
         this._rerenderHero()
         this._rerenderGrades()
       }
 
-      if (e.change.attribute === 'ratings') {
+      // all the other stuff we use in the reasons
+      // (e.g. isaMajorTrackingNetwork, https, tosdr)
+      // doesn't change dynamically
+      if (e.change.attribute === 'trackerNetworks') {
         this._rerenderReasons()
       }
 

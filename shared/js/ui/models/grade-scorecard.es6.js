@@ -6,13 +6,6 @@ function GradeScorecard (attrs) {
   if (!this.site) {
     throw new Error('The GradeScorecard model needs a Site model to be passed in')
   }
-
-  this._updateReasons()
-  this._updateGrades()
-
-  this.bindEvents([
-    [this.store.subscribe, 'site:change', this._onSiteChange]
-  ])
 }
 
 GradeScorecard.prototype = window.$.extend({},
@@ -20,7 +13,7 @@ GradeScorecard.prototype = window.$.extend({},
   {
     modelName: 'gradeScorecard',
 
-    _updateReasons: function (e) {
+    getReasons: function () {
       let reasons = []
 
       // grab all the data from the site to create
@@ -76,10 +69,10 @@ GradeScorecard.prototype = window.$.extend({},
         })
       }
 
-      this.set('reasons', reasons)
+      return reasons
     },
 
-    _updateGrades: function () {
+    getGrades: function () {
       const rating = this.site.siteRating
       if (!rating || !rating.before || !rating.after) return
 
@@ -103,20 +96,7 @@ GradeScorecard.prototype = window.$.extend({},
         })
       }
 
-      this.set('grades', grades)
-    },
-
-    _onSiteChange: function (e) {
-      // all the other stuff we use in the reasons
-      // (e.g. isaMajorTrackingNetwork, https, tosdr)
-      // doesn't change dynamically
-      if (e.change.attribute === 'trackerNetworks') {
-        this._updateReasons()
-      }
-
-      if (e.change.attribute === 'siteRating') {
-        this._updateGrades()
-      }
+      return grades
     }
   }
 )
