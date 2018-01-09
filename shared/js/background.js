@@ -15,23 +15,23 @@
  */
 
 
-var debugRequest = false;
-var trackers = require('trackers');
-var utils = require('utils');
-var settings = require('settings');
-var stats = require('stats');
+var debugRequest = false
+var trackers = require('trackers')
+var utils = require('utils')
+var settings = require('settings')
+var stats = require('stats')
 var db = require('db')
 var https = require('https')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox
-var browser = "chrome";
+var browser = 'chrome'
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === "Firefox") browser = "moz";
-    });
-} catch (e) {};
+        if (info.name === 'Firefox') browser = 'moz'
+    })
+} catch (e) {}
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
@@ -208,9 +208,8 @@ chrome.webRequest.onBeforeRequest.addListener(
 
          if (!thisTab.site) return
 
-         /**
-          * Skip https upgrade on broken sites
-          */
+
+        // Skip https upgrade on broken sites
         if (thisTab.site.isBroken) {
             console.log('temporarily skip https upgrades for site: '
                   + utils.extractHostFromURL(thisTab.url) + '\n'
@@ -224,11 +223,28 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
-        // Fetch upgrade rule from db
-        return new Promise ((resolve) => {
-            const isMainFrame = requestData.type === 'main_frame' ? true : false
+        // Make sure https module is ready, check synchronous .isReady property
+        // since we aren't sure if we're in Chrome or Firefox at this point
+        if (!https.isReady) return
 
-            if (https.isReady) {
+        // Is this request from the tab's main frame?
+        const isMainFrame = requestData.type === 'main_frame' ? true : false
+
+        // Fetch upgrade rule from db (synchronous -- Chrome only)
+        if (utils.isChromeBrowser()) {
+            const url = https.pipeRequestUrl(requestData.url, thisTab, isMainFrame)
+            if (url.toLowerCase() !== requestData.url.toLowerCase()) {
+                console.log('HTTPS: upgrade request url to ' + url)
+                if (isMainFrame) thisTab.upgradedHttps = true
+                thisTab.addHttpsUpgradeRequest(url)
+                return {redirectUrl: url}
+            } else {
+              return
+            }
+
+        // Fetch upgrade rule from db (asynchronous -- Firefox/Mozilla)
+        } else {
+            return new Promise ((resolve) => {
                 https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
                     (url) => {
                         if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -240,26 +256,24 @@ chrome.webRequest.onBeforeRequest.addListener(
                         resolve()
                     }
                 )
-            } else {
-              resolve()
-            }
-        })
+            })
+        }
     },
     {
         urls: [
-            "<all_urls>",
+            '<all_urls>',
         ],
         types: constants.requestListenerTypes
     },
-    ["blocking"]
+    ['blocking']
 );
 
 chrome.webRequest.onHeadersReceived.addListener(
         ATB.updateSetAtb,
     {
         urls: [
-            "*://duckduckgo.com/?*",
-            "*://*.duckduckgo.com/?*"
+            '*://duckduckgo.com/?*',
+            '*://*.duckduckgo.com/?*'
         ]
     }
 );

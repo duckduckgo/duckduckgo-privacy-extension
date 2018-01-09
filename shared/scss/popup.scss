@@ -475,27 +475,18 @@ body {
                             padding-top: 7.5px;
                         }
                         
-                        .site-info__tracker__wrapper {
+                        .site-info__tracker__icon {
+                            @include icon_display();
+                            @include tracker_network_icons_subview();
+                            
                             width: 22px;
                             height: 22px;
                             margin-top: -6px;
                             margin-left: -4px;
                             margin-bottom: 8px;
-                            border-radius: 100px;
-                            @include tracker_network_icons_bg();
-                        }
-
-                        .site-info__tracker__icon {
-                            @include icon_display();
-                            width: 14px;
-                            height: 14px;
                             overflow: hidden;
                             line-height: 100px;
-
-                            @include tracker_network_icons();
                             background-size:contain;
-                            margin: 4px;
-                            background-position: center;
                         }
 
                         &:last-child {
