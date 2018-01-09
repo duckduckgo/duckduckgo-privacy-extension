@@ -104,12 +104,16 @@ class HTTPS {
                 })
 
             // For Safari
-            } else {
+            } else if (window.localStorage) {
                 console.log("HTTPS: getFromStorage() using localStorage (Safari)")
+
+                if (!window.localStorage || !localStorage['https-upgrade-list0']) {
+                    return reject()
+                }
 
                 let data = ''
                 for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
-                    data += localStorage['https-upgrade-' + i]
+                    data += localStorage['https-upgrade-list' + i]
                 }
 
                 try {
@@ -119,6 +123,8 @@ class HTTPS {
                     console.log("HTTPS: getFromStorage() error parsing JSON from localStorage", e)
                     reject()
                 }
+            } else {
+                reject()
             }
         })
     }
@@ -131,14 +137,14 @@ class HTTPS {
             chrome.storage.local.set({ 'https-upgrade-list': data })
 
         // For Safari:
-        } else {
+        } else if (window.localStorage) {
             console.log("HTTPS: saveToStorage() using localStorage (Safari)")
 
             // Need to chunk it for safari or else
             // it throws a quota exceeded error
             let chunkSize = Math.floor(data.length / LOCAL_STORAGE_CHUNKS)
             for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
-                localStorage['https-upgrade-' + i] = data.substr(i*chunkSize, chunkSize)
+                localStorage['https-upgrade-list' + i] = data.substr(i*chunkSize, chunkSize)
             }
         }
     }
