@@ -88,7 +88,7 @@ GradeScorecard.prototype = window.$.extend({},
         modifier: before.toLowerCase()
       })
 
-      if (before !== after) {
+      if (before !== after && !this.site.isWhitelisted) {
         grades.push({
           msg: 'Enhanced Grade',
           modifier: after.toLowerCase(),
