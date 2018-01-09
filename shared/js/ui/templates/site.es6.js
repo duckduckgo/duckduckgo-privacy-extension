@@ -7,7 +7,7 @@ module.exports = function () {
     <ul class="default-list">
     <li class="site-info__rating-li">
       ${ratingHero(this.model, {
-        showOpen: true
+        showOpen: !this.model.disabled
       })}
     </li>
     <li class="site-info__li--toggle padded border--bottom">
