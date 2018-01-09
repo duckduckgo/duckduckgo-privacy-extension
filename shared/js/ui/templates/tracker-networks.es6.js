@@ -43,7 +43,7 @@ function trackersBlockedOrFound (model) {
   } else {
     msg = 'Blocked'
   }
-  return bel`<h3 class="padded">${msg}</h3>`
+  return bel`${msg}`
 }
 
 function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
