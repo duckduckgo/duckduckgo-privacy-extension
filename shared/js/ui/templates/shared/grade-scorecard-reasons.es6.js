@@ -1,4 +1,3 @@
-const bel = require('bel')
 const statusList = require('./status-list.es6.js')
 
 module.exports = function (reasons) {
