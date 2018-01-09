@@ -9,7 +9,7 @@ let constants = {
     "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
     "httpsUpgradeList": "data/httpsUpgradeList.json",
-    "httpsUpgradeListUrl": "https://brian.duckduckgo.com/contentblocking.js?l=https-200k",
+    "httpsUpgradeListUrl": "https://brian.duckduckgo.com/contentblocking.js?l=https2",
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",

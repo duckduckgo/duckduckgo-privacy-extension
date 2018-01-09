@@ -3,6 +3,10 @@ const load = require('load')
 const settings = require('settings')
 const utils = require('utils')
 
+// number of chunks to split up the data
+// when storing to Safari to avoid over quota issues:
+const LOCAL_STORAGE_CHUNKS = 5
+
 let httpsUpgradeList = []
 
 class HTTPS {
@@ -22,32 +26,23 @@ class HTTPS {
 
         return new Promise((resolve) => {
             // Try to load the list from local storage
-            chrome.storage.local.get('https-upgrade-list', (results) => {
+            this.getFromStorage().then((items) => {
+
                 // if items were found in local storage,
-                // use those:
-                if (results && results['https-upgrade-list']) {
-                    try {
-                        httpsUpgradeList = JSON.parse(results['https-upgrade-list'])
+                console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
+                httpsUpgradeList = items
+                return resolve()
 
-                        console.log("HTTPS: init() using upgrade list from local storage")
-                        console.log("HTTPS: init() " + httpsUpgradeList.simpleUpgrade.top500.length + " rules loaded")
+            }, () => {
 
-                        return resolve()
-                    } catch(e) {
-                        console.log("HTTPS: init() error parsing JSON from local storage")
-                    }
-                }
+                // if it fails to find anything in local storage,
+                // load from the json file packaged with the extension
+                console.log("HTTPS: init() nothing found in storage, loading from local file")
 
-                console.log("HTTPS: init() no upgrade list in local storage, loading from local file")
-
-                // fallback to loading smaller list packaged
-                // with the extension so we at least have something:
                 settings.ready().then(() => {
-                    load.JSONfromLocalFile(constants.httpsUpgradeList, (l) => {
-                        console.log("HTTPS: init() loaded upgrade list from local file")
-                        console.log("HTTPS: init() " + l.simpleUpgrade.top500.length + " rules loaded")
-
-                        httpsUpgradeList = l
+                    load.JSONfromLocalFile(constants.httpsUpgradeList, (items) => {
+                        console.log("HTTPS: init() loaded upgrade list from local file with " + items.length + " items")
+                        httpsUpgradeList = items
                         return resolve()
                     })
                 })
@@ -56,7 +51,7 @@ class HTTPS {
     }
 
     updateList() {
-        console.log("HTTPS: updateList()")
+        console.log("HTTPS: updateList() check if new list exists")
 
         let etag = settings.getSetting('https-etag') || ''
         
@@ -65,26 +60,87 @@ class HTTPS {
             source: 'external',
             etag: etag
         }, (data, res) => {
+            // this only gets called if the etag is different
+            // and it was able to get a new list
             console.log("HTTPS: updateList() got updated list from server")
 
             let newEtag = res.getResponseHeader('etag') || ''
 
             try {
-                // update blacklist in memory
+                // update list in memory
                 httpsUpgradeList = JSON.parse(data)
-
-                console.log("HTTPS: updateList() valid server response, swapping it in and saving to local storage")
-                console.log("HTTPS: updateList() " + httpsUpgradeList.simpleUpgrade.top500.length + " rules loaded")
+                console.log("HTTPS: updateList() new list has " + httpsUpgradeList.length + " items")
                 
-                // save blacklist locally
-                chrome.storage.local.set({ 'https-upgrade-list': data })
+                this.saveToStorage(data)
 
                 // save new etag for next time
                 settings.updateSetting('https-etag', newEtag)
+                console.log("HTTPS: updateList() updated https-etag to " + newEtag)
+
             } catch(e) {
                 console.log("HTTPS: updateList() error parsing server response")
             }
         })
+    }
+
+    getFromStorage (fn) {
+        return new Promise((resolve, reject) => {
+            // For Chrome/Firefox:
+            if (window.chrome) {
+                console.log("HTTPS: getFromStorage() using chrome.storage.local (Chrome/FF)")
+
+                chrome.storage.local.get('https-upgrade-list', (results) => {
+                    if (!results || !results['https-upgrade-list']) {
+                        return reject()
+                    }
+
+                    try {
+                        let parsedList = JSON.parse(results['https-upgrade-list'])
+                        resolve(parsedList)
+                    } catch(e) {
+                        console.log("HTTPS: getFromStorage() error parsing JSON from chrome.storage.local", e)
+                        reject()
+                    }
+                })
+
+            // For Safari
+            } else {
+                console.log("HTTPS: getFromStorage() using localStorage (Safari)")
+
+                let data = ''
+                for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
+                    data += localStorage['https-upgrade-' + i]
+                }
+
+                try {
+                    let parsedList = JSON.parse(data)
+                    resolve(parsedList)
+                } catch(e) {
+                    console.log("HTTPS: getFromStorage() error parsing JSON from localStorage", e)
+                    reject()
+                }
+            }
+        })
+    }
+
+    saveToStorage (data) {
+        // For Chrome/FF:
+        if (window.chrome) {
+            console.log("HTTPS: saveToStorage() using chrome.storage.local (Chrome/FF)")
+
+            chrome.storage.local.set({ 'https-upgrade-list': data })
+
+        // For Safari:
+        } else {
+            console.log("HTTPS: saveToStorage() using localStorage (Safari)")
+
+            // Need to chunk it for safari or else
+            // it throws a quota exceeded error
+            let chunkSize = Math.floor(data.length / LOCAL_STORAGE_CHUNKS)
+            for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
+                localStorage['https-upgrade-' + i] = data.substr(i*chunkSize, chunkSize)
+            }
+        }
     }
 
     getUpgradeList () {
@@ -129,7 +185,7 @@ class HTTPS {
 
         // Check for upgrades
         for (let i=0; i<hosts.length; i++) {
-            if (httpsUpgradeList.simpleUpgrade.top500.indexOf(hosts[i]) > -1) {
+            if (httpsUpgradeList.indexOf(hosts[i]) > -1) {
                 return reqUrl.replace(/^(http|https):\/\//i, 'https://')
             }
         }
