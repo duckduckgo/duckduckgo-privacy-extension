@@ -1,4 +1,5 @@
 const bel = require('bel')
+const hero = require('./shared/hero.es6.js')
 const header = require('./shared/sliding-subview-header.es6.js')
 
 module.exports = function () {
@@ -8,15 +9,28 @@ module.exports = function () {
       ${header('Tracker Networks')}
     </section>`
   } else {
-    return bel`<div class="site-info site-info--details card card--no-top-margin">
-      <h1 class="site-info__domain">${this.model.site.domain}</h1>
-      ${trackersBlockedOrFound(this.model)}
+  return bel`<div class="tracker-networks site-info card">
+      <div class="js-tracker-networks-hero">
+        ${hero({
+          title: this.model.site.domain,
+          subtitle: `${this.model.site.trackerNetworks.length} Tracker Networks ${trackersBlockedOrFound(this.model)}`,
+          showClose: true
+        })}
+      </div>
+      <div class="tracker-networks__explainer padded border--bottom--inner
+          text--center">
+          Tracker networks aggregate your web history into a data profile about you. 
+          Major tracker networks are more harmful because they can track and target you across more of the internet.
+      </div>
+      <div class="tracker-networks__details padded border--bottom--inner
+          js-tracker-networks-details">
       <ol class="default-list site-info__trackers__company-list">
         ${renderTrackerDetails(
           this.model.companyListMap,
           this.model.DOMAIN_MAPPINGS
         )}
       </ol>
+     </div>
     </div>`
   }
 }
@@ -25,9 +39,9 @@ function trackersBlockedOrFound (model) {
   let msg = ''
   if (model.site &&
      (model.site.isWhitelisted || model.site.trackerNetworks.length === 0)) {
-    msg = 'Trackers found'
+    msg = 'Found'
   } else {
-    msg = 'Trackers blocked'
+    msg = 'Blocked'
   }
   return bel`<h3 class="padded">${msg}</h3>`
 }
@@ -45,7 +59,7 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
             ${c.name.toLowerCase()}">
           </span>
         </div>
-        <span class="block">${c.name}</span>
+        <h1 class="site-info__domain block">${c.name}</h1>
         <ol class="default-list site-info__trackers__company-list__url-list">
           ${c.urls.map((url) => {
             let category = ''
