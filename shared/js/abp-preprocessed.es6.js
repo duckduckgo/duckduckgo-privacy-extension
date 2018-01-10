@@ -102,42 +102,7 @@ function updateLists () {
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
 
-    let trackersSurrogateListEtag = settings.getSetting('trackersSurrogateList-etag') || ''
-    // reset etag to get a new list copy if we don't have data
-    if (!trackersSurrogateList || !trackersSurrogateListEtag) trackersSurrogateListEtag = ''
-    // load surrogates list
-    load.loadExtensionFile({url: constants.trackersSurrogateList, etag: trackersSurrogateListEtag, source: 'external'}, (listData, response) => {
-        const newTrackersSurrogateListEtag = response.getResponseHeader('etag') || ''
-        const clientChecksum = crypto.createHash('md5').update(listData).digest('base64')
-
-        settings.updateSetting('trackersSurrogateList-etag', newTrackersSurrogateListEtag);
-
-        //  check that etag hash matches hash of file received
-        if (!clientChecksum || clientChecksum.substring(0,6) !== newTrackersSurrogateListEtag) {
-            console.log("Checksum didn't match")
-        } else {
-            // split response using ** delimiter and remove first element
-            // since it's a comment
-            trackersSurrogateList = listData.trim().split('\n\n')
-
-            for (let surrogate of trackersSurrogateList) {
-                // remove comment lines
-                let lines = surrogate.split('\n').filter((line) => {
-                    return !(/^#.*/).test(line)
-                })
-                console.log('lines', lines)
-                // remove first line, store it
-                let firstLine = lines.shift()
-                // take identifier from first line
-                let pattern = firstLine.split(' ')[0]
-                // convert to base 64 string
-                let b64surrogate = btoa(lines.join('\n'))
-
-                surrogateList[pattern] = b64surrogate
-            }
-        }
-
-    })
+    fetchSurrogateCode()
 }
 
 // Make sure the list updater runs on start up
@@ -179,5 +144,40 @@ function getVersionParam () {
     return versionParam
 }
 
-function parseSurrogateCode (textToParse) {
+function fetchSurrogateCode () {
+    let trackersSurrogateListEtag = settings.getSetting('trackersSurrogateList-etag') || ''
+	// reset etag to get a new list copy if we don't have data
+	if (!trackersSurrogateList || !trackersSurrogateListEtag) trackersSurrogateListEtag = ''
+	// load surrogates list
+	load.loadExtensionFile({url: constants.trackersSurrogateList, etag: trackersSurrogateListEtag, source: 'external'}, (listData, response) => {
+	    const newTrackersSurrogateListEtag = response.getResponseHeader('etag') || ''
+	    const clientChecksum = crypto.createHash('md5').update(listData).digest('base64')
+
+	    settings.updateSetting('trackersSurrogateList-etag', newTrackersSurrogateListEtag);
+
+	    //  check that etag hash matches hash of file received
+	    if (!clientChecksum || clientChecksum.substring(0,6) !== newTrackersSurrogateListEtag) {
+	        console.log("Checksum didn't match")
+	    } else {
+	        trackersSurrogateList = listData.trim().split('\n\n')
+
+	        for (let surrogate of trackersSurrogateList) {
+	            // remove comment lines that begin with #
+	            let lines = surrogate.split('\n').filter((line) => {
+	                return !(/^#.*/).test(line)
+	            })
+	            // remove first line, store it
+	            let firstLine = lines.shift()
+	            // take identifier from first line
+	            let pattern = firstLine.split(' ')[0]
+	            // create regular expression for it
+	            let regex = new RegExp(pattern.replace(/\//g,'\\/').replace(/\./g,'\\.').concat('$'),'g')
+
+	            // convert to base 64 string
+        	    let b64surrogate = btoa(lines.join('\n'))
+
+    	        surrogateList[pattern] = {regex: regex, snippet: b64surrogate}
+	        }
+    	}
+	})
 }
