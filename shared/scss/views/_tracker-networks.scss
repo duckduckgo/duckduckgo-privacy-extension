@@ -19,6 +19,20 @@
     li {
         padding-top: 0;
     }
+
+    .site-info__tracker__icon {
+        @include icon_display();
+        @include tracker_network_icons_subview();
+        
+        width: 22px;
+        height: 22px;
+        margin-top: -6px;
+        margin-left: -4px;
+        margin-bottom: 8px;
+        overflow: hidden;
+        line-height: 100px;
+        background-size:contain;
+    }
 }
 
 .tracker-networks h1.site-info__domain {
@@ -27,3 +41,4 @@
     line-height: 1.38;
     letter-spacing: -0.2px;
 }
+
