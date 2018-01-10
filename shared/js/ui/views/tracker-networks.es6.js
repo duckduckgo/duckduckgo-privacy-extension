@@ -2,6 +2,7 @@ const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const heroTemplate = require('./../templates/shared/hero.es6.js')
 const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
+const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 
 function TrackerNetworks (ops) {
   // model data is async
@@ -28,7 +29,7 @@ TrackerNetworks.prototype = window.$.extend({},
       this.bindEvents([[
         this.store.subscribe,
         `change:${this.currentSiteModelName}`,
-        this.renderSiteRating
+        this._renderTemplate
       ]])
     },
 
@@ -52,13 +53,21 @@ TrackerNetworks.prototype = window.$.extend({},
           this.setupClose()
         })
       })
+      this._renderTemplate()
+    },
+
+    _renderTemplate: function() {
       this.$hero.html(heroTemplate({
-        status: 'tracker-networks',
+                status: 'tracker-networks',
         title: this.currentSiteModelName,
         subtitle: `this.model.count Tracker Networks Blocked`,
         showClose: true
       }))
     },
+
+    _rerender: function() {
+        this._renderTemplate()
+    }
   }
 )
 
