@@ -13,7 +13,7 @@ let constants = {
     "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
-    "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https"
+    "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https",
     /**
      * Major tracking networks data:
      * percent of the top 1 million sites a tracking network has been seen on.
