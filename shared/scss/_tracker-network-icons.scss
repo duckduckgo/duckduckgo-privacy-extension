@@ -1,5 +1,6 @@
 /* Tracker Network Icons */
-$icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", "comscore", "criteo", "facebook", "fox", "generic", "google", "mixpanel", "moat", "newrelic", "nielsen", "openx", "outbrain", "quantcast", "salesforce", "taboola", "twitter", "yahoo", "yandex");
+$icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "chartbeat", "comscore", "facebook", "fox", "generic", "google", "mixpanel", "moat", "nielsen", "outbrain", "quantcast", "taboola", "twitter", "yahoo", "yandex");
+$subview-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", "comscore", "criteo", "facebook", "fox", "google", "mixpanel", "moat", "newrelic", "nielsen", "openx", "outbrain", "quantcast", "salesforce", "taboola", "twitter", "yahoo", "yandex");
 
 @mixin tracker_network_icons () {
 
@@ -15,13 +16,16 @@ $icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "chartbeat", 
     }
 }
 
-@mixin tracker_network_icons_bg () {
+@mixin tracker_network_icons_subview () {
     
-    @each $name in $icons {
+    @each $name in $subview-icons {
         &.#{$name} {
             // trackers subview
-            &.site-info__tracker__wrapper {
-                background-color: $color--light-grey;
+            .is-browser--chrome & {
+                background-image: url("chrome-extension://__MSG_@@extension_id__/img/tn-subview-#{$name}.svg");
+            }
+            .is-browser--moz & {
+                background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-subview-#{$name}.svg");
             }
         }
     }

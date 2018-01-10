@@ -1,6 +1,7 @@
 (function () {
 const db = require('db')
 const settings = require('settings')
+const utils = require('utils')
 let knownMixedContentList
 
 settings.ready().then(() => {
@@ -10,43 +11,75 @@ settings.ready().then(() => {
 class HTTPS {
 
     constructor () {
-        this.isReady = false
         this.db = null
         this.dbObjectStore = 'https'
-        db.ready().then(() => {
-          this.isReady = true
-          this.db = db
-        })
+
+        // if this.isSync: load Chrome-only synchronous rules object into memory
+        this.isSync = utils.isChromeBrowser() ? true : false
+        this.syncRuleCache = {}
+
+        this.isReady = false
+        this._ready = this.init().then(() => this.isReady = true)
 
         return this
     }
 
-    pipeRequestUrl (reqUrl, tab, isMainFrame) {
+    init () {
         return new Promise((resolve) => {
+            db.ready().then(() => {
+                this.db = db
+
+                if (this.isSync) {
+                    this.initSync().then(() => resolve())
+                } else {
+                    resolve()
+                }
+            })
+        })
+    }
+
+    initSync () {
+        return new Promise((resolve) => {
+            this.db.logAllRecords(this.dbObjectStore, this.syncRuleCache)
+            resolve()
+        })
+    }
+
+    ready () {
+        return this._ready
+    }
+
+    pipeRequestUrl (reqUrl, tab, isMainFrame) {
+
+        function checkDb (resolve) {
             if (!this.isReady) {
                 console.warn('HTTPS: .pipeRequestUrl() this.db is not ready')
-                return resolve(reqUrl)
+                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
             }
 
             // Only deal with http calls
             const protocol = utils.getProtocol(reqUrl).toLowerCase()
-            if (!protocol.indexOf('http:') === 0) return resolve(reqUrl)
+            if (!protocol.indexOf('http:') === 0) {
+                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
+            }
 
             // Obey global settings (options page)
-            if (!settings.getSetting('httpsEverywhereEnabled')) return resolve(reqUrl)
+            if (!settings.getSetting('httpsEverywhereEnabled')) {
+                if (this.isSync) { return reqUrl } else { resolve(reqUrl) }
+            }
 
             // Skip upgrading sites that have been whitelisted by user
             // via on/off toggle in popup
             if (tab.site.whitelisted) {
                 console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.`)
-                return resolve(reqUrl)
+                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
             }
 
             // Skip upgrading sites that have been 'HTTPSwhitelisted'
             // bc they contain mixed https content when forced to upgrade
             if (tab.site.HTTPSwhitelisted) {
                 console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)
-                return resolve(reqUrl)
+                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
             }
 
             // If `isMainFrame` request and host has known mixed content,
@@ -54,7 +87,7 @@ class HTTPS {
             if (isMainFrame) {
                 if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
                     console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)
-                    return resolve(reqUrl)
+                    if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
                 }
             }
 
@@ -69,33 +102,63 @@ class HTTPS {
                 loop.push(wildcard)
             }
 
-            // Check db
+            // Check db for simple upgrades
             let isResolved = false
+            let syncUrlResolution = reqUrl // Only used for sync version!
             loop.forEach((r, i) => {
                 if (isResolved) return
-                this.db
-                    .get(this.dbObjectStore, r.toLowerCase())
-                    .then(
-                        (record) => {
-                            if (record && record.simpleUpgrade) {
-                                const upgrade = reqUrl.replace(/^(http|https):\/\//i, 'https://')
-                                isResolved = true
-                                return resolve(upgrade)
-                            }
-                            if (i === (loop.length - 1)) return resolve(reqUrl)
-                        },
-                        () => {
-                            console.warn('HTTPS: pipeRequestUrl() encountered a db error')
-                            if (i === (loop.length -1)) return resolve(reqUrl)
-                        }
-                    )
 
+                if (this.isSync) {
+                    if (this.syncRuleCache[r] &&
+                        this.syncRuleCache[r].simpleUpgrade &&
+                        this.syncRuleCache[r].simpleUpgrade === true) {
+                        const upgrade = reqUrl.replace(/^(http|https):\/\//i, 'https://')
+                        isResolved = true
+                        return syncUrlResolution = upgrade
+                    }
+                } else {
+                    this.db
+                        .get(this.dbObjectStore, r.toLowerCase())
+                        .then(
+                            (record) => {
+                                if (record && record.simpleUpgrade) {
+                                    const upgrade = reqUrl.replace(/^(http|https):\/\//i, 'https://')
+                                    isResolved = true
+                                    return resolve(upgrade)
+                                }
+                                if (i === (loop.length - 1)) return resolve(reqUrl)
+                            },
+                            () => {
+                                console.warn('HTTPS: pipeRequestUrl() encountered a db error')
+                                if (i === (loop.length -1)) return resolve(reqUrl)
+                            }
+                        )
+                }
             })
 
-        })
+            if (this.isSync) return syncUrlResolution
+        }
+
+        if (this.isSync) {
+            return checkDb.call(this)
+        } else {
+            return new Promise((resolve) => checkDb.call(this, resolve))
+        }
     }
 
-    /* For debugging/development/test purposes only */
+    /**
+     * For debugging/development/test purposes only
+     * Logs all records in indexed db to console
+     */
+    logAllRecords () {
+        this.db.logAllRecords(this.dbObjectStore)
+    }
+
+    /**
+     * For debugging/development/test purposes only
+     * This only tests ability to retrieve record from indexed db
+     * Usage: .getHostRecord('goodreads.com').then((r) => console.log(r))
+     */
     getHostRecord (host) {
         return new Promise ((resolve, reject) => {
             if (!this.isReady) {
@@ -117,7 +180,10 @@ class HTTPS {
         })
     }
 
-    /* For debugging/development/test purposes only */
+    /* For debugging/development/test purposes only
+     * Tests the .getHostRecord() method against an array of test hosts
+     * defined below
+     */
     testGetHostRecord (cb) {
         // These hosts should always have records that were xhr'd
         // into the client-side db from server
@@ -150,7 +216,12 @@ class HTTPS {
         })
     }
 
-    /* For debugging/development/test purposes only */
+    /**
+     * For debugging/development/test purposes only
+     * Tests the .pipeRequestUrl() method in both synchronous (Chrome) and
+     * asynchronous modes (depending on browser it is run in) for
+     * array of test urls defined below
+     */
     testPipeRequestUrl () {
         // These hosts should always have records that were xhr'd
         // into the client-side db from server
@@ -169,16 +240,19 @@ class HTTPS {
         }
 
         console.time('testPipeRequestUrlTimer')
-        testUrls.forEach((url, i) => {
-            this.pipeRequestUrl(url, { site: {}} )
-                .then((r) => _handleDone(r, i),
-                      (r) => _handleDone(r, i))
-        })
-    }
+        if (this.isSync) {
+            testUrls.forEach((url, i) => {
+                const r = this.pipeRequestUrl(url, { site: {}} )
+                _handleDone(r, i)
+            })
 
-    /* For debugging/development/test purposes only */
-    logAllRecords () {
-        this.db.logAllRecords(this.dbObjectStore)
+        } else {
+            testUrls.forEach((url, i) => {
+                this.pipeRequestUrl(url, { site: {}} )
+                    .then((r) => _handleDone(r, i),
+                          (r) => _handleDone(r, i))
+            })
+        }
     }
 }
 
