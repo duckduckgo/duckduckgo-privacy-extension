@@ -52,7 +52,7 @@ class Score {
                 // remove period at end for lookup in pagesSeenOn
                 let tosdrData = tosdr[match[0]]
 
-                if (!tosdrData) { return }
+                if (!tosdrData) return
 
                 const matchGood = (tosdrData.match && tosdrData.match.good) || []
                 const matchBad = (tosdrData.match && tosdrData.match.bad) || []
