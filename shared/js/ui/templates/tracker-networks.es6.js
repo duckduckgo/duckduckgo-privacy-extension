@@ -9,7 +9,7 @@ module.exports = function () {
     sliding-subview--has-fixed-header">
     </section>`
   } else {
-  return bel`<div class="tracker-networks site-info site-info--full-height card">
+  return bel`<div class="tracker-networks site-info card">
       <div class="js-tracker-networks-hero">
         ${hero({
           status: trackerNetworksIcon(),
