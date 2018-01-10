@@ -12,11 +12,7 @@ let httpsUpgradeList = []
 class HTTPS {
 
     constructor () {
-        this.isReady = false
-        this.init().then(() => this.isReady = true)
-
-        // in the background, try to update the list:
-        this.updateList()
+        this.init()
 
         return this
     }
@@ -24,17 +20,19 @@ class HTTPS {
     init () {
         console.log("HTTPS: init()")
 
-        return new Promise((resolve) => {
-            // Try to load the list from local storage
-            this.getFromStorage().then((items) => {
+        // Try to load the list from local storage
+        this.getFromStorage().then((items) => {
+            console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
 
-                // if items were found in local storage,
-                console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
+            // if there are already items in the list (e.g. the server update somehow
+            // finishes faster than the local one) don't overwrite what's there.
+            if (!httpsUpgradeList.length) {
                 httpsUpgradeList = items
-                resolve()
-
-            })
+            }
         })
+
+        // And also try to update the list from the server:
+        this.updateList()
     }
 
     updateList() {
@@ -141,11 +139,6 @@ class HTTPS {
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
-
-        if (!this.isReady) {
-            console.warn('HTTPS: .pipeRequestUrl() this.db is not ready')
-            return reqUrl
-        }
 
         // Only deal with http calls
         const protocol = utils.getProtocol(reqUrl).toLowerCase()
