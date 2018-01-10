@@ -10,7 +10,7 @@ module.exports = function () {
   let tosdrStatus = tosdrMsg.toLowerCase()
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
-    <div class="privacy-practices site-info card">
+    <div class="privacy-practices site-info site-info--full-height card">
       <div class="js-privacy-practices-hero">
         ${hero({
           status: tosdrStatus,

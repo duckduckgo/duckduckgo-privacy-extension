@@ -361,6 +361,10 @@ body {
         }
     }
 
+    .site-info--full-height {
+        bottom: 0;
+    }
+
     .top-blocked {
         position: absolute;
         top: 400px;
@@ -720,6 +724,8 @@ body {
 }
 
 @import "views/hero";
+@import "views/hero-rating-container";
+@import "views/status-list";
 @import "views/privacy-practices";
 
 
