@@ -73,6 +73,12 @@ function Background() {
     if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
     }
+
+    // blow away old indexeddbs that might be there:
+    if (details.reason.match(/update/) && window.indexedDB) {
+        indexedDB.deleteDatabase('https')
+        indexedDB.deleteDatabase('ddgExtension')
+    }
   });
 }
 
