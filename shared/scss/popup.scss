@@ -377,14 +377,8 @@ body {
             }
         }
 
-        .site-info__li--more-details {
-            .link-secondary {
-                @include is_disableable_link();
-                display: block;
-            }
-        }
-
-        .site-info__li--toggle {
+        .link-secondary {
+            @include is_disableable_link();
         }
     }
 

@@ -36,7 +36,6 @@
 @mixin is_disableable_link () {
     body.is-disabled & {
         cursor: default;
-        opacity: 0.5;
 
         &:hover {
             text-decoration: none;

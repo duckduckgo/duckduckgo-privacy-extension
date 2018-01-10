@@ -87,6 +87,8 @@ Site.prototype = window.$.extend({},
     },
 
     _showPrivacyPractices: function () {
+      if (this.model.disabled) return
+
       this.views.privacyPractices = new PrivacyPracticesView({
         template: privacyPracticesTemplate,
         model: this.model
@@ -94,6 +96,8 @@ Site.prototype = window.$.extend({},
     },
 
     _showGradeScorecard: function () {
+      if (this.model.disabled) return
+
       this.views.gradeScorecard = new GradeScorecardView({
         template: gradeScorecardTemplate,
         model: this.model
