@@ -229,29 +229,25 @@ const fetchServerUpdate = {
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
                 (data, response) => {
-                    console.time('indexedDbBatchWrites')
-                    // TODO: work server response out
+                    // TODO: work server response structure out
                     // if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
                     if (!(data && data.length && data.length > 0)) {
-                        console.warn('IndexedDBClient: invalid server response')
-                        return
+                      console.warn('IndexedDBClient: invalid server response')
+                      return
                     }
                     console.log('IndexedDBClient: Received https list from server, inserting into db.')
+                    console.time('IndexedDbClientTimer')
 
-                    // RESULTS OF THIS BATCH-WRITE VERSION:
-                    // takes ~6.5 mins to batch-write to disk
-                    // runs CPU ~45% most of the time
                     const records = data // shorthand alias
                     const throttleBatchMS = 30 // amount to wait between batches
                     const batchSize = 20 // how many records to add on the same transaction
 
-                    let finishUpdate = function() {
-                        console.log('IndexedDBClient: finishUpdate(), save etag')
+                    const finishUpdate = function() {
                         // sync new etag to storage
                         const etag = response.getResponseHeader('etag')
                         if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
-                        console.log("IndexedDBClient: Finished updating https upgrade list")
-                        console.timeEnd('indexedDbBatchWrites')
+                        console.log('IndexedDBClient: Finished writing https upgrade list')
+                        console.timeEnd('IndexedDbClientTimer')
                         resolve()
                     }
 
@@ -271,31 +267,30 @@ const fetchServerUpdate = {
                             addBatch(batch, objectStore)
                         }
                         req.onerror = function () {
-                            console.error("error", this.error)
+                            console.error('IndexedDBClient: add() error')
                             batch.shift()
                             addBatch(batch, objectStore)
                         }
                     }
 
-                    let putRecords = function () {
-                        if (!records.length) return finishUpdate.call(this)
+                    const addRecords = function () {
+                      if (!records.length) return finishUpdate.call(this)
 
-                        const batch = records.slice(0, batchSize)
-                        batch.forEach((host, index) => {
-                            records.shift()
-                            if (index === (batch.length - 1)) {
-                                const objectStore = this.db.transaction('https', 'readwrite').objectStore('https')
-                                addBatch(batch, objectStore)
-
-                                // setTimeout and call putRecords() again
-                                window.setTimeout(() => {
-                                  putRecords.call(this)
-                                }, throttleBatchMS)
-                            }
-                        })
+                      const batch = records.slice(0, batchSize)
+                      batch.forEach((host, index) => {
+                        records.shift()
+                        if (index === (batch.length - 1)) {
+                          const objectStore = this.db.transaction('https', 'readwrite').objectStore('https')
+                          addBatch(batch, objectStore)
+                          // setTimeout and call putRecords() again
+                          window.setTimeout(() => {
+                            addRecords.call(this)
+                          }, throttleBatchMS)
+                        }
+                      })
                     }
 
-                    putRecords.call(this)
+                    addRecords.call(this)
                 }
             )
         })
