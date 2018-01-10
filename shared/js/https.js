@@ -31,21 +31,8 @@ class HTTPS {
                 // if items were found in local storage,
                 console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
                 httpsUpgradeList = items
-                return resolve()
+                resolve()
 
-            }, () => {
-
-                // if it fails to find anything in local storage,
-                // load from the json file packaged with the extension
-                console.log("HTTPS: init() nothing found in storage, loading from local file")
-
-                settings.ready().then(() => {
-                    load.JSONfromLocalFile(constants.httpsUpgradeList, (items) => {
-                        console.log("HTTPS: init() loaded upgrade list from local file with " + items.length + " items")
-                        httpsUpgradeList = items
-                        return resolve()
-                    })
-                })
             })
         })
     }
@@ -56,7 +43,7 @@ class HTTPS {
         let etag = settings.getSetting('https-etag') || ''
         
         load.loadExtensionFile({
-            url: constants.httpsUpgradeListUrl,
+            url: constants.httpsUpgradeList,
             source: 'external',
             etag: etag
         }, (data, res) => {

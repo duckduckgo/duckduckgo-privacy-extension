@@ -8,13 +8,12 @@ let constants = {
     "entityMap": "data/tracker_lists/entityMap.json",
     "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
-    "httpsUpgradeList": "data/httpsUpgradeList.json",
-    "httpsUpgradeListUrl": "https://brian.duckduckgo.com/contentblocking.js?l=https2",
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
+    "httpsUpgradeList": "https://brian.duckduckgo.com/contentblocking.js?l=https2"
     /**
      * Major tracking networks data:
      * percent of the top 1 million sites a tracking network has been seen on.
