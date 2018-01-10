@@ -36,6 +36,12 @@ require.scopes.utils = ( () => {
         }
     }
 
+    function isChromeBrowser () {
+        const ua = parseUserAgentString()
+        if (ua.browser === 'Chrome') return true
+        return false
+    }
+
     function syncToStorage (data){
         chrome.storage.local.set(data, function() { });
     }
@@ -77,6 +83,7 @@ require.scopes.utils = ( () => {
         extractHostFromURL: extractHostFromURL,
         extractTopSubdomainFromHost: extractTopSubdomainFromHost,
         parseUserAgentString: parseUserAgentString,
+        isChromeBrowser: isChromeBrowser,
         syncToStorage: syncToStorage,
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
