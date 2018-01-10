@@ -117,6 +117,7 @@ class IndexedDBClient {
 
     logAllRecords (objectStore, optionalLogObject) {
         console.log(`IndexedDBClient: logAllRecords() for object store: ${objectStore}`)
+        console.time('logRecords')
         const _store = this.db.transaction(objectStore).objectStore(objectStore)
         _store.openCursor().onsuccess = function (event) {
             const cursor = event.target.result
@@ -131,6 +132,7 @@ class IndexedDBClient {
             } else {
                 if (!optionalLogObject) {
                     console.log(`IndexedDBClient: logAllRecords() No more entries for objectStore: ${objectStore}`)
+                    console.timeEnd('logRecords')
                 }
             }
         }
@@ -225,7 +227,10 @@ const fetchServerUpdate = {
             // async throttled by 1ms
             // takes ~7-8 mins to load to disk
             // runs CPU ~70% most of the time, runs up to 90% at end
+
             // TODO: delete OLD top500 entries in production!
+            // TODO: optimize https.syncRuleCache so its structure is flipped
+            //       this.syncRuleCache = { 'hackernews.com': true }
 
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
