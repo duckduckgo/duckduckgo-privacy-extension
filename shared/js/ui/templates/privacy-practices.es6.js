@@ -3,12 +3,12 @@ const hero = require('./shared/hero.es6.js')
 const details = require('./shared/privacy-practices-details.es6.js')
 
 module.exports = function () {
-  let domain = this.model && this.model.domain
-  let tosdr = this.model && this.model.tosdr
+  const domain = this.model && this.model.domain
+  const tosdr = this.model && this.model.tosdr
 
-  let tosdrMsg = (tosdr && tosdr.message) ||
+  const tosdrMsg = (tosdr && tosdr.message) ||
     window.constants.tosdrMessages.unknown
-  let tosdrStatus = tosdrMsg.toLowerCase()
+  const tosdrStatus = tosdrMsg.toLowerCase()
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
     <div class="privacy-practices site-info site-info--full-height card">

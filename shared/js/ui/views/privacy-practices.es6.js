@@ -28,9 +28,9 @@ PrivacyPractices.prototype = window.$.extend({},
     _onSiteChange: function (e) {
       if (e.change.attribute !== 'tosdr') return
 
-      let tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
+      const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
         window.constants.tosdrMessages.unknown
-      let tosdrStatus = tosdrMsg.toLowerCase()
+      const tosdrStatus = tosdrMsg.toLowerCase()
 
       this.$hero.html(heroTemplate({
         status: tosdrStatus,

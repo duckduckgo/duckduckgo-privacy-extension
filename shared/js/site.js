@@ -54,8 +54,8 @@ class Score {
 
                 if (!tosdrData) { return }
 
-                let matchGood = (tosdrData.match && tosdrData.match.good) || []
-                let matchBad = (tosdrData.match && tosdrData.match.bad) || []
+                const matchGood = (tosdrData.match && tosdrData.match.good) || []
+                const matchBad = (tosdrData.match && tosdrData.match.bad) || []
 
                 // tosdr message
                 // 1. If we have a defined tosdr class look up the message in constants
