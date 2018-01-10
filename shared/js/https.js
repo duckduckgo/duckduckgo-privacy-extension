@@ -3,9 +3,15 @@ const load = require('load')
 const settings = require('settings')
 const utils = require('utils')
 
-// number of chunks to split up the data
-// when storing to Safari to avoid over quota issues:
-const LOCAL_STORAGE_CHUNKS = 5
+// chrome.storage.local can be unlimited, and
+// localStorage in Safari claims it can go up to 100MB,
+// but Safari seems to throw an error if the size of an
+// individual item in localStorage is greater than 2.5MB,
+// so this size will restict the # of characters we save
+// per item, chunking it up into n items that won't throw errors:
+// https://jsfiddle.net/53xcc4LL/
+// http://dev-test.nemikor.com/web-storage/support-test/
+const LOCAL_STORAGE_MAX_ITEM_LENGTH = 1000000
 
 let httpsUpgradeList = []
 
@@ -128,10 +134,11 @@ class HTTPS {
         } else if (window.localStorage) {
             console.log("HTTPS: saveToStorage() using localStorage (Safari)")
 
-            // Need to chunk it for safari or else
-            // it throws a quota exceeded error
-            let chunkSize = Math.floor(data.length / LOCAL_STORAGE_CHUNKS)
-            for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
+            // See comment at top of the file. Need to chunk it up for Safari/localStorage
+            // because individual items in localStorage seem to have a 2.5MB limit.
+            const chunkSize = LOCAL_STORAGE_MAX_ITEM_LENGTH
+            const numChunks = Math.ceil(data.length / chunkSize)
+            for (let i=0; i<numChunks; i++) {
                 localStorage['https-upgrade-list' + i] = data.substr(i*chunkSize, chunkSize)
             }
         }
