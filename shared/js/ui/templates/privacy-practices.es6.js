@@ -6,7 +6,8 @@ module.exports = function () {
   let domain = this.model && this.model.domain
   let tosdr = this.model && this.model.tosdr
 
-  let tosdrMsg = (tosdr && tosdr.message) || 'Unknown'
+  let tosdrMsg = (tosdr && tosdr.message) ||
+    window.constants.tosdrMessages.unknown
   let tosdrStatus = tosdrMsg.toLowerCase()
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
