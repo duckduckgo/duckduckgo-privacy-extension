@@ -9,7 +9,7 @@ module.exports = function () {
     sliding-subview--has-fixed-header">
     </section>`
   } else {
-  return bel`<div class="tracker-networks site-info card">
+  return bel`<div class="tracker-networks site-info site-info--full-height card">
       <div class="js-tracker-networks-hero">
         ${hero({
           status: trackerNetworksIcon(),
@@ -23,7 +23,7 @@ module.exports = function () {
           Tracker networks aggregate your web history into a data profile about you. 
           Major tracker networks are more harmful because they can track and target you across more of the internet.
       </div>
-      <div class="tracker-networks__details padded border--bottom--inner
+      <div class="tracker-networks__details padded
           js-tracker-networks-details">
       <ol class="default-list site-info__trackers__company-list">
         ${renderTrackerDetails(
