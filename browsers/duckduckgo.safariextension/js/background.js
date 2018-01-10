@@ -62,10 +62,6 @@ function onInstalled () {
  * - Upgrade http -> https per HTTPS Everywhere rules
  */
 var onBeforeRequest = function (requestData) { 
-
-    // autocomplete requests from a new tab come through with no url, we want to skip these
-    if (!requestData.target.url) return
-
     let potentialTracker = requestData.message.potentialTracker
     let currentURL = requestData.message.mainFrameURL
 
