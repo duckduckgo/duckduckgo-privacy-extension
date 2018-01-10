@@ -62,9 +62,16 @@ class HTTPS {
 
             try {
                 // update list in memory
-                httpsUpgradeList = JSON.parse(data)
+                let parsedData = JSON.parse(data)
+
+                // TEMP: until we can modify the endpoint.
+                // This pulls the array of domains out of the response,
+                // so that we only need to work with the array of domain rules everywhere else
+                httpsUpgradeList = parsedData.simpleUpgrade.top500
                 console.log("HTTPS: updateList() new list has " + httpsUpgradeList.length + " items")
                 
+                // save the full data response to storage
+                // so we don't have to re-stringify the parsed JSON object:
                 this.saveToStorage(data)
 
                 // save new etag for next time
@@ -89,7 +96,7 @@ class HTTPS {
                     }
 
                     try {
-                        let parsedList = JSON.parse(results['https-upgrade-list'])
+                        let parsedList = JSON.parse(results['https-upgrade-list']).simpleUpgrade.top500
                         resolve(parsedList)
                     } catch(e) {
                         console.log("HTTPS: getFromStorage() error parsing JSON from chrome.storage.local", e)
@@ -111,7 +118,7 @@ class HTTPS {
                 }
 
                 try {
-                    let parsedList = JSON.parse(data)
+                    let parsedList = JSON.parse(data).simpleUpgrade.top500
                     resolve(parsedList)
                 } catch(e) {
                     console.log("HTTPS: getFromStorage() error parsing JSON from localStorage", e)
