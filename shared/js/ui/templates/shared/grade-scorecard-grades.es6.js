@@ -1,14 +1,14 @@
 const statusList = require('./status-list.es6.js')
 
 module.exports = function (site) {
-  const grades = getGrades(site.siteRating)
+  const grades = getGrades(site.siteRating, site.isWhitelisted)
 
   if (!grades || !grades.length) return
 
   return statusList(grades, 'status-list--right padded js-grade-scorecard-grades')
 }
 
-function getGrades (rating) {
+function getGrades (rating, isWhitelisted) {
   if (!rating || !rating.before || !rating.after) return
 
   // transform site ratings into grades
@@ -23,7 +23,7 @@ function getGrades (rating) {
     modifier: before.toLowerCase()
   })
 
-  if (before !== after && !this.site.isWhitelisted) {
+  if (before !== after && !isWhitelisted) {
     grades.push({
       msg: 'Enhanced Grade',
       modifier: after.toLowerCase(),
