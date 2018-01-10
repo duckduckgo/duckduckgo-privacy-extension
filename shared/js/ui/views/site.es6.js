@@ -1,5 +1,4 @@
 const Parent = window.DDG.base.View
-const GradeScorecardModel = require('./../models/grade-scorecard.es6.js')
 const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const GradeDetailsView = require('./../views/grade-details.es6.js')
 const TrackerNetworksView = require('./../views/tracker-networks.es6.js')
@@ -53,10 +52,10 @@ Site.prototype = window.$.extend({},
       this._cacheElems('.js-site', [
         'toggle',
         'show-all-trackers',
-        'show-page-trackers',
-        'privacy-practices',
-        'grade-scorecard'
+        'privacy-practices'
       ])
+
+      this.$gradescorecard = this.$('.js-hero-open')
 
       this.bindEvents([
         [this.$toggle, 'click', this._whitelistClick],
@@ -105,13 +104,9 @@ Site.prototype = window.$.extend({},
     },
 
     _showGradeScorecard: function () {
-      const model = new GradeScorecardModel({
-        site: this.model
-      })
-
       this.views.gradeScorecard = new GradeScorecardView({
         template: gradeScorecardTemplate,
-        model
+        model: this.model
       })
     }
   }

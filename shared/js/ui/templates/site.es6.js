@@ -1,27 +1,17 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
-const siteRating = require('./shared/site-rating.es6.js')
-const siteRatingSubtitle = require('./shared/site-rating-subtitle.es6.js')
+const ratingHero = require('./shared/rating-hero.es6.js')
 
 module.exports = function () {
+  const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
+     window.constants.tosdrMessages.unknown
+
   return bel`<section class="site-info card">
     <ul class="default-list">
     <li class="site-info__rating-li">
-    <div class="hero border--bottom">
-        ${siteRating(
-      this.model.isCalculatingSiteRating,
-      this.model.siteRating,
-      this.model.isWhitelisted)}
-        <h1 class="hero__title">${this.model.domain}</h1>
-        ${siteRatingSubtitle(
-      this.model.isCalculatingSiteRating,
-      this.model.siteRating,
-      this.model.isWhitelisted)}
-      <a href="#" class="site-info__rating__open js-site-grade-scorecard">
-        <span class="icon icon__arrow icon__arrow--large icon__arrow--right">
-        </span>
-      </a>
-    </div>
+      ${ratingHero(this.model, {
+        showOpen: !this.model.disabled
+      })}
     </li>
     <li class="site-info__li--toggle padded border--bottom">
     <h2 class="site-info__protection">Site Privacy Protection</h2>
@@ -53,16 +43,12 @@ module.exports = function () {
             this.model.isWhitelisted)}
       </a>
     </li>
-    <!-- remove is-hidden to show the privacy practices section -->
-    <li class="site-info__li--privacy-practices padded border--bottom is-hidden">
+    <li class="site-info__li--privacy-practices padded border--bottom">
+      <span class="site-info__privacy-practices__icon
+        is-${tosdrMsg.toLowerCase()}">
+      </span>
       <a href="#" class="js-site-privacy-practices link-secondary bold">
-        ${this.model.tosdr && this.model.tosdr.message} Privacy Practices
-        <span class="icon icon__arrow pull-right"></span>
-      </a>
-    </li>
-    <li class="site-info__li--more-details padded border--bottom">
-      <a href="#" class="js-site-show-all-trackers link-secondary bold">
-        More details
+        ${tosdrMsg} Privacy Practices
         <span class="icon icon__arrow pull-right"></span>
       </a>
     </li>
