@@ -119,19 +119,22 @@ function updateLists () {
             // split response using ** delimiter and remove first element
             // since it's a comment
             trackersSurrogateList = listData.trim().split('\n\n')
-            console.log(trackersSurrogateList)
 
             for (let surrogate of trackersSurrogateList) {
-                // remove first line and check it for data
-                let lines = surrogate.split('\n')
+                // remove comment lines
+                let lines = surrogate.split('\n').filter((line) => {
+                    return !(/^#.*/).test(line)
+                })
+                console.log('lines', lines)
+                // remove first line, store it
                 let firstLine = lines.shift()
-                let gaVar = firstLine.split(' ')[0]
-                let gaUrl = firstLine.split(' ')[1]
+                // take identifier from first line
+                let pattern = firstLine.split(' ')[0]
+                // convert to base 64 string
                 let b64surrogate = btoa(lines.join('\n'))
 
-                surrogateList[gaVar] = b64surrogate
+                surrogateList[pattern] = b64surrogate
             }
-                console.log(surrogateList)
         }
 
     })
