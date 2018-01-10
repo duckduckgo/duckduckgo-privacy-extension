@@ -28,7 +28,7 @@ module.exports = function () {
       <span class="site-info__https-status__icon
         is-${this.model.httpsState}">
       </span>
-      Connection
+      <span class="text-line-after-icon"> Connection </span>
       <div class="float-right">
       <span class="site-info__https-status__msg
         is-${this.model.httpsStatusText.toLowerCase()}">
@@ -49,7 +49,7 @@ module.exports = function () {
         is-${tosdrMsg.toLowerCase()}">
       </span>
       <a href="#" class="js-site-privacy-practices link-secondary bold">
-        ${tosdrMsg} Privacy Practices
+        <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
         <span class="icon icon__arrow pull-right"></span>
       </a>
     </li>

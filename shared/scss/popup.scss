@@ -184,6 +184,10 @@ body {
             padding-bottom: 0;
         }
 
+        .text-line-after-icon {
+            margin-left: 12px;
+        }
+
         .site-info__protection {
             line-height: 1.4em;
             height: 1.2em;
@@ -307,10 +311,6 @@ body {
             }
 
             .site-info__trackers {
-
-                .text-line-after-icon {
-                    margin-left: 12px;
-                }
 
                 .site-info__trackers-status__icon {
                     @include icon_display();
