@@ -54,42 +54,6 @@ class IndexedDBClient {
         return this._ready
     }
 
-    add (objectStore, record) {
-        if (!this.db) {
-            return console.warn('IndexedDBClient: this.db does not exist')
-        }
-        const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
-
-        return new Promise((resolve, reject) => {
-            let request = _store.add(record)
-            request.onsuccess = (event) => resolve()
-            request.onerror = (event) => {
-                console.warn(`IndexedDBClient: add() record: ${record}. Error: {event}`)
-                reject()
-            }
-        })
-    }
-
-    put (objectStore, record) {
-        if (!this.db) {
-            return console.warn('IndexedDBClient: this.db does not exist')
-        }
-        const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
-
-        return new Promise((resolve, reject) => {
-            let request = _store.put(record)
-            request.onsuccess = (event) => resolve()
-            request.onerror = (event) => {
-                console.warn(`IndexedDBClient: put() record: ${record}. Error: {event}`)
-                reject()
-            }
-        })
-    }
-
-    update (objectStore, record) {
-        throw 'IndexedDBClient: update() not yet implemented'
-    }
-
     get (objectStore, record) {
         return new Promise((resolve, reject) => {
             if (!this.db) {
@@ -282,7 +246,7 @@ const fetchServerUpdate = {
                         if (index === (batch.length - 1)) {
                           const objectStore = this.db.transaction('https', 'readwrite').objectStore('https')
                           addBatch(batch, objectStore)
-                          // setTimeout and call putRecords() again
+                          // setTimeout and call addBatch() again
                           window.setTimeout(() => {
                             addRecords.call(this)
                           }, throttleBatchMS)
