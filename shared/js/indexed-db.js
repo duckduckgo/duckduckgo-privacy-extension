@@ -36,7 +36,8 @@ class IndexedDBClient {
         this.db = null
 
         this.serverUpdateUrls = {
-            https: 'http://duckduckgo.com/contentblocking.js?l=https'
+            // https: 'http://duckduckgo.com/contentblocking.js?l=https'
+            https: 'http://brian.duckduckgo.com/contentblocking.js?l=https2'
             // ...add more here
         }
         this.serverUpdateFails = 0
@@ -51,6 +52,22 @@ class IndexedDBClient {
     // .ready() is sugar for this.db init() promise
     ready () {
         return this._ready
+    }
+
+    add (objectStore, record) {
+        if (!this.db) {
+            return console.warn('IndexedDBClient: this.db does not exist')
+        }
+        const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
+
+        return new Promise((resolve, reject) => {
+            let request = _store.add(record)
+            request.onsuccess = (event) => resolve()
+            request.onerror = (event) => {
+                console.warn(`IndexedDBClient: add() record: ${record}. Error: {event}`)
+                reject()
+            }
+        })
     }
 
     put (objectStore, record) {
@@ -203,20 +220,30 @@ const fetchServerUpdate = {
         return new Promise((resolve) => {
             console.log("IndexedDBClient: Requesting https list from server");
 
+            // RESULTS OF THIS VERSION
+            // 1 record .add() at a time (not PUT!),
+            // async throttled by 1ms
+            // takes ~7-8 mins to load to disk
+            // runs CPU ~70% most of the time, runs up to 90% at end
+            // TODO: delete OLD top500 entries in production!
+
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
                 (data, response) => {
-                    if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
+                    // if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
+                    if (!(data && data.length && data.length > 0)) {
                         console.warn('IndexedDBClient: invalid server response')
                         return
                     }
 
                     console.log("IndexedDBClient: Received https list from server, inserting into db.")
-                    
-                    let records = data.simpleUpgrade.top500 // shorthand alias
+
+                    let records = data // shorthand alias
                     let counter = 0 // counter is just for logging
-                    let throttleMS = 20 // amount to wait between puts
+                    let throttleMS = 1 // amount to wait between puts
                     let finishUpdate = function() {
+                        console.log('IndexedDBClient: finishUpdate(), sync etag')
+                        console.log(`${counter} items added to db`)
                         // sync new etag to storage
                         const etag = response.getResponseHeader('etag')
                         if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
@@ -230,11 +257,10 @@ const fetchServerUpdate = {
                         let record = {
                             host: host,
                             simpleUpgrade: true,
-                            top500: true,
-                            lastUpdated: new Date().toString()
+                            top500: true
                         }
 
-                        return this.put('https', record)
+                        return this.add('https', record)
                     }
 
                     // recursively call putNextRecord asynchronously, until
@@ -247,7 +273,7 @@ const fetchServerUpdate = {
 
                         putNextRecord.call(this).then(() => {
                             counter++
-                            //console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
+                            // console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
                             window.setTimeout(() => {
                               putRecords.call(this)
                             }, throttleMS)
