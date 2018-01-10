@@ -161,6 +161,10 @@ class HTTPS {
         }
     }
 
+    canUpgradeHost (host) {
+        return (httpsUpgradeList.indexOf(host) > -1) ? true : false
+    }
+
     getUpgradeList () {
         return httpsUpgradeList
     }
@@ -198,7 +202,7 @@ class HTTPS {
 
         // Check for upgrades
         for (let i=0; i<hosts.length; i++) {
-            if (httpsUpgradeList.indexOf(hosts[i]) > -1) {
+            if (this.canUpgradeHost(hosts[i])) {
                 return reqUrl.replace(/^(http|https):\/\//i, 'https://')
             }
         }
@@ -207,30 +211,72 @@ class HTTPS {
         return reqUrl
     }
 
+    /* For debugging/development/test purposes only
+     * Tests the .canUpgradeHost() method against an array of test hosts
+     * defined below
+     */
+    testCanUpgradeHost () {
+        // These hosts should always have records that were xhr'd
+        // into the client-side db from server
+        const testHosts = [
+            '1337x.to',
+            'submit.pandora.com',
+            '*.api.roblox.com',
+            'thump.vice.com',
+            'yts.ag'
+        ]
+
+        let passed = true
+
+        // Test that host records exist after db install from server
+        testHosts.forEach((host, i) => {
+            if (this.canUpgradeHost(host)) {
+                console.log('HTTPS: retrieved record for host: ' + host)
+            } else {
+                passed = false
+                console.error('HTTPS: could not find record for host: ' + host)
+            }
+        })
+
+        return passed
+    }
+
     /**
      * For debugging/development/test purposes only
-     * Tests the .pipeRequestUrl() method 
+     * Tests the .getRequestUrl() method 
      * for array of test urls defined below
      */
     testGetUpgradedUrl () {
-        // These hosts should always have records that were xhr'd
-        // into the client-side db from server
         const testUrls = [
-            'http://1337x.to/foo',
-            'http://SUbMIt.pandora.com/foo/bar',
-            'http://foo.api.roblox.com/sit?stand=false',
-            'http://THUMP.vice.com',
-            'http://yts.ag'
+            // These hosts should always have records that were xhr'd
+            // into the client-side db from server
+            ['http://1337x.to/foo',                         'https://1337x.to/foo'],
+            ['http://SUbMIt.pandora.com/foo/bar',           'https://SUbMIt.pandora.com/foo/bar'],
+            ['http://foo.api.roblox.com/sit?stand=false',   'https://foo.api.roblox.com/sit?stand=false'],
+            ['http://THUMP.vice.com',                       'https://THUMP.vice.com'],
+            ['http://yts.ag',                               'https://yts.ag'],
+            // If it's already https, it should be the same:
+            ['https://duckduckgo.com',                      'https://duckduckgo.com'],
+            // If it's not in the list, it should stay http:
+            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr']
         ]
 
-        console.log('HTTPS: testGetUgradedUrl() for ' + testUrls.length + ' urls')
-        console.time('testGetUpgradedUrlTimer')
+        let passed = true
 
-        testUrls.forEach((url, i) => {
-            const r = this.getUpgradedUrl(url, { site: {}} )
-            console.log(r)
-            if (i === (testUrls.length - 1)) console.timeEnd('testGetUpgradedUrlTimer')
+        console.log('HTTPS: testGetUgradedUrl() for ' + testUrls.length + ' urls')
+
+        testUrls.forEach((test, i) => {
+            const r = this.getUpgradedUrl(test[0], { site: {}} )
+
+            if (r === test[1]) {
+                console.log('HTTPS: getUpgradedUrl("' + test[0] + '") returned the expected value: ' + r)
+            } else {
+                passed = false
+                console.error('HTTPS: getUpgradedUrl("' + test[0] + '") returned: ' + r + ', expected: ' + test[1])
+            }
         })
+
+        return passed
     }
 }
 
