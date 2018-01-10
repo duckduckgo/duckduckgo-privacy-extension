@@ -174,10 +174,9 @@ function fetchSurrogateCode () {
 	            let regex = new RegExp(pattern.replace(/\//g,'\\/').replace(/\./g,'\\.').concat('$'),'g')
 
 	            // convert to base 64 string
-        	    let b64surrogate = btoa(lines.join('\n'))
-
-    	        surrogateList[pattern] = {regex: regex, snippet: b64surrogate}
-	        }
-    	}
-	})
+                let b64surrogate = btoa(lines.join('\n'))
+                surrogateList[pattern] = {regex: regex, snippet: b64surrogate}
+            }
+        }
+    })
 }
