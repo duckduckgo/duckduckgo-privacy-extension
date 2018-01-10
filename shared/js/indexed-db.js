@@ -240,12 +240,13 @@ const fetchServerUpdate = {
                         console.warn('IndexedDBClient: invalid server response')
                         return
                     }
-
                     console.log("IndexedDBClient: Received https list from server, inserting into db.")
 
                     let records = data // shorthand alias
                     let counter = 0 // counter is just for logging
-                    let throttleMS = 1 // amount to wait between puts
+                    let throttleBatchMS = 20 // amount to wait between adds
+                    let throttleAddMS = 1
+
                     let finishUpdate = function() {
                         console.log('IndexedDBClient: finishUpdate(), sync etag')
                         console.log(`${counter} items added to db`)
@@ -256,35 +257,34 @@ const fetchServerUpdate = {
                         resolve()
                     }
 
-                    // function we'll call recursively to add each record
-                    let putNextRecord = function() {
-                        let host = records.shift()
-                        let record = {
-                            host: host,
-                            simpleUpgrade: true,
-                            top500: true
-                        }
+                    let putRecords = function () {
+                        console.log('putRecords() batch')
+                        const self = this
+                        if (!records.length) return finishUpdate.call(this)
 
-                        return this.add('https', record)
-                    }
-
-                    // recursively call putNextRecord asynchronously, until
-                    // all of the records from the response have been inserted.
-                    // - any errors are just skipped, not retried
-                    let putRecords = function() {
-                        if (!records.length) {
-                            return finishUpdate.call(this)
-                        }
-
-                        putNextRecord.call(this).then(() => {
+                        const batch = records.slice(0, 10)
+                        batch.forEach((host, index) => {
+                            records.shift()
                             counter++
-                            // console.log(`IndexedDBClient: ${counter} records added, ${records.length} left to add`)
+                            const record = {
+                                host: host,
+                                simpleUpgrade: true,
+                                top200k: true
+                            }
                             window.setTimeout(() => {
-                              putRecords.call(this)
-                            }, throttleMS)
-                        }, () => {
-                            // on error, just skip and go to the next record
-                            putRecords.call(this)
+                                // TODO: try keeping transaction alive across adds
+                                // https://stackoverflow.com/questions/10385364/how-do-you-keep-an-indexeddb-transaction-alive
+                                const store = this.db.transaction('https', 'readwrite').objectStore('https')
+                                const request = store.add(record)
+                            }, throttleAddMS)
+
+                            // last in batch
+                            if (index === (batch.length - 1)) {
+                                // setTimeout and call putRecords() again
+                                window.setTimeout(() => {
+                                  putRecords.call(this)
+                                }, throttleBatchMS)
+                            }
                         })
                     }
 
