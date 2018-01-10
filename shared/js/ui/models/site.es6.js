@@ -153,6 +153,8 @@ Site.prototype = window.$.extend({},
           this.set('trackerNetworks', newTrackerNetworks)
         }
 
+        this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
+
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()
         if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
           this.set('isUserPrivacyUpgraded', newUserPrivacy)
@@ -172,6 +174,13 @@ Site.prototype = window.$.extend({},
       return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
         return this.tab.trackersBlocked[name].urls.length + total
       }, 0)
+    },
+
+    getIsPartOfMajorTrackingNetwork: function () {
+      return this.isaMajorTrackingNetwork ||
+        this.trackerNetworks.some((tracker) =>
+          window.constants.majorTrackingNetworks[tracker]
+        )
     },
 
     getTrackerNetworksOnPage: function () {

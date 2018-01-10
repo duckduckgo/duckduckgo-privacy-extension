@@ -48,12 +48,7 @@ GradeScorecard.prototype = window.$.extend({},
 
       // major tracking networks,
       // only show a message if it's bad
-      const isPartOfMajorTrackingNetwork = this.site.isaMajorTrackingNetwork ||
-        this.site.trackerNetworks.some((tracker) =>
-          window.constants.majorTrackingNetworks[tracker]
-        )
-
-      if (isPartOfMajorTrackingNetwork) {
+      if (this.site.isPartOfMajorTrackingNetwork) {
         reasons.push({
           modifier: 'bad',
           msg: `Site Is Part of a Major Tracker Network`
