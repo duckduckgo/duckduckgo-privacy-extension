@@ -37,12 +37,16 @@ class HTTPS {
             }
         })
 
-        // And also try to update the list from the server:
         this.updateList()
     }
 
     updateList() {
         console.log("HTTPS: updateList() check if new list exists")
+
+        // if settings aren't ready, try again in 1 sec:
+        if (!settings.ready()) {
+            return setTimeout(this.updateList.bind(this), 1000)
+        }
 
         let etag = settings.getSetting('https-etag') || ''
         
