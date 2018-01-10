@@ -5,6 +5,7 @@
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 abp = require('abp-filter-parser')
+const crypto = require('crypto')
 const deepFreeze = require('deep-freeze')
 
 // these are defined in data/ and loaded in the manifest. 
@@ -100,6 +101,40 @@ function updateLists () {
         // defined in site.js
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
+
+    let trackersSurrogateListEtag = settings.getSetting('trackersSurrogateList-etag') || ''
+    // reset etag to get a new list copy if we don't have data
+    if (!trackersSurrogateList || !trackersSurrogateListEtag) trackersSurrogateListEtag = ''
+    // load surrogates list
+    load.loadExtensionFile({url: constants.trackersSurrogateList, etag: trackersSurrogateListEtag, source: 'external'}, (listData, response) => {
+        const newTrackersSurrogateListEtag = response.getResponseHeader('etag') || ''
+        const clientChecksum = crypto.createHash('md5').update(listData).digest('base64')
+
+        settings.updateSetting('trackersSurrogateList-etag', newTrackersSurrogateListEtag);
+
+        //  check that etag hash matches hash of file received
+        if (!clientChecksum || clientChecksum.substring(0,6) !== newTrackersSurrogateListEtag) {
+            console.log("Checksum didn't match")
+        } else {
+            // split response using ** delimiter and remove first element
+            // since it's a comment
+            trackersSurrogateList = listData.trim().split('\n\n')
+            console.log(trackersSurrogateList)
+
+            for (let surrogate of trackersSurrogateList) {
+                // remove first line and check it for data
+                let lines = surrogate.split('\n')
+                let firstLine = lines.shift()
+                let gaVar = firstLine.split(' ')[0]
+                let gaUrl = firstLine.split(' ')[1]
+                let b64surrogate = btoa(lines.join('\n'))
+
+                surrogateList[gaVar] = b64surrogate
+            }
+                console.log(surrogateList)
+        }
+
+    })
 }
 
 // Make sure the list updater runs on start up
@@ -139,4 +174,7 @@ function getVersionParam () {
     if (versionParam) settings.updateSetting('lastEasylistUpdate', now)
 
     return versionParam
+}
+
+function parseSurrogateCode (textToParse) {
 }

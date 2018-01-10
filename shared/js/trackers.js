@@ -3,6 +3,7 @@
 var abp,
     easylists,
     trackerWhitelist = {}
+    surrogateList = {}
 
 var load = require('load'),
     settings = require('settings'),
@@ -12,6 +13,7 @@ var load = require('load'),
 let entityList
 let entityMap
 let whitelists
+let trackersSurrogateList
 
 settings.ready().then(() => {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
