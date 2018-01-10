@@ -3,6 +3,7 @@ const heroTemplate = require('./../templates/shared/hero.es6.js')
 const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
+const trackerNetworksIconTemplate = require('./../templates/shared/tracker-network-icon.es6.js')
 
 function TrackerNetworks (ops) {
   // model data is async
@@ -11,11 +12,6 @@ function TrackerNetworks (ops) {
   this.currentSiteModelName = null
   this.template = ops.template
   ParentSlidingSubview.call(this, ops)
- 
-  this._cacheElems('.js-tracker-networks', [
-    'hero',
-    'details'
-  ])
 
   this.renderAsyncContent()
 }
@@ -25,6 +21,10 @@ TrackerNetworks.prototype = window.$.extend({},
   {
 
     setup: function () {
+      this._cacheElems('.js-tracker-networks', [
+        'hero',
+      ])
+      
       // site rating arrives async
       this.bindEvents([[
         this.store.subscribe,
@@ -37,7 +37,6 @@ TrackerNetworks.prototype = window.$.extend({},
       const random = Math.round(Math.random() * 100000)
       this.currentModelName = 'siteCompanyList' + random
       this.currentSiteModelName = 'site' + random
-
 
       this.model = new CompanyListModel({
         modelName: this.currentModelName
@@ -53,21 +52,27 @@ TrackerNetworks.prototype = window.$.extend({},
           this.setupClose()
         })
       })
+      
       this._renderTemplate()
     },
 
     _renderTemplate: function() {
-      this.$hero.html(heroTemplate({
-                status: 'tracker-networks',
-        title: this.currentSiteModelName,
-        subtitle: `this.model.count Tracker Networks Blocked`,
-        showClose: true
-      }))
-    },
+      if (this.model.site) {
+        const trackerNetworksIconName = trackerNetworksIconTemplate(
+          this.model.site.siteRating,
+          this.model.site.isWhitelisted
+        )
+        
+        const blockedOrFound = this.model.site.sWhitelisted? 'Blocked' : 'Found'
 
-    _rerender: function() {
-        this._renderTemplate()
-    }
+        this.$hero.html(heroTemplate({
+          status: trackerNetworksIconName,
+          title: this.model.site.domain,
+          subtitle: this.model.site.trackersCount + ' Tracker Networks ' + blockedOrFound,
+          showClose: true
+        }))
+      }
+    },
   }
 )
 

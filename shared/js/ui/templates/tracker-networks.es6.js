@@ -11,12 +11,7 @@ module.exports = function () {
   } else {
   return bel`<div class="tracker-networks site-info site-info--full-height card">
       <div class="js-tracker-networks-hero">
-        ${hero({
-          status: trackerNetworksIcon(),
-          title: this.model.site.domain,
-          subtitle: `${this.model.site.trackerNetworks.length} Tracker Networks ${trackersBlockedOrFound(this.model)}`,
-          showClose: true
-        })}
+        ${renderHero(this.model)}
       </div>
       <div class="tracker-networks__explainer padded border--bottom--inner
           text--center">
@@ -34,6 +29,17 @@ module.exports = function () {
      </div>
     </div>`
   }
+}
+
+function renderHero (model) {
+  let site = model.site || {}
+
+  return bel`${hero({
+    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted),
+    title: site.domain,
+    subtitle: `${site.trackersCount} Tracker Networks ${trackersBlockedOrFound(model)}`,
+    showClose: true
+  })}`
 }
 
 function trackersBlockedOrFound (model) {
