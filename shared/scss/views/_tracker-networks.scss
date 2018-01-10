@@ -1,12 +1,14 @@
-.hero__icon {
+.tracker-networks .hero__icon {
     width: 58px;
     height: 65px;
 }
 
-.hero__icon--major-networks-blocked {
+.hero__icon--major-networks-blocked,
+.icon-major-networks-blocked {
     @include cross_platform_bg_image("hero-on-major-networks.svg");
 }
-.hero__icon--major-networks-warning {
+.hero__icon--major-networks-warning,
+.icon-major-networks-warning {
     @include cross_platform_bg_image("hero-warning-major-networks.svg");
 }
 

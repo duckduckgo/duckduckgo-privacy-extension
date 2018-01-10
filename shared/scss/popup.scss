@@ -308,10 +308,16 @@ body {
 
             .site-info__trackers {
 
+                .text-line-after-icon {
+                    margin-left: 12px;
+                }
+
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    top: 12.5px;
+                    height: 30px;
+                    width: 27px;
+                    margin-right: 12px; 
 
                     &.is-blocking--true {
 

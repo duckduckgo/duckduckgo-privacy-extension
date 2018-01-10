@@ -64,9 +64,9 @@ module.exports = function () {
 
     return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
-      icon-tracker-networks-${trackerNetworksIcon}">
+      icon-${trackerNetworksIcon()}">
       </span>
-      <span class="${isActive}">${count} Tracker Networks ${foundOrBlocked}</span>
+      <span class="${isActive} text-line-after-icon"> ${count} Tracker Networks ${foundOrBlocked}</span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
   }
