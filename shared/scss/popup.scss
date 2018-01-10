@@ -255,13 +255,13 @@ body {
             width: 17px;
             height: 22px;
             top: 10px;
-            left: 20px;
         }
 
         .site-info__https-status__icon {
             @include icon_display();
             @include site_status_icons();
             width: 15px;
+            left: 24px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
@@ -317,8 +317,8 @@ body {
                     @include site_status_icons();
                     height: 30px;
                     width: 27px;
-                    margin-right: 12px; 
-
+                    left: 20px;
+                    
                     &.is-blocking--true {
 
                         .is-browser--chrome & {
@@ -368,7 +368,8 @@ body {
         .site-info__privacy-practices__icon {
             @include icon_display();
             @include site_status_icons();
-
+            left: 23px;
+            
             &.is-good {
                 @include cross_platform_bg_image("privacy--good.svg");
             }
