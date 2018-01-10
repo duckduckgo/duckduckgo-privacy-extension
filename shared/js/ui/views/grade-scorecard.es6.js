@@ -33,21 +33,17 @@ GradeScorecard.prototype = window.$.extend({},
 
     _rerenderHero: function () {
       this.$hero.replaceWith(ratingHeroTemplate(
-        this.model.site,
+        this.model,
         { showClose: true }
       ))
     },
 
     _rerenderGrades: function () {
-      this.$grades.replaceWith(gradesTemplate(
-        this.model.getGrades()
-      ))
+      this.$grades.replaceWith(gradesTemplate(this.model))
     },
 
     _rerenderReasons: function () {
-      this.$reasons.replaceWith(reasonsTemplate(
-        this.model.getReasons()
-      ))
+      this.$reasons.replaceWith(reasonsTemplate(this.model))
     },
 
     _onSiteChange: function (e) {
@@ -57,9 +53,10 @@ GradeScorecard.prototype = window.$.extend({},
       }
 
       // all the other stuff we use in the reasons
-      // (e.g. isaMajorTrackingNetwork, https, tosdr)
+      // (e.g. https, tosdr)
       // doesn't change dynamically
-      if (e.change.attribute === 'trackerNetworks') {
+      if (e.change.attribute === 'trackerNetworks' ||
+          e.change.attribute === 'isPartOfMajorTrackingNetwork') {
         this._rerenderReasons()
       }
 
