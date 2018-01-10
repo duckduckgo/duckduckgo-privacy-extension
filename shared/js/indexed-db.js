@@ -205,8 +205,8 @@ const fetchServerUpdate = {
                     console.time('IndexedDbClientTimer')
 
                     const records = data // shorthand alias
-                    const throttleBatchMS = 50 // amount to wait between batches
-                    const batchSize = 100 // how many records to add on the same transaction
+                    const throttleBatchMS = 30 // amount to wait between batches
+                    const batchSize = 20 // how many records to add on the same transaction
 
                     const finishUpdate = function() {
                         // sync new etag to storage
