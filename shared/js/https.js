@@ -40,13 +40,16 @@ class HTTPS {
 
         let etag = settings.getSetting('https-etag') || ''
         
+        // try to load an updated file from the server, passing
+        // in the latest etag we have and only calling the callback
+        // with the new file if the etag on the server is different:
         load.loadExtensionFile({
             url: constants.httpsUpgradeList,
             source: 'external',
             etag: etag
         }, (data, res) => {
-            // this only gets called if the etag is different
-            // and it was able to get a new list
+            // This only gets called if the etag is different
+            // and it was able to get a new list from the server:
             console.log("HTTPS: updateList() got updated list from server")
 
             let newEtag = res.getResponseHeader('etag') || ''
