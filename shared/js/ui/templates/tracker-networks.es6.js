@@ -69,7 +69,7 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
             }
             return bel`<li>
               <span class="url">${url}</span>
-              <span class="category pull-right">${category}</span>
+              <span class="category float-right">${category}</span>
             </li>`
           })}
         </ol>

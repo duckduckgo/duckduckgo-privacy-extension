@@ -11,30 +11,27 @@
 }
 
 #popup-container .tracker-networks .default-list.site-info__trackers__company-list__url-list {
-    padding-bottom: 10px;
-    padding-top: 4px;
+    padding-bottom: 15px;
+    padding-top: 9px;
     font-size: 14px;
     line-height: 1.5;
 
     li {
         padding-top: 0;
     }
+}
 
+.tracker-networks .default-list.site-info__trackers__company-list {
     .site-info__tracker__icon {
         @include icon_display();
         @include tracker_network_icons_subview();
         
-        width: 22px;
-        height: 22px;
-        margin-top: -6px;
-        margin-left: -4px;
-        margin-bottom: 8px;
+        width: 24px;
+        height: 24px;
         overflow: hidden;
-        line-height: 100px;
-        background-size:contain;
+        background-size: contain;
     }
 }
-
 .tracker-networks h1.site-info__domain {
     font-size: 16px;
     font-weight: bold;
