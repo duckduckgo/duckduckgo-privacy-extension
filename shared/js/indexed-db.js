@@ -223,10 +223,8 @@ const fetchServerUpdate = {
             console.log("IndexedDBClient: Requesting https list from server");
 
             // RESULTS OF THIS VERSION
-            // 1 record .add() at a time (not PUT!),
-            // async throttled by 1ms
-            // takes ~7-8 mins to load to disk
-            // runs CPU ~70% most of the time, runs up to 90% at end
+            // takes ~4.5 mins to batch-write to disk
+            // runs CPU ~60% most of the time
 
             // TODO: delete OLD top500 entries in production!
             // TODO: optimize https.syncRuleCache so its structure is flipped
@@ -235,51 +233,61 @@ const fetchServerUpdate = {
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
                 (data, response) => {
+                    // TODO: work server response out
                     // if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
                     if (!(data && data.length && data.length > 0)) {
                         console.warn('IndexedDBClient: invalid server response')
                         return
                     }
-                    console.log("IndexedDBClient: Received https list from server, inserting into db.")
+                    console.log('IndexedDBClient: Received https list from server, inserting into db.')
 
-                    let records = data // shorthand alias
-                    let counter = 0 // counter is just for logging
-                    let throttleBatchMS = 20 // amount to wait between adds
-                    let throttleAddMS = 1
+                    const records = data // shorthand alias
+                    const throttleBatchMS = 20 // amount to wait between adds
+                    const batchSize = 20
 
                     let finishUpdate = function() {
-                        console.log('IndexedDBClient: finishUpdate(), sync etag')
-                        console.log(`${counter} items added to db`)
+                        console.log('IndexedDBClient: finishUpdate(), save etag')
                         // sync new etag to storage
                         const etag = response.getResponseHeader('etag')
                         if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
-                        console.log("IndexedDBClient: Finished updating https list");
+                        console.log("IndexedDBClient: Finished updating https upgrade list");
                         resolve()
                     }
 
+                    // batch writes to disk
+                    // objectStore argument: keeps single transaction alive during batch writes
+                    // https://stackoverflow.com/questions/10385364/how-do-you-keep-an-indexeddb-transaction-alive
+                    const addBatch = function (batch, objectStore) {
+                        if (!batch.length) return
+                        const record = {
+                          host: batch[0],
+                          simpleUpgrade: true,
+                          top200k: true
+                        }
+                        const req = objectStore.add(record)
+                        req.onsuccess = function(e) {
+                            batch.shift()
+                            addBatch(batch, objectStore)
+                        }
+                        req.onerror = function () {
+                            console.error("error", this.error)
+                            batch.shift()
+                            addBatch(batch, objectStore)
+                        }
+                    }
+
                     let putRecords = function () {
-                        console.log('putRecords() batch')
-                        const self = this
                         if (!records.length) return finishUpdate.call(this)
 
-                        const batch = records.slice(0, 10)
+                        const batch = records.slice(0, batchSize)
                         batch.forEach((host, index) => {
                             records.shift()
-                            counter++
-                            const record = {
-                                host: host,
-                                simpleUpgrade: true,
-                                top200k: true
-                            }
-                            window.setTimeout(() => {
-                                // TODO: try keeping transaction alive across adds
-                                // https://stackoverflow.com/questions/10385364/how-do-you-keep-an-indexeddb-transaction-alive
-                                const store = this.db.transaction('https', 'readwrite').objectStore('https')
-                                const request = store.add(record)
-                            }, throttleAddMS)
-
                             // last in batch
                             if (index === (batch.length - 1)) {
+
+                                const objectStore = this.db.transaction('https', 'readwrite').objectStore('https')
+                                addBatch(batch, objectStore)
+
                                 // setTimeout and call putRecords() again
                                 window.setTimeout(() => {
                                   putRecords.call(this)
