@@ -1,3 +1,9 @@
+// TODO: delete OLD top500 entries in production!
+// TODO: flip chrome init sequence so it reads xhr data first to memory
+//       then starts the write here
+// TODO: optimize https.syncRuleCache so its structure is more simple:
+//       this.syncRuleCache = { 'hackernews.com': true }
+
 (function () {
 const utils = require('utils')
 
@@ -36,7 +42,8 @@ class IndexedDBClient {
         this.db = null
 
         this.serverUpdateUrls = {
-            https: 'http://duckduckgo.com/contentblocking.js?l=https'
+            // https: 'http://duckduckgo.com/contentblocking.js?l=https'
+            https: 'http://brian.duckduckgo.com/contentblocking.js?l=https2'
             // ...add more here
         }
         this.serverUpdateFails = 0
@@ -51,18 +58,6 @@ class IndexedDBClient {
     // .ready() is sugar for this.db init() promise
     ready () {
         return this._ready
-    }
-
-    put (objectStore, record) {
-        if (!this.db) {
-            return console.warn('IndexedDBClient: this.db does not exist')
-        }
-        const _store = this.db.transaction(objectStore, 'readwrite').objectStore(objectStore)
-        _store.put(record)
-    }
-
-    update (objectStore, record) {
-        throw 'IndexedDBClient: update() not yet implemented'
     }
 
     get (objectStore, record) {
@@ -92,6 +87,7 @@ class IndexedDBClient {
 
     logAllRecords (objectStore, optionalLogObject) {
         console.log(`IndexedDBClient: logAllRecords() for object store: ${objectStore}`)
+        console.time('logRecords')
         const _store = this.db.transaction(objectStore).objectStore(objectStore)
         _store.openCursor().onsuccess = function (event) {
             const cursor = event.target.result
@@ -104,6 +100,7 @@ class IndexedDBClient {
                 }
                 cursor.continue()
             } else {
+                console.timeEnd('logRecords')
                 if (!optionalLogObject) {
                     console.log(`IndexedDBClient: logAllRecords() No more entries for objectStore: ${objectStore}`)
                 }
@@ -193,41 +190,73 @@ const fetchServerUpdate = {
 'https': { // object store
     '1': function () { // db version
         return new Promise((resolve) => {
+            console.log('IndexedDBClient: Requesting https list from server')
+
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
                 (data, response) => {
-
-                    if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
-                        console.warn('IndexedDBClient: invalid server response')
-                        return
+                    // TODO: work server response structure out
+                    // if (!(data && data.simpleUpgrade && data.simpleUpgrade.top500)) {
+                    if (!(data && data.length && data.length > 0)) {
+                      console.warn('IndexedDBClient: invalid server response')
+                      return
                     }
-                    console.log('Updating list: https everywhere')
+                    console.log('IndexedDBClient: Received https list from server, inserting into db.')
+                    console.time('IndexedDbClientTimer')
 
-                    // Insert each record into db
-                    let counter = 1;
-                    data.simpleUpgrade.top500.forEach((host, index) => {
+                    const records = data // shorthand alias
+                    const throttleBatchMS = 30 // amount to wait between batches
+                    const batchSize = 20 // how many records to add on the same transaction
 
-                        let record = {
-                            host: host,
-                            simpleUpgrade: true,
-                            top500: true,
-                            lastUpdated: new Date().toString()
+                    const finishUpdate = function() {
+                        // sync new etag to storage
+                        const etag = response.getResponseHeader('etag')
+                        if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
+                        console.log('IndexedDBClient: Finished writing https upgrade list')
+                        console.timeEnd('IndexedDbClientTimer')
+                        resolve()
+                    }
+
+                    // batch writes to indexed db (disk)
+                    // objectStore argument: keeps single transaction alive during batch writes
+                    // https://stackoverflow.com/questions/10385364/how-do-you-keep-an-indexeddb-transaction-alive
+                    const addBatch = function (batch, objectStore) {
+                        if (!batch.length) return
+                        const record = {
+                          host: batch[0],
+                          simpleUpgrade: true,
+                          top200k: true
                         }
-
-                        this.put('https', record)
-                        // console.log(`IndexedDB: Added record to object store https. Record count: ${counter}`)
-                        counter++;
-
-                        // After we've added last record to db
-                        if (index === (data.simpleUpgrade.top500.length - 1)) {
-                            console.log(`IndexedDBClient: ${data.simpleUpgrade.top500.length} records added to https object store`)
-                            // sync new etag to storage
-                            const etag = response.getResponseHeader('etag')
-                            if (etag) settings.updateSetting('httpsEverywhereEtag', etag)
-                            resolve()
+                        const req = objectStore.add(record)
+                        req.onsuccess = function(e) {
+                            batch.shift()
+                            addBatch(batch, objectStore)
                         }
-                    })
+                        req.onerror = function () {
+                            console.error('IndexedDBClient: add() error')
+                            batch.shift()
+                            addBatch(batch, objectStore)
+                        }
+                    }
 
+                    const addRecords = function () {
+                      if (!records.length) return finishUpdate.call(this)
+                      const batch = records.slice(0, batchSize)
+
+                      batch.forEach((host, index) => {
+                        records.shift()
+                        if (index === (batch.length - 1)) {
+                          const objectStore = this.db.transaction('https', 'readwrite').objectStore('https')
+                          addBatch(batch, objectStore)
+                          // setTimeout and call addBatch() again
+                          window.setTimeout(() => {
+                            addRecords.call(this)
+                          }, throttleBatchMS)
+                        }
+                      })
+                    }
+
+                    addRecords.call(this)
                 }
             )
         })
