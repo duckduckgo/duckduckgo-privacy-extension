@@ -3,6 +3,9 @@ const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
 
 module.exports = function () {
+  const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
+     window.constants.tosdrMessages.unknown
+
   return bel`<section class="site-info card">
     <ul class="default-list">
     <li class="site-info__rating-li">
@@ -38,16 +41,12 @@ module.exports = function () {
         this.model.trackerNetworks,
         this.model.isWhitelisted)}
     </li>
-    <!-- remove is-hidden to show the privacy practices section -->
-    <li class="site-info__li--privacy-practices padded border--bottom is-hidden">
+    <li class="site-info__li--privacy-practices padded border--bottom">
+      <span class="site-info__privacy-practices__icon
+        is-${tosdrMsg.toLowerCase()}">
+      </span>
       <a href="#" class="js-site-privacy-practices link-secondary bold">
-        ${this.model.tosdr && this.model.tosdr.message} Privacy Practices
-        <span class="icon icon__arrow pull-right"></span>
-      </a>
-    </li>
-    <li class="site-info__li--more-details padded border--bottom">
-      <a href="#" class="js-site-show-all-trackers link-secondary bold">
-        More details
+        ${tosdrMsg} Privacy Practices
         <span class="icon icon__arrow pull-right"></span>
       </a>
     </li>

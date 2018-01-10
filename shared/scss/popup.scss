@@ -350,6 +350,33 @@ body {
             }
         }
 
+        .site-info__li--privacy-practices {
+            position: relative;
+            padding-left: 45px;
+
+            .is-disabled & {
+                @include is_disabled();
+            }
+        }
+
+        .site-info__privacy-practices__icon {
+            @include icon_display();
+            @include site_status_icons();
+
+            &.is-good {
+                @include cross_platform_bg_image("privacy--good.svg");
+            }
+
+            &.is-bad {
+                @include cross_platform_bg_image("privacy--bad.svg");
+            }
+
+            &.is-mixed,
+            &.is-unknown {
+                @include cross_platform_bg_image("privacy--mixed.svg");
+            }
+        }
+
         .site-info__li--more-details {
             .link-secondary {
                 @include is_disableable_link();
