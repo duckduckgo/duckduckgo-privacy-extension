@@ -14,6 +14,7 @@ function TrackerNetworks (ops) {
   ParentSlidingSubview.call(this, ops)
 
   this.renderAsyncContent()
+  this.setupClose()
 }
 
 TrackerNetworks.prototype = window.$.extend({},
@@ -23,13 +24,14 @@ TrackerNetworks.prototype = window.$.extend({},
     setup: function () {
       this._cacheElems('.js-tracker-networks', [
         'hero',
+        'details'
       ])
       
       // site rating arrives async
       this.bindEvents([[
         this.store.subscribe,
         `change:${this.currentSiteModelName}`,
-        this._renderTemplate
+        this._renderHeroTemplate
       ]])
     },
 
@@ -49,14 +51,13 @@ TrackerNetworks.prototype = window.$.extend({},
           let content = this.template()
           this.$el.append(content)
           this.setup()
-          this.setupClose()
         })
       })
       
-      this._renderTemplate()
+      this._renderHeroTemplate()
     },
 
-    _renderTemplate: function() {
+    _renderHeroTemplate: function() {
       if (this.model.site) {
         const trackerNetworksIconName = trackerNetworksIconTemplate(
           this.model.site.siteRating,
@@ -71,6 +72,7 @@ TrackerNetworks.prototype = window.$.extend({},
           subtitle: this.model.site.trackersCount + ' Tracker Networks ' + blockedOrFound,
           showClose: true
         }))
+        this.setupClose()
       }
     },
   }
