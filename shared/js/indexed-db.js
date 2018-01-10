@@ -1,3 +1,9 @@
+// TODO: delete OLD top500 entries in production!
+// TODO: flip chrome init sequence so it reads xhr data first to memory
+//       then starts the write here
+// TODO: optimize https.syncRuleCache so its structure is more simple:
+//       this.syncRuleCache = { 'hackernews.com': true }
+
 (function () {
 const utils = require('utils')
 
@@ -94,9 +100,9 @@ class IndexedDBClient {
                 }
                 cursor.continue()
             } else {
+                console.timeEnd('logRecords')
                 if (!optionalLogObject) {
                     console.log(`IndexedDBClient: logAllRecords() No more entries for objectStore: ${objectStore}`)
-                    console.timeEnd('logRecords')
                 }
             }
         }
@@ -186,10 +192,6 @@ const fetchServerUpdate = {
         return new Promise((resolve) => {
             console.log('IndexedDBClient: Requesting https list from server')
 
-            // TODO: delete OLD top500 entries in production!
-            // TODO: optimize https.syncRuleCache so its structure is flipped
-            //       this.syncRuleCache = { 'hackernews.com': true }
-
             load.JSONfromExternalFile(
                 this.serverUpdateUrls['https'],
                 (data, response) => {
@@ -203,8 +205,8 @@ const fetchServerUpdate = {
                     console.time('IndexedDbClientTimer')
 
                     const records = data // shorthand alias
-                    const throttleBatchMS = 30 // amount to wait between batches
-                    const batchSize = 20 // how many records to add on the same transaction
+                    const throttleBatchMS = 50 // amount to wait between batches
+                    const batchSize = 100 // how many records to add on the same transaction
 
                     const finishUpdate = function() {
                         // sync new etag to storage
@@ -239,8 +241,8 @@ const fetchServerUpdate = {
 
                     const addRecords = function () {
                       if (!records.length) return finishUpdate.call(this)
-
                       const batch = records.slice(0, batchSize)
+
                       batch.forEach((host, index) => {
                         records.shift()
                         if (index === (batch.length - 1)) {
