@@ -1,6 +1,7 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
+const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 
 module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
@@ -63,7 +64,7 @@ module.exports = function () {
 
     return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
-      is-blocking--${!isWhitelisted}">
+      icon-tracker-networks-${trackerNetworksIcon}">
       </span>
       <span class="${isActive}">${count} Tracker Networks ${foundOrBlocked}</span>
       <span class="icon icon__arrow pull-right"></span>

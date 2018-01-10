@@ -52,6 +52,7 @@ Site.prototype = window.$.extend({},
       this._cacheElems('.js-site', [
         'toggle',
         'show-all-trackers',
+        'show-page-trackers',
         'privacy-practices'
       ])
 
