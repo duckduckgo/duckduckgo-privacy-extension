@@ -14,6 +14,7 @@ let constants = {
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
     "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https",
+    "surrogateList": "https://brian.duckduckgo.com/contentblocking.js?l=surrogates",
     "tosdrMessages" : {
         "A": "Good",
         "B": "Mixed",
