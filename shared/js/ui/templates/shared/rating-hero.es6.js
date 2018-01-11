@@ -52,7 +52,7 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
   if (isActive && rating && rating.before && rating.after) {
     if (rating.before !== rating.after) {
       // wrap this in a single root span otherwise bel complains
-      return bel`<span>Upgraded from
+      return bel`<span>Enhanced from
         <span class="rating__text-only ${rating.before.toLowerCase()}">
         ${rating.before}</span> to
         <span class="rating__text-only ${rating.after.toLowerCase()}">
