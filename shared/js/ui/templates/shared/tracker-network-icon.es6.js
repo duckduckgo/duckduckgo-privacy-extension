@@ -7,7 +7,7 @@ module.exports = function (siteRating, isWhitelisted) {
     iconNameModifier = 'warning'
   }
 
-  let iconName = 'major-networks-' + iconNameModifier
+  const iconName = 'major-networks-' + iconNameModifier
 
   return bel`${iconName}`
 }

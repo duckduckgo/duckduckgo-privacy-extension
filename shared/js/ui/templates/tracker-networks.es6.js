@@ -31,7 +31,7 @@ module.exports = function () {
 }
 
 function renderHero (model) {
-  let site = model.site || {}
+  const site = model.site || {}
 
   return bel`${hero({
     status: trackerNetworksIcon(site.siteRating, site.isWhitelisted),
