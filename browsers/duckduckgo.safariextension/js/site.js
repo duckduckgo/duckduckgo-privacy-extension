@@ -43,7 +43,7 @@ class Score {
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
     }
-
+    
     getTosdr() {
         let result = {}
 
@@ -56,10 +56,39 @@ class Score {
                 // remove period at end for lookup in pagesSeenOn
                 let tosdrData = tosdr[match[0]]
 
+                if (!tosdrData) return
+
+                const matchGood = (tosdrData.match && tosdrData.match.good) || []
+                const matchBad = (tosdrData.match && tosdrData.match.bad) || []
+
+                // tosdr message
+                // 1. If we have a defined tosdr class look up the message in constants
+                //    for the corresponding letter class
+                // 2. If there are both good and bad points -> 'mixed'
+                // 3. Else use the calculated tosdr score to determine the message
+                let message = constants.tosdrMessages.unknown
+                if (tosdrData.class) {
+                    message = constants.tosdrMessages[tosdrData.class]
+                } else if (matchGood.length && matchBad.length) {
+                    message = constants.tosdrMessages.mixed
+                } else {
+                    if (tosdrData.score < 0) {
+                        message = constants.tosdrMessages.good
+                    } else if (tosdrData.score === 0 && (matchGood.length || matchBad.length)) {
+                        message = constants.tosdrMessages.mixed
+                    } else if (tosdrData.score > 0 ) {
+                        message = constants.tosdrMessages.bad
+                    }
+                }
+
                 return result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
-                    reasons: tosdrData.match
+                    reasons: {
+                        good: matchGood,
+                        bad: matchBad
+                    },
+                    message: message
                 }
             }
         })

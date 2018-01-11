@@ -45,7 +45,7 @@ module.exports = function () {
       <span class="site-info__privacy-practices__icon
         is-${tosdrMsg.toLowerCase()}">
       </span>
-      <a href="#" class="js-site-privacy-practices link-secondary bold">
+      <a href="javascript:void(0)" class="js-site-privacy-practices link-secondary bold">
         ${tosdrMsg} Privacy Practices
         <span class="icon icon__arrow pull-right"></span>
       </a>

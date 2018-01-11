@@ -16,14 +16,14 @@ module.exports = function (ops) {
 }
 
 function renderCloseButton () {
-  return bel`<a href="#" class="hero__close js-sliding-subview-close">
+  return bel`<a href="javascript:void(0)" class="hero__close js-sliding-subview-close">
     <span class="icon icon__arrow icon__arrow--large icon__arrow--left">
     </span>
   </a>`
 }
 
 function renderOpenButton () {
-  return bel`<a href="#" class="hero__open js-hero-open">
+  return bel`<a href="javascript:void(0)" class="hero__open js-hero-open">
     <span class="icon icon__arrow icon__arrow--large">
     </span>
   </a>`
