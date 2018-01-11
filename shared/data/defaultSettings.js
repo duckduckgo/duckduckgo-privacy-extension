@@ -18,6 +18,7 @@ let defaultSettings = {
     "set_atb": null,
     "trackersWhitelistTemporary-etag": null,
     "trackersWhitelist-etag": null,
+    "trackersSurrogateList-etag": null,
     "generalEasylist-etag": null,
     "privacyEasylist-etag": null
 }

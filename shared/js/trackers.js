@@ -3,6 +3,7 @@
 var abp,
     easylists,
     trackerWhitelist = {}
+    surrogateList = {}
 
 var load = require('load'),
     settings = require('settings'),
@@ -12,6 +13,7 @@ var load = require('load'),
 let entityList
 let entityMap
 let whitelists
+let trackersSurrogateList
 
 settings.ready().then(() => {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
@@ -64,13 +66,15 @@ require.scopes.trackers = (function() {
             // tracker is related to the current site. If this is the case we consider it to be the
             // same as a first party requrest and return
             var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
+            var surrogateTracker = checkSurrogateList(urlToCheck)
             if (trackerByParentCompany) {
             // check cancel to see if this tracker is related to the current site
                 if (trackerByParentCompany.cancel) {
                     return
-                } else {
-                    return trackerByParentCompany
+                } else if (surrogateTracker) {
+                    return surrogateTracker
                 }
+                return trackerByParentCompany
             }
 
             // block trackers from easylists
@@ -231,6 +235,17 @@ require.scopes.trackers = (function() {
                 elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
             })
         return match
+    }
+
+    function checkSurrogateList(url) {
+        const b64dataheader = 'data:application/javascript;base64,'
+
+        for (item of Object.keys(surrogateList)) {
+            if (surrogateList[item].regex.test(url)) {
+                return {redirectUrl: b64dataheader + surrogateList[item].snippet}
+            }
+        }
+        return false
     }
 
     return {
