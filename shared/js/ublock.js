@@ -53,10 +53,11 @@ class UBlock {
     }
 
     /****
-     * Takes a full url, along with a tldjs parsed url object
-     * and returns the surrogate content if there is some available
+     * Takes a full url, along with a tldjs parsed url object, and the full
+     * parsed list of rules, returning surrogate content if there is some available
+     * for the given url.
      */
-    getSurrogateContent (url, parsedUrl) {
+    getSurrogateContent (url, parsedUrl, parsedList) {
         // The rules we're loading in from ublock look like:
         // googletagservices.com/gpt.js
         //
@@ -72,7 +73,7 @@ class UBlock {
         let splitUrl = url.split('/')
         let filename = splitUrl[splitUrl.length - 1]
         let ruleToMatch = parsedUrl.domain + '/' + filename
-        return surrogates.surrogateList.parsed[ruleToMatch]
+        return parsedList[ruleToMatch]
     }
 
 

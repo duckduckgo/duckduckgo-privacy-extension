@@ -132,7 +132,7 @@ require.scopes.trackers = (function() {
     function checkSurrogateList(url, parsedUrl) {
 
         let result = false
-        let surrogateContent = ublock.getSurrogateContent(url, parsedUrl)
+        let surrogateContent = ublock.getSurrogateContent(url, parsedUrl, surrogates.surrogateList.parsed)
 
         if (surrogateContent) {
             result = getTrackerDetails(url, 'surrogatesList')
