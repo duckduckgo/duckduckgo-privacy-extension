@@ -34,10 +34,11 @@ function getReasons (site) {
   // tracking networks blocked,
   // only show a message if there's any blocked
   const numTrackerNetworks = site.trackerNetworks.length
+  const foundOrBlocked = site.isWhitelisted || numTrackerNetworks === 0 ? 'Found' : 'Blocked'
   if (numTrackerNetworks) {
     reasons.push({
       modifier: 'bad',
-      msg: `${numTrackerNetworks} Tracker Networks Blocked`
+      msg: `${numTrackerNetworks} Tracker Networks ${foundOrBlocked}`
     })
   }
 
