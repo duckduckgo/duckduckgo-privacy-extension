@@ -69,11 +69,8 @@ class UBlock {
         // http://en.www.googletagservices.com/some/other/random/path/gpt.js?v=123
         //
         // All our rules have domain + filename, so for now we're safe making that assumption.
-        let a = document.createElement('a')
-        a.href = url
-
-        let splitPath = a.pathname.split('/')
-        let filename = splitPath[splitPath.length - 1]
+        let splitUrl = url.split('/')
+        let filename = splitUrl[splitUrl.length - 1]
         let ruleToMatch = parsedUrl.domain + '/' + filename
         return surrogates.surrogateList.parsed[ruleToMatch]
     }
