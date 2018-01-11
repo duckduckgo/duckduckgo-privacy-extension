@@ -73,6 +73,12 @@ function Background() {
     if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
     }
+
+    // blow away old indexeddbs that might be there:
+    if (details.reason.match(/update/) && window.indexedDB) {
+        indexedDB.deleteDatabase('https')
+        indexedDB.deleteDatabase('ddgExtension')
+    }
   });
 }
 
@@ -230,33 +236,15 @@ chrome.webRequest.onBeforeRequest.addListener(
         // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false
 
-        // Fetch upgrade rule from db (synchronous -- Chrome only)
-        if (utils.isChromeBrowser()) {
-            const url = https.pipeRequestUrl(requestData.url, thisTab, isMainFrame)
-            if (url.toLowerCase() !== requestData.url.toLowerCase()) {
-                console.log('HTTPS: upgrade request url to ' + url)
-                if (isMainFrame) thisTab.upgradedHttps = true
-                thisTab.addHttpsUpgradeRequest(url)
-                return {redirectUrl: url}
-            } else {
-              return
-            }
-
-        // Fetch upgrade rule from db (asynchronous -- Firefox/Mozilla)
+        // Fetch upgrade rule from https module:
+        const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame)
+        if (url.toLowerCase() !== requestData.url.toLowerCase()) {
+            console.log('HTTPS: upgrade request url to ' + url)
+            if (isMainFrame) thisTab.upgradedHttps = true
+            thisTab.addHttpsUpgradeRequest(url)
+            return {redirectUrl: url}
         } else {
-            return new Promise ((resolve) => {
-                https.pipeRequestUrl(requestData.url, thisTab, isMainFrame).then(
-                    (url) => {
-                        if (url.toLowerCase() !== requestData.url.toLowerCase()) {
-                            console.log('HTTPS: upgrade request url to ' + url)
-                            if (isMainFrame) thisTab.upgradedHttps = true
-                            thisTab.addHttpsUpgradeRequest(url)
-                            resolve({redirectUrl: url})
-                        }
-                        resolve()
-                    }
-                )
-            })
+          return
         }
     },
     {
