@@ -171,7 +171,7 @@ function fetchSurrogateCode () {
             // take identifier from first line
             let pattern = firstLine.split(' ')[0]
             // create regular expression for it
-            let regex = new RegExp(pattern.replace(/\//g,'\\/').replace(/\./g,'\\.').concat('$'),'g')
+            let regex = new RegExp(pattern.replace(/\//g,'\\/').replace(/\./g,'\\.').concat('$'))
             // convert to base 64 string
             let b64surrogate = btoa(lines.join('\n'))
             surrogateList[pattern] = {regex: regex, snippet: b64surrogate}
