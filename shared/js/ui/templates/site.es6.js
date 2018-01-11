@@ -41,7 +41,7 @@ module.exports = function () {
       <a href="#" class="js-site-tracker-networks link-secondary bold">
         ${renderTrackerNetworks(
             this.model.siteRating,
-            this.model.trackerNetworks,
+            this.model.totalTrackersCount,
             this.model.isWhitelisted)}
       </a>
     </li>
@@ -57,16 +57,14 @@ module.exports = function () {
   </ul>
   </section>`
 
-  function renderTrackerNetworks (site, tn, isWhitelisted) {
-    let count = 0
-    if (tn && tn.length) count = tn.length
+  function renderTrackerNetworks (site, trackersCount, isWhitelisted) {
     const isActive = !isWhitelisted ? 'is-active' : ''
-    const foundOrBlocked = isWhitelisted || count === 0 ? 'Found' : 'Blocked'
+    const foundOrBlocked = isWhitelisted || trackersCount === 0 ? 'Found' : 'Blocked'
 
     return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
           icon-${trackerNetworksIcon(site, isWhitelisted)}"></span>
-      <span class="${isActive} text-line-after-icon"> ${count} Tracker Networks ${foundOrBlocked}</span>
+      <span class="${isActive} text-line-after-icon"> ${trackersCount} Tracker Networks ${foundOrBlocked}</span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
   }

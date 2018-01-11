@@ -17,7 +17,8 @@ function Site (attrs) {
   attrs.httpsState = 'none'
   attrs.httpsStatusText = ''
   attrs.isUserPrivacyUpgraded = false
-  attrs.trackerCount = 0
+  attrs.trackersCount = 0
+  attrs.totalTrackersCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
@@ -153,6 +154,12 @@ Site.prototype = window.$.extend({},
           this.set('trackerNetworks', newTrackerNetworks)
         }
 
+        const newUnknownTrackersCount = this.getUnknownTrackersCount()
+        const newTotalTrackersCount = newUnknownTrackersCount + newTrackerNetworks.length
+        if (newTotalTrackersCount !== this.totalTrackersCount) {
+            this.set('totalTrackersCount', newTotalTrackersCount)
+        }
+
         this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
 
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()
@@ -174,6 +181,18 @@ Site.prototype = window.$.extend({},
       return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
         return this.tab.trackersBlocked[name].urls.length + total
       }, 0)
+    },
+
+    getUnknownTrackersCount: function () {
+      // console.log('[model] getUnknownTrackersCount()')
+      const unknownTrackers = this.tab.trackers ? this.tab.trackers.unknown : {}
+
+      let count = 0
+      if (unknownTrackers && unknownTrackers.urls) {
+        count = unknownTrackers.urls.length
+      }
+      
+      return count
     },
 
     getIsPartOfMajorTrackingNetwork: function () {

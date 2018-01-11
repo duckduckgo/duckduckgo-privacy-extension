@@ -68,7 +68,7 @@ TrackerNetworks.prototype = window.$.extend({},
         this.$hero.html(heroTemplate({
           status: trackerNetworksIconName,
           title: this.model.site.domain,
-          subtitle: this.model.site.trackersCount + ' Tracker Networks ' + blockedOrFound,
+          subtitle: this.model.site.totalTrackersCount + ' Tracker Networks ' + blockedOrFound,
           showClose: true
         }))
         this.setupClose()
