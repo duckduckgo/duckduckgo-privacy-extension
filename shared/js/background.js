@@ -229,10 +229,6 @@ chrome.webRequest.onBeforeRequest.addListener(
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
-        // Make sure https module is ready, check synchronous .isReady property
-        // since we aren't sure if we're in Chrome or Firefox at this point
-        if (!https.isReady) return
-
         // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false
 
