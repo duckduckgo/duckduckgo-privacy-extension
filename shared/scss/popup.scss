@@ -362,6 +362,7 @@ body {
         .site-info__privacy-practices__icon {
             @include icon_display();
             @include site_status_icons();
+            top: 12px;
 
             &.is-good {
                 @include cross_platform_bg_image("privacy--good.svg");
@@ -397,7 +398,7 @@ body {
         &.top-blocked--truncated {
             padding-top: 15px;
         }
-            
+
         .top-blocked__list {
             padding-top: 0;
             padding-bottom: 30px;
@@ -463,11 +464,11 @@ body {
                         &:first-child {
                             padding-top: 7.5px;
                         }
-                        
+
                         .site-info__tracker__icon {
                             @include icon_display();
                             @include tracker_network_icons_subview();
-                            
+
                             width: 22px;
                             height: 22px;
                             margin-top: -6px;
@@ -594,7 +595,7 @@ body {
            margin-left: 12px;
            margin-right: 0;
            padding-top: 0;
-       
+
            &:first-child {
                margin-left: 24px;
            }
@@ -632,11 +633,11 @@ body {
                 float: left;
                 box-sizing: border-box;
            }
-           
+
            .top-blocked__pill-site__icon {
                 @include icon_display();
                 @include tracker_network_icons();
-            
+
                 background-size: contain;
                 margin: auto;
                 background-position-x: center;
