@@ -63,7 +63,7 @@ TrackerNetworks.prototype = window.$.extend({},
           this.model.site.isWhitelisted
         )
 
-        const blockedOrFound = this.model.site.isWhitelisted ? 'Blocked' : 'Found'
+        const blockedOrFound = this.model.site.isWhitelisted ? 'Found' : 'Blocked'
 
         this.$hero.html(heroTemplate({
           status: trackerNetworksIconName,
