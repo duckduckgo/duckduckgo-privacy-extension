@@ -152,6 +152,14 @@ safari.application.addEventListener('activate', ((e) => {
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
     }
+    // if we don't have an active tab then this is likely a new tab
+    // this can happen when you open a new tab, click to activate another existing tab,
+    // and then go back to the new tab. new tab -> existing tab -> back to new tab.
+    // reset the badge to default and reload the popup to get the correct new tab data
+    else {
+        utils.setBadgeIcon('img/ddg-icon.png', e.target)
+        safari.extension.popovers[0].contentWindow.location.reload()
+    }
 }), true)
 
 safari.application.addEventListener('beforeSearch', (e) => {
