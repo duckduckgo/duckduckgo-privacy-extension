@@ -195,8 +195,13 @@ chrome.webRequest.onBeforeRequest.addListener(
                     console.info( "blocked " + utils.extractHostFromURL(thisTab.url)
                                  + " [" + tracker.parentCompany + "] " + requestData.url);
 
-                    // tell Chrome to cancel this webrequest
-                    return {cancel: true};
+                    // return surrogate redirect if surrogate match,
+                    // otherwise tell Chrome to cancel this webrequest
+                    if (tracker.surrogate) {
+                        return tracker.surrogate
+                    } else {
+                        return {cancel: true}
+                    }
                 }
             }
         }

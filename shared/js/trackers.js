@@ -62,19 +62,24 @@ require.scopes.trackers = (function() {
                 return whitelistedTracker
             }
 
+            // Check to see if tracker matches surrogate list
+            var surrogateTracker = checkSurrogateList(urlToCheck)
+            if (surrogateTracker) {
+                let surrogateTrackerDetails = getTrackerDetails(urlToCheck,'surrogate')
+                surrogateTrackerDetails.surrogate = surrogateTracker
+                return surrogateTrackerDetails
+            }
             // Look up trackers by parent company. This function also checks to see if the poential
             // tracker is related to the current site. If this is the case we consider it to be the
             // same as a first party requrest and return
             var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
-            var surrogateTracker = checkSurrogateList(urlToCheck)
             if (trackerByParentCompany) {
             // check cancel to see if this tracker is related to the current site
                 if (trackerByParentCompany.cancel) {
                     return
-                } else if (surrogateTracker) {
-                    return surrogateTracker
+                } else {
+                    return trackerByParentCompany
                 }
-                return trackerByParentCompany
             }
 
             // block trackers from easylists
