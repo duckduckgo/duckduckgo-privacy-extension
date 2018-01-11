@@ -20,6 +20,7 @@ function Site (attrs) {
     attrs.trackerCount = 0
     attrs.trackerNetworks
     attrs.tosdr = {}
+    attrs.isaMajorTrackingNetwork = false
     Parent.call(this, attrs)
 
     this.bindEvents([
@@ -43,7 +44,11 @@ Site.prototype = $.extend({},
               thisModel.set('tab', backgroundTabObj)
               thisModel.domain = backgroundTabObj.site.domain
               thisModel.fetchSiteRating()
-              thisModel.tosdr = backgroundTabObj.site.score.tosdr
+              this.set('tosdr', backgroundTabObj.site.score.tosdr)
+              this.set(
+                  'isaMajorTrackingNetwork',
+                  backgroundTabObj.site.score.isaMajorTrackingNetwork
+              )
           } else {
               thisModel.domain = ''
           }
@@ -149,6 +154,8 @@ Site.prototype = $.extend({},
               if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
                   this.set('isUserPrivacyUpgraded', newUserPrivacy)
               }
+
+              this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
           }
       },
 
@@ -166,6 +173,13 @@ Site.prototype = $.extend({},
           }, 0)
       },
 
+      getIsPartOfMajorTrackingNetwork: function () {
+          return this.isaMajorTrackingNetwork ||
+              this.trackerNetworks.some((tracker) =>
+                  window.constants.majorTrackingNetworks[tracker]
+              )
+      },
+ 
       getTrackerNetworksOnPage: function () {
           // console.log('[model] getMajorTrackerNetworksOnPage()')
           // all tracker networks found on this page/tab

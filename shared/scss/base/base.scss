@@ -152,6 +152,19 @@ a {
     border-bottom: $card__border;
 }
 
+.border--bottom--inner {
+    position: relative;
+
+    &:after {
+        content: "";
+        border-bottom: $card__border;
+        position: absolute;
+        bottom: 0;
+        left: 20px;
+        right: 20px;
+    }
+}
+
 
 /* Padding */
 .padded {
@@ -264,13 +277,7 @@ a {
         width: 16px;
         height: 16px;
 
-        .is-browser--chrome & {
-            background-image: url($icon__arrow--chrome);
-        }
-
-        .is-browser--moz & {
-            background-image: url($icon__arrow--moz);
-        }
+        @include cross_platform_bg_image("arrow@2x.png");
 
         .is-browser--safari & {
             background-image: url($icon__arrow--safari);
@@ -278,6 +285,11 @@ a {
 
         &.icon__arrow--left {
             transform: rotate(180deg);
+        }
+
+        &.icon__arrow--large {
+            width: 9.5px;
+            @include cross_platform_bg_image("arrow--large.svg");
         }
     }
 
