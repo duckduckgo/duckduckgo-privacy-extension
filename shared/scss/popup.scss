@@ -184,7 +184,6 @@ body {
             padding-bottom: 0;
         }
 
-        .site-info__domain,
         .site-info__protection {
             line-height: 1.4em;
             height: 1.2em;
@@ -193,14 +192,6 @@ body {
             font-weight: bold;
             overflow: hidden;
             text-overflow: ellipsis;
-        }
-
-        .site-info__domain {
-            margin-top: 7.5px;
-            text-align: center;
-            width: 100%;
-            max-width: 100%;
-            font-size: 17px;
         }
 
         .site-info__tosdr-status {
@@ -240,21 +231,10 @@ body {
             padding-top: 0;
         }
 
-        .site-info__rating-container {
-            padding: 0 20px 15px 20px;
-            text-align: center;
-        }
-
-        .site-info__rating-upgrade {
-            padding-top: 7.5px;
-        }
-
         .site-info__rating {
-            @include icon_display();
             @include site_rating_icons();
             width: 80px;
             height: 64px;
-            margin-top: 15px;
         }
 
         .site-info__li--https-status {
@@ -370,15 +350,41 @@ body {
             }
         }
 
-        .site-info__li--more-details {
-            .link-secondary {
-                @include is_disableable_link();
-                display: block;
+        .site-info__li--privacy-practices {
+            position: relative;
+            padding-left: 45px;
+
+            .is-disabled & {
+                @include is_disabled();
             }
         }
 
-        .site-info__li--toggle {
+        .site-info__privacy-practices__icon {
+            @include icon_display();
+            @include site_status_icons();
+            top: 12px;
+
+            &.is-good {
+                @include cross_platform_bg_image("privacy--good.svg");
+            }
+
+            &.is-bad {
+                @include cross_platform_bg_image("privacy--bad.svg");
+            }
+
+            &.is-mixed,
+            &.is-unknown {
+                @include cross_platform_bg_image("privacy--mixed.svg");
+            }
         }
+
+        .link-secondary {
+            @include is_disableable_link();
+        }
+    }
+
+    .site-info--full-height {
+        bottom: 0;
     }
 
     .top-blocked {
@@ -392,7 +398,7 @@ body {
         &.top-blocked--truncated {
             padding-top: 15px;
         }
-            
+
         .top-blocked__list {
             padding-top: 0;
             padding-bottom: 30px;
@@ -458,11 +464,11 @@ body {
                         &:first-child {
                             padding-top: 7.5px;
                         }
-                        
+
                         .site-info__tracker__icon {
                             @include icon_display();
                             @include tracker_network_icons_subview();
-                            
+
                             width: 22px;
                             height: 22px;
                             margin-top: -6px;
@@ -589,7 +595,7 @@ body {
            margin-left: 12px;
            margin-right: 0;
            padding-top: 0;
-       
+
            &:first-child {
                margin-left: 24px;
            }
@@ -627,11 +633,11 @@ body {
                 float: left;
                 box-sizing: border-box;
            }
-           
+
            .top-blocked__pill-site__icon {
                 @include icon_display();
                 @include tracker_network_icons();
-            
+
                 background-size: contain;
                 margin: auto;
                 background-position-x: center;
@@ -738,6 +744,11 @@ body {
         }
     }
 }
+
+@import "views/hero";
+@import "views/hero-rating-container";
+@import "views/status-list";
+@import "views/privacy-practices";
 
 
 /* Generic menu list styling */

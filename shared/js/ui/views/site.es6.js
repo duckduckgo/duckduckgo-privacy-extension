@@ -1,6 +1,10 @@
 const Parent = window.DDG.base.View
+const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const GradeDetailsView = require('./../views/grade-details.es6.js')
+const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const gradeDetailsTemplate = require('./../templates/grade-details.es6.js')
+const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
+const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 
 function Site (ops) {
   this.model = ops.model
@@ -45,12 +49,17 @@ Site.prototype = window.$.extend({},
       // console.log('[site view] _setup()')
       this._cacheElems('.js-site', [
         'toggle',
-        'show-all-trackers'
+        'show-all-trackers',
+        'privacy-practices'
       ])
+
+      this.$gradescorecard = this.$('.js-hero-open')
 
       this.bindEvents([
         [this.$toggle, 'click', this._whitelistClick],
         [this.$showalltrackers, 'click', this._showAllTrackers],
+        [this.$privacypractices, 'click', this._showPrivacyPractices],
+        [this.$gradescorecard, 'click', this._showGradeScorecard],
         [this.store.subscribe, 'change:site', this.rerender]
       ])
     },
@@ -74,6 +83,24 @@ Site.prototype = window.$.extend({},
       if (this.$body.hasClass('is-disabled')) return
       this.views.slidingSubview = new GradeDetailsView({
         template: gradeDetailsTemplate
+      })
+    },
+
+    _showPrivacyPractices: function () {
+      if (this.model.disabled) return
+
+      this.views.privacyPractices = new PrivacyPracticesView({
+        template: privacyPracticesTemplate,
+        model: this.model
+      })
+    },
+
+    _showGradeScorecard: function () {
+      if (this.model.disabled) return
+
+      this.views.gradeScorecard = new GradeScorecardView({
+        template: gradeScorecardTemplate,
+        model: this.model
       })
     }
   }

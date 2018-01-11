@@ -20,6 +20,7 @@ function Site (attrs) {
   attrs.trackerCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
+  attrs.isaMajorTrackingNetwork = false
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -43,7 +44,11 @@ Site.prototype = window.$.extend({},
                 this.set('tab', backgroundTabObj)
                 this.domain = backgroundTabObj.site.domain
                 this.fetchSiteRating()
-                this.tosdr = backgroundTabObj.site.score.tosdr
+                this.set('tosdr', backgroundTabObj.site.score.tosdr)
+                this.set(
+                  'isaMajorTrackingNetwork',
+                  backgroundTabObj.site.score.isaMajorTrackingNetwork
+                )
               }
               this.setSiteProperties()
               this.setHttpsMessage()
@@ -148,6 +153,8 @@ Site.prototype = window.$.extend({},
           this.set('trackerNetworks', newTrackerNetworks)
         }
 
+        this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
+
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()
         if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
           this.set('isUserPrivacyUpgraded', newUserPrivacy)
@@ -167,6 +174,13 @@ Site.prototype = window.$.extend({},
       return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
         return this.tab.trackersBlocked[name].urls.length + total
       }, 0)
+    },
+
+    getIsPartOfMajorTrackingNetwork: function () {
+      return this.isaMajorTrackingNetwork ||
+        this.trackerNetworks.some((tracker) =>
+          window.constants.majorTrackingNetworks[tracker]
+        )
     },
 
     getTrackerNetworksOnPage: function () {
