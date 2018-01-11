@@ -28,7 +28,7 @@ module.exports = function () {
       </div>
       <div class="privacy-practices__details padded border--bottom--inner
           js-privacy-practices-details">
-        ${tosdr && tosdr.reasons ?  renderDetails(tosdr.reasons) : renderNoDetails()}
+        ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
       </div>
       <div class="privacy-practices__attrib padded text--center">
         Privacy Practice results from <a href="https://tosdr.org/" class="bold" target="_blank">ToS;DR</a>
