@@ -2,7 +2,6 @@ const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const heroTemplate = require('./../templates/shared/hero.es6.js')
 const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
-const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const trackerNetworksIconTemplate = require('./../templates/shared/tracker-network-icon.es6.js')
 
 function TrackerNetworks (ops) {
@@ -26,7 +25,7 @@ TrackerNetworks.prototype = window.$.extend({},
         'hero',
         'details'
       ])
-      
+
       // site rating arrives async
       this.bindEvents([[
         this.store.subscribe,
@@ -53,18 +52,18 @@ TrackerNetworks.prototype = window.$.extend({},
           this.setup()
         })
       })
-      
+
       this._renderHeroTemplate()
     },
 
-    _renderHeroTemplate: function() {
+    _renderHeroTemplate: function () {
       if (this.model.site) {
         const trackerNetworksIconName = trackerNetworksIconTemplate(
           this.model.site.siteRating,
           this.model.site.isWhitelisted
         )
-        
-        const blockedOrFound = this.model.site.sWhitelisted? 'Blocked' : 'Found'
+
+        const blockedOrFound = this.model.site.sWhitelisted ? 'Blocked' : 'Found'
 
         this.$hero.html(heroTemplate({
           status: trackerNetworksIconName,
@@ -74,7 +73,7 @@ TrackerNetworks.prototype = window.$.extend({},
         }))
         this.setupClose()
       }
-    },
+    }
   }
 )
 
