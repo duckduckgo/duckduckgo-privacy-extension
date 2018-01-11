@@ -94,7 +94,11 @@ function updateLists () {
 
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
-    load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
+    load.loadExtensionFile({
+        url: constants.trackersWhitelistTemporary,
+        etag: trackersWhitelistTemporaryEtag,
+        source: 'external'
+    }, (listData, response) => {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 
@@ -149,18 +153,20 @@ function fetchSurrogateCode () {
     // reset etag to get a new list copy if we don't have data
     if (!trackersSurrogateList || !trackersSurrogateListEtag) trackersSurrogateListEtag = ''
     // load surrogates list
-    load.loadExtensionFile({url: constants.trackersSurrogateList, etag: trackersSurrogateListEtag, source: 'external'}, (listData, response) => {
+    load.loadExtensionFile({
+        url: constants.trackersSurrogateList,
+        etag: trackersSurrogateListEtag,
+        source: 'external'
+    }, (listData, response) => {
         const newTrackersSurrogateListEtag = response.getResponseHeader('etag') || ''
         const clientChecksum = crypto.createHash('md5').update(listData).digest('base64')
 
         settings.updateSetting('trackersSurrogateList-etag', newTrackersSurrogateListEtag);
-
         //  check that etag hash matches hash of file received
         if (!clientChecksum || clientChecksum.substring(0,6) !== newTrackersSurrogateListEtag) {
             console.log("Checksum didn't match")
         } else {
             trackersSurrogateList = listData.trim().split('\n\n')
-
             for (let surrogate of trackersSurrogateList) {
                 // remove comment lines that begin with #
                 let lines = surrogate.split('\n').filter((line) => {
@@ -172,7 +178,6 @@ function fetchSurrogateCode () {
                 let pattern = firstLine.split(' ')[0]
                 // create regular expression for it
                 let regex = new RegExp(pattern.replace(/\//g,'\\/').replace(/\./g,'\\.').concat('$'),'g')
-
                 // convert to base 64 string
                 let b64surrogate = btoa(lines.join('\n'))
                 surrogateList[pattern] = {regex: regex, snippet: b64surrogate}
