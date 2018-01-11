@@ -14,6 +14,17 @@ let constants = {
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
     "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https",
+    "tosdrMessages" : {
+        "A": "Good",
+        "B": "Mixed",
+        "C": "Bad",
+        "D": "Bad",
+        "E": "Bad",
+        "good": "Good",
+        "bad": "Bad",
+        "unknown": "Unknown",
+        "mixed": "Mixed"
+    },
     /**
      * Major tracking networks data:
      * percent of the top 1 million sites a tracking network has been seen on.
