@@ -19,6 +19,7 @@ var debugRequest = false;
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
+var https = require('https');
 let browser = 'safari'
 
 function Background() {
