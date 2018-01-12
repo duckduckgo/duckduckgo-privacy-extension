@@ -27,7 +27,7 @@ let constants = {
     },
     "httpsMessages": {
         "secure": "Encrypted Connection",
-        "upgraded": "Forced Connection",
+        "upgraded": "Forced Encryption",
         "none": "Unencrypted Connection",
     },
     /**
