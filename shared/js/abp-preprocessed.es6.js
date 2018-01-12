@@ -41,7 +41,7 @@ let lists = {
     surrogates: {
         surrogateList: {
             constantsName: 'surrogateList',
-            parser: ublock,
+            parser: surrogates,
             parsed: {},
             isLoaded: false
         }
@@ -51,7 +51,6 @@ let lists = {
 // these are defined in trackers.js
 easylists = lists.easylists
 whitelists = lists.whitelists
-surrogates = lists.surrogates
 
 /*
  * Get the list data and use abp to parse.

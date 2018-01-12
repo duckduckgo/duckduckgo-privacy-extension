@@ -1,10 +1,12 @@
 (function() {
 
 /****
- * Parser and Matcher for uBlock resource files
+ * 
  */
 
-class UBlock {
+let surrogateList = {}
+
+class Surrogates {
 
     /****
      * Takes a text response, in uBlock's resources.txt format:
@@ -13,10 +15,10 @@ class UBlock {
      * Based off of their parser:
      * https://github.com/gorhill/uBlock/blob/master/src/js/redirect-engine.js#L400
      *
-     * Returns an object of urls + redirectUrl's of encoded data to serve in
-     * place of calling the URL
+     * Parses it into surrogateList hash, with the rules as keys
+     * and the base64 encoded surrogate content as the value.
      */
-    parse (text, res) {
+    parse (text) {
         this.text = text
         this.textLen = this.text.length
         this.offset = 0
@@ -25,7 +27,6 @@ class UBlock {
             fields,
             encoded,
             reNonEmptyLine = /\S/
-
 
         while ( this.eot() === false ) {
             line = this.nextLine()
@@ -46,10 +47,14 @@ class UBlock {
                 continue;
             }
 
-            res[fields[0]] = this.getRedirectURL(fields[1], fields.slice(2))
+            surrogateList[fields[0]] = this.getRedirectURL(fields[1], fields.slice(2))
 
             fields = undefined
         }
+    }
+
+    getContentForRule (rule) {
+      return surrogateList[rule]
     }
 
     /****
@@ -57,7 +62,7 @@ class UBlock {
      * parsed list of rules, returning surrogate content if there is some available
      * for the given url.
      */
-    getSurrogateContent (url, parsedUrl, parsedList) {
+    getContentForUrl (url, parsedUrl) {
         // The rules we're loading in from ublock look like:
         // googletagservices.com/gpt.js
         //
@@ -73,7 +78,7 @@ class UBlock {
         let splitUrl = url.split('/')
         let filename = splitUrl[splitUrl.length - 1]
         let ruleToMatch = parsedUrl.domain + '/' + filename
-        return parsedList[ruleToMatch]
+        return surrogateList[ruleToMatch]
     }
 
 
@@ -121,5 +126,5 @@ class UBlock {
     }
 }
 
-require.scopes.ublock = new UBlock()
+require.scopes.surrogates = new Surrogates()
 })()

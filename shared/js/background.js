@@ -22,7 +22,7 @@ var settings = require('settings')
 var stats = require('stats')
 var db = require('db')
 var https = require('https')
-var ublock = require('ublock')
+var surrogates = require('surrogates')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome

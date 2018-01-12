@@ -9,7 +9,7 @@ var abp,
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
-    ublock = require('ublock'),
+    surrogates = require('surrogates'),
     trackerLists = require('trackerLists').getLists()
 
 let entityList
@@ -132,12 +132,12 @@ require.scopes.trackers = (function() {
     function checkSurrogateList(url, parsedUrl) {
 
         let result = false
-        let surrogateContent = ublock.getSurrogateContent(url, parsedUrl, surrogates.surrogateList.parsed)
+        let dataURI = surrogates.getContentForUrl(url, parsedUrl)
 
-        if (surrogateContent) {
+        if (dataURI) {
             result = getTrackerDetails(url, 'surrogatesList')
             result.block = true
-            result.redirectUrl = surrogateContent
+            result.redirectUrl = dataURI
             console.log("serving surrogate content for: ", url)
         }
 

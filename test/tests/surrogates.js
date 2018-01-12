@@ -1,5 +1,5 @@
 (function() {
-  QUnit.module('UBlock')
+  QUnit.module('Surrogates')
 
   let afterSurrogatesListLoaded = function(fn) {
       let numTries = 0
@@ -32,7 +32,7 @@
       }
 
       xhr.send()
-  };
+  }
 
   QUnit.test('test parsing test file of rules', function(assert) {
       let done = assert.async()
@@ -40,11 +40,9 @@
       afterSurrogatesListLoaded((success) => {
           assert.ok(success, 'surrogate list loaded successfully')
 
-          let sur = surrogates.surrogateList.parsed
-
-          assert.ok(!!sur['google-analytics.com/ga.js'], 'should have something for ga.js')
-          assert.ok(!!sur['google-analytics.com/analytics.js'], 'should have something for analytics.js')
-          assert.ok(!sur['duckduckgo.com'], 'should not have duckduckgo.com')
+          assert.ok(!!surrogates.getContentForRule('google-analytics.com/ga.js'), 'should have something for ga.js')
+          assert.ok(!!surrogates.getContentForRule('google-analytics.com/analytics.js'), 'should have something for analytics.js')
+          assert.ok(!surrogates.getContentForRule('duckduckgo.com'), 'should not have duckduckgo.com')
 
           done()
       })
@@ -55,9 +53,7 @@
 
       afterSurrogatesListLoaded((success) => {
 
-          assert.ok(!window._gaq, 'should NOT have the window._gaq object before injecting the surrogate')
-
-          getSurrogateJS(surrogates.surrogateList.parsed['google-analytics.com/ga.js'], function(js) {
+          getSurrogateJS(surrogates.getContentForRule('google-analytics.com/ga.js'), function(js) {
               // can't eval the JS because of CSP, best I could come up with for now is
               // just to check that it looks like the valid start of the expected function:
               assert.ok(js.match(/\(function\(\) {/), 'should parse into JS')

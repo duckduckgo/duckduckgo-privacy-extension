@@ -51,7 +51,7 @@
                 "js/trackers.js",
                 "js/tldjs.js",
                 "js/https.js",
-                "js/ublock.js",
+                "js/surrogates.js",
                 "js/background.js",
                 "js/abp.js",
                 "js/atb.js"
