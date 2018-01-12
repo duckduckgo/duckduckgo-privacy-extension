@@ -18,7 +18,9 @@ class Surrogates {
      * Parses it into surrogateList hash, with the rules as keys
      * and the base64 encoded surrogate content as the value.
      */
-    parse (text) {
+    parse (text, res) {
+        res = res || {}
+
         this.text = text
         this.textLen = this.text.length
         this.offset = 0
@@ -47,14 +49,17 @@ class Surrogates {
                 continue;
             }
 
-            surrogateList[fields[0]] = this.getRedirectURL(fields[1], fields.slice(2))
+            res[fields[0]] = this.getRedirectURL(fields[1], fields.slice(2))
 
             fields = undefined
         }
+
+        surrogateList = res
+        return res
     }
 
     getContentForRule (rule) {
-      return surrogateList[rule]
+        return surrogateList[rule]
     }
 
     /****
