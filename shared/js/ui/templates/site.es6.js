@@ -28,13 +28,9 @@ module.exports = function () {
       <span class="site-info__https-status__icon
         is-${this.model.httpsState}">
       </span>
-      <span class="text-line-after-icon"> Connection </span>
-      <div class="float-right">
-      <span class="site-info__https-status__msg
-        is-${this.model.httpsStatusText.toLowerCase()}">
+      <span class="text-line-after-icon">
         ${this.model.httpsStatusText}
       </span>
-      </div>
     </h2>
     </li>
     <li class="site-info__li--trackers padded border--bottom">

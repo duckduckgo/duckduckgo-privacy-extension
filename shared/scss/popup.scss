@@ -289,19 +289,6 @@ body {
             }
         }
 
-        .site-info__https-status__msg {
-            @include uppercase_label();
-
-            &.is-secure,
-            &.is_upgraded {
-                color: $color--green;
-            }
-
-            &.is-insecure {
-                color: $color--grey;
-            }
-        }
-
         .site-info__li--trackers {
             position: relative;
             padding-left: 45px;
