@@ -50,7 +50,6 @@
                 "js/trackerLists.js",
                 "js/trackers.js",
                 "js/tldjs.js",
-                "js/indexed-db.js",
                 "js/https.js",
                 "js/background.js",
                 "js/abp.js",
