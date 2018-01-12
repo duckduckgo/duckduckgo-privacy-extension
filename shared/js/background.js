@@ -205,6 +205,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                     // return surrogate redirect if match, otherwise
                     // tell Chrome to cancel this webrequest
                     if (tracker.redirectUrl) {
+                        console.info("serving surrogate content for: ", tracker.url)
                         return {redirectUrl: tracker.redirectUrl}
                     } else {
                         return {cancel: true};

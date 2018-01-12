@@ -12,48 +12,27 @@ class Surrogates {
      * Takes a text response, in uBlock's resources.txt format:
      * https://github.com/uBlockOrigin/uAssets/blob/master/filters/resources.txt
      *
-     * Based off of their parser:
-     * https://github.com/gorhill/uBlock/blob/master/src/js/redirect-engine.js#L400
-     *
      * Parses it into surrogateList hash, with the rules as keys
      * and the base64 encoded surrogate content as the value.
      */
     parse (text, res) {
+        const b64dataheader = 'data:application/javascript;base64,'
         res = res || {}
 
-        this.text = text
-        this.textLen = this.text.length
-        this.offset = 0
+        this.trackersSurrogateList = text.trim().split('\n\n')
 
-        var line,
-            fields,
-            encoded,
-            reNonEmptyLine = /\S/
-
-        while ( this.eot() === false ) {
-            line = this.nextLine()
-            if (line.startsWith('#')) { continue; }
-
-            if (fields === undefined) {
-                fields = line.trim().split(/\s+/)
-                if ( fields.length === 2 ) {
-                    encoded = fields[1].indexOf(';') !== -1
-                } else {
-                    fields = undefined
-                }
-                continue;
-            }
-
-            if (reNonEmptyLine.test(line)) {
-                fields.push(encoded ? line.trim() : line);
-                continue;
-            }
-
-            res[fields[0]] = this.getRedirectURL(fields[1], fields.slice(2))
-
-            fields = undefined
+        for (let sur of this.trackersSurrogateList) {
+            // remove comment lines that begin with #
+            let lines = sur.split('\n').filter((line) => {
+                return !(/^#.*/).test(line)
+            })
+            // remove first line, store it
+            let firstLine = lines.shift()
+            // take identifier from first line
+            let pattern = firstLine.split(' ')[0]
+            let b64surrogate = btoa(lines.join('\n'))
+            res[pattern] =  b64dataheader + b64surrogate
         }
-
         surrogateList = res
         return res
     }
@@ -75,8 +54,7 @@ class Surrogates {
         // The rules we're loading in from ublock look like:
         // googletagservices.com/gpt.js
         //
-        // According to what I saw in their github issues, anything not
-        // specific in the rule is intended to be a wildcard, including the paths.
+        // Anything not specific in the rule is intended to be a wildcard, including the paths.
         //
         // So that rule can match things like:
         // https://wwww.googletagservices.com/js/gpt.js
@@ -88,50 +66,6 @@ class Surrogates {
         let filename = splitUrl[splitUrl.length - 1]
         let ruleToMatch = parsedUrl.domain + '/' + filename
         return surrogateList[ruleToMatch]
-    }
-
-
-    // parse() sub-functions from uBlock for parsing the file:
-
-    // https://github.com/gorhill/uBlock/blob/a9f68fe02f40472c3e16287f8a67b0abe9421e10/src/js/utils.js#L163
-    nextLine (offset) {
-        if (offset !== undefined) {
-            this.offset += offset
-        }
-        var lineEnd = this.text.indexOf('\n', this.offset)
-        if ( lineEnd === -1 ) {
-            lineEnd = this.text.indexOf('\r', this.offset)
-            if ( lineEnd === -1 ) {
-                lineEnd = this.textLen
-            }
-        }
-        var line = this.text.slice(this.offset, lineEnd)
-        this.offset = lineEnd + 1
-        return line
-    }
-
-    charCodeAt (offset) {
-        return this.text.charCodeAt(this.offset + offset)
-    }
-
-    eot () {
-        return this.offset >= this.textLen
-    }
-
-    getRedirectURL (mime, lines) {
-        // https://github.com/gorhill/uBlock/blob/master/src/js/redirect-engine.js#L65
-        var data = lines.join(mime.indexOf(';') !== -1 ? '' : '\n')
-
-        // https://github.com/gorhill/uBlock/blob/master/src/js/redirect-engine.js#L38
-        if (data.startsWith('data:') === false ) {
-            if (mime.indexOf(';') === -1 ) {
-                data = 'data:' + mime + ';base64,' + btoa(data)
-            } else {
-                data = 'data:' + mime + ',' + data
-            }
-        }
-
-        return data
     }
 }
 
