@@ -204,8 +204,12 @@ body {
         }
 
         .site-info__li--toggle {
-            background-color: $color--green;
+            background-color: $color--medium-slate;
             color: $color--white;
+
+            &.is-active {
+                background-color: $color--green;
+            }
 
             .is-disabled & {
                 @include is_disabled();
@@ -225,6 +229,11 @@ body {
             .toggle-button--is-active-true {
                 .toggle-button__bg {
                     background-color: $color--dark-green;
+                }
+            }
+            .toggle-button--is-active-false {
+                .toggle-button__bg {
+                    background-color: #4B4D50;
                 }
             }
         }
