@@ -12,8 +12,8 @@ function TrackerNetworks (ops) {
   this.template = ops.template
   ParentSlidingSubview.call(this, ops)
 
+  setTimeout(() => this._rerender(), 750)
   this.renderAsyncContent()
-  this.setupClose()
 }
 
 TrackerNetworks.prototype = window.$.extend({},
@@ -30,7 +30,7 @@ TrackerNetworks.prototype = window.$.extend({},
       this.bindEvents([[
         this.store.subscribe,
         `change:${this.currentSiteModelName}`,
-        this._renderHeroTemplate
+        this._rerender
       ]])
     },
 
@@ -50,10 +50,9 @@ TrackerNetworks.prototype = window.$.extend({},
           let content = this.template()
           this.$el.append(content)
           this.setup()
+          this.setupClose()
         })
       })
-
-      this._renderHeroTemplate()
     },
 
     _renderHeroTemplate: function () {
@@ -71,7 +70,19 @@ TrackerNetworks.prototype = window.$.extend({},
           subtitle: this.model.site.totalTrackersCount + ' Tracker Networks ' + blockedOrFound,
           showClose: true
         }))
-        this.setupClose()
+      }
+    },
+
+    _rerender: function (e) {
+      if (e && e.change) {
+        if (e.change.attribute === 'isPartOfMajorTrackingNetwork' ||
+            e.change.attribute === 'isWhitelisted' ||
+            e.change.attribute === 'totalTrackersCount') {
+          this._renderHeroTemplate()
+          this.unbindEvents()
+          this.setup()
+          this.setupClose()
+        }
       }
     }
   }
