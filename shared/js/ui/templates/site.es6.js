@@ -41,7 +41,7 @@ module.exports = function () {
         <span class="icon icon__arrow pull-right"></span>
       </a>
     </li>
-    <li class="site-info__li--toggle padded border--bottom">
+    <li class="site-info__li--toggle padded">
       <h2 class="site-info__protection">Site Privacy Protection</h2>
       <div class="site-info__toggle-container">
         ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}

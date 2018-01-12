@@ -188,16 +188,6 @@ body {
             margin-left: 12px;
         }
 
-        .site-info__protection {
-            line-height: 1.4em;
-            height: 1.2em;
-            display: block;
-            max-width: $popup__width - 125;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
         .site-info__tosdr-status {
             padding: 15px 20px 0px 20px
         }
@@ -214,6 +204,9 @@ body {
         }
 
         .site-info__li--toggle {
+            background-color: $color--green;
+            color: $color--white;
+
             .is-disabled & {
                 @include is_disabled();
             }
@@ -229,6 +222,11 @@ body {
                 right: 0;
             }
 
+            .toggle-button--is-active-true {
+                .toggle-button__bg {
+                    background-color: $color--dark-green;
+                }
+            }
         }
 
         .site-info__rating-li {
