@@ -38,6 +38,8 @@ class HTTPS {
             if (!httpsUpgradeList.length) {
                 httpsUpgradeList = items
             }
+        },() => {
+            console.log("HTTPS: init() failed to get existing list from storage")
         })
 
         // wait for settings to be ready before trying
