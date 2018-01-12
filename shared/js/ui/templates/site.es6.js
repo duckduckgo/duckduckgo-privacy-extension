@@ -7,7 +7,7 @@ module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
      window.constants.tosdrMessages.unknown
 
-  return bel`<section class="site-info site-info--main card">
+  return bel`<section class="site-info site-info--main">
     <ul class="default-list">
     <li class="site-info__rating-li silver-bg">
       ${ratingHero(this.model, {
