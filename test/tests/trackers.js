@@ -160,4 +160,26 @@
       })
   })
 
+  var surrogateBlocking = [
+    { url: 'https://google-analytics.com/ga.js' },
+    { url: 'https://www.google-analytics.com/ga.js' },
+    { url: 'https://www.googletagservices.com/tag/js/gpt.js' }
+  ];
+
+  QUnit.test("surrogateBlocking", function (assert) {
+      surrogateBlocking.forEach(function(test) {
+          let testTab = {
+              tabId: 0,
+              url: test.url,
+              site: {domain: utils.extractHostFromURL(test.url)}
+          }
+
+          let result = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+          assert.ok(result, 'should be flagged as a tracker')
+          assert.ok(result.block, 'should be blocked')
+          assert.ok(result.redirectUrl, 'should be redirected to new url')
+          assert.ok(result.redirectUrl.match(/data:application\/javascript;base64/), 'should be a data URI as redirect url')
+      });
+  });
+
 })();
