@@ -1,6 +1,7 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
+const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 
 module.exports = function () {
   if (!this.model) {
@@ -10,7 +11,7 @@ module.exports = function () {
   } else {
     return bel`<div class="tracker-networks site-info site-info--full-height card">
       <div class="js-tracker-networks-hero">
-        ${renderHero(this.model)}
+        ${renderHero(this.model.site)}
       </div>
       <div class="tracker-networks__explainer padded border--bottom--inner
           text--center">
@@ -30,27 +31,15 @@ module.exports = function () {
   }
 }
 
-function renderHero (model) {
-  const site = model.site || {}
-  const networkOrNetworks = (site.totalTrackersCount === 1) ? 'Network' : 'Networks'
+function renderHero (site) {
+  site = site || {}
 
   return bel`${hero({
     status: trackerNetworksIcon(site.siteRating, site.isWhitelisted),
     title: site.domain,
-    subtitle: `${site.totalTrackersCount} Tracker ${networkOrNetworks} ${trackersBlockedOrFound(model)}`,
+    subtitle: `${trackerNetworksText(site)}`,
     showClose: true
   })}`
-}
-
-function trackersBlockedOrFound (model) {
-  let msg = ''
-  if (model.site &&
-     (model.site.isWhitelisted || model.site.trackerNetworks.length === 0)) {
-    msg = 'Found'
-  } else {
-    msg = 'Blocked'
-  }
-  return bel`${msg}`
 }
 
 function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
