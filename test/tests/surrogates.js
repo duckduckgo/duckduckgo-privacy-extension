@@ -5,7 +5,7 @@
       let numTries = 0
       let maxTries = 10
       let checkForList = function() {
-          if (Object.keys(surrogates.surrogateList.parsed).length) {
+          if (surrogates.hasList()) {
               fn(true)
           } else if (numTries > maxTries) {
               fn(false)
@@ -34,12 +34,11 @@
       xhr.send()
   }
 
-  QUnit.test('test parsing test file of rules', function(assert) {
+  QUnit.test('file is loaded and has rules', function(assert) {
       let done = assert.async()
 
       afterSurrogatesListLoaded((success) => {
           assert.ok(success, 'surrogate list loaded successfully')
-
           assert.ok(!!surrogates.getContentForRule('google-analytics.com/ga.js'), 'should have something for ga.js')
           assert.ok(!!surrogates.getContentForRule('google-analytics.com/analytics.js'), 'should have something for analytics.js')
           assert.ok(!surrogates.getContentForRule('duckduckgo.com'), 'should not have duckduckgo.com')
@@ -48,7 +47,24 @@
       })
   })
 
-  QUnit.test('test injecting the GA base64 encoded rules into the DOM and making sure it works', function(assert) {
+  QUnit.test('getContentForUrl() works as expected', function(assert) {
+      let done = assert.async()
+
+      afterSurrogatesListLoaded((success) => {
+          let gaContent = surrogates.getContentForRule('google-analytics.com/ga.js')
+          let parsedUrlMock = {
+              domain: 'google-analytics.com'
+          }
+
+          assert.ok(surrogates.getContentForUrl('https://google-analytics.com/ga.js', parsedUrlMock) === gaContent)
+          assert.ok(surrogates.getContentForUrl('https://google-analytics.com/some/other/path/ga.js', parsedUrlMock) === gaContent)
+          assert.ok(surrogates.getContentForUrl('http://www.google-analytics.com/some/other/path/ga.js', parsedUrlMock) === gaContent)
+
+          done()
+      })
+  })
+
+  QUnit.test('test base64 content can be loaded and be parsed into valid JS', function(assert) {
       let done = assert.async()
 
       afterSurrogatesListLoaded((success) => {

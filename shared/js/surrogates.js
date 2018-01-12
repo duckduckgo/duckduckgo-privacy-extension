@@ -58,6 +58,10 @@ class Surrogates {
         return res
     }
 
+    hasList () {
+        return Object.keys(surrogateList).length
+    }
+
     getContentForRule (rule) {
         return surrogateList[rule]
     }
