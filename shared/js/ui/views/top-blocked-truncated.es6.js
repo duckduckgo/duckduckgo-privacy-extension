@@ -9,6 +9,7 @@ function TruncatedTopBlocked (ops) {
   Parent.call(this, ops)
 
   this.model.getTopBlocked().then(() => {
+    setTimeout(() => this.rerenderList(), 750)
     this.rerenderList()
   })
 
@@ -45,6 +46,7 @@ TruncatedTopBlocked.prototype = window.$.extend({},
 
       if (message.action === 'didResetTrackersData') {
         this.model.reset()
+        setTimeout(() => this.rerenderList(), 750)
         this.rerenderList()
       }
     }
