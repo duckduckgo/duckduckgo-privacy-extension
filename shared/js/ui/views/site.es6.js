@@ -1,9 +1,11 @@
 const Parent = window.DDG.base.View
 const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const GradeDetailsView = require('./../views/grade-details.es6.js')
+const TrackerNetworksView = require('./../views/tracker-networks.es6.js')
 const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const gradeDetailsTemplate = require('./../templates/grade-details.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
+const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 
 function Site (ops) {
@@ -50,6 +52,7 @@ Site.prototype = window.$.extend({},
       this._cacheElems('.js-site', [
         'toggle',
         'show-all-trackers',
+        'show-page-trackers',
         'privacy-practices'
       ])
 
@@ -58,6 +61,7 @@ Site.prototype = window.$.extend({},
       this.bindEvents([
         [this.$toggle, 'click', this._whitelistClick],
         [this.$showalltrackers, 'click', this._showAllTrackers],
+        [this.$showpagetrackers, 'click', this._showPageTrackers],
         [this.$privacypractices, 'click', this._showPrivacyPractices],
         [this.$gradescorecard, 'click', this._showGradeScorecard],
         [this.store.subscribe, 'change:site', this.rerender]
@@ -83,6 +87,13 @@ Site.prototype = window.$.extend({},
       if (this.$body.hasClass('is-disabled')) return
       this.views.slidingSubview = new GradeDetailsView({
         template: gradeDetailsTemplate
+      })
+    },
+
+    _showPageTrackers: function () {
+      if (this.$body.hasClass('is-disabled')) return
+      this.views.slidingSubview = new TrackerNetworksView({
+        template: trackerNetworksTemplate
       })
     },
 

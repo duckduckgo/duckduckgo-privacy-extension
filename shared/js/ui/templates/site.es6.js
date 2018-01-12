@@ -1,6 +1,7 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
+const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 
 module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
@@ -27,7 +28,7 @@ module.exports = function () {
       <span class="site-info__https-status__icon
         is-${this.model.httpsState}">
       </span>
-      Connection
+      <span class="text-line-after-icon"> Connection </span>
       <div class="float-right">
       <span class="site-info__https-status__msg
         is-${this.model.httpsStatusText.toLowerCase()}">
@@ -37,34 +38,34 @@ module.exports = function () {
     </h2>
     </li>
     <li class="site-info__li--trackers padded border--bottom">
-    ${renderTrackerNetworks(
-        this.model.trackerNetworks,
-        this.model.isWhitelisted)}
+      <a href="#" class="js-site-tracker-networks link-secondary bold">
+        ${renderTrackerNetworks(
+            this.model.siteRating,
+            this.model.totalTrackersCount,
+            this.model.isWhitelisted)}
+      </a>
     </li>
     <li class="site-info__li--privacy-practices padded border--bottom">
       <span class="site-info__privacy-practices__icon
         is-${tosdrMsg.toLowerCase()}">
       </span>
-      <a href="javascript:void(0)" class="js-site-privacy-practices link-secondary bold">
-        ${tosdrMsg} Privacy Practices
+      <a href="#" class="js-site-privacy-practices link-secondary bold">
+        <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
         <span class="icon icon__arrow pull-right"></span>
       </a>
     </li>
   </ul>
   </section>`
 
-  function renderTrackerNetworks (tn, isWhitelisted) {
-    let count = 0
-    if (tn && tn.length) count = tn.length
+  function renderTrackerNetworks (site, trackersCount, isWhitelisted) {
     const isActive = !isWhitelisted ? 'is-active' : ''
-    const foundOrBlocked = isWhitelisted || count === 0 ? 'found' : 'blocked'
+    const foundOrBlocked = isWhitelisted || trackersCount === 0 ? 'Found' : 'Blocked'
 
-    return bel`<h2 class="site-info__trackers bold">
+    return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
-      is-blocking--${!isWhitelisted}">
-      </span>
-      Tracker networks ${foundOrBlocked}
-      <div class="float-right uppercase ${isActive}">${count}</div>
-    </h2>`
+          icon-${trackerNetworksIcon(site, isWhitelisted)}"></span>
+      <span class="${isActive} text-line-after-icon"> ${trackersCount} Tracker Networks ${foundOrBlocked}</span>
+      <span class="icon icon__arrow pull-right"></span>
+    </a>`
   }
 }
