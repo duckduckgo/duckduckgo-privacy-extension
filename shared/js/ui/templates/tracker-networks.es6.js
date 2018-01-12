@@ -32,11 +32,12 @@ module.exports = function () {
 
 function renderHero (model) {
   const site = model.site || {}
+  const networkOrNetworks = (site.totalTrackersCount === 1) ? 'Network' : 'Networks'
 
   return bel`${hero({
     status: trackerNetworksIcon(site.siteRating, site.isWhitelisted),
     title: site.domain,
-    subtitle: `${site.totalTrackersCount} Tracker Networks ${trackersBlockedOrFound(model)}`,
+    subtitle: `${site.totalTrackersCount} Tracker ${networkOrNetworks} ${trackersBlockedOrFound(model)}`,
     showClose: true
   })}`
 }
