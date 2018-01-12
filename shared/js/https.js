@@ -33,18 +33,19 @@ class HTTPS {
         this.getFromStorage().then((items) => {
             console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
 
-            // if there are already items in the list (e.g. the server update somehow
-            // finishes faster than the local one) don't overwrite what's there.
-            if (!httpsUpgradeList.length) {
-                httpsUpgradeList = items
-            }
-        },() => {
-            console.log("HTTPS: init() failed to get existing list from storage")
-        })
+            httpsUpgradeList = items
 
-        // wait for settings to be ready before trying
-        // to update the list from the server:
-        settings.ready().then(this.updateList.bind(this))
+            // check server for updates:
+            settings.ready().then(this.updateList.bind(this))
+        },() => {
+            console.log("HTTPS: init() failed to get existing list from storage, going to server for updated list.")
+
+            // clear any etag that may be in settings:
+            settings.updateSetting('https-etag', '')
+
+            // and go to the server to pull an update:
+            settings.ready().then(this.updateList.bind(this))
+        })
     }
 
     updateList() {
