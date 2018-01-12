@@ -1,190 +1,215 @@
 (function () {
-const db = require('db')
+const load = require('load')
 const settings = require('settings')
 const utils = require('utils')
-let knownMixedContentList
 
-settings.ready().then(() => {
-    load.JSONfromLocalFile(constants.httpsWhitelist, (wl) => knownMixedContentList = wl)
-})
+// check every 30 minutes for an updated list:
+const UPDATE_INTERVAL = 1000 * 60 * 30
+
+// chrome.storage.local can be unlimited, and
+// localStorage in Safari claims it can go up to 100MB,
+// but Safari seems to throw an error if the size of an
+// individual item in localStorage is greater than 2.5MB,
+// so this size will restict the # of characters we save
+// per item, chunking it up into n items that won't throw errors:
+// https://jsfiddle.net/53xcc4LL/
+// http://dev-test.nemikor.com/web-storage/support-test/
+const LOCAL_STORAGE_MAX_ITEM_LENGTH = 1000000
+
+let httpsUpgradeList = []
 
 class HTTPS {
 
     constructor () {
-        this.db = null
-        this.dbObjectStore = 'https'
-
-        // if this.isSync: load Chrome-only synchronous rules object into memory
-        this.isSync = utils.isChromeBrowser() ? true : false
-        this.syncRuleCache = {}
-
-        this.isReady = false
-        this._ready = this.init().then(() => this.isReady = true)
+        this.init()
 
         return this
     }
 
     init () {
-        return new Promise((resolve) => {
-            db.ready().then(() => {
-                this.db = db
+        console.log("HTTPS: init()")
 
-                if (this.isSync) {
-                    this.initSync().then(() => resolve())
-                } else {
-                    resolve()
-                }
-            })
+        // Try to load the list from local storage
+        this.getFromStorage().then((items) => {
+            console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
+
+            // if there are already items in the list (e.g. the server update somehow
+            // finishes faster than the local one) don't overwrite what's there.
+            if (!httpsUpgradeList.length) {
+                httpsUpgradeList = items
+            }
         })
+
+        // wait for settings to be ready before trying
+        // to update the list from the server:
+        settings.ready().then(this.updateList.bind(this))
     }
 
-    initSync () {
-        return new Promise((resolve) => {
-            this.db.logAllRecords(this.dbObjectStore, this.syncRuleCache)
-            resolve()
+    updateList() {
+        console.log("HTTPS: updateList() check if new list exists")
+
+        let etag = settings.getSetting('https-etag') || ''
+        
+        // try to load an updated file from the server, passing
+        // in the latest etag we have and only calling the callback
+        // with the new file if the etag on the server is different:
+        load.loadExtensionFile({
+            url: constants.httpsUpgradeList,
+            source: 'external',
+            etag: etag
+        }, (data, res) => {
+            // This only gets called if the etag is different
+            // and it was able to get a new list from the server:
+            console.log("HTTPS: updateList() got updated list from server")
+
+            let newEtag = res.getResponseHeader('etag') || ''
+
+            try {
+                // update list in memory
+                let parsedData = JSON.parse(data)
+
+                httpsUpgradeList = parsedData
+                console.log("HTTPS: updateList() new list has " + httpsUpgradeList.length + " items")
+                
+                // save the full data response to storage
+                // so we don't have to re-stringify the parsed JSON object:
+                this.saveToStorage(data)
+
+                // save new etag for next time
+                settings.updateSetting('https-etag', newEtag)
+                console.log("HTTPS: updateList() updated https-etag to " + newEtag)
+
+            } catch(e) {
+                console.log("HTTPS: updateList() error parsing server response")
+            }
         })
+
+        // schedule the next check:
+        setTimeout(this.updateList.bind(this), UPDATE_INTERVAL)
     }
 
-    ready () {
-        return this._ready
-    }
+    getFromStorage (fn) {
+        return new Promise((resolve, reject) => {
+            // For Chrome/Firefox:
+            if (window.chrome) {
+                console.log("HTTPS: getFromStorage() using chrome.storage.local (Chrome/FF)")
 
-    pipeRequestUrl (reqUrl, tab, isMainFrame) {
-
-        function checkDb (resolve) {
-            if (!this.isReady) {
-                console.warn('HTTPS: .pipeRequestUrl() this.db is not ready')
-                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
-            }
-
-            // Only deal with http calls
-            const protocol = utils.getProtocol(reqUrl).toLowerCase()
-            if (!protocol.indexOf('http:') === 0) {
-                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
-            }
-
-            // Obey global settings (options page)
-            if (!settings.getSetting('httpsEverywhereEnabled')) {
-                if (this.isSync) { return reqUrl } else { resolve(reqUrl) }
-            }
-
-            // Skip upgrading sites that have been whitelisted by user
-            // via on/off toggle in popup
-            if (tab.site.whitelisted) {
-                console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.`)
-                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
-            }
-
-            // Skip upgrading sites that have been 'HTTPSwhitelisted'
-            // bc they contain mixed https content when forced to upgrade
-            if (tab.site.HTTPSwhitelisted) {
-                console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)
-                if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
-            }
-
-            // If `isMainFrame` request and host has known mixed content,
-            // skip db check (don't force upgrade)
-            if (isMainFrame) {
-                if (knownMixedContentList && knownMixedContentList[tab.site.domain]) {
-                    console.log(`HTTPS: ${tab.site.domain} has known mixed content. skip upgrade check.`)
-                    if (this.isSync) { return reqUrl } else { return resolve(reqUrl) }
-                }
-            }
-
-            // Determine host
-            const host = utils.extractHostFromURL(reqUrl)
-            const loop = [host]
-
-            // Check if host has an entry as a wildcarded subdomain in db
-            const subdomain = utils.extractTopSubdomainFromHost(host)
-            if (subdomain && subdomain !== 'www') {
-                const wildcard = host.replace(subdomain, '*')
-                loop.push(wildcard)
-            }
-
-            // Check db for simple upgrades
-            let isResolved = false
-            let syncUrlResolution = reqUrl // Only used for sync version!
-            loop.forEach((r, i) => {
-                if (isResolved) return
-
-                if (this.isSync) {
-                    if (this.syncRuleCache[r] &&
-                        this.syncRuleCache[r].simpleUpgrade &&
-                        this.syncRuleCache[r].simpleUpgrade === true) {
-                        const upgrade = reqUrl.replace(/^(http|https):\/\//i, 'https://')
-                        isResolved = true
-                        return syncUrlResolution = upgrade
+                chrome.storage.local.get('https-upgrade-list', (results) => {
+                    if (!results || !results['https-upgrade-list']) {
+                        return reject()
                     }
-                } else {
-                    this.db
-                        .get(this.dbObjectStore, r.toLowerCase())
-                        .then(
-                            (record) => {
-                                if (record && record.simpleUpgrade) {
-                                    const upgrade = reqUrl.replace(/^(http|https):\/\//i, 'https://')
-                                    isResolved = true
-                                    return resolve(upgrade)
-                                }
-                                if (i === (loop.length - 1)) return resolve(reqUrl)
-                            },
-                            () => {
-                                console.warn('HTTPS: pipeRequestUrl() encountered a db error')
-                                if (i === (loop.length -1)) return resolve(reqUrl)
-                            }
-                        )
-                }
-            })
 
-            if (this.isSync) return syncUrlResolution
-        }
+                    try {
+                        let parsedList = JSON.parse(results['https-upgrade-list'])
+                        resolve(parsedList)
+                    } catch(e) {
+                        console.log("HTTPS: getFromStorage() error parsing JSON from chrome.storage.local", e)
+                        reject()
+                    }
+                })
 
-        if (this.isSync) {
-            return checkDb.call(this)
-        } else {
-            return new Promise((resolve) => checkDb.call(this, resolve))
-        }
-    }
+            // For Safari
+            } else if (window.localStorage) {
+                console.log("HTTPS: getFromStorage() using localStorage (Safari)")
 
-    /**
-     * For debugging/development/test purposes only
-     * Logs all records in indexed db to console
-     */
-    logAllRecords () {
-        this.db.logAllRecords(this.dbObjectStore)
-    }
-
-    /**
-     * For debugging/development/test purposes only
-     * This only tests ability to retrieve record from indexed db
-     * Usage: .getHostRecord('goodreads.com').then((r) => console.log(r))
-     */
-    getHostRecord (host) {
-        return new Promise ((resolve, reject) => {
-            if (!this.isReady) {
-                console.warn('HTTPS: this.db is not ready')
-                return reject()
-            }
-
-            this.db.get(this.dbObjectStore, host).then(
-                (record) => {
-                    if (record) return resolve(record)
-                    return resolve()
-                },
-                () => {
-                    console.warn('HTTPS: getHostRecord() encountered a db error.')
+                if (!window.localStorage || !localStorage['https-upgrade-list0']) {
                     return reject()
                 }
-            )
 
+                let data = ''
+                for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
+                    data += localStorage['https-upgrade-list' + i]
+                }
+
+                try {
+                    let parsedList = JSON.parse(data)
+                    resolve(parsedList)
+                } catch(e) {
+                    console.log("HTTPS: getFromStorage() error parsing JSON from localStorage", e)
+                    reject()
+                }
+            } else {
+                reject()
+            }
         })
+    }
+
+    saveToStorage (data) {
+        // For Chrome/FF:
+        if (window.chrome) {
+            console.log("HTTPS: saveToStorage() using chrome.storage.local (Chrome/FF)")
+
+            chrome.storage.local.set({ 'https-upgrade-list': data })
+
+        // For Safari:
+        } else if (window.localStorage) {
+            console.log("HTTPS: saveToStorage() using localStorage (Safari)")
+
+            // See comment at top of the file. Need to chunk it up for Safari/localStorage
+            // because individual items in localStorage seem to have a 2.5MB limit.
+            const chunkSize = LOCAL_STORAGE_MAX_ITEM_LENGTH
+            const numChunks = Math.ceil(data.length / chunkSize)
+            for (let i=0; i<numChunks; i++) {
+                localStorage['https-upgrade-list' + i] = data.substr(i*chunkSize, chunkSize)
+            }
+        }
+    }
+
+    canUpgradeHost (host) {
+        return (httpsUpgradeList.indexOf(host) > -1) ? true : false
+    }
+
+    getUpgradeList () {
+        return httpsUpgradeList
+    }
+
+    getUpgradedUrl (reqUrl, tab, isMainFrame) {
+
+        // Only deal with http calls
+        const protocol = utils.getProtocol(reqUrl).toLowerCase()
+        if (!protocol.indexOf('http:') === 0) {
+            return reqUrl
+        }
+
+        // Obey global settings (options page)
+        if (!settings.getSetting('httpsEverywhereEnabled')) {
+            return reqUrl
+        }
+
+        // Skip upgrading sites that have been whitelisted by user
+        // via on/off toggle in popup
+        if (tab.site.whitelisted) {
+            console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.`)
+            return reqUrl
+        }
+
+        // Determine host
+        const host = utils.extractHostFromURL(reqUrl)
+        const hosts = [host]
+
+        // Check if host has an entry as a wildcarded subdomain
+        const subdomain = utils.extractTopSubdomainFromHost(host)
+        if (subdomain && subdomain !== 'www') {
+            const wildcard = host.replace(subdomain, '*')
+            hosts.push(wildcard)
+        }
+
+        // Check for upgrades
+        for (let i=0; i<hosts.length; i++) {
+            if (this.canUpgradeHost(hosts[i])) {
+                return reqUrl.replace(/^(http|https):\/\//i, 'https://')
+            }
+        }
+
+        // If it falls to here, default to reqUrl
+        return reqUrl
     }
 
     /* For debugging/development/test purposes only
-     * Tests the .getHostRecord() method against an array of test hosts
+     * Tests the .canUpgradeHost() method against an array of test hosts
      * defined below
      */
-    testGetHostRecord (cb) {
+    testCanUpgradeHost () {
         // These hosts should always have records that were xhr'd
         // into the client-side db from server
         const testHosts = [
@@ -195,64 +220,57 @@ class HTTPS {
             'yts.ag'
         ]
 
+        let passed = true
+
         // Test that host records exist after db install from server
         testHosts.forEach((host, i) => {
-            this.getHostRecord(host, { site: {} } ).then(
-                (record) => {
-                    if (record) {
-                        console.log('HTTPS: retrieved record for host: ' + host)
-                        console.log(record)
-                        if (cb && i === (testHosts.length - 1)) return cb()
-                        return
-                    }
-                    console.error('HTTPS: could not find record for host: ' + host)
-                    if (cb) cb(new Error('HTTPS: could not find record for host: ' + host))
-                },
-                () => {
-                    console.error('HTTPS: testDBKeys() encountered a db error for host: ' + host)
-                    if (cb) cb(new Error('HTTPS: testDBKeys() encountered a db error for host: ' + host))
-                }
-            )
+            if (this.canUpgradeHost(host)) {
+                console.log('HTTPS: retrieved record for host: ' + host)
+            } else {
+                passed = false
+                console.error('HTTPS: could not find record for host: ' + host)
+            }
         })
+
+        return passed
     }
 
     /**
      * For debugging/development/test purposes only
-     * Tests the .pipeRequestUrl() method in both synchronous (Chrome) and
-     * asynchronous modes (depending on browser it is run in) for
-     * array of test urls defined below
+     * Tests the .getRequestUrl() method 
+     * for array of test urls defined below
      */
-    testPipeRequestUrl () {
-        // These hosts should always have records that were xhr'd
-        // into the client-side db from server
+    testGetUpgradedUrl () {
         const testUrls = [
-            'http://1337x.to/foo',
-            'http://SUbMIt.pandora.com/foo/bar',
-            'http://foo.api.roblox.com/sit?stand=false',
-            'http://THUMP.vice.com',
-            'http://yts.ag'
+            // These hosts should always have records that were xhr'd
+            // into the client-side db from server
+            ['http://1337x.to/foo',                         'https://1337x.to/foo'],
+            ['http://SUbMIt.pandora.com/foo/bar',           'https://SUbMIt.pandora.com/foo/bar'],
+            ['http://foo.api.roblox.com/sit?stand=false',   'https://foo.api.roblox.com/sit?stand=false'],
+            ['http://THUMP.vice.com',                       'https://THUMP.vice.com'],
+            ['http://yts.ag',                               'https://yts.ag'],
+            // If it's already https, it should be the same:
+            ['https://duckduckgo.com',                      'https://duckduckgo.com'],
+            // If it's not in the list, it should stay http:
+            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr']
         ]
-        console.log('HTTPS: testPipeRequestUrl() for ' + testUrls.length + ' urls')
 
-        function _handleDone (r, i) {
-            console.log(r)
-            if (i === (testUrls.length - 1)) console.timeEnd('testPipeRequestUrlTimer')
-        }
+        let passed = true
 
-        console.time('testPipeRequestUrlTimer')
-        if (this.isSync) {
-            testUrls.forEach((url, i) => {
-                const r = this.pipeRequestUrl(url, { site: {}} )
-                _handleDone(r, i)
-            })
+        console.log('HTTPS: testGetUgradedUrl() for ' + testUrls.length + ' urls')
 
-        } else {
-            testUrls.forEach((url, i) => {
-                this.pipeRequestUrl(url, { site: {}} )
-                    .then((r) => _handleDone(r, i),
-                          (r) => _handleDone(r, i))
-            })
-        }
+        testUrls.forEach((test, i) => {
+            const r = this.getUpgradedUrl(test[0], { site: {}} )
+
+            if (r === test[1]) {
+                console.log('HTTPS: getUpgradedUrl("' + test[0] + '") returned the expected value: ' + r)
+            } else {
+                passed = false
+                console.error('HTTPS: getUpgradedUrl("' + test[0] + '") returned: ' + r + ', expected: ' + test[1])
+            }
+        })
+
+        return passed
     }
 }
 
