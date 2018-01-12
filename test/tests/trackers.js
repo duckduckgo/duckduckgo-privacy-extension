@@ -26,6 +26,24 @@
           assert.ok(toBlock === test.block, 'url should be blocked');
       });
   });
+
+  var surrogateBlocking = [
+    { url: 'https://google-analytics.com/ga.js'},
+    { url: 'https://google-analytics.com/analytics.js'},
+    { url: 'https://google-analytics.com/cx/api.js'},
+    { url: 'https://google-analytics.com/inpage_linkid.js'},
+    { url: 'https://googletagservices.com/gpt.js'}
+  ];
+
+  QUnit.test("surrogate blocking url", function (assert) {
+      surrogateBlocking.forEach(function(test) {
+          bkg.settings.updateSetting('trackerBlockingEnabled', true);
+          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+          assert.ok(toBlock.block, 'url should be blocked')
+          assert.ok(toBlock.type, 'should have type surrogate')
+          assert.ok(toBlock.redirectUrl, 'should return redirect')
+      });
+  });
  
   // These abp blocking tests are based on actual entries from 
   // the easylist. These tests could fail in the future if the easylist
