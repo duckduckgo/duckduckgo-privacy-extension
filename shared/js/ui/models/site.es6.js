@@ -157,7 +157,7 @@ Site.prototype = window.$.extend({},
         const newUnknownTrackersCount = this.getUnknownTrackersCount()
         const newTotalTrackersCount = newUnknownTrackersCount + newTrackerNetworks.length
         if (newTotalTrackersCount !== this.totalTrackersCount) {
-            this.set('totalTrackersCount', newTotalTrackersCount)
+          this.set('totalTrackersCount', newTotalTrackersCount)
         }
 
         this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
@@ -191,7 +191,7 @@ Site.prototype = window.$.extend({},
       if (unknownTrackers && unknownTrackers.urls) {
         count = unknownTrackers.urls.length
       }
-      
+
       return count
     },
 
