@@ -61,7 +61,7 @@ module.exports = function () {
     const isActive = !isWhitelisted ? 'is-active' : ''
     const foundOrBlocked = isWhitelisted || trackersCount === 0 ? 'Found' : 'Blocked'
     const networkOrNetworks = (trackersCount === 1) ? 'Network' : 'Networks'
-    
+
     return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
           icon-${trackerNetworksIcon(site, isWhitelisted)}"></span>
