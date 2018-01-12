@@ -4,7 +4,7 @@ const noData = require('./shared/top-blocked-no-data.es6.js')
 
 module.exports = function () {
   if (this.model.companyListMap && this.model.companyListMap.length > 0) {
-    return bel`<section class="top-blocked top-blocked--truncated card">
+    return bel`<section class="top-blocked top-blocked--truncated card silver-bg">
       <h3 class="padded uppercase text--center">
         Tracker Networks Top Offenders
       </h3>

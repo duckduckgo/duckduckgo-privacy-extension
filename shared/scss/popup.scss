@@ -230,7 +230,7 @@ body {
         }
 
         .site-info__rating-li {
-            padding-top: 0;
+            padding-top: 8px;
         }
 
         .site-info__rating {
@@ -378,6 +378,12 @@ body {
         bottom: 0;
     }
 
+    // main popup view has a coloured hero section
+    // so it doesn't need the extra space on top
+    .site-info--main {
+        top: auto;
+    }
+
     .top-blocked {
         position: absolute;
         top: 400px;
@@ -387,7 +393,9 @@ body {
         padding-bottom: 15px;
 
         &.top-blocked--truncated {
-            padding-top: 15px;
+            padding-top: 115px;
+            top: auto;
+            bottom: 40px;
         }
 
         .top-blocked__list {
