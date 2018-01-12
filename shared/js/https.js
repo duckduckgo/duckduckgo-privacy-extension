@@ -40,7 +40,8 @@ class HTTPS {
         },() => {
             console.log("HTTPS: init() failed to get existing list from storage, going to server for updated list.")
 
-            // clear any etag that may be in settings:
+            // clear any etag that may be in settings so that it
+            // forces updateList to download a new list from the server.
             settings.updateSetting('https-etag', '')
 
             // and go to the server to pull an update:
