@@ -7,34 +7,21 @@ module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
      window.constants.tosdrMessages.unknown
 
-  return bel`<section class="site-info card">
+  return bel`<section class="site-info site-info--main">
     <ul class="default-list">
-    <li class="site-info__rating-li">
+    <li class="site-info__rating-li silver-bg">
       ${ratingHero(this.model, {
         showOpen: !this.model.disabled
       })}
-    </li>
-    <li class="site-info__li--toggle padded border--bottom">
-    <h2 class="site-info__protection">Site Privacy Protection</h2>
-    <div class="site-info__toggle-container">
-      <span class="site-info__toggle-text">
-        ${this.model.whitelistStatusText}
-      </span>
-      ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
-    </div>
     </li>
     <li class="site-info__li--https-status padded border--bottom">
     <h2 class="site-info__https-status bold">
       <span class="site-info__https-status__icon
         is-${this.model.httpsState}">
       </span>
-      <span class="text-line-after-icon"> Connection </span>
-      <div class="float-right">
-      <span class="site-info__https-status__msg
-        is-${this.model.httpsStatusText.toLowerCase()}">
+      <span class="text-line-after-icon">
         ${this.model.httpsStatusText}
       </span>
-      </div>
     </h2>
     </li>
     <li class="site-info__li--trackers padded border--bottom">
@@ -53,6 +40,12 @@ module.exports = function () {
         <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
         <span class="icon icon__arrow pull-right"></span>
       </a>
+    </li>
+    <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
+      <h2 class="site-info__protection">Site Privacy Protection</h2>
+      <div class="site-info__toggle-container">
+        ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
+      </div>
     </li>
   </ul>
   </section>`

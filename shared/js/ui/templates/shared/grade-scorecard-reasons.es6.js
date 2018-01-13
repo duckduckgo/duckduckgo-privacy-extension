@@ -15,19 +15,13 @@ function getReasons (site) {
   // a list of reasons behind the grade
 
   // encryption status
-  const httpsStatusText = site.httpsStatusText
-  if (httpsStatusText) {
-    let connectionMsg = 'Unencrypted'
-    let modifier = 'bad'
-
-    if (httpsStatusText === 'Secure') {
-      connectionMsg = 'Encrypted'
-      modifier = 'good'
-    }
+  const httpsState = site.httpsState
+  if (httpsState) {
+    let modifier = httpsState === 'none' ? 'bad' : 'good'
 
     reasons.push({
       modifier,
-      msg: `${connectionMsg} Connection`
+      msg: site.httpsStatusText
     })
   }
 

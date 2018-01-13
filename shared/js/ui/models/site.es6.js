@@ -1,10 +1,6 @@
 const Parent = window.DDG.base.Model
 
-const httpsStates = {
-  'secure': 'Secure',
-  'upgraded': 'Secure', // was 'Upgraded'
-  'none': 'Insecure'
-}
+const httpsMessages = window.constants.httpsMessages
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -102,7 +98,7 @@ Site.prototype = window.$.extend({},
         this.httpsState = 'none'
       }
 
-      this.httpsStatusText = httpsStates[this.httpsState]
+      this.httpsStatusText = httpsMessages[this.httpsState]
     },
 
     handleBackgroundMsg: function (message) {
