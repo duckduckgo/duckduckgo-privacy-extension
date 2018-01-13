@@ -6,10 +6,9 @@ function TruncatedTopBlocked (ops) {
   this.model = ops.model
   this.pageView = ops.pageView
   this.template = ops.template
-  Parent.call(this, ops)
 
   this.model.getTopBlocked().then(() => {
-    setTimeout(() => this.rerenderList(), 750)
+    Parent.call(this, ops)
     this.rerenderList()
   })
 
