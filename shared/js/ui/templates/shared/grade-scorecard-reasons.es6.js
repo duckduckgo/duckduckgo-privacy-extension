@@ -1,4 +1,5 @@
 const statusList = require('./status-list.es6.js')
+const trackerNetworksText = require('./tracker-networks-text.es6.js')
 
 module.exports = function (site) {
   const reasons = getReasons(site)
@@ -25,14 +26,12 @@ function getReasons (site) {
     })
   }
 
-  // tracking networks blocked,
-  // only show a message if there's any blocked
-  const numTrackerNetworks = site.trackerNetworks.length
-  const foundOrBlocked = site.isWhitelisted || numTrackerNetworks === 0 ? 'Found' : 'Blocked'
-  if (numTrackerNetworks) {
+  // tracking networks blocked or found,
+  // only show a message if there's any
+  if (site.totalTrackerNetworks !== 0) {
     reasons.push({
       modifier: 'bad',
-      msg: `${numTrackerNetworks} Tracker Networks ${foundOrBlocked}`
+      msg: `${trackerNetworksText(site)}`
     })
   }
 
