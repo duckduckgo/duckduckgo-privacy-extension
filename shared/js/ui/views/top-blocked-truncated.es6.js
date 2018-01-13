@@ -9,7 +9,7 @@ function TruncatedTopBlocked (ops) {
 
   this.model.getTopBlocked().then(() => {
     Parent.call(this, ops)
-    this.rerenderList()
+    this._setup()
   })
 
   this.bindEvents([
