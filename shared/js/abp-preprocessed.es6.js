@@ -105,23 +105,25 @@ function updateLists () {
 // Make sure the list updater runs on start up
 settings.ready().then(() => updateLists())
 
-/*
-chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'updateLists') {
-        settings.ready().then(() => updateLists())
-    }
-})
-*/
+if (window.chrome) {
+    chrome.alarms.onAlarm.addListener(alarm => {
+        if (alarm.name === 'updateLists') {
+            settings.ready().then(() => updateLists())
+        }
+    })
 
-// set an alarm to recheck the lists
-// update every 3 hours
-//chrome.alarms.create('updateLists', {periodInMinutes: 180})
+    // set an alarm to recheck the lists
+    // update every 30 minutes
+    chrome.alarms.create('updateLists', { periodInMinutes: 30 })
+} else {
+    setInterval(updateLists, 30*60*1000)
+}
 
 // add version param to url on the first install and
 // only once a day after than
 function getVersionParam () {
-    const manifest = chrome.runtime.getManifest()
-    let version = manifest.version || ''
+    const manifest = window.chrome && chrome.runtime.getManifest()
+    let version = manifest ? manifest.version || '' : 'safari'
     let lastEasylistUpdate = settings.getSetting('lastEasylistUpdate')
     let now = Date.now()
     let versionParam
