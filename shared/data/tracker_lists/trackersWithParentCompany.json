@@ -222,7 +222,7 @@
         },
         "googletagmanager.com": {
             "c": "Google",
-            "t": "Disconnect"
+            "t": "Analytics"
         },
         "backtype.com": {
             "c": "Twitter",
@@ -7175,6 +7175,10 @@
         "postrank.com": {
             "c": "Google",
             "u": "http://www.google.com/"
+        },
+        "googletagmanager.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
         }
     },
     "Social": {
@@ -7441,12 +7445,6 @@
         "reddit.com": {
             "c": "reddit",
             "u": "http://www.reddit.com/"
-        }
-    },
-    "Disconnect": {
-        "googletagmanager.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
         }
     }
 }

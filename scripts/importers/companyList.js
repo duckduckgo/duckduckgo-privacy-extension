@@ -83,6 +83,7 @@ global.companyList = function (listData) {
     function remapGoogle(type, name, url){
         var newType;
         if(name === 'Google'){
+            newType = 'Analytics' // default to Analytics
             Object.keys(remapData).some( function(category) {
                 if(remapData[category][0]['Google']['http://www.google.com/'].indexOf(url) !== -1){
                     return newType = category;
