@@ -5,7 +5,7 @@ let constants = {
         "trackersWithParentCompany.json"
     ],
     "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist",
-    "entityMap": "https://duckduckgo.com/contentblocking.js?l=disconnect",
+    "entityMap": "data/tracker_lists/entityMap.json",
     "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
