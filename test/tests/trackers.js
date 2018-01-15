@@ -163,7 +163,9 @@
   var surrogateBlocking = [
     { url: 'https://google-analytics.com/ga.js' },
     { url: 'https://www.google-analytics.com/ga.js' },
-    { url: 'https://www.googletagservices.com/tag/js/gpt.js' }
+    { url: 'https://www.googletagservices.com/tag/js/gpt.js' },
+    // from nytimes.com:
+    { url: 'https://www.googletagmanager.com/gtm.js?id=GTM-WF9QCL2&gtm_auth=28ykelszAvyta5q5YGRVOg&gtm_preview=env-53&gtm_cookies_win=x' }
   ];
 
   QUnit.test("surrogateBlocking", function (assert) {

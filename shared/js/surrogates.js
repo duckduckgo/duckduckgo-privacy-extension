@@ -63,7 +63,11 @@ class Surrogates {
         //
         // All our rules have domain + filename, so for now we're safe making that assumption.
         let splitUrl = url.split('/')
+        // pull everything after the last slash as the filename:
         let filename = splitUrl[splitUrl.length - 1]
+        // strip off any querystring params:
+        filename = filename.split('?')[0]
+        // concat with domain to match the original rule:
         let ruleToMatch = parsedUrl.domain + '/' + filename
         return surrogateList[ruleToMatch]
     }
