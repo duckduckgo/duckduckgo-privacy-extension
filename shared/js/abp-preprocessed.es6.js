@@ -18,11 +18,13 @@ let lists = {
     easylists : {
         privacy: {
             constantsName: 'privacyEasylist',
+            parser: abp,
             parsed: {},
             isLoaded: false
         },
         general: {
             constantsName: 'generalEasylist',
+            parser: abp,
             parsed: {},
             isLoaded: false
         }
@@ -31,6 +33,15 @@ let lists = {
         // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
         trackersWhitelist: {
             constantsName: 'trackersWhitelist',
+            parser: abp,
+            parsed: {},
+            isLoaded: false
+        }
+    },
+    surrogates: {
+        surrogateList: {
+            constantsName: 'surrogateList',
+            parser: surrogates,
             parsed: {},
             isLoaded: false
         }
@@ -54,7 +65,8 @@ function updateLists () {
     for (let listType in lists) {
         for (let name in lists[listType]) {
 
-            const constantsName = lists[listType][name].constantsName
+            const list = lists[listType][name]
+            const constantsName = list.constantsName
             
             let url = constants[constantsName]
             if (!url) return 
@@ -72,7 +84,7 @@ function updateLists () {
 
             // if we don't have parsed list data skip the etag to make sure we
             // get a fresh copy of the list to process
-            if (Object.keys(lists[listType][name].parsed).length === 0) etag = ''
+            if (Object.keys(list.parsed).length === 0) etag = ''
                 
             load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
                 const newEtag = response.getResponseHeader('etag') || ''
@@ -81,8 +93,9 @@ function updateLists () {
                 // sync new etag to storage
                 settings.updateSetting(constantsName + '-etag', newEtag)
                 
-                abp.parse(listData, lists[listType][name].parsed)
-                lists[listType][name].isLoaded = true
+                list.parser.parse(listData, list.parsed)
+
+                list.isLoaded = true
             })
         }
     }

@@ -13,6 +13,7 @@ let constants = {
     "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
+    "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
     "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https2",
     "tosdrMessages" : {
         "A": "Good",

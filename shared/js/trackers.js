@@ -2,16 +2,18 @@
 // these are defined in abp.js
 var abp,
     easylists,
+    whitelists,
+    surrogates,
     trackerWhitelist = {}
 
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
+    surrogates = require('surrogates'),
     trackerLists = require('trackerLists').getLists()
 
 let entityList
 let entityMap
-let whitelists
 
 settings.ready().then(() => {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
@@ -43,7 +45,8 @@ require.scopes.trackers = (function() {
 
         if (settings.getSetting('trackerBlockingEnabled')) {
 
-            let urlSplit = tldjs.parse(urlToCheck).hostname.split('.')
+            let parsedUrl = tldjs.parse(urlToCheck)
+            let urlSplit = parsedUrl.hostname.split('.')
             var social_block = settings.getSetting('socialBlockingIsEnabled')
             var blockSettings = constants.blocking.slice(0)
 
@@ -58,6 +61,12 @@ require.scopes.trackers = (function() {
             var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
             if (whitelistedTracker) {
                 return whitelistedTracker
+            }
+
+
+            var surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl)
+            if (surrogateTracker) {
+                return surrogateTracker 
             }
 
             // Look up trackers by parent company. This function also checks to see if the poential
@@ -118,6 +127,21 @@ require.scopes.trackers = (function() {
         })
 
         return toBlock
+    }
+
+    function checkSurrogateList(url, parsedUrl) {
+
+        let result = false
+        let dataURI = surrogates.getContentForUrl(url, parsedUrl)
+
+        if (dataURI) {
+            result = getTrackerDetails(url, 'surrogatesList')
+            result.block = true
+            result.redirectUrl = dataURI
+            console.log("serving surrogate content for: ", url)
+        }
+
+        return result
     }
 
     function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
