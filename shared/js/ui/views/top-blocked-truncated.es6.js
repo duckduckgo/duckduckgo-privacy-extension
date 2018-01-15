@@ -6,10 +6,10 @@ function TruncatedTopBlocked (ops) {
   this.model = ops.model
   this.pageView = ops.pageView
   this.template = ops.template
-  Parent.call(this, ops)
 
   this.model.getTopBlocked().then(() => {
-    this.rerenderList()
+    Parent.call(this, ops)
+    this._setup()
   })
 
   this.bindEvents([
@@ -45,6 +45,7 @@ TruncatedTopBlocked.prototype = window.$.extend({},
 
       if (message.action === 'didResetTrackersData') {
         this.model.reset()
+        setTimeout(() => this.rerenderList(), 750)
         this.rerenderList()
       }
     }
