@@ -21,6 +21,7 @@ var utils = require('utils')
 var settings = require('settings')
 var stats = require('stats')
 var https = require('https')
+var surrogates = require('surrogates')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -200,8 +201,13 @@ chrome.webRequest.onBeforeRequest.addListener(
                     console.info( "blocked " + utils.extractHostFromURL(thisTab.url)
                                  + " [" + tracker.parentCompany + "] " + requestData.url);
 
+                    // return surrogate redirect if match, otherwise
                     // tell Chrome to cancel this webrequest
-                    return {cancel: true};
+                    if (tracker.redirectUrl) {
+                        return {redirectUrl: tracker.redirectUrl}
+                    } else {
+                        return {cancel: true};
+                    }
                 }
             }
         }
