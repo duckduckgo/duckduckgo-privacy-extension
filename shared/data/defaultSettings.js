@@ -20,5 +20,6 @@ let defaultSettings = {
     "trackersWhitelist-etag": null,
     "generalEasylist-etag": null,
     "privacyEasylist-etag": null,
-    "https-etag": null
+    "https-etag": null,
+    "surrogateList-etag": null
 }
