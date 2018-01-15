@@ -14,4 +14,9 @@
  * limitations under the License.
  */
 var ATB = document.querySelector('html').getAttribute('data-chromeatb') || document.querySelector('html').getAttribute('data-atb');
-chrome.runtime.sendMessage({atb: ATB});
+
+if (window.safari) {
+    safari.self.tab.dispatchMessage('atb', {atb: ATB})
+} else {
+    chrome.runtime.sendMessage({atb: ATB})
+}
