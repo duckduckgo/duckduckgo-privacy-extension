@@ -34,7 +34,10 @@ class TabManager {
      */
     create(tabData) {
         console.log(`CREATE TAB: ${tabData.url}`)
-        let createTabData = {url: tabData.message.currentURL, id: tabManager.getTabId(tabData)}
+        // when it's created from a message event, use tabData.message.currentURL, but
+        // when it's created from a beforeNavigation event, message object won't exist, so use tabData.url:
+        let url = tabData.message ? tabData.message.currentURL : tabData.url
+        let createTabData = {url: url, id: tabManager.getTabId(tabData)}
         createTabData.target = tabData.target
         
         console.log(createTabData)

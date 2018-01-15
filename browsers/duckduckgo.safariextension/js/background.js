@@ -19,6 +19,7 @@ var debugRequest = false;
 var trackers = require('trackers');
 var utils = require('utils');
 var settings = require('settings');
+var https = require('https');
 let browser = 'safari'
 
 function Background() {
@@ -77,7 +78,7 @@ var onBeforeRequest = function (requestData) {
 
     if (!thisTab && requestData.message.frame === 'main_frame') {
         thisTab = tabManager.create(requestData)
-        console.log(`CREATED TABID: ${thisTab}`)
+        console.log('onBeforeRequest CREATED TAB:', thisTab)
     }
 
     if(thisTab.site.isBroken) {
@@ -106,4 +107,59 @@ var onBeforeRequest = function (requestData) {
     }   
 }
 
+
+/**
+ * Before navigating to a new page,
+ * check whether we should upgrade to https
+ */
+var onBeforeNavigation = function (e) {
+    //console.log("beforeNavigation", e.url, e.target.url, e.eventPhase, e)
+
+    if (!e.url) return
+
+    const tabId = tabManager.getTabId(e)
+    let thisTab = tabManager.get({tabId: tabId})
+
+    if (!thisTab) {
+        thisTab = tabManager.create(e)
+        console.log('onBeforeNavigation CREATED TAB:', thisTab)
+    }
+
+    // same logic from /shared/js/background.js
+
+    // site is required to be there:
+    if (!thisTab || !thisTab.site) {
+        console.log('HTTPS: no tab or tab site found for: ', tabId, thisTab)
+        return
+    }
+    
+    // skip upgrading broken sites:
+    if (thisTab.site.isBroken) {
+        console.log('HTTPS: temporarily skip upgrades for: ' + e.url)
+        return
+    }
+
+    // avoid redirect loops:
+    // TODO: this won't work in safari yet:
+    //if (thisTab.httpsRedirects[e.url] >= 7) {
+    //    console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + e.url)
+    //    e.preventDefault()
+    //    e.target.url = thisTab.downgradeHttpsUpgradeRequest(e)
+    //}
+
+    const url = e.url
+    const isMainFrame = true // always main frame in this handler
+    const upgradedUrl = https.getUpgradedUrl(e.url, thisTab, isMainFrame)
+
+    if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
+        console.log('HTTPS: upgrade request url to ' + upgradedUrl)
+        thisTab.upgradedHttps = true
+        thisTab.addHttpsUpgradeRequest(upgradedUrl)
+
+        e.preventDefault()
+        e.target.url = upgradedUrl
+    }
+}
+
 safari.application.addEventListener("message", handleMessage, true);
+safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true);
