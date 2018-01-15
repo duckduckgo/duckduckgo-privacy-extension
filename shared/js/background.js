@@ -75,8 +75,8 @@ function Background() {
 
     // blow away old indexeddbs that might be there:
     if (details.reason.match(/update/) && window.indexedDB) {
-        indexedDB.deleteDatabase('https')
-        indexedDB.deleteDatabase('ddgExtension')
+        const ms = 1000 * 60
+        setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
     }
   });
 }
