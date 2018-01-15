@@ -247,6 +247,22 @@
         "twitter.jp": {
             "c": "Twitter",
             "t": "Social"
+        },
+        "static.ads-twitter.com": {
+            "c": "Twitter",
+            "t": "Advertising"
+        },
+        "syndication.twitter.com": {
+            "c": "Twitter",
+            "t": "Advertising"
+        },
+        "analytics.twitter.com": {
+            "c": "Twitter",
+            "t": "Advertising"
+        },
+        "connect.facebook.net": {
+            "c": "Facebook",
+            "t": "Advertising"
         }
     },
     "Advertising": {
@@ -6145,6 +6161,26 @@
         "ytsa.net": {
             "c": "Google",
             "u": "http://www.google.com/"
+        },
+        "static.ads-twitter.com": {
+            "c": "Twitter",
+            "u": "https://static.ads-twitter.com/"
+        },
+        "syndication.twitter.com": {
+            "c": "Twitter",
+            "u": "https://syndication.twitter.com/"
+        },
+        "analytics.twitter.com": {
+            "c": "Twitter",
+            "u": "https://analytics.twitter.com/"
+        },
+        "connect.facebook.net": {
+            "c": "Facebook",
+            "u": "https://connect.facebook.net/"
+        },
+        "ct.pinterest.com": {
+            "c": "Pinterest",
+            "u": "https://ct.pinterest.com/"
         }
     },
     "Analytics": {
@@ -7175,6 +7211,10 @@
         "postrank.com": {
             "c": "Google",
             "u": "http://www.google.com/"
+        },
+        "cdn.optimizely.com": {
+            "c": "Optimizely",
+            "u": "https://cdn.optimizely.com/"
         }
     },
     "Social": {

@@ -12,6 +12,17 @@ var trackerTypes = ['Advertising', 'Analytics', 'Disconnect', 'Social']
 var remapData
 var companyList
 
+// For launch, there are some very common trackers that it would be better to show broken out
+// by company, but they're not in the Disconnect list, so temporarily adding them here:
+const additionalMappings = [
+    ['Advertising', { c: 'Twitter', u: 'https://static.ads-twitter.com/'}, 'static.ads-twitter.com' ],
+    ['Advertising', { c: 'Twitter', u: 'https://syndication.twitter.com/'}, 'syndication.twitter.com' ],
+    ['Advertising', { c: 'Twitter', u: 'https://analytics.twitter.com/'}, 'analytics.twitter.com' ],
+    ['Advertising', { c: 'Facebook', u: 'https://connect.facebook.net/'}, 'connect.facebook.net' ],
+    ['Advertising', { c: 'Pinterest', u: 'https://ct.pinterest.com/'}, 'ct.pinterest.com' ],
+    ['Analytics', { c: 'Optimizely', u: 'https://cdn.optimizely.com/'}, 'cdn.optimizely.com' ]
+];
+
 global.companyList = function (listData) {
     return new Promise ((resolve) => {
         request.get(remapDataLoc, (err, res, body) => {
@@ -40,6 +51,10 @@ global.companyList = function (listData) {
                         }
                     });
                 });
+
+                additionalMappings.forEach(function(item) {
+                    addToList(item[0], item[2], item[1])
+                })
 
                 resolve({'name': 'trackersWithParentCompany.json', 'data': trackerList})
             })
