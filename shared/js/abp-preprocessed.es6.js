@@ -105,15 +105,17 @@ function updateLists () {
 // Make sure the list updater runs on start up
 settings.ready().then(() => updateLists())
 
+/*
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateLists') {
         settings.ready().then(() => updateLists())
     }
 })
+*/
 
 // set an alarm to recheck the lists
 // update every 3 hours
-chrome.alarms.create('updateLists', {periodInMinutes: 180})
+//chrome.alarms.create('updateLists', {periodInMinutes: 180})
 
 // add version param to url on the first install and
 // only once a day after than

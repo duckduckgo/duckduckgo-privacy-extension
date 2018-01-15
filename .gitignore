@@ -13,5 +13,5 @@ shared/data/tracker_lists/trackersWithParentCompany.json
 shared/js/tldjs.js
 build/firefox
 build/chrome
-build/safari
+build/duckduckgo.safariextension
 package-lock.json

@@ -11,10 +11,13 @@ module.exports = function(grunt) {
     let buildType = grunt.option('type')
     let buildPath = `build/${browser}/${buildType}`
 
+    
     if(!(browser && buildType)) {
         console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
         process.exit(1)
     }
+
+    if (browser === 'duckduckgo.safariextension') browser = 'safari'
 
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
@@ -41,8 +44,18 @@ module.exports = function(grunt) {
      */
     let browserMap = {
         firefox: {ui: {}, background: {}, sass: {}},
-        chrome: {ui: {}, background: {}, sass: {}},
-        safari: {ui: {}, background: {}, sass: {}}
+        chrome: {ui: {}, 
+            background: { 
+            }, 
+            sass: {}
+        },
+        safari: {ui: {
+                '<%= dirs.public.js %>/base.js': ['browsers/duckduckgo.safariextension/js/ui/base/index.es6.js'],
+        }, 
+        background: { 
+            '<%= dirs.src.js %>/abp.js': ['browsers/duckduckgo.safariextension/js/abp-preprocessed.es6.js'],
+        }, 
+        sass: {}}
     }
 
     /* final file mapping used by grunt */
@@ -114,7 +127,8 @@ module.exports = function(grunt) {
 
         // used by watch to copy shared/js to build dir
         exec: {
-            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
+            copySafari: `cp browsers/duckduckgo.safariextension/js/*.js ${buildPath}/js`
         },
 
         watch: {
@@ -138,7 +152,12 @@ module.exports = function(grunt) {
         }
     })
 
+    let tasks = {
+        dev : ['build', 'watch']
+    }
+    if (browser === 'safari') tasks.dev = ['build', 'exec:copySafari', 'watch']
+
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists'])
-    grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
+    grunt.registerTask('dev', 'Build and watch files for development', tasks.dev)
     grunt.registerTask('default', 'build')
 }

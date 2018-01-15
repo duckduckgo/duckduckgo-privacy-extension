@@ -21,16 +21,6 @@
         },
         "default_popup": "html/popup.html"
     },
-    "commands": {
-      "_execute_browser_action": {
-        "suggested_key": {
-          "default": "Alt+G",
-          "mac": "Alt+G",
-          "linux": "Alt+G",
-          "windows": "Alt+G"
-        }
-      }
-    },
     "omnibox": {"keyword": "d"},
     "background": {
             "scripts": [
@@ -50,7 +40,6 @@
                 "js/trackerLists.js",
                 "js/trackers.js",
                 "js/tldjs.js",
-                "js/indexed-db.js",
                 "js/https.js",
                 "js/background.js",
                 "js/abp.js",

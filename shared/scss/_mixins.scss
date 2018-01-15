@@ -13,6 +13,10 @@
     .is-browser--moz & {
         background-image: url($img__logo--moz);
     }
+
+    .is-browser--safari & {
+        background-image: url($img__logo--safari);
+    }
 }
 
 @mixin ddg_logo--small () {
@@ -25,6 +29,10 @@
     .is-browser--moz & {
         background-image: url($img__logo__small--moz);
     }
+
+    .is-browser--safari & {
+        background-image: url($img__logo__small--safari);
+    }
 }
 
 
@@ -36,7 +44,6 @@
 @mixin is_disableable_link () {
     body.is-disabled & {
         cursor: default;
-        opacity: 0.5;
 
         &:hover {
             text-decoration: none;
@@ -150,6 +157,19 @@
     vertical-align: middle;
 }
 
+/* Cross-platform background image */
+@mixin cross_platform_bg_image ($image) {
+    $asset-path: "__MSG_@@extension_id__/img/";
+    .is-browser--chrome & {
+        background-image: url("chrome-extension://#{$asset-path}#{$image}");
+    }
+    .is-browser--moz & {
+        background-image: url("moz-extension://#{$asset-path}#{$image}");
+    }
+    .is-browser--safari & {
+        background-image: url("../../img/#{$image}");
+    }
+}
 
 /* Sliding subviews */
 @mixin sliding_subview () {

@@ -170,7 +170,7 @@ body {
     }
 
     .site-info--placeholder {
-        height: 335px;
+        height: 332px;
     }
 
     .site-info {
@@ -184,23 +184,8 @@ body {
             padding-bottom: 0;
         }
 
-        .site-info__domain,
-        .site-info__protection {
-            line-height: 1.4em;
-            height: 1.2em;
-            display: block;
-            max-width: $popup__width - 125;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .site-info__domain {
-            margin-top: 7.5px;
-            text-align: center;
-            width: 100%;
-            max-width: 100%;
-            font-size: 17px;
+        .text-line-after-icon {
+            margin-left: 12px;
         }
 
         .site-info__tosdr-status {
@@ -219,6 +204,13 @@ body {
         }
 
         .site-info__li--toggle {
+            background-color: $color--medium-slate;
+            color: $color--white;
+
+            &.is-active {
+                background-color: $color--green;
+            }
+
             .is-disabled & {
                 @include is_disabled();
             }
@@ -234,27 +226,26 @@ body {
                 right: 0;
             }
 
+            .toggle-button--is-active-true {
+                .toggle-button__bg {
+                    background-color: $color--dark-green;
+                }
+            }
+            .toggle-button--is-active-false {
+                .toggle-button__bg {
+                    background-color: #4B4D50;
+                }
+            }
         }
 
         .site-info__rating-li {
-            padding-top: 0;
-        }
-
-        .site-info__rating-container {
-            padding: 0 20px 15px 20px;
-            text-align: center;
-        }
-
-        .site-info__rating-upgrade {
-            padding-top: 7.5px;
+            padding-top: 8px;
         }
 
         .site-info__rating {
-            @include icon_display();
             @include site_rating_icons();
             width: 80px;
             height: 64px;
-            margin-top: 15px;
         }
 
         .site-info__li--https-status {
@@ -271,13 +262,13 @@ body {
             width: 17px;
             height: 22px;
             top: 10px;
-            left: 20px;
         }
 
         .site-info__https-status__icon {
             @include icon_display();
             @include site_status_icons();
             width: 15px;
+            left: 24px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
@@ -288,6 +279,10 @@ body {
 
                 .is-browser--moz & {
                     background-image: url($icon__https-status__locked--moz);
+                }
+
+                .is-browser--safari & {
+                    background-image: url($icon__https-status__locked--safari);
                 }
             }
 
@@ -302,19 +297,10 @@ body {
                     background-image: url($icon__https-status__unlocked--moz);
                 }
 
-            }
-        }
+                .is-browser--safari & {
+                    background-image: url($icon__https-status__unlocked--safari);
+                }
 
-        .site-info__https-status__msg {
-            @include uppercase_label();
-
-            &.is-secure,
-            &.is_upgraded {
-                color: $color--green;
-            }
-
-            &.is-insecure {
-                color: $color--grey;
             }
         }
 
@@ -331,8 +317,10 @@ body {
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    top: 12.5px;
-
+                    height: 30px;
+                    width: 27px;
+                    left: 20px;
+                    
                     &.is-blocking--true {
 
                         .is-browser--chrome & {
@@ -341,6 +329,10 @@ body {
 
                         .is-browser--moz & {
                             background-image: url($icon__trackers__blocked--moz);
+                        }
+
+                        .is-browser--safari & {
+                            background-image: url($icon__trackers__blocked--safari);
                         }
                     }
 
@@ -352,6 +344,10 @@ body {
 
                         .is-browser--moz & {
                             background-image: url($icon__trackers__unblocked--moz);
+                        }
+
+                        .is-browser--safari & {
+                            background-image: url($icon__trackers__unblocked--safari);
                         }
 
                     }
@@ -370,15 +366,47 @@ body {
             }
         }
 
-        .site-info__li--more-details {
-            .link-secondary {
-                @include is_disableable_link();
-                display: block;
+        .site-info__li--privacy-practices {
+            position: relative;
+            padding-left: 45px;
+
+            .is-disabled & {
+                @include is_disabled();
             }
         }
 
-        .site-info__li--toggle {
+        .site-info__privacy-practices__icon {
+            @include icon_display();
+            @include site_status_icons();
+            left: 23px;
+            
+            &.is-good {
+                @include cross_platform_bg_image("privacy--good.svg");
+            }
+
+            &.is-bad {
+                @include cross_platform_bg_image("privacy--bad.svg");
+            }
+
+            &.is-mixed,
+            &.is-unknown {
+                @include cross_platform_bg_image("privacy--mixed.svg");
+            }
         }
+
+        .link-secondary {
+            @include is_disableable_link();
+        }
+    }
+
+    .site-info--full-height {
+        bottom: 0;
+    }
+
+    // main popup view has a coloured hero section
+    // so it doesn't need the extra space on top
+    .site-info--main {
+        top: auto;
     }
 
     .top-blocked {
@@ -387,17 +415,24 @@ body {
         left: 0;
         right: 0;
         margin-top: 0;
+        padding-bottom: 15px;
+
+        &.top-blocked--truncated {
+            padding-top: 40px;
+            top: auto;
+            bottom: 40px;
+        }
 
         .top-blocked__list {
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 0;
+            padding-bottom: 30px;
 
             .top-blocked__li:first-child {
                 padding-top: 0;
             }
 
             .top-blocked__li--no-data {
-                margin-top: 15px;
+                margin-top: 17px;
             }
         }
     }
@@ -456,6 +491,8 @@ body {
 
                         .site-info__tracker__icon {
                             @include icon_display();
+                            @include tracker_network_icons_subview();
+
                             width: 22px;
                             height: 22px;
                             margin-top: -6px;
@@ -463,10 +500,7 @@ body {
                             margin-bottom: 8px;
                             overflow: hidden;
                             line-height: 100px;
-                            border: 1px solid #fff;
-                            border-radius: 24px;
-
-                            @include tracker_network_icons();
+                            background-size:contain;
                         }
 
                         &:last-child {
@@ -515,7 +549,6 @@ body {
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
-            color: $color--grey;
         }
 
         .top-blocked__reset-stats {
@@ -546,9 +579,32 @@ body {
 
 
 /* Top blocked lists */
+.top-blocked__see-all {
+   padding-top: 14px;
+   padding-left: 20px;
+   margin: 48px 0 0 0;
+
+   .link-secondary {
+       position: relative;
+       font-weight: bold;
+       padding-top: 3.5px;
+       padding-bottom: 3.5px;
+       display: block;
+
+       .icon__arrow {
+           padding-top: 1px;
+       }
+   }
+}
+
 .top-blocked__list {
     margin: 0;
     padding-bottom: 0;
+
+    .icon__arrow {
+        margin-top: 4px;
+        right: 15px;
+    }
 
     .top-blocked__li {
         z-index: 0;
@@ -557,30 +613,95 @@ body {
         margin-right: 20px;
         clear: both;
 
+       &.top-blocked__li--truncated {
+           float: left;
+           clear: none;
+           margin-left: 12px;
+           margin-right: 0;
+           padding-top: 0;
+
+           &:first-child {
+               margin-left: 24px;
+           }
+       }
+
+       .top-blocked__pill {
+           border-radius: 100px;
+           background-color: $color--medium-slate;
+           height: 27px;
+
+           .top-blocked__pill__blocker-pct {
+               float: left;
+               color: $white;
+               font-size: 16px;
+               letter-spacing: 1.2px;
+               font-weight: bold;
+               text-align: right;
+               width: 34px;
+               height: 19px;
+               margin: 4px 9px 3px 0;
+           }
+
+           .top-blocked__pill__divider {
+               width: 1px;
+               height: 17px;
+               opacity: 0.4;
+               border-radius: 0.5px;
+               background-color: $white;
+               margin: 5px 5px 6px 5px;
+               float: left;
+           }
+
+           .top-blocked__pill-site__icon-container {
+                margin: 7px 0 7px 9px;
+                float: left;
+                box-sizing: border-box;
+           }
+
+           .top-blocked__pill-site__icon {
+                @include icon_display();
+                @include tracker_network_icons();
+
+                background-size: contain;
+                margin: auto;
+                background-position-x: center;
+                vertical-align: unset;
+                height: 13px;
+                width: 13.5px;
+           }
+       }
+
         &.top-blocked__li--no-data {
             text-align: center;
             padding-top: 30px;
 
             p {
-                color: $color--grey;
-                font-size: 15px;
-                margin-bottom: 15px;
+                color: $color--medium-dark-slate;
+                font-size: 12px;
+                margin-top: 8px;
+            }
+
+            p.top-blocked__no-data__lead {
+                margin-bottom: 2px;
+                font-size: 16px;
+                font-weight: 600;
+                margin-top: 11px;
             }
 
             .top-blocked__no-data__graph {
-                width: 80px;
-                height: 40px;
-                padding: 10px 15px;
-                margin: 0 auto 15px auto;
-                border-radius: 5px;
-                background: $platinum-light;
+                width: 71px;
+                height: 47px;
+                padding: 9px 11px;
+                margin: 0 auto;
+                border-radius: 3px;
+                background: $color--light-slate;
 
                 .top-blocked__no-data__graph__bar {
                     width: 5px;
                     background-color: #F1F2F6;
                     border-radius: 5px;
                     display: inline-block;
-                    margin-right: 15px;
+                    margin-right: 12px;
                     vertical-align: bottom;
 
                     &.one {
@@ -640,31 +761,19 @@ body {
         }
 
         .top-blocked__li__blocker-pct {
-            float: left;
             font-size: 13px;
-            color: $white;
             transition: all 0.5s ease-in-out;
-        }
-
-        &.top-blocked__li--see-all {
-            padding-top: 10px;
-            padding-left: 20px;
-            margin: 30px 0 0 0;
-
-            .link-secondary {
-                position: relative;
-                font-weight: bold;
-                padding-top: 3.5px;
-                padding-bottom: 3.5px;
-                display: block;
-
-                .icon__arrow {
-                    padding-top: 1px;
-                }
-            }
+            padding-left: 5px;
+            vertical-align: middle;
         }
     }
 }
+
+@import "views/hero";
+@import "views/hero-rating-container";
+@import "views/status-list";
+@import "views/privacy-practices";
+@import "views/tracker-networks";
 
 
 /* Generic menu list styling */

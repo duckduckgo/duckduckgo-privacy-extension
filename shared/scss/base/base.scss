@@ -152,6 +152,19 @@ a {
     border-bottom: $card__border;
 }
 
+.border--bottom--inner {
+    position: relative;
+
+    &:after {
+        content: "";
+        border-bottom: $card__border;
+        position: absolute;
+        bottom: 0;
+        left: 20px;
+        right: 20px;
+    }
+}
+
 
 /* Padding */
 .padded {
@@ -162,6 +175,15 @@ a {
     padding-bottom: 0;
 }
 
+/* Background */
+.silver-bg {
+    background-color: $color--silver;
+
+    .border--top,
+    .border--bottom {
+        border-color: #d8d8d8;
+    }
+}
 
 /* Hamburger Button */
 .hamburger-button {
@@ -255,22 +277,28 @@ a {
             background-image: url($icon__close--moz);
         }
 
+        .is-browser--safari & {
+            background-image: url($icon__close--safari);
+        }
     }
 
     &.icon__arrow {
         width: 16px;
         height: 16px;
 
-        .is-browser--chrome & {
-            background-image: url($icon__arrow--chrome);
-        }
+        @include cross_platform_bg_image("arrow@2x.png");
 
-        .is-browser--moz & {
-            background-image: url($icon__arrow--moz);
+        .is-browser--safari & {
+            background-image: url($icon__arrow--safari);
         }
 
         &.icon__arrow--left {
             transform: rotate(180deg);
+        }
+
+        &.icon__arrow--large {
+            width: 9.5px;
+            @include cross_platform_bg_image("arrow--large.svg");
         }
     }
 
@@ -284,6 +312,10 @@ a {
 
         .is-browser--moz & {
             background-image: url($icon__settings--moz);
+        }
+
+        .is-browser--safari & {
+            background-image: url($icon__settings--safari);
         }
 
     }

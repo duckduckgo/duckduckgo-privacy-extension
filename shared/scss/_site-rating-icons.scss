@@ -30,6 +30,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
         .is-browser--moz & {
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__calculating});
         }
+
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__calculating});
+        }
     }
 
     &.site-info__rating--null {
@@ -40,6 +44,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
         .is-browser--moz & {
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__null});
+        }
+
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__null});
         }
     }
 
@@ -53,6 +61,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__a});
         }
 
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__a});
+        }
+
         &.is-active {
 
             .is-browser--chrome & {
@@ -61,6 +73,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
             .is-browser--moz & {
                 background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__a--is-active});
+            }
+        
+            .is-browser--safari & {
+                background-image: url(../../img/#{$icon__hero_rating__a--is-active});
             }
         }
     }
@@ -75,6 +91,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__b});
         }
 
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__b});
+        }
+
         &.is-active {
 
             .is-browser--chrome & {
@@ -83,6 +103,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
             .is-browser--moz & {
                 background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__b--is-active});
+            }
+            
+            .is-browser--safari & {
+                background-image: url(../../img/#{$icon__hero_rating__b--is-active});
             }
         }
     }
@@ -97,6 +121,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__c});
         }
 
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__c});
+        }
+
         &.is-active {
 
             .is-browser--chrome & {
@@ -105,6 +133,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
             .is-browser--moz & {
                 background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__c--is-active});
+            }
+
+            .is-browser--safari & {
+                background-image: url(../../img/#{$icon__hero_rating__c--is-active});
             }
         }
     }
@@ -119,6 +151,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__d});
         }
 
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__d});
+        }
+
         &.is-active {
 
             .is-browser--chrome & {
@@ -127,6 +163,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
             .is-browser--moz & {
                 background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__d--is-active});
+            }
+
+            .is-browser--safari & {
+                background-image: url(../../img/#{$icon__hero_rating__d--is-active});
             }
         }
     }
@@ -141,6 +181,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
             background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__f});
         }
 
+        .is-browser--safari & {
+            background-image: url(../../img/#{$icon__hero_rating__f});
+        }
+
         &.is-active {
 
             .is-browser--chrome & {
@@ -149,6 +193,10 @@ $icon__hero_rating__f--is-active: "hero-rating__f--is-active.svg";
 
             .is-browser--moz & {
                 background-image: url(moz-extension://__MSG_@@extension_id__/img/#{$icon__hero_rating__f--is-active});
+            }
+        
+            .is-browser--safari & {
+                background-image: url(../../img/#{$icon__hero_rating__f--is-active});
             }
         }
     }
