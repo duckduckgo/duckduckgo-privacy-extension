@@ -1,0 +1,46 @@
+.tracker-networks .hero__icon {
+    width: 58px;
+    height: 65px;
+}
+
+.hero__icon--major-networks-blocked,
+.icon-major-networks-blocked {
+    @include cross_platform_bg_image("hero-on-major-networks.svg");
+}
+.hero__icon--major-networks-warning,
+.icon-major-networks-warning {
+    @include cross_platform_bg_image("hero-warning-major-networks.svg");
+}
+
+#popup-container .tracker-networks .default-list.site-info__trackers__company-list__url-list {
+    padding-bottom: 20px;
+    padding-top: 9px;
+    font-size: 14px;
+    line-height: 1.5;
+
+    li {
+        padding-top: 0;
+    }
+}
+
+.tracker-networks .default-list.site-info__trackers__company-list {
+    overflow-y: auto;
+    height: 230px;
+    
+    .site-info__tracker__icon {
+        @include icon_display();
+        @include tracker_network_icons_subview();
+        
+        width: 24px;
+        height: 24px;
+        overflow: hidden;
+        background-size: contain;
+    }
+}
+.tracker-networks h1.site-info__domain {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.38;
+    letter-spacing: -0.2px;
+}
+

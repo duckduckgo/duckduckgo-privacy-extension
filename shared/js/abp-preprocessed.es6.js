@@ -125,8 +125,8 @@ chrome.alarms.onAlarm.addListener(alarm => {
 })
 
 // set an alarm to recheck the lists
-// update every 3 hours
-chrome.alarms.create('updateLists', {periodInMinutes: 180})
+// update every 30 min
+chrome.alarms.create('updateLists', {periodInMinutes: 30})
 
 // add version param to url on the first install and
 // only once a day after than

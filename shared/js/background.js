@@ -20,7 +20,6 @@ var trackers = require('trackers')
 var utils = require('utils')
 var settings = require('settings')
 var stats = require('stats')
-var db = require('db')
 var https = require('https')
 var surrogates = require('surrogates')
 
@@ -235,10 +234,6 @@ chrome.webRequest.onBeforeRequest.addListener(
             console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + requestData.url)
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
-
-        // Make sure https module is ready, check synchronous .isReady property
-        // since we aren't sure if we're in Chrome or Firefox at this point
-        if (!https.isReady) return
 
         // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false

@@ -170,7 +170,7 @@ body {
     }
 
     .site-info--placeholder {
-        height: 335px;
+        height: 332px;
     }
 
     .site-info {
@@ -184,14 +184,8 @@ body {
             padding-bottom: 0;
         }
 
-        .site-info__protection {
-            line-height: 1.4em;
-            height: 1.2em;
-            display: block;
-            max-width: $popup__width - 125;
-            font-weight: bold;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .text-line-after-icon {
+            margin-left: 12px;
         }
 
         .site-info__tosdr-status {
@@ -210,6 +204,13 @@ body {
         }
 
         .site-info__li--toggle {
+            background-color: $color--medium-slate;
+            color: $color--white;
+
+            &.is-active {
+                background-color: $color--green;
+            }
+
             .is-disabled & {
                 @include is_disabled();
             }
@@ -225,10 +226,20 @@ body {
                 right: 0;
             }
 
+            .toggle-button--is-active-true {
+                .toggle-button__bg {
+                    background-color: $color--dark-green;
+                }
+            }
+            .toggle-button--is-active-false {
+                .toggle-button__bg {
+                    background-color: #4B4D50;
+                }
+            }
         }
 
         .site-info__rating-li {
-            padding-top: 0;
+            padding-top: 8px;
         }
 
         .site-info__rating {
@@ -251,13 +262,13 @@ body {
             width: 17px;
             height: 22px;
             top: 10px;
-            left: 20px;
         }
 
         .site-info__https-status__icon {
             @include icon_display();
             @include site_status_icons();
             width: 15px;
+            left: 24px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
@@ -285,19 +296,6 @@ body {
             }
         }
 
-        .site-info__https-status__msg {
-            @include uppercase_label();
-
-            &.is-secure,
-            &.is_upgraded {
-                color: $color--green;
-            }
-
-            &.is-insecure {
-                color: $color--grey;
-            }
-        }
-
         .site-info__li--trackers {
             position: relative;
             padding-left: 45px;
@@ -311,8 +309,10 @@ body {
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    top: 12.5px;
-
+                    height: 30px;
+                    width: 27px;
+                    left: 20px;
+                    
                     &.is-blocking--true {
 
                         .is-browser--chrome & {
@@ -362,8 +362,8 @@ body {
         .site-info__privacy-practices__icon {
             @include icon_display();
             @include site_status_icons();
-            top: 12px;
-
+            left: 23px;
+            
             &.is-good {
                 @include cross_platform_bg_image("privacy--good.svg");
             }
@@ -387,6 +387,12 @@ body {
         bottom: 0;
     }
 
+    // main popup view has a coloured hero section
+    // so it doesn't need the extra space on top
+    .site-info--main {
+        top: auto;
+    }
+
     .top-blocked {
         position: absolute;
         top: 400px;
@@ -396,7 +402,9 @@ body {
         padding-bottom: 15px;
 
         &.top-blocked--truncated {
-            padding-top: 15px;
+            padding-top: 40px;
+            top: auto;
+            bottom: 40px;
         }
 
         .top-blocked__list {
@@ -408,7 +416,7 @@ body {
             }
 
             .top-blocked__li--no-data {
-                margin-top: 15px;
+                margin-top: 17px;
             }
         }
     }
@@ -558,7 +566,7 @@ body {
 .top-blocked__see-all {
    padding-top: 14px;
    padding-left: 20px;
-   margin: 30px 0 0 0;
+   margin: 48px 0 0 0;
 
    .link-secondary {
        position: relative;
@@ -749,6 +757,7 @@ body {
 @import "views/hero-rating-container";
 @import "views/status-list";
 @import "views/privacy-practices";
+@import "views/tracker-networks";
 
 
 /* Generic menu list styling */

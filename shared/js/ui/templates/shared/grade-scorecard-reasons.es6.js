@@ -1,4 +1,5 @@
 const statusList = require('./status-list.es6.js')
+const trackerNetworksText = require('./tracker-networks-text.es6.js')
 
 module.exports = function (site) {
   const reasons = getReasons(site)
@@ -15,30 +16,22 @@ function getReasons (site) {
   // a list of reasons behind the grade
 
   // encryption status
-  const httpsStatusText = site.httpsStatusText
-  if (httpsStatusText) {
-    let connectionMsg = 'Unencrypted'
-    let modifier = 'bad'
-
-    if (httpsStatusText === 'Secure') {
-      connectionMsg = 'Encrypted'
-      modifier = 'good'
-    }
+  const httpsState = site.httpsState
+  if (httpsState) {
+    let modifier = httpsState === 'none' ? 'bad' : 'good'
 
     reasons.push({
       modifier,
-      msg: `${connectionMsg} Connection`
+      msg: site.httpsStatusText
     })
   }
 
-  // tracking networks blocked,
-  // only show a message if there's any blocked
-  const numTrackerNetworks = site.trackerNetworks.length
-  const foundOrBlocked = site.isWhitelisted || numTrackerNetworks === 0 ? 'Found' : 'Blocked'
-  if (numTrackerNetworks) {
+  // tracking networks blocked or found,
+  // only show a message if there's any
+  if (site.totalTrackerNetworks !== 0) {
     reasons.push({
       modifier: 'bad',
-      msg: `${numTrackerNetworks} Tracker Networks ${foundOrBlocked}`
+      msg: `${trackerNetworksText(site)}`
     })
   }
 
