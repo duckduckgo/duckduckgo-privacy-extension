@@ -73,12 +73,15 @@ function Background() {
         ATB.onInstalled();
     }
 
-    // blow away old indexeddbs that might be there:
+    // blow away old indexeddbs that might be there
     if (details.reason.match(/update/) && window.indexedDB) {
         const ms = 1000 * 60
         setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
     }
-  });
+
+    // remove legacy/unused `HTTPSwhitelisted` setting
+    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+  })
 }
 
 var background
