@@ -25,6 +25,11 @@ let constants = {
         "unknown": "Unknown",
         "mixed": "Mixed"
     },
+    "httpsMessages": {
+        "secure": "Encrypted Connection",
+        "upgraded": "Forced Encryption",
+        "none": "Unencrypted Connection",
+    },
     /**
      * Major tracking networks data:
      * percent of the top 1 million sites a tracking network has been seen on.
