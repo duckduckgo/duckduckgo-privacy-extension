@@ -42,6 +42,15 @@ function getReasons (site) {
     msg: `${trackerNetworksText(site, true)}`
   })
 
+  // Is the site itself a major tracking network?
+  // only show a message if it is
+  if (site.isaMajorTrackingNetwork) {
+    reasons.push({
+      modifier: 'bad',
+      msg: `Site is a Major Tracker Network`
+    })
+  }
+
   // privacy practices from tosdr
   const privacyMessage = site.tosdr && site.tosdr.message
   if (privacyMessage && privacyMessage !== window.constants.tosdrMessages.unknown) {
