@@ -101,13 +101,6 @@ class TabManager {
 var tabManager = new TabManager();
 
 var closeHandler = function (e) {
-    // only want to delete the tab
-    // when it's being closed. This handler will get
-    // called when the url is changing in the tab
-    // and we don't want to delete it here in those cases
-    // or it breaks things like https upgrades:
-    if (e.type !== 'close') return
-
     let tabId = tabManager.getTabId(e)
     if (tabId) tabManager.delete(tabId)
 }
