@@ -19,7 +19,7 @@ class TabManager {
 
         for (let id in safari.application.activeBrowserWindow.tabs) {
             if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
-                let tabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10;
+                let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
                 safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
                 return tabId
             }

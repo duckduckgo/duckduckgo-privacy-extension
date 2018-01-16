@@ -38,10 +38,13 @@ var handleMessage = function (message) {
 // and create a background tab so we can show the correct site in the popup
 function onInstalled () {
     if(!localStorage['installed']) {
+        
+        ATB.onInstalled()
+
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
                 // create a tab id and store in safari tab
-                safariTab.ddgTabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10
+                safariTab.ddgTabId = Math.floor(Math.random() * (10000000 - 10 + 1)) + 10
 
                 // make a fake request obj so we can use tabManager to handle creating and storing the tab
                 let req = {
@@ -126,6 +129,12 @@ var onBeforeNavigation = function (e) {
     }
 
     // same logic from /shared/js/background.js
+
+    let ddgAtbRewrite = ATB.redirectURL(e)
+    if (ddgAtbRewrite) {
+        e.target.url = ddgAtbRewrite.redirectUrl
+        return
+    }
 
     // site is required to be there:
     if (!thisTab || !thisTab.site) {

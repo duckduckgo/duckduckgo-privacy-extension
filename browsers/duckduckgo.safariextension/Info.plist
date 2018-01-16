@@ -74,6 +74,10 @@
 				<string>js/oninstall.js</string>
 			</array>
 		</dict>
+		<key>Stylesheets</key>
+		<array>
+			<string>public/css/noatb.css</string>
+		</array>
 	</dict>
 	<key>Description</key>
 	<string>DuckDuckGo enhancements for Safari</string>

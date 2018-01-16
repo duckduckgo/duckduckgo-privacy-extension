@@ -21,8 +21,12 @@ if (window.safari) {
     document.addEventListener("DOMContentLoaded", function(e) {
         // give success page a chance to set atb value
         setTimeout(() => {
-            if (window === window.top)
-                safari.self.tab.dispatchMessage('atb', {atb: getATB()})
+            if (window === window.top) {
+                let atb = getATB()
+                if (atb) {
+                    safari.self.tab.dispatchMessage('atb', {atb: atb})
+                }
+            }
         }, 500)
    }, true)
 } else {
