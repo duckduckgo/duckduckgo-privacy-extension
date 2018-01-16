@@ -14,6 +14,7 @@ function Site (attrs) {
   attrs.httpsStatusText = ''
   attrs.isUserPrivacyUpgraded = false
   attrs.trackersCount = 0
+  attrs.majorTrackersCount = 0
   attrs.totalTrackersCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
@@ -156,6 +157,10 @@ Site.prototype = window.$.extend({},
           this.set('totalTrackersCount', newTotalTrackersCount)
         }
 
+        const newMajorTrackersCount = this.getMajorTrackerNetworksCount()
+        if (newMajorTrackersCount !== this.majorTrackersCount) {
+          this.set('majorTrackersCount', newMajorTrackersCount)
+        }
         this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
 
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()
@@ -189,6 +194,18 @@ Site.prototype = window.$.extend({},
       }
 
       return count
+    },
+
+    getMajorTrackerNetworksCount: function () {
+      // console.log('[model] getMajorTrackersCount()')
+      return Object.keys(this.tab.trackers).reduce((total, name) => {
+        let tempTracker = name.toLowerCase()
+        const majorTrackingNetworks = Object.keys(window.constants.majorTrackingNetworks)
+          .filter((t) => t.toLowerCase() === tempTracker)
+        // in case a major tracking network is in the list more than once somehow
+        total += majorTrackingNetworks.length ? 1 : 0
+        return total
+      }, 0)
     },
 
     getIsPartOfMajorTrackingNetwork: function () {
