@@ -51,14 +51,5 @@ function getLocation () {
 }
 
 window.onbeforeunload = ((e) => unload(e))
-window.onfocus = ((e) => sendLoadEvent(e))
 
 document.addEventListener('beforeload', onBeforeLoad, true);
-document.addEventListener("DOMContentLoaded", sendLoadEvent, true)
-        
-        
-function sendLoadEvent (event) {
-    if (window === window.top) {
-        safari.self.tab.dispatchMessage('tabLoaded', {mainFrameURL: mainFrameURL})
-    }
-}
