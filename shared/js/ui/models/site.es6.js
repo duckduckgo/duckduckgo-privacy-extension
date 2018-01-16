@@ -201,7 +201,10 @@ Site.prototype = window.$.extend({},
       // console.log('[model] getMajorTrackersCount()')
       return Object.keys(this.tab.trackers).reduce((total, name) => {
         let tempTracker = name.toLowerCase()
-        total += window.constants.majorTrackingNetworks[tempTracker] ? 1 : 0
+        const majorTrackingNetworks = Object.keys(window.constants.majorTrackingNetworks)
+          .filter((t) => t.toLowerCase() === tempTracker)
+        // in case a major tracking network is in the list more than once somehow
+        total += majorTrackingNetworks.length ? 1 : 0
         return total
       }, 0)
     },
