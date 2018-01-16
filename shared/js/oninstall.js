@@ -13,10 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var ATB = document.querySelector('html').getAttribute('data-chromeatb') || document.querySelector('html').getAttribute('data-atb');
+function getATB () {
+    return document.querySelector('html').getAttribute('data-chromeatb') || document.querySelector('html').getAttribute('data-atb');
+}
 
 if (window.safari) {
-    safari.self.tab.dispatchMessage('atb', {atb: ATB})
+    document.addEventListener("DOMContentLoaded", function(e) {
+        // give success page a chance to set atb value
+        setTimeout(() => {
+            if (window === window.top)
+                safari.self.tab.dispatchMessage('atb', {atb: getATB()})
+        }, 500)
+   }, true)
 } else {
-    chrome.runtime.sendMessage({atb: ATB})
+    chrome.runtime.sendMessage({atb: getATB()})
 }
