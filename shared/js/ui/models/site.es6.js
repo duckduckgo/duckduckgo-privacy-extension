@@ -14,6 +14,7 @@ function Site (attrs) {
   attrs.httpsStatusText = ''
   attrs.isUserPrivacyUpgraded = false
   attrs.trackersCount = 0
+  attrs.majorTrackersCount = 0
   attrs.totalTrackersCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
@@ -199,7 +200,7 @@ Site.prototype = window.$.extend({},
     getMajorTrackerNetworksCount: function () {
       // console.log('[model] getMajorTrackersCount()')
       return Object.keys(this.tab.trackers).reduce((total, name) => {
-        let tempTracker = this.tab.trackers[name]
+        let tempTracker = name.toLowerCase()
         total += window.constants.majorTrackingNetworks[tempTracker] ? 1 : 0
         return total
       }, 0)
