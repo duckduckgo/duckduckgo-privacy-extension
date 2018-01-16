@@ -43,7 +43,8 @@ function getSitePoints (sites) {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
         let allData = JSON.parse(body)
         let pointsData = allData.pointsData
-        
+        let relatedUrls = allData.urls || []
+
         points.class = allData.class
         
         for (pointName in pointsData) {
@@ -64,6 +65,11 @@ function getSitePoints (sites) {
             if (data.url) {
                 let parsedUrl = tldjs.parse(data.url)
                 processed[parsedUrl.domain] = points
+
+                // link related sites with the same points
+                relatedUrls.forEach((url) => {
+                    processed[url] = points
+                })
             }
             resolve(getSitePoints(sites))
         })
