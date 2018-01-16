@@ -161,7 +161,6 @@ Site.prototype = window.$.extend({},
         if (newMajorTrackersCount !== this.majorTrackersCount) {
           this.set('majorTrackersCount', newMajorTrackersCount)
         }
-
         this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
 
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()

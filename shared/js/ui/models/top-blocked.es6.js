@@ -20,7 +20,7 @@ TopBlocked.prototype = window.$.extend({},
       return new Promise((resolve, reject) => {
         this.fetch({getTopBlockedByPages: this.numCompanies})
           .then((data) => {
-            if (!data.totalPages || data.totalPages < 10) return resolve()
+            if (!data.totalPages || data.totalPages < 30) return resolve()
             if (!data.topBlocked || data.topBlocked.length < 1) return resolve()
             this.companyList = data.topBlocked
             this.companyListMap = this.companyList.map((company) => {
