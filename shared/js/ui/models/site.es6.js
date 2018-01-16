@@ -160,6 +160,11 @@ Site.prototype = window.$.extend({},
           this.set('totalTrackersCount', newTotalTrackersCount)
         }
 
+        const newMajorTrackersCount = this.getMajorTrackerNetworksCount()
+        if (newMajorTrackersCount !== this.majorTrackersCount) {
+          this.set('majorTrackersCount', newMajorTrackersCount)
+        }
+
         this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
 
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()
@@ -193,6 +198,15 @@ Site.prototype = window.$.extend({},
       }
 
       return count
+    },
+
+    getMajorTrackerNetworksCount: function () {
+      // console.log('[model] getMajorTrackersCount()')
+      return Object.keys(this.tab.trackers).reduce((total, name) => {
+        let tempTracker = this.tab.trackers[name]
+        total += window.constants.majorTrackingNetworks[tempTracker] ? 1 : 0
+        return total
+      }, 0)
     },
 
     getIsPartOfMajorTrackingNetwork: function () {
