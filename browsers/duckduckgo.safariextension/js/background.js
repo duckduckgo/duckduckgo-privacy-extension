@@ -139,22 +139,31 @@ var onBeforeNavigation = function (e) {
         return
     }
 
-    // avoid redirect loops:
-    // TODO: this won't work in safari yet:
-    //if (thisTab.httpsRedirects[e.url] >= 7) {
-    //    console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + e.url)
-    //    e.preventDefault()
-    //    e.target.url = thisTab.downgradeHttpsUpgradeRequest(e)
-    //}
-
     const url = e.url
     const isMainFrame = true // always main frame in this handler
     const upgradedUrl = https.getUpgradedUrl(e.url, thisTab, isMainFrame)
+
+    // avoid redirect loops:
+    if (thisTab.httpsRedirects[url]) {
+        const downgradedUrl = thisTab.downgradeHttpsUpgradeRequest(e)
+        console.log('HTTPS: cancel https upgrade. redirect limit exceeded for: ' + url)
+
+        if (url.toLowerCase() !== downgradedUrl.toLowerCase()) {
+            e.preventDefault()
+            e.target.url = downgradedUrl
+        }
+
+        return
+    }
 
     if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + upgradedUrl)
         thisTab.upgradedHttps = true
         thisTab.addHttpsUpgradeRequest(upgradedUrl)
+
+        // keep track that we redirected this url,
+        // so we can prevent redirect loops:
+        thisTab.httpsRedirects[url] = true
 
         e.preventDefault()
         e.target.url = upgradedUrl

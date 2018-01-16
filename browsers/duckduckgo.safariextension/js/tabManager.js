@@ -33,13 +33,13 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create(tabData) {
-        console.log(`CREATE TAB: ${tabData.url}`)
         // when it's created from a message event, use tabData.message.currentURL, but
         // when it's created from a beforeNavigation event, message object won't exist, so use tabData.url:
         let url = tabData.message ? tabData.message.currentURL : tabData.url
         let createTabData = {url: url, id: tabManager.getTabId(tabData)}
         createTabData.target = tabData.target
         
+        console.log(`CREATE TAB: ${url}`)
         console.log(createTabData)
 
         let newTab = new Tab(createTabData);
@@ -101,6 +101,13 @@ class TabManager {
 var tabManager = new TabManager();
 
 var closeHandler = function (e) {
+    // only want to delete the tab
+    // when it's being closed. This handler will get
+    // called when the url is changing in the tab
+    // and we don't want to delete it here in those cases
+    // or it breaks things like https upgrades:
+    if (e.type !== 'close') return
+
     let tabId = tabManager.getTabId(e)
     if (tabId) tabManager.delete(tabId)
 }
