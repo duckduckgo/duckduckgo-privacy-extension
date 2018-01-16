@@ -3,6 +3,7 @@ const heroTemplate = require('./../templates/shared/hero.es6.js')
 const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
 const trackerNetworksIconTemplate = require('./../templates/shared/tracker-network-icon.es6.js')
+const trackerNetworksTextTemplate = require('./../templates/shared/tracker-networks-text.es6.js')
 
 function TrackerNetworks (ops) {
   // model data is async
@@ -62,12 +63,12 @@ TrackerNetworks.prototype = window.$.extend({},
           this.model.site.isWhitelisted
         )
 
-        const blockedOrFound = this.model.site.isWhitelisted ? 'Found' : 'Blocked'
+        const trackerNetworksText = trackerNetworksTextTemplate(this.model.site)
 
         this.$hero.html(heroTemplate({
           status: trackerNetworksIconName,
           title: this.model.site.domain,
-          subtitle: this.model.site.totalTrackersCount + ' Tracker Networks ' + blockedOrFound,
+          subtitle: trackerNetworksText,
           showClose: true
         }))
       }

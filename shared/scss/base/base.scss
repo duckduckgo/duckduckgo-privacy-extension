@@ -175,6 +175,15 @@ a {
     padding-bottom: 0;
 }
 
+/* Background */
+.silver-bg {
+    background-color: $color--silver;
+
+    .border--top,
+    .border--bottom {
+        border-color: #d8d8d8;
+    }
+}
 
 /* Hamburger Button */
 .hamburger-button {
