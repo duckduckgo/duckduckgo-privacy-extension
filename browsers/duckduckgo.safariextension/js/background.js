@@ -120,10 +120,23 @@ var onBeforeNavigation = function (e) {
     const tabId = tabManager.getTabId(e)
     let thisTab = tabManager.get({tabId: tabId})
 
-    if (!thisTab) {
-        thisTab = tabManager.create(e)
-        console.log('onBeforeNavigation CREATED TAB:', thisTab)
-    }
+    // There's 2 things we're addressing by not continuing
+    // when a tab already exists.
+    //
+    // 1) When you start to type a url in the omnibar and Safari
+    // autocompletes it, but you haven't pressed enter yet, it invokes
+    // this beforeNavigate event. We don't want to change the tab or try
+    // to change the url yet because the user is still typing.
+    //
+    // 2) In Safari, the tab is getting deleted and recreated when
+    // upgrading from http to https, which prevents the redirect loop
+    // detection we use in Chrome/FF from working. But by never trying
+    // to upgrade a site once we have a tab object, we're essentially
+    // preventing the upgrade from getting stuck in an infinite loop.
+    if (thisTab) return
+
+    thisTab = tabManager.create(e)
+    console.log('onBeforeNavigation CREATED TAB:', thisTab)
 
     // same logic from /shared/js/background.js
 
@@ -143,27 +156,10 @@ var onBeforeNavigation = function (e) {
     const isMainFrame = true // always main frame in this handler
     const upgradedUrl = https.getUpgradedUrl(e.url, thisTab, isMainFrame)
 
-    // avoid redirect loops:
-    if (thisTab.httpsRedirects[url]) {
-        const downgradedUrl = thisTab.downgradeHttpsUpgradeRequest(e)
-        console.log('HTTPS: cancel https upgrade. redirect limit exceeded for: ' + url)
-
-        if (url.toLowerCase() !== downgradedUrl.toLowerCase()) {
-            e.preventDefault()
-            e.target.url = downgradedUrl
-        }
-
-        return
-    }
-
     if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + upgradedUrl)
         thisTab.upgradedHttps = true
         thisTab.addHttpsUpgradeRequest(upgradedUrl)
-
-        // keep track that we redirected this url,
-        // so we can prevent redirect loops:
-        thisTab.httpsRedirects[url] = true
 
         e.preventDefault()
         e.target.url = upgradedUrl
