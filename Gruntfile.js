@@ -52,9 +52,6 @@ module.exports = function(grunt) {
         safari: {ui: {
                 '<%= dirs.public.js %>/base.js': ['browsers/duckduckgo.safariextension/js/ui/base/index.es6.js'],
         }, 
-        background: { 
-            '<%= dirs.src.js %>/abp.js': ['browsers/duckduckgo.safariextension/js/abp-preprocessed.es6.js'],
-        }, 
         sass: {}}
     }
 
