@@ -26,7 +26,7 @@ module.exports = function () {
     </h2>
     </li>
     <li class="site-info__li--trackers padded border--bottom">
-      <a href="#" class="js-site-tracker-networks link-secondary bold">
+      <a href="javascript:void(0)" class="js-site-tracker-networks link-secondary bold">
         ${renderTrackerNetworks(this.model)}
       </a>
     </li>
@@ -34,7 +34,7 @@ module.exports = function () {
       <span class="site-info__privacy-practices__icon
         is-${tosdrMsg.toLowerCase()}">
       </span>
-      <a href="#" class="js-site-privacy-practices link-secondary bold">
+      <a href="javascript:void(0)" class="js-site-privacy-practices link-secondary bold">
         <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
         <span class="icon icon__arrow pull-right"></span>
       </a>
@@ -51,7 +51,7 @@ module.exports = function () {
   function renderTrackerNetworks (model) {
     const isActive = !model.isWhitelisted ? 'is-active' : ''
 
-    return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
+    return bel`<a href="javascript:void(0)" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
           icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted)}"></span>
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model)} </span>
