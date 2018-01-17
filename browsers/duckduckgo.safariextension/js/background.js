@@ -132,30 +132,18 @@ var onBeforeRequest = function (requestData) {
  * check whether we should upgrade to https
  */
 var onBeforeNavigation = function (e) {
-    //console.log("beforeNavigation", e.url, e.target.url, e.eventPhase, e)
-
     if (!e.url) return
 
+    const url = e.url
+    const isMainFrame = true // always main frame in this handler
     const tabId = tabManager.getTabId(e)
-    let thisTab = tabManager.get({tabId: tabId})
 
-    // There's 2 things we're addressing by not continuing
-    // when a tab already exists.
-    //
-    // 1) When you start to type a url in the omnibar and Safari
-    // autocompletes it, but you haven't pressed enter yet, it invokes
-    // this beforeNavigate event. We don't want to change the tab or try
-    // to change the url yet because the user is still typing.
-    //
-    // 2) In Safari, the tab is getting deleted and recreated when
-    // upgrading from http to https, which prevents the redirect loop
-    // detection we use in Chrome/FF from working. But by never trying
-    // to upgrade a site once we have a tab object, we're essentially
-    // preventing the upgrade from getting stuck in an infinite loop.
-    if (thisTab) return
+    let thisTab = tabId && tabManager.get({tabId: tabId})
 
-    thisTab = tabManager.create(e)
-    console.log('onBeforeNavigation CREATED TAB:', thisTab)
+    if (!thisTab) {
+        thisTab = tabManager.create(e)
+        console.log('onBeforeNavigation CREATED TAB:', thisTab)
+    }
 
     // same logic from /shared/js/background.js
 
@@ -173,20 +161,23 @@ var onBeforeNavigation = function (e) {
     
     // skip upgrading broken sites:
     if (thisTab.site.isBroken) {
-        console.log('HTTPS: temporarily skip upgrades for: ' + e.url)
+        console.log('HTTPS: temporarily skip upgrades for: ' + url)
         return
     }
 
-    const url = e.url
-    const isMainFrame = true // always main frame in this handler
-    const upgradedUrl = https.getUpgradedUrl(e.url, thisTab, isMainFrame)
+    // skip trying again if we've already tried upgrading this url
+    if (thisTab.hasUpgradedUrlAlready(url)) {
+        console.log('HTTPS: skipping upgrade to avoid redirect loops', url)
+        return
+    }
+
+    const upgradedUrl = https.getUpgradedUrl(url, thisTab, isMainFrame)
 
     if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + upgradedUrl)
         thisTab.upgradedHttps = true
-        thisTab.addHttpsUpgradeRequest(upgradedUrl)
+        thisTab.addHttpsUpgradeRequest(upgradedUrl, url)
 
-        e.preventDefault()
         e.target.url = upgradedUrl
     }
 }

@@ -127,8 +127,20 @@ class Tab {
         }
     };
 
-    addHttpsUpgradeRequest (url) {
-        this.httpsRequests.push(url)
+    addHttpsUpgradeRequest (upgradedUrl, originalUrl) {
+        this.httpsRequests.push(upgradedUrl)
+
+        // keep track on the safari tab:
+        let safariTab = this.getSafariTab()
+        if (!safariTab.ddgHttpsRedirects) {
+            safariTab.ddgHttpsRedirects = {}
+        }
+        safariTab.ddgHttpsRedirects[originalUrl] = 1
+    }
+
+    hasUpgradedUrlAlready (url) {
+        let safariTab = this.getSafariTab()
+        return safariTab.ddgHttpsRedirects && safariTab.ddgHttpsRedirects[url]
     }
 
     downgradeHttpsUpgradeRequest (reqData) {
@@ -154,6 +166,20 @@ class Tab {
             const downgrade = this.url.replace(/^https:\/\//i, 'http://')
             //chrome.tabs.update(this.id, { url: downgrade })
         }
+    }
+
+    getSafariTab () {
+        if (this._safariTab) { return this._safariTab }
+
+        safari.application.browserWindows.some((w) => {
+            return w.tabs.some((t) => {
+                if (t.ddgTabId === this.id) {
+                    return this._safariTab = t
+                }
+            })
+        })
+
+        return this._safariTab
     }
 
     endStopwatch () {
