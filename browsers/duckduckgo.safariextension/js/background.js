@@ -134,11 +134,21 @@ var onBeforeRequest = function (requestData) {
 var onBeforeNavigation = function (e) {
     if (!e.url) return
 
+    //console.log(`onBeforeNavigation ${e.url} ${e.target.url}`)
+
     const url = e.url
     const isMainFrame = true // always main frame in this handler
     const tabId = tabManager.getTabId(e)
 
     let thisTab = tabId && tabManager.get({tabId: tabId})
+
+    // if a tab already exists, but the url is different,
+    // delete it and recreate for the new url
+    if (thisTab && thisTab.url !== url) {
+        tabManager.delete(tabId)
+        thisTab = null
+        console.log('onBeforeNavigation DELETED TAB because url did not match')
+    }
 
     if (!thisTab) {
         thisTab = tabManager.create(e)
@@ -162,24 +172,12 @@ var onBeforeNavigation = function (e) {
     // skip upgrading broken sites:
     if (thisTab.site.isBroken) {
         console.log('HTTPS: temporarily skip upgrades for: ' + url)
-
-        // e.preventDefault() here prevents broken
-        // sites from loading via autocomplete. It comes
-        // with the downside that it resets the omnibar 
-        // back to what it's state was before they started typing when ,
-        // but this is probably better than autoloading a site?
-        e.preventDefault()
-
         return
     }
 
     // skip trying again if we've already tried upgrading this url
     if (thisTab.hasUpgradedUrlAlready(url)) {
         console.log('HTTPS: skipping upgrade to avoid redirect loops', url)
-
-        // same as the block above
-        e.preventDefault()
-
         return
     }
 
