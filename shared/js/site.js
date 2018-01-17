@@ -9,18 +9,10 @@
 var load = require('load')
 var settings = require('settings')
 
-let tosdr
 let tosdrRegexList
-let tosdrListLoaded
 let trackersWhitelistTemporary
 
-settings.ready().then(() => {
-    load.JSONfromLocalFile(constants.tosdr,(data) => {
-        tosdr = data
-        tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
-        tosdrListLoaded = true
-    })
-})
+tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
 
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
@@ -42,9 +34,6 @@ class Score {
 
     getTosdr() {
         let result = {}
-
-        // return if the list hasn't been built yet
-        if (!tosdrListLoaded) return result
 
         tosdrRegexList.some(tosdrSite => {
             let match = tosdrSite.exec(this.domain)
