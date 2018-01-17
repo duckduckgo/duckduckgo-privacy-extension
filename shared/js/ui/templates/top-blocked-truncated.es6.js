@@ -11,8 +11,8 @@ module.exports = function () {
       <ol class="default-list top-blocked__list top-blocked__list--truncated">
         ${listItems(this.model.companyListMap)}
       </ol>
-      <div class="top-blocked__see-all border--top">
-        <a href="#" class="link-secondary js-top-blocked-see-all">
+      <div class="top-blocked__see-all border--top js-top-blocked-see-all">
+        <a href="javascript:void(0)" class="link-secondary">
           <span class="icon icon__arrow pull-right"></span>
             All Tracker Networks
           </a>
