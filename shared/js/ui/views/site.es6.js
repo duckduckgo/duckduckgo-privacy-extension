@@ -56,7 +56,7 @@ Site.prototype = window.$.extend({},
         'privacy-practices'
       ])
 
-      this.$gradescorecard = this.$('.js-hero')
+      this.$gradescorecard = this.$('.js-hero-open')
 
       this.bindEvents([
         [this.$toggle, 'click', this._whitelistClick],
