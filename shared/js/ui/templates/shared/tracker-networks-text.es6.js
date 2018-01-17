@@ -1,16 +1,19 @@
 const bel = require('bel')
 
-module.exports = function (site) {
-  const networkOrNetworks = (site.totalTrackersCount === 1) ? 'Network' : 'Networks'
+module.exports = function (site, isMajorNetworksCount) {
+  const trackerNetworksCount = isMajorNetworksCount ? site.majorTrackersCount : site.totalTrackersCount
 
-  const text = site.totalTrackersCount + ' Tracker ' + networkOrNetworks + ' ' + trackersBlockedOrFound(site)
-  return bel`${text}`
+  let trackersText = isMajorNetworksCount ? ' Major Tracker' : ' Tracker'
+  trackersText += (trackerNetworksCount === 1) ? ' Network ' : ' Networks '
+
+  const finalText = trackerNetworksCount + trackersText + trackersBlockedOrFound(site, trackerNetworksCount)
+  return bel`${finalText}`
 }
 
-function trackersBlockedOrFound (site) {
+function trackersBlockedOrFound (site, trackerNetworksCount) {
   let msg = ''
   if (site &&
-     (site.isWhitelisted || site.trackerNetworks.length === 0)) {
+     (site.isWhitelisted || trackerNetworksCount === 0)) {
     msg = 'Found'
   } else {
     msg = 'Blocked'

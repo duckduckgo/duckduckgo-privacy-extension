@@ -50,6 +50,10 @@ var ATB = (() => {
                     return
                 }
 
+                if(request.url.indexOf('exti=') !== -1){
+                    return
+                }
+
                 let atbSetting = settings.getSetting('atb')
 
                 if(!atbSetting){
