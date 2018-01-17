@@ -141,7 +141,7 @@ safari.application.addEventListener('beforeSearch', (e) => {
     }
 }, false)
 
-// rebuild cached tabs
+// called when a page has successfully loaded:
 safari.application.addEventListener('navigate', ((e) => {
     let tabId = e.target.ddgTabId
     let tab = tabManager.get({tabId: tabId})
@@ -165,6 +165,11 @@ safari.application.addEventListener('navigate', ((e) => {
         // stash data in safari tab to handle cached pages
         if(!e.target.ddgCache) e.target.ddgCache = {}
         e.target.ddgCache[tab.url] = tab
+
+        // after the page successfully loads, clear
+        // out the https redirect cache so we don't prevent
+        // subsequent pageloads from being upgraded:
+        delete e.target.ddgHttpsRedirects
     }
     else {
         utils.setBadgeIcon('img/ddg-icon.png', e.target)
