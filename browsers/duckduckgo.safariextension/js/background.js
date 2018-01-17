@@ -186,5 +186,32 @@ var onBeforeNavigation = function (e) {
     }
 }
 
+var onBeforeSearch = function (evt) {
+    if (!safari.extension.settings.default_search_engine) return
+
+    let query = evt.query;
+    let DDG_URL = 'https://duckduckgo.com/?q='
+
+    function checkURL(url){
+      var expr = /^(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/i;
+      var regex = RegExp(expr);
+      var localhost = RegExp(/^(https?:\/\/)?localhost(:\d+)?/i)
+      var about = RegExp(/(about|safari-extension):.*/);
+      var nums = RegExp(/^(\d+\.\d+).*/i);
+      return (url.match(regex) || url.match(about) || url.match(localhost)) && !url.match(nums) ;
+    }
+
+    if (!checkURL(query)) {
+        evt.preventDefault();
+        let url = DDG_URL + encodeURIComponent(query) + '&bext=msl';
+        let atb = settings.getSetting('atb')
+        if (atb) {
+              url = url + '&atb=' + atb
+        }   
+        evt.target.url = url
+    }
+}
+
 safari.application.addEventListener("message", handleMessage, true);
 safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true);
+safari.application.addEventListener('beforeSearch', onBeforeSearch, true);
