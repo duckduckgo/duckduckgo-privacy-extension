@@ -113,11 +113,14 @@ var ATB = (() => {
         },
 
         inject: () => {
+            // inject only runs on Firefox and Chrome. Safari does this through the plist file
+            if(!window.chrome) return
+
             chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
                 var i = tabs.length, tab
                 while (i--) {
                     tab = tabs[i]
-                    
+
                     chrome.tabs.executeScript(tab.id, {
                         file: 'js/oninstall.js'
                     })
@@ -130,6 +133,12 @@ var ATB = (() => {
         },
 
         onInstalled: () => {
+            // migrate old safari extension atb over to settings
+            if (window.safari) {
+                if (localStorage['atb']) {
+                    settings.ready().then(() => settings.updateSetting('atb', localStorage['atb']))
+                }
+            }
             ATB.setInitialVersions()
             // wait until settings is ready to try and get atb from the page
             settings.ready().then(() => ATB.inject())
@@ -146,19 +155,28 @@ var ATB = (() => {
     }
 })()
 
-// register message listener
-chrome.runtime.onMessage.addListener((request) => {
-    if(request.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb)
-    }
-})
+if (window.chrome) {
+    // register message listener
+    chrome.runtime.onMessage.addListener((request) => {
+        if(request.atb){
+            ATB.setAtbValuesFromSuccessPage(request.atb)
+        }
+    })
+    
+    // set uninstall survey url
+    settings.ready().then(() => chrome.runtime.setUninstallURL(ATB.getSurveyURL()))
+    chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
+    chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
+        if (alarmEvent.name === 'updateUninstallURL') {
+            chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+        }
+    }))
+} else {
 
+    safari.application.addEventListener('message', ((e) => {
+        if (e.name === 'atb') {
+            ATB.setAtbValuesFromSuccessPage(e.message.atb)
+        }
+    }))
 
-// set uninstall survey url
-settings.ready().then(() => chrome.runtime.setUninstallURL(ATB.getSurveyURL()))
-chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
-chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
-    if (alarmEvent.name === 'updateUninstallURL') {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-    }
-}))
+}

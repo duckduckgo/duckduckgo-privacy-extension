@@ -38,10 +38,13 @@ var handleMessage = function (message) {
 // and create a background tab so we can show the correct site in the popup
 function onInstalled () {
     if(!localStorage['installed']) {
+        
+        ATB.onInstalled()
+
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
                 // create a tab id and store in safari tab
-                safariTab.ddgTabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10
+                safariTab.ddgTabId = Math.floor(Math.random() * (10000000 - 10 + 1)) + 10
 
                 // make a fake request obj so we can use tabManager to handle creating and storing the tab
                 let req = {
@@ -75,8 +78,19 @@ var onBeforeRequest = function (requestData) {
     
     let tabId = tabManager.getTabId(requestData)
     let thisTab = tabManager.get({tabId: tabId})
+    let isMainFrame = requestData.message.frame === 'main_frame'
 
-    if (!thisTab && requestData.message.frame === 'main_frame') {
+    // if it's preloading a site in the background and the url changes, delete and recreate the tab:
+    if (thisTab && thisTab.url !== requestData.message.mainFrameURL) {
+        tabManager.delete(tabId)
+        thisTab = tabManager.create({
+            url: requestData.message.mainFrameURL,
+            target: requestData.target
+        })
+        console.log('onBeforeRequest DELETED AND RECREATED TAB because of url change:', thisTab)
+    }
+
+    if (!thisTab && isMainFrame) {
         thisTab = tabManager.create(requestData)
         console.log('onBeforeRequest CREATED TAB:', thisTab)
     }
@@ -100,7 +114,12 @@ var onBeforeRequest = function (requestData) {
             if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
             console.info(`${thisTab.site.domain} [${tracker.parentCompany }] ${tracker.url}`);
-            safari.extension.popovers[0].contentWindow.location.reload()
+
+            // don't update the popup until the tab is no longer hidden:
+            if (!requestData.message.hidden) {
+                safari.extension.popovers[0].contentWindow.location.reload()
+            }
+
             requestData.message = {cancel: true}
             return
         }
@@ -139,6 +158,12 @@ var onBeforeNavigation = function (e) {
     console.log('onBeforeNavigation CREATED TAB:', thisTab)
 
     // same logic from /shared/js/background.js
+
+    let ddgAtbRewrite = ATB.redirectURL(e)
+    if (ddgAtbRewrite) {
+        e.target.url = ddgAtbRewrite.redirectUrl
+        return
+    }
 
     // site is required to be there:
     if (!thisTab || !thisTab.site) {

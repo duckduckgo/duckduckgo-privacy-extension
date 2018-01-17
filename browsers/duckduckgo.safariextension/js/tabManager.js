@@ -19,7 +19,7 @@ class TabManager {
 
         for (let id in safari.application.activeBrowserWindow.tabs) {
             if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
-                let tabId = Math.floor(Math.random() * (1000 - 10 + 1)) + 10;
+                let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
                 safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
                 return tabId
             }
@@ -114,36 +114,6 @@ safari.application.addEventListener('message', ( (request) => {
     if (request.name === 'unloadTab') {
         closeHandler(request)
     }
-    else if (request.name === 'tabLoaded') {
-        let tab = tabManager.get({tabId: request.target.ddgTabId})
-        
-        if (tab) {
-            
-            // update site https status. We should move this out 
-            if (request.message.mainFrameURL && request.message.mainFrameURL.match(/^https:\/\//)) {
-                tab.site.score.update({hasHTTPS: true})
-            }
-
-            tab.updateBadgeIcon(request.target)
-            if (!tab.site.didIncrementCompaniesData) {
-                Companies.incrementTotalPages()
-                tab.site.didIncrementCompaniesData = true
-                
-                if (tab.trackers && Object.keys(tab.trackers).length > 0) {
-                    Companies.incrementTotalPagesWithTrackers()
-                }
-
-            }
-
-            // stash data in safari tab to handle cached pages
-            if(!request.target.ddgCache) request.target.ddgCache = {}
-            request.target.ddgCache[tab.url] = tab
-        }
-        else {
-            utils.setBadgeIcon('img/ddg-icon.png', request.target)
-        }
-        
-    }
     else if (request.name === 'whitelisted') {
         tabManager.whitelistDomain(request.message.whitelisted)
     }
@@ -175,10 +145,32 @@ safari.application.addEventListener('beforeSearch', (e) => {
 safari.application.addEventListener('navigate', ((e) => {
     let tabId = e.target.ddgTabId
     let tab = tabManager.get({tabId: tabId})
+        
+    if (tab) {
+        // update site https status. We should move this out 
+        if (tab.url.match(/^https:\/\//)) {
+            tab.site.score.update({hasHTTPS: true})
+        }
 
-    // if we don't have a tab with this tabId then we are in a cached page
-    // use the target url to find the correct cached tab obj
-    if (!tab) {
+        tab.updateBadgeIcon(e.target)
+        if (!tab.site.didIncrementCompaniesData) {
+            Companies.incrementTotalPages()
+            tab.site.didIncrementCompaniesData = true
+            
+            if (tab.trackers && Object.keys(tab.trackers).length > 0) {
+                Companies.incrementTotalPagesWithTrackers()
+            }
+        }
+
+        // stash data in safari tab to handle cached pages
+        if(!e.target.ddgCache) e.target.ddgCache = {}
+        e.target.ddgCache[tab.url] = tab
+    }
+    else {
+        utils.setBadgeIcon('img/ddg-icon.png', e.target)
+
+        // if we don't have a tab with this tabId then we are in a cached page
+        // use the target url to find the correct cached tab obj
         console.log("REBUILDING CACHED TAB")
         if (e.target.ddgCache) {
             let cachedTab = e.target.ddgCache[e.target.url]
