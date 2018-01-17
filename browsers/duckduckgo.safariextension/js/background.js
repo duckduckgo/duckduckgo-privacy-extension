@@ -78,8 +78,19 @@ var onBeforeRequest = function (requestData) {
     
     let tabId = tabManager.getTabId(requestData)
     let thisTab = tabManager.get({tabId: tabId})
+    let isMainFrame = requestData.message.frame === 'main_frame'
 
-    if (!thisTab && requestData.message.frame === 'main_frame') {
+    // if it's preloading a site in the background and the url changes, delete and recreate the tab:
+    if (thisTab && thisTab.url !== requestData.message.mainFrameURL) {
+        tabManager.delete(tabId)
+        thisTab = tabManager.create({
+            url: requestData.message.mainFrameURL,
+            target: requestData.target
+        })
+        console.log('onBeforeRequest DELETED AND RECREATED TAB because of url change:', thisTab)
+    }
+
+    if (!thisTab && isMainFrame) {
         thisTab = tabManager.create(requestData)
         console.log('onBeforeRequest CREATED TAB:', thisTab)
     }
@@ -103,7 +114,12 @@ var onBeforeRequest = function (requestData) {
             if (tracker.parentCompany !== 'unknown') Companies.add(tracker.parentCompany)
 
             console.info(`${thisTab.site.domain} [${tracker.parentCompany }] ${tracker.url}`);
-            safari.extension.popovers[0].contentWindow.location.reload()
+
+            // don't update the popup until the tab is no longer hidden:
+            if (!requestData.message.hidden) {
+                safari.extension.popovers[0].contentWindow.location.reload()
+            }
+
             requestData.message = {cancel: true}
             return
         }

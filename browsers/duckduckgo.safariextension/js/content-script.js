@@ -26,11 +26,12 @@ var onBeforeLoad = (e) => {
             potentialTracker: e.url,
             frame: frame,
             mainFrameURL: mainFrameURL,
-            type: requestTypes[e.target.nodeName.toLowerCase()] || 'other'
+            type: requestTypes[e.target.nodeName.toLowerCase()] || 'other',
+            hidden: document.hidden
         }
 
         console.log(`MAYBE BLOCK ${e.url}`)
-        let block = safari.self.tab.canLoad(e, {currentURL: e.target.baseURI, potentialTracker: e.url, frame: frame, mainFrameURL: mainFrameURL})
+        let block = safari.self.tab.canLoad(e, requestDetails)
         if (block.cancel) {
             console.log(`DDG BLOCKING ${e.url}`)
             e.preventDefault()
@@ -51,14 +52,5 @@ function getLocation () {
 }
 
 window.onbeforeunload = ((e) => unload(e))
-window.onfocus = ((e) => sendLoadEvent(e))
 
 document.addEventListener('beforeload', onBeforeLoad, true);
-document.addEventListener("DOMContentLoaded", sendLoadEvent, true)
-        
-        
-function sendLoadEvent (event) {
-    if (window === window.top) {
-        safari.self.tab.dispatchMessage('tabLoaded', {mainFrameURL: mainFrameURL})
-    }
-}
