@@ -28,19 +28,26 @@ function getReasons (site) {
 
   // tracking networks blocked or found,
   // only show a message if there's any
-  if (site.totalTrackerNetworks !== 0) {
-    reasons.push({
-      modifier: 'bad',
-      msg: `${trackerNetworksText(site)}`
-    })
-  }
+  const trackersBadOrGood = (site.totalTrackersCount !== 0) ? 'bad' : 'good'
+  reasons.push({
+    modifier: trackersBadOrGood,
+    msg: `${trackerNetworksText(site)}`
+  })
 
   // major tracking networks,
-  // only show a message if it's bad
-  if (site.isPartOfMajorTrackingNetwork) {
+  // only show a message if there are any
+  const majorTrackersBadOrGood = (site.majorTrackersCount !== 0) ? 'bad' : 'good'
+  reasons.push({
+    modifier: majorTrackersBadOrGood,
+    msg: `${trackerNetworksText(site, true)}`
+  })
+
+  // Is the site itself a major tracking network?
+  // only show a message if it is
+  if (site.isaMajorTrackingNetwork) {
     reasons.push({
       modifier: 'bad',
-      msg: `Site Is Part of a Major Tracker Network`
+      msg: `Site is a Major Tracker Network`
     })
   }
 

@@ -67,7 +67,7 @@ function renderNoDetails () {
       No Privacy Practices Found
     </h1>
     <div class="privacy-practices__details__msg">
-      The Privacy practices of this website have not been reviewed
+      The Privacy practices of this website have not been reviewed.
     </div>
   </div>`
 }
