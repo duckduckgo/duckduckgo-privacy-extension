@@ -1,4 +1,4 @@
-const tosdr ={
+const tosdr = {
     "youtube.com": {
         "score": 0,
         "all": {
