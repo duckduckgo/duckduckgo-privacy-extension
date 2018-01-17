@@ -108,10 +108,6 @@ var Companies = (() => {
 
         sanitizeData: (storageData) => {
             if (storageData.hasOwnProperty('twitter')) {
-              let twitterData = storageData.Twitter || {count: 0, name: 'Twitter',  pagesSeenOn: 0}
-              twitterData.count = (twitterData.count + storageData.twitter.count) || 0
-              twitterData.pagesSeenOn = (twitterData.pagesSeenOn + storageData.twitter.pagesSeenOn) || 0
-              storageData.Twitter = twitterData
               delete storageData.twitter
             }
             return storageData
