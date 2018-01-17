@@ -162,12 +162,24 @@ var onBeforeNavigation = function (e) {
     // skip upgrading broken sites:
     if (thisTab.site.isBroken) {
         console.log('HTTPS: temporarily skip upgrades for: ' + url)
+
+        // e.preventDefault() here prevents broken
+        // sites from loading via autocomplete. It comes
+        // with the downside that it resets the omnibar 
+        // back to what it's state was before they started typing when ,
+        // but this is probably better than autoloading a site?
+        e.preventDefault()
+
         return
     }
 
     // skip trying again if we've already tried upgrading this url
     if (thisTab.hasUpgradedUrlAlready(url)) {
         console.log('HTTPS: skipping upgrade to avoid redirect loops', url)
+
+        // same as the block above
+        e.preventDefault()
+
         return
     }
 
