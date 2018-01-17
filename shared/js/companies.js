@@ -106,8 +106,22 @@ var Companies = (() => {
             utils.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
         },
 
+        sanitizeData: (storageData) => {
+            if (storageData.hasOwnProperty('twitter')) {
+              let twitterData = storageData.Twitter || {count: 0, name: 'Twitter',  pagesSeenOn: 0}
+              twitterData.count = (twitterData.count + storageData.twitter.count) || 0
+              twitterData.pagesSeenOn = (twitterData.pagesSeenOn + storageData.twitter.pagesSeenOn) || 0
+              storageData.Twitter = twitterData
+              delete storageData.twitter
+            }
+            return storageData
+        },
+
         buildFromStorage: () => {
             utils.getFromStorage(storageName, function (storageData) {
+                // uncomment for testing
+                //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
+                storageData = Companies.sanitizeData(storageData)
                 for (company in storageData) {
                     let newCompany = Companies.add(company)
                     newCompany.set('count', storageData[company].count || 0)
