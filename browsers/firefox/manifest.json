@@ -1,5 +1,5 @@
 {
-    "name": "DuckDuckGo Plus",
+    "name": "DuckDuckGo Privacy Essentials",
     "applications": {
         "gecko": {
               "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
@@ -7,7 +7,7 @@
         }
     },
     "version": "2017.11.9",
-    "description": "DuckDuckGo Privacy Protection",
+    "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",

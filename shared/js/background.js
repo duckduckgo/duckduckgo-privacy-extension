@@ -55,10 +55,10 @@ function Background() {
   localStorage['os'] = os;
 
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      for(var i = 0; i < savedTabs.length; i++){
+      for (var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
 
-          if(tab.url){
+          if (tab.url) {
               let newTab = tabManager.create(tab);
               // check https status of saved tabs so we have the correct site score
               if (newTab.url.match(/^https:\/\//)) {
@@ -74,12 +74,15 @@ function Background() {
         ATB.onInstalled();
     }
 
-    // blow away old indexeddbs that might be there:
+    // blow away old indexeddbs that might be there
     if (details.reason.match(/update/) && window.indexedDB) {
         const ms = 1000 * 60
         setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
     }
-  });
+
+    // remove legacy/unused `HTTPSwhitelisted` setting
+    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+  })
 }
 
 var background
@@ -218,7 +221,6 @@ chrome.webRequest.onBeforeRequest.addListener(
          */
 
          if (!thisTab.site) return
-
 
         // Skip https upgrade on broken sites
         if (thisTab.site.isBroken) {

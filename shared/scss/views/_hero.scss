@@ -25,6 +25,9 @@
 .hero__subtitle {
     padding-top: 6px;
     @include uppercase_label();
+    height: 20px;
+    line-height: 21px;
+    text-align: center;
 }
 
 .hero__close {
