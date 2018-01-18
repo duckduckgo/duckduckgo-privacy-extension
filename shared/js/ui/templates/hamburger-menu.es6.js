@@ -19,7 +19,6 @@ module.exports = function () {
       </li>
       <li>
         <a href="${renderFeedbackHref(this.model.isBrowser, this.model.tabUrl)}"
-        target="_blank"
         class="menu-title">
         Send feedback
         <span>Got issues or suggestions? Let us know!</span>
@@ -27,7 +26,6 @@ module.exports = function () {
       </li>
       <li>
         <a href="${renderBrokenSiteHref(this.model.isBrowser, this.model.tabUrl)}"
-        target="_blank"
         class="menu-title">
         Report broken site
         <span>If a site's not working, please tell us.</span>
