@@ -9,7 +9,7 @@
 var load = require('load')
 var settings = require('settings')
 
-let tosdrRegexList
+let tosdrRegexList = []
 let trackersWhitelistTemporary
 
 tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
