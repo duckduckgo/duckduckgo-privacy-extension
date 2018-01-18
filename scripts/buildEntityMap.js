@@ -14,6 +14,9 @@ request('https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/ma
           json[parent].properties.map(url => {
               out[url] = parent;
           });
+          json[parent].resources.map(url => {
+              out[url] = parent;
+          });
       }
 
       fs.writeFile('shared/data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if(err) console.log(err)} );
