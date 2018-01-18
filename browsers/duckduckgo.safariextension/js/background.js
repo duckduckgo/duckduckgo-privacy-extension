@@ -136,6 +136,9 @@ var onBeforeNavigation = function (e) {
 
     if (!e.url) return
 
+    // skip settings page
+    if (e.url.match(/com.duckduckgo.safari/)) return
+
     const tabId = tabManager.getTabId(e)
     let thisTab = tabManager.get({tabId: tabId})
 
