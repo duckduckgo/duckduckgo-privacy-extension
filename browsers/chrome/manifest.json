@@ -1,7 +1,7 @@
 {
-    "name": "DuckDuckGo Plus",
+    "name": "DuckDuckGo Privacy Essentials",
     "version": "2017.11.9",
-    "description": "DuckDuckGo Privacy Protection",
+    "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -14,16 +14,6 @@
             "38": "img/icon_38.png"
         },
         "default_popup": "html/popup.html"
-    },
-    "commands": {
-      "_execute_browser_action": {
-        "suggested_key": {
-          "default": "Alt+G",
-          "mac": "Alt+G",
-          "linux": "Alt+G",
-          "windows": "Alt+G"
-        }
-      }
     },
     "omnibox": {"keyword": "d"},
     "options_page": "html/options.html",
@@ -45,8 +35,8 @@
                 "js/trackerLists.js",
                 "js/trackers.js",
                 "js/tldjs.js",
-                "js/indexed-db.js",
                 "js/https.js",
+                "js/surrogates.js",
                 "js/background.js",
                 "js/abp.js",
                 "js/atb.js"

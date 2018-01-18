@@ -36,7 +36,6 @@
 @mixin is_disableable_link () {
     body.is-disabled & {
         cursor: default;
-        opacity: 0.5;
 
         &:hover {
             text-decoration: none;
@@ -150,6 +149,16 @@
     vertical-align: middle;
 }
 
+/* Cross-platform background image */
+@mixin cross_platform_bg_image ($image) {
+    $asset-path: "__MSG_@@extension_id__/img/";
+    .is-browser--chrome & {
+        background-image: url("chrome-extension://#{$asset-path}#{$image}");
+    }
+    .is-browser--moz & {
+        background-image: url("moz-extension://#{$asset-path}#{$image}");
+    }
+}
 
 /* Sliding subviews */
 @mixin sliding_subview () {

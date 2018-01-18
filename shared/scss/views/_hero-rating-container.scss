@@ -1,0 +1,24 @@
+.rating-hero-container {
+    .hero__icon {
+        width: 80px;
+        height: 64px;
+    }
+
+    .hero__icon--calculating {
+        @include cross_platform_bg_image("hero-rating__calculating-state.svg");
+    }
+    .hero__icon--null {
+        @include cross_platform_bg_image("hero-rating__null-state.svg");
+    }
+
+    $ratings: ("a", "b", "c", "d", "f");
+
+    @each $rating in $ratings {
+        .hero__icon--#{$rating} {
+            @include cross_platform_bg_image("hero-rating__#{$rating}.svg");
+        }
+        .hero__icon--#{$rating}--active {
+            @include cross_platform_bg_image("hero-rating__#{$rating}--is-active.svg");
+        }
+    }
+}
