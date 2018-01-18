@@ -41,6 +41,8 @@ function onInstalled () {
         
         ATB.onInstalled()
 
+        settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
                 // create a tab id and store in safari tab
