@@ -107,7 +107,7 @@ var Companies = (() => {
         },
 
         sanitizeData: (storageData) => {
-            if (storageData.hasOwnProperty('twitter')) {
+            if (storageData && storageData.hasOwnProperty('twitter')) {
               delete storageData.twitter
             }
             return storageData
