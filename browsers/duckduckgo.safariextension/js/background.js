@@ -134,9 +134,9 @@ var onBeforeRequest = function (requestData) {
  * check whether we should upgrade to https
  */
 var onBeforeNavigation = function (e) {
-    if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
-
     //console.log(`onBeforeNavigation ${e.url} ${e.target.url}`)
+
+    if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
 
     const url = e.url
     const isMainFrame = true // always main frame in this handler
@@ -192,7 +192,6 @@ var onBeforeNavigation = function (e) {
 
         e.preventDefault()
         e.target.url = upgradedUrl
-        return
     }
 }
 
