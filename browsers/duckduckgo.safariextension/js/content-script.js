@@ -31,7 +31,8 @@ var onBeforeLoad = (e) => {
             e.preventDefault()
         } else if (block.redirectUrl) {
             console.log(`DDG BLOCKING AND USING SURROGATE ${e.url}`)
-            setTimeout(redirectSrc.bind(undefined, e.target, block.redirectUrl), 1)
+            e.preventDefault()
+            loadSurrogate(block.redirectUrl)
         }
     }
 
@@ -53,8 +54,13 @@ function getLocation () {
 }
 
 // serve surrogate content
-var redirectSrc = function(element, url) {
-    element.src = url
+var loadSurrogate = function(url) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = url
+    sp = document.getElementsByTagName('script')[0];
+    sp.parentNode.insertBefore(s, sp);
 }
 
 if (window === window.top) {
