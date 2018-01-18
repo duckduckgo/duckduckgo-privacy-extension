@@ -139,13 +139,16 @@ var ATB = (() => {
         onInstalled: () => {
             // migrate old safari extension atb over to settings
             if (window.safari) {
-                if (localStorage['atb']) {
-                    settings.ready().then(() => settings.updateSetting('atb', localStorage['atb']))
-                }
+                settings.ready().then(() => {
+                    if (!settings.getSetting('atb') && localStorage['atb']) {
+                        settings.updateSetting('atb', localStorage['atb'])
+                    }
+                    
+                    ATB.setInitialVersions()
+                })
             }
-            ATB.setInitialVersions()
             // wait until settings is ready to try and get atb from the page
-            settings.ready().then(() => ATB.inject())
+            //settings.ready().then(() => ATB.inject())
         },
 
         getSurveyURL: () => {
