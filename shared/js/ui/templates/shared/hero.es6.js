@@ -1,7 +1,7 @@
 const bel = require('bel')
 
 module.exports = function (ops) {
-  return bel`<div class="hero border--bottom text--center js-hero">
+  return bel`<div class="hero border--bottom text--center js-hero silver-bg">
     ${(ops.showClose) ? renderCloseButton() : ''}
     ${(ops.showOpen) ? renderOpenButton() : ''}
     <div class="hero__icon hero__icon--${ops.status}">
