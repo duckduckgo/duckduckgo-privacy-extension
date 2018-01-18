@@ -1,4 +1,3 @@
-var mainFrameURL
 var requestTypes = {
     'iframe': 'sub_frame',
     'frame': 'sub_frame',
@@ -13,11 +12,6 @@ var requestTypes = {
 var onBeforeLoad = (e) => {
     let frame = (window === window.top) ? "main_frame" : "sub_frame"
 
-    if (frame == 'main_frame' && !mainFrameURL) {
-        mainFrameURL = getLocation()
-    }
-
-
     if (e.url) {
         if (!e.url.match(/^https?:\/\/|^\/\//)) return
 
@@ -25,7 +19,7 @@ var onBeforeLoad = (e) => {
             currentURL: e.target.baseURI,
             potentialTracker: e.url,
             frame: frame,
-            mainFrameURL: mainFrameURL,
+            mainFrameURL: getLocation(),
             type: requestTypes[e.target.nodeName.toLowerCase()] || 'other',
             hidden: document.hidden
         }
@@ -35,22 +29,42 @@ var onBeforeLoad = (e) => {
         if (block.cancel) {
             console.log(`DDG BLOCKING ${e.url}`)
             e.preventDefault()
+        } else if (block.redirectUrl) {
+            console.log(`DDG BLOCKING AND USING SURROGATE ${e.url}`)
+            e.preventDefault()
+            loadSurrogate(block.redirectUrl)
         }
     }
 
 }
 
-var unload = (e) => {
-    if (window === window.top) {
-        safari.self.tab.dispatchMessage('unloadTab', {unload: mainFrameURL})
-    }
+var onBeforeUnload = (e) => {
+    safari.self.tab.dispatchMessage('unloadTab', {
+        unload: getLocation()
+    })
 }
 
 // return location without params
+var mainFrameURL
 function getLocation () {
-    return location.protocol + "//" + location.hostname + location.pathname
+    if (mainFrameURL) { return mainFrameURL }
+    var loc = window.top.location
+    mainFrameURL = loc.protocol + "//" + loc.hostname + loc.pathname
+    return mainFrameURL
 }
 
-window.onbeforeunload = ((e) => unload(e))
+// serve surrogate content
+var loadSurrogate = function(url) {
+    var s = document.createElement('script');
+    s.type = 'text/javascript';
+    s.async = true;
+    s.src = url
+    sp = document.getElementsByTagName('script')[0];
+    sp.parentNode.insertBefore(s, sp);
+}
+
+if (window === window.top) {
+    window.addEventListener('beforeunload', onBeforeUnload, true);
+}
 
 document.addEventListener('beforeload', onBeforeLoad, true);

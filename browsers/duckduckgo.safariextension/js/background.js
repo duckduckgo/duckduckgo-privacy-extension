@@ -122,7 +122,11 @@ var onBeforeRequest = function (requestData) {
                 safari.extension.popovers[0].contentWindow.location.reload()
             }
 
-            requestData.message = {cancel: true}
+            if (tracker.redirectUrl) {
+                requestData.message = { redirectUrl: tracker.redirectUrl }
+            } else {
+                requestData.message = { cancel: true }
+            }
             return
         }
     }   
