@@ -95,6 +95,17 @@ require.scopes.settings =(() => {
         syncSettingTolocalStorage();
     }
 
+    function removeSetting (name) {
+        if (!isReady) {
+            console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
+            return
+        }
+        if (settings[name]) {
+            delete settings[name]
+            syncSettingTolocalStorage()
+        }
+    }
+
     function logSettings () {
         console.log(localStorage['settings']) 
     }
@@ -123,6 +134,7 @@ require.scopes.settings =(() => {
     return {
         getSetting: getSetting,
         updateSetting: updateSetting,
+        removeSetting: removeSetting,
         logSettings: logSettings,
         ready: ready
     }

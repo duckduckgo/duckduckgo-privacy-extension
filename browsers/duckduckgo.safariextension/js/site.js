@@ -203,7 +203,6 @@ class Site {
         this.domain = domain,
         this.trackerUrls = [],
         this.score = new Score(this.specialDomain(), this.domain);
-        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
@@ -231,7 +230,7 @@ class Site {
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal(){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted']
+        let globalwhitelists = ['whitelisted']
 
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {}

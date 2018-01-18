@@ -15,11 +15,13 @@ HamburgerMenu.prototype = window.$.extend({},
     _setup: function () {
       this._cacheElems('.js-hamburger-menu', [
         'close',
-        'options-link'
+        'options-link',
+        'feedback-link'
       ])
       this.bindEvents([
         [this.$close, 'click', this._closeMenu],
         [this.$optionslink, 'click', this._openOptionsPage],
+        [this.$feedbacklink, 'click', this._handleFeedbackClick],
         [this.model.store.subscribe, 'action:search', this._handleAction],
         [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
       ])
@@ -44,6 +46,13 @@ HamburgerMenu.prototype = window.$.extend({},
         this._rerender()
         this._setup()
       }
+    },
+
+    _handleFeedbackClick: function () {
+        if (window.safari) {
+            safari.extension.popovers[0].hide()
+            safari.extension.popovers[0].contentWindow.location.reload()
+        }
     },
 
     _openOptionsPage: function () {

@@ -41,6 +41,8 @@ function onInstalled () {
         
         ATB.onInstalled()
 
+        settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
                 // create a tab id and store in safari tab
@@ -132,7 +134,7 @@ var onBeforeRequest = function (requestData) {
  * check whether we should upgrade to https
  */
 var onBeforeNavigation = function (e) {
-    if (!e.url) return
+    if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
 
     //console.log(`onBeforeNavigation ${e.url} ${e.target.url}`)
 
@@ -188,7 +190,9 @@ var onBeforeNavigation = function (e) {
         thisTab.upgradedHttps = true
         thisTab.addHttpsUpgradeRequest(upgradedUrl, url)
 
+        e.preventDefault()
         e.target.url = upgradedUrl
+        return
     }
 }
 
