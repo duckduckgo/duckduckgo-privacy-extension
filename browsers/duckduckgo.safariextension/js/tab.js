@@ -156,17 +156,17 @@ class Tab {
     }
 
     getSafariTab () {
-        if (this._safariTab) { return this._safariTab }
+        let safariTab
 
         safari.application.browserWindows.some((w) => {
             return w.tabs.some((t) => {
                 if (t.ddgTabId === this.id) {
-                    return this._safariTab = t
+                    return safariTab = t
                 }
             })
         })
 
-        return this._safariTab
+        return safariTab
     }
 
     endStopwatch () {
