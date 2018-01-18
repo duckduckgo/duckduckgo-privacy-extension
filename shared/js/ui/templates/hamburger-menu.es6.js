@@ -19,14 +19,14 @@ module.exports = function () {
       </li>
       <li>
         <a href="${renderFeedbackHref(this.model.isBrowser, this.model.tabUrl)}"
-        class="menu-title">
+        class="menu-title js-hamburger-menu-feedback-link">
         Send feedback
         <span>Got issues or suggestions? Let us know!</span>
           </a>
       </li>
       <li>
         <a href="${renderBrokenSiteHref(this.model.isBrowser, this.model.tabUrl)}"
-        class="menu-title">
+        class="menu-title js-hamburger-menu-feedback-link">
         Report broken site
         <span>If a site's not working, please tell us.</span>
           </a>

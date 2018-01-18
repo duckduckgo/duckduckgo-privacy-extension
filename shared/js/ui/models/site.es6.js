@@ -262,6 +262,13 @@ Site.prototype = $.extend({},
 
     toggleWhitelist: function () {
       if (this.tab && this.tab.site) {
+        
+        if (window.safari) {
+            let url = safari.application.activeBrowserWindow.activeTab.url
+            safari.application.activeBrowserWindow.activeTab.url = url
+            safari.extension.popovers[0].hide()
+        }
+
         this.isWhitelisted = !this.isWhitelisted
         this.set('whitelisted', this.isWhitelisted)
 
