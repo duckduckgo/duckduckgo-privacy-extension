@@ -24,9 +24,6 @@
 }
 
 .tracker-networks .default-list.site-info__trackers__company-list {
-    overflow-y: auto;
-    height: 230px;
-    
     .site-info__tracker__icon {
         @include icon_display();
         @include tracker_network_icons_subview();
