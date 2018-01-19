@@ -36,12 +36,12 @@ var handleMessage = function (message) {
 
 // when the extension first installs, check for any existing tabs
 // and create a background tab so we can show the correct site in the popup
-function onInstalled () {
+settings.ready().then(() => {    
     if(!localStorage['installed']) {
         
         ATB.onInstalled()
 
-        settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+        settings.removeSetting('HTTPSwhitelisted'))
 
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
@@ -59,7 +59,7 @@ function onInstalled () {
         })
         localStorage['installed'] = true
     }
-}
+})
 
 /** 
  * Before each request:

@@ -9,22 +9,10 @@
 var load = require('load')
 var settings = require('settings')
 
-let tosdr
-let tosdrRegexList
-let tosdrListLoaded
+let tosdrRegexList = []
 let trackersWhitelistTemporary
 
-settings.ready().then(() => {
-    load.JSONfromLocalFile(constants.tosdr,(data) => {
-        tosdr = data
-        tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
-        tosdrListLoaded = true
-
-        // need to wait for this list to be loaded before checking for saved tabs
-        onInstalled()
-
-    })
-})
+tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
 
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
