@@ -41,7 +41,7 @@ settings.ready().then(() => {
         
         ATB.onInstalled()
 
-        settings.removeSetting('HTTPSwhitelisted'))
+        settings.removeSetting('HTTPSwhitelisted')
 
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
