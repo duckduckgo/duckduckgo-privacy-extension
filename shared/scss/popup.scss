@@ -239,7 +239,7 @@ body {
         }
 
         .site-info__rating-li {
-            padding-top: 8px;
+            padding-top: 0;
         }
 
         .site-info__rating {
@@ -408,7 +408,7 @@ body {
         &.top-blocked--truncated {
             padding-top: 40px;
             top: auto;
-            bottom: 40px;
+            bottom: 0px;
         }
 
         .top-blocked__list {

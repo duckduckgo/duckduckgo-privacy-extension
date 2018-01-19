@@ -1,13 +1,8 @@
 #popup-container .site-info.privacy-practices {
     box-sizing: border-box;
-    margin-top: 9px;
 
     .padded {
         padding: 20px;
-    }
-
-    .hero__close {
-        top: calc(50% - 16px);
     }
 
     .hero__icon {
@@ -32,7 +27,7 @@
 }
 
 .privacy-practices__details {
-    min-height: 205px;
+    min-height: 208px;
 }
 
 .privacy-practices__details__no-detail-icon {
