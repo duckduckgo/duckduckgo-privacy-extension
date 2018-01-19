@@ -138,15 +138,23 @@ var onBeforeRequest = function (requestData) {
  * check whether we should upgrade to https
  */
 var onBeforeNavigation = function (e) {
-    //console.log("beforeNavigation", e.url, e.target.url, e.eventPhase, e)
+    //console.log(`onBeforeNavigation ${e.url} ${e.target.url}`)
 
-    if (!e.url) return
+    if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
 
-    // skip settings page
-    if (e.url.match(/com.duckduckgo.safari/)) return
-
+    const url = e.url
+    const isMainFrame = true // always main frame in this handler
     const tabId = tabManager.getTabId(e)
-    let thisTab = tabManager.get({tabId: tabId})
+
+    let thisTab = tabId && tabManager.get({tabId: tabId})
+
+    // if a tab already exists, but the url is different,
+    // delete it and recreate for the new url
+    if (thisTab && thisTab.url !== url) {
+        tabManager.delete(tabId)
+        thisTab = null
+        console.log('onBeforeNavigation DELETED TAB because url did not match')
+    }
 
     if (!thisTab) {
         thisTab = tabManager.create(e)
@@ -169,26 +177,22 @@ var onBeforeNavigation = function (e) {
     
     // skip upgrading broken sites:
     if (thisTab.site.isBroken) {
-        console.log('HTTPS: temporarily skip upgrades for: ' + e.url)
+        console.log('HTTPS: temporarily skip upgrades for: ' + url)
         return
     }
 
-    // avoid redirect loops:
-    // TODO: this won't work in safari yet:
-    //if (thisTab.httpsRedirects[e.url] >= 7) {
-    //    console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + e.url)
-    //    e.preventDefault()
-    //    e.target.url = thisTab.downgradeHttpsUpgradeRequest(e)
-    //}
+    // skip trying again if we've already tried upgrading this url
+    if (thisTab.hasUpgradedUrlAlready(url)) {
+        console.log('HTTPS: skipping upgrade to avoid redirect loops', url)
+        return
+    }
 
-    const url = e.url
-    const isMainFrame = true // always main frame in this handler
-    const upgradedUrl = https.getUpgradedUrl(e.url, thisTab, isMainFrame)
+    const upgradedUrl = https.getUpgradedUrl(url, thisTab, isMainFrame)
 
     if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + upgradedUrl)
         thisTab.upgradedHttps = true
-        thisTab.addHttpsUpgradeRequest(upgradedUrl)
+        thisTab.addHttpsUpgradeRequest(upgradedUrl, url)
 
         e.preventDefault()
         e.target.url = upgradedUrl

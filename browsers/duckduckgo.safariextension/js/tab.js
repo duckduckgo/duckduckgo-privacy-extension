@@ -127,8 +127,20 @@ class Tab {
         }
     };
 
-    addHttpsUpgradeRequest (url) {
-        this.httpsRequests.push(url)
+    addHttpsUpgradeRequest (upgradedUrl, originalUrl) {
+        this.httpsRequests.push(upgradedUrl)
+
+        // keep track on the safari tab:
+        let safariTab = this.getSafariTab()
+        if (!safariTab.ddgHttpsRedirects) {
+            safariTab.ddgHttpsRedirects = {}
+        }
+        safariTab.ddgHttpsRedirects[originalUrl] = 1
+    }
+
+    hasUpgradedUrlAlready (url) {
+        let safariTab = this.getSafariTab()
+        return safariTab.ddgHttpsRedirects && safariTab.ddgHttpsRedirects[url]
     }
 
     downgradeHttpsUpgradeRequest (reqData) {
@@ -141,6 +153,20 @@ class Tab {
     checkHttpsRequestsOnComplete () {
         // TODO later: watch all requests for http/https status and
         // report mixed content
+    }
+
+    getSafariTab () {
+        let safariTab
+
+        safari.application.browserWindows.some((w) => {
+            return w.tabs.some((t) => {
+                if (t.ddgTabId === this.id) {
+                    return safariTab = t
+                }
+            })
+        })
+
+        return safariTab
     }
 
     endStopwatch () {
