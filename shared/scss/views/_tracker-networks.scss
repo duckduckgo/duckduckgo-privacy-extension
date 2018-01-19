@@ -24,9 +24,6 @@
 }
 
 .tracker-networks .default-list.site-info__trackers__company-list {
-    overflow-y: auto;
-    height: 230px;
-    
     .site-info__tracker__icon {
         @include icon_display();
         @include tracker_network_icons_subview();
@@ -44,3 +41,16 @@
     letter-spacing: -0.2px;
 }
 
+.site-info__trackers__company-list__url-list {
+    .url {
+        width: 65%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .category {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}
