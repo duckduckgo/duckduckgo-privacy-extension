@@ -50,21 +50,28 @@ class HTTPS {
     }
 
     updateList() {
-        console.log("HTTPS: updateList() check if new list exists")
-
         let etag = settings.getSetting('https-etag') || ''
+        let url = constants.httpsUpgradeList
+
+        // for safari append a querystring param so that we can
+        // serve a different list if needed:
+        if (window.safari) {
+            url += '&b=safari'
+        }
+
+        console.log("HTTPS: updateList() check if new list exists at: " + url)
         
         // try to load an updated file from the server, passing
         // in the latest etag we have and only calling the callback
         // with the new file if the etag on the server is different:
         load.loadExtensionFile({
-            url: constants.httpsUpgradeList,
+            url: url,
             source: 'external',
             etag: etag
         }, (data, res) => {
             // This only gets called if the etag is different
             // and it was able to get a new list from the server:
-            console.log("HTTPS: updateList() got updated list from server")
+            console.log("HTTPS: updateList() got updated list from server: ")
 
             let newEtag = res.getResponseHeader('etag') || ''
 
