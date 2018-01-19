@@ -46,5 +46,11 @@
         width: 65%;
         text-overflow: ellipsis;
         overflow: hidden;
+        white-space: nowrap;
+    }
+    .category {
+        position: absolute;
+        right: 0;
+        top: 0;
     }
 }
