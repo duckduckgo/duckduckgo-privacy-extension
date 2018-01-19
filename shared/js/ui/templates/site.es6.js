@@ -10,7 +10,7 @@ module.exports = function () {
 
   return bel`<section class="site-info site-info--main">
     <ul class="default-list">
-    <li class="site-info__rating-li">
+    <li class="site-info__rating-li js-hero-open">
       ${ratingHero(this.model, {
         showOpen: !this.model.disabled
       })}
@@ -25,16 +25,16 @@ module.exports = function () {
       </span>
     </h2>
     </li>
-    <li class="site-info__li--trackers padded border--bottom">
-      <a href="#" class="js-site-tracker-networks link-secondary bold">
+    <li class="js-site-tracker-networks js-site-show-page-trackers site-info__li--trackers padded border--bottom">
+      <a href="#" class="link-secondary bold">
         ${renderTrackerNetworks(this.model)}
       </a>
     </li>
-    <li class="site-info__li--privacy-practices padded border--bottom">
+    <li class="js-site-privacy-practices site-info__li--privacy-practices padded border--bottom">
       <span class="site-info__privacy-practices__icon
         is-${tosdrMsg.toLowerCase()}">
       </span>
-      <a href="#" class="js-site-privacy-practices link-secondary bold">
+      <a href="#" class="link-secondary bold">
         <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
         <span class="icon icon__arrow pull-right"></span>
       </a>
@@ -51,7 +51,7 @@ module.exports = function () {
   function renderTrackerNetworks (model) {
     const isActive = !model.isWhitelisted ? 'is-active' : ''
 
-    return bel`<a href="#" class="js-site-show-page-trackers site-info__trackers link-secondary bold">
+    return bel`<a href="#" class="site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
           icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted)}"></span>
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model)} </span>
