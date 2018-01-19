@@ -69,9 +69,21 @@ function Background() {
   });
 
   chrome.runtime.onInstalled.addListener(function(details) {
-    // only run the following section on install
+    // only run the following section on install and on update
     if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
+    }
+
+    // only show post install page on install
+    if (details.reason.match(/install/)) {
+        settings.ready().then( () => {
+          if (!settings.getSetting('hasSeenPostInstall')) {
+            settings.updateSetting('hasSeenPostInstall', true)
+            chrome.tabs.update({
+              url: 'https://www.duckduckgo.com/app?post=1'
+            })
+          }
+        })
     }
 
     // blow away old indexeddbs that might be there
