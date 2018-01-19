@@ -130,9 +130,17 @@ var ATB = (() => {
         },
 
         onInstalled: () => {
-            ATB.setInitialVersions()
             // wait until settings is ready to try and get atb from the page
-            settings.ready().then(() => ATB.inject())
+            settings.ready().then(() => {
+                ATB.inject()
+
+                // migrate localStorage ATB from the old extension over to settings
+                if(!settings.getSetting('atb') && localStorage['atb']) {
+                    settings.updateSetting('atb', localStorage['atb'])
+                }
+                
+                ATB.setInitialVersions()
+            })
         },
 
         getSurveyURL: () => {

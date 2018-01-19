@@ -9,18 +9,10 @@
 var load = require('load')
 var settings = require('settings')
 
-let tosdr
-let tosdrRegexList
-let tosdrListLoaded
+let tosdrRegexList = []
 let trackersWhitelistTemporary
 
-settings.ready().then(() => {
-    load.JSONfromLocalFile(constants.tosdr,(data) => {
-        tosdr = data
-        tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
-        tosdrListLoaded = true
-    })
-})
+tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
 
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
@@ -42,9 +34,6 @@ class Score {
 
     getTosdr() {
         let result = {}
-
-        // return if the list hasn't been built yet
-        if (!tosdrListLoaded) return result
 
         tosdrRegexList.some(tosdrSite => {
             let match = tosdrSite.exec(this.domain)
@@ -199,7 +188,6 @@ class Site {
         this.domain = domain,
         this.trackerUrls = [],
         this.score = new Score(this.specialDomain(), this.domain);
-        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
@@ -226,16 +214,15 @@ class Site {
      * When site objects are created we check the stored whitelists
      * and set the new site whitelist statuses
      */
-    setWhitelistStatusFromGlobal(){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted']
-
+    setWhitelistStatusFromGlobal () {
+        let globalwhitelists = ['whitelisted']
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {}
             this.setWhitelisted(name, list[this.domain])
         })
     }
 
-    setWhitelisted(name, value){
+    setWhitelisted (name, value) {
         this[name] = value
     }
 

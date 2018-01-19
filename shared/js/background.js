@@ -55,10 +55,10 @@ function Background() {
   localStorage['os'] = os;
 
   chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      for(var i = 0; i < savedTabs.length; i++){
+      for (var i = 0; i < savedTabs.length; i++){
           var tab = savedTabs[i];
 
-          if(tab.url){
+          if (tab.url) {
               let newTab = tabManager.create(tab);
               // check https status of saved tabs so we have the correct site score
               if (newTab.url.match(/^https:\/\//)) {
@@ -69,17 +69,32 @@ function Background() {
   });
 
   chrome.runtime.onInstalled.addListener(function(details) {
-    // only run the following section on install
+    // only run the following section on install and on update
     if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
     }
 
-    // blow away old indexeddbs that might be there:
+    // only show post install page on install
+    if (details.reason.match(/install/)) {
+        settings.ready().then( () => {
+          if (!settings.getSetting('hasSeenPostInstall')) {
+            settings.updateSetting('hasSeenPostInstall', true)
+            chrome.tabs.update({
+              url: 'https://www.duckduckgo.com/app?post=1'
+            })
+          }
+        })
+    }
+
+    // blow away old indexeddbs that might be there
     if (details.reason.match(/update/) && window.indexedDB) {
         const ms = 1000 * 60
         setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
     }
-  });
+
+    // remove legacy/unused `HTTPSwhitelisted` setting
+    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+  })
 }
 
 var background
@@ -218,7 +233,6 @@ chrome.webRequest.onBeforeRequest.addListener(
          */
 
          if (!thisTab.site) return
-
 
         // Skip https upgrade on broken sites
         if (thisTab.site.isBroken) {

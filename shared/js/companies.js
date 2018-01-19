@@ -106,8 +106,18 @@ var Companies = (() => {
             utils.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
         },
 
+        sanitizeData: (storageData) => {
+            if (storageData && storageData.hasOwnProperty('twitter')) {
+              delete storageData.twitter
+            }
+            return storageData
+        },
+
         buildFromStorage: () => {
             utils.getFromStorage(storageName, function (storageData) {
+                // uncomment for testing
+                //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
+                storageData = Companies.sanitizeData(storageData)
                 for (company in storageData) {
                     let newCompany = Companies.add(company)
                     newCompany.set('count', storageData[company].count || 0)
