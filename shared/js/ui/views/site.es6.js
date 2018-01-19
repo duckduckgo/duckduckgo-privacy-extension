@@ -71,10 +71,12 @@ Site.prototype = window.$.extend({},
     rerender: function () {
       // console.log('[site view] rerender()')
       if (this.model && this.model.disabled) {
-        console.log('.addClass is-disabled')
-        this.$body.addClass('is-disabled')
-        this._rerender()
-        this._setup()
+        if (!this.$body.hasClass('is-disabled')) {
+          console.log('$body.addClass() is-disabled')
+          this.$body.addClass('is-disabled')
+          this._rerender()
+          this._setup()
+        }
       } else {
         this.$body.removeClass('is-disabled')
         this.unbindEvents()
