@@ -1,4 +1,5 @@
 .search-form {
+    background-color: $color--dark-grey;
 
     .ddg-logo {
         @include ddg_logo--small();
@@ -26,9 +27,10 @@
     z-index: 1;
     margin-left: 54px;
     margin-top: 9px;
+    color: #afafaf;
 
     &::placeholder {
-        color: $platinum-darker;
+        color: $color--grey;
     }
 }
 
