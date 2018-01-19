@@ -18,7 +18,7 @@ function getSites() {
 
             // recurse through sites list. Get and process the detailed points data for each
             getSitePoints(sites).then(result => {
-                fs.writeFile('shared/data/tosdr.json', JSON.stringify(processed, null, 4), err => { if(err) console.log(err)} )
+                fs.writeFile('shared/data/tosdr.js', 'const tosdr = ' + JSON.stringify(processed, null, 4), err => { if(err) console.log(err)} )
             })
     })
 }
