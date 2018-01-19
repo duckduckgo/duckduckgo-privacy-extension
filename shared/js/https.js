@@ -71,7 +71,7 @@ class HTTPS {
         }, (data, res) => {
             // This only gets called if the etag is different
             // and it was able to get a new list from the server:
-            console.log("HTTPS: updateList() got updated list from server: ")
+            console.log("HTTPS: updateList() got updated list from server")
 
             let newEtag = res.getResponseHeader('etag') || ''
 
