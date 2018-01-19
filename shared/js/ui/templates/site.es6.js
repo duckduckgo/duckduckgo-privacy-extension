@@ -10,7 +10,7 @@ module.exports = function () {
 
   return bel`<section class="site-info site-info--main">
     <ul class="default-list">
-    <li class="site-info__rating-li js-hero-open silver-bg">
+    <li class="site-info__rating-li js-hero-open">
       ${ratingHero(this.model, {
         showOpen: !this.model.disabled
       })}
