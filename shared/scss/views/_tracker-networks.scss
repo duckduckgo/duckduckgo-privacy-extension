@@ -41,3 +41,10 @@
     letter-spacing: -0.2px;
 }
 
+.site-info__trackers__company-list__url-list {
+    .url {
+        width: 65%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+}
