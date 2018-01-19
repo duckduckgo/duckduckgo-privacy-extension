@@ -52,13 +52,13 @@ function getReasons (site) {
   }
 
   // privacy practices from tosdr
-  const privacyMessage = site.tosdr && site.tosdr.message
-  if (privacyMessage && privacyMessage !== window.constants.tosdrMessages.unknown) {
-    reasons.push({
-      modifier: privacyMessage.toLowerCase(),
-      msg: `${privacyMessage} Privacy Practices`
-    })
-  }
+  const unknownPractices = window.constants.tosdrMessages.unknown
+  const privacyMessage = (site.tosdr && site.tosdr.message) || unknownPractices
+  const modifier = (privacyMessage === unknownPractices) ? 'bad' : privacyMessage
+  reasons.push({
+    modifier: modifier,
+    msg: `${privacyMessage} Privacy Practices`
+  })
 
   return reasons
 }
