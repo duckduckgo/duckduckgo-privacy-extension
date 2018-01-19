@@ -80,6 +80,14 @@ require.scopes.utils = ( () => {
         }
     }
 
+    function getSafariTabIndex (target) {
+        for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
+            if (target === safari.application.activeBrowserWindow.tabs[i]) {
+                return i
+            }
+        }
+    }
+
     return {
         extractHostFromURL: extractHostFromURL,
         extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -89,6 +97,7 @@ require.scopes.utils = ( () => {
         getCurrentURL: getCurrentURL,
         getCurrentTab: getCurrentTab,
         getProtocol: getProtocol,
-        setBadgeIcon: setBadgeIcon
+        setBadgeIcon: setBadgeIcon,
+        getSafariTabIndex: getSafariTabIndex
     }
 })();

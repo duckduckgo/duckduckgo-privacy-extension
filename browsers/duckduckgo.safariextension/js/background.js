@@ -43,6 +43,8 @@ settings.ready().then(() => {
 
         settings.removeSetting('HTTPSwhitelisted')
 
+        let activeTabIndex = 0 
+
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
                 // create a tab id and store in safari tab
@@ -57,6 +59,15 @@ settings.ready().then(() => {
                 tabManager.create(req)
             })
         })
+
+        let activeTabIdx = utils.getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
+
+        // open post install page
+        safari.application.activeBrowserWindow.openTab().url = 'https://duckduckgo.com/app?post=1'
+
+        // reactivate previous tab
+        safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
+
         localStorage['installed'] = true
     }
 })
