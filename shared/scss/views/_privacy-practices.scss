@@ -5,6 +5,14 @@
         padding: 20px;
     }
 
+    .hero {
+        padding-top: 9px;
+    }
+
+    .hero__close {
+        top: calc(50% - 16px);
+    }
+
     .hero__icon {
         width: 48px;
         height: 65px;
@@ -27,7 +35,7 @@
 }
 
 .privacy-practices__details {
-    min-height: 208px;
+    min-height: 205px;
 }
 
 .privacy-practices__details__no-detail-icon {

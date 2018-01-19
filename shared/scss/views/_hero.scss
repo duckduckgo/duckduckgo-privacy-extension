@@ -1,5 +1,5 @@
 .hero {
-    padding: 8px 20px 15px 20px;
+    padding: 0 20px 15px 20px;
     text-align: center;
     position: relative;
 }
@@ -33,11 +33,11 @@
 .hero__close {
     position: absolute;
     left: 20px;
-    top: calc(50% - 8px);
+    top: calc(50% - 12px);
 }
 
 .hero__open {
     position: absolute;
     right: 20px;
-    top: calc(50% - 8px);
+    top: calc(50% - 12px);
 }
