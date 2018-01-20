@@ -1,1 +1,1 @@
-{"appName":"DuckDuckGo Privacy Essentials","appDesc":"Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more."}
+{"appName":{"message":"DuckDuckGo Privacy Essentials","description":"The title of the extension, displayed in the web store"},"appDesc":{"message":"Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.","description":"The short description of the extension, displayed in the web store"}}
