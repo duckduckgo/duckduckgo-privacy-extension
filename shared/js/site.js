@@ -180,10 +180,10 @@ class Score {
 
         if (this.inMajorTrackingNetwork) {
             beforeIndex++
-            addstory({change: 1, why: `In major network: ${this.inMajorTrackingNetwork}`})
+            addstory({change: 1, why: `In major network`})
         }
         else {
-            addstory({change: 0, why: `Not in major network: ${this.inMajorTrackingNetwork}`})
+            addstory({change: 0, why: `Not in major network`})
         }
 
         /*
