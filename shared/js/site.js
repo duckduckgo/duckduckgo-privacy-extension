@@ -132,7 +132,7 @@ class Score {
 
             story.push(x)
 
-            console.log(`change: ${x.change} = ${x.grade}: ${x.why}`);
+            console.log(`change: ${x.change} = ${beforeIndex} = ${x.grade}: ${x.why}`);
         };
 
         addstory({change: 1, why: "Default grade"});
@@ -283,8 +283,12 @@ class Score {
         else if (event.trackerBlocked) {
 
             // tracker is from one of the top blocked companies
-            if (majorTrackingNetworks[event.trackerBlocked.parentCompany]) {
+            if (majorTrackingNetworks[event.trackerBlocked.parentCompany.toLowerCase()]) {
                 this.inMajorTrackingNetwork = true
+                console.log(`[major network: true] ${event.trackerBlocked.parentCompany}`);
+            }
+            else {
+                console.log(`[major network: false] ${event.trackerBlocked.parentCompany}`);
             }
 
             // trackers with IP address
