@@ -159,13 +159,13 @@ class Score {
             if (this.tosdr.class) {
                 beforeIndex += tosdrClassMap[this.tosdr.class]
                 afterIndex += tosdrClassMap[this.tosdr.class]
-                addstory( {change:tosdrClassMap[this.tosdr.class], why: `Has tosdr class ${this.tosdr.class}`})
+                addstory( {change:tosdrClassMap[this.tosdr.class], why: `Has tosdr class ${this.tosdr.class}`, tosdr: this.tosdr})
 
             } else if (this.tosdr.score) {
                 let tosdrScore =  Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
                 afterIndex += tosdrScore
-                addstory({change: tosdrScore, why: `Has tosdr score ${this.tosdr.score}`})
+                addstory({change: tosdrScore, why: `Has tosdr score ${this.tosdr.score}`, tosdr: this.tosdr})
             }
             else 
                 addstory({change: 0, why: `Has tosdr, but no tosdr score`, tosdr: this.tosdr})
