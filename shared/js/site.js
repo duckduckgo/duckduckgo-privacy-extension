@@ -126,7 +126,9 @@ class Score {
             x.gradeindex = beforeIndex;
 
             // use '-' as grade for mid-calculation out of range values
-            x.grade = (beforeIndex < 0 || beforeIndex > 3) ? '-' : siteScores[beforeIndex]
+            //x.grade = (beforeIndex < 0 || beforeIndex > 3) ? '-' : siteScores[beforeIndex]
+
+            x.grade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
 
             story.push(x)
 
@@ -238,7 +240,7 @@ class Score {
         if (beforeIndex < 0) {
             let diff = 0 - beforeIndex
             beforeIndex = 0;
-            addstory({change: diff, why: 'negative score'});
+            addstory({change: diff, why: 'negative score'})
         }
 
         if (afterIndex < 0) afterIndex = 0
@@ -256,8 +258,10 @@ class Score {
 
         if(beforeGrade === 'A' && this.tosdr.class !== 'A') {
             beforeGrade = 'B'
-            addstory({change: 1, why: `Grade 'A' requires TOSDR class 'A'. this.tosdr.class: ${this.tosdr.class}`});
+            addstory({change: 1, why: `Grade 'A' requires TOSDR class 'A'. this.tosdr.class: ${this.tosdr.class}`})
         }
+
+        addstory({change: 0, why: `final grade ${beforeGrade}`})
 
         this.gradedetails = story;
 
