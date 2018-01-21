@@ -103,13 +103,54 @@ class Score {
     get() {
         if (this.specialPage) return {}
 
+        /*
+         * Default grade is 'B'
+         * Most sites have unknown privacy practices.
+         */
+
         let beforeIndex = 1
         let afterIndex = 1
+
+        /*
+         * grade calculation history
+         * set to this.gradedetails
+         * contains structures of the form
+         *    {    change: <value>,
+         *         why: "reason for the change",
+         *         grade: "new letter grade"     }
+         */
+        let story = [  ];
+
+        var addstory = function(x) {
+            // const siteScores = ['A', 'B', 'C', 'D']
+            x.gradeindex = beforeIndex;
+
+            // use '-' as grade for mid-calculation out of range values
+            x.grade = (beforeIndex < 0 || beforeIndex > 3) ? '-' : siteScores[beforeIndex]
+
+            story.push(x)
+
+            console.log(`change: ${x.change} = ${x.grade}: ${x.why}`);
+        };
+
+        addstory({change: 1, why: "Default grade"});
+
+        /*
+         * site is a major tracker network
+         */
 
         if (this.isaMajorTrackingNetwork) {
             beforeIndex += this.isaMajorTrackingNetwork
             afterIndex += this.isaMajorTrackingNetwork
+            addstory({change: this.isaMajorTrackingNetwork, why: "Is a major tracking network"})
         }
+        else
+            addstory({change: this.isaMajorTrackingNetwork, why: "Not a major tracking network"})
+
+
+        /*
+         * Privacy Practices
+         */
 
         // If tosdr already determined a class ranking then we map that to increase or
         // decrease the grade accordingly. Otherwise we apply a +/- to the grade based
@@ -118,28 +159,94 @@ class Score {
             if (this.tosdr.class) {
                 beforeIndex += tosdrClassMap[this.tosdr.class]
                 afterIndex += tosdrClassMap[this.tosdr.class]
+                addstory( {change:tosdrClassMap[this.tosdr.class], why: `Has tosdr class ${this.tosdr.class}`})
 
             } else if (this.tosdr.score) {
                 let tosdrScore =  Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
                 afterIndex += tosdrScore
+                addstory({change: tosdrScore, why: `Has tosdr score ${this.tosdr.score}`})
             }
+            else 
+                addstory({change: 0, why: `Has tosdr, but no tosdr score`, tosdr: this.tosdr})
+        }
+        else {
+            addstory({change: 0, why: 'No tosdr' }) /// this is the default 'B' score
         }
 
-        if (this.inMajorTrackingNetwork) beforeIndex++
+        /*
+         * Site has trackers that are in a major tracker network
+         */
+
+        if (this.inMajorTrackingNetwork) {
+            beforeIndex++
+            afterIndex++
+            addstory({change: 1, why: `In major network: ${this.inMajorTrackingNetwork}`})
+        }
+        else {
+            addstory({change: 0, why: `Not in major network: ${this.inMajorTrackingNetwork}`})
+        }
+
+        /*
+         * HTTPS
+         * +1 if no https
+         */
+
         if (!this.hasHTTPS) {
             beforeIndex++
             afterIndex++
+            addstory({change: 1, why: `no HTTPS (this.hasHTTPS: ${this.hasHTTPS})`})
+        }
+        else {
+            addstory({change: 0, why: `Has HTTPS (this.hasHTTPS: ${this.hasHTTPS})`})
         }
 
-        if (this.hasObscureTracker) beforeIndex++
+        /*
+         * Obscure tracker
+         * +1 if no hostname, only IP address
+         */
+
+        // if (this.hasObscureTracker) beforeIndex++
+        if (this.hasObscureTracker) {
+            beforeIndex++
+            addstory({change: 1, why: `Obscure tracker: ${this.hasObscureTracker}`})
+        }
+        else {
+            addstory({change: 0, why: `No obscure trackers`})
+        }
+
+        /*
+         * Number of Trackers
+         * +1 for every 10 trackers
+         * ie
+         *    0 -  9 trackers: +1   (B -> C)
+         *   10 - 19 trackers: +2   (C -> D)
+         *   20 - 29 trackers: +3   (D -> D)
+         */
 
         // decrease score for every 10, round up
-        beforeIndex += Math.ceil(this.totalBlocked / 10)
+        let trackersteps = Math.ceil(this.totalBlocked / 10)
+
+        beforeIndex += trackersteps
+
+        addstory({change: trackersteps , why: `${this.totalBlocked} trackers blocked = ${trackersteps} groups of 10`})
+
+        /*
+         * adjust for negative
+         */
 
         // negative scoreIndex should return the highest score
-        if (beforeIndex < 0) beforeIndex = 0
+        if (beforeIndex < 0) {
+            let diff = 0 - beforeIndex
+            beforeIndex = 0;
+            addstory({change: diff, why: 'negative score'});
+        }
+
         if (afterIndex < 0) afterIndex = 0
+
+        /*
+         * convert to grade
+         */
 
         // return corresponding score or lowest score if outside the array
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
@@ -147,8 +254,13 @@ class Score {
 
         // only sites with a tosdr.class "A" can get a final grade of "A"
         if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
-        if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
 
+        if(beforeGrade === 'A' && this.tosdr.class !== 'A') {
+            beforeGrade = 'B'
+            addstory({change: 1, why: `Grade 'A' requires TOSDR class 'A'. this.tosdr.class: ${this.tosdr.class}`});
+        }
+
+        this.gradedetails = story;
 
         return {before: beforeGrade, after: afterGrade}
     }
