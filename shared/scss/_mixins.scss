@@ -162,6 +162,7 @@
         left: $popup__width;
         width: $popup__width;
         height: 100%;
+        box-sizing: border-box;
 
         &.sliding-subview--root {
             position: fixed;
@@ -176,8 +177,6 @@
 
         &.sliding-subview--has-fixed-header {
             padding: 42px 0 0 0;
-            width: $popup__width; /* 270px - 14*2 */
-            margin-bottom: 28px;
         }
 
         .sliding-subview__header {
