@@ -157,6 +157,7 @@ var ATB = (() => {
             let set_atb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
             if (set_atb) url += `&set_atb=${set_atb}`
+            if (typeof browser !== 'undefined') url += `&browser=${browser}`
             return url
         }
     }

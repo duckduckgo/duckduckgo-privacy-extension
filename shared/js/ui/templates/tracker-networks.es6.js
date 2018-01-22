@@ -63,8 +63,8 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
               category = DOMAIN_MAPPINGS[url.toLowerCase()].t
             }
             return bel`<li>
-              <span class="url">${url}</span>
-              <span class="category float-right">${category}</span>
+              <div class="url">${url}</div>
+              <div class="category">${category}</div>
             </li>`
           })}
         </ol>

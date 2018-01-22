@@ -307,6 +307,7 @@ body {
         .site-info__li--trackers {
             position: relative;
             padding-left: 45px;
+            cursor: pointer;
 
             .is-disabled & {
                 @include is_disabled();
@@ -369,6 +370,7 @@ body {
         .site-info__li--privacy-practices {
             position: relative;
             padding-left: 45px;
+            cursor: pointer;
 
             .is-disabled & {
                 @include is_disabled();
@@ -400,7 +402,11 @@ body {
     }
 
     .site-info--full-height {
-        bottom: 0;
+        position: relative;
+        margin-top: 0;
+        top: 0;
+        height: 100%;
+        overflow-y: auto;
     }
 
     // main popup view has a coloured hero section
@@ -420,7 +426,7 @@ body {
         &.top-blocked--truncated {
             padding-top: 40px;
             top: auto;
-            bottom: 40px;
+            bottom: 0px;
         }
 
         .top-blocked__list {
@@ -473,68 +479,6 @@ body {
                 font-size: 13px;
                 padding: 7.5px 20px 15px 20px;
             }
-
-            .site-info__trackers__company-list {
-                overflow-y: auto;
-                height: 230px;
-                padding: 0 20px 60px 20px;
-
-                    li {
-
-                        &.is-empty {
-                            padding: 15px 0 120px 0;
-                        }
-
-                        &:first-child {
-                            padding-top: 7.5px;
-                        }
-
-                        .site-info__tracker__icon {
-                            @include icon_display();
-                            @include tracker_network_icons_subview();
-
-                            width: 22px;
-                            height: 22px;
-                            margin-top: -6px;
-                            margin-left: -4px;
-                            margin-bottom: 8px;
-                            overflow: hidden;
-                            line-height: 100px;
-                            background-size:contain;
-                        }
-
-                        &:last-child {
-
-                            .site-info__trackers__company-list__url-list {
-                                margin-bottom: 60px;
-                            }
-                        }
-                    }
-
-                .site-info__trackers__company-list__url-list {
-
-                    li {
-                        padding-top: 7.5px;
-                        font-size: 13px;
-                        color: $color--grey;
-                        position: relative;
-
-                        .url {
-                            display: block;
-                            width: 65%;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-                        }
-
-                        .category {
-                            top: 7.5px;
-                            max-width: 85px;
-                            right: 0;
-                            text-align: right;
-                        }
-                    }
-                }
-            }
         }
 
         .top-blocked__list {
@@ -583,6 +527,7 @@ body {
    padding-top: 14px;
    padding-left: 20px;
    margin: 48px 0 0 0;
+   cursor: pointer;
 
    .link-secondary {
        position: relative;

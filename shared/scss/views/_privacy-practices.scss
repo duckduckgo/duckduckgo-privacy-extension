@@ -1,9 +1,12 @@
 #popup-container .site-info.privacy-practices {
     box-sizing: border-box;
-    margin-top: 9px;
 
     .padded {
         padding: 20px;
+    }
+
+    .hero {
+        padding-top: 9px;
     }
 
     .hero__close {

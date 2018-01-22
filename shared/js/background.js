@@ -79,7 +79,7 @@ function Background() {
         settings.ready().then( () => {
           if (!settings.getSetting('hasSeenPostInstall')) {
             settings.updateSetting('hasSeenPostInstall', true)
-            chrome.tabs.update({
+            chrome.tabs.create({
               url: 'https://www.duckduckgo.com/app?post=1'
             })
           }
