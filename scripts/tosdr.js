@@ -50,15 +50,18 @@ function getSitePoints (sites) {
         for (pointName in pointsData) {
             let point = pointsData[pointName]
             let pointCase = point.tosdr.case
+            let score = point.tosdr.score || 0
             if (!pointCase) continue
 
-            // standardize case
+            // standardize case (some of them start with caps)
             pointCase = pointCase.toLowerCase()
+            // standardize score (some of them come as strings)
+            score = parseInt(score, 10)
 
             let type = point.tosdr.point
 
             if (type === 'good' || type === 'bad')
-                addPoint(points, type, pointCase, point.tosdr.score)
+                addPoint(points, type, pointCase, score)
         }
 
         // get site url
