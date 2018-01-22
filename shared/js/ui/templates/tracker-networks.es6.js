@@ -35,7 +35,7 @@ function renderHero (site) {
   site = site || {}
 
   return bel`${hero({
-    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted),
+    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackersCount),
     title: site.domain,
     subtitle: `${trackerNetworksText(site)}`,
     showClose: true
