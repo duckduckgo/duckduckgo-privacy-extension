@@ -97,7 +97,9 @@ function addPoint(points, type, pointCase, score) {
     points['all'][type].push(pointCase)
     
     // is this a point we care about
-    if (topics[type].indexOf(pointCase) !== -1){
+    if (topics[type].indexOf(pointCase) !== -1 &&
+            // avoid adding duplicate points
+            points['match'][type].indexOf(pointCase) === -1){
         points['match'][type].push(pointCase)
 
         if (type === 'bad') {
