@@ -169,7 +169,7 @@ var onBeforeNavigation = function (e) {
 
     if (!thisTab) {
         thisTab = tabManager.create(e)
-        console.log('onBeforeNavigation CREATED TAB:', thisTab)
+        //console.log('onBeforeNavigation CREATED TAB:', thisTab)
     }
 
     // same logic from /shared/js/background.js
