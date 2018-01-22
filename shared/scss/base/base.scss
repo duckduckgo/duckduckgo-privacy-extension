@@ -193,10 +193,11 @@ a {
     font-size: 20px;
     width: 20px;
     height: 30px;
+    background-color: inherit;
 
     span {
         display: block;
-        margin: 2px auto 0 auto;
+        margin: 3px auto 0 auto;
         width: 15px;
         height: 2px;
         background-color: $hamburger-button__color;
