@@ -50,12 +50,27 @@ function getSitePoints (sites) {
         for (pointName in pointsData) {
             let point = pointsData[pointName]
             let pointCase = point.tosdr.case
+            let score = point.tosdr.score || 0
             if (!pointCase) continue
-            
+
+            // standardize case (some of them start with caps)
+            pointCase = pointCase.toLowerCase()
+            // standardize score (some of them come as strings)
+            score = parseInt(score, 10)
+
             let type = point.tosdr.point
 
             if (type === 'good' || type === 'bad')
-                addPoint(points, type, pointCase, point.tosdr.score)
+                addPoint(points, type, pointCase, score)
+        }
+
+        // we use class in our score but we may not have privacy-related reasons for it
+        // so show all available reasons instead
+        if (points.class &&
+                (!points.match.good || !points.match.good.length) &&
+                (!points.match.bad || !points.match.bad.length)) {
+            points.match.good = points.all.good
+            points.match.bad = points.all.bad
         }
 
         // get site url
@@ -82,7 +97,9 @@ function addPoint(points, type, pointCase, score) {
     points['all'][type].push(pointCase)
     
     // is this a point we care about
-    if (topics[type].indexOf(pointCase) !== -1){
+    if (topics[type].indexOf(pointCase) !== -1 &&
+            // avoid adding duplicate points
+            points['match'][type].indexOf(pointCase) === -1){
         points['match'][type].push(pointCase)
 
         if (type === 'bad') {
