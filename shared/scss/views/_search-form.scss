@@ -57,9 +57,9 @@
     border: medium none;
     outline: medium none;
 
-        &:hover, &.selected {
-            @include cross_platform_bg_image("loupe--highlight.svg");
-        }
+    &:hover, &.selected {
+        @include cross_platform_bg_image("loupe--highlight.svg");
+    }
 }
 
 .search-form__submit {
