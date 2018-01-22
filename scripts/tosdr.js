@@ -51,7 +51,10 @@ function getSitePoints (sites) {
             let point = pointsData[pointName]
             let pointCase = point.tosdr.case
             if (!pointCase) continue
-            
+
+            // standardize case
+            pointCase = pointCase.toLowerCase()
+
             let type = point.tosdr.point
 
             if (type === 'good' || type === 'bad')
