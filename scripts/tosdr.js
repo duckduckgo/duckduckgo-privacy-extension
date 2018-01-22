@@ -64,6 +64,15 @@ function getSitePoints (sites) {
                 addPoint(points, type, pointCase, score)
         }
 
+        // we use class in our score but we may not have privacy-related reasons for it
+        // so show all available reasons instead
+        if (points.class &&
+              (!points.match.good || !points.match.good.length) &&
+              (!points.match.bad || !points.match.bad.length)) {
+            points.match.good = points.all.good
+            points.match.bad = points.all.bad
+        }
+
         // get site url
         let servicesUrl = `${githubRepo}/services/${site}.json`
         request.get(servicesUrl, (err, res, body) => {
