@@ -27,24 +27,23 @@
     z-index: 1;
     margin-left: 54px;
     margin-top: 9px;
-    color: #afafaf;
+    color: $color--silver;
 
     &::placeholder {
-        color: $color--grey;
+        color: #afafaf;
     }
 }
 
 
 .search-form__go {
+    @include cross_platform_bg_image("loupe.svg");
     position: absolute;
     top: 4px;
     right: 30px;
-    background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9InNlYXJjaC1sb3VwZSI+PGc+PGc+PHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6Izg4ODg4ODsiIGQ9Ik0xOC43LDE2LjJsLTIuOS0yLjlDMTYuNSwxMi4xLDE3LDEwLjYsMTcsOWMwLTQuNC0zLjYtOC04LThTMSw0LjYsMSw5czMuNiw4LDgsOGMxLjYsMCwzLTAuNSw0LjMtMS4ybDIuOSwyLjljMC41LDAuNSwxLjIsMC41LDEuNiwwbDAuOC0wLjhDMTkuMSwxNy40LDE5LjEsMTYuNywxOC43LDE2LjJ6IE05LDE1Yy0zLjMsMC02LTIuNy02LTZjMC0zLjMsMi43LTYsNi02YzMuMywwLDYsMi43LDYsNkMxNSwxMi4zLDEyLjMsMTUsOSwxNXoiLz48L2c+PC9nPjwvZz48L3N2Zz4=);
     background-position: 47% 46%;
     background-size: 18px 18px;
     height: 34px;
     width: 42px;
-    color: $color--grey;
     padding: 0px 0.64em;
     min-height: 1.8em;
     margin-bottom: 2px;
@@ -60,8 +59,7 @@
     outline: medium none;
 
         &:hover, &.selected {
-            background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDIwIDIwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGcgaWQ9InNlYXJjaC1sb3VwZSI+PGc+PGc+PHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6I2ZmZmZmZjsiIGQ9Ik0xOC43LDE2LjJsLTIuOS0yLjlDMTYuNSwxMi4xLDE3LDEwLjYsMTcsOWMwLTQuNC0zLjYtOC04LThTMSw0LjYsMSw5czMuNiw4LDgsOGMxLjYsMCwzLTAuNSw0LjMtMS4ybDIuOSwyLjljMC41LDAuNSwxLjIsMC41LDEuNiwwbDAuOC0wLjhDMTkuMSwxNy40LDE5LjEsMTYuNywxOC43LDE2LjJ6IE05LDE1Yy0zLjMsMC02LTIuNy02LTZjMC0zLjMsMi43LTYsNi02YzMuMywwLDYsMi43LDYsNkMxNSwxMi4zLDEyLjMsMTUsOSwxNXoiLz48L2c+PC9nPjwvZz48L3N2Zz4=) !important;
-            background-color: $green !important;
+            @include cross_platform_bg_image("loupe--highlight.svg");
         }
 }
 

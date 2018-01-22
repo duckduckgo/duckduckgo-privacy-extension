@@ -203,6 +203,12 @@ a {
         background-color: $hamburger-button__color;
         border-radius: 5px;
     }
+
+    &:hover {
+        span {
+            background-color: $color--silver;
+        }
+    }
 }
 
 
