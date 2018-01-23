@@ -146,8 +146,8 @@ chrome.webRequest.onBeforeRequest.addListener(
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
                 let newTab = tabManager.create(requestData)
 
-                // persist the last URL the tab was trying to load
-                newTab.lastInProgressUrl = thisTab && thisTab.lastInProgressUrl
+                // persist the last URL the tab was trying to upgrade to HTTPS
+                newTab.lastUpgradeInProgressUrl = thisTab && thisTab.lastUpgradeInProgressUrl
                 thisTab = newTab
             }
 
@@ -261,7 +261,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false
 
-        if (isMainFrame && thisTab.lastInProgressUrl === requestData.url) {
+        if (isMainFrame && thisTab.lastUpgradeInProgressUrl === requestData.url) {
             console.log('already tried upgrading this url and it didn\'t complete successfully:\n' + requestData.url)
             return
         }
@@ -272,7 +272,7 @@ chrome.webRequest.onBeforeRequest.addListener(
             console.log('HTTPS: upgrade request url to ' + url)
             if (isMainFrame) {
                 thisTab.upgradedHttps = true
-                thisTab.lastInProgressUrl = requestData.url
+                thisTab.lastUpgradeInProgressUrl = requestData.url
             }
             return {redirectUrl: url}
         } else {

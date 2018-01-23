@@ -110,7 +110,7 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                 }
 
                 if (tab.statusCode === 200) {
-                    delete tab.lastInProgressUrl
+                    delete tab.lastUpgradeInProgressUrl
                     tab.endStopwatch()
                 }
             }
