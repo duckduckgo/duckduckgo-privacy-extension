@@ -247,7 +247,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         }
 
         if (thisTab.downgradedUrls[requestData.url]) {
-            console.log('already tried https upgrades for this URL and failed, skip: ' + requestData.url)
+            console.log('already tried https upgrades for this URL and failed, skip:\n' + requestData.url)
             return
         }
 
