@@ -77,10 +77,12 @@ function Background() {
     // only show post install page on install
     if (details.reason.match(/install/)) {
         settings.ready().then( () => {
-          if (!settings.getSetting('hasSeenPostInstall')) {
+          const domain = window.location ? window.location.href : ''
+          const postInstallUrl = 'https://www.duckduckgo.com/app'
+          if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(postInstallUrl))) {
             settings.updateSetting('hasSeenPostInstall', true)
             chrome.tabs.create({
-              url: 'https://www.duckduckgo.com/app?post=1'
+              url: postInstallUrl + '?post=1'
             })
           }
         })
