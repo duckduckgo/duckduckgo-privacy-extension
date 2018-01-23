@@ -147,7 +147,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 let newTab = tabManager.create(requestData)
 
                 // persist the last URL the tab was trying to load
-                newTab = thisTab && thisTab.lastInProgressUrl
+                newTab.lastInProgressUrl = thisTab && thisTab.lastInProgressUrl
                 thisTab = newTab
             }
 
