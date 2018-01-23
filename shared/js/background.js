@@ -144,7 +144,11 @@ chrome.webRequest.onBeforeRequest.addListener(
         // don't have a tab instance for this tabId or this is a new requestId.
         if (requestData.type === "main_frame") {
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
-                thisTab = tabManager.create(requestData);
+                let newTab = tabManager.create(requestData)
+
+                // persist the last URL the tab was trying to load
+                newTab = thisTab && thisTab.lastInProgressUrl
+                thisTab = newTab
             }
 
             // add atb params only to main_frame
@@ -257,11 +261,19 @@ chrome.webRequest.onBeforeRequest.addListener(
         // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false
 
+        if (isMainFrame && thisTab.lastInProgressUrl === requestData.url) {
+            console.log('already tried upgrading this url and it didn\'t complete successfully:\n' + requestData.url)
+            return
+        }
+
         // Fetch upgrade rule from https module:
         const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame)
         if (url.toLowerCase() !== requestData.url.toLowerCase()) {
             console.log('HTTPS: upgrade request url to ' + url)
-            if (isMainFrame) thisTab.upgradedHttps = true
+            if (isMainFrame) {
+                thisTab.upgradedHttps = true
+                thisTab.lastInProgressUrl = requestData.url
+            }
             thisTab.addHttpsUpgradeRequest(url)
             return {redirectUrl: url}
         } else {
