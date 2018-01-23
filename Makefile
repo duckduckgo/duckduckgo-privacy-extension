@@ -38,4 +38,4 @@ moveout: $(ITEMS)
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	find ./build/$(browser)/$(type)/js -type f -name '*.es6.js' -delete
 	rm -rf build/$(browser)/$(type)/js/ui
-	cp browsers/$(browser)/manifest.json build/$(browser)/$(type)/
+	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
