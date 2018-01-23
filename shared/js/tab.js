@@ -53,6 +53,7 @@ class Tab {
         this.url = tabData.url
         this.upgradedHttps = false
         this.httpsRequests = [] // array of urls we force-upgraded
+        this.downgradedUrls = {}
         this.httpsRedirects = {} // count redirects here in form of: { <requestId>: <count> }
         this.requestId = tabData.requestId
         this.status = tabData.status
@@ -132,6 +133,7 @@ class Tab {
         if (reqData.type === 'main_frame') this.upgradedHttps = false
         delete this.httpsRedirects[reqData.requestId]
         const downgrade = reqData.url.replace(/^https:\/\//i, 'http://')
+        this.downgradedUrls[downgrade] = true
         return downgrade
     }
 

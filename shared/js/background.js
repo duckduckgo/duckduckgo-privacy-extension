@@ -242,9 +242,15 @@ chrome.webRequest.onBeforeRequest.addListener(
             return
         }
 
+        if (thisTab.downgradedUrls[requestData.url]) {
+            console.log('already tried https upgrades for this URL and failed, skip: ' + requestData.url)
+            return
+        }
+
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
             console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + requestData.url)
+
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
