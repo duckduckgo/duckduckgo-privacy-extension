@@ -29,6 +29,7 @@ class Score {
         this.hasObscureTracker = false
         this.domain = domain
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
+        this.majorTrackingNetwork = this.getMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
     }
 
@@ -91,10 +92,28 @@ class Score {
             if (match) {
                 // remove period at end for lookup in pagesSeenOn
                 let name = match[0].slice(0,-1)
+                this.majorTrackingNetwork = name
                 return result = Math.ceil(pagesSeenOn[name] / 10)
             }
         })
         return result
+    }
+    
+            /* is the parent site itself a major tracking network?
+     * minus one grade for each 10% of the top pages this
+     * network is found on.
+     */
+    getMajorTrackingNetwork() {
+        let name = ''
+        pagesSeenOnRegexList.some(network => {
+            let match = network.exec(this.domain)
+            if (match) {
+                // remove period at end
+                return name = match[0].slice(0,-1)
+            }
+        })
+        console.log(name)
+        return name
     }
 
     /*

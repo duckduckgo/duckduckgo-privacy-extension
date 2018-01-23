@@ -19,6 +19,7 @@ function Site (attrs) {
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
+  attrs.majorTrackingNetwork = ''
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -46,6 +47,10 @@ Site.prototype = window.$.extend({},
                 this.set(
                   'isaMajorTrackingNetwork',
                   backgroundTabObj.site.score.isaMajorTrackingNetwork
+                )
+                this.set(
+                  'majorTrackingNetwork',
+                  backgroundTabObj.site.score.majorTrackingNetwork
                 )
               }
               this.setSiteProperties()
@@ -167,6 +172,16 @@ Site.prototype = window.$.extend({},
         if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
           this.set('isUserPrivacyUpgraded', newUserPrivacy)
         }
+       
+        console.log(this.majorTrackingNetwork)
+        const newMajorTrackingNetwork = this.getMajorTrackingNetwork()
+        if (newMajorTrackingNetwork !== this.majorTrackingNetwork) {
+          this.set('majorTrackingNetwork', newMajorTrackingNetwork)
+        }
+
+        if ((this.totalTrackersCount === 0) && this.isPartOfMajorTrackingNetwork && this.majorTrackingNetwork) {
+          this.set('totalTrackersCount', 1)
+        }
       }
     },
 
@@ -213,6 +228,13 @@ Site.prototype = window.$.extend({},
         this.trackerNetworks.some((tracker) =>
           window.constants.majorTrackingNetworks[tracker]
         )
+    },
+
+    getMajorTrackingNetwork: function () {
+      console.log(window.constants.majorTrackingNetworks[this.domain])
+      console.log(this.tab.trackers)
+      console.log(this.trackerNetworks)
+      return this.majorTrackingNetwork || window.constants.majorTrackingNetworks[this.domain]
     },
 
     getTrackerNetworksOnPage: function () {
