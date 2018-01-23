@@ -274,7 +274,6 @@ chrome.webRequest.onBeforeRequest.addListener(
                 thisTab.upgradedHttps = true
                 thisTab.lastInProgressUrl = requestData.url
             }
-            thisTab.addHttpsUpgradeRequest(url)
             return {redirectUrl: url}
         } else {
           return

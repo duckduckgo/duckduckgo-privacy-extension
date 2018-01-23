@@ -52,7 +52,6 @@ class Tab {
         this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
-        this.httpsRequests = [] // array of urls we force-upgraded
         this.downgradedUrls = {}
         this.httpsRedirects = {} // count redirects here in form of: { <requestId>: <count> }
         this.requestId = tabData.requestId
@@ -125,10 +124,6 @@ class Tab {
         }
     };
 
-    addHttpsUpgradeRequest (url) {
-        this.httpsRequests.push(url)
-    }
-
     downgradeHttpsUpgradeRequest (reqData) {
         if (reqData.type === 'main_frame') this.upgradedHttps = false
         delete this.httpsRedirects[reqData.requestId]
@@ -148,21 +143,6 @@ class Tab {
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs/1000} seconds to load.`)
     }
 }
-
-chrome.webRequest.onHeadersReceived.addListener((header) => {
-    let tab = tabManager.get({'tabId': header.tabId})
-
-    // Remove successful & rewritten requests
-    if (tab && header.statusCode < 400) {
-        tab.httpsRequests = tab.httpsRequests.filter((url) => {
-            // disregard diff between 'https://www.foo.com' and 'https://foo.com'
-            const _url = url.replace('https://www.', 'https://')
-            const _headerUrl = header.url.replace('https://www.', 'https://')
-            return _url !== _headerUrl
-        });
-    }
-
-}, {urls: ['<all_urls>']});
 
 chrome.webRequest.onBeforeRedirect.addListener((req) => {
     // count redirects
