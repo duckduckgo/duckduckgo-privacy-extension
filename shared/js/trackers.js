@@ -64,7 +64,7 @@ require.scopes.trackers = (function() {
             }
 
 
-            var surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl)
+            var surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
             if (surrogateTracker) {
                 return surrogateTracker 
             }
@@ -129,19 +129,20 @@ require.scopes.trackers = (function() {
         return toBlock
     }
 
-    function checkSurrogateList(url, parsedUrl) {
-
-        let result = false
+    function checkSurrogateList(url, parsedUrl, currLocation) {
         let dataURI = surrogates.getContentForUrl(url, parsedUrl)
 
         if (dataURI) {
             result = getTrackerDetails(url, 'surrogatesList')
-            result.block = true
-            result.redirectUrl = dataURI
-            console.log("serving surrogate content for: ", url)
+            if (!isRelatedEntity(result.parentCompany, currLocation)) {
+                result.block = true
+                result.redirectUrl = dataURI
+                console.log("serving surrogate content for: ", url)
+                return result
+            }
         }
 
-        return result
+        return false
     }
 
     function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
