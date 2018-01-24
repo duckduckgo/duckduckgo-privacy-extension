@@ -134,7 +134,7 @@ require.scopes.trackers = (function() {
 
         if (dataURI) {
             result = getTrackerDetails(url, 'surrogatesList')
-            if (!isRelatedEntity(result.parentCompany, currLocation)) {
+            if (result && !isRelatedEntity(result.parentCompany, currLocation)) {
                 result.block = true
                 result.redirectUrl = dataURI
                 console.log("serving surrogate content for: ", url)
