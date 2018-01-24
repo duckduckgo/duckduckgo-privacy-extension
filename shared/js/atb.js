@@ -102,10 +102,10 @@ var ATB = (() => {
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
-            if(!settings.getSetting('set_atb')){
-                settings.updateSetting('atb', atb)
-                settings.updateSetting('set_atb', atb)
-            }
+            if(settings.getSetting('set_atb')){ return }
+
+            settings.updateSetting('atb', atb)
+            settings.updateSetting('set_atb', atb)
 
             let xhr = new XMLHttpRequest()
             xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true)
