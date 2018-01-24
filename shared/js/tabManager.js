@@ -109,10 +109,7 @@ chrome.tabs.onUpdated.addListener( (id, info) => {
                     tab.site.didIncrementCompaniesData = true
                 }
 
-                if (tab.statusCode === 200) {
-                    delete tab.lastUpgradeInProgressUrl
-                    tab.endStopwatch()
-                }
+                if (tab.statusCode === 200) tab.endStopwatch()
             }
         }
     }

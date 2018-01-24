@@ -54,6 +54,7 @@ class Tab {
         this.upgradedHttps = false
         this.downgradedUrls = {}
         this.httpsRedirects = {} // count redirects here in form of: { <requestId>: <count> }
+        this.lastUpgrade = {}
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
