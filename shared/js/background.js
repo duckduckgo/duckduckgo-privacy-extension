@@ -78,11 +78,11 @@ function Background() {
     if (details.reason.match(/install/)) {
         settings.ready().then( () => {
           const domain = window.location ? window.location.href : ''
-          const postInstallUrl = 'https://www.duckduckgo.com/app'
-          if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(postInstallUrl))) {
+          const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
+          if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
             settings.updateSetting('hasSeenPostInstall', true)
             chrome.tabs.create({
-              url: postInstallUrl + '?post=1'
+              url: 'https://www.duckduckgo.com/app?post=1'
             })
           }
         })
