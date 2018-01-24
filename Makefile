@@ -48,5 +48,5 @@ moveout: $(ITEMS)
 	find ./build/$(browser)/$(type)/js -type f -name '*.es6.js' -delete
 	rm -rf build/$(browser)/$(type)/js/ui
 	# try to copy manifest (ff, chrome) or plist (safari) files, don't throw errors
-	cp browsers/$(browser)/manifest.json build/$(browser)/$(type)/ 2>/dev/null || :
 	cp browsers/$(browser)/*.plist build/$(browser)/$(type)/ 2>/dev/null || :
+	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
