@@ -24,13 +24,13 @@ var onBeforeLoad = (e) => {
             hidden: document.hidden
         }
 
-        console.log(`MAYBE BLOCK ${e.url}`)
+        //console.log(`MAYBE BLOCK ${e.url}`)
         let block = safari.self.tab.canLoad(e, requestDetails)
         if (block.cancel) {
-            console.log(`DDG BLOCKING ${e.url}`)
+            //console.log(`DDG BLOCKING ${e.url}`)
             e.preventDefault()
         } else if (block.redirectUrl) {
-            console.log(`DDG BLOCKING AND USING SURROGATE ${e.url}`)
+            //console.log(`DDG BLOCKING AND USING SURROGATE ${e.url}`)
             e.preventDefault()
             loadSurrogate(block.redirectUrl)
         }
