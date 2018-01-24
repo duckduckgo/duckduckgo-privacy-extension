@@ -111,19 +111,6 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   });
 });
 
-// This adds Context Menu when user select some text.
-// Create context menu:
-chrome.contextMenus.create({
-  title: 'Search DuckDuckGo for "%s"',
-  contexts: ["selection"],
-  onclick: function(info) {
-    var queryText = info.selectionText;
-    chrome.tabs.create({
-      url: "https://duckduckgo.com/?q=" + queryText + "&bext=" + localStorage['os'] + "cr"
-    });
-  }
-});
-
 /**
  * Before each request:
  * - Add ATB param
