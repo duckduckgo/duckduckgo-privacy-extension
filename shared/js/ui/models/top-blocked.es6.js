@@ -30,7 +30,7 @@ TopBlocked.prototype = window.$.extend({},
                 // calc graph bars using pixels instead of % to
                 // make margins easier
                 // max width: 145px
-                px: Math.floor(company.percent / 100 * 145)
+                px: Math.max(100, Math.floor(company.percent / 100 * 145))
               }
             })
             if (data.pctPagesWithTrackers) {
