@@ -52,9 +52,9 @@ class Tab {
         this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
-        this.downgradedUrls = {}
+        this.failedUpgradeUrls = {}
         this.httpsRedirects = {} // count redirects here in form of: { <requestId>: <count> }
-        this.lastUpgrade = {}
+        this.lastHttpsUpgrade = {}
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
@@ -129,7 +129,7 @@ class Tab {
         if (reqData.type === 'main_frame') this.upgradedHttps = false
         delete this.httpsRedirects[reqData.requestId]
         const downgrade = reqData.url.replace(/^https:\/\//i, 'http://')
-        this.downgradedUrls[downgrade] = true
+        this.failedUpgradeUrls[downgrade] = true
         return downgrade
     }
 
