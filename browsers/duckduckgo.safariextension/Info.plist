@@ -18,17 +18,6 @@
 	<string>39</string>
 	<key>Chrome</key>
 	<dict>
-		<key>Context Menu Items</key>
-		<array>
-			<dict>
-				<key>Command</key>
-				<string>ddg_context</string>
-				<key>Identifier</key>
-				<string>ddg_context</string>
-				<key>Title</key>
-				<string>Ask Dax</string>
-			</dict>
-		</array>
 		<key>Database Quota</key>
 		<integer>104857600</integer>
 		<key>Global Page</key>
