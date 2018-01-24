@@ -174,12 +174,6 @@ var onBeforeNavigation = function (e) {
 
     // same logic from /shared/js/background.js
 
-    let ddgAtbRewrite = ATB.redirectURL(e)
-    if (ddgAtbRewrite) {
-        e.target.url = ddgAtbRewrite.redirectUrl
-        return
-    }
-
     // site is required to be there:
     if (!thisTab || !thisTab.site) {
         console.log('HTTPS: no tab or tab site found for: ', tabId, thisTab)
