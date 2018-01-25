@@ -77,6 +77,12 @@ function getSitePoints (sites) {
         let servicesUrl = `${githubRepo}/services/${site}.json`
         request.get(servicesUrl, (err, res, body) => {
             let data = JSON.parse(body)
+            // some sites lack the 'url' field, but have
+            // multiple items in the 'urls' field.
+            if (!data.url && relatedUrls) {
+                data.url = relatedUrls.shift()
+            }
+
             if (data.url) {
                 let parsedUrl = tldjs.parse(data.url)
                 processed[parsedUrl.domain] = points
