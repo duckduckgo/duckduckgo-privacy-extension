@@ -188,21 +188,6 @@ body {
             margin-left: 12px;
         }
 
-        .site-info__tosdr-status {
-            padding: 15px 20px 0px 20px
-        }
-
-        .site-info__tosdr-msg {
-            color: $color--grey;
-            font-size: 13px;
-            padding: 7.5px 20px 15px 20px;
-
-            a {
-                padding: 0px;
-                color: $color--grey;
-            }
-        }
-
         .site-info__li--toggle {
             background-color: $color--medium-slate;
             color: $color--white;
