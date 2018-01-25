@@ -58,7 +58,6 @@ Site.prototype = window.$.extend({},
 
       this.bindEvents([
         [this.$toggle, 'click', this._whitelistClick],
-        [this.$showalltrackers, 'click', this._showAllTrackers],
         [this.$showpagetrackers, 'click', this._showPageTrackers],
         [this.$privacypractices, 'click', this._showPrivacyPractices],
         [this.$gradescorecard, 'click', this._showGradeScorecard],
@@ -81,13 +80,6 @@ Site.prototype = window.$.extend({},
         this._rerender()
         this._setup()
       }
-    },
-
-    _showAllTrackers: function () {
-      if (this.$body.hasClass('is-disabled')) return
-      this.views.slidingSubview = new GradeDetailsView({
-        template: gradeDetailsTemplate
-      })
     },
 
     _showPageTrackers: function () {
