@@ -74,7 +74,9 @@ function Background() {
         ATB.onInstalled();
     }
 
-    // only show post install page on install
+    // only show post install page on install if:
+    // - the user wasn't already looking at the app install page
+    // - the user hasn't seen the page before
     if (details.reason.match(/install/)) {
         settings.ready().then( () => {
             chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
