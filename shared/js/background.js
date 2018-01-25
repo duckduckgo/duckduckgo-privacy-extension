@@ -131,7 +131,11 @@ chrome.webRequest.onBeforeRequest.addListener(
         // don't have a tab instance for this tabId or this is a new requestId.
         if (requestData.type === "main_frame") {
             if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
-                thisTab = tabManager.create(requestData);
+                let newTab = tabManager.create(requestData)
+
+                // persist the last URL the tab was trying to upgrade to HTTPS
+                newTab.lastHttpsUpgrade = thisTab && thisTab.lastHttpsUpgrade
+                thisTab = newTab
             }
 
             // add atb params only to main_frame
@@ -229,21 +233,44 @@ chrome.webRequest.onBeforeRequest.addListener(
             return
         }
 
+        if (thisTab.failedUpgradeUrls[requestData.url]) {
+            console.log('already tried https upgrades for this URL and failed, skip:\n' + requestData.url)
+            return
+        }
+
         // Avoid redirect loops
         if (thisTab.httpsRedirects[requestData.requestId] >= 7) {
             console.log('HTTPS: cancel https upgrade. redirect limit exceeded for url: \n' + requestData.url)
+
             return {redirectUrl: thisTab.downgradeHttpsUpgradeRequest(requestData)}
         }
 
         // Is this request from the tab's main frame?
         const isMainFrame = requestData.type === 'main_frame' ? true : false
 
+        if (isMainFrame &&
+                thisTab.lastHttpsUpgrade &&
+                thisTab.lastHttpsUpgrade.url === requestData.url &&
+                Date.now() - thisTab.lastHttpsUpgrade.time < 1000) {
+
+            console.log('already tried upgrading this url on this tab a few moments ago ' +
+                'and it didn\'t complete successfully, abort:\n' +
+                requestData.url)
+            thisTab.downgradeHttpsUpgradeRequest(requestData)
+            return
+        }
+
         // Fetch upgrade rule from https module:
         const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame)
         if (url.toLowerCase() !== requestData.url.toLowerCase()) {
             console.log('HTTPS: upgrade request url to ' + url)
-            if (isMainFrame) thisTab.upgradedHttps = true
-            thisTab.addHttpsUpgradeRequest(url)
+            if (isMainFrame) {
+                thisTab.upgradedHttps = true
+                thisTab.lastHttpsUpgrade = {
+                    url: requestData.url,
+                    time: Date.now()
+                }
+            }
             return {redirectUrl: url}
         } else {
           return
