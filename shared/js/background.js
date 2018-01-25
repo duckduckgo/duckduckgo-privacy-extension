@@ -74,15 +74,21 @@ function Background() {
         ATB.onInstalled();
     }
 
-    // only show post install page on install
+    // only show post install page on install if:
+    // - the user wasn't already looking at the app install page
+    // - the user hasn't seen the page before
     if (details.reason.match(/install/)) {
         settings.ready().then( () => {
-          if (!settings.getSetting('hasSeenPostInstall')) {
-            settings.updateSetting('hasSeenPostInstall', true)
-            chrome.tabs.create({
-              url: 'https://www.duckduckgo.com/app?post=1'
+            chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
+                const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+                const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
+                if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
+                    settings.updateSetting('hasSeenPostInstall', true)
+                    chrome.tabs.create({
+                        url: 'https://www.duckduckgo.com/app?post=1'
+                    })
+                }
             })
-          }
         })
     }
 
