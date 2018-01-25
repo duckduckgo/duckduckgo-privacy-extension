@@ -29,11 +29,17 @@ require.scopes.utils = ( () => {
 
     function parseUserAgentString (uaString) {
         if (!uaString) uaString = window.navigator.userAgent
-        const rgx = uaString.match(/(Firefox|Chrome)\/([0-9]+)/)
+        const rgx = uaString.match(/(Firefox|Chrome|Safari)\/([0-9]+)/)
         return {
             browser: rgx[1],
             majorVersion: rgx[2]
         }
+    }
+
+    function isChromeBrowser () {
+        const ua = parseUserAgentString()
+        if (ua.browser === 'Chrome') return true
+        return false
     }
 
     function syncToStorage (data){
@@ -77,6 +83,7 @@ require.scopes.utils = ( () => {
         extractHostFromURL: extractHostFromURL,
         extractTopSubdomainFromHost: extractTopSubdomainFromHost,
         parseUserAgentString: parseUserAgentString,
+        isChromeBrowser: isChromeBrowser,
         syncToStorage: syncToStorage,
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,

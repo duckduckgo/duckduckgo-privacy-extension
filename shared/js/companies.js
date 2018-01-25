@@ -56,14 +56,14 @@ var Companies = (() => {
                 let c = Companies.get(name)
                 topBlockedData.push({
                     name: c.name,
-                    percent: Math.round((c.pagesSeenOn/totalPages) * 100)
+                    percent: Math.min(100, Math.round((c.pagesSeenOn/totalPages) * 100))
                 })
             })
 
             return {
                 topBlocked: topBlockedData,
                 totalPages: totalPages,
-                pctPagesWithTrackers: Math.round((totalPagesWithTrackers/totalPages) * 100),
+                pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers/totalPages) * 100)),
                 lastStatsResetDate: lastStatsResetDate
             }
         },
@@ -106,8 +106,18 @@ var Companies = (() => {
             utils.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
         },
 
+        sanitizeData: (storageData) => {
+            if (storageData && storageData.hasOwnProperty('twitter')) {
+              delete storageData.twitter
+            }
+            return storageData
+        },
+
         buildFromStorage: () => {
             utils.getFromStorage(storageName, function (storageData) {
+                // uncomment for testing
+                //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
+                storageData = Companies.sanitizeData(storageData)
                 for (company in storageData) {
                     let newCompany = Companies.add(company)
                     newCompany.set('count', storageData[company].count || 0)
