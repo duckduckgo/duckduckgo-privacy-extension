@@ -76,42 +76,6 @@
             "c": "Oracle",
             "t": "Advertising"
         },
-        "alexametrics.com": {
-            "c": "Amazon",
-            "t": "Analytics"
-        },
-        "polldaddy.com": {
-            "c": "Automattic",
-            "t": "Analytics"
-        },
-        "facebook.com": {
-            "c": "Facebook",
-            "t": "Social"
-        },
-        "facebook.de": {
-            "c": "Facebook",
-            "t": "Social"
-        },
-        "facebook.fr": {
-            "c": "Facebook",
-            "t": "Social"
-        },
-        "facebook.net": {
-            "c": "Facebook",
-            "t": "Social"
-        },
-        "fb.com": {
-            "c": "Facebook",
-            "t": "Social"
-        },
-        "atlassolutions.com": {
-            "c": "Facebook",
-            "t": "Social"
-        },
-        "friendfeed.com": {
-            "c": "Facebook",
-            "t": "Social"
-        },
         "2mdn.net": {
             "c": "Google",
             "t": "Advertising"
@@ -222,7 +186,43 @@
         },
         "googletagmanager.com": {
             "c": "Google",
-            "t": "Disconnect"
+            "t": "Advertising"
+        },
+        "alexametrics.com": {
+            "c": "Amazon",
+            "t": "Analytics"
+        },
+        "polldaddy.com": {
+            "c": "Automattic",
+            "t": "Analytics"
+        },
+        "facebook.com": {
+            "c": "Facebook",
+            "t": "Social"
+        },
+        "facebook.de": {
+            "c": "Facebook",
+            "t": "Social"
+        },
+        "facebook.fr": {
+            "c": "Facebook",
+            "t": "Social"
+        },
+        "facebook.net": {
+            "c": "Facebook",
+            "t": "Social"
+        },
+        "fb.com": {
+            "c": "Facebook",
+            "t": "Social"
+        },
+        "atlassolutions.com": {
+            "c": "Facebook",
+            "t": "Social"
+        },
+        "friendfeed.com": {
+            "c": "Facebook",
+            "t": "Social"
         },
         "backtype.com": {
             "c": "Twitter",
@@ -6106,7 +6106,19 @@
             "c": "Google",
             "u": "http://www.google.com/"
         },
+        "developers.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
         "doubleclick.net": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "gmail.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "google-analytics.com": {
             "c": "Google",
             "u": "http://www.google.com/"
         },
@@ -6114,7 +6126,35 @@
             "c": "Google",
             "u": "http://www.google.com/"
         },
+        "mail.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "inbox.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "plus.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "plusone.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "voice.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "wave.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
         "googleadservices.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "googlemail.com": {
             "c": "Google",
             "u": "http://www.google.com/"
         },
@@ -6127,6 +6167,14 @@
             "u": "http://www.google.com/"
         },
         "invitemedia.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "orkut.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "postrank.com": {
             "c": "Google",
             "u": "http://www.google.com/"
         },
@@ -6143,6 +6191,10 @@
             "u": "http://www.google.com/"
         },
         "ytsa.net": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "googletagmanager.com": {
             "c": "Google",
             "u": "http://www.google.com/"
         }
@@ -7178,98 +7230,6 @@
         }
     },
     "Social": {
-        "facebook.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "facebook.de": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "facebook.fr": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "facebook.net": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "fb.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "atlassolutions.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "friendfeed.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "developers.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "gmail.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "mail.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "inbox.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "plus.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "plusone.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "voice.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "wave.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "googlemail.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "orkut.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "backtype.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "crashlytics.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "tweetdeck.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "twimg.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "twitter.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "twitter.jp": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
         "addthis.com": {
             "c": "AddThis",
             "u": "http://www.addthis.com/"
@@ -7441,10 +7401,96 @@
         "reddit.com": {
             "c": "reddit",
             "u": "http://www.reddit.com/"
-        }
-    },
-    "Disconnect": {
-        "googletagmanager.com": {
+        },
+        "facebook.com": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "facebook.de": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "facebook.fr": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "facebook.net": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "fb.com": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "atlassolutions.com": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "friendfeed.com": {
+            "c": "Facebook",
+            "u": "http://www.facebook.com/"
+        },
+        "backtype.com": {
+            "c": "Twitter",
+            "u": "https://twitter.com/"
+        },
+        "crashlytics.com": {
+            "c": "Twitter",
+            "u": "https://twitter.com/"
+        },
+        "tweetdeck.com": {
+            "c": "Twitter",
+            "u": "https://twitter.com/"
+        },
+        "twimg.com": {
+            "c": "Twitter",
+            "u": "https://twitter.com/"
+        },
+        "twitter.com": {
+            "c": "Twitter",
+            "u": "https://twitter.com/"
+        },
+        "twitter.jp": {
+            "c": "Twitter",
+            "u": "https://twitter.com/"
+        },
+        "developers.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "gmail.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "mail.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "inbox.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "orkut.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "plus.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "plusone.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "voice.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "wave.google.com": {
+            "c": "Google",
+            "u": "http://www.google.com/"
+        },
+        "googlemail.com": {
             "c": "Google",
             "u": "http://www.google.com/"
         }
