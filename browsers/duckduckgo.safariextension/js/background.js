@@ -39,16 +39,24 @@ var handleMessage = function (message) {
 settings.ready().then(() => {    
     if(!localStorage['installed']) {
         
+        localStorage['installed'] = true
+        
         ATB.onInstalled()
 
         settings.removeSetting('HTTPSwhitelisted')
 
         let activeTabIndex = 0 
+        let showPostinstallPage = false
 
         safari.application.browserWindows.forEach((safariWindow) => {
             safariWindow.tabs.forEach((safariTab) => {
                 // create a tab id and store in safari tab
                 safariTab.ddgTabId = Math.floor(Math.random() * (10000000 - 10 + 1)) + 10
+
+                // only show postinstall page if one of the existing tabs is ddg with install param or the safari gallery page
+                if (safariTab.url.match(/duckduckgo.com\/\?t=hf|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/)) {
+                    showPostinstallPage = true
+                }
 
                 // make a fake request obj so we can use tabManager to handle creating and storing the tab
                 let req = {
@@ -60,15 +68,15 @@ settings.ready().then(() => {
             })
         })
 
-        let activeTabIdx = utils.getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
-
         // open post install page
-        safari.application.activeBrowserWindow.openTab().url = 'https://duckduckgo.com/app?post=1'
-
-        // reactivate previous tab
-        safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
-
-        localStorage['installed'] = true
+        if (showPostinstallPage) {
+            
+            let activeTabIdx = utils.getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
+            safari.application.activeBrowserWindow.openTab().url = 'https://duckduckgo.com/app?post=1'
+            
+            // reactivate previous tab
+            safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
+        }
     }
 })
 
