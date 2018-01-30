@@ -85,7 +85,7 @@ function Background() {
                 if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
                     settings.updateSetting('hasSeenPostInstall', true)
                     chrome.tabs.create({
-                        url: 'https://www.duckduckgo.com/app?post=1'
+                        url: 'https://duckduckgo.com/app?post=1'
                     })
                 }
             })
