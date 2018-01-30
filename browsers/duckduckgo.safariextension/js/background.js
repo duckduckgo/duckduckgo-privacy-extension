@@ -54,7 +54,7 @@ settings.ready().then(() => {
                 safariTab.ddgTabId = Math.floor(Math.random() * (10000000 - 10 + 1)) + 10
 
                 // only show postinstall page if one of the existing tabs is ddg with install param or the safari gallery page
-                if (safariTab.url.match(/duckduckgo.com\/\?t=hf|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/)) {
+                if (safariTab.url.match(/duckduckgo.com\/\?t=|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/)) {
                     showPostinstallPage = true
                 }
 
