@@ -257,7 +257,7 @@ chrome.webRequest.onBeforeRequest.addListener(
         if (isMainFrame &&
                 thisTab.lastHttpsUpgrade &&
                 thisTab.lastHttpsUpgrade.url === requestData.url &&
-                Date.now() - thisTab.lastHttpsUpgrade.time < 1000) {
+                Date.now() - thisTab.lastHttpsUpgrade.time < 3000) {
 
             console.log('already tried upgrading this url on this tab a few moments ago ' +
                 'and it didn\'t complete successfully, abort:\n' +
