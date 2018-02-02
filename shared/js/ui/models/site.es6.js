@@ -13,7 +13,7 @@ function Site (attrs) {
   attrs.httpsState = 'none'
   attrs.httpsStatusText = ''
   attrs.isUserPrivacyUpgraded = false
-  attrs.trackersCount = 0
+  attrs.trackersCount = 0 // unique trackers count
   attrs.majorTrackersCount = 0
   attrs.totalTrackersCount = 0
   attrs.trackerNetworks = []
@@ -172,16 +172,20 @@ Site.prototype = window.$.extend({},
 
     getUniqueTrackersCount: function () {
       // console.log('[model] getUniqueTrackersCount()')
-      return Object.keys(this.tab.trackers).reduce((total, name) => {
+      const count = Object.keys(this.tab.trackers).reduce((total, name) => {
         return this.tab.trackers[name].urls.length + total
       }, 0)
+
+      return count
     },
 
     getUniqueTrackersBlockedCount: function () {
       // console.log('[model] getUniqueTrackersBlockedCount()')
-      return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
+      const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
         return this.tab.trackersBlocked[name].urls.length + total
       }, 0)
+
+      return count
     },
 
     getUnknownTrackersCount: function () {
@@ -198,7 +202,7 @@ Site.prototype = window.$.extend({},
 
     getMajorTrackerNetworksCount: function () {
       // console.log('[model] getMajorTrackersCount()')
-      return Object.keys(this.tab.trackers).reduce((total, name) => {
+      const count = Object.keys(this.tab.trackers).reduce((total, name) => {
         let tempTracker = name.toLowerCase()
         const majorTrackingNetworks = Object.keys(window.constants.majorTrackingNetworks)
           .filter((t) => t.toLowerCase() === tempTracker)
@@ -206,6 +210,8 @@ Site.prototype = window.$.extend({},
         total += majorTrackingNetworks.length ? 1 : 0
         return total
       }, 0)
+
+      return count
     },
 
     getIsPartOfMajorTrackingNetwork: function () {
