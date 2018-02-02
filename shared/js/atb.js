@@ -102,10 +102,10 @@ var ATB = (() => {
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
-            if(!settings.getSetting('set_atb')){
-                settings.updateSetting('atb', atb)
-                settings.updateSetting('set_atb', atb)
-            }
+            if(settings.getSetting('set_atb')){ return }
+
+            settings.updateSetting('atb', atb)
+            settings.updateSetting('set_atb', atb)
 
             let xhr = new XMLHttpRequest()
             xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true)
@@ -133,14 +133,20 @@ var ATB = (() => {
             // wait until settings is ready to try and get atb from the page
             settings.ready().then(() => {
                 ATB.inject()
-
-                // migrate localStorage ATB from the old extension over to settings
-                if(!settings.getSetting('atb') && localStorage['atb']) {
-                    settings.updateSetting('atb', localStorage['atb'])
-                }
-                
+                ATB.migrate()
                 ATB.setInitialVersions()
             })
+        },
+
+        migrate: () => {
+            // migrate localStorage ATB from the old extension over to settings
+            if(!settings.getSetting('atb') && localStorage['atb']) {
+                settings.updateSetting('atb', localStorage['atb'])
+            }
+
+            if(!settings.getSetting('set_atb') && localStorage['set_atb']) {
+                settings.updateSetting('set_atb', localStorage['set_atb'])
+            }
         },
 
         getSurveyURL: () => {
@@ -162,9 +168,14 @@ chrome.runtime.onMessage.addListener((request) => {
     }
 })
 
+settings.ready().then(() => {
+    // migrate over any localStorage values from the old extension
+    ATB.migrate()
 
-// set uninstall survey url
-settings.ready().then(() => chrome.runtime.setUninstallURL(ATB.getSurveyURL()))
+    // set initial uninstall url
+    chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+})
+
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
     if (alarmEvent.name === 'updateUninstallURL') {

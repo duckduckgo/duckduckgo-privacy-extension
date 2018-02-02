@@ -188,21 +188,6 @@ body {
             margin-left: 12px;
         }
 
-        .site-info__tosdr-status {
-            padding: 15px 20px 0px 20px
-        }
-
-        .site-info__tosdr-msg {
-            color: $color--grey;
-            font-size: 13px;
-            padding: 7.5px 20px 15px 20px;
-
-            a {
-                padding: 0px;
-                color: $color--grey;
-            }
-        }
-
         .site-info__li--toggle {
             background-color: $color--medium-slate;
             color: $color--white;
@@ -432,37 +417,6 @@ body {
 
         .hamburger-button { // TODO: revive this at some point!
             display: none;
-        }
-
-        .site-info--details {
-            position: relative;
-            padding-top: 15px;
-            padding-bottom: 15px;
-            top: initial;
-
-            .site-info__domain {
-                margin-left: 20px;
-                line-height: 20px;
-                height: 21px;
-                max-width: 225px;
-                text-align: left;
-                font-size: 14px;
-                margin-top: 0;
-            }
-
-            .site-info__rating {
-                position: absolute;
-                top: 0;
-                right: 15px;
-                width: 30px;
-                height: 24px;
-            }
-
-            .site-info--details__explainer {
-                color: $color--grey;
-                font-size: 13px;
-                padding: 7.5px 20px 15px 20px;
-            }
         }
 
         .top-blocked__list {

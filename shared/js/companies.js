@@ -56,14 +56,14 @@ var Companies = (() => {
                 let c = Companies.get(name)
                 topBlockedData.push({
                     name: c.name,
-                    percent: Math.round((c.pagesSeenOn/totalPages) * 100)
+                    percent: Math.min(100, Math.round((c.pagesSeenOn/totalPages) * 100))
                 })
             })
 
             return {
                 topBlocked: topBlockedData,
                 totalPages: totalPages,
-                pctPagesWithTrackers: Math.round((totalPagesWithTrackers/totalPages) * 100),
+                pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers/totalPages) * 100)),
                 lastStatsResetDate: lastStatsResetDate
             }
         },

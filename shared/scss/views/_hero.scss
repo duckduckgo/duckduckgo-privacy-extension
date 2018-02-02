@@ -21,6 +21,8 @@
     width: 100%;
     max-width: 100%;
     font-size: 17px;
+    word-break: keep-all;
+    white-space: nowrap;
 }
 
 .hero__subtitle {
