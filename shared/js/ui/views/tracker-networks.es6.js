@@ -61,7 +61,7 @@ TrackerNetworks.prototype = window.$.extend({},
         const trackerNetworksIconName = trackerNetworksIconTemplate(
           this.model.site.siteRating,
           this.model.site.isWhitelisted,
-          this.model.site.totalTrackersCount
+          this.model.site.totalTrackerNetworksCount
         )
 
         const trackerNetworksText = trackerNetworksTextTemplate(this.model.site, false, true)
@@ -79,7 +79,7 @@ TrackerNetworks.prototype = window.$.extend({},
       if (e && e.change) {
         if (e.change.attribute === 'isPartOfMajorTrackingNetwork' ||
             e.change.attribute === 'isWhitelisted' ||
-            e.change.attribute === 'totalTrackersCount') {
+            e.change.attribute === 'totalTrackerNetworksCount') {
           this._renderHeroTemplate()
           this.unbindEvents()
           this.setup()
