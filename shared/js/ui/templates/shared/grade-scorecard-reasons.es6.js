@@ -36,7 +36,7 @@ function getReasons (site) {
 
   // major tracking networks,
   // only show a message if there are any
-  const majorTrackersBadOrGood = (site.majorTrackersCount !== 0) ? 'bad' : 'good'
+  const majorTrackersBadOrGood = (site.majorTrackerNetworksCount !== 0) ? 'bad' : 'good'
   reasons.push({
     modifier: majorTrackersBadOrGood,
     msg: `${trackerNetworksText(site, true)}`
