@@ -1,5 +1,4 @@
 const Parent = window.DDG.base.Model
-
 const httpsMessages = window.constants.httpsMessages
 
 function Site (attrs) {
@@ -14,8 +13,8 @@ function Site (attrs) {
   attrs.httpsStatusText = ''
   attrs.isUserPrivacyUpgraded = false
   attrs.trackersCount = 0 // unique trackers count
-  attrs.majorTrackersCount = 0
-  attrs.totalTrackersCount = 0
+  attrs.majorTrackerNetworksCount = 0
+  attrs.totalTrackerNetworksCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
@@ -152,14 +151,14 @@ Site.prototype = window.$.extend({},
         }
 
         const newUnknownTrackersCount = this.getUnknownTrackersCount()
-        const newTotalTrackersCount = newUnknownTrackersCount + newTrackerNetworks.length
-        if (newTotalTrackersCount !== this.totalTrackersCount) {
-          this.set('totalTrackersCount', newTotalTrackersCount)
+        const newTotalTrackerNetworksCount = newUnknownTrackersCount + newTrackerNetworks.length
+        if (newTotalTrackerNetworksCount !== this.totalTrackerNetworksCount) {
+          this.set('totalTrackerNetworksCount', newTotalTrackerNetworksCount)
         }
 
-        const newMajorTrackersCount = this.getMajorTrackerNetworksCount()
-        if (newMajorTrackersCount !== this.majorTrackersCount) {
-          this.set('majorTrackersCount', newMajorTrackersCount)
+        const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
+        if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
+          this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
         }
         this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
 
@@ -201,7 +200,7 @@ Site.prototype = window.$.extend({},
     },
 
     getMajorTrackerNetworksCount: function () {
-      // console.log('[model] getMajorTrackersCount()')
+      // console.log('[model] getMajorTrackerNetworksCount()')
       const count = Object.keys(this.tab.trackers).reduce((total, name) => {
         let tempTracker = name.toLowerCase()
         const majorTrackingNetworks = Object.keys(window.constants.majorTrackingNetworks)
