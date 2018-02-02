@@ -10,8 +10,8 @@ module.exports = function (site, isMajorNetworksCount, includeUniqueTrackersCoun
   if (includeUniqueTrackersCount && trackerNetworksCount > 0) {
     const uniqueTrackersText = site.trackersCount === 1 ? ' Unique Tracker In ' : ' Unique Trackers In '
     finalText = site.trackersCount + uniqueTrackersText + finalText
-    return bel`${finalText}`
   }
+
   return bel`${finalText}`
 }
 
