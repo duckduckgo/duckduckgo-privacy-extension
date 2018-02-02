@@ -28,7 +28,7 @@ function getReasons (site) {
 
   // tracking networks blocked or found,
   // only show a message if there's any
-  const trackersBadOrGood = (site.totalTrackersCount !== 0) ? 'bad' : 'good'
+  const trackersBadOrGood = (site.totalTrackerNetworksCount !== 0) ? 'bad' : 'good'
   reasons.push({
     modifier: trackersBadOrGood,
     msg: `${trackerNetworksText(site)}`

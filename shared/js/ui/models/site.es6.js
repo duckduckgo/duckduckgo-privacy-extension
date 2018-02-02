@@ -14,7 +14,7 @@ function Site (attrs) {
   attrs.isUserPrivacyUpgraded = false
   attrs.trackersCount = 0 // unique trackers count
   attrs.majorTrackerNetworksCount = 0
-  attrs.totalTrackersCount = 0 // TODO: disambiguate - is unique tracker networks count
+  attrs.totalTrackerNetworksCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
@@ -151,9 +151,9 @@ Site.prototype = window.$.extend({},
         }
 
         const newUnknownTrackersCount = this.getUnknownTrackersCount()
-        const newTotalTrackersCount = newUnknownTrackersCount + newTrackerNetworks.length
-        if (newTotalTrackersCount !== this.totalTrackersCount) {
-          this.set('totalTrackersCount', newTotalTrackersCount)
+        const newTotalTrackerNetworksCount = newUnknownTrackersCount + newTrackerNetworks.length
+        if (newTotalTrackerNetworksCount !== this.totalTrackerNetworksCount) {
+          this.set('totalTrackerNetworksCount', newTotalTrackerNetworksCount)
         }
 
         const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
