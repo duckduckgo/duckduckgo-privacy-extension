@@ -11,18 +11,20 @@ module.exports = function () {
       ">
       </section>`
   } else {
-    return bel`<div class="top-blocked--full site-info card">
-      ${hero({
-        status: 'top-blocked-good',
-        title: 'creepysite.com',
-        subtitle: `Tracker Network Top Offenders`,
-        showClose: true
-      })}
-      <div class="js-top-blocked-content">
-        ${renderPctPagesWithTrackers(this.model)}
-        ${renderList(this.model)}
-        ${renderResetButton(this.model)}
+    return bel`<div>
+      <div class="top-blocked--full site-info card">
+        ${hero({
+          status: 'top-blocked-good',
+          title: 'creepysite.com',
+          subtitle: `Tracker Network Top Offenders`,
+          showClose: true
+        })}
+        <div class="js-top-blocked-content">
+          ${renderPctPagesWithTrackers(this.model)}
+          ${renderList(this.model)}
+        </div>
       </div>
+    ${renderResetButton(this.model)}
     </div>`
   }
 }
@@ -34,7 +36,7 @@ function renderPctPagesWithTrackers (model) {
     if (d) msg = ` since ${d}`
   }
   if (model.pctPagesWithTrackers) {
-    return bel`<p class="top-blocked__pct card">
+    return bel`<p class="top-blocked__pct">
       Trackers were found on ${model.pctPagesWithTrackers}%
       of web sites you've visited${msg}.
     </p>`
@@ -43,7 +45,7 @@ function renderPctPagesWithTrackers (model) {
 
 function renderList (model) {
   if (model.companyListMap.length > 0) {
-    return bel`<ol class="default-list top-blocked__list card">
+    return bel`<ol class="default-list top-blocked__list">
       ${listItems(model.companyListMap)}
     </ol>`
   } else {
