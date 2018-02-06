@@ -1,6 +1,12 @@
-.tracker-networks .hero__icon {
-    width: 58px;
-    height: 65px;
+.tracker-networks {
+    .hero__icon {
+        width: 58px;
+        height: 65px;
+    }
+    .hero__subtitle {
+        height: 40px;
+        line-height: 18px;
+    }
 }
 
 .hero__icon--major-networks-blocked,
@@ -27,7 +33,6 @@
     .site-info__tracker__icon {
         @include icon_display();
         @include tracker_network_icons_subview();
-        
         width: 24px;
         height: 24px;
         overflow: hidden;
