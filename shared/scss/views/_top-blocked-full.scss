@@ -1,4 +1,12 @@
 .top-blocked--full {
+    .hero__icon {
+        width: 60px;
+        height: 55px;
+    }
+}
+
+.hero__icon--top-blocked-good {
+    @include cross_platform_bg_image("hero-top-trackers__good.svg");
 }
 
 .top-blocked__list {
