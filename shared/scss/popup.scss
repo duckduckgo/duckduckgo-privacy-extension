@@ -415,46 +415,6 @@ body {
     .sliding-subview {
         overflow-y: auto;
 
-        .hamburger-button { // TODO: revive this at some point!
-            display: none;
-        }
-
-        .top-blocked__list {
-            z-index: 0;
-            overflow-y: auto;
-            padding-top: 0;
-            padding-bottom: 30px;
-            margin-top: 0;
-            max-height: 315px;
-        }
-
-        .top-blocked__pct {
-            margin: 0;
-            padding: 15px 20px 7.5px 20px;
-        }
-
-        .top-blocked__reset-stats {
-            position: absolute;
-            height: 50px;
-            top: 470px;
-            left: 0;
-            right: 0;
-            padding: 15px 20px;
-            text-align: center;
-
-            button {
-                display: inline-block;
-                border: 1px solid $slate-light;
-                padding: 7.5px 15px;
-                border-radius: 3px;
-                background-color: $color--neutral-bg;
-            }
-
-            p {
-                margin-top: 15px;
-                color: $color--grey;
-            }
-        }
     }
 
 }
@@ -483,11 +443,6 @@ body {
 .top-blocked__list {
     margin: 0;
     padding-bottom: 0;
-
-    .icon__arrow {
-        margin-top: 4px;
-        right: 15px;
-    }
 
     .top-blocked__li {
         z-index: 0;
@@ -610,45 +565,6 @@ body {
             }
         }
 
-        .top-blocked__li__company-name {
-            position: relative;
-            float: left;
-            width: 60px;
-            height: 1.2em;
-            margin-right: 15px;
-            font-size: 13px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .top-blocked__li__blocker-bar {
-            position: relative;
-            top: 5px;
-            float: left;
-            width: 145px;
-            height: 5px;
-            margin-right: 10px;
-            vertical-align: top;
-            border-radius: 5px;
-            background: $platinum-light;
-
-            .top-blocked__li__blocker-bar__fg {
-                background: $slate;
-                border-radius: 5px;
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 5px;
-                transition: width 0.5s ease-in-out;
-            }
-        }
-
-        .top-blocked__li__blocker-pct {
-            font-size: 13px;
-            transition: all 0.5s ease-in-out;
-            padding-left: 5px;
-            vertical-align: middle;
-        }
     }
 }
 
@@ -657,6 +573,7 @@ body {
 @import "views/status-list";
 @import "views/privacy-practices";
 @import "views/tracker-networks";
+@import "views/top-blocked-full";
 
 
 /* Generic menu list styling */
