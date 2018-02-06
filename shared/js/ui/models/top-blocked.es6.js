@@ -26,11 +26,7 @@ TopBlocked.prototype = window.$.extend({},
             this.companyListMap = this.companyList.map((company) => {
               return {
                 name: company.name,
-                percent: company.percent,
-                // calc graph bars using pixels instead of % to
-                // make margins easier
-                // max width: 145px
-                px: Math.floor(company.percent / 100 * 145)
+                percent: company.percent
               }
             })
             if (data.pctPagesWithTrackers) {

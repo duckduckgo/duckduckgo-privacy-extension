@@ -63,7 +63,10 @@
     position: relative;
     top: 5px;
     float: left;
-    width: 145px;
+    // take up as much space as possible, leaving 115px for everything else:
+    // - 75px for the title on the left (inc. 15px margin)
+    // - 40px for the percentage on the right (inc. 10px margin)
+    width: calc(100% - 115px);
     height: 5px;
     margin-right: 10px;
     vertical-align: top;
