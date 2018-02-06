@@ -12,7 +12,7 @@ const tosdr = {
         "class": false
     },
     "youtube.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -26,14 +26,19 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting"
+                "device fingerprinting",
+                "broader than necessary",
+                "user needs to check tosback.org",
+                "reduction of legal period for cause of action"
             ],
-            "good": []
+            "good": [
+                "help you deal with take-down notices"
+            ]
         },
         "class": "D"
     },
     "yahoo.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -46,9 +51,7 @@ const tosdr = {
             ]
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -92,7 +95,7 @@ const tosdr = {
         "class": false
     },
     "wordpress.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -103,9 +106,7 @@ const tosdr = {
             ]
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -427,7 +428,7 @@ const tosdr = {
         "class": false
     },
     "quora.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -435,9 +436,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -715,7 +714,7 @@ const tosdr = {
         "class": false
     },
     "imgur.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -723,9 +722,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -816,7 +813,7 @@ const tosdr = {
         "class": false
     },
     "google.com": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -836,7 +833,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -846,7 +842,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.in": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -866,7 +862,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -876,7 +871,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.jp": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -896,7 +891,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -906,7 +900,7 @@ const tosdr = {
         "class": "C"
     },
     "google.de": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -926,7 +920,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -936,7 +929,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.uk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -956,7 +949,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -966,7 +958,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.br": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -986,7 +978,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -996,7 +987,7 @@ const tosdr = {
         "class": "C"
     },
     "google.fr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1016,7 +1007,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1026,7 +1016,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ru": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1046,7 +1036,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1056,7 +1045,7 @@ const tosdr = {
         "class": "C"
     },
     "google.it": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1076,7 +1065,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1086,7 +1074,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.hk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1106,7 +1094,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1116,7 +1103,7 @@ const tosdr = {
         "class": "C"
     },
     "google.es": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1136,7 +1123,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1146,7 +1132,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ca": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1166,7 +1152,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1176,7 +1161,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.mx": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1196,7 +1181,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1206,7 +1190,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.tr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1226,7 +1210,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1236,7 +1219,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.au": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1256,7 +1239,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1266,7 +1248,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.tw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1286,7 +1268,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1296,7 +1277,7 @@ const tosdr = {
         "class": "C"
     },
     "google.pl": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1316,7 +1297,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1326,7 +1306,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.id": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1346,7 +1326,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1356,7 +1335,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ar": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1376,7 +1355,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1386,7 +1364,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ua": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1406,7 +1384,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1416,7 +1393,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.pk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1436,7 +1413,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1446,7 +1422,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.th": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1466,7 +1442,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1476,7 +1451,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.sa": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1496,7 +1471,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1506,7 +1480,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.eg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1526,7 +1500,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1536,7 +1509,7 @@ const tosdr = {
         "class": "C"
     },
     "google.nl": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1556,7 +1529,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1566,7 +1538,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ve": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1586,7 +1558,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1596,7 +1567,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.za": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1616,7 +1587,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1626,7 +1596,7 @@ const tosdr = {
         "class": "C"
     },
     "google.gr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1646,7 +1616,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1656,7 +1625,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ph": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1676,7 +1645,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1686,7 +1654,7 @@ const tosdr = {
         "class": "C"
     },
     "google.se": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1706,7 +1674,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1716,7 +1683,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.sg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1736,7 +1703,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1746,7 +1712,7 @@ const tosdr = {
         "class": "C"
     },
     "google.be": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1766,7 +1732,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1776,7 +1741,7 @@ const tosdr = {
         "class": "C"
     },
     "google.az": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1796,7 +1761,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1806,7 +1770,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ao": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1826,7 +1790,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1836,7 +1799,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.co": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1856,7 +1819,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1866,7 +1828,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.kr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1886,7 +1848,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1896,7 +1857,7 @@ const tosdr = {
         "class": "C"
     },
     "google.at": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1916,7 +1877,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1926,7 +1886,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.vn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1946,7 +1906,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1956,7 +1915,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -1976,7 +1935,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -1986,7 +1944,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ng": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2006,7 +1964,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2016,7 +1973,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2036,7 +1993,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2046,7 +2002,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ch": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2066,7 +2022,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2076,7 +2031,7 @@ const tosdr = {
         "class": "C"
     },
     "google.no": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2096,7 +2051,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2106,7 +2060,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ro": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2126,7 +2080,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2136,7 +2089,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.pe": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2156,7 +2109,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2166,7 +2118,7 @@ const tosdr = {
         "class": "C"
     },
     "google.pt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2186,7 +2138,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2196,7 +2147,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cl": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2216,7 +2167,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2226,7 +2176,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ae": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2246,7 +2196,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2256,7 +2205,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ie": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2276,7 +2225,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2286,7 +2234,7 @@ const tosdr = {
         "class": "C"
     },
     "google.dk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2306,7 +2254,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2316,7 +2263,7 @@ const tosdr = {
         "class": "C"
     },
     "google.dz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2336,7 +2283,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2346,7 +2292,7 @@ const tosdr = {
         "class": "C"
     },
     "google.hu": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2366,7 +2312,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2376,7 +2321,7 @@ const tosdr = {
         "class": "C"
     },
     "google.fi": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2396,7 +2341,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2406,7 +2350,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.il": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2426,7 +2370,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2436,7 +2379,7 @@ const tosdr = {
         "class": "C"
     },
     "google.sk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2456,7 +2399,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2466,7 +2408,7 @@ const tosdr = {
         "class": "C"
     },
     "google.kz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2486,7 +2428,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2496,7 +2437,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.kw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2516,7 +2457,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2526,7 +2466,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.nz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2546,7 +2486,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2556,7 +2495,7 @@ const tosdr = {
         "class": "C"
     },
     "google.lk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2576,7 +2515,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2586,7 +2524,7 @@ const tosdr = {
         "class": "C"
     },
     "google.bg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2606,7 +2544,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2616,7 +2553,7 @@ const tosdr = {
         "class": "C"
     },
     "google.by": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2636,7 +2573,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2646,7 +2582,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.do": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2666,7 +2602,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2676,7 +2611,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ly": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2696,7 +2631,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2706,7 +2640,7 @@ const tosdr = {
         "class": "C"
     },
     "google.rs": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2726,7 +2660,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2736,7 +2669,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.mm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2756,7 +2689,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2766,7 +2698,7 @@ const tosdr = {
         "class": "C"
     },
     "google.hr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2786,7 +2718,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2796,7 +2727,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ec": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2816,7 +2747,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2826,7 +2756,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2846,7 +2776,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2856,7 +2785,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.my": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2876,7 +2805,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2886,7 +2814,7 @@ const tosdr = {
         "class": "C"
     },
     "google.lt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2906,7 +2834,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2916,7 +2843,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2936,7 +2863,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2946,7 +2872,7 @@ const tosdr = {
         "class": "C"
     },
     "google.iq": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2966,7 +2892,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -2976,7 +2901,7 @@ const tosdr = {
         "class": "C"
     },
     "google.si": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -2996,7 +2921,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3006,7 +2930,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.af": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3026,7 +2950,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3036,7 +2959,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.gt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3056,7 +2979,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3066,7 +2988,7 @@ const tosdr = {
         "class": "C"
     },
     "google.lv": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3086,7 +3008,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3096,7 +3017,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.pr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3116,7 +3037,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3126,7 +3046,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.gh": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3146,7 +3066,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3156,7 +3075,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.bd": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3176,7 +3095,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3186,7 +3104,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.cu": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3206,7 +3124,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3216,7 +3133,7 @@ const tosdr = {
         "class": "C"
     },
     "google.jo": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3236,7 +3153,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3246,7 +3162,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.lb": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3266,7 +3182,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3276,7 +3191,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.sv": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3296,7 +3211,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3306,7 +3220,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ee": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3326,7 +3240,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3336,7 +3249,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.bh": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3356,7 +3269,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3366,7 +3278,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ba": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3386,7 +3298,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3396,7 +3307,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.uy": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3416,7 +3327,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3426,7 +3336,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ma": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3446,7 +3356,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3456,7 +3365,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3476,7 +3385,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3486,7 +3394,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3506,7 +3414,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3516,7 +3423,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.kh": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3536,7 +3443,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3546,7 +3452,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.py": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3566,7 +3472,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3576,7 +3481,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.np": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3596,7 +3501,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3606,7 +3510,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.cy": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3626,7 +3530,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3636,7 +3539,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ni": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3656,7 +3559,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3666,7 +3568,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.et": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3686,7 +3588,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3696,7 +3597,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cd": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3716,7 +3617,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3726,7 +3626,7 @@ const tosdr = {
         "class": "C"
     },
     "google.hn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3746,7 +3646,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3756,7 +3655,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ge": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3776,7 +3675,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3786,7 +3684,7 @@ const tosdr = {
         "class": "C"
     },
     "google.am": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3806,7 +3704,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3816,7 +3713,7 @@ const tosdr = {
         "class": "C"
     },
     "google.lu": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3836,7 +3733,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3846,7 +3742,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.qa": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3866,7 +3762,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3876,7 +3771,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.mz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3896,7 +3791,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3906,7 +3800,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.bw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3926,7 +3820,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3936,7 +3829,7 @@ const tosdr = {
         "class": "C"
     },
     "google.mg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3956,7 +3849,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3966,7 +3858,7 @@ const tosdr = {
         "class": "C"
     },
     "google.sn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -3986,7 +3878,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -3996,7 +3887,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.pg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4016,7 +3907,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4026,7 +3916,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4046,7 +3936,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4056,7 +3945,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.bn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4076,7 +3965,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4086,7 +3974,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.tj": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4106,7 +3994,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4116,7 +4003,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ht": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4136,7 +4023,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4146,7 +4032,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.zm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4166,7 +4052,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4176,7 +4061,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ke": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4196,7 +4081,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4206,7 +4090,7 @@ const tosdr = {
         "class": "C"
     },
     "google.al": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4226,7 +4110,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4236,7 +4119,7 @@ const tosdr = {
         "class": "C"
     },
     "google.bf": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4256,7 +4139,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4266,7 +4148,7 @@ const tosdr = {
         "class": "C"
     },
     "google.mu": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4286,7 +4168,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4296,7 +4177,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.cr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4316,7 +4197,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4326,7 +4206,7 @@ const tosdr = {
         "class": "C"
     },
     "google.la": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4346,7 +4226,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4356,7 +4235,7 @@ const tosdr = {
         "class": "C"
     },
     "google.mn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4376,7 +4255,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4386,7 +4264,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.bo": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4406,7 +4284,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4416,7 +4293,7 @@ const tosdr = {
         "class": "C"
     },
     "google.org": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4436,7 +4313,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4446,7 +4322,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.jm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4466,7 +4342,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4476,7 +4351,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.tz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4496,7 +4371,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4506,7 +4380,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.na": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4526,7 +4400,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4536,7 +4409,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ml": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4556,7 +4429,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4566,7 +4438,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.mt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4586,7 +4458,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4596,7 +4467,7 @@ const tosdr = {
         "class": "C"
     },
     "google.is": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4616,7 +4487,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4626,7 +4496,7 @@ const tosdr = {
         "class": "C"
     },
     "google.bj": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4646,7 +4516,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4656,7 +4525,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ug": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4676,7 +4545,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4686,7 +4554,7 @@ const tosdr = {
         "class": "C"
     },
     "google.rw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4706,7 +4574,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4716,7 +4583,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.om": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4736,7 +4603,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4746,7 +4612,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ci": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4766,7 +4632,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4776,7 +4641,7 @@ const tosdr = {
         "class": "C"
     },
     "google.bs": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4796,7 +4661,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4806,7 +4670,7 @@ const tosdr = {
         "class": "C"
     },
     "google.td": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4826,7 +4690,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4836,7 +4699,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ps": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4856,7 +4719,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4866,7 +4728,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.gi": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4886,7 +4748,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4896,7 +4757,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.pa": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4916,7 +4777,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4926,7 +4786,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.sl": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4946,7 +4806,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4956,7 +4815,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.uz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -4976,7 +4835,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -4986,7 +4844,7 @@ const tosdr = {
         "class": "C"
     },
     "google.md": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5006,7 +4864,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5016,7 +4873,7 @@ const tosdr = {
         "class": "C"
     },
     "google.bi": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5036,7 +4893,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5046,7 +4902,7 @@ const tosdr = {
         "class": "C"
     },
     "google.sr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5066,7 +4922,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5076,7 +4931,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cat": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5096,7 +4951,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5106,7 +4960,7 @@ const tosdr = {
         "class": "C"
     },
     "google.so": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5126,7 +4980,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5136,7 +4989,7 @@ const tosdr = {
         "class": "C"
     },
     "google.bt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5156,7 +5009,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5166,7 +5018,7 @@ const tosdr = {
         "class": "C"
     },
     "google.je": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5186,7 +5038,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5196,7 +5047,7 @@ const tosdr = {
         "class": "C"
     },
     "google.gy": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5216,7 +5067,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5226,7 +5076,7 @@ const tosdr = {
         "class": "C"
     },
     "google.me": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5246,7 +5096,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5256,7 +5105,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.zw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5276,7 +5125,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5286,7 +5134,7 @@ const tosdr = {
         "class": "C"
     },
     "google.gp": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5306,7 +5154,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5316,7 +5163,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5336,7 +5183,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5346,7 +5192,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ls": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5366,7 +5212,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5376,7 +5221,7 @@ const tosdr = {
         "class": "C"
     },
     "google.as": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5396,7 +5241,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5406,7 +5250,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.bz": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5426,7 +5270,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5436,7 +5279,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cf": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5456,7 +5299,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5466,7 +5308,7 @@ const tosdr = {
         "class": "C"
     },
     "google.mv": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5486,7 +5328,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5496,7 +5337,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ad": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5516,7 +5357,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5526,7 +5366,7 @@ const tosdr = {
         "class": "C"
     },
     "google.li": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5546,7 +5386,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5556,7 +5395,7 @@ const tosdr = {
         "class": "C"
     },
     "google.cv": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5576,7 +5415,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5586,7 +5424,7 @@ const tosdr = {
         "class": "C"
     },
     "google.mk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5606,7 +5444,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5616,7 +5453,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.vc": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5636,7 +5473,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5646,7 +5482,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ag": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5666,7 +5502,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5676,7 +5511,7 @@ const tosdr = {
         "class": "C"
     },
     "google.gl": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5696,7 +5531,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5706,7 +5540,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ne": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5726,7 +5560,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5736,7 +5569,7 @@ const tosdr = {
         "class": "C"
     },
     "google.mw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5756,7 +5589,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5766,7 +5598,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ws": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5786,7 +5618,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5796,7 +5627,7 @@ const tosdr = {
         "class": "C"
     },
     "google.kg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5816,7 +5647,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5826,7 +5656,7 @@ const tosdr = {
         "class": "C"
     },
     "google.gm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5846,7 +5676,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5856,7 +5685,7 @@ const tosdr = {
         "class": "C"
     },
     "google.to": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5876,7 +5705,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5886,7 +5714,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.sb": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5906,7 +5734,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5916,7 +5743,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.tn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5936,7 +5763,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5946,7 +5772,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ga": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5966,7 +5792,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -5976,7 +5801,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tl": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -5996,7 +5821,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6006,7 +5830,7 @@ const tosdr = {
         "class": "C"
     },
     "google.im": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6026,7 +5850,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6036,7 +5859,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.fj": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6056,7 +5879,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6066,7 +5888,7 @@ const tosdr = {
         "class": "C"
     },
     "google.dj": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6086,7 +5908,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6096,7 +5917,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ac": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6116,7 +5937,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6126,7 +5946,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.iq": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6146,7 +5966,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6156,7 +5975,7 @@ const tosdr = {
         "class": "C"
     },
     "google.vg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6176,7 +5995,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6186,7 +6004,7 @@ const tosdr = {
         "class": "C"
     },
     "google.dm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6206,7 +6024,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6216,7 +6033,7 @@ const tosdr = {
         "class": "C"
     },
     "google.sc": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6236,7 +6053,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6246,7 +6062,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.pt": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6266,7 +6082,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6276,7 +6091,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.cn": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6296,7 +6111,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6306,7 +6120,7 @@ const tosdr = {
         "class": "C"
     },
     "google.st": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6326,7 +6140,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6336,7 +6149,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ng": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6356,7 +6169,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6366,7 +6178,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ai": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6386,7 +6198,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6396,7 +6207,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ki": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6416,7 +6227,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6426,7 +6236,7 @@ const tosdr = {
         "class": "C"
     },
     "google.vu": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6446,7 +6256,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6456,7 +6265,7 @@ const tosdr = {
         "class": "C"
     },
     "google.sm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6476,7 +6285,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6486,7 +6294,7 @@ const tosdr = {
         "class": "C"
     },
     "google.jp": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6506,7 +6314,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6516,7 +6323,7 @@ const tosdr = {
         "class": "C"
     },
     "google.om": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6536,7 +6343,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6546,7 +6352,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.vi": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6566,7 +6372,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6576,7 +6381,7 @@ const tosdr = {
         "class": "C"
     },
     "google.gg": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6596,7 +6401,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6606,7 +6410,7 @@ const tosdr = {
         "class": "C"
     },
     "google.fm": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6626,7 +6430,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6636,7 +6439,7 @@ const tosdr = {
         "class": "C"
     },
     "google.hk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6656,7 +6459,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6666,7 +6468,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.ck": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6686,7 +6488,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6696,7 +6497,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tk": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6716,7 +6517,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6726,7 +6526,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6746,7 +6546,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6756,7 +6555,7 @@ const tosdr = {
         "class": "C"
     },
     "google.in": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6776,7 +6575,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6786,7 +6584,7 @@ const tosdr = {
         "class": "C"
     },
     "google.co.je": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6806,7 +6604,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6816,7 +6613,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.ve": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6836,7 +6633,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6846,7 +6642,7 @@ const tosdr = {
         "class": "C"
     },
     "google.tw": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6866,7 +6662,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6876,7 +6671,7 @@ const tosdr = {
         "class": "C"
     },
     "google.us": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6896,7 +6691,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6906,7 +6700,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ua": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6926,7 +6720,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6936,7 +6729,7 @@ const tosdr = {
         "class": "C"
     },
     "google.de.com": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6956,7 +6749,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6966,7 +6758,7 @@ const tosdr = {
         "class": "C"
     },
     "google.ms": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -6986,7 +6778,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -6996,7 +6787,7 @@ const tosdr = {
         "class": "C"
     },
     "google.com.by": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -7016,7 +6807,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -7026,7 +6816,7 @@ const tosdr = {
         "class": "C"
     },
     "google.nr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -7046,7 +6836,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -7056,7 +6845,7 @@ const tosdr = {
         "class": "C"
     },
     "google.br.com": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -7076,7 +6865,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -7086,7 +6874,7 @@ const tosdr = {
         "class": "C"
     },
     "google.sh": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -7106,7 +6894,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -7116,7 +6903,7 @@ const tosdr = {
         "class": "C"
     },
     "google.hk.com": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -7136,7 +6923,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -7146,7 +6932,7 @@ const tosdr = {
         "class": "C"
     },
     "google.kr": {
-        "score": 270,
+        "score": 220,
         "all": {
             "bad": [
                 "device fingerprinting",
@@ -7166,7 +6952,6 @@ const tosdr = {
         },
         "match": {
             "bad": [
-                "device fingerprinting",
                 "tracks you on other websites",
                 "they can use your content for all their existing and future services",
                 "logs are kept forever"
@@ -7222,7 +7007,7 @@ const tosdr = {
         "class": false
     },
     "foxnews.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -7230,9 +7015,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -7468,7 +7251,7 @@ const tosdr = {
         "class": false
     },
     "dictionary.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -7476,9 +7259,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -7563,7 +7344,7 @@ const tosdr = {
         "class": false
     },
     "cnn.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -7571,15 +7352,13 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
     },
     "cnet.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -7587,9 +7366,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -7622,7 +7399,7 @@ const tosdr = {
         "class": "B"
     },
     "null": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -7630,9 +7407,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
@@ -7662,7 +7437,7 @@ const tosdr = {
         "class": false
     },
     "bbc.com": {
-        "score": 50,
+        "score": 0,
         "all": {
             "bad": [
                 "device fingerprinting"
@@ -7670,9 +7445,7 @@ const tosdr = {
             "good": []
         },
         "match": {
-            "bad": [
-                "device fingerprinting"
-            ],
+            "bad": [],
             "good": []
         },
         "class": false
