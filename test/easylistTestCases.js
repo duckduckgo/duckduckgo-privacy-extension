@@ -105,5 +105,9 @@ const easylistTestCases = [
     // Right anchor so request must end with svf
     // svf|
     {'url': 'https://ads.trackersite.net?t=a.svf', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
-    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}}
+    {'url': 'https://ads.trackersite.net/svf/asdf', 'block': false, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
+
+    // parse the correct host from filters like ||facebook.com*/impression.php
+    {'url': 'https://www.facebook.com/impression.php/f2c7ffad89f0f24', 'block': true, 'options': {'type': 'SCRIPT', 'domain': 'somesite.com'}},
+
 ]

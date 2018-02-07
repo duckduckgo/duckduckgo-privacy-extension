@@ -15,7 +15,7 @@ module.exports = function () {
       </div>
       <div class="tracker-networks__explainer padded border--bottom--inner
           text--center">
-          Tracker networks aggregate your web history into a data profile about you. 
+          Tracker networks aggregate your web history into a data profile about you.
           Major tracker networks are more harmful because they can track and target you across more of the internet.
       </div>
       <div class="tracker-networks__details padded
@@ -35,9 +35,9 @@ function renderHero (site) {
   site = site || {}
 
   return bel`${hero({
-    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackersCount),
+    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
     title: site.domain,
-    subtitle: `${trackerNetworksText(site)}`,
+    subtitle: `${trackerNetworksText(site, false, true)}`,
     showClose: true
   })}`
 }

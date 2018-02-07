@@ -16,7 +16,8 @@ const testEasylist = [
   'svf|',
   '!domain anchor with wildcard and options',
   '||site.bar.com^',
-  '@@||site.bar.com/*/test.img$image,domain=yahoo.com'
+  '@@||site.bar.com/*/test.img$image,domain=yahoo.com',
+  '||facebook.com*/impression.php'
 ]
 
 const regexList = [
