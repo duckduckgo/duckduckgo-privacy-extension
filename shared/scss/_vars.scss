@@ -19,6 +19,7 @@ $color--silver: #f0f0f0;
 $color--neutral-bg: #f5f5f5;
 $color--grey: $grey-dark; /* #888 */
 $color--default-box-shadow: $platinum-dark; /* #d0d0d0 */
+$color--dark-grey: #4a4c4f;
 
 /* Rating Colors */
 $color--site-rating--a: $color--green;
@@ -33,7 +34,7 @@ $popup__height: 600px;
 $popup__height--moz: 600px;
 
 /* Hamburger Button & Menu */
-$hamburger-button__color: $color--grey;
+$hamburger-button__color: #afafaf;
 $hamburger-menu__bg-color: $slate;
 
 /* Cards */
@@ -62,10 +63,6 @@ $arrow__border-radius: 3px;
 $img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 $img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
 $img__logo--safari: "../../img/logo-horizontal@2x.png";
-
-$img__logo__small--chrome: "chrome-extension://__MSG_@@extension_id__/img/ddg-logo-simple@2x.png";
-$img__logo__small--moz: "moz-extension://__MSG_@@extension_id__/img/ddg-logo-simple@2x.png";
-$img__logo__small--safari: "../../img/ddg-logo-simple@2x.png";
 
 /* Rating icons */
 $icon__rating__A--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
