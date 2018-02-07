@@ -188,19 +188,26 @@ a {
 /* Hamburger Button */
 .hamburger-button {
     position: absolute;
-    top: 4px;
+    top: 3px;
     right: 10px;
     font-size: 20px;
     width: 20px;
     height: 30px;
+    background-color: inherit;
 
     span {
         display: block;
-        margin: 2px auto 0 auto;
+        margin: 3px auto 0 auto;
         width: 15px;
         height: 2px;
         background-color: $hamburger-button__color;
         border-radius: 5px;
+    }
+
+    &:hover {
+        span {
+            background-color: $color--silver;
+        }
     }
 }
 
