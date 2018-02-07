@@ -3,7 +3,7 @@ const bel = require('bel')
 module.exports = function (site, isMajorNetworksCount, includeUniqueTrackersCount) {
   const trackerNetworksCount = isMajorNetworksCount ? site.majorTrackerNetworksCount : site.totalTrackerNetworksCount
 
-  let trackersText = isMajorNetworksCount ? ' Major Tracker' : ' Tracker'
+  let trackersText = isMajorNetworksCount ? ' Major' : ''
   trackersText += (trackerNetworksCount === 1) ? ' Network ' : ' Networks '
   let finalText = trackerNetworksCount + trackersText + trackersBlockedOrFound(site, trackerNetworksCount)
 
