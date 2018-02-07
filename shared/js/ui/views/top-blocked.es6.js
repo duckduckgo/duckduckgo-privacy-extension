@@ -9,7 +9,6 @@ function TopBlocked (ops) {
   this.template = ops.template
   ParentSlidingSubview.call(this, ops)
 
-  this.setupClose()
   this.renderAsyncContent()
 
   this.bindEvents([
@@ -46,6 +45,7 @@ TopBlocked.prototype = window.$.extend({},
         this.$graphbarfg = this.$el.find('.js-top-blocked-graph-bar-fg')
         this.$pct = this.$el.find('.js-top-blocked-pct')
         this.animateGraphBars()
+        this.setupClose()
       })
     },
 

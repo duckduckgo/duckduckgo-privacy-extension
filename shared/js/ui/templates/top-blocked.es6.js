@@ -1,19 +1,30 @@
 const bel = require('bel')
 const header = require('./shared/sliding-subview-header.es6.js')
+const hero = require('./shared/hero.es6.js')
 const listItems = require('./top-blocked-list-items.es6.js')
 const noData = require('./shared/top-blocked-no-data.es6.js')
 
 module.exports = function () {
   if (!this.model) {
     return bel`<section class="sliding-subview
-      sliding-subview--has-fixed-header">
-      ${header('All Trackers')}
+      sliding-subview--has-fixed-header
+      ">
       </section>`
   } else {
-    return bel`<div class="js-top-blocked-content">
-      ${renderPctPagesWithTrackers(this.model)}
-      ${renderList(this.model)}
-      ${renderResetButton(this.model)}
+    return bel`<div>
+      <div class="top-blocked--full site-info card">
+        ${hero({
+          status: 'top-blocked-good',
+          title: 'creepysite.com',
+          subtitle: `Tracker Network Top Offenders`,
+          showClose: true
+        })}
+        <div class="js-top-blocked-content">
+          ${renderPctPagesWithTrackers(this.model)}
+          ${renderList(this.model)}
+        </div>
+      </div>
+    ${renderResetButton(this.model)}
     </div>`
   }
 }
@@ -25,7 +36,7 @@ function renderPctPagesWithTrackers (model) {
     if (d) msg = ` since ${d}`
   }
   if (model.pctPagesWithTrackers) {
-    return bel`<p class="top-blocked__pct card">
+    return bel`<p class="top-blocked__pct">
       Trackers were found on ${model.pctPagesWithTrackers}%
       of web sites you've visited${msg}.
     </p>`
@@ -34,7 +45,7 @@ function renderPctPagesWithTrackers (model) {
 
 function renderList (model) {
   if (model.companyListMap.length > 0) {
-    return bel`<ol class="default-list top-blocked__list card">
+    return bel`<ol class="default-list top-blocked__list">
       ${listItems(model.companyListMap)}
     </ol>`
   } else {
