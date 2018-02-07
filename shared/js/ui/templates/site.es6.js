@@ -53,7 +53,7 @@ module.exports = function () {
 
     return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
-          icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackersCount)}"></span>
+          icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model)} </span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
