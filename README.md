@@ -32,7 +32,7 @@ The Safari extension lives on the branch jd/build-safari for now.
 
 `make mv-safari`
 
-Load the extension in Safari from the `build/duckduckgo.safariextension` directory.
+Load the extension in Safari from the `build/duckduckgo.safariextension` directory using the [extension builder](https://developer.apple.com/library/content/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html)
 
 
 ## Development flow
@@ -95,3 +95,11 @@ An easy way to find your extension ID is to go to the `settings` page for the ex
 - Move to the release directory: `cd build/firefox/release`
 - Use `web-ext` to package, sign, and upload to the Firefox Addon store
 - `web-ext sign --api-key=$JWT_ISSUER --api-secret=$JWT_SECRET`
+
+### Safari
+- Update the version numbers in `browsers/duckduckgo.safariextension/Info.plist`. You need to update both `CFBundleVersion` and `CFBundleShortVersionString`.
+- Build a release version. Follow the same build steps from the build section above. Use `npm run dev-safari`. 
+- Test locally
+- Before building a package with Safari extension builder you need to clear your company stats and localStorage otherwise your data will be packaged in the release version. 
+In the extension console run `localStorage.clear()` and `Companies.resetData()`.
+- Build a package through the extension builder.
