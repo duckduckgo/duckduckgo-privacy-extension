@@ -1,4 +1,5 @@
 **Safari Popup UX**
+
 *Background Data*
 - You still access background data through `fetch`. For Safari the internals of this method are a little different. Background data is accessed directly instead of through message passing. `safari.extension.globalPage.contentWindow`
 
@@ -7,6 +8,7 @@
 - Don't use `target="_blank"`
 
 **Safari api vs webextension api**
+
 The Safari extension injects a content script into each page. The main job of this script is to pass web requests to the background to check for and block trackers.
 
 *Content script*
@@ -34,6 +36,7 @@ Safari tabs are not assigned a unique ID and much of the webextension code relie
 When we get a canLoad event we will check to see if the Safari target tab contains a `ddgTabId` and generate one if it doesn't. These tab IDs persist for the life of the Safari tab.
 
 **Back and Forward Caching**
+
 Safari will sometimes load a cached page when using the back or forward button. Loading the cached page doesn't fire the beforeLoad event that we use to generate new tab data for the popup. To handle this we storing the ddg tab objects inside of the Safari tab. Example:
 `safari.application.activeBrowserWindow.activeTab`
 `ddgCache: {https://www.reddit.com/: Tab, https://github.com/: Tab}`
