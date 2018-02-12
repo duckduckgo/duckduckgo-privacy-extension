@@ -22,7 +22,13 @@ This software is licensed under the terms of the Apache License, Version 2.0 (se
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
 - Safari:
-TBD
+The Safari extension lives on the branch jd/build-safari for now. 
+`git checkout jd/build-safari`
+`make rm-safari`
+`npm run dev-safari`, Grunt watch doesn't work for Safari so kill the process (ctrl+c) when you see the watch messages in the console
+`make mv-safari`
+Load the extension in Safari from the `build/duckduckgo.safariextension` directory.
+
 
 ## Development flow
 Shared JS, CSS, and images are located in the `shared` directory. 
