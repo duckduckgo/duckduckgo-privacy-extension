@@ -64,7 +64,7 @@ TrackerNetworks.prototype = window.$.extend({},
           this.model.site.totalTrackerNetworksCount
         )
 
-        const trackerNetworksText = trackerNetworksTextTemplate(this.model.site, false, true)
+        const trackerNetworksText = trackerNetworksTextTemplate(this.model.site, false)
 
         this.$hero.html(heroTemplate({
           status: trackerNetworksIconName,

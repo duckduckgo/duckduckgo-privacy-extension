@@ -37,7 +37,7 @@ function renderHero (site) {
   return bel`${hero({
     status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
     title: site.domain,
-    subtitle: `${trackerNetworksText(site, false, true)}`,
+    subtitle: `${trackerNetworksText(site, false)}`,
     showClose: true
   })}`
 }
