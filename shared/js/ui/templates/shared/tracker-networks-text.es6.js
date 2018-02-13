@@ -7,7 +7,7 @@ module.exports = function (site, isMajorNetworksCount) {
   trackersText += (trackerNetworksCount === 1) ? ' Network ' : ' Networks '
   let finalText = trackerNetworksCount + trackersText + trackersBlockedOrFound(site, trackerNetworksCount)
 
-  const uniqueTrackersText = site.trackersCount === 1 ? ' Tracker In ' : ' Trackers In '
+  const uniqueTrackersText = site.trackersCount === 1 ? ' Tracker in ' : ' Trackers in '
   finalText = site.trackersCount + uniqueTrackersText + finalText
 
   return bel`${finalText}`
