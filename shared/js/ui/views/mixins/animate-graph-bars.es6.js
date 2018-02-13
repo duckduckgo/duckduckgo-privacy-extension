@@ -7,7 +7,7 @@ module.exports = {
       self.$graphbarfg.each(function (i, el) {
         let $el = window.$(el)
         let w = $el.data().width
-        $el.css('width', w)
+        $el.css('width', w + '%')
       })
     }, 250)
 
