@@ -250,10 +250,13 @@ require.scopes.trackers = (function() {
     }
 
     function checkABPParsedList(list, url, siteDomain, request) {
+        // third-party is always true since we filter out first party
+        // requests before checking any other blocking lists. 
         let match = abp.matches(list, url,
             {
                 domain: siteDomain,
-                elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
+                elementTypeMask: abp.elementTypes[request.type.toUpperCase()],
+                'third-party': true
             })
         return match
     }
