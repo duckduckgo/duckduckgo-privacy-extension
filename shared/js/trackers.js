@@ -97,7 +97,7 @@ require.scopes.trackers = (function() {
         let match
 
         if (whitelists.trackersWhitelist.isLoaded) {
-            match = checkABPParsedList(whitelists.trackersWhitelist.parsed, url, currLocation, request, 'trackersWhitelist')
+            match = checkABPParsedList(whitelists.trackersWhitelist.parsed, url, currLocation, request)
         }
 
         if (match) {
@@ -115,7 +115,7 @@ require.scopes.trackers = (function() {
             let match
             // lists can take a second or two to load so check that the parsed data exists
             if (easylists[listName].isLoaded) {
-                match = checkABPParsedList(easylists[listName].parsed, url, siteDomain, request, listName)
+                match = checkABPParsedList(easylists[listName].parsed, url, siteDomain, request)
             }
 
             // break loop early if a list matches
@@ -249,13 +249,14 @@ require.scopes.trackers = (function() {
         }
     }
 
-    function checkABPParsedList(list, url, siteDomain, request, listName) {
+    function checkABPParsedList(list, url, siteDomain, request) {
+        // third-party is always true since we filter out first party
+        // requests before checking any other blocking lists. 
         let match = abp.matches(list, url,
             {
                 domain: siteDomain,
                 elementTypeMask: abp.elementTypes[request.type.toUpperCase()],
-                'third-party': true,
-                listName: listName
+                'third-party': true
             })
         return match
     }
