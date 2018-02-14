@@ -46,6 +46,15 @@ require.scopes.trackers = (function() {
         if (settings.getSetting('trackerBlockingEnabled')) {
 
             let parsedUrl = tldjs.parse(urlToCheck)
+
+            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
+            // if the subdomain name has underscores in it
+            if (!parsedUrl ||
+                    !parsedUrl.isValid ||
+                    !parsedUrl.hostname) {
+                return false
+            }
+
             let urlSplit = parsedUrl.hostname.split('.')
             var social_block = settings.getSetting('socialBlockingIsEnabled')
             var blockSettings = constants.blocking.slice(0)
