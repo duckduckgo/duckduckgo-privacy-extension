@@ -14,7 +14,10 @@
     { url: 'https://x.y.z.doubleclick.net', block: true},
     { url: 'https://logx.optimizely.com/log/event', block: true},
     // make sure underscores don't error out
-    { url: 'https://foo_bar.duckduckgo.com', block: false}
+    { url: 'https://foo_bar.duckduckgo.com', block: false},
+    { url: 'https://foo_bar.doubleclick.net', block: true},
+    // invalid URL
+    { url: 'sdfsdfs', block: false}
   ];
   
   QUnit.test("block url", function (assert) {
