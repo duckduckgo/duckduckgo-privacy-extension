@@ -1,0 +1,66 @@
+#popup-container .site-info.privacy-practices {
+    box-sizing: border-box;
+
+    .padded {
+        padding: 20px;
+    }
+
+    .hero {
+        padding-top: 9px;
+    }
+
+    .hero__close {
+        top: calc(50% - 16px);
+    }
+
+    .hero__icon {
+        width: 48px;
+        height: 65px;
+    }
+
+    .hero__icon--good {
+        @include cross_platform_bg_image("hero-ribbon__good.svg");
+    }
+    .hero__icon--bad {
+        @include cross_platform_bg_image("hero-ribbon__bad.svg");
+    }
+    .hero__icon--mixed,
+    .hero__icon--unknown {
+        @include cross_platform_bg_image("hero-ribbon__mixed.svg");
+    }
+}
+
+.privacy-practices__explainer {
+    line-height: 18px;
+}
+
+.privacy-practices__details {
+    min-height: 205px;
+}
+
+.privacy-practices__details__no-detail-icon {
+    @include cross_platform_bg_image("unknown.svg");
+    width: 53px;
+    height: 53px;
+    margin: 10px auto 15px;
+}
+
+.privacy-practices__details__title {
+    font-size: 16px;
+    line-height: 18px;
+    margin-bottom: 5px;
+}
+
+.privacy-practices__details__msg {
+    line-height: 18px;
+}
+
+.privacy-practices__attrib {
+    a,
+    a:visited,
+    a:hover,
+    a:focus {
+        color: inherit;
+        text-decoration: underline;
+    }
+}

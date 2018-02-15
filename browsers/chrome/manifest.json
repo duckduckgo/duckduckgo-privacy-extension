@@ -1,7 +1,8 @@
 {
-    "name": "DuckDuckGo Plus",
-    "version": "2017.11.9",
-    "description": "DuckDuckGo Privacy Protection",
+    "name": "__MSG_appName__",
+    "description": "__MSG_appDesc__",
+    "default_locale": "en",
+    "version": "2018.2.6",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -15,22 +16,13 @@
         },
         "default_popup": "html/popup.html"
     },
-    "commands": {
-      "_execute_browser_action": {
-        "suggested_key": {
-          "default": "Alt+G",
-          "mac": "Alt+G",
-          "linux": "Alt+G",
-          "windows": "Alt+G"
-        }
-      }
-    },
     "omnibox": {"keyword": "d"},
     "options_page": "html/options.html",
     "background": {
             "scripts": [
                 "data/defaultSettings.js",
                 "data/constants.js",
+                "data/tosdr.js",
                 "js/require.js",
                 "js/load.js",
                 "js/utils.js",
@@ -45,8 +37,8 @@
                 "js/trackerLists.js",
                 "js/trackers.js",
                 "js/tldjs.js",
-                "js/indexed-db.js",
                 "js/https.js",
+                "js/surrogates.js",
                 "js/background.js",
                 "js/abp.js",
                 "js/atb.js"

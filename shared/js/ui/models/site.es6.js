@@ -1,10 +1,5 @@
 const Parent = window.DDG.base.Model
-
-const httpsStates = {
-  'secure': 'Secure',
-  'upgraded': 'Secure', // was 'Upgraded'
-  'none': 'Insecure'
-}
+const httpsMessages = window.constants.httpsMessages
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -17,9 +12,12 @@ function Site (attrs) {
   attrs.httpsState = 'none'
   attrs.httpsStatusText = ''
   attrs.isUserPrivacyUpgraded = false
-  attrs.trackerCount = 0
+  attrs.trackersCount = 0 // unique trackers count
+  attrs.majorTrackerNetworksCount = 0
+  attrs.totalTrackerNetworksCount = 0
   attrs.trackerNetworks = []
   attrs.tosdr = {}
+  attrs.isaMajorTrackingNetwork = false
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -43,7 +41,11 @@ Site.prototype = window.$.extend({},
                 this.set('tab', backgroundTabObj)
                 this.domain = backgroundTabObj.site.domain
                 this.fetchSiteRating()
-                this.tosdr = backgroundTabObj.site.score.tosdr
+                this.set('tosdr', backgroundTabObj.site.score.tosdr)
+                this.set(
+                  'isaMajorTrackingNetwork',
+                  backgroundTabObj.site.score.isaMajorTrackingNetwork
+                )
               }
               this.setSiteProperties()
               this.setHttpsMessage()
@@ -96,7 +98,7 @@ Site.prototype = window.$.extend({},
         this.httpsState = 'none'
       }
 
-      this.httpsStatusText = httpsStates[this.httpsState]
+      this.httpsStatusText = httpsMessages[this.httpsState]
     },
 
     handleBackgroundMsg: function (message) {
@@ -148,6 +150,18 @@ Site.prototype = window.$.extend({},
           this.set('trackerNetworks', newTrackerNetworks)
         }
 
+        const newUnknownTrackersCount = this.getUnknownTrackersCount()
+        const newTotalTrackerNetworksCount = newUnknownTrackersCount + newTrackerNetworks.length
+        if (newTotalTrackerNetworksCount !== this.totalTrackerNetworksCount) {
+          this.set('totalTrackerNetworksCount', newTotalTrackerNetworksCount)
+        }
+
+        const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
+        if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
+          this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
+        }
+        this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
+
         const newUserPrivacy = this.getIsUserPrivacyUpgraded()
         if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
           this.set('isUserPrivacyUpgraded', newUserPrivacy)
@@ -157,16 +171,53 @@ Site.prototype = window.$.extend({},
 
     getUniqueTrackersCount: function () {
       // console.log('[model] getUniqueTrackersCount()')
-      return Object.keys(this.tab.trackers).reduce((total, name) => {
+      const count = Object.keys(this.tab.trackers).reduce((total, name) => {
         return this.tab.trackers[name].urls.length + total
       }, 0)
+
+      return count
     },
 
     getUniqueTrackersBlockedCount: function () {
       // console.log('[model] getUniqueTrackersBlockedCount()')
-      return Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
+      const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
         return this.tab.trackersBlocked[name].urls.length + total
       }, 0)
+
+      return count
+    },
+
+    getUnknownTrackersCount: function () {
+      // console.log('[model] getUnknownTrackersCount()')
+      const unknownTrackers = this.tab.trackers ? this.tab.trackers.unknown : {}
+
+      let count = 0
+      if (unknownTrackers && unknownTrackers.urls) {
+        count = unknownTrackers.urls.length
+      }
+
+      return count
+    },
+
+    getMajorTrackerNetworksCount: function () {
+      // console.log('[model] getMajorTrackerNetworksCount()')
+      const count = Object.keys(this.tab.trackers).reduce((total, name) => {
+        let tempTracker = name.toLowerCase()
+        const majorTrackingNetworks = Object.keys(window.constants.majorTrackingNetworks)
+          .filter((t) => t.toLowerCase() === tempTracker)
+        // in case a major tracking network is in the list more than once somehow
+        total += majorTrackingNetworks.length ? 1 : 0
+        return total
+      }, 0)
+
+      return count
+    },
+
+    getIsPartOfMajorTrackingNetwork: function () {
+      return this.isaMajorTrackingNetwork ||
+        this.trackerNetworks.some((tracker) =>
+          window.constants.majorTrackingNetworks[tracker]
+        )
     },
 
     getTrackerNetworksOnPage: function () {

@@ -9,18 +9,10 @@
 var load = require('load')
 var settings = require('settings')
 
-let tosdr
-let tosdrRegexList
-let tosdrListLoaded
+let tosdrRegexList = []
 let trackersWhitelistTemporary
 
-settings.ready().then(() => {
-    load.JSONfromLocalFile(constants.tosdr,(data) => {
-        tosdr = data
-        tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
-        tosdrListLoaded = true
-    })
-})
+tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
 
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
@@ -43,19 +35,45 @@ class Score {
     getTosdr() {
         let result = {}
 
-        // return if the list hasn't been built yet
-        if (!tosdrListLoaded) return result
-
         tosdrRegexList.some(tosdrSite => {
             let match = tosdrSite.exec(this.domain)
             if (match) {
                 // remove period at end for lookup in pagesSeenOn
                 let tosdrData = tosdr[match[0]]
 
+                if (!tosdrData) return
+
+                const matchGood = (tosdrData.match && tosdrData.match.good) || []
+                const matchBad = (tosdrData.match && tosdrData.match.bad) || []
+
+                // tosdr message
+                // 1. If we have a defined tosdr class look up the message in constants
+                //    for the corresponding letter class
+                // 2. If there are both good and bad points -> 'mixed'
+                // 3. Else use the calculated tosdr score to determine the message
+                let message = constants.tosdrMessages.unknown
+                if (tosdrData.class) {
+                    message = constants.tosdrMessages[tosdrData.class]
+                } else if (matchGood.length && matchBad.length) {
+                    message = constants.tosdrMessages.mixed
+                } else {
+                    if (tosdrData.score < 0) {
+                        message = constants.tosdrMessages.good
+                    } else if (tosdrData.score === 0 && (matchGood.length || matchBad.length)) {
+                        message = constants.tosdrMessages.mixed
+                    } else if (tosdrData.score > 0 ) {
+                        message = constants.tosdrMessages.bad
+                    }
+                }
+
                 return result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
-                    reasons: tosdrData.match
+                    reasons: {
+                        good: matchGood,
+                        bad: matchBad
+                    },
+                    message: message
                 }
             }
         })
@@ -170,7 +188,6 @@ class Site {
         this.domain = domain,
         this.trackerUrls = [],
         this.score = new Score(this.specialDomain(), this.domain);
-        this.HTTPSwhitelisted = false; // when forced https upgrades create mixed content situations
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
@@ -197,16 +214,15 @@ class Site {
      * When site objects are created we check the stored whitelists
      * and set the new site whitelist statuses
      */
-    setWhitelistStatusFromGlobal(){
-        let globalwhitelists = ['whitelisted', 'HTTPSwhitelisted']
-
+    setWhitelistStatusFromGlobal () {
+        let globalwhitelists = ['whitelisted']
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {}
             this.setWhitelisted(name, list[this.domain])
         })
     }
 
-    setWhitelisted(name, value){
+    setWhitelisted (name, value) {
         this[name] = value
     }
 

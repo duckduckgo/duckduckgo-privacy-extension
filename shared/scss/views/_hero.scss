@@ -1,0 +1,46 @@
+.hero {
+    padding: 0 20px 15px 20px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+.hero__icon {
+    @include icon_display();
+    margin-top: 15px;
+}
+
+.hero__title {
+    line-height: 17px;
+    display: block;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 11px;
+    text-align: center;
+    width: 100%;
+    max-width: 100%;
+    font-size: 17px;
+    word-break: keep-all;
+    white-space: nowrap;
+}
+
+.hero__subtitle {
+    padding-top: 6px;
+    @include uppercase_label();
+    height: 20px;
+    line-height: 21px;
+    text-align: center;
+}
+
+.hero__close {
+    position: absolute;
+    left: 20px;
+    top: calc(50% - 12px);
+}
+
+.hero__open {
+    position: absolute;
+    right: 20px;
+    top: calc(50% - 12px);
+}

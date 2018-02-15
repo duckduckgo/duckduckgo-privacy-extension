@@ -17,7 +17,7 @@ html, body {
     min-height: 100%;
 
     &.body--neutral {
-        background: $color--neutral-bg;
+        background: $color--silver;
     }
 }
 
@@ -152,6 +152,19 @@ a {
     border-bottom: $card__border;
 }
 
+.border--bottom--inner {
+    position: relative;
+
+    &:after {
+        content: "";
+        border-bottom: $card__border;
+        position: absolute;
+        bottom: 0;
+        left: 20px;
+        right: 20px;
+    }
+}
+
 
 /* Padding */
 .padded {
@@ -162,23 +175,39 @@ a {
     padding-bottom: 0;
 }
 
+/* Background */
+.silver-bg {
+    background-color: $color--silver;
+
+    .border--top,
+    .border--bottom {
+        border-color: #d8d8d8;
+    }
+}
 
 /* Hamburger Button */
 .hamburger-button {
     position: absolute;
-    top: 4px;
+    top: 3px;
     right: 10px;
     font-size: 20px;
     width: 20px;
     height: 30px;
+    background-color: inherit;
 
     span {
         display: block;
-        margin: 2px auto 0 auto;
+        margin: 3px auto 0 auto;
         width: 15px;
         height: 2px;
         background-color: $hamburger-button__color;
         border-radius: 5px;
+    }
+
+    &:hover {
+        span {
+            background-color: $color--silver;
+        }
     }
 }
 
@@ -261,16 +290,15 @@ a {
         width: 16px;
         height: 16px;
 
-        .is-browser--chrome & {
-            background-image: url($icon__arrow--chrome);
-        }
-
-        .is-browser--moz & {
-            background-image: url($icon__arrow--moz);
-        }
+        @include cross_platform_bg_image("arrow@2x.png");
 
         &.icon__arrow--left {
             transform: rotate(180deg);
+        }
+
+        &.icon__arrow--large {
+            width: 9.5px;
+            @include cross_platform_bg_image("arrow--large.svg");
         }
     }
 

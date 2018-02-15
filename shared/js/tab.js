@@ -52,8 +52,9 @@ class Tab {
         this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
-        this.httpsRequests = []
-        this.httpsRedirects = {}
+        this.failedUpgradeUrls = {}
+        this.httpsRedirects = {} // count redirects here in form of: { <requestId>: <count> }
+        this.lastHttpsUpgrade = {}
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
@@ -124,33 +125,17 @@ class Tab {
         }
     };
 
-    addHttpsUpgradeRequest (url) {
-        this.httpsRequests.push(url)
-    }
-
     downgradeHttpsUpgradeRequest (reqData) {
         if (reqData.type === 'main_frame') this.upgradedHttps = false
         delete this.httpsRedirects[reqData.requestId]
         const downgrade = reqData.url.replace(/^https:\/\//i, 'http://')
+        this.failedUpgradeUrls[downgrade] = true
         return downgrade
     }
 
     checkHttpsRequestsOnComplete () {
-        if (!this.site.HTTPSwhitelisted && this.httpsRequests.length > 0) {
-
-            // set whitelist for all tabs with this domain
-            tabManager.whitelistDomain({
-                list: 'HTTPSwhitelisted',
-                value: true,
-                domain: this.site.domain
-            });
-
-            this.upgradedHttps = false
-
-            // then reload this tab, downgraded from https to http
-            const downgrade = this.url.replace(/^https:\/\//i, 'http://')
-            chrome.tabs.update(this.id, { url: downgrade })
-        }
+        // TODO later: watch all requests for http/https status and
+        // report mixed content
     }
 
     endStopwatch () {
@@ -160,26 +145,11 @@ class Tab {
     }
 }
 
-chrome.webRequest.onHeadersReceived.addListener((header) => {
-    let tab = tabManager.get({'tabId': header.tabId})
-
-    // Remove successful & rewritten requests
-    if (tab && header.statusCode < 400) {
-
-        tab.httpsRequests = tab.httpsRequests.filter((url) => {
-            // disregard diff between 'https://www.foo.com' and 'https://foo.com'
-            const _url = url.replace('https://www.', 'https://')
-            const _headerUrl = header.url.replace('https://www.', 'https://')
-            return _url !== _headerUrl
-        });
-    }
-
-}, {urls: ['<all_urls>']});
-
 chrome.webRequest.onBeforeRedirect.addListener((req) => {
     // count redirects
     let tab = tabManager.get({'tabId': req.tabId})
     if (!tab) return
+
     if (tab.httpsRedirects[req.requestId]) {
         tab.httpsRedirects[req.requestId] += 1
     } else {
