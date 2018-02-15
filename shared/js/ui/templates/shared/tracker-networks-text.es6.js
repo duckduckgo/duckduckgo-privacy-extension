@@ -5,8 +5,8 @@ module.exports = function (site, isMajorNetworksCount) {
   let uniqueTrackersText = trackersCount === 1 ? ' Tracker ' : ' Trackers '
 
   if (isMajorNetworksCount) {
-      trackersCount = site.majorTrackerNetworksCount
-      uniqueTrackersText = trackersCount === 1 ? ' Major Tracker Network ' : ' Major Tracker Networks '
+    trackersCount = site.majorTrackerNetworksCount
+    uniqueTrackersText = trackersCount === 1 ? ' Major Tracker Network ' : ' Major Tracker Networks '
   }
   const finalText = trackersCount + uniqueTrackersText + trackersBlockedOrFound(site, trackersCount)
 
