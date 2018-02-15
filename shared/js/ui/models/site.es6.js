@@ -172,7 +172,7 @@ Site.prototype = window.$.extend({},
     getUniqueTrackersCount: function () {
       // console.log('[model] getUniqueTrackersCount()')
       const count = Object.keys(this.tab.trackers).reduce((total, name) => {
-        return this.tab.trackers[name].urls.length + total
+        return this.tab.trackers[name].count + total
       }, 0)
 
       return count
