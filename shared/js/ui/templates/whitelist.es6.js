@@ -3,6 +3,7 @@ const bel = require('bel')
 module.exports = function () {
   return bel`<section class="options-content__whitelist">
     <h2 class="menu-title">Whitelisted Sites</h2>
+    <p class="menu-paragraph">These sites will not be enhanced by Privacy Protection</p>
     <ul class="default-list">
       ${listItems(this.model.list)}
       ${addToWhitelist()}
