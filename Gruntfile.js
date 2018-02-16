@@ -21,8 +21,7 @@ module.exports = function(grunt) {
     let baseFileMap = {
         ui: {
             '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
-            '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
-            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js']
+            '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js']
         },
         background: {
             '<%= dirs.src.js %>/abp.js': ['<%= dirs.src.js %>/abp-preprocessed.es6.js'],
@@ -31,8 +30,7 @@ module.exports = function(grunt) {
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
-            '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
-            '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss']
+            '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss']
         }
     }
 
