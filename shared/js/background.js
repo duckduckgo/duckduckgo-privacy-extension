@@ -69,6 +69,29 @@ function Background() {
   });
 
   chrome.runtime.onInstalled.addListener(function(details) {
+
+      /* Textile TODO:
+
+      We need to run the following at some point here,
+
+      chrome.identity.getAuthToken({'interactive': false}, function (token) {
+          console.log(token)
+      })
+
+      if we don't have user email in the settings, but perhaps we can always do it cause I think it will
+      just return the token without the interactive ui oauth step if the user has already done that (authorized us).
+
+      NOTE: waiting on the private web extension to pass google chrome store so that i can get the right "app key" and
+      add that to the manifest.json file. Without that, the above getAuthToken request fails cause the app ids
+      dont match.
+
+      PENDING EXTENSION: https://chrome.google.com/webstore/detail/ndphnolegaihkhjmfdbafgkgcemhmmgc/publish-delayed
+
+      - not sure how this will work in firefox, maybe we can only do this in chrome
+      - show the post-install page with a way for them to add email if the above fails
+
+      */
+
     // only run the following section on install and on update
     if (details.reason.match(/install|update/)) {
         ATB.onInstalled();
@@ -105,17 +128,6 @@ function Background() {
 
 var background
 settings.ready().then(() => new Background())
-
-chrome.omnibox.onInputEntered.addListener(function(text) {
-  chrome.tabs.query({
-    'currentWindow': true,
-    'active': true
-  }, function(tabs) {
-    chrome.tabs.update(tabs[0].id, {
-      url: "https://duckduckgo.com/?q=" + encodeURIComponent(text) + "&bext=" + localStorage['os'] + "cl"
-    });
-  });
-});
 
 /**
  * Before each request:

@@ -22,5 +22,6 @@ let defaultSettings = {
     "privacyEasylist-etag": null,
     "https-etag": null,
     "surrogateList-etag": null,
-    "hasSeenPostInstall": false
+    "hasSeenPostInstall": false,
+    "email": null
 }

@@ -1,5 +1,5 @@
 {
-    "name": "Privacy Essentials (Textile)",
+    "name": "Good Morning, Privacy!",
     "applications": {
         "gecko": {
               "id": "goodmorningprivacy@textile.io",
@@ -21,50 +21,50 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
     "background": {
-            "scripts": [
-                "data/defaultSettings.js",
-                "data/constants.js",
-                "data/tosdr.js",
-                "js/require.js",
-                "js/load.js",
-                "js/utils.js",
-                "js/topBlocked.js",
-                "js/settings.js",
-                "js/site.js",
-                "js/tab.js",
-                "js/tabManager.js",
-                "js/companies.js",
-                "js/company.js",
-                "js/atb.js",
-                "js/trackerLists.js",
-                "js/trackers.js",
-                "js/tldjs.js",
-                "js/https.js",
-                "js/surrogates.js",
-                "js/background.js",
-                "js/abp.js",
-                "js/atb.js"
-            ]
+        "scripts": [
+            "data/defaultSettings.js",
+            "data/constants.js",
+            "data/tosdr.js",
+            "js/require.js",
+            "js/load.js",
+            "js/utils.js",
+            "js/topBlocked.js",
+            "js/settings.js",
+            "js/site.js",
+            "js/tab.js",
+            "js/tabManager.js",
+            "js/companies.js",
+            "js/company.js",
+            "js/atb.js",
+            "js/trackerLists.js",
+            "js/trackers.js",
+            "js/tldjs.js",
+            "js/https.js",
+            "js/surrogates.js",
+            "js/background.js",
+            "js/abp.js",
+            "js/atb.js",
+            "js/email.js"
+        ]
     },
     "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "all_frames": true,
-        "css": ["public/css/noatb.css"],
-        "run_at": "document_start"
-      },
-      {
-          "js": [
-              "js/socialwidgets.js"
-          ],
-          "matches": [
-              "<all_urls>"
-          ],
-          "all_frames": true,
-          "run_at": "document_idle"
-      }
+        {
+            "matches": ["<all_urls>"],
+            "all_frames": true,
+            "css": ["public/css/noatb.css"],
+            "run_at": "document_start"
+        },
+        {
+            "js": [
+                "js/socialwidgets.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ],
+            "all_frames": true,
+            "run_at": "document_idle"
+        }
     ],
     "permissions": [
         "contextMenus",
@@ -77,7 +77,8 @@
         "cookies",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "identity"
     ],
     "web_accessible_resources": [
         "img/*"
