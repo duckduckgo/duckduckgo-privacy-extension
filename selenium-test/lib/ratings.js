@@ -130,7 +130,7 @@ function _getDetailsData (jsonText) {
         details: site.scoreObj.gradedetails
     }));
 
-    return JSON.stringify(detailsData);
+    return JSON.stringify(detailsData, null, "  ");
 }
 
 
