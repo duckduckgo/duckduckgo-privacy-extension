@@ -186,6 +186,11 @@ exports.testUrls = async function(urlArray, opts) {
         // for loop forces synchronous execution
         for (let path of urlArray) {
             if (path == '') continue;
+
+            if (path.indexOf('http://') === -1) {
+                path = 'http://' + path;
+            }
+
             const url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
             log(chalk.green.bold(`Running Test on URL: ${url}`));
             const jsonText = await _testUrl(url);
