@@ -18,14 +18,14 @@ module.exports = function () {
         <button class="remove pull-right js-whitelist-remove" data-item="${i++}">×</button>
       </li>`)}`
     }
-
-    function addToWhitelist () {
-      return bel`<li>
-        <input type="text" placeholder="Enter URL">
-        <div class="add pull-right js-whitelist-add">Add to Whitelist</div>
-      </li>`
-    }
-
     return bel`<li>No whitelisted sites.</li>`
   }
+
+  function addToWhitelist () {
+    return bel`<li>
+      <input type="text" placeholder="Enter URL">
+      <div class="add pull-right js-whitelist-add">Add to Whitelist</div>
+    </li>`
+  }
+
 }

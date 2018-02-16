@@ -29,7 +29,10 @@ Whitelist.prototype = window.$.extend({},
     },
 
     setup: function () {
-      this._cacheElems('.js-whitelist', ['remove'])
+      this._cacheElems('.js-whitelist', [
+              'remove',
+              'add'
+      ])
 
       this.bindEvents([
         [this.$remove, 'click', this._removeItem],
