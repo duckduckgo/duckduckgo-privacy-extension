@@ -50,6 +50,10 @@ var ATB = (() => {
                     return
                 }
 
+                if(request.url.indexOf('exti=') !== -1){
+                    return
+                }
+
                 let atbSetting = settings.getSetting('atb')
 
                 if(!atbSetting){
@@ -113,11 +117,14 @@ var ATB = (() => {
         },
 
         inject: () => {
+            // inject only runs on Firefox and Chrome. Safari does this through the plist file
+            if(!window.chrome) return
+
             chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
                 var i = tabs.length, tab
                 while (i--) {
                     tab = tabs[i]
-                    
+
                     chrome.tabs.executeScript(tab.id, {
                         file: 'js/oninstall.js'
                     })
@@ -130,12 +137,13 @@ var ATB = (() => {
         },
 
         onInstalled: () => {
-            // wait until settings is ready to try and get atb from the page
-            settings.ready().then(() => {
-                ATB.inject()
-                ATB.migrate()
-                ATB.setInitialVersions()
-            })
+            // migrate old safari extension atb over to settings
+            if (window.safari) {
+                settings.ready().then(() => {
+                    ATB.migrate()
+                    ATB.setInitialVersions()
+                })
+            }
         },
 
         migrate: () => {
@@ -161,24 +169,38 @@ var ATB = (() => {
     }
 })()
 
-// register message listener
-chrome.runtime.onMessage.addListener((request) => {
-    if(request.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb)
-    }
-})
+if (window.chrome) {
+    // register message listener
+    chrome.runtime.onMessage.addListener((request) => {
+        if(request.atb){
+            ATB.setAtbValuesFromSuccessPage(request.atb)
+        }
+    })
+    
+    settings.ready().then(() => {
+        // migrate over any localStorage values from the old extension
+        ATB.migrate()
 
-settings.ready().then(() => {
-    // migrate over any localStorage values from the old extension
-    ATB.migrate()
-
-    // set initial uninstall url
-    chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-})
-
-chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
-chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
-    if (alarmEvent.name === 'updateUninstallURL') {
+        // set initial uninstall url
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-    }
-}))
+    })
+
+    chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
+    chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
+        if (alarmEvent.name === 'updateUninstallURL') {
+            chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+        }
+    }))
+} else {
+
+    settings.ready().then(() => {
+        ATB.migrate()
+    })
+
+    safari.application.addEventListener('message', ((e) => {
+        if (e.name === 'atb') {
+            ATB.setAtbValuesFromSuccessPage(e.message.atb)
+        }
+    }))
+
+}

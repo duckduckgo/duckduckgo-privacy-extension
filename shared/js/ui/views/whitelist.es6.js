@@ -46,7 +46,7 @@ Whitelist.prototype = window.$.extend({},
 
     setWhitelistFromSettings: function () {
       let self = this
-      this.model.fetch({getSetting: {name: 'whitelisted'}}).then((list) => {
+      this.model.fetch({getSetting: {name: 'whitelisted'}, context: 'options'}).then((list) => {
         let wlist = list || {}
         self.model.list = Object.keys(wlist)
         self.model.list.sort()

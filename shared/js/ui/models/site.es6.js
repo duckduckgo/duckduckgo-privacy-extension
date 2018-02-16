@@ -25,13 +25,17 @@ function Site (attrs) {
   ])
 }
 
-Site.prototype = window.$.extend({},
+Site.prototype = $.extend({},
   Parent.prototype,
   {
 
     modelName: 'site',
 
     getBackgroundTabData: function () {
+      if (window.safari) {
+          return this.getBackgroundTabDataSafari()
+      }
+
       // console.log('[site view] getBackgroundTabData()')
       return new Promise((resolve, reject) => {
         this.fetch({getCurrentTab: true}).then((tab) => {
@@ -57,6 +61,26 @@ Site.prototype = window.$.extend({},
             resolve()
           }
         })
+      })
+    },
+
+    getBackgroundTabDataSafari: function () {
+      return new Promise((resolve) => {
+        let backgroundTabObj = JSON.parse(JSON.stringify(safari.extension.globalPage.contentWindow.tabManager.getActiveTab() || {}))
+        if (backgroundTabObj && backgroundTabObj.site) {
+          this.set('tab', backgroundTabObj)
+          this.domain = backgroundTabObj.site.domain
+          this.fetchSiteRating()
+          this.set('tosdr', backgroundTabObj.site.score.tosdr)
+          this.set('isaMajorTrackingNetwork',backgroundTabObj.site.score.isaMajorTrackingNetwork)
+        } else {
+          this.domain = ''
+        }
+
+        this.setSiteProperties()
+        this.setHttpsMessage()
+        this.update()
+        resolve()
       })
     },
 
@@ -243,6 +267,13 @@ Site.prototype = window.$.extend({},
 
     toggleWhitelist: function () {
       if (this.tab && this.tab.site) {
+        
+        if (window.safari) {
+            let url = safari.application.activeBrowserWindow.activeTab.url
+            safari.application.activeBrowserWindow.activeTab.url = url
+            safari.extension.popovers[0].hide()
+        }
+
         this.isWhitelisted = !this.isWhitelisted
         this.set('whitelisted', this.isWhitelisted)
 

@@ -52,6 +52,7 @@ TopBlocked.prototype = window.$.extend({},
     resetTrackersStats: function (e) {
       if (e) e.preventDefault()
       this.model.fetch({resetTrackersData: true})
+      safari.self.hide()
     },
 
     handleBackgroundMsg: function (message) {

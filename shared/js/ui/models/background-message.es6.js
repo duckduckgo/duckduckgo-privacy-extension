@@ -1,4 +1,4 @@
-const Parent = window.DDG.base.Model
+const Parent = window.DDG.base.Model;
 
 /**
  * Background messaging is done via two methods:
@@ -19,23 +19,25 @@ const Parent = window.DDG.base.Model
  *  The common fetch method is defined in base/model.es6.js
  */
 function BackgroundMessage (attrs) {
-  Parent.call(this, attrs)
+    Parent.call(this, attrs);
 
-  // listen for messages from background and
-  // notify subscribers
-  window.chrome.runtime.onMessage.addListener((req) => {
-    if (req.whitelistChanged) this.send('whitelistChanged')
-    if (req.updateTabData) this.send('updateTabData')
-    if (req.didResetTrackersData) this.send('didResetTrackersData', req.didResetTrackersData)
-    if (req.closePopup) window.close()
-  })
+    // listen for messages from background 
+    safari.self.addEventListener("message", (req) => {
+        if (req.whitelistChanged) {
+            // notify subscribers that the whitelist has changed
+            this.set('whitelistChanged', true)
+        }
+        else if (req.updateTrackerCount) {
+            this.set('updateTrackerCount', true)
+        }
+    });
 }
 
-BackgroundMessage.prototype = window.$.extend({},
-  Parent.prototype,
-  {
-    modelName: 'backgroundMessage'
-  }
-)
+BackgroundMessage.prototype = $.extend({}, 
+    Parent.prototype,
+    {
+        modelName: 'backgroundMessage',
+    }
+);
 
-module.exports = BackgroundMessage
+module.exports = BackgroundMessage;

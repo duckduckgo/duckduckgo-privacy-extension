@@ -193,6 +193,10 @@ body {
                 .is-browser--moz & {
                     background-image: url($icon__https-status__locked--moz);
                 }
+
+                .is-browser--safari & {
+                    background-image: url($icon__https-status__locked--safari);
+                }
             }
 
             &.is-none,
@@ -204,6 +208,10 @@ body {
 
                 .is-browser--moz & {
                     background-image: url($icon__https-status__unlocked--moz);
+                }
+
+                .is-browser--safari & {
+                    background-image: url($icon__https-status__unlocked--safari);
                 }
 
             }
@@ -236,6 +244,10 @@ body {
                         .is-browser--moz & {
                             background-image: url($icon__trackers__blocked--moz);
                         }
+
+                        .is-browser--safari & {
+                            background-image: url($icon__trackers__blocked--safari);
+                        }
                     }
 
                     &.is-blocking--false {
@@ -246,6 +258,10 @@ body {
 
                         .is-browser--moz & {
                             background-image: url($icon__trackers__unblocked--moz);
+                        }
+
+                        .is-browser--safari & {
+                            background-image: url($icon__trackers__unblocked--safari);
                         }
 
                     }

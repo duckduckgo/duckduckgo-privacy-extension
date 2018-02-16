@@ -284,6 +284,9 @@ a {
             background-image: url($icon__close--moz);
         }
 
+        .is-browser--safari & {
+            background-image: url($icon__close--safari);
+        }
     }
 
     &.icon__arrow {
@@ -291,6 +294,10 @@ a {
         height: 16px;
 
         @include cross_platform_bg_image("arrow@2x.png");
+
+        .is-browser--safari & {
+            background-image: url($icon__arrow--safari);
+        }
 
         &.icon__arrow--left {
             transform: rotate(180deg);
@@ -312,6 +319,10 @@ a {
 
         .is-browser--moz & {
             background-image: url($icon__settings--moz);
+        }
+
+        .is-browser--safari & {
+            background-image: url($icon__settings--safari);
         }
 
     }

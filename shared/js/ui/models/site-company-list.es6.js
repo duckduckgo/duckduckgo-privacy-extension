@@ -15,22 +15,20 @@ SiteCompanyList.prototype = window.$.extend({},
 
     modelName: 'siteCompanyList',
 
-    fetchAsyncData: function () {
-      return new Promise((resolve, reject) => {
-        this.fetch({getCurrentTab: true}).then((tab) => {
-          if (tab) {
-            this.fetch({getTab: tab.id}).then((bkgTab) => {
-              this.tab = bkgTab
-              this._updateCompaniesList()
-              resolve()
-            })
-          } else {
-            console.debug('SiteDetails model: no tab')
-            resolve()
-          }
-        })
-      })
-    },
+      fetchAsyncData: function () {
+          return new Promise ((resolve, reject) => {
+              this.fetch({getCurrentTab: true}).then((tab) => {
+                  if (tab) {
+                      this.tab = tab;
+                      this._updateCompaniesList()
+                      resolve()
+                  } else {
+                      console.debug('SiteDetails model: no tab');
+                      resolve()
+                  }
+              })
+          })
+      },
 
     _updateCompaniesList: function () {
       // list of all trackers on page (whether we blocked them or not)
