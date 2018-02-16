@@ -1,8 +1,8 @@
 {
-    "name": "DuckDuckGo Privacy Essentials",
+    "name": "DuckDuckGo Privacy Essentials (Textile)",
     "applications": {
         "gecko": {
-              "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
+              "id": "goodmorningprivacy@textile.io",
               "strict_min_version": "57.0"
         }
     },

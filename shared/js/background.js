@@ -215,11 +215,12 @@ chrome.webRequest.onBeforeRequest.addListener(
 
                     // return surrogate redirect if match, otherwise
                     // tell Chrome to cancel this webrequest
-                    if (tracker.redirectUrl) {
-                        return {redirectUrl: tracker.redirectUrl}
-                    } else {
-                        return {cancel: true};
-                    }
+                    // TEXTILE HACK: Don't actually block
+                    // if (tracker.redirectUrl) {
+                    //     return {redirectUrl: tracker.redirectUrl}
+                    // } else {
+                    //     return {cancel: true};
+                    // }
                 }
             }
         }
