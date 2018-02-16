@@ -1,5 +1,5 @@
 {
-    "name": "DuckDuckGo Privacy Essentials (Textile)",
+    "name": "Privacy Essentials (Textile)",
     "applications": {
         "gecko": {
               "id": "goodmorningprivacy@textile.io",
@@ -7,7 +7,7 @@
         }
     },
     "version": "2018.2.6",
-    "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
+    "description": "Privacy, simplified. Learn about website tracking as you search and browse: tracker tracking, and more.",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -47,16 +47,6 @@
                 "js/abp.js",
                 "js/atb.js"
             ]
-    },
-    "chrome_settings_overrides": {
-      "search_provider": {
-        "favicon_url": "https://duckduckgo.com/favicon.ico",
-        "is_default": true,
-        "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
-        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
-      }
     },
     "content_scripts": [
       {
