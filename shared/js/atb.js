@@ -150,7 +150,7 @@ var ATB = (() => {
         },
 
         getSurveyURL: () => {
-            let url = 'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
+            let url = 'https://goodmorningprivacy.com/thanks'
             let atb = settings.getSetting('atb')
             let set_atb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
