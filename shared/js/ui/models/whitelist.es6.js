@@ -21,6 +21,18 @@ Whitelist.prototype = window.$.extend({},
         value: false
       }
       })
+    },
+
+    addDomain: function (domain) {
+      console.log(`whitelist: add ${domain}`)
+
+      this.fetch({'whitelisted':
+      {
+        list: 'whitelisted',
+        domain: domain,
+        value: true
+      }
+      })
     }
   }
 )

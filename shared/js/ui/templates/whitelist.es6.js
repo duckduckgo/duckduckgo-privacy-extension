@@ -5,6 +5,7 @@ module.exports = function () {
     <h2 class="menu-title">Whitelisted Sites</h2>
     <ul class="default-list">
       ${listItems(this.model.list)}
+      ${addToWhitelist()}
     </ul>
   </section>`
 
@@ -16,6 +17,13 @@ module.exports = function () {
         <a class="link-secondary" href="https://${dom}">${dom}</a>
         <button class="remove pull-right js-whitelist-remove" data-item="${i++}">×</button>
       </li>`)}`
+    }
+
+    function addToWhitelist () {
+      return bel`<li>
+        <input type="text" placeholder="Enter URL">
+        <div class="add pull-right js-whitelist-add">Add to Whitelist</div>
+      </li>`
     }
 
     return bel`<li>No whitelisted sites.</li>`

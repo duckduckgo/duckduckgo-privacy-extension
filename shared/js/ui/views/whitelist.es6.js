@@ -21,12 +21,19 @@ Whitelist.prototype = window.$.extend({},
       this.model.removeDomain(itemIndex)
       this.setWhitelistFromSettings()
     },
+    
+    _addItem: function (e) {
+      var domain = window.$(e.target).val()
+      this.model.addDomain(domain)
+      this.setWhitelistFromSettings()
+    },
 
     setup: function () {
       this._cacheElems('.js-whitelist', ['remove'])
 
       this.bindEvents([
         [this.$remove, 'click', this._removeItem],
+        [this.$add, 'click', this._addItem],
         [this.store.subscribe, 'action:backgroundMessage', this.update]
       ])
     },
