@@ -91,35 +91,46 @@ function _writeToFile (jsonText, opts) {
     log(chalk.yellow('JSON Data written to file: ') + chalk.yellow.bold(jsonFile));
 
     // Cleanup data for HTML table
-    Object.keys(jsonData).forEach(function (key) {
-        delete jsonData[key].scoreObj.specialPage;
-        delete jsonData[key].scoreObj.domain;
-        Object.keys(jsonData[key].scoreObj).forEach(function (k) {
-            jsonData[key][k] = jsonData[key].scoreObj[k];
-        });
-        delete jsonData[key].scoreObj;
+    // Object.keys(jsonData).forEach(function (key) {
+        // delete jsonData[key].scoreObj.specialPage;
+        // delete jsonData[key].scoreObj.domain;
+        // Object.keys(jsonData[key].scoreObj).forEach(function (k) {
+            // jsonData[key][k] = jsonData[key].scoreObj[k];
+        // });
+        // delete jsonData[key].scoreObj;
 
-        if (Object.keys(jsonData[key].tosdr).length && jsonData[key].tosdr.reasons){
-            const reasons = jsonData[key].tosdr.reasons;
+        // if (Object.keys(jsonData[key].tosdr).length && jsonData[key].tosdr.reasons){
+            // const reasons = jsonData[key].tosdr.reasons;
 
-            if (reasons.bad) {
-                reasons.bad = reasons.bad.join(', ');
-            }
-            if (reasons.good) {
-                reasons.good = reasons.good.join(', ');
-            }
-        }
-    });
+            // if (reasons.bad) {
+                // reasons.bad = reasons.bad.join(', ');
+            // }
+            // if (reasons.good) {
+                // reasons.good = reasons.good.join(', ');
+            // }
+        // }
+    // });
 
     // HTML File Output
-    const htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
-    const htmlDoc = _buildHtmlDoc(htmlTable);
-    const htmlFile = `${path}/${filename}.html`;
-    fs.writeFileSync(htmlFile, htmlDoc);
-    log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(htmlFile));
+    // const htmlTable = tabular.html(jsonData, {classes: {table: "dataTable display"} });
+    // const htmlDoc = _buildHtmlDoc(htmlTable);
+    // const htmlFile = `${path}/${filename}.html`;
+    // fs.writeFileSync(htmlFile, htmlDoc);
+    // log(chalk.yellow('HTML Table written to file: ') + chalk.yellow.bold(htmlFile));
 
     // Open file
-    opn(fileUrl(htmlFile), { wait: false });
+    // opn(fileUrl(htmlFile), { wait: false });
+}
+
+function _getDetailsData (jsonText) {
+    let siteData = JSON.parse(jsonText);
+
+    let detailsData = siteData.map((site) => ({
+        url: site.url,
+        details: site.scoreObj.gradedetails
+    }));
+
+    return JSON.stringify(detailsData);
 }
 
 
@@ -131,8 +142,9 @@ exports.testTopSites = async function(num, opts) {
         log(chalk.green.bold(`Running ${num} Tests on Alex Top 500 Sites`));
 
         const jsonText = await _testUrl(url);
+        const detailsText = _getDetailsData(jsonText);
         log(chalk.underline('JSON Data:'));
-        log(jsonText);
+        log(detailsText);
 
         // TODO: Audit Data
         // check for:
@@ -140,7 +152,7 @@ exports.testTopSites = async function(num, opts) {
         //  - after < before
         //  Report issues
 
-        _writeToFile(jsonText, opts);
+        _writeToFile(detailsText, opts);
 
         await _teardown();
         resolve();
@@ -154,10 +166,12 @@ exports.testUrl = function(path, opts) {
         log(chalk.green.bold(`Running Tests on URL: ${url}`));
 
         let jsonText = await _testUrl(url);
+        const detailsText = _getDetailsData(jsonText);
         log(chalk.underline('JSON Data:'));
-        log(jsonText);
+        log(detailsText);
+        let data = JSON.parse(jsonText);
 
-        _writeToFile(jsonText, opts);
+        _writeToFile(detailsText, opts);
 
         await _teardown();
         resolve();
@@ -175,16 +189,16 @@ exports.testUrls = async function(urlArray, opts) {
             const url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
             log(chalk.green.bold(`Running Test on URL: ${url}`));
             const jsonText = await _testUrl(url);
-            log( jsonText );
             const jsonData = JSON.parse(jsonText);
             jsonArray.push(jsonData[0]);
         }
 
         log(chalk.underline('JSON Data:'));
         const jsonText = JSON.stringify(jsonArray);
-        log(jsonText);
+        const detailsText = _getDetailsData(jsonText);
+        log(detailsText);
 
-        _writeToFile(jsonText, opts);
+        _writeToFile(detailsText, opts);
 
         await _teardown();
         resolve();
