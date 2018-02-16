@@ -24,15 +24,17 @@ Whitelist.prototype = window.$.extend({},
     },
 
     addDomain: function (domain) {
-      console.log(`whitelist: add ${domain}`)
+      if (domain) {
+        console.log(`whitelist: add ${domain}`)
 
-      this.fetch({'whitelisted':
-      {
-        list: 'whitelisted',
-        domain: domain,
-        value: true
+        this.fetch({'whitelisted':
+        {
+          list: 'whitelisted',
+          domain: domain,
+          value: true
+        }
+        })
       }
-      })
     }
   }
 )
