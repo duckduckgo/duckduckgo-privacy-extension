@@ -60,4 +60,20 @@
             padding: 0;
         }
     }
+
+    .whitelist-add {
+        width: 264px;
+        height: 36px;
+        border-radius: 4px;
+        border: solid 1px $color--dark-silver;
+        padding: 0 10px;
+
+        @include placeholder {
+            width: 63px;
+            height: 17px;
+            font-size: 14px;
+            font-weight: 600;
+            color: $grey-light;
+        }  
+    }
 }

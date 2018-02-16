@@ -223,3 +223,13 @@
         }
     }
 }
+
+@mixin placeholder {
+    .is-browser--chrome & {
+        &::-webkit-input-placeholder {@content}
+    }
+    .is-browser--moz & {
+        &:-moz-placeholder {@content}
+        &::-moz-placeholder {@content}
+    }
+}
