@@ -28,7 +28,7 @@ async function _init () {
 
     WD = await new Builder()
     .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().addArguments("load-extension=" + process.cwd()))
+    .setChromeOptions(new chrome.Options().addArguments("load-extension=" + process.cwd() + "/build/chrome/dev"))
     .build();
 
     log(chalk.green.bold(`Requesting: ${EXTENSIONS_URL}`));
