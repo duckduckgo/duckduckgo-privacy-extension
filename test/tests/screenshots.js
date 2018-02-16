@@ -62,19 +62,19 @@ function processSite(url) {
     newScreenshots = {url};
 
     // turn tracker blocking and https on
-    resetSettings(true);
+    // resetSettings(true);
 
     // run test with tracker blocking and https
     clearCache().then(runTest(url).then(() => {
 
         // turn tracker blocking off
-        resetSettings(false);
+        // resetSettings(false);
 
-        clearCache().then(runTest(url).then(() => {
+        // clearCache().then(runTest(url).then(() => {
             screenshots.push(newScreenshots);
             buildSummary();
-            return;
-        }));
+            // return;
+        // }));
     }));
 }
 
@@ -98,18 +98,18 @@ function processTopSites() {
     newScreenshots = {url};
 
     // turn tracker blocking and https on
-    resetSettings(true);
+    // resetSettings(true);
 
     // run test with tracker blocking and https
     runTest(url).then(() => {
 
         // turn tracker blocking off
-        resetSettings(false);
+        // resetSettings(false);
 
-        runTest(url).then(() => {
+        // runTest(url).then(() => {
             screenshots.push(newScreenshots)
             processTopSites();
-        });
+        // });
     });
 }
 
@@ -131,7 +131,7 @@ function runTest(url) {
                     newScreenshots.scoreObj = tabObj.site.score
                     newScreenshots.score = tabObj.site.score.get()
                     newScreenshots.enabledOnComplete = tabObj.stopwatch.completeMs/1000 + ' seconds'
-                } else {
+                // } else {
                     newScreenshots.disabledOnComplete = tabObj.stopwatch.completeMs/1000 + ' seconds'
                 }
 
