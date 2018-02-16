@@ -23,8 +23,8 @@ module.exports = function () {
 
   function addToWhitelist () {
     return bel`<li>
-      <input class="whitelist-add float-left" type="text" placeholder="Enter URL">
-      <div class="add float-right js-whitelist-add">Add to Whitelist</div>
+      <input class="new-whitelist-domain float-left" type="text" placeholder="Enter URL">
+      <div class="whitelist-add is-disabled float-right js-whitelist-add">Add to Whitelist</div>
     </li>`
   }
 

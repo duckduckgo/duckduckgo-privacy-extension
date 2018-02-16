@@ -61,19 +61,39 @@
         }
     }
 
-    .whitelist-add {
-        width: 264px;
+    .new-whitelist-domain {
+        width: 250px;
         height: 36px;
         border-radius: 4px;
         border: solid 1px $color--dark-silver;
         padding: 0 10px;
+        color: $slate;
+        font-size: 14px;
+        font-weight: 600;
 
         @include placeholder {
             width: 63px;
             height: 17px;
-            font-size: 14px;
-            font-weight: 600;
             color: $grey-light;
         }  
+    }
+
+    .whitelist-add {
+        width: 120px;
+        height: 30px;
+        border-radius: 4px;
+        background-color: $blue;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+        text-align: center;
+        color: $white;
+        padding-top: 8px;
+        margin-left: 7px;
+    }
+    
+    .whitelist-add.is-disabled {
+        background-color: $silver;
+        color: $grey-light;
     }
 }
