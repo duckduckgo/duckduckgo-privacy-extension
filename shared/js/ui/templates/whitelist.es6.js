@@ -24,7 +24,7 @@ module.exports = function () {
 
   function addToWhitelist () {
     return bel`<li>
-      <input class="new-whitelist-domain float-left" type="text" placeholder="Enter URL">
+      <input class="new-whitelist-domain float-left js-whitelist-domain" type="text" placeholder="Enter URL">
       <div class="whitelist-add is-disabled float-right js-whitelist-add">Add to Whitelist</div>
     </li>`
   }

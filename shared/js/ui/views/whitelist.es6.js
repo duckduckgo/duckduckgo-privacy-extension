@@ -17,21 +17,24 @@ Whitelist.prototype = window.$.extend({},
   {
 
     _removeItem: function (e) {
-      var itemIndex = window.$(e.target).data('item')
+      const itemIndex = window.$(e.target).data('item')
       this.model.removeDomain(itemIndex)
       this.setWhitelistFromSettings()
     },
     
     _addItem: function (e) {
-      var domain = window.$(e.target).val()
-      this.model.addDomain(domain)
-      this.setWhitelistFromSettings()
+      const domain = this.$domain.val()
+      if (domain) {
+        this.model.addDomain(domain)
+        this.setWhitelistFromSettings()
+      }
     },
 
     setup: function () {
       this._cacheElems('.js-whitelist', [
               'remove',
-              'add'
+              'add',
+              'domain'
       ])
 
       this.bindEvents([
