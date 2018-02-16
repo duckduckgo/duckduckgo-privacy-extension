@@ -1,13 +1,13 @@
 {
-    "name": "DuckDuckGo Privacy Essentials",
+    "name": "Good Morning, Privacy!",
     "applications": {
         "gecko": {
-              "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
+              "id": "goodmorningprivacy@textile.io",
               "strict_min_version": "57.0"
         }
     },
     "version": "2018.2.6",
-    "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
+    "description": "Privacy, simplified. Learn about website tracking as you search and browse: tracker tracking, and more.",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -21,60 +21,50 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
     "background": {
-            "scripts": [
-                "data/defaultSettings.js",
-                "data/constants.js",
-                "data/tosdr.js",
-                "js/require.js",
-                "js/load.js",
-                "js/utils.js",
-                "js/topBlocked.js",
-                "js/settings.js",
-                "js/site.js",
-                "js/tab.js",
-                "js/tabManager.js",
-                "js/companies.js",
-                "js/company.js",
-                "js/atb.js",
-                "js/trackerLists.js",
-                "js/trackers.js",
-                "js/tldjs.js",
-                "js/https.js",
-                "js/surrogates.js",
-                "js/background.js",
-                "js/abp.js",
-                "js/atb.js"
-            ]
-    },
-    "chrome_settings_overrides": {
-      "search_provider": {
-        "favicon_url": "https://duckduckgo.com/favicon.ico",
-        "is_default": true,
-        "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
-        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
-      }
+        "scripts": [
+            "data/defaultSettings.js",
+            "data/constants.js",
+            "data/tosdr.js",
+            "js/require.js",
+            "js/load.js",
+            "js/utils.js",
+            "js/topBlocked.js",
+            "js/settings.js",
+            "js/site.js",
+            "js/tab.js",
+            "js/tabManager.js",
+            "js/companies.js",
+            "js/company.js",
+            "js/atb.js",
+            "js/trackerLists.js",
+            "js/trackers.js",
+            "js/tldjs.js",
+            "js/https.js",
+            "js/surrogates.js",
+            "js/background.js",
+            "js/abp.js",
+            "js/atb.js",
+            "js/email.js"
+        ]
     },
     "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "all_frames": true,
-        "css": ["public/css/noatb.css"],
-        "run_at": "document_start"
-      },
-      {
-          "js": [
-              "js/socialwidgets.js"
-          ],
-          "matches": [
-              "<all_urls>"
-          ],
-          "all_frames": true,
-          "run_at": "document_idle"
-      }
+        {
+            "matches": ["<all_urls>"],
+            "all_frames": true,
+            "css": ["public/css/noatb.css"],
+            "run_at": "document_start"
+        },
+        {
+            "js": [
+                "js/socialwidgets.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ],
+            "all_frames": true,
+            "run_at": "document_idle"
+        }
     ],
     "permissions": [
         "contextMenus",
@@ -87,7 +77,8 @@
         "cookies",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "identity"
     ],
     "web_accessible_resources": [
         "img/*"

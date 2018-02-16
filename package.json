@@ -38,7 +38,8 @@
     "localStorage": "^1.0.3",
     "request": "^2.83.0",
     "selenium-webdriver": "^3.0.1",
-    "standard": "^10.0.3"
+    "standard": "^10.0.3",
+    "web-ext": "^2.4.0"
   },
   "dependencies": {
     "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git",

@@ -33,72 +33,8 @@ body {
         }
     }
 
-    .hamburger-button {
-    }
-
-    .hamburger-menu {
-        z-index: 20;
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-
-        &__bg {
-            z-index: -1;
-            background-color: $hamburger-menu__bg-color;
-            opacity: 0.9;
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        }
-
-        &__content {
-            z-index: 1;
-            margin-top: 20px;
-            position: relative;
-
-            .hamburger-menu__content__more-options {
-                padding: 15px 20px;
-            }
-
-            .hamburger-menu__close-container {
-                top: 15px;
-
-                .icon__close {
-                    top: 15px;
-                }
-            }
-
-            .hamburger-menu__links {
-                padding-top: 0;
-
-                .menu-title {
-                    padding-top: 0;
-                    padding-left: 20px;
-                    color: $slate;
-                    font-weight: bold;
-
-                    span {
-                        font-size: 14px;
-                        color: $color--grey;
-                        display: block;
-                        font-weight: normal;
-                        padding-left: 20px;
-                    }
-
-                    &:hover {
-                        text-decoration: none;
-                    }
-                }
-            }
-        }
-    }
-
     .site-info--placeholder {
-        height: 340px;
+        height: 250px;
     }
 
     .site-info {
@@ -114,41 +50,6 @@ body {
 
         .text-line-after-icon {
             margin-left: 12px;
-        }
-
-        .site-info__li--toggle {
-            background-color: $color--medium-slate;
-            color: $color--white;
-
-            &.is-active {
-                background-color: $color--green;
-            }
-
-            .is-disabled & {
-                @include is_disabled();
-            }
-        }
-
-        .site-info__toggle-container {
-            position: absolute;
-            right: 20px;
-            top: 18px;
-
-            .toggle-button {
-                position: absolute;
-                right: 0;
-            }
-
-            .toggle-button--is-active-true {
-                .toggle-button__bg {
-                    background-color: $color--dark-green;
-                }
-            }
-            .toggle-button--is-active-false {
-                .toggle-button__bg {
-                    background-color: #4B4D50;
-                }
-            }
         }
 
         .site-info__rating-li {
@@ -314,7 +215,7 @@ body {
 
     .top-blocked {
         position: absolute;
-        top: 400px;
+        top: 300px;
         left: 0;
         right: 0;
         margin-top: 0;
@@ -580,7 +481,6 @@ body {
     }
 }
 
-@import "views/search-form";
 @import "views/hero";
 @import "views/hero-rating-container";
 @import "views/status-list";

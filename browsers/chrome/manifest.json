@@ -16,62 +16,50 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
-    "options_page": "html/options.html",
     "background": {
-            "scripts": [
-                "data/defaultSettings.js",
-                "data/constants.js",
-                "data/tosdr.js",
-                "js/require.js",
-                "js/load.js",
-                "js/utils.js",
-                "js/topBlocked.js",
-                "js/settings.js",
-                "js/site.js",
-                "js/tab.js",
-                "js/tabManager.js",
-                "js/companies.js",
-                "js/company.js",
-                "js/atb.js",
-                "js/trackerLists.js",
-                "js/trackers.js",
-                "js/tldjs.js",
-                "js/https.js",
-                "js/surrogates.js",
-                "js/background.js",
-                "js/abp.js",
-                "js/atb.js"
-            ]
-    },
-    "chrome_settings_overrides": {
-      "search_provider": {
-        "encoding": "UTF-8",
-        "favicon_url": "https://duckduckgo.com/favicon.ico",
-        "is_default": true,
-        "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
-        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
-      }
+        "scripts": [
+            "data/defaultSettings.js",
+            "data/constants.js",
+            "data/tosdr.js",
+            "js/require.js",
+            "js/load.js",
+            "js/utils.js",
+            "js/topBlocked.js",
+            "js/settings.js",
+            "js/site.js",
+            "js/tab.js",
+            "js/tabManager.js",
+            "js/companies.js",
+            "js/company.js",
+            "js/atb.js",
+            "js/trackerLists.js",
+            "js/trackers.js",
+            "js/tldjs.js",
+            "js/https.js",
+            "js/surrogates.js",
+            "js/background.js",
+            "js/abp.js",
+            "js/atb.js",
+            "js/email.js"
+        ]
     },
     "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "all_frames": true,
-        "css": ["public/css/noatb.css"],
-        "run_at": "document_start"
-      },
-      {
-          "js": [
-              "js/socialwidgets.js"
-          ],
-          "matches": [
-              "<all_urls>"
-          ],
-          "all_frames": true,
-          "run_at": "document_idle"
-      }
+        {
+            "matches": ["<all_urls>"],
+            "all_frames": true,
+            "css": ["public/css/noatb.css"],
+            "run_at": "document_start"
+        },
+        {
+            "js": [
+                "js/socialwidgets.js"
+            ],
+            "matches": [
+                "<all_urls>"
+            ],
+            "all_frames": true,
+            "run_at": "document_idle"
+        }
     ],
     "permissions": [
         "contextMenus",
@@ -84,8 +72,15 @@
         "cookies",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "identity"
     ],
+    "oauth2": {
+        "client_id": "932480673761-aaticsb0qtdb1t4pl4oq6dak4dp7b48m.apps.googleusercontent.com",
+        "scopes": [
+            "https://www.googleapis.com/auth/userinfo.email"
+        ]
+    },
     "web_accessible_resources": [
         "img/*"
     ]
