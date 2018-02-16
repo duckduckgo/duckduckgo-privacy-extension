@@ -23,9 +23,9 @@ Whitelist.prototype = window.$.extend({},
     },
     
     _addItem: function (e) {
-      const domain = this.$domain.val()
-      if (domain) {
-        this.model.addDomain(domain)
+      const url = this.$url.val()
+      if (url) {
+        this.model.addDomain(url)
         this.setWhitelistFromSettings()
       }
     },
@@ -34,7 +34,7 @@ Whitelist.prototype = window.$.extend({},
       this._cacheElems('.js-whitelist', [
               'remove',
               'add',
-              'domain'
+              'url'
       ])
 
       this.bindEvents([
