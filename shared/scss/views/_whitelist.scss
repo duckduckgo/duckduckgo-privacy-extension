@@ -9,7 +9,6 @@
 
     .menu-paragraph {
         height: 17px;
-        font-size: 14px;
         text-align: left;
         color: $grey-dark;
         font-weight: normal;
@@ -45,8 +44,6 @@
         border: solid 1px $color--dark-silver;
         padding: 0 10px;
         color: $slate;
-        font-size: 14px;
-        font-weight: 600;
 
         @include placeholder {
             width: 63px;
@@ -60,8 +57,6 @@
         height: 30px;
         border-radius: 4px;
         background-color: $blue;
-        font-size: 14px;
-        font-weight: 600;
         line-height: 1.5;
         text-align: center;
         color: $white;
@@ -79,8 +74,6 @@
     .whitelist-show-add {
         width: 128px;
         height: 17px;
-        font-size: 14px;
-        font-weight: 600;
         color: $blue;
     }
 }
