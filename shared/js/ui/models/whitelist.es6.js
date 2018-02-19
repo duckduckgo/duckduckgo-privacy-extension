@@ -25,7 +25,7 @@ Whitelist.prototype = window.$.extend({},
     },
 
     addDomain: function (url) {
-      const parsedUrl = tldjs.parse(url)
+      const parsedUrl = tldjs.tldExists(url) ? tldjs.parse(url) : ''
       if (parsedUrl && parsedUrl.hostname) {
         const hostname = parsedUrl.hostname
         console.log(`whitelist: add ${hostname}`)
