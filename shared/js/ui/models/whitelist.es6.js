@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.Model
-const utils = require('../../utils')
+const tldjs = require('tldjs')
 
 function Whitelist (attrs) {
   attrs.list = {}
@@ -25,9 +25,10 @@ Whitelist.prototype = window.$.extend({},
     },
 
     addDomain: function (url) {
-      let hostname = url ? utils.extractHostFromURL(url) : ''
-      if (hostname) {
-        console.log(`whitelist: add ${domain}`)
+      const parsedUrl = tldjs.parse(url)
+      if (parsedUrl && parsedUrl.hostname) {
+        const hostname = parsedUrl.hostname
+        console.log(`whitelist: add ${hostname}`)
 
         this.fetch({'whitelisted':
         {
