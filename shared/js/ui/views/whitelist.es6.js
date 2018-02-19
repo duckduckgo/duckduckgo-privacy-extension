@@ -45,16 +45,25 @@ Whitelist.prototype = window.$.extend({},
       }
     },
 
+    _showAddToWhitelistInput: function(e) {
+      const isHiddenClass = 'is-hidden'
+      this.$url.removeClass(isHiddenClass)
+      this.$add.removeClass(isHiddenClass)
+      this.$showadd.addClass(isHiddenClass)
+    },
+
     setup: function () {
       this._cacheElems('.js-whitelist', [
               'remove',
               'add',
+              'show-add',
               'url'
       ])
 
       this.bindEvents([
         [this.$remove, 'click', this._removeItem],
         [this.$add, 'click', this._addItem],
+        [this.$showadd, 'click', this._showAddToWhitelistInput],
         [this.$url, 'keyup', this._manageInputChange],
         [this.store.subscribe, 'action:backgroundMessage', this.update]
       ])

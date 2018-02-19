@@ -1,5 +1,8 @@
 .options-content__whitelist {
 
+    font-size: 14px;
+    font-weight: 600;
+
     .menu-title {
         padding-bottom: 4px;
     }
@@ -9,6 +12,7 @@
         font-size: 14px;
         text-align: left;
         color: $grey-dark;
+        font-weight: normal;
     }
 
     li {
@@ -34,7 +38,7 @@
         }
     }
 
-    .new-whitelist-url {
+    .whitelist-url {
         width: 250px;
         height: 36px;
         border-radius: 4px;
@@ -69,5 +73,14 @@
     .whitelist-add.is-disabled {
         background-color: $silver;
         color: $grey-light;
+        cursor: default;
+    }
+
+    .whitelist-show-add {
+        width: 128px;
+        height: 17px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $blue;
     }
 }
