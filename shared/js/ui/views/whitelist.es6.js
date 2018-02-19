@@ -30,6 +30,12 @@ Whitelist.prototype = window.$.extend({},
       }
     },
 
+    _addItemOnReturn: function(e) {
+      if (e.key === 'Enter') {
+        this._addItem() 
+      }
+    },
+
     setup: function () {
       this._cacheElems('.js-whitelist', [
               'remove',
@@ -40,6 +46,7 @@ Whitelist.prototype = window.$.extend({},
       this.bindEvents([
         [this.$remove, 'click', this._removeItem],
         [this.$add, 'click', this._addItem],
+        [this.$url, 'keyup', this._addItemOnReturn],
         [this.store.subscribe, 'action:backgroundMessage', this.update]
       ])
     },
