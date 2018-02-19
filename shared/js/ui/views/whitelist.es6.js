@@ -30,8 +30,17 @@ Whitelist.prototype = window.$.extend({},
       }
     },
 
-    _addItemOnReturn: function(e) {
-      if (e.key === 'Enter') {
+    _manageInputChange: function(e) {
+      const isDisabledClass = 'is-disabled'
+      const isButtonDisabled = this.$add.hasClass(isDisabledClass)
+      if (this.$url.val() && isButtonDisabled) {
+        this.$add.removeClass(isDisabledClass)
+      } else if (!this.$url.val()) {
+        this.$add.addClass(isDisabledClass)
+      }
+
+      if (!isButtonDisabled && e.key === 'Enter') {
+        // also add to whitelist on enter
         this._addItem() 
       }
     },
@@ -46,7 +55,7 @@ Whitelist.prototype = window.$.extend({},
       this.bindEvents([
         [this.$remove, 'click', this._removeItem],
         [this.$add, 'click', this._addItem],
-        [this.$url, 'keyup', this._addItemOnReturn],
+        [this.$url, 'keyup', this._manageInputChange],
         [this.store.subscribe, 'action:backgroundMessage', this.update]
       ])
     },
