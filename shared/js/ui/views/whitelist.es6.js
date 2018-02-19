@@ -50,6 +50,7 @@ Whitelist.prototype = window.$.extend({},
       this.$url.removeClass(isHiddenClass)
       this.$add.removeClass(isHiddenClass)
       this.$showadd.addClass(isHiddenClass)
+      e.preventDefault()
     },
 
     setup: function () {
