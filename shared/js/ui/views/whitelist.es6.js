@@ -48,6 +48,7 @@ Whitelist.prototype = window.$.extend({},
     _showAddToWhitelistInput: function(e) {
       const isHiddenClass = 'is-hidden'
       this.$url.removeClass(isHiddenClass)
+      this.$url.focus()
       this.$add.removeClass(isHiddenClass)
       this.$showadd.addClass(isHiddenClass)
       e.preventDefault()
