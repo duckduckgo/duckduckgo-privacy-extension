@@ -21,7 +21,7 @@ Whitelist.prototype = window.$.extend({},
       this.model.removeDomain(itemIndex)
       this.setWhitelistFromSettings()
     },
-    
+
     _addItem: function (e) {
       const url = this.$url.val()
       if (url) {
@@ -30,7 +30,7 @@ Whitelist.prototype = window.$.extend({},
       }
     },
 
-    _manageInputChange: function(e) {
+    _manageInputChange: function (e) {
       const isDisabledClass = 'is-disabled'
       const isButtonDisabled = this.$add.hasClass(isDisabledClass)
       if (this.$url.val() && isButtonDisabled) {
@@ -41,11 +41,11 @@ Whitelist.prototype = window.$.extend({},
 
       if (!isButtonDisabled && e.key === 'Enter') {
         // also add to whitelist on enter
-        this._addItem() 
+        this._addItem()
       }
     },
 
-    _showAddToWhitelistInput: function(e) {
+    _showAddToWhitelistInput: function (e) {
       const isHiddenClass = 'is-hidden'
       this.$url.removeClass(isHiddenClass)
       this.$url.focus()
@@ -56,10 +56,10 @@ Whitelist.prototype = window.$.extend({},
 
     setup: function () {
       this._cacheElems('.js-whitelist', [
-              'remove',
-              'add',
-              'show-add',
-              'url'
+        'remove',
+        'add',
+        'show-add',
+        'url'
       ])
 
       this.bindEvents([

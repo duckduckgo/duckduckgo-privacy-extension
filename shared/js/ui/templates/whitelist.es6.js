@@ -31,5 +31,4 @@ module.exports = function () {
       <div class="is-hidden whitelist-add is-disabled float-right js-whitelist-add">Add to Whitelist</div>
     </li>`
   }
-
 }
