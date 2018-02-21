@@ -321,14 +321,7 @@ a {
         height: 24px;
         vertical-align: bottom;
 
-        .is-browser--chrome & {
-            background-image: url($icon__error--chrome);
-        }
-
-        .is-browser--moz & {
-            background-image: url($icon__error--moz);
-        }
-
+        @include cross_platform_bg_image("error.svg");
     }
 }
 
