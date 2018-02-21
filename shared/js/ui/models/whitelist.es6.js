@@ -25,24 +25,22 @@ Whitelist.prototype = window.$.extend({},
     },
 
     addDomain: function (url) {
-      const parsedUrl = tldjs.tldExists(url) ? tldjs.parse(url) : ''
-      let isValidUrl = false
-      if (parsedUrl && parsedUrl.hostname) {
-        const hostname = parsedUrl.hostname
-        console.log(`whitelist: add ${hostname}`)
-
-        isValidUrl = true
+      // we only whitelist domains, not full URLs
+      // and getDomain will return null if the URL is invalid
+      const domain = tldjs.getDomain(url)
+      if (domain) {
+        console.log(`whitelist: add ${domain}`)
 
         this.fetch({'whitelisted':
         {
           list: 'whitelisted',
-          domain: hostname,
+          domain: domain,
           value: true
         }
         })
       }
 
-      return isValidUrl
+      return domain
     }
   }
 )
