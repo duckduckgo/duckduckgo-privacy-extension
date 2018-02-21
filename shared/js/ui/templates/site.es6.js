@@ -3,6 +3,7 @@ const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
+const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
 
 module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
@@ -45,6 +46,11 @@ module.exports = function () {
         ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
       </div>
     </li>
+    <li class="site-info__li--manage-whitelist padded border--bottom">
+      <a href="#" class="link-secondary bold">
+        ${renderManageWhitelist(this.model)}
+      </a>
+    </li>
   </ul>
   </section>`
 
@@ -57,5 +63,16 @@ module.exports = function () {
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
+  }
+
+  function renderManageWhitelist (model) {
+    return bel`<div class="">
+      <a href="#" class="site-info__manage-whitelist link-secondary bold">
+        Manage Whitelist
+      </a>
+      <a href="renderBrokenSiteHref(model.isBrowser, model.tabUrl)" class="site-info__report-broken link-secondary bold">
+        Report Broken Site
+      </a>
+    </div>`
   }
 }
