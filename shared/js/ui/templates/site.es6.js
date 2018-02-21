@@ -47,9 +47,7 @@ module.exports = function () {
       </div>
     </li>
     <li class="site-info__li--manage-whitelist padded border--bottom">
-      <a href="#" class="link-secondary bold">
-        ${renderManageWhitelist(this.model)}
-      </a>
+      ${renderManageWhitelist(this.model)}
     </li>
   </ul>
   </section>`
@@ -66,11 +64,13 @@ module.exports = function () {
   }
 
   function renderManageWhitelist (model) {
+    console.log(model)
     return bel`<div class="">
       <a href="#" class="site-info__manage-whitelist link-secondary bold">
         Manage Whitelist
       </a>
-      <a href="renderBrokenSiteHref(model.isBrowser, model.tabUrl)" class="site-info__report-broken link-secondary bold">
+      <div class="separator"></div>
+      <a href="${renderBrokenSiteHref(model.isBrowser, model.domain)}" class="site-info__report-broken link-secondary bold">
         Report Broken Site
       </a>
     </div>`

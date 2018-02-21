@@ -438,3 +438,12 @@ a {
         z-index: 5;
     }
 }
+
+.separator {
+    width: 1px;
+    height: 18px;
+    background-color: $color--medium-silver;
+    display: inline-block;
+    vertical-align: bottom;
+    margin: 0 12px;
+}
