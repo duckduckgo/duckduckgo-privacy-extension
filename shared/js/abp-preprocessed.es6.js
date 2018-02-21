@@ -165,6 +165,7 @@ function getVersionParam () {
 
 window.abpLists = (() => {
     return {
+        getTemporaryWhitelist,
         getWhitelists,
         getEasylists,
         updateLists
