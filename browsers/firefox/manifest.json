@@ -33,6 +33,7 @@
                 "js/topBlocked.js",
                 "js/settings.js",
                 "js/score.js",
+                "js/tracker.js",
                 "js/site.js",
                 "js/tab.js",
                 "js/tabManager.js",
