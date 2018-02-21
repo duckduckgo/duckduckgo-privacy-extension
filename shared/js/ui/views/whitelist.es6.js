@@ -1,4 +1,7 @@
 const Parent = window.DDG.base.View
+const isHiddenClass = 'is-hidden'
+const isDisabledClass = 'is-disabled'
+const isInvalidInputClass = 'is-invalid-input'
 
 function Whitelist (ops) {
   this.model = ops.model
@@ -15,9 +18,6 @@ function Whitelist (ops) {
 Whitelist.prototype = window.$.extend({},
   Parent.prototype,
   {
-    _isHiddenClass: 'is-hidden',
-    _isDisabledClass: 'is-disabled',
-    _isInvalidInputClass: 'is-invalid-input',
 
     _removeItem: function (e) {
       const itemIndex = window.$(e.target).data('item')
@@ -43,26 +43,26 @@ Whitelist.prototype = window.$.extend({},
     },
 
     _showErrorMessage: function () {
-        this.$add.addClass(this._isHiddenClass)
-        this.$error.removeClass(this._isHiddenClass)
-        this.$url.addClass(this._isInvalidInputClass)
+        this.$add.addClass(isHiddenClass)
+        this.$error.removeClass(isHiddenClass)
+        this.$url.addClass(isInvalidInputClass)
     },
 
     _hideErrorMessage: function () {
-        this.$add.removeClass(this._isHiddenClass)
-        this.$error.addClass(this._isHiddenClass)
-        this.$url.removeClass(this._isInvalidInputClass)
+        this.$add.removeClass(isHiddenClass)
+        this.$error.addClass(isHiddenClass)
+        this.$url.removeClass(isInvalidInputClass)
     },
 
     _manageInputChange: function (e) {
-      const isButtonDisabled = this.$add.hasClass(this._isDisabledClass)
+      const isButtonDisabled = this.$add.hasClass(isDisabledClass)
 
       this._hideErrorMessage()
       
       if (this.$url.val() && isButtonDisabled) {
-        this.$add.removeClass(this._isDisabledClass)
+        this.$add.removeClass(isDisabledClass)
       } else if (!this.$url.val()) {
-        this.$add.addClass(this._isDisabledClass)
+        this.$add.addClass(isDisabledClass)
       }
 
       if (!isButtonDisabled && e.key === 'Enter') {
@@ -72,10 +72,10 @@ Whitelist.prototype = window.$.extend({},
     },
 
     _showAddToWhitelistInput: function (e) {
-      this.$url.removeClass(this._isHiddenClass)
+      this.$url.removeClass(isHiddenClass)
       this.$url.focus()
-      this.$add.removeClass(this._isHiddenClass)
-      this.$showadd.addClass(this._isHiddenClass)
+      this.$add.removeClass(isHiddenClass)
+      this.$showadd.addClass(isHiddenClass)
       e.preventDefault()
     },
 
