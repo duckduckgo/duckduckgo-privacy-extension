@@ -10,7 +10,6 @@ var load = require('load')
 var settings = require('settings')
 
 let tosdrRegexList = []
-let trackersWhitelistTemporary
 
 tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
 
@@ -203,6 +202,8 @@ class Site {
      * check to see if this is a broken site reported on github
     */
      checkBrokenSites (domain) {
+         let trackersWhitelistTemporary = window.abpLists.getTemporaryWhitelist()
+
          if (!trackersWhitelistTemporary) {
              return
          } else {

@@ -48,6 +48,12 @@ let lists = {
     }
 }
 
+let trackerWhitelistTemporary
+
+function getTemporaryWhitelist() {
+    return trackerWhitelistTemporary;
+}
+
 function getEasylists () {
     return lists.easylists
 }
@@ -114,7 +120,6 @@ function updateLists () {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 
-        // defined in site.js
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
 }
