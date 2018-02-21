@@ -25,16 +25,22 @@ Whitelist.prototype = window.$.extend({},
     },
 
     addDomain: function (url) {
-      // we only whitelist domains, not full URLs
-      // and getDomain will return null if the URL is invalid
+      // We only whitelist domains, not full URLs:
+      // - use getDomain, it will return null if the URL is invalid
+      // - prefix with getSubDomain, which returns an empty string if none is found
+      // But first, strip the 'www.' part, otherwise getSubDomain will include it
+      // and whitelisting won't work for that site
+      url = url ? url.replace('www.', '') : ''
+      const subDomain = tldjs.getSubdomain(url)
       const domain = tldjs.getDomain(url)
       if (domain) {
-        console.log(`whitelist: add ${domain}`)
+        const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
+        console.log(`whitelist: add ${domainToWhitelist}`)
 
         this.fetch({'whitelisted':
         {
           list: 'whitelisted',
-          domain: domain,
+          domain: domainToWhitelist,
           value: true
         }
         })
