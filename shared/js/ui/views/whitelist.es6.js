@@ -15,6 +15,9 @@ function Whitelist (ops) {
 Whitelist.prototype = window.$.extend({},
   Parent.prototype,
   {
+    _isHiddenClass: 'is-hidden',
+    _isDisabledClass: 'is-disabled',
+    _isInvalidInputClass: 'is-invalid-input',
 
     _removeItem: function (e) {
       const itemIndex = window.$(e.target).data('item')
@@ -37,27 +40,26 @@ Whitelist.prototype = window.$.extend({},
     },
 
     _showErrorMessage: function () {
-        this.$add.addClass('is-hidden')
-        this.$error.removeClass('is-hidden')
-        this.$url.addClass('is-invalid')
+        this.$add.addClass(this._isHiddenClass)
+        this.$error.removeClass(this._isHiddenClass)
+        this.$url.addClass(this._isInvalidInputClass)
     },
 
     _hideErrorMessage: function () {
-        this.$add.removeClass('is-hidden')
-        this.$error.addClass('is-hidden')
-        this.$url.removeClass('is-invalid')
+        this.$add.removeClass(this._isHiddenClass)
+        this.$error.addClass(this._isHiddenClass)
+        this.$url.removeClass(this._isInvalidInputClass)
     },
 
     _manageInputChange: function (e) {
-      const isDisabledClass = 'is-disabled'
-      const isButtonDisabled = this.$add.hasClass(isDisabledClass)
+      const isButtonDisabled = this.$add.hasClass(this._isDisabledClass)
 
       this._hideErrorMessage()
       
       if (this.$url.val() && isButtonDisabled) {
-        this.$add.removeClass(isDisabledClass)
+        this.$add.removeClass(this._isDisabledClass)
       } else if (!this.$url.val()) {
-        this.$add.addClass(isDisabledClass)
+        this.$add.addClass(this._isDisabledClass)
       }
 
       if (!isButtonDisabled && e.key === 'Enter') {
@@ -67,11 +69,10 @@ Whitelist.prototype = window.$.extend({},
     },
 
     _showAddToWhitelistInput: function (e) {
-      const isHiddenClass = 'is-hidden'
-      this.$url.removeClass(isHiddenClass)
+      this.$url.removeClass(this._isHiddenClass)
       this.$url.focus()
-      this.$add.removeClass(isHiddenClass)
-      this.$showadd.addClass(isHiddenClass)
+      this.$add.removeClass(this._isHiddenClass)
+      this.$showadd.addClass(this._isHiddenClass)
       e.preventDefault()
     },
 
