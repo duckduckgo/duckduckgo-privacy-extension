@@ -39,7 +39,7 @@
 }
 
 .whitelist-url {
-    width: 250px;
+    width: 245px;
     height: 36px;
     border-radius: 4px;
     border: solid 1px $color--dark-silver;
@@ -51,6 +51,10 @@
         height: 17px;
         color: $grey-light;
     }
+}
+
+.whitelist-url--is-invalid {
+    border: solid 1px $red;
 }
 
 .whitelist-add {
@@ -77,3 +81,4 @@
     height: 17px;
     color: $blue;
 }
+

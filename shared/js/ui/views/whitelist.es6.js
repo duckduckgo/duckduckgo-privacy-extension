@@ -24,15 +24,36 @@ Whitelist.prototype = window.$.extend({},
 
     _addItem: function (e) {
       const url = this.$url.val()
+      let isValidInput = false;
       if (url) {
-        this.model.addDomain(url)
-        this.setWhitelistFromSettings()
+        isValidInput = this.model.addDomain(url)
       }
+
+      if (isValidInput) {
+        this.setWhitelistFromSettings()
+      } else {
+        this._showErrorMessage()
+      }
+    },
+
+    _showErrorMessage: function () {
+        this.$add.addClass('is-hidden')
+        this.$error.removeClass('is-hidden')
+        this.$url.addClass('is-invalid')
+    },
+
+    _hideErrorMessage: function () {
+        this.$add.removeClass('is-hidden')
+        this.$error.addClass('is-hidden')
+        this.$url.removeClass('is-invalid')
     },
 
     _manageInputChange: function (e) {
       const isDisabledClass = 'is-disabled'
       const isButtonDisabled = this.$add.hasClass(isDisabledClass)
+
+      this._hideErrorMessage()
+      
       if (this.$url.val() && isButtonDisabled) {
         this.$add.removeClass(isDisabledClass)
       } else if (!this.$url.val()) {
@@ -58,6 +79,7 @@ Whitelist.prototype = window.$.extend({},
       this._cacheElems('.js-whitelist', [
         'remove',
         'add',
+        'error',
         'show-add',
         'url'
       ])

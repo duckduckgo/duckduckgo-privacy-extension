@@ -26,9 +26,12 @@ Whitelist.prototype = window.$.extend({},
 
     addDomain: function (url) {
       const parsedUrl = tldjs.tldExists(url) ? tldjs.parse(url) : ''
+      let isValidUrl = false
       if (parsedUrl && parsedUrl.hostname) {
         const hostname = parsedUrl.hostname
         console.log(`whitelist: add ${hostname}`)
+
+        isValidUrl = true
 
         this.fetch({'whitelisted':
         {
@@ -38,6 +41,8 @@ Whitelist.prototype = window.$.extend({},
         }
         })
       }
+
+      return isValidUrl
     }
   }
 )
