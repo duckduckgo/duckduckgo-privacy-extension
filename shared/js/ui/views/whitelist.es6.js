@@ -29,16 +29,18 @@ Whitelist.prototype = window.$.extend({},
     },
 
     _addItem: function (e) {
-      const url = this.$url.val()
-      let isValidInput = false;
-      if (url) {
-        isValidInput = this.model.addDomain(url)
-      }
+      if (!this.$add.hasClass(isDisabledClass)) {
+        const url = this.$url.val()
+        let isValidInput = false;
+        if (url) {
+          isValidInput = this.model.addDomain(url)
+        }
 
-      if (isValidInput) {
-        this.setWhitelistFromSettings()
-      } else {
-        this._showErrorMessage()
+        if (isValidInput) {
+          this.setWhitelistFromSettings()
+        } else {
+          this._showErrorMessage()
+        }
       }
     },
 
