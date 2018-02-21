@@ -48,20 +48,13 @@ let lists = {
     }
 }
 
-window.abpLists = (() => {
-    function getEasylists () {
-        return lists.easylists
-    }
+function getEasylists () {
+    return lists.easylists
+}
 
-    function getWhitelists () {
-        return lists.whitelists
-    }
-
-    return {
-        getWhitelists,
-        getEasylists
-    }
-})()
+function getWhitelists () {
+    return lists.whitelists
+}
 
 /*
  * Get the list data and use abp to parse.
@@ -127,11 +120,11 @@ function updateLists () {
 }
 
 // Make sure the list updater runs on start up
-settings.ready().then(() => updateLists())
+settings.ready().then(() => abpLists.updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateLists') {
-        settings.ready().then(() => updateLists())
+        settings.ready().then(() => abpLists.updateLists())
     }
 })
 
@@ -164,3 +157,11 @@ function getVersionParam () {
 
     return versionParam
 }
+
+window.abpLists = (() => {
+    return {
+        getWhitelists,
+        getEasylists,
+        updateLists
+    }
+})()
