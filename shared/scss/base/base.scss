@@ -320,6 +320,7 @@ a {
         width: 24px;
         height: 24px;
         vertical-align: bottom;
+        margin-left: -3px;
 
         @include cross_platform_bg_image("error.svg");
     }
