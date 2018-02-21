@@ -21,8 +21,11 @@ Whitelist.prototype = window.$.extend({},
 
     _removeItem: function (e) {
       const itemIndex = window.$(e.target).data('item')
+      const $listItem = window.$(e.target).parent()
       this.model.removeDomain(itemIndex)
-      this.setWhitelistFromSettings()
+
+      // No need to rerender the whole view
+      $listItem.remove()
     },
 
     _addItem: function (e) {
@@ -89,8 +92,7 @@ Whitelist.prototype = window.$.extend({},
         [this.$remove, 'click', this._removeItem],
         [this.$add, 'click', this._addItem],
         [this.$showadd, 'click', this._showAddToWhitelistInput],
-        [this.$url, 'keyup', this._manageInputChange],
-        [this.store.subscribe, 'action:backgroundMessage', this.update]
+        [this.$url, 'keyup', this._manageInputChange]
       ])
     },
 
