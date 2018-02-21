@@ -127,11 +127,11 @@ function updateLists () {
 }
 
 // Make sure the list updater runs on start up
-settings.ready().then(() => abpLists.updateLists())
+settings.ready().then(() => updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateLists') {
-        settings.ready().then(() => abpLists.updateLists())
+        settings.ready().then(() => updateLists())
     }
 })
 

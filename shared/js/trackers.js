@@ -5,7 +5,6 @@ var abp
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
-    abpLists = require('abpLists'),
     surrogates = require('surrogates'),
     trackerLists = require('trackerLists').getLists(),
     abpLists = window.abpLists;
