@@ -48,10 +48,10 @@ let lists = {
     }
 }
 
-let trackerWhitelistTemporary
+var trackersWhitelistTemporary
 
 function getTemporaryWhitelist() {
-    return trackerWhitelistTemporary;
+    return trackersWhitelistTemporary;
 }
 
 function getEasylists () {
