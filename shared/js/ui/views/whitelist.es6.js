@@ -36,7 +36,7 @@ Whitelist.prototype = window.$.extend({},
     _addItem: function (e) {
       if (!this.$add.hasClass(isDisabledClass)) {
         const url = this.$url.val()
-        let isValidInput = false;
+        let isValidInput = false
         if (url) {
           isValidInput = this.model.addDomain(url)
         }
@@ -50,22 +50,22 @@ Whitelist.prototype = window.$.extend({},
     },
 
     _showErrorMessage: function () {
-        this.$add.addClass(isHiddenClass)
-        this.$error.removeClass(isHiddenClass)
-        this.$url.addClass(isInvalidInputClass)
+      this.$add.addClass(isHiddenClass)
+      this.$error.removeClass(isHiddenClass)
+      this.$url.addClass(isInvalidInputClass)
     },
 
     _hideErrorMessage: function () {
-        this.$add.removeClass(isHiddenClass)
-        this.$error.addClass(isHiddenClass)
-        this.$url.removeClass(isInvalidInputClass)
+      this.$add.removeClass(isHiddenClass)
+      this.$error.addClass(isHiddenClass)
+      this.$url.removeClass(isInvalidInputClass)
     },
 
     _manageInputChange: function (e) {
       const isButtonDisabled = this.$add.hasClass(isDisabledClass)
 
       this._hideErrorMessage()
-      
+
       if (this.$url.val() && isButtonDisabled) {
         this.$add.removeClass(isDisabledClass)
       } else if (!this.$url.val()) {
