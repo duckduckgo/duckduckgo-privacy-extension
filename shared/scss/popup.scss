@@ -508,19 +508,19 @@ body {
             }
 
             .top-blocked__no-data__graph {
-                width: 67px;
-                height: 37px;
+                width: 48px;
+                height: 32px;
                 padding: 5px 11px;
                 margin: 0 auto;
                 border-radius: 3px;
-                background: $color--light-slate;
+                background: $platinum-dark;
 
                 .top-blocked__no-data__graph__bar {
                     width: 5px;
                     background-color: #F1F2F6;
                     border-radius: 5px;
                     display: inline-block;
-                    margin-right: 12px;
+                    margin-right: 4px;
                     vertical-align: bottom;
 
                     &.one {
