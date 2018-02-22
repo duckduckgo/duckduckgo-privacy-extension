@@ -294,7 +294,11 @@ body {
         }
 
         .site-info__li--manage-whitelist {
-          background-color: $white; 
+            background-color: $white; 
+
+            .is-disabled & {
+                @include is_disabled();
+            }
         }
 
         .link-secondary {
@@ -325,8 +329,8 @@ body {
         padding-bottom: 15px;
 
         &.top-blocked--truncated {
-            padding-top: 40px;
-            top: auto;
+            padding-top: 12px;
+            top: 438px;
             bottom: 0px;
         }
 
