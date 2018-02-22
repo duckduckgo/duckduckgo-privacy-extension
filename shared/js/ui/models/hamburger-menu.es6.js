@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.Model
 const parseUserAgent = require('./mixins/parse-user-agent.es6.js')
+const suggestDomain = require('./mixins/suggest-domain.es6.js')
 
 function HamburgerMenu (attrs) {
   attrs = attrs || {}
@@ -11,6 +12,7 @@ function HamburgerMenu (attrs) {
 HamburgerMenu.prototype = window.$.extend({},
   Parent.prototype,
   parseUserAgent,
+  suggestDomain,
   {
     modelName: 'hamburgerMenu'
   }

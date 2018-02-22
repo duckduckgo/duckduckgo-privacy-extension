@@ -24,7 +24,7 @@ Options.prototype = window.$.extend({},
     ready: function () {
       var $parent = window.$('#options-content')
       Parent.prototype.ready.call(this)
-
+console.log(this)
       this.setBrowserClassOnBodyTag()
       this.isBrowser = this.parseUserAgentString().browser
       this.generateFeedbackLink()

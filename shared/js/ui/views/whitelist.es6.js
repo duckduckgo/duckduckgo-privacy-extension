@@ -101,12 +101,25 @@ Whitelist.prototype = window.$.extend({},
         [this.$showadd, 'click', this._showAddToWhitelistInput],
         [this.$url, 'keyup', this._manageInputChange]
       ])
+
+      this._setSuggestedDomainToWhitelistFromSettings()
     },
 
     rerender: function () {
       this.unbindEvents()
       this._rerender()
       this.setup()
+    },
+
+    _setSuggestedDomainToWhitelistFromSettings: function () {
+      let self = this
+      this.model.fetch({getSetting: {name: 'suggestedDomainToWhitelist'}}).then((domain) => {
+        console.log(domain)
+        if (domain) {  
+          self.$url.val(domain)
+          this.$add.removeClass(isDisabledClass)
+        }  
+      })
     },
 
     // watch for changes in the whitelist and rerender
