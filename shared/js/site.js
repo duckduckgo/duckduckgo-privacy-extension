@@ -6,8 +6,8 @@
  * The Score attributes are then used generate a site
  * privacy score used in the popup.
  */
-var load = require('load')
-var settings = require('settings')
+var load = require('./load')
+var settings = require('./settings')
 
 class Site {
     constructor(domain) {

@@ -1,3 +1,6 @@
+const TopBlocked = require('./topBlocked')
+const Company = require ('./Company')
+
 var Companies = (() => {
     var companyContainer = {}
     var topBlocked = new TopBlocked()
@@ -161,3 +164,5 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
     return true
 })
+
+module.exports = Companies

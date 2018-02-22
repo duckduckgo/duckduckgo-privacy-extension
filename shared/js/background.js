@@ -16,12 +16,11 @@
 
 
 var debugRequest = false
-var trackers = require('trackers')
-var utils = require('utils')
-var settings = require('settings')
-var stats = require('stats')
-var https = require('https')
-var surrogates = require('surrogates')
+var trackers = require('./trackers')
+var utils = require('./utils')
+var settings = require('./settings')
+var https = require('./https')
+var surrogates = require('./surrogates')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome

@@ -1,3 +1,5 @@
+const settings = require('./settings')
+
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
@@ -182,3 +184,5 @@ chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     }
 }))
+
+module.exports = ATB

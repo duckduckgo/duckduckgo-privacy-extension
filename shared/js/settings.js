@@ -1,4 +1,4 @@
-var load = require('load');
+var load = require('./load');
 /**
  * Public api
  * Usage:
