@@ -65,7 +65,6 @@ Whitelist.prototype = window.$.extend({},
       const isButtonDisabled = this.$add.hasClass(isDisabledClass)
 
       this._hideErrorMessage()
-
       if (this.$url.val() && isButtonDisabled) {
         this.$add.removeClass(isDisabledClass)
       } else if (!this.$url.val()) {
