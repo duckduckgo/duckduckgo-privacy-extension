@@ -324,6 +324,16 @@ a {
 
         @include cross_platform_bg_image("error.svg");
     }
+    
+    &.icon__check {
+        width: 22px;
+        height: 22px;
+        margin-top: -4px;
+        margin-left: 1px;
+        vertical-align: top;
+
+        @include cross_platform_bg_image("check.svg");
+    }
 }
 
 
@@ -437,4 +447,13 @@ a {
         margin-top: -6px;
         z-index: 5;
     }
+}
+
+.separator {
+    width: 1px;
+    height: 18px;
+    background-color: $color--medium-silver;
+    display: inline-block;
+    vertical-align: bottom;
+    margin: 0 12px;
 }
