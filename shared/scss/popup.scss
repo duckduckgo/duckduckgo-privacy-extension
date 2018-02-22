@@ -98,7 +98,7 @@ body {
     }
 
     .site-info--placeholder {
-        height: 340px;
+        height: 388px;
     }
 
     .site-info {
@@ -293,6 +293,14 @@ body {
             }
         }
 
+        .site-info__li--manage-whitelist {
+            background-color: $white; 
+
+            .is-disabled & {
+                @include is_disabled();
+            }
+        }
+
         .link-secondary {
             @include is_disableable_link();
         }
@@ -314,28 +322,28 @@ body {
 
     .top-blocked {
         position: absolute;
-        top: 400px;
+        top: 440px;
         left: 0;
         right: 0;
         margin-top: 0;
         padding-bottom: 15px;
 
         &.top-blocked--truncated {
-            padding-top: 40px;
-            top: auto;
+            padding-top: 12px;
+            top: 438px;
             bottom: 0px;
         }
 
         .top-blocked__list {
             padding-top: 0;
-            padding-bottom: 30px;
+            padding-bottom: 5px;
 
             .top-blocked__li:first-child {
                 padding-top: 0;
             }
 
             .top-blocked__li--no-data {
-                margin-top: 17px;
+                margin-top: 12px;
             }
         }
     }
@@ -500,19 +508,19 @@ body {
             }
 
             .top-blocked__no-data__graph {
-                width: 71px;
-                height: 47px;
-                padding: 9px 11px;
+                width: 48px;
+                height: 32px;
+                padding: 5px 11px;
                 margin: 0 auto;
                 border-radius: 3px;
-                background: $color--light-slate;
+                background: $platinum-dark;
 
                 .top-blocked__no-data__graph__bar {
                     width: 5px;
                     background-color: #F1F2F6;
                     border-radius: 5px;
                     display: inline-block;
-                    margin-right: 12px;
+                    margin-right: 4px;
                     vertical-align: bottom;
 
                     &.one {

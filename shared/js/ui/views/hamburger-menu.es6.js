@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.View
+const openOptionsPage = require('./mixins/open-options-page.es6.js')
 
 function HamburgerMenu (ops) {
   this.model = ops.model
@@ -10,6 +11,7 @@ function HamburgerMenu (ops) {
 
 HamburgerMenu.prototype = window.$.extend({},
   Parent.prototype,
+  openOptionsPage,
   {
 
     _setup: function () {
@@ -19,7 +21,7 @@ HamburgerMenu.prototype = window.$.extend({},
       ])
       this.bindEvents([
         [this.$close, 'click', this._closeMenu],
-        [this.$optionslink, 'click', this._openOptionsPage],
+        [this.$optionslink, 'click', this.openOptionsPage],
         [this.model.store.subscribe, 'action:search', this._handleAction],
         [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
       ])
@@ -44,17 +46,6 @@ HamburgerMenu.prototype = window.$.extend({},
         this._rerender()
         this._setup()
       }
-    },
-
-    _openOptionsPage: function () {
-      this.model.fetch({getBrowser: true}).then(browser => {
-        if (browser === 'moz') {
-          window.chrome.tabs.create({url: window.chrome.extension.getURL('/html/options.html')})
-          window.close()
-        } else {
-          window.chrome.runtime.openOptionsPage()
-        }
-      })
     }
   }
 )

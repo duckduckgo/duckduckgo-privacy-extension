@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.Model
 const httpsMessages = window.constants.httpsMessages
+const parseUserAgent = require('./mixins/parse-user-agent.es6.js')
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -18,6 +19,7 @@ function Site (attrs) {
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
+  attrs.isBrowser = this.parseUserAgentString().browser
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -27,6 +29,7 @@ function Site (attrs) {
 
 Site.prototype = window.$.extend({},
   Parent.prototype,
+  parseUserAgent,
   {
 
     modelName: 'site',
@@ -172,7 +175,7 @@ Site.prototype = window.$.extend({},
     getUniqueTrackersCount: function () {
       // console.log('[model] getUniqueTrackersCount()')
       const count = Object.keys(this.tab.trackers).reduce((total, name) => {
-        return this.tab.trackers[name].urls.length + total
+        return this.tab.trackers[name].count + total
       }, 0)
 
       return count
