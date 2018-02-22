@@ -70,7 +70,7 @@ module.exports = function () {
   }
 
   function renderManageWhitelist (model) {
-    return bel`<div class="">
+    return bel`<div>
       <a href="#" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
         Manage Whitelist
       </a>
