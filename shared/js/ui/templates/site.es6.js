@@ -70,7 +70,7 @@ module.exports = function () {
         Manage Whitelist
       </a>
       <div class="separator"></div>
-      <a href="${renderBrokenSiteHref(model.isBrowser, model.domain)}" class="site-info__report-broken link-secondary bold">
+      <a href="${renderBrokenSiteHref(model.isBrowser, model.tab.url)}" target="_blank" class="site-info__report-broken link-secondary bold">
         Report Broken Site
       </a>
     </div>`
