@@ -5,6 +5,7 @@ const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
+const openOptionsPage = require('./mixins/open-options-page.es6.js')
 
 function Site (ops) {
   this.model = ops.model
@@ -32,6 +33,7 @@ function Site (ops) {
 
 Site.prototype = window.$.extend({},
   Parent.prototype,
+  openOptionsPage,
   {
 
     _whitelistClick: function (e) {
@@ -51,6 +53,8 @@ Site.prototype = window.$.extend({},
         'toggle',
         'show-all-trackers',
         'show-page-trackers',
+        'manage-whitelist',
+        'report-broken',
         'privacy-practices'
       ])
 
@@ -61,6 +65,8 @@ Site.prototype = window.$.extend({},
         [this.$showpagetrackers, 'click', this._showPageTrackers],
         [this.$privacypractices, 'click', this._showPrivacyPractices],
         [this.$gradescorecard, 'click', this._showGradeScorecard],
+        [this.$managewhitelist, 'click', this._onManageWhitelistClick],
+        [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
         [this.store.subscribe, 'change:site', this.rerender]
       ])
     },
@@ -79,6 +85,20 @@ Site.prototype = window.$.extend({},
         this.unbindEvents()
         this._rerender()
         this._setup()
+      }
+    },
+
+    _onManageWhitelistClick: function () {
+      if (this.model && this.model.disabled) {
+        return
+      }
+
+      this.openOptionsPage()
+    },
+
+    _onReportBrokenSiteClick: function (e) {
+      if (this.model && this.model.disabled) {
+        e.preventDefault()
       }
     },
 
