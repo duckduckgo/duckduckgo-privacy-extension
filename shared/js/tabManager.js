@@ -1,3 +1,7 @@
+const Companies = require('./companies')
+const settings = require('./settings')
+const Tab = require('./tab')
+
 class TabManager {
     constructor() {
         this.tabContainer = {}

@@ -1,10 +1,10 @@
 const TopBlocked = require('./topBlocked')
-const Company = require ('./Company')
+const Company = require ('./company')
+const utils = require('./utils')
 
 var Companies = (() => {
     var companyContainer = {}
     var topBlocked = new TopBlocked()
-    var utils = require('utils')
     var storageName = 'companyData'
     var totalPages = 0
     var totalPagesWithTrackers = 0

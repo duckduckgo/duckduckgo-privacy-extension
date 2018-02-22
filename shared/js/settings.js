@@ -12,6 +12,8 @@ let _ready = init().then(() => {
     console.log("Settings are loaded")
 })
 
+const defaultSettings = require('../data/defaultSettings')
+
 // external settings defines a function that needs to run when a setting is updated
 var externalSettings = {
     'httpsEverywhereEnabled': function(value){ isExtensionEnabled = value }

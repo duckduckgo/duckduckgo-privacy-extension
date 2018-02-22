@@ -21,6 +21,9 @@ var utils = require('./utils')
 var settings = require('./settings')
 var https = require('./https')
 var surrogates = require('./surrogates')
+const tabManager = require('./tabManager')
+const Companies = require('./companies')
+const ATB = require('./atb')
 const constants = require('../data/constants')
 
 // Set browser for popup asset paths

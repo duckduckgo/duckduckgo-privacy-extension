@@ -8,6 +8,7 @@
  */
 var load = require('./load')
 var settings = require('./settings')
+var Score = require('./score')
 
 class Site {
     constructor(domain) {

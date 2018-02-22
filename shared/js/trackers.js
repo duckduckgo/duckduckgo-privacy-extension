@@ -1,5 +1,5 @@
-// these are defi-abpListsed in abp.js
 const abp = require('abp-filter-parser')
+const tldjs = require('tldjs')
 
 const load = require('./load')
 const settings = require('./settings')
@@ -146,6 +146,7 @@ function checkEasylists(url, siteDomain, request){
 
 function checkSurrogateList(url, parsedUrl, currLocation) {
     let dataURI = surrogates.getContentForUrl(url, parsedUrl)
+    let result = false
 
     if (dataURI) {
         result = getTrackerDetails(url, 'surrogatesList')

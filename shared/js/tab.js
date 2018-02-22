@@ -22,6 +22,13 @@ const scoreIconLocations = {
     "F": "img/toolbar-rating-f@2x.png"
 }
 
+const Site = require('./site')
+const Tracker = require('./tracker')
+const Score = require('./score')
+const utils = require('./utils')
+const Companies = require('./companies')
+const tabManager = require('./tabManager')
+
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId
