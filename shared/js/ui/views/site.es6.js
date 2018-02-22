@@ -36,13 +36,27 @@ Site.prototype = window.$.extend({},
   openOptionsPage,
   {
 
-    _whitelistClick: function (e) {
+    _onWhitelistClick: function (e) {
       if (this.$body.hasClass('is-disabled')) return
       this.model.toggleWhitelist()
       console.log('isWhitelisted: ', this.model.isWhitelisted)
-      window.chrome.tabs.reload(this.model.tab.id)
+      this._showAddedToWhitelistMessage()
+    },
+
+    // If we just whitelisted a site, show a message briefly before reloading
+    // otherwise just reload the tab and close the popup
+    _showAddedToWhitelistMessage: function () {
       const w = window.chrome.extension.getViews({type: 'popup'})[0]
-      w.close()
+      const isHiddenClass = 'is-hidden'
+      if (this.model.isWhitelisted) {
+        this.$protection.addClass(isHiddenClass)
+        this.$protectionwhitelisted.removeClass(isHiddenClass)
+        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 650)
+        setTimeout(() => w.close(), 650)
+      } else {
+        window.chrome.tabs.reload(this.model.tab.id)
+        w.close()
+      }
     },
 
     // NOTE: after ._setup() is called this view listens for changes to
@@ -51,6 +65,8 @@ Site.prototype = window.$.extend({},
       // console.log('[site view] _setup()')
       this._cacheElems('.js-site', [
         'toggle',
+        'protection',
+        'protection-whitelisted',
         'show-all-trackers',
         'show-page-trackers',
         'manage-whitelist',
@@ -61,7 +77,7 @@ Site.prototype = window.$.extend({},
       this.$gradescorecard = this.$('.js-hero-open')
 
       this.bindEvents([
-        [this.$toggle, 'click', this._whitelistClick],
+        [this.$toggle, 'click', this._onWhitelistClick],
         [this.$showpagetrackers, 'click', this._showPageTrackers],
         [this.$privacypractices, 'click', this._showPrivacyPractices],
         [this.$gradescorecard, 'click', this._showGradeScorecard],

@@ -324,6 +324,15 @@ a {
 
         @include cross_platform_bg_image("error.svg");
     }
+    
+    &.icon__check {
+        width: 24px;
+        height: 24px;
+        vertical-align: bottom;
+        margin-left: -2px;
+
+        @include cross_platform_bg_image("check.svg");
+    }
 }
 
 
