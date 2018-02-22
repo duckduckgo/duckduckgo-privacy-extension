@@ -21,11 +21,16 @@ Whitelist.prototype = window.$.extend({},
 
     _removeItem: function (e) {
       const itemIndex = window.$(e.target).data('item')
-      const $listItem = window.$(e.target).parent()
+      const $clickedListItem = window.$(e.target).parent()
       this.model.removeDomain(itemIndex)
 
       // No need to rerender the whole view
-      $listItem.remove()
+      // unless we need to show the "no sites in whitelist" message
+      if (this.$listitem && (this.$listitem.length > 1)) {
+        $clickedListItem.remove()
+      } else {
+        this.setWhitelistFromSettings()
+      }
     },
 
     _addItem: function (e) {
@@ -87,6 +92,7 @@ Whitelist.prototype = window.$.extend({},
         'add',
         'error',
         'show-add',
+        'list-item',
         'url'
       ])
 
