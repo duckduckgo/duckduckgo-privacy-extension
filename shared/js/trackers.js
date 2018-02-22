@@ -7,6 +7,7 @@ const utils = require('./utils')
 const surrogates = require('./surrogates')
 const trackerLists = require('./trackerLists').getLists()
 const abpLists = require('./abp-preprocessed.es6')
+const constants = require('../data/constants')
 
 let entityList
 let entityMap

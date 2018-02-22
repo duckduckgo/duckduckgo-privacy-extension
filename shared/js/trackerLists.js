@@ -1,6 +1,7 @@
 var settings = require('./settings')
 var load = require('./load')
 var lists = {}
+const constants = require('../data/constants')
 
 function getLists () {
     return lists

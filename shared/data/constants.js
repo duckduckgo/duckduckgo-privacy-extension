@@ -49,7 +49,7 @@ let constants = {
     }
 }
 
-if (typeof window === 'undefined' && module && module.exports)  {
+if (module && module.exports)  {
     module.exports = constants
 } else if (typeof window === 'object') {
     window.constants = constants

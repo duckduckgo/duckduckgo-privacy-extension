@@ -21,6 +21,7 @@ var utils = require('./utils')
 var settings = require('./settings')
 var https = require('./https')
 var surrogates = require('./surrogates')
+const constants = require('../data/constants')
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome

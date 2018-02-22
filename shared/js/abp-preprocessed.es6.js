@@ -6,11 +6,8 @@
  */
 const abp = require('abp-filter-parser')
 const deepFreeze = require('deep-freeze')
-
-// these are defined in data/ and loaded in the manifest. 
-// Make them immutable with deep-freeze
-constants = deepFreeze(constants)
-defaultSettings = deepFreeze(defaultSettings)
+const constants = require('../data/constants')
+const defaultSettings = require('../data/defaultSettings')
 
 const ONEDAY = 1000*60*60*24
 
