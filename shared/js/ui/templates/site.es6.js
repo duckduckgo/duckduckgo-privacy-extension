@@ -42,9 +42,11 @@ module.exports = function () {
     </li>
     <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
       <h2 class="site-info__protection js-site-protection">Site Privacy Protection</h2>
-      <h2 class="is-hidden site-info__protection--whitelisted js-site-protection-whitelisted">
+      <h2 class="is-hidden site-info__protection js-site-protection-whitelisted">
         <span class="icon icon__check"></span>
-        Added to Whitelist
+        <span class="text-line-after-icon">
+          Added to Whitelist
+        </span>
       </h2>
       <div class="site-info__toggle-container">
         ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
@@ -68,7 +70,6 @@ module.exports = function () {
   }
 
   function renderManageWhitelist (model) {
-    console.log(model)
     return bel`<div class="">
       <a href="#" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
         Manage Whitelist
