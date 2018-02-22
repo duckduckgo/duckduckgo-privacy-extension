@@ -20,3 +20,5 @@ class Tracker {
         }
     }
 }
+
+module.exports = Tracker

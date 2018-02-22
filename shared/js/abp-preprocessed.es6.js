@@ -163,11 +163,9 @@ function getVersionParam () {
     return versionParam
 }
 
-window.abpLists = (() => {
-    return {
-        getTemporaryWhitelist,
-        getWhitelists,
-        getEasylists,
-        updateLists
-    }
-})()
+module.exports = {
+    getTemporaryWhitelist,
+    getWhitelists,
+    getEasylists,
+    updateLists
+}

@@ -148,3 +148,5 @@ chrome.webRequest.onHeadersReceived.addListener((request) => {
     }
 
 }, {urls: ['<all_urls>'], types: ['main_frame']})
+
+module.exports = tabManager

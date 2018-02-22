@@ -133,3 +133,5 @@ chrome.webRequest.onBeforeRedirect.addListener((req) => {
         tab.httpsRedirects[req.requestId] = 1
     }
 }, {urls: ["*://*/*"]})
+
+module.exports = Tab

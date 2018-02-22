@@ -5,139 +5,136 @@ var load = require('./load');
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
-require.scopes.settings =(() => {
-    var settings = {};
-    let isReady = false
-    let _ready = init().then(() => {
-        isReady = true
-        console.log("Settings are loaded")
+var settings = {};
+let isReady = false
+let _ready = init().then(() => {
+    isReady = true
+    console.log("Settings are loaded")
+})
+
+// external settings defines a function that needs to run when a setting is updated
+var externalSettings = {
+    'httpsEverywhereEnabled': function(value){ isExtensionEnabled = value }
+};
+
+function init() {
+    return new Promise ((resolve, reject) => {
+        buildSettingsFromDefaults()
+        buildSettingsFromLocalStorage().then(() => {
+            registerListeners()
+            resolve()
+        })
     })
+}
 
-    // external settings defines a function that needs to run when a setting is updated
-    var externalSettings = {
-        'httpsEverywhereEnabled': function(value){ isExtensionEnabled = value }
-    };
+function ready () {
+    return _ready
+}
 
-    function init() {
-        return new Promise ((resolve, reject) => {
-            buildSettingsFromDefaults()
-            buildSettingsFromLocalStorage().then(() => {
-                registerListeners()
-                resolve()
-            })
+function buildSettingsFromLocalStorage() {
+    return new Promise ((resolve) => {
+        chrome.storage.local.get(['settings'], function(results){
+            // copy over saved settings from storage
+            Object.assign(settings, results['settings']);
+
+            runExternalSettings();
+            resolve()
         })
+    })
+}
+
+function runExternalSettings(){
+    for(var settingName in settings){
+        let value = settings[settingName];
+        runExternalSetting(settingName, value);
+    }
+}
+
+function runExternalSetting(name, value){
+    if(externalSettings[name] && typeof(externalSettings[name]) === 'function'){
+        externalSettings[name](value);
+    }
+}
+
+function buildSettingsFromDefaults() {
+    // initial settings are a copy of default settings
+    settings = Object.assign({}, defaultSettings)
+}
+
+function syncSettingTolocalStorage(){
+    chrome.storage.local.set({'settings': settings});
+}
+
+function getSetting(name) {
+    if (!isReady) {
+        console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
+        return
     }
 
-    function ready () {
-        return _ready
+    // let all and null return all settings
+    if (name === 'all') name = null;
+
+    if(name){
+        return settings[name];
+    }
+    else {
+        return settings;
+    }
+}
+
+function updateSetting(name, value) {
+    if (!isReady) {
+        console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
+        return
     }
 
-    function buildSettingsFromLocalStorage() {
-        return new Promise ((resolve) => {
-            chrome.storage.local.get(['settings'], function(results){
-                // copy over saved settings from storage
-                Object.assign(settings, results['settings']);
+    settings[name] = value;
+    runExternalSetting(name, value);
+    syncSettingTolocalStorage();
+}
 
-                runExternalSettings();
-                resolve()
-            })
-        })
+function removeSetting (name) {
+    if (!isReady) {
+        console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
+        return
     }
-
-    function runExternalSettings(){
-        for(var settingName in settings){
-            let value = settings[settingName];
-            runExternalSetting(settingName, value);
-        }
+    if (settings[name]) {
+        delete settings[name]
+        syncSettingTolocalStorage()
     }
+}
 
-    function runExternalSetting(name, value){
-        if(externalSettings[name] && typeof(externalSettings[name]) === 'function'){
-            externalSettings[name](value);
-        }
+function logSettings () {
+    chrome.storage.local.get(['settings'], function (s) {
+        console.log(s.settings)
+    })
+}
+
+function registerListeners(){
+    chrome.runtime.onMessage.addListener(onUpdateSetting);
+    chrome.runtime.onMessage.addListener(onGetSetting);
+}
+
+var onUpdateSetting = function(req, sender, res) {
+    if(req.updateSetting) {
+        var name = req.updateSetting['name'];
+        var value = req.updateSetting['value'];
+        updateSetting(name, value);
     }
+};
 
-    function buildSettingsFromDefaults() {
-        // initial settings are a copy of default settings
-        settings = Object.assign({}, defaultSettings)
+var onGetSetting = function(req, sender, res){
+    if(req.getSetting){
+        res(getSetting(req.getSetting.name));
     }
-
-    function syncSettingTolocalStorage(){
-        chrome.storage.local.set({'settings': settings});
-    }
-
-    function getSetting(name) {
-        if (!isReady) {
-            console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
-            return
-        }
-
-        // let all and null return all settings
-        if (name === 'all') name = null;
-
-        if(name){
-            return settings[name];
-        }
-        else {
-            return settings;
-        }
-    }
-
-    function updateSetting(name, value) {
-        if (!isReady) {
-            console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
-            return
-        }
-
-        settings[name] = value;
-        runExternalSetting(name, value);
-        syncSettingTolocalStorage();
-    }
-
-    function removeSetting (name) {
-        if (!isReady) {
-            console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
-            return
-        }
-        if (settings[name]) {
-            delete settings[name]
-            syncSettingTolocalStorage()
-        }
-    }
-
-    function logSettings () {
-        chrome.storage.local.get(['settings'], function (s) {
-            console.log(s.settings)
-        })
-    }
-
-    function registerListeners(){
-        chrome.runtime.onMessage.addListener(onUpdateSetting);
-        chrome.runtime.onMessage.addListener(onGetSetting);
-    }
-
-    var onUpdateSetting = function(req, sender, res) {
-        if(req.updateSetting) {
-            var name = req.updateSetting['name'];
-            var value = req.updateSetting['value'];
-            updateSetting(name, value);
-        }
-    };
-
-    var onGetSetting = function(req, sender, res){
-        if(req.getSetting){
-            res(getSetting(req.getSetting.name));
-        }
-        return true;
-    };
+    return true;
+};
 
 
-    return {
-        getSetting: getSetting,
-        updateSetting: updateSetting,
-        removeSetting: removeSetting,
-        logSettings: logSettings,
-        ready: ready
-    }
-
-})();
+module.exports = {
+    getSetting: getSetting,
+    updateSetting: updateSetting,
+    removeSetting: removeSetting,
+    logSettings: logSettings,
+    ready: ready
+}

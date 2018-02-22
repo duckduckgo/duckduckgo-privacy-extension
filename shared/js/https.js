@@ -1,4 +1,3 @@
-(function () {
 const load = require('./load')
 const settings = require('./settings')
 const utils = require('./utils')
@@ -285,5 +284,4 @@ class HTTPS {
     }
 }
 
-require.scopes.https = new HTTPS()
-})()
+module.exports = new HTTPS()

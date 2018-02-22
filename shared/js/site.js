@@ -100,3 +100,5 @@ class Site {
         return false
     }
 }
+
+module.exports = Site
