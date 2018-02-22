@@ -36,39 +36,11 @@ module.exports = function(grunt) {
         }
     }
 
-    /* Browser specific files here
-     * Ex: safari: { ui: { '<%= dirs.public.js %>/yourFile.js': ['<%= dirs.src.js %>/ui/base/yourfile.es6.js']}}
-     */
-    let browserMap = {
-        firefox: {ui: {}, background: {}, sass: {}},
-        chrome: {ui: {}, background: {}, sass: {}},
-        safari: {ui: {}, background: {}, sass: {}}
-    }
-
-    /* final file mapping used by grunt */
-    let fileMap = {
-        firefox: {
-            ui: Object.assign(baseFileMap.ui, browserMap.firefox.ui),
-            background: Object.assign(baseFileMap.background, browserMap.firefox.background),
-            sass: Object.assign(baseFileMap.sass, browserMap.firefox.sass)
-        },
-        chrome: {
-            ui: Object.assign(baseFileMap.ui, browserMap.chrome.ui),
-            background: Object.assign(baseFileMap.background, browserMap.chrome.background),
-            sass: Object.assign(baseFileMap.sass, browserMap.chrome.sass)
-        },
-        safari: {
-            ui: Object.assign(baseFileMap.ui, browserMap.safari.ui),
-            background: Object.assign(baseFileMap.background, browserMap.safari.background),
-            sass: Object.assign(baseFileMap.sass, browserMap.safari.sass)
-        },
-    }
-
     /* watch any base files and browser specific files */
     let watch = {
-        sass: [['<%= dirs.src.scss %>/**/*.scss'], Object.values(fileMap[browser].sass)].join().split(','),
-        ui: [['<%= dirs.src.js %>/ui/**/*.es6.js'], Object.values(fileMap[browser].ui)].join().split(','),
-        background: [['<%= dirs.src.js %>/*.es6.js'], Object.values(fileMap[browser].background)].join().split(',')
+        sass: ['<%= dirs.src.scss %>/**/*.scss'],
+        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js'],
+        background: ['<%= dirs.src.js %>/*.js']
     }
 
     grunt.initConfig({
@@ -89,17 +61,17 @@ module.exports = function(grunt) {
         browserify: {
             ui: {
                 options: { transform: ['babelify'] },
-                files: fileMap[browser].ui
+                files: baseFileMap.ui
             },
             background: {
                 options: { transform: ['babelify'] },
-                files: fileMap[browser].background
+                files: baseFileMap.background
             }
         },
 
         sass: {
             dist: {
-                files: fileMap[browser].sass
+                files: baseFileMap.sass
             }
         },
 
