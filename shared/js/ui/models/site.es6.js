@@ -1,6 +1,7 @@
 const Parent = window.DDG.base.Model
 const httpsMessages = window.constants.httpsMessages
 const parseUserAgent = require('./mixins/parse-user-agent.es6.js')
+const suggestDomain = require('./mixins/suggest-domain.es6.js')
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -20,6 +21,7 @@ function Site (attrs) {
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
   attrs.isBrowser = this.parseUserAgentString().browser
+  attrs.domainToWhitelist = '' // used to prefill the 'add to whitelist' input in the options page
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -30,6 +32,7 @@ function Site (attrs) {
 Site.prototype = window.$.extend({},
   Parent.prototype,
   parseUserAgent,
+  suggestDomain,
   {
 
     modelName: 'site',

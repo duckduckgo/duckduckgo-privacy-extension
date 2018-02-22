@@ -47,6 +47,10 @@ Whitelist.prototype = window.$.extend({},
       }
 
       return domain
+    },
+
+    resetSuggestedDomainInSettings () {
+      this.fetch({updateSetting: {name: 'suggestedDomainToWhitelist', value: ''}})
     }
   }
 )

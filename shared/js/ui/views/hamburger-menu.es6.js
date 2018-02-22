@@ -21,7 +21,7 @@ HamburgerMenu.prototype = window.$.extend({},
       ])
       this.bindEvents([
         [this.$close, 'click', this._closeMenu],
-        [this.$optionslink, 'click', this.openOptionsPage],
+        [this.$optionslink, 'click', this._onOptionsLinkClick],
         [this.model.store.subscribe, 'action:search', this._handleAction],
         [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
       ])
@@ -29,6 +29,18 @@ HamburgerMenu.prototype = window.$.extend({},
 
     _handleAction: function (notification) {
       if (notification.action === 'burgerClick') this._openMenu()
+    },
+
+    _onOptionsLinkClick: function (e) {
+      console.log(this)
+      if (this.model) {
+        // Update settings with the current domain
+        // in order to pre populate the whitelist input field
+        // since the user likely wants to whitelist this one
+        //this.fetch({updateSetting: {name: 'suggestedDomainToWhitelist', value: this.domain}})
+        this.model.setDomainToWhitelist()
+        this.openOptionsPage()
+      }
     },
 
     _openMenu: function (e) {

@@ -104,11 +104,12 @@ Site.prototype = window.$.extend({},
       }
     },
 
-    _onManageWhitelistClick: function () {
+    _onManageWhitelistClick: function (e) {
       if (this.model && this.model.disabled) {
         return
       }
 
+      this.model.setDomainToWhitelist()
       this.openOptionsPage()
     },
 
