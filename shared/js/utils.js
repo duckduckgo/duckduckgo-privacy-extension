@@ -79,6 +79,20 @@ require.scopes.utils = ( () => {
         return true;
     })
 
+    // Set browser for popup asset paths
+    // chrome doesn't have getBrowserInfo so we'll default to chrome
+    // and try to detect if this is firefox
+    var browser = 'chrome'
+    try {
+        chrome.runtime.getBrowserInfo((info) => {
+            if (info.name === 'Firefox') browser = 'moz'
+        })
+    } catch (e) {}
+
+    function getBrowserName() {
+        return browser
+    }
+
     return {
         extractHostFromURL: extractHostFromURL,
         extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -88,6 +102,7 @@ require.scopes.utils = ( () => {
         getFromStorage: getFromStorage,
         getCurrentURL: getCurrentURL,
         getCurrentTab: getCurrentTab,
-        getProtocol: getProtocol
+        getProtocol: getProtocol,
+        getBrowserName: getBrowserName
     }
 })();

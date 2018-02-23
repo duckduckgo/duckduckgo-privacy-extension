@@ -8,6 +8,7 @@
  */
 var load = require('load')
 var settings = require('settings')
+var utils = require('utils')
 
 class Site {
     constructor(domain) {
@@ -93,7 +94,7 @@ class Site {
             return 'about'
         }
 
-        if (browser === 'moz' && !this.domain) {
+        if (utils.getBrowserName() === 'moz' && !this.domain) {
             return 'new tab'
         }
 
