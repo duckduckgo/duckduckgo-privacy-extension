@@ -129,16 +129,4 @@ class Tab {
     }
 }
 
-chrome.webRequest.onBeforeRedirect.addListener((req) => {
-    // count redirects
-    let tab = tabManager.get({'tabId': req.tabId})
-    if (!tab) return
-
-    if (tab.httpsRedirects[req.requestId]) {
-        tab.httpsRedirects[req.requestId] += 1
-    } else {
-        tab.httpsRedirects[req.requestId] = 1
-    }
-}, {urls: ["*://*/*"]})
-
 module.exports = Tab
