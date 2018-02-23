@@ -1,4 +1,5 @@
 const settings = require('./settings')
+const utils = require('./utils')
 
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
@@ -155,9 +156,10 @@ var ATB = (() => {
             let url = 'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             let atb = settings.getSetting('atb')
             let set_atb = settings.getSetting('set_atb')
+            let browserName = utils.getBrowserName()
             if (atb) url += `&atb=${atb}`
             if (set_atb) url += `&set_atb=${set_atb}`
-            if (typeof browser !== 'undefined') url += `&browser=${browser}`
+            if (browserName) url += `&browser=${browserName}`
             return url
         }
     }
