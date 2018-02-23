@@ -23,20 +23,10 @@ var stats = require('stats')
 var https = require('https')
 var surrogates = require('surrogates')
 
-// Set browser for popup asset paths
-// chrome doesn't have getBrowserInfo so we'll default to chrome
-// and try to detect if this is firefox
-var browser = 'chrome'
-try {
-    chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') browser = 'moz'
-    })
-} catch (e) {}
-
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getBrowser) {
-        res(browser);
+        res(utils.getBrowserName());
     }
     return true;
 });
