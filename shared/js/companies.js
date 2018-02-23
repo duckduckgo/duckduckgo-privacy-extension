@@ -121,7 +121,7 @@ var Companies = (() => {
                 // uncomment for testing
                 //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
-                for (company in storageData) {
+                for (let company in storageData) {
                     let newCompany = Companies.add(company)
                     newCompany.set('count', storageData[company].count || 0)
                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
