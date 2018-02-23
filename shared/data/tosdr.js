@@ -1,4 +1,4 @@
-const tosdr = {
+module.exports = {
     "zoosk.com": {
         "score": 0,
         "all": {
