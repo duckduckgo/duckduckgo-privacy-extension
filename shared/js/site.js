@@ -9,8 +9,6 @@
 var load = require('load')
 var settings = require('settings')
 
-let trackersWhitelistTemporary
-
 class Site {
     constructor(domain) {
         if (domain) domain = domain.toLowerCase()
@@ -32,6 +30,8 @@ class Site {
      * check to see if this is a broken site reported on github
     */
      checkBrokenSites (domain) {
+         let trackersWhitelistTemporary = window.abpLists.getTemporaryWhitelist()
+
          if (!trackersWhitelistTemporary) {
              return
          } else {

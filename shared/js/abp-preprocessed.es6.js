@@ -48,9 +48,19 @@ let lists = {
     }
 }
 
-// these are defined in trackers.js
-easylists = lists.easylists
-whitelists = lists.whitelists
+var trackersWhitelistTemporary
+
+function getTemporaryWhitelist() {
+    return trackersWhitelistTemporary;
+}
+
+function getEasylists () {
+    return lists.easylists
+}
+
+function getWhitelists () {
+    return lists.whitelists
+}
 
 /*
  * Get the list data and use abp to parse.
@@ -110,17 +120,16 @@ function updateLists () {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 
-        // defined in site.js
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
 }
 
 // Make sure the list updater runs on start up
-settings.ready().then(() => updateLists())
+settings.ready().then(() => abpLists.updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateLists') {
-        settings.ready().then(() => updateLists())
+        settings.ready().then(() => abpLists.updateLists())
     }
 })
 
@@ -153,3 +162,12 @@ function getVersionParam () {
 
     return versionParam
 }
+
+window.abpLists = (() => {
+    return {
+        getTemporaryWhitelist,
+        getWhitelists,
+        getEasylists,
+        updateLists
+    }
+})()

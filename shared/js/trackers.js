@@ -1,16 +1,13 @@
 
 // these are defined in abp.js
-var abp,
-    easylists,
-    whitelists,
-    surrogates,
-    trackerWhitelist = {}
+var abp
 
 var load = require('load'),
     settings = require('settings'),
     utils = require('utils'),
     surrogates = require('surrogates'),
-    trackerLists = require('trackerLists').getLists()
+    trackerLists = require('trackerLists').getLists(),
+    abpLists = window.abpLists;
 
 let entityList
 let entityMap
@@ -113,6 +110,7 @@ require.scopes.trackers = (function() {
     function checkWhitelist(url, currLocation, request) {
         let result = false
         let match
+        const whitelists = abpLists.getWhitelists()
 
         if (whitelists.trackersWhitelist.isLoaded) {
             match = checkABPParsedList(whitelists.trackersWhitelist.parsed, url, currLocation, request)
@@ -129,6 +127,7 @@ require.scopes.trackers = (function() {
     function checkEasylists(url, siteDomain, request){
         let toBlock = false
         constants.easylists.some((listName) => {
+            const easylists = abpLists.getEasylists()
 
             let match
             // lists can take a second or two to load so check that the parsed data exists
