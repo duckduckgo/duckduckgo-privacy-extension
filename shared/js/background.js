@@ -45,8 +45,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 });
 
 function Background() {
-  $this = this;
-
   // clearing last search on browser startup
   settings.updateSetting('last_search', '')
 
