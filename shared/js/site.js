@@ -10,6 +10,7 @@ var load = require('./load')
 var settings = require('./settings')
 var Score = require('./score')
 var utils = require('./utils')
+var abpLists = require('./abp-preprocessed.es6')
 
 class Site {
     constructor(domain) {
@@ -32,7 +33,7 @@ class Site {
      * check to see if this is a broken site reported on github
     */
      checkBrokenSites (domain) {
-         let trackersWhitelistTemporary = window.abpLists.getTemporaryWhitelist()
+         let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
 
          if (!trackersWhitelistTemporary) {
              return
