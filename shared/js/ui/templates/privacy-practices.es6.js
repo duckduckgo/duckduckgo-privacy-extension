@@ -2,13 +2,14 @@ const bel = require('bel')
 const changeCase = require('change-case')
 const hero = require('./shared/hero.es6.js')
 const statusList = require('./shared/status-list.es6.js')
+const constants = require('../../../data/constants')
 
 module.exports = function () {
   const domain = this.model && this.model.domain
   const tosdr = this.model && this.model.tosdr
 
   const tosdrMsg = (tosdr && tosdr.message) ||
-    window.constants.tosdrMessages.unknown
+    constants.tosdrMessages.unknown
   const tosdrStatus = tosdrMsg.toLowerCase()
 
   return bel`<section class="sliding-subview sliding-subview--has-fixed-header">

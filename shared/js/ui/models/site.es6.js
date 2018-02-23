@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.Model
-const httpsMessages = window.constants.httpsMessages
+const constants = require('../../../data/constants')
+const httpsMessages = constants.httpsMessages
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -203,7 +204,7 @@ Site.prototype = window.$.extend({},
       // console.log('[model] getMajorTrackerNetworksCount()')
       const count = Object.keys(this.tab.trackers).reduce((total, name) => {
         let tempTracker = name.toLowerCase()
-        const majorTrackingNetworks = Object.keys(window.constants.majorTrackingNetworks)
+        const majorTrackingNetworks = Object.keys(constants.majorTrackingNetworks)
           .filter((t) => t.toLowerCase() === tempTracker)
         // in case a major tracking network is in the list more than once somehow
         total += majorTrackingNetworks.length ? 1 : 0
@@ -216,7 +217,7 @@ Site.prototype = window.$.extend({},
     getIsPartOfMajorTrackingNetwork: function () {
       return this.isaMajorTrackingNetwork ||
         this.trackerNetworks.some((tracker) =>
-          window.constants.majorTrackingNetworks[tracker]
+          constants.majorTrackingNetworks[tracker]
         )
     },
 

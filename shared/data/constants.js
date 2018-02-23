@@ -52,8 +52,3 @@ let constants = {
 if (module && module.exports)  {
     module.exports = constants
 }
-
-// temporary hack until UI code can stop relying on window.constants
-if (typeof window === 'object') {
-    window.constants = constants
-}
