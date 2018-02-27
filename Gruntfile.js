@@ -38,8 +38,8 @@ module.exports = function(grunt) {
     /* watch any base files and browser specific files */
     let watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
-        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js'],
-        background: ['<%= dirs.src.js %>/*.js']
+        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js','<%= dirs.data %>/*.js'],
+        background: ['<%= dirs.src.js %>/*.js','<%= dirs.data %>/*.js']
     }
 
     grunt.initConfig({
@@ -51,6 +51,7 @@ module.exports = function(grunt) {
                 scss: 'shared/scss',
                 templates: 'shared/templates'
             },
+            data: 'shared/data',
             public: {
                 js: `${buildPath}/public/js`,
                 css: `${buildPath}/public/css`
