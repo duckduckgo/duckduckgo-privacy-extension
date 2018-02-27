@@ -20,7 +20,7 @@ module.exports = function () {
           </a>
       </li>
       <li>
-        <a href="${renderFeedbackHref(this.model.isBrowser, this.model.tabUrl)}"
+        <a href="${renderFeedbackHref(this.model.browserInfo, this.model.tabUrl)}"
         target="_blank"
         class="menu-title">
         Send feedback
@@ -28,7 +28,7 @@ module.exports = function () {
           </a>
       </li>
       <li>
-        <a href="${renderBrokenSiteHref(this.model.isBrowser, this.model.tabUrl)}"
+        <a href="${renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl)}"
         target="_blank"
         class="menu-title">
         Report broken site
