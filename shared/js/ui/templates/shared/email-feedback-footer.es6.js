@@ -2,6 +2,7 @@ module.exports = function (browserInfo, url) {
   let footer = '---\n'
   let extensionVersion = chrome.runtime.getManifest().version
 
+  // append URL if the user is sending feedback to do with a specific tab
   if (url) {
     footer += `URL is ${url}\n`
   }
