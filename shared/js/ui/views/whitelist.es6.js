@@ -2,6 +2,7 @@ const Parent = window.DDG.base.View
 const isHiddenClass = 'is-hidden'
 const isDisabledClass = 'is-disabled'
 const isInvalidInputClass = 'is-invalid-input'
+const whitelistItemsTemplate = require('./../templates/whitelist-items.es6.js')
 
 function Whitelist (ops) {
   this.model = ops.model
@@ -25,12 +26,7 @@ Whitelist.prototype = window.$.extend({},
       this.model.removeDomain(itemIndex)
 
       // No need to rerender the whole view
-      // unless we need to show the "no sites in whitelist" message
-      if (this.$listitem && (this.$listitem.length > 1)) {
-        $clickedListItem.remove()
-      } else {
-        this.setWhitelistFromSettings()
-      }
+      this._renderList()
     },
 
     _addItem: function (e) {
@@ -91,6 +87,7 @@ Whitelist.prototype = window.$.extend({},
         'add',
         'error',
         'show-add',
+        'container',
         'list-item',
         'url'
       ])
@@ -109,6 +106,12 @@ Whitelist.prototype = window.$.extend({},
       this.setup()
     },
 
+    _renderList: function () {
+      this.unbindEvents()
+      this.$container.html(whitelistItemsTemplate(this.model.list))
+      this.setup()
+    },
+    
     // watch for changes in the whitelist and rerender
     update: function (message) {
       if (message.action === 'whitelistChanged') {

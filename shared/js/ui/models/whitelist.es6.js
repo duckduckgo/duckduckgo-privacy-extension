@@ -25,7 +25,7 @@ Whitelist.prototype = window.$.extend({},
 
       // Update list
       // use splice() so it reindexes the array
-      this.list.splice(itemIndex, 0)
+      this.list.splice(itemIndex, 1)
     },
 
     addDomain: function (url) {
