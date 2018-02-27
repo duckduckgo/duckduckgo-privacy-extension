@@ -1,3 +1,5 @@
+const emailFeedbackFooter = require('./email-feedback-footer.es6.js')
+
 module.exports = function (browserInfo, url) {
   let subject = `${browserInfo.browser} Extension Broken Site Report`
   let body = `Help us improve by sharing a little info about the issue you've encountered.
@@ -6,8 +8,7 @@ module.exports = function (browserInfo, url) {
 
 2. Describe the issue. (What's breaking on the page? Attach a screenshot if possible)
 
-----
-URL is ${url}`
+${emailFeedbackFooter(browserInfo, url)}`
 
   return `mailto:extension-brokensites@duckduckgo.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 }
