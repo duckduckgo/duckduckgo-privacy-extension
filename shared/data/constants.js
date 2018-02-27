@@ -1,4 +1,4 @@
-let constants = {
+module.exports = {
     "trackerListLoc": "data/tracker_lists",
     "blockLists": [
         "trackersWithParentCompany.json"
@@ -47,8 +47,4 @@ let constants = {
         "maxcdn": 7,
         "automattic": 7
     }
-}
-
-if (module && module.exports)  {
-    module.exports = constants
 }
