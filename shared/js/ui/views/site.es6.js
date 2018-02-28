@@ -11,6 +11,8 @@ function Site (ops) {
   this.model = ops.model
   this.pageView = ops.pageView
   this.template = ops.template
+  this.isToggleButtonClicked = false
+  this.donotRerender = false
 
   // cache 'body' selector
   this.$body = window.$('body')
@@ -38,6 +40,7 @@ Site.prototype = window.$.extend({},
 
     _onWhitelistClick: function (e) {
       if (this.$body.hasClass('is-disabled')) return
+      this.isToggleButtonClicked = true
       this.model.toggleWhitelist()
       console.log('isWhitelisted: ', this.model.isWhitelisted)
       this._showAddedToWhitelistMessage()
@@ -49,8 +52,8 @@ Site.prototype = window.$.extend({},
       const w = window.chrome.extension.getViews({type: 'popup'})[0]
       const isTransparentClass = 'is-transparent'
       if (this.model.isWhitelisted) {
-        this.$protection.addClass(isTransparentClass)
         this.$protectionwhitelisted.removeClass(isTransparentClass)
+        this.$protection.addClass(isTransparentClass)
         setTimeout(() => w.close(), 6500)
         setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 6500)
       } else {
@@ -96,11 +99,20 @@ Site.prototype = window.$.extend({},
           this._rerender()
           this._setup()
         }
-      } else {
+      } else if (this.donotRerender) {
+        // Avoid rerendering after toggle button click
+        // otherwise it overrides the css transition
+        // and we're closing and reloading the tab anyway
+        return;
+      }else {
         this.$body.removeClass('is-disabled')
         this.unbindEvents()
         this._rerender()
         this._setup()
+      }
+
+      if (this.isToggleButtonClicked) {
+        this.donotRerender = true
       }
     },
 
