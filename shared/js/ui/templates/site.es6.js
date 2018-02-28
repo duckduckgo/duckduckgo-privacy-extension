@@ -41,13 +41,13 @@ module.exports = function () {
       </a>
     </li>
     <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
-      <h2 class="site-info__protection js-site-protection">Site Privacy Protection</h2>
-      <h2 class="is-hidden site-info__protection js-site-protection-whitelisted">
+      <h2 class="is-transparent site-info__protection--is-whitelisted js-site-protection-whitelisted">
         <span class="icon icon__check"></span>
         <span class="text-line-after-icon">
           Added to Whitelist
         </span>
       </h2>
+      <h2 class="site-info__protection js-site-protection">Site Privacy Protection</h2>
       <div class="site-info__toggle-container">
         ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
       </div>

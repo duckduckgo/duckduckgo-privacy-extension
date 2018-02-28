@@ -47,12 +47,12 @@ Site.prototype = window.$.extend({},
     // otherwise just reload the tab and close the popup
     _showAddedToWhitelistMessage: function () {
       const w = window.chrome.extension.getViews({type: 'popup'})[0]
-      const isHiddenClass = 'is-hidden'
+      const isTransparentClass = 'is-transparent'
       if (this.model.isWhitelisted) {
-        this.$protection.addClass(isHiddenClass)
-        this.$protectionwhitelisted.removeClass(isHiddenClass)
-        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 650)
-        setTimeout(() => w.close(), 650)
+        this.$protection.addClass(isTransparentClass)
+        this.$protectionwhitelisted.removeClass(isTransparentClass)
+        setTimeout(() => w.close(), 6500)
+        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 6500)
       } else {
         window.chrome.tabs.reload(this.model.tab.id)
         w.close()

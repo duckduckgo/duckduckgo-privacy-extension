@@ -116,6 +116,29 @@ body {
             margin-left: 12px;
         }
 
+        .site-info__protection--is-whitelisted {
+            opacity: 100;
+            margin-top: 0;
+            transition: all 4s ease;
+             
+            &.is-transparent {
+                margin-top: -16px;
+                opacity: 0;
+            }
+        }
+ 
+        .site-info__protection {
+            opacity: 100;
+            margin-top: 0;
+             
+            &.is-transparent {
+                margin-top: 16px;
+                opacity: 0;
+                height: 0;
+                transition: all 4s ease;
+            }
+        }
+
         .site-info__li--toggle {
             background-color: $color--medium-slate;
             color: $color--white;
