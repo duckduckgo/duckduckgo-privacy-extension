@@ -12,6 +12,7 @@ grunt:
 
 grunt-process-lists:
 	grunt execute:preProcessLists --browser=$(browser) --type=$(type)
+	grunt browserify:backgroundTest --browser=$(browser) --type=$(type)
 
 grunt-dev:
 	cp -r test build/$(browser)/dev/

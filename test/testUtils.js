@@ -1,5 +1,3 @@
-var bkg = chrome.extension.getBackgroundPage()
-
 /* Pass an array of chrome tab objects to be closed */
 function cleanUpTabs(tabs) {
     tabs.forEach((tab) => chrome.tabs.remove(tab.id));
