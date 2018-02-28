@@ -18,7 +18,9 @@
     "dev-firefox": "make dev browser=firefox type=dev",
     "release-firefox": "make browser=firefox type=release",
     "dev-chrome": "make dev browser=chrome type=dev",
-    "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
+    "beta-firefox": "npm run release-firefox && cd build/firefox/release && npm run remove-firefox-id && web-ext build",
+    "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
+    "remove-firefox-id": "sed '/jid1-ZAdIEUB7XOzOJw@jetpack/d' ./browsers/firefox/manifest.json > build/firefox/release/manifest.json"
   },
   "devDependencies": {
     "babel-preset-env": "^1.4.0",
