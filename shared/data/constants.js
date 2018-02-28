@@ -49,8 +49,11 @@ let constants = {
     }
 }
 
-if (typeof window === 'undefined' && module && module.exports)  {
+if (module && module.exports)  {
     module.exports = constants
-} else if (typeof window === 'object') {
+}
+
+// temporary hack until UI code can stop relying on window.constants
+if (typeof window === 'object') {
     window.constants = constants
 }

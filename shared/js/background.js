@@ -16,12 +16,15 @@
 
 
 var debugRequest = false
-var trackers = require('trackers')
-var utils = require('utils')
-var settings = require('settings')
-var stats = require('stats')
-var https = require('https')
-var surrogates = require('surrogates')
+const trackers = require('./trackers')
+const utils = require('./utils')
+const settings = require('./settings')
+const https = require('./https')
+const surrogates = require('./surrogates')
+const tabManager = require('./tabManager')
+const Companies = require('./companies')
+const ATB = require('./atb')
+const constants = require('../data/constants')
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
@@ -32,8 +35,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 });
 
 function Background() {
-  $this = this;
-
   // clearing last search on browser startup
   settings.updateSetting('last_search', '')
 

@@ -20,30 +20,7 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": [
-                "data/defaultSettings.js",
-                "data/constants.js",
-                "data/tosdr.js",
-                "js/require.js",
-                "js/load.js",
-                "js/utils.js",
-                "js/topBlocked.js",
-                "js/settings.js",
-                "js/score.js",
-                "js/site.js",
-                "js/tracker.js",
-                "js/tab.js",
-                "js/tabManager.js",
-                "js/companies.js",
-                "js/company.js",
-                "js/atb.js",
-                "js/trackerLists.js",
-                "js/trackers.js",
-                "js/tldjs.js",
-                "js/https.js",
-                "js/surrogates.js",
-                "js/background.js",
-                "js/abp.js",
-                "js/atb.js"
+                "public/js/background.js"
             ]
     },
     "chrome_settings_overrides": {

@@ -1,3 +1,5 @@
+const Companies = require('./companies')
+
 class Tracker {
     constructor (name, url, type) {
         this.parentCompany = Companies.get(name)
@@ -20,3 +22,5 @@ class Tracker {
         }
     }
 }
+
+module.exports = Tracker

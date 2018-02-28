@@ -4,13 +4,13 @@
  *
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
-abp = require('abp-filter-parser')
+const abp = require('abp-filter-parser')
 const deepFreeze = require('deep-freeze')
-
-// these are defined in data/ and loaded in the manifest. 
-// Make them immutable with deep-freeze
-constants = deepFreeze(constants)
-defaultSettings = deepFreeze(defaultSettings)
+const constants = require('../data/constants')
+const defaultSettings = require('../data/defaultSettings')
+const surrogates = require('./surrogates')
+const settings = require('./settings')
+const load = require('./load')
 
 const ONEDAY = 1000*60*60*24
 
@@ -125,11 +125,11 @@ function updateLists () {
 }
 
 // Make sure the list updater runs on start up
-settings.ready().then(() => abpLists.updateLists())
+settings.ready().then(() => updateLists())
 
 chrome.alarms.onAlarm.addListener(alarm => {
     if (alarm.name === 'updateLists') {
-        settings.ready().then(() => abpLists.updateLists())
+        settings.ready().then(() => updateLists())
     }
 })
 
@@ -163,11 +163,9 @@ function getVersionParam () {
     return versionParam
 }
 
-window.abpLists = (() => {
-    return {
-        getTemporaryWhitelist,
-        getWhitelists,
-        getEasylists,
-        updateLists
-    }
-})()
+module.exports = {
+    getTemporaryWhitelist,
+    getWhitelists,
+    getEasylists,
+    updateLists
+}

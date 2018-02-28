@@ -22,6 +22,12 @@ const scoreIconLocations = {
     "F": "img/toolbar-rating-f@2x.png"
 }
 
+const Site = require('./site')
+const Tracker = require('./tracker')
+const Score = require('./score')
+const utils = require('./utils')
+const Companies = require('./companies')
+
 class Tab {
     constructor(tabData) {
         this.id = tabData.id || tabData.tabId
@@ -122,14 +128,4 @@ class Tab {
     }
 }
 
-chrome.webRequest.onBeforeRedirect.addListener((req) => {
-    // count redirects
-    let tab = tabManager.get({'tabId': req.tabId})
-    if (!tab) return
-
-    if (tab.httpsRedirects[req.requestId]) {
-        tab.httpsRedirects[req.requestId] += 1
-    } else {
-        tab.httpsRedirects[req.requestId] = 1
-    }
-}, {urls: ["*://*/*"]})
+module.exports = Tab

@@ -1,5 +1,3 @@
-(function() {
-
 /****
  * 
  */
@@ -73,5 +71,4 @@ class Surrogates {
     }
 }
 
-require.scopes.surrogates = new Surrogates()
-})()
+module.exports = new Surrogates()

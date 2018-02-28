@@ -6,9 +6,11 @@
  * The Score attributes are then used generate a site
  * privacy score used in the popup.
  */
-var load = require('load')
-var settings = require('settings')
-var utils = require('utils')
+const load = require('./load')
+const settings = require('./settings')
+const Score = require('./score')
+const utils = require('./utils')
+const abpLists = require('./abp-preprocessed.es6')
 
 class Site {
     constructor(domain) {
@@ -31,7 +33,7 @@ class Site {
      * check to see if this is a broken site reported on github
     */
      checkBrokenSites (domain) {
-         let trackersWhitelistTemporary = window.abpLists.getTemporaryWhitelist()
+         let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
 
          if (!trackersWhitelistTemporary) {
              return
@@ -101,3 +103,5 @@ class Site {
         return false
     }
 }
+
+module.exports = Site
