@@ -3,6 +3,7 @@ const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
+const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
 
 module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
@@ -40,10 +41,19 @@ module.exports = function () {
       </a>
     </li>
     <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
-      <h2 class="site-info__protection">Site Privacy Protection</h2>
+      <h2 class="site-info__protection js-site-protection">Site Privacy Protection</h2>
+      <h2 class="is-hidden site-info__protection js-site-protection-whitelisted">
+        <span class="icon icon__check"></span>
+        <span class="text-line-after-icon">
+          Added to Whitelist
+        </span>
+      </h2>
       <div class="site-info__toggle-container">
         ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
       </div>
+    </li>
+    <li class="site-info__li--manage-whitelist padded border--bottom">
+      ${renderManageWhitelist(this.model)}
     </li>
   </ul>
   </section>`
@@ -57,5 +67,17 @@ module.exports = function () {
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
+  }
+
+  function renderManageWhitelist (model) {
+    return bel`<div>
+      <a href="#" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
+        Manage Whitelist
+      </a>
+      <div class="separator"></div>
+      <a href="${renderBrokenSiteHref(model.browserInfo, model.domain)}" target="_blank" class="js-site-report-broken site-info__report-broken link-secondary bold">
+        Report Broken Site
+      </a>
+    </div>`
   }
 }

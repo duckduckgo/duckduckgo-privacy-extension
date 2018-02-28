@@ -14,6 +14,8 @@ $color--medium-slate: #777;
 $color--medium-dark-slate: #5f5f5f;
 $color--light-grey: #a8a8ab;
 $color--silver: #f0f0f0;
+$color--dark-silver: #ddd;
+$color--medium-silver: #d8d8d8;
 
 /* Neutral Colors */
 $color--neutral-bg: #f5f5f5;
@@ -104,4 +106,8 @@ $icon__settings--moz: "moz-extension://__MSG_@@extension_id__/img/settings-gear@
 /* Close modal "x" icon */
 $icon__close--chrome: "chrome-extension://__MSG_@@extension_id__/img/close.svg";
 $icon__close--moz: "moz-extension://__MSG_@@extension_id__/img/close.svg";
+
+/* Error warning icon */
+$icon__error--chrome: "chrome-extension://__MSG_@@extension_id__/img/error.svg";
+$icon__error--moz: "moz-extension://__MSG_@@extension_id__/img/error.svg";
 

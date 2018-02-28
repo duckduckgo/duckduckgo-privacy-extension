@@ -315,6 +315,25 @@ a {
         }
 
     }
+    
+    &.icon__error {
+        width: 24px;
+        height: 24px;
+        vertical-align: bottom;
+        margin-left: -2px;
+
+        @include cross_platform_bg_image("error.svg");
+    }
+    
+    &.icon__check {
+        width: 22px;
+        height: 22px;
+        margin-top: -4px;
+        margin-left: 1px;
+        vertical-align: top;
+
+        @include cross_platform_bg_image("check.svg");
+    }
 }
 
 
@@ -391,4 +410,50 @@ a {
             border-right: 5px solid transparent;
         }
     }
+}
+
+/* Popout box with left arrow */
+.modal-box {
+    .modal-box__body {
+        width: 120px;
+        height: 32px;
+        border-radius: 4px;
+        line-height: 1.5;
+        text-align: center;
+        padding-top: 5px;
+        margin-left: 7px;
+        background-color: $white;
+        border: solid 1px #ddd;
+        color: $slate;
+        text-align: center;
+        z-index: 1;
+        float: right;
+    }
+    
+    .modal-box__popout {
+        @include arrow-left(7px, $platinum);
+    
+        margin-right: -15px;
+        margin-top: 13px;
+        z-index: 3;
+        float: left;
+        position: absolute;
+    }
+    
+    .modal-box__popout__body {
+        @include arrow-left(6px, $white);
+    
+        margin-left: 2px;
+        margin-top: -6px;
+        z-index: 5;
+    }
+}
+
+.separator {
+    width: 1px;
+    height: 18px;
+    background-color: $color--medium-silver;
+    display: inline-block;
+    vertical-align: bottom;
+    margin: 0 12px;
 }

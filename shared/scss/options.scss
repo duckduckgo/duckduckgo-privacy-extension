@@ -9,6 +9,8 @@
 /* Generic toggle button styling */
 @include toggle_button();
 
+/* Whitelist */
+@import "views/whitelist";
 
 /* Options page */
 .options-container {
@@ -34,30 +36,3 @@
     }
 }
 
-
-/* Whitelist */
-.options-content__whitelist {
-
-    li {
-
-        $whitelist-item-height: 1.2em;
-
-        a {
-            display: inline-block;
-            max-width: 360px;
-            height: $whitelist-item-height;
-            line-height: $whitelist-item-height;
-            overflow: hidden;
-        }
-
-        button.remove {
-            color: $color--grey;
-            font-size: 22px;
-            line-height: $whitelist-item-height;
-            background: transparent;
-            border: none;
-            margin: -4px 0 0 0;
-            padding: 0;
-        }
-    }
-}

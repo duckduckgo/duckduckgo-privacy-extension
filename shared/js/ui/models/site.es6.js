@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.Model
 const httpsMessages = window.constants.httpsMessages
+const parseUserAgent = require('./mixins/parse-user-agent.es6.js')
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -18,6 +19,7 @@ function Site (attrs) {
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
+  attrs.browserInfo = this.parseUserAgentString()
   Parent.call(this, attrs)
 
   this.bindEvents([
@@ -27,6 +29,7 @@ function Site (attrs) {
 
 Site.prototype = window.$.extend({},
   Parent.prototype,
+  parseUserAgent,
   {
 
     modelName: 'site',
