@@ -40,6 +40,8 @@ moveout: $(ITEMS)
 	rm -rf build/$(browser)/$(type)/js/ui
 	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
 
+beta-firefox: release beta-firefox-zip
+
 remove-firefox-id:
 	sed '/jid1-ZAdIEUB7XOzOJw@jetpack/d' ./browsers/firefox/manifest.json > build/firefox/release/manifest.json
 
