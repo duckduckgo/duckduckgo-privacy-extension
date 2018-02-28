@@ -1,4 +1,4 @@
-var load = require('./load');
+const load = require('./load');
 /**
  * Public api
  * Usage:

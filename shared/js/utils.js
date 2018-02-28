@@ -1,4 +1,4 @@
-let tldjs = require('tldjs')
+const tldjs = require('tldjs')
 
 function extractHostFromURL (url) {
     if (!url) return;
