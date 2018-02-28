@@ -16,11 +16,11 @@
 
 
 var debugRequest = false
-var trackers = require('./trackers')
-var utils = require('./utils')
-var settings = require('./settings')
-var https = require('./https')
-var surrogates = require('./surrogates')
+const trackers = require('./trackers')
+const utils = require('./utils')
+const settings = require('./settings')
+const https = require('./https')
+const surrogates = require('./surrogates')
 const tabManager = require('./tabManager')
 const Companies = require('./companies')
 const ATB = require('./atb')

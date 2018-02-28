@@ -27,7 +27,6 @@ const Tracker = require('./tracker')
 const Score = require('./score')
 const utils = require('./utils')
 const Companies = require('./companies')
-const tabManager = require('./tabManager')
 
 class Tab {
     constructor(tabData) {

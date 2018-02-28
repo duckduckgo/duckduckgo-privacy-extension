@@ -5,6 +5,7 @@ const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
+const openOptionsPage = require('./mixins/open-options-page.es6.js')
 
 function Site (ops) {
   this.model = ops.model
@@ -32,15 +33,30 @@ function Site (ops) {
 
 Site.prototype = window.$.extend({},
   Parent.prototype,
+  openOptionsPage,
   {
 
-    _whitelistClick: function (e) {
+    _onWhitelistClick: function (e) {
       if (this.$body.hasClass('is-disabled')) return
       this.model.toggleWhitelist()
       console.log('isWhitelisted: ', this.model.isWhitelisted)
-      window.chrome.tabs.reload(this.model.tab.id)
+      this._showAddedToWhitelistMessage()
+    },
+
+    // If we just whitelisted a site, show a message briefly before reloading
+    // otherwise just reload the tab and close the popup
+    _showAddedToWhitelistMessage: function () {
       const w = window.chrome.extension.getViews({type: 'popup'})[0]
-      w.close()
+      const isHiddenClass = 'is-hidden'
+      if (this.model.isWhitelisted) {
+        this.$protection.addClass(isHiddenClass)
+        this.$protectionwhitelisted.removeClass(isHiddenClass)
+        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 650)
+        setTimeout(() => w.close(), 650)
+      } else {
+        window.chrome.tabs.reload(this.model.tab.id)
+        w.close()
+      }
     },
 
     // NOTE: after ._setup() is called this view listens for changes to
@@ -49,18 +65,24 @@ Site.prototype = window.$.extend({},
       // console.log('[site view] _setup()')
       this._cacheElems('.js-site', [
         'toggle',
+        'protection',
+        'protection-whitelisted',
         'show-all-trackers',
         'show-page-trackers',
+        'manage-whitelist',
+        'report-broken',
         'privacy-practices'
       ])
 
       this.$gradescorecard = this.$('.js-hero-open')
 
       this.bindEvents([
-        [this.$toggle, 'click', this._whitelistClick],
+        [this.$toggle, 'click', this._onWhitelistClick],
         [this.$showpagetrackers, 'click', this._showPageTrackers],
         [this.$privacypractices, 'click', this._showPrivacyPractices],
         [this.$gradescorecard, 'click', this._showGradeScorecard],
+        [this.$managewhitelist, 'click', this._onManageWhitelistClick],
+        [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
         [this.store.subscribe, 'change:site', this.rerender]
       ])
     },
@@ -79,6 +101,20 @@ Site.prototype = window.$.extend({},
         this.unbindEvents()
         this._rerender()
         this._setup()
+      }
+    },
+
+    _onManageWhitelistClick: function () {
+      if (this.model && this.model.disabled) {
+        return
+      }
+
+      this.openOptionsPage()
+    },
+
+    _onReportBrokenSiteClick: function (e) {
+      if (this.model && this.model.disabled) {
+        e.preventDefault()
       }
     },
 

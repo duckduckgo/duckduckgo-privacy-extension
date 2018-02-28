@@ -1,4 +1,6 @@
 const bel = require('bel')
+const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
+const renderFeedbackHref = require('./shared/render-feedback-href.es6.js')
 
 module.exports = function () {
   return bel`<nav class="hamburger-menu js-hamburger-menu is-hidden">
@@ -18,7 +20,7 @@ module.exports = function () {
           </a>
       </li>
       <li>
-        <a href="${renderFeedbackHref(this.model.isBrowser, this.model.tabUrl)}"
+        <a href="${renderFeedbackHref(this.model.browserInfo, this.model.tabUrl)}"
         target="_blank"
         class="menu-title">
         Send feedback
@@ -26,7 +28,7 @@ module.exports = function () {
           </a>
       </li>
       <li>
-        <a href="${renderBrokenSiteHref(this.model.isBrowser, this.model.tabUrl)}"
+        <a href="${renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl)}"
         target="_blank"
         class="menu-title">
         Report broken site
@@ -36,12 +38,4 @@ module.exports = function () {
         </ul>
     </div>
   </nav>`
-}
-
-function renderFeedbackHref (browser, url) {
-  return `mailto:extension-feedback@duckduckgo.com?subject=${browser}%20Extension%20Feedback&body=Help%20us%20improve%20by%20sharing%20a%20little%20info%20about%20the%20issue%20you%27ve%20encountered%2E%0A%0ATell%20us%20which%20features%20or%20functionality%20your%20feedback%20refers%20to%2E%20What%20do%20you%20love%3F%20What%20isn%27t%20working%3F%20How%20could%20it%20be%20improved%3F%20%20%0A%0A----URL%20is%20${encodeURIComponent(url)}`
-}
-
-function renderBrokenSiteHref (browser, url) {
-  return `mailto:extension-brokensites@duckduckgo.com?subject=${browser}%20Extension%20Broken%20Site%20Report&body=Help%20us%20improve%20by%20sharing%20a%20little%20info%20about%20the%20issue%20you%27ve%20encountered%2E%0A%0A1%2E%20Which%20website%20is%20broken%3F%20%28copy%20and%20paste%20the%20URL%29%0A%0A2%2E%20Describe%20the%20issue%2E%20%28What%27s%20breaking%20on%20the%20page%3F%20Attach%20a%20screenshot%20if%20possible%29%0A%0A----URL%20is%20${encodeURIComponent(url)}`
 }
