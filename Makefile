@@ -15,7 +15,7 @@ grunt-process-lists:
 	grunt browserify:backgroundTest --browser=$(browser) --type=$(type)
 
 grunt-dev:
-	cp -r test build/$(browser)/dev/
+	cp -Lr test build/$(browser)/dev/
 	grunt dev --browser=$(browser) --type=$(type)
 
 tosdr:
