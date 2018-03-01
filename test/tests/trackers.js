@@ -19,17 +19,22 @@
     // invalid URL
     { url: 'sdfsdfs', block: false}
   ];
-  
+
   QUnit.test("block url", function (assert) {
       // turn social blocking on for this test
       bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-      
-      basicBlocking.forEach(function(test) {
-          bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? true : false;
-          assert.ok(toBlock === test.block, 'url should be blocked');
-      });
+      var done = assert.async()
+
+      setTimeout(function () {
+          basicBlocking.forEach(function(test) {
+              bkg.settings.updateSetting('trackerBlockingEnabled', true);
+              var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+              toBlock = toBlock ? true : false;
+              assert.ok(toBlock === test.block, 'url should be blocked');
+
+              done()
+          });
+      }, 1000);
   });
  
   // These abp blocking tests are based on actual entries from 
@@ -109,7 +114,7 @@
           let testTab = {
               tabId: 0,
               url: test.url,
-              site: {domain: utils.extractHostFromURL(test.url)}
+              site: {domain: bkg.utils.extractHostFromURL(test.url)}
           }
 
           var toBlock = bkg.trackers.isTracker(test.potentialTracker, testTab, fakeRequest);
@@ -149,16 +154,16 @@
       let fakeRegexList = regexList.join('\n')
 
       let parsedList = {}
-      abp.parse(fakeEasylist, parsedList)
-      abp.parse(fakeRegexList, parsedList)
+      bkg.abp.parse(fakeEasylist, parsedList)
+      bkg.abp.parse(fakeRegexList, parsedList)
 
       easylistTestCases.forEach((e) => {
           let domain = e.options.domain || 'test.com'
           let type = e.options.type || 'SCRIPT'
 
-          let match = abp.matches(parsedList, e.url, {
+          let match = bkg.abp.matches(parsedList, e.url, {
               domain: domain,
-              elementTypeMask:abp.elementTypes[type]
+              elementTypeMask: bkg.abp.elementTypes[type]
           })
           
           assert.ok(match === e.block, `Got correct blocking decision. ${match} === ${e.block}, ${e.url} ${JSON.stringify(e.options)}`)
@@ -178,7 +183,7 @@
           let testTab = {
               tabId: 0,
               url: test.url,
-              site: {domain: utils.extractHostFromURL(test.url)}
+              site: {domain: bkg.utils.extractHostFromURL(test.url)}
           }
 
           let result = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);

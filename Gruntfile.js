@@ -27,6 +27,9 @@ module.exports = function(grunt) {
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background.js']
         },
+        backgroundTest: {
+            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background.js', '<%= dirs.test %>/requireHelper.js']
+        },
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
@@ -55,7 +58,8 @@ module.exports = function(grunt) {
             public: {
                 js: `${buildPath}/public/js`,
                 css: `${buildPath}/public/css`
-            }
+            },
+            test: 'test'
         },
 
         browserify: {
@@ -66,6 +70,10 @@ module.exports = function(grunt) {
             background: {
                 options: { transform: ['babelify'] },
                 files: baseFileMap.background
+            },
+            backgroundTest: {
+                options: { transform: ['babelify'] },
+                files: baseFileMap.backgroundTest
             }
         },
 
