@@ -18,6 +18,7 @@
     "dev-firefox": "make dev browser=firefox type=dev",
     "release-firefox": "make browser=firefox type=release",
     "dev-chrome": "make dev browser=chrome type=dev",
+    "beta-firefox": "make beta-firefox browser=firefox type=release",
     "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
   },
   "devDependencies": {
