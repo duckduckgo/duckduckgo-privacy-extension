@@ -4,6 +4,8 @@ const tldjs = require('tldjs')
 function Whitelist (attrs) {
   attrs.list = {}
   Parent.call(this, attrs)
+  
+  this.setWhitelistFromSettings()
 }
 
 Whitelist.prototype = window.$.extend({},
@@ -48,9 +50,27 @@ Whitelist.prototype = window.$.extend({},
           value: true
         }
         })
+
+        this.setWhitelistFromSettings()
       }
 
       return domain
+    },
+
+    setWhitelistFromSettings: function () {
+      let self = this
+      this.fetch({getSetting: {name: 'whitelisted'}}).then((list) => {
+        list = list || {}
+        let wlist = Object.keys(list)
+        wlist.sort()
+
+        // Prevent sealing array elements
+        self.list = [...wlist]
+
+        // Publish whitelist change notification via the store
+        // used to know when to rerender the view
+        self.set('whitelist', wlist)
+      })
     }
   }
 )

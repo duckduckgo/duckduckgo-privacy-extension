@@ -13,7 +13,6 @@ function Whitelist (ops) {
 
   // bind events
   this.setup()
-  this.setWhitelistFromSettings()
 }
 
 Whitelist.prototype = window.$.extend({},
@@ -38,7 +37,7 @@ Whitelist.prototype = window.$.extend({},
         }
 
         if (isValidInput) {
-          this.setWhitelistFromSettings()
+          this.rerender()
         } else {
           this._showErrorMessage()
         }
@@ -96,7 +95,8 @@ Whitelist.prototype = window.$.extend({},
         [this.$remove, 'click', this._removeItem],
         [this.$add, 'click', this._addItem],
         [this.$showadd, 'click', this._showAddToWhitelistInput],
-        [this.$url, 'keyup', this._manageInputChange]
+        [this.$url, 'keyup', this._manageInputChange],
+        [this.store.subscribe, 'change:whitelist', this.rerender]
       ])
     },
 
@@ -110,23 +110,6 @@ Whitelist.prototype = window.$.extend({},
       this.unbindEvents()
       this.$container.html(whitelistItemsTemplate(this.model.list))
       this.setup()
-    },
-    
-    // watch for changes in the whitelist and rerender
-    update: function (message) {
-      if (message.action === 'whitelistChanged') {
-        this.setWhitelistFromSettings()
-      }
-    },
-
-    setWhitelistFromSettings: function () {
-      let self = this
-      this.model.fetch({getSetting: {name: 'whitelisted'}}).then((list) => {
-        let wlist = list || {}
-        self.model.list = Object.keys(wlist)
-        self.model.list.sort()
-        self.rerender()
-      })
     }
   }
 )
