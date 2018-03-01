@@ -13,7 +13,9 @@
               numTries++
               setTimeout(function() { checkForList() }, 50)
           }
-      }()
+      }
+
+      checkForList()
   }
 
   QUnit.test('test https upgrade rules installed to indexed db', function (assert) {
