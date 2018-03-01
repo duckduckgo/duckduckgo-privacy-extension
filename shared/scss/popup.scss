@@ -116,35 +116,37 @@ body {
             margin-left: 12px;
         }
 
-        .site-info__protection--is-whitelisted:not(.is-transparent) {
+        .site-info__protection--is-whitelisted {
             opacity: 100;
             margin-top: 0;
-             
+            transition: all 2s ease 1s;
+            -webkit-transition: all 2s ease 1s;
         }
 
         .site-info__protection--is-whitelisted.is-transparent {
             margin-top: -16px;
             opacity: 0;
-            transition: all 3s ease-in-out;
-            -webkit-transition: all 3s ease-in-out;
         }
  
-        .site-info__protection:not(.is-transparent) {
+        .site-info__protection {
             opacity: 100;
             margin-top: 0;
-                transition: all 3s ease-in-out;
-                -webkit-transition: all 3s ease-in-out;
-             
+            max-height: 20px;
         }
+
         .site-info__protection.is-transparent {
-                margin-top: 16px;
-                opacity: 0;
-                height: 0;
+            margin-top: 16px;
+            opacity: 0;
+            max-height: 0;
+            transition: all 2s ease 1s;
+            -webkit-transition: all 2s ease 1s;
         }
 
         .site-info__li--toggle {
             background-color: $color--medium-slate;
             color: $color--white;
+            max-height: 19px;
+            overflow: hidden;
 
             &.is-active {
                 background-color: $color--green;
