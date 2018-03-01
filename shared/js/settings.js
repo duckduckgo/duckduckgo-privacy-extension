@@ -1,4 +1,5 @@
 const load = require('./load');
+const defaultSettings = require('../data/defaultSettings')
 /**
  * Public api
  * Usage:
@@ -11,8 +12,6 @@ let _ready = init().then(() => {
     isReady = true
     console.log("Settings are loaded")
 })
-
-const defaultSettings = require('../data/defaultSettings')
 
 // external settings defines a function that needs to run when a setting is updated
 let isExtensionEnabled
