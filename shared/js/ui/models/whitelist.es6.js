@@ -4,7 +4,7 @@ const tldjs = require('tldjs')
 function Whitelist (attrs) {
   attrs.list = {}
   Parent.call(this, attrs)
-  
+ 
   this.setWhitelistFromSettings()
 }
 

@@ -21,7 +21,6 @@ Whitelist.prototype = window.$.extend({},
 
     _removeItem: function (e) {
       const itemIndex = window.$(e.target).data('item')
-      const $clickedListItem = window.$(e.target).parent()
       this.model.removeDomain(itemIndex)
 
       // No need to rerender the whole view
