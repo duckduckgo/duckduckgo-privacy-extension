@@ -64,12 +64,14 @@ Whitelist.prototype = window.$.extend({},
         let wlist = Object.keys(list)
         wlist.sort()
 
-        // Prevent sealing array elements
+        // The list passed via fetch is sealed
+        // unpack and wrap to allow adding/removing elements
+        // in the model property
         self.list = [...wlist]
 
         // Publish whitelist change notification via the store
         // used to know when to rerender the view
-        self.set('whitelist', wlist)
+        self.set('whitelist', [...wlist])
       })
     }
   }
