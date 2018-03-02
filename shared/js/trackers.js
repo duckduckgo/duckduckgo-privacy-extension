@@ -240,8 +240,12 @@ require.scopes.trackers = (function() {
 
         if (currentLocationParsed.domain === urlToCheckParsed.domain) {
             return true
+        } else {
+            let parentEntity = entityMap[urlToCheckParsed.domain]
+            if (parentEntity) {
+                return isRelatedEntity(parentEntity, currLocation)
+            }
         }
-
         return false
     }
 
