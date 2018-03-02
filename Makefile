@@ -2,7 +2,7 @@ ITEMS   := shared/html shared/data shared/img shared/js
 
 release: npm setup-build-dir grunt tosdr moveout fonts
 
-dev: setup-build-dir grunt-process-lists moveout fonts grunt-dev
+dev: setup-build-dir grunt-process-lists build-test-files moveout fonts grunt-dev
 
 npm:
 	npm install --tldjs-update-rules
@@ -12,6 +12,8 @@ grunt:
 
 grunt-process-lists:
 	grunt execute:preProcessLists --browser=$(browser) --type=$(type)
+
+build-test-files:
 	grunt browserify:backgroundTest --browser=$(browser) --type=$(type)
 
 grunt-dev:

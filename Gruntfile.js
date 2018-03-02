@@ -118,7 +118,7 @@ module.exports = function(grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify', 'execute:preProcessLists'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'execute:preProcessLists'])
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('default', 'build')
 }
