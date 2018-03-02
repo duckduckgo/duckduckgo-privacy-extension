@@ -4,7 +4,7 @@ const tldjs = require('tldjs')
 function Whitelist (attrs) {
   attrs.list = {}
   Parent.call(this, attrs)
-
+  
   this.setWhitelistFromSettings()
 }
 
@@ -59,19 +59,19 @@ Whitelist.prototype = window.$.extend({},
 
     setWhitelistFromSettings: function () {
       let self = this
-      this.fetch({getSetting: {name: 'whitelisted'}}).then((list) => {
-        list = list || {}
-        let wlist = Object.keys(list)
+      this.fetch({getSetting: {name: 'whitelisted'}}).then((whitelist) => {
+        whitelist = whitelist || {}
+        let wlist = Object.keys(whitelist)
         wlist.sort()
-
-        // The list passed via fetch is sealed
+        
+        // Publish whitelist change notification via the store
+        // used to know when to rerender the view
+        self.set('list', wlist)
+        
+        // set() sealed both the model's list and wlist
         // unpack and wrap to allow adding/removing elements
         // in the model property
         self.list = [...wlist]
-
-        // Publish whitelist change notification via the store
-        // used to know when to rerender the view
-        self.set('whitelist', [...wlist])
       })
     }
   }

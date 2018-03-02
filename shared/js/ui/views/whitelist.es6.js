@@ -80,6 +80,7 @@ Whitelist.prototype = window.$.extend({},
     },
 
     setup: function () {
+      console.log(this.model.list)
       this._cacheElems('.js-whitelist', [
         'remove',
         'add',
@@ -95,6 +96,7 @@ Whitelist.prototype = window.$.extend({},
         [this.$add, 'click', this._addItem],
         [this.$showadd, 'click', this._showAddToWhitelistInput],
         [this.$url, 'keyup', this._manageInputChange],
+        // listen to changes to the whitelist model
         [this.store.subscribe, 'change:whitelist', this.rerender]
       ])
     },
