@@ -3,11 +3,12 @@ const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
+const constants = require('../../../data/constants')
 const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
 
 module.exports = function () {
   const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
-     window.constants.tosdrMessages.unknown
+     constants.tosdrMessages.unknown
 
   return bel`<section class="site-info site-info--main">
     <ul class="default-list">

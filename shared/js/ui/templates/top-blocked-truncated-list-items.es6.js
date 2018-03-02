@@ -1,7 +1,6 @@
 const bel = require('bel')
-// TODO/FIXME: this is a hack:
-const _constants = require('./../../../data/constants.js') // eslint-disable-line
-const majorTrackingNetworks = window.constants.majorTrackingNetworks
+const constants = require('../../../data/constants')
+const majorTrackingNetworks = constants.majorTrackingNetworks
 
 module.exports = function (companyListMap) {
   return companyListMap.map((data) => {
