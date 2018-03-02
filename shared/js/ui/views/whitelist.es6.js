@@ -80,7 +80,6 @@ Whitelist.prototype = window.$.extend({},
     },
 
     setup: function () {
-      console.log(this.model.list)
       this._cacheElems('.js-whitelist', [
         'remove',
         'add',
