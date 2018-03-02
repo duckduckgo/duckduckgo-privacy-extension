@@ -41,7 +41,6 @@ Site.prototype = window.$.extend({},
       if (this.$body.hasClass('is-disabled')) return
       this.isToggleButtonClicked = true
       this.model.toggleWhitelist()
-      console.log('isWhitelisted: ', this.model.isWhitelisted)
       this._showAddedToWhitelistMessage()
     },
 
@@ -51,10 +50,13 @@ Site.prototype = window.$.extend({},
       const w = window.chrome.extension.getViews({type: 'popup'})[0]
       const isTransparentClass = 'is-transparent'
       if (this.model.isWhitelisted) {
-        this.$protectionwhitelisted.removeClass(isTransparentClass)
-        this.$protection.addClass(isTransparentClass)
-        setTimeout(() => w.close(), 4000)
-        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 4000)
+        // Wait for the rerendering to be done
+        // 10ms timeout is the minimum to render the transition smoothly 
+        setTimeout(() => this.$protectionwhitelisted.removeClass(isTransparentClass), 10)
+        setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
+        // Wait a bit more before closing the popup and reloading the tab
+        setTimeout(() => w.close(), 3500)
+        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 3500)
       } else {
         window.chrome.tabs.reload(this.model.tab.id)
         w.close()
@@ -98,18 +100,12 @@ Site.prototype = window.$.extend({},
           this._rerender()
           this._setup()
         }
-      }else if (this.isToggleButtonClicked) {
-        // Avoid rerendering after toggle button click
-        // otherwise it overrides the css transition
-        // and we're closing and reloading the tab anyway
-        return;
       } else {
         this.$body.removeClass('is-disabled')
         this.unbindEvents()
         this._rerender()
         this._setup()
       }
-
     },
 
     _onManageWhitelistClick: function () {
