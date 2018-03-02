@@ -19,7 +19,7 @@ function Site (attrs) {
   attrs.trackerNetworks = []
   attrs.tosdr = {}
   attrs.isaMajorTrackingNetwork = false
-  attrs.isBrowser = this.parseUserAgentString().browser
+  attrs.browserInfo = this.parseUserAgentString()
   Parent.call(this, attrs)
 
   this.bindEvents([

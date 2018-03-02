@@ -22,15 +22,12 @@ global.companyList = function (listData) {
                     companyList.categories[type].forEach((entry) => {
                     
                         for (var name in entry) {
-                            let normalizedName = name
-                            if (name === 'Amazon.com') normalizedName = 'Amazon'
-
                             // ItIsAtracker is not a real entry in the list
                             if (name !== 'ItIsATracker') {
                                 for (var domain in entry[name]){
                                     if (entry[name][domain].length) {
                                         entry[name][domain].forEach((trackerURL) => {
-                                            addToList(type, trackerURL, {'c': normalizedName, 'u': domain});
+                                            addToList(type, trackerURL, {'c': name, 'u': domain});
                                         });
                                     }
                                 }
