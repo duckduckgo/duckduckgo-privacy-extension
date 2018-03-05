@@ -63,15 +63,10 @@ Whitelist.prototype = window.$.extend({},
         whitelist = whitelist || {}
         let wlist = Object.keys(whitelist)
         wlist.sort()
-        
+
         // Publish whitelist change notification via the store
         // used to know when to rerender the view
         self.set('list', wlist)
-        
-        // set() sealed both the model's list and wlist
-        // unpack and wrap to allow adding/removing elements
-        // in the model property
-        self.list = [...wlist]
       })
     }
   }
