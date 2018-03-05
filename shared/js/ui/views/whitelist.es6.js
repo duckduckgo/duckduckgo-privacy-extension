@@ -2,6 +2,7 @@ const Parent = window.DDG.base.View
 const isHiddenClass = 'is-hidden'
 const isDisabledClass = 'is-disabled'
 const isInvalidInputClass = 'is-invalid-input'
+const whitelistItemsTemplate = require('./../templates/whitelist-items.es6.js')
 
 function Whitelist (ops) {
   this.model = ops.model
@@ -12,7 +13,6 @@ function Whitelist (ops) {
 
   // bind events
   this.setup()
-  this.setWhitelistFromSettings()
 }
 
 Whitelist.prototype = window.$.extend({},
@@ -21,16 +21,10 @@ Whitelist.prototype = window.$.extend({},
 
     _removeItem: function (e) {
       const itemIndex = window.$(e.target).data('item')
-      const $clickedListItem = window.$(e.target).parent()
       this.model.removeDomain(itemIndex)
 
       // No need to rerender the whole view
-      // unless we need to show the "no sites in whitelist" message
-      if (this.$listitem && (this.$listitem.length > 1)) {
-        $clickedListItem.remove()
-      } else {
-        this.setWhitelistFromSettings()
-      }
+      this._renderList()
     },
 
     _addItem: function (e) {
@@ -42,7 +36,7 @@ Whitelist.prototype = window.$.extend({},
         }
 
         if (isValidInput) {
-          this.setWhitelistFromSettings()
+          this.rerender()
         } else {
           this._showErrorMessage()
         }
@@ -91,6 +85,7 @@ Whitelist.prototype = window.$.extend({},
         'add',
         'error',
         'show-add',
+        'container',
         'list-item',
         'url'
       ])
@@ -99,7 +94,9 @@ Whitelist.prototype = window.$.extend({},
         [this.$remove, 'click', this._removeItem],
         [this.$add, 'click', this._addItem],
         [this.$showadd, 'click', this._showAddToWhitelistInput],
-        [this.$url, 'keyup', this._manageInputChange]
+        [this.$url, 'keyup', this._manageInputChange],
+        // listen to changes to the whitelist model
+        [this.store.subscribe, 'change:whitelist', this.rerender]
       ])
     },
 
@@ -109,21 +106,10 @@ Whitelist.prototype = window.$.extend({},
       this.setup()
     },
 
-    // watch for changes in the whitelist and rerender
-    update: function (message) {
-      if (message.action === 'whitelistChanged') {
-        this.setWhitelistFromSettings()
-      }
-    },
-
-    setWhitelistFromSettings: function () {
-      let self = this
-      this.model.fetch({getSetting: {name: 'whitelisted'}}).then((list) => {
-        let wlist = list || {}
-        self.model.list = Object.keys(wlist)
-        self.model.list.sort()
-        self.rerender()
-      })
+    _renderList: function () {
+      this.unbindEvents()
+      this.$container.html(whitelistItemsTemplate(this.model.list))
+      this.setup()
     }
   }
 )

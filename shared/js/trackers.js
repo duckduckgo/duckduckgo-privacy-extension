@@ -224,8 +224,8 @@ function isRelatedEntity(parentCompany, currLocation) {
         if (host.match(parentEntity.regexProperties)) {
             return true
         }
-
     }
+
     return false
 }
 
@@ -238,6 +238,11 @@ function isFirstPartyRequest(currLocation, urlToCheck) {
 
     if (currentLocationParsed.domain === urlToCheckParsed.domain) {
         return true
+    } else {
+        let parentEntity = entityMap[urlToCheckParsed.domain]
+        if (parentEntity) {
+            return isRelatedEntity(parentEntity, currLocation)
+        }
     }
 
     return false
