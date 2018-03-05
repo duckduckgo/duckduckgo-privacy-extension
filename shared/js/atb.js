@@ -155,7 +155,16 @@ var ATB = (() => {
             let set_atb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
             if (set_atb) url += `&set_atb=${set_atb}`
-            if (typeof browser !== 'undefined') url += `&browser=${browser}`
+
+            let browserInfo = utils.parseUserAgentString()
+            let browserName = browserInfo.browser
+            let browserVersion = browserInfo.version
+            let extensionVersion = window.chrome.runtime.getManifest().version
+
+            if (browserName) url += `&browser=${browserName}`
+            if (browserVersion) url += `&bv=${browserVersion}`
+            if (extensionVersion) url += `&v=${extensionVersion}`
+
             return url
         }
     }
