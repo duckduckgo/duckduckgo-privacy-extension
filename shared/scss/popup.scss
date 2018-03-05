@@ -119,7 +119,7 @@ body {
         .site-info__whitelist-status {
             opacity: 1;
             margin-top: 0;
-            transition: all 1.5s ease;
+            transition: all 0.3s ease;
         }
 
         .site-info__whitelist-status.is-transparent {
@@ -137,7 +137,7 @@ body {
             margin-top: 16px;
             opacity: 0;
             max-height: 0;
-            transition: all 1.5s ease;
+            transition: all 0.3s ease;
         }
 
         .site-info__li--toggle {
