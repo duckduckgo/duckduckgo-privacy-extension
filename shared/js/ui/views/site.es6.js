@@ -49,7 +49,7 @@ Site.prototype = window.$.extend({},
       const isTransparentClass = 'is-transparent'
       if (this.model.isWhitelisted) {
         // Wait for the rerendering to be done
-        // 10ms timeout is the minimum to render the transition smoothly 
+        // 10ms timeout is the minimum to render the transition smoothly
         setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
         setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
         // Wait a bit more before closing the popup and reloading the tab
