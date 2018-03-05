@@ -208,8 +208,8 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
 }
 
 /* Check to see if this tracker is related to the current page through their parent companies
-* Only block request to 3rd parties
-*/
+ * Only block request to 3rd parties
+ */
 function isRelatedEntity(parentCompany, currLocation) {
     var parentEntity = entityList[parentCompany]
     var host = utils.extractHostFromURL(currLocation)
@@ -230,8 +230,8 @@ function isRelatedEntity(parentCompany, currLocation) {
 }
 
 /* Compare two urls to determine if they came from the same hostname
-* pull off any subdomains before comparison
-*/
+ * pull off any subdomains before comparison
+ */
 function isFirstPartyRequest(currLocation, urlToCheck) {
     let currentLocationParsed = tldjs.parse(currLocation)
     let urlToCheckParsed = tldjs.parse(urlToCheck)
