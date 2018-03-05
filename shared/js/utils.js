@@ -29,7 +29,7 @@ function parseUserAgentString (uaString) {
     const rgx = uaString.match(/(Firefox|Chrome|Safari)\/([0-9]+)/)
     return {
         browser: rgx[1],
-        majorVersion: rgx[2]
+        version: rgx[2]
     }
 }
 
