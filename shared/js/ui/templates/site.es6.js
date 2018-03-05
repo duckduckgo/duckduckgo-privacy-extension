@@ -41,7 +41,7 @@ module.exports = function () {
       </a>
     </li>
     <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
-      <h2 class="is-transparent site-info__protection--is-whitelisted js-site-protection-whitelisted">
+      <h2 class="is-transparent site-info__whitelist-status js-site-whitelist-status">
         <span class="icon icon__check"></span>
         <span class="text-line-after-icon">
           Added to Whitelist

@@ -11,7 +11,6 @@ function Site (ops) {
   this.model = ops.model
   this.pageView = ops.pageView
   this.template = ops.template
-  this.isToggleButtonClicked = false
 
   // cache 'body' selector
   this.$body = window.$('body')
@@ -39,7 +38,6 @@ Site.prototype = window.$.extend({},
 
     _onWhitelistClick: function (e) {
       if (this.$body.hasClass('is-disabled')) return
-      this.isToggleButtonClicked = true
       this.model.toggleWhitelist()
       this._showAddedToWhitelistMessage()
     },
@@ -52,7 +50,7 @@ Site.prototype = window.$.extend({},
       if (this.model.isWhitelisted) {
         // Wait for the rerendering to be done
         // 10ms timeout is the minimum to render the transition smoothly 
-        setTimeout(() => this.$protectionwhitelisted.removeClass(isTransparentClass), 10)
+        setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
         setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
         // Wait a bit more before closing the popup and reloading the tab
         setTimeout(() => w.close(), 3500)
@@ -70,7 +68,7 @@ Site.prototype = window.$.extend({},
       this._cacheElems('.js-site', [
         'toggle',
         'protection',
-        'protection-whitelisted',
+        'whitelist-status',
         'show-all-trackers',
         'show-page-trackers',
         'manage-whitelist',
