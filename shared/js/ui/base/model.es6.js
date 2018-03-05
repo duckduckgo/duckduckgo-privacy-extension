@@ -57,6 +57,9 @@ BaseModel.prototype = $.extend({},
       const lastValue = this[attr] || null
       this[attr] = val
 
+      // deep clone val in case it's something passed by reference
+      val = JSON.parse(JSON.stringify(val))
+
       this.store.publish({
         notifierName: this.modelName,
         change: {attribute: attr, value: val, lastValue: lastValue},
@@ -107,6 +110,7 @@ BaseModel.prototype = $.extend({},
     send: function (action, data) {
       if (!action) throw new Error('model.send() requires an action argument')
       data = data || null
+      data = JSON.parse(JSON.stringify(data))
       this.store.publish({
         notifierName: this.modelName,
         action: action,
