@@ -1,31 +1,29 @@
-require.scopes.trackerLists = (function() {
-    var settings = require('settings')
-    var load = require('load')
-    var lists = {}
+const settings = require('./settings')
+const load = require('./load')
+const constants = require('../data/constants')
+let lists = {}
 
-    function getLists () {
-        return lists
-    }
+function getLists () {
+    return lists
+}
 
-    function setList (name, data) {
-        lists[name] = data
-    }
+function setList (name, data) {
+    lists[name] = data
+}
 
-    function loadLists(){
-        var listLocation = constants.trackerListLoc
-        var blockLists = constants.blockLists
-        blockLists.forEach( function(listName) {
-            load.JSONfromLocalFile(listLocation + "/" + listName, (listJSON) => {
-                console.log(`Loaded tracker list: ${listLocation}/${listName}`)
-                lists[listName.replace('.json', '')] = listJSON
-            })
+function loadLists(){
+    var listLocation = constants.trackerListLoc
+    var blockLists = constants.blockLists
+    blockLists.forEach( function(listName) {
+        load.JSONfromLocalFile(listLocation + "/" + listName, (listJSON) => {
+            console.log(`Loaded tracker list: ${listLocation}/${listName}`)
+            lists[listName.replace('.json', '')] = listJSON
         })
-    }
+    })
+}
 
-    settings.ready().then(() => loadLists())
+settings.ready().then(() => loadLists())
 
-    return {
-        getLists: getLists
-    }
-
-})()
+module.exports = {
+    getLists: getLists
+}

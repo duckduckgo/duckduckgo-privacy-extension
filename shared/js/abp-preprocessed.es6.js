@@ -4,13 +4,13 @@
  *
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
-abp = require('abp-filter-parser')
+const abp = require('abp-filter-parser')
 const deepFreeze = require('deep-freeze')
-
-// these are defined in data/ and loaded in the manifest. 
-// Make them immutable with deep-freeze
-constants = deepFreeze(constants)
-defaultSettings = deepFreeze(defaultSettings)
+const constants = require('../data/constants')
+const defaultSettings = require('../data/defaultSettings')
+const surrogates = require('./surrogates')
+const settings = require('./settings')
+const load = require('./load')
 
 const ONEDAY = 1000*60*60*24
 
@@ -48,9 +48,19 @@ let lists = {
     }
 }
 
-// these are defined in trackers.js
-easylists = lists.easylists
-whitelists = lists.whitelists
+var trackersWhitelistTemporary
+
+function getTemporaryWhitelist() {
+    return trackersWhitelistTemporary;
+}
+
+function getEasylists () {
+    return lists.easylists
+}
+
+function getWhitelists () {
+    return lists.whitelists
+}
 
 /*
  * Get the list data and use abp to parse.
@@ -110,7 +120,6 @@ function updateLists () {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 
-        // defined in site.js
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
 }
@@ -152,4 +161,11 @@ function getVersionParam () {
     if (versionParam) settings.updateSetting('lastEasylistUpdate', now)
 
     return versionParam
+}
+
+module.exports = {
+    getTemporaryWhitelist,
+    getWhitelists,
+    getEasylists,
+    updateLists
 }

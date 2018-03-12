@@ -16,34 +16,25 @@
 
 
 var debugRequest = false
-var trackers = require('trackers')
-var utils = require('utils')
-var settings = require('settings')
-var stats = require('stats')
-var https = require('https')
-var surrogates = require('surrogates')
-
-// Set browser for popup asset paths
-// chrome doesn't have getBrowserInfo so we'll default to chrome
-// and try to detect if this is firefox
-var browser = 'chrome'
-try {
-    chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') browser = 'moz'
-    })
-} catch (e) {}
+const trackers = require('./trackers')
+const utils = require('./utils')
+const settings = require('./settings')
+const https = require('./https')
+const surrogates = require('./surrogates')
+const tabManager = require('./tabManager')
+const Companies = require('./companies')
+const ATB = require('./atb')
+const constants = require('../data/constants')
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getBrowser) {
-        res(browser);
+        res(utils.getBrowserName());
     }
     return true;
 });
 
 function Background() {
-  $this = this;
-
   // clearing last search on browser startup
   settings.updateSetting('last_search', '')
 

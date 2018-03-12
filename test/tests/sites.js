@@ -5,7 +5,7 @@
       bkg.settings.updateSetting('whitelist', '');
 
       var domain = "test.com";
-      var newSite = new Site(domain)
+      var newSite = new bkg.Site(domain)
 
       assert.ok(newSite.domain === domain, 'site has correct name');
       assert.ok(newSite.isWhiteListed() === undefined, 'site is not whitelisted by default');
@@ -27,7 +27,7 @@
       ];
 
       tests.map((test) => {
-          let site = new Site(utils.extractHostFromURL(test[0]));
+          let site = new bkg.Site(bkg.utils.extractHostFromURL(test[0]));
           assert.ok(site.domain === test[1], "site should have the correct domain");
       });
   });
@@ -91,7 +91,7 @@
       ]
 
       tests.map(test => {
-          let site = new Site('test.com');
+          let site = new bkg.Site('test.com');
 
           for(var value in test.values) {
               site.score[value] = test.values[value];
@@ -103,15 +103,15 @@
   });
 
   QUnit.test('test tosdr site scores', function(assert) {
-      for (var tosdrUrl in tosdr) {
-          let site = new Site(tosdrUrl)
-          if (tosdr[tosdrUrl].hasOwnProperty('score')) {
-              assert.ok(site.score.tosdr.score === tosdr[tosdrUrl].score, 'site object has correct tosdr score')
+      for (var tosdrUrl in bkg.tosdr) {
+          let site = new bkg.Site(tosdrUrl)
+          if (bkg.tosdr[tosdrUrl].hasOwnProperty('score')) {
+              assert.ok(site.score.tosdr.score === bkg.tosdr[tosdrUrl].score, 'site object has correct tosdr score')
           }
       }
 
       // this should not have a tosdr entry
-      let site = new Site('instagram.x.com')
+      let site = new bkg.Site('instagram.x.com')
       assert.ok(Object.keys(site.score.tosdr).length === 0, 'site should not have tosdr data')
 
   });

@@ -1,4 +1,5 @@
 const statusList = require('./status-list.es6.js')
+const constants = require('../../../../data/constants')
 const trackerNetworksText = require('./tracker-networks-text.es6.js')
 
 module.exports = function (site) {
@@ -52,7 +53,7 @@ function getReasons (site) {
   }
 
   // privacy practices from tosdr
-  const unknownPractices = window.constants.tosdrMessages.unknown
+  const unknownPractices = constants.tosdrMessages.unknown
   const privacyMessage = (site.tosdr && site.tosdr.message) || unknownPractices
   const modifier = (privacyMessage === unknownPractices) ? 'bad' : privacyMessage.toLowerCase()
   reasons.push({

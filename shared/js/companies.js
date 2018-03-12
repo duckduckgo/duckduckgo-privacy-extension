@@ -1,7 +1,10 @@
+const TopBlocked = require('./topBlocked')
+const Company = require ('./company')
+const utils = require('./utils')
+
 var Companies = (() => {
     var companyContainer = {}
     var topBlocked = new TopBlocked()
-    var utils = require('utils')
     var storageName = 'companyData'
     var totalPages = 0
     var totalPagesWithTrackers = 0
@@ -118,7 +121,7 @@ var Companies = (() => {
                 // uncomment for testing
                 //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
-                for (company in storageData) {
+                for (let company in storageData) {
                     let newCompany = Companies.add(company)
                     newCompany.set('count', storageData[company].count || 0)
                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
@@ -161,3 +164,5 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
     return true
 })
+
+module.exports = Companies

@@ -1,4 +1,4 @@
-let defaultSettings = {
+module.exports = {
     "extensionIsEnabled": true,
     "socialBlockingIsEnabled": false,
     "trackerBlockingEnabled": true,

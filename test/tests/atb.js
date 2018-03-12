@@ -51,7 +51,7 @@ function testATBrewrite() {
       var fakeSetAtb = "fakeatbvalue";
       bkg.settings.updateSetting('set_atb', fakeSetAtb);
       bkg.ATB.updateSetAtb().then((res) => {
-          assert.ok(settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
+          assert.ok(bkg.settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
       });
       
       // test anchor tag rewrite
