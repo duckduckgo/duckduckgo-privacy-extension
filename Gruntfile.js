@@ -38,6 +38,11 @@ module.exports = function(grunt) {
         }
     }
 
+    // for the dev version of the extension only, add some extra debug code
+    if (buildType === 'dev') {
+        baseFileMap.background['<%= dirs.public.js %>/background.js'].push('<%= dirs.src.js %>/debug.js')
+    }
+
     /* watch any base files and browser specific files */
     let watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
