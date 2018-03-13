@@ -1,13 +1,13 @@
 const abp = require('abp-filter-parser')
 const tldjs = require('tldjs')
 
-const load = require('./load')
-const settings = require('./settings')
-const utils = require('./utils')
-const surrogates = require('./surrogates')
-const trackerLists = require('./trackerLists').getLists()
-const abpLists = require('./abp-preprocessed.es6')
-const constants = require('../data/constants')
+const load = require('./load.es6')
+const settings = require('./settings.es6')
+const utils = require('./utils.es6')
+const surrogates = require('./surrogates.es6')
+const trackerLists = require('./tracker-lists.es6').getLists()
+const abpLists = require('./abp-lists.es6')
+const constants = require('../../data/constants')
 
 let entityList
 let entityMap

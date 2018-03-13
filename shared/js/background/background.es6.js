@@ -16,15 +16,15 @@
 
 
 var debugRequest = false
-const trackers = require('./trackers')
-const utils = require('./utils')
-const settings = require('./settings')
-const https = require('./https')
-const surrogates = require('./surrogates')
-const tabManager = require('./tabManager')
-const Companies = require('./companies')
-const ATB = require('./atb')
-const constants = require('../data/constants')
+const trackers = require('./trackers.es6')
+const utils = require('./utils.es6')
+const settings = require('./settings.es6')
+const https = require('./https.es6')
+const surrogates = require('./surrogates.es6')
+const tabManager = require('./tab-manager.es6')
+const Companies = require('./companies.es6')
+const ATB = require('./atb.es6')
+const constants = require('../../data/constants')
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {

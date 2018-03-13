@@ -6,11 +6,11 @@
  * The Score attributes are then used generate a site
  * privacy score used in the popup.
  */
-const load = require('./load')
-const settings = require('./settings')
-const Score = require('./score')
-const utils = require('./utils')
-const abpLists = require('./abp-preprocessed.es6')
+const load = require('../load.es6')
+const settings = require('../settings.es6')
+const Score = require('./score.es6')
+const utils = require('../utils.es6')
+const abpLists = require('../abp-lists.es6')
 
 class Site {
     constructor(domain) {

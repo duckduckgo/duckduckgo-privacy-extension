@@ -1,6 +1,6 @@
-const settings = require('./settings')
-const load = require('./load')
-const constants = require('../data/constants')
+const settings = require('./settings.es6')
+const load = require('./load.es6')
+const constants = require('../../data/constants')
 let lists = {}
 
 function getLists () {
