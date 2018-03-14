@@ -1,5 +1,5 @@
-const load = require('./load');
-const defaultSettings = require('../data/defaultSettings')
+const load = require('./load.es6');
+const defaultSettings = require('../../data/defaultSettings')
 /**
  * Public api
  * Usage:

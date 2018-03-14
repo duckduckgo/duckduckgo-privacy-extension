@@ -1,5 +1,5 @@
-const settings = require('./settings')
-const utils = require('./utils')
+const settings = require('./settings.es6')
+const utils = require('./utils.es6')
 
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
@@ -122,7 +122,7 @@ var ATB = (() => {
                     tab = tabs[i]
                     
                     chrome.tabs.executeScript(tab.id, {
-                        file: 'js/oninstall.js'
+                        file: 'content-scripts/on-install.js'
                     })
                     
                     chrome.tabs.insertCSS(tab.id, {

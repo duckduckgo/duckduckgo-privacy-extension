@@ -1,7 +1,7 @@
-const load = require('./load')
-const settings = require('./settings')
-const utils = require('./utils')
-const constants = require('../data/constants')
+const load = require('./load.es6')
+const settings = require('./settings.es6')
+const utils = require('./utils.es6')
+const constants = require('../../data/constants')
 
 // check every 30 minutes for an updated list:
 const UPDATE_INTERVAL = 1000 * 60 * 30

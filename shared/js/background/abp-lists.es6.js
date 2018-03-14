@@ -6,11 +6,11 @@
  */
 const abp = require('abp-filter-parser')
 const deepFreeze = require('deep-freeze')
-const constants = require('../data/constants')
-const defaultSettings = require('../data/defaultSettings')
-const surrogates = require('./surrogates')
-const settings = require('./settings')
-const load = require('./load')
+const constants = require('../../data/constants')
+const defaultSettings = require('../../data/defaultSettings')
+const surrogates = require('./surrogates.es6')
+const settings = require('./settings.es6')
+const load = require('./load.es6')
 
 const ONEDAY = 1000*60*60*24
 

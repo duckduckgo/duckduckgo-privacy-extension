@@ -22,11 +22,11 @@ const scoreIconLocations = {
     "F": "img/toolbar-rating-f@2x.png"
 }
 
-const Site = require('./site')
-const Tracker = require('./tracker')
-const Score = require('./score')
-const utils = require('./utils')
-const Companies = require('./companies')
+const Site = require('./site.es6')
+const Tracker = require('./tracker.es6')
+const Score = require('./score.es6')
+const utils = require('../utils.es6')
+const Companies = require('../companies.es6')
 
 class Tab {
     constructor(tabData) {

@@ -1,6 +1,6 @@
-const TopBlocked = require('./topBlocked')
-const Company = require ('./company')
-const utils = require('./utils')
+const TopBlocked = require('./classes/top-blocked.es6')
+const Company = require ('./classes/company.es6')
+const utils = require('./utils.es6')
 
 var Companies = (() => {
     var companyContainer = {}
