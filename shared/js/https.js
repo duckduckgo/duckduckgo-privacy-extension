@@ -19,6 +19,31 @@ const LOCAL_STORAGE_MAX_ITEM_LENGTH = 1000000
 
 let httpsUpgradeList = []
 
+class Timer {
+    constructor(name) {
+        this.name = name;
+    }
+
+    time(name) {
+        this[name] = Date.now();
+    }
+
+    timeEnd(name) {
+        this[name + 'End'] = Date.now();
+    }
+
+    done() {
+        let timeToAdd = this.addEnd - this.add;
+        let timeToGet = this.getEnd - this.get;
+      console.log(this);
+        $("body").append(`<div>
+          <h1>${this.name}</h1>
+          <p>Time to add records: ${timeToAdd}ms</p>
+          <p>Time to get records: ${timeToGet}ms</p>
+        </div>`);
+    }
+}
+
 class HTTPS {
 
     constructor () {
@@ -59,18 +84,23 @@ class HTTPS {
     }
 
     loadListViaLocalStorage() {
+        const timer = new Timer("local storage");
         return new Promise((resolve, reject) => {
             this.get200kSites().then((list) => {
-                console.time("local storage");
+                timer.time("add");
                 chrome.storage.local.set({ 'https-upgrade-list': list });
-                console.timeEnd("local storage");
+                timer.timeEnd("add");
+
+                timer.done();
                 chrome.storage.local.clear();
+
                 resolve();
             });
         });
     }
 
     loadListViaDexieAsTextBlob() {
+        const timer = new Timer("dexie as JSON text blob");
         return new Promise((resolve, reject) => {
             const db = new Dexie('https_blob');
             db.version(1).stores({
@@ -78,17 +108,22 @@ class HTTPS {
             });
 
             this.get200kSites().then((list) => {
-                console.time("dexie storage as blob");
-                db.rules.put({ list: list }).then(() => {
-                    console.timeEnd("dexie storage as blob");
-                    db.delete();
-                    resolve();
-                });
+                timer.time("add");
+                return db.rules.put({ list: list });
+            }).then(() => {
+                timer.timeEnd("add");
+
+                timer.done();
+                return db.delete();
+            }).then(() => {
+
+                resolve();
             });
         });
     }
 
     loadListViaDexieAsObjectBlob() {
+        const timer = new Timer("dexie as object");
         return new Promise((resolve, reject) => {
             const db = new Dexie('https_blob');
             db.version(1).stores({
@@ -98,30 +133,15 @@ class HTTPS {
             this.get200kSites().then((list) => {
                 list = JSON.parse(list)
 
-                console.time("dexie storage as object");
-                db.rules.put({ list: list }).then(() => {
-                    console.timeEnd("dexie storage as object");
-                    db.delete();
-                });
-            });
-        });
-    }
+                timer.time("add");
+                return db.rules.put({ list: list })
+            }).then(() => {
+                timer.timeEnd("add");
 
-    loadListViaDexieAsRows() {
-        return new Promise((resolve, reject) => {
-            const db = new Dexie('https_rows');
-            db.version(1).stores({
-                rules: '++id,rule'
-            });
-
-            this.get200kSites().then((list) => {
-                console.log("loaded list", typeof list);
-                let rows = list.map((item) => ({ rule: item }));
-                console.time("dexie storage");
-                db.rules.bulkPut(rows).then(() => {
-                    console.timeEnd("dexie storage");
-                    db.delete();
-                });
+                timer.done();
+                return db.delete();
+            }).then(() => {
+                resolve();
             });
         });
     }
