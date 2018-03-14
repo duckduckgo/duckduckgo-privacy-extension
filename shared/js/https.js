@@ -2,6 +2,7 @@ const load = require('./load')
 const settings = require('./settings')
 const utils = require('./utils')
 const constants = require('../data/constants')
+const Dexie = require('dexie')
 
 // check every 30 minutes for an updated list:
 const UPDATE_INTERVAL = 1000 * 60 * 30
@@ -53,8 +54,8 @@ class HTTPS {
         return new Promise((resolve, reject) => {
           load.loadExtensionFile({
               url: 'data/contentblocking.json'
-          }, resolve)
-        })
+          }, resolve);
+        });
     }
 
     loadListViaLocalStorage() {
@@ -62,7 +63,56 @@ class HTTPS {
             console.time("local storage");
             chrome.storage.local.set({ 'https-upgrade-list': list })
             console.timeEnd("local storage");
-        })
+        });
+    }
+
+    loadListViaDexieAsTextBlob() {
+        const db = new Dexie('https_blob');
+        db.version(1).stores({
+            rules: '++id'
+        });
+
+        this.get200kSites().then((list) => {
+            console.time("dexie storage");
+            db.rules.put({ list: list }).then(() => {
+                console.timeEnd("dexie storage");
+                db.delete();
+            });
+        });
+    }
+
+    loadListViaDexieAsObjectBlob() {
+        const db = new Dexie('https_blob');
+        db.version(1).stores({
+            rules: '++id'
+        });
+
+        this.get200kSites().then((list) => {
+            list = JSON.parse(list)
+
+            console.time("dexie storage");
+            db.rules.put({ list: list }).then(() => {
+                console.timeEnd("dexie storage");
+                db.delete();
+            });
+        });
+    }
+
+    loadListViaDexieAsRows() {
+        const db = new Dexie('https_rows');
+        db.version(1).stores({
+            rules: '++id,rule'
+        });
+
+        this.get200kSites().then((list) => {
+            console.log("loaded list", typeof list);
+            let rows = list.map((item) => ({ rule: item }));
+            console.time("dexie storage");
+            db.rules.bulkPut(rows).then(() => {
+                console.timeEnd("dexie storage");
+                db.delete();
+            });
+        });
     }
 
     updateList() {
