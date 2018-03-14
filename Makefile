@@ -1,4 +1,4 @@
-ITEMS   := shared/html shared/data shared/img shared/js/content-scripts/
+ITEMS   := shared/html shared/data shared/img shared/js/content-scripts
 
 release: npm setup-build-dir grunt tosdr moveout fonts
 
