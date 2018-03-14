@@ -35,7 +35,7 @@ class Timer {
     done() {
         let timeToAdd = this.addEnd - this.add;
         let timeToGet = this.getEnd - this.get;
-      console.log(this);
+
         $("body").append(`<div>
           <h2>${this.name}</h2>
           <p>Time to add records: ${timeToAdd}ms</p>
@@ -137,7 +137,7 @@ class HTTPS {
     }
 
     loadListViaDexieAsObjectBlob() {
-        const timer = new Timer("dexie as object");
+        const timer = new Timer("dexie already parsed JSON object");
         return new Promise((resolve, reject) => {
             const db = new Dexie('https_blob');
             db.version(1).stores({
