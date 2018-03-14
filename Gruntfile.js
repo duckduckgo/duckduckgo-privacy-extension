@@ -28,7 +28,8 @@ module.exports = function(grunt) {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background.js']
         },
         backgroundTest: {
-            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background.js', '<%= dirs.test %>/requireHelper.js']
+            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background.js', '<%= dirs.test %>/requireHelper.js'],
+            '<%= dirs.test %>/httpsPerf.js': ['<%= dirs.src.js %>/https.js', '<%= dirs.test %>/httpsPerfHelper.js']
         },
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],

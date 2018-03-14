@@ -21,7 +21,7 @@ let httpsUpgradeList = []
 class HTTPS {
 
     constructor () {
-        this.init()
+        // this.init()
 
         return this
     }
@@ -46,6 +46,22 @@ class HTTPS {
 
             // and go to the server to pull an update:
             settings.ready().then(this.updateList.bind(this))
+        })
+    }
+
+    get200kSites() {
+        return new Promise((resolve, reject) => {
+          load.loadExtensionFile({
+              url: 'data/contentblocking.json'
+          }, resolve)
+        })
+    }
+
+    loadListViaLocalStorage() {
+        this.get200kSites().then((list) => {
+            console.time("local storage");
+            chrome.storage.local.set({ 'https-upgrade-list': list })
+            console.timeEnd("local storage");
         })
     }
 
