@@ -37,7 +37,7 @@ class Timer {
         let timeToGet = this.getEnd - this.get;
       console.log(this);
         $("body").append(`<div>
-          <h1>${this.name}</h1>
+          <h2>${this.name}</h2>
           <p>Time to add records: ${timeToAdd}ms</p>
           <p>Time to get records: ${timeToGet}ms</p>
         </div>`);
@@ -75,18 +75,22 @@ class HTTPS {
         })
     }
 
-    get200kSites() {
+    getSites() {
+        let url = 'data/contentblocking.json';
+
+        if (this.million) {
+            url = 'data/contentblocking1m.json';
+        }
+
         return new Promise((resolve, reject) => {
-            load.loadExtensionFile({
-                url: 'data/contentblocking.json'
-            }, resolve);
+            load.loadExtensionFile({ url: url }, resolve);
         });
     }
 
     loadListViaLocalStorage() {
         const timer = new Timer("local storage");
         return new Promise((resolve, reject) => {
-            this.get200kSites().then((list) => {
+            this.getSites().then((list) => {
                 timer.time("add");
                 chrome.storage.local.set({ 'https-upgrade-list': list });
                 timer.timeEnd("add");
@@ -112,7 +116,7 @@ class HTTPS {
                 rules: '++id'
             });
 
-            this.get200kSites().then((list) => {
+            this.getSites().then((list) => {
                 timer.time("add");
                 return db.rules.put({ list: list });
             }).then(() => {
@@ -140,7 +144,7 @@ class HTTPS {
                 rules: '++id'
             });
 
-            this.get200kSites().then((list) => {
+            this.getSites().then((list) => {
                 list = JSON.parse(list)
 
                 timer.time("add");
