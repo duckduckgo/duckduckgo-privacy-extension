@@ -1,5 +1,6 @@
 const https = require('../shared/js/https');
 
-https.loadListViaLocalStorage();
-// https.loadListViaDexieAsObjectBlob();
-// https.loadListViaDexieAsRows();
+Promise.resolve()
+  .then(https.loadListViaDexieAsTextBlob.bind(https))
+  .then(https.loadListViaLocalStorage.bind(https))
+  .then(https.loadListViaDexieAsObjectBlob.bind(https));

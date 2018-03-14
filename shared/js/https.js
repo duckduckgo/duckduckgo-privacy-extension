@@ -52,65 +52,76 @@ class HTTPS {
 
     get200kSites() {
         return new Promise((resolve, reject) => {
-          load.loadExtensionFile({
-              url: 'data/contentblocking.json'
-          }, resolve);
+            load.loadExtensionFile({
+                url: 'data/contentblocking.json'
+            }, resolve);
         });
     }
 
     loadListViaLocalStorage() {
-        this.get200kSites().then((list) => {
-            console.time("local storage");
-            chrome.storage.local.set({ 'https-upgrade-list': list })
-            console.timeEnd("local storage");
+        return new Promise((resolve, reject) => {
+            this.get200kSites().then((list) => {
+                console.time("local storage");
+                chrome.storage.local.set({ 'https-upgrade-list': list });
+                console.timeEnd("local storage");
+                chrome.storage.local.clear();
+                resolve();
+            });
         });
     }
 
     loadListViaDexieAsTextBlob() {
-        const db = new Dexie('https_blob');
-        db.version(1).stores({
-            rules: '++id'
-        });
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_blob');
+            db.version(1).stores({
+                rules: '++id'
+            });
 
-        this.get200kSites().then((list) => {
-            console.time("dexie storage");
-            db.rules.put({ list: list }).then(() => {
-                console.timeEnd("dexie storage");
-                db.delete();
+            this.get200kSites().then((list) => {
+                console.time("dexie storage as blob");
+                db.rules.put({ list: list }).then(() => {
+                    console.timeEnd("dexie storage as blob");
+                    db.delete();
+                    resolve();
+                });
             });
         });
     }
 
     loadListViaDexieAsObjectBlob() {
-        const db = new Dexie('https_blob');
-        db.version(1).stores({
-            rules: '++id'
-        });
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_blob');
+            db.version(1).stores({
+                rules: '++id'
+            });
 
-        this.get200kSites().then((list) => {
-            list = JSON.parse(list)
+            this.get200kSites().then((list) => {
+                list = JSON.parse(list)
 
-            console.time("dexie storage");
-            db.rules.put({ list: list }).then(() => {
-                console.timeEnd("dexie storage");
-                db.delete();
+                console.time("dexie storage as object");
+                db.rules.put({ list: list }).then(() => {
+                    console.timeEnd("dexie storage as object");
+                    db.delete();
+                });
             });
         });
     }
 
     loadListViaDexieAsRows() {
-        const db = new Dexie('https_rows');
-        db.version(1).stores({
-            rules: '++id,rule'
-        });
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_rows');
+            db.version(1).stores({
+                rules: '++id,rule'
+            });
 
-        this.get200kSites().then((list) => {
-            console.log("loaded list", typeof list);
-            let rows = list.map((item) => ({ rule: item }));
-            console.time("dexie storage");
-            db.rules.bulkPut(rows).then(() => {
-                console.timeEnd("dexie storage");
-                db.delete();
+            this.get200kSites().then((list) => {
+                console.log("loaded list", typeof list);
+                let rows = list.map((item) => ({ rule: item }));
+                console.time("dexie storage");
+                db.rules.bulkPut(rows).then(() => {
+                    console.timeEnd("dexie storage");
+                    db.delete();
+                });
             });
         });
     }
