@@ -91,10 +91,15 @@ class HTTPS {
                 chrome.storage.local.set({ 'https-upgrade-list': list });
                 timer.timeEnd("add");
 
-                timer.done();
-                chrome.storage.local.clear();
+                timer.time("get");
+                chrome.storage.local.get('https-upgrade-list', function () {
+                    timer.timeEnd("get");
 
-                resolve();
+                    timer.done();
+                    chrome.storage.local.clear();
+
+                    resolve();
+                });
             });
         });
     }
@@ -112,6 +117,11 @@ class HTTPS {
                 return db.rules.put({ list: list });
             }).then(() => {
                 timer.timeEnd("add");
+
+                timer.time("get")
+                return db.rules.get(1);
+            }).then(() => {
+                timer.timeEnd("get")
 
                 timer.done();
                 return db.delete();
@@ -137,6 +147,11 @@ class HTTPS {
                 return db.rules.put({ list: list })
             }).then(() => {
                 timer.timeEnd("add");
+
+                timer.time("get")
+                return db.rules.get(1);
+            }).then(() => {
+                timer.timeEnd("get")
 
                 timer.done();
                 return db.delete();
