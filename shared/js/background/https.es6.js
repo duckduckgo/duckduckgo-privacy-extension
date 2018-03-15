@@ -138,7 +138,7 @@ class HTTPS {
     loadListViaDexieAsObjectBlob() {
         const timer = new Timer("dexie already parsed JSON object");
         return new Promise((resolve, reject) => {
-            const db = new Dexie('https_blob');
+            const db = new Dexie('https_blob_' + this.multiplier);
             db.version(1).stores({
                 rules: '++id'
             });
