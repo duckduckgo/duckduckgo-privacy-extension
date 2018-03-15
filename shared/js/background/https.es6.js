@@ -178,7 +178,7 @@ class HTTPS {
 
         // Only deal with http calls
         const protocol = utils.getProtocol(reqUrl).toLowerCase()
-        if (!protocol.indexOf('http:') === 0) {
+        if (protocol !== 'http:') {
             return reqUrl
         }
 
