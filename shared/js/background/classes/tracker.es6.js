@@ -1,4 +1,4 @@
-const Companies = require('./companies')
+const Companies = require('../companies.es6')
 
 class Tracker {
     constructor (name, url, type) {

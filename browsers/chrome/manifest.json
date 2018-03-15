@@ -43,7 +43,7 @@
       },
       {
           "js": [
-              "js/socialwidgets.js"
+              "content-scripts/social-widgets.js"
           ],
           "matches": [
               "<all_urls>"

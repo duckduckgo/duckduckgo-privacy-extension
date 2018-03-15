@@ -1,6 +1,6 @@
-const Companies = require('./companies')
-const settings = require('./settings')
-const Tab = require('./tab')
+const Companies = require('./companies.es6')
+const settings = require('./settings.es6')
+const Tab = require('./classes/tab.es6')
 
 class TabManager {
     constructor() {

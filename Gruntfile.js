@@ -25,11 +25,11 @@ module.exports = function(grunt) {
             '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js']
         },
         background: {
-            '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background.js']
+            '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
         },
         backgroundTest: {
-            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background.js', '<%= dirs.test %>/requireHelper.js'],
-            '<%= dirs.test %>/httpsPerf.js': ['<%= dirs.src.js %>/https.js', '<%= dirs.test %>/httpsPerfHelper.js']
+            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js'],
+            '<%= dirs.test %>/httpsPerf.js': ['<%= dirs.src.js %>/background/https.es6.js', '<%= dirs.test %>/httpsPerfHelper.js']
         },
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
@@ -41,14 +41,14 @@ module.exports = function(grunt) {
 
     // for the dev version of the extension only, add some extra debug code
     if (buildType === 'dev') {
-        baseFileMap.background['<%= dirs.public.js %>/background.js'].push('<%= dirs.src.js %>/debug.js')
+        baseFileMap.background['<%= dirs.public.js %>/background.js'].push('<%= dirs.src.js %>/background/debug.es6.js')
     }
 
     /* watch any base files and browser specific files */
     let watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js','<%= dirs.data %>/*.js'],
-        background: ['<%= dirs.src.js %>/*.js','<%= dirs.data %>/*.js']
+        background: ['<%= dirs.src.js %>/background/**/*.js','<%= dirs.data %>/*.js']
     }
 
     grunt.initConfig({
