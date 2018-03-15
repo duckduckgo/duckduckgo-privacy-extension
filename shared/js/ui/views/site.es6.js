@@ -53,8 +53,8 @@ Site.prototype = window.$.extend({},
         setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
         setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
         // Wait a bit more before closing the popup and reloading the tab
-        setTimeout(() => w.close(), 1500)
         setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
+        setTimeout(() => w.close(), 1500)
       } else {
         window.chrome.tabs.reload(this.model.tab.id)
         w.close()
