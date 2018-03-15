@@ -76,11 +76,8 @@ class HTTPS {
     }
 
     getSites() {
-        let url = 'data/contentblocking.json';
-
-        if (this.million) {
-            url = 'data/contentblocking1m.json';
-        }
+        let multiplier = this.multiplier || '';
+        let url = `data/contentblocking${multiplier}.json`;
 
         return new Promise((resolve, reject) => {
             load.loadExtensionFile({ url: url }, resolve);

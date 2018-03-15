@@ -1,16 +1,22 @@
-const https = require('../shared/js/https');
+const https = require('../shared/js/background/https.es6');
 
 Promise.resolve()
   .then(() => {
     $("body").append("<h1>200k rules</h1>")
   })
-  .then(https.loadListViaLocalStorage.bind(https))
   .then(https.loadListViaDexieAsTextBlob.bind(https))
-  .then(https.loadListViaDexieAsObjectBlob.bind(https))
   .then(() => {
     $("body").append("<h1>1m rules</h1>");
-    https.million = true;
+    https.multiplier = "1m";
   })
-  .then(https.loadListViaLocalStorage.bind(https))
   .then(https.loadListViaDexieAsTextBlob.bind(https))
-  .then(https.loadListViaDexieAsObjectBlob.bind(https));
+  .then(() => {
+    $("body").append("<h1>10m rules</h1>");
+    https.multiplier = "10m";
+  })
+  .then(https.loadListViaDexieAsTextBlob.bind(https))
+  .then(() => {
+    $("body").append("<h1>20m rules</h1>");
+    https.multiplier = "20m";
+  })
+  .then(https.loadListViaDexieAsTextBlob.bind(https));
