@@ -196,20 +196,9 @@ class HTTPS {
 
         // Determine host
         const host = utils.extractHostFromURL(reqUrl)
-        const hosts = [host]
 
-        // Check if host has an entry as a wildcarded subdomain
-        const subdomain = utils.extractTopSubdomainFromHost(host)
-        if (subdomain && subdomain !== 'www') {
-            const wildcard = host.replace(subdomain, '*')
-            hosts.push(wildcard)
-        }
-
-        // Check for upgrades
-        for (let i=0; i<hosts.length; i++) {
-            if (this.canUpgradeHost(hosts[i])) {
-                return reqUrl.replace(/^(http|https):\/\//i, 'https://')
-            }
+        if (this.canUpgradeHost(host)) {
+            return reqUrl.replace(/^(http|https):\/\//i, 'https://')
         }
 
         // If it falls to here, default to reqUrl
