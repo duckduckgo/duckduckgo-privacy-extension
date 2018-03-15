@@ -1,26 +1,3 @@
-class Tracker {
-    constructor (name, url, type) {
-        this.parentCompany = Companies.get(name)
-        this.urls = [url]
-        this.count = 1 // request count
-        this.type = type || ''
-    }
-
-    increment () {
-        this.count += 1
-    }
-
-    /* A parent company may try
-     * to track you through many different entities.
-     * We store a list of all unique urls here.
-     */
-    addURL (url) {
-        if (this.urls.indexOf(url) === -1) {
-            this.urls.push(url)
-        }
-    }
-}
-
 /* This class contains information about what trackers and sites
  * are on a given tab:
  *  id: Chrome tab id
@@ -44,6 +21,12 @@ const scoreIconLocations = {
     "D": "img/toolbar-rating-d@2x.png",
     "F": "img/toolbar-rating-f@2x.png"
 }
+
+const Site = require('./site.es6')
+const Tracker = require('./tracker.es6')
+const Score = require('./score.es6')
+const utils = require('../utils.es6')
+const Companies = require('../companies.es6')
 
 class Tab {
     constructor(tabData) {
@@ -145,14 +128,4 @@ class Tab {
     }
 }
 
-chrome.webRequest.onBeforeRedirect.addListener((req) => {
-    // count redirects
-    let tab = tabManager.get({'tabId': req.tabId})
-    if (!tab) return
-
-    if (tab.httpsRedirects[req.requestId]) {
-        tab.httpsRedirects[req.requestId] += 1
-    } else {
-        tab.httpsRedirects[req.requestId] = 1
-    }
-}, {urls: ["*://*/*"]})
+module.exports = Tab

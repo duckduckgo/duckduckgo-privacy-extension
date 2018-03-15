@@ -26,3 +26,5 @@ TopBlocked.prototype = {
         this.data = data;
     }
 }
+
+module.exports = TopBlocked

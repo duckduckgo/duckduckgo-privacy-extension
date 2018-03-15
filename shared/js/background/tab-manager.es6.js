@@ -1,3 +1,7 @@
+const Companies = require('./companies.es6')
+const settings = require('./settings.es6')
+const Tab = require('./classes/tab.es6')
+
 class TabManager {
     constructor() {
         this.tabContainer = {}
@@ -148,3 +152,18 @@ chrome.webRequest.onHeadersReceived.addListener((request) => {
     }
 
 }, {urls: ['<all_urls>'], types: ['main_frame']})
+
+chrome.webRequest.onBeforeRedirect.addListener((req) => {
+    // count redirects
+    let tab = tabManager.get({'tabId': req.tabId})
+    if (!tab) return
+
+    if (tab.httpsRedirects[req.requestId]) {
+        tab.httpsRedirects[req.requestId] += 1
+    } else {
+        tab.httpsRedirects[req.requestId] = 1
+    }
+}, {urls: ["*://*/*"]})
+
+
+module.exports = tabManager

@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2018.3.2",
+    "version": "2018.3.15",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -20,28 +20,7 @@
     "options_page": "html/options.html",
     "background": {
             "scripts": [
-                "data/defaultSettings.js",
-                "data/constants.js",
-                "data/tosdr.js",
-                "js/require.js",
-                "js/load.js",
-                "js/utils.js",
-                "js/topBlocked.js",
-                "js/settings.js",
-                "js/site.js",
-                "js/tab.js",
-                "js/tabManager.js",
-                "js/companies.js",
-                "js/company.js",
-                "js/atb.js",
-                "js/trackerLists.js",
-                "js/trackers.js",
-                "js/tldjs.js",
-                "js/https.js",
-                "js/surrogates.js",
-                "js/background.js",
-                "js/abp.js",
-                "js/atb.js"
+                "public/js/background.js"
             ]
     },
     "chrome_settings_overrides": {
@@ -64,7 +43,7 @@
       },
       {
           "js": [
-              "js/socialwidgets.js"
+              "public/js/content-scripts/social-widgets.js"
           ],
           "matches": [
               "<all_urls>"

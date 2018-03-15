@@ -5,7 +5,7 @@
       let numTries = 0
       let maxTries = 10
       let checkForList = function() {
-          if (surrogates.hasList()) {
+          if (bkg.surrogates.hasList()) {
               fn(true)
           } else if (numTries > maxTries) {
               fn(false)
@@ -39,9 +39,9 @@
 
       afterSurrogatesListLoaded((success) => {
           assert.ok(success, 'surrogate list loaded successfully')
-          assert.ok(!!surrogates.getContentForRule('google-analytics.com/ga.js'), 'should have something for ga.js')
-          assert.ok(!!surrogates.getContentForRule('google-analytics.com/analytics.js'), 'should have something for analytics.js')
-          assert.ok(!surrogates.getContentForRule('duckduckgo.com'), 'should not have duckduckgo.com')
+          assert.ok(!!bkg.surrogates.getContentForRule('google-analytics.com/ga.js'), 'should have something for ga.js')
+          assert.ok(!!bkg.surrogates.getContentForRule('google-analytics.com/analytics.js'), 'should have something for analytics.js')
+          assert.ok(!bkg.surrogates.getContentForRule('duckduckgo.com'), 'should not have duckduckgo.com')
 
           done()
       })
@@ -51,14 +51,14 @@
       let done = assert.async()
 
       afterSurrogatesListLoaded((success) => {
-          let gaContent = surrogates.getContentForRule('google-analytics.com/ga.js')
+          let gaContent = bkg.surrogates.getContentForRule('google-analytics.com/ga.js')
           let parsedUrlMock = {
               domain: 'google-analytics.com'
           }
 
-          assert.ok(surrogates.getContentForUrl('https://google-analytics.com/ga.js', parsedUrlMock) === gaContent)
-          assert.ok(surrogates.getContentForUrl('https://google-analytics.com/some/other/path/ga.js', parsedUrlMock) === gaContent)
-          assert.ok(surrogates.getContentForUrl('http://www.google-analytics.com/some/other/path/ga.js', parsedUrlMock) === gaContent)
+          assert.ok(bkg.surrogates.getContentForUrl('https://google-analytics.com/ga.js', parsedUrlMock) === gaContent)
+          assert.ok(bkg.surrogates.getContentForUrl('https://google-analytics.com/some/other/path/ga.js', parsedUrlMock) === gaContent)
+          assert.ok(bkg.surrogates.getContentForUrl('http://www.google-analytics.com/some/other/path/ga.js', parsedUrlMock) === gaContent)
 
           done()
       })
@@ -69,7 +69,7 @@
 
       afterSurrogatesListLoaded((success) => {
 
-          getSurrogateJS(surrogates.getContentForRule('google-analytics.com/ga.js'), function(js) {
+          getSurrogateJS(bkg.surrogates.getContentForRule('google-analytics.com/ga.js'), function(js) {
               // can't eval the JS because of CSP, best I could come up with for now is
               // just to check that it looks like the valid start of the expected function:
               assert.ok(js.match(/\(function\(\) {/), 'should parse into JS')

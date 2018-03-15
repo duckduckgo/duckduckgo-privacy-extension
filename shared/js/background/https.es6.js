@@ -1,7 +1,7 @@
-(function () {
-const load = require('load')
-const settings = require('settings')
-const utils = require('utils')
+const load = require('./load.es6')
+const settings = require('./settings.es6')
+const utils = require('./utils.es6')
+const constants = require('../../data/constants')
 
 // check every 30 minutes for an updated list:
 const UPDATE_INTERVAL = 1000 * 60 * 30
@@ -285,5 +285,4 @@ class HTTPS {
     }
 }
 
-require.scopes.https = new HTTPS()
-})()
+module.exports = new HTTPS()

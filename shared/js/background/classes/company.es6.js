@@ -21,3 +21,5 @@ class Company{
         this[property] = val;
     }
 }
+
+module.exports = Company

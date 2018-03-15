@@ -4,13 +4,14 @@
  *
  * This will be browserifyed and turned into abp.js by running 'grunt'
  */
-abp = require('abp-filter-parser')
+const abp = require('abp-filter-parser')
 const deepFreeze = require('deep-freeze')
-
-// these are defined in data/ and loaded in the manifest. 
-// Make them immutable with deep-freeze
-constants = deepFreeze(constants)
-defaultSettings = deepFreeze(defaultSettings)
+const constants = require('../../data/constants')
+const defaultSettings = require('../../data/defaultSettings')
+const surrogates = require('./surrogates.es6')
+const settings = require('./settings.es6')
+const ATB = require('./atb.es6')
+const load = require('./load.es6')
 
 const ONEDAY = 1000*60*60*24
 
@@ -48,9 +49,19 @@ let lists = {
     }
 }
 
-// these are defined in trackers.js
-easylists = lists.easylists
-whitelists = lists.whitelists
+var trackersWhitelistTemporary
+
+function getTemporaryWhitelist() {
+    return trackersWhitelistTemporary;
+}
+
+function getEasylists () {
+    return lists.easylists
+}
+
+function getWhitelists () {
+    return lists.whitelists
+}
 
 /*
  * Get the list data and use abp to parse.
@@ -110,7 +121,6 @@ function updateLists () {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
 
-        // defined in site.js
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
 }
@@ -152,4 +162,45 @@ function getVersionParam () {
     if (versionParam) settings.updateSetting('lastEasylistUpdate', now)
 
     return versionParam
+}
+
+chrome.runtime.onInstalled.addListener(function(details) {
+    // only run the following section on install and on update
+    if (details.reason.match(/install|update/)) {
+        ATB.onInstalled();
+    }
+
+    // only show post install page on install if:
+    // - the user wasn't already looking at the app install page
+    // - the user hasn't seen the page before
+    if (details.reason.match(/install/)) {
+        settings.ready().then( () => {
+            chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
+                const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+                const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
+                if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
+                    settings.updateSetting('hasSeenPostInstall', true)
+                    chrome.tabs.create({
+                        url: 'https://duckduckgo.com/app?post=1'
+                    })
+                }
+            })
+        })
+    }
+
+    // blow away old indexeddbs that might be there
+    if (details.reason.match(/update/) && window.indexedDB) {
+        const ms = 1000 * 60
+        setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
+    }
+
+    // remove legacy/unused `HTTPSwhitelisted` setting
+    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
+})
+
+module.exports = {
+    getTemporaryWhitelist,
+    getWhitelists,
+    getEasylists,
+    updateLists
 }

@@ -1,3 +1,6 @@
+const settings = require('./settings.es6')
+const utils = require('./utils.es6')
+
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
@@ -119,7 +122,7 @@ var ATB = (() => {
                     tab = tabs[i]
                     
                     chrome.tabs.executeScript(tab.id, {
-                        file: 'js/oninstall.js'
+                        file: 'content-scripts/on-install.js'
                     })
                     
                     chrome.tabs.insertCSS(tab.id, {
@@ -155,7 +158,16 @@ var ATB = (() => {
             let set_atb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
             if (set_atb) url += `&set_atb=${set_atb}`
-            if (typeof browser !== 'undefined') url += `&browser=${browser}`
+
+            let browserInfo = utils.parseUserAgentString()
+            let browserName = browserInfo.browser
+            let browserVersion = browserInfo.version
+            let extensionVersion = window.chrome.runtime.getManifest().version
+
+            if (browserName) url += `&browser=${browserName}`
+            if (browserVersion) url += `&bv=${browserVersion}`
+            if (extensionVersion) url += `&v=${extensionVersion}`
+
             return url
         }
     }
@@ -182,3 +194,5 @@ chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     }
 }))
+
+module.exports = ATB

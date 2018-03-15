@@ -16,34 +16,25 @@
 
 
 var debugRequest = false
-var trackers = require('trackers')
-var utils = require('utils')
-var settings = require('settings')
-var stats = require('stats')
-var https = require('https')
-var surrogates = require('surrogates')
-
-// Set browser for popup asset paths
-// chrome doesn't have getBrowserInfo so we'll default to chrome
-// and try to detect if this is firefox
-var browser = 'chrome'
-try {
-    chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') browser = 'moz'
-    })
-} catch (e) {}
+const trackers = require('./trackers.es6')
+const utils = require('./utils.es6')
+const settings = require('./settings.es6')
+const https = require('./https.es6')
+const surrogates = require('./surrogates.es6')
+const tabManager = require('./tab-manager.es6')
+const Companies = require('./companies.es6')
+const ATB = require('./atb.es6')
+const constants = require('../../data/constants')
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.getBrowser) {
-        res(browser);
+        res(utils.getBrowserName());
     }
     return true;
 });
 
 function Background() {
-  $this = this;
-
   // clearing last search on browser startup
   settings.updateSetting('last_search', '')
 
@@ -67,40 +58,6 @@ function Background() {
           }
       }
   });
-
-  chrome.runtime.onInstalled.addListener(function(details) {
-    // only run the following section on install and on update
-    if (details.reason.match(/install|update/)) {
-        ATB.onInstalled();
-    }
-
-    // only show post install page on install if:
-    // - the user wasn't already looking at the app install page
-    // - the user hasn't seen the page before
-    if (details.reason.match(/install/)) {
-        settings.ready().then( () => {
-            chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
-                const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
-                if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
-                    settings.updateSetting('hasSeenPostInstall', true)
-                    chrome.tabs.create({
-                        url: 'https://duckduckgo.com/app?post=1'
-                    })
-                }
-            })
-        })
-    }
-
-    // blow away old indexeddbs that might be there
-    if (details.reason.match(/update/) && window.indexedDB) {
-        const ms = 1000 * 60
-        setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
-    }
-
-    // remove legacy/unused `HTTPSwhitelisted` setting
-    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
-  })
 }
 
 var background

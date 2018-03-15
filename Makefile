@@ -1,4 +1,4 @@
-ITEMS   := shared/html shared/data shared/img shared/js
+ITEMS   := shared/html shared/data shared/img
 
 release: npm setup-build-dir grunt tosdr moveout fonts
 
@@ -15,6 +15,8 @@ grunt-process-lists:
 
 grunt-dev:
 	cp -r test build/$(browser)/dev/
+	cp -r shared/img build/$(browser)/dev/test/html
+	cp -r shared/data build/$(browser)/dev/test/html
 	grunt dev --browser=$(browser) --type=$(type)
 
 tosdr:
@@ -24,6 +26,7 @@ setup-build-dir:
 	mkdir -p build/$(browser)
 	rm -rf build/$(browser)/$(type)
 	mkdir build/$(browser)/$(type)
+	mkdir -p build/$(browser)/$(type)/public/js/
 
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
@@ -36,8 +39,8 @@ fonts:
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
 	cp -r $(ITEMS) build/$(browser)/$(type)
-	find ./build/$(browser)/$(type)/js -type f -name '*.es6.js' -delete
-	rm -rf build/$(browser)/$(type)/js/ui
+	cp -r $(ITEMS) build/$(browser)/$(type)
+	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
 	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
 
 beta-firefox: release beta-firefox-zip

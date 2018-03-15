@@ -39,7 +39,6 @@ Site.prototype = window.$.extend({},
     _onWhitelistClick: function (e) {
       if (this.$body.hasClass('is-disabled')) return
       this.model.toggleWhitelist()
-      console.log('isWhitelisted: ', this.model.isWhitelisted)
       this._showAddedToWhitelistMessage()
     },
 
@@ -47,12 +46,15 @@ Site.prototype = window.$.extend({},
     // otherwise just reload the tab and close the popup
     _showAddedToWhitelistMessage: function () {
       const w = window.chrome.extension.getViews({type: 'popup'})[0]
-      const isHiddenClass = 'is-hidden'
+      const isTransparentClass = 'is-transparent'
       if (this.model.isWhitelisted) {
-        this.$protection.addClass(isHiddenClass)
-        this.$protectionwhitelisted.removeClass(isHiddenClass)
-        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 650)
-        setTimeout(() => w.close(), 650)
+        // Wait for the rerendering to be done
+        // 10ms timeout is the minimum to render the transition smoothly
+        setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
+        setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
+        // Wait a bit more before closing the popup and reloading the tab
+        setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
+        setTimeout(() => w.close(), 1500)
       } else {
         window.chrome.tabs.reload(this.model.tab.id)
         w.close()
@@ -66,7 +68,7 @@ Site.prototype = window.$.extend({},
       this._cacheElems('.js-site', [
         'toggle',
         'protection',
-        'protection-whitelisted',
+        'whitelist-status',
         'show-all-trackers',
         'show-page-trackers',
         'manage-whitelist',

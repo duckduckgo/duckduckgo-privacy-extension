@@ -109,16 +109,51 @@ body {
         margin-top: 0;
 
         .default-list {
-            padding-bottom: 0;
+           padding-bottom: 0;
         }
 
         .text-line-after-icon {
-            margin-left: 12px;
+           margin-left: 12px;
+        }
+
+       .site-info__whitelist-status {
+           margin-top: 0;
+           transition: margin 0.3s ease;
+
+           .icon.icon__check,
+           .text-line-after-icon {
+               opacity: 1;
+               transition: opacity 0.3s ease;
+           }
+       }
+
+       .site-info__whitelist-status.is-transparent {
+           margin-top: -16px;           
+           
+           .icon.icon__check,
+           .text-line-after-icon {
+               opacity: 0;
+           }
+       }
+
+        .site-info__protection {
+            opacity: 1;
+            margin-top: 0;
+            max-height: 20px;
+        }
+
+        .site-info__protection.is-transparent {
+            margin-top: 16px;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.3s ease;
         }
 
         .site-info__li--toggle {
             background-color: $color--medium-slate;
             color: $color--white;
+            max-height: 19px;
+            overflow: hidden;
 
             &.is-active {
                 background-color: $color--green;
