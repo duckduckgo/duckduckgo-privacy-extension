@@ -96,8 +96,9 @@ class HTTPS {
                 timer.timeEnd("add");
 
                 timer.time("get");
-                chrome.storage.local.get('https-upgrade-list', function () {
+                chrome.storage.local.get('https-upgrade-list', function (results) {
                     timer.timeEnd("get");
+                    JSON.parse(results['https-upgrade-list']);
 
                     timer.done();
                     chrome.storage.local.clear();
@@ -124,7 +125,8 @@ class HTTPS {
 
                 timer.time("get")
                 return db.rules.get(1);
-            }).then(() => {
+            }).then((rules) => {
+                JSON.parse(rules.list);
                 timer.timeEnd("get")
 
                 timer.done();
