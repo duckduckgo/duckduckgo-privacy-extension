@@ -252,7 +252,9 @@ class HTTPS {
             // If it's already https, it should be the same:
             ['https://duckduckgo.com',                      'https://duckduckgo.com'],
             // If it's not in the list, it should stay http:
-            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr']
+            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr'],
+            // any other protocols should be left the same:
+            ['file:///home/foo/bar',                        'file:///home/foo/bar']
         ]
 
         let passed = true
