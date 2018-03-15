@@ -37,6 +37,7 @@ fonts:
 
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
+	mkdir -p build/$(browser)/$(type)/public/js/
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
