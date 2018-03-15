@@ -26,6 +26,7 @@ setup-build-dir:
 	mkdir -p build/$(browser)
 	rm -rf build/$(browser)/$(type)
 	mkdir build/$(browser)/$(type)
+	mkdir -p build/$(browser)/$(type)/public/js/
 
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
@@ -37,7 +38,6 @@ fonts:
 
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
-	mkdir -p build/$(browser)/$(type)/public/js/
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
