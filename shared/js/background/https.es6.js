@@ -215,7 +215,6 @@ class HTTPS {
         const testHosts = [
             '1337x.to',
             'submit.pandora.com',
-            '*.api.roblox.com',
             'thump.vice.com',
             'yts.ag'
         ]
