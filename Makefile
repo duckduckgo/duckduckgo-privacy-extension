@@ -1,4 +1,4 @@
-ITEMS   := shared/html shared/data shared/img shared/js/content-scripts
+ITEMS   := shared/html shared/data shared/img
 
 release: npm setup-build-dir grunt tosdr moveout fonts
 
@@ -39,6 +39,7 @@ moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	cp -r $(ITEMS) build/$(browser)/$(type)
+	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
 	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
 
 beta-firefox: release beta-firefox-zip
