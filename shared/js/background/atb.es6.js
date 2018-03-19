@@ -132,12 +132,30 @@ var ATB = (() => {
             })
         },
 
-        onInstalled: () => {
+        updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
             settings.ready().then(() => {
                 ATB.inject()
                 ATB.migrate()
                 ATB.setInitialVersions()
+            })
+        },
+
+        openPostInstallPage: () => {
+            // only show post install page on install if:
+            // - the user wasn't already looking at the app install page
+            // - the user hasn't seen the page before
+            settings.ready().then( () => {
+                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
+                    const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+                    const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
+                    if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
+                        settings.updateSetting('hasSeenPostInstall', true)
+                        chrome.tabs.create({
+                            url: 'https://duckduckgo.com/app?post=1'
+                        })
+                    }
+                })
             })
         },
 

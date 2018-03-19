@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
+const chromeEvents = require('./chrome-events.es6')
 
 var debugRequest = false
-const trackers = require('./trackers.es6')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
-const https = require('./https.es6')
-const surrogates = require('./surrogates.es6')
 const tabManager = require('./tab-manager.es6')
-const Companies = require('./companies.es6')
-const ATB = require('./atb.es6')
 const redirect = require('./redirect.es6')
-const constants = require('../../data/constants')
 
 // popup will ask for the browser type then it is created
 chrome.runtime.onMessage.addListener((req, sender, res) => {
@@ -63,35 +58,3 @@ function Background() {
 
 var background
 settings.ready().then(() => new Background())
-
-chrome.omnibox.onInputEntered.addListener(function(text) {
-  chrome.tabs.query({
-    'currentWindow': true,
-    'active': true
-  }, function(tabs) {
-    chrome.tabs.update(tabs[0].id, {
-      url: "https://duckduckgo.com/?q=" + encodeURIComponent(text) + "&bext=" + localStorage['os'] + "cl"
-    });
-  });
-});
-
-chrome.webRequest.onBeforeRequest.addListener(
-    redirect.handleRequest,
-    {
-        urls: [
-            '<all_urls>',
-        ],
-        types: constants.requestListenerTypes
-    },
-    ['blocking']
-);
-
-chrome.webRequest.onHeadersReceived.addListener(
-        ATB.updateSetAtb,
-    {
-        urls: [
-            '*://duckduckgo.com/?*',
-            '*://*.duckduckgo.com/?*'
-        ]
-    }
-);

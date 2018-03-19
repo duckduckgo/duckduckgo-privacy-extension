@@ -164,40 +164,6 @@ function getVersionParam () {
     return versionParam
 }
 
-chrome.runtime.onInstalled.addListener(function(details) {
-    // only run the following section on install and on update
-    if (details.reason.match(/install|update/)) {
-        ATB.onInstalled();
-    }
-
-    // only show post install page on install if:
-    // - the user wasn't already looking at the app install page
-    // - the user hasn't seen the page before
-    if (details.reason.match(/install/)) {
-        settings.ready().then( () => {
-            chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
-                const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
-                if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
-                    settings.updateSetting('hasSeenPostInstall', true)
-                    chrome.tabs.create({
-                        url: 'https://duckduckgo.com/app?post=1'
-                    })
-                }
-            })
-        })
-    }
-
-    // blow away old indexeddbs that might be there
-    if (details.reason.match(/update/) && window.indexedDB) {
-        const ms = 1000 * 60
-        setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
-    }
-
-    // remove legacy/unused `HTTPSwhitelisted` setting
-    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
-})
-
 module.exports = {
     getTemporaryWhitelist,
     getWhitelists,

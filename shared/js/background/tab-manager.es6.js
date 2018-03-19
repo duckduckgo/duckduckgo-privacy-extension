@@ -61,64 +61,85 @@ class TabManager {
 
         settings.updateSetting(list, globalwhitelist)
     }
-}
 
-var tabManager = new TabManager();
+    /* This handles the new tab case. You have clicked to
+     * open a new tab and haven't typed in a url yet.
+     * This will fire an onUpdated event and we can create
+     * an intital tab instance here. We'll update this instance
+     * later on when webrequests start coming in.
+     */
+    createOrUpdateTab(id, info) {
+        if (!tabManager.get({'tabId': id})) {
+            info.id = id;
+            tabManager.create(info);
+        }
+        else {
+            let tab = tabManager.get({tabId: id});
+            if (tab && info.status) {
+                tab.status = info.status;
 
-chrome.tabs.onRemoved.addListener( (id, info) => {
-    // remove the tab object
-    tabManager.delete(id);
-});
+                /**
+                 * Re: HTTPS. When the tab finishes loading:
+                 * 1. check main_frame url (via tab.url) for http/s, update site score
+                 * 2. check for incomplete upgraded https upgrade requests, whitelist
+                 * the entire site if there are any then notify tabManager
+                 * NOTE: we aren't making a distinction between active and passive
+                 * content when https content is mixed after a forced upgrade
+                 */
+                if (tab.status === 'complete') {
+                    if (tab.url && tab.url.match(/^https:\/\//)) {
+                        tab.site.score.update({hasHTTPS: true})
+                    }
+                    tab.checkHttpsRequestsOnComplete()
+                    console.info(tab.site.score)
+                    tab.updateBadgeIcon()
 
-/* This handles the new tab case. You have clicked to
- * open a new tab and haven't typed in a url yet.
- * This will fire an onUpdated event and we can create
- * an intital tab instance here. We'll update this instance
- * later on when webrequests start coming in.
- */
-chrome.tabs.onUpdated.addListener( (id, info) => {
-    if (!tabManager.get({'tabId': id})) {
-        info.id = id;
-        tabManager.create(info);
-    }
-    else {
-        let tab = tabManager.get({tabId: id});
-        if (tab && info.status) {
-            tab.status = info.status;
+                    if (tab.statusCode === 200 &&
+                        !tab.site.didIncrementCompaniesData) {
 
-            /**
-             * Re: HTTPS. When the tab finishes loading:
-             * 1. check main_frame url (via tab.url) for http/s, update site score
-             * 2. check for incomplete upgraded https upgrade requests, whitelist
-             * the entire site if there are any then notify tabManager
-             * NOTE: we aren't making a distinction between active and passive
-             * content when https content is mixed after a forced upgrade
-             */
-            if (tab.status === 'complete') {
-                if (tab.url && tab.url.match(/^https:\/\//)) {
-                    tab.site.score.update({hasHTTPS: true})
-                }
-                tab.checkHttpsRequestsOnComplete()
-                console.info(tab.site.score)
-                tab.updateBadgeIcon()
+                        if (tab.trackers && Object.keys(tab.trackers).length > 0) {
+                            Companies.incrementTotalPagesWithTrackers()
+                        }
 
-                if (tab.statusCode === 200 &&
-                    !tab.site.didIncrementCompaniesData) {
-
-                    if (tab.trackers && Object.keys(tab.trackers).length > 0) {
-                        Companies.incrementTotalPagesWithTrackers()
+                        Companies.incrementTotalPages()
+                        tab.site.didIncrementCompaniesData = true
                     }
 
-                    Companies.incrementTotalPages()
-                    tab.site.didIncrementCompaniesData = true
+                    if (tab.statusCode === 200) tab.endStopwatch()
                 }
+            }
+        }
 
-                if (tab.statusCode === 200) tab.endStopwatch()
+    }
+
+    updateTabUrl(request) {
+        // Update tab data. This makes
+        // sure we have the correct url after any https rewrites
+        let tab = tabManager.get({tabId: request.tabId})
+
+        if (tab) {
+            tab.statusCode = request.statusCode
+            if (tab.statusCode === 200) {
+                tab.url = request.url
+                tab.updateSite()
             }
         }
     }
 
-});
+    updateTabRedirectCount(request) {
+        // count redirects
+        let tab = tabManager.get({'tabId': req.tabId})
+        if (!tab) return
+
+        if (tab.httpsRedirects[req.requestId]) {
+            tab.httpsRedirects[req.requestId] += 1
+        } else {
+            tab.httpsRedirects[req.requestId] = 1
+        }
+    }
+}
+
+var tabManager = new TabManager();
 
 chrome.runtime.onMessage.addListener( (req, sender, res) => {
     if (req.whitelisted) {
@@ -134,36 +155,5 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     }
     return true;
 })
-
-// message popup to close when the active tab changes
-chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({closePopup: true}))
-
-// Update tab data. This makes
-// sure we have the correct url after any https rewrites
-chrome.webRequest.onHeadersReceived.addListener((request) => {
-    let tab = tabManager.get({tabId: request.tabId})
-
-    if (tab) {
-        tab.statusCode = request.statusCode
-        if (tab.statusCode === 200) {
-            tab.url = request.url
-            tab.updateSite()
-        }
-    }
-
-}, {urls: ['<all_urls>'], types: ['main_frame']})
-
-chrome.webRequest.onBeforeRedirect.addListener((req) => {
-    // count redirects
-    let tab = tabManager.get({'tabId': req.tabId})
-    if (!tab) return
-
-    if (tab.httpsRedirects[req.requestId]) {
-        tab.httpsRedirects[req.requestId] += 1
-    } else {
-        tab.httpsRedirects[req.requestId] = 1
-    }
-}, {urls: ["*://*/*"]})
-
 
 module.exports = tabManager
