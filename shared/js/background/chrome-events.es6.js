@@ -130,7 +130,7 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
         return true
     }
 
-    if(request.atb){
+    if(req.atb){
         ATB.setAtbValuesFromSuccessPage(request.atb)
     }
 

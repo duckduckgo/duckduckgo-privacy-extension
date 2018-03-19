@@ -15,8 +15,6 @@
  */
 
 const chromeEvents = require('./chrome-events.es6')
-
-var debugRequest = false
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 

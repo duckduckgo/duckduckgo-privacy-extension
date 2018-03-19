@@ -129,13 +129,13 @@ class TabManager {
 
     updateTabRedirectCount(request) {
         // count redirects
-        let tab = tabManager.get({'tabId': req.tabId})
+        let tab = tabManager.get({'tabId': request.tabId})
         if (!tab) return
 
-        if (tab.httpsRedirects[req.requestId]) {
-            tab.httpsRedirects[req.requestId] += 1
+        if (tab.httpsRedirects[request.requestId]) {
+            tab.httpsRedirects[request.requestId] += 1
         } else {
-            tab.httpsRedirects[req.requestId] = 1
+            tab.httpsRedirects[request.requestId] = 1
         }
     }
 }

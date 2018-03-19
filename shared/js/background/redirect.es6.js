@@ -6,6 +6,8 @@ const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 
+var debugRequest = false
+
 /**
  * Where most of the extension work happens.
  *
