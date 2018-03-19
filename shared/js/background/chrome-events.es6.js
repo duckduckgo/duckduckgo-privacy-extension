@@ -4,7 +4,7 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
-const atb = require('./atb.es6')
+const ATB = require('./atb.es6')
 
 chrome.runtime.onInstalled.addListener(function(details) {
     // only run the following section on install and on update
@@ -154,5 +154,24 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     } else if (req.getSiteScore) {
         let tab = tabManager.get({tabId: req.getSiteScore})
         res(tab.site.score.get())
+    }
+})
+
+/**
+ * ALARMS
+ */
+
+const abpLists = require('./abp-lists.es6')
+
+// recheck adblock plus lists every 30 minutes
+chrome.alarms.create('updateLists', {periodInMinutes: 30})
+// update uninstall URL every 10 minutes
+chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
+
+chrome.alarms.onAlarm.addListener(alarm => {
+    if (alarm.name === 'updateLists') {
+        settings.ready().then(() => updateLists())
+    } else if (alarmEvent.name === 'updateUninstallURL') {
+        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     }
 })

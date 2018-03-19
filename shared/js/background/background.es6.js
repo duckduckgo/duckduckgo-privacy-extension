@@ -17,10 +17,8 @@
 const chromeEvents = require('./chrome-events.es6')
 
 var debugRequest = false
-const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
-const redirect = require('./redirect.es6')
 
 function Background() {
   // clearing last search on browser startup

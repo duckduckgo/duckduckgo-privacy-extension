@@ -199,11 +199,4 @@ settings.ready().then(() => {
     chrome.runtime.setUninstallURL(ATB.getSurveyURL())
 })
 
-chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
-chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
-    if (alarmEvent.name === 'updateUninstallURL') {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-    }
-}))
-
 module.exports = ATB
