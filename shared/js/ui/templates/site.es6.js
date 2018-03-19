@@ -45,7 +45,7 @@ module.exports = function () {
       <h2 class="is-transparent site-info__whitelist-status js-site-whitelist-status">
         <span class="icon icon__check"></span>
         <span class="text-line-after-icon">
-          Added to Whitelist
+         ${setTransitionText(!this.model.isWhitelisted)}
         </span>
       </h2>
       <h2 class="site-info__protection js-site-protection">Site Privacy Protection</h2>
@@ -58,6 +58,18 @@ module.exports = function () {
     </li>
   </ul>
   </section>`
+
+  function setTransitionText (isSiteWhitelisted) {
+    isSiteWhitelisted = isSiteWhitelisted || false
+    let text = 'Added to '
+
+    if (isSiteWhitelisted) {
+      text = 'Removed from '
+    }
+
+    text += 'Whitelist'
+    return text
+  }
 
   function renderTrackerNetworks (model) {
     const isActive = !model.isWhitelisted ? 'is-active' : ''
