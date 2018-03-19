@@ -191,13 +191,6 @@ var ATB = (() => {
     }
 })()
 
-// register message listener
-chrome.runtime.onMessage.addListener((request) => {
-    if(request.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb)
-    }
-})
-
 settings.ready().then(() => {
     // migrate over any localStorage values from the old extension
     ATB.migrate()

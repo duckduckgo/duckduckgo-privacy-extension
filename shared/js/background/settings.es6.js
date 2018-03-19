@@ -23,7 +23,6 @@ function init() {
     return new Promise ((resolve, reject) => {
         buildSettingsFromDefaults()
         buildSettingsFromLocalStorage().then(() => {
-            registerListeners()
             resolve()
         })
     })
@@ -111,27 +110,6 @@ function logSettings () {
         console.log(s.settings)
     })
 }
-
-function registerListeners(){
-    chrome.runtime.onMessage.addListener(onUpdateSetting);
-    chrome.runtime.onMessage.addListener(onGetSetting);
-}
-
-var onUpdateSetting = function(req, sender, res) {
-    if(req.updateSetting) {
-        var name = req.updateSetting['name'];
-        var value = req.updateSetting['value'];
-        updateSetting(name, value);
-    }
-};
-
-var onGetSetting = function(req, sender, res){
-    if(req.getSetting){
-        res(getSetting(req.getSetting.name));
-    }
-    return true;
-};
-
 
 module.exports = {
     getSetting: getSetting,

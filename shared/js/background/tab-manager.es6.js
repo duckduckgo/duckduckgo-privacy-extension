@@ -45,6 +45,7 @@ class TabManager {
             }
         }
 
+        chrome.runtime.sendMessage({whitelistChanged: true});
     }
 
     /* Update the whitelists kept in settings
@@ -140,20 +141,5 @@ class TabManager {
 }
 
 var tabManager = new TabManager();
-
-chrome.runtime.onMessage.addListener( (req, sender, res) => {
-    if (req.whitelisted) {
-        tabManager.whitelistDomain(req.whitelisted)
-        chrome.runtime.sendMessage({whitelistChanged: true});
-    }
-    else if (req.getTab) {
-        res(tabManager.get({'tabId': req.getTab}))
-    }
-    else if (req.getSiteScore) {
-        let tab = tabManager.get({tabId: req.getSiteScore})
-        res(tab.site.score.get())
-    }
-    return true;
-})
 
 module.exports = tabManager

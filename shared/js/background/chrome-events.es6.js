@@ -97,3 +97,62 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
   });
 });
 
+/**
+ * MESSAGES
+ */
+
+const utils = require('./utils.es6')
+const settings = require('./utils.es6')
+
+// handle any messages that come from content/UI scripts
+// returning `true` makes it possible to send back an async response
+chrome.runtime.onMessage.addListener( (req, sender, res) => {
+    if (req.getCurrentTab) {
+        utils.getCurrentTab().then((tab) => {
+            res(tab)
+        })
+
+        return true
+    }
+
+    if (req.updateSetting) {
+        let name = req.updateSetting['name']
+        let value = req.updateSetting['value']
+        settings.ready().then(() => {
+            settings.updateSetting(name, value)
+        })
+    } else if (req.updateSetting) {
+        let name = req.updateSetting['name']
+        settings.ready().then(() => {
+            res(settings.getSetting(name));
+        })
+
+        return true
+    }
+
+    if(request.atb){
+        ATB.setAtbValuesFromSuccessPage(request.atb)
+    }
+
+    // popup will ask for the browser type then it is created
+    if (req.getBrowser) {
+        res(utils.getBrowserName());
+    }
+
+    if (req.getTopBlocked) {
+        res(Companies.getTopBlocked(req.getTopBlocked))
+    } else if (req.getTopBlockedByPages) {
+        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
+    } else if (req.resetTrackersData) {
+        Companies.resetData()
+    }
+
+    if (req.whitelisted) {
+        tabManager.whitelistDomain(req.whitelisted)
+    } else if (req.getTab) {
+        res(tabManager.get({'tabId': req.getTab}))
+    } else if (req.getSiteScore) {
+        let tab = tabManager.get({tabId: req.getSiteScore})
+        res(tab.site.score.get())
+    }
+})
