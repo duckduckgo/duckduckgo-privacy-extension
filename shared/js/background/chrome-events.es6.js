@@ -137,12 +137,15 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     // popup will ask for the browser type then it is created
     if (req.getBrowser) {
         res(utils.getBrowserName());
+        return true
     }
 
     if (req.getTopBlocked) {
         res(Companies.getTopBlocked(req.getTopBlocked))
+        return true
     } else if (req.getTopBlockedByPages) {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
+        return true
     } else if (req.resetTrackersData) {
         Companies.resetData()
     }
@@ -151,9 +154,11 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
         tabManager.whitelistDomain(req.whitelisted)
     } else if (req.getTab) {
         res(tabManager.get({'tabId': req.getTab}))
+        return true
     } else if (req.getSiteScore) {
         let tab = tabManager.get({tabId: req.getSiteScore})
         res(tab.site.score.get())
+        return true
     }
 })
 
