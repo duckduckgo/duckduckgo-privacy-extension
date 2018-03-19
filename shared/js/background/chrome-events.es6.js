@@ -73,7 +73,7 @@ chrome.tabs.onUpdated.addListener( (id,info) => {
         Companies.syncToStorage()
     }
 
-    tabManager.createOrUpdateTab(info, id)
+    tabManager.createOrUpdateTab(id, info)
 })
 
 chrome.tabs.onRemoved.addListener( (id, info) => {
