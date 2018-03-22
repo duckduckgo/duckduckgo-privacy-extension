@@ -35,6 +35,14 @@ module.exports = function () {
         <span>If a site's not working, please tell us.</span>
           </a>
       </li>
+      <li>
+        <a href="${renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl)}"
+        target="_blank"
+        class="menu-title">
+        Source code
+        <span>Read, learn from, and improve this extension.</span>
+          </a>
+      </li>
         </ul>
     </div>
   </nav>`
