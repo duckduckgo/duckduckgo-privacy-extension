@@ -122,11 +122,11 @@ var ATB = (() => {
                     tab = tabs[i]
 
                     chrome.tabs.executeScript(tab.id, {
-                        file: 'public/js/content-scripts/on-install.js'
+                        file: '/public/js/content-scripts/on-install.js'
                     })
 
                     chrome.tabs.insertCSS(tab.id, {
-                        file: 'public/css/noatb.css'
+                        file: '/public/css/noatb.css'
                     })
                 }
             })
