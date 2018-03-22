@@ -37,9 +37,15 @@ async function runTest(opts) {
 }
 
 (async () => {
-    let opts = {
-        output: program.output || '.'
-    };
+    let d = new Date().toJSON()
+
+    let opts = {}
+
+    if (!program.output) {
+        opts.output = d
+    } else {
+        opts.output = `${program.output}-${d}`
+    }
 
     if (program.xvbf) {
         let xvfb = new Xvfb({ reuse: true });
