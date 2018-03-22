@@ -94,6 +94,8 @@ class Score {
         let beforeIndex = 1
         let afterIndex = 1
 
+        this.decisions = []
+
         this.addDecision({change: 1, index: beforeIndex, why: "Default grade"})
 
         if (this.isaMajorTrackingNetwork) {
