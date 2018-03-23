@@ -31,7 +31,7 @@ function runTest(url) {
 
         chrome.tabs.create({url}, (t) => {
 
-            getLoadedTabById(t.id, blockingOnStartTime, 9000, 10000).then((tab) => {
+            getLoadedTabById(t.id, blockingOnStartTime, 9000, 3000).then((tab) => {
                 let blocking = bkg.settings.getSetting('trackerBlockingEnabled')
                 let tabObj = bkg.tabManager.get({'tabId': tab.id});
 
