@@ -9,7 +9,9 @@ $(document).ready(function() {
      * Get test params from the url and set any defaults
      */
     if (PARAMS.url) {
-        clearCache().then(runTest(PARAMS.url).then(() => {
+        clearCache()
+            .then(waitForHTTPSToLoad())
+            .then(runTest(PARAMS.url).then(() => {
 
             if (PARAMS.json) {
                 $('#gradedetails').append(`<div id="json-data">${JSON.stringify(siteDetails, null, 4)}</div>`);
@@ -20,6 +22,20 @@ $(document).ready(function() {
     }
 });
 
+function waitForHTTPSToLoad() {
+    return new Promise((resolve) => {
+        let list = bkg.https.getUpgradeList()
+
+        if (list && list.length) {
+            resolve();
+        } else {
+            setTimeout(() => {
+                waitForHTTPSToLoad().then(resolve);
+            }, 1000);
+        }
+
+    });
+}
 
 /*
  * Navigate to a url
