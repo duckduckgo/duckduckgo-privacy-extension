@@ -68,6 +68,11 @@ class Site {
     isWhiteListed () { return this.whitelisted }
 
     addTracker (tracker) {
+        if (!this.trackers[tracker.parentCompany])
+            this.trackers[tracker.parentCompany] = {}
+
+        this.trackers[tracker.parentCompany][tracker.url] = tracker
+
         if (this.trackerUrls.indexOf(tracker.url) === -1){
             this.trackerUrls.push(tracker.url)
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
