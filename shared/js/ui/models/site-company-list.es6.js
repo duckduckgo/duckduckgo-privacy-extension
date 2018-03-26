@@ -60,14 +60,28 @@ SiteCompanyList.prototype = window.$.extend({},
           return {
             name: companyName,
             // hack to bump 'unknown' trackers to bottom of list
-            count: companyName === 'unknown' ? -1 : company.count,
+            count: this._setCount(company),
             px: Math.floor(company.count * 260 / maxCount),
             urls: company.urls
           }
-        })
+        }, this)
         .sort((a, b) => {
           return b.count - a.count
         })
+    },
+
+    // Determines sorting order of the company list
+    _setCount: function (company) {
+      let count = company.count
+      // Unknown trackers, followed by unblocked first party,
+      // should be at the bottom of the list
+      if (company.name === 'unknown') {
+        count = -1
+      } else if (company.isFirstParty) {
+        count = -2
+      }
+
+      return count
     }
   }
 )
