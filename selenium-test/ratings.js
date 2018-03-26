@@ -41,11 +41,7 @@ async function runTest(opts) {
 
     let opts = {}
 
-    if (!program.output) {
-        opts.output = d
-    } else {
-        opts.output = `${program.output}-${d}`
-    }
+    opts.output = program.output || d
 
     if (program.xvbf) {
         let xvfb = new Xvfb({ reuse: true });
