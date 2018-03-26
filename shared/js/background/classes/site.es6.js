@@ -20,6 +20,7 @@ class Site {
         this.score = new Score(this.specialDomain(), this.domain);
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
+        this.trackers = {};
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
         this.didIncrementCompaniesData = false;
 
@@ -68,8 +69,9 @@ class Site {
     isWhiteListed () { return this.whitelisted }
 
     addTracker (tracker) {
-        if (!this.trackers[tracker.parentCompany])
+        if (tracker.parentCompany && !this.trackers[tracker.parentCompany]) {
             this.trackers[tracker.parentCompany] = {}
+        }
 
         this.trackers[tracker.parentCompany][tracker.url] = tracker
 
