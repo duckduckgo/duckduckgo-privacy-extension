@@ -3,6 +3,7 @@ const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const constants = require('../../data/constants')
 const Dexie = require('dexie')
+const BloomFilter = require("jsbloom").filter;
 
 // check every 30 minutes for an updated list:
 const UPDATE_INTERVAL = 1000 * 60 * 30
@@ -84,6 +85,17 @@ class HTTPS {
         });
     }
 
+    getBloomBlob() {
+        let url = `data/https-bloom`;
+
+        return new Promise((resolve, reject) => {
+            load.loadExtensionFile({
+                url: url,
+                returnType: 'arraybuffer'
+            }, resolve);
+        });
+    }
+
     loadListViaLocalStorage() {
         const timer = new Timer("local storage");
         return new Promise((resolve, reject) => {
@@ -159,6 +171,26 @@ class HTTPS {
                 timer.done();
                 return db.delete();
             }).then(() => {
+                resolve();
+            });
+        });
+    }
+
+    loadAndParseBloomFilter() {
+        const timer = new Timer("dexie already parsed JSON object");
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_bloom_' + this.multiplier);
+            db.version(1).stores({
+                rules: '++id'
+            });
+
+            this.getBloomBlob().then((arrayBuffer) => {
+                console.log("got it!");
+                console.time("loading filter");
+                // TODO the number here needs to be passed separately
+                this.bloom = new BloomFilter(1197749, 0.0001);
+                this.bloom.importData(new Uint8Array(arrayBuffer));
+                console.timeEnd("loading filter");
                 resolve();
             });
         });
@@ -282,7 +314,7 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
-        return (httpsUpgradeList.indexOf(host) > -1) ? true : false
+        return this.bloom.checkEntry(host)
     }
 
     getUpgradeList () {
