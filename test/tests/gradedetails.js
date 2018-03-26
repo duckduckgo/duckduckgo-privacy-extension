@@ -56,7 +56,8 @@ function runTest(url) {
                         scoreObj: tabObj.site.score,
                         score: tabObj.site.score.get(),
                         httpsDecisions: tabObj.httpsDecisions,
-                        trackers: tabObj.site.trackers
+                        trackers: tabObj.site.trackers,
+                        trackersNotBlocked: tabObj.site.trackersNotBlocked
                     })
                 }
 

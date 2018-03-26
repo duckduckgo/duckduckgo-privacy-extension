@@ -65,7 +65,7 @@ function isTracker(urlToCheck, thisTab, request) {
 
         // don't block 1st party requests
         if (isFirstPartyRequest(currLocation, urlToCheck)) {
-            return
+            return getTrackerDetails(urlToCheck, 'trackersWhitelist')
         }
         if (social_block) {
             blockSettings.push('Social')

@@ -178,6 +178,8 @@ chrome.webRequest.onBeforeRequest.addListener(
                         return {cancel: true};
                     }
                 }
+            } else if (tracker.type === 'trackersWhitelist') {
+                thisTab.site.addTrackerNotBlocked(tracker)
             }
         }
 
