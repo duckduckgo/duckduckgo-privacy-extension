@@ -9,15 +9,14 @@ $(document).ready(function() {
      * Get test params from the url and set any defaults
      */
     if (PARAMS.url) {
-        clearCache()
-            .then(waitForHTTPSToLoad())
+        waitForHTTPSToLoad()
             .then(runTest(PARAMS.url).then(() => {
 
-            if (PARAMS.json) {
-                $('#gradedetails').append(`<div id="json-data">${JSON.stringify(siteDetails, null, 4)}</div>`);
-                // $('#json-data').append(`${JSON.stringify(siteDetails, null, 4)}`)
-            }
-        }))
+                if (PARAMS.json) {
+                    $('#gradedetails').append(`<div id="json-data">${JSON.stringify(siteDetails, null, 4)}</div>`);
+                    // $('#json-data').append(`${JSON.stringify(siteDetails, null, 4)}`)
+                }
+            }))
         return;
     }
 });
