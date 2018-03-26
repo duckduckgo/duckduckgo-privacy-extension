@@ -48,7 +48,11 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
   }
   if (companyListMap && companyListMap.length > 0) {
     return companyListMap.map((c, i) => {
-      if (c.name && c.name === 'unknown') c.name = '(Tracker network unknown)'
+      if (c.name && c.name === 'unknown') {
+        c.name = '(Tracker network unknown)'
+      } else if (c.name && c.isFirstParty) {
+        c.name += ' associated domains (not blocked)'
+      }
       return bel`<li>
         <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
           <span class="site-info__tracker__icon
