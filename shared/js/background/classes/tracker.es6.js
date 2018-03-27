@@ -4,7 +4,7 @@ class Tracker {
     constructor (t) {
         this.parentCompany = Companies.get(t.parentCompany)
         this.urls = {}
-        this.urls[t.url] = {block: t.block, reason: t.reason}
+        this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
         this.count = 1 // request count
         this.type = t.type || ''
     }
@@ -19,7 +19,7 @@ class Tracker {
      */
     update (t) {
         if (!this.urls[t.url]) {
-            this.urls[t.url] = {blocked: t.block, reason: t.reason}
+            this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
         }
     }
 }
