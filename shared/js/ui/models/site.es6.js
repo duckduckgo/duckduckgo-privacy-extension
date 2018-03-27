@@ -205,7 +205,8 @@ Site.prototype = window.$.extend({},
 
       let count = 0
       if (unknownTrackers && unknownTrackers.urls) {
-        count = unknownTrackers.urls.length
+        const unknownTrackersUrls = Object.keys(unknownTrackers.urls)
+        count = unknownTrackersUrls ? unknownTrackersUrls.length : 0
       }
 
       return count
