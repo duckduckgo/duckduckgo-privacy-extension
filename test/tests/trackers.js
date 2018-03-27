@@ -83,9 +83,6 @@
 
           let toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest) || {block: false};
           assert.ok(toBlock.block === test.block, `abp blocking decision.. url: ${test.url} ${toBlock.block} === ${test.block}`);
-          console.log(test.url)
-          console.log(toBlock.reason)
-          console.log(toBlock.parentCompany)
 
           if (test.result) {
               if (test.result.parent) assert.ok(test.result.parent === toBlock.parentCompany, `has correct parent company ${test.result.parent} === ${toBlock.parentCompany}`)

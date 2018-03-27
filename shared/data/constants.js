@@ -43,7 +43,7 @@ module.exports = {
         "appnexus": 10,
         "oracle": 10,
         "mediamath": 9,
-        "yahoo": 9,
+        "oath": 9,
         "maxcdn": 7,
         "automattic": 7
     }
