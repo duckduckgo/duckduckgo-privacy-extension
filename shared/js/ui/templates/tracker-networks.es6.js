@@ -53,7 +53,8 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
       if (c.name && c.name === 'unknown') {
         c.name = '(Tracker network unknown)'
       } else if (c.name && model.hasUnblockedTrackers(c)) {
-        c.name += ' associated domains (not blocked)'
+        const additionalText = ' associated domains'
+        c.name += model.site && model.site.isWhitelisted ? additionalText : additionalText + ' (not blocked)'
         borderClass = 'border--top'
       }
       return bel`<li class="${borderClass}">
