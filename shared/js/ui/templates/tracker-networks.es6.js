@@ -49,12 +49,15 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
   }
   if (companyListMap && companyListMap.length > 0) {
     return companyListMap.map((c, i) => {
+      let borderClass = ''
       if (c.name && c.name === 'unknown') {
         c.name = '(Tracker network unknown)'
       } else if (c.name && model.hasUnblockedTrackers(c)) {
-        c.name += ' associated domains (not blocked)'
+        const additionalText = ' associated domains'
+        c.name += model.site && model.site.isWhitelisted ? additionalText : additionalText + ' (not blocked)'
+        borderClass = 'border--top'
       }
-      return bel`<li>
+      return bel`<li class="${borderClass}">
         <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
           <span class="site-info__tracker__icon
             ${c.name.toLowerCase()}">
