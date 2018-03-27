@@ -1,23 +1,28 @@
 var request = require('request'),
     fs = require('fs');
 
-request('https://raw.githubusercontent.com/mozilla-services/shavar-prod-lists/master/disconnect-entitylist.json', function (err, res, body) {
+let requestData = {
+    method: 'get',
+    uri: 'https://jason.duckduckgo.com/contentblocking.js?l=entitylist2',
+    gzip: true
+}
 
-      if (err) {
-          return console.log(err);
-      }
+request(requestData, (err, res, body) => {
+    if (err) {
+        return console.log(err);
+    }
+    
+    let json = JSON.parse(body);
+    let out = {};
 
-      let json = JSON.parse(body);
-      let out = {};
+    for(let parent in json) {
+        json[parent].properties.map(url => {
+            out[url] = parent;
+        });
+        json[parent].resources.map(url => {
+            out[url] = parent;
+        });
+    }
 
-      for(let parent in json) {
-          json[parent].properties.map(url => {
-              out[url] = parent;
-          });
-          json[parent].resources.map(url => {
-              out[url] = parent;
-          });
-      }
-
-      fs.writeFile('shared/data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if(err) console.log(err)} );
+    fs.writeFile('shared/data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if(err) console.log(err)} );
 });

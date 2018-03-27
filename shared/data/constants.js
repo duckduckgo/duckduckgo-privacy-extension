@@ -3,7 +3,7 @@ module.exports = {
     "blockLists": [
         "trackersWithParentCompany.json"
     ],
-    "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist",
+    "entityList": "https://jason.duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
     "easylists": ["privacy", "general"],
     "blocking": ["Advertising", "Analytics"],
