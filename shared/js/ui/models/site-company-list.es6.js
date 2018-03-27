@@ -41,10 +41,11 @@ SiteCompanyList.prototype = window.$.extend({},
       let maxCount = 0
       if (this.trackers && companyNames.length > 0) {
         companyNames.map((name) => {
-          // don't sort "unknown" trackers since they will
+          // don't sort "unknown" nor unblocked trackers since they will
           // be listed individually at bottom of graph,
           // we don't want "unknown" tracker total as maxCount
-          if (name !== 'unknown') {
+          if (name !== 'unknown' || 
+            this.hasUnblockedTrackers(this.trackers[name])) {
             let compare = this.trackers[name].count
             if (compare > maxCount) maxCount = compare
           }
@@ -59,7 +60,6 @@ SiteCompanyList.prototype = window.$.extend({},
           // max width: 300 - (horizontal padding in css) = 260
           return {
             name: companyName,
-            // hack to bump 'unknown' trackers to bottom of list
             count: this._setCount(company),
             px: Math.floor(company.count * 260 / maxCount),
             urls: company.urls
@@ -71,6 +71,14 @@ SiteCompanyList.prototype = window.$.extend({},
         })
     },
 
+    // Return true if company has unblocked trackers in the current tab
+    hasUnblockedTrackers: function (company) {
+      if (!company || !company.urls) return false
+
+      const urls = Object.keys(company.urls)
+      return urls.some((url) => url.blocked === false)
+    },
+
     // Determines sorting order of the company list
     _setCount: function (company) {
       let count = company.count
@@ -78,7 +86,7 @@ SiteCompanyList.prototype = window.$.extend({},
       // should be at the bottom of the list
       if (company.name === 'unknown') {
         count = -1
-      } else if (company.isFirstParty) {
+      } else if (this.hasUnblockedTrackers(company)) {
         count = -2
       }
 
