@@ -63,7 +63,6 @@ SiteCompanyList.prototype = window.$.extend({},
             count: this._setCount(company),
             px: Math.floor(company.count * 260 / maxCount),
             urls: company.urls
-            isFirstParty: company.isFirstParty
           }
         }, this)
         .sort((a, b) => {
