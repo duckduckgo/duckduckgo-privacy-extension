@@ -75,7 +75,7 @@ SiteCompanyList.prototype = window.$.extend({},
       if (!company || !company.urls) return false
 
       const urls = Object.keys(company.urls)
-      return urls.some((url) => url.block === false)
+      return urls.some((url) => url.isBlocked === false)
     },
 
     // Determines sorting order of the company list
