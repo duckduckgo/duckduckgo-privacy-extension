@@ -81,6 +81,7 @@ function isTracker(urlToCheck, thisTab, request) {
         if (surrogateTracker) {
             let firstParty = isFirstPartyRequest(currLocation, urlToCheck)
             if (firstParty) {
+                surrogateTracker.parentCompany = firstParty
                 surrogateTracker.block = false
                 surrogateTracker.reason = 'first party'
             }
@@ -91,6 +92,7 @@ function isTracker(urlToCheck, thisTab, request) {
         if (trackerFromList) {
             let firstParty = isFirstPartyRequest(currLocation, urlToCheck)
             if (firstParty) {
+                trackerFromList.parentCompany = firstParty
                 trackerFromList.block = false
                 trackerFromList.reason = 'first party'
             }
@@ -106,12 +108,7 @@ function checkTrackerLists(blockSettings, urlSplit, currLocation, urlToCheck, re
     // same as a first party requrest and return
     var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
     if (trackerByParentCompany) {
-        // check cancel to see if this tracker is related to the current site
-        if (trackerByParentCompany.cancel) {
-            return
-        } else {
-            return trackerByParentCompany
-        }
+        return trackerByParentCompany
     }
     
     // block trackers from easylists
@@ -198,17 +195,12 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
         if (trackerLists.trackersWithParentCompany[trackerType]) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
             if (tracker) {
-                if (!isRelatedEntity(tracker.c, currLocation)) {
-                    return toBlock = {
-                        parentCompany: tracker.c,
-                        url: trackerURL,
-                        type: trackerType,
-                        block: true,
-                        reason: 'trackersWithParentCompany'
-                    }
-                }
-                else {
-                    return toBlock = {cancel: 'relatedEntity'}
+                return toBlock = {
+                    parentCompany: tracker.c,
+                    url: trackerURL,
+                    type: trackerType,
+                    block: true,
+                    reason: 'trackersWithParentCompany'
                 }
             }
         }
@@ -242,7 +234,7 @@ function isRelatedEntity(parentCompany, currLocation) {
         }
 
         if (host.match(parentEntity.regexProperties)) {
-            return true
+            return parentCompany
         }
     }
 
@@ -250,14 +242,15 @@ function isRelatedEntity(parentCompany, currLocation) {
 }
 
 /* Compare two urls to determine if they came from the same hostname
- * pull off any subdomains before comparison
+ * pull off any subdomains before comparison. 
+ * Return parent company name from entityMap if one is found.
  */
 function isFirstPartyRequest(currLocation, urlToCheck) {
     let currentLocationParsed = tldjs.parse(currLocation)
     let urlToCheckParsed = tldjs.parse(urlToCheck)
 
     if (currentLocationParsed.domain === urlToCheckParsed.domain) {
-        return true
+        return entityMap[currentLocationParsed.domain]
     } else {
         let parentEntity = entityMap[urlToCheckParsed.domain]
         if (parentEntity) {
