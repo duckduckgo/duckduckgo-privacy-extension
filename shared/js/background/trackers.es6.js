@@ -17,6 +17,17 @@ settings.ready().then(() => {
     load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
 })
 
+/*
+ * The main parts of the isTracker algo looks like this:
+ * 1. check the request against our own whitelist
+ * 2. check the request against the trackersWithParentCompany list
+ * 3. check the request against the easylists
+ *
+ * If a tracker is found in steps #2,3 we check it against isFirstParty
+ * to determine if this tracker is owned by the current site's parent company.
+ * In this case we don't block the request but still return the tracker obj 
+ * for transparency.
+ */
 function isTracker(urlToCheck, thisTab, request) {
     let currLocation = thisTab.url || ''
     let siteDomain = thisTab.site ? thisTab.site.domain : ''
