@@ -22,7 +22,7 @@ module.exports = function () {
           js-tracker-networks-details">
       <ol class="default-list site-info__trackers__company-list">
         ${renderTrackerDetails(
-          this.model.companyListMap,
+          this.model,
           this.model.DOMAIN_MAPPINGS
         )}
       </ol>
@@ -42,7 +42,8 @@ function renderHero (site) {
   })}`
 }
 
-function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
+function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
+  const companyListMap = model.companyListMap || {}
   if (companyListMap.length === 0) {
     return bel`<li class="is-empty">None</li>`
   }
@@ -50,7 +51,7 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
     return companyListMap.map((c, i) => {
       if (c.name && c.name === 'unknown') {
         c.name = '(Tracker network unknown)'
-      } else if (c.name && c.isFirstParty) {
+      } else if (c.name && model.hasUnblockedTrackers(c)) {
         c.name += ' associated domains (not blocked)'
       }
       return bel`<li>
@@ -61,7 +62,7 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
         </div>
         <h1 class="site-info__domain block">${c.name}</h1>
         <ol class="default-list site-info__trackers__company-list__url-list">
-          ${c.urls.map((url) => {
+          ${Object.keys(c.urls).map((url) => {
             let category = ''
             if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
               category = DOMAIN_MAPPINGS[url.toLowerCase()].t
