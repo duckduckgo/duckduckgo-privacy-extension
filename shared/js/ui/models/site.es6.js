@@ -185,7 +185,15 @@ Site.prototype = window.$.extend({},
     getUniqueTrackersBlockedCount: function () {
       // console.log('[model] getUniqueTrackersBlockedCount()')
       const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
-        return this.tab.trackersBlocked[name].urls.length + total
+        const companyBlocked = this.tab.trackersBlocked[name]
+
+        // Don't throw a TypeError if urls are not there
+        const trackersBlocked = companyBlocked.urls ? Object.keys(companyBlocked.urls) : null
+
+        // Counting unique URLs instead of using the count
+        // because the count refers to all requests rather than unique number of trackers
+        const trackersBlockedCount = trackersBlocked? trackersBlocked.length : 0
+        return trackersBlockedCount + total
       }, 0)
 
       return count
@@ -197,7 +205,8 @@ Site.prototype = window.$.extend({},
 
       let count = 0
       if (unknownTrackers && unknownTrackers.urls) {
-        count = unknownTrackers.urls.length
+        const unknownTrackersUrls = Object.keys(unknownTrackers.urls)
+        count = unknownTrackersUrls ? unknownTrackersUrls.length : 0
       }
 
       return count
