@@ -77,26 +77,20 @@ let getCSVData = (fileName) => {
 
     let score = site.scoreObj
 
-    let scoreArray = [
-        score.hasHTTPS ? 1 : 0,
-        score.isaMajorTrackingNetwork ? 1 : 0,
-        score.totalBlocked,
-        score.hasObscureTracker ? 1 : 0,
-        score.inMajorTrackingNetwork? 1 : 0,
-        (score.tosdr && score.tosdr.score) ? score.tosdr.score : '-'
-    ]
-
     let csvtext = `${siteName},${score.totalBlocked},${csvDetails(site.scoreObj.decisions)}`
     console.log(csvtext)
     appendLine(csvPath, `${csvtext}\n`)
-
-    let o = {
-        url: site.url,
-        details: site.scoreObj.decisions,
-        trackers: site.trackers,
-        score: scoreArray
-    }
 };
+
+// nullify results from previous runs
+try {
+    fs.unlinkSync(csvPath);
+} catch(e) {
+    // ah well
+}
+
+// add the headings for the CSV
+appendLine(csvPath, `${csvHeaders}\n`)
 
 const files = fs.readdirSync(inputPath);
 
