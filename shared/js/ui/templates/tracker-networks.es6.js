@@ -66,7 +66,7 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
         </div>
         <h1 class="site-info__domain block">${c.name}</h1>
         <ol class="default-list site-info__trackers__company-list__url-list">
-          ${Object.keys(c.urls).map((url) => {
+          ${c.urlsList.map((url) => {
             let category = ''
             if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
               category = DOMAIN_MAPPINGS[url.toLowerCase()].t

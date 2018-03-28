@@ -41,12 +41,14 @@ SiteCompanyList.prototype = window.$.extend({},
       this.companyListMap = companyNames
         .map((companyName) => {
           let company = this.trackers[companyName]
+          let urlsList = company.urls ? Object.keys(company.urls) : []
           // calc max using pixels instead of % to make margins easier
           // max width: 300 - (horizontal padding in css) = 260
           return {
             name: companyName,
-            count: this._setCount(company),
-            urls: company.urls
+            count: this._setCount(company, urlsList),
+            urls: company.urls,
+            urlsList: urlsList
           }
         }, this)
         .sort((a, b) => {
@@ -55,11 +57,10 @@ SiteCompanyList.prototype = window.$.extend({},
     },
 
     // Return true if company has unblocked trackers in the current tab
-    hasUnblockedTrackers: function (company) {
-      if (!company || !company.urls) return false
+    hasUnblockedTrackers: function (company, urlsList) {
+      if (!company || !company.urls || !urlsList) return false
 
-      const urls = Object.keys(company.urls)
-      return urls.some((url) => company.urls[url].isBlocked === false)
+      return urlsList.some((url) => company.urls[url].isBlocked === false)
     },
 
     // Determines sorting order of the company list
