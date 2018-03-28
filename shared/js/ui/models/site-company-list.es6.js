@@ -64,13 +64,13 @@ SiteCompanyList.prototype = window.$.extend({},
     },
 
     // Determines sorting order of the company list
-    _setCount: function (company) {
+    _setCount: function (company, urlsList) {
       let count = company.count
       // Unknown trackers, followed by unblocked first party,
       // should be at the bottom of the list
       if (company.name === 'unknown') {
         count = -1
-      } else if (this.hasUnblockedTrackers(company)) {
+      } else if (this.hasUnblockedTrackers(company, urlsList)) {
         count = -2
       }
 
