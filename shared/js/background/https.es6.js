@@ -191,6 +191,20 @@ class HTTPS {
                 this.bloom = new BloomFilter(1197749, 0.0001);
                 this.bloom.importData(new Uint8Array(arrayBuffer));
                 console.timeEnd("loading filter");
+
+                timer.time("add");
+                return db.rules.put({ buf: arrayBuffer })
+            }).then(() => {
+                timer.timeEnd("add");
+
+                timer.time("get")
+                return db.rules.get(1);
+            }).then(() => {
+                timer.timeEnd("get")
+
+                timer.done();
+                return db.delete();
+            }).then(() => {
                 resolve();
             });
         });
