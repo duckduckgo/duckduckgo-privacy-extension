@@ -74,6 +74,10 @@ function isTracker(urlToCheck, thisTab, request) {
 
         var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
         if (whitelistedTracker) {
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(whitelistedTracker, commonParent)
+            }
             return whitelistedTracker
         }
       
@@ -257,7 +261,7 @@ function getCommonParentEntity(currLocation, urlToCheck) {
 
     if (currentLocationParsed.domain === urlToCheckParsed.domain ||
         isRelatedEntity(parentEntity, currLocation)) 
-        return parentEntity || 'unknown'
+        return parentEntity || currentLocationParsed.domain
 
     return false
 }
