@@ -42,6 +42,10 @@ function renderHero (site) {
   })}`
 }
 
+function renderIcon (companyName) {
+  companyName = companyName ? companyName.toLowerCase().replace(/\.[a-z]+/, '') : ''
+}
+
 function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
   if (companyListMap.length === 0) {
     return bel`<li class="is-empty">None</li>`
@@ -52,7 +56,7 @@ function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
       return bel`<li>
         <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
           <span class="site-info__tracker__icon
-            ${c.name.toLowerCase()}">
+            ${renderIcon(c.name)}">
           </span>
         </div>
         <h1 class="site-info__domain block">${c.name}</h1>
