@@ -178,11 +178,14 @@ chrome.runtime.onInstalled.addListener(function(details) {
             chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
                 const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                 const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
-                if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
-                    settings.updateSetting('hasSeenPostInstall', true)
-                    chrome.tabs.create({
-                        url: 'https://duckduckgo.com/app?post=1'
-                    })
+                const regExpSoftwarePage = new RegExp('duckduckgo\.com\/software')
+                if ((!settings.getSetting('hasSeenPostInstall'))
+                    && (!domain.match(regExpPostInstall))
+                    && (!domain.match(regExpSoftwarePage))) {
+                        settings.updateSetting('hasSeenPostInstall', true)
+                        chrome.tabs.create({
+                            url: 'https://duckduckgo.com/app?post=1'
+                        })
                 }
             })
         })
