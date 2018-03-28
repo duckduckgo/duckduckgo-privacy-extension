@@ -37,21 +37,6 @@ SiteCompanyList.prototype = window.$.extend({},
       this.trackers = this.tab.trackers || {}
       const companyNames = Object.keys(this.trackers)
 
-      // find largest number of trackers (by company)
-      let maxCount = 0
-      if (this.trackers && companyNames.length > 0) {
-        companyNames.map((name) => {
-          // don't sort "unknown" nor unblocked trackers since they will
-          // be listed individually at bottom of graph,
-          // we don't want "unknown" tracker total as maxCount
-          if (name !== 'unknown' || 
-            this.hasUnblockedTrackers(this.trackers[name])) {
-            let compare = this.trackers[name].count
-            if (compare > maxCount) maxCount = compare
-          }
-        })
-      }
-
       // set trackerlist metadata for list display by company:
       this.companyListMap = companyNames
         .map((companyName) => {
@@ -61,7 +46,6 @@ SiteCompanyList.prototype = window.$.extend({},
           return {
             name: companyName,
             count: this._setCount(company),
-            px: Math.floor(company.count * 260 / maxCount),
             urls: company.urls
           }
         }, this)
