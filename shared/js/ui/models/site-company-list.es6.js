@@ -46,7 +46,7 @@ SiteCompanyList.prototype = window.$.extend({},
           // max width: 300 - (horizontal padding in css) = 260
           return {
             name: companyName,
-            count: this._setCount(company, urlsList),
+            count: this._setCount(company, companyName, urlsList),
             urls: company.urls,
             urlsList: urlsList
           }
@@ -54,6 +54,8 @@ SiteCompanyList.prototype = window.$.extend({},
         .sort((a, b) => {
           return b.count - a.count
         })
+
+        console.log(this.companyListMap)
     },
 
     // Return true if company has unblocked trackers in the current tab
@@ -64,11 +66,11 @@ SiteCompanyList.prototype = window.$.extend({},
     },
 
     // Determines sorting order of the company list
-    _setCount: function (company, urlsList) {
+    _setCount: function (company, companyName, urlsList) {
       let count = company.count
       // Unknown trackers, followed by unblocked first party,
       // should be at the bottom of the list
-      if (company.name === 'unknown') {
+      if (companyName === 'unknown') {
         count = -1
       } else if (this.hasUnblockedTrackers(company, urlsList)) {
         count = -2
