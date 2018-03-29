@@ -29,7 +29,8 @@ function getReasons (site) {
 
   // tracking networks blocked or found,
   // only show a message if there's any
-  const trackersBadOrGood = (site.totalTrackerNetworksCount !== 0) ? 'bad' : 'good'
+  const trackersCount = site.isWhitelisted ? site.trackersCount : site.trackersBlockedCount
+  const trackersBadOrGood = (trackersCount !== 0) ? 'bad' : 'good'
   reasons.push({
     modifier: trackersBadOrGood,
     msg: `${trackerNetworksText(site)}`
