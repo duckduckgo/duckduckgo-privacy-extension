@@ -17,6 +17,8 @@ describe('score', () => {
 
             expect(result.before).toEqual(test.result.before)
             expect(result.after).toEqual(test.result.after)
+            expect(result.beforeIndex).toEqual(test.result.beforeIndex)
+            expect(result.afterIndex).toEqual(test.result.afterIndex)
         })
     })
 });
