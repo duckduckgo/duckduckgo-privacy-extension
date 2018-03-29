@@ -3,7 +3,7 @@ var request = require('request'),
 
 let requestData = {
     method: 'get',
-    uri: 'https://jason.duckduckgo.com/contentblocking.js?l=entitylist2',
+    uri: 'https://duckduckgo.com/contentblocking.js?l=entitylist2',
     gzip: true
 }
 
