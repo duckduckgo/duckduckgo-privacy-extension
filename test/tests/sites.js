@@ -34,61 +34,6 @@
 
   QUnit.test("test site score", function (assert) {
 
-      let tests = [
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: {before: 'C', after: 'C'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false}, result: {before: 'B', after: 'B'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: {before: 'D', after: 'B'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 11, hasObscureTracker: false}, result: {before: 'D', after: 'B'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 9, hasObscureTracker: false}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:true, totalBlocked: 10, hasObscureTracker: false}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: true}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 1, hasObscureTracker: true}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false}, result: {before: 'D', after: 'B'}},
-
-          // basic tosdr test
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 100}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {class: 'A'}}, result: {before: 'A', after: 'A'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 0}}, result: {before: 'C', after: 'C'}},
-          
-          // don't user tosdr.score to upgrade to "A"
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: -200}}, result: {before: 'B', after: 'B'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {score: -200}}, result: {before: 'C', after: 'B'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {score: -200}}, result: {before: 'D', after: 'B'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: -200}}, result: {before: 'B', after: 'B'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {score: -200}}, result: {before: 'B', after: 'B'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {score: -200}}, result: {before: 'C', after: 'B'}},
-
-          // upgrade to "A" if tosdr.class is "A". Some of these might not be realistic.
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {score: -200, class: 'A'}}, result: {before: 'B', after: 'A'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 11, hasObscureTracker: false, tosdr: {score: -200, class: 'A'}}, result: {before: 'C', after: 'A'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 25, hasObscureTracker: false, tosdr: {score: -200, class: 'A'}}, result: {before: 'D', after: 'A'}},
-
-          // positive tosdr scores
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 200}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {score: 100}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {score: 200}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 100}}, result: {before: 'C', after: 'C'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {score: 200}}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {score: 100}}, result: {before: 'D', after: 'C'}},
-          
-          // tosdr classes
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {class: 'A'}}, result: {before: 'B', after: 'B'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {class: 'B'}}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {class: 'D'}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:false, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {class: 'C'}}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {class: 'A'}}, result: {before: 'A', after: 'A'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 10, hasObscureTracker: false, tosdr: {class: 'A'}}, result: {before: 'B', after: 'A'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {class: 'C'}}, result: {before: 'D', after: 'B'}},
-          { values: {hasHTTPS:true, inMajorTrackingNetwork:false, totalBlocked: 20, hasObscureTracker: false, tosdr: {class: 'D'}}, result: {before: 'D', after: 'C'}},
-          
-          // major networks
-          { values: {hasHTTPS:true, isaMajorTrackingNetwork: true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false, tosdr: {score: 200}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:true, isaMajorTrackingNetwork: true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {score: 200}}, result: {before: 'D', after: 'D'}},
-          { values: {hasHTTPS:true, isaMajorTrackingNetwork: true, inMajorTrackingNetwork:true, totalBlocked: 1, hasObscureTracker: false, tosdr: {class: 'C'}}, result: {before: 'D', after: 'C'}},
-          { values: {hasHTTPS:true, isaMajorTrackingNetwork: true, inMajorTrackingNetwork:false, totalBlocked: 0, hasObscureTracker: false, tosdr: {class: 'D'}}, result: {before: 'D', after: 'D'}},
-
-      ]
 
       tests.map(test => {
           let site = new bkg.Site('test.com');
