@@ -14,7 +14,7 @@
     "release": "grunt build && node scripts/httpsWhitelist.js",
     "selenium": "cd selenium-test && node test.js",
     "lint": "standard 'shared/js/ui/**/*.js'",
-    "test": "concurrently 'npm run lint' 'npm run selenium'",
+    "test": "grunt test --browser=chrome --type=dev",
     "dev-firefox": "make dev browser=firefox type=dev",
     "release-firefox": "make browser=firefox type=release",
     "dev-chrome": "make dev browser=chrome type=dev",
