@@ -142,10 +142,12 @@ module.exports = function(grunt) {
         },
 
         karma: {
-            options: {
-                configFile: 'karma.conf.js'
-            },
-            background: {
+            unit: {
+                options: {
+                    configFile: 'karma.conf.js',
+                    basePath: 'build/test/',
+                    files: ['background.js']
+                }
             }
         }
     })
