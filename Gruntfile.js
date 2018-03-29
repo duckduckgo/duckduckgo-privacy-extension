@@ -95,7 +95,9 @@ module.exports = function(grunt) {
             unitTest: {
                 options: {
                     transform: ['babelify'],
-                    debug: true
+                    browserifyOptions: {
+                        debug: true
+                    }
                 },
                 files: baseFileMap.unitTest
             }

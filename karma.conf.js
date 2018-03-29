@@ -3,7 +3,7 @@ module.exports = function(config) {
 
     config.set({
         basePath: '',
-        frameworks: ['jasmine'],
+        frameworks: ['jasmine','source-map-support'],
         singleRun: true,
         files: [],
         logLevel: config.LOG_ERROR,
