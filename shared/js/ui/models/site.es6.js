@@ -214,7 +214,9 @@ Site.prototype = window.$.extend({},
 
     getMajorTrackerNetworksCount: function () {
       // console.log('[model] getMajorTrackerNetworksCount()')
-      const count = Object.keys(this.tab.trackers).reduce((total, name) => {
+      // Show only blocked major trackers count, unless site is whitelisted
+      const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
+      const count = Object.keys(trackers).reduce((total, name) => {
         let tempTracker = name.toLowerCase()
         const majorTrackingNetworks = Object.keys(constants.majorTrackingNetworks)
           .filter((t) => t.toLowerCase() === tempTracker)
