@@ -32,21 +32,6 @@
       });
   });
 
-  QUnit.test("test site score", function (assert) {
-
-
-      tests.map(test => {
-          let site = new bkg.Site('test.com');
-
-          for(var value in test.values) {
-              site.score[value] = test.values[value];
-          }
-
-          assert.ok(site.score.get().after === test.result.after, `site should have the correct after site score: got: ${site.score.get().after}, expected: ${test.result.after}`);
-          assert.ok(site.score.get().before === test.result.before, `site should have the correct before site score: got: ${site.score.get().before}, expected: ${test.result.before}`);
-      });
-  });
-
   QUnit.test('test tosdr site scores', function(assert) {
       for (var tosdrUrl in bkg.tosdr) {
           let site = new bkg.Site(tosdrUrl)
