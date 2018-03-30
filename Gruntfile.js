@@ -68,6 +68,11 @@ module.exports = function(grunt) {
         },
 
         browserify: {
+            options: {
+                browserifyOptions: {
+                    debug: buildType === 'dev'
+                }
+            },
             ui: {
                 options: { transform: ['babelify'] },
                 files: baseFileMap.ui
