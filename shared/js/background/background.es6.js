@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// NOTE: this needs to be the first thing that's require()d when the extension loads.
+// otherwise FF might miss the onInstalled event
 const chromeEvents = require('./chrome-events.es6')
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
