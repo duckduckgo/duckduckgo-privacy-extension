@@ -1,7 +1,7 @@
 [
   {
       "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false},
-      "result": {"before": "", "after": "C", "beforeScore": 2, "afterScore": 2 },
+      "result": {"before": "C", "after": "C", "beforeScore": 2, "afterScore": 2 },
       "descr": "no trackers, http"
   },
   {
