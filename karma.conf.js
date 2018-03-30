@@ -1,7 +1,7 @@
 module.exports = function(config) {
     process.env.CHROME_BIN = require('puppeteer').executablePath()
 
-    let config = {
+    let configuration = {
         basePath: '',
         frameworks: ['jasmine','source-map-support'],
         singleRun: true,
@@ -21,5 +21,5 @@ module.exports = function(config) {
         configuration.browsers = ['Chrome_travis_ci'];
     }
 
-    config.set(config)
+    config.set(configuration)
 };
