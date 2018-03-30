@@ -1,6 +1,8 @@
 module.exports = function(grunt) {
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
+    grunt.loadNpmTasks('grunt-karma')
+
     var values = require('object.values');
 
     if(!Object.values) {
@@ -29,6 +31,11 @@ module.exports = function(grunt) {
         },
         backgroundTest: {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
+        },
+        unitTest: {
+            '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
+            // TODO uncomment this when we add some UI tests
+            // '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.unitTest.ui %>/**/*.js']
         },
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
@@ -64,7 +71,12 @@ module.exports = function(grunt) {
                 js: `${buildPath}/public/js`,
                 css: `${buildPath}/public/css`
             },
-            test: 'test'
+            test: 'test',
+            unitTest: {
+                background: `unit-test/background`,
+                ui: `unit-test/ui`,
+                build: `build/test`
+            }
         },
 
         browserify: {
@@ -84,6 +96,15 @@ module.exports = function(grunt) {
             backgroundTest: {
                 options: { transform: ['babelify'] },
                 files: baseFileMap.backgroundTest
+            },
+            unitTest: {
+                options: {
+                    transform: ['babelify'],
+                    browserifyOptions: {
+                        debug: true
+                    }
+                },
+                files: baseFileMap.unitTest
             }
         },
 
@@ -125,10 +146,21 @@ module.exports = function(grunt) {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs']
             }
+        },
+
+        karma: {
+            unit: {
+                options: {
+                    configFile: 'karma.conf.js',
+                    basePath: 'build/test/',
+                    files: ['background.js']
+                }
+            }
         }
     })
 
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'execute:preProcessLists'])
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
+    grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
     grunt.registerTask('default', 'build')
 }
