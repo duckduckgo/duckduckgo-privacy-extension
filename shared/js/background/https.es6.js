@@ -178,7 +178,7 @@ class HTTPS {
 
         // Only deal with http calls
         const protocol = utils.getProtocol(reqUrl).toLowerCase()
-        if (!protocol.indexOf('http:') === 0) {
+        if (protocol !== 'http:') {
             return reqUrl
         }
 
@@ -196,20 +196,9 @@ class HTTPS {
 
         // Determine host
         const host = utils.extractHostFromURL(reqUrl)
-        const hosts = [host]
 
-        // Check if host has an entry as a wildcarded subdomain
-        const subdomain = utils.extractTopSubdomainFromHost(host)
-        if (subdomain && subdomain !== 'www') {
-            const wildcard = host.replace(subdomain, '*')
-            hosts.push(wildcard)
-        }
-
-        // Check for upgrades
-        for (let i=0; i<hosts.length; i++) {
-            if (this.canUpgradeHost(hosts[i])) {
-                return reqUrl.replace(/^(http|https):\/\//i, 'https://')
-            }
+        if (this.canUpgradeHost(host)) {
+            return reqUrl.replace(/^(http|https):\/\//i, 'https://')
         }
 
         // If it falls to here, default to reqUrl
@@ -226,7 +215,6 @@ class HTTPS {
         const testHosts = [
             '1337x.to',
             'submit.pandora.com',
-            '*.api.roblox.com',
             'thump.vice.com',
             'yts.ag'
         ]
@@ -263,7 +251,9 @@ class HTTPS {
             // If it's already https, it should be the same:
             ['https://duckduckgo.com',                      'https://duckduckgo.com'],
             // If it's not in the list, it should stay http:
-            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr']
+            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr'],
+            // any other protocols should be left the same:
+            ['file:///home/foo/bar',                        'file:///home/foo/bar']
         ]
 
         let passed = true

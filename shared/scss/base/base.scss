@@ -334,6 +334,16 @@ a {
 
         @include cross_platform_bg_image("check.svg");
     }
+    
+    &.icon__shield {
+        width: 22px;
+        height: 22px;
+        margin-top: -4px;
+        margin-left: 1px;
+        vertical-align: top;
+
+        @include cross_platform_bg_image("shield.svg");
+    }
 }
 
 
