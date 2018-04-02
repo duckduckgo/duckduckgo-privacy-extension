@@ -59,7 +59,6 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
         c.name = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
         borderClass = companyListMap.length > 1 ? 'border--top' : ''
       }
-      console.log(c.name)
       return bel`<li class="${borderClass}">
         <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
           <span class="site-info__tracker__icon
