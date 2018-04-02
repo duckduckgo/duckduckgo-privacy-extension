@@ -1,6 +1,7 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
-const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
+const trackerNetworksHeroIcon = require('./shared/tracker-network-hero-icon.es6.js')
+const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 
 module.exports = function () {
@@ -22,7 +23,7 @@ module.exports = function () {
           js-tracker-networks-details">
       <ol class="default-list site-info__trackers__company-list">
         ${renderTrackerDetails(
-          this.model.companyListMap,
+          this.model,
           this.model.DOMAIN_MAPPINGS
         )}
       </ol>
@@ -35,33 +36,39 @@ function renderHero (site) {
   site = site || {}
 
   return bel`${hero({
-    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
+    status: trackerNetworksHeroIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
     title: site.domain,
     subtitle: `${trackerNetworksText(site, false)}`,
     showClose: true
   })}`
 }
 
-function renderIcon (companyName) {
-  companyName = companyName ? companyName.toLowerCase().replace(/\.[a-z]+/, '') : ''
-}
-
-function renderTrackerDetails (companyListMap, DOMAIN_MAPPINGS) {
+function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
+  const companyListMap = model.companyListMap || {}
   if (companyListMap.length === 0) {
     return bel`<li class="is-empty">None</li>`
   }
   if (companyListMap && companyListMap.length > 0) {
     return companyListMap.map((c, i) => {
-      if (c.name && c.name === 'unknown') c.name = '(Tracker network unknown)'
-      return bel`<li>
+      let borderClass = ''
+      if (c.name && c.name === 'unknown') {
+        c.name = '(Tracker network unknown)'
+      } else if (c.name && model.hasUnblockedTrackers(c, c.urlsList)) {
+        const additionalText = ' associated domains'
+        const domain = model.site ? model.site.domain : c.name
+        c.name = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
+        borderClass = companyListMap.length > 1 ? 'border--top' : ''
+      }
+      console.log(c.name)
+      return bel`<li class="${borderClass}">
         <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
           <span class="site-info__tracker__icon
-            ${renderIcon(c.name)}">
+            ${normalizeCompanyName(c.name)}">
           </span>
         </div>
         <h1 class="site-info__domain block">${c.name}</h1>
         <ol class="default-list site-info__trackers__company-list__url-list">
-          ${c.urls.map((url) => {
+          ${c.urlsList.map((url) => {
             let category = ''
             if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
               category = DOMAIN_MAPPINGS[url.toLowerCase()].t

@@ -1,0 +1,202 @@
+[
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false},
+      "result": {"before": "C", "after": "C", "beforeScore": 2, "afterScore": 2 },
+      "descr": "no trackers, http"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false},
+      "result": {"before": "B", "after": "B", "beforeScore": 1, "afterScore": 1 },
+      "descr": "no trackers, https"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":true, "totalBlocked": 1, "hasObscureTracker": false},
+      "result": {"before": "D", "after": "B", "beforeScore": 3, "afterScore": 1 },
+      "descr": "one tracker, https"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":true, "totalBlocked": 11, "hasObscureTracker": false},
+      "result": {"before": "D", "after": "B", "beforeScore": 4, "afterScore": 1 },
+      "descr": "11 trackers, major tracking network, https"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 9, "hasObscureTracker": false},
+      "result": {"before": "D", "after": "C", "beforeScore": 3, "afterScore": 2 },
+      "descr": "11 trackers, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":true, "totalBlocked": 10, "hasObscureTracker": false},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "10 trackers, major tracking network, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "20 trackers, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": true},
+      "result": {"before": "D", "after": "C", "beforeScore": 5, "afterScore": 2 },
+      "descr": "20 trackers, one of them obscure, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 1, "hasObscureTracker": true},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "1 obscure tracker, http"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":true, "totalBlocked": 1, "hasObscureTracker": false},
+      "result": {"before": "D", "after": "B", "beforeScore": 3, "afterScore": 1 },
+      "descr": "1 tracker, major tracking network, https"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": 100}},
+      "result": {"before": "D", "after": "D", "beforeScore": 3, "afterScore": 3 },
+      "descr": "tosdr positive score"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"class": "A"}},
+      "result": {"before": "A", "after": "A", "beforeScore": 0, "afterScore": 0 },
+      "descr": "tosdr class A"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": 0}},
+      "result": {"before": "C", "after": "C", "beforeScore": 2, "afterScore": 2 },
+      "descr": "tosdr zero score, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": -200}},
+      "result": {"before": "B", "after": "B", "beforeScore": 1, "afterScore": 1 },
+      "descr": "tosdr negative score, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"score": -200}},
+      "result": {"before": "C", "after": "B", "beforeScore": 2, "afterScore": 1 },
+      "descr": "tosdr negative score, 10 trackers, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"score": -200}},
+      "result": {"before": "D", "after": "B", "beforeScore": 3, "afterScore": 1 },
+      "descr": "tosdr negative score, 20 trackers, http"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": -200}},
+      "result": {"before": "B", "after": "B", "beforeScore": 1, "afterScore": 1 },
+      "descr": "tosdr negative score"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"score": -200}},
+      "result": {"before": "B", "after": "B", "beforeScore": 1, "afterScore": 1 },
+      "descr": "tosdr negative score, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"score": -200}},
+      "result": {"before": "C", "after": "B", "beforeScore": 2, "afterScore": 1 },
+      "descr": "tosdr negative score, 20 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"score": -200, "class": "A"}},
+      "result": {"before": "B", "after": "A", "beforeScore": 1, "afterScore": 0 },
+      "descr": "upgrade to A if tosdr.class is A, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 11, "hasObscureTracker": false, "tosdr": {"score": -200, "class": "A"}},
+      "result": {"before": "C", "after": "A", "beforeScore": 2, "afterScore": 0 },
+      "descr": "upgrade to A if tosdr.class is A, 20 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 25, "hasObscureTracker": false, "tosdr": {"score": -200, "class": "A"}},
+      "result": {"before": "D", "after": "A", "beforeScore": 3, "afterScore": 0 },
+      "descr": "upgrade to A if tosdr.class is A, 35 trackers"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": 200}},
+      "result": {"before": "D", "after": "D", "beforeScore": 3, "afterScore": 3 },
+      "descr": "positive tosdr score, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"score": 100}},
+      "result": {"before": "D", "after": "D", "beforeScore": 4, "afterScore": 3 },
+      "descr": "positive tosdr score, http, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"score": 200}},
+      "result": {"before": "D", "after": "D", "beforeScore": 5, "afterScore": 3 },
+      "descr": "positive tosdr score, http, 20 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": 100}},
+      "result": {"before": "C", "after": "C", "beforeScore": 2, "afterScore": 2 },
+      "descr": "positive tosdr score"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"score": 200}},
+      "result": {"before": "D", "after": "C", "beforeScore": 3, "afterScore": 2 },
+      "descr": "positive tosdr score, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"score": 100}},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "positive tosdr score, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"class": "A"}},
+      "result": {"before": "B", "after": "B", "beforeScore": 1, "afterScore": 1 },
+      "descr": "tosdr class A, http"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"class": "B"}},
+      "result": {"before": "D", "after": "C", "beforeScore": 3, "afterScore": 2 },
+      "descr": "tosdr class B, http, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"class": "D"}},
+      "result": {"before": "D", "after": "D", "beforeScore": 4, "afterScore": 3 },
+      "descr": "tosdr class D, http, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":false, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"class": "C"}},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "tosdr class C, http, 20 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"class": "A"}},
+      "result": {"before": "A", "after": "A", "beforeScore": 0, "afterScore": 0 },
+      "descr": "tosdr class A"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 10, "hasObscureTracker": false, "tosdr": {"class": "A"}},
+      "result": {"before": "B", "after": "A", "beforeScore": 1, "afterScore": 0 },
+      "descr": "tosdr class A, 10 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"class": "C"}},
+      "result": {"before": "D", "after": "B", "beforeScore": 3, "afterScore": 1 },
+      "descr": "tosdr class B, 20 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "inMajorTrackingNetwork":false, "totalBlocked": 20, "hasObscureTracker": false, "tosdr": {"class": "D"}},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "tosdr class D, 20 trackers"
+  },
+  {
+      "values": {"hasHTTPS":true, "isaMajorTrackingNetwork": true, "inMajorTrackingNetwork":true, "totalBlocked": 1, "hasObscureTracker": false, "tosdr": {"score": 200}},
+      "result": {"before": "D", "after": "D", "beforeScore": 5, "afterScore": 3 },
+      "descr": "is major tracking network, 1 tracker blocked, positive tosdr score"
+  },
+  {
+      "values": {"hasHTTPS":true, "isaMajorTrackingNetwork": true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"score": 200}},
+      "result": {"before": "D", "after": "D", "beforeScore": 3, "afterScore": 3 },
+      "descr": "is major tracking network, positive tosdr score"
+  },
+  {
+      "values": {"hasHTTPS":true, "isaMajorTrackingNetwork": true, "inMajorTrackingNetwork":true, "totalBlocked": 1, "hasObscureTracker": false, "tosdr": {"class": "C"}},
+      "result": {"before": "D", "after": "C", "beforeScore": 4, "afterScore": 2 },
+      "descr": "is major tracking network, 1 tracker blocked, tosdr class C"
+  },
+  {
+      "values": {"hasHTTPS":true, "isaMajorTrackingNetwork": true, "inMajorTrackingNetwork":false, "totalBlocked": 0, "hasObscureTracker": false, "tosdr": {"class": "D"}},
+      "result": {"before": "D", "after": "D", "beforeScore": 3, "afterScore": 3 },
+      "descr": "is major tracking network, tosdr class D"
+  }
+]
