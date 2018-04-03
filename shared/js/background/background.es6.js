@@ -16,7 +16,7 @@
 
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
-const chromeEvents = require('./chrome-events.es6')
+const events = require('./chrome-events.es6')
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 
@@ -31,19 +31,7 @@ function Background() {
 
   localStorage['os'] = os;
 
-  chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
-      for (var i = 0; i < savedTabs.length; i++){
-          var tab = savedTabs[i];
-
-          if (tab.url) {
-              let newTab = tabManager.create(tab);
-              // check https status of saved tabs so we have the correct site score
-              if (newTab.url.match(/^https:\/\//)) {
-                  newTab.site.score.update({hasHTTPS: true})
-              }
-          }
-      }
-  });
+  events.onStartup()
 }
 
 var background
