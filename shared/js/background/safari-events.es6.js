@@ -1,4 +1,4 @@
-const ATB = require('./atb.js')
+const ATB = require('./atb.es6')
 const tabManager = require('./tab-manager.es6')
 
 /** onStartup
@@ -61,7 +61,7 @@ let handleMessage = ((message) => {
 
         if (!(currentURL && potentialTracker)) return
             
-        let message.tabId = tabManager.getTabId(message)
+        message.tabId = tabManager.getTabId(message)
         let thisTab = tabManager.get({tabId: tabId})
         let isMainFrame = requestData.message.frame === 'main_frame'
         
@@ -84,6 +84,77 @@ let handleMessage = ((message) => {
     }
 })
 
-safari.application.addEventListener("message", handleMessage, true);
-//safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true);
-//safari.application.addEventListener('beforeSearch', onBeforeSearch, true);
+// update the popup when switching browser windows
+let onActivate = ((e) => {
+    let activeTab = tabManager.getActiveTab()
+    if (activeTab) {
+        activeTab.updateBadgeIcon(e.target)
+    }
+    // if we don't have an active tab then this is likely a new tab
+    // this can happen when you open a new tab, click to activate another existing tab,
+    // and then go back to the new tab. new tab -> existing tab -> back to new tab.
+    // reset the badge to default and reload the popup to get the correct new tab data
+    else {
+        utils.setBadgeIcon('img/ddg-icon.png', e.target)
+        safari.extension.popovers[0].contentWindow.location.reload()
+    }
+})
+
+let onBeforeSearch = ((e) => {
+    if (e.target && e.target.ddgTabId) {
+        tabManager.delete(e.target.ddgTabId)
+    }
+})
+
+// called when a page has successfully loaded:
+let onNavigate = ((e) => {
+    let tabId = e.target.ddgTabId
+    let tab = tabManager.get({tabId: tabId})
+        
+    if (tab) {
+        // update site https status. We should move this out 
+        if (tab.url.match(/^https:\/\//)) {
+            tab.site.score.update({hasHTTPS: true})
+        }
+
+        tab.updateBadgeIcon(e.target)
+        if (!tab.site.didIncrementCompaniesData) {
+            Companies.incrementTotalPages()
+            tab.site.didIncrementCompaniesData = true
+            
+            if (tab.trackers && Object.keys(tab.trackers).length > 0) {
+                Companies.incrementTotalPagesWithTrackers()
+            }
+        }
+
+        // stash data in safari tab to handle cached pages
+        if(!e.target.ddgCache) e.target.ddgCache = {}
+        e.target.ddgCache[tab.url] = tab
+
+        // after the page successfully loads, clear
+        // out the https redirect cache so we don't prevent
+        // subsequent pageloads from being upgraded:
+        delete e.target.ddgHttpsRedirects
+    }
+    else {
+        utils.setBadgeIcon('img/ddg-icon.png', e.target)
+
+        // if we don't have a tab with this tabId then we are in a cached page
+        // use the target url to find the correct cached tab obj
+        console.log("REBUILDING CACHED TAB")
+        if (e.target.ddgCache) {
+            let cachedTab = e.target.ddgCache[e.target.url]
+            if (cachedTab) {
+                tabManager.tabContainer[tabId] = cachedTab
+                safari.extension.popovers[0].contentWindow.location.reload()
+                cachedTab.updateBadgeIcon(e.target)
+            }
+        }
+    }
+})
+
+safari.application.addEventListener("activate", onActivate, true)
+safari.application.addEventListener("message", handleMessage, true)
+safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
+safari.application.addEventListener("navigate", onNavigate, true)
+safari.application.addEventListener('beforeSearch', onBeforeSearch, true);

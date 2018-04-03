@@ -1,4 +1,6 @@
 const tldjs = require('tldjs')
+const polyfill = require('./chrome-polyfill.es6')
+
 
 function extractHostFromURL (url) {
     if (!url) return;
@@ -81,6 +83,10 @@ function getBrowserName() {
     return browser
 }
 
+function setBadgeIcon (path, target) {
+    polyfill.setBadgeIcon(path, target)
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -91,5 +97,6 @@ module.exports = {
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
-    getBrowserName: getBrowserName
+    getBrowserName: getBrowserName,
+    setBadgeIcon: setBadgeIcon
 }

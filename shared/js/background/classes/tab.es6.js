@@ -48,14 +48,14 @@ class Tab {
             completeMs: null
         }
         // set the new tab icon to the dax logo
-        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
+        utils.setBadgeIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
     };
 
     updateBadgeIcon () {
         if (!this.site.specialDomain() ) {
 
             if(this.site.isBroken) {
-                chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
+                utils.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id});
             } else {
                 let scoreIcon
                 if (this.site.whitelisted) {
@@ -64,7 +64,7 @@ class Tab {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
 
-                chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
+                utils.setBadgeIcon({path: scoreIcon, tabId: this.id});
             }
         }
     };
@@ -72,7 +72,7 @@ class Tab {
     updateSite () {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
-        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
+        utils.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id});
     };
 
     // Store all trackers for a given tab even if we don't block them.
