@@ -167,15 +167,19 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
  */
 
 const abpLists = require('./abp-lists.es6')
+const https = require('./https.es6')
 
-// recheck adblock plus lists every 30 minutes
+// recheck adblock plus and https lists every 30 minutes
 chrome.alarms.create('updateLists', {periodInMinutes: 30})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateLists') {
-        settings.ready().then(() => abpLists.updateLists())
+        settings.ready().then(() => {
+            abpLists.updateLists()
+            https.updateList()
+        })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     }
