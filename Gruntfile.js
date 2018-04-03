@@ -57,6 +57,25 @@ module.exports = function(grunt) {
         background: ['<%= dirs.src.js %>/background/**/*.js','<%= dirs.data %>/*.js']
     }
 
+    let karmaOps = {
+        configFile: 'karma.conf.js',
+        basePath: 'build/test/',
+        files: ['background.js']
+    }
+
+    // override some options to allow the devs
+    // to open the test page manually and debug
+    if (grunt.option('test-debug')) {
+        Object.assign(karmaOps, {
+            // don't kill the process when first test is run
+            singleRun: false,
+            // INFO outputs the url/port for the test page
+            logLevel: 'INFO',
+            // don't run headless chrome tests
+            browsers: []
+        })
+    }
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         dirs: {
@@ -150,11 +169,7 @@ module.exports = function(grunt) {
 
         karma: {
             unit: {
-                options: {
-                    configFile: 'karma.conf.js',
-                    basePath: 'build/test/',
-                    files: ['background.js']
-                }
+                options: karmaOps
             }
         }
     })
