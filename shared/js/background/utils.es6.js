@@ -1,7 +1,6 @@
 const tldjs = require('tldjs')
 const polyfill = require('./chrome-polyfill.es6')
 
-
 function extractHostFromURL (url) {
     if (!url) return;
 
@@ -42,13 +41,11 @@ function isChromeBrowser () {
 }
 
 function syncToStorage (data){
-    chrome.storage.local.set(data, function() { });
+    polyfill.syncToStorage(data)
 }
 
 function getFromStorage (key, callback) {
-    chrome.storage.local.get(key, function (result) {
-        callback(result[key])
-    })
+    polyfill.getFromStorage(key, callback)
 }
 
 function getCurrentURL(callback){

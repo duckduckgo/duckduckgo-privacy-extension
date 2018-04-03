@@ -6,7 +6,19 @@ let setBadgeIcon = ((badgeData) => {
     chrome.browserAction.setIcon(badgeData)
 })
 
+let syncToStorage = ((data) => {
+    chrome.storage.local.set(data, function() { });
+})
+
+let getFromStorage = ((key, cb) => {
+    chrome.storage.local.get(key, ((result) => {
+        cb(result[key])
+    }))
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
-    setBadgeIcon: setBadgeIcon
+    setBadgeIcon: setBadgeIcon,
+    syncToStorage: syncToStorage,
+    getFromStorage: getFromStorage
 }

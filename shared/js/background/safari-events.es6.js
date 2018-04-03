@@ -100,12 +100,6 @@ let onActivate = ((e) => {
     }
 })
 
-let onBeforeSearch = ((e) => {
-    if (e.target && e.target.ddgTabId) {
-        tabManager.delete(e.target.ddgTabId)
-    }
-})
-
 // called when a page has successfully loaded:
 let onNavigate = ((e) => {
     let tabId = e.target.ddgTabId
@@ -152,6 +146,92 @@ let onNavigate = ((e) => {
         }
     }
 })
+
+/**
+ * Before navigating to a new page,
+ * check whether we should upgrade to https
+ */
+var onBeforeNavigation = function (e) {
+    //console.log(`onBeforeNavigation ${e.url} ${e.target.url}`)
+
+    if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
+
+    const url = e.url
+    const isMainFrame = true // always main frame in this handler
+    const tabId = tabManager.getTabId(e)
+
+    let thisTab = tabId && tabManager.get({tabId: tabId})
+
+    // if a tab already exists, but the url is different,
+    // delete it and recreate for the new url
+    if (thisTab && thisTab.url !== url) {
+        tabManager.delete(tabId)
+        thisTab = null
+        console.log('onBeforeNavigation DELETED TAB because url did not match')
+    }
+
+    if (!thisTab) {
+        thisTab = tabManager.create(e)
+        //console.log('onBeforeNavigation CREATED TAB:', thisTab)
+    }
+
+    // same logic from /shared/js/background.js
+
+    // site is required to be there:
+    if (!thisTab || !thisTab.site) {
+        console.log('HTTPS: no tab or tab site found for: ', tabId, thisTab)
+        return
+    }
+    
+    // skip upgrading broken sites:
+    if (thisTab.site.isBroken) {
+        console.log('HTTPS: temporarily skip upgrades for: ' + url)
+        return
+    }
+
+    // skip trying again if we've already tried upgrading this url
+    if (thisTab.hasUpgradedUrlAlready(url)) {
+        console.log('HTTPS: skipping upgrade to avoid redirect loops', url)
+        return
+    }
+
+    const upgradedUrl = https.getUpgradedUrl(url, thisTab, isMainFrame)
+
+    if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
+        console.log('HTTPS: upgrade request url to ' + upgradedUrl)
+        thisTab.upgradedHttps = true
+        thisTab.addHttpsUpgradeRequest(upgradedUrl, url)
+
+        e.preventDefault()
+        e.target.url = upgradedUrl
+    }
+}
+
+var onBeforeSearch = function (evt) {
+    if (!safari.extension.settings.default_search_engine) return
+
+    let query = evt.query;
+    let DDG_URL = 'https://duckduckgo.com/?q='
+
+    function checkURL(url){
+      var expr = /^(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/i;
+      var regex = RegExp(expr);
+      var localhost = RegExp(/^(https?:\/\/)?localhost(:\d+)?/i)
+      var about = RegExp(/(about|safari-extension):.*/);
+      var nums = RegExp(/^(\d+\.\d+).*/i);
+      return (url.match(regex) || url.match(about) || url.match(localhost)) && !url.match(nums) ;
+    }
+
+    if (!checkURL(query)) {
+        evt.preventDefault();
+        let url = DDG_URL + encodeURIComponent(query) + '&bext=msl';
+        let atb = settings.getSetting('atb')
+        if (atb) {
+              url = url + '&atb=' + atb
+        }   
+        evt.target.url = url
+    }
+}
 
 safari.application.addEventListener("activate", onActivate, true)
 safari.application.addEventListener("message", handleMessage, true)
