@@ -173,9 +173,9 @@ chrome.alarms.create('updateLists', {periodInMinutes: 30})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 
-chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'updateLists') {
-        settings.ready().then(() => updateLists())
+chrome.alarms.onAlarm.addListener(alarmEvent => {
+    if (alarmEvent.name === 'updateLists') {
+        settings.ready().then(() => abpLists.updateLists())
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     }
