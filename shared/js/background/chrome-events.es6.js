@@ -37,10 +37,18 @@ chrome.webRequest.onBeforeRequest.addListener(
 )
 
 chrome.webRequest.onHeadersReceived.addListener(
-    tabManager.updateTabUrl,
+    (request) => {
+        if (request.type === 'main_frame') {
+            tabManager.updateTabUrl(request)
+        }
+
+        if (/^https?:\/\/(.*?\.)?duckduckgo.com\/\?/.test(request.url)) {
+            // returns a promise
+            return ATB.updateSetAtb(request)
+        }
+    },
     {
-        urls: ['<all_urls>'],
-        types: ['main_frame']
+        urls: ['<all_urls>']
     }
 )
 
@@ -48,16 +56,6 @@ chrome.webRequest.onBeforeRedirect.addListener(
     tabManager.updateTabRedirectCount,
     {
         urls: ["*://*/*"]
-    }
-)
-
-chrome.webRequest.onHeadersReceived.addListener(
-    ATB.updateSetAtb,
-    {
-        urls: [
-            '*://duckduckgo.com/?*',
-            '*://*.duckduckgo.com/?*'
-        ]
     }
 )
 
