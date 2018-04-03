@@ -28,9 +28,7 @@ const tabManager = require('./tab-manager.es6')
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
     {
-        urls: [
-            '<all_urls>',
-        ],
+        urls: ['<all_urls>'],
         types: constants.requestListenerTypes
     },
     ['blocking']
