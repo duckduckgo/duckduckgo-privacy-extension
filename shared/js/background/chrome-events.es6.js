@@ -102,7 +102,7 @@ chrome.omnibox.onInputEntered.addListener(function(text) {
  */
 
 const utils = require('./utils.es6')
-const settings = require('./utils.es6')
+const settings = require('./settings.es6')
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
@@ -121,8 +121,8 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
         settings.ready().then(() => {
             settings.updateSetting(name, value)
         })
-    } else if (req.updateSetting) {
-        let name = req.updateSetting['name']
+    } else if (req.getSetting) {
+        let name = req.getSetting['name']
         settings.ready().then(() => {
             res(settings.getSetting(name));
         })
