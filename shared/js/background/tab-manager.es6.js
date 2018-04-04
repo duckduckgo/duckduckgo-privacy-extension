@@ -28,6 +28,7 @@ class TabManager {
             if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
                 let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
                 safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+                console.log(`Created Tab id: ${tabId}`)
                 return tabId
             }
         }
@@ -45,16 +46,17 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create(tabData) {
-
-        if (browser === 'Safari') {
+        let newTab
+        if (browser.browser === 'Safari') {
             let url = tabData.message ? tabData.message.currentURL : tabData.url
-            let createTabData = {url: url, id: tabManager.getTabId(tabData)}
-            createTabData.target = tabData.target
+            let newTabData = {url: url, id: tabManager.getTabId(tabData)}
+            newTabData.target = tabData.target
+            newTab = new Tab(newTabData)
+        } else {
+            newTab = new Tab(tabData)
         }
-
-        let newTab = new Tab(tabData);
-        this.tabContainer[newTab.id] = newTab;
-        return newTab;
+        this.tabContainer[newTab.id] = newTab
+        return newTab
     };
 
     delete(id) {

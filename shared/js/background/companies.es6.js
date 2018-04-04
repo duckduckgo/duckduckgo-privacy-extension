@@ -86,6 +86,8 @@ var Companies = (() => {
             totalPagesWithTrackers = 0
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
+
+            if (window.chrome)
             chrome.runtime.sendMessage({'didResetTrackersData': Companies.getLastResetDate()})
         },
 

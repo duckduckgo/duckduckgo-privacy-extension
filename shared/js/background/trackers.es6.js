@@ -12,10 +12,13 @@ const constants = require('../../data/constants')
 let entityList
 let entityMap
 
-settings.ready().then(() => {
+function loadLists () {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
-    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
-})
+    load.JSONfromLocalFile(constants.entityMap, (list) => {
+        console.log('ENTITY MAP')
+        entityMap = list
+    })
+}
 
 /*
  * The main parts of the isTracker algo looks like this:
@@ -298,5 +301,6 @@ function checkABPParsedList(list, url, siteDomain, request) {
 }
 
 module.exports = {
-    isTracker: isTracker
+    isTracker: isTracker,
+    loadLists: loadLists
 }

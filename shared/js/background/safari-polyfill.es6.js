@@ -2,6 +2,10 @@ let getExtensionURL = ((path) => {
     return safari.extension.baseURI + path
 })
 
+let getExtensionVersion = (() => {
+    return safari.extension.displayVersion
+})
+
 let _getSafariWindowId = ((target) => {
     for(let i = 0; i < safari.extension.toolbarItems.length; i++) {
         if (safari.extension.toolbarItems[i].browserWindow.activeTab === target) {
@@ -10,16 +14,8 @@ let _getSafariWindowId = ((target) => {
     }
 })
 
-let getSafariTabIndex = ((target) => {
-    for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
-        if (target === safari.application.activeBrowserWindow.tabs[i]) {
-            return i
-        }
-    }
-})
-
 let setBadgeIcon = ((iconPath, target) => {
-    if (target.activeTab) target = target.activeTab
+    if (target && target.activeTab) target = target.activeTab
 
     let windowId = _getSafariWindowId(target)
     if (iconPath && windowId !== undefined) {
@@ -48,6 +44,7 @@ let getFromStorage = ((key, cb) => {
 
 module.exports = {
     getExtensionURL: getExtensionURL,
+    getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage

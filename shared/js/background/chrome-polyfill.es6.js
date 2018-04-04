@@ -2,6 +2,11 @@ let getExtensionURL = ((path) => {
     return chrome.extension.getURL(path)
 })
 
+let getExtensionVersion = (() => {
+    const manifest = window.chrome && chrome.runtime.getManifest()
+    return manifest.version
+})
+
 let setBadgeIcon = ((badgeData) => {
     chrome.browserAction.setIcon(badgeData)
 })
@@ -18,6 +23,7 @@ let getFromStorage = ((key, cb) => {
 
 module.exports = {
     getExtensionURL: getExtensionURL,
+    getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage

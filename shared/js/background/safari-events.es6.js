@@ -1,5 +1,15 @@
 const ATB = require('./atb.es6')
 const tabManager = require('./tab-manager.es6')
+const utils = require('./utils.es6')
+const Companies = require('./companies.es6')
+
+let _getSafariTabIndex = ((target) => {
+    for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
+        if (target === safari.application.activeBrowserWindow.tabs[i]) {
+            return i
+        }
+    }
+})
 
 /** onStartup
  * Safari doesn't have a onInstalled event so we'll set a flag in localStorage.
@@ -10,12 +20,12 @@ const tabManager = require('./tab-manager.es6')
 let onStartup = (() => {
     if (!localStorage['installed']) {
         localStorage['installed'] = true
-        ATB.onInstalled()
+        ATB.updateATBValues()
     }
     
     // show post install page
     let activeTabIndex = 0
-    let showPostinstallPage = false
+    let showPostInstallPage = false
     let postInstallRegex = /duckduckgo.com\/\?t=|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/
         
     safari.application.browserWindows.forEach((safariWindow) => {
@@ -41,7 +51,7 @@ let onStartup = (() => {
     if (showPostInstallPage) {
         // we'll open the post install page in a new tab but keep the current tab active. To do this
         // we need to open a tab then reset the active tab
-        let activeTabIdx = utils.getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
+        let activeTabIdx = _getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
         safari.application.activeBrowserWindow.openTab().url = 'https://duckduckgo.com/app?post=1'
             
         // reactive the previous tab
@@ -53,35 +63,52 @@ const redirect = require('./redirect.es6')
 
 // Messaging
 // canLoad => request data from content script. Runs onBeforeRequest
+// atb => set atb values from inject content script
+//
 let handleMessage = ((message) => {
     if (message.name === 'canLoad') {
-
-        let potentialTracker = requestData.message.potentialTracker
-        let currentURL = requestData.message.mainFrameURL
-
-        if (!(currentURL && potentialTracker)) return
-            
-        message.tabId = tabManager.getTabId(message)
-        let thisTab = tabManager.get({tabId: tabId})
-        let isMainFrame = requestData.message.frame === 'main_frame'
-        
-        // if it's preloading a site in the background and the url changes, delete and recreate the tab
-        if (thisTab && thisTab.url !== message.message.mainFrameURL) {
-            tabManager.delete(tabId)
-            thisTab = tabManager.create({
-                url: message.message.mainFrameURL,
-                target: messaeg.target
-            })
-            console.log('onBeforeRequest DELETED AND RECREATED TAB because of url change:', thisTab)
-        }
-
-        if (!thisTab && isMainFrame) {
-            tabManager.create(requestData)
-            console.log('onBeforeRequest CREATED TAB:', thisTab)
-        }
-
-        return redirect.handleRequest(message)
+        onBeforeRequest(message)
     }
+    else if (message.name === 'atb') {
+        ATB.setAtbValuesFromSuccessPage(message.message.atb)
+    }
+    else if (message.name === 'unloadTab') {
+        onClose(message)
+    }
+})
+
+let onBeforeRequest = ((requestData) => {
+    let potentialTracker = requestData.message.potentialTracker
+    let currentURL = requestData.message.mainFrameURL
+
+    if (!(currentURL && potentialTracker)) return
+       
+    let tabId = tabManager.getTabId(requestData)
+    console.log(`REQUEST: ${tabId}, target id: ${requestData.target.ddgTabId}`)
+
+    let thisTab = tabManager.get({tabId: tabId})
+    requestData.tabId = tabId
+
+    let isMainFrame = requestData.message.frame === 'main_frame'
+   
+    // if it's preloading a site in the background and the url changes, delete and recreate the tab
+    if (thisTab && thisTab.url !== requestData.message.mainFrameURL) {
+        tabManager.delete(tabId)
+        thisTab = tabManager.create({
+            url: requestData.message.mainFrameURL,
+            target: requestData.target
+        })
+        console.log('onBeforeRequest DELETED AND RECREATED TAB because of url change:', thisTab)
+    }
+
+    if (!(thisTab) && isMainFrame) {
+        thisTab = tabManager.create(requestData)
+        console.log('onBeforeRequest CREATED TAB:', thisTab)
+    }
+
+    requestData.url = potentialTracker
+
+    return redirect.handleRequest(requestData)
 })
 
 // update the popup when switching browser windows
@@ -125,10 +152,6 @@ let onNavigate = ((e) => {
         if(!e.target.ddgCache) e.target.ddgCache = {}
         e.target.ddgCache[tab.url] = tab
 
-        // after the page successfully loads, clear
-        // out the https redirect cache so we don't prevent
-        // subsequent pageloads from being upgraded:
-        delete e.target.ddgHttpsRedirects
     }
     else {
         utils.setBadgeIcon('img/ddg-icon.png', e.target)
@@ -172,38 +195,7 @@ var onBeforeNavigation = function (e) {
 
     if (!thisTab) {
         thisTab = tabManager.create(e)
-        //console.log('onBeforeNavigation CREATED TAB:', thisTab)
-    }
-
-    // same logic from /shared/js/background.js
-
-    // site is required to be there:
-    if (!thisTab || !thisTab.site) {
-        console.log('HTTPS: no tab or tab site found for: ', tabId, thisTab)
-        return
-    }
-    
-    // skip upgrading broken sites:
-    if (thisTab.site.isBroken) {
-        console.log('HTTPS: temporarily skip upgrades for: ' + url)
-        return
-    }
-
-    // skip trying again if we've already tried upgrading this url
-    if (thisTab.hasUpgradedUrlAlready(url)) {
-        console.log('HTTPS: skipping upgrade to avoid redirect loops', url)
-        return
-    }
-
-    const upgradedUrl = https.getUpgradedUrl(url, thisTab, isMainFrame)
-
-    if (url.toLowerCase() !== upgradedUrl.toLowerCase()) {
-        console.log('HTTPS: upgrade request url to ' + upgradedUrl)
-        thisTab.upgradedHttps = true
-        thisTab.addHttpsUpgradeRequest(upgradedUrl, url)
-
-        e.preventDefault()
-        e.target.url = upgradedUrl
+        console.log('onBeforeNavigation CREATED TAB:', thisTab)
     }
 }
 
@@ -233,8 +225,19 @@ var onBeforeSearch = function (evt) {
     }
 }
 
+let onClose = ((e) => {
+    let tabId = tabManager.getTabId(e)
+    console.log(`Delete tab: ${tabId}`)
+    if (tabId) tabManager.delete(tabId)
+})
+
 safari.application.addEventListener("activate", onActivate, true)
 safari.application.addEventListener("message", handleMessage, true)
 safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
-safari.application.addEventListener("navigate", onNavigate, true)
-safari.application.addEventListener('beforeSearch', onBeforeSearch, true);
+safari.application.addEventListener("navigate", onNavigate, false)
+safari.application.addEventListener('beforeSearch', onBeforeSearch, false)
+safari.application.addEventListener("close", onClose, true);
+
+module.exports = {
+    onStartup: onStartup
+}
