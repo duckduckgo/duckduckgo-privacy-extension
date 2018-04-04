@@ -83,9 +83,7 @@ let onBeforeRequest = ((requestData) => {
 
     if (!(currentURL && potentialTracker)) return
        
-    let tabId = tabManager.getTabId(requestData)
-    console.log(`REQUEST: ${tabId}, target id: ${requestData.target.ddgTabId}`)
-
+    let tabId = requestData.target.ddgTabId || tabManager.getTabId(requestData)
     let thisTab = tabManager.get({tabId: tabId})
     requestData.tabId = tabId
 
@@ -108,7 +106,12 @@ let onBeforeRequest = ((requestData) => {
 
     requestData.url = potentialTracker
 
-    return redirect.handleRequest(requestData)
+    let redirectRequest = redirect.handleRequest(requestData)
+    if (redirectRequest) { 
+        redirectRequest
+    } else {
+        return requestData
+    }
 })
 
 // update the popup when switching browser windows
@@ -194,8 +197,8 @@ var onBeforeNavigation = function (e) {
     }
 
     if (!thisTab) {
-        thisTab = tabManager.create(e)
-        console.log('onBeforeNavigation CREATED TAB:', thisTab)
+        //thisTab = tabManager.create(e)
+        //console.log('onBeforeNavigation CREATED TAB:', thisTab)
     }
 }
 
@@ -226,17 +229,18 @@ var onBeforeSearch = function (evt) {
 }
 
 let onClose = ((e) => {
-    let tabId = tabManager.getTabId(e)
+    let tabId = e.target.ddgTabId
+    //let tabId = tabManager.getTabId(e)
     console.log(`Delete tab: ${tabId}`)
     if (tabId) tabManager.delete(tabId)
 })
 
-safari.application.addEventListener("activate", onActivate, true)
-safari.application.addEventListener("message", handleMessage, true)
-safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
+safari.application.addEventListener("activate", onActivate, false)
+safari.application.addEventListener("message", handleMessage, false)
+//safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
 safari.application.addEventListener("navigate", onNavigate, false)
 safari.application.addEventListener('beforeSearch', onBeforeSearch, false)
-safari.application.addEventListener("close", onClose, true);
+safari.application.addEventListener("close", onClose, false);
 
 module.exports = {
     onStartup: onStartup

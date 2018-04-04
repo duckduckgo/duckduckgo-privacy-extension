@@ -26,8 +26,14 @@ class TabManager {
 
         for (let id in safari.application.activeBrowserWindow.tabs) {
             if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
+                // prevent race conditions incase another events set a tabId
+                if (safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
+                    return safari.application.activeBrowserWindow.tabs[id].ddgTabId
+                }
+
                 let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
                 safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+                console.log(safari.application.activeBrowserWindow.tabs[id])
                 console.log(`Created Tab id: ${tabId}`)
                 return tabId
             }
@@ -35,7 +41,7 @@ class TabManager {
     }
 
     reloadTab() {
-        var activeTab = safari.application.activeBrowserWindow.activeTab;activeTab.url = activeTab.url
+        var activeTab = safari.application.activeBrowserWindow.activeTab
         activeTab.url = activeTab.url
     }
 
