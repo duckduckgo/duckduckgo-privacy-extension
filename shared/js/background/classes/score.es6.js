@@ -128,16 +128,20 @@ class Score {
         if (beforeIndex < 0) beforeIndex = 0
         if (afterIndex < 0) afterIndex = 0
 
+        // only sites with a tosdr.class "A" can get a final grade of "A"
+        if(afterIndex === 0 && this.tosdr.class !== 'A') afterIndex = 1
+        if(beforeIndex === 0 && this.tosdr.class !== 'A') beforeIndex = 1
+
         // return corresponding score or lowest score if outside the array
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
         let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
 
-        // only sites with a tosdr.class "A" can get a final grade of "A"
-        if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
-        if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
-
-
-        return {before: beforeGrade, after: afterGrade}
+        return {
+            before: beforeGrade,
+            beforeIndex: beforeIndex,
+            after: afterGrade,
+            afterIndex: afterIndex
+        }
     }
 
     /*
