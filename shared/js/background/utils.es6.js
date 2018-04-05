@@ -1,4 +1,17 @@
 const tldjs = require('tldjs')
+const load = require('./load.es6')
+const settings = require('./settings.es6')
+const constants = require('../../data/constants')
+
+let entityMap
+
+settings.ready().then(() => {
+    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
+})
+
+function getEntityMap () {
+    return entityMap
+}
 
 function extractHostFromURL (url) {
     if (!url) return;
@@ -17,6 +30,18 @@ function extractTopSubdomainFromHost (host) {
      }
      return false
  }
+
+// pull off subdomains and look for parent companies
+function findParent (url) {
+    if (!entityMap || url.length < 2) return
+    let joinURL = url.join('.')
+    if (entityMap[joinURL]) {
+        return entityMap[joinURL]
+    } else {
+        url.shift()
+        return findParent(url)
+    }
+}
 
 function getProtocol (url){
     var a = document.createElement('a');
@@ -91,5 +116,7 @@ module.exports = {
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
-    getBrowserName: getBrowserName
+    getBrowserName: getBrowserName,
+    getEntityMap: getEntityMap,
+    findParent: findParent
 }

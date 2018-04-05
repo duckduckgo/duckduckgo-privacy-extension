@@ -1,5 +1,6 @@
 const tosdr = require('../../../data/tosdr')
 const constants = require('../../../data/constants')
+const utils = require('../utils.es6')
 const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 const siteScores = ['A', 'B', 'C', 'D']
@@ -73,14 +74,13 @@ class Score {
      */
     isaMajorTrackingNetwork() {
         let result = 0
-        pagesSeenOnRegexList.some(network => {
-            let match = network.exec(this.domain)
-            if (match) {
-                // remove period at end for lookup in pagesSeenOn
-                let name = match[0].slice(0,-1)
-                return result = Math.ceil(pagesSeenOn[name] / 10)
-            }
-        })
+        if (this.specialPage || !this.domain) return result
+        const parentCompany = utils.findParent(this.domain.split('.'))
+        if (!parentCompany) return result
+        const isMajorNetwork = pagesSeenOn[parentCompany.toLowerCase()]
+        if (isMajorNetwork) {
+            result = Math.ceil(isMajorNetwork / 10)
+        }
         return result
     }
 
