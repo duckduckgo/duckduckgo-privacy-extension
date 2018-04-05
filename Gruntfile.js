@@ -115,20 +115,16 @@ module.exports = function(grunt) {
                 ]
             },
             ui: {
-                options: { transform: ['babelify'] },
                 files: baseFileMap.ui
             },
             background: {
-                options: { transform: ['babelify'] },
                 files: baseFileMap.background
             },
             backgroundTest: {
-                options: { transform: ['babelify'] },
                 files: baseFileMap.backgroundTest
             },
             unitTest: {
                 options: {
-                    transform: ['babelify'],
                     browserifyOptions: {
                         debug: true
                     }
