@@ -258,7 +258,6 @@ function getCommonParentEntity(currLocation, urlToCheck) {
     let currentLocationParsed = tldjs.parse(currLocation)
     let urlToCheckParsed = tldjs.parse(urlToCheck)
     let parentEntity = entityMap[urlToCheckParsed.domain]
-    console.log(entityMap)
     if (currentLocationParsed.domain === urlToCheckParsed.domain ||
         isRelatedEntity(parentEntity, currLocation)) 
         return parentEntity || currentLocationParsed.domain
@@ -269,8 +268,6 @@ function getCommonParentEntity(currLocation, urlToCheck) {
 function getTrackerDetails (trackerUrl, listName) {
     let host = utils.extractHostFromURL(trackerUrl)
     let parentCompany = utils.findParent(host.split('.')) || 'unknown'
-    console.log(parentCompany)
-    console.log(host)
     return {
         parentCompany: parentCompany,
         url: host,
