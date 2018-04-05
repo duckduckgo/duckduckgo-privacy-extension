@@ -12,7 +12,7 @@ const surrogates = require('./surrogates.es6')
 const settings = require('./settings.es6')
 const ATB = require('./atb.es6')
 const load = require('./load.es6')
-const polyfill = require('./safari-polyfill.es6')
+const polyfill = require('./$BROWSER-polyfill.es6')
 
 const ONEDAY = 1000*60*60*24
 

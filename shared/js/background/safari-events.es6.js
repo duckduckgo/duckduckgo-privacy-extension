@@ -3,6 +3,10 @@ const tabManager = require('./tab-manager.es6')
 const utils = require('./utils.es6')
 const Companies = require('./companies.es6')
 
+// add these to contentWindow so the popup can access them
+safari.extension.globalPage.contentWindow.tabManager = tabManager
+safari.extension.globalPage.contentWindow.Companies = Companies
+
 let _getSafariTabIndex = ((target) => {
     for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
         if (target === safari.application.activeBrowserWindow.tabs[i]) {
@@ -119,6 +123,7 @@ let onActivate = ((e) => {
     let activeTab = tabManager.getActiveTab()
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
+        safari.extension.popovers[0].contentWindow.location.reload()
     }
     // if we don't have an active tab then this is likely a new tab
     // this can happen when you open a new tab, click to activate another existing tab,
@@ -235,7 +240,7 @@ let onClose = ((e) => {
     if (tabId) tabManager.delete(tabId)
 })
 
-safari.application.addEventListener("activate", onActivate, false)
+safari.application.addEventListener("activate", onActivate, true)
 safari.application.addEventListener("message", handleMessage, false)
 //safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
 safari.application.addEventListener("navigate", onNavigate, false)

@@ -5,6 +5,7 @@ const surrogates = require('./surrogates.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
+const polyfill = require('./$BROWSER-polyfill.es6')
 
 var debugRequest = false
 
@@ -88,9 +89,7 @@ function handleRequest(requestData) {
             if (!thisTab.site.whitelisted && tracker.block) {
                 thisTab.addOrUpdateTrackersBlocked(tracker);
 
-                if (window.chrome) {
-                    chrome.runtime.sendMessage({'updateTabData': true})
-                }
+                polyfill.notifyPopup({'updateTabData': true})
 
                 // update badge icon for any requests that come in after
                 // the tab has finished loading

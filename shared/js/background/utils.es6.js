@@ -1,5 +1,5 @@
 const tldjs = require('tldjs')
-const polyfill = require('./safari-polyfill.es6')
+const polyfill = require('./$BROWSER-polyfill.es6')
 
 function extractHostFromURL (url) {
     if (!url) return;

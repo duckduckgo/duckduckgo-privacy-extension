@@ -284,6 +284,10 @@ a {
             background-image: url($icon__close--moz);
         }
 
+        .is-browser--safari & {
+            background-image: url($icon__close--safari);
+        }
+
     }
 
     &.icon__arrow {
@@ -314,6 +318,9 @@ a {
             background-image: url($icon__settings--moz);
         }
 
+        .is-browser--safari & {
+            background-image: url($icon__settings--safari);
+        }
     }
     
     &.icon__error {

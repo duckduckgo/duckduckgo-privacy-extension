@@ -21,10 +21,15 @@ let getFromStorage = ((key, cb) => {
     }))
 })
 
+let notifyPopup = ((message) => {
+    chrome.runtime.sendMessage(message)
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
     syncToStorage: syncToStorage,
-    getFromStorage: getFromStorage
+    getFromStorage: getFromStorage,
+    notifyPopup: notifyPopup
 }

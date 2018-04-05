@@ -42,10 +42,17 @@ let getFromStorage = ((key, cb) => {
     }
 })
 
+// webextensions can send messages to the popup. In safari the 
+// best we can do is refresh it
+let notifyPopup = (() => {
+    safari.extension.popovers[0].contentWindow.location.reload()
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
     syncToStorage: syncToStorage,
-    getFromStorage: getFromStorage
+    getFromStorage: getFromStorage,
+    notifyPopup: notifyPopup
 }
