@@ -10,11 +10,11 @@ module.exports = function () {
       More Options
         </h2>
         <nav class="pull-right hamburger-menu__close-container">
-      <a href="#" class="icon icon__close js-hamburger-menu-close"></a>
+      <a href="javascript:void(0)" class="icon icon__close js-hamburger-menu-close"></a>
         </nav>
         <ul class="hamburger-menu__links padded default-list">
       <li>
-          <a href="#" class="menu-title js-hamburger-menu-options-link">
+          <a href="javascript:void(0)" class="menu-title js-hamburger-menu-options-link">
         Settings
         <span>Manage whitelist and other options</span>
           </a>

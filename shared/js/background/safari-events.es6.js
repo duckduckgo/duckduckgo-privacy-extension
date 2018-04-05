@@ -242,7 +242,7 @@ let onClose = ((e) => {
 
 safari.application.addEventListener("activate", onActivate, true)
 safari.application.addEventListener("message", handleMessage, false)
-//safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
+safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
 safari.application.addEventListener("navigate", onNavigate, false)
 safari.application.addEventListener('beforeSearch', onBeforeSearch, false)
 safari.application.addEventListener("close", onClose, false);

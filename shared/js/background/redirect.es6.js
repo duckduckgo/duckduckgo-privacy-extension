@@ -77,7 +77,7 @@ function handleRequest(requestData) {
         if (tracker && !(tracker.type === 'trackersWhitelist' && tracker.reason !== 'first party')) {
             // only count trackers on pages with 200 response. Trackers on these sites are still
             // blocked below but not counted toward company stats
-            if (thisTab.statusCode === 200) {
+            if (window.safari || thisTab.statusCode === 200) {
                 // record all tracker urls on a site even if we don't block them
                 thisTab.site.addTracker(tracker)
 
