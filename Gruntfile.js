@@ -1,4 +1,5 @@
 module.exports = function(grunt) {
+    const through = require('through2')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
@@ -102,7 +103,16 @@ module.exports = function(grunt) {
             options: {
                 browserifyOptions: {
                     debug: buildType === 'dev'
-                }
+                },
+                transform: [
+                    ['babelify'],
+                    [(file) => {
+                        return through( function(buf, enc, next) {
+                            this.push(buf.toString('utf8').replace(/\$BROWSER/g, "safari"))
+                            next()
+                        })
+                    }]
+                ]
             },
             ui: {
                 options: { transform: ['babelify'] },
