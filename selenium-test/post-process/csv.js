@@ -71,7 +71,7 @@ let getCSVData = (fileName) => {
     let site = JSON.parse(jsonText);
 
     if (!site.url || !site.scoreObj || !site.scoreObj.decisions) {
-        log(chalk.red(`error: missing site url or details for ${path}`));
+        log(chalk.red(`error: missing site url or details for ${fileName}`));
         return;
     }
 
