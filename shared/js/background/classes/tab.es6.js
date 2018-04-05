@@ -63,8 +63,10 @@ class Tab {
                 } else {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
+                let badgeData = {path: scoreIcon, tabId: this.id}
+                if (target) badgeData.target = target
 
-                utils.setBadgeIcon({path: scoreIcon, tabId: this.id, target: target});
+                utils.setBadgeIcon(badgeData);
             }
         }
     };
