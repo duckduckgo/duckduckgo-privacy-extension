@@ -31,7 +31,9 @@ function buildSettingsFromLocalStorage() {
     return new Promise ((resolve) => {
         utils.getFromStorage(['settings'], function(results){
             // copy over saved settings from storage
-            Object.assign(settings, results['settings']);
+            if (results) {
+                Object.assign(settings, results['settings'])
+            }
             resolve()
         })
     })
