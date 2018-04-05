@@ -9,10 +9,6 @@ settings.ready().then(() => {
     load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
 })
 
-function getEntityMap () {
-    return entityMap
-}
-
 function extractHostFromURL (url) {
     if (!url) return;
 
@@ -117,6 +113,5 @@ module.exports = {
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
-    getEntityMap: getEntityMap,
     findParent: findParent
 }
