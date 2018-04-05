@@ -1,7 +1,8 @@
+const tldjs = require('tldjs')
 const tosdr = require('../../../data/tosdr')
 const constants = require('../../../data/constants')
 const utils = require('../utils.es6')
-const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
+const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${tldjs.getDomain(x)}`))
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
