@@ -28,7 +28,7 @@ module.exports = function () {
     </h2>
     </li>
     <li class="js-site-tracker-networks js-site-show-page-trackers site-info__li--trackers padded border--bottom">
-      <a href="#" class="link-secondary bold">
+      <a href="javascript:void(0)" class="link-secondary bold">
         ${renderTrackerNetworks(this.model)}
       </a>
     </li>
@@ -36,7 +36,7 @@ module.exports = function () {
       <span class="site-info__privacy-practices__icon
         is-${tosdrMsg.toLowerCase()}">
       </span>
-      <a href="#" class="link-secondary bold">
+      <a href="javascript:void(0)" class="link-secondary bold">
         <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
         <span class="icon icon__arrow pull-right"></span>
       </a>
@@ -85,7 +85,7 @@ module.exports = function () {
   function renderTrackerNetworks (model) {
     const isActive = !model.isWhitelisted ? 'is-active' : ''
 
-    return bel`<a href="#" class="site-info__trackers link-secondary bold">
+    return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
           icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
@@ -95,7 +95,7 @@ module.exports = function () {
 
   function renderManageWhitelist (model) {
     return bel`<div>
-      <a href="#" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
+      <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
         Manage Whitelist
       </a>
       <div class="separator"></div>
