@@ -147,6 +147,8 @@ let onNavigate = ((e) => {
         }
 
         tab.updateBadgeIcon(e.target)
+        safari.extension.popovers[0].contentWindow.location.reload()
+
         if (!tab.site.didIncrementCompaniesData) {
             Companies.incrementTotalPages()
             tab.site.didIncrementCompaniesData = true
