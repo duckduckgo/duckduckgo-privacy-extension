@@ -3,18 +3,17 @@ const tldjs = require('tldjs')
 
 const load = require('./load.es6')
 const settings = require('./settings.es6')
-const utils = require('./utils.es6')
 const surrogates = require('./surrogates.es6')
 const trackerLists = require('./tracker-lists.es6').getLists()
 const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
+const utils = require('./utils.es6')
+const entityMap = utils.getEntityMap()
 
 let entityList
-let entityMap
 
 settings.ready().then(() => {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
-    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
 })
 
 /*
@@ -255,6 +254,7 @@ function isRelatedEntity(parentCompany, currLocation) {
  * if domains match but we don't have this site in our entityMap.
  */
 function getCommonParentEntity(currLocation, urlToCheck) {
+    if (!entityMap) return
     let currentLocationParsed = tldjs.parse(currLocation)
     let urlToCheckParsed = tldjs.parse(urlToCheck)
     let parentEntity = entityMap[urlToCheckParsed.domain]

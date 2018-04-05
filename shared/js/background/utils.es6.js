@@ -5,9 +5,12 @@ const constants = require('../../data/constants')
 
 let entityMap
 
-settings.ready().then(() => {
-    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
-})
+load.JSONfromLocalFile(constants.entityMap, (list) => entityMap = list)
+
+function getEntityMap () {
+    console.log(entityMap)
+    return entityMap
+}
 
 function extractHostFromURL (url) {
     if (!url) return;
@@ -113,5 +116,6 @@ module.exports = {
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
+    getEntityMap: getEntityMap,
     findParent: findParent
 }
