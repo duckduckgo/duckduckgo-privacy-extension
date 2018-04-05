@@ -1,6 +1,10 @@
 {
     "extends": "standard",
     "rules": {
-        "indent": ["error", 2]
+        "indent": ["error", 4]
+    },
+    "env": {
+        "webextensions": true,
+        "browser": true
     }
 }
