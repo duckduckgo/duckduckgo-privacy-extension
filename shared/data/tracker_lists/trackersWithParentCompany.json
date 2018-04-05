@@ -1,41 +1,5 @@
 {
     "TopTrackerDomains": {
-        "amazon-adsystem.com": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.ca": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.co.jp": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.co.uk": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.de": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.es": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.fr": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "amazon.it": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
-        "assoc-amazon.com": {
-            "c": "Amazon",
-            "t": "Advertising"
-        },
         "adlantic.nl": {
             "c": "AppNexus",
             "t": "Advertising"
@@ -187,10 +151,6 @@
         "googletagmanager.com": {
             "c": "Google",
             "t": "Advertising"
-        },
-        "alexametrics.com": {
-            "c": "Amazon",
-            "t": "Analytics"
         },
         "polldaddy.com": {
             "c": "Automattic",
@@ -1151,39 +1111,39 @@
             "u": "https://aloodo.com/"
         },
         "amazon-adsystem.com": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.ca": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.co.jp": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.co.uk": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.de": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.es": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.fr": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "amazon.it": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "assoc-amazon.com": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "adnetwork.vn": {
@@ -6261,7 +6221,7 @@
             "u": "http://amazingcounters.com/"
         },
         "alexametrics.com": {
-            "c": "Amazon",
+            "c": "Amazon.com",
             "u": "http://www.amazon.com/"
         },
         "attracta.com": {

@@ -122,22 +122,40 @@ var ATB = (() => {
                     tab = tabs[i]
 
                     chrome.tabs.executeScript(tab.id, {
-                        file: 'public/js/content-scripts/on-install.js'
+                        file: '/public/js/content-scripts/on-install.js'
                     })
 
                     chrome.tabs.insertCSS(tab.id, {
-                        file: 'public/css/noatb.css'
+                        file: '/public/css/noatb.css'
                     })
                 }
             })
         },
 
-        onInstalled: () => {
+        updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
             settings.ready().then(() => {
                 ATB.inject()
                 ATB.migrate()
                 ATB.setInitialVersions()
+            })
+        },
+
+        openPostInstallPage: () => {
+            // only show post install page on install if:
+            // - the user wasn't already looking at the app install page
+            // - the user hasn't seen the page before
+            settings.ready().then( () => {
+                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
+                    const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+                    const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
+                    if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
+                        settings.updateSetting('hasSeenPostInstall', true)
+                        chrome.tabs.create({
+                            url: 'https://duckduckgo.com/app?post=1'
+                        })
+                    }
+                })
             })
         },
 
@@ -173,13 +191,6 @@ var ATB = (() => {
     }
 })()
 
-// register message listener
-chrome.runtime.onMessage.addListener((request) => {
-    if(request.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb)
-    }
-})
-
 settings.ready().then(() => {
     // migrate over any localStorage values from the old extension
     ATB.migrate()
@@ -187,12 +198,5 @@ settings.ready().then(() => {
     // set initial uninstall url
     chrome.runtime.setUninstallURL(ATB.getSurveyURL())
 })
-
-chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
-chrome.alarms.onAlarm.addListener( ((alarmEvent) => {
-    if (alarmEvent.name === 'updateUninstallURL') {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-    }
-}))
 
 module.exports = ATB

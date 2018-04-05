@@ -67,15 +67,6 @@ function getCurrentTab(callback){
     })
 }
 
-chrome.runtime.onMessage.addListener( (req, sender, res) => {
-    if (req.getCurrentTab) {
-        getCurrentTab().then((tab) => {
-            res(tab)
-        })
-    }
-    return true;
-})
-
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox

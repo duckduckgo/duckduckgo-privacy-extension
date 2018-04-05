@@ -1,11 +1,12 @@
 const Companies = require('../companies.es6')
 
 class Tracker {
-    constructor (name, url, type) {
-        this.parentCompany = Companies.get(name)
-        this.urls = [url]
+    constructor (t) {
+        this.parentCompany = Companies.get(t.parentCompany)
+        this.urls = {}
+        this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
         this.count = 1 // request count
-        this.type = type || ''
+        this.type = t.type || ''
     }
 
     increment () {
@@ -16,9 +17,9 @@ class Tracker {
      * to track you through many different entities.
      * We store a list of all unique urls here.
      */
-    addURL (url) {
-        if (this.urls.indexOf(url) === -1) {
-            this.urls.push(url)
+    update (t) {
+        if (!this.urls[t.url]) {
+            this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
         }
     }
 }

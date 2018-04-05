@@ -75,17 +75,15 @@ class Tab {
         chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
     };
 
-    /* Store all trackers for a given tab even if we
-     * don't block them.
-     */
+    // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
         let tracker = this.trackers[t.parentCompany];
         if (tracker) {
             tracker.increment();
-            tracker.addURL(t.url);
+            tracker.update(t);
         }
         else {
-            let newTracker = new Tracker(t.parentCompany, t.url, t.type);
+            let newTracker = new Tracker(t);
             this.trackers[t.parentCompany] = newTracker;
 
             // first time we have seen this network tracker on the page
@@ -99,10 +97,10 @@ class Tab {
         let tracker = this.trackersBlocked[t.parentCompany];
         if (tracker) {
             tracker.increment();
-            tracker.addURL(t.url);
+            tracker.update(t);
         }
         else {
-            let newTracker = new Tracker(t.parentCompany, t.url, t.type);
+            let newTracker = new Tracker(t);
             this.trackersBlocked[t.parentCompany] = newTracker;
             return newTracker;
         }
