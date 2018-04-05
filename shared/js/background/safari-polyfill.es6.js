@@ -14,12 +14,14 @@ let _getSafariWindowId = ((target) => {
     }
 })
 
-let setBadgeIcon = ((iconPath, target) => {
-    if (target && target.activeTab) target = target.activeTab
+let setBadgeIcon = ((badgeUpdate) => {
+    if (badgeUpdate.target && badgeUpdate.target.activeTab) {
+        badgeUpdate.target = badgeUpdate.target.activeTab
+    }
 
-    let windowId = _getSafariWindowId(target)
-    if (iconPath && windowId !== undefined) {
-        safari.extension.toolbarItems[windowId].image = safari.extension.baseURI + iconPath
+    let windowId = _getSafariWindowId(badgeUpdate.target)
+    if (badgeUpdate.path && windowId !== undefined) {
+        safari.extension.toolbarItems[windowId].image = getExtensionURL(badgeUpdate.path)
         safari.extension.popovers[0].contentWindow.location.reload()
     }
 })
@@ -27,7 +29,11 @@ let setBadgeIcon = ((iconPath, target) => {
 let syncToStorage = ((data) => {
     if (data) {
         let key = Object.keys(data)[0]
-        localStorage[key] = JSON.stringify(data[key])
+        let value = data[key]
+        if (typeof(value) === 'object') {
+            value = JSON.stringify(value)
+        }
+        localStorage[key] = value
     }
 })
 

@@ -2,6 +2,7 @@ const ATB = require('./atb.es6')
 const tabManager = require('./tab-manager.es6')
 const utils = require('./utils.es6')
 const Companies = require('./companies.es6')
+const settings = require('./settings.es6')
 
 // add these to contentWindow so the popup can access them
 safari.extension.globalPage.contentWindow.tabManager = tabManager

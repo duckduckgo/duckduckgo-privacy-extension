@@ -51,7 +51,7 @@ class Tab {
         utils.setBadgeIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
     };
 
-    updateBadgeIcon () {
+    updateBadgeIcon (target) {
         if (!this.site.specialDomain() ) {
 
             if(this.site.isBroken) {
@@ -64,7 +64,7 @@ class Tab {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
 
-                utils.setBadgeIcon({path: scoreIcon, tabId: this.id});
+                utils.setBadgeIcon({path: scoreIcon, tabId: this.id, target: target});
             }
         }
     };
