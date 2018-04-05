@@ -66,11 +66,13 @@ function handleRequest(requestData) {
          */
         chrome.runtime.sendMessage({'updateTabData': true})
 
+        thisTab.site.addRequest([requestData.url, requestData.type])
+
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData);
 
-        if (!tracker.block) {
-            thisTab.addTrackerNotBlocked(tracker)
-        }
+        // if (!tracker.block) {
+            // thisTab.addTrackerNotBlocked(tracker)
+        // }
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.type === 'trackersWhitelist' && tracker.reason !== 'first party')) {

@@ -22,6 +22,7 @@ class Site {
         this.setWhitelistStatusFromGlobal(domain);
         this.trackers = {};
         this.trackersNotBlocked = {};
+        this.requests = []
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
         this.didIncrementCompaniesData = false;
 
@@ -79,6 +80,11 @@ class Site {
             this.trackerUrls.push(tracker.url)
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
         }
+    }
+
+    addRequest (request) {
+        this.requests.push(request)
+        console.log(this.requests)
     }
 
     addTrackerNotBlocked (tracker) {

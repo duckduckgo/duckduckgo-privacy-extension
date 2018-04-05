@@ -53,11 +53,7 @@ function runTest(url) {
                 if (blocking) {
                     siteDetails.push({
                         url: url,
-                        scoreObj: tabObj.site.score,
-                        score: tabObj.site.score.get(),
-                        httpsDecisions: tabObj.httpsDecisions,
-                        trackers: tabObj.site.trackers,
-                        trackersNotBlocked: tabObj.site.trackersNotBlocked
+                        requests: tabObj.site.requests
                     })
                 }
 
