@@ -13,6 +13,8 @@ module.exports = {
       else if (browser === 'safari') {
           let tab = safari.application.activeBrowserWindow.openTab()
           tab.url = wrapper.getExtensionURL('html/options.html')
+          // close the popup
+          safari.self.hide()
       }
     })
   }
