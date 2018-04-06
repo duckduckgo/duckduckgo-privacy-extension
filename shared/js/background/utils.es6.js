@@ -1,11 +1,7 @@
 const tldjs = require('tldjs')
 const load = require('./load.es6')
 const settings = require('./settings.es6')
-const constants = require('../../data/constants')
-
-let entityMap
-
-load.JSONfromLocalFile(constants.entityMap, (list) => entityMap = list)
+const entityMap = require('../../data/tracker_lists/entityMap')
 
 function getEntityMap () {
     console.log(entityMap)
