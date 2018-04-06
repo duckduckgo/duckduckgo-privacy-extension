@@ -1,39 +1,34 @@
-let params = getParams();
-
-$(document).ready(() => {
-    // wait a bit to grab lists; yeah it's hacky
-    setTimeout(outputData, 2000)
-})
-
-function outputData() {
-    if (!params.json) { return }
-
-    const siteInfo = JSON.parse(params.json)
+function getGradeData(siteInfo) {
     const url = siteInfo.url
     const domain = bkg.utils.extractHostFromURL(url)
     const score = new bkg.Score(false, domain)
 
-    let numTrackersBlocked = 0
-    let trackersBlocked = {}
+    let trackers = {}
     let trackersNotBlocked = {}
 
     siteInfo.requests.forEach((request) => {
-        const tracker = bkg.trackers.isTracker(
-            request[0],
-            { url, site: { domain } },
-            { type: request[1] }
-        )
+        let tracker
 
-        if (!(tracker.type === 'trackersWhitelist' &&
+        try {
+            tracker = bkg.trackers.isTracker(
+                request[0],
+                { url, site: { domain } },
+                { type: request[1] }
+            )
+        } catch (e) {
+            console.log(`error checking tracker for: ${request[0]}`)
+        }
+
+        if (tracker && !(tracker.type === 'trackersWhitelist' &&
                 tracker.reason !== 'first party')) {
             score.update({ trackerBlocked: tracker })
 
-            if (!trackersBlocked[tracker.parentCompany]) {
-                trackersBlocked[tracker.parentCompany] = {}
+            if (!trackers[tracker.parentCompany]) {
+                trackers[tracker.parentCompany] = {}
             }
 
-            trackersBlocked[tracker.parentCompany][tracker.url] = tracker
-        } else {
+            trackers[tracker.parentCompany][tracker.url] = tracker
+        } else if (tracker) {
             if (!trackersNotBlocked[tracker.parentCompany]) {
                 trackersNotBlocked[tracker.parentCompany] = {}
             }
@@ -49,7 +44,7 @@ function outputData() {
     // get score / decisions
     score.get()
 
-    let out = { url, trackersBlocked, trackersNotBlocked }
+    let out = { url, trackers, trackersNotBlocked }
 
     out.scoreObj = {
         hasHTTPS: score.hasHTTPS,
@@ -61,5 +56,5 @@ function outputData() {
         decisions: score.decisions
     }
 
-    $('body').append(`<div id="json-data">${JSON.stringify(out)}</div>`)
+    $('body').html(`<div id="json-data">${JSON.stringify(out)}</div>`)
 }

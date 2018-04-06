@@ -47,8 +47,10 @@ async function _init () {
     INITIALIZED = true;
 };
 
-async function _testUrl(_path) {
-    await WD.get(_path);
+async function _testUrl(siteInfo) {
+    await WD.executeScript((siteInfo) => {
+        getGradeData(siteInfo)
+    }, siteInfo)
     let jsonData = await WD.wait(until.elementLocated(By.id('json-data')));
     return jsonData.getText();
 }
@@ -60,7 +62,7 @@ function _teardown () {
 exports.testSites = async function(opts) {
     return new Promise (async (resolve, reject) => {
         // create output dir if it didn't exist already
-        let outputDir = `${process.cwd()}/${opts.output}-grades/`;
+        let outputDir = `${process.cwd()}/${opts.output}-grades`;
         childProcess.execSync(`mkdir -p ${outputDir}`);
 
         const siteDir = `${process.cwd()}/sites`
@@ -70,6 +72,10 @@ exports.testSites = async function(opts) {
         let jsonArray = [];
 
         console.log(`Testing with ${TEST_URL}`)
+
+        await WD.get(TEST_URL)
+        // wait for all the lists to load - hacky, yes
+        await WD.sleep(2000)
 
         for (let fileName of siteFiles) {
 
@@ -90,10 +96,8 @@ exports.testSites = async function(opts) {
                 continue;
             }
 
-            const url = `${TEST_URL}?json=${encodeURIComponent(JSON.stringify(siteInfo))}`;
-            log(chalk.green(url));
-
-            const jsonText = await _testUrl(url);
+            console.log(chalk.green(`trying ${fileName}`))
+            const jsonText = await _testUrl(siteInfo);
 
             if (!jsonText) {
                 log(chalk.red(`Failed to receive json data for '${path}'`))

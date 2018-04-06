@@ -5,7 +5,7 @@ const name = process.argv[2];
 const csvHeaders = 'domain,requests,initial,is major,tosdr,in major,https,obscure,blocked,total,grade\n'
 const csvPath  = `${name}.csv`;
 const histPath = `${name}.hist.csv`;
-const inputPath = `${process.cwd()}/${name}-sites/`;
+const inputPath = `${process.cwd()}/${name}-grades/`;
 
 let hist = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
 

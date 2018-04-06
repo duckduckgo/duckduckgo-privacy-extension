@@ -1,6 +1,6 @@
 const fs = require('fs');
 const name = process.argv.splice(2)
-const inputPath = `${process.cwd()}/${name}-sites/`;
+const inputPath = `${process.cwd()}/${name}-grades/`;
 
 // parent company -> site
 let parents = { }
