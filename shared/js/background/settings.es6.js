@@ -31,7 +31,11 @@ function buildSettingsFromLocalStorage() {
     return new Promise ((resolve) => {
         utils.getFromStorage(['settings'], function(results){
             // copy over saved settings from storage
-            if (results) {
+            if (window.safari) {
+                if (results) {
+                    Object.assign(settings, results)
+                }
+            } else {
                 Object.assign(settings, results['settings'])
             }
             resolve()

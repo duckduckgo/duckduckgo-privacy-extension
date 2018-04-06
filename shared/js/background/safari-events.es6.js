@@ -107,8 +107,8 @@ let getSetting = ((e) => {
         name = e.message.getSetting
     }
 
-    let setting = settings.getSetting(name) || {}
-
+    let setting = JSON.parse(JSON.stringify(settings.getSetting(name)))
+    
     // Safari optons page has to send a message to the background
     // and includes an id to help identify the correct response
     setting.id = e.message.id
