@@ -1,0 +1,14 @@
+[
+        {
+                "url": "google.com",
+                "parent": "Google"
+        },
+        {
+                "url": "youtube.com",
+                "parent": "Google"
+        },
+        {
+                "url": "duckduckgo.com",
+                "parent": "undefined"
+        }
+]

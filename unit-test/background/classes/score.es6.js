@@ -1,5 +1,7 @@
 const Score = require('../../../shared/js/background/classes/score.es6')
-const testCases = require('../../data/grade-cases')
+const gradeTestCases = require('../../data/grade-cases')
+const majorNetworks = require('../../data/major-networks')
+const tosdrMessages = require('../../data/tosdr-messages')
 let score
 
 describe('score', () => {
@@ -7,7 +9,7 @@ describe('score', () => {
         score = new Score()
     })
 
-    testCases.forEach((test) => {
+    gradeTestCases.forEach((test) => {
         it(`should return the correct grades for: ${test.descr}`, () => {
             Object.keys(test.values).forEach((prop) => {
                 score[prop] = test.values[prop]
