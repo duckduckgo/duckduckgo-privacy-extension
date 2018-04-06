@@ -24,7 +24,8 @@ function getGradeData(siteInfo) {
 
         if (tracker && trackersByUrl[tracker.url]) { return }
 
-        if (tracker && !(tracker.type === 'trackersWhitelist' &&
+        if (tracker && tracker.block &&
+            !(tracker.type === 'trackersWhitelist' &&
                 tracker.reason !== 'first party')) {
             score.update({ trackerBlocked: tracker })
 
