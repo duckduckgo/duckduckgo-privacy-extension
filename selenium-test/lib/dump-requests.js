@@ -5,6 +5,7 @@ const chrome = require('selenium-webdriver/chrome');
 const chromedriver = require('chromedriver');
 const chalk = require('chalk');
 const log = console.log;
+// const tabular = require('tabular-json');
 const opn = require ('opn');
 const fileUrl = require('file-url');
 
@@ -41,15 +42,13 @@ async function _init () {
     EXT_ID = href.replace('chrome-extension://', '').replace('/html/options.html', '');
     log(chalk.green(`Found Extension ID: ${EXT_ID}`));
 
-    TEST_URL = `chrome-extension://${EXT_ID}/test/html/singleSiteGrade.html`
+    TEST_URL = `chrome-extension://${EXT_ID}/test/html/grade.html`
 
     INITIALIZED = true;
 };
 
-async function _testUrl(siteInfo) {
-    await WD.executeScript((siteInfo) => {
-        getGradeData(siteInfo)
-    }, siteInfo)
+async function _testUrl(_path) {
+    await WD.get(_path);
     let jsonData = await WD.wait(until.elementLocated(By.id('json-data')));
     return jsonData.getText();
 }
@@ -58,29 +57,22 @@ function _teardown () {
     return WD.quit();
 }
 
-exports.getGradeDetails = async function(opts) {
+exports.getRequests = async function(urlArray, opts) {
     return new Promise (async (resolve, reject) => {
         // create output dir if it didn't exist already
-        let outputDir = `${process.cwd()}/${opts.output}-grades`;
+        let outputDir = `${process.cwd()}/sites/`;
         childProcess.execSync(`mkdir -p ${outputDir}`);
-
-        const siteDir = `${process.cwd()}/sites`
-        let siteFiles = fs.readdirSync(siteDir)
 
         await _init();
         let jsonArray = [];
 
         console.log(`Testing with ${TEST_URL}`)
 
-        await WD.get(TEST_URL)
-        // wait for all the lists to load - hacky, yes
-        await WD.sleep(2000)
+        // for loop forces synchronous execution
+        for (let path of urlArray) {
+            if (path == '') continue;
 
-        for (let fileName of siteFiles) {
-
-            let siteInfo = require(`${siteDir}/${fileName}`)
-
-            let filePath = `${outputDir}/${fileName}`;
+            let filePath = `${outputDir}/${path}.json`;
             let fileExists;
 
             try {
@@ -91,12 +83,18 @@ exports.getGradeDetails = async function(opts) {
             }
 
             if (fileExists) {
-                console.log(`File exists for ${filePath}, skipping`);
+                console.log(`File exists for ${path}, skipping`);
                 continue;
             }
 
-            console.log(chalk.green(`trying ${fileName}`))
-            const jsonText = await _testUrl(siteInfo);
+            if (path.indexOf('http://') === -1) {
+                path = 'http://' + path;
+            }
+
+            const url = `${TEST_URL}?url=${encodeURIComponent(path)}&json=true`;
+            log(chalk.green(url));
+
+            const jsonText = await _testUrl(url);
 
             if (!jsonText) {
                 log(chalk.red(`Failed to receive json data for '${path}'`))
@@ -105,7 +103,10 @@ exports.getGradeDetails = async function(opts) {
 
             // the JSON we get back from the test page is wrapped in an array
             // so unwrap it
-            fs.writeFileSync(filePath, jsonText, 'utf8');
+            let jsonObj = JSON.parse(jsonText);
+            let noArrayJson = JSON.stringify(jsonObj[0]);
+
+            fs.writeFileSync(filePath, noArrayJson, 'utf8');
         }
 
 

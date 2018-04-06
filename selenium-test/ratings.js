@@ -6,7 +6,8 @@ const chalk = require('chalk');
 const Xvfb = require('xvfb');
 const program = require('commander');
 const testRatings = require('./lib/ratings.js');
-const testGrade = require('./lib/grade-details-from-site.js');
+const dumpRequests = require('./lib/dump-requests.js');
+const testGrades = require('./lib/grade-details-from-site.js');
 
 const log = console.log;
 const error = console.error;
@@ -17,16 +18,45 @@ program
     .option('-u, --url <path>', 'URL to test')
     .option('-x, --xvbf', 'Use Xvbf')
     .option('-o, --output <path>', 'Output location')
+    .option('--dump', 'Dump requests from a list of sites')
+    .option('--grades', 'Get grades for site JSON dump')
     .parse(process.argv);
 
 async function runTest(opts) {
+
+    if (program.dump) {
+        if (!program.file) {
+            return console.error(`please pass in a file with URLs! (-f)`)
+        }
+
+        if (!fs.existsSync(program.file)) {
+            return console.error(`Could not read ${program.file}`)
+        }
+
+        let text = fs.readFileSync(program.file, "utf8");
+        let urlArray = text.split(/\r?\n/);
+        await dumpRequests.getRequests(urlArray, opts);
+
+        return
+    }
+
+    if (program.grades) {
+        if (!program.output) {
+            return console.error(`please pass in an output name! (-o)`)
+        }
+
+        await testGrades.getGradeDetails(opts)
+
+        return
+    }
+
     if (program.number) {
         await testRatings.testTopSites(program.number, opts);
     } else if (program.file) {
         if (fs.existsSync(program.file)) {
             let text = fs.readFileSync(program.file, "utf8");
             let urlArray = text.split(/\r?\n/);
-            await testGrade.testSites(opts);
+            await testRatings.testUrls(urlArray, opts);
         } else {
             console.error(`Could not read ${program.file}`);
         }
