@@ -19,8 +19,7 @@ $(document).ready(function() {
             .then(() => {
 
                 if (PARAMS.json) {
-                    $('#gradedetails').append(`<div id="json-data">${JSON.stringify(siteDetails, null, 4)}</div>`);
-                    // $('#json-data').append(`${JSON.stringify(siteDetails, null, 4)}`)
+                    $('body').append(`<div id="json-data">${JSON.stringify(siteDetails, null, 4)}</div>`);
                 }
             }))
         return;

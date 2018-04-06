@@ -42,7 +42,7 @@ async function _init () {
     EXT_ID = href.replace('chrome-extension://', '').replace('/html/options.html', '');
     log(chalk.green(`Found Extension ID: ${EXT_ID}`));
 
-    TEST_URL = `chrome-extension://${EXT_ID}/test/html/grade.html`
+    TEST_URL = `chrome-extension://${EXT_ID}/test/html/dumpRequests.html`
 
     INITIALIZED = true;
 };
