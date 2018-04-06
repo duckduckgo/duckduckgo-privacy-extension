@@ -84,7 +84,6 @@ class Site {
 
     addRequest (request) {
         this.requests.push(request)
-        console.log(this.requests)
     }
 
     addTrackerNotBlocked (tracker) {
