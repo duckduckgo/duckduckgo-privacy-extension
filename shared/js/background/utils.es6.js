@@ -3,11 +3,6 @@ const load = require('./load.es6')
 const settings = require('./settings.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
-function getEntityMap () {
-    console.log(entityMap)
-    return entityMap
-}
-
 function extractHostFromURL (url) {
     if (!url) return;
 
@@ -112,6 +107,5 @@ module.exports = {
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
-    getEntityMap: getEntityMap,
     findParent: findParent
 }

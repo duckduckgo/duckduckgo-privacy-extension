@@ -8,7 +8,7 @@ const trackerLists = require('./tracker-lists.es6').getLists()
 const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
-const entityMap = utils.getEntityMap()
+const entityMap = require('../../data/tracker_lists/entityMap')
 
 let entityList
 
