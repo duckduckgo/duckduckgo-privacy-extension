@@ -6,6 +6,7 @@ const chalk = require('chalk');
 const Xvfb = require('xvfb');
 const program = require('commander');
 const testRatings = require('./lib/ratings.js');
+const testGrade = require('./lib/grade-details-from-site.js');
 
 const log = console.log;
 const error = console.error;
@@ -25,7 +26,7 @@ async function runTest(opts) {
         if (fs.existsSync(program.file)) {
             let text = fs.readFileSync(program.file, "utf8");
             let urlArray = text.split(/\r?\n/);
-            await testRatings.testUrls(urlArray, opts);
+            await testGrade.testSites(opts);
         } else {
             console.error(`Could not read ${program.file}`);
         }
