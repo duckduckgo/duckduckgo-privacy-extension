@@ -70,16 +70,52 @@ const redirect = require('./redirect.es6')
 // canLoad => request data from content script. Runs onBeforeRequest
 // atb => set atb values from inject content script
 //
-let handleMessage = ((message) => {
-    if (message.name === 'canLoad') {
-        onBeforeRequest(message)
+let handleMessage = ((e) => {
+    if (e.name === 'canLoad') {
+        onBeforeRequest(e)
     }
-    else if (message.name === 'atb') {
-        ATB.setAtbValuesFromSuccessPage(message.message.atb)
+    else if (e.name === 'atb') {
+        ATB.setAtbValuesFromSuccessPage(e.message.atb)
     }
-    else if (message.name === 'unloadTab') {
-        onClose(message)
+    else if (e.name === 'unloadTab') {
+        onClose(e)
     }
+    else if (e.name === 'getSetting') {
+        getSetting(e)
+    }
+    else if (e.name === 'updateSetting') {
+        updateSetting(e)
+    }
+    else if (e.name === 'whitelisted') {
+        tabManager.whitelistDomain(e.message.whitelisted)
+    }
+})
+
+let updateSetting = ((e) => {
+    let name = e.message.updateSetting.name
+    let val = e.message.updateSetting.value
+    if (name && val) {
+        settings.updateSetting(name, val)
+    }
+})
+
+let getSetting = ((e) => {
+    let name
+    if (e.message.getSetting && e.message.getSetting.name) {
+        name = e.message.getSetting.name
+    } else {
+        name = e.message.getSetting
+    }
+
+    let setting = settings.getSetting(name) || {}
+
+    // Safari optons page has to send a message to the background
+    // and includes an id to help identify the correct response
+    setting.id = e.message.id
+
+    console.log(`Message setting: ${name}, ${JSON.stringify(setting)}`)
+    // send message back to options page
+    e.target.page.dispatchMessage('getSetting', setting)
 })
 
 let onBeforeRequest = ((requestData) => {
@@ -244,7 +280,7 @@ let onClose = ((e) => {
 })
 
 safari.application.addEventListener("activate", onActivate, true)
-safari.application.addEventListener("message", handleMessage, false)
+safari.application.addEventListener("message", handleMessage, true)
 safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
 safari.application.addEventListener("navigate", onNavigate, false)
 safari.application.addEventListener('beforeSearch', onBeforeSearch, false)

@@ -121,17 +121,17 @@ BaseModel.prototype = $.extend({},
             }
             else if (message.getSetting) {
                 if (message.context && message.context === 'options') {
-                    // send message with time stamp
-                    let timestamp = Date.now()
-                    message.timestamp = timestamp
+                    // send message random ID so we know which promise to resolve
+                    let id = Math.random()
+                    message.id = id
                     safari.self.tab.dispatchMessage('getSetting', message)
                     
                     safari.self.addEventListener('message', (e) => {
-                        if (e.name === 'getSetting' && e.message.timestamp === timestamp) {
-                            delete e.message.timestamp
+                        if (e.name === 'getSetting' && e.message.id === id) {
+                            delete e.message.id
                             resolve(e.message)
                         }
-                    }, false);
+                    }, true);
                 }
             }
             else if (message.updateSetting) {

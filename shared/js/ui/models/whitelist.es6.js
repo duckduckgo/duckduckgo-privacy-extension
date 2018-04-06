@@ -22,7 +22,7 @@ Whitelist.prototype = window.$.extend({},
         list: 'whitelisted',
         domain: domain,
         value: false
-      }
+      }, context: 'options'
       })
 
       // Update list
@@ -48,7 +48,7 @@ Whitelist.prototype = window.$.extend({},
           list: 'whitelisted',
           domain: domainToWhitelist,
           value: true
-        }
+        }, context: 'options'
         })
 
         this.setWhitelistFromSettings()
@@ -59,7 +59,7 @@ Whitelist.prototype = window.$.extend({},
 
     setWhitelistFromSettings: function () {
       let self = this
-      this.fetch({getSetting: {name: 'whitelisted'}}).then((whitelist) => {
+      this.fetch({getSetting: {name: 'whitelisted'}, context: 'options'}).then((whitelist) => {
         whitelist = whitelist || {}
         let wlist = Object.keys(whitelist)
         wlist.sort()
