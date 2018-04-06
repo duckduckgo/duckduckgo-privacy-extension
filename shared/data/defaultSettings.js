@@ -22,5 +22,6 @@ module.exports = {
     "privacyEasylist-etag": null,
     "https-etag": null,
     "surrogateList-etag": null,
-    "hasSeenPostInstall": false
+    "hasSeenPostInstall": false,
+    "dumpRequests": false
 }

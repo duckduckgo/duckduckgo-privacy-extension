@@ -5,6 +5,7 @@ const surrogates = require('./surrogates.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
+const settings = require('./settings.es6')
 
 var debugRequest = false
 
@@ -66,7 +67,10 @@ function handleRequest(requestData) {
          */
         chrome.runtime.sendMessage({'updateTabData': true})
 
-        thisTab.site.addRequest([requestData.url, requestData.type])
+        // debug mode, only switched on for testing
+        if (settings.getSetting('dumpRequests')) {
+            thisTab.site.addRequest([requestData.url, requestData.type])
+        }
 
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData);
 

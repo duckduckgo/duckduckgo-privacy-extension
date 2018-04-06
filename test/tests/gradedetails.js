@@ -4,13 +4,19 @@ var PARAMS = getParams();
 let siteDetails = [ ];
 
 $(document).ready(function() {
-
     /*
      * Get test params from the url and set any defaults
      */
     if (PARAMS.url) {
-        waitForHTTPSToLoad()
-            .then(runTest(PARAMS.url).then(() => {
+        bkg.settings.ready()
+            .then(() => {
+                bkg.settings.updateSetting('dumpRequests', true)
+
+                return Promise.resolve()
+            })
+            .then(waitForHTTPSToLoad)
+            .then(runTest(PARAMS.url)
+            .then(() => {
 
                 if (PARAMS.json) {
                     $('#gradedetails').append(`<div id="json-data">${JSON.stringify(siteDetails, null, 4)}</div>`);
@@ -47,15 +53,12 @@ function runTest(url) {
         chrome.tabs.create({url}, (t) => {
 
             getLoadedTabById(t.id, blockingOnStartTime, 20000, 9000).then((tab) => {
-                let blocking = bkg.settings.getSetting('trackerBlockingEnabled')
                 let tabObj = bkg.tabManager.get({'tabId': tab.id});
 
-                if (blocking) {
-                    siteDetails.push({
-                        url: url,
-                        requests: tabObj.site.requests
-                    })
-                }
+                siteDetails.push({
+                    url: url,
+                    requests: tabObj.site.requests
+                })
 
                 chrome.tabs.remove(tab.id);
                 resolve()
