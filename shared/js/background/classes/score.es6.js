@@ -6,8 +6,6 @@ const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
 const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
 
-const https = require('../https.es6')
-
 class Score {
 
     constructor(specialPage, domain) {
@@ -149,8 +147,6 @@ class Score {
         } else {
             this.addDecision({ change: 1, index: beforeIndex, why: `Not in major tracking network` })
         }
-
-        this.hasHTTPS = this.hasHTTPS || https.canUpgradeHost(this.domain)
 
         if (!this.hasHTTPS) {
             beforeIndex++
