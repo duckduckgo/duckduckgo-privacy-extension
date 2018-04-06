@@ -6,6 +6,9 @@ function getGradeData(siteInfo) {
     let trackers = {}
     let trackersNotBlocked = {}
 
+    // for deduplication
+    let trackersByUrl = {}
+
     siteInfo.requests.forEach((request) => {
         let tracker
 
@@ -19,6 +22,8 @@ function getGradeData(siteInfo) {
             console.log(`error checking tracker for: ${request[0]}`)
         }
 
+        if (tracker && trackersByUrl[tracker.url]) { return }
+
         if (tracker && !(tracker.type === 'trackersWhitelist' &&
                 tracker.reason !== 'first party')) {
             score.update({ trackerBlocked: tracker })
@@ -28,6 +33,7 @@ function getGradeData(siteInfo) {
             }
 
             trackers[tracker.parentCompany][tracker.url] = tracker
+            trackersByUrl[tracker.url] = true
         } else if (tracker) {
             if (!trackersNotBlocked[tracker.parentCompany]) {
                 trackersNotBlocked[tracker.parentCompany] = {}
