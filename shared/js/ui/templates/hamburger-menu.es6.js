@@ -1,6 +1,7 @@
-const bel = require('bel')
 const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
 const renderFeedbackHref = require('./shared/render-feedback-href.es6.js')
+const crossplatformLink = require('./shared/crossplatform-link.es6.js')
+const bel = require('bel')
 
 module.exports = function () {
   return bel`<nav class="hamburger-menu js-hamburger-menu is-hidden">
@@ -20,20 +21,22 @@ module.exports = function () {
           </a>
       </li>
       <li>
-        <a href="${renderFeedbackHref(this.model.browserInfo, this.model.tabUrl)}"
-        target="_blank"
-        class="menu-title">
-        Send feedback
-        <span>Got issues or suggestions? Let us know!</span>
-          </a>
+        ${crossplatformLink(renderFeedbackHref(this.model.browserInfo, this.model.tabUrl),
+            { 
+                target: '_blank', 
+                className: 'menu-title',
+                innerHTML: `Send feedback <span>Got issues or suggestions? Let us know!</span>`
+            }
+         )}
       </li>
       <li>
-        <a href="${renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl)}"
-        target="_blank"
-        class="menu-title">
-        Report broken site
-        <span>If a site's not working, please tell us.</span>
-          </a>
+        ${crossplatformLink(renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl),
+           {
+               target: "_blank",
+               className: "menu-title",
+               innerHTML: `Report broken site <span>If a site's not working, please tell us.</span>`
+           }
+        )}
       </li>
         </ul>
     </div>
