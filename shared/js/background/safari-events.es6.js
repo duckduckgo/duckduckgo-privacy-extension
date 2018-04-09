@@ -3,6 +3,7 @@ const tabManager = require('./tab-manager.es6')
 const utils = require('./utils.es6')
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
+const abpLists = require('./abp-lists.es6')
 
 // add these to contentWindow so the popup can access them
 safari.extension.globalPage.contentWindow.tabManager = tabManager
@@ -88,6 +89,9 @@ let handleMessage = ((e) => {
     }
     else if (e.name === 'whitelisted') {
         tabManager.whitelistDomain(e.message.whitelisted)
+    }
+    else if (e.name === 'atb') {
+        ATB.setAtbValuesFromSuccessPage(e.message.atb)
     }
 })
 
@@ -275,6 +279,9 @@ let onClose = ((e) => {
     console.log(`Delete tab: ${tabId}`)
     if (tabId) tabManager.delete(tabId)
 })
+
+// update blocking lists on interval
+setInterval(abpLists.updateLists, 30*60*1000)
 
 safari.application.addEventListener("activate", onActivate, true)
 safari.application.addEventListener("message", handleMessage, true)
