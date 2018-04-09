@@ -7,7 +7,7 @@ const isaMajorNetworkTestCases = [
       "domain": "facebook.com",
       "parent": "Facebook",
       "isZeroResult": 0,
-      "descr": "a number greater than zero for Google (major network)" 
+      "descr": "a number greater than zero for Facebook (major network)" 
    },
    {
       "specialPage": 0,
