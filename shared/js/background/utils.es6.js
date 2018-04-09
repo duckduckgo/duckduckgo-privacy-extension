@@ -84,10 +84,6 @@ function setBadgeIcon (path, target) {
     browserWrapper.setBadgeIcon(path, target)
 }
 
-function getExtensionURL (path) {
-    return browserWrapper.getExtensionURL(path)
-}
-
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -99,6 +95,5 @@ module.exports = {
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
-    setBadgeIcon: setBadgeIcon,
-    getExtensionURL: getExtensionURL
+    setBadgeIcon: setBadgeIcon
 }

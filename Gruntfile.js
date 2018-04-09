@@ -12,12 +12,14 @@ module.exports = function(grunt) {
 
     let browser = grunt.option('browser')
     let buildType = grunt.option('type')
-    let buildPath = `build/${browser}/${buildType}`
 
     if(!(browser && buildType)) {
         console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
         process.exit(1)
     }
+
+    let buildPath = `build/${browser}/${buildType}`
+
 
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
@@ -108,7 +110,11 @@ module.exports = function(grunt) {
                     ['babelify'],
                     [(file) => {
                         return through( function(buf, enc, next) {
-                            this.push(buf.toString('utf8').replace(/\$BROWSER/g, "safari"))
+                            let requireName = browser
+                            if(browser === 'duckduckgo.safariextension') {
+                                requireName = 'safari'
+                            }
+                            this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
                             next()
                         })
                     }]

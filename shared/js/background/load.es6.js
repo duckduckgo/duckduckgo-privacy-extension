@@ -1,4 +1,4 @@
-const utils = require('./utils.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 function JSONfromLocalFile(path, cb){
     loadExtensionFile({url: path, returnType: 'json'}, (res) => cb(JSON.parse(res)))
@@ -41,7 +41,7 @@ function loadExtensionFile(params, cb){
         // set type xhr type tag. Safari internal xhr requests
         // don't set a 200 status so we'll check this type
         xhr.type = 'internal'
-        xhr.open("GET", utils.getExtensionURL(params.url));
+        xhr.open("GET", browserWrapper.getExtensionURL(params.url));
     }
 
     xhr.send(null);
