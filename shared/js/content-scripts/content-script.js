@@ -47,6 +47,15 @@ var onBeforeUnload = (e) => {
 // return location without params
 var mainFrameURL
 function getLocation () {
+    // content script only works from window.top and will throw
+    // errors if it runs in iframes. Try to access hostname and
+    // bail if there are any errors.
+    try {
+        window.top.location.hostname
+    } catch (e) {
+        return
+    }
+
     if (mainFrameURL) { return mainFrameURL }
     var loc = window.top.location
     mainFrameURL = loc.protocol + "//" + loc.hostname + loc.pathname
