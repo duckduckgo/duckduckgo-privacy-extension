@@ -32,12 +32,34 @@ const isaMajorNetworkTestCases = [
    }
 ]
 
+const tosdrTestCases = [
+    {
+        "domain": "google.com",
+        "isMessageBad": 1,
+        "descr": "bad tosdr rating for google.com"
+    },
+    {
+        "domain": "youtube.com",
+        "isMessageBad": 1,
+        "descr": "bad tosdr rating for youtube.com"
+    },
+    {
+        "domain": "duckduckgo.com",
+        "isMessageBad": 0,
+        "descr": "good tosdr rating for duckduckgo.com"
+    },
+    {
+        "domain": "deletefacebook.com",
+        "isMessageBad": 0,
+        "descr": "not bad tosdr rating for deletefacebook.com"
+    }
+]
+
 let score
 
 describe('score', () => {
     beforeEach(() => {
         score = new Score()
-        //spyOn(utils, 'findParent')
     })
 
     gradeTestCases.forEach((test) => {
@@ -73,6 +95,23 @@ describe('isaMajorNetwork', () => {
                 expect(result).toEqual(0)
             } else {
                 expect(result).toBeGreaterThan(0)
+            }
+        })
+    })
+});
+
+describe('getTosdr', () => {
+    tosdrTestCases.forEach((test) => {
+        it(`should return ${test.descr}`, () => {
+            score = new Score('', test.domain)
+ 
+            let result = score.tosdr
+            let message = result.message
+
+            if (test.isMessageBad) {
+                expect(message).toEqual('Bad')
+            } else {
+                expect(message).not.toEqual('Bad')
             }
         })
     })
