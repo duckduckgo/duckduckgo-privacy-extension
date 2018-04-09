@@ -1,7 +1,5 @@
 const Score = require('../../../shared/js/background/classes/score.es6')
 const gradeTestCases = require('../../data/grade-cases')
-const majorNetworks = require('../../data/major-networks')
-const tosdrMessages = require('../../data/tosdr-messages')
 let score
 
 describe('score', () => {
