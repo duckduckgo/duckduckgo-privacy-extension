@@ -1,7 +1,19 @@
 
 const utils = require('../../shared/js/background/utils.es6')
-const findParentTestCases = require('../data/find-parent-test-cases')
-const majorNetworks = require('../data/major-networks')
+const findParentTestCases = [
+   {
+           "url": "google.com",
+           "parent": "Google"
+   },
+   {
+           "url": "youtube.com",
+           "parent": "Google"
+   },
+   {
+           "url": "duckduckgo.com",
+           "parent": "undefined"
+   }
+]
 
 describe('utils.findParent()', () => {
     findParentTestCases.forEach((test) => {
