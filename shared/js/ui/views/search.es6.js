@@ -39,7 +39,11 @@ Search.prototype = window.$.extend({},
 
     _handleBurgerClick: function (e) {
       e.preventDefault()
-      this.model.send('burgerClick')
+      if (window.safari && this.model.searchText) {
+          this._handleSubmit(e)
+      } else {
+          this.model.send('burgerClick')
+      }
     }
   }
 )
