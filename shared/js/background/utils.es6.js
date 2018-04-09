@@ -1,5 +1,5 @@
 const tldjs = require('tldjs')
-const polyfill = require('./$BROWSER-polyfill.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 function extractHostFromURL (url) {
     if (!url) return;
@@ -41,11 +41,11 @@ function isChromeBrowser () {
 }
 
 function syncToStorage (data){
-    polyfill.syncToStorage(data)
+    browserWrapper.syncToStorage(data)
 }
 
 function getFromStorage (key, callback) {
-    polyfill.getFromStorage(key, callback)
+    browserWrapper.getFromStorage(key, callback)
 }
 
 function getCurrentURL(callback){
@@ -81,11 +81,11 @@ function getBrowserName() {
 }
 
 function setBadgeIcon (path, target) {
-    polyfill.setBadgeIcon(path, target)
+    browserWrapper.setBadgeIcon(path, target)
 }
 
 function getExtensionURL (path) {
-    return polyfill.getExtensionURL(path)
+    return browserWrapper.getExtensionURL(path)
 }
 
 module.exports = {

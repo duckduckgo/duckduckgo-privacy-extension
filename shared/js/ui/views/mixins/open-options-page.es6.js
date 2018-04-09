@@ -1,4 +1,4 @@
-const wrapper = require('./../../../background/$BROWSER-polyfill.es6')
+const browserWrapper = require('./../../../background/$BROWSER-wrapper.es6')
 
 module.exports = {
   openOptionsPage: function () {
@@ -12,7 +12,7 @@ module.exports = {
       }
       else if (browser === 'safari') {
           let tab = safari.application.activeBrowserWindow.openTab()
-          tab.url = wrapper.getExtensionURL('html/options.html')
+          tab.url = browserWrapper.getExtensionURL('html/options.html')
           // close the popup
           safari.self.hide()
       }
