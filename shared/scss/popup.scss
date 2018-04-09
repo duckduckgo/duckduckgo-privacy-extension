@@ -192,12 +192,6 @@ body {
             padding-top: 8px;
         }
 
-        .site-info__rating {
-            @include site_rating_icons();
-            width: 80px;
-            height: 64px;
-        }
-
         .site-info__li--https-status {
             position: relative;
             padding-left: 45px;
