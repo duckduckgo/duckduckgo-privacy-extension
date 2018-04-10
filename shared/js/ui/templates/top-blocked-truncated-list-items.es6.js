@@ -19,7 +19,7 @@ module.exports = function (companyListMap) {
 
   function getScssClass (companyName) {
     var genericName = 'generic'
-    
+ 
     if (majorTrackingNetworks[companyName]) {
       return companyName
     } else {
