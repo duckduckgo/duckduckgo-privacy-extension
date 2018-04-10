@@ -1,7 +1,6 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
-const trackerNetworksIcon = require('./shared/tracker-network-hero-icon.es6.js')
-//const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
+const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 
 module.exports = function () {

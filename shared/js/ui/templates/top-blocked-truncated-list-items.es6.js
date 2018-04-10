@@ -1,6 +1,5 @@
 const bel = require('bel')
 const constants = require('../../../data/constants')
-//const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
 const majorTrackingNetworks = constants.majorTrackingNetworks
 
 module.exports = function (companyListMap) {
