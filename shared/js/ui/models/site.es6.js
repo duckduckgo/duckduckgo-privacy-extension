@@ -38,9 +38,7 @@ Site.prototype = window.$.extend({},
 
     getBackgroundTabData: function () {
         let thisModel = this
-        return new Promise ((resolve) => {
-            browserUIWrapper.getBackgroundTabData(thisModel).then(resolve())
-        })
+        return browserUIWrapper.getBackgroundTabData(thisModel)
     },
 
     fetchSiteRating: function () {

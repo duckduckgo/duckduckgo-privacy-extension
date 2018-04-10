@@ -49,9 +49,15 @@ let getFromStorage = ((key, cb) => {
 })
 
 // webextensions can send messages to the popup. In safari the 
-// best we can do is refresh it
-let notifyPopup = (() => {
+// best we can do is refresh it. To keep the popup from refreshing
+// too frequently we can set a debounce rate.
+var _ = require('underscore');
+let reload = (() => {
     safari.extension.popovers[0].contentWindow.location.reload()
+})
+let reloadPopup = _.debounce(reload, 200)
+let notifyPopup = (() => {
+    reloadPopup()
 })
 
 module.exports = {
