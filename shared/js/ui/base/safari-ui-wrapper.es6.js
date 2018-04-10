@@ -45,7 +45,8 @@ let fetch = ((message) => {
            resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlockedByPages(message.getTopBlockedByPages))
        }
        else if (message.resetTrackersData) {
-          safari.extension.globalPage.contentWindow.Companies.resetData()
+          safari.extension.globalPage.contentWindow.Companies.resetData()          
+          safari.self.hide()
       }
    })
 })
