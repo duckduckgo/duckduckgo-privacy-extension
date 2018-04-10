@@ -68,6 +68,10 @@ function handleRequest(requestData) {
 
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData);
 
+        if (!tracker.block) {
+            thisTab.addTrackerNotBlocked(tracker)
+        }
+
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.type === 'trackersWhitelist' && tracker.reason !== 'first party')) {
             // only count trackers on pages with 200 response. Trackers on these sites are still

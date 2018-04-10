@@ -20,13 +20,14 @@ class Site {
         this.score = new Score(this.specialDomain(), this.domain);
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
+        this.trackers = {};
+        this.trackersNotBlocked = {};
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
         this.didIncrementCompaniesData = false;
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
         this.isSpecialDomain = this.specialDomain()
-
     }
 
     /*
@@ -68,10 +69,23 @@ class Site {
     isWhiteListed () { return this.whitelisted }
 
     addTracker (tracker) {
+        if (!this.trackers[tracker.parentCompany]) {
+            this.trackers[tracker.parentCompany] = {}
+        }
+
+        this.trackers[tracker.parentCompany][tracker.url] = tracker
+
         if (this.trackerUrls.indexOf(tracker.url) === -1){
             this.trackerUrls.push(tracker.url)
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
         }
+    }
+
+    addTrackerNotBlocked (tracker) {
+        if (!this.trackers[tracker.parentCompany]) {
+            this.trackersNotBlocked[tracker.parentCompany] = {}
+        }
+        this.trackersNotBlocked[tracker.parentCompany][tracker.url] = tracker
     }
 
     /*
