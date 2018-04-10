@@ -159,7 +159,10 @@ module.exports = function(grunt) {
 
         // used by watch to copy shared/js to build dir
         exec: {
-            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
+            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`, 
+            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`, 
+            mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
         },
 
         watch: {
@@ -169,16 +172,16 @@ module.exports = function(grunt) {
             },
             ui: {
                 files: watch.ui, 
-                tasks: ['browserify:ui']
+                tasks: ['browserify:ui', 'watchSafari']
 
             },
             backgroundES6JS: {
                 files: watch.background,
-                tasks: ['browserify:background']
+                tasks: ['browserify:background', 'watchSafari']
             },
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
-                tasks: ['exec:copyjs']
+                tasks: ['exec:copyjs', 'watchSafari']
             }
         },
 
@@ -189,7 +192,24 @@ module.exports = function(grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'execute:preProcessLists'])
+    // sets up safari directory structure so that it can be loaded in extension builder
+    // duckduckgo.safariextension -> build type -> duckduckgo.safariextension -> build files
+    grunt.registerTask('safari', 'Move Safari build', (() => {
+        if (browser === 'duckduckgo.safariextension') {
+            console.log("Moving Safari build")
+            grunt.task.run('exec:tmpSafari')
+            grunt.task.run('exec:mvSafari')
+        }
+    }))
+
+    // moves generated files from watch into the correct build directory
+    grunt.registerTask('watchSafari', 'Moves Safari files after watch', (() => {
+        if (browser === 'duckduckgo.safariextension') {
+            grunt.task.run('exec:mvWatchSafari')
+        }
+    }))
+
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'execute:preProcessLists', 'safari'])
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
     grunt.registerTask('default', 'build')
