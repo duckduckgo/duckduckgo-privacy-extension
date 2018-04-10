@@ -1,6 +1,7 @@
 const $ = require('jquery')
 const mixins = require('./mixins/index.es6.js')
 const store = require('./store.es6.js')
+const browserUIWrapper = require('./$BROWSER-ui-wrapper.es6.js')
 
 function BaseModel (attrs) {
   // attributes are applied directly
@@ -97,55 +98,7 @@ BaseModel.prototype = $.extend({},
      * this.model.fetch({'messageName': messageValue}).then((response) ..
      **/
     fetch: function (message) {
-        return new Promise( (resolve, reject) => {
-            console.log(`Safari Fetch: ${JSON.stringify(message)}`)
-            if (message.getCurrentTab || message.getTab) {
-                resolve(safari.extension.globalPage.contentWindow.tabManager.getActiveTab())
-            }
-            else if (message.getTopBlocked) {
-                resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlocked(message.getTopBlocked))
-            }
-            else if (message.getBrowser) {
-                resolve('safari')
-            }
-            else if (message.whitelisted) {
-                if (message.context && message.context === 'options') {
-                    resolve(safari.self.tab.dispatchMessage('whitelisted', message))
-                }else {
-                    resolve(safari.extension.globalPage.contentWindow.tabManager.whitelistDomain(message.whitelisted))
-                }
-            }
-            else if (message.getSiteScore) {
-                let tab = safari.extension.globalPage.contentWindow.tabManager.get({tabId: message.getSiteScore})
-                if (tab) resolve(tab.site.score.get())
-            }
-            else if (message.getSetting) {
-                if (message.context && message.context === 'options') {
-                    // send message random ID so we know which promise to resolve
-                    let id = Math.random()
-                    message.id = id
-                    safari.self.tab.dispatchMessage('getSetting', message)
-                    
-                    safari.self.addEventListener('message', (e) => {
-                        if (e.name === 'getSetting' && e.message.id === id) {
-                            delete e.message.id
-                            resolve(e.message)
-                        }
-                    }, true);
-                }
-            }
-            else if (message.updateSetting) {
-                if (message.context && message.context === 'options') {
-                    resolve(safari.self.tab.dispatchMessage('updateSetting', message))
-                }
-            }
-            else if (message.getTopBlockedByPages) {
-                resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlockedByPages(message.getTopBlockedByPages))
-            }
-            else if (message.resetTrackersData) {
-               safari.extension.globalPage.contentWindow.Companies.resetData()
-           }
-        })
+      return browserUIWrapper.fetch(message)
     },
 
     /**

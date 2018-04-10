@@ -2,6 +2,7 @@ const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
 const httpsMessages = constants.httpsMessages
 const parseUserAgent = require('./mixins/parse-user-agent.es6.js')
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Site (attrs) {
   attrs = attrs || {}
@@ -36,24 +37,10 @@ Site.prototype = window.$.extend({},
     modelName: 'site',
 
     getBackgroundTabData: function () {
-      // console.log('[site view] getBackgroundTabData()')
-      return new Promise((resolve) => {
-        let backgroundTabObj = JSON.parse(JSON.stringify(safari.extension.globalPage.contentWindow.tabManager.getActiveTab() || {}))
-        if (backgroundTabObj && backgroundTabObj.site) {
-          this.set('tab', backgroundTabObj)
-          this.domain = backgroundTabObj.site.domain
-          this.fetchSiteRating()
-          this.set('tosdr', backgroundTabObj.site.score.tosdr)
-          this.set('isaMajorTrackingNetwork',backgroundTabObj.site.score.isaMajorTrackingNetwork)
-        } else {
-          this.domain = ''
-        }
-
-        this.setSiteProperties()
-        this.setHttpsMessage()
-        this.update()
-        resolve()
-      })
+        let thisModel = this
+        return new Promise ((resolve) => {
+            browserUIWrapper.getBackgroundTabData(thisModel).then(resolve())
+        })
     },
 
     fetchSiteRating: function () {
