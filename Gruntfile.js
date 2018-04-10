@@ -114,6 +114,9 @@ module.exports = function(grunt) {
                             if(browser === 'duckduckgo.safariextension') {
                                 requireName = 'safari'
                             }
+                            else if (browser === 'firefox') {
+                                requireName = 'chrome'
+                            }
                             this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
                             next()
                         })
