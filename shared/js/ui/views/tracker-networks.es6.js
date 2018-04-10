@@ -2,7 +2,7 @@ const ParentSlidingSubview = require('./sliding-subview.es6.js')
 const heroTemplate = require('./../templates/shared/hero.es6.js')
 const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
-const trackerNetworksHeroIconTemplate = require('./../templates/shared/tracker-network-hero-icon.es6.js')
+const trackerNetworksIconTemplate = require('./../templates/shared/tracker-network-hero-icon.es6.js')
 const trackerNetworksTextTemplate = require('./../templates/shared/tracker-networks-text.es6.js')
 
 function TrackerNetworks (ops) {
@@ -58,7 +58,7 @@ TrackerNetworks.prototype = window.$.extend({},
 
     _renderHeroTemplate: function () {
       if (this.model.site) {
-        const trackerNetworksHeroIconName = trackerNetworksHeroIconTemplate(
+        const trackerNetworksIconName = trackerNetworksIconTemplate(
           this.model.site.siteRating,
           this.model.site.isWhitelisted,
           this.model.site.totalTrackerNetworksCount
@@ -67,7 +67,7 @@ TrackerNetworks.prototype = window.$.extend({},
         const trackerNetworksText = trackerNetworksTextTemplate(this.model.site, false)
 
         this.$hero.html(heroTemplate({
-          status: trackerNetworksHeroIconName,
+          status: trackerNetworksIconName,
           title: this.model.site.domain,
           subtitle: trackerNetworksText,
           showClose: true

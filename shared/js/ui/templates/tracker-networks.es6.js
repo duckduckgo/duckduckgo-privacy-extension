@@ -1,6 +1,6 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
-const trackerNetworksHeroIcon = require('./shared/tracker-network-hero-icon.es6.js')
+const trackerNetworksIcon = require('./shared/tracker-network-hero-icon.es6.js')
 //const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 
@@ -36,7 +36,7 @@ function renderHero (site) {
   site = site || {}
 
   return bel`${hero({
-    status: trackerNetworksHeroIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
+    status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
     title: site.domain,
     subtitle: `${trackerNetworksText(site, false)}`,
     showClose: true

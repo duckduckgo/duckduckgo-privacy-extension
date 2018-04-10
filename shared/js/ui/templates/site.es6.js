@@ -1,7 +1,7 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
-const trackerNetworksHeroIcon = require('./shared/tracker-network-hero-icon.es6.js')
+const trackerNetworksIcon = require('./shared/tracker-network-hero-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 const constants = require('../../../data/constants')
 const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
@@ -87,7 +87,7 @@ module.exports = function () {
 
     return bel`<a href="#" class="site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
-          icon-${trackerNetworksHeroIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
+          icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
