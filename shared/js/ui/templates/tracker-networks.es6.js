@@ -1,7 +1,7 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
 const trackerNetworksHeroIcon = require('./shared/tracker-network-hero-icon.es6.js')
-const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
+//const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 
 module.exports = function () {
@@ -60,9 +60,8 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
         borderClass = companyListMap.length > 1 ? 'border--top' : ''
       }
       return bel`<li class="${borderClass}">
-        <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
-          <span class="site-info__tracker__icon
-            ${normalizeCompanyName(c.name)}">
+        <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
+          <span class="site-info__tracker__icon ${c.normalizedName}">
           </span>
         </div>
         <h1 class="site-info__domain block">${c.name}</h1>

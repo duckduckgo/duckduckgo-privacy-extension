@@ -1,6 +1,6 @@
 const bel = require('bel')
 const constants = require('../../../data/constants')
-const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
+//const normalizeCompanyName = require('./shared/normalize-company-icon-name.es6.js')
 const majorTrackingNetworks = constants.majorTrackingNetworks
 
 module.exports = function (companyListMap) {
@@ -8,7 +8,7 @@ module.exports = function (companyListMap) {
     return bel`<li class="top-blocked__li top-blocked__li--truncated">
       <div class="top-blocked__pill">
         <div class="top-blocked__pill-site__icon-container">
-          <div class="top-blocked__pill-site__icon ${getScssClass(data.name.toLowerCase())}"></div>
+          <div class="top-blocked__pill-site__icon ${getScssClass(data.normalizedName)}"></div>
         </div>
         <div class="top-blocked__pill__divider"></div>
         <div class="top-blocked__pill__blocker-pct js-top-blocked-pct">
@@ -18,11 +18,11 @@ module.exports = function (companyListMap) {
     </li>`
   })
 
-  function getScssClass (networkName) {
+  function getScssClass (companyName) {
     var genericName = 'generic'
-
-    if (majorTrackingNetworks[networkName]) {
-      return normalizeCompanyName(networkName)
+    
+    if (majorTrackingNetworks[companyName]) {
+      return companyName
     } else {
       return genericName
     }
