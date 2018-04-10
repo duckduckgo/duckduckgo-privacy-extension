@@ -11,8 +11,6 @@
         @include cross_platform_bg_image("hero-rating__null-state.svg");
     }
 
-    $ratings: ("a", "b", "c", "d", "f");
-
     @each $rating in $ratings {
         .hero__icon--#{$rating} {
             @include cross_platform_bg_image("hero-rating__#{$rating}.svg");

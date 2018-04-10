@@ -3,9 +3,6 @@ const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const constants = require('../../data/constants')
 
-// check every 30 minutes for an updated list:
-const UPDATE_INTERVAL = 1000 * 60 * 30
-
 // chrome.storage.local can be unlimited, and
 // localStorage in Safari claims it can go up to 100MB,
 // but Safari seems to throw an error if the size of an
@@ -94,9 +91,6 @@ class HTTPS {
                 console.log("HTTPS: updateList() error parsing server response")
             }
         })
-
-        // schedule the next check:
-        setTimeout(this.updateList.bind(this), UPDATE_INTERVAL)
     }
 
     getFromStorage (fn) {

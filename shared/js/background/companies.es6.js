@@ -86,6 +86,7 @@ var Companies = (() => {
             totalPagesWithTrackers = 0
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
+            chrome.runtime.sendMessage({'didResetTrackersData': Companies.getLastResetDate()})
         },
 
         getLastResetDate: ()  => lastStatsResetDate,
@@ -144,25 +145,5 @@ var Companies = (() => {
 })()
 
 Companies.buildFromStorage()
-
-// sync data to storage when a tab finishes loading
-chrome.tabs.onUpdated.addListener( (id,info) => {
-    if (info.status === "complete") {
-        Companies.syncToStorage()
-    }
-})
-
-chrome.runtime.onMessage.addListener((req, sender, res) => {
-    if (req.getTopBlocked) {
-        res(Companies.getTopBlocked(req.getTopBlocked))
-    } else if (req.getTopBlockedByPages) {
-        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
-    } else if (req.resetTrackersData) {
-        Companies.resetData()
-        chrome.runtime.sendMessage({'didResetTrackersData': Companies.getLastResetDate()})
-        res()
-    }
-    return true
-})
 
 module.exports = Companies

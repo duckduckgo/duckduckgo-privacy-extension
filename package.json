@@ -15,6 +15,7 @@
     "selenium": "cd selenium-test && node test.js",
     "lint": "standard 'shared/js/ui/**/*.js'",
     "test": "grunt test --browser=chrome --type=dev",
+    "test-debug": "grunt test --browser=chrome --type=dev --test-debug",
     "dev-firefox": "make dev browser=firefox type=dev",
     "release-firefox": "make browser=firefox type=release",
     "dev-chrome": "make dev browser=chrome type=dev",
