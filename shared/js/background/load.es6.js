@@ -14,6 +14,8 @@ function JSONfromExternalFile(url, cb){
 function returnResponse(xhr, returnType) {
     if (returnType === 'xml') {
         return xhr.responseXML;
+    } else if (returnType === 'arraybuffer') {
+        return xhr.response;
     } else {
         return xhr.responseText
     }
@@ -36,6 +38,10 @@ function loadExtensionFile(params, cb){
     }
     else {
         xhr.open("GET", chrome.extension.getURL(params.url));
+    }
+
+    if (params.returnType) {
+        xhr.responseType = params.returnType;
     }
 
     xhr.send(null);

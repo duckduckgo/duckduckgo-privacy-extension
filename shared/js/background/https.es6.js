@@ -2,6 +2,8 @@ const load = require('./load.es6')
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const constants = require('../../data/constants')
+const Dexie = require('dexie')
+const BloomFilter = require("jsbloom").filter;
 
 // chrome.storage.local can be unlimited, and
 // localStorage in Safari claims it can go up to 100MB,
@@ -15,10 +17,35 @@ const LOCAL_STORAGE_MAX_ITEM_LENGTH = 1000000
 
 let httpsUpgradeList = []
 
+class Timer {
+    constructor(name) {
+        this.name = name;
+    }
+
+    time(name) {
+        this[name] = Date.now();
+    }
+
+    timeEnd(name) {
+        this[name + 'End'] = Date.now();
+    }
+
+    done() {
+        let timeToAdd = this.addEnd - this.add;
+        let timeToGet = this.getEnd - this.get;
+
+        $("body").append(`<div>
+          <h2>${this.name}</h2>
+          <p>Time to add records: ${timeToAdd}ms</p>
+          <p>Time to get records: ${timeToGet}ms</p>
+        </div>`);
+    }
+}
+
 class HTTPS {
 
     constructor () {
-        this.init()
+        // this.init()
 
         return this
     }
@@ -44,6 +71,140 @@ class HTTPS {
             // and go to the server to pull an update:
             settings.ready().then(this.updateList.bind(this))
         })
+    }
+
+    getSites() {
+        let multiplier = this.multiplier || '';
+        let url = `data/contentblocking${multiplier}.json`;
+
+        return new Promise((resolve, reject) => {
+            load.loadExtensionFile({ url: url }, resolve);
+        });
+    }
+
+    getBloomBlob() {
+        let url = `data/https-bloom`;
+
+        return new Promise((resolve, reject) => {
+            load.loadExtensionFile({
+                url: url,
+                returnType: 'arraybuffer'
+            }, resolve);
+        });
+    }
+
+    loadListViaLocalStorage() {
+        const timer = new Timer("local storage");
+        return new Promise((resolve, reject) => {
+            this.getSites().then((list) => {
+                timer.time("add");
+                chrome.storage.local.set({ 'https-upgrade-list': list });
+                timer.timeEnd("add");
+
+                timer.time("get");
+                chrome.storage.local.get('https-upgrade-list', function (results) {
+                    timer.timeEnd("get");
+                    JSON.parse(results['https-upgrade-list']);
+
+                    timer.done();
+                    chrome.storage.local.clear();
+
+                    resolve();
+                });
+            });
+        });
+    }
+
+    loadListViaDexieAsTextBlob() {
+        const timer = new Timer("dexie as JSON text blob");
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_blob');
+            db.version(1).stores({
+                rules: '++id'
+            });
+
+            this.getSites().then((list) => {
+                timer.time("add");
+                return db.rules.put({ list: list });
+            }).then(() => {
+                timer.timeEnd("add");
+
+                timer.time("get")
+                return db.rules.get(1);
+            }).then((rules) => {
+                JSON.parse(rules.list);
+                timer.timeEnd("get")
+
+                timer.done();
+                return db.delete();
+            }).then(() => {
+
+                resolve();
+            });
+        });
+    }
+
+    loadListViaDexieAsObjectBlob() {
+        const timer = new Timer("dexie already parsed JSON object");
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_blob_' + this.multiplier);
+            db.version(1).stores({
+                rules: '++id'
+            });
+
+            this.getSites().then((list) => {
+                list = JSON.parse(list)
+
+                timer.time("add");
+                return db.rules.put({ list: list })
+            }).then(() => {
+                timer.timeEnd("add");
+
+                timer.time("get")
+                return db.rules.get(1);
+            }).then(() => {
+                timer.timeEnd("get")
+
+                timer.done();
+                return db.delete();
+            }).then(() => {
+                resolve();
+            });
+        });
+    }
+
+    loadAndParseBloomFilter() {
+        const timer = new Timer("dexie already parsed JSON object");
+        return new Promise((resolve, reject) => {
+            const db = new Dexie('https_bloom_' + this.multiplier);
+            db.version(1).stores({
+                rules: '++id'
+            });
+
+            this.getBloomBlob().then((arrayBuffer) => {
+                console.log("got it!");
+                console.time("loading filter");
+                // TODO the number here needs to be passed separately
+                this.bloom = new BloomFilter(1197749, 0.0001);
+                this.bloom.importData(new Uint8Array(arrayBuffer));
+                console.timeEnd("loading filter");
+
+                timer.time("add");
+                return db.rules.put({ buf: arrayBuffer })
+            }).then(() => {
+                timer.timeEnd("add");
+
+                timer.time("get")
+                return db.rules.get(1);
+            }).then(() => {
+                timer.timeEnd("get")
+
+                timer.done();
+                return db.delete();
+            }).then(() => {
+                resolve();
+            });
+        });
     }
 
     updateList() {
@@ -161,7 +322,7 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
-        return (httpsUpgradeList.indexOf(host) > -1) ? true : false
+        return this.bloom.checkEntry(host)
     }
 
     getUpgradeList () {

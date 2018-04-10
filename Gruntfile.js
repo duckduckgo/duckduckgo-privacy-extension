@@ -30,7 +30,8 @@ module.exports = function(grunt) {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
         },
         backgroundTest: {
-            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
+            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js'],
+            '<%= dirs.test %>/httpsPerf.js': ['<%= dirs.src.js %>/background/https.es6.js', '<%= dirs.test %>/httpsPerfHelper.js']
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
