@@ -39,6 +39,9 @@ $popup__height--moz: 600px;
 $hamburger-button__color: #afafaf;
 $hamburger-menu__bg-color: $slate;
 
+/* The ratings we give */
+$ratings: ("a", "b", "c", "d", "f");
+
 /* Cards */
 $card__bg-color: $white;
 $card__border-radius: 0;
@@ -60,67 +63,3 @@ $popover__border-radius: 3px;
 /* CSS Arrow */
 $arrow__bg-color: $white;
 $arrow__border-radius: 3px;
-
-/* Logo images */
-$img__logo--chrome: "chrome-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
-$img__logo--moz: "moz-extension://__MSG_@@extension_id__/img/logo-horizontal@2x.png";
-$img__logo--safari: "../../img/logo-horizontal@2x.png";
-
-/* Rating icons */
-$icon__rating__A--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
-$icon__rating__A--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-a@2x.png";
-$icon__rating__A--safari: "../../img/Grade-A-gray@2x.png";
-
-$icon__rating__B--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png";
-$icon__rating__B--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-b@2x.png";
-$icon__rating__B--safari: "../../img/Grade-B-gray@2x.png";
-
-$icon__rating__C--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png";
-$icon__rating__C--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-c@2x.png";
-$icon__rating__C--safari: "../../img/Grade-C-gray@2x.png";
-
-$icon__rating__D--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
-$icon__rating__D--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-d@2x.png";
-$icon__rating__D--safari: "../../img/Grade-D-gray@2x.png";
-
-$icon__rating__F--chrome: "chrome-extension://__MSG_@@extension_id__/img/toolbar-rating-f@2x.png";
-$icon__rating__F--moz: "moz-extension://__MSG_@@extension_id__/img/toolbar-rating-f@2x.png";
-$icon__rating__F--safari: "../../img/Grade-F-gray@2x.png";
-
-/* HTTPS status icons */
-$icon__https-status__locked--chrome: "chrome-extension://__MSG_@@extension_id__/img/https--on.svg";
-$icon__https-status__locked--moz: "moz-extension://__MSG_@@extension_id__/img/https--on.svg";
-$icon__https-status__locked--safari: "../../img/https--on.svg";
-
-$icon__https-status__unlocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/https--off.svg";
-$icon__https-status__unlocked--moz: "moz-extension://__MSG_@@extension_id__/img/https--off.svg";
-$icon__https-status__unlocked--safari: "../../img/https--off.svg";
-
-/* Tracker network status icons */
-$icon__trackers__blocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/blocking--on.svg";
-$icon__trackers__blocked--moz: "moz-extension://__MSG_@@extension_id__/img/blocking--on.svg";
-$icon__trackers__blocked--safari: "../../img/blocking--on.svg";
-
-$icon__trackers__unblocked--chrome: "chrome-extension://__MSG_@@extension_id__/img/blocking--off.svg";
-$icon__trackers__unblocked--moz: "moz-extension://__MSG_@@extension_id__/img/blocking--off.svg";
-$icon__trackers__unblocked--safari: "../../img/blocking--off.svg";
-
-/* Left carat/arrow icons */
-$icon__arrow--chrome: "chrome-extension://__MSG_@@extension_id__/img/arrow@2x.png";
-$icon__arrow--moz: "moz-extension://__MSG_@@extension_id__/img/arrow@2x.png";
-$icon__arrow--safari: "../../img/arrow@2x.png";
-
-/* Settings cog icon */
-$icon__settings--chrome: "chrome-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
-$icon__settings--moz: "moz-extension://__MSG_@@extension_id__/img/settings-gear@2x.png";
-$icon__settings--safari: "../../img/settings-gear@2x.png";
-
-/* Close modal "x" icon */
-$icon__close--chrome: "chrome-extension://__MSG_@@extension_id__/img/close.svg";
-$icon__close--moz: "moz-extension://__MSG_@@extension_id__/img/close.svg";
-$icon__close--safari: "../../img/close.svg";
-
-/* Error warning icon */
-$icon__error--chrome: "chrome-extension://__MSG_@@extension_id__/img/error.svg";
-$icon__error--moz: "moz-extension://__MSG_@@extension_id__/img/error.svg";
-$icon__error--safari: "../../img/error.svg";

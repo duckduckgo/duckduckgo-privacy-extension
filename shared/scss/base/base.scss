@@ -276,18 +276,7 @@ a {
         width: 14px;
         height: 14px;
 
-        .is-browser--chrome & {
-            background-image: url($icon__close--chrome);
-        }
-
-        .is-browser--moz & {
-            background-image: url($icon__close--moz);
-        }
-
-        .is-browser--safari & {
-            background-image: url($icon__close--safari);
-        }
-
+        @include cross_platform_bg_image("close.svg");
     }
 
     &.icon__arrow {
@@ -310,17 +299,7 @@ a {
         width: 16px;
         height: 16px;
 
-        .is-browser--chrome & {
-            background-image: url($icon__settings--chrome);
-        }
-
-        .is-browser--moz & {
-            background-image: url($icon__settings--moz);
-        }
-
-        .is-browser--safari & {
-            background-image: url($icon__settings--safari);
-        }
+        @include cross_platform_bg_image("settings-gear@2x.png");
     }
     
     &.icon__error {
