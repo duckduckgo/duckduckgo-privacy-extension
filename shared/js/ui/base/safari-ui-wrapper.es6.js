@@ -66,24 +66,14 @@ let backgroundMessage = (() => {
 
 let getBackgroundTabData = ((thisModel) => {
     return new Promise ((resolve) => {
+        let tab = safari.extension.globalPage.contentWindow.tabManager.getActiveTab()
         
-        let backgroundTabObj = JSON.parse(JSON.stringify(safari.extension.globalPage.contentWindow.tabManager.getActiveTab() || {}))
-        
-        if (backgroundTabObj && backgroundTabObj.site) {
-            thisModel.set('tab', backgroundTabObj)
-            thisModel.domain = backgroundTabObj.site.domain
-            thisModel.fetchSiteRating()
-            thisModel.set('tosdr', backgroundTabObj.site.score.tosdr)
-            thisModel.set('isaMajorTrackingNetwork',backgroundTabObj.site.score.isaMajorTrackingNetwork)
+        if (tab) {
+            let tabCopy = JSON.parse(JSON.stringify(tab))
+            resolve(tabCopy)
         } else {
-            thisModel.domain = ''
+            resolve()
         }
-
-        thisModel.setSiteProperties()
-        thisModel.setHttpsMessage()
-        thisModel.update()
-
-        resolve()
     })
 })
 

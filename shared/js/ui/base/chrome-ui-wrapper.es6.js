@@ -18,29 +18,10 @@ let backgroundMessage = (() => {
 let getBackgroundTabData = ((thisModel) => {
     return new Promise((resolve, reject) => {
         thisModel.fetch({getCurrentTab: true}).then((tab) => {
-            
             if (tab) {
                 thisModel.fetch({getTab: tab.id}).then((backgroundTabObj) => {
-                    
-                    if (backgroundTabObj) {
-                        thisModel.set('tab', backgroundTabObj)
-                        thisModel.domain = backgroundTabObj.site.domain
-                        thisModel.fetchSiteRating()
-                        thisModel.set('tosdr', backgroundTabObj.site.score.tosdr)
-                        thisModel.set(
-                            'isaMajorTrackingNetwork',
-                            backgroundTabObj.site.score.isaMajorTrackingNetwork
-                        )
-                    }
-                    
-                    thisModel.setSiteProperties()
-                    thisModel.setHttpsMessage()
-                    thisModel.update()
-                    resolve()
+                    resolve(backgroundTabObj)
                 })
-            } else {
-                console.debug('Site model: no tab')
-                resolve()
             }
         })
     })

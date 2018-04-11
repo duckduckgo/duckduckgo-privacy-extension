@@ -38,7 +38,25 @@ Site.prototype = window.$.extend({},
 
     getBackgroundTabData: function () {
         let thisModel = this
-        return browserUIWrapper.getBackgroundTabData(thisModel)
+        return new Promise ((resolve) => {
+            browserUIWrapper.getBackgroundTabData(thisModel).then((tab) => {
+                
+                if (tab) {
+                    this.set('tab', tab)
+                    this.domain = tab.site.domain
+                    this.fetchSiteRating()
+                    this.set('tosdr', tab.site.score.tosdr)
+                    this.set('isaMajorTrackingNetwork',tab.site.score.isaMajorTrackingNetwork)
+                } else {
+                    console.debug('Site model: no tab')
+                }
+                
+                this.setSiteProperties()
+                this.setHttpsMessage()
+                this.update()
+                resolve()
+            })
+        })
     },
 
     fetchSiteRating: function () {
