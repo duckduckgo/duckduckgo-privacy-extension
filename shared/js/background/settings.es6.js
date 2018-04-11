@@ -33,14 +33,7 @@ function buildSettingsFromLocalStorage() {
         browserWrapper.getFromStorage(['settings'], function(results){
             // copy over saved settings from storage
             if (!results) resolve()
-
-            if (window.safari) {
-                if (results) {
-                    Object.assign(settings, results)
-                }
-            } else {
-                Object.assign(settings, results['settings'])
-            }
+            settings = browserWrapper.mergeSavedSettings(settings, results)
             resolve()
         })
     })

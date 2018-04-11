@@ -29,6 +29,10 @@ let normalizeTabData = ((tabData) => {
     return tabData
 })
 
+let mergeSavedSettings = ((settings, results) => {
+    return Object.assign(settings, results)
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
@@ -36,5 +40,6 @@ module.exports = {
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage,
     notifyPopup: notifyPopup,
-    normalizeTabData: normalizeTabData
+    normalizeTabData: normalizeTabData,
+    mergeSavedSettings: mergeSavedSettings
 }

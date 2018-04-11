@@ -126,7 +126,7 @@ let onBeforeRequest = ((requestData) => {
 
     if (!(currentURL && potentialTracker)) return
        
-    let tabId = requestData.target.ddgTabId || browserWrapper.getTabId(requestData)
+    let tabId = requestData.target.ddgTabId || tabManager.getTabId(requestData)
     let thisTab = tabManager.get({tabId: tabId})
     requestData.tabId = tabId
 
@@ -136,6 +136,7 @@ let onBeforeRequest = ((requestData) => {
     if (thisTab && thisTab.url !== requestData.message.mainFrameURL) {
         tabManager.delete(tabId)
         thisTab = tabManager.create({
+            tabId: tabId,
             url: requestData.message.mainFrameURL,
             target: requestData.target
         })
@@ -143,6 +144,7 @@ let onBeforeRequest = ((requestData) => {
     }
 
     if (!(thisTab) && isMainFrame) {
+        requestData.url = requestData.message.mainFrameURL
         thisTab = tabManager.create(requestData)
         console.log('onBeforeRequest CREATED TAB:', thisTab)
     }
@@ -159,7 +161,7 @@ let onBeforeRequest = ((requestData) => {
 
 // update the popup when switching browser windows
 let onActivate = ((e) => {
-    let activeTab = browserWrapper.getActiveTab()
+    let activeTab = tabManager.getActiveTab()
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
@@ -230,7 +232,7 @@ var onBeforeNavigation = function (e) {
 
     const url = e.url
     const isMainFrame = true // always main frame in this handler
-    const tabId = browserWrapper.getTabId(e)
+    const tabId = tabManager.getTabId(e)
 
     let thisTab = tabId && tabManager.get({tabId: tabId})
 

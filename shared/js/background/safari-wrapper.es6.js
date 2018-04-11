@@ -101,6 +101,10 @@ let reloadTab = (() => {
     activeTab.url = activeTab.url
 })
 
+let mergeSavedSettings = ((settings, results) => {
+    return Object.assign(settings, results)
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
@@ -111,5 +115,6 @@ module.exports = {
     normalizeTabData: normalizeTabData,
     getTabId: getTabId,
     getActiveTab: getActiveTab,
-    reloadTab: reloadTab
+    reloadTab: reloadTab,
+    mergeSavedSettings: mergeSavedSettings,
 }

@@ -9,6 +9,34 @@ class TabManager {
     constructor() {
         this.tabContainer = {}
     };
+    
+    getTabId(e) {
+        if (e.target.ddgTabId) return e.target.ddgTabId    
+        for (let id in safari.application.activeBrowserWindow.tabs) {
+            if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
+                // prevent race conditions incase another events set a tabId
+                if (safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
+                    return safari.application.activeBrowserWindow.tabs[id].ddgTabId
+                }
+                    
+                let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
+                safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+                console.log(safari.application.activeBrowserWindow.tabs[id])
+                console.log(`Created Tab id: ${tabId}`)
+                return tabId
+            }
+        }
+    };
+
+    getActiveTab() {
+        let activeTab = safari.application.activeBrowserWindow.activeTab
+        if (activeTab.ddgTabId) {
+            return tabManager.get({tabId: activeTab.ddgTabId})
+        } else {
+            let id = tabManager.getTabId({target: activeTab})
+            return tabManager.get({tabId: id})
+        }   
+    };
 
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
