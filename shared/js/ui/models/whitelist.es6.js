@@ -1,4 +1,5 @@
 const index = require('../base/index.es6')
+// TODO tidy up Parent ref so above line isn't necessary
 const Parent = window.DDG.base.Model
 const tldjs = require('tldjs')
 

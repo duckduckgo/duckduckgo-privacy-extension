@@ -34,7 +34,6 @@ module.exports = function(grunt) {
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
-            // TODO uncomment this when we add some UI tests
             '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.src.js %>/ui/base/index.es6.js', '<%= dirs.unitTest.ui %>/**/*.js']
         },
         sass: {
