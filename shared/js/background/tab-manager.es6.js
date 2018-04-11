@@ -9,7 +9,11 @@ class TabManager {
     constructor() {
         this.tabContainer = {}
     };
-    
+
+    /* Get stashed tabId from native safari tabs. This needs to 
+     * be here for now. The popup can't access the tabId for
+     * some reason
+     */
     getTabId(e) {
         if (e.target.ddgTabId) return e.target.ddgTabId    
         for (let id in safari.application.activeBrowserWindow.tabs) {
@@ -28,6 +32,9 @@ class TabManager {
         }
     };
 
+    /* Get active safari tab. Needs to be here for the same reason as
+     * getTabId above
+     */
     getActiveTab() {
         let activeTab = safari.application.activeBrowserWindow.activeTab
         if (activeTab.ddgTabId) {
@@ -36,6 +43,12 @@ class TabManager {
             let id = tabManager.getTabId({target: activeTab})
             return tabManager.get({tabId: id})
         }   
+    };
+
+    // reload safari tab. Move this out later with the other safari methods
+    reloadTab() {
+        var activeTab = safari.application.activeBrowserWindow.activeTab
+        activeTab.url = activeTab.url
     };
 
     /* This overwrites the current tab data for a given
