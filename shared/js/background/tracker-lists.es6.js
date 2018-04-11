@@ -13,10 +13,8 @@ function setList (name, data) {
 function loadLists(){
     var listLocation = constants.trackerListLoc
     var blockLists = constants.blockLists
-    console.log("LOAD LISTS")
 
     blockLists.forEach( function(listName) {
-        console.log(`Load: ${listName}`)
 
         load.JSONfromLocalFile(listLocation + "/" + listName, (listJSON) => {
             console.log(`Loaded tracker list: ${listLocation}/${listName}`)
