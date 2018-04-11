@@ -50,9 +50,25 @@ let createBrowserTab = ((url) => {
     window.chrome.tabs.create({url: `${url}&bext=${window.localStorage['os']}cr`})
 })
 
+let getExtensionURL = ((path) => {
+    return chrome.extension.getURL(path)
+})
+
+let openOptionsPage = ((browser) => {
+    if (browser === 'moz') {
+        window.chrome.tabs.create({url: getExtensionURL('/html/options.html')})
+        window.close()
+    } 
+    else if (browser === 'chrome'){
+        window.chrome.runtime.openOptionsPage()
+    }
+})
+
 module.exports = {
     fetch: fetch,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
-    createBrowserTab: createBrowserTab
+    createBrowserTab: createBrowserTab,
+    openOptionsPage: openOptionsPage,
+    getExtensionURL: getExtensionURL
 }

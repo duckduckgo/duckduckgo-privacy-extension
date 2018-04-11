@@ -92,9 +92,21 @@ let createBrowserTab = ((url) => {
     safari.self.hide()
 })
 
+let getExtensionURL = ((path) => {
+    return safari.extension.baseURI + path
+})
+
+let openOptionsPage = (() => {
+    let tab = safari.application.activeBrowserWindow.openTab()
+    tab.url = getExtensionURL('html/options.html')
+    safari.self.hide()
+})
+
 module.exports = {
     fetch: fetch,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
-    createBrowserTab: createBrowserTab
+    createBrowserTab: createBrowserTab,
+    openOptionsPage: openOptionsPage,
+    getExtensionURL: getExtensionURL
 }

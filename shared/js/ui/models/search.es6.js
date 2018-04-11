@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.Model
-const browserWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Search (attrs) {
   Parent.call(this, attrs)
@@ -19,7 +19,7 @@ Search.prototype = window.$.extend({},
       
       let url = 'https://duckduckgo.com/?q=' + s
 
-      browserWrapper.createBrowserTab(url)
+      browserUIWrapper.createBrowserTab(url)
     }
   }
 )
