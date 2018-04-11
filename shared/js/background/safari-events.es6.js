@@ -90,9 +90,6 @@ let handleMessage = ((e) => {
     else if (e.name === 'whitelisted') {
         tabManager.whitelistDomain(e.message.whitelisted)
     }
-    else if (e.name === 'atb') {
-        ATB.setAtbValuesFromSuccessPage(e.message.atb)
-    }
 })
 
 let updateSetting = ((e) => {
