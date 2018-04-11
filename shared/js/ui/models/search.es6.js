@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.Model
+const browserWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Search (attrs) {
   Parent.call(this, attrs)
@@ -18,16 +19,8 @@ Search.prototype = window.$.extend({},
       
       let url = 'https://duckduckgo.com/?q=' + s
 
-      if (window.chrome) {
-          window.chrome.tabs.create({
-              url: `${url}&bext=${window.localStorage['os']}cr`
-          })
-      } else {
-          safari.application.activeBrowserWindow.openTab().url = `${url}&bext=safari`
-          safari.self.hide()
-      }
+      browserWrapper.createBrowserTab(url)
     }
-
   }
 )
 

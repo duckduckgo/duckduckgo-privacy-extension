@@ -46,8 +46,13 @@ let getBackgroundTabData = ((thisModel) => {
     })
 })
 
+let createBrowserTab = ((url) => {
+    window.chrome.tabs.create({url: `${url}&bext=${window.localStorage['os']}cr`})
+})
+
 module.exports = {
     fetch: fetch,
     backgroundMessage: backgroundMessage,
-    getBackgroundTabData: getBackgroundTabData
+    getBackgroundTabData: getBackgroundTabData,
+    createBrowserTab: createBrowserTab
 }

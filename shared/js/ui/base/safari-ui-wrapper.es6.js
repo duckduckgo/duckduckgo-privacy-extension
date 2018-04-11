@@ -87,8 +87,14 @@ let getBackgroundTabData = ((thisModel) => {
     })
 })
 
+let createBrowserTab = ((url) => {
+    safari.application.activeBrowserWindow.openTab().url = `${url}&bext=safari`
+    safari.self.hide()
+})
+
 module.exports = {
     fetch: fetch,
     backgroundMessage: backgroundMessage,
-    getBackgroundTabData: getBackgroundTabData
+    getBackgroundTabData: getBackgroundTabData,
+    createBrowserTab: createBrowserTab
 }
