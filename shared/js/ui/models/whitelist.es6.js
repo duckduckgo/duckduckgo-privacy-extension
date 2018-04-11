@@ -1,3 +1,4 @@
+const index = require('../base/index.es6')
 const Parent = window.DDG.base.Model
 const tldjs = require('tldjs')
 
