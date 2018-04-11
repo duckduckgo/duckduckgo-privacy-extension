@@ -90,7 +90,7 @@ class TabManager {
             }
         }
 
-        if (window.chrome) chrome.runtime.sendMessage({whitelistChanged: true});
+        browserWrapper.notifyPopup({whitelistChanged: true});
     }
 
     /* Update the whitelists kept in settings
