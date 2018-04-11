@@ -51,15 +51,15 @@ let fetch = ((message) => {
    })
 })
 
-let backgroundMessage = (() => {
+let backgroundMessage = ((thisModel) => {
     // listen for messages from background 
     safari.self.addEventListener("message", (req) => {
         if (req.whitelistChanged) {
             // notify subscribers that the whitelist has changed
-            this.set('whitelistChanged', true)
+            thisModel.set('whitelistChanged', true)
         }
         else if (req.updateTrackerCount) {
-            this.set('updateTrackerCount', true)
+            thisModel.set('updateTrackerCount', true)
         }
     })
 })

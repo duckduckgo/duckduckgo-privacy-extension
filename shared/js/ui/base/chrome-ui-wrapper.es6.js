@@ -4,13 +4,13 @@ let fetch = ((message) => {
     })
 })
 
-let backgroundMessage = (() => {
+let backgroundMessage = ((thisModel) => {
     // listen for messages from background and
     // // notify subscribers
     window.chrome.runtime.onMessage.addListener((req) => {
-        if (req.whitelistChanged) this.send('whitelistChanged')
-        if (req.updateTabData) this.send('updateTabData')
-        if (req.didResetTrackersData) this.send('didResetTrackersData', req.didResetTrackersData)
+        if (req.whitelistChanged) thisModel.send('whitelistChanged')
+        if (req.updateTabData) thisModel.send('updateTabData')
+        if (req.didResetTrackersData) thisModel.send('didResetTrackersData', req.didResetTrackersData)
         if (req.closePopup) window.close()
     })
 })

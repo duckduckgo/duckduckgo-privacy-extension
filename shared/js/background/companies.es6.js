@@ -86,7 +86,8 @@ var Companies = (() => {
             totalPagesWithTrackers = 0
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
-            browserWrapper.notifyPopup({'didResetTrackersData': Companies.getLastResetDate()})
+            let resetDate = Companies.getLastResetDate()
+            browserWrapper.notifyPopup({'didResetTrackersData': resetDate})
         },
 
         getLastResetDate: ()  => lastStatsResetDate,
