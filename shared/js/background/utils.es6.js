@@ -89,11 +89,8 @@ module.exports = {
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
     parseUserAgentString: parseUserAgentString,
     isChromeBrowser: isChromeBrowser,
-    syncToStorage: syncToStorage,
-    getFromStorage: getFromStorage,
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
-    setBadgeIcon: setBadgeIcon
 }

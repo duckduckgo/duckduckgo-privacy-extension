@@ -168,7 +168,7 @@ let onActivate = ((e) => {
     // and then go back to the new tab. new tab -> existing tab -> back to new tab.
     // reset the badge to default and reload the popup to get the correct new tab data
     else {
-        utils.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
+        browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
         safari.extension.popovers[0].contentWindow.location.reload()
     }
 })
@@ -202,7 +202,7 @@ let onNavigate = ((e) => {
 
     }
     else {
-        utils.setBadgeIcon('img/ddg-icon.png', e.target)
+        browserWrapper.setBadgeIcon('img/ddg-icon.png', e.target)
 
         // if we don't have a tab with this tabId then we are in a cached page
         // use the target url to find the correct cached tab obj
@@ -241,7 +241,7 @@ var onBeforeNavigation = function (e) {
         console.log('onBeforeNavigation DELETED TAB because url did not match')
     }
 
-    utils.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
+    browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
 }
 
 var onBeforeSearch = function (evt) {

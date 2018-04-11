@@ -1,6 +1,7 @@
 const load = require('./load.es6')
-const utils = require('./utils.es6')
 const defaultSettings = require('../../data/defaultSettings')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
+
 /**
  * Public api
  * Usage:
@@ -29,7 +30,7 @@ function ready () {
 
 function buildSettingsFromLocalStorage() {
     return new Promise ((resolve) => {
-        utils.getFromStorage(['settings'], function(results){
+        browserWrapper.getFromStorage(['settings'], function(results){
             // copy over saved settings from storage
             if (window.safari) {
                 if (results) {
@@ -49,7 +50,7 @@ function buildSettingsFromDefaults() {
 }
 
 function syncSettingTolocalStorage(){
-    utils.syncToStorage({'settings': settings});
+    browserWrapper.syncToStorage({'settings': settings});
 }
 
 function getSetting(name) {
@@ -91,7 +92,7 @@ function removeSetting (name) {
 }
 
 function logSettings () {
-    utils.getFromStorage(['settings'], function (s) {
+    browserWrapper.getFromStorage(['settings'], function (s) {
         console.log(s.settings)
     })
 }
