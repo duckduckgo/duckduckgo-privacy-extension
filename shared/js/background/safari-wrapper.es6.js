@@ -60,11 +60,56 @@ let notifyPopup = (() => {
     reloadPopup()
 })
 
+let normalizeTabData = ((tabData) => {
+    let url = tabData.message ? tabData.message.currentURL : tabData.url
+    let newTabData = {url: url, id: getTabId(tabData)}
+    newTabData.target = tabData.target
+    return newTabData
+})
+
+let getTabId = ((e) => {
+    if (e.target.ddgTabId) return e.target.ddgTabId
+    
+    for (let id in safari.application.activeBrowserWindow.tabs) {
+        if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
+            // prevent race conditions incase another events set a tabId
+            if (safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
+                return safari.application.activeBrowserWindow.tabs[id].ddgTabId
+            }
+
+            let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
+            safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+            console.log(safari.application.activeBrowserWindow.tabs[id])
+            console.log(`Created Tab id: ${tabId}`)
+            return tabId
+        }
+    }
+})
+
+let getActiveTab = (() => {
+    let activeTab = safari.application.activeBrowserWindow.activeTab
+    if (activeTab.ddgTabId) {
+        return tabManager.get({tabId: activeTab.ddgTabId})
+    } else {
+        let id = getTabId({target: activeTab})
+        return tabManager.get({tabId: id})
+    }   
+})
+
+let reloadTab = (() => {
+    var activeTab = safari.application.activeBrowserWindow.activeTab
+    activeTab.url = activeTab.url
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage,
-    notifyPopup: notifyPopup
+    notifyPopup: notifyPopup,
+    normalizeTabData: normalizeTabData,
+    getTabId: getTabId,
+    getActiveTab: getActiveTab,
+    reloadTab: reloadTab
 }

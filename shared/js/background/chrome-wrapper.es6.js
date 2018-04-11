@@ -25,11 +25,16 @@ let notifyPopup = ((message) => {
     chrome.runtime.sendMessage(message)
 })
 
+let normalizeTabData = ((tabData) => {
+    return tabData
+})
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage,
-    notifyPopup: notifyPopup
+    notifyPopup: notifyPopup,
+    normalizeTabData: normalizeTabData
 }

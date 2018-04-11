@@ -2,48 +2,13 @@ const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
 const utils = require('./utils.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 let browser = utils.parseUserAgentString()
 
 class TabManager {
     constructor() {
         this.tabContainer = {}
     };
-
-    /* Safari getActiveTab */
-    getActiveTab () {
-        let activeTab = safari.application.activeBrowserWindow.activeTab
-        if (activeTab.ddgTabId) {
-            return tabManager.get({tabId: activeTab.ddgTabId})
-        } else {
-            let id = tabManager.getTabId({target: activeTab})
-            return tabManager.get({tabId: id})
-        }   
-    }
-
-    /* Safari getTabId */
-    getTabId (e) {
-        if (e.target.ddgTabId) return e.target.ddgTabId
-
-        for (let id in safari.application.activeBrowserWindow.tabs) {
-            if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
-                // prevent race conditions incase another events set a tabId
-                if (safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
-                    return safari.application.activeBrowserWindow.tabs[id].ddgTabId
-                }
-
-                let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
-                safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
-                console.log(safari.application.activeBrowserWindow.tabs[id])
-                console.log(`Created Tab id: ${tabId}`)
-                return tabId
-            }
-        }
-    }
-
-    reloadTab() {
-        var activeTab = safari.application.activeBrowserWindow.activeTab
-        activeTab.url = activeTab.url
-    }
 
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
@@ -52,15 +17,8 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create(tabData) {
-        let newTab
-        if (browser.browser === 'Safari') {
-            let url = tabData.message ? tabData.message.currentURL : tabData.url
-            let newTabData = {url: url, id: tabManager.getTabId(tabData)}
-            newTabData.target = tabData.target
-            newTab = new Tab(newTabData)
-        } else {
-            newTab = new Tab(tabData)
-        }
+        let normalizedData = browserWrapper.normalizeTabData(tabData)
+        let newTab = new Tab(tabData)
         this.tabContainer[newTab.id] = newTab
         return newTab
     };

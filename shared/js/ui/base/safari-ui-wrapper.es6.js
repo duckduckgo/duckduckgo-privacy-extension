@@ -1,8 +1,37 @@
+let getTabId = ((e) => {
+    if (e.target.ddgTabId) return e.target.ddgTabId
+    
+    for (let id in safari.application.activeBrowserWindow.tabs) {
+        if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
+            // prevent race conditions incase another events set a tabId
+            if (safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
+                return safari.application.activeBrowserWindow.tabs[id].ddgTabId
+            }
+
+            let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
+            safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+            console.log(safari.application.activeBrowserWindow.tabs[id])
+            console.log(`Created Tab id: ${tabId}`)
+            return tabId
+        }
+    }
+})
+
+let getActiveTab = (() => {
+    let activeTab = safari.application.activeBrowserWindow.activeTab
+    if (activeTab.ddgTabId) {
+        return safari.extension.globalPage.contentWindow.tabManager.get({tabId: activeTab.ddgTabId})
+    } else {
+        let id = getTabId({target: activeTab})
+        return safari.extension.globalPage.contentWindow.tabManager.get({tabId: id})
+    }   
+})
+
 let fetch = ((message) => {
    return new Promise( (resolve, reject) => {
        console.log(`Safari Fetch: ${JSON.stringify(message)}`)
        if (message.getCurrentTab || message.getTab) {
-           resolve(safari.extension.globalPage.contentWindow.tabManager.getActiveTab())
+           resolve(getActiveTab())
        }
        else if (message.getTopBlocked) {
            resolve(safari.extension.globalPage.contentWindow.Companies.getTopBlocked(message.getTopBlocked))
@@ -66,7 +95,7 @@ let backgroundMessage = (() => {
 
 let getBackgroundTabData = ((thisModel) => {
     return new Promise ((resolve) => {
-        let tab = safari.extension.globalPage.contentWindow.tabManager.getActiveTab()
+        let tab = getActiveTab()
         
         if (tab) {
             let tabCopy = JSON.parse(JSON.stringify(tab))

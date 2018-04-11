@@ -126,7 +126,7 @@ let onBeforeRequest = ((requestData) => {
 
     if (!(currentURL && potentialTracker)) return
        
-    let tabId = requestData.target.ddgTabId || tabManager.getTabId(requestData)
+    let tabId = requestData.target.ddgTabId || browserWrapper.getTabId(requestData)
     let thisTab = tabManager.get({tabId: tabId})
     requestData.tabId = tabId
 
@@ -159,7 +159,7 @@ let onBeforeRequest = ((requestData) => {
 
 // update the popup when switching browser windows
 let onActivate = ((e) => {
-    let activeTab = tabManager.getActiveTab()
+    let activeTab = browserWrapper.getActiveTab()
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
@@ -230,7 +230,7 @@ var onBeforeNavigation = function (e) {
 
     const url = e.url
     const isMainFrame = true // always main frame in this handler
-    const tabId = tabManager.getTabId(e)
+    const tabId = browserWrapper.getTabId(e)
 
     let thisTab = tabId && tabManager.get({tabId: tabId})
 
@@ -273,7 +273,6 @@ var onBeforeSearch = function (evt) {
 
 let onClose = ((e) => {
     let tabId = e.target.ddgTabId
-    //let tabId = tabManager.getTabId(e)
     console.log(`Delete tab: ${tabId}`)
     if (tabId) tabManager.delete(tabId)
 })
