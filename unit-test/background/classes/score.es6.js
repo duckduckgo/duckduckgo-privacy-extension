@@ -5,13 +5,23 @@ const isaMajorNetworkTestCases = [
    {
       "specialPage": 0,
       "domain": "facebook.com",
+      "slicedDomain": ["facebook", "com"],
       "parent": "Facebook",
       "isZeroResult": 0,
       "descr": "a number greater than zero for Facebook (major network)" 
    },
    {
       "specialPage": 0,
+      "domain": "encrypted.google.com",
+      "slicedDomain": ["google", "com"],
+      "parent": "Google",
+      "isZeroResult": 0,
+      "descr": "a number greater than zero for Google (major network)" 
+   },
+   {
+      "specialPage": 0,
       "domain": "",
+      "slicedDomain": [],
       "parent": "",
       "isZeroResult": 1,
       "descr": "zero, because we have no domain"
@@ -19,6 +29,7 @@ const isaMajorNetworkTestCases = [
    {
       "specialPage": 1,
       "domain": "",
+      "slicedDomain": [],
       "parent": "",
       "isZeroResult": 1,
       "descr": "zero, because it's a special page" 
@@ -26,6 +37,7 @@ const isaMajorNetworkTestCases = [
    {
       "specialPage": 0,
       "domain": "duckduckgo.com",
+      "slicedDomain": ["duckduckgo", "com"],
       "parent": "",
       "isZeroResult": 1,
       "descr": "zero, because of no major network parent"
@@ -37,6 +49,11 @@ const tosdrTestCases = [
         "domain": "google.com",
         "isMessageBad": 1,
         "descr": "bad tosdr rating for google.com"
+    },
+    {
+        "domain": "encrypted.google.com",
+        "isMessageBad": 1,
+        "descr": "bad tosdr rating for encrypted.google.com (match domain)"
     },
     {
         "domain": "youtube.com",
@@ -85,8 +102,7 @@ describe('isaMajorNetwork', () => {
             score = new Score(test.specialPage, test.domain)
  
             if (test.parent) {
-                let slicedDomain = test.domain.split('.')
-                expect(utils.findParent).toHaveBeenCalledWith(slicedDomain)
+                expect(utils.findParent).toHaveBeenCalledWith(test.slicedDomain)
             }
 
             let result = score.isaMajorTrackingNetwork
