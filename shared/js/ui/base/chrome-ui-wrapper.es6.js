@@ -64,11 +64,17 @@ let openOptionsPage = ((browser) => {
     }
 })
 
+let getExtensionVersion = (() => {
+    const manifest = window.chrome && chrome.runtime.getManifest()
+    return manifest.version
+})
+
 module.exports = {
     fetch: fetch,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
-    getExtensionURL: getExtensionURL
+    getExtensionURL: getExtensionURL,
+    getExtensionVersion: getExtensionVersion
 }

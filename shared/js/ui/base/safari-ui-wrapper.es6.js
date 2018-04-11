@@ -102,11 +102,16 @@ let openOptionsPage = (() => {
     safari.self.hide()
 })
 
+let getExtensionVersion = (() => {
+    return safari.extension.displayVersion
+})
+
 module.exports = {
     fetch: fetch,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
-    getExtensionURL: getExtensionURL
+    getExtensionURL: getExtensionURL,
+    getExtensionVersion: getExtensionVersion
 }
