@@ -282,6 +282,9 @@ let onClose = ((e) => {
 // update blocking lists on interval
 setInterval(abpLists.updateLists, 30*60*1000)
 
+// event listeners
+// true for event capture. Deciding to enable capture was mostly trial/error.
+// https://developer.apple.com/library/content/documentation/Tools/Conceptual/SafariExtensionGuide/WorkingwithWindowsandTabs/WorkingwithWindowsandTabs.html
 safari.application.addEventListener("activate", onActivate, true)
 safari.application.addEventListener("message", handleMessage, true)
 safari.application.addEventListener("beforeNavigate", onBeforeNavigation, true)
