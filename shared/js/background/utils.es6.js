@@ -40,14 +40,6 @@ function isChromeBrowser () {
     return false
 }
 
-function syncToStorage (data){
-    browserWrapper.syncToStorage(data)
-}
-
-function getFromStorage (key, callback) {
-    browserWrapper.getFromStorage(key, callback)
-}
-
 function getCurrentURL(callback){
     chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
         if(tabData.length){
@@ -78,10 +70,6 @@ try {
 
 function getBrowserName() {
     return browser
-}
-
-function setBadgeIcon (path, target) {
-    browserWrapper.setBadgeIcon(path, target)
 }
 
 module.exports = {
