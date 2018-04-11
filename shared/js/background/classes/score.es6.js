@@ -15,7 +15,7 @@ class Score {
         this.inMajorTrackingNetwork = false
         this.totalBlocked = 0
         this.hasObscureTracker = false
-        this.domain = domain
+        this.domain = tldjs.getDomain(domain) // strip the subdomain. Fixes matching tosdr for eg encrypted.google.com
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
     }
