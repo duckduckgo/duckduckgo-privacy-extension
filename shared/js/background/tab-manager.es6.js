@@ -11,8 +11,9 @@ class TabManager {
     };
 
     /* Get stashed tabId from native safari tabs. This needs to 
-     * be here for now. The popup can't access the tabId for
-     * some reason
+     * be here for now. For some reason moving this to the ui 
+     * seems to give us a copy of the native tabs without our
+     * stashed tab ids. 
      */
     getTabId(e) {
         if (e.target.ddgTabId) return e.target.ddgTabId    
