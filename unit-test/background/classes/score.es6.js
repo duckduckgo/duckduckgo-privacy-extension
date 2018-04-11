@@ -41,6 +41,14 @@ const isaMajorNetworkTestCases = [
       "parent": "",
       "isZeroResult": 1,
       "descr": "zero, because of no major network parent"
+   },
+   {
+      "specialPage": 0,
+      "domain": "bttf.duckduckgo.com",
+      "slicedDomain": ["duckduckgo", "com"],
+      "parent": "",
+      "isZeroResult": 1,
+      "descr": "zero, because of no major network parent"
    }
 ]
 
@@ -64,6 +72,11 @@ const tosdrTestCases = [
         "domain": "duckduckgo.com",
         "isMessageBad": 0,
         "descr": "good tosdr rating for duckduckgo.com"
+    },
+    {
+        "domain": "bttf.duckduckgo.com",
+        "isMessageBad": 0,
+        "descr": "good tosdr rating for bttf.duckduckgo.com"
     },
     {
         "domain": "deletefacebook.com",
