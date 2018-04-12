@@ -55,7 +55,7 @@ var _ = require('underscore');
 let reload = (() => {
     safari.extension.popovers[0].contentWindow.location.reload()
 })
-let reloadPopup = _.debounce(reload, 200)
+let reloadPopup = _.debounce(reload, 400)
 let notifyPopup = ((message) => {
     // don't notify whitelist changes. It messes with the popup reloading
     if (message && message.whitelistChanged) return
