@@ -60,7 +60,7 @@ class TabManager {
      */
     create(tabData) {
         let normalizedData = browserWrapper.normalizeTabData(tabData)
-        let newTab = new Tab(tabData)
+        let newTab = new Tab(normalizedData)
         this.tabContainer[newTab.id] = newTab
         return newTab
     };

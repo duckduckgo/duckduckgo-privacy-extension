@@ -64,6 +64,9 @@ let onStartup = (() => {
         // reactive the previous tab
         safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
     }
+
+    // reload popup 
+    browserWrapper.notifyPopup()
 })
 
 const redirect = require('./redirect.es6')

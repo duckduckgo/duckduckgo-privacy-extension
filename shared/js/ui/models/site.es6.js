@@ -37,9 +37,8 @@ Site.prototype = window.$.extend({},
     modelName: 'site',
 
     getBackgroundTabData: function () {
-        let thisModel = this
         return new Promise ((resolve) => {
-            browserUIWrapper.getBackgroundTabData(thisModel).then((tab) => {
+            browserUIWrapper.getBackgroundTabData().then((tab) => {
                 
                 if (tab) {
                     this.set('tab', tab)
