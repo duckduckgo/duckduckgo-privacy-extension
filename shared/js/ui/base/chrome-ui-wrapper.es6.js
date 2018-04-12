@@ -15,11 +15,11 @@ let backgroundMessage = ((thisModel) => {
     })
 })
 
-let getBackgroundTabData = ((thisModel) => {
+let getBackgroundTabData = (() => {
     return new Promise((resolve, reject) => {
-        thisModel.fetch({getCurrentTab: true}).then((tab) => {
+        fetch({getCurrentTab: true}).then((tab) => {
             if (tab) {
-                thisModel.fetch({getTab: tab.id}).then((backgroundTabObj) => {
+                fetch({getTab: tab.id}).then((backgroundTabObj) => {
                     resolve(backgroundTabObj)
                 })
             }

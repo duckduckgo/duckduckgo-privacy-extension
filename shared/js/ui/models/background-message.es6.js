@@ -21,8 +21,7 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
  */
 function BackgroundMessage (attrs) {
   Parent.call(this, attrs)
-  let thisModel = this
-  browserUIWrapper.backgroundMessage(thisModel)
+  browserUIWrapper.backgroundMessage()
 }
 
 BackgroundMessage.prototype = window.$.extend({},

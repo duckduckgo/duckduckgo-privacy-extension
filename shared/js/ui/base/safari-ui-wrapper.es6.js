@@ -64,7 +64,7 @@ let backgroundMessage = ((thisModel) => {
     })
 })
 
-let getBackgroundTabData = ((thisModel) => {
+let getBackgroundTabData = (() => {
     return new Promise ((resolve) => {
         let tab = safari.extension.globalPage.contentWindow.tabManager.getActiveTab()
         
