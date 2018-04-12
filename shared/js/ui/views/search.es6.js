@@ -32,6 +32,7 @@ Search.prototype = window.$.extend({},
     },
 
     _handleSubmit: function (e) {
+      e.preventDefault()
       console.log(`Search submit for ${this.$input.val()}`)
       this.model.doSearch(this.$input.val())
       window.close()
@@ -39,11 +40,7 @@ Search.prototype = window.$.extend({},
 
     _handleBurgerClick: function (e) {
       e.preventDefault()
-      if (window.safari && this.model.searchText) {
-          this._handleSubmit(e)
-      } else {
-          this.model.send('burgerClick')
-      }
+      this.model.send('burgerClick')
     }
   }
 )
