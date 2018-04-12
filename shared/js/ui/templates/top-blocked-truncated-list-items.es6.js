@@ -7,7 +7,7 @@ module.exports = function (companyListMap) {
     return bel`<li class="top-blocked__li top-blocked__li--truncated">
       <div class="top-blocked__pill">
         <div class="top-blocked__pill-site__icon-container">
-          <div class="top-blocked__pill-site__icon ${getScssTrackerName(data.name.toLowerCase())}"></div>
+          <div class="top-blocked__pill-site__icon ${getScssClass(data.normalizedName)}"></div>
         </div>
         <div class="top-blocked__pill__divider"></div>
         <div class="top-blocked__pill__blocker-pct js-top-blocked-pct">
@@ -17,11 +17,11 @@ module.exports = function (companyListMap) {
     </li>`
   })
 
-  function getScssTrackerName (trackerName) {
+  function getScssClass (companyName) {
     var genericName = 'generic'
-
-    if (majorTrackingNetworks[trackerName]) {
-      return trackerName
+ 
+    if (majorTrackingNetworks[companyName]) {
+      return companyName
     } else {
       return genericName
     }
