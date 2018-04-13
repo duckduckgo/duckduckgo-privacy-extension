@@ -19,8 +19,9 @@ module.exports = function (companyListMap) {
 
   function getScssClass (companyName) {
     var genericName = 'generic'
- 
-    if (majorTrackingNetworks[companyName]) {
+
+    // TODO: remove Oath special case when we have an icon for it 
+    if ((companyName !== 'oath') && majorTrackingNetworks[companyName]) {
       return companyName
     } else {
       return genericName
