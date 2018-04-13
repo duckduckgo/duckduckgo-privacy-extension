@@ -1,10 +1,11 @@
+const tldjs = require('tldjs')
 const tosdr = require('../../../data/tosdr')
 const constants = require('../../../data/constants')
-const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
+const utils = require('../utils.es6')
+const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${tldjs.getDomain(x)}`)) // only match domains, and from the start of the URL
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
-const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
 
 class Score {
 
@@ -14,7 +15,7 @@ class Score {
         this.inMajorTrackingNetwork = false
         this.totalBlocked = 0
         this.hasObscureTracker = false
-        this.domain = domain
+        this.domain = tldjs.getDomain(domain) // strip the subdomain. Fixes matching tosdr for eg encrypted.google.com
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
     }
@@ -73,14 +74,13 @@ class Score {
      */
     isaMajorTrackingNetwork() {
         let result = 0
-        pagesSeenOnRegexList.some(network => {
-            let match = network.exec(this.domain)
-            if (match) {
-                // remove period at end for lookup in pagesSeenOn
-                let name = match[0].slice(0,-1)
-                return result = Math.ceil(pagesSeenOn[name] / 10)
-            }
-        })
+        if (this.specialPage || !this.domain) return result
+        const parentCompany = utils.findParent(this.domain.split('.'))
+        if (!parentCompany) return result
+        const isMajorNetwork = pagesSeenOn[parentCompany.toLowerCase()]
+        if (isMajorNetwork) {
+            result = Math.ceil(isMajorNetwork / 10)
+        }
         return result
     }
 
