@@ -10,6 +10,10 @@ const findParentTestCases = [
            "parent": "Google"
    },
    {
+           "url": "encrypted.google.com",
+           "parent": "Google"
+   },
+   {
            "url": "duckduckgo.com",
            "parent": "undefined"
    }
