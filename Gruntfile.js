@@ -100,8 +100,7 @@ module.exports = function(grunt) {
         browserify: {
             options: {
                 browserifyOptions: {
-                    debug: buildType === 'dev',
-                    fullPaths: true
+                    debug: buildType === 'dev'
                 }
             },
             ui: {
