@@ -119,14 +119,20 @@ exports.getRequests = async function(urlArray, opts) {
                 continue
             }
 
+            numSitesChecked++;
+
             // the JSON we get back from the test page is wrapped in an array
             // so unwrap it
             let jsonObj = JSON.parse(jsonText);
             let noArrayJson = JSON.stringify(jsonObj[0]);
 
+            if (!jsonObj[0].requests || !jsonObj[0].requests.length) {
+                log(chalk.red(`Failed to get requests for '${path}'`));
+                continue
+            }
+
             fs.writeFileSync(filePath, noArrayJson, 'utf8');
 
-            numSitesChecked++;
         }
 
 
