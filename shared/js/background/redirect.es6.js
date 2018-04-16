@@ -51,6 +51,11 @@ function handleRequest(requestData) {
          */
         if (!(thisTab && thisTab.url && thisTab.id)) return
 
+        // debug mode, only switched on for testing
+        if (settings.getSetting('dumpRequests')) {
+            thisTab.site.addRequest([requestData.url, requestData.type])
+        }
+
         /**
          * skip any broken sites
          */
@@ -66,11 +71,6 @@ function handleRequest(requestData) {
          * If request is a tracker, cancel the request
          */
         chrome.runtime.sendMessage({'updateTabData': true})
-
-        // debug mode, only switched on for testing
-        if (settings.getSetting('dumpRequests')) {
-            thisTab.site.addRequest([requestData.url, requestData.type])
-        }
 
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData);
 
