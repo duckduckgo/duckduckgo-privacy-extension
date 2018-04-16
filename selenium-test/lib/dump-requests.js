@@ -23,15 +23,20 @@ let EXT_ID,
 promise.USE_PROMISE_MANAGER = false;
 
 // PRIVATE
-async function _init () {
-    if (INITIALIZED) return;
 
+async function _buildDriver() {
     // https://seleniumhq.github.io/selenium/docs/api/javascript/
     // https://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/index_exports_Builder.html
     WD = await new Builder()
-    .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().addArguments("load-extension=" + process.cwd() + "/build/chrome/dev"))
-    .build();
+        .forBrowser('chrome')
+        .setChromeOptions(new chrome.Options().addArguments("load-extension=" + process.cwd() + "/build/chrome/dev"))
+        .build();
+}
+
+async function _init () {
+    if (INITIALIZED) return;
+
+    await _buildDriver();
 
     log(chalk.green.bold(`Requesting: ${EXTENSIONS_URL}`));
     await WD.get(EXTENSIONS_URL);
@@ -53,8 +58,13 @@ async function _testUrl(_path) {
     return jsonData.getText();
 }
 
-function _teardown () {
-    return WD.quit();
+async function _teardown () {
+    await WD.quit();
+}
+
+async function _rebuild() {
+    await _teardown();
+    await _buildDriver();
 }
 
 exports.getRequests = async function(urlArray, opts) {
@@ -68,9 +78,17 @@ exports.getRequests = async function(urlArray, opts) {
 
         console.log(`Testing with ${TEST_URL}`)
 
-        // for loop forces synchronous execution
+        let numSitesChecked = 0;
+
         for (let path of urlArray) {
             if (path == '') continue;
+
+            // rebuild driver every 100 checks
+            if (numSitesChecked > 100) {
+                await _rebuild();
+                console.log("refreshing driver");
+                numSitesChecked = 0;
+            }
 
             let filePath = `${outputDir}/${path}.json`;
             let fileExists;
@@ -107,6 +125,8 @@ exports.getRequests = async function(urlArray, opts) {
             let noArrayJson = JSON.stringify(jsonObj[0]);
 
             fs.writeFileSync(filePath, noArrayJson, 'utf8');
+
+            numSitesChecked++;
         }
 
 
