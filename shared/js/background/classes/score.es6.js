@@ -174,7 +174,7 @@ class Score {
             let diff = 0 - beforeIndex
             beforeIndex = 0
             this.addDecision({
-                change: trackerPenalty,
+                change: diff,
                 index: beforeIndex,
                 why: `Don't allow negative score`
             })
