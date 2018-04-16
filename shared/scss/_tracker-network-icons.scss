@@ -6,27 +6,17 @@ $subview-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "char
 
     @each $name in $icons {
         &.#{$name} {
-            .is-browser--chrome & {
-                background-image: url("chrome-extension://__MSG_@@extension_id__/img/tn-#{$name}.svg");
-            }
-            .is-browser--moz & {
-                background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-#{$name}.svg");
-            }
+            @include cross_platform_bg_image("tn-#{$name}.svg");
         }
     }
 }
 
 @mixin tracker_network_icons_subview () {
-    
+
     @each $name in $subview-icons {
         &.#{$name} {
             // trackers subview
-            .is-browser--chrome & {
-                background-image: url("chrome-extension://__MSG_@@extension_id__/img/tn-subview-#{$name}.svg");
-            }
-            .is-browser--moz & {
-                background-image: url("moz-extension://__MSG_@@extension_id__/img/tn-subview-#{$name}.svg");
-            }
+            @include cross_platform_bg_image("tn-subview-#{$name}.svg");
         }
     }
 }

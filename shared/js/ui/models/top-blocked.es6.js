@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.Model
+const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
 function TopBlocked (attrs) {
   attrs = attrs || {}
@@ -12,6 +13,7 @@ function TopBlocked (attrs) {
 
 TopBlocked.prototype = window.$.extend({},
   Parent.prototype,
+  normalizeCompanyName,
   {
 
     modelName: 'topBlocked',
@@ -26,6 +28,7 @@ TopBlocked.prototype = window.$.extend({},
             this.companyListMap = this.companyList.map((company) => {
               return {
                 name: company.name,
+                normalizedName: this.normalizeCompanyName(company.name),
                 percent: company.percent,
                 // calc graph bars using pixels instead of % to
                 // make margins easier
