@@ -146,7 +146,7 @@ describe('getTosdr', () => {
     })
 });
 
-// piggy back on the existing grade scores, and make sure decisions are updated properly
+// piggy back on the existing grade score test cases, and make sure decisions are kept track of properly
 describe('decisions', () => {
     // re-use instance of the score class so we can validate grades are
     // getting cleared between invocations of get()
