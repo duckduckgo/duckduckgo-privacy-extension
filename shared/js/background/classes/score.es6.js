@@ -145,7 +145,7 @@ class Score {
             beforeIndex++
             this.addDecision({ change: 1, index: beforeIndex, why: `In major tracking network` })
         } else {
-            this.addDecision({ change: 1, index: beforeIndex, why: `Not in major tracking network` })
+            this.addDecision({ change: 0, index: beforeIndex, why: `Not in major tracking network` })
         }
 
         if (!this.hasHTTPS) {
