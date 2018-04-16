@@ -14,6 +14,7 @@ $(document).ready(function() {
 
                 return Promise.resolve()
             })
+            .then(waitForEntityListToLoad)
             .then(waitForHTTPSToLoad)
             .then(runTest(PARAMS.url)
             .then(() => {
@@ -25,6 +26,21 @@ $(document).ready(function() {
         return;
     }
 });
+
+function waitForEntityListToLoad() {
+    return new Promise((resolve) => {
+        let list = bkg.trackers.getEntityList()
+
+        if (list && list.length) {
+            resolve();
+        } else {
+            setTimeout(() => {
+                waitForEntityListToLoad().then(resolve);
+            }, 1000);
+        }
+
+    });
+}
 
 function waitForHTTPSToLoad() {
     return new Promise((resolve) => {
