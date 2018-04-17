@@ -127,7 +127,7 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     }
 
     if(req.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb)
+        ATB.setAtbValuesFromSuccessPage(req.atb)
     }
 
     // popup will ask for the browser type then it is created
