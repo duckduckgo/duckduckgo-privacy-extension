@@ -162,6 +162,8 @@ var ATB = (() => {
             const regExpPostInstall = /duckduckgo\.com\/app/
             const regExpSoftwarePage = /duckduckgo\.com\/software/
 
+            if (!(domain && settings)) return false
+
             return !settings.getSetting('hasSeenPostInstall')
                 && !domain.match(regExpPostInstall)
                 && !domain.match(regExpSoftwarePage);
