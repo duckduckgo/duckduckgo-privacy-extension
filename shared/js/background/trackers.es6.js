@@ -14,7 +14,7 @@ let entityList
 
 function loadLists () {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
-})
+}
 
 /*
  * The main parts of the isTracker algo looks like this:
