@@ -4,11 +4,14 @@ const tldjs = require('tldjs')
 const load = require('./load.es6')
 const settings = require('./settings.es6')
 const surrogates = require('./surrogates.es6')
-const trackerLists = require('./tracker-lists.es6').getLists()
+// const trackerLists = require('./tracker-lists.es6').getLists()
 const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
+const trackerLists = {
+    trackersWithParentCompany: require('../../data/tracker_lists/trackersWithParentCompany')
+}
 
 let entityList
 
@@ -284,6 +287,11 @@ function checkABPParsedList(list, url, siteDomain, request) {
     return match
 }
 
+function getEntityList() {
+    return entityList
+}
+
 module.exports = {
-    isTracker: isTracker
+    isTracker: isTracker,
+    getEntityList: getEntityList
 }

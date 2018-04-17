@@ -145,3 +145,33 @@ describe('getTosdr', () => {
         })
     })
 });
+
+// piggy back on the existing grade score test cases, and make sure decisions are kept track of properly
+describe('decisions', () => {
+    // re-use instance of the score class so we can validate grades are
+    // getting cleared between invocations of get()
+    score = new Score()
+    gradeTestCases.forEach((test) => {
+        it(`should get decisions correctly for case: ${test.grade}`, () => {
+            Object.keys(test.values).forEach((prop) => {
+                score[prop] = test.values[prop]
+            })
+
+            let result = score.get()
+
+            let decisions = score.decisions
+            let currentIndex = 0
+
+            expect(decisions instanceof Array).toBeTruthy()
+            decisions.forEach((decision) => {
+                expect(typeof decision.why).toBe('string', 'every decision should have a reason')
+                expect(decision.grade).toMatch(/^[A-F]$/,'every decision should include the grade')
+
+                currentIndex += decision.change
+                expect(currentIndex).toEqual(decision.index,'the decision index should match what the change says')
+            })
+
+            expect(currentIndex).toEqual(result.beforeIndex,'all the changes in the decisions should match the final score reported')
+        })
+    })
+})

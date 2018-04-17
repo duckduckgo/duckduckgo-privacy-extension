@@ -5,6 +5,7 @@ const surrogates = require('./surrogates.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
+const settings = require('./settings.es6')
 
 var debugRequest = false
 
@@ -49,6 +50,11 @@ function handleRequest(requestData) {
          * we got the webrequest event
          */
         if (!(thisTab && thisTab.url && thisTab.id)) return
+
+        // debug mode, only switched on for testing
+        if (settings.getSetting('dumpRequests')) {
+            thisTab.site.addRequest([requestData.url, requestData.type])
+        }
 
         /**
          * skip any broken sites

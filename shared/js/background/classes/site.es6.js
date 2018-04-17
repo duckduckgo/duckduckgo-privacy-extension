@@ -20,13 +20,13 @@ class Site {
         this.score = new Score(this.specialDomain(), this.domain);
         this.whitelisted = false; // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain);
+        this.requests = []
         this.isBroken = this.checkBrokenSites(domain); // broken sites reported to github repo
         this.didIncrementCompaniesData = false;
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
         this.isSpecialDomain = this.specialDomain()
-
     }
 
     /*
@@ -72,6 +72,10 @@ class Site {
             this.trackerUrls.push(tracker.url)
             this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
         }
+    }
+
+    addRequest (request) {
+        this.requests.push(request)
     }
 
     /*
