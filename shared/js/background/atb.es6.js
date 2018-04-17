@@ -166,7 +166,7 @@ var ATB = (() => {
 
             return !settings.getSetting('hasSeenPostInstall')
                 && !domain.match(regExpPostInstall)
-                && !domain.match(regExpSoftwarePage);
+                && !domain.match(regExpSoftwarePage)
         },
 
         migrate: () => {
