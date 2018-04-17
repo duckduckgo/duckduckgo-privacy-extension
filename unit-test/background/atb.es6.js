@@ -17,14 +17,14 @@ const canShowAtbCases = [
     }
 ]
 
-describe('atb._canShowPostInstall()', () => {
+describe('atb.canShowPostInstall()', () => {
     canShowAtbCases.forEach((test) => {
         it(`should return ${test.result} when the domain is: '${test.domain}'`, () => {
 
             // ensure settings.getSettings('hasSeenPostInstall') == false
             spyOn(settings, 'getSetting').and.returnValue(false);
 
-            const result = atb._canShowPostInstall(test.domain);
+            const result = atb.canShowPostInstall(test.domain);
             expect(result).toBe(test.result)
         })
     })
