@@ -100,7 +100,7 @@ var ATB = (() => {
                 epoch = isDST ? estEpoch - oneHour : estEpoch,
                 timeSinceEpoch = new Date().getTime() - epoch,
                 majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)        
+                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
             return {'major': majorVersion, 'minor': minorVersion}
         },
 
