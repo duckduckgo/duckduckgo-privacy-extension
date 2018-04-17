@@ -26,7 +26,7 @@ describe('atb.canShowPostInstall()', () => {
             // ensure settings.getSettings('hasSeenPostInstall') == false
             spyOn(settings, 'getSetting').and.returnValue(false)
 
-            const result = atb.canShowPostInstall(test.domain);
+            const result = atb.canShowPostInstall(test.domain)
             expect(result).toBe(test.result)
         })
     })
