@@ -47,8 +47,8 @@ var ATB = (() => {
         },
 
         redirectURL: (request) => {
-            if(request.url.search(ddgRegex) !== -1){
-                
+            if(request.url.search(regExpAboutPage) !== -1){
+
                 if(request.url.indexOf('atb=') !== -1){
                     return
                 }
