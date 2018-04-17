@@ -59,9 +59,8 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
         borderClass = companyListMap.length > 1 ? 'border--top' : ''
       }
       return bel`<li class="${borderClass}">
-        <div class="site-info__tracker__wrapper ${c.name.toLowerCase()} float-right">
-          <span class="site-info__tracker__icon
-            ${c.name.toLowerCase()}">
+        <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
+          <span class="site-info__tracker__icon ${c.normalizedName}">
           </span>
         </div>
         <h1 class="site-info__domain block">${c.name}</h1>

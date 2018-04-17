@@ -1,5 +1,6 @@
 const DOMAIN_MAPPINGS = require('./../../../data/tracker_lists/trackersWithParentCompany.json').TopTrackerDomains
 const Parent = window.DDG.base.Model
+const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
 function SiteCompanyList (attrs) {
   attrs = attrs || {}
@@ -11,6 +12,7 @@ function SiteCompanyList (attrs) {
 
 SiteCompanyList.prototype = window.$.extend({},
   Parent.prototype,
+  normalizeCompanyName,
   {
 
     modelName: 'siteCompanyList',
@@ -54,6 +56,7 @@ SiteCompanyList.prototype = window.$.extend({},
           // max width: 300 - (horizontal padding in css) = 260
           return {
             name: companyName,
+            normalizedName: this.normalizeCompanyName(companyName),
             count: this._setCount(company, companyName, urlsList),
             urls: company.urls,
             urlsList: urlsList
@@ -75,6 +78,7 @@ SiteCompanyList.prototype = window.$.extend({},
        const unblockedTrackers = this.spliceUnblockedTrackers(company, urlsList)
        return {
          name: this.domain,
+         iconName: '', // we won't have an icon for unknown first party trackers
          count: -2,
          urls: unblockedTrackers,
          urlsList: Object.keys(unblockedTrackers)
