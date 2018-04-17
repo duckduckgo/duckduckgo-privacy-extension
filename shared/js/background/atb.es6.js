@@ -4,8 +4,8 @@ const utils = require('./utils.es6')
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
-    var ddgRegex = new RegExp(/^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/)
-    var ddgAtbURL = 'https://duckduckgo.com/atb.js?'
+    const regExpAboutPage = /^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
         updateSetAtb: () => {
