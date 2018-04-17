@@ -146,13 +146,9 @@ var ATB = (() => {
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
             settings.ready().then( () => {
-                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
+                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                    const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
-                    const regExpSoftwarePage = new RegExp('duckduckgo\.com\/software')
-                    if ((!settings.getSetting('hasSeenPostInstall'))
-                        && (!domain.match(regExpPostInstall))
-                        && (!domain.match(regExpSoftwarePage))) {
+                    if (this._canShowPostInstall(domain)) {
                             settings.updateSetting('hasSeenPostInstall', true)
                             chrome.tabs.create({
                                 url: 'https://duckduckgo.com/app?post=1'
@@ -160,6 +156,15 @@ var ATB = (() => {
                     }
                 })
             })
+        },
+
+        _canShowPostInstall: (domain) => {
+            const regExpPostInstall = /duckduckgo\.com\/app/
+            const regExpSoftwarePage = /duckduckgo\.com\/software/
+
+            return !settings.getSetting('hasSeenPostInstall')
+                && !domain.match(regExpPostInstall)
+                && !domain.match(regExpSoftwarePage);
         },
 
         migrate: () => {
