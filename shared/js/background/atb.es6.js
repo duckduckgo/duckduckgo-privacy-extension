@@ -148,7 +148,7 @@ var ATB = (() => {
             settings.ready().then( () => {
                 chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                    if (this.canShowPostInstall(domain)) {
+                    if (ATB.canShowPostInstall(domain)) {
                             settings.updateSetting('hasSeenPostInstall', true)
                             chrome.tabs.create({
                                 url: 'https://duckduckgo.com/app?post=1'
