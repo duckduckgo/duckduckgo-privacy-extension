@@ -13,7 +13,8 @@ chrome.runtime.onInstalled.addListener(function(details) {
     }
 
     if (details.reason.match(/install/)) {
-        ATB.openPostInstallPage()
+        // need to wait at least 750 ms for ATB to be set
+        setTimeout(() => ATB.openPostInstallPage(), 750)
     }
 })
 

@@ -153,10 +153,13 @@ var ATB = (() => {
                 chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                     if (ATB.canShowPostInstall(domain)) {
-                            settings.updateSetting('hasSeenPostInstall', true)
-                            chrome.tabs.create({
-                                url: 'https://duckduckgo.com/app?post=1'
-                            })
+                        settings.updateSetting('hasSeenPostInstall', true)
+                        let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                        const atb = settings.getSetting('atb')
+                        postInstallURL += atb ? `&atb=${atb}` : ''
+                        chrome.tabs.create({
+                            url: postInstallURL
+                        })
                     }
                 })
             })
