@@ -155,8 +155,11 @@ var ATB = (() => {
                     const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
                     if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
                         settings.updateSetting('hasSeenPostInstall', true)
+                        let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                        let versions = ATB.calculateInitialVersions()
+                        postInstallURL += (versions && versions.major && versions.minor) ? `&v${versions.major}-${versions.minor}` : ''
                         chrome.tabs.create({
-                            url: 'https://duckduckgo.com/app?post=1'
+                            url: postInstallURL
                         })
                     }
                 })
