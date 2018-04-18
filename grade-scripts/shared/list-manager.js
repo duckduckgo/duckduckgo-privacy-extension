@@ -4,16 +4,21 @@
  */
 
 const request = require('request')
-const baseUrl = 'https://duckduckgo.com/contentblocking.js'
+const baseUrl = 'https://duckduckgo.com/contentblocking'
 
-const listsToLoad = ['surrogates', 'https2', 'entitylist2']
+const listsToLoad = {
+    surrogates: `${baseUrl}.js?l=surrogates`,
+    https: `${baseUrl}.js?l=https2`,
+    whitelist: `${baseUrl}/trackers-whitelist.txt`,
+    entityList: `${baseUrl}.js?l=entitylist2`
+}
 let loadedLists = {}
 
 let load = (listName) => {
     return new Promise((resolve, reject) => {
         request({
             method: 'get',
-            url: `${baseUrl}?l=${listName}`,
+            url: listsToLoad[listName],
             gzip: true
         }, (err, res, body) => {
             if (err) { return reject(err) }
@@ -24,7 +29,7 @@ let load = (listName) => {
             try {
                 response = JSON.parse(body)
             } catch (e) {
-                // ¯\_(ツ)_/¯
+                response = body
             }
 
             resolve(response)
@@ -33,7 +38,7 @@ let load = (listName) => {
 }
 
 let loadLists = async () => {
-    for (let listName of listsToLoad) {
+    for (let listName in listsToLoad) {
         loadedLists[listName] = await load(listName)
     }
 }

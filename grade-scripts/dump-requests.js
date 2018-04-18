@@ -3,39 +3,52 @@ const listManager = require('./shared/list-manager')
 
 const Grade = require('../src/classes/grade')
 const https = require('../src/https')
+const trackers = require('../src/trackers')
+const surrogates = require('../src/surrogates')
 
 let grade
+
+let siteToCheck = 'reddit.com'
 
 const handleRequest = (request) => {
     let url = request.url()
 
-    // fake some tracker blocking for now
-    if (url.indexOf('doubleclick.net') > -1) {
-        console.log(`blocking: ${url}`)
-        grade.update({
-            trackerBlocked: {
-                parentCompany: 'google',
-                url
-            }
-        })
-        request.abort()
-    } else {
-        let upgradedUrl = https.getUpgradedUrl(url)
+    let upgradedUrl = https.getUpgradedUrl(url)
 
-        if (url !== upgradedUrl) {
-            console.log(`https upgrade: ${upgradedUrl}`)
-        }
-
-        request.continue({
-            url: url
-        })
+    if (url !== upgradedUrl) {
+        console.log(`https upgrade: ${upgradedUrl}`)
+        url = upgradedUrl
     }
+
+    // fake some tracker blocking for now
+    let tracker = trackers.isTracker(url, siteToCheck, url.resourceType)
+
+    if (tracker && tracker.block) {
+        console.log(`blocking: ${url}`)
+        grade.update({ trackerBlocked: tracker })
+
+        if (tracker.redirectUrl) {
+            url = tracker.redirectUrl
+        } else {
+            request.abort()
+            return
+        }
+    }
+
+    request.continue({
+        url: url
+    })
 }
 
 (async () => {
     // load any lists and plug them into any classes that wait for them
     await listManager.loadLists()
-    https.init(listManager.getList('https2'))
+    https.init(listManager.getList('https'))
+    trackers.init({
+        entityList: listManager.getList('entityList'),
+        whitelist: listManager.getList('whitelist')
+    })
+    surrogates.init(listManager.getList('surrogates'))
 
     // set up headless browser
     const browser = await puppeteer.launch({
@@ -47,8 +60,8 @@ const handleRequest = (request) => {
     page.on('request', handleRequest)
 
     // visit page!
-    grade = new Grade('', 'theguardian.com')
-    await page.goto('http://theguardian.com')
+    grade = new Grade('', siteToCheck)
+    await page.goto(`http://${siteToCheck}`)
 
     // wait for the page to load and then an extra 3s
     try {
@@ -65,6 +78,7 @@ const handleRequest = (request) => {
     }
 
     console.log(`grade is: ${JSON.stringify(grade.get())}`)
+    console.log(`number of trackers blocked: ${grade.totalBlocked}`)
 
     await browser.close()
 })()

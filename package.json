@@ -19,6 +19,8 @@
     "request": "^2.85.0"
   },
   "dependencies": {
+    "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git",
+    "btoa": "^1.2.1",
     "tldjs": "^2.3.1"
   }
 }
