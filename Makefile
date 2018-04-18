@@ -5,7 +5,7 @@ release: npm setup-build-dir grunt tosdr moveout fonts
 dev: setup-build-dir grunt-process-lists moveout fonts grunt-dev
 
 npm:
-	npm install --tldjs-update-rules
+	npm install
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)
