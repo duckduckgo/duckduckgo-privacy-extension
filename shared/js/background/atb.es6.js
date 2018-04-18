@@ -156,7 +156,7 @@ var ATB = (() => {
                     if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
                         settings.updateSetting('hasSeenPostInstall', true)
                         let postInstallURL = 'https://duckduckgo.com/app?post=1'
-                        const atb = ATB.getLatestATB()
+                        const atb = settings.getSetting('atb')
                         postInstallURL += atb ? `&atb=${atb}` : ''
                         chrome.tabs.create({
                             url: postInstallURL
@@ -194,12 +194,6 @@ var ATB = (() => {
             if (extensionVersion) url += `&v=${extensionVersion}`
 
             return url
-        },
-
-        getLatestATB: () => {
-            let atb = settings.getSetting('set_atb')
-            if (!atb) atb = settings.getSetting('atb')
-            return atb
         }
     }
 })()
