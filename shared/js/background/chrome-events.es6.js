@@ -13,7 +13,7 @@ chrome.runtime.onInstalled.addListener(function(details) {
     }
 
     if (details.reason.match(/install/)) {
-        ATB.openPostInstallPage()
+        setTimeout(() => ATB.openPostInstallPage(), 500)
     }
 })
 
