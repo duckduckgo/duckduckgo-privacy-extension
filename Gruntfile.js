@@ -9,11 +9,19 @@ module.exports = (grunt) => {
             entityMap: {
                 src: ['scripts/entity-map.js']
             },
+            trackersWithParentCompany: {
+                src: ['scripts/trackers-with-parent-company.js']
+            },
             tosdr: {
                 src: ['scripts/tosdr.js']
             }
         }
     })
 
-    grunt.registerTask('build', 'Build project files', ['exec:setup', 'execute:entityMap', 'execute:tosdr'])
+    grunt.registerTask('build', 'Build project files', [
+        'exec:setup',
+        'execute:entityMap',
+        'execute:tosdr',
+        'execute:trackersWithParentCompany'
+    ])
 }
