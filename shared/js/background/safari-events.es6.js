@@ -55,9 +55,9 @@ let onStartup = (() => {
         })
     })
 
-    // need at least 750 ms before atb is available
-    setTimeout(function () {
-        if (showPostInstallPage) {
+    if (showPostInstallPage) {
+        // need at least 750 ms before atb is available
+        setTimeout(function () {
             // we'll open the post install page in a new tab but keep the current tab active. To do this
             // we need to open a tab then reset the active tab
             let activeTabIdx = _getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
@@ -69,8 +69,8 @@ let onStartup = (() => {
                 
             // reactive the previous tab
             safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
-        }
-    }, 750)
+        }, 750)
+    }
 
     // reload popup 
     browserWrapper.notifyPopup()
