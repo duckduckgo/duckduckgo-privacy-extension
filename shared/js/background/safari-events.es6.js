@@ -59,7 +59,14 @@ let onStartup = (() => {
         // we'll open the post install page in a new tab but keep the current tab active. To do this
         // we need to open a tab then reset the active tab
         let activeTabIdx = _getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
-        safari.application.activeBrowserWindow.openTab().url = 'https://duckduckgo.com/app?post=1'
+        let postInstallURL = 'https://duckduckgo.com/app?post=1'
+        // show atb in postinstall page
+        const atb = settings.getSetting('atb')
+        postInstallURL += atb ? `&atb=${atb}` : ''
+        // need at least 750 ms before atb is available
+        setTimeout(function () {
+            safari.application.activeBrowserWindow.openTab().url = postInstallURL
+        }, 750)
             
         // reactive the previous tab
         safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
