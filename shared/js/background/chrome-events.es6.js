@@ -127,7 +127,7 @@ chrome.runtime.onMessage.addListener( (req, sender, res) => {
     }
 
     if(req.atb){
-        ATB.setAtbValuesFromSuccessPage(request.atb)
+        ATB.setAtbValuesFromSuccessPage(req.atb)
     }
 
     // popup will ask for the browser type then it is created
@@ -180,3 +180,26 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     }
 })
+
+/**
+ * on start up
+ */
+let onStartup = (() => {
+    chrome.tabs.query({currentWindow: true, status: 'complete'}, function(savedTabs){
+        for (var i = 0; i < savedTabs.length; i++){
+            var tab = savedTabs[i]
+
+            if (tab.url) {
+                let newTab = tabManager.create(tab)
+                // check https status of saved tabs so we have the correct site score
+                if (newTab.url.match(/^https:\/\//)) {
+                    newTab.site.score.update({hasHTTPS: true})
+                }
+            }
+        }
+    })
+})
+
+module.exports = {
+    onStartup: onStartup
+}

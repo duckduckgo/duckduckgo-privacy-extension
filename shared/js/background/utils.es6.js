@@ -1,4 +1,5 @@
 const tldjs = require('tldjs')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 const load = require('./load.es6')
 const settings = require('./settings.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
@@ -54,16 +55,6 @@ function isChromeBrowser () {
     return false
 }
 
-function syncToStorage (data){
-    chrome.storage.local.set(data, function() { });
-}
-
-function getFromStorage (key, callback) {
-    chrome.storage.local.get(key, function (result) {
-        callback(result[key])
-    })
-}
-
 function getCurrentURL(callback){
     chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
         if(tabData.length){
@@ -101,8 +92,6 @@ module.exports = {
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
     parseUserAgentString: parseUserAgentString,
     isChromeBrowser: isChromeBrowser,
-    syncToStorage: syncToStorage,
-    getFromStorage: getFromStorage,
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,

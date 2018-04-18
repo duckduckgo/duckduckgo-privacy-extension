@@ -3,7 +3,7 @@ const bel = require('bel')
 module.exports = function (site, isMajorNetworksCount) {
   // Show all trackers found if site is whitelisted
   // but only show the blocked ones otherwise
-  let trackersCount = site.isWhitelisted ? site.trackersCount : site.trackersBlockedCount
+  let trackersCount = site.isWhitelisted ? site.trackersCount : site.trackersBlockedCount || 0
   let uniqueTrackersText = trackersCount === 1 ? ' Tracker ' : ' Trackers '
 
   if (isMajorNetworksCount) {

@@ -5,8 +5,11 @@ const surrogates = require('./surrogates.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 var debugRequest = false
+
+trackers.loadLists()
 
 /**
  * Where most of the extension work happens.
@@ -64,7 +67,9 @@ function handleRequest(requestData) {
          * Tracker blocking
          * If request is a tracker, cancel the request
          */
-        chrome.runtime.sendMessage({'updateTabData': true})
+        if (window.chrome) {
+            chrome.runtime.sendMessage({'updateTabData': true})
+        }
 
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData);
 
@@ -72,7 +77,7 @@ function handleRequest(requestData) {
         if (tracker && !(tracker.type === 'trackersWhitelist' && tracker.reason !== 'first party')) {
             // only count trackers on pages with 200 response. Trackers on these sites are still
             // blocked below but not counted toward company stats
-            if (thisTab.statusCode === 200) {
+            if (window.safari || thisTab.statusCode === 200) {
                 // record all tracker urls on a site even if we don't block them
                 thisTab.site.addTracker(tracker)
 
@@ -80,10 +85,12 @@ function handleRequest(requestData) {
                 thisTab.addToTrackers(tracker)
             }
 
+            browserWrapper.notifyPopup({'updateTabData': true})
+
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.block) {
                 thisTab.addOrUpdateTrackersBlocked(tracker);
-                chrome.runtime.sendMessage({'updateTabData': true})
+
 
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
@@ -108,8 +115,11 @@ function handleRequest(requestData) {
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
+                    // safari gets return data in message
+                    requestData.message = {redirectUrl: tracker.redirectUrl}
                     return {redirectUrl: tracker.redirectUrl}
                 } else {
+                    requestData.message = {cancel: true}
                     return {cancel: true};
                 }
             }
@@ -121,7 +131,7 @@ function handleRequest(requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-     if (!thisTab.site) return
+     if (!thisTab.site || !window.chrome) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {

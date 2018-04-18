@@ -116,6 +116,10 @@ var ATB = (() => {
         },
 
         inject: () => {
+
+            // skip this for non webextension browsers
+            if (!window.chrome) return
+
             chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
                 var i = tabs.length, tab
                 while (i--) {
@@ -195,8 +199,10 @@ settings.ready().then(() => {
     // migrate over any localStorage values from the old extension
     ATB.migrate()
 
-    // set initial uninstall url
-    chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    // set initial uninstall url. webextension only
+    if (window.chrome) {
+        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    }
 })
 
 module.exports = ATB

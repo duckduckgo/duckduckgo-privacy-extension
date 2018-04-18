@@ -12,6 +12,7 @@ const surrogates = require('./surrogates.es6')
 const settings = require('./settings.es6')
 const ATB = require('./atb.es6')
 const load = require('./load.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ONEDAY = 1000*60*60*24
 
@@ -131,8 +132,7 @@ settings.ready().then(() => updateLists())
 // add version param to url on the first install and
 // only once a day after than
 function getVersionParam () {
-    const manifest = chrome.runtime.getManifest()
-    let version = manifest.version || ''
+    let version = browserWrapper.getExtensionVersion()
     let lastEasylistUpdate = settings.getSetting('lastEasylistUpdate')
     let now = Date.now()
     let versionParam

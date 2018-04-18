@@ -169,7 +169,7 @@ body {
         .site-info__toggle-container {
             position: absolute;
             right: 20px;
-            top: 18px;
+            top: 16px;
 
             .toggle-button {
                 position: absolute;
@@ -242,7 +242,7 @@ body {
                     height: 30px;
                     width: 27px;
                     left: 20px;
-                    
+
                     &.is-blocking--true {
                         @include cross_platform_bg_image("blocking--on.svg");
                     }

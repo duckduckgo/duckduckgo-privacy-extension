@@ -12,9 +12,9 @@ const entityMap = require('../../data/tracker_lists/entityMap')
 
 let entityList
 
-settings.ready().then(() => {
+function loadLists () {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
-})
+}
 
 /*
  * The main parts of the isTracker algo looks like this:
@@ -285,5 +285,6 @@ function checkABPParsedList(list, url, siteDomain, request) {
 }
 
 module.exports = {
-    isTracker: isTracker
+    isTracker: isTracker,
+    loadLists: loadLists
 }
