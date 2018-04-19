@@ -15,6 +15,12 @@ const handleRequest = (requests, siteToCheck, request) => {
     let url = request.url()
     let type = request.resourceType()
 
+    // we don't care about main frame requests
+    if (type === 'document') {
+        request.continue()
+        return
+    }
+
     requests.push([url, type])
 
     let upgradedUrl = https.getUpgradedUrl(url)
@@ -70,7 +76,11 @@ const getSiteData = async (siteToCheck) => {
     page.on('request', handleRequest.bind(null, requests, siteToCheck))
 
     // wait for the page to load and then an extra 3s, to be sure
-    await page.goto(url, { timeout: 10000, waitUntil: 'load' })
+    try {
+        await page.goto(url, { timeout: 10000, waitUntil: 'load' })
+    } catch (e) {
+        console.log(chalk.red(`timed out for ${url}`))
+    }
     await page.waitFor(3000)
 
     return { url, requests }
@@ -107,6 +117,7 @@ const run = async (filename) => {
 
         if (!data.requests.length) {
             console.log(chalk.red(`couldn't get requests for ${siteToCheck}`))
+            continue
         }
 
         console.log(chalk.green(`got ${data.requests.length} requests for ${siteToCheck}`))
