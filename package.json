@@ -51,7 +51,7 @@
     "standard": "10.0.3"
   },
   "dependencies": {
-    "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git",
+    "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git#0.2.0",
     "bel": "4.6.0",
     "chalk": "2.1.0",
     "change-case": "3.0.1",

@@ -14,5 +14,4 @@ shared/js/tldjs.js
 build/firefox
 build/chrome
 build/safari
-package-lock.json
 test/background.js
