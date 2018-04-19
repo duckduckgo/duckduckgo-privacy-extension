@@ -59,6 +59,8 @@ const run = async (outputName) => {
 
         let gradeData = grade.get()
 
+        gradeData.decisions = grade.decisions
+
         console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
 
         fs.writeFileSync(`${outputDir}/${fileName}`, JSON.stringify(gradeData))
