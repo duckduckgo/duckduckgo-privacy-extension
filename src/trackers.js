@@ -1,4 +1,4 @@
-// const abp = require('abp-filter-parser')
+const abp = require('abp-filter-parser')
 const tldjs = require('tldjs')
 const utils = require('./utils')
 const trackersWithParentCompany = require('../data/generated/trackers-with-parent-company')
@@ -11,7 +11,9 @@ class Trackers {
 
     init (lists) {
         this.entityList = lists.entityList
-        this.whitelist = lists.whitelist
+        this.whitelist = {}
+
+        abp.parse(lists.whitelist, this.whitelist)
     }
 
     isTracker(urlToCheck, currLocation, requestType) {
@@ -91,7 +93,7 @@ class Trackers {
         let result = false
         let match
 
-        // match = checkABPParsedList(this.whitelist.trackersWhitelist.parsed, url, currLocation, requestType)
+        match = this.checkABPParsedList(this.whitelist, url, currLocation, requestType)
 
         if (match) {
             result = this.getTrackerDetails(url, 'trackersWhitelist')

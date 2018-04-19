@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "grunt build"
+    "build": "grunt build",
+    "abp": "cd node_modules/abp-filter-parser && npm install",
+    "postinstall": "npm run abp"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -21,7 +23,7 @@
     "request": "^2.85.0"
   },
   "dependencies": {
-    "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git",
+    "abp-filter-parser": "https://github.com/duckduckgo/abp-filter-parser/tarball/master",
     "btoa": "^1.2.1",
     "tldjs": "^2.3.1"
   }
