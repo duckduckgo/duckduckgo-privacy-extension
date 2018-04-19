@@ -16,7 +16,6 @@ const handleRequest = (request) => {
     let upgradedUrl = https.getUpgradedUrl(url)
 
     if (url !== upgradedUrl) {
-        console.log(`https upgrade: ${upgradedUrl}`)
         url = upgradedUrl
     }
 
@@ -24,7 +23,6 @@ const handleRequest = (request) => {
     let tracker = trackers.isTracker(url, siteToCheck, url.resourceType)
 
     if (tracker && tracker.block) {
-        console.log(`blocking: ${url}`)
         grade.update({ trackerBlocked: tracker })
 
         if (tracker.redirectUrl) {

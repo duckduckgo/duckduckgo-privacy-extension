@@ -112,7 +112,6 @@ class Trackers {
                 result.block = true
                 result.reason = 'surrogate'
                 result.redirectUrl = dataURI
-                console.log("serving surrogate content for: ", url)
                 return result
             }
         }
