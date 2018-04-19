@@ -74,6 +74,12 @@ const getSiteData = async (siteToCheck) => {
 
     await page.setRequestInterception(true)
     page.on('request', handleRequest.bind(null, requests, siteToCheck))
+    page.on('response', (response) => {
+        if (response.request().resourceType() === 'document' &&
+                response.status() !== 200) {
+            console.log(chalk.red(`got ${response.status()} for ${response.url()}`))
+        }
+    })
 
     // wait for the page to load and then an extra 3s, to be sure
     try {

@@ -60,10 +60,20 @@ const run = async () => {
 
     await page.setRequestInterception(true)
     page.on('request', handleRequest)
+    page.on('response', (response) => {
+        if (response.request().resourceType() === 'document' &&
+                response.status() !== 200) {
+            console.log(chalk.red(`got ${response.status()} for ${response.url()}`))
+        }
+    })
 
     console.log(`getting grade for ${siteToCheck}`)
     // wait for the page to load and then an extra 3s, to be sure
-    await page.goto(`http://${siteToCheck}`, { timeout: 10000, waitUntil: 'load' })
+    try {
+        await page.goto(`http://${siteToCheck}`, { timeout: 10000, waitUntil: 'load' })
+    } catch (e) {
+        console.log(chalk.red(`timed out for ${siteToCheck}`))
+    }
     await page.waitFor(3000)
 
     // check if https
