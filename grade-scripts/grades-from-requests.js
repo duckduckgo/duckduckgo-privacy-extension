@@ -9,7 +9,17 @@ const https = require('../src/https')
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
 
-const run = async (outputName) => {
+program
+    .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites"')
+    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades"')
+    .parse(process.argv)
+
+const input = program.input
+const inputPath = `${input}-sites`
+const output = program.output
+const outputPath = `${output}-grades`
+
+const run = async () => {
     // load any lists and plug them into any classes that wait for them
     await listManager.loadLists()
     https.init(listManager.getList('https'))
@@ -20,15 +30,14 @@ const run = async (outputName) => {
     surrogates.init(listManager.getList('surrogates'))
 
     // get initial file data
-    let outputDir = `${outputName}-grades`
-    let siteDataFiles = fs.readdirSync(`sites`)
+    let siteDataFiles = fs.readdirSync(inputPath)
 
-    execSync(`mkdir -p ${outputDir}`)
+    execSync(`mkdir -p ${outputPath}`)
 
     for (let fileName of siteDataFiles) {
-        let path = `${outputDir}/${fileName}`
+        let path = `${outputPath}/${fileName}`
         let fileExists
-        let siteData = require(`${process.cwd()}/sites/${fileName}`)
+        let siteData = require(`${process.cwd()}/${inputPath}/${fileName}`)
         let hostname = fileName.replace(/\.json$/, '')
 
         let trackersBlocked = {}
@@ -85,11 +94,8 @@ const run = async (outputName) => {
 
         console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
 
-        fs.writeFileSync(`${outputDir}/${fileName}`, JSON.stringify(gradeData))
+        fs.writeFileSync(`${outputPath}/${fileName}`, JSON.stringify(gradeData))
     }
 }
 
-program
-    .arguments('<outputName>')
-    .action(run)
-    .parse(process.argv)
+run()

@@ -12,6 +12,17 @@ const surrogates = require('../src/surrogates')
 
 let browser
 
+program
+    .option('-f, --file <name>', 'Text file with newline-separated hostnames')
+    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-sites"')
+    .option('-t, --allow-trackers', 'Don\'t run tracker blocking')
+    .parse(process.argv)
+
+const fileName = program.file
+const output = program.output
+const outputPath = `${output}-sites`
+const allowTrackers = program.allowTrackers
+
 const handleRequest = (requests, siteToCheck, request) => {
     let url = request.url()
     let type = request.resourceType()
@@ -32,7 +43,7 @@ const handleRequest = (requests, siteToCheck, request) => {
 
     let tracker = trackers.isTracker(url, siteToCheck, type)
 
-    if (tracker && tracker.block) {
+    if (tracker && tracker.block && !allowTrackers) {
         if (tracker.redirectUrl) {
             url = tracker.redirectUrl
         } else {
@@ -61,7 +72,7 @@ const setup = async () => {
         args: ['--no-sandbox']
     })
 
-    execSync(`mkdir -p sites`)
+    execSync(`mkdir -p ${outputPath}`)
 }
 
 const teardown = async () => {
@@ -102,13 +113,13 @@ const getSiteData = async (siteToCheck) => {
     return { url, requests }
 }
 
-const run = async (filename) => {
+const run = async () => {
     let sites
 
     try {
-        sites = fs.readFileSync(filename, { encoding: 'utf8' }).trim().split('\n')
+        sites = fs.readFileSync(fileName, { encoding: 'utf8' }).trim().split('\n')
     } catch (e) {
-        console.log(chalk.red(`Error getting sites from file ${filename}: ${e.message}`))
+        console.log(chalk.red(`Error getting sites from file ${fileName}: ${e.message}`))
         return
     }
 
@@ -124,7 +135,7 @@ const run = async (filename) => {
             await refreshBrowser()
         }
 
-        let path = `sites/${siteToCheck}.json`
+        let path = `${outputPath}/${siteToCheck}.json`
         let fileExists
 
         try {
@@ -147,13 +158,10 @@ const run = async (filename) => {
 
         console.log(chalk.green(`got ${data.requests.length} requests for ${siteToCheck}`))
 
-        fs.writeFileSync(`sites/${siteToCheck}.json`, JSON.stringify(data))
+        fs.writeFileSync(`${outputPath}/${siteToCheck}.json`, JSON.stringify(data))
     }
 
     await teardown()
 }
 
-program
-    .arguments('<filename>')
-    .action(run)
-    .parse(process.argv)
+run()
