@@ -56,7 +56,7 @@ let onStartup = (() => {
     })
 
     if (showPostInstallPage) {
-        // need at least 750 ms before atb is available
+        // need at least 3s before atb is available in safari
         setTimeout(() => {
             // we'll open the post install page in a new tab but keep the current tab active. To do this
             // we need to open a tab then reset the active tab
@@ -69,7 +69,7 @@ let onStartup = (() => {
                 
             // reactive the previous tab
             safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
-        }, 750)
+        }, 3000)
     }
 
     // reload popup 
