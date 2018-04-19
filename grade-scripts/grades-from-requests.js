@@ -31,6 +31,10 @@ const run = async (outputName) => {
         let siteData = require(`${process.cwd()}/sites/${fileName}`)
         let hostname = fileName.replace(/\.json$/, '')
 
+        let trackersBlocked = {}
+        let trackersNotBlocked = {}
+        let trackersByUrl = {}
+
         try {
             fileExists = fs.existsSync(path)
         } catch (e) {
@@ -48,8 +52,22 @@ const run = async (outputName) => {
         siteData.requests.forEach((request) => {
             let tracker = trackers.isTracker(request[0], hostname, request[1])
 
-            if (tracker && tracker.block) {
-                grade.update({ trackerBlocked: tracker })
+            if (tracker) {
+                if (trackersByUrl[tracker.url]) { return }
+
+                if (tracker.block) {
+                    grade.update({ trackerBlocked: tracker })
+
+                    if (!trackersBlocked[tracker.parentCompany]) {
+                        trackersBlocked[tracker.parentCompany] = {}
+                    }
+                    trackersBlocked[tracker.parentCompany][tracker.url] = tracker
+                } else {
+                    if (!trackersNotBlocked[tracker.parentCompany]) {
+                        trackersNotBlocked[tracker.parentCompany] = {}
+                    }
+                    trackersNotBlocked[tracker.parentCompany][tracker.url] = tracker
+                }
             }
         })
 
@@ -60,6 +78,8 @@ const run = async (outputName) => {
         let gradeData = grade.get()
 
         gradeData.decisions = grade.decisions
+        gradeData.trackersBlocked = trackersBlocked
+        gradeData.trackersNotBlocked = trackersNotBlocked
 
         console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
 
