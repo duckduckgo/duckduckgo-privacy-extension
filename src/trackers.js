@@ -18,7 +18,6 @@ class Trackers {
 
     isTracker(urlToCheck, currLocation, requestType) {
         currLocation = currLocation
-        let siteDomain = tldjs.getDomain(currLocation)
 
         let parsedUrl = tldjs.parse(urlToCheck)
         let hostname
@@ -39,9 +38,11 @@ class Trackers {
             }
         }
 
+        hostname = hostname.replace(/^www\./,'')
+
         let urlSplit = hostname.split('.')
 
-        let whitelistedTracker = this.checkWhitelist(urlToCheck, siteDomain, requestType)
+        let whitelistedTracker = this.checkWhitelist(urlToCheck, hostname, requestType)
         if (whitelistedTracker) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -59,7 +60,7 @@ class Trackers {
             return surrogateTracker
         }
 
-        let trackerFromList = this.checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, siteDomain)
+        let trackerFromList = this.checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, hostname)
         if (trackerFromList) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -79,7 +80,7 @@ class Trackers {
         return trackerObj
     }
 
-    checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, siteDomain) {
+    checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, hostname) {
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
@@ -212,10 +213,10 @@ class Trackers {
         }
     }
 
-    checkABPParsedList(list, url, siteDomain, requestType) {
+    checkABPParsedList(list, url, hostname, requestType) {
         let match = abp.matches(list, url,
             {
-                domain: siteDomain,
+                domain: hostname,
                 elementTypeMask: abp.elementTypes[requestType.toUpperCase()]
             })
         return match
