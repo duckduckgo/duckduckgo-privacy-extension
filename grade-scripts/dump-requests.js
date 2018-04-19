@@ -61,15 +61,8 @@ const handleRequest = (request) => {
 
     // visit page!
     grade = new Grade('', siteToCheck)
-    await page.goto(`http://${siteToCheck}`)
-
-    // wait for the page to load and then an extra 3s
-    try {
-        await page.waitForNavigation({ timeout: 5000, waitUntil: 'load' })
-    } catch (e) {
-        console.log('timed out waiting for page load')
-    }
-
+    // wait for the page to load and then an extra 3s, to be sure
+    await page.goto(`http://${siteToCheck}`, { timeout: 10000, waitUntil: 'load' })
     await page.waitFor(3000)
 
     // check if https
