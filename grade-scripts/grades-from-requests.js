@@ -77,9 +77,11 @@ const run = async (outputName) => {
 
         let gradeData = grade.get()
 
+        gradeData.url = `http://${hostname}`
         gradeData.decisions = grade.decisions
         gradeData.trackersBlocked = trackersBlocked
         gradeData.trackersNotBlocked = trackersNotBlocked
+        gradeData.totalBlocked = grade.totalBlocked
 
         console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
 
