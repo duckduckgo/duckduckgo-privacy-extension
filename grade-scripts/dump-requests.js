@@ -68,6 +68,14 @@ const teardown = async () => {
     await browser.close()
 }
 
+const refreshBrowser = async () => {
+    await browser.close()
+
+    browser = await puppeteer.launch({
+        args: ['--no-sandbox']
+    })
+}
+
 const getSiteData = async (siteToCheck) => {
     const page = await browser.newPage()
     const url = `http://${siteToCheck}`
@@ -88,6 +96,8 @@ const getSiteData = async (siteToCheck) => {
         console.log(chalk.red(`timed out for ${url}`))
     }
     await page.waitFor(3000)
+    page.removeAllListeners()
+    await page.close()
 
     return { url, requests }
 }
@@ -104,7 +114,16 @@ const run = async (filename) => {
 
     await setup()
 
+    let sitesChecked = 0
+
     for (let siteToCheck of sites) {
+        sitesChecked += 1
+
+        if (sitesChecked % 20 === 0) {
+            console.log(`checked ${sitesChecked}, refreshing browser instance...`)
+            await refreshBrowser()
+        }
+
         let path = `sites/${siteToCheck}.json`
         let fileExists
 
