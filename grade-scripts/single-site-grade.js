@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer')
 const listManager = require('./shared/list-manager')
+const utils = require('./shared/utils')
 const program = require('commander')
 const chalk = require('chalk')
 
@@ -61,8 +62,7 @@ const run = async () => {
     await page.setRequestInterception(true)
     page.on('request', handleRequest)
     page.on('response', (response) => {
-        if (response.request().resourceType() === 'document' &&
-                response.status() !== 200) {
+        if (!utils.responseIsOK(response)) {
             console.log(chalk.red(`got ${response.status()} for ${response.url()}`))
         }
     })
