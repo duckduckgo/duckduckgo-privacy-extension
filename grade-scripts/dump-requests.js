@@ -91,12 +91,14 @@ const getSiteData = async (siteToCheck) => {
     const page = await browser.newPage()
     const url = `http://${siteToCheck}`
     let requests = []
+    let failed = false
 
     await page.setRequestInterception(true)
     page.on('request', handleRequest.bind(null, requests, siteToCheck))
     page.on('response', (response) => {
         if (!utils.responseIsOK(response, siteToCheck)) {
             console.log(chalk.red(`got ${response.status()} for ${response.url()}`))
+            failed = true
         }
     })
 
@@ -109,6 +111,9 @@ const getSiteData = async (siteToCheck) => {
     await page.waitFor(3000)
     page.removeAllListeners()
     await page.close()
+
+    // ignore requests for failed pages (e.g. if we saw their 404 page)
+    if (failed) { requests = [] }
 
     return { url, requests }
 }
@@ -128,11 +133,9 @@ const run = async () => {
     let sitesChecked = 0
 
     for (let siteToCheck of sites) {
-        sitesChecked += 1
-
         let failed = false
 
-        if (sitesChecked % 20 === 0) {
+        if (sitesChecked && sitesChecked % 20 === 0) {
             console.log(`checked ${sitesChecked}, refreshing browser instance...`)
             await refreshBrowser()
         }
@@ -148,11 +151,12 @@ const run = async () => {
 
         if (fileExists) {
             console.log(`dump file exists for ${siteToCheck}, skipping`)
-            failed = true
             continue
         }
 
         let data = await getSiteData(siteToCheck)
+
+        sitesChecked += 1
 
         if (!data.requests.length) {
             console.log(chalk.red(`couldn't get requests for ${siteToCheck}`))
