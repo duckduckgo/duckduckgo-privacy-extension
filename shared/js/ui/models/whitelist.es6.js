@@ -22,7 +22,7 @@ Whitelist.prototype = window.$.extend({},
         list: 'whitelisted',
         domain: domain,
         value: false
-      }
+      }, context: 'options'
       })
 
       // Update list
@@ -37,8 +37,9 @@ Whitelist.prototype = window.$.extend({},
       // But first, strip the 'www.' part, otherwise getSubDomain will include it
       // and whitelisting won't work for that site
       url = url ? url.replace('www.', '') : ''
+      const localDomain = url.toLowerCase() === 'localhost' ? 'localhost' : null
       const subDomain = tldjs.getSubdomain(url)
-      const domain = tldjs.getDomain(url)
+      const domain = tldjs.getDomain(url) || localDomain
       if (domain) {
         const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
         console.log(`whitelist: add ${domainToWhitelist}`)
@@ -48,7 +49,7 @@ Whitelist.prototype = window.$.extend({},
           list: 'whitelisted',
           domain: domainToWhitelist,
           value: true
-        }
+        }, context: 'options'
         })
 
         this.setWhitelistFromSettings()
@@ -59,7 +60,7 @@ Whitelist.prototype = window.$.extend({},
 
     setWhitelistFromSettings: function () {
       let self = this
-      this.fetch({getSetting: {name: 'whitelisted'}}).then((whitelist) => {
+      this.fetch({getSetting: {name: 'whitelisted'}, context: 'options'}).then((whitelist) => {
         whitelist = whitelist || {}
         let wlist = Object.keys(whitelist)
         wlist.sort()

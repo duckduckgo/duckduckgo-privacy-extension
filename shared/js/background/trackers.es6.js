@@ -3,19 +3,18 @@ const tldjs = require('tldjs')
 
 const load = require('./load.es6')
 const settings = require('./settings.es6')
-const utils = require('./utils.es6')
 const surrogates = require('./surrogates.es6')
 const trackerLists = require('./tracker-lists.es6').getLists()
 const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
+const utils = require('./utils.es6')
+const entityMap = require('../../data/tracker_lists/entityMap')
 
 let entityList
-let entityMap
 
-settings.ready().then(() => {
+function loadLists () {
     load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
-    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
-})
+}
 
 /*
  * The main parts of the isTracker algo looks like this:
@@ -255,10 +254,10 @@ function isRelatedEntity(parentCompany, currLocation) {
  * if domains match but we don't have this site in our entityMap.
  */
 function getCommonParentEntity(currLocation, urlToCheck) {
+    if (!entityMap) return
     let currentLocationParsed = tldjs.parse(currLocation)
     let urlToCheckParsed = tldjs.parse(urlToCheck)
     let parentEntity = entityMap[urlToCheckParsed.domain]
-
     if (currentLocationParsed.domain === urlToCheckParsed.domain ||
         isRelatedEntity(parentEntity, currLocation)) 
         return parentEntity || currentLocationParsed.domain
@@ -268,23 +267,11 @@ function getCommonParentEntity(currLocation, urlToCheck) {
 
 function getTrackerDetails (trackerUrl, listName) {
     let host = utils.extractHostFromURL(trackerUrl)
-    let parentCompany = findParent(host.split('.')) || 'unknown'
+    let parentCompany = utils.findParent(host.split('.')) || 'unknown'
     return {
         parentCompany: parentCompany,
         url: host,
         type: listName
-    }
-}
-
-// pull off subdomains and look for parent companies
-function findParent (url) {
-    if (url.length < 2) return
-    let joinURL = url.join('.')
-    if (entityMap[joinURL]) {
-        return entityMap[joinURL]
-    } else {
-        url.shift()
-        return findParent(url)
     }
 }
 
@@ -298,5 +285,6 @@ function checkABPParsedList(list, url, siteDomain, request) {
 }
 
 module.exports = {
-    isTracker: isTracker
+    isTracker: isTracker,
+    loadLists: loadLists
 }

@@ -86,7 +86,7 @@ class Site {
         if (this.domain === 'extensions')
             return 'extensions'
 
-        if (this.domain === chrome.runtime.id)
+        if (window.chrome && this.domain === chrome.runtime.id)
             return 'options'
 
         if (this.domain === 'newtab')

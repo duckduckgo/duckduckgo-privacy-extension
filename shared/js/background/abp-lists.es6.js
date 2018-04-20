@@ -12,6 +12,7 @@ const surrogates = require('./surrogates.es6')
 const settings = require('./settings.es6')
 const ATB = require('./atb.es6')
 const load = require('./load.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ONEDAY = 1000*60*60*24
 
@@ -128,21 +129,10 @@ function updateLists () {
 // Make sure the list updater runs on start up
 settings.ready().then(() => updateLists())
 
-chrome.alarms.onAlarm.addListener(alarm => {
-    if (alarm.name === 'updateLists') {
-        settings.ready().then(() => updateLists())
-    }
-})
-
-// set an alarm to recheck the lists
-// update every 30 min
-chrome.alarms.create('updateLists', {periodInMinutes: 30})
-
 // add version param to url on the first install and
 // only once a day after than
 function getVersionParam () {
-    const manifest = chrome.runtime.getManifest()
-    let version = manifest.version || ''
+    let version = browserWrapper.getExtensionVersion()
     let lastEasylistUpdate = settings.getSetting('lastEasylistUpdate')
     let now = Date.now()
     let versionParam
@@ -163,40 +153,6 @@ function getVersionParam () {
 
     return versionParam
 }
-
-chrome.runtime.onInstalled.addListener(function(details) {
-    // only run the following section on install and on update
-    if (details.reason.match(/install|update/)) {
-        ATB.onInstalled();
-    }
-
-    // only show post install page on install if:
-    // - the user wasn't already looking at the app install page
-    // - the user hasn't seen the page before
-    if (details.reason.match(/install/)) {
-        settings.ready().then( () => {
-            chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
-                const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
-                if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
-                    settings.updateSetting('hasSeenPostInstall', true)
-                    chrome.tabs.create({
-                        url: 'https://duckduckgo.com/app?post=1'
-                    })
-                }
-            })
-        })
-    }
-
-    // blow away old indexeddbs that might be there
-    if (details.reason.match(/update/) && window.indexedDB) {
-        const ms = 1000 * 60
-        setTimeout(() => window.indexedDB.deleteDatabase('ddgExtension'), ms)
-    }
-
-    // remove legacy/unused `HTTPSwhitelisted` setting
-    settings.ready().then(settings.removeSetting('HTTPSwhitelisted'))
-})
 
 module.exports = {
     getTemporaryWhitelist,

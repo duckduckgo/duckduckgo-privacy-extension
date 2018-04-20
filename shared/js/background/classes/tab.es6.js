@@ -27,6 +27,7 @@ const Tracker = require('./tracker.es6')
 const Score = require('./score.es6')
 const utils = require('../utils.es6')
 const Companies = require('../companies.es6')
+const browserWrapper = require('./../$BROWSER-wrapper.es6')
 
 class Tab {
     constructor(tabData) {
@@ -48,14 +49,14 @@ class Tab {
             completeMs: null
         }
         // set the new tab icon to the dax logo
-        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
+        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
     };
 
-    updateBadgeIcon () {
+    updateBadgeIcon (target) {
         if (!this.site.specialDomain() ) {
 
             if(this.site.isBroken) {
-                chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
+                browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id});
             } else {
                 let scoreIcon
                 if (this.site.whitelisted) {
@@ -63,8 +64,10 @@ class Tab {
                 } else {
                     scoreIcon = scoreIconLocations[this.site.score.get().after]
                 }
+                let badgeData = {path: scoreIcon, tabId: this.id}
+                if (target) badgeData.target = target
 
-                chrome.browserAction.setIcon({path: scoreIcon, tabId: this.id});
+                browserWrapper.setBadgeIcon(badgeData);
             }
         }
     };
@@ -72,7 +75,7 @@ class Tab {
     updateSite () {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
-        chrome.browserAction.setIcon({path: 'img/icon_48.png', tabId: this.id});
+        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id});
     };
 
     // Store all trackers for a given tab even if we don't block them.

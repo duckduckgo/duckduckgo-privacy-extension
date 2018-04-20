@@ -1,4 +1,8 @@
 const tldjs = require('tldjs')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
+const load = require('./load.es6')
+const settings = require('./settings.es6')
+const entityMap = require('../../data/tracker_lists/entityMap')
 
 function extractHostFromURL (url) {
     if (!url) return;
@@ -17,6 +21,18 @@ function extractTopSubdomainFromHost (host) {
      }
      return false
  }
+
+// pull off subdomains and look for parent companies
+function findParent (url) {
+    if (!entityMap || url.length < 2) return
+    let joinURL = url.join('.')
+    if (entityMap[joinURL]) {
+        return entityMap[joinURL]
+    } else {
+        url.shift()
+        return findParent(url)
+    }
+}
 
 function getProtocol (url){
     var a = document.createElement('a');
@@ -39,16 +55,6 @@ function isChromeBrowser () {
     return false
 }
 
-function syncToStorage (data){
-    chrome.storage.local.set(data, function() { });
-}
-
-function getFromStorage (key, callback) {
-    chrome.storage.local.get(key, function (result) {
-        callback(result[key])
-    })
-}
-
 function getCurrentURL(callback){
     chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
         if(tabData.length){
@@ -66,15 +72,6 @@ function getCurrentTab(callback){
         });
     })
 }
-
-chrome.runtime.onMessage.addListener( (req, sender, res) => {
-    if (req.getCurrentTab) {
-        getCurrentTab().then((tab) => {
-            res(tab)
-        })
-    }
-    return true;
-})
 
 // Set browser for popup asset paths
 // chrome doesn't have getBrowserInfo so we'll default to chrome
@@ -95,10 +92,9 @@ module.exports = {
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
     parseUserAgentString: parseUserAgentString,
     isChromeBrowser: isChromeBrowser,
-    syncToStorage: syncToStorage,
-    getFromStorage: getFromStorage,
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
-    getBrowserName: getBrowserName
+    getBrowserName: getBrowserName,
+    findParent: findParent
 }
