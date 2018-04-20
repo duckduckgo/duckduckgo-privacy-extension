@@ -42,7 +42,6 @@ const run = async () => {
 
         let trackersBlocked = {}
         let trackersNotBlocked = {}
-        let trackersByUrl = {}
 
         try {
             fileExists = fs.existsSync(path)
@@ -62,9 +61,6 @@ const run = async () => {
             let tracker = trackers.isTracker(request[0], hostname, request[1])
 
             if (tracker) {
-                if (trackersByUrl[tracker.url]) { return }
-                trackersByUrl[tracker.url] = true
-
                 if (tracker.block) {
                     grade.update({ trackerBlocked: tracker })
 

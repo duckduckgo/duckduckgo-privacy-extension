@@ -20,6 +20,7 @@ class Grade {
         this.domain = tldjs.getDomain(domain) // strip the subdomain. Fixes matching tosdr for eg encrypted.google.com
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
+        this.trackersByUrl = {}
     }
 
     getTosdr() {
@@ -223,14 +224,18 @@ class Grade {
             this.hasHTTPS = true
         }
         else if (event.trackerBlocked) {
+            let tracker = event.trackerBlocked
+            if (this.trackersByUrl[tracker.url]) { return }
+
+            this.trackersByUrl[tracker.url] = true
 
             // tracker is from one of the top blocked companies
-            if (majorTrackingNetworks[event.trackerBlocked.parentCompany]) {
+            if (majorTrackingNetworks[tracker.parentCompany]) {
                 this.inMajorTrackingNetwork = true
             }
 
             // trackers with IP address
-            if (event.trackerBlocked.url.match(IPRegex)) {
+            if (tracker.url.match(IPRegex)) {
                 this.hasObscureTracker = true
             }
 
