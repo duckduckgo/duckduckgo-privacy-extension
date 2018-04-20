@@ -9,7 +9,7 @@ class Surrogates {
      * Parses it into surrogateList hash, with the rules as keys
      * and the base64 encoded surrogate content as the value.
      */
-    init (text) {
+    addLists (text) {
         const b64dataheader = 'data:application/javascript;base64,'
 
         this.surrogateList = {}

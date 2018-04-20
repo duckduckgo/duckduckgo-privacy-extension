@@ -9,7 +9,7 @@ const blockSettings = ['Advertising', 'Analytics']
 
 class Trackers {
 
-    init (lists) {
+    addLists (lists) {
         this.entityList = lists.entityList
         this.whitelist = {}
 

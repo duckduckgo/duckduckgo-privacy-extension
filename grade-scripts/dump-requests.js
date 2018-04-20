@@ -60,12 +60,12 @@ const handleRequest = (requests, siteToCheck, request) => {
 const setup = async () => {
     // load any lists and plug them into any classes that wait for them
     await listManager.loadLists()
-    https.init(listManager.getList('https'))
-    trackers.init({
+    https.addLists(listManager.getList('https'))
+    trackers.addLists({
         entityList: listManager.getList('entityList'),
         whitelist: listManager.getList('whitelist')
     })
-    surrogates.init(listManager.getList('surrogates'))
+    surrogates.addLists(listManager.getList('surrogates'))
 
     // set up headless browser
     browser = await puppeteer.launch({

@@ -2,7 +2,7 @@ let tldjs = require('tldjs')
 let utils = require('./utils')
 
 class HTTPS {
-    init (rules) {
+    addLists (rules) {
         this.rules = rules
     }
 
