@@ -92,7 +92,9 @@ const run = async () => {
         gradeData.trackersNotBlocked = trackersNotBlocked
         gradeData.totalBlocked = grade.totalBlocked
 
-        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
+        let numTrackersBlocked = Object.keys(trackersBlocked).length
+
+        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}, ${numTrackersBlocked} trackers blocked`))
 
         fs.writeFileSync(`${outputPath}/${fileName}`, JSON.stringify(gradeData))
     }
