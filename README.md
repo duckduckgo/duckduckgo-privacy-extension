@@ -22,7 +22,7 @@ This software is licensed under the terms of the Apache License, Version 2.0 (se
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
 - Safari:
-`npm run dev-safari'
+`npm run dev-safari`
 
 Load the extension in Safari from the `build/duckduckgo.safariextension/dev/duckduckgo.safariextension` directory using the [extension builder](https://developer.apple.com/library/content/documentation/Tools/Conceptual/SafariExtensionGuide/UsingExtensionBuilder/UsingExtensionBuilder.html)
 
