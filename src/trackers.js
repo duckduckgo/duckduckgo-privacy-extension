@@ -17,6 +17,10 @@ class Trackers {
     }
 
     isTracker(urlToCheck, currLocation, requestType) {
+        if (!this.entityList || !this.whitelist) {
+            throw new Error('tried to detect trackers before rules were loaded')
+        }
+
         currLocation = currLocation
 
         let parsedUrl = tldjs.parse(urlToCheck)

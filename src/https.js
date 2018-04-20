@@ -25,6 +25,10 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
+        if (!this.rules) {
+            throw new Error('tried to upgrade hosts before rules were loaded')
+        }
+
         return this.rules.indexOf(host) > -1
     }
 }
