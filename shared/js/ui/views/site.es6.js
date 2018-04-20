@@ -45,15 +45,21 @@ Site.prototype = window.$.extend({},
     // If we just whitelisted a site, show a message briefly before reloading
     // otherwise just reload the tab and close the popup
     _showWhitelistedStatusMessage: function () {
-      const w = window.chrome.extension.getViews({type: 'popup'})[0]
       const isTransparentClass = 'is-transparent'
       // Wait for the rerendering to be done
       // 10ms timeout is the minimum to render the transition smoothly
       setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
       setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
       // Wait a bit more before closing the popup and reloading the tab
-      setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
-      setTimeout(() => w.close(), 1500)
+      
+      if (window.chrome) {
+          const w = window.chrome.extension.getViews({type: 'popup'})[0]
+          setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
+          setTimeout(() => w.close(), 1500)
+      } else {
+          setTimeout(() => safari.extension.globalPage.contentWindow.tabManager.reloadTab(), 1500)
+          setTimeout(() => safari.self.hide(), 1500)
+      }
     },
 
     // NOTE: after ._setup() is called this view listens for changes to

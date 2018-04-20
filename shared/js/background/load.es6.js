@@ -1,3 +1,5 @@
+const browserWrapper = require('./$BROWSER-wrapper.es6')
+
 function JSONfromLocalFile(path, cb){
     loadExtensionFile({url: path, returnType: 'json'}, (res) => cb(JSON.parse(res)))
 }
@@ -7,6 +9,7 @@ function JSONfromExternalFile(url, cb){
         loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res, xhr) => cb(JSON.parse(res), xhr))
     }
     catch(e) {
+        console.log(e)
         return {}
     }
 }
@@ -35,15 +38,20 @@ function loadExtensionFile(params, cb){
         }
     }
     else {
-        xhr.open("GET", chrome.extension.getURL(params.url));
+        // set type xhr type tag. Safari internal xhr requests
+        // don't set a 200 status so we'll check this type
+        xhr.type = 'internal'
+        xhr.open("GET", browserWrapper.getExtensionURL(params.url));
     }
 
     xhr.send(null);
 
     xhr.onreadystatechange = function() {
         let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
-        if (xhr.readyState === done && xhr.status === 200) {
-            cb(returnResponse(xhr, params.returnType), xhr)
+        if (xhr.readyState === done) {
+            if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
+                cb(returnResponse(xhr, params.returnType), xhr)
+            }
         }
     }
 }

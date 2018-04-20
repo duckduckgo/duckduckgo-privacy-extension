@@ -3,6 +3,7 @@ const changeCase = require('change-case')
 const hero = require('./shared/hero.es6.js')
 const statusList = require('./shared/status-list.es6.js')
 const constants = require('../../../data/constants')
+const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 
 module.exports = function () {
   const domain = this.model && this.model.domain
@@ -32,7 +33,7 @@ module.exports = function () {
         ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
       </div>
       <div class="privacy-practices__attrib padded text--center">
-        Privacy Practice results from <a href="https://tosdr.org/" class="bold" target="_blank">ToS;DR</a>
+        Privacy Practice results from ${crossplatformLink('https://tosdr.org/', {className: 'bold', target: '_blank', text: 'ToS;DR'})}
       </div>
     </div>
   </section>`

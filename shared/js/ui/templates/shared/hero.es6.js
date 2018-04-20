@@ -18,7 +18,7 @@ module.exports = function (ops) {
 function renderOpenOrCloseButton (isCloseButton) {
   const openOrClose = isCloseButton ? 'close' : 'open'
   const arrowIconClass = isCloseButton ? 'icon__arrow--left' : ''
-  return bel`<a href="#" class="hero__${openOrClose}">
+  return bel`<a href="javascript:void(0)" class="hero__${openOrClose}">
     <span class="icon icon__arrow icon__arrow--large ${arrowIconClass}">
     </span>
   </a>`

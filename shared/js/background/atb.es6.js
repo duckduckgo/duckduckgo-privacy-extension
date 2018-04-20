@@ -4,8 +4,8 @@ const utils = require('./utils.es6')
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
-    var ddgRegex = new RegExp(/^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/)
-    var ddgAtbURL = 'https://duckduckgo.com/atb.js?'
+    const regExpAboutPage = /^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
         updateSetAtb: () => {
@@ -47,8 +47,8 @@ var ATB = (() => {
         },
 
         redirectURL: (request) => {
-            if(request.url.search(ddgRegex) !== -1){
-                
+            if(request.url.search(regExpAboutPage) !== -1){
+
                 if(request.url.indexOf('atb=') !== -1){
                     return
                 }
@@ -100,7 +100,7 @@ var ATB = (() => {
                 epoch = isDST ? estEpoch - oneHour : estEpoch,
                 timeSinceEpoch = new Date().getTime() - epoch,
                 majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)        
+                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
             return {'major': majorVersion, 'minor': minorVersion}
         },
 
@@ -116,6 +116,10 @@ var ATB = (() => {
         },
 
         inject: () => {
+
+            // skip this for non webextension browsers
+            if (!window.chrome) return
+
             chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
                 var i = tabs.length, tab
                 while (i--) {
@@ -146,17 +150,30 @@ var ATB = (() => {
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
             settings.ready().then( () => {
-                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) { 
+                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                    const regExpPostInstall = new RegExp('duckduckgo\.com\/app')
-                    if ((!settings.getSetting('hasSeenPostInstall')) && (!domain.match(regExpPostInstall))) {
+                    if (ATB.canShowPostInstall(domain)) {
                         settings.updateSetting('hasSeenPostInstall', true)
+                        let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                        const atb = settings.getSetting('atb')
+                        postInstallURL += atb ? `&atb=${atb}` : ''
                         chrome.tabs.create({
-                            url: 'https://duckduckgo.com/app?post=1'
+                            url: postInstallURL
                         })
                     }
                 })
             })
+        },
+
+        canShowPostInstall: (domain) => {
+            const regExpPostInstall = /duckduckgo\.com\/app/
+            const regExpSoftwarePage = /duckduckgo\.com\/software/
+
+            if (!(domain && settings)) return false
+
+            return !settings.getSetting('hasSeenPostInstall')
+                && !domain.match(regExpPostInstall)
+                && !domain.match(regExpSoftwarePage)
         },
 
         migrate: () => {
@@ -195,8 +212,10 @@ settings.ready().then(() => {
     // migrate over any localStorage values from the old extension
     ATB.migrate()
 
-    // set initial uninstall url
-    chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    // set initial uninstall url. webextension only
+    if (window.chrome) {
+        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    }
 })
 
 module.exports = ATB

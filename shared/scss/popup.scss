@@ -169,7 +169,7 @@ body {
         .site-info__toggle-container {
             position: absolute;
             right: 20px;
-            top: 18px;
+            top: 16px;
 
             .toggle-button {
                 position: absolute;
@@ -190,12 +190,6 @@ body {
 
         .site-info__rating-li {
             padding-top: 8px;
-        }
-
-        .site-info__rating {
-            @include site_rating_icons();
-            width: 80px;
-            height: 64px;
         }
 
         .site-info__li--https-status {
@@ -222,27 +216,12 @@ body {
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
-
-                .is-browser--chrome & {
-                    background-image: url($icon__https-status__locked--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__https-status__locked--moz);
-                }
+                @include cross_platform_bg_image("https--on.svg");
             }
 
             &.is-none,
             &.is-insecure { // none = insecure, http
-
-                .is-browser--chrome & {
-                    background-image: url($icon__https-status__unlocked--chrome);
-                }
-
-                .is-browser--moz & {
-                    background-image: url($icon__https-status__unlocked--moz);
-                }
-
+                @include cross_platform_bg_image("https--off.svg");
             }
         }
 
@@ -263,28 +242,13 @@ body {
                     height: 30px;
                     width: 27px;
                     left: 20px;
-                    
+
                     &.is-blocking--true {
-
-                        .is-browser--chrome & {
-                            background-image: url($icon__trackers__blocked--chrome);
-                        }
-
-                        .is-browser--moz & {
-                            background-image: url($icon__trackers__blocked--moz);
-                        }
+                        @include cross_platform_bg_image("blocking--on.svg");
                     }
 
                     &.is-blocking--false {
-
-                        .is-browser--chrome & {
-                            background-image: url($icon__trackers__unblocked--chrome);
-                        }
-
-                        .is-browser--moz & {
-                            background-image: url($icon__trackers__unblocked--moz);
-                        }
-
+                        @include cross_platform_bg_image("blocking--off.svg");
                     }
                 }
 

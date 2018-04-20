@@ -1,18 +1,10 @@
 @import "vars";
 @import "tracker-network-icons";
-@import "site-rating-icons";
 
 /* Logo */
 @mixin ddg_logo () {
+    @include cross_platform_bg_image("logo-horizontal@2x.png");
     background-size: contain;
-
-    .is-browser--chrome & {
-        background-image: url($img__logo--chrome);
-    }
-
-    .is-browser--moz & {
-        background-image: url($img__logo--moz);
-    }
 }
 
 @mixin ddg_logo--small () {
@@ -77,7 +69,8 @@
         position: absolute;
         right: 14px;
         width: 32px;
-        height: auto;
+        height: 22px;
+        margin-top: -1px;
         margin: 0;
         padding: 0;
         border: none;
@@ -150,6 +143,9 @@
     }
     .is-browser--moz & {
         background-image: url("moz-extension://#{$asset-path}#{$image}");
+    }
+    .is-browser--safari & {
+        background-image: url("../../img/#{$image}");
     }
 }
 
