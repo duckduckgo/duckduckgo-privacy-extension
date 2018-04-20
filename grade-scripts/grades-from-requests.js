@@ -63,6 +63,7 @@ const run = async () => {
 
             if (tracker) {
                 if (trackersByUrl[tracker.url]) { return }
+                trackersByUrl[tracker.url] = true
 
                 if (tracker.block) {
                     grade.update({ trackerBlocked: tracker })
@@ -92,9 +93,7 @@ const run = async () => {
         gradeData.trackersNotBlocked = trackersNotBlocked
         gradeData.totalBlocked = grade.totalBlocked
 
-        let numTrackersBlocked = Object.keys(trackersBlocked).length
-
-        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}, ${numTrackersBlocked} trackers blocked`))
+        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}, ${grade.totalBlocked} trackers blocked`))
 
         fs.writeFileSync(`${outputPath}/${fileName}`, JSON.stringify(gradeData))
     }
