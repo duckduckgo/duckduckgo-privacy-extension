@@ -7,18 +7,18 @@ module.exports = (grunt) => {
         },
         execute: {
             entityMap: {
-                src: ['scripts/entity-map.js']
+                src: ['data-scripts/entity-map.js']
             },
             trackersWithParentCompany: {
-                src: ['scripts/trackers-with-parent-company.js']
+                src: ['data-scripts/trackers-with-parent-company.js']
             },
             tosdr: {
-                src: ['scripts/tosdr.js']
+                src: ['data-scripts/tosdr.js']
             }
         }
     })
 
-    grunt.registerTask('build', 'Build project files', [
+    grunt.registerTask('updateLists', 'Update data lists used by the grade calculation', [
         'exec:setup',
         'execute:entityMap',
         'execute:tosdr',
