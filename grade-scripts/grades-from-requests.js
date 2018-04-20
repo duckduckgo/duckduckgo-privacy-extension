@@ -40,6 +40,8 @@ const run = async () => {
         let siteData = require(`${process.cwd()}/${inputPath}/${fileName}`)
         let hostname = fileName.replace(/\.json$/, '')
 
+        if (siteData.failed) continue
+
         let trackersBlocked = {}
         let trackersNotBlocked = {}
 
