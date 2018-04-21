@@ -225,7 +225,7 @@ class Grade {
         else if (event.trackerBlocked) {
 
             // tracker is from one of the top blocked companies
-            if (majorTrackingNetworks[event.trackerBlocked.parentCompany]) {
+            if (majorTrackingNetworks[event.trackerBlocked.parentCompany.toLowerCase()]) {
                 this.inMajorTrackingNetwork = true
             }
 
