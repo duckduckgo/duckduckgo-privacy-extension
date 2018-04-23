@@ -230,7 +230,7 @@ class Grade {
             this.trackersByUrl[tracker.url] = true
 
             // tracker is from one of the top blocked companies
-            if (majorTrackingNetworks[tracker.parentCompany]) {
+            if (majorTrackingNetworks[tracker.parentCompany.toLowerCase()]) {
                 this.inMajorTrackingNetwork = true
             }
 
