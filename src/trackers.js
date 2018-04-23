@@ -9,7 +9,7 @@ const blockSettings = ['Advertising', 'Analytics']
 
 class Trackers {
 
-    init (lists) {
+    addLists (lists) {
         this.entityList = lists.entityList
         this.whitelist = {}
 
@@ -17,6 +17,10 @@ class Trackers {
     }
 
     isTracker(urlToCheck, currLocation, requestType) {
+        if (!this.entityList || !this.whitelist) {
+            throw new Error('tried to detect trackers before rules were loaded')
+        }
+
         currLocation = currLocation
 
         let parsedUrl = tldjs.parse(urlToCheck)

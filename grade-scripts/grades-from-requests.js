@@ -22,12 +22,12 @@ const outputPath = `${output}-grades`
 const run = async () => {
     // load any lists and plug them into any classes that wait for them
     await listManager.loadLists()
-    https.init(listManager.getList('https'))
-    trackers.init({
+    https.addLists(listManager.getList('https'))
+    trackers.addLists({
         entityList: listManager.getList('entityList'),
         whitelist: listManager.getList('whitelist')
     })
-    surrogates.init(listManager.getList('surrogates'))
+    surrogates.addLists(listManager.getList('surrogates'))
 
     // get initial file data
     let siteDataFiles = fs.readdirSync(inputPath)
@@ -40,9 +40,10 @@ const run = async () => {
         let siteData = require(`${process.cwd()}/${inputPath}/${fileName}`)
         let hostname = fileName.replace(/\.json$/, '')
 
+        if (siteData.failed) continue
+
         let trackersBlocked = {}
         let trackersNotBlocked = {}
-        let trackersByUrl = {}
 
         try {
             fileExists = fs.existsSync(path)
@@ -62,8 +63,6 @@ const run = async () => {
             let tracker = trackers.isTracker(request[0], hostname, request[1])
 
             if (tracker) {
-                if (trackersByUrl[tracker.url]) { return }
-
                 if (tracker.block) {
                     grade.update({ trackerBlocked: tracker })
 
@@ -92,7 +91,7 @@ const run = async () => {
         gradeData.trackersNotBlocked = trackersNotBlocked
         gradeData.totalBlocked = grade.totalBlocked
 
-        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
+        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}, ${grade.totalBlocked} trackers blocked`))
 
         fs.writeFileSync(`${outputPath}/${fileName}`, JSON.stringify(gradeData))
     }

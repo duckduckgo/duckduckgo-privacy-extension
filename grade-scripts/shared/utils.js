@@ -1,6 +1,7 @@
-const responseIsOK = (response) => {
-    // we only care about main frame responses
-    if (response.request().resourceType() !== 'document') {
+const responseIsOK = (response, siteToCheck) => {
+    // we only care about main frame responses for the site we're opening
+    if (response.request().resourceType() !== 'document' ||
+            response.url().indexOf(siteToCheck) === -1) {
         return true
     }
 

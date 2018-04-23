@@ -9,7 +9,7 @@ class Surrogates {
      * Parses it into surrogateList hash, with the rules as keys
      * and the base64 encoded surrogate content as the value.
      */
-    init (text) {
+    addLists (text) {
         const b64dataheader = 'data:application/javascript;base64,'
 
         this.surrogateList = {}
@@ -31,10 +31,14 @@ class Surrogates {
     }
 
     hasList () {
-        return Object.keys(this.surrogateList).length
+        return this.surrogateList && Object.keys(this.surrogateList).length
     }
 
     getContentForRule (rule) {
+        if (!this.surrogateList) {
+            throw new Error('tried to get surrogate content before list was loaded')
+        }
+
         return this.surrogateList[rule]
     }
 
@@ -44,6 +48,10 @@ class Surrogates {
      * for the given url.
      */
     getContentForUrl (url, parsedUrl) {
+        if (!this.surrogateList) {
+            throw new Error('tried to get surrogate content before list was loaded')
+        }
+
         // The rules we're loading in from ublock look like:
         // googletagservices.com/gpt.js
         //

@@ -2,7 +2,7 @@ let tldjs = require('tldjs')
 let utils = require('./utils')
 
 class HTTPS {
-    init (rules) {
+    addLists (rules) {
         this.rules = rules
     }
 
@@ -25,6 +25,10 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
+        if (!this.rules) {
+            throw new Error('tried to upgrade hosts before rules were loaded')
+        }
+
         return this.rules.indexOf(host) > -1
     }
 }
