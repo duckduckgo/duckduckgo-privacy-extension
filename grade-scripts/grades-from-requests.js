@@ -12,12 +12,14 @@ const surrogates = require('../src/surrogates')
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites"')
     .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades"')
+    .option('-f, --file <name>', 'Allow processing a subset of dumped site data, defined in a file')
     .parse(process.argv)
 
 const input = program.input
 const inputPath = `${input}-sites`
 const output = program.output
 const outputPath = `${output}-grades`
+const fileForSubset = program.file
 
 const run = async () => {
     // load any lists and plug them into any classes that wait for them
@@ -31,6 +33,19 @@ const run = async () => {
 
     // get initial file data
     let siteDataFiles = fs.readdirSync(inputPath)
+
+    // if we've defined a file for subset, get all the sites listed in that
+    // and avoid processing all the rest
+    if (fileForSubset) {
+        let sitesForSubset = fs.readFileSync(fileForSubset, { encoding: 'utf8' })
+            .trim()
+            .split('\n')
+
+        siteDataFiles = siteDataFiles.filter((fileName) => {
+            let hostname = fileName.replace(/\.json$/, '')
+            return sitesForSubset.indexOf(hostname) > -1
+        })
+    }
 
     execSync(`mkdir -p ${outputPath}`)
 
