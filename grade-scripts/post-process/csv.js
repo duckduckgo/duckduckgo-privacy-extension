@@ -7,7 +7,7 @@ const csvPath  = `${name}.csv`;
 const histPath = `${name}.hist.csv`;
 const inputPath = `${process.cwd()}/${name}-grades/`;
 
-let hist = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+let hist = new Array(100)
 
 const appendLine = (fn,text) => {
     try {
@@ -42,6 +42,8 @@ let csvDetails = (details) => {
         // for the final one we'll add the final grade as another column
         if (d.why.match(/final grade/)) {
             cols += col(d.index)
+            if (!hist[d.index])
+                hist[d.index] = 0
             hist[d.index] += 1;
             cols += d.grade
         }
