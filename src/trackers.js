@@ -16,7 +16,9 @@ class Trackers {
         abp.parse(lists.whitelist, this.whitelist)
     }
 
-    isTracker(urlToCheck, currLocation, requestType) {
+    isTracker(urlToCheck, currLocation, requestType, ops) {
+        ops = ops || {}
+
         if (!this.entityList || !this.whitelist) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
@@ -71,6 +73,20 @@ class Trackers {
                 return this.addCommonParent(trackerFromList, commonParent)
             }
             return trackerFromList
+        }
+
+        // embedded tweet option
+        // a more robust test for tweet code may need to be used besides just
+        // blocking platform.twitter.com
+        if (ops.embeddedTweetsEnabled === false &&
+                /platform.twitter.com/.test(urlToCheck)) {
+            let tracker = { parentCompany: 'Twitter', url: 'platform.twitter.com', type: 'Analytics', block: true }
+            let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
+
+            if (commonParent) {
+                return this.addCommonParent(tracker, commonParent)
+            }
+            return tracker
         }
 
         return false
