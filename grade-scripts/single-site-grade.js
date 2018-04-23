@@ -56,7 +56,7 @@ const run = async () => {
     })
 
     const page = await browser.newPage()
-    grade = new Grade('', siteToCheck)
+    grade = new Grade(siteToCheck)
     let requests = []
 
     await page.setRequestInterception(true)

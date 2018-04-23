@@ -56,7 +56,7 @@ const run = async () => {
             continue
         }
 
-        let grade = new Grade('', hostname)
+        let grade = new Grade(hostname)
 
         // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach((request) => {

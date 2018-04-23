@@ -10,7 +10,7 @@ const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr cla
 const siteScores = ['A', 'B', 'C', 'D']
 
 class Grade {
-    constructor(specialPage, domain) {
+    constructor(domain, specialPage) {
         this.specialPage = specialPage     // see specialDomain() in class Site below
         this.hasHTTPS = false
         this.inMajorTrackingNetwork = false
