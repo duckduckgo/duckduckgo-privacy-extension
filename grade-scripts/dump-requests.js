@@ -101,6 +101,10 @@ const getSiteData = async (siteToCheck) => {
             failed = true
         }
     })
+    // if any prompts open on page load, they'll make the page hang unless closed
+    page.on('dialog', (dialog) => {
+        dialog.dismiss()
+    })
 
     // wait for the page to load and then an extra 3s, to be sure
     try {
