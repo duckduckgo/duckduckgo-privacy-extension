@@ -84,7 +84,6 @@ var upgradeToSecureSupport = false
 
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        console.log('getBrowserInfo')
         if (info.name === 'Firefox') {
             browser = 'moz'
 
