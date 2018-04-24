@@ -73,18 +73,35 @@ function getCurrentTab(callback){
     })
 }
 
-// Set browser for popup asset paths
+// Browser / Version detection
+// 1. Set browser for popup asset paths
+// 2. Determine if upgradeToSecure supported (firefox 59+)
 // chrome doesn't have getBrowserInfo so we'll default to chrome
-// and try to detect if this is firefox
+// and try to detect if this is firefox.
+
 var browser = 'chrome'
+var upgradeToSecureSupport = false
+
 try {
     chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') browser = 'moz'
+        console.log('getBrowserInfo')
+        if (info.name === 'Firefox') {
+            browser = 'moz'
+
+            var browserVersion = info.version.match(/^(\d+)/)[1];
+            if (browserVersion >= 59) {
+                upgradeToSecureSupport = true
+            }
+        }
     })
 } catch (e) {}
 
 function getBrowserName() {
     return browser
+}
+
+function getUpgradeToSecureSupport() {
+    return upgradeToSecureSupport
 }
 
 module.exports = {
@@ -96,5 +113,6 @@ module.exports = {
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
+    getUpgradeToSecureSupport: getUpgradeToSecureSupport,
     findParent: findParent
 }

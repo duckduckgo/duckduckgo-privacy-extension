@@ -179,7 +179,11 @@ function handleRequest(requestData) {
                 time: Date.now()
             }
         }
-        return {redirectUrl: url}
+        if (utils.getUpgradeToSecureSupport()) {
+            return {upgradeToSecure: true}
+        } else {
+            return {redirectUrl: url}
+        }
     } else {
       return
     }
