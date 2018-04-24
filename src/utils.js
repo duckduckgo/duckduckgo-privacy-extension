@@ -19,6 +19,9 @@ const extractHostFromURL = (url) => {
 
     let urlObj = tldjs.parse(url)
     let hostname = urlObj.hostname
+
+    if (!hostname) return ''
+
     hostname = hostname.replace(/^www\./,'')
 
     return hostname

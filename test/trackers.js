@@ -159,4 +159,16 @@ describe('isTracker', () => {
             expect(tracker.reason).toEqual('whitelisted')
         })
     })
+    describe('things that can\'t be blocked', () => {
+        it(`should not try and block malformed urls`, () => {
+            let tracker = trackers.isTracker(
+                'http://%20%20s.src%20%3D/',
+                'https://example.com',
+                'script'
+            )
+
+            expect(tracker).toEqual(false)
+        })
+    })
+
 })

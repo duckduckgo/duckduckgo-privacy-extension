@@ -13,7 +13,10 @@ describe('getUpgradedUrl', () => {
         { url: 'http://github.io/', shouldUpgrade: false },
 
         { url: 'http://github.com/duckduckgo/', shouldUpgrade: true },
-        { url: 'http://github.com/duckduckgo/?query=string', shouldUpgrade: true }
+        { url: 'http://github.com/duckduckgo/?query=string', shouldUpgrade: true },
+
+        // malformed URL
+        { url: 'http://%20%20s.src%20%3D/', shouldUpgrade: false }
     ]
 
     tests.forEach((test) => {
