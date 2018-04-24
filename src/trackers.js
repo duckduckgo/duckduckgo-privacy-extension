@@ -23,7 +23,7 @@ class Trackers {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        currLocation = currLocation
+        let currLocationDomain = tldjs.getDomain(currLocation)
 
         let parsedUrl = tldjs.parse(urlToCheck)
         let hostname
@@ -48,7 +48,7 @@ class Trackers {
 
         let urlSplit = hostname.split('.')
 
-        let whitelistedTracker = this.checkWhitelist(urlToCheck, hostname, requestType)
+        let whitelistedTracker = this.checkWhitelist(urlToCheck, currLocationDomain, requestType)
         if (whitelistedTracker) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -110,11 +110,11 @@ class Trackers {
         }
     }
 
-    checkWhitelist(url, currLocation, requestType) {
+    checkWhitelist(url, currLocationDomain, requestType) {
         let result = false
         let match
 
-        match = this.checkABPParsedList(this.whitelist, url, currLocation, requestType)
+        match = this.checkABPParsedList(this.whitelist, url, currLocationDomain, requestType)
 
         if (match) {
             result = this.getTrackerDetails(url, 'trackersWhitelist')
@@ -233,10 +233,10 @@ class Trackers {
         }
     }
 
-    checkABPParsedList(list, url, hostname, requestType) {
+    checkABPParsedList(list, url, currLocationDomain, requestType) {
         let match = abp.matches(list, url,
             {
-                domain: hostname,
+                domain: currLocationDomain,
                 elementTypeMask: abp.elementTypes[requestType.toUpperCase()]
             })
         return match
