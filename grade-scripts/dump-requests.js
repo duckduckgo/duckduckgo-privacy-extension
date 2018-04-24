@@ -35,13 +35,24 @@ const handleRequest = (requests, siteToCheck, request) => {
 
     requests.push([url, type])
 
-    let upgradedUrl = https.getUpgradedUrl(url)
+    let upgradedUrl
+    let tracker
 
-    if (url !== upgradedUrl) {
+    try {
+        upgradedUrl = https.getUpgradedUrl(url)
+    } catch (e) {
+        console.log(`error getting upgraded URL for ${url}: ${e.message}`)
+    }
+
+    if (upgradedUrl && url !== upgradedUrl) {
         url = upgradedUrl
     }
 
-    let tracker = trackers.isTracker(url, siteToCheck, type)
+    try {
+        tracker = trackers.isTracker(url, siteToCheck, type)
+    } catch (e) {
+        console.log(`error getting upgraded URL for ${url}: ${e.message}`)
+    }
 
     if (tracker && tracker.block && !allowTrackers) {
         if (tracker.redirectUrl) {
