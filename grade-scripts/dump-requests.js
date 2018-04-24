@@ -101,6 +101,9 @@ const getSiteData = async (siteToCheck) => {
             failed = true
         }
     })
+    page.on('dialog', (dialog) => {
+        dialog.dismiss()
+    })
 
     // wait for the page to load and then an extra 3s, to be sure
     try {
