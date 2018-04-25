@@ -4,25 +4,25 @@ const surrogates = require('../src/surrogates')
 let dummyLists = {
     whitelist: `||scorecardresearch.com/sometracker.js$domain=example.com`,
     entityList: {
-        "comScore": {
-            "properties": [
-                "comscore.com",
-                "adxpose.com",
-                "scorecardresearch.com",
-                "sitestat.com",
-                "voicefive.com"
+        'comScore': {
+            'properties': [
+                'comscore.com',
+                'adxpose.com',
+                'scorecardresearch.com',
+                'sitestat.com',
+                'voicefive.com'
             ],
-            "resources": [
-                "comscore.com",
-                "adxpose.com",
-                "certifica.com",
-                "scorecardresearch.com",
-                "sitestat.com",
-                "voicefive.com",
-                "mdotlabs.com",
-                "proximic.com",
-                "proxilinks.com",
-                "proximic.net"
+            'resources': [
+                'comscore.com',
+                'adxpose.com',
+                'certifica.com',
+                'scorecardresearch.com',
+                'sitestat.com',
+                'voicefive.com',
+                'mdotlabs.com',
+                'proximic.com',
+                'proxilinks.com',
+                'proximic.net'
             ]
         }
     }
@@ -170,5 +170,4 @@ describe('isTracker', () => {
             expect(tracker).toEqual(false)
         })
     })
-
 })
