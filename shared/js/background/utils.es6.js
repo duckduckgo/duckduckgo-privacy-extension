@@ -5,22 +5,22 @@ const settings = require('./settings.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
 function extractHostFromURL (url) {
-    if (!url) return;
+    if (!url) return
 
-    let urlObj = tldjs.parse(url);
-    let hostname = urlObj.hostname;
-    hostname = hostname.replace(/^www\./,'');
-    return hostname;
+    let urlObj = tldjs.parse(url)
+    let hostname = urlObj.hostname
+    hostname = hostname.replace(/^www\./, '')
+    return hostname
 }
 
 function extractTopSubdomainFromHost (host) {
-     if (typeof host !== 'string') return false
-     const rgx = /\./g
-     if (host.match(rgx) && host.match(rgx).length > 1) {
-         return host.split('.')[0]
-     }
-     return false
- }
+    if (typeof host !== 'string') return false
+    const rgx = /\./g
+    if (host.match(rgx) && host.match(rgx).length > 1) {
+        return host.split('.')[0]
+    }
+    return false
+}
 
 // pull off subdomains and look for parent companies
 function findParent (url) {
@@ -34,10 +34,10 @@ function findParent (url) {
     }
 }
 
-function getProtocol (url){
-    var a = document.createElement('a');
-    a.href = url;
-    return a.protocol;
+function getProtocol (url) {
+    var a = document.createElement('a')
+    a.href = url
+    return a.protocol
 }
 
 function parseUserAgentString (uaString) {
@@ -55,21 +55,21 @@ function isChromeBrowser () {
     return false
 }
 
-function getCurrentURL(callback){
-    chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
-        if(tabData.length){
+function getCurrentURL (callback) {
+    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+        if (tabData.length) {
             callback(tabData[0].url)
         }
-    });
+    })
 }
 
-function getCurrentTab(callback){
-    return new Promise( (resolve, reject) => {
-        chrome.tabs.query({"active": true, "lastFocusedWindow": true}, function(tabData) {
-            if(tabData.length){
+function getCurrentTab (callback) {
+    return new Promise((resolve, reject) => {
+        chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+            if (tabData.length) {
                 resolve(tabData[0])
             }
-        });
+        })
     })
 }
 
@@ -83,7 +83,7 @@ try {
     })
 } catch (e) {}
 
-function getBrowserName() {
+function getBrowserName () {
     return browser
 }
 

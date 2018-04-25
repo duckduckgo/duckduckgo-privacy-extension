@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 function getATB () {
-    return document.querySelector('html').getAttribute('data-chromeatb') || document.querySelector('html').getAttribute('data-atb');
+    return document.querySelector('html').getAttribute('data-chromeatb') || document.querySelector('html').getAttribute('data-atb')
 }
 
 if (window.safari) {
-    document.addEventListener("DOMContentLoaded", function(e) {
+    document.addEventListener('DOMContentLoaded', function (e) {
         // give success page a chance to set atb value
         setTimeout(() => {
             if (window === window.top) {
@@ -28,7 +28,7 @@ if (window.safari) {
                 }
             }
         }, 500)
-   }, true)
+    }, true)
 } else {
     chrome.runtime.sendMessage({atb: getATB()})
 }

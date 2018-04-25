@@ -1,20 +1,20 @@
-let getExtensionURL = ((path) => {
+let getExtensionURL = (path) => {
     return safari.extension.baseURI + path
-})
+}
 
-let getExtensionVersion = (() => {
+let getExtensionVersion = () => {
     return safari.extension.displayVersion
-})
+}
 
-let _getSafariWindowId = ((target) => {
-    for(let i = 0; i < safari.extension.toolbarItems.length; i++) {
+let _getSafariWindowId = (target) => {
+    for (let i = 0; i < safari.extension.toolbarItems.length; i++) {
         if (safari.extension.toolbarItems[i].browserWindow.activeTab === target) {
             return i
         }
     }
-})
+}
 
-let setBadgeIcon = ((badgeUpdate) => {
+let setBadgeIcon = (badgeUpdate) => {
     if (badgeUpdate.target && badgeUpdate.target.activeTab) {
         badgeUpdate.target = badgeUpdate.target.activeTab
     }
@@ -24,20 +24,20 @@ let setBadgeIcon = ((badgeUpdate) => {
         safari.extension.toolbarItems[windowId].image = getExtensionURL(badgeUpdate.path)
         safari.extension.popovers[0].contentWindow.location.reload()
     }
-})
+}
 
-let syncToStorage = ((data) => {
+let syncToStorage = (data) => {
     if (data) {
         let key = Object.keys(data)[0]
         let value = data[key]
-        if (typeof(value) === 'object') {
+        if (typeof (value) === 'object') {
             value = JSON.stringify(value)
         }
         localStorage[key] = value
     }
-})
+}
 
-let getFromStorage = ((key, cb) => {
+let getFromStorage = (key, cb) => {
     let setting = localStorage[key]
     // try to parse json
     try {
@@ -46,32 +46,32 @@ let getFromStorage = ((key, cb) => {
         console.log(e)
         cb(setting)
     }
-})
+}
 
-// webextensions can send messages to the popup. In safari the 
+// webextensions can send messages to the popup. In safari the
 // best we can do is refresh it. To keep the popup from refreshing
 // too frequently we can set a debounce rate.
-var _ = require('underscore');
-let reload = (() => {
+var _ = require('underscore')
+let reload = () => {
     safari.extension.popovers[0].contentWindow.location.reload()
-})
+}
 let reloadPopup = _.debounce(reload, 400)
-let notifyPopup = ((message) => {
+let notifyPopup = (message) => {
     // don't notify whitelist changes. It messes with the popup reloading
     if (message && message.whitelistChanged) return
     reloadPopup()
-})
+}
 
-let normalizeTabData = ((tabData) => {
+let normalizeTabData = (tabData) => {
     let url = tabData.message ? tabData.message.currentURL : tabData.url
     let newTabData = {url: url, id: getTabId(tabData)}
     newTabData.target = tabData.target
     return newTabData
-})
+}
 
-let getTabId = ((e) => {
+let getTabId = (e) => {
     if (e.target.ddgTabId) return e.target.ddgTabId
-    
+
     for (let id in safari.application.activeBrowserWindow.tabs) {
         if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
             // prevent race conditions incase another events set a tabId
@@ -79,33 +79,33 @@ let getTabId = ((e) => {
                 return safari.application.activeBrowserWindow.tabs[id].ddgTabId
             }
 
-            let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10;
+            let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10
             safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
             console.log(safari.application.activeBrowserWindow.tabs[id])
             console.log(`Created Tab id: ${tabId}`)
             return tabId
         }
     }
-})
+}
 
-let getActiveTab = (() => {
+let getActiveTab = () => {
     let activeTab = safari.application.activeBrowserWindow.activeTab
     if (activeTab.ddgTabId) {
         return tabManager.get({tabId: activeTab.ddgTabId})
     } else {
         let id = getTabId({target: activeTab})
         return tabManager.get({tabId: id})
-    }   
-})
+    }
+}
 
-let reloadTab = (() => {
+let reloadTab = () => {
     var activeTab = safari.application.activeBrowserWindow.activeTab
     activeTab.url = activeTab.url
-})
+}
 
-let mergeSavedSettings = ((settings, results) => {
+let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
-})
+}
 
 module.exports = {
     getExtensionURL: getExtensionURL,
@@ -118,5 +118,5 @@ module.exports = {
     getTabId: getTabId,
     getActiveTab: getActiveTab,
     reloadTab: reloadTab,
-    mergeSavedSettings: mergeSavedSettings,
+    mergeSavedSettings: mergeSavedSettings
 }

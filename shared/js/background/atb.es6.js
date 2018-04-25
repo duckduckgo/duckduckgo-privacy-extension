@@ -13,11 +13,10 @@ var ATB = (() => {
                 let atbSetting = settings.getSetting('atb'),
                     setAtbSetting = settings.getSetting('set_atb')
 
-                if(!atbSetting || !setAtbSetting)
-                    resolve(null)
+                if (!atbSetting || !setAtbSetting) { resolve(null) }
 
                 ATB.getSetAtb(atbSetting, setAtbSetting).then((newAtb) => {
-                    if(newAtb !== setAtbSetting){
+                    if (newAtb !== setAtbSetting) {
                         settings.updateSetting('set_atb', newAtb)
                     }
                     resolve(newAtb)
@@ -29,9 +28,9 @@ var ATB = (() => {
             return new Promise((resolve) => {
                 var xhr = new XMLHttpRequest()
 
-                xhr.onreadystatechange = function() {
-                    if(xhr.readyState === XMLHttpRequest.DONE){
-                        if(xhr.status == 200){
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status == 200) {
                             let curATB = JSON.parse(xhr.responseText)
                             resolve(curATB.version)
                         }
@@ -41,21 +40,20 @@ var ATB = (() => {
                 let randomValue = Math.ceil(Math.random() * 1e7)
                 let AtbRequestURL = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtb
 
-                xhr.open('GET', AtbRequestURL, true )
+                xhr.open('GET', AtbRequestURL, true)
                 xhr.send()
             })
         },
 
         redirectURL: (request) => {
-            if(request.url.search(regExpAboutPage) !== -1){
-
-                if(request.url.indexOf('atb=') !== -1){
+            if (request.url.search(regExpAboutPage) !== -1) {
+                if (request.url.indexOf('atb=') !== -1) {
                     return
                 }
 
                 let atbSetting = settings.getSetting('atb')
 
-                if(!atbSetting){
+                if (!atbSetting) {
                     return
                 }
 
@@ -66,8 +64,7 @@ var ATB = (() => {
                 // if we have an anchor tag
                 if (urlParts.length === 2) {
                     newURL = urlParts[0] + '&atb=' + atbSetting + '#' + urlParts[1]
-                }
-                else {
+                } else {
                     newURL = request.url + '&atb=' + atbSetting
                 }
 
@@ -76,9 +73,9 @@ var ATB = (() => {
         },
 
         setInitialVersions: () => {
-            if(!settings.getSetting('atb')){
+            if (!settings.getSetting('atb')) {
                 let versions = ATB.calculateInitialVersions()
-                if(versions && versions.major && versions.minor){
+                if (versions && versions.major && versions.minor) {
                     settings.updateSetting('atb', `v${versions.major}-${versions.minor}`)
                 }
             }
@@ -105,7 +102,7 @@ var ATB = (() => {
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
-            if(settings.getSetting('set_atb')){ return }
+            if (settings.getSetting('set_atb')) { return }
 
             settings.updateSetting('atb', atb)
             settings.updateSetting('set_atb', atb)
@@ -116,7 +113,6 @@ var ATB = (() => {
         },
 
         inject: () => {
-
             // skip this for non webextension browsers
             if (!window.chrome) return
 
@@ -149,8 +145,8 @@ var ATB = (() => {
             // only show post install page on install if:
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
-            settings.ready().then( () => {
-                chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
+            settings.ready().then(() => {
+                chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                     if (ATB.canShowPostInstall(domain)) {
                         settings.updateSetting('hasSeenPostInstall', true)
@@ -171,18 +167,18 @@ var ATB = (() => {
 
             if (!(domain && settings)) return false
 
-            return !settings.getSetting('hasSeenPostInstall')
-                && !domain.match(regExpPostInstall)
-                && !domain.match(regExpSoftwarePage)
+            return !settings.getSetting('hasSeenPostInstall') &&
+                !domain.match(regExpPostInstall) &&
+                !domain.match(regExpSoftwarePage)
         },
 
         migrate: () => {
             // migrate localStorage ATB from the old extension over to settings
-            if(!settings.getSetting('atb') && localStorage['atb']) {
+            if (!settings.getSetting('atb') && localStorage['atb']) {
                 settings.updateSetting('atb', localStorage['atb'])
             }
 
-            if(!settings.getSetting('set_atb') && localStorage['set_atb']) {
+            if (!settings.getSetting('set_atb') && localStorage['set_atb']) {
                 settings.updateSetting('set_atb', localStorage['set_atb'])
             }
         },

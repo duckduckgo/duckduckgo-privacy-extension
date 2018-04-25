@@ -8,15 +8,15 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
-var settings = {};
+var settings = {}
 let isReady = false
 let _ready = init().then(() => {
     isReady = true
-    console.log("Settings are loaded")
+    console.log('Settings are loaded')
 })
 
-function init() {
-    return new Promise ((resolve, reject) => {
+function init () {
+    return new Promise((resolve, reject) => {
         buildSettingsFromDefaults()
         buildSettingsFromLocalStorage().then(() => {
             resolve()
@@ -28,9 +28,9 @@ function ready () {
     return _ready
 }
 
-function buildSettingsFromLocalStorage() {
-    return new Promise ((resolve) => {
-        browserWrapper.getFromStorage(['settings'], function(results){
+function buildSettingsFromLocalStorage () {
+    return new Promise((resolve) => {
+        browserWrapper.getFromStorage(['settings'], function (results) {
             // copy over saved settings from storage
             if (!results) resolve()
             settings = browserWrapper.mergeSavedSettings(settings, results)
@@ -39,40 +39,39 @@ function buildSettingsFromLocalStorage() {
     })
 }
 
-function buildSettingsFromDefaults() {
+function buildSettingsFromDefaults () {
     // initial settings are a copy of default settings
     settings = Object.assign({}, defaultSettings)
 }
 
-function syncSettingTolocalStorage(){
-    browserWrapper.syncToStorage({'settings': settings});
+function syncSettingTolocalStorage () {
+    browserWrapper.syncToStorage({'settings': settings})
 }
 
-function getSetting(name) {
+function getSetting (name) {
     if (!isReady) {
         console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
         return
     }
 
     // let all and null return all settings
-    if (name === 'all') name = null;
+    if (name === 'all') name = null
 
-    if(name){
-        return settings[name];
-    }
-    else {
-        return settings;
+    if (name) {
+        return settings[name]
+    } else {
+        return settings
     }
 }
 
-function updateSetting(name, value) {
+function updateSetting (name, value) {
     if (!isReady) {
         console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
         return
     }
 
-    settings[name] = value;
-    syncSettingTolocalStorage();
+    settings[name] = value
+    syncSettingTolocalStorage()
 }
 
 function removeSetting (name) {
