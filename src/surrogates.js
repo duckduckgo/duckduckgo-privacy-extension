@@ -1,4 +1,5 @@
 let btoa = require('btoa')
+let utils = require('./utils')
 
 class Surrogates {
 
@@ -43,14 +44,16 @@ class Surrogates {
     }
 
     /****
-     * Takes a full url, along with a tldjs parsed url object, and the full
+     * Takes a full url and the full
      * parsed list of rules, returning surrogate content if there is some available
      * for the given url.
      */
-    getContentForUrl (url, parsedUrl) {
+    getContentForUrl (url) {
         if (!this.surrogateList) {
             throw new Error('tried to get surrogate content before list was loaded')
         }
+
+        let domain = utils.getDomain(url)
 
         // The rules we're loading in from ublock look like:
         // googletagservices.com/gpt.js
@@ -69,7 +72,8 @@ class Surrogates {
         // strip off any querystring params:
         filename = filename.split('?')[0]
         // concat with domain to match the original rule:
-        let ruleToMatch = parsedUrl.domain + '/' + filename
+        let ruleToMatch = domain + '/' + filename
+
         return this.surrogateList[ruleToMatch]
     }
 }

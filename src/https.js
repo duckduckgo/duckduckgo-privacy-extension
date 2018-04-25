@@ -1,4 +1,3 @@
-let tldjs = require('tldjs')
 let utils = require('./utils')
 
 class HTTPS {
