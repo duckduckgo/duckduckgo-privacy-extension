@@ -16,7 +16,6 @@ const LOCAL_STORAGE_MAX_ITEM_LENGTH = 1000000
 let httpsUpgradeList = []
 
 class HTTPS {
-
     constructor () {
         this.init()
 
@@ -24,18 +23,18 @@ class HTTPS {
     }
 
     init () {
-        console.log("HTTPS: init()")
+        console.log('HTTPS: init()')
 
         // Try to load the list from local storage
         this.getFromStorage().then((items) => {
-            console.log("HTTPS: init() found existing list in storage with " + items.length + " items")
+            console.log('HTTPS: init() found existing list in storage with ' + items.length + ' items')
 
             httpsUpgradeList = items
 
             // check server for updates:
             settings.ready().then(this.updateList.bind(this))
-        },() => {
-            console.log("HTTPS: init() failed to get existing list from storage, going to server for updated list.")
+        }, () => {
+            console.log('HTTPS: init() failed to get existing list from storage, going to server for updated list.')
 
             // clear any etag that may be in settings so that it
             // forces updateList to download a new list from the server.
@@ -46,7 +45,7 @@ class HTTPS {
         })
     }
 
-    updateList() {
+    updateList () {
         let etag = settings.getSetting('https-etag') || ''
         let url = constants.httpsUpgradeList
 
@@ -56,8 +55,8 @@ class HTTPS {
             url += '&b=safari'
         }
 
-        console.log("HTTPS: updateList() check if new list exists at: " + url)
-        
+        console.log('HTTPS: updateList() check if new list exists at: ' + url)
+
         // try to load an updated file from the server, passing
         // in the latest etag we have and only calling the callback
         // with the new file if the etag on the server is different:
@@ -68,7 +67,7 @@ class HTTPS {
         }, (data, res) => {
             // This only gets called if the etag is different
             // and it was able to get a new list from the server:
-            console.log("HTTPS: updateList() got updated list from server")
+            console.log('HTTPS: updateList() got updated list from server')
 
             let newEtag = res.getResponseHeader('etag') || ''
 
@@ -77,18 +76,17 @@ class HTTPS {
                 let parsedData = JSON.parse(data)
 
                 httpsUpgradeList = parsedData
-                console.log("HTTPS: updateList() new list has " + httpsUpgradeList.length + " items")
-                
+                console.log('HTTPS: updateList() new list has ' + httpsUpgradeList.length + ' items')
+
                 // save the full data response to storage
                 // so we don't have to re-stringify the parsed JSON object:
                 this.saveToStorage(data)
 
                 // save new etag for next time
                 settings.updateSetting('https-etag', newEtag)
-                console.log("HTTPS: updateList() updated https-etag to " + newEtag)
-
-            } catch(e) {
-                console.log("HTTPS: updateList() error parsing server response")
+                console.log('HTTPS: updateList() updated https-etag to ' + newEtag)
+            } catch (e) {
+                console.log('HTTPS: updateList() error parsing server response')
             }
         })
     }
@@ -97,7 +95,7 @@ class HTTPS {
         return new Promise((resolve, reject) => {
             // For Chrome/Firefox:
             if (window.chrome) {
-                console.log("HTTPS: getFromStorage() using chrome.storage.local (Chrome/FF)")
+                console.log('HTTPS: getFromStorage() using chrome.storage.local (Chrome/FF)')
 
                 chrome.storage.local.get('https-upgrade-list', (results) => {
                     if (!results || !results['https-upgrade-list']) {
@@ -107,30 +105,30 @@ class HTTPS {
                     try {
                         let parsedList = JSON.parse(results['https-upgrade-list'])
                         resolve(parsedList)
-                    } catch(e) {
-                        console.log("HTTPS: getFromStorage() error parsing JSON from chrome.storage.local", e)
+                    } catch (e) {
+                        console.log('HTTPS: getFromStorage() error parsing JSON from chrome.storage.local', e)
                         reject()
                     }
                 })
 
             // For Safari
             } else if (window.localStorage) {
-                console.log("HTTPS: getFromStorage() using localStorage (Safari)")
+                console.log('HTTPS: getFromStorage() using localStorage (Safari)')
 
                 if (!window.localStorage || !localStorage['https-upgrade-list0']) {
                     return reject()
                 }
 
                 let data = ''
-                for (let i=0; i<LOCAL_STORAGE_CHUNKS; i++) {
+                for (let i = 0; i < LOCAL_STORAGE_CHUNKS; i++) {
                     data += localStorage['https-upgrade-list' + i]
                 }
 
                 try {
                     let parsedList = JSON.parse(data)
                     resolve(parsedList)
-                } catch(e) {
-                    console.log("HTTPS: getFromStorage() error parsing JSON from localStorage", e)
+                } catch (e) {
+                    console.log('HTTPS: getFromStorage() error parsing JSON from localStorage', e)
                     reject()
                 }
             } else {
@@ -142,26 +140,26 @@ class HTTPS {
     saveToStorage (data) {
         // For Chrome/FF:
         if (window.chrome) {
-            console.log("HTTPS: saveToStorage() using chrome.storage.local (Chrome/FF)")
+            console.log('HTTPS: saveToStorage() using chrome.storage.local (Chrome/FF)')
 
             chrome.storage.local.set({ 'https-upgrade-list': data })
 
         // For Safari:
         } else if (window.localStorage) {
-            console.log("HTTPS: saveToStorage() using localStorage (Safari)")
+            console.log('HTTPS: saveToStorage() using localStorage (Safari)')
 
             // See comment at top of the file. Need to chunk it up for Safari/localStorage
             // because individual items in localStorage seem to have a 2.5MB limit.
             const chunkSize = LOCAL_STORAGE_MAX_ITEM_LENGTH
             const numChunks = Math.ceil(data.length / chunkSize)
-            for (let i=0; i<numChunks; i++) {
-                localStorage['https-upgrade-list' + i] = data.substr(i*chunkSize, chunkSize)
+            for (let i = 0; i < numChunks; i++) {
+                localStorage['https-upgrade-list' + i] = data.substr(i * chunkSize, chunkSize)
             }
         }
     }
 
     canUpgradeHost (host) {
-        return (httpsUpgradeList.indexOf(host) > -1) ? true : false
+        return (httpsUpgradeList.indexOf(host) > -1)
     }
 
     getUpgradeList () {
@@ -169,7 +167,6 @@ class HTTPS {
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
-
         // Only deal with http calls
         const protocol = utils.getProtocol(reqUrl).toLowerCase()
         if (protocol !== 'http:') {
@@ -230,24 +227,24 @@ class HTTPS {
 
     /**
      * For debugging/development/test purposes only
-     * Tests the .getRequestUrl() method 
+     * Tests the .getRequestUrl() method
      * for array of test urls defined below
      */
     testGetUpgradedUrl () {
         const testUrls = [
             // These hosts should always have records that were xhr'd
             // into the client-side db from server
-            ['http://1337x.to/foo',                         'https://1337x.to/foo'],
-            ['http://SUbMIt.pandora.com/foo/bar',           'https://SUbMIt.pandora.com/foo/bar'],
-            ['http://foo.api.roblox.com/sit?stand=false',   'https://foo.api.roblox.com/sit?stand=false'],
-            ['http://THUMP.vice.com',                       'https://THUMP.vice.com'],
-            ['http://yts.ag',                               'https://yts.ag'],
+            ['http://1337x.to/foo', 'https://1337x.to/foo'],
+            ['http://SUbMIt.pandora.com/foo/bar', 'https://SUbMIt.pandora.com/foo/bar'],
+            ['http://foo.api.roblox.com/sit?stand=false', 'https://foo.api.roblox.com/sit?stand=false'],
+            ['http://THUMP.vice.com', 'https://THUMP.vice.com'],
+            ['http://yts.ag', 'https://yts.ag'],
             // If it's already https, it should be the same:
-            ['https://duckduckgo.com',                      'https://duckduckgo.com'],
+            ['https://duckduckgo.com', 'https://duckduckgo.com'],
             // If it's not in the list, it should stay http:
-            ['http://fdsakljfsa.fr',                        'http://fdsakljfsa.fr'],
+            ['http://fdsakljfsa.fr', 'http://fdsakljfsa.fr'],
             // any other protocols should be left the same:
-            ['file:///home/foo/bar',                        'file:///home/foo/bar']
+            ['file:///home/foo/bar', 'file:///home/foo/bar']
         ]
 
         let passed = true
@@ -255,7 +252,7 @@ class HTTPS {
         console.log('HTTPS: testGetUgradedUrl() for ' + testUrls.length + ' urls')
 
         testUrls.forEach((test, i) => {
-            const r = this.getUpgradedUrl(test[0], { site: {}} )
+            const r = this.getUpgradedUrl(test[0], { site: {}})
 
             if (r === test[1]) {
                 console.log('HTTPS: getUpgradedUrl("' + test[0] + '") returned the expected value: ' + r)

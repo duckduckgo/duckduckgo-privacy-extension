@@ -3,22 +3,22 @@ const Whitelist = require('../../../shared/js/ui/models/whitelist.es6')
 let whitelist
 
 const domainTestCases = [
-  {
-        "url": "duckduckgo.com",
-        "valid": true
-  },
-  {
-        "url": "duckduck",
-        "valid": false
-  },
-  {
-        "url": "localhost",
-        "valid": true
-  },
-  {
-        "url": "",
-        "valid": false
-  }
+    {
+        'url': 'duckduckgo.com',
+        'valid': true
+    },
+    {
+        'url': 'duckduck',
+        'valid': false
+    },
+    {
+        'url': 'localhost',
+        'valid': true
+    },
+    {
+        'url': '',
+        'valid': false
+    }
 ]
 
 describe('whitelist.addDomain()', () => {

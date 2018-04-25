@@ -18,63 +18,63 @@ const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
 
 function Trackers (ops) {
-  this.$parent = window.$('#popup-container')
-  Parent.call(this, ops)
+    this.$parent = window.$('#popup-container')
+    Parent.call(this, ops)
 }
 
 Trackers.prototype = window.$.extend({},
-  Parent.prototype,
-  mixins.setBrowserClassOnBodyTag,
-  {
+    Parent.prototype,
+    mixins.setBrowserClassOnBodyTag,
+    {
 
-    pageName: 'popup',
+        pageName: 'popup',
 
-    ready: function () {
-      Parent.prototype.ready.call(this)
-      this.message = new BackgroundMessageModel()
-      this.setBrowserClassOnBodyTag()
+        ready: function () {
+            Parent.prototype.ready.call(this)
+            this.message = new BackgroundMessageModel()
+            this.setBrowserClassOnBodyTag()
 
-      this.views.search = new SearchView({
-        pageView: this,
-        model: new SearchModel({searchText: ''}),
-        appendTo: this.$parent,
-        template: searchTemplate
-      })
+            this.views.search = new SearchView({
+                pageView: this,
+                model: new SearchModel({searchText: ''}),
+                appendTo: this.$parent,
+                template: searchTemplate
+            })
 
-      this.views.hamburgerMenu = new HamburgerMenuView({
-        pageView: this,
-        model: new HamburgerMenuModel(),
-        appendTo: this.$parent,
-        template: hamburgerMenuTemplate
-      })
+            this.views.hamburgerMenu = new HamburgerMenuView({
+                pageView: this,
+                model: new HamburgerMenuModel(),
+                appendTo: this.$parent,
+                template: hamburgerMenuTemplate
+            })
 
-      this.views.site = new SiteView({
-        pageView: this,
-        model: new SiteModel(),
-        appendTo: this.$parent,
-        template: siteTemplate
-      })
+            this.views.site = new SiteView({
+                pageView: this,
+                model: new SiteModel(),
+                appendTo: this.$parent,
+                template: siteTemplate
+            })
 
-      this.views.topblocked = new TopBlockedView({
-        pageView: this,
-        model: new TopBlockedModel({numCompanies: 3}),
-        appendTo: this.$parent,
-        template: topBlockedTemplate
-      })
+            this.views.topblocked = new TopBlockedView({
+                pageView: this,
+                model: new TopBlockedModel({numCompanies: 3}),
+                appendTo: this.$parent,
+                template: topBlockedTemplate
+            })
 
-      // TODO: hook up model query to actual ddg ac endpoint.
-      // For now this is just here to demonstrate how to
-      // listen to another component via model.set() +
-      // store.subscribe()
-      this.views.autocomplete = new AutocompleteView({
-        pageView: this,
-        model: new AutocompleteModel({suggestions: []}),
-        // appendTo: this.views.search.$el,
-        appendTo: null,
-        template: autocompleteTemplate
-      })
+            // TODO: hook up model query to actual ddg ac endpoint.
+            // For now this is just here to demonstrate how to
+            // listen to another component via model.set() +
+            // store.subscribe()
+            this.views.autocomplete = new AutocompleteView({
+                pageView: this,
+                model: new AutocompleteModel({suggestions: []}),
+                // appendTo: this.views.search.$el,
+                appendTo: null,
+                template: autocompleteTemplate
+            })
+        }
     }
-  }
 )
 
 // kickoff!
