@@ -5,6 +5,7 @@
     },
     "env": {
         "webextensions": true,
-        "browser": true
+        "browser": true,
+        "jasmine": true
     }
 }

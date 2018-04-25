@@ -2,31 +2,31 @@ let normalizeCompanyName = require('../../../../shared/js/ui/models/mixins/norma
 normalizeCompanyName = normalizeCompanyName.normalizeCompanyName
 const companyNamesTestCases = [
     {
-        "name": "Amazon.com",
-        "result": "amazon"
+        'name': 'Amazon.com',
+        'result': 'amazon'
     },
     {
-        "name": "comScore",
-        "result": "comscore"
+        'name': 'comScore',
+        'result': 'comscore'
     },
     {
-        "name": "",
-        "result": ""
+        'name': '',
+        'result': ''
     },
     {
-        "name": "undefined",
-        "result": ""
+        'name': 'undefined',
+        'result': ''
     },
     {
-        "name": "AOL",
-        "result": "aol"
+        'name': 'AOL',
+        'result': 'aol'
     }
 ]
 
 describe('normalizeCompanyName', () => {
     companyNamesTestCases.forEach((test) => {
         it(`should return ${test.result} for company ${test.name}`, () => {
-            let result 
+            let result
             if (test.name === 'undefined') {
                 result = normalizeCompanyName()
             } else {
@@ -36,4 +36,4 @@ describe('normalizeCompanyName', () => {
             expect(result).toEqual(test.result)
         })
     })
-});
+})

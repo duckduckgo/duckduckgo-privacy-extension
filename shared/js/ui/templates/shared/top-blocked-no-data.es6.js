@@ -1,7 +1,7 @@
 const bel = require('bel')
 
 module.exports = function () {
-  return bel`<div class="top-blocked__no-data">
+    return bel`<div class="top-blocked__no-data">
     <div class="top-blocked__no-data__graph">
       <span class="top-blocked__no-data__graph__bar one"></span>
       <span class="top-blocked__no-data__graph__bar two"></span>

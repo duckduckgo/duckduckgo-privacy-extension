@@ -1,11 +1,11 @@
 const bel = require('bel')
 
 module.exports = function (isActiveBoolean, klass, dataKey) {
-  // make `klass` and `dataKey` optional:
-  klass = klass || ''
-  dataKey = dataKey || ''
+    // make `klass` and `dataKey` optional:
+    klass = klass || ''
+    dataKey = dataKey || ''
 
-  return bel`
+    return bel`
   <button class="toggle-button toggle-button--is-active-${isActiveBoolean} ${klass}"
       data-key="${dataKey}"
       type="button">

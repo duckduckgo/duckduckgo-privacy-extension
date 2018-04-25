@@ -4,7 +4,7 @@ const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 const bel = require('bel')
 
 module.exports = function () {
-  return bel`<nav class="hamburger-menu js-hamburger-menu is-hidden">
+    return bel`<nav class="hamburger-menu js-hamburger-menu is-hidden">
     <div class="hamburger-menu__bg"></div>
     <div class="hamburger-menu__content card padded">
         <h2 class="menu-title border--bottom hamburger-menu__content__more-options">
@@ -22,21 +22,21 @@ module.exports = function () {
       </li>
       <li>
         ${crossplatformLink(renderFeedbackHref(this.model.browserInfo, this.model.tabUrl),
-            { 
-                target: '_blank', 
-                className: 'menu-title',
-                innerHTML: `Send feedback <span>Got issues or suggestions? Let us know!</span>`
-            }
-         )}
+        {
+            target: '_blank',
+            className: 'menu-title',
+            innerHTML: `Send feedback <span>Got issues or suggestions? Let us know!</span>`
+        }
+    )}
       </li>
       <li>
         ${crossplatformLink(renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl),
-           {
-               target: "_blank",
-               className: "menu-title",
-               innerHTML: `Report broken site <span>If a site's not working, please tell us.</span>`
-           }
-        )}
+        {
+            target: '_blank',
+            className: 'menu-title',
+            innerHTML: `Report broken site <span>If a site's not working, please tell us.</span>`
+        }
+    )}
       </li>
         </ul>
     </div>

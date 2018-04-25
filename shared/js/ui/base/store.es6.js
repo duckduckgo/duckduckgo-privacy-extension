@@ -48,22 +48,22 @@ const notifiers = require('./notifiers.es6.js')
  * @api public
  */
 function register (notifierName) {
-  if (typeof notifierName !== 'string') { throw new Error(`notifierName argument must be a string`) }
-  if (notifiers.registered[notifierName]) { throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`) }
+    if (typeof notifierName !== 'string') { throw new Error(`notifierName argument must be a string`) }
+    if (notifiers.registered[notifierName]) { throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`) }
 
-  notifiers.add(notifierName)
-  const combinedNotifiers = notifiers.combine()
+    notifiers.add(notifierName)
+    const combinedNotifiers = notifiers.combine()
 
-  if (!_store) {
-    _store = _createStore(combinedNotifiers)
-    _store.subscribe((notification) => {
-      notification = deepFreeze(notification) // make immutable before publishing
-      _publish(notification) // publish notif. about state changes to subscribers
-    })
-  } else {
+    if (!_store) {
+        _store = _createStore(combinedNotifiers)
+        _store.subscribe((notification) => {
+            notification = deepFreeze(notification) // make immutable before publishing
+            _publish(notification) // publish notif. about state changes to subscribers
+        })
+    } else {
     // update reducers to include the newest registered here
-    _store.replaceNotifier(combinedNotifiers)
-  }
+        _store.replaceNotifier(combinedNotifiers)
+    }
 }
 
 /**
@@ -73,7 +73,7 @@ function register (notifierName) {
  * @api public
  */
 function publish (notification) {
-  _store.dispatch(notification)
+    _store.dispatch(notification)
 }
 
 /**
@@ -88,14 +88,14 @@ _publisher.setMaxListeners(100) // EventEmitter2 default of 10 is too low
  * @api private
  */
 function _publish (notification) {
-  if (notification && notification.change) {
-    console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification)
-    _publisher.emit(`change:${notification.notifierName}`, notification)
-  }
-  if (notification && notification.action) {
-    console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification)
-    _publisher.emit(`action:${notification.notifierName}`, notification)
-  }
+    if (notification && notification.change) {
+        console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification)
+        _publisher.emit(`change:${notification.notifierName}`, notification)
+    }
+    if (notification && notification.action) {
+        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification)
+        _publisher.emit(`action:${notification.notifierName}`, notification)
+    }
 }
 
 /**
@@ -104,10 +104,10 @@ function _publish (notification) {
  * @api public
  */
 function remove (notifierName) {
-  if (notifiers.remove(notifierName)) {
-    const combinedNotifiers = notifiers.combine()
-    _store.replaceNotifier(combinedNotifiers)
-  }
+    if (notifiers.remove(notifierName)) {
+        const combinedNotifiers = notifiers.combine()
+        _store.replaceNotifier(combinedNotifiers)
+    }
 }
 
 /**
@@ -126,47 +126,47 @@ var _store = null
  * @api private
  */
 function _createStore (notifier) {
-  if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
+    if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
 
-  var state = {}
-  var listener = null
-  var isEmitting = false
+    var state = {}
+    var listener = null
+    var isEmitting = false
 
-  function dispatch (notification) {
-    if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object')
-    if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string')
-    if (isEmitting) throw new Error('subscribers may not generate notifications')
+    function dispatch (notification) {
+        if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object')
+        if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string')
+        if (isEmitting) throw new Error('subscribers may not generate notifications')
 
-    isEmitting = true
-    state = notifier(state, notification)
-    if (listener) listener(notification)
-    isEmitting = false
-    return notification
-  }
+        isEmitting = true
+        state = notifier(state, notification)
+        if (listener) listener(notification)
+        isEmitting = false
+        return notification
+    }
 
-  function subscribe (cb) {
-    if (!cb || typeof cb !== 'function') throw new Error('listener must be a function')
-    listener = cb
-  }
+    function subscribe (cb) {
+        if (!cb || typeof cb !== 'function') throw new Error('listener must be a function')
+        listener = cb
+    }
 
-  function replaceNotifier (next) {
-    if (typeof next !== 'function') throw new Error('new notifier must be a function')
-    notifier = next
-  }
+    function replaceNotifier (next) {
+        if (typeof next !== 'function') throw new Error('new notifier must be a function')
+        notifier = next
+    }
 
-  dispatch({ notifierName: '@@createStore/INIT' })
+    dispatch({ notifierName: '@@createStore/INIT' })
 
-  return {
-    dispatch: dispatch,
-    subscribe: subscribe,
-    replaceNotifier: replaceNotifier
-  }
+    return {
+        dispatch: dispatch,
+        subscribe: subscribe,
+        replaceNotifier: replaceNotifier
+    }
 }
 
 // Public api
 module.exports = {
-  register: register, // registers a new notifier to the store (likely a model)
-  publish: publish, // publish a notification from notifier to subscribers
-  subscribe: _publisher, // subscribe to notifiers' notifications
-  remove: remove // remove a notifier from the store
+    register: register, // registers a new notifier to the store (likely a model)
+    publish: publish, // publish a notification from notifier to subscribers
+    subscribe: _publisher, // subscribe to notifiers' notifications
+    remove: remove // remove a notifier from the store
 }

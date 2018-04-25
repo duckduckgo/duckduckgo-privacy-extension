@@ -8,15 +8,15 @@ const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
 const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 
 module.exports = function () {
-  const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
+    const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
      constants.tosdrMessages.unknown
 
-  return bel`<section class="site-info site-info--main">
+    return bel`<section class="site-info site-info--main">
     <ul class="default-list">
     <li class="site-info__rating-li js-hero-open">
       ${ratingHero(this.model, {
         showOpen: !this.model.disabled
-      })}
+    })}
     </li>
     <li class="site-info__li--https-status padded border--bottom">
     <h2 class="site-info__https-status bold">
@@ -60,53 +60,53 @@ module.exports = function () {
   </ul>
   </section>`
 
-  function setTransitionIcon (isSiteWhitelisted) {
-    isSiteWhitelisted = isSiteWhitelisted || false
-    let icon = 'icon__check'
+    function setTransitionIcon (isSiteWhitelisted) {
+        isSiteWhitelisted = isSiteWhitelisted || false
+        let icon = 'icon__check'
 
-    if (isSiteWhitelisted) {
-      icon = 'icon__shield'
+        if (isSiteWhitelisted) {
+            icon = 'icon__shield'
+        }
+
+        return icon
     }
 
-    return icon
-  }
-  
-  function setTransitionText (isSiteWhitelisted) {
-    isSiteWhitelisted = isSiteWhitelisted || false
-    let text = 'Added to '
+    function setTransitionText (isSiteWhitelisted) {
+        isSiteWhitelisted = isSiteWhitelisted || false
+        let text = 'Added to '
 
-    if (isSiteWhitelisted) {
-      text = 'Removed From '
+        if (isSiteWhitelisted) {
+            text = 'Removed From '
+        }
+
+        text += 'Whitelist'
+        return text
     }
 
-    text += 'Whitelist'
-    return text
-  }
+    function renderTrackerNetworks (model) {
+        const isActive = !model.isWhitelisted ? 'is-active' : ''
 
-  function renderTrackerNetworks (model) {
-    const isActive = !model.isWhitelisted ? 'is-active' : ''
-
-    return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
+        return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
       <span class="site-info__trackers-status__icon
           icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
       <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
       <span class="icon icon__arrow pull-right"></span>
     </a>`
-  }
+    }
 
-  function renderManageWhitelist (model) {
-    return bel`<div>
+    function renderManageWhitelist (model) {
+        return bel`<div>
       <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
         Manage Whitelist
       </a>
       <div class="separator"></div>
         ${crossplatformLink(renderBrokenSiteHref(model.browserInfo, model.domain),
-            {
-                target: "_blank",
-                className: "js-site-report-broken site-info__report-broken link-secondary bold",
-                text: "Report Broken Site"
-            }
-        )}
+        {
+            target: '_blank',
+            className: 'js-site-report-broken site-info__report-broken link-secondary bold',
+            text: 'Report Broken Site'
+        }
+    )}
     </div>`
-  }
+    }
 }
