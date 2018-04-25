@@ -2,86 +2,86 @@ const utils = require('../../src/utils')
 const Grade = require('../../src/classes/grade')
 const gradeTestCases = require('../data/grade-cases')
 const isaMajorNetworkTestCases = [
-   {
-      "specialPage": 0,
-      "domain": "facebook.com",
-      "slicedDomain": ["facebook", "com"],
-      "parent": "Facebook",
-      "isZeroResult": 0,
-      "descr": "a number greater than zero for Facebook (major network)" 
-   },
-   {
-      "specialPage": 0,
-      "domain": "encrypted.google.com",
-      "slicedDomain": ["google", "com"],
-      "parent": "Google",
-      "isZeroResult": 0,
-      "descr": "a number greater than zero for Google (major network)" 
-   },
-   {
-      "specialPage": 0,
-      "domain": "",
-      "slicedDomain": [],
-      "parent": "",
-      "isZeroResult": 1,
-      "descr": "zero, because we have no domain"
-   },
-   {
-      "specialPage": 1,
-      "domain": "",
-      "slicedDomain": [],
-      "parent": "",
-      "isZeroResult": 1,
-      "descr": "zero, because it's a special page" 
-   },
-   {
-      "specialPage": 0,
-      "domain": "duckduckgo.com",
-      "slicedDomain": ["duckduckgo", "com"],
-      "parent": "",
-      "isZeroResult": 1,
-      "descr": "zero, because of no major network parent"
-   },
-   {
-      "specialPage": 0,
-      "domain": "bttf.duckduckgo.com",
-      "slicedDomain": ["duckduckgo", "com"],
-      "parent": "",
-      "isZeroResult": 1,
-      "descr": "zero, because of no major network parent"
-   }
+    {
+        'specialPage': 0,
+        'domain': 'facebook.com',
+        'slicedDomain': ['facebook', 'com'],
+        'parent': 'Facebook',
+        'isZeroResult': 0,
+        'descr': 'a number greater than zero for Facebook (major network)'
+    },
+    {
+        'specialPage': 0,
+        'domain': 'encrypted.google.com',
+        'slicedDomain': ['google', 'com'],
+        'parent': 'Google',
+        'isZeroResult': 0,
+        'descr': 'a number greater than zero for Google (major network)'
+    },
+    {
+        'specialPage': 0,
+        'domain': '',
+        'slicedDomain': [],
+        'parent': '',
+        'isZeroResult': 1,
+        'descr': 'zero, because we have no domain'
+    },
+    {
+        'specialPage': 1,
+        'domain': '',
+        'slicedDomain': [],
+        'parent': '',
+        'isZeroResult': 1,
+        'descr': "zero, because it's a special page"
+    },
+    {
+        'specialPage': 0,
+        'domain': 'duckduckgo.com',
+        'slicedDomain': ['duckduckgo', 'com'],
+        'parent': '',
+        'isZeroResult': 1,
+        'descr': 'zero, because of no major network parent'
+    },
+    {
+        'specialPage': 0,
+        'domain': 'bttf.duckduckgo.com',
+        'slicedDomain': ['duckduckgo', 'com'],
+        'parent': '',
+        'isZeroResult': 1,
+        'descr': 'zero, because of no major network parent'
+    }
 ]
 
 const tosdrTestCases = [
     {
-        "domain": "google.com",
-        "isMessageBad": 1,
-        "descr": "bad tosdr rating for google.com"
+        'domain': 'google.com',
+        'isMessageBad': 1,
+        'descr': 'bad tosdr rating for google.com'
     },
     {
-        "domain": "encrypted.google.com",
-        "isMessageBad": 1,
-        "descr": "bad tosdr rating for encrypted.google.com (match domain)"
+        'domain': 'encrypted.google.com',
+        'isMessageBad': 1,
+        'descr': 'bad tosdr rating for encrypted.google.com (match domain)'
     },
     {
-        "domain": "youtube.com",
-        "isMessageBad": 1,
-        "descr": "bad tosdr rating for youtube.com"
+        'domain': 'youtube.com',
+        'isMessageBad': 1,
+        'descr': 'bad tosdr rating for youtube.com'
     },
     {
-        "domain": "duckduckgo.com",
-        "isMessageBad": 0,
-        "descr": "good tosdr rating for duckduckgo.com"
+        'domain': 'duckduckgo.com',
+        'isMessageBad': 0,
+        'descr': 'good tosdr rating for duckduckgo.com'
     },
     {
-        "domain": "bttf.duckduckgo.com",
-        "isMessageBad": 0,
-        "descr": "good tosdr rating for bttf.duckduckgo.com"
+        'domain': 'bttf.duckduckgo.com',
+        'isMessageBad': 0,
+        'descr': 'good tosdr rating for bttf.duckduckgo.com'
     },
     {
-        "domain": "deletefacebook.com",
-        "isMessageBad": 0,
-        "descr": "not bad tosdr rating for deletefacebook.com"
+        'domain': 'deletefacebook.com',
+        'isMessageBad': 0,
+        'descr': 'not bad tosdr rating for deletefacebook.com'
     }
 ]
 
@@ -106,14 +106,14 @@ describe('grade', () => {
             expect(result.afterIndex).toEqual(test.result.afterScore)
         })
     })
-});
+})
 
 describe('isaMajorNetwork', () => {
     isaMajorNetworkTestCases.forEach((test) => {
         it(`should return ${test.descr}`, () => {
             spyOn(utils, 'findParent').and.returnValue(test.parent)
             grade = new Grade(test.domain, test.specialPage)
- 
+
             if (test.parent) {
                 expect(utils.findParent).toHaveBeenCalledWith(test.slicedDomain)
             }
@@ -127,13 +127,13 @@ describe('isaMajorNetwork', () => {
             }
         })
     })
-});
+})
 
 describe('getTosdr', () => {
     tosdrTestCases.forEach((test) => {
         it(`should return ${test.descr}`, () => {
             grade = new Grade(test.domain)
- 
+
             let result = grade.tosdr
             let message = result.message
 
@@ -144,7 +144,7 @@ describe('getTosdr', () => {
             }
         })
     })
-});
+})
 
 // piggy back on the existing grade test cases, and make sure decisions are kept track of properly
 describe('decisions', () => {
@@ -165,13 +165,13 @@ describe('decisions', () => {
             expect(decisions instanceof Array).toBeTruthy()
             decisions.forEach((decision) => {
                 expect(typeof decision.why).toBe('string', 'every decision should have a reason')
-                expect(decision.grade).toMatch(/^[A-F]$/,'every decision should include the grade')
+                expect(decision.grade).toMatch(/^[A-F]$/, 'every decision should include the grade')
 
                 currentIndex += decision.change
-                expect(currentIndex).toEqual(decision.index,'the decision index should match what the change says')
+                expect(currentIndex).toEqual(decision.index, 'the decision index should match what the change says')
             })
 
-            expect(currentIndex).toEqual(result.beforeIndex,'all the changes in the decisions should match the final grade reported')
+            expect(currentIndex).toEqual(result.beforeIndex, 'all the changes in the decisions should match the final grade reported')
         })
     })
 })

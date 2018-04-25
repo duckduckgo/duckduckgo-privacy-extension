@@ -1,0 +1,9 @@
+{
+    "extends": "standard",
+    "rules": {
+        "indent": ["error", 4]
+    },
+    "env": {
+        "jasmine": true
+    }
+}

@@ -2,7 +2,6 @@ let btoa = require('btoa')
 let utils = require('./utils')
 
 class Surrogates {
-
     /****
      * Takes a text response, in uBlock's resources.txt format:
      * https://github.com/uBlockOrigin/uAssets/blob/master/filters/resources.txt
@@ -27,7 +26,7 @@ class Surrogates {
             // take identifier from first line
             let pattern = firstLine.split(' ')[0]
             let b64surrogate = btoa(lines.join('\n'))
-            this.surrogateList[pattern] =  b64dataheader + b64surrogate
+            this.surrogateList[pattern] = b64dataheader + b64surrogate
         }
     }
 

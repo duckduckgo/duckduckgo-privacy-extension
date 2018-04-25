@@ -9,8 +9,8 @@ const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr cla
 const siteScores = ['A', 'B', 'C', 'D']
 
 class Grade {
-    constructor(domain, specialPage) {
-        this.specialPage = specialPage     // see specialDomain() in class Site below
+    constructor (domain, specialPage) {
+        this.specialPage = specialPage // see specialDomain() in class Site below
         this.hasHTTPS = false
         this.inMajorTrackingNetwork = false
         this.totalBlocked = 0
@@ -22,7 +22,7 @@ class Grade {
         this.trackersByUrl = {}
     }
 
-    getTosdr() {
+    getTosdr () {
         let result = {}
 
         tosdrRegexList.some(tosdrSite => {
@@ -51,12 +51,12 @@ class Grade {
                         message = tosdrMessages.good
                     } else if (tosdrData.score === 0 && (matchGood.length || matchBad.length)) {
                         message = tosdrMessages.mixed
-                    } else if (tosdrData.score > 0 ) {
+                    } else if (tosdrData.score > 0) {
                         message = tosdrMessages.bad
                     }
                 }
 
-                return result = {
+                result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
                     reasons: {
@@ -65,6 +65,8 @@ class Grade {
                     },
                     message: message
                 }
+
+                return result
             }
         })
         return result
@@ -74,7 +76,7 @@ class Grade {
      * minus one grade for each 10% of the top pages this
      * network is found on.
      */
-    isaMajorTrackingNetwork() {
+    isaMajorTrackingNetwork () {
         let result = 0
         if (this.specialPage || !this.domain) return result
         const parentCompany = utils.findParent(this.domain.split('.'))
@@ -89,7 +91,7 @@ class Grade {
     /*
      * Calculates and returns a site score
      */
-    get() {
+    get () {
         if (this.specialPage) return {}
 
         this.decisions = []
@@ -97,7 +99,7 @@ class Grade {
         let beforeIndex = 1
         let afterIndex = 1
 
-        this.addDecision({change: 1, index: beforeIndex, why: "Default grade"})
+        this.addDecision({change: 1, index: beforeIndex, why: 'Default grade'})
 
         if (this.isaMajorTrackingNetwork) {
             beforeIndex += this.isaMajorTrackingNetwork
@@ -105,10 +107,10 @@ class Grade {
             this.addDecision({
                 change: this.isaMajorTrackingNetwork,
                 index: beforeIndex,
-                why: "Is a major tracking network"
+                why: 'Is a major tracking network'
             })
         } else {
-            this.addDecision({ change: 0, index: beforeIndex, why: "Not a major tracking network" })
+            this.addDecision({ change: 0, index: beforeIndex, why: 'Not a major tracking network' })
         }
 
         // If tosdr already determined a class ranking then we map that to increase or
@@ -125,9 +127,8 @@ class Grade {
                     why: `Has tosdr class ${this.tosdr.class}`,
                     tosdr: this.tosdr
                 })
-
             } else if (this.tosdr.score) {
-                let tosdrScore =  Math.sign(this.tosdr.score)
+                let tosdrScore = Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
                 afterIndex += tosdrScore
 
@@ -183,8 +184,8 @@ class Grade {
         if (afterIndex < 0) afterIndex = 0
 
         // only sites with a tosdr.class "A" can get a final grade of "A"
-        if(afterIndex === 0 && this.tosdr.class !== 'A') afterIndex = 1
-        if(beforeIndex === 0 && this.tosdr.class !== 'A') {
+        if (afterIndex === 0 && this.tosdr.class !== 'A') afterIndex = 1
+        if (beforeIndex === 0 && this.tosdr.class !== 'A') {
             beforeIndex = 1
 
             this.addDecision({
@@ -216,13 +217,12 @@ class Grade {
      * Update the score attruibues as new events come in. The actual
      * site score is calculated later when you call .get()
      */
-    update(event) {
+    update (event) {
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
         if (event.hasHTTPS) {
             this.hasHTTPS = true
-        }
-        else if (event.trackerBlocked) {
+        } else if (event.trackerBlocked) {
             let tracker = event.trackerBlocked
             if (this.trackersByUrl[tracker.url]) { return }
 
@@ -242,7 +242,7 @@ class Grade {
         }
     }
 
-    addDecision(decision) {
+    addDecision (decision) {
         decision.grade = siteScores[decision.index] || 'D'
         this.decisions.push(decision)
     }

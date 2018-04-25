@@ -6,6 +6,8 @@
   "scripts": {
     "test": "grunt test",
     "test-debug": "grunt test --type=dev --test-debug",
+    "lint": "eslint src test",
+    "lint-fix": "eslint src test --fix",
     "updateLists": "grunt updateLists",
     "abp": "cd node_modules/abp-filter-parser && npm install",
     "postinstall": "npm run abp"
@@ -15,6 +17,12 @@
   "devDependencies": {
     "chalk": "2.4.0",
     "commander": "2.15.1",
+    "eslint": "4.19.1",
+    "eslint-config-standard": "11.0.0",
+    "eslint-plugin-import": "2.11.0",
+    "eslint-plugin-node": "6.0.1",
+    "eslint-plugin-promise": "3.7.0",
+    "eslint-plugin-standard": "3.1.0",
     "grunt": "1.0.2",
     "grunt-browserify": "5.3.0",
     "grunt-cli": "1.2.0",

@@ -6,7 +6,6 @@ class HTTPS {
     }
 
     getUpgradedUrl (url) {
-
         // Only deal with http calls
         if (url.indexOf('http:') !== 0) {
             return url
