@@ -1,6 +1,3 @@
-
-// var bg = chrome.extension.getBackgroundPage();
-
 function replaceAllButtons () {
     var key
     for (key in socialwidgets) {
@@ -9,7 +6,7 @@ function replaceAllButtons () {
 }
 
 function replaceIndividualButton (key) {
-    tracker = socialwidgets[key]
+    var tracker = socialwidgets[key]
     var buttonSelectorsString = tracker.buttonSelectors.toString()
     var buttonsToReplace =
         document.querySelectorAll(buttonSelectorsString)
@@ -25,7 +22,7 @@ function replaceIndividualButton (key) {
 }
 
 function createReplacementButtonImage (key, trackerElem) {
-    tracker = socialwidgets[key]
+    var tracker = socialwidgets[key]
     var buttonData = tracker.replacementButton
 
     var button = document.createElement('img')
@@ -64,7 +61,7 @@ function createReplacementButtonImage (key, trackerElem) {
         break
 
     default:
-        throw 'Invalid button type specified: ' + buttonType
+        throw new Error('Invalid button type specified: ' + buttonType)
     }
 
     return button
