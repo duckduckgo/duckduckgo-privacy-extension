@@ -8,8 +8,8 @@ module.exports = function () {
         <li>
             Show Embedded Tweets
             ${toggleButton(this.model.embeddedTweetsEnabled,
-                'js-options-embedded-tweets-enabled',
-                'embeddedTweetsEnabled')}
+        'js-options-embedded-tweets-enabled',
+        'embeddedTweetsEnabled')}
         </li>
     </ul>
 </section>`

@@ -22,9 +22,9 @@ module.exports = function () {
         js-tracker-networks-details">
         <ol class="default-list site-info__trackers__company-list">
             ${renderTrackerDetails(
-                this.model,
-                this.model.DOMAIN_MAPPINGS
-            )}
+        this.model,
+        this.model.DOMAIN_MAPPINGS
+    )}
         </ol>
     </div>
 </div>`
@@ -66,15 +66,15 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
     <h1 class="site-info__domain block">${c.name}</h1>
     <ol class="default-list site-info__trackers__company-list__url-list">
         ${c.urlsList.map((url) => {
-            let category = ''
-            if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
-                category = DOMAIN_MAPPINGS[url.toLowerCase()].t
-            }
-            return bel`<li>
+        let category = ''
+        if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
+            category = DOMAIN_MAPPINGS[url.toLowerCase()].t
+        }
+        return bel`<li>
                 <div class="url">${url}</div>
                 <div class="category">${category}</div>
             </li>`
-        })}
+    })}
     </ol>
 </li>`
         })

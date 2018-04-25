@@ -22,21 +22,21 @@ module.exports = function () {
             </li>
             <li>
                 ${crossplatformLink(renderFeedbackHref(this.model.browserInfo, this.model.tabUrl),
-                    {
-                        target: '_blank',
-                        className: 'menu-title',
-                        innerHTML: `Send feedback <span>Got issues or suggestions? Let us know!</span>`
-                    }
-                )}
+        {
+            target: '_blank',
+            className: 'menu-title',
+            innerHTML: `Send feedback <span>Got issues or suggestions? Let us know!</span>`
+        }
+    )}
             </li>
             <li>
                 ${crossplatformLink(renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl),
-                    {
-                        target: '_blank',
-                        className: 'menu-title',
-                        innerHTML: `Report broken site <span>If a site's not working, please tell us.</span>`
-                    }
-                    )}
+        {
+            target: '_blank',
+            className: 'menu-title',
+            innerHTML: `Report broken site <span>If a site's not working, please tell us.</span>`
+        }
+    )}
             </li>
         </ul>
     </div>
