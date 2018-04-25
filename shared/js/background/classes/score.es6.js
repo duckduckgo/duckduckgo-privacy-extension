@@ -53,7 +53,7 @@ class Score {
                     }
                 }
 
-                return result = {
+                result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
                     reasons: {
@@ -62,6 +62,8 @@ class Score {
                     },
                     message: message
                 }
+
+                return result
             }
         })
         return result

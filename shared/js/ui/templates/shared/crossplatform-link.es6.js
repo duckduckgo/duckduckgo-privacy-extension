@@ -1,5 +1,3 @@
-const bel = require('bel')
-
 /* Generates a link that will work on both webextensions and safari
  * url: href url
  * options: any a tag attribute
@@ -17,8 +15,8 @@ module.exports = function (url, options) {
             a.removeAttribute('target')
             a.href = 'javascript:void(0)'
             a.onclick = () => {
-                safari.application.activeBrowserWindow.openTab().url = url
-                safari.self.hide()
+                window.safari.application.activeBrowserWindow.openTab().url = url
+                window.safari.self.hide()
             }
         }
     }

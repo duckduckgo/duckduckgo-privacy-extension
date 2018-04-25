@@ -1,4 +1,3 @@
-const load = require('./load.es6')
 const defaultSettings = require('../../data/defaultSettings')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 

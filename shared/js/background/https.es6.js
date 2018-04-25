@@ -99,7 +99,7 @@ class HTTPS {
 
                 chrome.storage.local.get('https-upgrade-list', (results) => {
                     if (!results || !results['https-upgrade-list']) {
-                        return reject()
+                        return reject(new Error('couldn\'t get HTTPS results from local storage'))
                     }
 
                     try {
@@ -107,32 +107,11 @@ class HTTPS {
                         resolve(parsedList)
                     } catch (e) {
                         console.log('HTTPS: getFromStorage() error parsing JSON from chrome.storage.local', e)
-                        reject()
+                        reject(e)
                     }
                 })
-
-            // For Safari
-            } else if (window.localStorage) {
-                console.log('HTTPS: getFromStorage() using localStorage (Safari)')
-
-                if (!window.localStorage || !localStorage['https-upgrade-list0']) {
-                    return reject()
-                }
-
-                let data = ''
-                for (let i = 0; i < LOCAL_STORAGE_CHUNKS; i++) {
-                    data += localStorage['https-upgrade-list' + i]
-                }
-
-                try {
-                    let parsedList = JSON.parse(data)
-                    resolve(parsedList)
-                } catch (e) {
-                    console.log('HTTPS: getFromStorage() error parsing JSON from localStorage', e)
-                    reject()
-                }
             } else {
-                reject()
+                reject(new Error('no way to get HTTPS results from local storage'))
             }
         })
     }
@@ -252,7 +231,7 @@ class HTTPS {
         console.log('HTTPS: testGetUgradedUrl() for ' + testUrls.length + ' urls')
 
         testUrls.forEach((test, i) => {
-            const r = this.getUpgradedUrl(test[0], { site: {}})
+            const r = this.getUpgradedUrl(test[0], { site: {} })
 
             if (r === test[1]) {
                 console.log('HTTPS: getUpgradedUrl("' + test[0] + '") returned the expected value: ' + r)

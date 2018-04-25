@@ -10,8 +10,8 @@ var ATB = (() => {
     return {
         updateSetAtb: () => {
             return new Promise((resolve) => {
-                let atbSetting = settings.getSetting('atb'),
-                    setAtbSetting = settings.getSetting('set_atb')
+                let atbSetting = settings.getSetting('atb')
+                let setAtbSetting = settings.getSetting('set_atb')
 
                 if (!atbSetting || !setAtbSetting) { resolve(null) }
 
@@ -30,7 +30,7 @@ var ATB = (() => {
 
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status == 200) {
+                        if (xhr.status === 200) {
                             let curATB = JSON.parse(xhr.responseText)
                             resolve(curATB.version)
                         }
@@ -82,22 +82,23 @@ var ATB = (() => {
         },
 
         calculateInitialVersions: () => {
-            let oneWeek = 604800000,
-                oneDay = 86400000,
-                oneHour = 3600000,
-                oneMinute = 60000,
-                estEpoch = 1456290000000,
-                localDate = new Date(),
-                localTime = localDate.getTime(),
-                utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute),
-                est = new Date(utcTime + (oneHour * -5)),
-                dstStartDay = 13 - ((est.getFullYear() - 2016) % 6),
-                dstStopDay = 6 - ((est.getFullYear() - 2016) % 6),
-                isDST = (est.getMonth() > 2 || (est.getMonth() == 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() == 10 && est.getDate() < dstStopDay)),
-                epoch = isDST ? estEpoch - oneHour : estEpoch,
-                timeSinceEpoch = new Date().getTime() - epoch,
-                majorVersion = Math.ceil(timeSinceEpoch / oneWeek),
-                minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
+            let oneWeek = 604800000
+            let oneDay = 86400000
+            let oneHour = 3600000
+            let oneMinute = 60000
+            let estEpoch = 1456290000000
+            let localDate = new Date()
+            let localTime = localDate.getTime()
+            let utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute)
+            let est = new Date(utcTime + (oneHour * -5))
+            let dstStartDay = 13 - ((est.getFullYear() - 2016) % 6)
+            let dstStopDay = 6 - ((est.getFullYear() - 2016) % 6)
+            let isDST = (est.getMonth() > 2 || (est.getMonth() === 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() === 10 && est.getDate() < dstStopDay))
+            let epoch = isDST ? estEpoch - oneHour : estEpoch
+            let timeSinceEpoch = new Date().getTime() - epoch
+            let majorVersion = Math.ceil(timeSinceEpoch / oneWeek)
+            let minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
+
             return {'major': majorVersion, 'minor': minorVersion}
         },
 
@@ -117,7 +118,8 @@ var ATB = (() => {
             if (!window.chrome) return
 
             chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
-                var i = tabs.length, tab
+                let i = tabs.length
+                let tab
                 while (i--) {
                     tab = tabs[i]
 
@@ -186,9 +188,9 @@ var ATB = (() => {
         getSurveyURL: () => {
             let url = 'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             let atb = settings.getSetting('atb')
-            let set_atb = settings.getSetting('set_atb')
+            let setAtb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
-            if (set_atb) url += `&set_atb=${set_atb}`
+            if (setAtb) url += `&set_atb=${setAtb}`
 
             let browserInfo = utils.parseUserAgentString()
             let browserName = browserInfo.browser

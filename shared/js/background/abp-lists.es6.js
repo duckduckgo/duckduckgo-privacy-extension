@@ -1,16 +1,11 @@
 /*
  * Load the abp-filter-parser node module and
  * pre-process the easylists.
- *
- * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 const abp = require('abp-filter-parser')
-const deepFreeze = require('deep-freeze')
 const constants = require('../../data/constants')
-const defaultSettings = require('../../data/defaultSettings')
 const surrogates = require('./surrogates.es6')
 const settings = require('./settings.es6')
-const ATB = require('./atb.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
@@ -71,7 +66,7 @@ function getWhitelists () {
  */
 function updateLists () {
     const atb = settings.getSetting('atb')
-    const set_atb = settings.getSetting('set_atb')
+    const setAtb = settings.getSetting('set_atb')
     const versionParam = getVersionParam()
 
     for (let listType in lists) {
@@ -87,7 +82,7 @@ function updateLists () {
             // only add url params to contentblocking.js duckduckgo urls
             if (url.match(/^https?:\/\/(.+)?duckduckgo.com\/contentblocking\.js/)) {
                 if (atb) url += '&atb=' + atb
-                if (set_atb) url += '&set_atb=' + set_atb
+                if (setAtb) url += '&set_atb=' + setAtb
                 if (versionParam) url += versionParam
             }
 
