@@ -23,22 +23,22 @@ ${trackerTwo}
 describe('getContentForUrl', () => {
     let tests = [
         {
-            url: 'tracker-one.com/tracks.js',
+            url: 'https://tracker-one.com/tracks.js',
             parsedUrl: { domain: 'tracker-one.com' },
             expectedBase64: trackerOneBase64
         },
         {
-            url: 'tracker-two.com/tracks.js',
+            url: 'https://tracker-two.com/tracks.js',
             parsedUrl: { domain: 'tracker-two.com' },
             expectedBase64: trackerTwoBase64
         },
         {
-            url: 'en.www.tracker-one.com/foo/bar/tracks.js',
+            url: 'https://en.www.tracker-one.com/foo/bar/tracks.js',
             parsedUrl: { domain: 'tracker-one.com' },
             expectedBase64: trackerOneBase64
         },
         {
-            url: 'en.www.tracker-one.com/foo/bar/tracks.js?a=b',
+            url: 'https://en.www.tracker-one.com/foo/bar/tracks.js?a=b',
             parsedUrl: { domain: 'tracker-one.com' },
             expectedBase64: trackerOneBase64
         }
