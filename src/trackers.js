@@ -1,5 +1,4 @@
 const abp = require('abp-filter-parser')
-const tldjs = require('tldjs')
 const utils = require('./utils')
 const trackersWithParentCompany = require('../data/generated/trackers-with-parent-company')
 const entityMap = require('../data/generated/entity-map')
@@ -23,29 +22,9 @@ class Trackers {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        let currLocationDomain = tldjs.getDomain(currLocation)
+        let currLocationDomain = utils.getDomain(currLocation)
 
-        let parsedUrl = tldjs.parse(urlToCheck)
-        let hostname
-
-        if (parsedUrl && parsedUrl.hostname) {
-            hostname = parsedUrl.hostname
-        } else {
-            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
-            // if the subdomain name has underscores in it
-            try {
-                // last ditch attempt to try and grab a hostname
-                // this will fail on more complicated URLs with e.g. ports
-                // but will allow us to block simple trackers with _ in the subdomains
-                hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
-            } catch (e) {
-                // give up
-                return false
-            }
-        }
-
-        hostname = hostname.replace(/^www\./,'')
-
+        let hostname = utils.extractHostFromURL(urlToCheck)
         let urlSplit = hostname.split('.')
 
         let whitelistedTracker = this.checkWhitelist(urlToCheck, currLocationDomain, requestType)
@@ -57,7 +36,7 @@ class Trackers {
             return whitelistedTracker
         }
       
-        let surrogateTracker = this.checkSurrogateList(urlToCheck, parsedUrl, currLocation)
+        let surrogateTracker = this.checkSurrogateList(urlToCheck, currLocation)
         if (surrogateTracker) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -125,8 +104,8 @@ class Trackers {
         return result
     }
 
-    checkSurrogateList(url, parsedUrl, currLocation) {
-        let dataURI = surrogates.getContentForUrl(url, parsedUrl)
+    checkSurrogateList(url, currLocation) {
+        let dataURI = surrogates.getContentForUrl(url)
         let result = false
 
         if (dataURI) {
@@ -213,12 +192,12 @@ class Trackers {
      */
     getCommonParentEntity(currLocation, urlToCheck) {
         if (!entityMap) return
-        let currentLocationParsed = tldjs.parse(currLocation)
-        let urlToCheckParsed = tldjs.parse(urlToCheck)
-        let parentEntity = entityMap[urlToCheckParsed.domain]
-        if (currentLocationParsed.domain === urlToCheckParsed.domain ||
+        let currentLocationDomain = utils.getDomain(currLocation)
+        let urlToCheckDomain = utils.getDomain(urlToCheck)
+        let parentEntity = entityMap[urlToCheckDomain]
+        if (currentLocationDomain === urlToCheckDomain ||
             this.isRelatedEntity(parentEntity, currLocation)) 
-            return parentEntity || currentLocationParsed.domain
+            return parentEntity || currentLocationDomain
 
         return false
     }

@@ -6,7 +6,7 @@
 const request = require('request')
 const topics = require('../data/tosdr-topics')
 const fs = require('fs')
-const tldjs = require('tldjs')
+const utils = require('../src/utils')
 let processed = {}
 let nProcessed = 0
 
@@ -84,8 +84,8 @@ function getSitePoints (sites) {
             }
 
             if (data.url) {
-                let parsedUrl = tldjs.parse(data.url)
-                processed[parsedUrl.domain] = points
+                let domain = utils.getDomain(data.url)
+                processed[domain] = points
 
                 // link related sites with the same points
                 relatedUrls.forEach((url) => {

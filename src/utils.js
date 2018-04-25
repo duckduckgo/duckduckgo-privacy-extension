@@ -1,5 +1,5 @@
 const entityMap = require('../data/generated/entity-map')
-const tldjs = require('tldjs')
+const parseUrl = require('url-parse-lax')
 
 // pull off subdomains and look for parent companies
 const findParent = (url) => {
@@ -14,14 +14,25 @@ const findParent = (url) => {
     }
 }
 
+const getDomain = (url) => {
+    if (!url) return ''
+
+    let parsed = parseUrl(url)
+    let domainParts = parsed.hostname.split('.')
+
+    while (domainParts.length > 2) {
+        domainParts.shift()
+    }
+
+    return domainParts.join('.')
+}
+
 const extractHostFromURL = (url) => {
     if (!url) return ''
 
-    let urlObj = tldjs.parse(url)
-    let hostname = urlObj.hostname
+    let parsed = parseUrl(url)
 
-    if (!hostname) return ''
-
+    hostname = parsed.hostname
     hostname = hostname.replace(/^www\./,'')
 
     return hostname
@@ -29,5 +40,6 @@ const extractHostFromURL = (url) => {
 
 module.exports = {
     findParent,
+    getDomain,
     extractHostFromURL
 }
