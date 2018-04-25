@@ -1,3 +1,4 @@
+/* global safari:false */
 let getExtensionURL = (path) => {
     return safari.extension.baseURI + path
 }

@@ -1,3 +1,4 @@
+/* global safari:false */
 const ATB = require('./atb.es6')
 const tabManager = require('./tab-manager.es6')
 const utils = require('./utils.es6')

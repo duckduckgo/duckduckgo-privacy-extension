@@ -1,3 +1,4 @@
+/* global safari:false */
 let fetch = (message) => {
     return new Promise((resolve, reject) => {
         console.log(`Safari Fetch: ${JSON.stringify(message)}`)

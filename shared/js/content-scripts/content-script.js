@@ -25,7 +25,7 @@ var onBeforeLoad = (e) => {
         }
 
         // console.log(`MAYBE BLOCK ${e.url}`)
-        let block = safari.self.tab.canLoad(e, requestDetails)
+        let block = window.safari.self.tab.canLoad(e, requestDetails)
         if (block.cancel) {
             // console.log(`DDG BLOCKING ${e.url}`)
             e.preventDefault()
@@ -38,7 +38,7 @@ var onBeforeLoad = (e) => {
 }
 
 var onBeforeUnload = (e) => {
-    safari.self.tab.dispatchMessage('unloadTab', {
+    window.safari.self.tab.dispatchMessage('unloadTab', {
         unload: getLocation()
     })
 }

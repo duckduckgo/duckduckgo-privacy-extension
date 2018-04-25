@@ -17,16 +17,16 @@ class TabManager {
      */
     getTabId (e) {
         if (e.target.ddgTabId) return e.target.ddgTabId
-        for (let id in safari.application.activeBrowserWindow.tabs) {
-            if (safari.application.activeBrowserWindow.tabs[id] === e.target) {
+        for (let id in window.safari.application.activeBrowserWindow.tabs) {
+            if (window.safari.application.activeBrowserWindow.tabs[id] === e.target) {
                 // prevent race conditions incase another events set a tabId
-                if (safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
-                    return safari.application.activeBrowserWindow.tabs[id].ddgTabId
+                if (window.safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
+                    return window.safari.application.activeBrowserWindow.tabs[id].ddgTabId
                 }
 
                 let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10
-                safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
-                console.log(safari.application.activeBrowserWindow.tabs[id])
+                window.safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
+                console.log(window.safari.application.activeBrowserWindow.tabs[id])
                 console.log(`Created Tab id: ${tabId}`)
                 return tabId
             }
@@ -37,7 +37,7 @@ class TabManager {
      * getTabId above
      */
     getActiveTab () {
-        let activeTab = safari.application.activeBrowserWindow.activeTab
+        let activeTab = window.safari.application.activeBrowserWindow.activeTab
         if (activeTab.ddgTabId) {
             return tabManager.get({tabId: activeTab.ddgTabId})
         } else {
@@ -48,7 +48,7 @@ class TabManager {
 
     // reload safari tab. Move this out later with the other safari methods
     reloadTab () {
-        var activeTab = safari.application.activeBrowserWindow.activeTab
+        var activeTab = window.safari.application.activeBrowserWindow.activeTab
         activeTab.url = activeTab.url
     };
 
