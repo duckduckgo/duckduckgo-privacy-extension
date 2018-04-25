@@ -32,7 +32,7 @@ const extractHostFromURL = (url) => {
 
     let parsed = parseUrl(url)
 
-    hostname = parsed.hostname
+    let hostname = parsed.hostname
     hostname = hostname.replace(/^www\./, '')
 
     return hostname

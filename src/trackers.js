@@ -137,13 +137,15 @@ class Trackers {
             if (trackersWithParentCompany[trackerType]) {
                 let tracker = trackersWithParentCompany[trackerType][trackerURL]
                 if (tracker) {
-                    return toBlock = {
+                    toBlock = {
                         parentCompany: tracker.c,
                         url: trackerURL,
                         type: trackerType,
                         block: true,
                         reason: 'trackersWithParentCompany'
                     }
+
+                    return toBlock
                 }
             }
         })
