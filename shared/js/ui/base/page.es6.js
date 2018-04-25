@@ -11,7 +11,7 @@ BasePage.prototype = window.$.extend({},
     mixins.events,
     {
 
-    // pageName: '' - should be unique, defined by each page subclass
+        // pageName: '' - should be unique, defined by each page subclass
 
         ready: function () {}
 

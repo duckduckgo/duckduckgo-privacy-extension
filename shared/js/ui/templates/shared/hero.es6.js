@@ -7,12 +7,12 @@ module.exports = function (ops) {
     <div class="hero__icon hero__icon--${ops.status}">
     </div>
     <h1 class="hero__title">
-      ${ops.title}
+        ${ops.title}
     </h1>
     <h2 class="hero__subtitle">
-      ${ops.subtitle}
+        ${ops.subtitle}
     </h2>
-  </div>`
+</div>`
 }
 
 function renderOpenOrCloseButton (isCloseButton) {
@@ -21,5 +21,5 @@ function renderOpenOrCloseButton (isCloseButton) {
     return bel`<a href="javascript:void(0)" class="hero__${openOrClose}">
     <span class="icon icon__arrow icon__arrow--large ${arrowIconClass}">
     </span>
-  </a>`
+</a>`
 }

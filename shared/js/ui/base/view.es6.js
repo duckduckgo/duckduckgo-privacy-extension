@@ -37,20 +37,20 @@ BaseView.prototype = $.extend(
     {},
     mixins.events,
     {
-    /***
-     * Each view should define a template
-     * if it wants to be rendered and added to the DOM.
-     *
-     * template: '',
-     */
+        /***
+         * Each view should define a template
+         * if it wants to be rendered and added to the DOM.
+         *
+         * template: '',
+         */
 
-    /**
-     * Removes the view element (and all child view elements)
-     * from the DOM.
-     *
-     * Should be extended to do any cleanup of child views or
-     * unbinding of events.
-     */
+        /**
+         * Removes the view element (and all child view elements)
+         * from the DOM.
+         *
+         * Should be extended to do any cleanup of child views or
+         * unbinding of events.
+         */
         destroy: function () {
             this.unbindEvents()
             this.destroyChildViews()
@@ -59,16 +59,16 @@ BaseView.prototype = $.extend(
         },
 
         /**
-     * Go through the this.views object
-     * and recurse down destroying any child
-     * views and their child views so that
-     * when a view is destroyed it removes all memory
-     * footprint, all events are cleanly unbound and
-     * all related DOM elements are removed.
-     *
-     */
+         * Go through the this.views object
+         * and recurse down destroying any child
+         * views and their child views so that
+         * when a view is destroyed it removes all memory
+         * footprint, all events are cleanly unbound and
+         * all related DOM elements are removed.
+         *
+         */
         destroyChildViews: function () {
-      !function destroyViews (views) { // eslint-disable-line
+            !function destroyViews (views) { // eslint-disable-line
                 if (!views) { return }
                 var v
                 if ($.isArray(views)) {
@@ -92,19 +92,19 @@ BaseView.prototype = $.extend(
                         delete views[c]
                     }
                 }
-      }(this.views) // eslint-disable-line
+            }(this.views) // eslint-disable-line
             delete this.views
         },
 
         /**
-     * Take the template defined on the view class and
-     * use it to create a DOM element + append it to the DOM.
-     *
-     * Can be extended with any custom rendering logic
-     * a view may need to do.
-     *
-     * @param {object} ops - the same ops hash passed into the view constructor
-     */
+         * Take the template defined on the view class and
+         * use it to create a DOM element + append it to the DOM.
+         *
+         * Can be extended with any custom rendering logic
+         * a view may need to do.
+         *
+         * @param {object} ops - the same ops hash passed into the view constructor
+         */
         _render: function (ops) {
             if (!this.$el) {
                 if (ops && ops.$el) {
@@ -139,8 +139,8 @@ BaseView.prototype = $.extend(
         },
 
         /**
-     * Add the rendered element to the DOM.
-     */
+         * Add the rendered element to the DOM.
+         */
         _addToDOM: function () {
             if (this.$parent) {
                 this.$parent.append(this.$el)
@@ -152,18 +152,18 @@ BaseView.prototype = $.extend(
         },
 
         /**
-     * Takes a prefix string and an array
-     * of elements and caches dom references.
-     *
-     * It should be used like this:
-     *
-     * this._cacheElems('.js-detail',['next','prev'])
-     * --> this.$next (is cached ref to '.js-detail-next'
-     *   this.$prev (is cached ref to '.js-detail-prev'
-     *
-     * @param {String} prefix
-     * @param {Array} elems
-     */
+         * Takes a prefix string and an array
+         * of elements and caches dom references.
+         *
+         * It should be used like this:
+         *
+         * this._cacheElems('.js-detail',['next','prev'])
+         * --> this.$next (is cached ref to '.js-detail-next'
+         *   this.$prev (is cached ref to '.js-detail-prev'
+         *
+         * @param {String} prefix
+         * @param {Array} elems
+         */
         _cacheElems: function (prefix, elems) {
             for (var i = 0; i < elems.length; i++) {
                 var selector = prefix + '-' + elems[i]

@@ -117,7 +117,7 @@ Site.prototype = window.$.extend({},
                 // got siteRating back fr/ background process,
                 // 'after' rating changed, template needs re-render
                 if (ops && ops.siteRating &&
-          (ops.siteRating.after !== this.siteRating.after)) {
+                        (ops.siteRating.after !== this.siteRating.after)) {
                     this.set({
                         'siteRating': ops.siteRating,
                         'isCalculatingSiteRating': false
@@ -143,7 +143,7 @@ Site.prototype = window.$.extend({},
 
                 const newTrackerNetworks = this.getTrackerNetworksOnPage()
                 if (this.trackerNetworks.length === 0 ||
-          (newTrackerNetworks.length !== this.trackerNetworks.length)) {
+                        (newTrackerNetworks.length !== this.trackerNetworks.length)) {
                     this.set('trackerNetworks', newTrackerNetworks)
                 }
 
@@ -223,9 +223,9 @@ Site.prototype = window.$.extend({},
 
         getIsPartOfMajorTrackingNetwork: function () {
             return this.isaMajorTrackingNetwork ||
-        this.trackerNetworks.some((tracker) =>
-            constants.majorTrackingNetworks[tracker]
-        )
+                this.trackerNetworks.some((tracker) =>
+                    constants.majorTrackingNetworks[tracker]
+                )
         },
 
         getTrackerNetworksOnPage: function () {
@@ -242,7 +242,7 @@ Site.prototype = window.$.extend({},
             if (!this.tab) return false
 
             if (this.tab.upgradedHttps ||
-        Object.keys(this.tab.trackersBlocked).length > 0) {
+                    Object.keys(this.tab.trackersBlocked).length > 0) {
                 return true
             }
 
@@ -255,11 +255,11 @@ Site.prototype = window.$.extend({},
                 this.set('whitelisted', this.isWhitelisted)
 
                 this.fetch({'whitelisted':
-        {
-            list: 'whitelisted',
-            domain: this.tab.site.domain,
-            value: this.isWhitelisted
-        }
+                    {
+                        list: 'whitelisted',
+                        domain: this.tab.site.domain,
+                        value: this.isWhitelisted
+                    }
                 })
             }
         }

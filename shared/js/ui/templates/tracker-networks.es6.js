@@ -7,27 +7,27 @@ module.exports = function () {
     if (!this.model) {
         return bel`<section class="sliding-subview
     sliding-subview--has-fixed-header">
-    </section>`
+</section>`
     } else {
         return bel`<div class="tracker-networks site-info site-info--full-height card">
-      <div class="js-tracker-networks-hero">
+    <div class="js-tracker-networks-hero">
         ${renderHero(this.model.site)}
-      </div>
-      <div class="tracker-networks__explainer padded border--bottom--inner
-          text--center">
-          Tracker networks aggregate your web history into a data profile about you.
-          Major tracker networks are more harmful because they can track and target you across more of the internet.
-      </div>
-      <div class="tracker-networks__details padded
-          js-tracker-networks-details">
-      <ol class="default-list site-info__trackers__company-list">
-        ${renderTrackerDetails(
-        this.model,
-        this.model.DOMAIN_MAPPINGS
-    )}
-      </ol>
-     </div>
-    </div>`
+    </div>
+    <div class="tracker-networks__explainer padded border--bottom--inner
+        text--center">
+        Tracker networks aggregate your web history into a data profile about you.
+        Major tracker networks are more harmful because they can track and target you across more of the internet.
+    </div>
+    <div class="tracker-networks__details padded
+        js-tracker-networks-details">
+        <ol class="default-list site-info__trackers__company-list">
+            ${renderTrackerDetails(
+                this.model,
+                this.model.DOMAIN_MAPPINGS
+            )}
+        </ol>
+    </div>
+</div>`
     }
 }
 
@@ -59,24 +59,24 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
                 borderClass = companyListMap.length > 1 ? 'border--top' : ''
             }
             return bel`<li class="${borderClass}">
-        <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
-          <span class="site-info__tracker__icon ${c.normalizedName}">
-          </span>
-        </div>
-        <h1 class="site-info__domain block">${c.name}</h1>
-        <ol class="default-list site-info__trackers__company-list__url-list">
-          ${c.urlsList.map((url) => {
-        let category = ''
-        if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
-            category = DOMAIN_MAPPINGS[url.toLowerCase()].t
-        }
-        return bel`<li>
-              <div class="url">${url}</div>
-              <div class="category">${category}</div>
+    <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
+        <span class="site-info__tracker__icon ${c.normalizedName}">
+        </span>
+    </div>
+    <h1 class="site-info__domain block">${c.name}</h1>
+    <ol class="default-list site-info__trackers__company-list__url-list">
+        ${c.urlsList.map((url) => {
+            let category = ''
+            if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
+                category = DOMAIN_MAPPINGS[url.toLowerCase()].t
+            }
+            return bel`<li>
+                <div class="url">${url}</div>
+                <div class="category">${category}</div>
             </li>`
-    })}
-        </ol>
-      </li>`
+        })}
+    </ol>
+</li>`
         })
     }
 }

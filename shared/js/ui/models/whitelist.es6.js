@@ -18,12 +18,13 @@ Whitelist.prototype = window.$.extend({},
             let domain = this.list[itemIndex]
             console.log(`whitelist: remove ${domain}`)
 
-            this.fetch({'whitelisted': {
-                list: 'whitelisted',
-                domain: domain,
-                value: false
-            },
-            context: 'options'
+            this.fetch({
+                'whitelisted': {
+                    list: 'whitelisted',
+                    domain: domain,
+                    value: false
+                },
+                context: 'options'
             })
 
             // Update list
@@ -45,13 +46,13 @@ Whitelist.prototype = window.$.extend({},
                 const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
                 console.log(`whitelist: add ${domainToWhitelist}`)
 
-                this.fetch({'whitelisted':
-        {
-            list: 'whitelisted',
-            domain: domainToWhitelist,
-            value: true
-        },
-                context: 'options'
+                this.fetch({
+                    'whitelisted': {
+                        list: 'whitelisted',
+                        domain: domainToWhitelist,
+                        value: true
+                    },
+                    context: 'options'
                 })
 
                 this.setWhitelistFromSettings()

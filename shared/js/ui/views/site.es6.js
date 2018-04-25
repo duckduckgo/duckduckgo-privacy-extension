@@ -18,7 +18,7 @@ function Site (ops) {
     // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
         if (this.model.tab &&
-       (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
+                (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
             // render template for the first time here
             Parent.call(this, ops)
             this._setup()

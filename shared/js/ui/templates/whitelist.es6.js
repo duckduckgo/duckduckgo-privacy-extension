@@ -6,32 +6,32 @@ module.exports = function () {
     <h2 class="menu-title">Whitelisted Sites</h2>
     <p class="menu-paragraph">These sites will not be enhanced by Privacy Protection</p>
     <ul class="default-list js-whitelist-container">
-      ${whitelistItems(this.model.list)}
+        ${whitelistItems(this.model.list)}
     </ul>
     ${addToWhitelist()}
-  </section>`
+</section>`
 
     function addToWhitelist () {
         return bel`<div>
-      <p class="whitelist-show-add js-whitelist-show-add">
+    <p class="whitelist-show-add js-whitelist-show-add">
         <a href="javascript:void(0)">Add site to whitelist</a>
-      </p>
-      <input class="is-hidden whitelist-url float-left js-whitelist-url" type="text" placeholder="Enter URL">
-      <div class="is-hidden whitelist-add is-disabled float-right js-whitelist-add">Add to Whitelist</div>
+    </p>
+    <input class="is-hidden whitelist-url float-left js-whitelist-url" type="text" placeholder="Enter URL">
+    <div class="is-hidden whitelist-add is-disabled float-right js-whitelist-add">Add to Whitelist</div>
 
-      <div class="is-hidden modal-box js-whitelist-error float-right">
+    <div class="is-hidden modal-box js-whitelist-error float-right">
         <div class="modal-box__popout">
-          <div class="modal-box__popout__body">
-          </div>
+            <div class="modal-box__popout__body">
+            </div>
         </div>
         <div class="modal-box__body">
-          <span class="icon icon__error">
-          </span>
-          <span class="modal__body__text">
-            Invalid URL
-          </span>
+            <span class="icon icon__error">
+            </span>
+            <span class="modal__body__text">
+                Invalid URL
+            </span>
         </div>
-      </div>
-    </div>`
+    </div>
+</div>`
     }
 }

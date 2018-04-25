@@ -40,14 +40,14 @@ BaseModel.prototype = $.extend({},
      */
         set: function (attr, val) {
             /*
-      * support passing a hash of values to set instead of
-      * single attribute/value pair, i.e.:
-      *
-      * this.set({
-      *   title: 'something',
-      *   description: 'something described'
-      * })
-      */
+             * support passing a hash of values to set instead of
+             * single attribute/value pair, i.e.:
+             *
+             * this.set({
+             *   title: 'something',
+             *   description: 'something described'
+             * })
+             */
             if (typeof attr === 'object') {
                 for (var key in attr) {
                     this.set(key, attr[key], val)
@@ -71,43 +71,43 @@ BaseModel.prototype = $.extend({},
         },
 
         /**
-     * Convenience method for code clarity
-     * so we can explicitly call clear()
-     * instead of doing null sets.
-     * Using .clear() broadcasts the change
-     * out to the rest of the app via this.set()
-     * which calls this.store.publish()
-     */
+         * Convenience method for code clarity
+         * so we can explicitly call clear()
+         * instead of doing null sets.
+         * Using .clear() broadcasts the change
+         * out to the rest of the app via this.set()
+         * which calls this.store.publish()
+         */
         clear: function (attr) {
             this.set(attr, null)
         },
 
         /**
-     * Destroy any of this model's bound events
-     * and remove its reducer from store so
-     * there is no memeory footprint left.
-     * Mostly used when view.destroy() is called.
-     */
+         * Destroy any of this model's bound events
+         * and remove its reducer from store so
+         * there is no memeory footprint left.
+         * Mostly used when view.destroy() is called.
+         */
         destroy: function () {
             this.unbindEvents()
             this.store.remove(this.modelName)
         },
 
         /**
-     * Fetch data from background
-     * this.model.fetch({'messageName': messageValue}).then((response) ..
-     **/
+         * Fetch data from background
+         * this.model.fetch({'messageName': messageValue}).then((response) ..
+         **/
         fetch: function (message) {
             return browserUIWrapper.fetch(message)
         },
 
         /**
-     * Send a user action
-     * Broadcasts an action to other UI components
-     * via notification store
-     * @param action {string}
-     * @param data {could be a jquery event or other data is optional}
-     */
+         * Send a user action
+         * Broadcasts an action to other UI components
+         * via notification store
+         * @param action {string}
+         * @param data {could be a jquery event or other data is optional}
+         */
         send: function (action, data) {
             if (!action) throw new Error('model.send() requires an action argument')
             data = data || null
@@ -126,11 +126,11 @@ BaseModel.prototype = $.extend({},
         },
 
         /**
-      * Private method for turning `this` into a
-      * JSON object before sending to application store.
-      * Basically just weeds out properties that
-      * are functions.
-      */
+          * Private method for turning `this` into a
+          * JSON object before sending to application store.
+          * Basically just weeds out properties that
+          * are functions.
+          */
         _toJSON: function () {
             let attributes = Object.assign({}, Object.getPrototypeOf(this), this)
             if (attributes.store) delete attributes.store

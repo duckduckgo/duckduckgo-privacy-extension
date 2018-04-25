@@ -6,11 +6,11 @@ module.exports = function (isActiveBoolean, klass, dataKey) {
     dataKey = dataKey || ''
 
     return bel`
-  <button class="toggle-button toggle-button--is-active-${isActiveBoolean} ${klass}"
-      data-key="${dataKey}"
-      type="button">
+<button class="toggle-button toggle-button--is-active-${isActiveBoolean} ${klass}"
+    data-key="${dataKey}"
+    type="button">
     <div class="toggle-button__bg">
     </div>
     <div class="toggle-button__knob"></div>
-  </button>`
+</button>`
 }

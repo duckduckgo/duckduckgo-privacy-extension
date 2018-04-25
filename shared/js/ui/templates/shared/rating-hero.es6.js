@@ -21,7 +21,7 @@ module.exports = function (site, ops) {
         showClose: ops.showClose,
         showOpen: ops.showOpen
     })}
-  </div>`
+</div>`
 }
 
 function siteRatingStatus (isCalculating, rating, isWhitelisted) {
@@ -53,11 +53,11 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
         if (rating.before !== rating.after) {
             // wrap this in a single root span otherwise bel complains
             return bel`<span>Enhanced from
-        <span class="rating__text-only ${rating.before.toLowerCase()}">
-        ${rating.before}</span> to
-        <span class="rating__text-only ${rating.after.toLowerCase()}">
-        ${rating.after}</span>
-      </span>`
+    <span class="rating__text-only ${rating.before.toLowerCase()}">
+    ${rating.before}</span> to
+    <span class="rating__text-only ${rating.after.toLowerCase()}">
+    ${rating.after}</span>
+</span>`
         }
     }
 

@@ -6,5 +6,5 @@ module.exports = function (klass) {
     <span></span>
     <span></span>
     <span></span>
-  </button>`
+</button>`
 }
