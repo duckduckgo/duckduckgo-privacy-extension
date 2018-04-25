@@ -75,7 +75,8 @@ const run = async () => {
 
         // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach((request) => {
-            let tracker = trackers.isTracker(request[0], hostname, request[1])
+            let url = `http://${hostname}`;
+            let tracker = trackers.isTracker(request[0], url, request[1])
 
             if (tracker) {
                 if (tracker.block) {
