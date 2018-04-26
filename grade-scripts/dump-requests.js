@@ -104,6 +104,17 @@ const getSiteData = async (siteToCheck) => {
     let requests = []
     let failed = false
 
+    let userAgent = await browser.userAgent()
+
+    await page.emulate({
+        // just in case some sites block headless visits
+        userAgent: userAgent.replace('Headless', ''),
+        viewport: {
+            width: 1440,
+            height: 812
+        }
+    })
+
     await page.setRequestInterception(true)
     page.on('request', handleRequest.bind(null, requests, siteToCheck))
     page.on('response', (response) => {

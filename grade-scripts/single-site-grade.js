@@ -59,6 +59,18 @@ const run = async () => {
     grade = new Grade(siteToCheck)
     let requests = []
 
+    // set useragent/viewport
+    let userAgent = await browser.userAgent()
+
+    await page.emulate({
+        // just in case some sites block headless visits
+        userAgent: userAgent.replace('Headless', ''),
+        viewport: {
+            width: 1440,
+            height: 812
+        }
+    })
+
     await page.setRequestInterception(true)
     page.on('request', handleRequest)
     page.on('response', (response) => {
