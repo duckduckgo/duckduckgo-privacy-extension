@@ -39,7 +39,7 @@ Whitelist.prototype = window.$.extend({},
             // But first, strip the 'www.' part, otherwise getSubDomain will include it
             // and whitelisting won't work for that site
             url = url ? url.replace('www.', '') : ''
-            const localDomain = url.toLowerCase() === 'localhost' ? 'localhost' : null
+            const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null
             const subDomain = tldjs.getSubdomain(url)
             const domain = tldjs.getDomain(url) || localDomain
             if (domain) {
