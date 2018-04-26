@@ -25,7 +25,7 @@ var onBeforeLoad = (e) => {
         }
 
         // console.log(`MAYBE BLOCK ${e.url}`)
-        let block = safari.self.tab.canLoad(e, requestDetails)
+        let block = window.safari.self.tab.canLoad(e, requestDetails)
         if (block.cancel) {
             // console.log(`DDG BLOCKING ${e.url}`)
             e.preventDefault()
@@ -38,7 +38,7 @@ var onBeforeLoad = (e) => {
 }
 
 var onBeforeUnload = (e) => {
-    safari.self.tab.dispatchMessage('unloadTab', {
+    window.safari.self.tab.dispatchMessage('unloadTab', {
         unload: getLocation()
     })
 }
@@ -49,15 +49,15 @@ function getLocation () {
     // content script only works from window.top and will throw
     // errors if it runs in iframes. Try to access hostname and
     // bail if there are any errors.
+    if (mainFrameURL) { return mainFrameURL }
+
     try {
-        window.top.location.hostname
+        var loc = window.top.location
+        mainFrameURL = loc.protocol + '//' + loc.hostname + loc.pathname
     } catch (e) {
         return
     }
 
-    if (mainFrameURL) { return mainFrameURL }
-    var loc = window.top.location
-    mainFrameURL = loc.protocol + '//' + loc.hostname + loc.pathname
     return mainFrameURL
 }
 
@@ -67,7 +67,7 @@ var loadSurrogate = function (url) {
     s.type = 'text/javascript'
     s.async = true
     s.src = url
-    sp = document.getElementsByTagName('script')[0]
+    var sp = document.getElementsByTagName('script')[0]
     sp.parentNode.insertBefore(s, sp)
 }
 

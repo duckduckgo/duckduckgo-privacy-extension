@@ -1,7 +1,6 @@
 const trackers = require('./trackers.es6')
 const utils = require('./utils.es6')
 const https = require('./https.es6')
-const surrogates = require('./surrogates.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')

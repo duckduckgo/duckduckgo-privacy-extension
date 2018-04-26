@@ -56,9 +56,9 @@ Site.prototype = window.$.extend({},
                 const w = window.chrome.extension.getViews({type: 'popup'})[0]
                 setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
                 setTimeout(() => w.close(), 1500)
-            } else {
-                setTimeout(() => safari.extension.globalPage.contentWindow.tabManager.reloadTab(), 1500)
-                setTimeout(() => safari.self.hide(), 1500)
+            } else if (window.safari) {
+                setTimeout(() => window.safari.extension.globalPage.contentWindow.tabManager.reloadTab(), 1500)
+                setTimeout(() => window.safari.self.hide(), 1500)
             }
         },
 

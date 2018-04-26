@@ -6,10 +6,6 @@ function getLists () {
     return lists
 }
 
-function setList (name, data) {
-    lists[name] = data
-}
-
 function loadLists () {
     var listLocation = constants.trackerListLoc
     var blockLists = constants.blockLists

@@ -24,7 +24,7 @@ if (window.safari) {
             if (window === window.top) {
                 let atb = getATB()
                 if (atb) {
-                    safari.self.tab.dispatchMessage('atb', {atb: atb})
+                    window.safari.self.tab.dispatchMessage('atb', {atb: atb})
                 }
             }
         }, 500)

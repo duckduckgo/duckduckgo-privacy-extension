@@ -13,7 +13,7 @@ const entityMap = require('../../data/tracker_lists/entityMap')
 let entityList
 
 function loadLists () {
-    load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
+    load.JSONfromExternalFile(constants.entityList, (list) => { entityList = list })
 }
 
 /*
@@ -63,10 +63,10 @@ function isTracker (urlToCheck, thisTab, request) {
         }
 
         let urlSplit = hostname.split('.')
-        var social_block = settings.getSetting('socialBlockingIsEnabled')
+        var socialBlock = settings.getSetting('socialBlockingIsEnabled')
         var blockSettings = constants.blocking.slice(0)
 
-        if (social_block) {
+        if (socialBlock) {
             blockSettings.push('Social')
         }
 
@@ -200,13 +200,15 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
         if (trackerLists.trackersWithParentCompany[trackerType]) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
             if (tracker) {
-                return toBlock = {
+                toBlock = {
                     parentCompany: tracker.c,
                     url: trackerURL,
                     type: trackerType,
                     block: true,
                     reason: 'trackersWithParentCompany'
                 }
+
+                return toBlock
             }
         }
     })

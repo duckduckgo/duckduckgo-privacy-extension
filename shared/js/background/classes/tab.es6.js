@@ -24,7 +24,6 @@ const scoreIconLocations = {
 
 const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
-const Score = require('./score.es6')
 const utils = require('../utils.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
@@ -42,7 +41,7 @@ class Tab {
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
-        this.statusCode // statusCode is set when headers are recieved in tabManager.js
+        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
             begin: Date.now(),
             end: null,

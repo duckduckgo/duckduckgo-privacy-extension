@@ -6,7 +6,6 @@
  * The Score attributes are then used generate a site
  * privacy score used in the popup.
  */
-const load = require('../load.es6')
 const settings = require('../settings.es6')
 const Score = require('./score.es6')
 const utils = require('../utils.es6')
@@ -15,8 +14,8 @@ const abpLists = require('../abp-lists.es6')
 class Site {
     constructor (domain) {
         if (domain) domain = domain.toLowerCase()
-        this.domain = domain,
-        this.trackerUrls = [],
+        this.domain = domain
+        this.trackerUrls = []
         this.score = new Score(this.specialDomain(), this.domain)
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain)

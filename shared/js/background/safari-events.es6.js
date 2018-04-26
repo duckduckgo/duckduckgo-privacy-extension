@@ -1,6 +1,6 @@
+/* global safari:false */
 const ATB = require('./atb.es6')
 const tabManager = require('./tab-manager.es6')
-const utils = require('./utils.es6')
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const abpLists = require('./abp-lists.es6')
@@ -31,7 +31,6 @@ let onStartup = () => {
     }
 
     // show post install page
-    let activeTabIndex = 0
     let showPostInstallPage = false
     let postInstallRegex = /duckduckgo.com\/\?t=|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/
 
@@ -158,7 +157,7 @@ let onBeforeRequest = (requestData) => {
 
     let redirectRequest = redirect.handleRequest(requestData)
     if (redirectRequest) {
-        redirectRequest
+        return redirectRequest
     } else {
         return requestData
     }
@@ -170,12 +169,11 @@ let onActivate = (e) => {
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
-    }
-    // if we don't have an active tab then this is likely a new tab
-    // this can happen when you open a new tab, click to activate another existing tab,
-    // and then go back to the new tab. new tab -> existing tab -> back to new tab.
-    // reset the badge to default and reload the popup to get the correct new tab data
-    else {
+    } else {
+        // if we don't have an active tab then this is likely a new tab
+        // this can happen when you open a new tab, click to activate another existing tab,
+        // and then go back to the new tab. new tab -> existing tab -> back to new tab.
+        // reset the badge to default and reload the popup to get the correct new tab data
         browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
         safari.extension.popovers[0].contentWindow.location.reload()
     }
@@ -234,7 +232,6 @@ var onBeforeNavigation = function (e) {
     if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
 
     const url = e.url
-    const isMainFrame = true // always main frame in this handler
     const tabId = tabManager.getTabId(e)
 
     let thisTab = tabId && tabManager.get({tabId: tabId})

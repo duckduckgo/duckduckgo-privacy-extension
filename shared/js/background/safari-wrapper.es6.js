@@ -1,3 +1,6 @@
+/* global safari:false */
+const tabManager = require('./tab-manager.es6')
+
 let getExtensionURL = (path) => {
     return safari.extension.baseURI + path
 }

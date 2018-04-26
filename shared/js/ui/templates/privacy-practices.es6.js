@@ -17,11 +17,11 @@ module.exports = function () {
     <div class="privacy-practices site-info site-info--full-height card">
         <div class="js-privacy-practices-hero">
             ${hero({
-            status: tosdrStatus,
-            title: domain,
-            subtitle: `${tosdrMsg} Privacy Practices`,
-            showClose: true
-            })}
+        status: tosdrStatus,
+        title: domain,
+        subtitle: `${tosdrMsg} Privacy Practices`,
+        showClose: true
+    })}
         </div>
         <div class="privacy-practices__explainer padded border--bottom--inner
             text--center">

@@ -15,8 +15,8 @@ module.exports = function () {
     <ul class="default-list">
         <li class="site-info__rating-li js-hero-open">
             ${ratingHero(this.model, {
-                showOpen: !this.model.disabled
-            })}
+        showOpen: !this.model.disabled
+    })}
         </li>
         <li class="site-info__li--https-status padded border--bottom">
             <h2 class="site-info__https-status bold">
