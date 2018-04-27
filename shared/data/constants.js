@@ -5,7 +5,7 @@ module.exports = {
     ],
     "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
-    "easylists": [],
+    "easylists": ['general'],
     "blocking": ["Advertising", "Analytics"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
