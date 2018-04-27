@@ -49,8 +49,19 @@ let getExtensionVersion = () => {
     return manifest.version
 }
 
+let reloadTab = (id) => {
+    window.chrome.tabs.reload(id)
+}
+
+let closePopup = () => {
+    const w = window.chrome.extension.getViews({type: 'popup'})[0]
+    w.close()
+}
+
 module.exports = {
     fetch: fetch,
+    reloadTab: reloadTab,
+    closePopup: closePopup,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,

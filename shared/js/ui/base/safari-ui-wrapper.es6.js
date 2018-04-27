@@ -103,6 +103,8 @@ let getExtensionVersion = () => {
 
 module.exports = {
     fetch: fetch,
+    reloadTab: reloadTab,
+    closePopup: closePopup,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,
