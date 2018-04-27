@@ -128,7 +128,7 @@ safari.extension.globalPage.contentWindow.message = handleUIMessage
 let updateSetting = (e) => {
     let name = e.message.updateSetting.name
     let val = e.message.updateSetting.value
-    if (name && val) {
+    if (name) {
         settings.updateSetting(name, val)
     }
 }
