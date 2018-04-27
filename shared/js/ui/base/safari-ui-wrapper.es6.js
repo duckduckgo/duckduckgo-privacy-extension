@@ -15,9 +15,6 @@ if (safari &&
 }
 
 let sendOptionsMessage = (message, resolve, reject) => {
-    // messages that require an answer need some more complicated logic
-    // since sending a message through the options page doesn't support
-    // two-way messaging
     if (message.whitelisted) {
         resolve(safari.self.tab.dispatchMessage('whitelisted', message))
     } else if (message.getSetting) {
