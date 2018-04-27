@@ -89,11 +89,6 @@ let getTabId = (e) => {
     }
 }
 
-let reloadTab = () => {
-    var activeTab = safari.application.activeBrowserWindow.activeTab
-    activeTab.url = activeTab.url
-}
-
 let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
@@ -107,6 +102,5 @@ module.exports = {
     notifyPopup: notifyPopup,
     normalizeTabData: normalizeTabData,
     getTabId: getTabId,
-    reloadTab: reloadTab,
     mergeSavedSettings: mergeSavedSettings
 }
