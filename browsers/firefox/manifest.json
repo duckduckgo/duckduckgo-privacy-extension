@@ -55,6 +55,9 @@
           "run_at": "document_idle"
       }
     ],
+    "options_ui": {
+        "page": "html/options.html"
+  },
     "permissions": [
         "contextMenus",
         "webRequest",
