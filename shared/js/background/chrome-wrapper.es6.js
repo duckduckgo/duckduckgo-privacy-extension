@@ -1,37 +1,37 @@
-let getExtensionURL = ((path) => {
+let getExtensionURL = (path) => {
     return chrome.extension.getURL(path)
-})
+}
 
-let getExtensionVersion = (() => {
+let getExtensionVersion = () => {
     const manifest = window.chrome && chrome.runtime.getManifest()
     return manifest.version
-})
+}
 
-let setBadgeIcon = ((badgeData) => {
+let setBadgeIcon = (badgeData) => {
     chrome.browserAction.setIcon(badgeData)
-})
+}
 
-let syncToStorage = ((data) => {
-    chrome.storage.local.set(data, function() { });
-})
+let syncToStorage = (data) => {
+    chrome.storage.local.set(data, function () { })
+}
 
-let getFromStorage = ((key, cb) => {
-    chrome.storage.local.get(key, ((result) => {
+let getFromStorage = (key, cb) => {
+    chrome.storage.local.get(key, (result) => {
         cb(result[key])
-    }))
-})
+    })
+}
 
-let notifyPopup = ((message) => {
+let notifyPopup = (message) => {
     chrome.runtime.sendMessage(message)
-})
+}
 
-let normalizeTabData = ((tabData) => {
+let normalizeTabData = (tabData) => {
     return tabData
-})
+}
 
-let mergeSavedSettings = ((settings, results) => {
+let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
-})
+}
 
 module.exports = {
     getExtensionURL: getExtensionURL,

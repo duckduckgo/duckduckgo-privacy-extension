@@ -7,7 +7,7 @@ const abp = require('abp-filter-parser')
 const tabManager = require('./tab-manager.es6')
 
 window.dbg = {
-  settings,
-  abp,
-  tabManager
+    settings,
+    abp,
+    tabManager
 }

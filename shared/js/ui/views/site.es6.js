@@ -8,144 +8,144 @@ const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.j
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
 
 function Site (ops) {
-  this.model = ops.model
-  this.pageView = ops.pageView
-  this.template = ops.template
+    this.model = ops.model
+    this.pageView = ops.pageView
+    this.template = ops.template
 
-  // cache 'body' selector
-  this.$body = window.$('body')
+    // cache 'body' selector
+    this.$body = window.$('body')
 
-  // get data from background process, then re-render template with it
-  this.model.getBackgroundTabData().then(() => {
-    if (this.model.tab &&
-       (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
-      // render template for the first time here
-      Parent.call(this, ops)
-      this._setup()
-    } else {
-      // the timeout helps buffer the re-render cycle during heavy
-      // page loads with lots of trackers
-      Parent.call(this, ops)
-      setTimeout(() => this.rerender(), 750)
-    }
-  })
+    // get data from background process, then re-render template with it
+    this.model.getBackgroundTabData().then(() => {
+        if (this.model.tab &&
+                (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
+            // render template for the first time here
+            Parent.call(this, ops)
+            this._setup()
+        } else {
+            // the timeout helps buffer the re-render cycle during heavy
+            // page loads with lots of trackers
+            Parent.call(this, ops)
+            setTimeout(() => this.rerender(), 750)
+        }
+    })
 }
 
 Site.prototype = window.$.extend({},
-  Parent.prototype,
-  openOptionsPage,
-  {
+    Parent.prototype,
+    openOptionsPage,
+    {
 
-    _onWhitelistClick: function (e) {
-      if (this.$body.hasClass('is-disabled')) return
-      this.model.toggleWhitelist()
-      this._showWhitelistedStatusMessage()
-    },
+        _onWhitelistClick: function (e) {
+            if (this.$body.hasClass('is-disabled')) return
+            this.model.toggleWhitelist()
+            this._showWhitelistedStatusMessage()
+        },
 
-    // If we just whitelisted a site, show a message briefly before reloading
-    // otherwise just reload the tab and close the popup
-    _showWhitelistedStatusMessage: function () {
-      const isTransparentClass = 'is-transparent'
-      // Wait for the rerendering to be done
-      // 10ms timeout is the minimum to render the transition smoothly
-      setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
-      setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
-      // Wait a bit more before closing the popup and reloading the tab
-      
-      if (window.chrome) {
-          const w = window.chrome.extension.getViews({type: 'popup'})[0]
-          setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
-          setTimeout(() => w.close(), 1500)
-      } else {
-          setTimeout(() => safari.extension.globalPage.contentWindow.tabManager.reloadTab(), 1500)
-          setTimeout(() => safari.self.hide(), 1500)
-      }
-    },
+        // If we just whitelisted a site, show a message briefly before reloading
+        // otherwise just reload the tab and close the popup
+        _showWhitelistedStatusMessage: function () {
+            const isTransparentClass = 'is-transparent'
+            // Wait for the rerendering to be done
+            // 10ms timeout is the minimum to render the transition smoothly
+            setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
+            setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
+            // Wait a bit more before closing the popup and reloading the tab
 
-    // NOTE: after ._setup() is called this view listens for changes to
-    // site model and re-renders every time model properties change
-    _setup: function () {
-      // console.log('[site view] _setup()')
-      this._cacheElems('.js-site', [
-        'toggle',
-        'protection',
-        'whitelist-status',
-        'show-all-trackers',
-        'show-page-trackers',
-        'manage-whitelist',
-        'report-broken',
-        'privacy-practices'
-      ])
+            if (window.chrome) {
+                const w = window.chrome.extension.getViews({type: 'popup'})[0]
+                setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
+                setTimeout(() => w.close(), 1500)
+            } else if (window.safari) {
+                setTimeout(() => window.safari.extension.globalPage.contentWindow.tabManager.reloadTab(), 1500)
+                setTimeout(() => window.safari.self.hide(), 1500)
+            }
+        },
 
-      this.$gradescorecard = this.$('.js-hero-open')
+        // NOTE: after ._setup() is called this view listens for changes to
+        // site model and re-renders every time model properties change
+        _setup: function () {
+            // console.log('[site view] _setup()')
+            this._cacheElems('.js-site', [
+                'toggle',
+                'protection',
+                'whitelist-status',
+                'show-all-trackers',
+                'show-page-trackers',
+                'manage-whitelist',
+                'report-broken',
+                'privacy-practices'
+            ])
 
-      this.bindEvents([
-        [this.$toggle, 'click', this._onWhitelistClick],
-        [this.$showpagetrackers, 'click', this._showPageTrackers],
-        [this.$privacypractices, 'click', this._showPrivacyPractices],
-        [this.$gradescorecard, 'click', this._showGradeScorecard],
-        [this.$managewhitelist, 'click', this._onManageWhitelistClick],
-        [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
-        [this.store.subscribe, 'change:site', this.rerender]
-      ])
-    },
+            this.$gradescorecard = this.$('.js-hero-open')
 
-    rerender: function () {
-      // console.log('[site view] rerender()')
-      if (this.model && this.model.disabled) {
-        if (!this.$body.hasClass('is-disabled')) {
-          console.log('$body.addClass() is-disabled')
-          this.$body.addClass('is-disabled')
-          this._rerender()
-          this._setup()
+            this.bindEvents([
+                [this.$toggle, 'click', this._onWhitelistClick],
+                [this.$showpagetrackers, 'click', this._showPageTrackers],
+                [this.$privacypractices, 'click', this._showPrivacyPractices],
+                [this.$gradescorecard, 'click', this._showGradeScorecard],
+                [this.$managewhitelist, 'click', this._onManageWhitelistClick],
+                [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
+                [this.store.subscribe, 'change:site', this.rerender]
+            ])
+        },
+
+        rerender: function () {
+            // console.log('[site view] rerender()')
+            if (this.model && this.model.disabled) {
+                if (!this.$body.hasClass('is-disabled')) {
+                    console.log('$body.addClass() is-disabled')
+                    this.$body.addClass('is-disabled')
+                    this._rerender()
+                    this._setup()
+                }
+            } else {
+                this.$body.removeClass('is-disabled')
+                this.unbindEvents()
+                this._rerender()
+                this._setup()
+            }
+        },
+
+        _onManageWhitelistClick: function () {
+            if (this.model && this.model.disabled) {
+                return
+            }
+
+            this.openOptionsPage()
+        },
+
+        _onReportBrokenSiteClick: function (e) {
+            if (this.model && this.model.disabled) {
+                e.preventDefault()
+            }
+        },
+
+        _showPageTrackers: function () {
+            if (this.$body.hasClass('is-disabled')) return
+            this.views.slidingSubview = new TrackerNetworksView({
+                template: trackerNetworksTemplate
+            })
+        },
+
+        _showPrivacyPractices: function () {
+            if (this.model.disabled) return
+
+            this.views.privacyPractices = new PrivacyPracticesView({
+                template: privacyPracticesTemplate,
+                model: this.model
+            })
+        },
+
+        _showGradeScorecard: function () {
+            if (this.model.disabled) return
+
+            this.views.gradeScorecard = new GradeScorecardView({
+                template: gradeScorecardTemplate,
+                model: this.model
+            })
         }
-      } else {
-        this.$body.removeClass('is-disabled')
-        this.unbindEvents()
-        this._rerender()
-        this._setup()
-      }
-    },
-
-    _onManageWhitelistClick: function () {
-      if (this.model && this.model.disabled) {
-        return
-      }
-
-      this.openOptionsPage()
-    },
-
-    _onReportBrokenSiteClick: function (e) {
-      if (this.model && this.model.disabled) {
-        e.preventDefault()
-      }
-    },
-
-    _showPageTrackers: function () {
-      if (this.$body.hasClass('is-disabled')) return
-      this.views.slidingSubview = new TrackerNetworksView({
-        template: trackerNetworksTemplate
-      })
-    },
-
-    _showPrivacyPractices: function () {
-      if (this.model.disabled) return
-
-      this.views.privacyPractices = new PrivacyPracticesView({
-        template: privacyPracticesTemplate,
-        model: this.model
-      })
-    },
-
-    _showGradeScorecard: function () {
-      if (this.model.disabled) return
-
-      this.views.gradeScorecard = new GradeScorecardView({
-        template: gradeScorecardTemplate,
-        model: this.model
-      })
     }
-  }
 )
 
 module.exports = Site

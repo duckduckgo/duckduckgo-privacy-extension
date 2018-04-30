@@ -1,7 +1,6 @@
 const trackers = require('./trackers.es6')
 const utils = require('./utils.es6')
 const https = require('./https.es6')
-const surrogates = require('./surrogates.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
@@ -20,17 +19,17 @@ trackers.loadLists()
  * - Upgrade http -> https where possible
  */
 
-function handleRequest(requestData) {
-    let tabId = requestData.tabId;
+function handleRequest (requestData) {
+    let tabId = requestData.tabId
 
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
-    let thisTab = tabManager.get(requestData);
+    let thisTab = tabManager.get(requestData)
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    if (requestData.type === "main_frame") {
+    if (requestData.type === 'main_frame') {
         if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
             let newTab = tabManager.create(requestData)
 
@@ -40,12 +39,9 @@ function handleRequest(requestData) {
         }
 
         // add atb params only to main_frame
-        let ddgAtbRewrite = ATB.redirectURL(requestData);
-        if (ddgAtbRewrite) return ddgAtbRewrite;
-
-    }
-    else {
-
+        let ddgAtbRewrite = ATB.redirectURL(requestData)
+        if (ddgAtbRewrite) return ddgAtbRewrite
+    } else {
         /**
          * Check that we have a valid tab
          * there is a chance this tab was closed before
@@ -57,9 +53,9 @@ function handleRequest(requestData) {
          * skip any broken sites
          */
         if (thisTab.site.isBroken) {
-            console.log('temporarily skip tracker blocking for site: '
-              + utils.extractHostFromURL(thisTab.url) + '\n'
-              + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            console.log('temporarily skip tracker blocking for site: ' +
+              utils.extractHostFromURL(thisTab.url) + '\n' +
+              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
             return
         }
 
@@ -71,7 +67,7 @@ function handleRequest(requestData) {
             chrome.runtime.sendMessage({'updateTabData': true})
         }
 
-        var tracker = trackers.isTracker(requestData.url, thisTab, requestData);
+        var tracker = trackers.isTracker(requestData.url, thisTab, requestData)
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.type === 'trackersWhitelist' && tracker.reason !== 'first party')) {
@@ -89,28 +85,26 @@ function handleRequest(requestData) {
 
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.block) {
-                thisTab.addOrUpdateTrackersBlocked(tracker);
-
+                thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
-                if (thisTab.status === "complete") thisTab.updateBadgeIcon()
+                if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
 
-
-                if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200){
+                if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200) {
                     Companies.add(tracker.parentCompany)
                 }
 
                 // for debugging specific requests. see test/tests/debugSite.js
                 if (debugRequest && debugRequest.length) {
                     if (debugRequest.includes(tracker.url)) {
-                        console.log("UNBLOCKED: ", tracker.url)
+                        console.log('UNBLOCKED: ', tracker.url)
                         return
                     }
                 }
 
-                console.info( "blocked " + utils.extractHostFromURL(thisTab.url)
-                             + " [" + tracker.parentCompany + "] " + requestData.url);
+                console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
+                             ' [' + tracker.parentCompany + '] ' + requestData.url)
 
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
@@ -120,7 +114,7 @@ function handleRequest(requestData) {
                     return {redirectUrl: tracker.redirectUrl}
                 } else {
                     requestData.message = {cancel: true}
-                    return {cancel: true};
+                    return {cancel: true}
                 }
             }
         }
@@ -131,13 +125,13 @@ function handleRequest(requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-     if (!thisTab.site || !window.chrome) return
+    if (!thisTab.site || !window.chrome) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {
-        console.log('temporarily skip https upgrades for site: '
-              + utils.extractHostFromURL(thisTab.url) + '\n'
-              + 'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+        console.log('temporarily skip https upgrades for site: ' +
+              utils.extractHostFromURL(thisTab.url) + '\n' +
+              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
         return
     }
 
@@ -154,13 +148,12 @@ function handleRequest(requestData) {
     }
 
     // Is this request from the tab's main frame?
-    const isMainFrame = requestData.type === 'main_frame' ? true : false
+    const isMainFrame = requestData.type === 'main_frame'
 
     if (isMainFrame &&
             thisTab.lastHttpsUpgrade &&
             thisTab.lastHttpsUpgrade.url === requestData.url &&
             Date.now() - thisTab.lastHttpsUpgrade.time < 3000) {
-
         console.log('already tried upgrading this url on this tab a few moments ago ' +
             'and it didn\'t complete successfully, abort:\n' +
             requestData.url)
@@ -179,9 +172,13 @@ function handleRequest(requestData) {
                 time: Date.now()
             }
         }
-        return {redirectUrl: url}
+        if (utils.getUpgradeToSecureSupport()) {
+            return {upgradeToSecure: true}
+        } else {
+            return {redirectUrl: url}
+        }
     } else {
-      return
+
     }
 }
 
