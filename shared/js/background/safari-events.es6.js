@@ -220,6 +220,12 @@ let onNavigate = (e) => {
             }
         }
     }
+
+    var urlMatch = e.target.url.match(/https?:\/\/duckduckgo.com\/\?*/)
+
+    if (urlMatch && urlMatch[0]) {
+        ATB.updateSetAtb()
+    }
 }
 
 /**
