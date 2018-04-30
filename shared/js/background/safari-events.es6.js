@@ -226,7 +226,6 @@ let onNavigate = (e) => {
     if (urlMatch && urlMatch[0]) {
         ATB.updateSetAtb()
     }
-
 }
 
 /**
