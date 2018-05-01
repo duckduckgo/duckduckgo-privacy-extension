@@ -18,21 +18,17 @@
 // otherwise FF might miss the onInstalled event
 const events = require('./$BROWSER-events.es6')
 const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
 
-function Background() {
-  // clearing last search on browser startup
-  settings.updateSetting('last_search', '')
+settings.ready().then(() => {
+    // clearing last search on browser startup
+    settings.updateSetting('last_search', '')
 
-  var os = "o";
-  if (window.navigator.userAgent.indexOf("Windows") != -1) os = "w";
-  if (window.navigator.userAgent.indexOf("Mac") != -1) os = "m";
-  if (window.navigator.userAgent.indexOf("Linux") != -1) os = "l";
+    var os = 'o'
+    if (window.navigator.userAgent.indexOf('Windows') !== -1) os = 'w'
+    if (window.navigator.userAgent.indexOf('Mac') !== -1) os = 'm'
+    if (window.navigator.userAgent.indexOf('Linux') !== -1) os = 'l'
 
-  localStorage['os'] = os;
+    localStorage['os'] = os
 
-  events.onStartup()
-}
-
-var background
-settings.ready().then(() => new Background())
+    events.onStartup()
+})

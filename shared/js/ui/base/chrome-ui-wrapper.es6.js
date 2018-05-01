@@ -1,10 +1,10 @@
-let fetch = ((message) => {
+let fetch = (message) => {
     return new Promise((resolve, reject) => {
         window.chrome.runtime.sendMessage(message, (result) => resolve(result))
     })
-})
+}
 
-let backgroundMessage = ((thisModel) => {
+let backgroundMessage = (thisModel) => {
     // listen for messages from background and
     // // notify subscribers
     window.chrome.runtime.onMessage.addListener((req) => {
@@ -13,9 +13,9 @@ let backgroundMessage = ((thisModel) => {
         if (req.didResetTrackersData) thisModel.send('didResetTrackersData', req.didResetTrackersData)
         if (req.closePopup) window.close()
     })
-})
+}
 
-let getBackgroundTabData = (() => {
+let getBackgroundTabData = () => {
     return new Promise((resolve, reject) => {
         fetch({getCurrentTab: true}).then((tab) => {
             if (tab) {
@@ -25,33 +25,43 @@ let getBackgroundTabData = (() => {
             }
         })
     })
-})
+}
 
-let createBrowserTab = ((url) => {
+let createBrowserTab = (url) => {
     window.chrome.tabs.create({url: `${url}&bext=${window.localStorage['os']}cr`})
-})
+}
 
-let getExtensionURL = ((path) => {
+let getExtensionURL = (path) => {
     return chrome.extension.getURL(path)
-})
+}
 
-let openOptionsPage = ((browser) => {
+let openOptionsPage = (browser) => {
     if (browser === 'moz') {
         window.chrome.tabs.create({url: getExtensionURL('/html/options.html')})
         window.close()
-    } 
-    else if (browser === 'chrome'){
+    } else if (browser === 'chrome') {
         window.chrome.runtime.openOptionsPage()
     }
-})
+}
 
-let getExtensionVersion = (() => {
+let getExtensionVersion = () => {
     const manifest = window.chrome && chrome.runtime.getManifest()
     return manifest.version
-})
+}
+
+let reloadTab = (id) => {
+    window.chrome.tabs.reload(id)
+}
+
+let closePopup = () => {
+    const w = window.chrome.extension.getViews({type: 'popup'})[0]
+    w.close()
+}
 
 module.exports = {
     fetch: fetch,
+    reloadTab: reloadTab,
+    closePopup: closePopup,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,

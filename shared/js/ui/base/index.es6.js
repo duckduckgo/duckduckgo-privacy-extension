@@ -10,9 +10,9 @@ const BaseView = require('./view.es6.js')
 // init base
 window.DDG = window.DDG || {}
 window.DDG.base = {
-  mixins: mixins,
-  Model: BaseModel,
-  Page: BasePage,
-  utils: {},
-  View: BaseView
+    mixins: mixins,
+    Model: BaseModel,
+    Page: BasePage,
+    utils: {},
+    View: BaseView
 }

@@ -1,23 +1,18 @@
 /*
- * Load the abp-filter-parser node module and 
+ * Load the abp-filter-parser node module and
  * pre-process the easylists.
- *
- * This will be browserifyed and turned into abp.js by running 'grunt'
  */
 const abp = require('abp-filter-parser')
-const deepFreeze = require('deep-freeze')
 const constants = require('../../data/constants')
-const defaultSettings = require('../../data/defaultSettings')
 const surrogates = require('./surrogates.es6')
 const settings = require('./settings.es6')
-const ATB = require('./atb.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
-const ONEDAY = 1000*60*60*24
+const ONEDAY = 1000 * 60 * 60 * 24
 
 let lists = {
-    easylists : {
+    easylists: {
         privacy: {
             constantsName: 'privacyEasylist',
             parser: abp,
@@ -52,8 +47,8 @@ let lists = {
 
 var trackersWhitelistTemporary
 
-function getTemporaryWhitelist() {
-    return trackersWhitelistTemporary;
+function getTemporaryWhitelist () {
+    return trackersWhitelistTemporary
 }
 
 function getEasylists () {
@@ -66,29 +61,28 @@ function getWhitelists () {
 
 /*
  * Get the list data and use abp to parse.
- * The parsed list data will be added to 
+ * The parsed list data will be added to
  * the easyLists object.
  */
 function updateLists () {
     const atb = settings.getSetting('atb')
-    const set_atb = settings.getSetting('set_atb')
+    const setAtb = settings.getSetting('set_atb')
     const versionParam = getVersionParam()
 
     for (let listType in lists) {
         for (let name in lists[listType]) {
-
             const list = lists[listType][name]
             const constantsName = list.constantsName
-            
+
             let url = constants[constantsName]
-            if (!url) return 
-                
+            if (!url) return
+
             let etag = settings.getSetting(constantsName + '-etag') || ''
 
             // only add url params to contentblocking.js duckduckgo urls
-            if(url.match(/^https?:\/\/(.+)?duckduckgo.com\/contentblocking\.js/)) {
+            if (url.match(/^https?:\/\/(.+)?duckduckgo.com\/contentblocking\.js/)) {
                 if (atb) url += '&atb=' + atb
-                if (set_atb) url += '&set_atb=' + set_atb
+                if (setAtb) url += '&set_atb=' + setAtb
                 if (versionParam) url += versionParam
             }
 
@@ -97,14 +91,14 @@ function updateLists () {
             // if we don't have parsed list data skip the etag to make sure we
             // get a fresh copy of the list to process
             if (Object.keys(list.parsed).length === 0) etag = ''
-                
+
             load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
                 const newEtag = response.getResponseHeader('etag') || ''
                 console.log('Updating list: ', name)
-                
+
                 // sync new etag to storage
                 settings.updateSetting(constantsName + '-etag', newEtag)
-                
+
                 list.parser.parse(listData, list.parsed)
 
                 list.isLoaded = true
@@ -120,7 +114,7 @@ function updateLists () {
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
     load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
-        settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag);
+        settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag)
 
         trackersWhitelistTemporary = listData.trim().split('\n')
     })
@@ -141,7 +135,7 @@ function getVersionParam () {
     // not exist then this is the initial install
     if (lastEasylistUpdate) {
         let delta = now - new Date(lastEasylistUpdate)
-            
+
         if (delta > ONEDAY) {
             versionParam = `&v=${version}`
         }

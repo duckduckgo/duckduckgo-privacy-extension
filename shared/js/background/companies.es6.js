@@ -1,5 +1,5 @@
 const TopBlocked = require('./classes/top-blocked.es6')
-const Company = require ('./classes/company.es6')
+const Company = require('./classes/company.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 var Companies = (() => {
@@ -35,16 +35,16 @@ var Companies = (() => {
         // This is used by tab.js to count only unique tracking networks on a tab
         countCompanyOnPage: (name) => {
             if (!companyContainer[name]) {
-                companyContainer[name] = new Company(name);
-                topBlocked.add(name);
+                companyContainer[name] = new Company(name)
+                topBlocked.add(name)
             }
-            if (name !== 'unknown') companyContainer[name].incrementPagesSeenOn();
+            if (name !== 'unknown') companyContainer[name].incrementPagesSeenOn()
         },
 
         all: () => { return Object.keys(companyContainer) },
 
         getTopBlocked: (n) => {
-            var topBlockedData = [];
+            var topBlockedData = []
             topBlocked.getTop(n, sortByCount).forEach((name) => {
                 let c = Companies.get(name)
                 topBlockedData.push({name: c.name, count: c.count})
@@ -59,14 +59,14 @@ var Companies = (() => {
                 let c = Companies.get(name)
                 topBlockedData.push({
                     name: c.name,
-                    percent: Math.min(100, Math.round((c.pagesSeenOn/totalPages) * 100))
+                    percent: Math.min(100, Math.round((c.pagesSeenOn / totalPages) * 100))
                 })
             })
 
             return {
                 topBlocked: topBlockedData,
                 totalPages: totalPages,
-                pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers/totalPages) * 100)),
+                pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers / totalPages) * 100)),
                 lastStatsResetDate: lastStatsResetDate
             }
         },
@@ -90,7 +90,7 @@ var Companies = (() => {
             browserWrapper.notifyPopup({'didResetTrackersData': resetDate})
         },
 
-        getLastResetDate: ()  => lastStatsResetDate,
+        getLastResetDate: () => lastStatsResetDate,
 
         incrementTotalPages: () => {
             totalPages += 1
@@ -103,8 +103,8 @@ var Companies = (() => {
         },
 
         syncToStorage: () => {
-            var toSync = {};
-            toSync[storageName] = companyContainer;
+            var toSync = {}
+            toSync[storageName] = companyContainer
             browserWrapper.syncToStorage(toSync)
             browserWrapper.syncToStorage({'totalPages': totalPages})
             browserWrapper.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
@@ -113,7 +113,7 @@ var Companies = (() => {
 
         sanitizeData: (storageData) => {
             if (storageData && storageData.hasOwnProperty('twitter')) {
-              delete storageData.twitter
+                delete storageData.twitter
             }
             return storageData
         },
@@ -121,7 +121,7 @@ var Companies = (() => {
         buildFromStorage: () => {
             browserWrapper.getFromStorage(storageName, function (storageData) {
                 // uncomment for testing
-                //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
+                // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
                 for (let company in storageData) {
                     let newCompany = Companies.add(company)
@@ -141,8 +141,8 @@ var Companies = (() => {
                     Companies.resetData()
                 }
             })
-         }
-     }
+        }
+    }
 })()
 
 Companies.buildFromStorage()
