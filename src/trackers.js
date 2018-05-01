@@ -1,5 +1,4 @@
 const abp = require('abp-filter-parser')
-const tldjs = require('tldjs')
 const utils = require('./utils')
 const trackersWithParentCompany = require('../data/generated/trackers-with-parent-company')
 const entityMap = require('../data/generated/entity-map')
@@ -195,11 +194,13 @@ class Trackers {
      */
     getCommonParentEntity (currLocation, urlToCheck) {
         if (!entityMap) return
-        let currentLocationParsed = tldjs.parse(currLocation)
-        let urlToCheckParsed = tldjs.parse(urlToCheck)
-        let parentEntity = entityMap[urlToCheckParsed.domain]
-        if (currentLocationParsed.domain === urlToCheckParsed.domain ||
-            this.isRelatedEntity(parentEntity, currLocation)) { return parentEntity || currentLocationParsed.domain }
+        let currLocationDomain = utils.getDomain(currLocation)
+        let urlToCheckDomain = utils.getDomain(urlToCheck)
+        let parentEntity = entityMap[urlToCheckDomain]
+        if (currLocationDomain === urlToCheckDomain ||
+                this.isRelatedEntity(parentEntity, currLocation)) {
+            return parentEntity || currLocationDomain
+        }
 
         return false
     }
