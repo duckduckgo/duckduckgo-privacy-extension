@@ -1,6 +1,4 @@
-/* global safari:false tabManager:false */
-// const tabManager = require('./tab-manager.es6')
-
+/* global safari:false */
 let getExtensionURL = (path) => {
     return safari.extension.baseURI + path
 }
@@ -91,21 +89,6 @@ let getTabId = (e) => {
     }
 }
 
-let getActiveTab = () => {
-    let activeTab = safari.application.activeBrowserWindow.activeTab
-    if (activeTab.ddgTabId) {
-        return tabManager.get({tabId: activeTab.ddgTabId})
-    } else {
-        let id = getTabId({target: activeTab})
-        return tabManager.get({tabId: id})
-    }
-}
-
-let reloadTab = () => {
-    var activeTab = safari.application.activeBrowserWindow.activeTab
-    activeTab.url = activeTab.url
-}
-
 let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
@@ -119,7 +102,5 @@ module.exports = {
     notifyPopup: notifyPopup,
     normalizeTabData: normalizeTabData,
     getTabId: getTabId,
-    getActiveTab: getActiveTab,
-    reloadTab: reloadTab,
     mergeSavedSettings: mergeSavedSettings
 }

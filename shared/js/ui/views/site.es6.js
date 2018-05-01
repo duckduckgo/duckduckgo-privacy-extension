@@ -6,6 +6,7 @@ const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Site (ops) {
     this.model = ops.model
@@ -52,14 +53,12 @@ Site.prototype = window.$.extend({},
             setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
             // Wait a bit more before closing the popup and reloading the tab
 
-            if (window.chrome) {
-                const w = window.chrome.extension.getViews({type: 'popup'})[0]
-                setTimeout(() => window.chrome.tabs.reload(this.model.tab.id), 1500)
-                setTimeout(() => w.close(), 1500)
-            } else if (window.safari) {
-                setTimeout(() => window.safari.extension.globalPage.contentWindow.tabManager.reloadTab(), 1500)
-                setTimeout(() => window.safari.self.hide(), 1500)
-            }
+            setTimeout(() => {
+                browserUIWrapper.reloadTab(this.model.tab.id)
+            }, 1500)
+            setTimeout(() => {
+                browserUIWrapper.closePopup()
+            }, 1500)
         },
 
         // NOTE: after ._setup() is called this view listens for changes to

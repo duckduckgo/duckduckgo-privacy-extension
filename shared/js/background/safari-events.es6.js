@@ -6,10 +6,6 @@ const settings = require('./settings.es6')
 const abpLists = require('./abp-lists.es6')
 const browserWrapper = require('./safari-wrapper.es6')
 
-// add these to contentWindow so the popup can access them
-safari.extension.globalPage.contentWindow.tabManager = tabManager
-safari.extension.globalPage.contentWindow.Companies = Companies
-
 let _getSafariTabIndex = (target) => {
     for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
         if (target === safari.application.activeBrowserWindow.tabs[i]) {
@@ -97,10 +93,42 @@ let handleMessage = (e) => {
     }
 }
 
+let getActiveTab = () => {
+    let activeTab = safari.application.activeBrowserWindow.activeTab
+    if (activeTab.ddgTabId) {
+        return tabManager.get({tabId: activeTab.ddgTabId})
+    } else {
+        let id = browserWrapper.getTabId({target: activeTab})
+        return tabManager.get({tabId: id})
+    }
+}
+
+let handleUIMessage = (req, res) => {
+    if (req.getCurrentTab || req.getTab) {
+        res(getActiveTab())
+    } else if (req.getTopBlocked) {
+        res(Companies.getTopBlocked(req.getTopBlocked))
+    } else if (req.getBrowser) {
+        res('safari')
+    } else if (req.whitelisted) {
+        res(tabManager.whitelistDomain(req.whitelisted))
+    } else if (req.getSiteScore) {
+        let tab = tabManager.get({tabId: req.getSiteScore})
+        if (tab) res(tab.site.score.get())
+    } else if (req.getTopBlockedByPages) {
+        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
+    } else if (req.resetTrackersData) {
+        Companies.resetData()
+        safari.self.hide()
+    }
+}
+
+safari.extension.globalPage.contentWindow.message = handleUIMessage
+
 let updateSetting = (e) => {
     let name = e.message.updateSetting.name
     let val = e.message.updateSetting.value
-    if (name && val) {
+    if (name) {
         settings.updateSetting(name, val)
     }
 }
@@ -130,7 +158,7 @@ let onBeforeRequest = (requestData) => {
 
     if (!(currentURL && potentialTracker)) return
 
-    let tabId = requestData.target.ddgTabId || tabManager.getTabId(requestData)
+    let tabId = requestData.target.ddgTabId || browserWrapper.getTabId(requestData)
     let thisTab = tabManager.get({tabId: tabId})
     requestData.tabId = tabId
 
@@ -165,7 +193,7 @@ let onBeforeRequest = (requestData) => {
 
 // update the popup when switching browser windows
 let onActivate = (e) => {
-    let activeTab = tabManager.getActiveTab()
+    let activeTab = getActiveTab()
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
@@ -238,7 +266,7 @@ var onBeforeNavigation = function (e) {
     if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
 
     const url = e.url
-    const tabId = tabManager.getTabId(e)
+    const tabId = browserWrapper.getTabId(e)
 
     let thisTab = tabId && tabManager.get({tabId: tabId})
 

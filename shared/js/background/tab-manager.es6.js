@@ -8,48 +8,6 @@ class TabManager {
         this.tabContainer = {}
     };
 
-    /* Get stashed tabId from native safari tabs. This needs to
-     * be here for now. For some reason moving this to the ui
-     * seems to give us a copy of the native tabs without our
-     * stashed tab ids.
-     */
-    getTabId (e) {
-        if (e.target.ddgTabId) return e.target.ddgTabId
-        for (let id in window.safari.application.activeBrowserWindow.tabs) {
-            if (window.safari.application.activeBrowserWindow.tabs[id] === e.target) {
-                // prevent race conditions incase another events set a tabId
-                if (window.safari.application.activeBrowserWindow.tabs[id].ddgTabId) {
-                    return window.safari.application.activeBrowserWindow.tabs[id].ddgTabId
-                }
-
-                let tabId = Math.floor(Math.random() * (100000 - 10 + 1)) + 10
-                window.safari.application.activeBrowserWindow.tabs[id].ddgTabId = tabId
-                console.log(window.safari.application.activeBrowserWindow.tabs[id])
-                console.log(`Created Tab id: ${tabId}`)
-                return tabId
-            }
-        }
-    };
-
-    /* Get active safari tab. Needs to be here for the same reason as
-     * getTabId above
-     */
-    getActiveTab () {
-        let activeTab = window.safari.application.activeBrowserWindow.activeTab
-        if (activeTab.ddgTabId) {
-            return tabManager.get({tabId: activeTab.ddgTabId})
-        } else {
-            let id = tabManager.getTabId({target: activeTab})
-            return tabManager.get({tabId: id})
-        }
-    };
-
-    // reload safari tab. Move this out later with the other safari methods
-    reloadTab () {
-        var activeTab = window.safari.application.activeBrowserWindow.activeTab
-        activeTab.url = activeTab.url
-    };
-
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
      * 1. When we rebuild saved tabs when the browser is restarted
