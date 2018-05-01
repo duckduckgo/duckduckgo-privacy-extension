@@ -22,9 +22,14 @@ class Trackers {
         }
 
         let currLocationDomain = utils.getDomain(currLocation)
+        let hostnameToCheck = utils.extractHostFromURL(urlToCheck)
+        let parsedUrl = { domain: utils.getDomain(urlToCheck) }
 
-        let hostname = utils.extractHostFromURL(urlToCheck)
-        let urlSplit = hostname.split('.')
+        if (!hostnameToCheck) {
+            return false
+        }
+
+        let urlSplit = hostnameToCheck.split('.')
 
         let whitelistedTracker = this.checkWhitelist(urlToCheck, currLocationDomain, requestType)
         if (whitelistedTracker) {
@@ -35,7 +40,7 @@ class Trackers {
             return whitelistedTracker
         }
 
-        let surrogateTracker = this.checkSurrogateList(urlToCheck, currLocation)
+        let surrogateTracker = this.checkSurrogateList(urlToCheck, parsedUrl, currLocation)
         if (surrogateTracker) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -44,7 +49,7 @@ class Trackers {
             return surrogateTracker
         }
 
-        let trackerFromList = this.checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, hostname)
+        let trackerFromList = this.checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType)
         if (trackerFromList) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -78,7 +83,7 @@ class Trackers {
         return trackerObj
     }
 
-    checkTrackerLists (urlSplit, currLocation, urlToCheck, requestType, hostname) {
+    checkTrackerLists (urlSplit, currLocation, urlToCheck, requestType) {
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
@@ -103,8 +108,8 @@ class Trackers {
         return result
     }
 
-    checkSurrogateList (url, currLocation) {
-        let dataURI = surrogates.getContentForUrl(url)
+    checkSurrogateList (url, parsedUrl, currLocation) {
+        let dataURI = surrogates.getContentForUrl(url, parsedUrl)
         let result = false
 
         if (dataURI) {
@@ -189,12 +194,12 @@ class Trackers {
      */
     getCommonParentEntity (currLocation, urlToCheck) {
         if (!entityMap) return
-        let currentLocationDomain = utils.getDomain(currLocation)
+        let currLocationDomain = utils.getDomain(currLocation)
         let urlToCheckDomain = utils.getDomain(urlToCheck)
         let parentEntity = entityMap[urlToCheckDomain]
-        if (currentLocationDomain === urlToCheckDomain ||
+        if (currLocationDomain === urlToCheckDomain ||
                 this.isRelatedEntity(parentEntity, currLocation)) {
-            return parentEntity || currentLocationDomain
+            return parentEntity || currLocationDomain
         }
 
         return false
