@@ -22,7 +22,7 @@ const extractHostFromURL = (url) => {
 
     if (!hostname) return ''
 
-    hostname = hostname.replace(/^www\./,'')
+    hostname = hostname.replace(/^www\./, '')
 
     return hostname
 }
