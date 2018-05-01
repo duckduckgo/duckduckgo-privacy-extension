@@ -1,10 +1,11 @@
+const tldjs = require('tldjs')
 const utils = require('../utils')
 
 const tosdr = require('../../data/generated/tosdr')
 const tosdrMessages = require('../../data/tosdr-messages')
 const majorTrackingNetworks = require('../../data/major-tracking-networks')
 
-const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${utils.getDomain(x)}`)) // only match domains, and from the start of the URL
+const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${tldjs.getDomain(x)}`)) // only match domains, and from the start of the URL
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 const siteScores = ['A', 'B', 'C', 'D']
 
@@ -16,7 +17,7 @@ class Grade {
         this.totalBlocked = 0
         this.decisions = []
         this.hasObscureTracker = false
-        this.domain = utils.getDomain(domain) // strip the subdomain. Fixes matching tosdr for eg encrypted.google.com
+        this.domain = tldjs.getDomain(domain) // strip the subdomain. Fixes matching tosdr for eg encrypted.google.com
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
         this.trackersByUrl = {}

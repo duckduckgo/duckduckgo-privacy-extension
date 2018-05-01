@@ -41,6 +41,6 @@
   "dependencies": {
     "abp-filter-parser": "https://github.com/duckduckgo/abp-filter-parser/tarball/master",
     "btoa": "1.2.1",
-    "url-parse-lax": "3.0.0"
+    "tldjs": "2.3.1"
   }
 }

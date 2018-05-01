@@ -1,4 +1,5 @@
 const abp = require('abp-filter-parser')
+const tldjs = require('tldjs')
 const utils = require('./utils')
 const trackersWithParentCompany = require('../data/generated/trackers-with-parent-company')
 const entityMap = require('../data/generated/entity-map')
@@ -7,6 +8,7 @@ const surrogates = require('./surrogates')
 const blockSettings = ['Advertising', 'Analytics']
 
 class Trackers {
+
     addLists (lists) {
         this.entityList = lists.entityList
         this.whitelist = {}
@@ -14,16 +16,36 @@ class Trackers {
         abp.parse(lists.whitelist, this.whitelist)
     }
 
-    isTracker (urlToCheck, currLocation, requestType, ops) {
+    isTracker(urlToCheck, currLocation, requestType, ops) {
         ops = ops || {}
 
         if (!this.entityList || !this.whitelist) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        let currLocationDomain = utils.getDomain(currLocation)
+        let currLocationDomain = tldjs.getDomain(currLocation)
 
-        let hostname = utils.extractHostFromURL(urlToCheck)
+        let parsedUrl = tldjs.parse(urlToCheck)
+        let hostname
+
+        if (parsedUrl && parsedUrl.hostname) {
+            hostname = parsedUrl.hostname
+        } else {
+            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
+            // if the subdomain name has underscores in it
+            try {
+                // last ditch attempt to try and grab a hostname
+                // this will fail on more complicated URLs with e.g. ports
+                // but will allow us to block simple trackers with _ in the subdomains
+                hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
+            } catch (e) {
+                // give up
+                return false
+            }
+        }
+
+        hostname = hostname.replace(/^www\./,'')
+
         let urlSplit = hostname.split('.')
 
         let whitelistedTracker = this.checkWhitelist(urlToCheck, currLocationDomain, requestType)
@@ -34,8 +56,8 @@ class Trackers {
             }
             return whitelistedTracker
         }
-
-        let surrogateTracker = this.checkSurrogateList(urlToCheck, currLocation)
+      
+        let surrogateTracker = this.checkSurrogateList(urlToCheck, parsedUrl, currLocation)
         if (surrogateTracker) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -71,14 +93,14 @@ class Trackers {
     }
 
     // add common parent info to the final tracker object returned by isTracker
-    addCommonParent (trackerObj, parentName) {
+    addCommonParent(trackerObj, parentName) {
         trackerObj.parentCompany = parentName
         trackerObj.block = false
         trackerObj.reason = 'first party'
         return trackerObj
     }
 
-    checkTrackerLists (urlSplit, currLocation, urlToCheck, requestType, hostname) {
+    checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, hostname) {
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
@@ -88,7 +110,7 @@ class Trackers {
         }
     }
 
-    checkWhitelist (url, currLocationDomain, requestType) {
+    checkWhitelist(url, currLocationDomain, requestType) {
         let result = false
         let match
 
@@ -103,8 +125,8 @@ class Trackers {
         return result
     }
 
-    checkSurrogateList (url, currLocation) {
-        let dataURI = surrogates.getContentForUrl(url)
+    checkSurrogateList(url, parsedUrl, currLocation) {
+        let dataURI = surrogates.getContentForUrl(url, parsedUrl)
         let result = false
 
         if (dataURI) {
@@ -124,7 +146,8 @@ class Trackers {
         let toBlock
 
         // base case
-        if (url.length < 2) { return false }
+        if (url.length < 2)
+            return false
 
         let trackerURL = url.join('.')
 
@@ -137,22 +160,22 @@ class Trackers {
             if (trackersWithParentCompany[trackerType]) {
                 let tracker = trackersWithParentCompany[trackerType][trackerURL]
                 if (tracker) {
-                    toBlock = {
+                    return toBlock = {
                         parentCompany: tracker.c,
                         url: trackerURL,
                         type: trackerType,
                         block: true,
                         reason: 'trackersWithParentCompany'
                     }
-
-                    return toBlock
                 }
             }
+
         })
 
         if (toBlock) {
             return toBlock
-        } else {
+        }
+        else {
             // remove the subdomain and recheck for trackers. This is recursive, we'll continue
             // to pull off subdomains until we either find a match or have no url to check.
             // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
@@ -164,11 +187,12 @@ class Trackers {
     /* Check to see if this tracker is related to the current page through their parent companies
      * Only block request to 3rd parties
      */
-    isRelatedEntity (parentCompany, currLocation) {
+    isRelatedEntity(parentCompany, currLocation) {
         let parentEntity = this.entityList[parentCompany]
         let host = utils.extractHostFromURL(currLocation)
 
-        if (parentEntity && parentEntity.properties) {
+        if(parentEntity && parentEntity.properties) {
+
         // join parent entities to use as regex and store in parentEntity so we don't have to do this again
             if (!parentEntity.regexProperties) {
                 parentEntity.regexProperties = parentEntity.properties.join('|')
@@ -183,19 +207,18 @@ class Trackers {
     }
 
     /* Compare two urls to determine if they came from the same hostname
-     * pull off any subdomains before comparison.
+     * pull off any subdomains before comparison. 
      * Return parent company name from entityMap if one is found or unknown
      * if domains match but we don't have this site in our entityMap.
      */
-    getCommonParentEntity (currLocation, urlToCheck) {
+    getCommonParentEntity(currLocation, urlToCheck) {
         if (!entityMap) return
-        let currentLocationDomain = utils.getDomain(currLocation)
-        let urlToCheckDomain = utils.getDomain(urlToCheck)
-        let parentEntity = entityMap[urlToCheckDomain]
-        if (currentLocationDomain === urlToCheckDomain ||
-                this.isRelatedEntity(parentEntity, currLocation)) {
-            return parentEntity || currentLocationDomain
-        }
+        let currentLocationParsed = tldjs.parse(currLocation)
+        let urlToCheckParsed = tldjs.parse(urlToCheck)
+        let parentEntity = entityMap[urlToCheckParsed.domain]
+        if (currentLocationParsed.domain === urlToCheckParsed.domain ||
+            this.isRelatedEntity(parentEntity, currLocation)) 
+            return parentEntity || currentLocationParsed.domain
 
         return false
     }
@@ -210,7 +233,7 @@ class Trackers {
         }
     }
 
-    checkABPParsedList (list, url, currLocationDomain, requestType) {
+    checkABPParsedList(list, url, currLocationDomain, requestType) {
         let match = abp.matches(list, url,
             {
                 domain: currLocationDomain,
@@ -218,6 +241,7 @@ class Trackers {
             })
         return match
     }
+
 }
 
 module.exports = new Trackers()
