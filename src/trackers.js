@@ -22,30 +22,15 @@ class Trackers {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        let currLocationDomain = tldjs.getDomain(currLocation)
+        let currLocationDomain = utils.getDomain(currLocation)
+        let hostnameToCheck = utils.extractHostFromURL(urlToCheck)
+        let parsedUrl = { domain: utils.getDomain(urlToCheck) }
 
-        let parsedUrl = tldjs.parse(urlToCheck)
-        let hostname
-
-        if (parsedUrl && parsedUrl.hostname) {
-            hostname = parsedUrl.hostname
-        } else {
-            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
-            // if the subdomain name has underscores in it
-            try {
-                // last ditch attempt to try and grab a hostname
-                // this will fail on more complicated URLs with e.g. ports
-                // but will allow us to block simple trackers with _ in the subdomains
-                hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
-            } catch (e) {
-                // give up
-                return false
-            }
+        if (!hostnameToCheck) {
+            return false
         }
 
-        hostname = hostname.replace(/^www\./, '')
-
-        let urlSplit = hostname.split('.')
+        let urlSplit = hostnameToCheck.split('.')
 
         let whitelistedTracker = this.checkWhitelist(urlToCheck, currLocationDomain, requestType)
         if (whitelistedTracker) {
@@ -65,7 +50,7 @@ class Trackers {
             return surrogateTracker
         }
 
-        let trackerFromList = this.checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType, hostname)
+        let trackerFromList = this.checkTrackerLists(urlSplit, currLocation, urlToCheck, requestType)
         if (trackerFromList) {
             let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -99,7 +84,7 @@ class Trackers {
         return trackerObj
     }
 
-    checkTrackerLists (urlSplit, currLocation, urlToCheck, requestType, hostname) {
+    checkTrackerLists (urlSplit, currLocation, urlToCheck, requestType) {
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
