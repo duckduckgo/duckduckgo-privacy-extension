@@ -106,6 +106,8 @@ const run = async () => {
         gradeData.trackersBlocked = trackersBlocked
         gradeData.trackersNotBlocked = trackersNotBlocked
         gradeData.totalBlocked = grade.totalBlocked
+        gradeData.tosdr = grade.tosdr
+        gradeData.hasHTTPS = grade.hasHTTPS
 
         console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}, ${grade.totalBlocked} trackers blocked`))
 
