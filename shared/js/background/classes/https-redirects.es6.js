@@ -1,48 +1,72 @@
 const MAINFRAME_RESET_MS = 3000
+const REQUEST_REDIRECT_LIMIT = 7
 
 class HttpsRedirects {
     constructor () {
         this.failedUpgradeUrls = {}
         this.redirectCounts = {}
 
-        this.mainFrameUpgrade = null
+        this.mainFrameRedirect = null
         this.clearMainFrameTimeout = null
     }
 
     registerRedirect (request) {
         if (request.type === 'main_frame') {
-            this.mainFrameUpgrade = {
+            this.mainFrameRedirect = {
                 url: request.url,
                 time: Date.now()
             }
 
             clearTimeout(this.clearMainFrameTimeout)
             this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, MAINFRAME_RESET_MS)
+        } else {
+            this.redirectCounts[request.requestId] = this.redirectCounts[request.requestId] || 0
+            this.redirectCounts[request.requestId] += 1
         }
     }
 
     canRedirect (request) {
-        if (request.type === 'main_frame') {
-            if (this.mainFrameUpgrade &&
-                    this.mainFrameUpgrade.url === request.url) {
-                return Date.now() - this.mainFrameUpgrade.time > MAINFRAME_RESET_MS
-            }
+        let canRedirect = true
 
-            return true
+        // this URL previously failed, don't try to upgrade it
+        if (this.failedUpgradeUrls[request.url]) {
+            return false
         }
 
-        return true
+        if (request.type === 'main_frame') {
+            if (this.mainFrameRedirect &&
+                    this.mainFrameRedirect.url === request.url) {
+                canRedirect = Date.now() - this.mainFrameRedirect.time > MAINFRAME_RESET_MS
+            }
+        } else if (this.redirectCounts[request.requestId]) {
+            canRedirect = this.redirectCounts[request.requestId] < REQUEST_REDIRECT_LIMIT
+        }
+
+        // remember this URL as previously failed, don't try to upgrade it
+        if (!canRedirect) {
+            this.failedUpgradeUrls[request.url] = true
+        }
+
+        return canRedirect
     }
 
     persistMainFrameRedirect (redirectData) {
+        if (!redirectData) { return }
+
+        // shallow copy to prevent pass-by-reference issues
+        this.mainFrameRedirect = Object.assign({}, redirectData)
+
+        // setup reset timeout again
+        this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, MAINFRAME_RESET_MS)
     }
 
     getMainFrameRedirect () {
+        return this.mainFrameRedirect
     }
 
     resetMainFrameRedirect () {
         clearTimeout(this.clearMainFrameTimeout)
-        this.mainFrameUpgrade = null
+        this.mainFrameRedirect = null
     }
 }
 

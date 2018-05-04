@@ -7,6 +7,7 @@ const setup = () => {
 }
 
 const teardown = () => {
+    httpsRedirects.resetMainFrameRedirect()
     tk.reset()
 }
 
@@ -18,20 +19,20 @@ describe('HttpsRedirects', () => {
     describe('main frame redirecting loop protection', () => {
         beforeEach(() => {
             setup()
+
             httpsRedirects.registerRedirect({
-                id: 5,
+                requestId: 5,
                 url: 'http://example.com',
                 type: 'main_frame'
             })
         })
-
         afterEach(teardown)
 
         it('should prevent any repeated main frame redirects in the first 3s', () => {
             fastForward(1500)
 
             let canRedirect = httpsRedirects.canRedirect({
-                id: 6,
+                requestId: 6,
                 url: 'http://example.com',
                 type: 'main_frame'
             })
@@ -42,7 +43,7 @@ describe('HttpsRedirects', () => {
             fastForward(4500)
 
             let canRedirect = httpsRedirects.canRedirect({
-                id: 6,
+                requestId: 6,
                 url: 'http://example.com',
                 type: 'main_frame'
             })
@@ -53,7 +54,7 @@ describe('HttpsRedirects', () => {
             fastForward(1500)
 
             let canRedirect = httpsRedirects.canRedirect({
-                id: 6,
+                requestId: 6,
                 url: 'http://example.test',
                 type: 'main_frame'
             })
@@ -61,7 +62,7 @@ describe('HttpsRedirects', () => {
             expect(canRedirect).toEqual(true, 'it should let other mainframe redirects pass')
 
             canRedirect = httpsRedirects.canRedirect({
-                id: 8,
+                requestId: 8,
                 url: 'http://example.com/cat.gif',
                 type: 'image'
             })
@@ -72,7 +73,7 @@ describe('HttpsRedirects', () => {
             fastForward(1500)
 
             let canRedirect = httpsRedirects.canRedirect({
-                id: 6,
+                requestId: 6,
                 url: 'http://example.com',
                 type: 'main_frame'
             })
@@ -82,7 +83,7 @@ describe('HttpsRedirects', () => {
             fastForward(7000)
 
             canRedirect = httpsRedirects.canRedirect({
-                id: 7,
+                requestId: 7,
                 url: 'http://example.com',
                 type: 'main_frame'
             })
@@ -91,7 +92,90 @@ describe('HttpsRedirects', () => {
         })
     })
     describe('normal request redirect protection', () => {
+        beforeEach(setup)
+        afterEach(teardown)
+
+        it('should block repeated redirects to non-mainframe requests', () => {
+            let canRedirect
+            const request = {
+                requestId: 102,
+                url: 'http://example.com/something/another.js',
+                type: 'xhr'
+            }
+
+            for (let i = 1; i < 10; i += 1) {
+                httpsRedirects.registerRedirect(request)
+                canRedirect = httpsRedirects.canRedirect(request)
+
+                expect(canRedirect).toEqual(i < 7, 'allow up to 7 redirect attempts for the same request before giving up')
+            }
+        })
+
+        it('should not allow https redirects for a URL after it\'s failed', () => {
+            const request = {
+                requestId: 102,
+                url: 'http://example.com/something/another.js',
+                type: 'xhr'
+            }
+
+            for (let i = 1; i < 10; i += 1) {
+                httpsRedirects.registerRedirect(request)
+                httpsRedirects.canRedirect(request)
+            }
+
+            let canRedirect = httpsRedirects.canRedirect({
+                requestId: 105,
+                url: 'http://example.com/something/another.js',
+                type: 'xhr'
+            })
+
+            expect(canRedirect).toEqual(false)
+        })
+
+        it('should let other requests through', () => {
+            for (let i = 1; i < 10; i += 1) {
+                httpsRedirects.registerRedirect({
+                    requestId: 102,
+                    url: 'http://example.com/something/another.js',
+                    type: 'xhr'
+                })
+            }
+
+            let canRedirect = httpsRedirects.canRedirect({
+                requestId: 105,
+                url: 'http://example.com/something/completely/different.js',
+                type: 'xhr'
+            })
+
+            expect(canRedirect).toEqual(true)
+        })
     })
     describe('getting/persisting the main frame redirect', () => {
+        beforeEach(setup)
+        afterEach(teardown)
+
+        it('should be able to dump the main frame redirect', () => {
+            httpsRedirects.registerRedirect({
+                id: 105,
+                url: 'http://example.com',
+                type: 'main_frame'
+            })
+            let redirect = httpsRedirects.getMainFrameRedirect()
+
+            expect(redirect.url).toEqual('http://example.com')
+            expect(typeof redirect.time).toEqual('number')
+        })
+        it('should be able to set a main frame redirect', () => {
+            httpsRedirects.registerRedirect({
+                id: 105,
+                url: 'http://example.com',
+                type: 'main_frame'
+            })
+            httpsRedirects.persistMainFrameRedirect({ url: 'http://example.com', time: Date.now() - 500 })
+
+            let redirect = httpsRedirects.getMainFrameRedirect()
+            expect(redirect).toBeTruthy()
+            expect(typeof redirect).toEqual('object')
+        })
     })
 })
