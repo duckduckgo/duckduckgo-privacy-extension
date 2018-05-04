@@ -30,6 +30,7 @@ class HttpsRedirects {
 
         // this URL previously failed, don't try to upgrade it
         if (this.failedUpgradeUrls[request.url]) {
+            console.log(`HTTPS: not upgrading, url previously failed: ${request.url}`)
             return false
         }
 
@@ -45,6 +46,7 @@ class HttpsRedirects {
         // remember this URL as previously failed, don't try to upgrade it
         if (!canRedirect) {
             this.failedUpgradeUrls[request.url] = true
+            console.log(`HTTPS: not upgrading, redirect loop protection kicked in for url: ${request.url}`)
         }
 
         return canRedirect
