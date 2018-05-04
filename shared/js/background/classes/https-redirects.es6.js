@@ -43,7 +43,7 @@ class HttpsRedirects {
          * 2. The server gives 200 but prints out some HTML that redirects the page to HTTP
          * 3. We try to upgrade again
          *
-         * To prevent this, block we redirects to the same URL for the next few seconds
+         * To prevent this, block redirects to the same URL for the next few seconds
          */
         if (request.type === 'main_frame') {
             if (this.mainFrameRedirect &&
