@@ -34,12 +34,27 @@ class HttpsRedirects {
             return false
         }
 
+        /**
+         * Redirect loop detection is different when the request is for the main frame vs
+         * any other request on the page.
+         *
+         * For main frames, the redirect loop could happen like this:
+         * 1. We upgrade a page to HTTPS
+         * 2. The server gives 200 but prints out some HTML that redirects the page to HTTP
+         * 3. We try to upgrade again
+         *
+         * To prevent this, block we redirects to the same URL for the next few seconds
+         */
         if (request.type === 'main_frame') {
             if (this.mainFrameRedirect &&
                     this.mainFrameRedirect.url === request.url) {
                 canRedirect = Date.now() - this.mainFrameRedirect.time > MAINFRAME_RESET_MS
             }
         } else if (this.redirectCounts[request.requestId]) {
+            /**
+             * For other requests, the server would likely just do a 301 redirect
+             * to the HTTP version - so we can use the requestId as an identifier
+             */
             canRedirect = this.redirectCounts[request.requestId] < REQUEST_REDIRECT_LIMIT
         }
 
