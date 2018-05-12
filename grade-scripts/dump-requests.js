@@ -33,7 +33,16 @@ const handleRequest = (requests, siteToCheck, request) => {
         return
     }
 
-    requests.push([url, type])
+    // is this request from an iframe?
+    let frame = request.frame()
+    let frameUrl = null
+
+    // parentFrame() returns null when frame is top
+    if (frame && frame.parentFrame()) {
+        frameUrl = frame.url()
+    }
+
+    requests.push([url, type, frameUrl])
 
     let upgradedUrl
     let tracker
@@ -193,6 +202,7 @@ const run = async () => {
             data = { url: `http://${siteToCheck}`, failed: true }
         } else {
             console.log(chalk.green(`got ${data.requests.length} requests for ${siteToCheck}`))
+            data.hasIFrameRequests = data.requests.some((requestData) => !!requestData[2])
         }
 
         fs.writeFileSync(`${outputPath}/${siteToCheck}.json`, JSON.stringify(data))
