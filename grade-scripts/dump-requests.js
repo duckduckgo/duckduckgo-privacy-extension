@@ -166,9 +166,12 @@ const run = async () => {
     await setup()
 
     let sitesChecked = 0
+    let rank = 0
 
     for (let siteToCheck of sites) {
         let failed = false
+
+        rank += 1
 
         if (sitesChecked && sitesChecked % 20 === 0) {
             console.log(`checked ${sitesChecked}, refreshing browser instance...`)
@@ -204,6 +207,8 @@ const run = async () => {
             console.log(chalk.green(`got ${data.requests.length} requests for ${siteToCheck}`))
             data.hasIFrameRequests = data.requests.some((requestData) => !!requestData[2])
         }
+
+        data.rank = rank
 
         fs.writeFileSync(`${outputPath}/${siteToCheck}.json`, JSON.stringify(data))
     }
