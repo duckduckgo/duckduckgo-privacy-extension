@@ -109,6 +109,10 @@ const run = async () => {
         gradeData.tosdr = grade.tosdr
         gradeData.hasHTTPS = grade.hasHTTPS
 
+        if (siteData.rank) {
+            gradeData.rank = siteData.rank
+        }
+
         console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}, ${grade.totalBlocked} trackers blocked`))
 
         fs.writeFileSync(`${outputPath}/${fileName}`, JSON.stringify(gradeData))
