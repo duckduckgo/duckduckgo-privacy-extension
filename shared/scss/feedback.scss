@@ -18,45 +18,54 @@
     }
 }
 
-// FORM STUFF
+// General form styles, mostly ripped from
+// https://github.com/duckduckgo/duckduckgo-styles
+// and
+// https://github.com/duckduckgo/litestrap
 
 .frm {
     display: block;
 }
 
 .frm__label {
-    font-size: 0.9em;
-    font-weight: 600;
     color: $slate;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.frm__label__chk {
+    margin-top: 0.1em;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .frm__text,
 .frm__input {
     box-sizing: border-box;
     margin: 0;
-    font-size: 1em;
     background-color: $silver-light;
     border: 1px solid #e6e6e6;
     color: $slate;
-
     outline: none;
+    margin-bottom: 10px;
 }
 
 .frm__input {
     border-radius: 2px;
-    height: 2em;
-    line-height: 2em;
+    height: 30px;
+    line-height: 30px;
     padding-left: 0.8em;
-    // on mobile devices the top/bottom padding are different:
     padding-top: 0;
     padding-bottom: 0;
-    // disable inner shadows on webkit mobile devices:
     -webkit-appearance: none;
 }
 
 .frm__text {
     padding: 0.8em;
     border-radius: 2px;
+    width: 100%;
+    max-width: 100%;
+    height: 100px;
 }
 
 .btn {
