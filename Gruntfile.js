@@ -27,7 +27,8 @@ module.exports = function(grunt) {
         ui: {
             '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
             '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
-            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js']
+            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
+            '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js']
         },
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
@@ -43,7 +44,8 @@ module.exports = function(grunt) {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
             '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
-            '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss']
+            '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
+            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss']
         }
     }
 
