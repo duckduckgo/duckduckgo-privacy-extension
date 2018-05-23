@@ -4,8 +4,6 @@ const ratingHero = require('./shared/rating-hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
 const constants = require('../../../data/constants')
-const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
-const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 
 module.exports = function () {
     const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
@@ -100,13 +98,9 @@ module.exports = function () {
         Manage Whitelist
     </a>
     <div class="separator"></div>
-    ${crossplatformLink(renderBrokenSiteHref(model.browserInfo, model.domain),
-        {
-            target: '_blank',
-            className: 'js-site-report-broken site-info__report-broken link-secondary bold',
-            text: 'Report Broken Site'
-        }
-    )}
+    <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
+        Report Broken Site
+    </a>
 </div>`
     }
 }

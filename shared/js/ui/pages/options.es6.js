@@ -8,8 +8,6 @@ const WhitelistModel = require('./../models/whitelist.es6.js')
 const whitelistTemplate = require('./../templates/whitelist.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
 const parseUserAgentString = require('./../models/mixins/parse-user-agent.es6.js')
-const renderFeedbackHref = require('./../templates/shared/render-feedback-href.es6.js')
-const renderBrokenSiteHref = require('./../templates/shared/render-broken-site-href.es6.js')
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Options (ops) {
