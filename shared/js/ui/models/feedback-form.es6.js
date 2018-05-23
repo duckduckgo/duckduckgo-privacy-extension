@@ -6,6 +6,7 @@ function FeedbackForm (attrs) {
     attrs.url = attrs.url || ''
     attrs.message = attrs.message || ''
     attrs.canSubmit = false
+    attrs.submitted = false
 
     attrs.browser = attrs.browser || ''
     attrs.browserVersion = attrs.browserVersion || ''
@@ -25,6 +26,8 @@ FeedbackForm.prototype = window.$.extend({},
             if (!this.canSubmit) { return }
 
             console.log('SUBMIT!!!')
+
+            this.set('submitted', true)
         },
 
         toggleBrokenSite: function (val) {

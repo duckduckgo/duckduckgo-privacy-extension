@@ -3,6 +3,10 @@ const bel = require('bel')
 module.exports = function () {
     let fields
 
+    if (this.model.submitted) {
+        return showThankYou(this.model.isBrokenSite)
+    }
+
     if (this.model.isBrokenSite) {
         fields = bel`<div>
             <label class='frm__label'>Which website is broken?</label>
@@ -18,7 +22,7 @@ module.exports = function () {
     }
 
     return bel`<form class='frm'>
-        <p class='frm__label'>Help us improve by sharing a little info about the issue you've encountered.</p>
+        <p>Help us improve by sharing a little info about the issue you've encountered.</p>
         <label class='frm__label'>
             <input type='checkbox' class='js-feedback-broken-site frm__label__chk'
                 ${this.model.isBrokenSite ? 'checked' : ''}/>
@@ -28,4 +32,16 @@ module.exports = function () {
         <input class='btn js-feedback-submit ${this.model.canSubmit ? '' : 'is-disabled'}'
             type='submit' value='Submit'/>
     </form>`
+}
+
+function showThankYou (isBrokenSite) {
+    if (isBrokenSite) {
+        return bel`<div>
+            <p>Thank you for your feedback!</p>
+            <p>Your broken site reports help our development team fix these breakages.</p>
+            <p>To fix the issue for the time being, you can turn off "Privacy Protection" to add the site to the extension whitelist.</p>
+        </div>`
+    } else {
+        return bel`<p>Thank you for your feedback!</p>`
+    }
 }

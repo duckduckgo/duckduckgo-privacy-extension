@@ -31,7 +31,7 @@ FeedbackForm.prototype = window.$.extend({},
         },
 
         _onModelChange: function (e) {
-            if (e.change.attribute === 'isBrokenSite') {
+            if (e.change.attribute === 'isBrokenSite' || e.change.attribute === 'submitted') {
                 this.unbindEvents()
                 this._rerender()
                 this._setup()
