@@ -26,7 +26,7 @@ FeedbackForm.prototype = window.$.extend({},
                 [this.$url, `input`, this._onUrlChange],
                 [this.$message, `input`, this._onMessageChange],
                 [this.$brokensite, `change`, this._onBrokenSiteChange],
-                [this.$submit, `click`, this._onSubmitClick],
+                [this.$submit, `click`, this._onSubmitClick]
             ])
         },
 

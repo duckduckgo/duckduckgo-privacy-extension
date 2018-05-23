@@ -36,7 +36,7 @@ let getExtensionURL = (path) => {
 }
 
 let openExtensionPage = (path) => {
-    window.chrome.tabs.create({url: getExtensionURL(path) })
+    window.chrome.tabs.create({ url: getExtensionURL(path) })
 }
 
 let openOptionsPage = (browser) => {
