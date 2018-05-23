@@ -10,19 +10,19 @@ module.exports = function () {
     if (this.model.isBrokenSite) {
         fields = bel`<div>
             <label class='frm__label'>Which website is broken?</label>
-            <input class='js-feedback-url frm__input' type='text' placeholder='Please copy and paste your URL' value='${this.model.url}'/>
-            <label class='frm__label'>Describe the issue</label>
-            <textarea class='frm__text js-feedback-message'></textarea>
+            <input class='js-feedback-url frm__input' type='text' placeholder='Copy and paste your URL' value='${this.model.url}'/>
+            <label class='frm__label'>Describe the issue you encountered:</label>
+            <textarea class='frm__text js-feedback-message' placeholder='Which website content or functionality is broken? Please be as specific as possible.'></textarea>
         </div>`
     } else {
         fields = bel`<div>
-            <label class='frm__label'>Tell us which features or functionality your feedback refers to. What do you love? What isn't working? How could it be improved?</label>
-            <textarea class='frm__text js-feedback-message'></textarea>
+            <label class='frm__label'>What do you love? What isn't working? How could the extension be improved?</label>
+            <textarea class='frm__text js-feedback-message' placeholder='Which features or functionality does your feedback refer to? Please be as specific as possible.'></textarea>
         </div>`
     }
 
     return bel`<form class='frm'>
-        <p>Help us improve by sharing a little info about the issue you've encountered.</p>
+        <p>Share some feedback to help us improve DuckDuckGo Privacy Essentials.</p>
         <label class='frm__label'>
             <input type='checkbox' class='js-feedback-broken-site frm__label__chk'
                 ${this.model.isBrokenSite ? 'checked' : ''}/>
