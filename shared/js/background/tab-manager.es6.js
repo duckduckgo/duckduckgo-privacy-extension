@@ -124,18 +124,6 @@ class TabManager {
             }
         }
     }
-
-    updateTabRedirectCount (request) {
-        // count redirects
-        let tab = tabManager.get({'tabId': request.tabId})
-        if (!tab) return
-
-        if (tab.httpsRedirects[request.requestId]) {
-            tab.httpsRedirects[request.requestId] += 1
-        } else {
-            tab.httpsRedirects[request.requestId] = 1
-        }
-    }
 }
 
 var tabManager = new TabManager()
