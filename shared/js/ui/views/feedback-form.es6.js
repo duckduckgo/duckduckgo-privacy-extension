@@ -41,9 +41,7 @@ FeedbackForm.prototype = window.$.extend({},
         },
 
         _onBrokenSiteChange: function (e) {
-            this.model.toggleBrokenSite()
-            this.model.set('isBrokenSite', e.target.checked)
-            this.model.updateCanSubmit()
+            this.model.toggleBrokenSite(e.target.checked)
         },
 
         _onUrlChange: function () {
