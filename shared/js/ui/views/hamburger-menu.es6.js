@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.View
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function HamburgerMenu (ops) {
     this.model = ops.model
@@ -17,11 +18,15 @@ HamburgerMenu.prototype = window.$.extend({},
         _setup: function () {
             this._cacheElems('.js-hamburger-menu', [
                 'close',
-                'options-link'
+                'options-link',
+                'feedback-link',
+                'broken-site-link'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeMenu],
                 [this.$optionslink, 'click', this.openOptionsPage],
+                [this.$feedbacklink, 'click', this._handleFeedbackClick],
+                [this.$brokensitelink, 'click', this._handleBrokenSiteClick],
                 [this.model.store.subscribe, 'action:search', this._handleAction],
                 [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
             ])
@@ -38,6 +43,19 @@ HamburgerMenu.prototype = window.$.extend({},
         _closeMenu: function (e) {
             if (e) e.preventDefault()
             this.$el.addClass('is-hidden')
+        },
+
+        _handleFeedbackClick: function (e) {
+            e.preventDefault()
+
+            browserUIWrapper.openExtensionPage(`/html/feedback.html`)
+        },
+
+        _handleBrokenSiteClick: function (e) {
+            e.preventDefault()
+
+            let url = encodeURIComponent(this.model.tabUrl)
+            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1&url=${url}`)
         },
 
         _handleSiteUpdate: function (notification) {
