@@ -25,6 +25,7 @@ module.exports = function () {
             I want to report a broken site
         </label>
         ${fields}
-        <input class='btn js-feedback-submit' type='submit' value='Submit'/>
+        <input class='btn js-feedback-submit ${this.model.canSubmit ? '' : 'is-disabled'}'
+            type='submit' value='Submit'/>
     </form>`
 }

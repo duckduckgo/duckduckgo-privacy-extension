@@ -23,6 +23,8 @@ FeedbackForm.prototype = window.$.extend({},
 
             this.bindEvents([
                 [this.store.subscribe, `change:feedbackForm`, this._onModelChange],
+                [this.$url, `input`, this._onUrlChange],
+                [this.$message, `input`, this._onMessageChange],
                 [this.$brokensite, `change`, this._onBrokenSiteChange],
                 [this.$submit, `click`, this._onSubmitClick],
             ])
@@ -33,11 +35,25 @@ FeedbackForm.prototype = window.$.extend({},
                 this.unbindEvents()
                 this._rerender()
                 this._setup()
+            } else if (e.change.attribute === 'canSubmit') {
+                this.$submit.toggleClass('is-disabled', !this.model.canSubmit)
             }
         },
 
         _onBrokenSiteChange: function (e) {
+            this.model.toggleBrokenSite()
             this.model.set('isBrokenSite', e.target.checked)
+            this.model.updateCanSubmit()
+        },
+
+        _onUrlChange: function () {
+            this.model.set('url', this.$url.val())
+            this.model.updateCanSubmit()
+        },
+
+        _onMessageChange: function () {
+            this.model.set('message', this.$message.val())
+            this.model.updateCanSubmit()
         },
 
         _onSubmitClick: function (e) {
