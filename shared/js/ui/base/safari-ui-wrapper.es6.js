@@ -88,9 +88,13 @@ let getExtensionURL = (path) => {
     return safari.extension.baseURI + path
 }
 
-let openOptionsPage = () => {
+let openExtensionPage = (path) => {
     let tab = safari.application.activeBrowserWindow.openTab()
-    tab.url = getExtensionURL('html/options.html')
+    tab.url = getExtensionURL(path)
+}
+
+let openOptionsPage = () => {
+    openExtensionPage('/html/options.html')
     safari.self.hide()
 }
 
@@ -106,6 +110,7 @@ module.exports = {
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
+    openExtensionPage: openOptionsPage,
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion
 }

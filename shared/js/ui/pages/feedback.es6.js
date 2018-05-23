@@ -28,7 +28,7 @@ Feedback.prototype = window.$.extend({},
                 appendTo: window.$('.js-feedback-form'),
                 model: new FeedbackFormModel({
                     isBrokenSite: params.broken,
-                    url: params.url,
+                    url: decodeURIComponent(params.url),
                     browser: browserInfo.browser,
                     browserVersion: browserInfo.version,
                     extensionVersion: browserInfo.extension

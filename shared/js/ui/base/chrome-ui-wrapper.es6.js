@@ -35,9 +35,13 @@ let getExtensionURL = (path) => {
     return chrome.extension.getURL(path)
 }
 
+let openExtensionPage = (path) => {
+    window.chrome.tabs.create({url: getExtensionURL(path) })
+}
+
 let openOptionsPage = (browser) => {
     if (browser === 'moz') {
-        window.chrome.tabs.create({url: getExtensionURL('/html/options.html')})
+        openExtensionPage('/html/options.html')
         window.close()
     } else if (browser === 'chrome') {
         window.chrome.runtime.openOptionsPage()
@@ -66,6 +70,7 @@ module.exports = {
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
+    openExtensionPage: openExtensionPage,
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion
 }
