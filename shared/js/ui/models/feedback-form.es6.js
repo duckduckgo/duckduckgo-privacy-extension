@@ -6,6 +6,11 @@ function FeedbackForm (attrs) {
     attrs.url = attrs.url || ''
     attrs.message = attrs.message || ''
     attrs.canSubmit = false
+
+    attrs.browser = attrs.browser || ''
+    attrs.browserVersion = attrs.browserVersion || ''
+    attrs.extensionVersion = attrs.extensionVersion || ''
+
     Parent.call(this, attrs)
 
     this.updateCanSubmit()
