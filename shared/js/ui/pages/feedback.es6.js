@@ -1,6 +1,7 @@
 const Parent = window.DDG.base.Page
 const mixins = require('./mixins/index.es6')
 const FeedbackFormView = require('../views/feedback-form.es6')
+const FeedbackFormModel = require('../models/feedback-form.es6')
 
 function Feedback (ops) {
     Parent.call(this, ops)
@@ -19,7 +20,8 @@ Feedback.prototype = window.$.extend({},
 
             this.form = new FeedbackFormView({
                 appendTo: window.$('.js-feedback-form'),
-                model: {}
+                model: new FeedbackFormModel({
+                })
             })
         }
     }
