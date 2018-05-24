@@ -116,6 +116,7 @@
     &.is-disabled {
         border-color: $platinum-darker;
         background-color: $platinum-darker;
+        cursor: default;
         color: #eee;
     }
 }
