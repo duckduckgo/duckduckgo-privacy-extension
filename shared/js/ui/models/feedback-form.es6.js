@@ -28,7 +28,7 @@ FeedbackForm.prototype = window.$.extend({},
 
             this._submitting = true
 
-            $.ajax(constants.feedbackUrl, {
+            window.$.ajax(constants.feedbackUrl, {
                 method: 'POST',
                 data: {
                     reason: this.isBrokenSite ? 'broken_site' : 'general',
@@ -50,7 +50,6 @@ FeedbackForm.prototype = window.$.extend({},
                     this.set('errored', true)
                 }
             })
-
         },
 
         toggleBrokenSite: function (val) {
