@@ -1,6 +1,3 @@
-const renderBrokenSiteHref = require('./shared/render-broken-site-href.es6.js')
-const renderFeedbackHref = require('./shared/render-feedback-href.es6.js')
-const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 const bel = require('bel')
 
 module.exports = function () {
@@ -21,22 +18,16 @@ module.exports = function () {
                 </a>
             </li>
             <li>
-                ${crossplatformLink(renderFeedbackHref(this.model.browserInfo, this.model.tabUrl),
-        {
-            target: '_blank',
-            className: 'menu-title',
-            innerHTML: `Send feedback <span>Got issues or suggestions? Let us know!</span>`
-        }
-    )}
+                <a href="javascript:void(0)" class="menu-title js-hamburger-menu-feedback-link">
+                    Send feedback
+                    <span>Got issues or suggestions? Let us know!</span>
+                </a>
             </li>
             <li>
-                ${crossplatformLink(renderBrokenSiteHref(this.model.browserInfo, this.model.tabUrl),
-        {
-            target: '_blank',
-            className: 'menu-title',
-            innerHTML: `Report broken site <span>If a site's not working, please tell us.</span>`
-        }
-    )}
+                <a href="javascript:void(0)" class="menu-title js-hamburger-menu-broken-site-link">
+                    Report broken site
+                    <span>If a site's not working, please tell us.</span>
+                </a>
             </li>
         </ul>
     </div>

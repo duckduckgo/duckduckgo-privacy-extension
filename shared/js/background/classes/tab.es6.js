@@ -24,6 +24,7 @@ const scoreIconLocations = {
 
 const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
+const HttpsRedirects = require('./https-redirects.es6')
 const utils = require('../utils.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
@@ -35,12 +36,10 @@ class Tab {
         this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
-        this.failedUpgradeUrls = {}
-        this.httpsRedirects = {} // count redirects here in form of: { <requestId>: <count> }
-        this.lastHttpsUpgrade = {}
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
+        this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
             begin: Date.now(),
@@ -104,14 +103,6 @@ class Tab {
             return newTracker
         }
     };
-
-    downgradeHttpsUpgradeRequest (reqData) {
-        if (reqData.type === 'main_frame') this.upgradedHttps = false
-        delete this.httpsRedirects[reqData.requestId]
-        const downgrade = reqData.url.replace(/^https:\/\//i, 'http://')
-        this.failedUpgradeUrls[downgrade] = true
-        return downgrade
-    }
 
     checkHttpsRequestsOnComplete () {
         // TODO later: watch all requests for http/https status and

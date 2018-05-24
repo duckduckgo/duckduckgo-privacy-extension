@@ -51,13 +51,6 @@ chrome.webRequest.onHeadersReceived.addListener(
     }
 )
 
-chrome.webRequest.onBeforeRedirect.addListener(
-    tabManager.updateTabRedirectCount,
-    {
-        urls: ['*://*/*']
-    }
-)
-
 /**
  * TABS
  */

@@ -10,7 +10,7 @@ const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
-let entityList
+let entityList = {}
 
 function loadLists () {
     load.JSONfromExternalFile(constants.entityList, (list) => { entityList = list })

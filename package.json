@@ -51,7 +51,8 @@
     "puppeteer": "1.2.0",
     "request": "2.83.0",
     "selenium-webdriver": "3.0.1",
-    "standard": "10.0.3"
+    "standard": "10.0.3",
+    "timekeeper": "^2.1.1"
   },
   "dependencies": {
     "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git#0.2.0",

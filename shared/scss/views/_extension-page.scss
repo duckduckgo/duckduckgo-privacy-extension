@@ -1,0 +1,20 @@
+.page-container {
+    width: 400px;
+    margin: 3em auto auto auto;
+    position: relative;
+
+    p {
+        margin-bottom: 10px;
+    }
+}
+
+.ddg-logo {
+    @include ddg_logo();
+    width: 158px;
+    height: 44px;
+    margin-bottom: 23px;
+
+    span {
+        display: none;
+    }
+}
