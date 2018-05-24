@@ -89,12 +89,17 @@ let getExtensionURL = (path) => {
 }
 
 let openExtensionPage = (path) => {
+    // Chrome needs an opening slash, Safari breaks if you add it
+    if (path.indexOf('/') === 0) {
+        path = path.substr(1)
+    }
+
     let tab = safari.application.activeBrowserWindow.openTab()
     tab.url = getExtensionURL(path)
 }
 
 let openOptionsPage = () => {
-    openExtensionPage('html/options.html')
+    openExtensionPage('/html/options.html')
     safari.self.hide()
 }
 
