@@ -94,7 +94,7 @@ let openExtensionPage = (path) => {
 }
 
 let openOptionsPage = () => {
-    openExtensionPage('/html/options.html')
+    openExtensionPage('html/options.html')
     safari.self.hide()
 }
 
@@ -110,7 +110,7 @@ module.exports = {
     getBackgroundTabData: getBackgroundTabData,
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
-    openExtensionPage: openOptionsPage,
+    openExtensionPage: openExtensionPage,
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion
 }
