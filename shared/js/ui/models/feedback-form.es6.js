@@ -27,18 +27,23 @@ FeedbackForm.prototype = window.$.extend({},
 
             this._submitting = true
 
-            $.ajax('https://andrey.duckduckgo.com/collect.js?type=extension-feedback', {
+            $.ajax('https://andrey.duckduckgo.com/feedback.js?type=extension-feedback', {
                 method: 'POST',
                 data: {
                     broken: this.isBrokenSite ? 1 : 0,
                     url: this.url || '',
-                    message: this.message || '',
+                    comment: this.message || '',
                     browser: this.browser || '',
-                    browserVersion: this.browserVersion || '',
-                    version: this.extensionVersion || ''
+                    browser_version: this.browserVersion || '',
+                    v: this.extensionVersion || '',
+                    atb: this.atb || ''
                 },
-                success: () => {
-                    this.set('submitted', true)
+                success: (data) => {
+                    if (data && data.status === 'success') {
+                        this.set('submitted', true)
+                    } else {
+                        this.set('errored', true)
+                    }
                 },
                 error: () => {
                     this.set('errored', true)
