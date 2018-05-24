@@ -55,7 +55,12 @@ FeedbackForm.prototype = window.$.extend({},
         },
 
         _onSubmitClick: function (e) {
+            e.preventDefault()
+
             this.model.submit()
+
+            this.$submit.addClass('is-disabled')
+            this.$submit.val('Sending...')
         }
     }
 )
