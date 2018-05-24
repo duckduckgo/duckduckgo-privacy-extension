@@ -14,7 +14,7 @@ module.exports = {
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
     "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
     "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https2",
-    "feedbackUrl": "https://andrey.duckduckgo.com/feedback.js?type=extension-feedback",
+    "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
         "B": "Mixed",
