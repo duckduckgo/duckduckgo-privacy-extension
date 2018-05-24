@@ -30,7 +30,7 @@ FeedbackForm.prototype = window.$.extend({},
             $.ajax('https://andrey.duckduckgo.com/feedback.js?type=extension-feedback', {
                 method: 'POST',
                 data: {
-                    broken: this.isBrokenSite ? 1 : 0,
+                    reason: this.isBrokenSite ? 'broken_site' : 'general',
                     url: this.url || '',
                     comment: this.message || '',
                     browser: this.browser || '',
