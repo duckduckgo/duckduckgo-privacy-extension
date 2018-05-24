@@ -115,9 +115,14 @@ Site.prototype = window.$.extend({},
         },
 
         _onReportBrokenSiteClick: function (e) {
+            e.preventDefault()
+
             if (this.model && this.model.disabled) {
-                e.preventDefault()
+                return
             }
+
+            let url = encodeURIComponent(this.model.tab.url)
+            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1&url=${url}`)
         },
 
         _showPageTrackers: function () {
