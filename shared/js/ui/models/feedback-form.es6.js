@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.Model
+const constants = require('../../data/constants')
 
 function FeedbackForm (attrs) {
     attrs = attrs || {}
@@ -27,7 +28,7 @@ FeedbackForm.prototype = window.$.extend({},
 
             this._submitting = true
 
-            $.ajax('https://andrey.duckduckgo.com/feedback.js?type=extension-feedback', {
+            $.ajax(constants.feedbackUrl, {
                 method: 'POST',
                 data: {
                     reason: this.isBrokenSite ? 'broken_site' : 'general',
