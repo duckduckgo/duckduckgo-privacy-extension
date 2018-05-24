@@ -16,6 +16,10 @@ function FeedbackForm (attrs) {
     Parent.call(this, attrs)
 
     this.updateCanSubmit()
+
+    // grab atb value from background process
+    this.fetch({ getSetting: { name: 'atb' } })
+        .then((atb) => { this.atb = atb })
 }
 
 FeedbackForm.prototype = window.$.extend({},
