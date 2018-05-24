@@ -23,11 +23,28 @@ FeedbackForm.prototype = window.$.extend({},
         modelName: 'feedbackForm',
 
         submit: function () {
-            if (!this.canSubmit) { return }
+            if (!this.canSubmit || this._submitting) { return }
 
-            console.log('SUBMIT!!!')
+            this._submitting = true
 
-            this.set('submitted', true)
+            $.ajax('https://andrey.duckduckgo.com/collect.js?type=extension-feedback', {
+                method: 'POST',
+                data: {
+                    broken: this.isBrokenSite ? 1 : 0,
+                    url: this.url || '',
+                    message: this.message || '',
+                    browser: this.browser || '',
+                    browserVersion: this.browserVersion || '',
+                    version: this.extensionVersion || ''
+                },
+                success: () => {
+                    this.set('submitted', true)
+                },
+                error: () => {
+                    throw new Error('Errorrrr!')
+                }
+            })
+
         },
 
         toggleBrokenSite: function (val) {
