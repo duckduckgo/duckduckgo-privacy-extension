@@ -3,6 +3,10 @@ const bel = require('bel')
 module.exports = function () {
     let fields
 
+    if (this.model.errored) {
+        return showError()
+    }
+
     if (this.model.submitted) {
         return showThankYou(this.model.isBrokenSite)
     }
@@ -44,4 +48,8 @@ function showThankYou (isBrokenSite) {
     } else {
         return bel`<p>Thank you for your feedback!</p>`
     }
+}
+
+function showError () {
+    return bel`<p>Something went wrong when submitting feedback. Please try again later!</p>`
 }

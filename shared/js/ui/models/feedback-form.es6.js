@@ -41,7 +41,7 @@ FeedbackForm.prototype = window.$.extend({},
                     this.set('submitted', true)
                 },
                 error: () => {
-                    throw new Error('Errorrrr!')
+                    this.set('errored', true)
                 }
             })
 
