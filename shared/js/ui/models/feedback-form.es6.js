@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.Model
-const constants = require('../../data/constants')
+const constants = require('../../../data/constants')
 
 function FeedbackForm (attrs) {
     attrs = attrs || {}
