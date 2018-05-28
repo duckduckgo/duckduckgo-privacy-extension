@@ -94,13 +94,21 @@ let openExtensionPage = (path) => {
         path = path.substr(1)
     }
 
-    let tab = safari.application.activeBrowserWindow.openTab()
-    tab.url = getExtensionURL(path)
+    let url = getExtensionURL(path)
+
+    if (context === 'popup') {
+        let tab = safari.application.activeBrowserWindow.openTab()
+        tab.url = url
+        safari.self.hide()
+    } else {
+        // note: this will only work if this is happening as a direct response
+        // to a user click - otherwise it'll be blocked by Safari's popup blocker
+        window.open(url, '_blank')
+    }
 }
 
 let openOptionsPage = () => {
     openExtensionPage('/html/options.html')
-    safari.self.hide()
 }
 
 let getExtensionVersion = () => {
