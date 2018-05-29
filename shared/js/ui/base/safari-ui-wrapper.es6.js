@@ -137,10 +137,6 @@ let openOptionsPage = () => {
     openExtensionPage('/html/options.html')
 }
 
-let getExtensionVersion = () => {
-    return safari.extension.displayVersion
-}
-
 module.exports = {
     fetch: fetch,
     reloadTab: reloadTab,
@@ -150,6 +146,5 @@ module.exports = {
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
-    getExtensionURL: getExtensionURL,
-    getExtensionVersion: getExtensionVersion
+    getExtensionURL: getExtensionURL
 }

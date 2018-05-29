@@ -48,11 +48,6 @@ let openOptionsPage = (browser) => {
     }
 }
 
-let getExtensionVersion = () => {
-    const manifest = window.chrome && chrome.runtime.getManifest()
-    return Promise.resolve(manifest.version)
-}
-
 let reloadTab = (id) => {
     window.chrome.tabs.reload(id)
 }
@@ -71,6 +66,5 @@ module.exports = {
     createBrowserTab: createBrowserTab,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
-    getExtensionURL: getExtensionURL,
-    getExtensionVersion: getExtensionVersion
+    getExtensionURL: getExtensionURL
 }
