@@ -4,10 +4,14 @@ const browserUIWrapper = require('../../../shared/js/ui/base/$BROWSER-ui-wrapper
 let feedbackForm
 
 function setup () {
-    // make sure we always have an atb version handy
-    spyOn(browserUIWrapper, 'fetch')
-        .withArgs({ getSetting: { name: 'atb' } })
+    // make sure we always have an atb and extension version handy
+    let spy = spyOn(browserUIWrapper, 'fetch')
+
+    spy.withArgs({ getSetting: { name: 'atb' } })
         .and.returnValue(Promise.resolve('v110-1'))
+
+    spy.withArgs({ getExtensionVersion: true })
+        .and.returnValue(Promise.resolve('2018.5.1'))
 
     feedbackForm = new FeedbackForm({
         modelName: Math.random().toString()
