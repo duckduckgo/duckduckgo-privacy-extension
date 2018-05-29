@@ -9,7 +9,7 @@ if (safari &&
 } else if (safari &&
         safari.self &&
         safari.self.tab) {
-    context = 'options'
+    context = 'extensionPage'
 } else {
     throw new Error('safari-ui-wrapper couldn\'t figure out the context it\'s in')
 }
@@ -36,7 +36,7 @@ let closePopup = () => {
 
 let pendingMessages = {}
 
-let sendOptionsMessage = (message, resolve, reject) => {
+let sendExtensionPageMessage = (message, resolve, reject) => {
     if (message.whitelisted) {
         resolve(safari.self.tab.dispatchMessage('whitelisted', message))
     } else if (message.getSetting) {
@@ -54,7 +54,7 @@ let sendOptionsMessage = (message, resolve, reject) => {
     }
 }
 
-if (context === 'options') {
+if (context === 'extensionPage') {
     safari.self.addEventListener('message', (e) => {
         if (e.name !== 'backgroundResponse' || !e.message.id) {
             return
@@ -74,8 +74,8 @@ let fetch = (message) => {
         console.log(`Safari Fetch: ${JSON.stringify(message)}`)
         if (context === 'popup') {
             safari.extension.globalPage.contentWindow.message(message, resolve)
-        } else if (context === 'options') {
-            sendOptionsMessage(message, resolve, reject)
+        } else if (context === 'extensionPage') {
+            sendExtensionPageMessage(message, resolve, reject)
         }
     })
 }
