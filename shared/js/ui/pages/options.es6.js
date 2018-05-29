@@ -7,7 +7,6 @@ const WhitelistView = require('./../views/whitelist.es6.js')
 const WhitelistModel = require('./../models/whitelist.es6.js')
 const whitelistTemplate = require('./../templates/whitelist.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
-const parseUserAgentString = require('./../models/mixins/parse-user-agent.es6.js')
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Options (ops) {
@@ -17,7 +16,6 @@ function Options (ops) {
 Options.prototype = window.$.extend({},
     Parent.prototype,
     mixins.setBrowserClassOnBodyTag,
-    parseUserAgentString,
     {
 
         pageName: 'options',
@@ -27,7 +25,6 @@ Options.prototype = window.$.extend({},
             Parent.prototype.ready.call(this)
 
             this.setBrowserClassOnBodyTag()
-            this.browserInfo = this.parseUserAgentString()
 
             window.$('.js-feedback-link')
                 .click(this._onFeedbackClick.bind(this))
