@@ -14,25 +14,6 @@ if (safari &&
     throw new Error('safari-ui-wrapper couldn\'t figure out the context it\'s in')
 }
 
-let sendOptionsMessage = (message, resolve, reject) => {
-    if (message.whitelisted) {
-        resolve(safari.self.tab.dispatchMessage('whitelisted', message))
-    } else if (message.getSetting) {
-        // send message random ID so we know which promise to res
-        let id = Math.random()
-        message.id = id
-        safari.self.tab.dispatchMessage('getSetting', message)
-
-        safari.self.addEventListener('message', (e) => {
-            if (e.name === 'getSetting' && e.message.id === id) {
-                delete e.message.id
-                resolve(e.message.data)
-            }
-        }, true)
-    } else if (message.updateSetting) {
-        resolve(safari.self.tab.dispatchMessage('updateSetting', message))
-    }
-}
 
 let reloadTab = () => {
     var activeTab = window.safari.application.activeBrowserWindow.activeTab
@@ -41,6 +22,51 @@ let reloadTab = () => {
 
 let closePopup = () => {
     window.safari.self.hide()
+}
+
+/**
+ * Messaging to/from the background page
+ *
+ * Unlike Chrome, Safari has different contexts for the popups and extension pages
+ *
+ * In extension pages, it's impossible to send a message along with a callback
+ * for a reply, so for messages that need a response (e.g. getSetting) we need to
+ * keep track of them via an ID
+ */
+
+let pendingMessages = {}
+
+let sendOptionsMessage = (message, resolve, reject) => {
+    if (message.whitelisted) {
+        resolve(safari.self.tab.dispatchMessage('whitelisted', message))
+    } else if (message.getSetting) {
+        let id = Math.random()
+        message.id = id
+        pendingMessages[id] = resolve
+        safari.self.tab.dispatchMessage('getSetting', message)
+    } else if (message.getExtensionVersion) {
+        let id = Math.random()
+        message.id = id
+        pendingMessages[id] = resolve
+        safari.self.tab.dispatchMessage('getExtensionVersion', message)
+    } else if (message.updateSetting) {
+        resolve(safari.self.tab.dispatchMessage('updateSetting', message))
+    }
+}
+
+if (context === 'options') {
+    safari.self.addEventListener('message', (e) => {
+        if (e.name !== 'backgroundResponse' || !e.message.id) {
+            return
+        }
+
+        let pendingResolve = pendingMessages[e.message.id]
+
+        if (!pendingResolve) { return }
+
+        delete pendingMessages[e.message.id]
+        pendingResolve(e.message.data)
+    }, true)
 }
 
 let fetch = (message) => {

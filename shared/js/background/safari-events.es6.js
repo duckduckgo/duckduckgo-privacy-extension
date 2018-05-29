@@ -86,6 +86,8 @@ let handleMessage = (e) => {
         onClose(e)
     } else if (e.name === 'getSetting') {
         getSetting(e)
+    } else if (e.name === 'getExtensionVersion') {
+        getExtensionVersion(e)
     } else if (e.name === 'updateSetting') {
         updateSetting(e)
     } else if (e.name === 'whitelisted') {
@@ -152,7 +154,16 @@ let getSetting = (e) => {
 
     console.log(`Message setting: ${name}, ${JSON.stringify(setting)}`)
     // send message back to options page
-    e.target.page.dispatchMessage('getSetting', message)
+    e.target.page.dispatchMessage('backgroundResponse', message)
+}
+
+let getExtensionVersion = (e) => {
+    let message = {
+        data: browserWrapper.getExtensionVersion(),
+        id: e.message.id
+    }
+
+    e.target.page.dispatchMessage('backgroundResponse', message)
 }
 
 let onBeforeRequest = (requestData) => {

@@ -50,7 +50,7 @@ let openOptionsPage = (browser) => {
 
 let getExtensionVersion = () => {
     const manifest = window.chrome && chrome.runtime.getManifest()
-    return manifest.version
+    return Promise.resolve(manifest.version)
 }
 
 let reloadTab = (id) => {
