@@ -79,8 +79,7 @@ describe('submit', () => {
             message: 'hello',
             url: 'http://example.com',
             browser: 'Chrome',
-            browserVersion: '60.5',
-            extensionVersion: '2018.5.1'
+            browserVersion: '60.5'
         })
         feedbackForm.updateCanSubmit()
     })
