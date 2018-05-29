@@ -26,7 +26,7 @@ let sendOptionsMessage = (message, resolve, reject) => {
         safari.self.addEventListener('message', (e) => {
             if (e.name === 'getSetting' && e.message.id === id) {
                 delete e.message.id
-                resolve(e.message)
+                resolve(e.message.data)
             }
         }, true)
     } else if (message.updateSetting) {

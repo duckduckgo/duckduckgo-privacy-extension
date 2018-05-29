@@ -145,11 +145,14 @@ let getSetting = (e) => {
 
     // Safari optons page has to send a message to the background
     // and includes an id to help identify the correct response
-    setting.id = e.message.id
+    let message = {
+        data: setting,
+        id: e.message.id
+    }
 
     console.log(`Message setting: ${name}, ${JSON.stringify(setting)}`)
     // send message back to options page
-    e.target.page.dispatchMessage('getSetting', setting)
+    e.target.page.dispatchMessage('getSetting', message)
 }
 
 let onBeforeRequest = (requestData) => {
