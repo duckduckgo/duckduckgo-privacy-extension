@@ -14,7 +14,6 @@ if (safari &&
     throw new Error('safari-ui-wrapper couldn\'t figure out the context it\'s in')
 }
 
-
 let reloadTab = () => {
     var activeTab = window.safari.application.activeBrowserWindow.activeTab
     activeTab.url = activeTab.url
