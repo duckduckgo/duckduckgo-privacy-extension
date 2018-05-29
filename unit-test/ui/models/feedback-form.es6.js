@@ -69,7 +69,7 @@ describe('toggleBrokenSite', () => {
 describe('submit', () => {
     let spy
 
-    beforeEach(() => {
+    beforeEach((done) => {
         setup()
 
         spy = spyOn(window.$, 'ajax')
@@ -82,6 +82,10 @@ describe('submit', () => {
             browserVersion: '60.5'
         })
         feedbackForm.updateCanSubmit()
+
+        // even though we've got spies for the properties we get via fetch,
+        // they are retrieved asynchronously - give them some time to resolve
+        setTimeout(done, 50)
     })
 
     it('should pass the correct arguments to the AJAX call', () => {
