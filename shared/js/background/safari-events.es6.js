@@ -145,15 +145,15 @@ let getSetting = (e) => {
 
     let setting = JSON.parse(JSON.stringify(settings.getSetting(name)))
 
-    // Safari optons page has to send a message to the background
-    // and includes an id to help identify the correct response
+    // Safari extension pages can't pass a callback
+    // so they have to include an id to help identify the correct response
     let message = {
         data: setting,
         id: e.message.id
     }
 
     console.log(`Message setting: ${name}, ${JSON.stringify(setting)}`)
-    // send message back to options page
+    // send message back to extension page
     e.target.page.dispatchMessage('backgroundResponse', message)
 }
 
