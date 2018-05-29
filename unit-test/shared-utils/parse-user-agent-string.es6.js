@@ -1,6 +1,4 @@
-const browserUIWrapper = require('../../../../shared/js/ui/base/$BROWSER-ui-wrapper.es6')
-let parseUserAgentString = require('../../../../shared/js/ui/models/mixins/parse-user-agent.es6')
-parseUserAgentString = parseUserAgentString.parseUserAgentString
+const parseUserAgentString = require('../../shared/js/shared-utils/parse-user-agent-string.es6')
 
 const tests = [
     {
@@ -36,9 +34,6 @@ const tests = [
 ]
 
 describe('parseUserAgentString', () => {
-    beforeEach(() => {
-        spyOn(browserUIWrapper, 'getExtensionVersion').and.returnValue('2018-5-23')
-    })
     tests.forEach((test) => {
         it(`should be able to parse ${test.ua}`, () => {
             let result = parseUserAgentString(test.ua)

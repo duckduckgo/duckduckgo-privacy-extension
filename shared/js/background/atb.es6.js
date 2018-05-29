@@ -1,5 +1,5 @@
 const settings = require('./settings.es6')
-const utils = require('./utils.es6')
+const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
@@ -192,7 +192,7 @@ var ATB = (() => {
             if (atb) url += `&atb=${atb}`
             if (setAtb) url += `&set_atb=${setAtb}`
 
-            let browserInfo = utils.parseUserAgentString()
+            let browserInfo = parseUserAgentString()
             let browserName = browserInfo.browser
             let browserVersion = browserInfo.version
             let extensionVersion = window.chrome.runtime.getManifest().version

@@ -1,8 +1,9 @@
 const Parent = window.DDG.base.Page
 const mixins = require('./mixins/index.es6')
-const parseUserAgentString = require('./../models/mixins/parse-user-agent.es6.js')
+const parseUserAgentString = require('../../shared-utils/parse-user-agent-string.es6.js')
 const FeedbackFormView = require('../views/feedback-form.es6')
 const FeedbackFormModel = require('../models/feedback-form.es6')
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Feedback (ops) {
     Parent.call(this, ops)
@@ -12,7 +13,6 @@ Feedback.prototype = window.$.extend({},
     Parent.prototype,
     mixins.setBrowserClassOnBodyTag,
     mixins.parseQueryString,
-    parseUserAgentString,
     {
 
         pageName: 'feedback',
@@ -22,7 +22,7 @@ Feedback.prototype = window.$.extend({},
             this.setBrowserClassOnBodyTag()
 
             let params = this.parseQueryString(window.location.search)
-            let browserInfo = this.parseUserAgentString()
+            let browserInfo = parseUserAgentString()
 
             this.form = new FeedbackFormView({
                 appendTo: window.$('.js-feedback-form'),
@@ -31,7 +31,7 @@ Feedback.prototype = window.$.extend({},
                     url: decodeURIComponent(params.url || ''),
                     browser: browserInfo.browser,
                     browserVersion: browserInfo.version,
-                    extensionVersion: browserInfo.extension
+                    extensionVersion: browserUIWrapper.getExtensionVersion()
                 })
             })
         }
