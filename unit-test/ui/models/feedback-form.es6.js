@@ -4,10 +4,14 @@ const browserUIWrapper = require('../../../shared/js/ui/base/$BROWSER-ui-wrapper
 let feedbackForm
 
 function setup () {
-    // make sure we always have an atb version handy
-    spyOn(browserUIWrapper, 'fetch')
-        .withArgs({ getSetting: { name: 'atb' } })
+    // make sure we always have an atb and extension version handy
+    let spy = spyOn(browserUIWrapper, 'fetch')
+
+    spy.withArgs({ getSetting: { name: 'atb' } })
         .and.returnValue(Promise.resolve('v110-1'))
+
+    spy.withArgs({ getExtensionVersion: true })
+        .and.returnValue(Promise.resolve('2018.5.1'))
 
     feedbackForm = new FeedbackForm({
         modelName: Math.random().toString()
@@ -65,7 +69,7 @@ describe('toggleBrokenSite', () => {
 describe('submit', () => {
     let spy
 
-    beforeEach(() => {
+    beforeEach((done) => {
         setup()
 
         spy = spyOn(window.$, 'ajax')
@@ -75,10 +79,13 @@ describe('submit', () => {
             message: 'hello',
             url: 'http://example.com',
             browser: 'Chrome',
-            browserVersion: '60.5',
-            extensionVersion: '2018.5.1'
+            browserVersion: '60.5'
         })
         feedbackForm.updateCanSubmit()
+
+        // even though we've got spies for the properties we get via fetch,
+        // they are retrieved asynchronously - give them some time to resolve
+        setTimeout(done, 50)
     })
 
     it('should pass the correct arguments to the AJAX call', () => {
