@@ -9,6 +9,8 @@ module.exports = (uaString) => {
         browser = parsedUaParts[1]
         version = parsedUaParts[2]
 
+        // in Safari, the bit immediately after Safari/ is the Webkit version
+        // the *actual* version number is elsewhere
         if (browser === 'Safari') {
             version = uaString.match(/Version\/(\d+)/)[1]
         }
