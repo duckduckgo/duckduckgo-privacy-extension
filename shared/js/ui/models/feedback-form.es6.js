@@ -11,7 +11,6 @@ function FeedbackForm (attrs) {
 
     attrs.browser = attrs.browser || ''
     attrs.browserVersion = attrs.browserVersion || ''
-    attrs.extensionVersion = attrs.extensionVersion || ''
 
     Parent.call(this, attrs)
 
@@ -20,6 +19,8 @@ function FeedbackForm (attrs) {
     // grab atb value from background process
     this.fetch({ getSetting: { name: 'atb' } })
         .then((atb) => { this.atb = atb })
+    this.fetch({ getExtensionVersion: true })
+        .then((extensionVersion) => { this.extensionVersion = extensionVersion })
 }
 
 FeedbackForm.prototype = window.$.extend({},

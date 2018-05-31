@@ -30,8 +30,7 @@ Feedback.prototype = window.$.extend({},
                     isBrokenSite: params.broken,
                     url: decodeURIComponent(params.url || ''),
                     browser: browserInfo.browser,
-                    browserVersion: browserInfo.version,
-                    extensionVersion: browserUIWrapper.getExtensionVersion()
+                    browserVersion: browserInfo.version
                 })
             })
         }

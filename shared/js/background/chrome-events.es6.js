@@ -93,6 +93,7 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
+const browserWrapper = require('./chrome-wrapper.es6')
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
@@ -127,6 +128,11 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     // popup will ask for the browser type then it is created
     if (req.getBrowser) {
         res(utils.getBrowserName())
+        return true
+    }
+
+    if (req.getExtensionVersion) {
+        res(browserWrapper.getExtensionVersion())
         return true
     }
 
