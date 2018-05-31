@@ -3,7 +3,6 @@ const mixins = require('./mixins/index.es6')
 const parseUserAgentString = require('../../shared-utils/parse-user-agent-string.es6.js')
 const FeedbackFormView = require('../views/feedback-form.es6')
 const FeedbackFormModel = require('../models/feedback-form.es6')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Feedback (ops) {
     Parent.call(this, ops)
