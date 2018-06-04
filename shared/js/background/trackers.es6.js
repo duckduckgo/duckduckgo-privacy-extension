@@ -170,6 +170,21 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
     return false
 }
 
+/* Check the matched rule's options against the request data
+ * return: true (all options matched)
+ */
+function checkRuleConditions (rule, request) {
+    if (!rule.options) return true
+
+    if (rule.type && (rule.type != request.type)) {
+        return false
+    }
+    else if (rule.domains) {
+        // todo
+        return true
+    }
+}
+
 function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocation) {
     var toBlock
 
@@ -200,16 +215,10 @@ function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocati
 
                 if (tracker.rules) {
                     tracker.rules.forEach(rule => {
-                        if (rule.hostname && fullURL.match(rule.hostname)) {
+                        match = requestMatchesRule(rule, request)
+
+                        if (matchesRule) {
                             toBlock.rule = rule
-                            match = true
-                        } 
-                        else if (rule.regex) {
-                            let re = new RegExp(rule.regex)
-                            if (re.exec(fullURL)) {
-                                toBlock.rule = rule
-                                match = true
-                            }
                         }
                     })
                 } else {
@@ -233,6 +242,21 @@ function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocati
         url.shift()
         return checkTrackersWithParentCompany(blockSettings, url, fullURL, currLocation)
     }
+}
+
+function requestMatchesRule (request, rule) {
+    if (rule.hostname && fullURL.match(rule.hostname)) {
+        return true
+    } 
+    else if (rule.regex) {
+        let re = new RegExp(rule.regex)
+        if (re.exec(fullURL)) {
+            return true
+        }
+    }
+
+    // console.log('Unsupported rule type')
+    return false
 }
 
 /* Check to see if this tracker is related to the current page through their parent companies
