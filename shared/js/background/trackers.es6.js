@@ -87,14 +87,17 @@ function isTracker (urlToCheck, thisTab, request) {
             }
             return surrogateTracker
         }
-
-        let trackerFromList = checkTrackerLists(blockSettings, urlSplit, currLocation, urlToCheck, request, siteDomain)
-        if (trackerFromList) {
+        
+        // Look up trackers by parent company. This function also checks to see if the poential
+        // tracker is related to the current site. If this is the case we consider it to be the
+        // same as a first party requrest and return
+        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, urlToCheck, currLocation)
+        if (trackerByParentCompany) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
-                return addCommonParent(trackerFromList, commonParent)
+                return addCommonParent(trackerByParentCompany, commonParent)
             }
-            return trackerFromList
+            return trackerByParentCompany
         }
     }
     return false
@@ -106,16 +109,6 @@ function addCommonParent (trackerObj, parentName) {
     trackerObj.block = false
     trackerObj.reason = 'first party'
     return trackerObj
-}
-
-function checkTrackerLists (blockSettings, urlSplit, currLocation, urlToCheck, request, siteDomain) {
-    // Look up trackers by parent company. This function also checks to see if the poential
-    // tracker is related to the current site. If this is the case we consider it to be the
-    // same as a first party requrest and return
-    var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, urlToCheck, currLocation)
-    if (trackerByParentCompany) {
-        return trackerByParentCompany
-    }
 }
 
 function checkWhitelist (url, currLocation, request) {
