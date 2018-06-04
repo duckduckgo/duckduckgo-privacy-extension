@@ -38,7 +38,8 @@ module.exports = function(grunt) {
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
-            '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.src.js %>/ui/base/index.es6.js', '<%= dirs.unitTest.ui %>/**/*.js']
+            '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.src.js %>/ui/base/index.es6.js', '<%= dirs.unitTest.ui %>/**/*.js'],
+            '<%= dirs.unitTest.build %>/shared-utils.js': ['<%= dirs.unitTest.sharedUtils %>/**/*.js']
         },
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
@@ -64,7 +65,7 @@ module.exports = function(grunt) {
     let karmaOps = {
         configFile: 'karma.conf.js',
         basePath: 'build/test/',
-        files: ['background.js','ui.js']
+        files: ['background.js','ui.js','shared-utils.js']
     }
 
     // override some options to allow the devs
@@ -98,6 +99,7 @@ module.exports = function(grunt) {
             unitTest: {
                 background: `unit-test/background`,
                 ui: `unit-test/ui`,
+                sharedUtils: `unit-test/shared-utils`,
                 build: `build/test`
             }
         },

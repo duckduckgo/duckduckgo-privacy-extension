@@ -37,21 +37,6 @@ function getProtocol (url) {
     return a.protocol
 }
 
-function parseUserAgentString (uaString) {
-    if (!uaString) uaString = window.navigator.userAgent
-    const rgx = uaString.match(/(Firefox|Chrome|Safari)\/([0-9]+)/)
-    return {
-        browser: rgx[1],
-        version: rgx[2]
-    }
-}
-
-function isChromeBrowser () {
-    const ua = parseUserAgentString()
-    if (ua.browser === 'Chrome') return true
-    return false
-}
-
 function getCurrentURL (callback) {
     chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
         if (tabData.length) {
@@ -103,8 +88,6 @@ function getUpgradeToSecureSupport () {
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
-    parseUserAgentString: parseUserAgentString,
-    isChromeBrowser: isChromeBrowser,
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
     getProtocol: getProtocol,
