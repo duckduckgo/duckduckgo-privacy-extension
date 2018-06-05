@@ -176,13 +176,16 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
 function matchRuleOptions (rule, request, siteDomain) {
     if (!rule.options) return true
 
-    if (rule.type && (rule.type != request.type)) {
-        return false
+    if (rule.options.types) {
+        let matchesType = rule.options.types.findIndex(t => {return t === request.type})
+        if (matchesType === -1) {
+            return false
+        }
     }
     
-    if (rule.domains) {
-        let matchesDomain = rule.domains.findIndex(d => {return d === siteDomain})
-        if (!matchesDomain) {
+    if (rule.options.domains) {
+        let matchesDomain = rule.options.domains.findIndex(d => {return d === siteDomain})
+        if (matchesDomain === -1) {
             return false
         }
     }

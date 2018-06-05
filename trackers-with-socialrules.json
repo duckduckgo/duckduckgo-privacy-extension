@@ -7461,9 +7461,10 @@
             "u": "https://facebook.com",
             "rules": [
                 {"hostname": "facebook.com/ai.php?"},
-                {"hostname": "facebook.com/audience_network/", "t": "image"},
+                {"hostname": "facebook.com/audience_network/", "options": {"types": ["image"]}},
                 {"regex": "pixel.facebook.com($|[?/])"},
-                {"regex": "facebook.com.*/impression.php", "whitelist": ["thehill.com"]}
+                {"regex": "facebook.com.*/impression.php"},
+                {"regex": "graph.facebook.com/?ids=.*&callback=", "options": {"types": ["script"]}}
             ]
         },
         "twitter.com": {
