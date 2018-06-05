@@ -91,7 +91,7 @@ function isTracker (urlToCheck, thisTab, request) {
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
-        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, urlToCheck, currLocation)
+        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, siteDomain, request)
         if (trackerByParentCompany) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -173,20 +173,25 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
 /* Check the matched rule's options against the request data
  * return: true (all options matched)
  */
-function checkRuleConditions (rule, request) {
+function matchRuleOptions (rule, request, siteDomain) {
     if (!rule.options) return true
 
     if (rule.type && (rule.type != request.type)) {
         return false
     }
-    else if (rule.domains) {
-        // todo
-        return true
+    
+    if (rule.domains) {
+        let matchesDomain = rule.domains.findIndex(d => {return d === siteDomain})
+        if (!matchesDomain) {
+            return false
+        }
     }
+
+    return true
 }
 
-function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocation) {
-    var toBlock
+function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request) {
+    let toBlock
 
     // base case
     if (url.length < 2) { return false }
@@ -194,6 +199,9 @@ function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocati
     let trackerURL = url.join('.')
 
     blockSettings.some(function (trackerType) {
+        let request = this.request
+        let siteDomain = this.siteDomain
+
         // Some trackers are listed under just the host name of their parent company without
         // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
         // Other trackers are listed using their subdomains. Ex: developers.google.com.
@@ -215,10 +223,11 @@ function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocati
 
                 if (tracker.rules) {
                     tracker.rules.forEach(rule => {
-                        match = requestMatchesRule(rule, request)
-
-                        if (matchesRule) {
-                            toBlock.rule = rule
+                        if (requestMatchesRule(request, rule)) {
+                            if (matchRuleOptions(rule, request, siteDomain)) {
+                                toBlock.rule = rule
+                                match = true
+                            }
                         }
                     })
                 } else {
@@ -231,7 +240,7 @@ function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocati
                 }
             }
         }
-    })
+    }, {request: request, siteDomain: siteDomain})
 
     if (toBlock) {
         return toBlock
@@ -240,21 +249,20 @@ function checkTrackersWithParentCompany (blockSettings, url, fullURL, currLocati
         // to pull off subdomains until we either find a match or have no url to check.
         // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
         url.shift()
-        return checkTrackersWithParentCompany(blockSettings, url, fullURL, currLocation)
+        return checkTrackersWithParentCompany(blockSettings, url, siteDomain, request)
     }
 }
 
 function requestMatchesRule (request, rule) {
-    if (rule.hostname && fullURL.match(rule.hostname)) {
+    if (rule.hostname && request.url.match(rule.hostname)) {
         return true
     } 
     else if (rule.regex) {
         let re = new RegExp(rule.regex)
-        if (re.exec(fullURL)) {
+        if (re.exec(request.url)) {
             return true
         }
     }
-
     // console.log('Unsupported rule type')
     return false
 }
