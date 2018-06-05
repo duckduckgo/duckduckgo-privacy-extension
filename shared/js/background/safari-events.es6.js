@@ -86,6 +86,8 @@ let handleMessage = (e) => {
         onClose(e)
     } else if (e.name === 'getSetting') {
         getSetting(e)
+    } else if (e.name === 'getExtensionVersion') {
+        getExtensionVersion(e)
     } else if (e.name === 'updateSetting') {
         updateSetting(e)
     } else if (e.name === 'whitelisted') {
@@ -143,13 +145,25 @@ let getSetting = (e) => {
 
     let setting = JSON.parse(JSON.stringify(settings.getSetting(name)))
 
-    // Safari optons page has to send a message to the background
-    // and includes an id to help identify the correct response
-    setting.id = e.message.id
+    // Safari extension pages can't pass a callback
+    // so they have to include an id to help identify the correct response
+    let message = {
+        data: setting,
+        id: e.message.id
+    }
 
     console.log(`Message setting: ${name}, ${JSON.stringify(setting)}`)
-    // send message back to options page
-    e.target.page.dispatchMessage('getSetting', setting)
+    // send message back to extension page
+    e.target.page.dispatchMessage('backgroundResponse', message)
+}
+
+let getExtensionVersion = (e) => {
+    let message = {
+        data: browserWrapper.getExtensionVersion(),
+        id: e.message.id
+    }
+
+    e.target.page.dispatchMessage('backgroundResponse', message)
 }
 
 let onBeforeRequest = (requestData) => {
