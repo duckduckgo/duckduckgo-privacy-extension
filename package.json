@@ -1,7 +1,7 @@
 {
   "name": "privacy-grade",
   "version": "0.9.0",
-  "description": "DuckDuckGo's privacy grade calculator",
+  "description": "DuckDuckGo's privacy grade algorithm",
   "main": "index.js",
   "scripts": {
     "test": "grunt test",
