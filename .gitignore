@@ -6,3 +6,7 @@ npm-debug.log
 .cache
 *.map
 build/
+*-sites/
+*-grades/
+*.csv
+*.txt
