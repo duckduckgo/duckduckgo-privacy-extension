@@ -9,7 +9,7 @@
     "lint": "eslint src test",
     "lint-fix": "eslint src test --fix",
     "updateLists": "grunt updateLists",
-    "abp": "cd $INIT_CWD/node_modules/abp-filter-parser && npm install",
+    "abp": "(cd node_modules/abp-filter-parser && npm install) || true",
     "postinstall": "npm run abp"
   },
   "author": "",
