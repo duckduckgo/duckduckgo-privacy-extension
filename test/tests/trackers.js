@@ -49,15 +49,23 @@
     { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false, options:{}}, // whitelisted by @@||fastly.net/ad2/$script
     { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /securepubads.
     { url: 'https://shim.btrll.com/', block: true, options:{}, result: {parent: 'BrightRoll', reason: 'trackersWithParentCompany'}}, // ||btrll.com^$third-party
-    { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'BlogHer', reason: 'trackersWithParentCompany'}}, // /webservices/jsparselinks.aspx?$script
-    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'SCRIPT', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
+    { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'object'}, result: {parent: 'BlogHer', reason: 'trackersWithParentCompany'}}, // /webservices/jsparselinks.aspx?$script
+    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'script', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
     //
     //
     //// testing social blocking from our own data structure
-    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'SCRIPT', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'SCRIPT', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'first party'}},
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'OBJECT'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'first party'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'first party'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'first party'}},
+    { url: 'https://graph.facebook.com/?ids=asf3454534&callback=somefunction', block: true, options: {type: 'script', domain: 'reddit.com'}, result: {parent: 'Facebook', rule:{regex:'graph.facebook.com/\\?ids=.*&callback=.*'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php?', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{hostname:'facebook.com/ai.php\\?'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{hostname:'facebook.com/ai.php\\?'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php', block: false, options: {domain: 'gmail.com'}}, // doesn't match any filters
   ];
   
   QUnit.test("abp blocking url", function (assert) {
@@ -86,7 +94,10 @@
           if (test.result) {
               if (test.result.parent) assert.ok(test.result.parent === toBlock.parentCompany, `has correct parent company ${test.result.parent} === ${toBlock.parentCompany}`)
               if (test.result.reason) assert.ok(test.result.reason === toBlock.reason, `has correct blocking reason ${test.result.reason} === ${toBlock.reason}`)
-              if (test.result.rule) assert.ok(JSON.stringify(test.result.rule) === JSON.stringify(toBlock.rule), `has correct blocking rule ${test.result.rule} === ${toBlock.rule}`)
+              if (test.result.rule) {
+                  if (test.result.rule.regex) assert.ok(test.result.rule.regex === toBlock.rule.regex, `has correct blocking rule ${test.result.rule.regex} === ${toBlock.rule.regex}`)
+                  if (test.result.rule.hostname) assert.ok(test.result.rule.hostname === toBlock.rule.hostname, `has correct blocking rule ${test.result.rule.hostname} === ${toBlock.rule.hostname}`)
+              }
           }
       });
   });
@@ -105,7 +116,6 @@
       { url: 'https://independent.co.uk', potentialTracker: 'https://amazon.co.uk', block: true, message: 'handle two part tld'},
       { url: 'https://independent.co.uk', potentialTracker: 'https://subdomain.amazon.co.uk', block: true, message: 'handle two part tld'},
       { url: 'https://amazon.co.uk', potentialTracker: 'https://subdomain.amazon.co.uk', block: false, message: 'handle two part tld'},
-      { url: 'https://facebook.com', potentialTracker: 'https://reddit.com', block: true, message: 'should block third party request'},
       { url: 'https://facebook.com', potentialTracker: 'https://instagram.com', block: false, message: 'should not block third party requests owned by same parent company'}
   ];
   
@@ -126,29 +136,6 @@
       });
   });
 
-  var socialBlocking = [
-    { url: 'https://facebook.com/?q=something&param=a'},
-    { url: 'http://twitter.com/somescript.js'}
-  ];
-  
-  QUnit.test("social blocking", function (assert) {
-      socialBlocking.forEach(function(test) {
-          bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-          let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? toBlock.block : false;
-          assert.ok(toBlock === true, 'url should be blocked');
-      });
-  
-      socialBlocking.forEach(function(test) {
-          bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          bkg.settings.updateSetting('socialBlockingIsEnabled', false);
-          let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? toBlock.block : false;
-          assert.ok(toBlock === false, 'url should be blocked');
-      });
-  });
-
   // Some basic tests for the abp module. These should be expanded to cover all abp filter options
   QUnit.test("Test abp matching", (assert) => {
       
@@ -162,7 +149,7 @@
 
       easylistTestCases.forEach((e) => {
           let domain = e.options.domain || 'test.com'
-          let type = e.options.type || 'SCRIPT'
+          let type = e.options.type || 'script'
 
           let match = bkg.abp.matches(parsedList, e.url, {
               domain: domain,

@@ -257,15 +257,20 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
 }
 
 function requestMatchesRule (request, rule) {
-    if (rule.hostname && request.url.match(rule.hostname)) {
-        return true
-    } 
-    else if (rule.regex) {
-        let re = new RegExp(rule.regex)
-        if (re.exec(request.url)) {
-            return true
-        }
+    let re
+    
+    // hostnames have an implied wildcard at the end
+    if (rule.hostname) {
+        re = new RegExp(rule.hostname + '.*')
     }
+    else if (rule.regex) {
+        re = new RegExp(rule.regex)
+    }
+    
+    if (re.exec(request.url)) {
+        return true
+    }
+
     // console.log('Unsupported rule type')
     return false
 }
