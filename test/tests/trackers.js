@@ -41,10 +41,7 @@
   // the easylist. These tests could fail in the future if the easylist
   // entries are changed or whitelisted.
   var abpBlocking = [
-    { url: 'https://s.yimg.com/rq/darla/boot.js', block: false, options:{domain: 'yahoo.com'}, result: {parent: 'Oath', reason: 'first party'}}, // ||yimg.com/rq/darla/$domain=yahoo.com
-    //{ url: 'https://somesite.com/_ad6.', block: true, options:{}, result: {reason: 'general'}}, // _ad6.
     { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /googleads.
-    //{ url: 'https://www.redditstatic.com/moat/moatframe.js', block: true, options:{}, result: {parent: 'reddit', reason: 'general'}}, // ||redditstatic.com/moat/
     { url: 'http://ads.rubiconproject.com/header/11078.js', block: true, options:{}, result: {parent: 'Fox One Stop Media', reason: 'trackersWithParentCompany'}}, //  ||rubiconproject.com^$third-party
     { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, options: {domain: 'yahoo.com'}}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
     { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false, options:{}}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
@@ -52,16 +49,15 @@
     { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false, options:{}}, // whitelisted by @@||fastly.net/ad2/$script
     { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /securepubads.
     { url: 'https://shim.btrll.com/', block: true, options:{}, result: {parent: 'BrightRoll', reason: 'trackersWithParentCompany'}}, // ||btrll.com^$third-party
-    { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: true, options: {type: 'SCRIPT'}}, // /webservices/jsparselinks.aspx?$script
-    { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: false, options: {type: 'OBJECT'}}, // /webservices/jsparselinks.aspx?$script
     { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'BlogHer', reason: 'trackersWithParentCompany'}}, // /webservices/jsparselinks.aspx?$script
-    //{ url: 'https://radar.cedexis.com/1/14290/radar.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'Cedexis', reason: 'privacy'}}, // from easy privacy, ||cedexis.com^$third-party
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'Facebook', reason: 'trackersWithParentCompany'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'OBJECT'}, result: {parent: 'Facebook', reason: 'first party'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
-    { url: 'https://www.facebook.com/rsrc.php/v3/y6/r/69R6jxYtiKN.js', block: true, options: {domain: 'up-4ever.com', type: 'OBJECT'}, result: {parent: 'Facebook', reason: 'trackersWithParentCompany'}}, // |https://$third-party,script,domain=up-4ever.com
-    { url: 'https://v.shopify.com/storefront/page?referrer=https%3A%2F%2Fwww.pinkbike.com&eventType=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}, result: {reason: 'privacy'}}, // from easy privacy ||shopify.com/storefront/page?*&eventtype=
-    //{ url: 'https://secureinclude.ebaystatic.com/js/v/us/pulsar.js', block: true, options: {type: 'SCRIPT', domain: 'ebay.com'}, result: {reason: 'privacy'}}, // easy privacy, ||ebaystatic.com^*/pulsar.js, tests domain anchor and wildcard
     { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'SCRIPT', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
+    //
+    //
+    //// testing social blocking from our own data structure
+    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'SCRIPT', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'SCRIPT', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'first party'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'OBJECT'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'first party'}},
   ];
   
   QUnit.test("abp blocking url", function (assert) {
@@ -78,8 +74,11 @@
               testTab.site.domain = test.options.domain
           }
 
-          if (test.options.type) 
+          if (test.options.type) { 
               fakeRequest.type = test.options.type
+          }
+
+          fakeRequest.url = test.url
 
           let toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest) || {block: false};
           assert.ok(toBlock.block === test.block, `abp blocking decision.. url: ${test.url} ${toBlock.block} === ${test.block}`);
@@ -87,6 +86,7 @@
           if (test.result) {
               if (test.result.parent) assert.ok(test.result.parent === toBlock.parentCompany, `has correct parent company ${test.result.parent} === ${toBlock.parentCompany}`)
               if (test.result.reason) assert.ok(test.result.reason === toBlock.reason, `has correct blocking reason ${test.result.reason} === ${toBlock.reason}`)
+              if (test.result.rule) assert.ok(JSON.stringify(test.result.rule) === JSON.stringify(toBlock.rule), `has correct blocking rule ${test.result.rule} === ${toBlock.rule}`)
           }
       });
   });

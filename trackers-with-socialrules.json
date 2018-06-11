@@ -7467,6 +7467,14 @@
                 {"regex": "graph.facebook.com/?ids=.*&callback=", "options": {"types": ["script"]}}
             ]
         },
+        "facebook.net": {
+            "c": "Facebook",
+            "u": "https://facebook.com",
+            "rules": [
+                {"hostname": "connect.facebook.net/signals/"},
+                {"regex": "connect.facebook.net($|[?/].*/fbevents.js)"}
+            ]
+        },
         "twitter.com": {
             "c": "Twitter",
             "u": "https://twitter.com",
