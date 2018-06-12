@@ -176,7 +176,7 @@ class Grade {
         return grade
     }
 
-    _importTrackersFromDataFile(trackers, blocked) {
+    _importTrackersFromDataFile (trackers, blocked) {
         let companyList = blocked ? this.companiesBlocked : this.companiesNotBlocked
 
         // NOTE: this makes some assumptions about how this data is passed

@@ -51,7 +51,7 @@ describe('constructor', () => {
             trackersNotBlocked: {
                 'Amazon.com': {
                     prevalence: 14.15,
-                    's3.amazonaws.com':{
+                    's3.amazonaws.com': {
                         parentCompany: 'Amazon.com',
                         url: 's3.amazonaws.com',
                         type: 'trackersWhitelist',
