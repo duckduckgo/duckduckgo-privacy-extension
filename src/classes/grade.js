@@ -28,10 +28,10 @@ class Grade {
             this.setParentEntity(attrs.parentCompany, attrs.prevalence)
         }
         if (attrs.trackersBlocked) {
-            this.importTrackersFromDataFile(attrs.trackersBlocked, true)
+            this._importTrackersFromDataFile(attrs.trackersBlocked, true)
         }
         if (attrs.trackersNotBlocked) {
-            this.importTrackersFromDataFile(attrs.trackersNotBlocked, false)
+            this._importTrackersFromDataFile(attrs.trackersNotBlocked, false)
         }
     }
 
@@ -91,12 +91,12 @@ class Grade {
         let enhancedTrackerScore = 0
 
         for (let company in this.companiesBlocked) {
-            siteTrackerScore += this.normalizeTrackerScore(this.companiesBlocked[company])
+            siteTrackerScore += this._normalizeTrackerScore(this.companiesBlocked[company])
         }
 
         for (let company in this.companiesNotBlocked) {
-            siteTrackerScore += this.normalizeTrackerScore(this.companiesNotBlocked[company])
-            enhancedTrackerScore += this.normalizeTrackerScore(this.companiesNotBlocked[company])
+            siteTrackerScore += this._normalizeTrackerScore(this.companiesNotBlocked[company])
+            enhancedTrackerScore += this._normalizeTrackerScore(this.companiesNotBlocked[company])
         }
 
         let siteTotalScore = siteHttpsScore + siteTrackerScore + privacyScore
@@ -104,14 +104,14 @@ class Grade {
 
         this.scores = {
             site: {
-                grade: this.scoreToGrade(siteTotalScore),
+                grade: this._scoreToGrade(siteTotalScore),
                 score: siteTotalScore,
                 trackerScore: siteTrackerScore,
                 httpsScore: siteHttpsScore,
                 privacyScore: privacyScore
             },
             enhanced: {
-                grade: this.scoreToGrade(enhancedTotalScore),
+                grade: this._scoreToGrade(enhancedTotalScore),
                 score: enhancedTotalScore,
                 trackerScore: enhancedTrackerScore,
                 httpsScore: enhancedHttpsScore,
@@ -120,7 +120,11 @@ class Grade {
         }
     }
 
-    normalizeTrackerScore (pct) {
+    getGrades () {
+        return this.scores
+    }
+
+    _normalizeTrackerScore (pct) {
         let score
 
         if (!pct) {
@@ -150,7 +154,7 @@ class Grade {
         return score
     }
 
-    scoreToGrade (score) {
+    _scoreToGrade (score) {
         let grade
 
         if (score < 2) {
@@ -172,7 +176,7 @@ class Grade {
         return grade
     }
 
-    importTrackersFromDataFile(trackers, blocked) {
+    _importTrackersFromDataFile(trackers, blocked) {
         let companyList = blocked ? this.companiesBlocked : this.companiesNotBlocked
 
         // NOTE: this makes some assumptions about how this data is passed
@@ -180,10 +184,6 @@ class Grade {
         for (let company in trackers) {
             companyList[company] = trackers[company].prevalence
         }
-    }
-
-    getGrades () {
-        return this.scores
     }
 }
 
