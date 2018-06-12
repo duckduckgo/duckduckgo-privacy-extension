@@ -33,10 +33,12 @@ class Grade {
 
         if (!parentCompany) return
 
+        let prevalence = tracker.prevalence || 1
+
         if (tracker.blocked) {
-            this.companiesBlocked[parentCompany] = tracker.prevalence || 1
+            this.companiesBlocked[parentCompany] = prevalence
         } else {
-            this.companiesNotBlocked[parentCompany] = tracker.prevalence || 1
+            this.companiesNotBlocked[parentCompany] = prevalence
         }
     }
 
