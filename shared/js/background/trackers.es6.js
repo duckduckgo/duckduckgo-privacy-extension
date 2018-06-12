@@ -225,10 +225,10 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
                 }
 
                 if (tracker.rules) {
-                    tracker.rules.forEach(rule => {
-                        if (requestMatchesRule(request, rule)) {
-                            if (matchRuleOptions(rule, request, siteDomain)) {
-                                toBlock.rule = rule
+                    tracker.rules.forEach(ruleObj => {
+                        if (requestMatchesRule(request, ruleObj.rule)) {
+                            if (matchRuleOptions(ruleObj, request, siteDomain)) {
+                                toBlock.rule = ruleObj
                                 match = true
                             }
                         }
@@ -257,21 +257,12 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
 }
 
 function requestMatchesRule (request, rule) {
-    let re
-    
-    // hostnames have an implied wildcard at the end
-    if (rule.hostname) {
-        re = new RegExp(rule.hostname + '.*')
-    }
-    else if (rule.regex) {
-        re = new RegExp(rule.regex)
-    }
+    let re = new RegExp(rule + '.*', 'i')
     
     if (re.exec(request.url)) {
         return true
     }
 
-    // console.log('Unsupported rule type')
     return false
 }
 

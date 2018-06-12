@@ -54,18 +54,29 @@
     //
     //
     //// testing social blocking from our own data structure
-    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{regex:'facebook.com.*/impression.php'}, reason: 'first party'}},
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{regex:'connect.facebook.net($|[?/].*/fbevents.js)'}, reason: 'first party'}},
-    { url: 'https://graph.facebook.com/?ids=asf3454534&callback=somefunction', block: true, options: {type: 'script', domain: 'reddit.com'}, result: {parent: 'Facebook', rule:{regex:'graph.facebook.com/\\?ids=.*&callback=.*'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://pixel.facebook.com', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://pixel.facebook.com?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{regex:'pixel.facebook.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://facebook.com/ai.php?', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{hostname:'facebook.com/ai.php\\?'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://facebook.com/ai.php?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{hostname:'facebook.com/ai.php\\?'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://facebook.com/ai.php', block: false, options: {domain: 'gmail.com'}}, // doesn't match any filters
+    { url: 'https://facebook.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://facebook.net', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://twitter.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://linkedin.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'first party'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net([?/]).*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/asdf/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net([?/]).*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net([?/]).*\\/fbevents\\.js'}, reason: 'first party'}},
+    { url: 'https://graph.facebook.com/?ids=asf3454534&callback=somefunction', block: true, options: {type: 'script', domain: 'reddit.com'}, result: {parent: 'Facebook', rule:{rule:'graph\\.facebook\\.com\\/\\?ids=.*&callback=.*'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php?', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/ai\\.php\\?'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/ai\\.php\\?'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php', block: false, options: {domain: 'gmail.com'}}, // doesn't match any rules
+    { url: 'https://facebook.com/audience_network/', block: true, options: {domain: 'gmail.com', type: 'image'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/audience_network\\/'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/audience_network/', block: false, options: {domain: 'gmail.com', type: 'script'}}, // wrong request type doesn't match rule
+    { url: 'https://facebook.com/asdfasd/plugins/send_to_messenger.php?app_id=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/.*\\/plugins\\/send_to_messenger\\.php\\?app_id='}, reason: 'trackersWithParentCompany'}},
+    // domain options
+    { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: true, options: {domain: 'dailymotion.com'}, result: {parent: 'Facebook', rule: {rule: 'facebook\\.net([?/]).*\\/AudienceNetworkVPAID\\.'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: false, options: {domain: 'test.com'}},
   ];
   
   QUnit.test("abp blocking url", function (assert) {
@@ -95,8 +106,7 @@
               if (test.result.parent) assert.ok(test.result.parent === toBlock.parentCompany, `has correct parent company ${test.result.parent} === ${toBlock.parentCompany}`)
               if (test.result.reason) assert.ok(test.result.reason === toBlock.reason, `has correct blocking reason ${test.result.reason} === ${toBlock.reason}`)
               if (test.result.rule) {
-                  if (test.result.rule.regex) assert.ok(test.result.rule.regex === toBlock.rule.regex, `has correct blocking rule ${test.result.rule.regex} === ${toBlock.rule.regex}`)
-                  if (test.result.rule.hostname) assert.ok(test.result.rule.hostname === toBlock.rule.hostname, `has correct blocking rule ${test.result.rule.hostname} === ${toBlock.rule.hostname}`)
+                  if (test.result.rule.rule) assert.ok(test.result.rule.rule === toBlock.rule.rule, `has correct blocking rule ${test.result.rule.rule} === ${toBlock.rule.rule}`)
               }
           }
       });
