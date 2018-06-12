@@ -14,6 +14,25 @@ class Grade {
             site: {},
             enhanced: {}
         }
+
+        // set any values that were passed in
+        attrs = attrs || {}
+
+        if (attrs.hasHttps) {
+            this.setHttps(attrs.hasHttps, attrs.isAutoUpgradeable)
+        }
+        if (attrs.privacyScore) {
+            this.setPrivacyScore(attrs.privacyScore)
+        }
+        if (attrs.parentCompany) {
+            this.setParentEntity(attrs.parentCompany, attrs.prevalence)
+        }
+        if (attrs.trackersBlocked) {
+            this.importTrackersFromDataFile(attrs.trackersBlocked, true)
+        }
+        if (attrs.trackersNotBlocked) {
+            this.importTrackersFromDataFile(attrs.trackersNotBlocked, false)
+        }
     }
 
     setHttps (hasHttps, isAutoUpgradeable) {
@@ -151,6 +170,16 @@ class Grade {
         }
 
         return grade
+    }
+
+    importTrackersFromDataFile(trackers, blocked) {
+        let companyList = blocked ? this.companiesBlocked : this.companiesNotBlocked
+
+        // NOTE: this makes some assumptions about how this data is passed
+        // this format may still be in flux
+        for (let company in trackers) {
+            companyList[company] = trackers[company].prevalence
+        }
     }
 
     getGrades () {
