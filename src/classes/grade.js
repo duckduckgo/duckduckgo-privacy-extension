@@ -40,7 +40,7 @@ class Grade {
         }
     }
 
-    setParentCompany (name, prevalence) {
+    setParentEntity (name, prevalence) {
         if (!name || !prevalence) return
 
         this.companiesNotBlocked[name] = prevalence
@@ -151,7 +151,7 @@ class Grade {
         return grade
     }
 
-    get () {
+    getGrades () {
         return this.scores
     }
 }
