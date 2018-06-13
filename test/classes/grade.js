@@ -12,7 +12,7 @@ describe('example grades', () => {
         it(`should calculate the correct grade for ${test.url}`, () => {
             grade.setHttps(test.input.https, test.input.httpsAutoUpgrade)
             grade.setPrivacyScore(test.input.privacyScore)
-            grade.setParentEntity(test.input.parentCompany, test.input.parentTrackerPrevalence)
+            grade.setParentEntity(test.input.parentEntity, test.input.parentTrackerPrevalence)
 
             test.input.trackers.forEach((tracker) => {
                 grade.addTracker(tracker)
@@ -33,7 +33,7 @@ describe('constructor', () => {
         grade = new Grade({
             hasHttps: true,
             isAutoUpgradeable: true,
-            parentCompany: 'Oath',
+            parentEntity: 'Oath',
             privacyScore: 5,
             prevalence: 7.06,
             trackersBlocked: {
@@ -41,7 +41,7 @@ describe('constructor', () => {
                     prevalence: 12.75,
                     'scorecardresearch.com': {
                         blocked: true,
-                        parentCompany: 'comScore',
+                        parentEntity: 'comScore',
                         reason: 'trackersWithParentCompany',
                         type: 'Analytics',
                         url: 'scorecardresearch.com'
@@ -52,7 +52,7 @@ describe('constructor', () => {
                 'Amazon.com': {
                     prevalence: 14.15,
                     's3.amazonaws.com': {
-                        parentCompany: 'Amazon.com',
+                        parentEntity: 'Amazon.com',
                         url: 's3.amazonaws.com',
                         type: 'trackersWhitelist',
                         block: false,
@@ -65,10 +65,10 @@ describe('constructor', () => {
         expect(grade.hasHttps).toEqual(true)
         expect(grade.isAutoUpgradeable).toEqual(true)
         expect(grade.privacyScore).toEqual(5)
-        expect(grade.companiesBlocked).toEqual({
+        expect(grade.entitiesBlocked).toEqual({
             comScore: 12.75
         })
-        expect(grade.companiesNotBlocked).toEqual({
+        expect(grade.entitiesNotBlocked).toEqual({
             Oath: 7.06,
             'Amazon.com': 14.15
         })

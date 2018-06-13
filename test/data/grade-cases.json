@@ -19,96 +19,96 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Skimlinks",
+                    "parentEntity": "Skimlinks",
                     "prevalence": 1.32
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Cross Pixel",
+                    "parentEntity": "Cross Pixel",
                     "prevalence": 0.2
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AK",
+                    "parentEntity": "AK",
                     "prevalence": 1.57
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Federated Media",
+                    "parentEntity": "Federated Media",
                     "prevalence": 3.61
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AOL"
+                    "parentEntity": "AOL"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "CONTEXTWEB",
+                    "parentEntity": "CONTEXTWEB",
                     "prevalence": 3.36
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BlueKai",
+                    "parentEntity": "BlueKai",
                     "prevalence": 2.8
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "MediaMath",
+                    "parentEntity": "MediaMath",
                     "prevalence": 5.25
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Rocket Fuel",
+                    "parentEntity": "Rocket Fuel",
                     "prevalence": 1.64
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -135,17 +135,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "bigmir)net",
+                    "parentEntity": "bigmir)net",
                     "prevalence": 0.06
                 }
             ]
@@ -172,42 +172,42 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "bigmir)net",
+                    "parentEntity": "bigmir)net",
                     "prevalence": 0.06
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "LiveInternet",
+                    "parentEntity": "LiveInternet",
                     "prevalence": 2.06
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -234,17 +234,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "whos.amung.us",
+                    "parentEntity": "whos.amung.us",
                     "prevalence": 0.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -271,12 +271,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -303,72 +303,72 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Outbrain",
+                    "parentEntity": "Outbrain",
                     "prevalence": 1.73
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Yieldmo",
+                    "parentEntity": "Yieldmo",
                     "prevalence": 0.25
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Wishabi",
+                    "parentEntity": "Wishabi",
                     "prevalence": 0.42
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Quantcast",
+                    "parentEntity": "Quantcast",
                     "prevalence": 8.18
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Wishabi",
+                    "parentEntity": "Wishabi",
                     "prevalence": 0.42
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Wishabi",
+                    "parentEntity": "Wishabi",
                     "prevalence": 0.42
                 }
             ]
@@ -395,22 +395,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "New Relic",
+                    "parentEntity": "New Relic",
                     "prevalence": 9.57
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -437,17 +437,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -474,22 +474,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "INFOnline",
+                    "parentEntity": "INFOnline",
                     "prevalence": 2.24
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -516,12 +516,12 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "LiveInternet",
+                    "parentEntity": "LiveInternet",
                     "prevalence": 2.06
                 }
             ]
@@ -548,7 +548,7 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -574,22 +574,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -616,12 +616,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -648,81 +648,81 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AK",
+                    "parentEntity": "AK",
                     "prevalence": 1.57
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AOL"
+                    "parentEntity": "AOL"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Federated Media",
+                    "parentEntity": "Federated Media",
                     "prevalence": 3.61
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "CONTEXTWEB",
+                    "parentEntity": "CONTEXTWEB",
                     "prevalence": 3.36
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BlueKai",
+                    "parentEntity": "BlueKai",
                     "prevalence": 2.8
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "MediaMath",
+                    "parentEntity": "MediaMath",
                     "prevalence": 5.25
                 }
             ]
@@ -749,22 +749,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "StatCounter",
+                    "parentEntity": "StatCounter",
                     "prevalence": 1.17
                 }
             ]
@@ -791,22 +791,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -833,17 +833,17 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -870,27 +870,27 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -917,22 +917,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Yandex",
+                    "parentEntity": "Yandex",
                     "prevalence": 2.77
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "LiveInternet",
+                    "parentEntity": "LiveInternet",
                     "prevalence": 2.06
                 }
             ]
@@ -959,27 +959,27 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Neustar",
+                    "parentEntity": "Neustar",
                     "prevalence": 0.14
                 }
             ]
@@ -1006,22 +1006,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BrightTag",
+                    "parentEntity": "BrightTag",
                     "prevalence": 0.66
                 }
             ]
@@ -1048,17 +1048,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1085,12 +1085,12 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1117,52 +1117,52 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Lotame",
+                    "parentEntity": "Lotame",
                     "prevalence": 4.12
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "ZEDO",
+                    "parentEntity": "ZEDO",
                     "prevalence": 0.11
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Taboola",
+                    "parentEntity": "Taboola",
                     "prevalence": 3.76
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "PubMatic",
+                    "parentEntity": "PubMatic",
                     "prevalence": 3.5
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Soasta",
+                    "parentEntity": "Soasta",
                     "prevalence": 1.08
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Crazy Egg",
+                    "parentEntity": "Crazy Egg",
                     "prevalence": 1.86
                 }
             ]
@@ -1189,32 +1189,32 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adform",
+                    "parentEntity": "Adform",
                     "prevalence": 1.54
                 }
             ]
@@ -1241,12 +1241,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1273,12 +1273,12 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1305,22 +1305,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1347,27 +1347,27 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Veoxa",
+                    "parentEntity": "Veoxa",
                     "prevalence": 0.01
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1394,12 +1394,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1426,27 +1426,27 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1473,17 +1473,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1510,12 +1510,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1542,17 +1542,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1579,47 +1579,47 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Silverpop",
+                    "parentEntity": "Silverpop",
                     "prevalence": 0.07
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Hotjar",
+                    "parentEntity": "Hotjar",
                     "prevalence": 2.91
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1646,17 +1646,17 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1683,17 +1683,17 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AWeber",
+                    "parentEntity": "AWeber",
                     "prevalence": 0.21
                 }
             ]
@@ -1720,52 +1720,52 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "AK",
+                    "parentEntity": "AK",
                     "prevalence": 1.57
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Heron Partnership",
+                    "parentEntity": "The Heron Partnership",
                     "prevalence": 0.38
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Hotjar",
+                    "parentEntity": "Hotjar",
                     "prevalence": 2.91
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adara Media",
+                    "parentEntity": "Adara Media",
                     "prevalence": 0.19
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Rocket Fuel",
+                    "parentEntity": "Rocket Fuel",
                     "prevalence": 1.64
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -1792,31 +1792,31 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Yahoo!"
+                    "parentEntity": "Yahoo!"
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "RichRelevance",
+                    "parentEntity": "RichRelevance",
                     "prevalence": 0.26
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "RichRelevance",
+                    "parentEntity": "RichRelevance",
                     "prevalence": 0.26
                 }
             ]
@@ -1843,7 +1843,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -1869,7 +1869,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -1895,22 +1895,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "MailChimp",
+                    "parentEntity": "MailChimp",
                     "prevalence": 0.5
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "MailChimp",
+                    "parentEntity": "MailChimp",
                     "prevalence": 0.5
                 }
             ]
@@ -1937,7 +1937,7 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -1963,22 +1963,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -2005,51 +2005,51 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "SpotXchange",
+                    "parentEntity": "SpotXchange",
                     "prevalence": 0.77
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AOL"
+                    "parentEntity": "AOL"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "PubMatic",
+                    "parentEntity": "PubMatic",
                     "prevalence": 3.5
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Moat",
+                    "parentEntity": "Moat",
                     "prevalence": 0.83
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Oath",
+                    "parentEntity": "Oath",
                     "prevalence": 7.06
                 }
             ]
@@ -2076,142 +2076,142 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Taboola",
+                    "parentEntity": "Taboola",
                     "prevalence": 3.76
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AdSafe Media",
+                    "parentEntity": "AdSafe Media",
                     "prevalence": 0.68
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "ADTECH",
+                    "parentEntity": "ADTECH",
                     "prevalence": 1.71
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "TripleLift",
+                    "parentEntity": "TripleLift",
                     "prevalence": 0.74
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "PubMatic",
+                    "parentEntity": "PubMatic",
                     "prevalence": 3.5
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Fox One Stop Media",
+                    "parentEntity": "Fox One Stop Media",
                     "prevalence": 6.11
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "MediaMath",
+                    "parentEntity": "MediaMath",
                     "prevalence": 5.25
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Krux",
+                    "parentEntity": "Krux",
                     "prevalence": 3.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BlueKai",
+                    "parentEntity": "BlueKai",
                     "prevalence": 2.8
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Rimm-Kaufman Group",
+                    "parentEntity": "The Rimm-Kaufman Group",
                     "prevalence": 0.51
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "New Relic",
+                    "parentEntity": "New Relic",
                     "prevalence": 9.57
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Tremor Video",
+                    "parentEntity": "Tremor Video",
                     "prevalence": 0.17
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -2238,17 +2238,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -2275,22 +2275,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -2317,62 +2317,62 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Krux",
+                    "parentEntity": "Krux",
                     "prevalence": 3.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Hotjar",
+                    "parentEntity": "Hotjar",
                     "prevalence": 2.91
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Taboola",
+                    "parentEntity": "Taboola",
                     "prevalence": 3.76
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 }
             ]
@@ -2399,67 +2399,67 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "AWeber",
+                    "parentEntity": "AWeber",
                     "prevalence": 0.21
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Quantcast",
+                    "parentEntity": "Quantcast",
                     "prevalence": 8.18
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "m6d",
+                    "parentEntity": "m6d",
                     "prevalence": 1.65
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -2486,52 +2486,52 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Demandbase",
+                    "parentEntity": "Demandbase",
                     "prevalence": 0.44
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Flashtalking",
+                    "parentEntity": "Flashtalking",
                     "prevalence": 0.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "LinkedIn",
+                    "parentEntity": "LinkedIn",
                     "prevalence": 1.61
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "LinkedIn",
+                    "parentEntity": "LinkedIn",
                     "prevalence": 1.61
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "LinkedIn",
+                    "parentEntity": "LinkedIn",
                     "prevalence": 1.61
                 }
             ]
@@ -2558,37 +2558,37 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "MailChimp",
+                    "parentEntity": "MailChimp",
                     "prevalence": 0.5
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AdRoll",
+                    "parentEntity": "AdRoll",
                     "prevalence": 0.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -2615,52 +2615,52 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Fox One Stop Media",
+                    "parentEntity": "Fox One Stop Media",
                     "prevalence": 6.11
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Gemius",
+                    "parentEntity": "Gemius",
                     "prevalence": 0.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "WPP",
+                    "parentEntity": "WPP",
                     "prevalence": 1.41
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Lotame",
+                    "parentEntity": "Lotame",
                     "prevalence": 4.12
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Moat",
+                    "parentEntity": "Moat",
                     "prevalence": 0.83
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 }
             ]
@@ -2687,41 +2687,41 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Demandbase",
+                    "parentEntity": "Demandbase",
                     "prevalence": 0.44
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AdRoll",
+                    "parentEntity": "AdRoll",
                     "prevalence": 0.98
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Eloqua"
+                    "parentEntity": "Eloqua"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 }
             ]
@@ -2748,7 +2748,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -2774,12 +2774,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "INFOnline",
+                    "parentEntity": "INFOnline",
                     "prevalence": 2.24
                 }
             ]
@@ -2806,27 +2806,27 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 }
             ]
@@ -2853,22 +2853,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -2895,22 +2895,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -2937,7 +2937,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -2963,7 +2963,7 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -2989,7 +2989,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -3015,32 +3015,32 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "ADTECH",
+                    "parentEntity": "ADTECH",
                     "prevalence": 1.71
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "New Relic",
+                    "parentEntity": "New Relic",
                     "prevalence": 9.57
                 }
             ]
@@ -3067,7 +3067,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -3093,37 +3093,37 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Exponential Interactive",
+                    "parentEntity": "Exponential Interactive",
                     "prevalence": 0.59
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "ValueClick",
+                    "parentEntity": "ValueClick",
                     "prevalence": 1.66
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "ADTECH",
+                    "parentEntity": "ADTECH",
                     "prevalence": 1.71
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -3150,27 +3150,27 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -3197,47 +3197,47 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "StatCounter",
+                    "parentEntity": "StatCounter",
                     "prevalence": 1.17
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Taboola",
+                    "parentEntity": "Taboola",
                     "prevalence": 3.76
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -3264,22 +3264,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Taboola",
+                    "parentEntity": "Taboola",
                     "prevalence": 3.76
                 }
             ]
@@ -3306,42 +3306,42 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Ambient Digital",
+                    "parentEntity": "Ambient Digital",
                     "prevalence": 0
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -3368,17 +3368,17 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -3405,12 +3405,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "AvantLink",
+                    "parentEntity": "AvantLink",
                     "prevalence": 0.09
                 }
             ]
@@ -3437,7 +3437,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -3463,22 +3463,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -3505,22 +3505,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -3547,56 +3547,56 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Outbrain",
+                    "parentEntity": "Outbrain",
                     "prevalence": 1.73
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Quantcast",
+                    "parentEntity": "Quantcast",
                     "prevalence": 8.18
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Eloqua"
+                    "parentEntity": "Eloqua"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "New Relic",
+                    "parentEntity": "New Relic",
                     "prevalence": 9.57
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -3623,102 +3623,102 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "RevContent",
+                    "parentEntity": "RevContent",
                     "prevalence": 0.36
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Fox One Stop Media",
+                    "parentEntity": "Fox One Stop Media",
                     "prevalence": 6.11
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Ensighten",
+                    "parentEntity": "Ensighten",
                     "prevalence": 1.19
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "DoubleVerify",
+                    "parentEntity": "DoubleVerify",
                     "prevalence": 0.08
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Evidon",
+                    "parentEntity": "Evidon",
                     "prevalence": 0.6
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Krux",
+                    "parentEntity": "Krux",
                     "prevalence": 3.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Nativo",
+                    "parentEntity": "Nativo",
                     "prevalence": 1.42
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Federated Media",
+                    "parentEntity": "Federated Media",
                     "prevalence": 3.61
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "PubMatic",
+                    "parentEntity": "PubMatic",
                     "prevalence": 3.5
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -3745,7 +3745,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -3771,7 +3771,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -3797,37 +3797,37 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Nativo",
+                    "parentEntity": "Nativo",
                     "prevalence": 1.42
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -3854,32 +3854,32 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Quantcast",
+                    "parentEntity": "Quantcast",
                     "prevalence": 8.18
                 }
             ]
@@ -3906,71 +3906,71 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "PubMatic",
+                    "parentEntity": "PubMatic",
                     "prevalence": 3.5
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Fox One Stop Media",
+                    "parentEntity": "Fox One Stop Media",
                     "prevalence": 6.11
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Rhythm",
+                    "parentEntity": "Rhythm",
                     "prevalence": 1.59
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AOL"
+                    "parentEntity": "AOL"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Federated Media",
+                    "parentEntity": "Federated Media",
                     "prevalence": 3.61
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Quantcast",
+                    "parentEntity": "Quantcast",
                     "prevalence": 8.18
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "SAY",
+                    "parentEntity": "SAY",
                     "prevalence": 0.05
                 }
             ]
@@ -3997,32 +3997,32 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Hotjar",
+                    "parentEntity": "Hotjar",
                     "prevalence": 2.91
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Segment.io",
+                    "parentEntity": "Segment.io",
                     "prevalence": 0.74
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Pardot",
+                    "parentEntity": "Pardot",
                     "prevalence": 0.26
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -4049,7 +4049,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": []
         },
@@ -4075,37 +4075,37 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Lotame",
+                    "parentEntity": "Lotame",
                     "prevalence": 4.12
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -4132,106 +4132,106 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Skimlinks",
+                    "parentEntity": "Skimlinks",
                     "prevalence": 1.32
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AK",
+                    "parentEntity": "AK",
                     "prevalence": 1.57
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Federated Media",
+                    "parentEntity": "Federated Media",
                     "prevalence": 3.61
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AOL"
+                    "parentEntity": "AOL"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "MediaMath",
+                    "parentEntity": "MediaMath",
                     "prevalence": 5.25
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BlueKai",
+                    "parentEntity": "BlueKai",
                     "prevalence": 2.8
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "CONTEXTWEB",
+                    "parentEntity": "CONTEXTWEB",
                     "prevalence": 3.36
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "SpotXchange",
+                    "parentEntity": "SpotXchange",
                     "prevalence": 0.77
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adform",
+                    "parentEntity": "Adform",
                     "prevalence": 1.54
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "GumGum",
+                    "parentEntity": "GumGum",
                     "prevalence": 0.89
                 }
             ]
@@ -4258,32 +4258,32 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Go Daddy",
+                    "parentEntity": "Go Daddy",
                     "prevalence": 0.08
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BrightTag",
+                    "parentEntity": "BrightTag",
                     "prevalence": 0.66
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 }
             ]
@@ -4310,17 +4310,17 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "AT Internet",
+                    "parentEntity": "AT Internet",
                     "prevalence": 1.06
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Horyzon Media",
+                    "parentEntity": "Horyzon Media",
                     "prevalence": 1.51
                 }
             ]
@@ -4347,12 +4347,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 }
             ]
@@ -4379,12 +4379,12 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -4411,86 +4411,86 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "comScore",
+                    "parentEntity": "comScore",
                     "prevalence": 12.75
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AK",
+                    "parentEntity": "AK",
                     "prevalence": 1.57
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Federated Media",
+                    "parentEntity": "Federated Media",
                     "prevalence": 3.61
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Casale Media",
+                    "parentEntity": "Casale Media",
                     "prevalence": 4.95
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Criteo",
+                    "parentEntity": "Criteo",
                     "prevalence": 9
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "OpenX",
+                    "parentEntity": "OpenX",
                     "prevalence": 5.89
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AOL"
+                    "parentEntity": "AOL"
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "The Trade Desk",
+                    "parentEntity": "The Trade Desk",
                     "prevalence": 6.58
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "BlueKai",
+                    "parentEntity": "BlueKai",
                     "prevalence": 2.8
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "CONTEXTWEB",
+                    "parentEntity": "CONTEXTWEB",
                     "prevalence": 3.36
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "MediaMath",
+                    "parentEntity": "MediaMath",
                     "prevalence": 5.25
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -4517,12 +4517,12 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -4549,32 +4549,32 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "SessionCam",
+                    "parentEntity": "SessionCam",
                     "prevalence": 0.16
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 }
             ]
@@ -4601,22 +4601,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -4643,37 +4643,37 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Chartbeat",
+                    "parentEntity": "Chartbeat",
                     "prevalence": 4.27
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Hotjar",
+                    "parentEntity": "Hotjar",
                     "prevalence": 2.91
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 }
             ]
@@ -4700,17 +4700,17 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Amazon.com",
+                    "parentEntity": "Amazon.com",
                     "prevalence": 14.15
                 }
             ]
@@ -4737,72 +4737,72 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Google",
+                    "parentEntity": "Google",
                     "prevalence": 83.81
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Taboola",
+                    "parentEntity": "Taboola",
                     "prevalence": 3.76
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "SiteScout",
+                    "parentEntity": "SiteScout",
                     "prevalence": 2.64
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "EQ Ads",
+                    "parentEntity": "EQ Ads",
                     "prevalence": 1.38
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "AppNexus",
+                    "parentEntity": "AppNexus",
                     "prevalence": 14.52
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Tapad",
+                    "parentEntity": "Tapad",
                     "prevalence": 1.76
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "eXelate",
+                    "parentEntity": "eXelate",
                     "prevalence": 1.17
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Teads.tv",
+                    "parentEntity": "Teads.tv",
                     "prevalence": 0.4
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Lotame",
+                    "parentEntity": "Lotame",
                     "prevalence": 4.12
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "New Relic",
+                    "parentEntity": "New Relic",
                     "prevalence": 9.57
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Marketo",
+                    "parentEntity": "Marketo",
                     "prevalence": 0.65
                 }
             ]
@@ -4829,7 +4829,7 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": false,
-            "parentCompany": "Google",
+            "parentEntity": "Google",
             "parentTrackerPrevalence": 83.81,
             "privacyScore": 10,
             "trackers": []
@@ -4856,17 +4856,17 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": false,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Yandex",
+                    "parentEntity": "Yandex",
                     "prevalence": 2.77
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -4893,22 +4893,22 @@
         "input": {
             "https": true,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "unknown",
+                    "parentEntity": "unknown",
                     "prevalence": 4.98
                 }
             ]
@@ -4935,22 +4935,22 @@
         "input": {
             "https": false,
             "httpsAutoUpgrade": true,
-            "parentCompany": null,
+            "parentEntity": null,
             "privacyScore": null,
             "trackers": [
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": true,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 },
                 {
                     "blocked": false,
-                    "parentCompany": "Adobe",
+                    "parentEntity": "Adobe",
                     "prevalence": 11.56
                 }
             ]

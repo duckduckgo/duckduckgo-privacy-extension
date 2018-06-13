@@ -7,8 +7,8 @@ class Grade {
         this.isAutoUpgradeable = false
         this.privacyScore = UNKNOWN_PRIVACY_SCORE // unknown
 
-        this.companiesBlocked = {}
-        this.companiesNotBlocked = {}
+        this.entitiesBlocked = {}
+        this.entitiesNotBlocked = {}
 
         this.scores = {
             site: {},
@@ -24,8 +24,8 @@ class Grade {
         if (attrs.privacyScore) {
             this.setPrivacyScore(attrs.privacyScore)
         }
-        if (attrs.parentCompany) {
-            this.setParentEntity(attrs.parentCompany, attrs.prevalence)
+        if (attrs.parentEntity) {
+            this.setParentEntity(attrs.parentEntity, attrs.prevalence)
         }
         if (attrs.trackersBlocked) {
             this._importTrackersFromDataFile(attrs.trackersBlocked, true)
@@ -48,23 +48,23 @@ class Grade {
     }
 
     addTracker (tracker) {
-        let parentCompany = tracker.parentCompany
+        let parentEntity = tracker.parentEntity
 
-        if (!parentCompany) return
+        if (!parentEntity) return
 
         let prevalence = tracker.prevalence || 1
 
         if (tracker.blocked) {
-            this.companiesBlocked[parentCompany] = prevalence
+            this.entitiesBlocked[parentEntity] = prevalence
         } else {
-            this.companiesNotBlocked[parentCompany] = prevalence
+            this.entitiesNotBlocked[parentEntity] = prevalence
         }
     }
 
     setParentEntity (name, prevalence) {
         if (!name || !prevalence) return
 
-        this.companiesNotBlocked[name] = prevalence
+        this.entitiesNotBlocked[name] = prevalence
     }
 
     calculate () {
@@ -90,13 +90,13 @@ class Grade {
         let siteTrackerScore = 0
         let enhancedTrackerScore = 0
 
-        for (let company in this.companiesBlocked) {
-            siteTrackerScore += this._normalizeTrackerScore(this.companiesBlocked[company])
+        for (let entity in this.entitiesBlocked) {
+            siteTrackerScore += this._normalizeTrackerScore(this.entitiesBlocked[entity])
         }
 
-        for (let company in this.companiesNotBlocked) {
-            siteTrackerScore += this._normalizeTrackerScore(this.companiesNotBlocked[company])
-            enhancedTrackerScore += this._normalizeTrackerScore(this.companiesNotBlocked[company])
+        for (let entity in this.entitiesNotBlocked) {
+            siteTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity])
+            enhancedTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity])
         }
 
         let siteTotalScore = siteHttpsScore + siteTrackerScore + privacyScore
@@ -177,12 +177,12 @@ class Grade {
     }
 
     _importTrackersFromDataFile (trackers, blocked) {
-        let companyList = blocked ? this.companiesBlocked : this.companiesNotBlocked
+        let entityList = blocked ? this.entitiesBlocked : this.entitiesNotBlocked
 
         // NOTE: this makes some assumptions about how this data is passed
         // this format may still be in flux
-        for (let company in trackers) {
-            companyList[company] = trackers[company].prevalence
+        for (let entity in trackers) {
+            entityList[entity] = trackers[entity].prevalence
         }
     }
 }
