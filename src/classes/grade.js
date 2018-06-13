@@ -83,10 +83,14 @@ class Grade {
             this.setParentEntity(attrs.parentEntity, attrs.prevalence)
         }
         if (attrs.trackersBlocked) {
-            this._importTrackersFromDataFile(attrs.trackersBlocked, true)
+            Object.keys(attrs.trackersBlocked).forEach((entityName) => {
+                this.addEntityBlocked(entityName, attrs.trackersBlocked[entityName].prevalence)
+            })
         }
         if (attrs.trackersNotBlocked) {
-            this._importTrackersFromDataFile(attrs.trackersNotBlocked, false)
+            Object.keys(attrs.trackersNotBlocked).forEach((entityName) => {
+                this.addEntityNotBlocked(entityName, attrs.trackersNotBlocked[entityName].prevalence)
+            })
         }
     }
 
@@ -102,24 +106,24 @@ class Grade {
         this.privacyScore = typeof score === 'number' ? score : UNKNOWN_PRIVACY_SCORE
     }
 
-    addTracker (tracker) {
-        let parentEntity = tracker.parentEntity
+    addEntityBlocked (name, prevalence) {
+        if (!name) return
+        if (!prevalence) prevalence = 1
 
-        if (!parentEntity) return
+        this.entitiesBlocked[name] = prevalence
+    }
 
-        let prevalence = tracker.prevalence || 1
+    addEntityNotBlocked (name, prevalence) {
+        if (!name) return
+        if (!prevalence) prevalence = 1
 
-        if (tracker.blocked) {
-            this.entitiesBlocked[parentEntity] = prevalence
-        } else {
-            this.entitiesNotBlocked[parentEntity] = prevalence
-        }
+        this.entitiesNotBlocked[name] = prevalence
     }
 
     setParentEntity (name, prevalence) {
         if (!name || !prevalence) return
 
-        this.entitiesNotBlocked[name] = prevalence
+        this.addEntityNotBlocked(name, prevalence)
     }
 
     calculate () {
@@ -203,16 +207,6 @@ class Grade {
 
     _scoreToGrade (score) {
         return this._getThreshold(score, GRADE_THRESHOLDS)
-    }
-
-    _importTrackersFromDataFile (trackers, blocked) {
-        let entityList = blocked ? this.entitiesBlocked : this.entitiesNotBlocked
-
-        // NOTE: this makes some assumptions about how this data is passed
-        // this format may still be in flux
-        for (let entity in trackers) {
-            entityList[entity] = trackers[entity].prevalence
-        }
     }
 }
 

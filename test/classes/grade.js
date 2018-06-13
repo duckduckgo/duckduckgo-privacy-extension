@@ -15,7 +15,11 @@ describe('example grades', () => {
             grade.setParentEntity(test.input.parentEntity, test.input.parentTrackerPrevalence)
 
             test.input.trackers.forEach((tracker) => {
-                grade.addTracker(tracker)
+                if (tracker.blocked) {
+                    grade.addEntityBlocked(tracker.parentEntity, tracker.prevalence)
+                } else {
+                    grade.addEntityNotBlocked(tracker.parentEntity, tracker.prevalence)
+                }
             })
 
             grade.calculate()
