@@ -1,5 +1,60 @@
 const UNKNOWN_PRIVACY_SCORE = 2
 
+/**
+ * Threshold data structures:
+ *
+ * Used to map a numeric input to an arbitrary output.
+ *
+ * `steps` defines the range of inputs for each output,
+ * `max` defines what happens if the input is above the given ranges
+ * `zero` is a special case for when the input is 0 or falsy
+ *
+ * For example:
+ *
+ * zero: 'foo',
+ * max: 'qux',
+ * steps: [
+ *     [1, 'bar'],
+ *     [2, 'baz']
+ * ]
+ *
+ * means:
+ *
+ * input <= 0       maps to 'foo'
+ * 0 < input < 1    maps to 'bar'
+ * 1 <= input < 2   maps to 'baz'
+ * input >= 2       maps to 'C'
+ */
+
+const TRACKER_THRESHOLDS = {
+    zero: 0,
+    max: 10,
+    steps: [
+        [0.1, 1],
+        [1, 2],
+        [5, 3],
+        [10, 4],
+        [15, 5],
+        [20, 6],
+        [30, 7],
+        [45, 8],
+        [66, 9]
+    ]
+}
+
+const GRADE_THRESHOLDS = {
+    zero: 'A',
+    max: 'D-',
+    steps: [
+        [2, 'A'],
+        [4, 'B+'],
+        [10, 'B'],
+        [14, 'C+'],
+        [20, 'C'],
+        [30, 'D']
+    ]
+}
+
 class Grade {
     constructor (attrs) {
         // defaults
@@ -124,56 +179,30 @@ class Grade {
         return this.scores
     }
 
-    _normalizeTrackerScore (pct) {
-        let score
+    _getThreshold (value, thresholdData) {
+        let steps = thresholdData.steps
 
-        if (!pct) {
-            score = 0
-        } else if (pct < 0.1) {
-            score = 1
-        } else if (pct < 1) {
-            score = 2
-        } else if (pct < 5) {
-            score = 3
-        } else if (pct < 10) {
-            score = 4
-        } else if (pct < 15) {
-            score = 5
-        } else if (pct < 20) {
-            score = 6
-        } else if (pct < 30) {
-            score = 7
-        } else if (pct < 45) {
-            score = 8
-        } else if (pct < 66) {
-            score = 9
-        } else {
-            score = 10
+        if (!value || value <= 0) {
+            return thresholdData.zero
         }
 
-        return score
+        if (value >= steps[steps.length - 1][0]) {
+            return thresholdData.max
+        }
+
+        for (let i = 0; i < steps.length; i++) {
+            if (value < steps[i][0]) {
+                return steps[i][1]
+            }
+        }
+    }
+
+    _normalizeTrackerScore (pct) {
+        return this._getThreshold(pct, TRACKER_THRESHOLDS)
     }
 
     _scoreToGrade (score) {
-        let grade
-
-        if (score < 2) {
-            grade = 'A'
-        } else if (score < 4) {
-            grade = 'B+'
-        } else if (score < 10) {
-            grade = 'B'
-        } else if (score < 14) {
-            grade = 'C+'
-        } else if (score < 20) {
-            grade = 'C'
-        } else if (score < 30) {
-            grade = 'D'
-        } else {
-            grade = 'D-'
-        }
-
-        return grade
+        return this._getThreshold(score, GRADE_THRESHOLDS)
     }
 
     _importTrackersFromDataFile (trackers, blocked) {
