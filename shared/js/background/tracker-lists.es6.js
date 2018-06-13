@@ -12,6 +12,19 @@ function loadLists () {
 
     blockLists.forEach(function (listName) {
         load.JSONfromLocalFile(listLocation + '/' + listName, (listJSON) => {
+            Object.keys(listJSON).forEach(categoryName => {
+                let category = listJSON[categoryName]
+
+                Object.keys(category).forEach(trackerName => {
+                    let tracker = category[trackerName]
+
+                    if (tracker.rules) {
+                        for (let i in tracker.rules) {
+                            tracker.rules[i].rule = new RegExp(tracker.rules[i].rule + '.*', 'i')
+                        }
+                    }
+                })
+            })
             console.log(`Loaded tracker list: ${listLocation}/${listName}`)
             lists[listName.replace('.json', '')] = listJSON
         })

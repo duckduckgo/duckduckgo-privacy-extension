@@ -257,9 +257,7 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
 }
 
 function requestMatchesRule (request, rule) {
-    let re = new RegExp(rule + '.*', 'i')
-    
-    if (re.exec(request.url)) {
+    if (rule.exec(request.url)) {
         return true
     }
 
