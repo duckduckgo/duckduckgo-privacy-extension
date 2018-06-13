@@ -1,9 +1,9 @@
 const UNKNOWN_PRIVACY_SCORE = 2
 
 /**
- * Threshold data structures:
+ * Range map data structures:
  *
- * Used to map a numeric input to an arbitrary output.
+ * Maps a numeric input to an arbitrary output based on provided ranges
  *
  * `steps` defines the range of inputs for each output,
  * `max` defines what happens if the input is above the given ranges
@@ -26,7 +26,7 @@ const UNKNOWN_PRIVACY_SCORE = 2
  * input >= 2       maps to 'C'
  */
 
-const TRACKER_THRESHOLDS = {
+const TRACKER_RANGE_MAP = {
     zero: 0,
     max: 10,
     steps: [
@@ -42,7 +42,7 @@ const TRACKER_THRESHOLDS = {
     ]
 }
 
-const GRADE_THRESHOLDS = {
+const GRADE_RANGE_MAP = {
     zero: 'A',
     max: 'D-',
     steps: [
@@ -183,15 +183,15 @@ class Grade {
         return this.scores
     }
 
-    _getThreshold (value, thresholdData) {
-        let steps = thresholdData.steps
+    getValueFromRangeMap (value, rangeMapData) {
+        let steps = rangeMapData.steps
 
         if (!value || value <= 0) {
-            return thresholdData.zero
+            return rangeMapData.zero
         }
 
         if (value >= steps[steps.length - 1][0]) {
-            return thresholdData.max
+            return rangeMapData.max
         }
 
         for (let i = 0; i < steps.length; i++) {
@@ -202,11 +202,11 @@ class Grade {
     }
 
     _normalizeTrackerScore (pct) {
-        return this._getThreshold(pct, TRACKER_THRESHOLDS)
+        return this.getValueFromRangeMap(pct, TRACKER_RANGE_MAP)
     }
 
     _scoreToGrade (score) {
-        return this._getThreshold(score, GRADE_THRESHOLDS)
+        return this.getValueFromRangeMap(score, GRADE_RANGE_MAP)
     }
 }
 
