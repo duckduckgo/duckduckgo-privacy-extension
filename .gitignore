@@ -8,7 +8,6 @@ npm-debug.log
 public/js/*.*
 public/css/*.*
 *.swp
-shared/data/tracker_lists/trackersWithParentCompany.json
 build/firefox
 build/chrome
 build/safari
