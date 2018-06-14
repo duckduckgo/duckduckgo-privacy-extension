@@ -183,7 +183,7 @@ class Grade {
         return this.scores
     }
 
-    getValueFromRangeMap (value, rangeMapData) {
+    _getValueFromRangeMap (value, rangeMapData) {
         let steps = rangeMapData.steps
 
         if (!value || value <= 0) {
@@ -202,11 +202,11 @@ class Grade {
     }
 
     _normalizeTrackerScore (pct) {
-        return this.getValueFromRangeMap(pct, TRACKER_RANGE_MAP)
+        return this._getValueFromRangeMap(pct, TRACKER_RANGE_MAP)
     }
 
     _scoreToGrade (score) {
-        return this.getValueFromRangeMap(score, GRADE_RANGE_MAP)
+        return this._getValueFromRangeMap(score, GRADE_RANGE_MAP)
     }
 }
 
