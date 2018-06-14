@@ -35,8 +35,8 @@ describe('example grades', () => {
 describe('constructor', () => {
     it('should be able to use attributes passed in via the constructor', () => {
         grade = new Grade({
-            hasHttps: true,
-            isAutoUpgradeable: true,
+            https: true,
+            httpsAutoUpgrade: true,
             parentEntity: 'Oath',
             privacyScore: 5,
             prevalence: 7.06,
@@ -66,8 +66,8 @@ describe('constructor', () => {
             }
         })
 
-        expect(grade.hasHttps).toEqual(true)
-        expect(grade.isAutoUpgradeable).toEqual(true)
+        expect(grade.https).toEqual(true)
+        expect(grade.httpsAutoUpgrade).toEqual(true)
         expect(grade.privacyScore).toEqual(5)
         expect(grade.entitiesBlocked).toEqual({
             comScore: 12.75

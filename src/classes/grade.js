@@ -58,8 +58,8 @@ const GRADE_RANGE_MAP = {
 class Grade {
     constructor (attrs) {
         // defaults
-        this.hasHttps = false
-        this.isAutoUpgradeable = false
+        this.https = false
+        this.httpsAutoUpgrade = false
         this.privacyScore = UNKNOWN_PRIVACY_SCORE // unknown
 
         this.entitiesBlocked = {}
@@ -73,8 +73,8 @@ class Grade {
         // set any values that were passed in
         attrs = attrs || {}
 
-        if (attrs.hasHttps) {
-            this.setHttps(attrs.hasHttps, attrs.isAutoUpgradeable)
+        if (attrs.https) {
+            this.setHttps(attrs.https, attrs.httpsAutoUpgrade)
         }
         if (attrs.privacyScore) {
             this.setPrivacyScore(attrs.privacyScore)
@@ -94,12 +94,12 @@ class Grade {
         }
     }
 
-    setHttps (hasHttps, isAutoUpgradeable) {
-        // isAutoUpgradeable implies the site has https
-        // make sure hasHttps is correct in case of
+    setHttps (https, httpsAutoUpgrade) {
+        // httpsAutoUpgrade implies the site has https
+        // make sure https is correct in case of
         // e.g. a difference between the two lists
-        this.hasHttps = hasHttps || isAutoUpgradeable
-        this.isAutoUpgradeable = isAutoUpgradeable
+        this.https = https || httpsAutoUpgrade
+        this.httpsAutoUpgrade = httpsAutoUpgrade
     }
 
     setPrivacyScore (score) {
@@ -130,10 +130,10 @@ class Grade {
         // HTTPS
         let siteHttpsScore, enhancedHttpsScore
 
-        if (this.hasHttps && this.isAutoUpgradeable) {
+        if (this.https && this.httpsAutoUpgrade) {
             siteHttpsScore = 0
             enhancedHttpsScore = 0
-        } else if (this.hasHttps) {
+        } else if (this.https) {
             siteHttpsScore = 3
             enhancedHttpsScore = 0
         } else {
