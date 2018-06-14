@@ -154,14 +154,14 @@ function matchRuleOptions (rule, request, siteDomain) {
     if (!rule.options) return true
 
     if (rule.options.types) {
-        let matchesType = rule.options.types.findIndex(t => {return t === request.type})
+        let matchesType = rule.options.types.findIndex(t => { return t === request.type })
         if (matchesType === -1) {
             return false
         }
     }
-    
+
     if (rule.options.domains) {
-        let matchesDomain = rule.options.domains.findIndex(d => {return d === siteDomain})
+        let matchesDomain = rule.options.domains.findIndex(d => { return d === siteDomain })
         if (matchesDomain === -1) {
             return false
         }
