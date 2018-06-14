@@ -170,7 +170,7 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
     return false
 }
 
-/* Check the matched rule's options against the request data
+/* Check the matched rule  options against the request data
  * return: true (all options matched)
  */
 function matchRuleOptions (rule, request, siteDomain) {
@@ -260,7 +260,6 @@ function requestMatchesRule (request, rule) {
     if (rule.exec(request.url)) {
         return true
     }
-
     return false
 }
 
