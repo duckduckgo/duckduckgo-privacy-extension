@@ -60,9 +60,9 @@
     { url: 'https://linkedin.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
     { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'trackersWithParentCompany'}},
     { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'first party'}},
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net([?/]).*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://connect.facebook.net/asdf/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net([?/]).*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net([?/]).*\\/fbevents\\.js'}, reason: 'first party'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/asdf/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'first party'}},
     { url: 'https://graph.facebook.com/?ids=asf3454534&callback=somefunction', block: true, options: {type: 'script', domain: 'reddit.com'}, result: {parent: 'Facebook', rule:{rule:'graph\\.facebook\\.com\\/\\?ids=.*&callback=.*'}, reason: 'trackersWithParentCompany'}},
     { url: 'https://pixel.facebook.com', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
     { url: 'https://pixel.facebook.com?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
@@ -75,7 +75,7 @@
     { url: 'https://facebook.com/audience_network/', block: false, options: {domain: 'gmail.com', type: 'script'}}, // wrong request type doesn't match rule
     { url: 'https://facebook.com/asdfasd/plugins/send_to_messenger.php?app_id=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/.*\\/plugins\\/send_to_messenger\\.php\\?app_id='}, reason: 'trackersWithParentCompany'}},
     // domain options
-    { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: true, options: {domain: 'dailymotion.com'}, result: {parent: 'Facebook', rule: {rule: 'facebook\\.net([?/]).*\\/AudienceNetworkVPAID\\.'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: true, options: {domain: 'dailymotion.com'}, result: {parent: 'Facebook', rule: {rule: 'facebook\\.net[?/].*\\/AudienceNetworkVPAID\\.'}, reason: 'trackersWithParentCompany'}},
     { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: false, options: {domain: 'test.com'}},
   ];
   

@@ -234,10 +234,7 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
 }
 
 function requestMatchesRule (request, rule) {
-    if (rule.exec(request.url)) {
-        return true
-    }
-    return false
+    return !!rule.exec(request.url)
 }
 
 /* Check to see if this tracker is related to the current page through their parent companies
