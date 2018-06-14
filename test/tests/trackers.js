@@ -106,7 +106,10 @@
               if (test.result.parent) assert.ok(test.result.parent === toBlock.parentCompany, `has correct parent company ${test.result.parent} === ${toBlock.parentCompany}`)
               if (test.result.reason) assert.ok(test.result.reason === toBlock.reason, `has correct blocking reason ${test.result.reason} === ${toBlock.reason}`)
               if (test.result.rule) {
-                  if (test.result.rule.rule) assert.ok(test.result.rule.rule === toBlock.rule.rule, `has correct blocking rule ${test.result.rule.rule} === ${toBlock.rule.rule}`)
+                  if (test.result.rule.rule) {
+                      let regexRule = new RegExp(test.result.rule.rule + '.*', 'i')
+                      assert.ok(`${regexRule}` === `${toBlock.rule.rule}`, `has correct blocking rule ${regexRule} === ${toBlock.rule.rule}`)
+                  }
               }
           }
       });
