@@ -87,7 +87,7 @@ function isTracker (urlToCheck, thisTab, request) {
             }
             return surrogateTracker
         }
-        
+
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
@@ -127,29 +127,6 @@ function checkWhitelist (url, currLocation, request) {
     }
 
     return result
-}
-
-function checkEasylists (url, siteDomain, request) {
-    let toBlock = false
-    constants.easylists.some((listName) => {
-        const easylists = abpLists.getEasylists()
-
-        let match
-        // lists can take a second or two to load so check that the parsed data exists
-        if (easylists[listName].isLoaded) {
-            match = checkABPParsedList(easylists[listName].parsed, url, siteDomain, request)
-        }
-
-        // break loop early if a list matches
-        if (match) {
-            toBlock = getTrackerDetails(url, listName)
-            toBlock.block = true
-            toBlock.reason = listName
-            return toBlock
-        }
-    })
-
-    return toBlock
 }
 
 function checkSurrogateList (url, parsedUrl, currLocation) {
