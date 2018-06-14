@@ -95,10 +95,7 @@ class Grade {
     }
 
     setHttps (https, httpsAutoUpgrade) {
-        // httpsAutoUpgrade implies the site has https
-        // make sure https is correct in case of
-        // e.g. a difference between the two lists
-        this.https = https || httpsAutoUpgrade
+        this.https = https
         this.httpsAutoUpgrade = httpsAutoUpgrade
     }
 
@@ -130,7 +127,7 @@ class Grade {
         // HTTPS
         let siteHttpsScore, enhancedHttpsScore
 
-        if (this.https && this.httpsAutoUpgrade) {
+        if (this.httpsAutoUpgrade) {
             siteHttpsScore = 0
             enhancedHttpsScore = 0
         } else if (this.https) {
