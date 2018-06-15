@@ -9,6 +9,7 @@ const Grade = require('../src/classes/grade')
 const https = require('../src/https')
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
+const privacyPolicy = require('../src/privacy-policy')
 
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites"')
@@ -34,6 +35,10 @@ const run = async () => {
         https: listManager.getList('https'),
         httpsAutoUpgrade: listManager.getList('httpsAutoUpgrade')
     })
+    privacyPolicy.addLists({
+        tosdr: require('../data/generated/tosdr'),
+        polisis: require('../data/generated/polisis')
+    })
 
     execSync(`mkdir -p ${outputPath}`)
 
@@ -46,18 +51,20 @@ const run = async () => {
 
         siteData.https = https.canUpgradeHost(hostname)
         siteData.httpsWithAutoUpgrade = https.hostAutoUpgrades(hostname)
-
-        // TODO privacy
+        siteData.privacyScore = privacyPolicy.getScoreForUrl(url)
 
         let grade = new Grade(siteData)
 
         grade.calculate()
 
-        let gradeData = grade.get()
+        let gradeData = grade.getGrades()
 
-        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.before}, after ${gradeData.after}`))
+        siteData.score = gradeData
+        siteData.privacy = privacyPolicy.getReasonsForUrl(url)
 
-        fs.writeFileSync(`${outputPath}/${hostname}.json`, JSON.stringify(gradeData))
+        console.log(chalk.green(`got grade for ${hostname}: before ${gradeData.site.grade}, after ${gradeData.enhanced.grade}`))
+
+        fs.writeFileSync(`${outputPath}/${hostname}.json`, JSON.stringify(siteData))
     }
 }
 
