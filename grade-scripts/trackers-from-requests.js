@@ -136,7 +136,7 @@ const calculateTrackerPrevalence = () => {
         let hostname = siteData.url.replace(/https?:\/\//, '')
 
         siteData.parentEntity = entityMap[hostname] || ''
-        siteData.parentTrackerPrevalence = networkPrevalence[siteData.parentEntity] || 0
+        siteData.prevalence = networkPrevalence[siteData.parentEntity] || 0
 
         Object.keys(siteData.trackersBlocked).forEach((network) => {
             siteData.trackersBlocked[network].prevalence = networkPrevalence[network]
