@@ -4,6 +4,7 @@ const fs = require('fs')
 const execSync = require('child_process').execSync
 const chalk = require('chalk')
 const fileManager = require('./shared/file-manager')
+const entityMap = require('../data/generated/entity-map')
 
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
@@ -132,7 +133,7 @@ const calculateTrackerPrevalence = () => {
     fs.writeFileSync(`prevalence.json`, JSON.stringify(networkPrevalence))
 
     siteDataArray.forEach((siteData) => {
-        siteData.parentEntity = entityList[siteData.url] || ''
+        siteData.parentEntity = entityMap[siteData.url] || ''
         siteData.parentTrackerPrevalence = networkPrevalence[siteData.parentEntity] || 0
 
         Object.keys(siteData.trackersBlocked).forEach((network) => {
