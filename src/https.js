@@ -4,6 +4,9 @@ class HTTPS {
     addLists (lists) {
         this.httpsList = lists.https
         this.httpsAutoUpgradeList = lists.httpsAutoUpgrade
+
+        this.httpsSet = new Set(this.httpsList)
+        this.httpsAutoUpgradeSet = new Set(this.httpsAutoUpgrade)
     }
 
     getUpgradedUrl (url) {
@@ -24,19 +27,19 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
-        if (!this.httpsList) {
+        if (!this.httpsSet) {
             throw new Error('tried to upgrade hosts before rules were loaded')
         }
 
-        return this.httpsList.indexOf(host) > -1
+        return this.httpsSet.has(host)
     }
 
     hostAutoUpgrades (host) {
-        if (!this.httpsAutoUpgradeList) {
+        if (!this.httpsAutoUpgradeSet) {
             throw new Error('tried to upgrade hosts before rules were loaded')
         }
 
-        return this.httpsAutoUpgradeList.indexOf(host) > -1
+        return this.httpsAutoUpgradeSet.has(host)
     }
 }
 
