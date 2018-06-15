@@ -113,10 +113,6 @@ class Tab {
         } 
     };
 
-    addOrUpdateScriptsBlocked (url) {
-        this.scriptsBlocked += `|${url}`
-    };
-
     checkHttpsRequestsOnComplete () {
         // TODO later: watch all requests for http/https status and
         // report mixed content
