@@ -73,6 +73,32 @@ function getSitePoints (sites) {
             points.match.bad = points.all.bad
         }
 
+        if (points.class || points.score) {
+            let normalizedScore
+
+            if (points.class === 'A') {
+                normalizedScore = 0
+            } else if (points.class === 'B') {
+                normalizedScore = 1
+            } else if (points.score > 150) {
+                normalizedScore = 10
+            } else if (points.score > 100) {
+                normalizedScore = 7
+            } else {
+                normalizedScore = 5
+            }
+
+            points.score = normalizedScore
+            points.good = points.match.good
+            points.bad = points.match.bad
+
+            delete points.match
+            delete points.all
+            delete points.class
+        } else {
+            return resolve(getSitePoints(sites))
+        }
+
         // get site url
         let servicesUrl = `${githubRepo}/services/${site}.json`
         request.get(servicesUrl, (err, res, body) => {
