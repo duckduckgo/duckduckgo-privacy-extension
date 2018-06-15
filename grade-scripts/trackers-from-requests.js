@@ -133,7 +133,9 @@ const calculateTrackerPrevalence = () => {
     fs.writeFileSync(`prevalence.json`, JSON.stringify(networkPrevalence))
 
     siteDataArray.forEach((siteData) => {
-        siteData.parentEntity = entityMap[siteData.url] || ''
+        let hostname = siteData.url.replace(/https?:\/\//, '')
+
+        siteData.parentEntity = entityMap[hostname] || ''
         siteData.parentTrackerPrevalence = networkPrevalence[siteData.parentEntity] || 0
 
         Object.keys(siteData.trackersBlocked).forEach((network) => {
@@ -143,7 +145,6 @@ const calculateTrackerPrevalence = () => {
             siteData.trackersNotBlocked[network].prevalence = networkPrevalence[network]
         })
 
-        let hostname = siteData.url.replace(/https?:\/\//, '')
         fs.writeFileSync(`${outputPath}/${hostname}.json`, JSON.stringify(siteData))
     })
 
