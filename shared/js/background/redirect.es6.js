@@ -10,6 +10,23 @@ var debugRequest = false
 
 trackers.loadLists()
 
+var ports = []
+function connected(p) {
+    ports[p.sender.frameId] = p;
+	console.log("p value", p.sender.tab.id);
+    let requestTab = tabManager.get({tabId: p.sender.tab.id});
+    console.log("thisTab", requestTab);
+    p.onMessage.addListener(function(m) {
+        if (m.frame === 'main') {
+            p.postMessage({blockedRequests: requestTab.framesBlocked});
+        } else if (m.frame === 'sub') {
+            p.postMessage({blockedRequests: requestTab.scriptsAndFramesBlocked});
+        }
+    })
+}
+
+chrome.runtime.onConnect.addListener(connected);
+
 /**
  * Where most of the extension work happens.
  *
@@ -88,6 +105,9 @@ function handleRequest (requestData) {
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.block) {
                 thisTab.addOrUpdateTrackersBlocked(tracker)
+                if (requestData.type === 'sub_frame' || requestData.type === 'script') {
+                    thisTab.addBlockedAsset(requestData.url, requestData.type)
+                }
 
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
