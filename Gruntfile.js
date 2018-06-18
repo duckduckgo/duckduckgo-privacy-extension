@@ -33,6 +33,9 @@ module.exports = (grunt) => {
             },
             tosdr: {
                 src: ['data-scripts/tosdr.js']
+            },
+            polisis: {
+                src: ['data-scripts/polisis.js']
             }
         },
         browserify: {
@@ -58,6 +61,7 @@ module.exports = (grunt) => {
         'exec:setup',
         'execute:entityMap',
         'execute:tosdr',
+        'execute:polisis',
         'execute:trackersWithParentCompany'
     ])
     // NOTE: why is browserify being used for the extension?
