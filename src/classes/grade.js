@@ -118,8 +118,6 @@ class Grade {
     }
 
     setParentEntity (name, prevalence) {
-        if (!name || !prevalence) return
-
         this.addEntityNotBlocked(name, prevalence)
     }
 
