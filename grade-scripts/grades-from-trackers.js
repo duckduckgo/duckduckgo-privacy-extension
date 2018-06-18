@@ -50,7 +50,7 @@ const run = async () => {
         let hostname = url.replace(/https?:\/\//, '')
 
         siteData.https = https.canUpgradeHost(hostname)
-        siteData.httpsWithAutoUpgrade = https.hostAutoUpgrades(hostname)
+        siteData.httpsAutoUpgrade = https.hostAutoUpgrades(hostname)
         siteData.privacyScore = privacyPolicy.getScoreForUrl(url)
 
         let grade = new Grade(siteData)
