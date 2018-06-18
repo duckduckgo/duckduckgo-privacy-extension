@@ -1,16 +1,4 @@
 {
-    "youtube.com": {
-        "score": 5,
-        "good": [
-            "help you deal with take-down notices"
-        ],
-        "bad": [
-            "broader than necessary",
-            "reduction of legal period for cause of action",
-            "user needs to check tosback.org",
-            "device fingerprinting"
-        ]
-    },
     "twitpic.com": {
         "score": 5,
         "good": [],
@@ -2143,58 +2131,6 @@
             "may sell your data in merger",
             "targeted third-party advertising",
             "tracks you on other websites"
-        ]
-    },
-    "500px.com": {
-        "score": 5,
-        "good": [
-            "easy to read",
-            "pseudonyms allowed"
-        ],
-        "bad": [
-            "class action waiver",
-            "responsible and indemnify",
-            "they can delete your account without prior notice and without a reason",
-            "broader than necessary"
-        ]
-    },
-    "500px.me": {
-        "score": 5,
-        "good": [
-            "easy to read",
-            "pseudonyms allowed"
-        ],
-        "bad": [
-            "class action waiver",
-            "responsible and indemnify",
-            "they can delete your account without prior notice and without a reason",
-            "broader than necessary"
-        ]
-    },
-    "500px.org": {
-        "score": 5,
-        "good": [
-            "easy to read",
-            "pseudonyms allowed"
-        ],
-        "bad": [
-            "class action waiver",
-            "responsible and indemnify",
-            "they can delete your account without prior notice and without a reason",
-            "broader than necessary"
-        ]
-    },
-    "500px.net": {
-        "score": 5,
-        "good": [
-            "easy to read",
-            "pseudonyms allowed"
-        ],
-        "bad": [
-            "class action waiver",
-            "responsible and indemnify",
-            "they can delete your account without prior notice and without a reason",
-            "broader than necessary"
         ]
     }
 }
