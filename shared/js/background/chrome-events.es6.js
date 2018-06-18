@@ -124,6 +124,16 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         ATB.setAtbValuesFromSuccessPage(req.atb)
     }
 
+    if (req.hideElements) {
+        console.log("sender", sender);
+        let requestTab = tabManager.get({tabId: sender.tab.id});
+        if (req.frame === 'main') {
+            chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.framesBlocked}, {frameId: sender.frameId})
+        } else if (req.frame === 'sub') {
+            chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.scriptsAndFramesBlocked}, {frameId: sender.frameId})
+        }
+    }
+
     // popup will ask for the browser type then it is created
     if (req.getBrowser) {
         res(utils.getBrowserName())
@@ -150,6 +160,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(tab.site.score.get())
         return true
     }
+
 })
 
 /**

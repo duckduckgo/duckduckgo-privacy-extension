@@ -1,6 +1,5 @@
 var isTop = window === window.top;
 var contentScript = {};
-var csPort = chrome.runtime.connect({name:"cs-port"});
 var frameId;
 var mainFrameUrl;
 var possibleTargets = [];
@@ -37,21 +36,22 @@ window.addEventListener("message", (e) => {
     }
 });
 
-csPort.onMessage.addListener((m) => {
-    if (!isTop) {
-        console.log("fetching frame id for", document.location.href);
-        window.top.postMessage({frameUrl: document.location.href, blockedRequests: m.blockedRequests}, '*');
-    } else {
-        contentScript.locateBlockedFrames(m.blockedRequests);
+chrome.runtime.onMessage.addListener((req, sender, res) => {
+    if (req.blockedRequests) {
+        if (isTop) {
+            contentScript.locateBlockedFrames(req.blockedRequests);
+        } else {
+            window.top.postMessage({frameUrl: document.location.href, blockedRequests: req.blockedRequests}, '*');
+        }
     }
 });
 
 contentScript.domIsLoaded = (event) => {
     if (isTop) {
-        csPort.postMessage({url: document.location.href, frame: 'main'});
+        chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: 'main'});
         foundFrames = document.getElementsByTagName('iframe');
     } else {
-        csPort.postMessage({url: document.location.href, frame: 'sub'});
+        chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: 'sub'});
         foundFrames = Array.from(document.getElementsByTagName('iframe'))
         foundScripts = Array.from(document.getElementsByTagName('script'));
         possibleTargets = foundFrames.concat(foundScripts);
