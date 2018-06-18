@@ -6,7 +6,7 @@ class HTTPS {
         this.httpsAutoUpgradeList = lists.httpsAutoUpgrade
 
         this.httpsSet = new Set(this.httpsList)
-        this.httpsAutoUpgradeSet = new Set(this.httpsAutoUpgrade)
+        this.httpsAutoUpgradeSet = new Set(this.httpsAutoUpgradeList)
     }
 
     getUpgradedUrl (url) {
