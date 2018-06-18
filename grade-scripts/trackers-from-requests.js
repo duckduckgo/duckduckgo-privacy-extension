@@ -110,6 +110,8 @@ const calculateTrackerPrevalence = () => {
 
         // add them to the global counts
         Object.keys(networksOnThisSite).forEach((network) => {
+            if (network === 'unknown') return
+
             if (!networksSeen[network]) {
                 networksSeen[network] = 0
             }
@@ -123,8 +125,6 @@ const calculateTrackerPrevalence = () => {
     let totalSites = siteDataArray.length
 
     Object.keys(networksSeen).forEach((network) => {
-        if (network === 'unknown') return
-
         let percent = networksSeen[network] / totalSites * 100
         // round to 2 significant digits
         percent = Math.round(percent * 100) / 100
