@@ -8,6 +8,15 @@ privacyPolicy.addLists({
             "bad": [
                 "may sell your data in merger"
             ]
+        },
+        "google.com": {
+            "score": 10,
+            "good": [],
+            "bad": [
+                "they can use your content for all their existing and future services",
+                "tracks you on other websites",
+                "logs are kept forever"
+            ]
         }
     },
     polisis: {
@@ -40,7 +49,8 @@ describe('getScoreForUrl', () => {
     let tests = [
         { url: 'wikihow.com', expected: 11 },
         { url: 'de.yahoo.com', expected: 11 },
-        { url: 'couchsurfing.org', expected: 5 }
+        { url: 'couchsurfing.org', expected: 5 },
+        { url: 'maps.google.com', expected: 10 }
     ]
 
     tests.forEach((test) => {
