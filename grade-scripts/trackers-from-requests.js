@@ -123,6 +123,8 @@ const calculateTrackerPrevalence = () => {
     let totalSites = siteDataArray.length
 
     Object.keys(networksSeen).forEach((network) => {
+        if (network === 'unknown') return
+
         let percent = networksSeen[network] / totalSites * 100
         // round to 2 significant digits
         percent = Math.round(percent * 100) / 100
@@ -131,7 +133,7 @@ const calculateTrackerPrevalence = () => {
     })
 
     // write the prevalence to file, then add it to all the file data
-    fs.writeFileSync(`prevalence.json`, JSON.stringify(networkPrevalence))
+    fs.writeFileSync(`data/generated/prevalence.json`, JSON.stringify(networkPrevalence))
 
     siteDataArray.forEach((siteData) => {
         let hostname = siteData.url.replace(/https?:\/\//, '')
