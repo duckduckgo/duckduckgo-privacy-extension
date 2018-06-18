@@ -41,6 +41,13 @@ privacyPolicy.addLists({
                 good: []
             },
             score: 11
+        },
+        "thefreedictionary.com": {
+            "reasons": {
+                "bad": [],
+                "good": []
+            },
+            "score": 0
         }
     }
 })
@@ -50,7 +57,8 @@ describe('getScoreForUrl', () => {
         { url: 'wikihow.com', expected: 11 },
         { url: 'de.yahoo.com', expected: 11 },
         { url: 'couchsurfing.org', expected: 5 },
-        { url: 'maps.google.com', expected: 10 }
+        { url: 'maps.google.com', expected: 10 },
+        { url: 'legal-dictionary.thefreedictionary.com', expected: 0 }
     ]
 
     tests.forEach((test) => {
