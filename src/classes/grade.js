@@ -76,7 +76,7 @@ class Grade {
         if (attrs.https) {
             this.setHttps(attrs.https, attrs.httpsAutoUpgrade)
         }
-        if (attrs.privacyScore) {
+        if (typeof attrs.privacyScore !== 'undefined') {
             this.setPrivacyScore(attrs.privacyScore)
         }
         if (attrs.parentEntity) {
