@@ -1,9 +1,15 @@
 const https = require('../src/https')
 
-https.addLists([
-    'github.com',
-    'status.github.com'
-])
+https.addLists({
+    https: [
+        'github.com',
+        'status.github.com'
+    ],
+
+    httpsAutoUpgrade: [
+        'test.com'
+    ]
+})
 
 describe('getUpgradedUrl', () => {
     let tests = [
