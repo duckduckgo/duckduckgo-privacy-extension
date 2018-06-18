@@ -1,5 +1,4 @@
 let utils = require('./utils')
-let entityMap = require('../data/generated/entity-map')
 
 class PrivacyPolicy {
     addLists (lists) {
