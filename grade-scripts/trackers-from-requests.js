@@ -5,6 +5,7 @@ const execSync = require('child_process').execSync
 const chalk = require('chalk')
 const fileManager = require('./shared/file-manager')
 const entityMap = require('../data/generated/entity-map')
+const utils = require('../src/utils')
 
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
@@ -135,7 +136,7 @@ const calculateTrackerPrevalence = () => {
     siteDataArray.forEach((siteData) => {
         let hostname = siteData.url.replace(/https?:\/\//, '')
 
-        siteData.parentEntity = entityMap[hostname] || ''
+        siteData.parentEntity = utils.findParent(hostname.split('.')) || ''
         siteData.prevalence = networkPrevalence[siteData.parentEntity] || 0
 
         Object.keys(siteData.trackersBlocked).forEach((network) => {
