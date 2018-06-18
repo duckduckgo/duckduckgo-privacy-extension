@@ -20,10 +20,10 @@ const UNKNOWN_PRIVACY_SCORE = 2
  *
  * means:
  *
- * input <= 0       maps to 'foo'
+ * input === 0      maps to 'foo'
  * 0 < input < 1    maps to 'bar'
  * 1 <= input < 2   maps to 'baz'
- * input >= 2       maps to 'C'
+ * input >= 2       maps to 'qux'
  */
 
 const TRACKER_RANGE_MAP = {
