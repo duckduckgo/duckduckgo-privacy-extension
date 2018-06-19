@@ -34,8 +34,8 @@ class Tab {
         this.id = tabData.id || tabData.tabId
         this.trackers = {}
         this.trackersBlocked = {}
-        this.framesBlocked = ""
-        this.scriptsAndFramesBlocked = ""
+        this.framesBlocked = ''
+        this.scriptsAndFramesBlocked = ''
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
@@ -110,7 +110,7 @@ class Tab {
         this.scriptsAndFramesBlocked += `|${url}`
         if (type === 'sub_frame') {
             this.framesBlocked += `|${url}`
-        } 
+        }
     };
 
     checkHttpsRequestsOnComplete () {

@@ -126,6 +126,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.hideElements) {
         let requestTab = tabManager.get({tabId: sender.tab.id});
+        console.log("requests", requestTab.framesBlocked, requestTab.scriptsAndFramesBlocked)
         if (req.frame === 'main') {
             chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.framesBlocked}, {frameId: sender.frameId})
         } else if (req.frame === 'sub') {
