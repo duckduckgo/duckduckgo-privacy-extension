@@ -68,4 +68,41 @@ const run = async () => {
     }
 }
 
+const generateCsv = () => {
+    let csvText = `domain,site https,enhanced https,site trackers,enhanced trackers,privacy,site score,enhanced score,site grade,enhanced grade`
+
+    // init values for histogram
+    const gradeLetters = ['A+','A','A-','B+','B','B-','C+','C','C-','D-','D','D+','F']
+    let grades = {}
+
+    gradeLetters.forEach(letter => grades[letter] = 0)
+
+    let siteDataArray = utils.getSiteData(outputPath)
+
+    siteDataArray.forEach((siteData) => {
+        let site = siteData.score.site
+        let enhanced = siteData.score.enhanced
+        csvText += `\n`
+        csvText += [
+            siteData.url,
+            site.httpsScore,
+            enhanced.httpsScore,
+            site.trackerScore,
+            enhanced.trackerScore,
+            site.privacyScore,
+            site.score,
+            enhanced.score,
+            site.grade,
+            enhanced.grade
+        ]
+
+        grades[site.grade] += 1
+    })
+
+    console.log(JSON.stringify(grades))
+
+    fs.writeFileSync(`${output}-grades.csv`, { encoding: 'utf8' })
+}
+
 run()
+    .then(generateCsv)
