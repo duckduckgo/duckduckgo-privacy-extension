@@ -67,6 +67,6 @@ It'll also produce a histogram and a CSV file with all the grades.
 Caveats
 ---
 
-The output of step 1 is heavily influenced by your location and IP, and might be blocked, captcha'd, etc.
+The output of step 1 is heavily influenced by your location and IP, time of the day, and might be blocked, captcha'd, etc. So the results you get are not consistent between runs.
 
-If you change tracker blocking drastically, you may want to rerun both step 1 and 2, because it may change the number of trackers loaded.
+Steps 2 and 3 are deterministic, so if you're comparing two different sets of data you probably want to use the same data from step 1.
