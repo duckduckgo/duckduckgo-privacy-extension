@@ -26,10 +26,13 @@ const getSiteData = (inputPath, outputPath, fileForSubset, skipExistingFiles) =>
             .trim()
             .split('\n')
 
-        siteDataFiles = siteDataFiles.filter((fileName) => {
-            let hostname = fileName.replace(/\.json$/, '')
-            return sitesForSubset.indexOf(hostname) > -1
-        })
+        // we map from the sitesForSubset array because we want
+        // to preserve the order defined in that file
+        siteDataFiles = sitesForSubset
+            .map(hostname => hostname + '.json')
+            .filter((fileName) => {
+                return siteDataFiles.indexOf(fileName) > -1
+            })
     }
 
     // skip files that exist

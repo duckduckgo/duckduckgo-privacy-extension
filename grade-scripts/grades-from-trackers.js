@@ -77,7 +77,7 @@ const generateCsv = () => {
 
     gradeLetters.forEach(letter => grades[letter] = 0)
 
-    let siteDataArray = utils.getSiteData(outputPath)
+    let siteDataArray = utils.getSiteData(outputPath, null, fileForSubset)
 
     siteDataArray.forEach((siteData) => {
         let site = siteData.score.site
