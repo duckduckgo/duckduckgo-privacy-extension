@@ -125,13 +125,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.hideElements) {
-        console.log("sender", sender);
         let requestTab = tabManager.get({tabId: sender.tab.id});
         if (req.frame === 'main') {
             chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.framesBlocked}, {frameId: sender.frameId})
         } else if (req.frame === 'sub') {
-            chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.scriptsAndFramesBlocked}, {frameId: sender.frameId})
+            chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.scriptsAndFramesBlocked, mainFrameUrl: requestTab.url}, {frameId: sender.frameId})
         }
+
+        return true
     }
 
     // popup will ask for the browser type then it is created
@@ -160,7 +161,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(tab.site.score.get())
         return true
     }
-
 })
 
 /**
