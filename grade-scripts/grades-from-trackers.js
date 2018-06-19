@@ -1,5 +1,4 @@
 const listManager = require('./shared/list-manager')
-const fileManager = require('./shared/file-manager')
 const program = require('commander')
 const fs = require('fs')
 const execSync = require('child_process').execSync
@@ -10,6 +9,7 @@ const https = require('../src/https')
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
 const privacyPolicy = require('../src/privacy-policy')
+const utils = require('./shared/utils')
 
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites"')
@@ -43,7 +43,7 @@ const run = async () => {
     execSync(`mkdir -p ${outputPath}`)
 
     // get initial file data
-    let siteDataArray = fileManager.getSiteData(inputPath, outputPath, fileForSubset, true)
+    let siteDataArray = utils.getSiteData(inputPath, outputPath, fileForSubset, true)
 
     for (let siteData of siteDataArray) {
         let url = siteData.url

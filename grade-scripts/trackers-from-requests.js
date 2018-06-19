@@ -3,9 +3,9 @@ const program = require('commander')
 const fs = require('fs')
 const execSync = require('child_process').execSync
 const chalk = require('chalk')
-const fileManager = require('./shared/file-manager')
 const entityMap = require('../data/generated/entity-map')
 const utils = require('../src/utils')
+const scriptUtils = require('./utils')
 
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
@@ -34,7 +34,7 @@ const run = async () => {
     execSync(`mkdir -p ${outputPath}`)
 
     // get initial file data
-    let siteDataArray = fileManager.getSiteData(inputPath, outputPath, fileForSubset, true)
+    let siteDataArray = scriptUtils.getSiteData(inputPath, outputPath, fileForSubset, true)
 
     for (let siteData of siteDataArray) {
         let url = siteData.url
@@ -85,7 +85,7 @@ const calculateTrackerPrevalence = () => {
     console.log('calculating tracker prevalence data...')
 
     // get all the files that we've just processed
-    let siteDataArray = fileManager.getSiteData(outputPath)
+    let siteDataArray = scriptUtils.getSiteData(outputPath)
     let entityList = listManager.getList('entityList')
 
     let networksSeen = {}
