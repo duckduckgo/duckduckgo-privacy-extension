@@ -66,8 +66,8 @@ contentScript.locateBlockedFrames = (requests) => {
 
 /**
  * Hide frames that were either themselves blocked, or that contain scripts
- * or other frames that were blocked. Then move up a level in the DOM and
- * hide container selector if it only contains the blocked frame. Add class
+ * or other frames that were blocked. Then traverse DOM upward, hiding
+ * parent selector if it only contains the blocked frame. Add class
  * and remove event listeners so that other content scripts no longer
  * interact with hidden frames
  */
@@ -75,8 +75,9 @@ contentScript.hideFrame = (frame) => {
     frame.style.setProperty('display', 'none', 'important')
     frame.hidden = true
     frame.className += ' ' + 'ddg-hidden'
-    if (frame.parentNode.children.length === 1) {
-        frame.parentNode.style.setProperty('display', 'none', 'important')
+
+    if (frame.parentNode.childElementCount === 1) {
+        contentScript.hideFrame(frame.parentNode)
     }
 }
 
