@@ -98,6 +98,8 @@ const browserWrapper = require('./chrome-wrapper.es6')
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
+    if (sender.id !== chrome.runtime.id) return
+
     if (req.getCurrentTab) {
         utils.getCurrentTab().then((tab) => {
             res(tab)
