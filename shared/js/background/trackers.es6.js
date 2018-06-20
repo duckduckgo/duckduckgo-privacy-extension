@@ -194,7 +194,7 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
             if (tracker) {
                 toBlock = {
                     parentCompany: tracker.c,
-                    url: trackerURL,
+                    url: utils.extractHostFromURL(request.url),
                     type: trackerType,
                     block: true,
                     rule: '',
