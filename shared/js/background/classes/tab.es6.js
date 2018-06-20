@@ -26,6 +26,7 @@ const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const utils = require('../utils.es6')
+const trackers = require('../trackers.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
 
@@ -34,9 +35,11 @@ class Tab {
         this.id = tabData.id || tabData.tabId
         this.trackers = {}
         this.trackersBlocked = {}
+        this.blockedAssets = []
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
+        this.parentEntity = trackers.getParentEntity(tabData.url)
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
         this.httpsRedirects = new HttpsRedirects()
@@ -102,6 +105,15 @@ class Tab {
             this.trackersBlocked[t.parentCompany] = newTracker
             return newTracker
         }
+    };
+
+    addBlockedAsset (url, type) {
+        this.blockedAssets.push({url, type})
+    };
+
+    // return list of asset urls of specific type
+    getBlockedAssets (types) {
+        return this.blockedAssets.filter(asset => types.includes(asset.type)).map(asset => asset.url)
     };
 
     checkHttpsRequestsOnComplete () {
