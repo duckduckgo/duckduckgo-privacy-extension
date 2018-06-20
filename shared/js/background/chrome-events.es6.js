@@ -130,11 +130,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         let requestTab = tabManager.get({tabId: sender.tab.id})
         if (requestTab.parentEntity === 'Oath') {
             if (req.frame === 'main') {
-                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.framesBlocked,
-                                        frame: 'main'}, {frameId: sender.frameId})
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.framesBlocked, frame: 'main'}, {frameId: sender.frameId})
             } else if (req.frame === 'topLevelFrame') {
-                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.scriptsAndFramesBlocked,
-                                        mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.scriptsAndFramesBlocked, mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
             }
         } else {
             chrome.tabs.sendMessage(sender.tab.id, {type: 'disable'}, {frameId: sender.frameId})

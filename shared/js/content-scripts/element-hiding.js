@@ -106,7 +106,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 })
 
-
 // Initialize event listener for interframe messaging
 window.addEventListener('message', contentScript.frameListener)
 
