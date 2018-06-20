@@ -9,7 +9,7 @@ const https = require('../src/https')
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
 const privacyPolicy = require('../src/privacy-policy')
-const utils = require('./shared/utils')
+const scriptUtils = require('./shared/utils')
 
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites"')
@@ -43,11 +43,13 @@ const run = async () => {
     execSync(`mkdir -p ${outputPath}`)
 
     // get initial file data
-    let siteDataArray = utils.getSiteData(inputPath, outputPath, fileForSubset, true)
+    let siteDataArray = scriptUtils.getSiteData(inputPath, fileForSubset)
 
     for (let siteData of siteDataArray) {
         let url = siteData.url
         let hostname = url.replace(/https?:\/\//, '')
+
+        if (scriptUtils.dataFileExists(hostname, outputPath)) continue
 
         siteData.https = https.canUpgradeHost(hostname)
         siteData.httpsAutoUpgrade = https.hostAutoUpgrades(hostname)
@@ -77,7 +79,7 @@ const generateCsv = () => {
 
     gradeLetters.forEach(letter => grades[letter] = 0)
 
-    let siteDataArray = utils.getSiteData(outputPath, null, fileForSubset)
+    let siteDataArray = scriptUtils.getSiteData(outputPath, fileForSubset)
 
     siteDataArray.forEach((siteData) => {
         let site = siteData.score.site

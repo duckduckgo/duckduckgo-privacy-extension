@@ -15,7 +15,7 @@ const responseIsOK = (response, siteToCheck) => {
         firstStatusDigit === 3
 }
 
-const getSiteData = (inputPath, outputPath, fileForSubset, skipExistingFiles) => {
+const getSiteData = (inputPath, fileForSubset) => {
     // get initial file data
     let siteDataFiles = fs.readdirSync(inputPath)
 
@@ -35,28 +35,6 @@ const getSiteData = (inputPath, outputPath, fileForSubset, skipExistingFiles) =>
             })
     }
 
-    // skip files that exist
-    if (skipExistingFiles && outputPath) {
-        siteDataFiles = siteDataFiles.filter((fileName) => {
-            let destPath = `${outputPath}/${fileName}`
-            let hostname = fileName.replace(/\.json$/, '')
-            let fileExists
-
-            try {
-                fileExists = fs.existsSync(destPath)
-            } catch (e) {
-                // ¯\_(ツ)_/¯
-            }
-
-            if (fileExists) {
-                console.log(`grade file exists for ${hostname}, skipping`)
-                return false
-            }
-
-            return true
-        })
-    }
-
     let siteData = siteDataFiles.map(fileName => require(`${process.cwd()}/${inputPath}/${fileName}`))
 
     // don't process files that failed in the previous step
@@ -65,7 +43,25 @@ const getSiteData = (inputPath, outputPath, fileForSubset, skipExistingFiles) =>
     return siteData
 }
 
+const dataFileExists = (hostname, outputPath) => {
+    let destPath = `${outputPath}/${hostname}.json`
+    let fileExists
+
+    try {
+        fileExists = fs.existsSync(destPath)
+    } catch (e) {
+        // ¯\_(ツ)_/¯
+    }
+
+    if (fileExists) {
+        console.log(`file exists for ${hostname}, skipping`)
+    }
+
+    return fileExists
+}
+
 module.exports = {
     responseIsOK,
-    getSiteData
+    getSiteData,
+    dataFileExists
 }

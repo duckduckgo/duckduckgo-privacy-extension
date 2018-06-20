@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer')
 const listManager = require('./shared/list-manager')
-const utils = require('./shared/utils')
+const scriptUtils = require('./shared/utils')
 const program = require('commander')
 const fs = require('fs')
 const execSync = require('child_process').execSync
@@ -127,7 +127,7 @@ const getSiteData = async (siteToCheck) => {
     await page.setRequestInterception(true)
     page.on('request', handleRequest.bind(null, requests, siteToCheck))
     page.on('response', (response) => {
-        if (!utils.responseIsOK(response, siteToCheck)) {
+        if (!scriptUtils.responseIsOK(response, siteToCheck)) {
             console.log(chalk.red(`got ${response.status()} for ${response.url()}`))
             failed = true
         }
@@ -178,19 +178,7 @@ const run = async () => {
             await refreshBrowser()
         }
 
-        let path = `${outputPath}/${siteToCheck}.json`
-        let fileExists
-
-        try {
-            fileExists = fs.existsSync(path)
-        } catch (e) {
-            // ¯\_(ツ)_/¯
-        }
-
-        if (fileExists) {
-            console.log(`dump file exists for ${siteToCheck}, skipping`)
-            continue
-        }
+        if (scriptUtils.dataFileExists(siteToCheck, outputPath)) continue
 
         let data = await getSiteData(siteToCheck)
 

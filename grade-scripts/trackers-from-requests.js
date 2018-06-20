@@ -5,7 +5,7 @@ const execSync = require('child_process').execSync
 const chalk = require('chalk')
 const entityMap = require('../data/generated/entity-map')
 const utils = require('../src/utils')
-const scriptUtils = require('./utils')
+const scriptUtils = require('./shared/utils')
 
 const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
@@ -34,11 +34,13 @@ const run = async () => {
     execSync(`mkdir -p ${outputPath}`)
 
     // get initial file data
-    let siteDataArray = scriptUtils.getSiteData(inputPath, outputPath, fileForSubset, true)
+    let siteDataArray = scriptUtils.getSiteData(inputPath, fileForSubset)
 
     for (let siteData of siteDataArray) {
         let url = siteData.url
         let hostname = url.replace(/https?:\/\//, '')
+
+        if (scriptUtils.dataFileExists(hostname, outputPath)) continue
 
         let trackersBlocked = {}
         let trackersNotBlocked = {}
