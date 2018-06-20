@@ -130,13 +130,16 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         let requestTab = tabManager.get({tabId: sender.tab.id})
         if (requestTab.parentEntity === 'Oath') {
             if (req.frame === 'main') {
-                chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.framesBlocked}, {frameId: sender.frameId})
-            } else if (req.frame === 'sub') {
-                chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.scriptsAndFramesBlocked, mainFrameUrl: requestTab.url}, {frameId: sender.frameId})
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.framesBlocked,
+                                        frame: 'main'}, {frameId: sender.frameId})
+            } else if (req.frame === 'topLevelFrame') {
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.scriptsAndFramesBlocked,
+                                        mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
             }
-
-            return true
+        } else {
+            chrome.tabs.sendMessage(sender.tab.id, {type: 'disable'}, {frameId: sender.frameId})
         }
+        return true
     }
 
     // popup will ask for the browser type then it is created
