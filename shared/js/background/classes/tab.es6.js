@@ -112,7 +112,7 @@ class Tab {
     };
 
     // return list of asset urls of specific type
-    getBlockedAssets(types) {
+    getBlockedAssets (types) {
         return this.blockedAssets.filter(asset => types.includes(asset.type)).map(asset => asset.url)
     };
 

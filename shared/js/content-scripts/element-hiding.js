@@ -6,7 +6,7 @@
 
 'use strict';
 
-(function() {
+(function () {
     const contentScript = {}
     contentScript.frameType = window === window.top ? 'main' : window.parent === window.top ? 'topLevelFrame' : 'nestedFrame'
     contentScript.possibleTargets = []
@@ -123,4 +123,4 @@
             chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: contentScript.frameType})
         }
     }
-})();
+})()

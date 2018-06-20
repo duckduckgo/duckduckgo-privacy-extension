@@ -136,7 +136,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             } else if (req.frame === 'topLevelFrame') {
                 // in iframes, we need both blocked frames and blocked scripts, since
                 // these blocked scripts often were going to load a nested iframe
-                let blockedAssets = requestTab.getBlockedAssets(['sub_frame','script']).join('|')
+                let blockedAssets = requestTab.getBlockedAssets(['sub_frame', 'script']).join('|')
                 chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
             }
         } else {
