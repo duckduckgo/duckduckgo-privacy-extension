@@ -201,6 +201,7 @@ function checkTrackersWithParentCompany (blockSettings, url, siteDomain, request
                     reason: 'trackersWithParentCompany'
                 }
 
+                // Check to see if this request matches any of the blocking rules for this tracker
                 if (tracker.rules) {
                     tracker.rules.forEach(ruleObj => {
                         if (requestMatchesRule(request, ruleObj.rule)) {
