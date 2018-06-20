@@ -266,8 +266,8 @@ function getCommonParentEntity (currLocation, urlToCheck) {
  */
 function getParentEntity (urlToCheck) {
     if (!entityMap) { return 'unknown' }
-    let urlToCheckParsed = tldjs.parse(urlToCheck)
-    let parentEntity = entityMap[urlToCheckParsed.domain]
+    const urlToCheckParsed = tldjs.parse(urlToCheck)
+    const parentEntity = entityMap[urlToCheckParsed.domain]
     if (parentEntity) {
         return parentEntity
     } else {

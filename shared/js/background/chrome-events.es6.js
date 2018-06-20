@@ -127,12 +127,17 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     // listen for messages from content scripts injected into frames
     // on specific domains. Respond with list of blocked requests.
     if (req.hideElements) {
-        let requestTab = tabManager.get({tabId: sender.tab.id})
+        const requestTab = tabManager.get({tabId: sender.tab.id})
         if (requestTab.parentEntity === 'Oath') {
             if (req.frame === 'main') {
-                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.framesBlocked, frame: 'main'}, {frameId: sender.frameId})
+                // in main frame, we only care about blocked frames
+                let blockedAssets = requestTab.getBlockedAssets('sub_frame').join('|')
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, frame: 'main'}, {frameId: sender.frameId})
             } else if (req.frame === 'topLevelFrame') {
-                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: requestTab.scriptsAndFramesBlocked, mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
+                // in iframes, we need both blocked frames and blocked scripts, since
+                // these blocked scripts often were going to load a nested iframe
+                let blockedAssets = requestTab.getBlockedAssets(['sub_frame','script']).join('|')
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
             }
         } else {
             chrome.tabs.sendMessage(sender.tab.id, {type: 'disable'}, {frameId: sender.frameId})
