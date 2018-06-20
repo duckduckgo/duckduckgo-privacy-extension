@@ -73,11 +73,15 @@ const run = async () => {
 const generateCsv = () => {
     let csvText = `domain,site https,enhanced https,site trackers,enhanced trackers,privacy,site score,enhanced score,site grade,enhanced grade`
 
-    // init values for histogram
-    const gradeLetters = ['A+','A','A-','B+','B','B-','C+','C','C-','D-','D','D+','F']
-    let grades = {}
+    // grade histogram
+    const gradeLetters = ['A+','A','A-','B+','B','B-','C+','C','C-','D+','D','D-','F']
+    let gradeCounts = {}
 
-    gradeLetters.forEach(letter => grades[letter] = 0)
+    gradeLetters.forEach(letter => gradeCounts[letter] = 0)
+
+    // score histogram, scores are numbers from 0 with no upper bound
+    // so we do it as a sparse array instead
+    let scoreCounts = []
 
     let siteDataArray = scriptUtils.getSiteData(outputPath, fileForSubset)
 
@@ -96,14 +100,27 @@ const generateCsv = () => {
             enhanced.score,
             site.grade,
             enhanced.grade
-        ]
+        ].join(',')
 
-        grades[site.grade] += 1
+        gradeCounts[site.grade] += 1
+
+        if (!scoreCounts[site.score]) scoreCounts[site.score] = 0
+        scoreCounts[site.score] += 1
     })
 
-    console.log(JSON.stringify(grades))
+    let csvGradeHistText = `grade,count\n`
+    csvGradeHistText += gradeLetters.map(letter => `${letter},${gradeCounts[letter]}`).join('\n')
 
-    fs.writeFileSync(`${output}-grades.csv`, { encoding: 'utf8' })
+    let csvScoreHistText = `score,count\n`
+    for (let i = 0; i < scoreCounts.length; i++) {
+        csvScoreHistText += `${i},${scoreCounts[i] || 0}\n`
+    }
+
+    console.log(JSON.stringify(gradeCounts))
+
+    fs.writeFileSync(`${output}.csv`, csvText, { encoding: 'utf8' })
+    fs.writeFileSync(`${output}.grade.hist.csv`, csvGradeHistText, { encoding: 'utf8' })
+    fs.writeFileSync(`${output}.score.hist.csv`, csvScoreHistText, { encoding: 'utf8' })
 }
 
 run()
