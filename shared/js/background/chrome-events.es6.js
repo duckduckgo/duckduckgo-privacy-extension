@@ -124,15 +124,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         ATB.setAtbValuesFromSuccessPage(req.atb)
     }
 
+    // listen for messages from content scripts injected into frames
+    // on specific domains. Respond with list of blocked requests.
     if (req.hideElements) {
         let requestTab = tabManager.get({tabId: sender.tab.id})
-        if (req.frame === 'main') {
-            chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.framesBlocked}, {frameId: sender.frameId})
-        } else if (req.frame === 'sub') {
-            chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.scriptsAndFramesBlocked, mainFrameUrl: requestTab.url}, {frameId: sender.frameId})
-        }
+        if (requestTab.parentEntity === 'Oath') {
+            if (req.frame === 'main') {
+                chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.framesBlocked}, {frameId: sender.frameId})
+            } else if (req.frame === 'sub') {
+                chrome.tabs.sendMessage(sender.tab.id, {blockedRequests: requestTab.scriptsAndFramesBlocked, mainFrameUrl: requestTab.url}, {frameId: sender.frameId})
+            }
 
-        return true
+            return true
+        }
     }
 
     // popup will ask for the browser type then it is created

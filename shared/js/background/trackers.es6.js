@@ -261,6 +261,20 @@ function getCommonParentEntity (currLocation, urlToCheck) {
     return false
 }
 
+/* Fetch parent entity for a domain. If domain is not in
+ * entityMap, return 'unknown'
+ */
+function getParentEntity (urlToCheck) {
+    if (!entityMap) { return 'unknown' }
+    let urlToCheckParsed = tldjs.parse(urlToCheck)
+    let parentEntity = entityMap[urlToCheckParsed.domain]
+    if (parentEntity) {
+        return parentEntity
+    } else {
+        return 'unknown'
+    }
+}
+
 function getTrackerDetails (trackerUrl, listName) {
     let host = utils.extractHostFromURL(trackerUrl)
     let parentCompany = utils.findParent(host.split('.')) || 'unknown'
@@ -282,5 +296,6 @@ function checkABPParsedList (list, url, siteDomain, request) {
 
 module.exports = {
     isTracker: isTracker,
-    loadLists: loadLists
+    loadLists: loadLists,
+    getParentEntity: getParentEntity
 }
