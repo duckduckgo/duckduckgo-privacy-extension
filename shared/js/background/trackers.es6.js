@@ -173,9 +173,6 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
     let trackerURL = url.join('.')
 
     constants.blocking.some(function (trackerType) {
-        let request = this.request
-        let siteDomain = this.siteDomain
-
         // Some trackers are listed under just the host name of their parent company without
         // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
         // Other trackers are listed using their subdomains. Ex: developers.google.com.
@@ -218,7 +215,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             return toBlock
         }
 
-    }, {request: request, siteDomain: siteDomain})
+    })
 
     if (toBlock) {
         return toBlock
