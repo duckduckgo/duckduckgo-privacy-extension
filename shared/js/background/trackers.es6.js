@@ -199,6 +199,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
                 if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
                     toBlock.rule = ruleObj
                     match = true
+                    // found a match so break loop early 
                     return true
                 }
             })
