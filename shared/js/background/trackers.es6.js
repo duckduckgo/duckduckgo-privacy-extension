@@ -183,7 +183,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         if (!tracker) return
 
         let match = false
-        
+
         toBlock = {
             parentCompany: tracker.c,
             url: utils.extractHostFromURL(request.url),
@@ -199,7 +199,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
                 if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
                     toBlock.rule = ruleObj
                     match = true
-                    // found a match so break loop early 
+                    // found a match so break loop early
                     return true
                 }
             })
@@ -217,7 +217,6 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             // we have a rule based match, return early
             return true
         }
-
     })
 
     if (toBlock) {
