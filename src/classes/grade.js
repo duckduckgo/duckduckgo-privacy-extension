@@ -105,14 +105,12 @@ class Grade {
 
     addEntityBlocked (name, prevalence) {
         if (!name) return
-        if (!prevalence) prevalence = 1
 
         this.entitiesBlocked[name] = prevalence
     }
 
     addEntityNotBlocked (name, prevalence) {
         if (!name) return
-        if (!prevalence) prevalence = 1
 
         this.entitiesNotBlocked[name] = prevalence
     }
