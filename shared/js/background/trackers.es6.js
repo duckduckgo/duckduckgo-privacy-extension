@@ -85,7 +85,7 @@ function isTracker (urlToCheck, thisTab, request) {
         // Look up trackers by parent company. This function also checks to see if the poential
         // tracker is related to the current site. If this is the case we consider it to be the
         // same as a first party requrest and return
-        var trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
+        let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
         if (trackerByParentCompany) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
@@ -198,12 +198,14 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             tracker.rules.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
                     toBlock.rule = ruleObj
-                    return match = true
+                    match = true
+                    return true
                 }
             })
         } else {
             // no filters so we always block this tracker
-            return match = true
+            match = true
+            return true
         }
 
         // no match on any of the rules for this tracker
@@ -212,7 +214,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             toBlock = null
         } else {
             // we have a rule based match, return early
-            return toBlock
+            return true
         }
 
     })
