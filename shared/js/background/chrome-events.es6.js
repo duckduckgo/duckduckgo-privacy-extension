@@ -98,6 +98,8 @@ const browserWrapper = require('./chrome-wrapper.es6')
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
+    if (sender.id !== chrome.runtime.id) return
+
     if (req.getCurrentTab) {
         utils.getCurrentTab().then((tab) => {
             res(tab)
@@ -123,6 +125,28 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.atb) {
         ATB.setAtbValuesFromSuccessPage(req.atb)
+    }
+
+    // listen for messages from content scripts injected into frames
+    // on specific domains. Respond with list of blocked requests.
+    if (req.hideElements) {
+        const requestTab = tabManager.get({tabId: sender.tab.id})
+        if (requestTab.parentEntity === 'Oath' && !requestTab.site.whitelisted) {
+            if (req.frame === 'main') {
+                // in main frame, we only care about blocked frames
+                let blockedAssets = requestTab.getBlockedAssets('sub_frame').join('|')
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, frame: 'main'}, {frameId: sender.frameId})
+            } else if (req.frame === 'topLevelFrame') {
+                // in iframes, we need both blocked frames and blocked scripts, since
+                // these blocked scripts often were going to load a nested iframe
+                let blockedAssets = requestTab.getBlockedAssets(['sub_frame', 'script']).join('|')
+                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
+            }
+        } else {
+            // if site does not belong to parent company or is whitelisted, disable content scripts
+            chrome.tabs.sendMessage(sender.tab.id, {type: 'disable'}, {frameId: sender.frameId})
+        }
+        return true
     }
 
     // popup will ask for the browser type then it is created
