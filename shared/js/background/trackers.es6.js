@@ -209,9 +209,15 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             return match = true
         }
 
+        // no match on any of the rules for this tracker
+        // reset toBlock for the next iteration
         if (!match) {
-            return toBlock = null
+            toBlock = null
+        } else {
+            // we have a rule based match, return early
+            return toBlock
         }
+
     }, {request: request, siteDomain: siteDomain})
 
     if (toBlock) {
