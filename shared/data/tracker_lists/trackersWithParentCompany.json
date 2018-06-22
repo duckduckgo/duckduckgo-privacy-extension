@@ -7190,269 +7190,74 @@
         }
     },
     "Social": {
-        "addthis.com": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "addthiscdn.com": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "addthisedge.com": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "clearspring.com": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "connectedads.net": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "xgraph.com": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "xgraph.net": {
-            "c": "AddThis",
-            "u": "http://www.addthis.com/"
-        },
-        "causes.com": {
-            "c": "Causes",
-            "u": "http://www.causes.com/"
-        },
-        "digg.com": {
-            "c": "Digg",
-            "u": "http://digg.com/"
-        },
-        "licdn.com": {
-            "c": "LinkedIn",
-            "u": "http://www.linkedin.com/"
-        },
-        "linkedin.com": {
-            "c": "LinkedIn",
-            "u": "http://www.linkedin.com/"
-        },
-        "addtoany.com": {
-            "c": "Lockerz",
-            "u": "http://lockerz.com/"
-        },
-        "lockerz.com": {
-            "c": "Lockerz",
-            "u": "http://lockerz.com/"
-        },
-        "list.ru": {
-            "c": "Mail.Ru",
-            "u": "http://mail.ru/"
-        },
-        "mail.ru": {
-            "c": "Mail.Ru",
-            "u": "http://mail.ru/"
-        },
-        "meebo.com": {
-            "c": "Meebo",
-            "u": "https://www.meebo.com/"
-        },
-        "meebocdn.net": {
-            "c": "Meebo",
-            "u": "https://www.meebo.com/"
-        },
-        "papayamobile.com": {
-            "c": "Papaya",
-            "u": "http://papayamobile.com/"
-        },
-        "sharethis.com": {
-            "c": "ShareThis",
-            "u": "http://sharethis.com/"
-        },
-        "buzzster.com": {
-            "c": "Shareaholic",
-            "u": "http://www.shareaholic.com/"
-        },
-        "shareaholic.com": {
-            "c": "Shareaholic",
-            "u": "http://www.shareaholic.com/"
-        },
-        "stumble-upon.com": {
-            "c": "StumbleUpon",
-            "u": "http://www.stumbleupon.com/"
-        },
-        "stumbleupon.com": {
-            "c": "StumbleUpon",
-            "u": "http://www.stumbleupon.com/"
-        },
-        "userapi.com": {
-            "c": "VKontakte",
-            "u": "http://vk.com/"
-        },
-        "vk.com": {
-            "c": "VKontakte",
-            "u": "http://vk.com/"
-        },
-        "vkontakte.ru": {
-            "c": "VKontakte",
-            "u": "http://vk.com/"
-        },
-        "mybloglog.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "rocketmail.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "address.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "alerts.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "avatars.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "buzz.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "calendar.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "edit.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "legalredirect.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "login.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "mail.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "my.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "notepad.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "pulse.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "webmessenger.yahoo.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "ymail.com": {
-            "c": "Yahoo!",
-            "u": "http://www.yahoo.com/"
-        },
-        "reddit.com": {
-            "c": "reddit",
-            "u": "http://www.reddit.com/"
-        },
         "facebook.com": {
             "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "facebook.de": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "facebook.fr": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
+            "u": "https://facebook.com",
+            "rules": [
+                {"rule": "facebook\\.com\\/ai\\.php\\?"},
+                {"rule": "facebook\\.com\\/audience_network\\/", "options": {"types": ["image"]}},
+                {"rule": "pixel\\.facebook\\.com($|[?/])"},
+                {"rule": "facebook\\.com.*\\/impression\\.php"},
+                {"rule": "graph\\.facebook\\.com\\/\\?ids=.*&callback=.*", "options": {"types": ["script"]}},
+                {"rule": "facebook\\.com\\/.*\\/plugins\\/send_to_messenger\\.php\\?app_id="},
+                {"rule": "facebook\\.com\\/brandlift\\.php"},
+                {"rule": "facebook\\.com\\/tr[?/]"},
+                {"rule": "facebook\\.com\\/common\\/scribe_endpoint\\.php"},
+                {"rule": "facebook\\.com\\/email_open_loc_pic\\.php"},
+                {"rule": "facebook\\.com\\/fr\\/u\\.php\\?"},
+                {"rule": "facebook\\.com\\/method\\/links\\.getStats\\?"},
+                {"rule": "facebook\\.com\\/offsite_event\\.php"},
+                {"rule": "facebook\\.com\\/rtb_impression\\/\\?"},
+                {"rule": "facebook\\.com\\/rtb_video\\/\\?"},
+                {"rule": "facebook\\.com[?/].*\\/tracking\\.js"},
+                {"rule": "facebook\\.com\\/ajax\/.*\\/log\\.php"},
+                {"rule": "facebook\\.com\\/ajax\\/.*logging\\."},
+                {"rule": "facebook\\.com\\/ct\\.php"},
+                {"rule": "facebook\\.com\\/friends\\/requests\\/log_impressions"},
+                {"rule": "facebook\\.com\\/search\\/web\\/instrumentation\\.php\\?"},
+                {"rule": "facebook\\.com\\/xti\\.php\\?"},
+                {"rule": "facebook\\.com[?/].*\\/impression_logging\\/"},
+                {"rule": "facebook\\.com[?/].*\\/instream\\/vast\\.xml\\?"}
+            ]
         },
         "facebook.net": {
             "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "fb.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "atlassolutions.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "friendfeed.com": {
-            "c": "Facebook",
-            "u": "http://www.facebook.com/"
-        },
-        "backtype.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "crashlytics.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "tweetdeck.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "twimg.com": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
+            "u": "https://facebook.com",
+            "rules": [
+                {"rule": "connect\\.facebook\\.net\\/signals\\/"},
+                {"rule": "connect\\.facebook\\.net[?/].*\\/fbevents\\.js"},
+                {"rule": "facebook\\.net[?/].*\\/AudienceNetworkVPAID\\.", "options": {"domains": ["dailymotion.com"]}}
+            ]
         },
         "twitter.com": {
             "c": "Twitter",
-            "u": "https://twitter.com/"
+            "u": "https://twitter.com",
+            "rules": [
+                {"rule": "twitter\\.com\\/i\/jot"},
+                {"rule": "twitter\\.com\\/jot\\.html"},
+                {"rule": "twitter\\.com\\/oct\\.js"},
+                {"rule": "twitter\\.com\\/scribe"},
+                {"rule": "twitter\\.com\\/abacus\\?"},
+                {"rule": "twitter\\.com\\/csp_report\\?"},
+                {"rule": "platform\\.twitter\\.com\\/impressions\\.js"},
+                {"rule": "analytics\\.twitter\\.com($|[?/])"},
+                {"rule": "scribe\\.twitter\\.com($|[?/])"},
+                {"rule": "twitter\\.com[?/].*\\/anonymize\\?data"},
+                {"rule": "analytics\\.twitter\\.com($|[?/])"},
+                {"rule": "twitter\\.com[?/].*\\/log\\.json\\?"}, 
+                {"rule": "twitter\\.com[?/].*\\/prompts\\/impress"},
+                {"rule": "twitter\\.com\\/i\\/cards\\/tfw\\/.*\\?advertiser_name="}
+            ]
         },
-        "twitter.jp": {
-            "c": "Twitter",
-            "u": "https://twitter.com/"
-        },
-        "developers.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "gmail.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "mail.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "inbox.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "orkut.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "plus.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "plusone.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "voice.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "wave.google.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
-        },
-        "googlemail.com": {
-            "c": "Google",
-            "u": "http://www.google.com/"
+        "linkedin.com": {
+            "c": "LinkedIn",
+            "u": "https://linkedin.com",
+            "rules": [
+                {"rule": "linkedin\\.com\\/analytics\\/"},
+                {"rule": "ads\\.linkedin\\.com($|[?/])"},
+                {"rule": "linkedin\\.com\\/csp\\/dtag\\?"},
+                {"rule": "linkedin\\.com\\/emimp\\/", "options": {"types": ["image"]}}
+            ]
         }
     }
 }
