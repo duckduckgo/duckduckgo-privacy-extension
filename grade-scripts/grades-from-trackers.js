@@ -6,8 +6,6 @@ const chalk = require('chalk')
 
 const Grade = require('../src/classes/grade')
 const https = require('../src/https')
-const trackers = require('../src/trackers')
-const surrogates = require('../src/surrogates')
 const privacyPolicy = require('../src/privacy-policy')
 const scriptUtils = require('./shared/utils')
 
@@ -26,11 +24,6 @@ const fileForSubset = program.file
 const run = async () => {
     // load any lists and plug them into any classes that wait for them
     await listManager.loadLists()
-    trackers.addLists({
-        entityList: listManager.getList('entityList'),
-        whitelist: listManager.getList('whitelist')
-    })
-    surrogates.addLists(listManager.getList('surrogates'))
     https.addLists({
         https: listManager.getList('https'),
         httpsAutoUpgrade: listManager.getList('httpsAutoUpgrade')
