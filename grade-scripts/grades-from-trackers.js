@@ -50,9 +50,7 @@ const run = async () => {
 
         let grade = new Grade(siteData)
 
-        grade.calculate()
-
-        let gradeData = grade.getGrades()
+        let gradeData = grade.get()
 
         siteData.score = gradeData
         siteData.privacy = privacyPolicy.getReasonsForUrl(url)

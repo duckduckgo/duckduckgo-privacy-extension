@@ -65,10 +65,7 @@ class Grade {
         this.entitiesBlocked = {}
         this.entitiesNotBlocked = {}
 
-        this.scores = {
-            site: {},
-            enhanced: {}
-        }
+        this.scores = null
 
         // set any values that were passed in
         attrs = attrs || {}
@@ -95,27 +92,32 @@ class Grade {
     }
 
     setHttps (https, httpsAutoUpgrade) {
+        this.scores = null
         this.https = https
         this.httpsAutoUpgrade = httpsAutoUpgrade
     }
 
     setPrivacyScore (score) {
+        this.scores = null
         this.privacyScore = typeof score === 'number' ? score : UNKNOWN_PRIVACY_SCORE
     }
 
     addEntityBlocked (name, prevalence) {
         if (!name) return
 
+        this.scores = null
         this.entitiesBlocked[name] = prevalence
     }
 
     addEntityNotBlocked (name, prevalence) {
         if (!name) return
 
+        this.scores = null
         this.entitiesNotBlocked[name] = prevalence
     }
 
     setParentEntity (name, prevalence) {
+        this.scores = null
         this.addEntityNotBlocked(name, prevalence)
     }
 
@@ -172,7 +174,9 @@ class Grade {
         }
     }
 
-    getGrades () {
+    get () {
+        if (!this.scores) this.calculate()
+
         return this.scores
     }
 
