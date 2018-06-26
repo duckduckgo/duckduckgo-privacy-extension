@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.Model
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 /**
  * Background messaging is done via two methods:
@@ -19,23 +20,16 @@ const Parent = window.DDG.base.Model
  *  The common fetch method is defined in base/model.es6.js
  */
 function BackgroundMessage (attrs) {
-  Parent.call(this, attrs)
-
-  // listen for messages from background and
-  // notify subscribers
-  window.chrome.runtime.onMessage.addListener((req) => {
-    if (req.whitelistChanged) this.send('whitelistChanged')
-    if (req.updateTabData) this.send('updateTabData')
-    if (req.didResetTrackersData) this.send('didResetTrackersData', req.didResetTrackersData)
-    if (req.closePopup) window.close()
-  })
+    Parent.call(this, attrs)
+    let thisModel = this
+    browserUIWrapper.backgroundMessage(thisModel)
 }
 
 BackgroundMessage.prototype = window.$.extend({},
-  Parent.prototype,
-  {
-    modelName: 'backgroundMessage'
-  }
+    Parent.prototype,
+    {
+        modelName: 'backgroundMessage'
+    }
 )
 
 module.exports = BackgroundMessage

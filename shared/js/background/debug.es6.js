@@ -4,8 +4,10 @@
  */
 const settings = require('./settings.es6')
 const abp = require('abp-filter-parser')
+const tabManager = require('./tab-manager.es6')
 
 window.dbg = {
-  settings,
-  abp
+    settings,
+    abp,
+    tabManager
 }

@@ -1,6 +1,6 @@
 const TopBlocked = require('./classes/top-blocked.es6')
-const Company = require ('./classes/company.es6')
-const utils = require('./utils.es6')
+const Company = require('./classes/company.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 var Companies = (() => {
     var companyContainer = {}
@@ -35,16 +35,16 @@ var Companies = (() => {
         // This is used by tab.js to count only unique tracking networks on a tab
         countCompanyOnPage: (name) => {
             if (!companyContainer[name]) {
-                companyContainer[name] = new Company(name);
-                topBlocked.add(name);
+                companyContainer[name] = new Company(name)
+                topBlocked.add(name)
             }
-            if (name !== 'unknown') companyContainer[name].incrementPagesSeenOn();
+            if (name !== 'unknown') companyContainer[name].incrementPagesSeenOn()
         },
 
         all: () => { return Object.keys(companyContainer) },
 
         getTopBlocked: (n) => {
-            var topBlockedData = [];
+            var topBlockedData = []
             topBlocked.getTop(n, sortByCount).forEach((name) => {
                 let c = Companies.get(name)
                 topBlockedData.push({name: c.name, count: c.count})
@@ -59,14 +59,14 @@ var Companies = (() => {
                 let c = Companies.get(name)
                 topBlockedData.push({
                     name: c.name,
-                    percent: Math.min(100, Math.round((c.pagesSeenOn/totalPages) * 100))
+                    percent: Math.min(100, Math.round((c.pagesSeenOn / totalPages) * 100))
                 })
             })
 
             return {
                 topBlocked: topBlockedData,
                 totalPages: totalPages,
-                pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers/totalPages) * 100)),
+                pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers / totalPages) * 100)),
                 lastStatsResetDate: lastStatsResetDate
             }
         },
@@ -86,9 +86,11 @@ var Companies = (() => {
             totalPagesWithTrackers = 0
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
+            let resetDate = Companies.getLastResetDate()
+            browserWrapper.notifyPopup({'didResetTrackersData': resetDate})
         },
 
-        getLastResetDate: ()  => lastStatsResetDate,
+        getLastResetDate: () => lastStatsResetDate,
 
         incrementTotalPages: () => {
             totalPages += 1
@@ -101,25 +103,25 @@ var Companies = (() => {
         },
 
         syncToStorage: () => {
-            var toSync = {};
-            toSync[storageName] = companyContainer;
-            utils.syncToStorage(toSync)
-            utils.syncToStorage({'totalPages': totalPages})
-            utils.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
-            utils.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
+            var toSync = {}
+            toSync[storageName] = companyContainer
+            browserWrapper.syncToStorage(toSync)
+            browserWrapper.syncToStorage({'totalPages': totalPages})
+            browserWrapper.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
+            browserWrapper.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
         },
 
         sanitizeData: (storageData) => {
             if (storageData && storageData.hasOwnProperty('twitter')) {
-              delete storageData.twitter
+                delete storageData.twitter
             }
             return storageData
         },
 
         buildFromStorage: () => {
-            utils.getFromStorage(storageName, function (storageData) {
+            browserWrapper.getFromStorage(storageName, function (storageData) {
                 // uncomment for testing
-                //storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
+                // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
                 for (let company in storageData) {
                     let newCompany = Companies.add(company)
@@ -128,9 +130,9 @@ var Companies = (() => {
                 }
             })
 
-            utils.getFromStorage('totalPages', (n) => { if (n) totalPages = n })
-            utils.getFromStorage('totalPagesWithTrackers', (n) => { if (n) totalPagesWithTrackers = n })
-            utils.getFromStorage('lastStatsResetDate', (d) => {
+            browserWrapper.getFromStorage('totalPages', (n) => { if (n) totalPages = n })
+            browserWrapper.getFromStorage('totalPagesWithTrackers', (n) => { if (n) totalPagesWithTrackers = n })
+            browserWrapper.getFromStorage('lastStatsResetDate', (d) => {
                 if (d) {
                     lastStatsResetDate = d
                 } else {
@@ -139,30 +141,10 @@ var Companies = (() => {
                     Companies.resetData()
                 }
             })
-         }
-     }
+        }
+    }
 })()
 
 Companies.buildFromStorage()
-
-// sync data to storage when a tab finishes loading
-chrome.tabs.onUpdated.addListener( (id,info) => {
-    if (info.status === "complete") {
-        Companies.syncToStorage()
-    }
-})
-
-chrome.runtime.onMessage.addListener((req, sender, res) => {
-    if (req.getTopBlocked) {
-        res(Companies.getTopBlocked(req.getTopBlocked))
-    } else if (req.getTopBlockedByPages) {
-        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
-    } else if (req.resetTrackersData) {
-        Companies.resetData()
-        chrome.runtime.sendMessage({'didResetTrackersData': Companies.getLastResetDate()})
-        res()
-    }
-    return true
-})
 
 module.exports = Companies

@@ -1,25 +1,25 @@
+const tldjs = require('tldjs')
 const tosdr = require('../../../data/tosdr')
 const constants = require('../../../data/constants')
-const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(x))
+const utils = require('../utils.es6')
+const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${tldjs.getDomain(x)}`)) // only match domains, and from the start of the URL
 const tosdrClassMap = {'A': -1, 'B': 0, 'C': 0, 'D': 1, 'E': 2} // map tosdr class rankings to increase/decrease in grade
 const siteScores = ['A', 'B', 'C', 'D']
 const pagesSeenOn = constants.majorTrackingNetworks
-const pagesSeenOnRegexList = Object.keys(pagesSeenOn).map(x => new RegExp(`${x}\\.`))
 
 class Score {
-
-    constructor(specialPage, domain) {
-        this.specialPage = specialPage     // see specialDomain() in class Site below
+    constructor (specialPage, domain) {
+        this.specialPage = specialPage // see specialDomain() in class Site below
         this.hasHTTPS = false
         this.inMajorTrackingNetwork = false
         this.totalBlocked = 0
         this.hasObscureTracker = false
-        this.domain = domain
+        this.domain = tldjs.getDomain(domain) // strip the subdomain. Fixes matching tosdr for eg encrypted.google.com
         this.isaMajorTrackingNetwork = this.isaMajorTrackingNetwork()
         this.tosdr = this.getTosdr()
     }
 
-    getTosdr() {
+    getTosdr () {
         let result = {}
 
         tosdrRegexList.some(tosdrSite => {
@@ -48,12 +48,12 @@ class Score {
                         message = constants.tosdrMessages.good
                     } else if (tosdrData.score === 0 && (matchGood.length || matchBad.length)) {
                         message = constants.tosdrMessages.mixed
-                    } else if (tosdrData.score > 0 ) {
+                    } else if (tosdrData.score > 0) {
                         message = constants.tosdrMessages.bad
                     }
                 }
 
-                return result = {
+                result = {
                     score: tosdrData.score,
                     class: tosdrData.class,
                     reasons: {
@@ -62,6 +62,8 @@ class Score {
                     },
                     message: message
                 }
+
+                return result
             }
         })
         return result
@@ -71,23 +73,22 @@ class Score {
      * minus one grade for each 10% of the top pages this
      * network is found on.
      */
-    isaMajorTrackingNetwork() {
+    isaMajorTrackingNetwork () {
         let result = 0
-        pagesSeenOnRegexList.some(network => {
-            let match = network.exec(this.domain)
-            if (match) {
-                // remove period at end for lookup in pagesSeenOn
-                let name = match[0].slice(0,-1)
-                return result = Math.ceil(pagesSeenOn[name] / 10)
-            }
-        })
+        if (this.specialPage || !this.domain) return result
+        const parentCompany = utils.findParent(this.domain.split('.'))
+        if (!parentCompany) return result
+        const isMajorNetwork = pagesSeenOn[parentCompany.toLowerCase()]
+        if (isMajorNetwork) {
+            result = Math.ceil(isMajorNetwork / 10)
+        }
         return result
     }
 
     /*
      * Calculates and returns a site score
      */
-    get() {
+    get () {
         if (this.specialPage) return {}
 
         let beforeIndex = 1
@@ -105,9 +106,8 @@ class Score {
             if (this.tosdr.class) {
                 beforeIndex += tosdrClassMap[this.tosdr.class]
                 afterIndex += tosdrClassMap[this.tosdr.class]
-
             } else if (this.tosdr.score) {
-                let tosdrScore =  Math.sign(this.tosdr.score)
+                let tosdrScore = Math.sign(this.tosdr.score)
                 beforeIndex += tosdrScore
                 afterIndex += tosdrScore
             }
@@ -128,32 +128,33 @@ class Score {
         if (beforeIndex < 0) beforeIndex = 0
         if (afterIndex < 0) afterIndex = 0
 
+        // only sites with a tosdr.class "A" can get a final grade of "A"
+        if (afterIndex === 0 && this.tosdr.class !== 'A') afterIndex = 1
+        if (beforeIndex === 0 && this.tosdr.class !== 'A') beforeIndex = 1
+
         // return corresponding score or lowest score if outside the array
         let beforeGrade = siteScores[beforeIndex] || siteScores[siteScores.length - 1]
         let afterGrade = siteScores[afterIndex] || siteScores[siteScores.length - 1]
 
-        // only sites with a tosdr.class "A" can get a final grade of "A"
-        if(afterGrade === 'A' && this.tosdr.class !== 'A') afterGrade = 'B'
-        if(beforeGrade === 'A' && this.tosdr.class !== 'A') beforeGrade = 'B'
-
-
-        return {before: beforeGrade, after: afterGrade}
+        return {
+            before: beforeGrade,
+            beforeIndex: beforeIndex,
+            after: afterGrade,
+            afterIndex: afterIndex
+        }
     }
 
     /*
      * Update the score attruibues as new events come in. The actual
      * site score is calculated later when you call .get()
      */
-    update(event) {
-
+    update (event) {
         let majorTrackingNetworks = constants.majorTrackingNetworks
         let IPRegex = /[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/
 
         if (event.hasHTTPS) {
             this.hasHTTPS = true
-        }
-        else if (event.trackerBlocked) {
-
+        } else if (event.trackerBlocked) {
             // tracker is from one of the top blocked companies
             if (majorTrackingNetworks[event.trackerBlocked.parentCompany]) {
                 this.inMajorTrackingNetwork = true

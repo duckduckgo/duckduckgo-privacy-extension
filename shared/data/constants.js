@@ -3,9 +3,9 @@ module.exports = {
     "blockLists": [
         "trackersWithParentCompany.json"
     ],
-    "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist",
+    "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
-    "easylists": ["privacy", "general"],
+    "easylists": ['general'],
     "blocking": ["Advertising", "Analytics"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
@@ -14,6 +14,7 @@ module.exports = {
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
     "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
     "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https2",
+    "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
         "B": "Mixed",
@@ -43,7 +44,7 @@ module.exports = {
         "appnexus": 10,
         "oracle": 10,
         "mediamath": 9,
-        "yahoo": 9,
+        "oath": 9,
         "maxcdn": 7,
         "automattic": 7
     }

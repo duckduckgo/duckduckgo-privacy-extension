@@ -1,29 +1,23 @@
-const load = require('./load.es6');
 const defaultSettings = require('../../data/defaultSettings')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
+
 /**
  * Public api
  * Usage:
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
-var settings = {};
+var settings = {}
 let isReady = false
 let _ready = init().then(() => {
     isReady = true
-    console.log("Settings are loaded")
+    console.log('Settings are loaded')
 })
 
-// external settings defines a function that needs to run when a setting is updated
-let isExtensionEnabled
-var externalSettings = {
-    'httpsEverywhereEnabled': function(value){ isExtensionEnabled = value }
-};
-
-function init() {
-    return new Promise ((resolve, reject) => {
+function init () {
+    return new Promise((resolve, reject) => {
         buildSettingsFromDefaults()
         buildSettingsFromLocalStorage().then(() => {
-            registerListeners()
             resolve()
         })
     })
@@ -33,66 +27,50 @@ function ready () {
     return _ready
 }
 
-function buildSettingsFromLocalStorage() {
-    return new Promise ((resolve) => {
-        chrome.storage.local.get(['settings'], function(results){
+function buildSettingsFromLocalStorage () {
+    return new Promise((resolve) => {
+        browserWrapper.getFromStorage(['settings'], function (results) {
             // copy over saved settings from storage
-            Object.assign(settings, results['settings']);
-
-            runExternalSettings();
+            if (!results) resolve()
+            settings = browserWrapper.mergeSavedSettings(settings, results)
             resolve()
         })
     })
 }
 
-function runExternalSettings(){
-    for(var settingName in settings){
-        let value = settings[settingName];
-        runExternalSetting(settingName, value);
-    }
-}
-
-function runExternalSetting(name, value){
-    if(externalSettings[name] && typeof(externalSettings[name]) === 'function'){
-        externalSettings[name](value);
-    }
-}
-
-function buildSettingsFromDefaults() {
+function buildSettingsFromDefaults () {
     // initial settings are a copy of default settings
     settings = Object.assign({}, defaultSettings)
 }
 
-function syncSettingTolocalStorage(){
-    chrome.storage.local.set({'settings': settings});
+function syncSettingTolocalStorage () {
+    browserWrapper.syncToStorage({'settings': settings})
 }
 
-function getSetting(name) {
+function getSetting (name) {
     if (!isReady) {
         console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
         return
     }
 
     // let all and null return all settings
-    if (name === 'all') name = null;
+    if (name === 'all') name = null
 
-    if(name){
-        return settings[name];
-    }
-    else {
-        return settings;
+    if (name) {
+        return settings[name]
+    } else {
+        return settings
     }
 }
 
-function updateSetting(name, value) {
+function updateSetting (name, value) {
     if (!isReady) {
         console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
         return
     }
 
-    settings[name] = value;
-    runExternalSetting(name, value);
-    syncSettingTolocalStorage();
+    settings[name] = value
+    syncSettingTolocalStorage()
 }
 
 function removeSetting (name) {
@@ -107,31 +85,10 @@ function removeSetting (name) {
 }
 
 function logSettings () {
-    chrome.storage.local.get(['settings'], function (s) {
+    browserWrapper.getFromStorage(['settings'], function (s) {
         console.log(s.settings)
     })
 }
-
-function registerListeners(){
-    chrome.runtime.onMessage.addListener(onUpdateSetting);
-    chrome.runtime.onMessage.addListener(onGetSetting);
-}
-
-var onUpdateSetting = function(req, sender, res) {
-    if(req.updateSetting) {
-        var name = req.updateSetting['name'];
-        var value = req.updateSetting['value'];
-        updateSetting(name, value);
-    }
-};
-
-var onGetSetting = function(req, sender, res){
-    if(req.getSetting){
-        res(getSetting(req.getSetting.name));
-    }
-    return true;
-};
-
 
 module.exports = {
     getSetting: getSetting,

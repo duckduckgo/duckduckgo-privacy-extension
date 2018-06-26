@@ -3,30 +3,34 @@ const tldjs = require('tldjs')
 
 const load = require('./load.es6')
 const settings = require('./settings.es6')
-const utils = require('./utils.es6')
 const surrogates = require('./surrogates.es6')
 const trackerLists = require('./tracker-lists.es6').getLists()
 const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
+const utils = require('./utils.es6')
+const entityMap = require('../../data/tracker_lists/entityMap')
 
-let entityList
-let entityMap
+let entityList = {}
 
-settings.ready().then(() => {
-    load.JSONfromExternalFile(constants.entityList, (list) => entityList = list)
-    load.JSONfromExternalFile(constants.entityMap, (list) => entityMap = list)
-})
+function loadLists () {
+    load.JSONfromExternalFile(constants.entityList, (list) => { entityList = list })
+}
 
-function isTracker(urlToCheck, thisTab, request) {
+/*
+ * The main parts of the isTracker algo looks like this:
+ * 1. check the request against our own whitelist
+ * 2. check the request against the trackersWithParentCompany list
+ * 3. check the request against the easylists
+ *
+ * If a tracker is found in steps #2,3 we check it against getCommonParentEntity
+ * to determine if this tracker is owned by the current site's parent company.
+ * In this case we don't block the request but still return the tracker obj
+ * for transparency.
+ */
+function isTracker (urlToCheck, thisTab, request) {
     let currLocation = thisTab.url || ''
     let siteDomain = thisTab.site ? thisTab.site.domain : ''
-    if(!siteDomain) return
-
-    // TODO: easylist is marking some of our requests as trackers. Whitelist us
-    // by default for now until we can figure out why.
-    if (currLocation.match(/duckduckgo\.com/)) {
-        return false
-    }
+    if (!siteDomain) return
 
     // DEMO embedded tweet option
     // a more robust test for tweet code may need to be used besides just
@@ -39,7 +43,6 @@ function isTracker(urlToCheck, thisTab, request) {
     }
 
     if (settings.getSetting('trackerBlockingEnabled')) {
-
         let parsedUrl = tldjs.parse(urlToCheck)
         let hostname
 
@@ -60,52 +63,68 @@ function isTracker(urlToCheck, thisTab, request) {
         }
 
         let urlSplit = hostname.split('.')
-        var social_block = settings.getSetting('socialBlockingIsEnabled')
+        var socialBlock = settings.getSetting('socialBlockingIsEnabled')
         var blockSettings = constants.blocking.slice(0)
 
-        // don't block 1st party requests
-        if (isFirstPartyRequest(currLocation, urlToCheck)) {
-            return
-        }
-        if (social_block) {
+        if (socialBlock) {
             blockSettings.push('Social')
         }
 
         var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
         if (whitelistedTracker) {
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(whitelistedTracker, commonParent)
+            }
             return whitelistedTracker
         }
 
-
-        var surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
+        let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
         if (surrogateTracker) {
-            return surrogateTracker 
-        }
-
-        // Look up trackers by parent company. This function also checks to see if the poential
-        // tracker is related to the current site. If this is the case we consider it to be the
-        // same as a first party requrest and return
-        var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
-        if (trackerByParentCompany) {
-        // check cancel to see if this tracker is related to the current site
-            if (trackerByParentCompany.cancel) {
-                return
-            } else {
-                return trackerByParentCompany
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(surrogateTracker, commonParent)
             }
+            return surrogateTracker
         }
 
-        // block trackers from easylists
-        let easylistBlock = checkEasylists(urlToCheck, siteDomain, request)
-        if (easylistBlock) {
-            return easylistBlock
+        let trackerFromList = checkTrackerLists(blockSettings, urlSplit, currLocation, urlToCheck, request, siteDomain)
+        if (trackerFromList) {
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(trackerFromList, commonParent)
+            }
+            return trackerFromList
         }
-
     }
     return false
 }
 
-function checkWhitelist(url, currLocation, request) {
+// add common parent info to the final tracker object returned by isTracker
+function addCommonParent (trackerObj, parentName) {
+    trackerObj.parentCompany = parentName
+    trackerObj.block = false
+    trackerObj.reason = 'first party'
+    return trackerObj
+}
+
+function checkTrackerLists (blockSettings, urlSplit, currLocation, urlToCheck, request, siteDomain) {
+    // Look up trackers by parent company. This function also checks to see if the poential
+    // tracker is related to the current site. If this is the case we consider it to be the
+    // same as a first party requrest and return
+    var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
+    if (trackerByParentCompany) {
+        return trackerByParentCompany
+    }
+
+    // block trackers from easylists
+    let easylistBlock = checkEasylists(urlToCheck, siteDomain, request)
+    if (easylistBlock) {
+        return easylistBlock
+    }
+}
+
+function checkWhitelist (url, currLocation, request) {
     let result = false
     let match
     const whitelists = abpLists.getWhitelists()
@@ -117,12 +136,13 @@ function checkWhitelist(url, currLocation, request) {
     if (match) {
         result = getTrackerDetails(url, 'trackersWhitelist')
         result.block = false
+        result.reason = 'whitelisted'
     }
 
     return result
 }
 
-function checkEasylists(url, siteDomain, request){
+function checkEasylists (url, siteDomain, request) {
     let toBlock = false
     constants.easylists.some((listName) => {
         const easylists = abpLists.getEasylists()
@@ -137,6 +157,7 @@ function checkEasylists(url, siteDomain, request){
         if (match) {
             toBlock = getTrackerDetails(url, listName)
             toBlock.block = true
+            toBlock.reason = listName
             return toBlock
         }
     })
@@ -144,7 +165,7 @@ function checkEasylists(url, siteDomain, request){
     return toBlock
 }
 
-function checkSurrogateList(url, parsedUrl, currLocation) {
+function checkSurrogateList (url, parsedUrl, currLocation) {
     let dataURI = surrogates.getContentForUrl(url, parsedUrl)
     let result = false
 
@@ -152,8 +173,9 @@ function checkSurrogateList(url, parsedUrl, currLocation) {
         result = getTrackerDetails(url, 'surrogatesList')
         if (result && !isRelatedEntity(result.parentCompany, currLocation)) {
             result.block = true
+            result.reason = 'surrogate'
             result.redirectUrl = dataURI
-            console.log("serving surrogate content for: ", url)
+            console.log('serving surrogate content for: ', url)
             return result
         }
     }
@@ -165,8 +187,7 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
     var toBlock
 
     // base case
-    if (url.length < 2)
-        return false
+    if (url.length < 2) { return false }
 
     let trackerURL = url.join('.')
 
@@ -179,26 +200,22 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
         if (trackerLists.trackersWithParentCompany[trackerType]) {
             var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
             if (tracker) {
-                if (!isRelatedEntity(tracker.c, currLocation)) {
-                    return toBlock = {
-                        parentCompany: tracker.c,
-                        url: trackerURL,
-                        type: trackerType,
-                        block: true
-                    }
+                toBlock = {
+                    parentCompany: tracker.c,
+                    url: trackerURL,
+                    type: trackerType,
+                    block: true,
+                    reason: 'trackersWithParentCompany'
                 }
-                else {
-                    return toBlock = {cancel: 'relatedEntity'}
-                }
+
+                return toBlock
             }
         }
-
     })
 
     if (toBlock) {
         return toBlock
-    }
-    else {
+    } else {
         // remove the subdomain and recheck for trackers. This is recursive, we'll continue
         // to pull off subdomains until we either find a match or have no url to check.
         // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
@@ -210,12 +227,11 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
 /* Check to see if this tracker is related to the current page through their parent companies
  * Only block request to 3rd parties
  */
-function isRelatedEntity(parentCompany, currLocation) {
+function isRelatedEntity (parentCompany, currLocation) {
     var parentEntity = entityList[parentCompany]
     var host = utils.extractHostFromURL(currLocation)
 
-    if(parentEntity && parentEntity.properties) {
-
+    if (parentEntity && parentEntity.properties) {
     // join parent entities to use as regex and store in parentEntity so we don't have to do this again
         if (!parentEntity.regexProperties) {
             parentEntity.regexProperties = parentEntity.properties.join('|')
@@ -230,27 +246,38 @@ function isRelatedEntity(parentCompany, currLocation) {
 }
 
 /* Compare two urls to determine if they came from the same hostname
- * pull off any subdomains before comparison
+ * pull off any subdomains before comparison.
+ * Return parent company name from entityMap if one is found or unknown
+ * if domains match but we don't have this site in our entityMap.
  */
-function isFirstPartyRequest(currLocation, urlToCheck) {
+function getCommonParentEntity (currLocation, urlToCheck) {
+    if (!entityMap) return
     let currentLocationParsed = tldjs.parse(currLocation)
     let urlToCheckParsed = tldjs.parse(urlToCheck)
-
-    if (currentLocationParsed.domain === urlToCheckParsed.domain) {
-        return true
-    } else {
-        let parentEntity = entityMap[urlToCheckParsed.domain]
-        if (parentEntity) {
-            return isRelatedEntity(parentEntity, currLocation)
-        }
-    }
+    let parentEntity = entityMap[urlToCheckParsed.domain]
+    if (currentLocationParsed.domain === urlToCheckParsed.domain ||
+        isRelatedEntity(parentEntity, currLocation)) { return parentEntity || currentLocationParsed.domain }
 
     return false
 }
 
+/* Fetch parent entity for a domain. If domain is not in
+ * entityMap, return 'unknown'
+ */
+function getParentEntity (urlToCheck) {
+    if (!entityMap) { return 'unknown' }
+    const urlToCheckParsed = tldjs.parse(urlToCheck)
+    const parentEntity = entityMap[urlToCheckParsed.domain]
+    if (parentEntity) {
+        return parentEntity
+    } else {
+        return 'unknown'
+    }
+}
+
 function getTrackerDetails (trackerUrl, listName) {
     let host = utils.extractHostFromURL(trackerUrl)
-    let parentCompany = findParent(host.split('.')) || 'unknown'
+    let parentCompany = utils.findParent(host.split('.')) || 'unknown'
     return {
         parentCompany: parentCompany,
         url: host,
@@ -258,19 +285,7 @@ function getTrackerDetails (trackerUrl, listName) {
     }
 }
 
-// pull off subdomains and look for parent companies
-function findParent (url) {
-    if (url.length < 2) return
-    let joinURL = url.join('.')
-    if (entityMap[joinURL]) {
-        return entityMap[joinURL]
-    } else {
-        url.shift()
-        return findParent(url)
-    }
-}
-
-function checkABPParsedList(list, url, siteDomain, request) {
+function checkABPParsedList (list, url, siteDomain, request) {
     let match = abp.matches(list, url,
         {
             domain: siteDomain,
@@ -280,5 +295,7 @@ function checkABPParsedList(list, url, siteDomain, request) {
 }
 
 module.exports = {
-    isTracker: isTracker
+    isTracker: isTracker,
+    loadLists: loadLists,
+    getParentEntity: getParentEntity
 }

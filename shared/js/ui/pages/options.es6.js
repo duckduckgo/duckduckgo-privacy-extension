@@ -7,58 +7,59 @@ const WhitelistView = require('./../views/whitelist.es6.js')
 const WhitelistModel = require('./../models/whitelist.es6.js')
 const whitelistTemplate = require('./../templates/whitelist.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
-const parseUserAgentString = require('./../models/mixins/parse-user-agent.es6.js')
-const renderFeedbackHref = require('./../templates/shared/render-feedback-href.es6.js')
-const renderBrokenSiteHref = require('./../templates/shared/render-broken-site-href.es6.js')
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function Options (ops) {
-  Parent.call(this, ops)
+    Parent.call(this, ops)
 }
 
 Options.prototype = window.$.extend({},
-  Parent.prototype,
-  mixins.setBrowserClassOnBodyTag,
-  parseUserAgentString,
-  {
+    Parent.prototype,
+    mixins.setBrowserClassOnBodyTag,
+    {
 
-    pageName: 'options',
+        pageName: 'options',
 
-    ready: function () {
-      var $parent = window.$('#options-content')
-      Parent.prototype.ready.call(this)
+        ready: function () {
+            var $parent = window.$('#options-content')
+            Parent.prototype.ready.call(this)
 
-      this.setBrowserClassOnBodyTag()
-      this.browserInfo = this.parseUserAgentString()
-      this.generateFeedbackLink()
-      this.generateReportSiteLink()
+            this.setBrowserClassOnBodyTag()
 
-      this.views.options = new PrivacyOptionsView({
-        pageView: this,
-        model: new PrivacyOptionsModel({}),
-        appendTo: $parent,
-        template: privacyOptionsTemplate
-      })
+            window.$('.js-feedback-link')
+                .click(this._onFeedbackClick.bind(this))
+            window.$('.js-report-site-link')
+                .click(this._onReportSiteClick.bind(this))
 
-      this.views.whitelist = new WhitelistView({
-        pageView: this,
-        model: new WhitelistModel({}),
-        appendTo: $parent,
-        template: whitelistTemplate
-      })
+            this.views.options = new PrivacyOptionsView({
+                pageView: this,
+                model: new PrivacyOptionsModel({}),
+                appendTo: $parent,
+                template: privacyOptionsTemplate
+            })
 
-      this.message = new BackgroundMessageModel({})
-    },
+            this.views.whitelist = new WhitelistView({
+                pageView: this,
+                model: new WhitelistModel({}),
+                appendTo: $parent,
+                template: whitelistTemplate
+            })
 
-    generateFeedbackLink: function () {
-      const mailto = renderFeedbackHref(this.browserInfo, '')
-      window.$('.js-feedback-link').attr('href', mailto)
-    },
+            this.message = new BackgroundMessageModel({})
+        },
 
-    generateReportSiteLink: function () {
-      const mailto = renderBrokenSiteHref(this.browserInfo, '')
-      window.$('.js-report-site-link').attr('href', mailto)
+        _onFeedbackClick: function (e) {
+            e.preventDefault()
+
+            browserUIWrapper.openExtensionPage(`/html/feedback.html`)
+        },
+
+        _onReportSiteClick: function (e) {
+            e.preventDefault()
+
+            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1`)
+        }
     }
-  }
 )
 
 // kickoff!

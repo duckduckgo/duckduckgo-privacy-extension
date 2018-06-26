@@ -7,12 +7,9 @@ npm-debug.log
 *.map
 public/js/*.*
 public/css/*.*
-shared/js/abp.js
 *.swp
 shared/data/tracker_lists/trackersWithParentCompany.json
-shared/js/tldjs.js
 build/firefox
 build/chrome
 build/safari
-package-lock.json
 test/background.js
