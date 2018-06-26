@@ -16,25 +16,27 @@ Promise.resolve()
   .then(() => {
     $("body").append("<h1>bloom filter</h1>")
   })
-  .then(https.loadAndParseBloomFilter.bind(https))
   .then(() => {
-      console.time("checking url");
-      staticDomains.forEach((url) => {
-          let bloomResult = https.canUpgradeHost(url)
-
-          if (bloomResult) {
-              if (httpsFullObj[url]) {
-                  bloomHits += 1;
-                  hits += 1;
-              } else {
-                  bloomFalsePositives += 1;
-              }
-          } else if (httpsFullObj[url]) {
-              hits += 1;
-          }
-      });
-      console.timeEnd("checking url");
-
-      console.log(`bloom upgrades: ${((bloomHits + bloomFalsePositives) / staticDomains.length) * 100}%`);
-      console.log(`JSON upgrades: ${(hits / staticDomains.length) * 100}%`);
+      https.ready().then(() => {
+          console.time("checking url");
+          staticDomains.forEach((url) => {
+              recordResult(https.canUpgradeHost(url), url)        
+          });
+        console.timeEnd("checking url");
+        $("body").append(`<h2>bloom upgrades:</h2> ${((bloomHits + bloomFalsePositives) / staticDomains.length) * 100}%`);
+        $("body").append(`<h2>JSON upgrades:</h2> ${(hits / staticDomains.length) * 100}%`);
+      })
   })
+
+function recordResult(bloomResult, url) {
+    if (bloomResult) {
+        if (httpsFullObj[url]) {
+            bloomHits += 1;
+            hits += 1;
+        } else {
+            bloomFalsePositives += 1;
+        }
+    } else if (httpsFullObj[url]) {
+        hits += 1;
+    }
+}
