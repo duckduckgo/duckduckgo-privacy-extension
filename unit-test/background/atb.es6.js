@@ -36,24 +36,24 @@ describe('atb.canShowPostInstall()', () => {
 
 describe('atb.redirectURL()', () => {
     let tests = [
-        {url: 'http://duckduckgo.com/?q=something', rewrite: true },
-        {url: 'https://duckduckgo.com/?q=something', rewrite: true },
-        {url: 'https://duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
-        {url: 'https://duckduckgo.com/?q=atb', rewrite: true},
-        {url: 'https://duckduckgo.com/js/spice/forecast/Denver%20Colorado%20United%20States/en', rewrite: false},
-        {url: 'https://twitter.com', rewrite: false },
-        {url: 'https://twitter.com/?u=duckduckgo.com', rewrite: false },
-        {url: 'https://icons.duckduckgo.com/ip2/weather.com.ico', rewrite: false},
-        {url: 'https://duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false},
-        {url: 'https://duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false},
-        {url: 'https://duckduckgo.com/t/iaui?7725756&oi=forecast&r0=forecast&r1=forecast&r2=forecast&r5=en_wikipedia_queries,nlp_fathead,nlp_wiki&r8=news&r16=news&r19=forecast&r28=apps_domains&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false},
-        {url: 'https://www.reddit.com/search?q=duckduckgo', rewrite: false},
-        {url: 'https://duckduckgo.com/?q=whois+https://duckduckgo.com/?q=whois', rewrite: true},
-        {url: 'https://beta.duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false},
-        {url: 'https://beta.duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false},
-        {url: 'http://beta.duckduckgo.com/?q=something', rewrite: true },
-        {url: 'https://beta.duckduckgo.com/?q=something', rewrite: true },
-        {url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false }
+        { url: 'http://duckduckgo.com/?q=something', rewrite: true },
+        { url: 'https://duckduckgo.com/?q=something', rewrite: true },
+        { url: 'https://duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
+        { url: 'https://duckduckgo.com/?q=atb', rewrite: true },
+        { url: 'https://duckduckgo.com/js/spice/forecast/Denver%20Colorado%20United%20States/en', rewrite: false },
+        { url: 'https://twitter.com', rewrite: false },
+        { url: 'https://twitter.com/?u=duckduckgo.com', rewrite: false },
+        { url: 'https://icons.duckduckgo.com/ip2/weather.com.ico', rewrite: false },
+        { url: 'https://duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false },
+        { url: 'https://duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false },
+        { url: 'https://duckduckgo.com/t/iaui?7725756&oi=forecast&r0=forecast&r1=forecast&r2=forecast&r5=en_wikipedia_queries,nlp_fathead,nlp_wiki&r8=news&r16=news&r19=forecast&r28=apps_domains&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false },
+        { url: 'https://www.reddit.com/search?q=duckduckgo', rewrite: false },
+        { url: 'https://duckduckgo.com/?q=whois+https://duckduckgo.com/?q=whois', rewrite: true },
+        { url: 'https://beta.duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false },
+        { url: 'https://beta.duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false },
+        { url: 'http://beta.duckduckgo.com/?q=something', rewrite: true },
+        { url: 'https://beta.duckduckgo.com/?q=something', rewrite: true },
+        { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false }
     ]
 
     beforeEach(() => {
