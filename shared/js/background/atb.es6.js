@@ -1,5 +1,6 @@
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const load = require('./load.es6')
 
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
@@ -15,33 +16,13 @@ var ATB = (() => {
 
                 if (!atbSetting || !setAtbSetting) { resolve(null) }
 
-                ATB.getSetAtb(atbSetting, setAtbSetting).then((newAtb) => {
-                    if (newAtb !== setAtbSetting) {
-                        settings.updateSetting('set_atb', newAtb)
-                    }
-                    resolve(newAtb)
-                })
-            })
-        },
-
-        getSetAtb: (atbSetting, setAtb) => {
-            return new Promise((resolve) => {
-                var xhr = new XMLHttpRequest()
-
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            let curATB = JSON.parse(xhr.responseText)
-                            resolve(curATB.version)
-                        }
-                    }
-                }
-
                 let randomValue = Math.ceil(Math.random() * 1e7)
-                let AtbRequestURL = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtb
+                let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
 
-                xhr.open('GET', AtbRequestURL, true)
-                xhr.send()
+                load.JSONfromExternalFile(url, (res) => {
+                    settings.updateSetting('set_atb', res.version)
+                    resolve()
+                })
             })
         },
 
@@ -73,33 +54,14 @@ var ATB = (() => {
         },
 
         setInitialVersions: () => {
-            if (!settings.getSetting('atb')) {
-                let versions = ATB.calculateInitialVersions()
-                if (versions && versions.major && versions.minor) {
-                    settings.updateSetting('atb', `v${versions.major}-${versions.minor}`)
-                }
-            }
-        },
+            if (settings.getSetting('atb')) return
 
-        calculateInitialVersions: () => {
-            let oneWeek = 604800000
-            let oneDay = 86400000
-            let oneHour = 3600000
-            let oneMinute = 60000
-            let estEpoch = 1456290000000
-            let localDate = new Date()
-            let localTime = localDate.getTime()
-            let utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute)
-            let est = new Date(utcTime + (oneHour * -5))
-            let dstStartDay = 13 - ((est.getFullYear() - 2016) % 6)
-            let dstStopDay = 6 - ((est.getFullYear() - 2016) % 6)
-            let isDST = (est.getMonth() > 2 || (est.getMonth() === 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() === 10 && est.getDate() < dstStopDay))
-            let epoch = isDST ? estEpoch - oneHour : estEpoch
-            let timeSinceEpoch = new Date().getTime() - epoch
-            let majorVersion = Math.ceil(timeSinceEpoch / oneWeek)
-            let minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
+            let randomValue = Math.ceil(Math.random() * 1e7)
+            let url = ddgAtbURL + randomValue
 
-            return {'major': majorVersion, 'minor': minorVersion}
+            load.JSONfromExternalFile(url, (res) => {
+                settings.updateSetting('atb', res.version)
+            })
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
