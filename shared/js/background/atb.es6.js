@@ -70,9 +70,9 @@ var ATB = (() => {
             settings.updateSetting('atb', atb)
             settings.updateSetting('set_atb', atb)
 
-            let xhr = new XMLHttpRequest()
-            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true)
-            xhr.send()
+            load.JSONfromExternalFile(`https://duckduckgo.com/exti/?atb=${atb}`, () => {
+                // no-op, we only care that the request was made
+            })
         },
 
         inject: () => {
