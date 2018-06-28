@@ -83,3 +83,33 @@ describe('atb.redirectURL()', () => {
         })
     })
 })
+
+describe('atb.setInitialVersions()', () => {
+    it('should grab the version from the ATB service and save it to settings', () => {
+        let urlCalled
+
+        spyOn(settings, 'getSetting').withArgs('atb').and.returnValue(null)
+        spyOn(load, 'JSONfromExternalFile').and.callFake((url, cb) => {
+            urlCalled = url
+            cb({ version: 'v111-4' })
+        })
+
+        let updateSettingSpy = spyOn(settings, 'updateSetting')
+
+        atb.setInitialVersions()
+
+        expect(urlCalled).toMatch(/duckduckgo\.com\/atb\.js/)
+        expect(updateSettingSpy).toHaveBeenCalledWith('atb', 'v111-4')
+    })
+
+    it('should not bail if the version has already been set', () => {
+        spyOn(settings, 'getSetting').withArgs('atb').and.returnValue('v111-5')
+        let loadSpy = spyOn(load, 'JSONfromExternalFile')
+
+        atb.setInitialVersions()
+
+        expect(loadSpy).not.toHaveBeenCalled()
+    })
+
+    it('should be able to handle the server being down correctly')
+})
