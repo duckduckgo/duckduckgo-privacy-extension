@@ -50,7 +50,7 @@ let insertCSS = (tabId, file) => {
 }
 
 let setUninstallURL = (url) => {
-    chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    chrome.runtime.setUninstallURL(url)
 }
 
 module.exports = {
