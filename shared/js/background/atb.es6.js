@@ -1,6 +1,7 @@
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
@@ -76,22 +77,15 @@ var ATB = (() => {
         },
 
         inject: () => {
-            // skip this for non webextension browsers
-            if (!window.chrome) return
-
-            chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
+            browserWrapper.getTabsByURL('https://*.duckduckgo.com/*', (tabs) => {
                 let i = tabs.length
                 let tab
+
                 while (i--) {
                     tab = tabs[i]
 
-                    chrome.tabs.executeScript(tab.id, {
-                        file: '/public/js/content-scripts/on-install.js'
-                    })
-
-                    chrome.tabs.insertCSS(tab.id, {
-                        file: '/public/css/noatb.css'
-                    })
+                    browserWrapper.executeScript(tab.id, '/public/js/content-scripts/on-install.js')
+                    browserWrapper.insertCSS(tab.id, '/public/css/noatb.css')
                 }
             })
         },
@@ -157,8 +151,7 @@ var ATB = (() => {
             let browserInfo = parseUserAgentString()
             let browserName = browserInfo.browser
             let browserVersion = browserInfo.version
-            let extensionVersion = window.chrome.runtime.getManifest().version
-
+            let extensionVersion = browserWrapper.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
@@ -172,10 +165,8 @@ settings.ready().then(() => {
     // migrate over any localStorage values from the old extension
     ATB.migrate()
 
-    // set initial uninstall url. webextension only
-    if (window.chrome) {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-    }
+    // set initial uninstall url
+    browserWrapper.setUninstallURL(ATB.getSurveyURL())
 })
 
 module.exports = ATB

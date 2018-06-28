@@ -33,6 +33,26 @@ let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
 
+let getTabsByURL = (url, cb) => {
+    chrome.tabs.query({ url }, cb)
+}
+
+let executeScript = (tabId, file) => {
+    chrome.tabs.executeScript(tabId, {
+        file: file
+    })
+}
+
+let insertCSS = (tabId, file) => {
+    chrome.tabs.insertCSS(tabId, {
+        file: file
+    })
+}
+
+let setUninstallURL = (url) => {
+    chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+}
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
@@ -41,5 +61,9 @@ module.exports = {
     getFromStorage: getFromStorage,
     notifyPopup: notifyPopup,
     normalizeTabData: normalizeTabData,
-    mergeSavedSettings: mergeSavedSettings
+    mergeSavedSettings: mergeSavedSettings,
+    getTabsByURL: getTabsByURL,
+    executeScript: executeScript,
+    insertCSS: insertCSS,
+    setUninstallURL: setUninstallURL
 }

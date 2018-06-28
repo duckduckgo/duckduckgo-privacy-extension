@@ -93,6 +93,10 @@ let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
 
+// no-ops, in cases where Safari lacks support for something
+// or we've achieved it in a different way
+let noop = () => { /* noop */ }
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
@@ -102,5 +106,9 @@ module.exports = {
     notifyPopup: notifyPopup,
     normalizeTabData: normalizeTabData,
     getTabId: getTabId,
-    mergeSavedSettings: mergeSavedSettings
+    mergeSavedSettings: mergeSavedSettings,
+    getTabsByURL: noop,
+    executeScript: noop,
+    insertCSS: noop,
+    setUninstallURL: noop
 }
