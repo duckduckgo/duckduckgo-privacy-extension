@@ -63,12 +63,6 @@ function isTracker (urlToCheck, thisTab, request) {
         }
 
         let urlSplit = hostname.split('.')
-        var socialBlock = settings.getSetting('socialBlockingIsEnabled')
-        var blockSettings = constants.blocking.slice(0)
-
-        if (socialBlock) {
-            blockSettings.push('Social')
-        }
 
         var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
         if (whitelistedTracker) {
@@ -88,13 +82,16 @@ function isTracker (urlToCheck, thisTab, request) {
             return surrogateTracker
         }
 
-        let trackerFromList = checkTrackerLists(blockSettings, urlSplit, currLocation, urlToCheck, request, siteDomain)
-        if (trackerFromList) {
+        // Look up trackers by parent company. This function also checks to see if the poential
+        // tracker is related to the current site. If this is the case we consider it to be the
+        // same as a first party requrest and return
+        let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
+        if (trackerByParentCompany) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
-                return addCommonParent(trackerFromList, commonParent)
+                return addCommonParent(trackerByParentCompany, commonParent)
             }
-            return trackerFromList
+            return trackerByParentCompany
         }
     }
     return false
@@ -106,22 +103,6 @@ function addCommonParent (trackerObj, parentName) {
     trackerObj.block = false
     trackerObj.reason = 'first party'
     return trackerObj
-}
-
-function checkTrackerLists (blockSettings, urlSplit, currLocation, urlToCheck, request, siteDomain) {
-    // Look up trackers by parent company. This function also checks to see if the poential
-    // tracker is related to the current site. If this is the case we consider it to be the
-    // same as a first party requrest and return
-    var trackerByParentCompany = checkTrackersWithParentCompany(blockSettings, urlSplit, currLocation)
-    if (trackerByParentCompany) {
-        return trackerByParentCompany
-    }
-
-    // block trackers from easylists
-    let easylistBlock = checkEasylists(urlToCheck, siteDomain, request)
-    if (easylistBlock) {
-        return easylistBlock
-    }
 }
 
 function checkWhitelist (url, currLocation, request) {
@@ -142,29 +123,6 @@ function checkWhitelist (url, currLocation, request) {
     return result
 }
 
-function checkEasylists (url, siteDomain, request) {
-    let toBlock = false
-    constants.easylists.some((listName) => {
-        const easylists = abpLists.getEasylists()
-
-        let match
-        // lists can take a second or two to load so check that the parsed data exists
-        if (easylists[listName].isLoaded) {
-            match = checkABPParsedList(easylists[listName].parsed, url, siteDomain, request)
-        }
-
-        // break loop early if a list matches
-        if (match) {
-            toBlock = getTrackerDetails(url, listName)
-            toBlock.block = true
-            toBlock.reason = listName
-            return toBlock
-        }
-    })
-
-    return toBlock
-}
-
 function checkSurrogateList (url, parsedUrl, currLocation) {
     let dataURI = surrogates.getContentForUrl(url, parsedUrl)
     let result = false
@@ -183,33 +141,81 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
     return false
 }
 
-function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
-    var toBlock
+/* Check the matched rule  options against the request data
+ * return: true (all options matched)
+ */
+function matchRuleOptions (rule, request, siteDomain) {
+    if (!rule.options) return true
+
+    if (rule.options.types) {
+        let matchesType = rule.options.types.findIndex(t => { return t === request.type })
+        if (matchesType === -1) {
+            return false
+        }
+    }
+
+    if (rule.options.domains) {
+        let matchesDomain = rule.options.domains.findIndex(d => { return d === siteDomain })
+        if (matchesDomain === -1) {
+            return false
+        }
+    }
+
+    return true
+}
+
+function checkTrackersWithParentCompany (url, siteDomain, request) {
+    let toBlock
 
     // base case
     if (url.length < 2) { return false }
 
     let trackerURL = url.join('.')
 
-    blockSettings.some(function (trackerType) {
+    constants.blocking.some(function (trackerType) {
         // Some trackers are listed under just the host name of their parent company without
         // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
         // Other trackers are listed using their subdomains. Ex: developers.google.com.
         // We'll start by checking the full host with subdomains and then if no match is found
         // try pulling off the subdomain and checking again.
-        if (trackerLists.trackersWithParentCompany[trackerType]) {
-            var tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
-            if (tracker) {
-                toBlock = {
-                    parentCompany: tracker.c,
-                    url: trackerURL,
-                    type: trackerType,
-                    block: true,
-                    reason: 'trackersWithParentCompany'
-                }
+        if (!trackerLists.trackersWithParentCompany[trackerType]) return
+        let tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
+        if (!tracker) return
 
-                return toBlock
-            }
+        let match = false
+
+        toBlock = {
+            parentCompany: tracker.c,
+            url: utils.extractHostFromURL(request.url),
+            type: trackerType,
+            block: true,
+            rule: '',
+            reason: 'trackersWithParentCompany'
+        }
+
+        // Check to see if this request matches any of the blocking rules for this tracker
+        if (tracker.rules) {
+            tracker.rules.some(ruleObj => {
+                if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
+                    toBlock.rule = ruleObj
+                    match = true
+                    // found a match so break loop early
+                    return true
+                }
+            })
+        } else {
+            // no filters so we always block this tracker
+            match = true
+            return true
+        }
+
+        // no match on any of the rules for this tracker
+        // reset toBlock for the next iteration
+        if (!match) {
+            toBlock = null
+        } else {
+            // we have a rule based match, return early
+            return true
         }
     })
 
@@ -220,8 +226,12 @@ function checkTrackersWithParentCompany (blockSettings, url, currLocation) {
         // to pull off subdomains until we either find a match or have no url to check.
         // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
         url.shift()
-        return checkTrackersWithParentCompany(blockSettings, url, currLocation)
+        return checkTrackersWithParentCompany(url, siteDomain, request)
     }
+}
+
+function requestMatchesRule (request, rule) {
+    return !!rule.exec(request.url)
 }
 
 /* Check to see if this tracker is related to the current page through their parent companies

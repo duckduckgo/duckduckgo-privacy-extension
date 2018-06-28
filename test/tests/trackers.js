@@ -41,10 +41,7 @@
   // the easylist. These tests could fail in the future if the easylist
   // entries are changed or whitelisted.
   var abpBlocking = [
-    { url: 'https://s.yimg.com/rq/darla/boot.js', block: false, options:{domain: 'yahoo.com'}, result: {parent: 'Oath', reason: 'first party'}}, // ||yimg.com/rq/darla/$domain=yahoo.com
-    { url: 'https://somesite.com/_ad6.', block: true, options:{}, result: {reason: 'general'}}, // _ad6.
     { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /googleads.
-    { url: 'https://www.redditstatic.com/moat/moatframe.js', block: true, options:{}, result: {parent: 'reddit', reason: 'general'}}, // ||redditstatic.com/moat/
     { url: 'http://ads.rubiconproject.com/header/11078.js', block: true, options:{}, result: {parent: 'Fox One Stop Media', reason: 'trackersWithParentCompany'}}, //  ||rubiconproject.com^$third-party
     { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, options: {domain: 'yahoo.com'}}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
     { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false, options:{}}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
@@ -52,22 +49,40 @@
     { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false, options:{}}, // whitelisted by @@||fastly.net/ad2/$script
     { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /securepubads.
     { url: 'https://shim.btrll.com/', block: true, options:{}, result: {parent: 'BrightRoll', reason: 'trackersWithParentCompany'}}, // ||btrll.com^$third-party
-    { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: true, options: {type: 'SCRIPT'}}, // /webservices/jsparselinks.aspx?$script
-    { url: 'https:/somesite.com/webservices/jsparselinks.aspx?q=1', block: false, options: {type: 'OBJECT'}}, // /webservices/jsparselinks.aspx?$script
-    { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'BlogHer', reason: 'trackersWithParentCompany'}}, // /webservices/jsparselinks.aspx?$script
-    { url: 'https://radar.cedexis.com/1/14290/radar.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'Cedexis', reason: 'privacy'}}, // from easy privacy, ||cedexis.com^$third-party
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'OBJECT'}, result: {parent: 'Facebook', reason: 'trackersWithParentCompany'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
-    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'OBJECT'}, result: {parent: 'Facebook', reason: 'first party'}}, // from easy privacy,  ||connect.facebook.net^*/fbevents.js$third-party
-    { url: 'https://www.facebook.com/rsrc.php/v3/y6/r/69R6jxYtiKN.js', block: true, options: {domain: 'up-4ever.com', type: 'OBJECT'}, result: {parent: 'Facebook', reason: 'trackersWithParentCompany'}}, // |https://$third-party,script,domain=up-4ever.com
-    { url: 'https://v.shopify.com/storefront/page?referrer=https%3A%2F%2Fwww.pinkbike.com&eventType=page', block: true, options: {domain: 'facebook.com', type: 'OBJECT'}, result: {reason: 'privacy'}}, // from easy privacy ||shopify.com/storefront/page?*&eventtype=
-    { url: 'https://secureinclude.ebaystatic.com/js/v/us/pulsar.js', block: true, options: {type: 'SCRIPT', domain: 'ebay.com'}, result: {reason: 'privacy'}}, // easy privacy, ||ebaystatic.com^*/pulsar.js, tests domain anchor and wildcard
-    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'SCRIPT', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
+    { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'object'}, result: {parent: 'BlogHer', reason: 'trackersWithParentCompany'}}, // /webservices/jsparselinks.aspx?$script
+    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'script', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
+    //
+    //
+    //// testing social blocking from our own data structure
+    { url: 'https://facebook.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://facebook.net', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://twitter.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://linkedin.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
+    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'first party'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/asdf/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'first party'}},
+    { url: 'https://graph.facebook.com/?ids=asf3454534&callback=somefunction', block: true, options: {type: 'script', domain: 'reddit.com'}, result: {parent: 'Facebook', rule:{rule:'graph\\.facebook\\.com\\/\\?ids=.*&callback=.*'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://pixel.facebook.com/asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'pixel\\.facebook\\.com($|[?/])'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php?', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/ai\\.php\\?'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php?a=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/ai\\.php\\?'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/ai.php', block: false, options: {domain: 'gmail.com'}}, // doesn't match any rules
+    { url: 'https://facebook.com/audience_network/', block: true, options: {domain: 'gmail.com', type: 'image'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/audience_network\\/'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/audience_network/', block: false, options: {domain: 'gmail.com', type: 'script'}}, // wrong request type doesn't match rule
+    { url: 'https://facebook.com/asdfasd/plugins/send_to_messenger.php?app_id=asdf', block: true, options: {domain: 'gmail.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/.*\\/plugins\\/send_to_messenger\\.php\\?app_id='}, reason: 'trackersWithParentCompany'}},
+    // domain options
+    { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: true, options: {domain: 'dailymotion.com'}, result: {parent: 'Facebook', rule: {rule: 'facebook\\.net[?/].*\\/AudienceNetworkVPAID\\.'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.net/asdf/audiencenetworkvpaid.php', block: false, options: {domain: 'test.com'}},
   ];
   
   QUnit.test("abp blocking url", function (assert) {
       // turn social blocking on for this test
       bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-      
+
       abpBlocking.forEach(function(test) {
           bkg.settings.updateSetting('trackerBlockingEnabled', true);
 
@@ -78,8 +93,11 @@
               testTab.site.domain = test.options.domain
           }
 
-          if (test.options.type) 
+          if (test.options.type) { 
               fakeRequest.type = test.options.type
+          }
+
+          fakeRequest.url = test.url
 
           let toBlock = bkg.trackers.isTracker(test.url, testTab, fakeRequest) || {block: false};
           assert.ok(toBlock.block === test.block, `abp blocking decision.. url: ${test.url} ${toBlock.block} === ${test.block}`);
@@ -87,6 +105,12 @@
           if (test.result) {
               if (test.result.parent) assert.ok(test.result.parent === toBlock.parentCompany, `has correct parent company ${test.result.parent} === ${toBlock.parentCompany}`)
               if (test.result.reason) assert.ok(test.result.reason === toBlock.reason, `has correct blocking reason ${test.result.reason} === ${toBlock.reason}`)
+              if (test.result.rule) {
+                  if (test.result.rule.rule) {
+                      let regexRule = new RegExp(test.result.rule.rule + '.*', 'i')
+                      assert.ok(`${regexRule}` === `${toBlock.rule.rule}`, `has correct blocking rule ${regexRule} === ${toBlock.rule.rule}`)
+                  }
+              }
           }
       });
   });
@@ -105,7 +129,6 @@
       { url: 'https://independent.co.uk', potentialTracker: 'https://amazon.co.uk', block: true, message: 'handle two part tld'},
       { url: 'https://independent.co.uk', potentialTracker: 'https://subdomain.amazon.co.uk', block: true, message: 'handle two part tld'},
       { url: 'https://amazon.co.uk', potentialTracker: 'https://subdomain.amazon.co.uk', block: false, message: 'handle two part tld'},
-      { url: 'https://facebook.com', potentialTracker: 'https://reddit.com', block: true, message: 'should block third party request'},
       { url: 'https://facebook.com', potentialTracker: 'https://instagram.com', block: false, message: 'should not block third party requests owned by same parent company'}
   ];
   
@@ -126,29 +149,6 @@
       });
   });
 
-  var socialBlocking = [
-    { url: 'https://facebook.com/?q=something&param=a'},
-    { url: 'http://twitter.com/somescript.js'}
-  ];
-  
-  QUnit.test("social blocking", function (assert) {
-      socialBlocking.forEach(function(test) {
-          bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          bkg.settings.updateSetting('socialBlockingIsEnabled', true);
-          let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? toBlock.block : false;
-          assert.ok(toBlock === true, 'url should be blocked');
-      });
-  
-      socialBlocking.forEach(function(test) {
-          bkg.settings.updateSetting('trackerBlockingEnabled', true);
-          bkg.settings.updateSetting('socialBlockingIsEnabled', false);
-          let toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
-          toBlock = toBlock ? toBlock.block : false;
-          assert.ok(toBlock === false, 'url should be blocked');
-      });
-  });
-
   // Some basic tests for the abp module. These should be expanded to cover all abp filter options
   QUnit.test("Test abp matching", (assert) => {
       
@@ -162,7 +162,7 @@
 
       easylistTestCases.forEach((e) => {
           let domain = e.options.domain || 'test.com'
-          let type = e.options.type || 'SCRIPT'
+          let type = e.options.type || 'script'
 
           let match = bkg.abp.matches(parsedList, e.url, {
               domain: domain,
