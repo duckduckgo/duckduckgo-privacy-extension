@@ -42,13 +42,21 @@ var ATB = (() => {
                 // handle anchor tags for pages like about#newsletter
                 let urlParts = request.url.split('#')
                 let newURL = request.url
+                let anchor = ''
 
                 // if we have an anchor tag
                 if (urlParts.length === 2) {
-                    newURL = urlParts[0] + '&atb=' + atbSetting + '#' + urlParts[1]
-                } else {
-                    newURL = request.url + '&atb=' + atbSetting
+                    newURL = urlParts[0]
+                    anchor = '#' + urlParts[1]
                 }
+
+                if (request.url.indexOf('?') !== -1) {
+                    newURL += '&'
+                } else {
+                    newURL += '?'
+                }
+
+                newURL += 'atb=' + atbSetting + anchor
 
                 return {redirectUrl: newURL}
             }
