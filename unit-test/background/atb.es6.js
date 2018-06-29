@@ -1,6 +1,7 @@
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
+const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
 
 // HELPERS
 
@@ -153,5 +154,20 @@ describe('atb.setAtbValuesFromSuccessPage()', () => {
         expect(updateSettingSpy).toHaveBeenCalledWith('atb', 'v123-4ab')
         expect(updateSettingSpy).toHaveBeenCalledWith('set_atb', 'v123-4ab')
         expect(loadJSONSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab', jasmine.any(Function))
+    })
+})
+
+describe('atb.inject()', () => {
+    it('should inject the scripts when tabs are found', () => {
+        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => {
+            cb([{id: 17}]) // eslint-disable-line standard/no-callback-literal
+        })
+        let scriptSpy = spyOn(browserWrapper, 'executeScript')
+        let cssSpy = spyOn(browserWrapper, 'insertCSS')
+
+        atb.inject()
+
+        expect(scriptSpy).toHaveBeenCalledWith(17, '/public/js/content-scripts/on-install.js')
+        expect(cssSpy).toHaveBeenCalledWith(17, '/public/css/noatb.css')
     })
 })
