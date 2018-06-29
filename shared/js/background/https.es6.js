@@ -30,8 +30,8 @@ class HTTPS {
             // check for a new bloom filter
             this.getBloomDataXHR().then(data => {
                 if (data) {
-                    this.numberOfDomains = data.total
-                    let arrayBuffer = new Uint8Array(data.array)
+                    this.numberOfDomains = data.totalEntries
+                    let arrayBuffer = Buffer.from(data.bloomFilter, 'base64')
                     //this.storeBloomInLocalDB(arrayBuffer)
                     this.createBloomFilter(arrayBuffer)
                     this._isReady = true
@@ -50,7 +50,7 @@ class HTTPS {
     }
 
     getBloomDataXHR() {
-        let url = `https://jason.duckduckgo.com/https-bloom`;
+        let url = `https://jason.duckduckgo.com/https-bloom.json`;
 
         return new Promise((resolve, reject) => {
             load.JSONfromExternalFile(url, resolve);
@@ -60,7 +60,7 @@ class HTTPS {
     createBloomFilter(arrayBuffer) {
         console.log("loading filter");
         this.bloom.filter = new BloomFilter(this.numberOfDomains, this.bloom.errorRate);
-        this.bloom.filter.importData(new Uint8Array(arrayBuffer));
+        this.bloom.filter.importData(arrayBuffer);
     }
 
     getBloomFromLocalDB() {
