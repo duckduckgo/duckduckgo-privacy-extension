@@ -1,6 +1,5 @@
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
-const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
 const load = require('../../shared/js/background/load.es6')
 
 // HELPERS
@@ -12,7 +11,7 @@ const mockSettings = (args) => {
 const mockAtbService = (version) => {
     return spyOn(load, 'JSONfromExternalFile').and.callFake((url, cb) => {
         if (url.match(/duckduckgo\.com\/atb\.js/)) {
-            cb({ version: version })
+            cb({ version: version }) // eslint-disable-line standard/no-callback-literal
         }
     })
 }
@@ -101,8 +100,6 @@ describe('atb.redirectURL()', () => {
 
 describe('atb.setInitialVersions()', () => {
     it('should grab the version from the ATB service and save it to settings', () => {
-        let urlCalled
-
         mockSettings({ atb: null })
         mockAtbService('v111-4')
 
@@ -129,8 +126,6 @@ describe('atb.setInitialVersions()', () => {
 
 describe('atb.updateSetAtb()', () => {
     it('should hit atb service with atb and set_atb when both are set', (done) => {
-        let urlCalled
-
         mockSettings({ atb: 'v111-2', set_atb: 'v111-6' })
         let loadJSONSpy = mockAtbService('v112-2')
 
