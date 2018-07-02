@@ -168,3 +168,83 @@ describe('atb.inject()', () => {
         expect(cssSpy).toHaveBeenCalledWith(17, '/public/css/noatb.css')
     })
 })
+
+describe('install workflow', () => {
+    let loadSpy
+
+    // make sure /exti was hit, and hit just once
+    const validateExtiWasHit = (expectedAtb) => {
+        let numExtiCalls = 0
+
+        loadSpy.calls.allArgs().forEach((args) => {
+            let url = args[0]
+
+            if (url.match(/\/exti/)) {
+                numExtiCalls += 1
+                expect(url).toContain('atb=' + expectedAtb)
+            }
+        })
+
+        expect(numExtiCalls).toEqual(1, 'exti service should\'ve been called exactly once')
+    }
+
+    beforeEach(() => {
+        spyOn(browserWrapper, 'executeScript')
+        spyOn(browserWrapper, 'insertCSS')
+        loadSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        settingHelper.stub()
+    })
+
+    it(`should handle the install process correctly if there's no DDG pages open`, (done) => {
+        // return no matching pages
+        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([]) })
+
+        atb.updateATBValues()
+
+        setTimeout(() => {
+            validateExtiWasHit('v112-2')
+            expect(settings.getSetting('atb')).toEqual('v112-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+
+            done()
+        }, 1100)
+    })
+    it(`should handle the install process correctly if there's DDG pages open that pass an ATB param`, (done) => {
+        // return one matching page
+        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([{id: 17}]) })
+
+        atb.updateATBValues()
+
+        // pretend one of the pages injected ATB correctly
+        setTimeout(() => {
+            atb.setAtbValuesFromSuccessPage('v112-2ab')
+        }, 200)
+
+        setTimeout(() => {
+            validateExtiWasHit('v112-2ab')
+            expect(settings.getSetting('atb')).toEqual('v112-2ab')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
+
+            done()
+        }, 1100)
+    })
+    it(`should handle the install process correctly if there's DDG pages open that do not pass an ATB param`, (done) => {
+        // return one matching page
+        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([{id: 17}]) })
+
+        atb.updateATBValues()
+
+        // pretend one of the pages didn't manage to inject ATB correctly
+        setTimeout(() => {
+            atb.setAtbValuesFromSuccessPage('')
+        }, 200)
+
+        setTimeout(() => {
+            validateExtiWasHit('v112-2')
+            expect(settings.getSetting('atb')).toEqual('v112-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+
+            done()
+        }, 1100)
+    })
+})

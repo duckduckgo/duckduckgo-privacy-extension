@@ -72,9 +72,18 @@ var ATB = (() => {
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
-            if (settings.getSetting('set_atb')) { return }
+            if (!atb) return
 
             settings.updateSetting('atb', atb)
+
+            ATB.finalizeATB()
+        },
+
+        finalizeATB: () => {
+            let atb = settings.getSetting('atb')
+
+            if (!atb || settings.getSetting('set_atb')) return
+
             settings.updateSetting('set_atb', atb)
 
             load.JSONfromExternalFile(`https://duckduckgo.com/exti/?atb=${atb}`, () => {
@@ -94,6 +103,8 @@ var ATB = (() => {
                     browserWrapper.insertCSS(tab.id, '/public/css/noatb.css')
                 }
             })
+
+            setTimeout(ATB.finalizeATB, 1000)
         },
 
         updateATBValues: () => {
