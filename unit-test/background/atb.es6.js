@@ -3,16 +3,16 @@ const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
 const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
 
+const settingHelper = require('../helpers/settings.es6')
+
 // HELPERS
 
-const mockSettings = (args) => {
-    return spyOn(settings, 'getSetting').and.callFake(key => args[key])
-}
-
-const mockAtbService = (version) => {
+const stubLoadJSON = (ops) => {
     return spyOn(load, 'JSONfromExternalFile').and.callFake((url, cb) => {
         if (url.match(/duckduckgo\.com\/atb\.js/)) {
-            cb({ version: version }) // eslint-disable-line standard/no-callback-literal
+            cb({ version: ops.returnedAtb }) // eslint-disable-line standard/no-callback-literal
+        } else {
+            cb()
         }
     })
 }
@@ -41,7 +41,7 @@ describe('atb.canShowPostInstall()', () => {
 
     canShowAtbCases.forEach((test) => {
         it(`should return ${test.result} when the domain is: '${test.domain}'`, () => {
-            mockSettings({ hasSeenPostInstall: false })
+            settingHelper.stub({ hasSeenPostInstall: false })
 
             const result = atb.canShowPostInstall(test.domain)
             expect(result).toBe(test.result)
@@ -72,7 +72,7 @@ describe('atb.redirectURL()', () => {
     ]
 
     beforeEach(() => {
-        mockSettings({ atb: 'v123-4ab' })
+        settingHelper.stub({ atb: 'v123-4ab' })
     })
 
     tests.forEach((test) => {
@@ -101,25 +101,22 @@ describe('atb.redirectURL()', () => {
 
 describe('atb.setInitialVersions()', () => {
     it('should grab the version from the ATB service and save it to settings', () => {
-        mockSettings({ atb: null })
-        mockAtbService('v111-4')
-
-        let updateSettingSpy = spyOn(settings, 'updateSetting')
+        settingHelper.stub({ atb: null })
+        stubLoadJSON({ returnedAtb: 'v111-4' })
 
         atb.setInitialVersions()
 
-        expect(updateSettingSpy).toHaveBeenCalledWith('atb', 'v111-4')
+        expect(settings.getSetting('atb')).toEqual('v111-4')
     })
 
     it('should bail if the version has already been set', () => {
-        mockSettings({ atb: 'v111-5' })
-        let loadJSONSpy = mockAtbService('v111-6')
-        let updateSettingSpy = spyOn(settings, 'updateSetting')
+        settingHelper.stub({ atb: 'v111-5' })
+        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v111-6' })
 
         atb.setInitialVersions()
 
         expect(loadJSONSpy).not.toHaveBeenCalled()
-        expect(updateSettingSpy).not.toHaveBeenCalled()
+        expect(settings.getSetting('atb')).toEqual('v111-5')
     })
 
     it('should be able to handle the server being down correctly')
@@ -127,14 +124,12 @@ describe('atb.setInitialVersions()', () => {
 
 describe('atb.updateSetAtb()', () => {
     it('should hit atb service with atb and set_atb when both are set', (done) => {
-        mockSettings({ atb: 'v111-2', set_atb: 'v111-6' })
-        let loadJSONSpy = mockAtbService('v112-2')
-
-        let updateSettingSpy = spyOn(settings, 'updateSetting')
+        settingHelper.stub({ atb: 'v111-2', set_atb: 'v111-6' })
+        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/), jasmine.any(Function))
-            expect(updateSettingSpy).toHaveBeenCalledWith('set_atb', 'v112-2')
+            expect(settings.getSetting('atb')).toEqual('v111-2')
 
             done()
         })
@@ -146,15 +141,17 @@ describe('atb.updateSetAtb()', () => {
 
 describe('atb.setAtbValuesFromSuccessPage()', () => {
     it('should call /exti with the atb param', () => {
-        let updateSettingSpy = spyOn(settings, 'updateSetting')
+        settingHelper.stub()
         let loadJSONSpy = spyOn(load, 'JSONfromExternalFile')
 
         atb.setAtbValuesFromSuccessPage('v123-4ab')
 
-        expect(updateSettingSpy).toHaveBeenCalledWith('atb', 'v123-4ab')
-        expect(updateSettingSpy).toHaveBeenCalledWith('set_atb', 'v123-4ab')
+        expect(settings.getSetting('atb')).toEqual('v123-4ab')
+        expect(settings.getSetting('set_atb')).toEqual('v123-4ab')
         expect(loadJSONSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab', jasmine.any(Function))
     })
+
+    it('should not overwrite an existing atb param if the page sends a blank one')
 })
 
 describe('atb.inject()', () => {
