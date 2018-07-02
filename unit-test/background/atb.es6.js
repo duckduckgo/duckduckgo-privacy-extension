@@ -1,3 +1,6 @@
+// disable no-callback-literal because the load module currently
+// breaks nodeJS callback conventions for passing back errors
+/* eslint "standard/no-callback-literal": 0 */
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
@@ -10,7 +13,7 @@ const settingHelper = require('../helpers/settings.es6')
 const stubLoadJSON = (ops) => {
     return spyOn(load, 'JSONfromExternalFile').and.callFake((url, cb) => {
         if (url.match(/duckduckgo\.com\/atb\.js/)) {
-            cb({ version: ops.returnedAtb }) // eslint-disable-line standard/no-callback-literal
+            cb({ version: ops.returnedAtb })
         } else {
             cb()
         }
@@ -157,7 +160,7 @@ describe('atb.setAtbValuesFromSuccessPage()', () => {
 describe('atb.inject()', () => {
     it('should inject the scripts when tabs are found', () => {
         spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => {
-            cb([{id: 17}]) // eslint-disable-line standard/no-callback-literal
+            cb([{id: 17}])
         })
         let scriptSpy = spyOn(browserWrapper, 'executeScript')
         let cssSpy = spyOn(browserWrapper, 'insertCSS')
