@@ -13,6 +13,10 @@ function JSONfromExternalFile (url, cb) {
     }
 }
 
+function url (url, cb) {
+    loadExtensionFile({ url: url, source: 'external' }, cb)
+}
+
 function returnResponse (xhr, returnType) {
     if (returnType === 'xml') {
         return xhr.responseXML
@@ -57,5 +61,6 @@ function loadExtensionFile (params, cb) {
 module.exports = {
     loadExtensionFile: loadExtensionFile,
     JSONfromLocalFile: JSONfromLocalFile,
-    JSONfromExternalFile: JSONfromExternalFile
+    JSONfromExternalFile: JSONfromExternalFile,
+    url: url
 }

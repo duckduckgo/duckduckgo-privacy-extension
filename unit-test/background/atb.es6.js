@@ -14,7 +14,13 @@ const stubLoadJSON = (ops) => {
     return spyOn(load, 'JSONfromExternalFile').and.callFake((url, cb) => {
         if (url.match(/duckduckgo\.com\/atb\.js/)) {
             cb({ version: ops.returnedAtb })
-        } else {
+        }
+    })
+}
+
+const stubLoadURL = () => {
+    return spyOn(load, 'url').and.callFake((url, cb) => {
+        if (url.match(/duckduckgo\.com\/exti/)) {
             cb()
         }
     })
@@ -164,34 +170,36 @@ describe('atb.updateSetAtb()', () => {
 })
 
 describe('atb.setAtbValuesFromSuccessPage()', () => {
+    let loadURLSpy
+
+    beforeEach(() => {
+        loadURLSpy = spyOn(load, 'url')
+    })
     it('should call /exti with the atb param', () => {
         settingHelper.stub()
-        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile')
 
         atb.setAtbValuesFromSuccessPage('v123-4ab')
 
         expect(settings.getSetting('atb')).toEqual('v123-4ab')
         expect(settings.getSetting('set_atb')).toEqual('v123-4ab')
-        expect(loadJSONSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab', jasmine.any(Function))
+        expect(loadURLSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab', jasmine.any(Function))
     })
 
     it('should do nothing if the page sends a blank atb', () => {
         settingHelper.stub()
-        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile')
 
         atb.setAtbValuesFromSuccessPage('')
 
         expect(settings.getSetting('set_atb')).toBeFalsy()
-        expect(loadJSONSpy).not.toHaveBeenCalled()
+        expect(loadURLSpy).not.toHaveBeenCalled()
     })
 
     it('should do nothing if another page already came back with atb', () => {
         settingHelper.stub({ atb: 'v123-4ab', set_atb: 'v123-4ab' })
-        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile')
 
         atb.setAtbValuesFromSuccessPage('v123-4ab')
 
-        expect(loadJSONSpy).not.toHaveBeenCalled()
+        expect(loadURLSpy).not.toHaveBeenCalled()
     })
 })
 
@@ -211,13 +219,13 @@ describe('atb.inject()', () => {
 })
 
 describe('complex install workflow cases', () => {
-    let loadSpy
+    let loadURLSpy
 
     // make sure /exti was hit, and hit just once
     const validateExtiWasHit = (expectedAtb) => {
         let numExtiCalls = 0
 
-        loadSpy.calls.allArgs().forEach((args) => {
+        loadURLSpy.calls.allArgs().forEach((args) => {
             let url = args[0]
 
             if (url.match(/\/exti/)) {
@@ -232,7 +240,8 @@ describe('complex install workflow cases', () => {
     beforeEach(() => {
         spyOn(browserWrapper, 'executeScript')
         spyOn(browserWrapper, 'insertCSS')
-        loadSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        stubLoadJSON({ returnedAtb: 'v112-2' })
+        loadURLSpy = stubLoadURL()
         settingHelper.stub()
     })
 

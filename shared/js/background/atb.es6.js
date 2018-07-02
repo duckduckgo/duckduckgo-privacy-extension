@@ -88,7 +88,7 @@ var ATB = (() => {
 
             settings.updateSetting('set_atb', atb)
 
-            load.JSONfromExternalFile(`https://duckduckgo.com/exti/?atb=${atb}`, () => {
+            load.url(`https://duckduckgo.com/exti/?atb=${atb}`, () => {
                 // no-op, we only care that the request was made
             })
         },
