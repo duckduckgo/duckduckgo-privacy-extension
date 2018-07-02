@@ -106,6 +106,11 @@ var ATB = (() => {
                 }
             })
 
+            // while we're waiting for any tabs to get back to us with an ATB version,
+            // we're retrieving it from atb.js (see setInitialVersions)
+            //
+            // if there's no DDG tabs open or no tabs that can give us an ATB version,
+            // fall back to version from atb.js
             setTimeout(ATB.finalizeATB, 1000)
         },
 
