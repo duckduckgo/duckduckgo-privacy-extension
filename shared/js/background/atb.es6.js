@@ -15,6 +15,8 @@ var ATB = (() => {
                 let atbSetting = settings.getSetting('atb')
                 let setAtbSetting = settings.getSetting('set_atb')
 
+                if (!atbSetting) return resolve()
+
                 let randomValue = Math.ceil(Math.random() * 1e7)
                 let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
 

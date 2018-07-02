@@ -133,13 +133,34 @@ describe('atb.updateSetAtb()', () => {
         atb.updateSetAtb().then(() => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/), jasmine.any(Function))
             expect(settings.getSetting('atb')).toEqual('v111-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
 
             done()
         })
     })
 
-    it('should be able to handle cases where atb is null')
-    it('should be able to handle cases where set_atb is null')
+    it('should be able to handle cases where set_atb is null', (done) => {
+        settingHelper.stub({ atb: 'v111-2' })
+        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+
+        atb.updateSetAtb().then(() => {
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2/), jasmine.any(Function))
+            expect(settings.getSetting('atb')).toEqual('v111-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+
+            done()
+        })
+    })
+
+    it('should be able to handle cases where atb is null', (done) => {
+        settingHelper.stub({ set_atb: 'v112-2' })
+        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+
+        atb.updateSetAtb().then(() => {
+            expect(loadJSONSpy).not.toHaveBeenCalled()
+            done()
+        })
+    })
 })
 
 describe('atb.setAtbValuesFromSuccessPage()', () => {
@@ -154,7 +175,24 @@ describe('atb.setAtbValuesFromSuccessPage()', () => {
         expect(loadJSONSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab', jasmine.any(Function))
     })
 
-    it('should not overwrite an existing atb param if the page sends a blank one')
+    it('should do nothing if the page sends a blank atb', () => {
+        settingHelper.stub()
+        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile')
+
+        atb.setAtbValuesFromSuccessPage('')
+
+        expect(settings.getSetting('set_atb')).toBeFalsy()
+        expect(loadJSONSpy).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing if another page already came back with atb', () => {
+        settingHelper.stub({ atb: 'v123-4ab', set_atb: 'v123-4ab' })
+        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile')
+
+        atb.setAtbValuesFromSuccessPage('v123-4ab')
+
+        expect(loadJSONSpy).not.toHaveBeenCalled()
+    })
 })
 
 describe('atb.inject()', () => {
@@ -172,7 +210,7 @@ describe('atb.inject()', () => {
     })
 })
 
-describe('install workflow', () => {
+describe('complex install workflow cases', () => {
     let loadSpy
 
     // make sure /exti was hit, and hit just once
