@@ -1,86 +1,21 @@
-const load = require('./load.es6')
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const constants = require('../../data/constants')
-const Dexie = require('dexie')
-const BloomFilter = require("jsbloom").filter;
+const httpsStorage = require('./storage/https.es6.js')
 
 class HTTPS {
     constructor () {
-        this.db = new Dexie('https_bloom_blob')
-        this.numberOfDomains = 0
-        this.bloom = {
-            filter: '',
-            errorRate: 0.0001,
-        }
-
-        this._isReady = this.init().then(() => this.isReady = true)
-        
-        return this
-    }
-
-    ready() {
-        return this._isReady
-    }
-
-    init() {
-        return new Promise((resolve, reject) => {
-            console.log('HTTPS: init()')
-            
-            // check for a new bloom filter
-            this.getBloomDataXHR().then(data => {
-                if (data) {
-                    this.numberOfDomains = data.totalEntries
-                    let arrayBuffer = Buffer.from(data.bloomFilter, 'base64')
-                    //this.storeBloomInLocalDB(arrayBuffer)
-                    this.createBloomFilter(arrayBuffer)
-                    this._isReady = true
-                    resolve()
-                } else {
-                    //this.getBloomDataFromLocalDB().then(arrayBuffer => {
-                    //    this.createBloomFilter(arrayBuffer)
-                    //})
-                }
-            })
-        })
-    }
-
-    checkForListUpdate() {
-        getBloomBlob().then(data)
-    }
-
-    getBloomDataXHR() {
-        let url = `https://jason.duckduckgo.com/https-bloom.json`;
-
-        return new Promise((resolve, reject) => {
-            load.JSONfromExternalFile(url, resolve);
-        });
-    }
-
-    createBloomFilter(arrayBuffer) {
-        console.log("loading filter");
-        this.bloom.filter = new BloomFilter(this.numberOfDomains, this.bloom.errorRate);
-        this.bloom.filter.importData(arrayBuffer);
-    }
-
-    getBloomFromLocalDB() {
-        return new Promise((resolve, reject) => {
-            this.db.open() 
-        })
-    }
-    storeBloomInLocalDB(arrayBuffer) {
-        return new Promise((resolve, reject) => {
-            this.db.version(1).stores({
-                rules: '++id'
-            });
-            
-            return this.db.rules.put({ buf: arrayBuffer })
-            resolve();
-        });
+        this.bloom = {}
+        this._isReady = httpsStorage.ready().then(() => { return true })
     }
 
     canUpgradeHost (host) {
-        return this.bloom.filter.checkEntry(host)
+        if (this._isReady) {
+            return httpsStorage.bloom.checkEntry(host)
+        } else {
+            console.log('https not ready yet')
+            return false
+        }
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
