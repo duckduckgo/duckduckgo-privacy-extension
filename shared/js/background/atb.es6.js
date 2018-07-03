@@ -81,8 +81,10 @@ var ATB = (() => {
         finalizeATB: () => {
             let atb = settings.getSetting('atb')
 
-            if (!atb || settings.getSetting('set_atb')) return
+            // make this request only once
+            if (!atb || settings.getSetting('extiSent')) return
 
+            settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
 
             // just a GET request, we only care that the request was made

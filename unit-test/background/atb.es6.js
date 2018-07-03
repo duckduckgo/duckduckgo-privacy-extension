@@ -197,7 +197,7 @@ describe('atb.setAtbValuesFromSuccessPage()', () => {
     })
 
     it('should do nothing if another page already came back with atb', () => {
-        settingHelper.stub({ atb: 'v123-4ab', set_atb: 'v123-4ab' })
+        settingHelper.stub({ atb: 'v123-4ab', set_atb: 'v123-4ab', extiSent: true })
 
         atb.setAtbValuesFromSuccessPage('v123-4ab')
 
