@@ -5,7 +5,7 @@ const constants = require('../../../data/constants')
 
 class HTTPSStorage {
     constructor () {
-        this.dbc = new Dexie('https_bloom_blob')
+        this.dbc = new Dexie('https')
         this._isReady = this.init().then(() => { return true })
         this.bloom = {}
     }
@@ -18,27 +18,25 @@ class HTTPSStorage {
         return new Promise((resolve, reject) => {
             // check for a new bloom filter
             this.getBloomDataXHR().then(data => {
-                if (data) {
+                if (0 && data) {
+                    data.version = 1
+                    data.bloomFilter = Buffer.from(data.bloomFilter, 'base64')
                     this.createBloomFilter(data)
-                    //this.storeBloomInLocalDB(arrayBuffer)
+                    this.storeBloomInLocalDB(data)
                     resolve()
                 } else {
-                    //this.getBloomDataFromLocalDB().then(arrayBuffer => {
-                    //    this.createBloomFilter(arrayBuffer)
-                    //})
+                    this.getDataFromLocalDB().then(storedData => {
+                        this.createBloomFilter(storedData.bloomData)
+                    })
                }
             })
 
         })
     }
 
-    checkForListUpdate () {
-        getBloomBlob().then(data)
-    }
-
     createBloomFilter (filterData) {
         this.bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
-        this.bloom.importData(Buffer.from(filterData.bloomFilter, 'base64'))
+        this.bloom.importData(filterData.bloomFilter)
     }
 
     getBloomDataXHR () {
@@ -49,19 +47,31 @@ class HTTPSStorage {
         });
     }
 
-    getBloomFromLocalDB() {
+    getDataFromLocalDB() {
         return new Promise((resolve, reject) => {
-            this.db.open() 
+            this.dbc.open().then(() => {
+                this.dbc.table('httpsStorage').get(0).then((data) => {
+                    resolve(data)
+                }).catch((err) => console.log(err))
+            })
         })
     }
-    storeBloomInLocalDB(arrayBuffer) {
+
+    storeBloomInLocalDB(bloomData) {
         return new Promise((resolve, reject) => {
-            this.db.version(1).stores({
-                rules: '++id'
+            let name = this.storageName
+            this.dbc.version(1).stores({
+                httpsStorage: '++id'
             });
             
-            return this.db.rules.put({ buf: arrayBuffer })
-            resolve();
+            this.dbc.httpsStorage.put(
+                { id: 0, bloomData: bloomData},
+            ).then(() => {
+                resolve()
+            }).catch((err) => {
+                console.log(`Error saving https data: ${err}`)
+                reject()
+            })
         });
     }
 }
