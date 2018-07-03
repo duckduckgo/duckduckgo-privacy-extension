@@ -1,32 +1,9 @@
 (function() {
   bkg.settings.ready().then(() => {
       QUnit.module("ATB");
-      testATBrewrite()
       testATBInstall()
   })
 })()
-
-function testATBrewrite() {
-  QUnit.test("ATB module url rewrite", function (assert) {
-      
-      // don't update atb values if they don't already exist
-      bkg.settings.updateSetting('set_atb', null);
-      bkg.ATB.updateSetAtb().then().catch((message) => {
-          assert.ok(message, 'should not set a new atb if one doesnt exist already: ' + message);
-      });
-      
-      // test getting new atb values from atb.js
-      var fakeSetAtb = "fakeatbvalue";
-      bkg.settings.updateSetting('set_atb', fakeSetAtb);
-      bkg.ATB.updateSetAtb().then((res) => {
-          assert.ok(bkg.settings.getSetting('set_atb') === res, "should have a new set_atb value: " + res)
-      });
-      
-      // test anchor tag rewrite
-      bkg.settings.updateSetting('atb', 'v70-6')
-      bkg.settings.updateSetting('set_atb', 'v70-6')
-  });
-}
 
 function testATBInstall () {
   QUnit.test("ATB install flow", function (assert) {
