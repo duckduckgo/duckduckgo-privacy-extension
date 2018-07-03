@@ -188,6 +188,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
 const abpLists = require('./abp-lists.es6')
 const https = require('./https.es6')
+const httpsStorage = require('./storage/https.es6.js')
 
 // recheck adblock plus and https lists every 30 minutes
 chrome.alarms.create('updateLists', {periodInMinutes: 30})
@@ -222,6 +223,8 @@ let onStartup = () => {
             }
         }
     })
+
+    Promise.all(httpsStorage.getLists()).then(lists => https.setLists(lists))
 }
 
 module.exports = {
