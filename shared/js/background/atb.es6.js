@@ -11,19 +11,16 @@ var ATB = (() => {
 
     return {
         updateSetAtb: () => {
-            return new Promise((resolve) => {
-                let atbSetting = settings.getSetting('atb')
-                let setAtbSetting = settings.getSetting('set_atb')
+            let atbSetting = settings.getSetting('atb')
+            let setAtbSetting = settings.getSetting('set_atb')
 
-                if (!atbSetting) return resolve()
+            if (!atbSetting) return Promise.resolve()
 
-                let randomValue = Math.ceil(Math.random() * 1e7)
-                let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
+            let randomValue = Math.ceil(Math.random() * 1e7)
+            let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
 
-                load.JSONfromExternalFile(url, (res) => {
-                    settings.updateSetting('set_atb', res.version)
-                    resolve()
-                })
+            return load.JSONfromExternalFile(url).then((res) => {
+                settings.updateSetting('set_atb', res.data.version)
             })
         },
 
@@ -63,13 +60,13 @@ var ATB = (() => {
         },
 
         setInitialVersions: () => {
-            if (settings.getSetting('atb')) return
+            if (settings.getSetting('atb')) return Promise.resolve()
 
             let randomValue = Math.ceil(Math.random() * 1e7)
             let url = ddgAtbURL + randomValue
 
-            load.JSONfromExternalFile(url, (res) => {
-                settings.updateSetting('atb', res.version)
+            return load.JSONfromExternalFile(url).then((res) => {
+                settings.updateSetting('atb', res.data.version)
             })
         },
 
@@ -88,9 +85,8 @@ var ATB = (() => {
 
             settings.updateSetting('set_atb', atb)
 
-            load.url(`https://duckduckgo.com/exti/?atb=${atb}`, () => {
-                // no-op, we only care that the request was made
-            })
+            // just a GET request, we only care that the request was made
+            load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
         },
 
         inject: () => {

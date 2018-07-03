@@ -74,7 +74,8 @@ function updateLists () {
             // get a fresh copy of the list to process
             if (Object.keys(list.parsed).length === 0) etag = ''
 
-            load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
+            load.loadExtensionFile({url: url, source: 'external', etag: etag}).then((response) => {
+                const listData = response.data
                 const newEtag = response.getResponseHeader('etag') || ''
                 console.log('Updating list: ', name)
 
@@ -94,7 +95,8 @@ function updateLists () {
 
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
-    load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
+    load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}).then((response) => {
+        const listData = response.data
         const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
         settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag)
 

@@ -64,11 +64,12 @@ class HTTPS {
             url: url,
             source: 'external',
             etag: etag
-        }, (data, res) => {
+        }).then((res) => {
             // This only gets called if the etag is different
             // and it was able to get a new list from the server:
             console.log('HTTPS: updateList() got updated list from server')
 
+            let data = res.data
             let newEtag = res.getResponseHeader('etag') || ''
 
             try {

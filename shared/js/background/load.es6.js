@@ -2,25 +2,30 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 let dev = false
 
-function JSONfromLocalFile (path, cb) {
-    loadExtensionFile({url: path, returnType: 'json'}, (res) => cb(JSON.parse(res)))
+function JSONfromLocalFile (path) {
+    return loadExtensionFile({url: path, returnType: 'json'})
 }
 
-function JSONfromExternalFile (url, cb) {
-    try {
-        loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res, xhr) => cb(JSON.parse(res), xhr))
-    } catch (e) {
-        console.log(e)
-        return {}
-    }
+function JSONfromExternalFile (url) {
+    return loadExtensionFile({url: url, returnType: 'json', source: 'external'})
 }
 
 function url (url, cb) {
-    loadExtensionFile({ url: url, source: 'external' }, cb)
+    return loadExtensionFile({ url: url, source: 'external' })
 }
 
 function returnResponse (xhr, returnType) {
-    if (returnType === 'xml') {
+    if (returnType === 'json') {
+        let res
+
+        try {
+            res = JSON.parse(xhr.responseText)
+        } catch (e) {
+            console.warn(`couldn't parse JSON response: ${xhr.responseText}`)
+        }
+
+        return res
+    } else if (returnType === 'xml') {
         return xhr.responseXML
     } else {
         return xhr.responseText
@@ -33,7 +38,7 @@ function returnResponse (xhr, returnType) {
  *  - source: requests are internal by default. set source to 'external' for non-extension URLs
  *  - etag: set an if-none-match header
  */
-function loadExtensionFile (params, cb) {
+function loadExtensionFile (params) {
     let xhr = new XMLHttpRequest()
     let url = params.url
 
@@ -62,14 +67,21 @@ function loadExtensionFile (params, cb) {
 
     xhr.send(null)
 
-    xhr.onreadystatechange = function () {
-        let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
-        if (xhr.readyState === done) {
-            if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
-                cb(returnResponse(xhr, params.returnType), xhr)
+    return new Promise((resolve, reject) => {
+        xhr.onreadystatechange = function () {
+            let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
+            if (xhr.readyState === done) {
+                if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
+                    xhr.data = returnResponse(xhr, params.returnType)
+                    resolve(xhr)
+                } else if (xhr.status === 304) {
+                    reject(new Error(`server returned 304, resource not changed`))
+                } else {
+                    reject(new Error(`couldn't reach ${url}, got status: ${xhr.status}`))
+                }
             }
         }
-    }
+    })
 }
 
 function setDevMode () {

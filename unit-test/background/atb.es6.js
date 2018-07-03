@@ -11,18 +11,16 @@ const settingHelper = require('../helpers/settings.es6')
 // HELPERS
 
 const stubLoadJSON = (ops) => {
-    return spyOn(load, 'JSONfromExternalFile').and.callFake((url, cb) => {
-        if (url.match(/duckduckgo\.com\/atb\.js/)) {
-            cb({ version: ops.returnedAtb })
-        }
+    return spyOn(load, 'JSONfromExternalFile').and.callFake((url) => {
+        return url.match(/duckduckgo\.com\/atb\.js/)
+            ? Promise.resolve({ data: { version: ops.returnedAtb } })
+            : Promise.resolve({ data: undefined })
     })
 }
 
 const stubLoadURL = () => {
-    return spyOn(load, 'url').and.callFake((url, cb) => {
-        if (url.match(/duckduckgo\.com\/exti/)) {
-            cb()
-        }
+    return spyOn(load, 'url').and.callFake((url) => {
+        return Promise.resolve({ data: undefined })
     })
 }
 
@@ -109,23 +107,27 @@ describe('atb.redirectURL()', () => {
 })
 
 describe('atb.setInitialVersions()', () => {
-    it('should grab the version from the ATB service and save it to settings', () => {
+    it('should grab the version from the ATB service and save it to settings', (done) => {
         settingHelper.stub({ atb: null })
         stubLoadJSON({ returnedAtb: 'v111-4' })
 
-        atb.setInitialVersions()
+        atb.setInitialVersions().then(() => {
+            expect(settings.getSetting('atb')).toEqual('v111-4')
 
-        expect(settings.getSetting('atb')).toEqual('v111-4')
+            done()
+        })
     })
 
-    it('should bail if the version has already been set', () => {
+    it('should bail if the version has already been set', (done) => {
         settingHelper.stub({ atb: 'v111-5' })
         let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v111-6' })
 
-        atb.setInitialVersions()
+        atb.setInitialVersions().then(() => {
+            expect(loadJSONSpy).not.toHaveBeenCalled()
+            expect(settings.getSetting('atb')).toEqual('v111-5')
 
-        expect(loadJSONSpy).not.toHaveBeenCalled()
-        expect(settings.getSetting('atb')).toEqual('v111-5')
+            done()
+        })
     })
 
     it('should be able to handle the server being down correctly')
@@ -137,7 +139,7 @@ describe('atb.updateSetAtb()', () => {
         let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/), jasmine.any(Function))
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/))
             expect(settings.getSetting('atb')).toEqual('v111-2')
             expect(settings.getSetting('set_atb')).toEqual('v112-2')
 
@@ -150,7 +152,7 @@ describe('atb.updateSetAtb()', () => {
         let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2/), jasmine.any(Function))
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2/))
             expect(settings.getSetting('atb')).toEqual('v111-2')
             expect(settings.getSetting('set_atb')).toEqual('v112-2')
 
@@ -182,7 +184,7 @@ describe('atb.setAtbValuesFromSuccessPage()', () => {
 
         expect(settings.getSetting('atb')).toEqual('v123-4ab')
         expect(settings.getSetting('set_atb')).toEqual('v123-4ab')
-        expect(loadURLSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab', jasmine.any(Function))
+        expect(loadURLSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab')
     })
 
     it('should do nothing if the page sends a blank atb', () => {

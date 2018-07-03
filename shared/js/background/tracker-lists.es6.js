@@ -11,7 +11,9 @@ function loadLists () {
     var blockLists = constants.blockLists
 
     blockLists.forEach(function (listName) {
-        load.JSONfromLocalFile(listLocation + '/' + listName, (listJSON) => {
+        load.JSONfromLocalFile(listLocation + '/' + listName).then((response) => {
+            let listJSON = response.data
+
             Object.keys(listJSON).forEach(categoryName => {
                 let category = listJSON[categoryName]
 

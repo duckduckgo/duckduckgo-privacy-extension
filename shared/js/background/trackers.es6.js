@@ -13,7 +13,7 @@ const entityMap = require('../../data/tracker_lists/entityMap')
 let entityList = {}
 
 function loadLists () {
-    load.JSONfromExternalFile(constants.entityList, (list) => { entityList = list })
+    load.JSONfromExternalFile(constants.entityList).then((response) => { entityList = response.data })
 }
 
 /*
