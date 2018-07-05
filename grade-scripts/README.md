@@ -6,9 +6,9 @@ These are a set of scripts that run the DDG privacy grade algorithm against a se
 Prerequisites
 ---
 
-Tested on NodeJS 8.11.x.
+Tested on NodeJS 8.11.x. Any version that supports `async`/`await`.
 
-A few datasets aren't publicly available just yet: `https_list.txt`, `https_autoupgrade_list.txt`, original `polisis.json`.
+A few datasets aren't publicly available just yet: `https_list.txt`, `https_autoupgrade_list.txt`, original `polisis.json`. They currently need to be in `data/symlinked`.
 
 Talk to Andrey or Russell if you need them.
 
