@@ -45,13 +45,7 @@ const getSiteData = (inputPath, fileForSubset) => {
 
 const dataFileExists = (hostname, outputPath) => {
     let destPath = `${outputPath}/${hostname}.json`
-    let fileExists
-
-    try {
-        fileExists = fs.existsSync(destPath)
-    } catch (e) {
-        // ¯\_(ツ)_/¯
-    }
+    let fileExists = fs.existsSync(destPath)
 
     if (fileExists) {
         console.log(`file exists for ${hostname}, skipping`)

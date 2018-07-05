@@ -74,7 +74,7 @@ function getSitePoints (sites) {
         }
 
         if (points.class === 'A' || points.class === 'B' || points.score) {
-            let normalizedScore
+            let normalizedScore = 5
 
             if (points.class === 'A') {
                 normalizedScore = 0
@@ -84,8 +84,6 @@ function getSitePoints (sites) {
                 normalizedScore = 10
             } else if (points.score > 100) {
                 normalizedScore = 7
-            } else {
-                normalizedScore = 5
             }
 
             points.score = normalizedScore
