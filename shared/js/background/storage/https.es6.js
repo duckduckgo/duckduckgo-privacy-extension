@@ -2,26 +2,11 @@ const load = require('./../load.es6.js')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 
-const lists = [
-    {
-        type: 'upgrade list',
-        name: 'httpsUpgradeList',
-        data: {},
-        url: 'https://jason.duckduckgo.com/https-bloom.json'
-    },
-    { 
-        type: 'whitelist',
-        name: 'whitelist',
-        data: [],
-        url: 'https://jason.duckduckgo.com/https-whitelist.json'
-    }
-]
-
 class HTTPSStorage {
     constructor () {
         this.dbc = new Dexie('https')
         this.dbc.version(1).stores({
-            httpsStorage: '++id,name,type,data'
+            httpsStorage: 'name,type,data'
         })    
     }
 
@@ -29,7 +14,7 @@ class HTTPSStorage {
     getLists () {
         let promiseList = []
         
-        lists.forEach((list) => {
+        constants.httpsLists.forEach((list) => {
             promiseList.push(new Promise((resolve, reject) => {
                 this.getDataXHR(list.url).then(data => {
                     if (data) {

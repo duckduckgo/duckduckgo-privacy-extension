@@ -36,16 +36,18 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
-        //todo check whitelist here
-        // this.whitelist
         if (this.whitelist.indexOf(host) !== -1) {
             return false
         }
 
+        let canUpgrade = false
         Object.keys(this.upgradeLists).some((listName) => {
-            console.log(`Upgrade: host, ${this.upgradeLists[listName].checkEntry(host)}`)
-            return this.upgradeLists[listName].checkEntry(host)
+            //console.log(`Upgrade: host, ${this.upgradeLists[listName].checkEntry(host)}`)
+            canUpgrade = this.upgradeLists[listName].checkEntry(host)
+            return canUpgrade === true
         })
+
+        return canUpgrade
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {

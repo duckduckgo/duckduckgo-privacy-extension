@@ -13,7 +13,6 @@ module.exports = {
     "generalEasylist": "https://duckduckgo.com/contentblocking.js?l=easylist",
     "privacyEasylist": "https://duckduckgo.com/contentblocking.js?l=easyprivacy",
     "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
-    "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https2",
     "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
@@ -47,5 +46,17 @@ module.exports = {
         "oath": 9,
         "maxcdn": 7,
         "automattic": 7
-    }
+    },
+    "httpsLists": [
+        {
+            "type": "upgrade list",
+            "name": "httpsUpgradeList",
+            "url": "https://jason.duckduckgo.com/https-bloom.json"
+        },
+        {
+            "type": "whitelist",
+            "name": "httpsWhitelist",
+            "url": "https://jason.duckduckgo.com/https-whitelist.json"
+        }
+    ]
 }
