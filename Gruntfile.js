@@ -34,8 +34,7 @@ module.exports = function(grunt) {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
         },
         backgroundTest: {
-            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js'],
-            '<%= dirs.test %>/httpsPerf.js': ['<%= dirs.src.js %>/background/https.es6.js', '<%= dirs.test %>/httpsPerfHelper.js']
+            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
@@ -154,7 +153,7 @@ module.exports = function(grunt) {
 
         execute: {
             preProcessLists: {
-                src: ['scripts/buildLists.js', 'scripts/buildEntityMap.js']
+                src: ['scripts/buildEntityMap.js']
             },
             tosdr: {
                 src: ['scripts/tosdr.js']
@@ -213,7 +212,7 @@ module.exports = function(grunt) {
         }
     }))
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
     grunt.registerTask('dev', 'Build and watch files for development', ['build', 'watch'])
     grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
     grunt.registerTask('default', 'build')
