@@ -10,8 +10,8 @@ const privacyPolicy = require('../src/privacy-policy')
 const scriptUtils = require('./shared/utils')
 
 program
-    .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites"')
-    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades"')
+    .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites" (required)')
+    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades" (required)')
     .option('-f, --file <name>', 'Allow processing a subset of dumped site data, defined in a file')
     .parse(process.argv)
 
@@ -20,6 +20,10 @@ const inputPath = `${input}-trackers`
 const output = program.output
 const outputPath = `${output}-grades`
 const fileForSubset = program.file
+
+if (!input || !output) {
+    return program.help()
+}
 
 const run = async () => {
     // load any lists and plug them into any classes that wait for them

@@ -13,8 +13,8 @@ const surrogates = require('../src/surrogates')
 let browser
 
 program
-    .option('-f, --file <name>', 'Text file with newline-separated hostnames')
-    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-sites"')
+    .option('-f, --file <name>', 'Text file with newline-separated hostnames (required)')
+    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-sites" (required)')
     .option('-t, --allow-trackers', 'Don\'t run tracker blocking')
     .parse(process.argv)
 
@@ -22,6 +22,10 @@ const fileName = program.file
 const output = program.output
 const outputPath = `${output}-sites`
 const allowTrackers = program.allowTrackers
+
+if (!fileName || !output) {
+    return program.help()
+}
 
 const handleRequest = (requests, siteToCheck, request) => {
     let url = request.url()
