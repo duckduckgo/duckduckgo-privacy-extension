@@ -17,7 +17,7 @@ class HTTPS {
     // 'whitelist' is an array
     setLists (lists) {
         lists.forEach((list) => {
-            if (!list.data) return 
+            if (!list.data) return
 
             if (list.type === 'upgrade list') {
                 let name = list.name

@@ -9,8 +9,7 @@ const setup = () => {
     lists.forEach(list => {
         if (list.name === 'httpsUpgradeList') {
             list.data = httpsUpgradeListData
-        }
-        else if (list.name === 'httpsWhitelist') {
+        } else if (list.name === 'httpsWhitelist') {
             list.data = httpsWhitelistData
         }
     })
