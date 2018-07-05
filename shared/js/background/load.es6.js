@@ -1,12 +1,12 @@
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 function JSONfromLocalFile (path, cb) {
-    loadExtensionFile({url: path, returnType: 'json'}, (res) => cb(res))
+    loadExtensionFile({url: path, returnType: 'json'}, (res) => cb(JSON.parse(res)))
 }
 
 function JSONfromExternalFile (url, cb) {
     try {
-        loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res, xhr) => cb(res, xhr))
+        loadExtensionFile({url: url, returnType: 'json', source: 'external'}, (res, xhr) => cb(JSON.parse(res), xhr))
     } catch (e) {
         console.log(e)
         return {}
@@ -15,9 +15,7 @@ function JSONfromExternalFile (url, cb) {
 
 function returnResponse (xhr, returnType) {
     if (returnType === 'xml') {
-        return xhr.responseXML;
-    } else if (returnType === 'json') {
-        return xhr.response
+        return xhr.responseXML
     } else {
         return xhr.responseText
     }
@@ -44,11 +42,7 @@ function loadExtensionFile (params, cb) {
         xhr.open('GET', browserWrapper.getExtensionURL(params.url))
     }
 
-    if (params.returnType) {
-        xhr.responseType = params.returnType;
-    }
-
-    xhr.send(null);
+    xhr.send(null)
 
     xhr.onreadystatechange = function () {
         let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
