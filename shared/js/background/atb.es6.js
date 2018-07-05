@@ -3,6 +3,8 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
+let dev = false
+
 var ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
@@ -171,7 +173,7 @@ var ATB = (() => {
         },
 
         getSurveyURL: () => {
-            let url = 'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
+            let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             let atb = settings.getSetting('atb')
             let setAtb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
@@ -184,8 +186,13 @@ var ATB = (() => {
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
+            if (dev) url += `&dev=1`
 
             return url
+        },
+
+        setDevMode: () => {
+            dev = true
         }
     }
 })()
