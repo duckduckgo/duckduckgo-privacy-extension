@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer')
 const listManager = require('./shared/list-manager')
-const utils = require('./shared/utils')
+const scriptUtils = require('./shared/utils')
 const program = require('commander')
 const fs = require('fs')
 const execSync = require('child_process').execSync
@@ -13,8 +13,8 @@ const surrogates = require('../src/surrogates')
 let browser
 
 program
-    .option('-f, --file <name>', 'Text file with newline-separated hostnames')
-    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-sites"')
+    .option('-f, --file <name>', 'Text file with newline-separated hostnames (required)')
+    .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-sites" (required)')
     .option('-t, --allow-trackers', 'Don\'t run tracker blocking')
     .parse(process.argv)
 
@@ -22,6 +22,10 @@ const fileName = program.file
 const output = program.output
 const outputPath = `${output}-sites`
 const allowTrackers = program.allowTrackers
+
+if (!fileName || !output) {
+    return program.help()
+}
 
 const handleRequest = (requests, siteToCheck, request) => {
     let url = request.url()
@@ -127,7 +131,7 @@ const getSiteData = async (siteToCheck) => {
     await page.setRequestInterception(true)
     page.on('request', handleRequest.bind(null, requests, siteToCheck))
     page.on('response', (response) => {
-        if (!utils.responseIsOK(response, siteToCheck)) {
+        if (!scriptUtils.responseIsOK(response, siteToCheck)) {
             console.log(chalk.red(`got ${response.status()} for ${response.url()}`))
             failed = true
         }
@@ -178,19 +182,7 @@ const run = async () => {
             await refreshBrowser()
         }
 
-        let path = `${outputPath}/${siteToCheck}.json`
-        let fileExists
-
-        try {
-            fileExists = fs.existsSync(path)
-        } catch (e) {
-            // ¯\_(ツ)_/¯
-        }
-
-        if (fileExists) {
-            console.log(`dump file exists for ${siteToCheck}, skipping`)
-            continue
-        }
+        if (scriptUtils.dataFileExists(siteToCheck, outputPath)) continue
 
         let data = await getSiteData(siteToCheck)
 
