@@ -17,14 +17,26 @@ const responseIsOK = (response, siteToCheck) => {
 
 const getSiteData = (inputPath, fileForSubset) => {
     // get initial file data
-    let siteDataFiles = fs.readdirSync(inputPath)
+    let siteDataFiles
+
+    try {
+        siteDataFiles = fs.readdirSync(inputPath)
+    } catch (e) {
+        throw new Error(`couldn't find site JSON files, tried looking in ${inputPath}`)
+    }
 
     // if we've defined a file for subset, get all the sites listed in that
     // and avoid processing all the rest
     if (fileForSubset) {
-        let sitesForSubset = fs.readFileSync(fileForSubset, { encoding: 'utf8' })
-            .trim()
-            .split('\n')
+        let sitesForSubset
+
+        try {
+            sitesForSubset = fs.readFileSync(fileForSubset, { encoding: 'utf8' })
+                .trim()
+                .split('\n')
+        } catch (e) {
+            throw new Error(`couldn't find ${fileForSubset}`)
+        }
 
         // we map from the sitesForSubset array because we want
         // to preserve the order defined in that file
@@ -33,6 +45,10 @@ const getSiteData = (inputPath, fileForSubset) => {
             .filter((fileName) => {
                 return siteDataFiles.indexOf(fileName) > -1
             })
+    }
+
+    if (!siteDataFiles.length) {
+        throw new Error(`couldn't find any suitable site JSON files at ${inputPath}`)
     }
 
     let siteData = siteDataFiles.map(fileName => require(`${process.cwd()}/${inputPath}/${fileName}`))
