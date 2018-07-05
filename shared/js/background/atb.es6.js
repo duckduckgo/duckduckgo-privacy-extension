@@ -1,3 +1,8 @@
+/**
+ * DuckDuckGo's ATB pipeline to facilitate various experiments.
+ * Please see https://duck.co/help/privacy/atb for more information.
+ */
+
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
