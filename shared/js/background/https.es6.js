@@ -1,23 +1,24 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
-const constants = require('../../data/constants')
-const BloomFilter = require("jsbloom").filter
+const BloomFilter = require('jsbloom').filter
 
 class HTTPS {
     constructor () {
         // Store multiple upgrades lists keyed by list name
         this.upgradeLists = {}
-
         // One whitelist arrray
         this.whitelist = []
+        this.isReady = false
     }
 
-    // Sets a list by type and name. This is data that 
+    // Sets a list by type and name. This is data that
     // is gathered from HTTPSStorage.
     // 'upgrade list' is assumed to be a bloom filter
     // 'whitelist' is an array
     setLists (lists) {
         lists.forEach((list) => {
+            if (!list.data) return 
+
             if (list.type === 'upgrade list') {
                 let name = list.name
                 this.upgradeLists[name] = this.createBloomFilter(list.data)
@@ -25,6 +26,8 @@ class HTTPS {
                 this.whitelist = list.data
             }
         })
+
+        this.isReady = true
     }
 
     // create a new BloomFilter
@@ -42,7 +45,6 @@ class HTTPS {
 
         let canUpgrade = false
         Object.keys(this.upgradeLists).some((listName) => {
-            //console.log(`Upgrade: host, ${this.upgradeLists[listName].checkEntry(host)}`)
             canUpgrade = this.upgradeLists[listName].checkEntry(host)
             return canUpgrade === true
         })
@@ -51,6 +53,8 @@ class HTTPS {
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
+        if (!this.isReady) return reqUrl
+
         // Only deal with http calls
         const protocol = utils.getProtocol(reqUrl).toLowerCase()
         if (protocol !== 'http:') {

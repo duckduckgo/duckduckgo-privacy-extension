@@ -7,13 +7,13 @@ class HTTPSStorage {
         this.dbc = new Dexie('https')
         this.dbc.version(1).stores({
             httpsStorage: 'name,type,data'
-        })    
+        })
     }
 
     // gets list data, returns array of promises. use promise.all().then()
     getLists () {
         let promiseList = []
-        
+
         constants.httpsLists.forEach((list) => {
             promiseList.push(new Promise((resolve, reject) => {
                 this.getDataXHR(list.url).then(data => {
@@ -25,7 +25,9 @@ class HTTPSStorage {
                     } else {
                         // No new data, look up old data from DB
                         this.getDataFromLocalDB(list.name).then(storedData => {
-                            list.data = storedData.data
+                            if (storedData.data) {
+                                list.data = storedData.data
+                            }
                             resolve(list)
                         })
                     }
@@ -38,31 +40,32 @@ class HTTPSStorage {
 
     getDataXHR (url) {
         return new Promise((resolve, reject) => {
-            load.JSONfromExternalFile(url, resolve);
-        });
+            load.JSONfromExternalFile(url, resolve)
+        })
     }
 
-    getDataFromLocalDB(name) {
+    getDataFromLocalDB (name) {
         return new Promise((resolve, reject) => {
             this.dbc.open().then(() => {
                 this.dbc.table('httpsStorage').get({name: name}).then((data) => {
                     resolve(data)
-                }).catch((err) => console.log(err))
+                }).catch((err) => {
+                    console.log(`Error getting https data: ${err}`)
+                })
             })
         })
     }
 
-    storeInLocalDB(name, type, data) {
+    storeInLocalDB (name, type, data) {
         return new Promise((resolve, reject) => {
             this.dbc.httpsStorage.put(
-                {name: name, type: type, data: data},
+                {name: name, type: type, data: data}
             ).then(() => {
                 resolve()
             }).catch((err) => {
                 console.log(`Error saving https data: ${err}`)
-                reject()
             })
-        });
+        })
     }
 }
 module.exports = new HTTPSStorage()
