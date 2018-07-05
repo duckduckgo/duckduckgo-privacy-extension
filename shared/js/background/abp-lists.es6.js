@@ -12,20 +12,6 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 const ONEDAY = 1000 * 60 * 60 * 24
 
 let lists = {
-    easylists: {
-        privacy: {
-            constantsName: 'privacyEasylist',
-            parser: abp,
-            parsed: {},
-            isLoaded: false
-        },
-        general: {
-            constantsName: 'generalEasylist',
-            parser: abp,
-            parsed: {},
-            isLoaded: false
-        }
-    },
     whitelists: {
         // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
         trackersWhitelist: {
@@ -49,10 +35,6 @@ var trackersWhitelistTemporary
 
 function getTemporaryWhitelist () {
     return trackersWhitelistTemporary
-}
-
-function getEasylists () {
-    return lists.easylists
 }
 
 function getWhitelists () {
@@ -151,6 +133,5 @@ function getVersionParam () {
 module.exports = {
     getTemporaryWhitelist,
     getWhitelists,
-    getEasylists,
     updateLists
 }
