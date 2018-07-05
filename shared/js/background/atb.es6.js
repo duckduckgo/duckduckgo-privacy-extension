@@ -92,11 +92,21 @@ var ATB = (() => {
             ATB.finalizeATB()
         },
 
-        finalizeATB: () => {
+        finalizeATB: (numTries) => {
             let atb = settings.getSetting('atb')
 
+            numTries = numTries || 0
+
+            // atb.js might not have manged to respond yet
+            // so wait and try again
+            if (!atb && numTries < 10) {
+                numTries += 1
+                setTimeout(ATB.finalizeATB, 500, numTries)
+                return
+            }
+
             // make this request only once
-            if (!atb || settings.getSetting('extiSent')) return
+            if (settings.getSetting('extiSent')) return
 
             settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
@@ -123,7 +133,9 @@ var ATB = (() => {
             //
             // if there's no DDG tabs open or no tabs that can give us an ATB version,
             // fall back to version from atb.js
-            setTimeout(ATB.finalizeATB, 1000)
+            //
+            // finalizeATB will try to run several times before giving up
+            setTimeout(ATB.finalizeATB, 500)
         },
 
         updateATBValues: () => {

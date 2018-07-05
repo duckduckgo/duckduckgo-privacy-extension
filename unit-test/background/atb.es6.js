@@ -234,6 +234,7 @@ describe('atb.inject()', () => {
 
 describe('complex install workflow cases', () => {
     let loadURLSpy
+    let loadJSONSpy
 
     // make sure /exti was hit, and hit just once
     const validateExtiWasHit = (expectedAtb) => {
@@ -254,7 +255,7 @@ describe('complex install workflow cases', () => {
     beforeEach(() => {
         spyOn(browserWrapper, 'executeScript')
         spyOn(browserWrapper, 'insertCSS')
-        stubLoadJSON({ returnedAtb: 'v112-2' })
+        loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
         loadURLSpy = stubLoadURL()
         settingHelper.stub()
     })
@@ -271,7 +272,7 @@ describe('complex install workflow cases', () => {
             expect(settings.getSetting('set_atb')).toEqual('v112-2')
 
             done()
-        }, 1100)
+        }, 600)
     })
     it(`should handle the install process correctly if there's DDG pages open that pass an ATB param`, (done) => {
         // return one matching page
@@ -290,7 +291,7 @@ describe('complex install workflow cases', () => {
             expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
 
             done()
-        }, 1100)
+        }, 600)
     })
     it(`should handle the install process correctly if there's DDG pages open that do not pass an ATB param`, (done) => {
         // return one matching page
@@ -302,6 +303,28 @@ describe('complex install workflow cases', () => {
         setTimeout(() => {
             atb.setAtbValuesFromSuccessPage('')
         }, 200)
+
+        setTimeout(() => {
+            validateExtiWasHit('v112-2')
+            expect(settings.getSetting('atb')).toEqual('v112-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+
+            done()
+        }, 600)
+    })
+    it('should handle atb.js being slow', (done) => {
+        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([]) })
+
+        // pretend atb.js took a full 1s to load
+        loadJSONSpy.and.callFake(() => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({ data: { version: 'v112-2' } })
+                }, 1000)
+            })
+        })
+
+        atb.updateATBValues()
 
         setTimeout(() => {
             validateExtiWasHit('v112-2')
