@@ -66,6 +66,13 @@ var ATB = (() => {
             let url = ddgAtbURL + randomValue
 
             return load.JSONfromExternalFile(url).then((res) => {
+                // this guard prevents overwriting the ATB param in
+                // the following race condition:
+                // 1. this request is made
+                // 2. an ATB version comes back from the success page
+                // 3. this callback resolves
+                if (settings.getSetting('atb')) return
+
                 settings.updateSetting('atb', res.data.version)
             })
         },

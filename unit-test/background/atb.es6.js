@@ -130,7 +130,19 @@ describe('atb.setInitialVersions()', () => {
         })
     })
 
-    it('should be able to handle the server being down correctly')
+    it('shouldn\'t accidentally overwrite an ATB param that came from the success page', (done) => {
+        settingHelper.stub({ atb: null })
+        stubLoadJSON({ returnedAtb: 'v111-4' })
+        stubLoadURL()
+
+        atb.setInitialVersions().then(() => {
+            expect(settings.getSetting('atb')).toEqual('v111-4ab')
+
+            done()
+        })
+
+        atb.setAtbValuesFromSuccessPage('v111-4ab')
+    })
 })
 
 describe('atb.updateSetAtb()', () => {
