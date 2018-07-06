@@ -129,20 +129,6 @@ describe('atb.setInitialVersions()', () => {
             done()
         })
     })
-
-    it('shouldn\'t accidentally overwrite an ATB param that came from the success page', (done) => {
-        settingHelper.stub({ atb: null })
-        stubLoadJSON({ returnedAtb: 'v111-4' })
-        stubLoadURL()
-
-        atb.setInitialVersions().then(() => {
-            expect(settings.getSetting('atb')).toEqual('v111-4ab')
-
-            done()
-        })
-
-        atb.setAtbValuesFromSuccessPage('v111-4ab')
-    })
 })
 
 describe('atb.updateSetAtb()', () => {
@@ -311,27 +297,5 @@ describe('complex install workflow cases', () => {
 
             done()
         }, 600)
-    })
-    it('should handle atb.js being slow', (done) => {
-        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([]) })
-
-        // pretend atb.js took a full 1s to load
-        loadJSONSpy.and.callFake(() => {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({ data: { version: 'v112-2' } })
-                }, 1000)
-            })
-        })
-
-        atb.updateATBValues()
-
-        setTimeout(() => {
-            validateExtiWasHit('v112-2')
-            expect(settings.getSetting('atb')).toEqual('v112-2')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2')
-
-            done()
-        }, 1100)
     })
 })

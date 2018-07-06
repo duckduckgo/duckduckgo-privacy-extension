@@ -73,13 +73,6 @@ var ATB = (() => {
             let url = ddgAtbURL + randomValue
 
             return load.JSONfromExternalFile(url).then((res) => {
-                // this guard prevents overwriting the ATB param in
-                // the following race condition:
-                // 1. this request is made
-                // 2. an ATB version comes back from the success page
-                // 3. this callback resolves
-                if (settings.getSetting('atb')) return
-
                 settings.updateSetting('atb', res.data.version)
             })
         },
@@ -92,18 +85,8 @@ var ATB = (() => {
             ATB.finalizeATB()
         },
 
-        finalizeATB: (numTries) => {
+        finalizeATB: () => {
             let atb = settings.getSetting('atb')
-
-            numTries = numTries || 0
-
-            // atb.js might not have manged to respond yet
-            // so wait and try again
-            if (!atb && numTries < 10) {
-                numTries += 1
-                setTimeout(ATB.finalizeATB, 500, numTries)
-                return
-            }
 
             // make this request only once
             if (settings.getSetting('extiSent')) return
@@ -128,23 +111,19 @@ var ATB = (() => {
                 }
             })
 
-            // while we're waiting for any tabs to get back to us with an ATB version,
-            // we're retrieving it from atb.js (see setInitialVersions)
-            //
             // if there's no DDG tabs open or no tabs that can give us an ATB version,
             // fall back to version from atb.js
-            //
-            // finalizeATB will try to run several times before giving up
             setTimeout(ATB.finalizeATB, 500)
         },
 
         updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
-            settings.ready().then(() => {
-                ATB.inject()
-                ATB.migrate()
-                ATB.setInitialVersions()
-            })
+            return settings.ready()
+                .then(ATB.setInitialVersions)
+                .then(() => {
+                    ATB.migrate()
+                    return ATB.inject()
+                })
         },
 
         openPostInstallPage: () => {
