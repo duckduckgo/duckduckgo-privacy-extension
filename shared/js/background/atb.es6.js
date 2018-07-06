@@ -66,14 +66,24 @@ var ATB = (() => {
             }
         },
 
-        setInitialVersions: () => {
-            if (settings.getSetting('atb')) return Promise.resolve()
+        setInitialVersions: (numTries) => {
+            numTries = numTries || 0
+            if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
             let randomValue = Math.ceil(Math.random() * 1e7)
             let url = ddgAtbURL + randomValue
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
+            }, () => {
+                console.log('couldn\'t reach atb.js for initial server call, trying again')
+                numTries += 1
+
+                return new Promise((resolve) => {
+                    setTimeout(resolve, 500)
+                }).then(() => {
+                    return ATB.setInitialVersions(numTries)
+                })
             })
         },
 

@@ -129,6 +129,22 @@ describe('atb.setInitialVersions()', () => {
             done()
         })
     })
+
+    it('should try hitting atb.js a few times if it\'s down', (done) => {
+        settingHelper.stub({ atb: null })
+        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.returnValues(
+            Promise.reject(new Error()),
+            Promise.reject(new Error()),
+            Promise.resolve({ data: { version: 'v111-5' }})
+        )
+
+        atb.setInitialVersions().then(() => {
+            expect(loadJSONSpy).toHaveBeenCalledTimes(3)
+            expect(settings.getSetting('atb')).toEqual('v111-5')
+
+            done()
+        })
+    })
 })
 
 describe('atb.updateSetAtb()', () => {
