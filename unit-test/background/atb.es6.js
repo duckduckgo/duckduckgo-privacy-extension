@@ -135,7 +135,7 @@ describe('atb.setInitialVersions()', () => {
         let loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.returnValues(
             Promise.reject(new Error()),
             Promise.reject(new Error()),
-            Promise.resolve({ data: { version: 'v111-5' }})
+            Promise.resolve({ data: { version: 'v111-5' } })
         )
 
         atb.setInitialVersions().then(() => {
@@ -236,7 +236,6 @@ describe('atb.inject()', () => {
 
 describe('complex install workflow cases', () => {
     let loadURLSpy
-    let loadJSONSpy
 
     // make sure /exti was hit, and hit just once
     const validateExtiWasHit = (expectedAtb) => {
@@ -257,7 +256,7 @@ describe('complex install workflow cases', () => {
     beforeEach(() => {
         spyOn(browserWrapper, 'executeScript')
         spyOn(browserWrapper, 'insertCSS')
-        loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        stubLoadJSON({ returnedAtb: 'v112-2' })
         loadURLSpy = stubLoadURL()
         settingHelper.stub()
     })
