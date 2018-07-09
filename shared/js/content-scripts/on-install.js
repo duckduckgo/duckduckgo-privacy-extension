@@ -18,16 +18,19 @@ function getATB () {
 }
 
 if (window.safari) {
+    // in Safari we can't inject a script whenever we want, so instead add it everywhere
+    // and wait for the background process to tell us when to execute it
     document.addEventListener('DOMContentLoaded', function (e) {
-        // give success page a chance to set atb value
-        setTimeout(() => {
-            if (window === window.top) {
-                let atb = getATB()
-                if (atb) {
-                    window.safari.self.tab.dispatchMessage('atb', {atb: atb})
-                }
+        if (window !== window.top) return
+
+        window.safari.self.addEventListener('message', function (e) {
+            if (e.name !== 'getATB') return
+
+            let atb = getATB()
+            if (atb) {
+                window.safari.self.tab.dispatchMessage('atb', {atb: atb})
             }
-        }, 500)
+        })
     }, true)
 } else {
     chrome.runtime.sendMessage({atb: getATB()})

@@ -33,19 +33,21 @@ let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
 
-let getTabsByURL = (url, cb) => {
-    chrome.tabs.query({ url }, cb)
-}
+let injectATBScripts = () => {
+    chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, (tabs) => {
+        let i = tabs.length
+        let tab
 
-let executeScript = (tabId, file) => {
-    chrome.tabs.executeScript(tabId, {
-        file: file
-    })
-}
+        while (i--) {
+            tab = tabs[i]
 
-let insertCSS = (tabId, file) => {
-    chrome.tabs.insertCSS(tabId, {
-        file: file
+            chrome.tabs.executeScript(tab.id, {
+                file: '/public/js/content-scripts/on-install.js'
+            })
+            chrome.tabs.insertCSS(tab.id, {
+                file: '/public/css/noatb.css'
+            })
+        }
     })
 }
 
@@ -62,8 +64,6 @@ module.exports = {
     notifyPopup: notifyPopup,
     normalizeTabData: normalizeTabData,
     mergeSavedSettings: mergeSavedSettings,
-    getTabsByURL: getTabsByURL,
-    executeScript: executeScript,
-    insertCSS: insertCSS,
+    injectATBScripts: injectATBScripts,
     setUninstallURL: setUninstallURL
 }

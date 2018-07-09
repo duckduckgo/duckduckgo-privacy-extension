@@ -93,6 +93,16 @@ let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
 
+let injectATBScripts = () => {
+    // in Safari we can't inject a script whenever we want, so instead add it everywhere
+    // and wait for the background process to tell us when to execute it
+    safari.application.activeBrowserWindow.tabs.forEach((tab) => {
+        if (tab.url.match(/https:\/\/([^/]+\.)?duckduckgo.com/)) {
+            tab.page.dispatchMessage('getATB')
+        }
+    })
+}
+
 // no-ops, in cases where Safari lacks support for something
 // or we've achieved it in a different way
 let noop = () => { /* noop */ }
@@ -107,8 +117,6 @@ module.exports = {
     normalizeTabData: normalizeTabData,
     getTabId: getTabId,
     mergeSavedSettings: mergeSavedSettings,
-    getTabsByURL: noop,
-    executeScript: noop,
-    insertCSS: noop,
+    injectATBScripts: injectATBScripts,
     setUninstallURL: noop
 }

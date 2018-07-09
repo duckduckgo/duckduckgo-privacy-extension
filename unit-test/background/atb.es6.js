@@ -219,21 +219,6 @@ describe('atb.setAtbValuesFromSuccessPage()', () => {
     })
 })
 
-describe('atb.inject()', () => {
-    it('should inject the scripts when tabs are found', () => {
-        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => {
-            cb([{id: 17}])
-        })
-        let scriptSpy = spyOn(browserWrapper, 'executeScript')
-        let cssSpy = spyOn(browserWrapper, 'insertCSS')
-
-        atb.inject()
-
-        expect(scriptSpy).toHaveBeenCalledWith(17, '/public/js/content-scripts/on-install.js')
-        expect(cssSpy).toHaveBeenCalledWith(17, '/public/css/noatb.css')
-    })
-})
-
 describe('complex install workflow cases', () => {
     let loadURLSpy
 
@@ -254,17 +239,13 @@ describe('complex install workflow cases', () => {
     }
 
     beforeEach(() => {
-        spyOn(browserWrapper, 'executeScript')
-        spyOn(browserWrapper, 'insertCSS')
+        spyOn(browserWrapper, 'injectATBScripts')
         stubLoadJSON({ returnedAtb: 'v112-2' })
         loadURLSpy = stubLoadURL()
         settingHelper.stub()
     })
 
     it(`should handle the install process correctly if there's no DDG pages open`, (done) => {
-        // return no matching pages
-        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([]) })
-
         atb.updateATBValues()
 
         setTimeout(() => {
@@ -276,9 +257,6 @@ describe('complex install workflow cases', () => {
         }, 600)
     })
     it(`should handle the install process correctly if there's DDG pages open that pass an ATB param`, (done) => {
-        // return one matching page
-        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([{id: 17}]) })
-
         atb.updateATBValues()
 
         // pretend one of the pages injected ATB correctly
@@ -295,9 +273,6 @@ describe('complex install workflow cases', () => {
         }, 600)
     })
     it(`should handle the install process correctly if there's DDG pages open that do not pass an ATB param`, (done) => {
-        // return one matching page
-        spyOn(browserWrapper, 'getTabsByURL').and.callFake((filter, cb) => { cb([{id: 17}]) })
-
         atb.updateATBValues()
 
         // pretend one of the pages didn't manage to inject ATB correctly

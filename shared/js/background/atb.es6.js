@@ -109,17 +109,7 @@ var ATB = (() => {
         },
 
         inject: () => {
-            browserWrapper.getTabsByURL('https://*.duckduckgo.com/*', (tabs) => {
-                let i = tabs.length
-                let tab
-
-                while (i--) {
-                    tab = tabs[i]
-
-                    browserWrapper.executeScript(tab.id, '/public/js/content-scripts/on-install.js')
-                    browserWrapper.insertCSS(tab.id, '/public/css/noatb.css')
-                }
-            })
+            browserWrapper.injectATBScripts()
 
             // if there's no DDG tabs open or no tabs that can give us an ATB version,
             // fall back to version from atb.js

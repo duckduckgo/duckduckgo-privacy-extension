@@ -23,7 +23,9 @@ let _getSafariTabIndex = (target) => {
 let onStartup = () => {
     if (!localStorage['installed']) {
         localStorage['installed'] = true
-        ATB.updateATBValues()
+        // if there's a success page, it's just reloaded
+        // give it a bit of time to settle before kicking off the ATB process
+        setTimeout(ATB.updateATBValues, 2000)
     }
 
     // show post install page
