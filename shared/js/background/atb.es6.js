@@ -121,7 +121,6 @@ var ATB = (() => {
             return settings.ready()
                 .then(ATB.setInitialVersions)
                 .then(() => {
-                    ATB.migrate()
                     return ATB.inject()
                 })
         },
@@ -157,17 +156,6 @@ var ATB = (() => {
                 !domain.match(regExpSoftwarePage)
         },
 
-        migrate: () => {
-            // migrate localStorage ATB from the old extension over to settings
-            if (!settings.getSetting('atb') && localStorage['atb']) {
-                settings.updateSetting('atb', localStorage['atb'])
-            }
-
-            if (!settings.getSetting('set_atb') && localStorage['set_atb']) {
-                settings.updateSetting('set_atb', localStorage['set_atb'])
-            }
-        },
-
         getSurveyURL: () => {
             let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             let atb = settings.getSetting('atb')
@@ -194,9 +182,6 @@ var ATB = (() => {
 })()
 
 settings.ready().then(() => {
-    // migrate over any localStorage values from the old extension
-    ATB.migrate()
-
     // set initial uninstall url
     browserWrapper.setUninstallURL(ATB.getSurveyURL())
 })
