@@ -1,6 +1,3 @@
-// disable no-callback-literal because the load module currently
-// breaks nodeJS callback conventions for passing back errors
-/* eslint "standard/no-callback-literal": 0 */
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
