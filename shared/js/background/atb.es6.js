@@ -10,7 +10,7 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 let dev = false
 
-var ATB = (() => {
+const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
     const regExpAboutPage = /^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
