@@ -65,6 +65,7 @@
     "file-url": "2.0.2",
     "is-plain-object": "2.0.1",
     "jquery": "3.2.1",
+    "jsbloom": "git://github.com/duckduckgo/jsbloom",
     "normalize.scss": "0.1.0",
     "object.values": "1.0.4",
     "opn": "5.1.0",
