@@ -65,19 +65,24 @@ function loadExtensionFile (params) {
         xhr.open('GET', browserWrapper.getExtensionURL(url))
     }
 
+    xhr.timeout = 20000
+
     xhr.send(null)
 
     return new Promise((resolve, reject) => {
-        xhr.onreadystatechange = function () {
+        xhr.ontimeout = () => {
+            reject(new Error(`${url} timed out`))
+        }
+        xhr.onreadystatechange = () => {
             let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
             if (xhr.readyState === done) {
                 if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
                     xhr.data = returnResponse(xhr, params.returnType)
                     resolve(xhr)
                 } else if (xhr.status === 304) {
-                    reject(new Error(`server returned 304, resource not changed`))
+                    reject(new Error(`${url} returned 304, resource not changed`))
                 } else {
-                    reject(new Error(`couldn't reach ${url}, got status: ${xhr.status}`))
+                    reject(new Error(`${url} returned ${xhr.status}`))
                 }
             }
         }
