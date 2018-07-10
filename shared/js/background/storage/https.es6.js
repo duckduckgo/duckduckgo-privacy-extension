@@ -26,7 +26,7 @@ class HTTPSStorage {
                     } else {
                         // No new data, look up old data from DB
                         this.getDataFromLocalDB(list.name).then(storedData => {
-                            if (storedData.data) {
+                            if (storedData && storedData.data) {
                                 list.data = storedData.data
                                 resolve(list)
                             } else {
