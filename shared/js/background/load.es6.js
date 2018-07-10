@@ -10,7 +10,7 @@ function JSONfromExternalFile (url) {
     return loadExtensionFile({url: url, returnType: 'json', source: 'external'})
 }
 
-function url (url, cb) {
+function url (url) {
     return loadExtensionFile({ url: url, source: 'external' })
 }
 
