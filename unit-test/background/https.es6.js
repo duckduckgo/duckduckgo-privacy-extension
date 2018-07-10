@@ -1,10 +1,10 @@
-const https = require('../../shared/js/background/https.es6.js')
 const testDomains = require('./../data/httpsTestDomains.json')
+const https = require('../../shared/js/background/https.es6.js')
 const constants = require('../../shared/data/constants.js')
 const httpsUpgradeListData = require('./../data/https-bloom.json')
 const httpsWhitelistData = require('./../data/https-whitelist.json')
 
-const setup = () => {
+const buildLists = () => { 
     let lists = constants.httpsLists
     lists.forEach(list => {
         if (list.name === 'httpsUpgradeList') {
@@ -13,16 +13,23 @@ const setup = () => {
             list.data = httpsWhitelistData
         }
     })
-
-    https.setLists(lists)
+    return lists
 }
 
-describe('Https', () => {
+describe('Https normal conditions', () => {
+    beforeAll(() => {
+        return new Promise((resolve, reject) => {
+            https.setLists(buildLists())
+            setTimeout(() => resolve(), 2000)
+        })
+    })
+
     describe('https upgrading', () => {
-        beforeEach(() => {
-            setup()
+        it('should be ready to upgrade', () => {
+            expect(https.isReady).toEqual(true)
         })
 
+        
         it('should upgrade known upgradable domains', () => {
             testDomains.shouldUpgrade.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(true)
@@ -36,3 +43,4 @@ describe('Https', () => {
         })
     })
 })
+
