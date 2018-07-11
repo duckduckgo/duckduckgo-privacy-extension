@@ -36,9 +36,10 @@ class HTTPS {
             this.isReady = true
             console.log('HTTPS: is ready')
         }).catch((e) => {
+            // a failed setLists update will turn https off
+            // validation of the data should happen before calling setLists
             this.isReady = false
-            console.log(e)
-            console.log('HTTPS: error, not ready')
+            console.log('HTTPS: setLists error, not ready')
         })
     }
 
@@ -74,6 +75,11 @@ class HTTPS {
     }
 
     canUpgradeHost (host) {
+        if (!this.isReady) {
+            console.warn('HTTPS: not ready')
+            return false
+        }
+
         if (this.whitelist.includes(host)) {
             return false
         }
