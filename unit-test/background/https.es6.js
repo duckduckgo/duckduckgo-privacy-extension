@@ -1,8 +1,6 @@
 const testDomains = require('./../data/httpsTestDomains.json')
 const https = require('../../shared/js/background/https.es6')
-const constants = require('../../shared/data/constants.js')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
-let httpsWhitelistData
 
 describe('Https ready', () => {
     beforeAll(() => {
@@ -17,7 +15,7 @@ describe('Https ready', () => {
     it('should be ready to upgrade', () => {
         expect(https.isReady).toEqual(true)
     })
-        
+
     it('should upgrade known upgradable domains', () => {
         testDomains.shouldUpgrade.forEach(domain => {
             expect(https.canUpgradeHost(domain)).toEqual(true)
@@ -47,7 +45,7 @@ describe('Https not ready', () => {
     it('should not be ready to upgrade', () => {
         expect(https.isReady).toEqual(false)
     })
-        
+
     it('should not upgrade known upgradable domains', () => {
         testDomains.shouldUpgrade.forEach(domain => {
             expect(https.canUpgradeHost(domain)).toEqual(false)

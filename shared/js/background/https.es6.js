@@ -21,9 +21,9 @@ class HTTPS {
                 if (!list.data) {
                     reject(new Error(`HTTPS: ${list.name} missing data`))
                 }
-                    
+
                 if (list.type === 'upgrade list') {
-                    this.upgradeLists.set(list.name,  this.createBloomFilter(list.data))
+                    this.upgradeLists.set(list.name, this.createBloomFilter(list.data))
                 } else if (list.type === 'whitelist') {
                     this.whitelist = list.data
                 }
@@ -44,7 +44,7 @@ class HTTPS {
     // filterData is assumed to be base64 encoded 8 bit typed array
     createBloomFilter (filterData) {
         let bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
-        let buffer = Buffer.from(filterData.bloomFilter, 'base64')    
+        let buffer = Buffer.from(filterData.bloomFilter, 'base64')
         bloom.importData(buffer)
         return bloom
     }
@@ -59,7 +59,7 @@ class HTTPS {
             return false
         }
 
-        return Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host)) 
+        return Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {

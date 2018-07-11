@@ -12,11 +12,10 @@ class HTTPSStorage {
 
     // Load https data defined in constants.httpsLists.
     // First try to grab new data via xhr. If that fails
-    // fall back to local db. 
+    // fall back to local db.
     getLists () {
         return Promise.all(constants.httpsLists.map(list => {
             return new Promise((resolve, reject) => {
-                
                 this.getDataXHR(list.url).then(data => {
                     if (data) {
                         // if we have new data store it in local DB for later
@@ -60,7 +59,7 @@ class HTTPSStorage {
 
     hasCorrectChecksum (buffer, checksum) {
         return new Promise((resolve, reject) => {
-            crypto.subtle.digest("SHA-256", buffer).then(arrayBuffer => {
+            crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
                 let sha256 = Buffer.from(arrayBuffer).toString('base64')
                 if (checksum.sha256 && checksum.sha256 === sha256) {
                     resolve(true)
