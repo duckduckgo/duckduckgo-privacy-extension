@@ -23,14 +23,11 @@ class HTTPS {
                 }
                     
                 if (list.type === 'upgrade list') {
-                    this.createBloomFilter(list.data).then(bloom => { 
-                        resolve(this.upgradeLists.set(list.name, bloom))
-                    }).catch((e) => {
-                        reject(e)
-                    })
+                    this.upgradeLists.set(list.name,  this.createBloomFilter(list.data))
                 } else if (list.type === 'whitelist') {
-                    resolve(this.whitelist = list.data)
+                    this.whitelist = list.data
                 }
+                resolve()
             })
         })).then(() => {
             this.isReady = true
@@ -46,32 +43,10 @@ class HTTPS {
     // create a new BloomFilter
     // filterData is assumed to be base64 encoded 8 bit typed array
     createBloomFilter (filterData) {
-        return new Promise((resolve, reject) => {
-            let bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
-            let buffer = Buffer.from(filterData.bloomFilter, 'base64')
-            
-            this.hasCorrectChecksum(buffer, filterData.checksum).then(hasValidData => {
-                if (hasValidData) {
-                    bloom.importData(buffer)
-                    resolve(bloom)
-                } else {
-                    reject(new Error('HTTPS: invalid bloom filter data. checksum failed'))
-                }
-            })
-        })
-    }
-
-    hasCorrectChecksum (buffer, checksum) {
-        return new Promise((resolve, reject) => {
-            crypto.subtle.digest("SHA-256", buffer).then(arrayBuffer => {
-                let sha256 = Buffer.from(arrayBuffer).toString('base64')
-                if (checksum.sha256 && checksum.sha256 === sha256) {
-                    resolve(true)
-                } else {
-                    resolve(false)
-                }
-            })
-        })
+        let bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
+        let buffer = Buffer.from(filterData.bloomFilter, 'base64')    
+        bloom.importData(buffer)
+        return bloom
     }
 
     canUpgradeHost (host) {

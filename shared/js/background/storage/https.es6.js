@@ -57,5 +57,18 @@ class HTTPSStorage {
         return this.dbc.httpsStorage.put({name: name, type: type, data: data})
             .catch((err) => console.log(`Error saving https data: ${err}`))
     }
+
+    hasCorrectChecksum (buffer, checksum) {
+        return new Promise((resolve, reject) => {
+            crypto.subtle.digest("SHA-256", buffer).then(arrayBuffer => {
+                let sha256 = Buffer.from(arrayBuffer).toString('base64')
+                if (checksum.sha256 && checksum.sha256 === sha256) {
+                    resolve(true)
+                } else {
+                    resolve(false)
+                }
+            })
+        })
+    }
 }
 module.exports = new HTTPSStorage()

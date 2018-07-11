@@ -1,27 +1,16 @@
 const testDomains = require('./../data/httpsTestDomains.json')
-const https = require('../../shared/js/background/https.es6.js')
+const https = require('../../shared/js/background/https.es6')
 const constants = require('../../shared/data/constants.js')
-const httpsUpgradeListData = require('./../data/https-bloom.json')
-const httpsWhitelistData = require('./../data/https-whitelist.json')
+const httpsStorage = require('../../shared/js/background/storage/https.es6')
+let httpsWhitelistData
 
-const buildLists = () => { 
-    let lists = constants.httpsLists
-    lists.forEach(list => {
-        if (list.name === 'httpsUpgradeList') {
-            list.data = JSON.parse(JSON.stringify(httpsUpgradeListData))
-        } else if (list.name === 'httpsWhitelist') {
-            list.data = httpsWhitelistData
-        }
-    })
-    return lists
-}
-
-describe('Https good data update condition', () => {
+describe('Https ready', () => {
     beforeAll(() => {
         return new Promise((resolve) => {
-            let lists = buildLists()
-            https.setLists(lists)
-            setTimeout(() => resolve(), 2000)
+            httpsStorage.getLists().then(lists => {
+                https.setLists(lists)
+            })
+            setTimeout(() => resolve(), 4000)
         })
     })
 
@@ -36,26 +25,22 @@ describe('Https good data update condition', () => {
     })
 
     it('should not upgrade whitelisted domains', () => {
-        httpsWhitelistData.forEach(domain => {
+        https.whitelist.forEach(domain => {
             expect(https.canUpgradeHost(domain)).toEqual(false)
         })
     })
 })
 
-describe('Https update with bad data turns https off', () => {
+describe('Https not ready', () => {
     beforeAll(() => {
         return new Promise((resolve) => {
-            // load some good data
-            let lists = buildLists()
-            https.setLists(lists)
-
-            setTimeout(() => {
-                // try to update with a bad checksum
-                lists[0].data.checksum.sha256 = ''
+            httpsStorage.getLists().then(lists => {
                 https.setLists(lists)
-                setTimeout(() => resolve(), 2000)
-            }, 2000)
-
+            })
+            setTimeout(() => {
+                https.isReady = false
+                resolve()
+            }, 4000)
         })
     })
 
@@ -70,7 +55,7 @@ describe('Https update with bad data turns https off', () => {
     })
 
     it('should not upgrade whitelisted domains', () => {
-        httpsWhitelistData.forEach(domain => {
+        https.whitelist.forEach(domain => {
             expect(https.canUpgradeHost(domain)).toEqual(false)
         })
     })

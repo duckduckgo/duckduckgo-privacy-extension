@@ -48,12 +48,12 @@ module.exports = {
         {
             "type": "upgrade list",
             "name": "httpsUpgradeList",
-            "url": "https://jason.duckduckgo.com/https-bloom.json"
+            "url": "https://staticcdn.duckduckgo.com/https/https-bloom2.json"
         },
         {
             "type": "whitelist",
             "name": "httpsWhitelist",
-            "url": "https://jason.duckduckgo.com/https-whitelist.json"
+            "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
         }
     ]
 }
