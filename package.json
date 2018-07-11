@@ -48,7 +48,7 @@
     "karma-source-map-support": "1.2.0",
     "load-grunt-tasks": "3.5.2",
     "localStorage": "1.0.3",
-    "puppeteer": "1.2.0",
+    "puppeteer": "git://github.com/GoogleChrome/puppeteer.git#master",
     "request": "2.83.0",
     "selenium-webdriver": "3.0.1",
     "standard": "10.0.3",
