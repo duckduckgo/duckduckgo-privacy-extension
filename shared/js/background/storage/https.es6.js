@@ -41,12 +41,11 @@ class HTTPSStorage {
             })
         } else {
             // No new data, look up old data from DB
-            return this.getDataFromLocalDB(list.name).then(storedData => {
-                hasCorrectChecksum(storedData.data, storedData.checksum).then((isValid) => {
+            return this.getDataFromLocalDB(listDetails.name).then(storedData => {
+                return this.hasCorrectChecksum(storedData.data, storedData.checksum).then((isValid) => {
                     if (isValid) {
                         if (storedData && storedData.data) {
-                            resultData.data = storedData.data
-                            return resultData
+                            return Object.assign(listDetails, storedData.data)
                         }
                     }
                 })
@@ -63,12 +62,14 @@ class HTTPSStorage {
     }
 
     getDataFromLocalDB (name) {
+        console.log(`HTTPS: gettin ${name} from db`)
         return this.dbc.open()
             .then(() => this.dbc.table('httpsStorage').get({name: name}))
             .catch((err) => console.log(`Error getting https data: ${err}`))
     }
 
     storeInLocalDB (name, type, data) {
+        console.log(`HTTPS: storing ${name} in db`)
         return this.dbc.httpsStorage.put({name: name, type: type, data: data})
             .catch((err) => console.log(`Error saving https data: ${err}`))
     }
