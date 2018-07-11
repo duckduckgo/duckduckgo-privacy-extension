@@ -1,6 +1,8 @@
 const testDomains = require('./../data/httpsTestDomains.json')
 const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
+let originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 
 describe('Https ready', () => {
     beforeAll(() => {
@@ -8,53 +10,49 @@ describe('Https ready', () => {
             httpsStorage.getLists().then(lists => {
                 https.setLists(lists)
             })
-            setTimeout(() => resolve(), 4000)
+            setTimeout(() => resolve(), 9000)
         })
     })
 
-    it('should be ready to upgrade', () => {
-        expect(https.isReady).toEqual(true)
-    })
+    describe('https on', () => {
 
-    it('should upgrade known upgradable domains', () => {
-        testDomains.shouldUpgrade.forEach(domain => {
-            expect(https.canUpgradeHost(domain)).toEqual(true)
+        it('should be ready to upgrade', () => {
+            expect(https.isReady).toEqual(true)
         })
-    })
-
-    it('should not upgrade whitelisted domains', () => {
-        https.whitelist.forEach(domain => {
-            expect(https.canUpgradeHost(domain)).toEqual(false)
-        })
-    })
-})
-
-describe('Https not ready', () => {
-    beforeAll(() => {
-        return new Promise((resolve) => {
-            httpsStorage.getLists().then(lists => {
-                https.setLists(lists)
+        
+        it('should upgrade known upgradable domains', () => {
+            testDomains.shouldUpgrade.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(true)
             })
-            setTimeout(() => {
-                https.isReady = false
-                resolve()
-            }, 4000)
         })
-    })
 
-    it('should not be ready to upgrade', () => {
-        expect(https.isReady).toEqual(false)
-    })
-
-    it('should not upgrade known upgradable domains', () => {
-        testDomains.shouldUpgrade.forEach(domain => {
-            expect(https.canUpgradeHost(domain)).toEqual(false)
+        it('should not upgrade whitelisted domains', () => {
+            https.whitelist.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
         })
+
     })
 
-    it('should not upgrade whitelisted domains', () => {
-        https.whitelist.forEach(domain => {
-            expect(https.canUpgradeHost(domain)).toEqual(false)
+    describe('https off', () => {
+        beforeEach(() => {
+            https.isReady = false
+        })
+
+        it('should not be ready to upgrade', () => {
+            expect(https.isReady).toEqual(false)
+        })
+
+        it('https off should not upgrade known upgradable domains', () => {
+            testDomains.shouldUpgrade.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+
+        it('https off should not upgrade whitelisted domains', () => {
+            https.whitelist.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
         })
     })
 })
