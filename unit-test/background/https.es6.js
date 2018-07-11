@@ -1,5 +1,4 @@
 const testDomains = require('./../data/httpsTestDomains.json')
-const https = require('../../shared/js/background/https.es6.js')
 const constants = require('../../shared/data/constants.js')
 const httpsUpgradeListData = require('./../data/https-bloom.json')
 const httpsWhitelistData = require('./../data/https-whitelist.json')
@@ -17,6 +16,7 @@ const buildLists = () => {
 }
 
 describe('Https normal conditions', () => {
+    const https = require('../../shared/js/background/https.es6.js')
     beforeAll(() => {
         return new Promise((resolve, reject) => {
             https.setLists(buildLists())
@@ -24,11 +24,12 @@ describe('Https normal conditions', () => {
         })
     })
 
+    afterAll(() => https.isReady = false)
+
     describe('https upgrading', () => {
         it('should be ready to upgrade', () => {
             expect(https.isReady).toEqual(true)
         })
-
         
         it('should upgrade known upgradable domains', () => {
             testDomains.shouldUpgrade.forEach(domain => {
@@ -39,6 +40,38 @@ describe('Https normal conditions', () => {
         it('should not upgrade whitelisted domains', () => {
             httpsWhitelistData.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+    })
+})
+
+describe('Https error conditions', () => {
+    const https2 = require('../../shared/js/background/https.es6.js')
+    beforeAll(() => {
+        return new Promise((resolve, reject) => {
+            let lists = buildLists()
+            lists[0].data.checksum.sha256 = ''
+            https2.setLists(lists)
+            setTimeout(() => resolve(), 2000)
+        })
+    })
+
+    afterAll(() => https2.isReady = false)
+
+    describe('https upgrading', () => {
+        it('should be ready to upgrade', () => {
+            expect(https2.isReady).toEqual(false)
+        })
+        
+        it('should upgrade known upgradable domains', () => {
+            testDomains.shouldUpgrade.forEach(domain => {
+                expect(https2.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+
+        it('should not upgrade whitelisted domains', () => {
+            httpsWhitelistData.forEach(domain => {
+                expect(https2.canUpgradeHost(domain)).toEqual(false)
             })
         })
     })
