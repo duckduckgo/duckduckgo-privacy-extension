@@ -17,25 +17,41 @@ class HTTPSStorage {
         return Promise.all(constants.httpsLists.map(list => {
             return new Promise((resolve, reject) => {
                 this.getDataXHR(list.url).then(data => {
-                    if (data) {
-                        // if we have new data store it in local DB for later
-                        this.storeInLocalDB(list.name, list.type, data)
-                        list.data = data
-                        resolve(list)
-                    } else {
-                        // No new data, look up old data from DB
-                        this.getDataFromLocalDB(list.name).then(storedData => {
-                            if (storedData && storedData.data) {
-                                list.data = storedData.data
-                                resolve(list)
-                            } else {
-                                reject(new Error(`HTTPS: no stored data for ${list.name}`))
-                            }
-                        })
-                    }
+                    this.processData(list, data).then(resultData => {
+                        if (resultData) {
+                            resolve(resultData)
+                        } else {
+                            reject(new Error(`HTTPS: data update for ${list.name} failed`))
+                        }
+                    })
                 })
             })
         }))
+    }
+
+    // validate xhr data and lookup previous data from local db if needed
+    // verify the checksum before returning the processData result
+    processData (listDetails, xhrData) {
+        if (xhrData) {
+            return this.hasCorrectChecksum(xhrData.data, xhrData.checksum).then((isValid) => {
+                if (isValid) {
+                    this.storeInLocalDB(listDetails.name, listDetails.type, xhrData)
+                    return Object.assign(listDetails, xhrData)
+                }
+            })
+        } else {
+            // No new data, look up old data from DB
+            return this.getDataFromLocalDB(list.name).then(storedData => {
+                hasCorrectChecksum(storedData.data, storedData.checksum).then((isValid) => {
+                    if (isValid) {
+                        if (storedData && storedData.data) {
+                            resultData.data = storedData.data
+                            return resultData
+                        }
+                    }
+                })
+            })
+        }
     }
 
     getDataXHR (url) {
@@ -57,8 +73,14 @@ class HTTPSStorage {
             .catch((err) => console.log(`Error saving https data: ${err}`))
     }
 
-    hasCorrectChecksum (buffer, checksum) {
+    hasCorrectChecksum (data, checksum) {
+        // not everything has a checksum
+        if (!checksum) return Promise.resolve(true)
+
         return new Promise((resolve, reject) => {
+            // need a buffer to send to crypto.subtle
+            let buffer = Buffer.from(data, 'base64')
+
             crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
                 let sha256 = Buffer.from(arrayBuffer).toString('base64')
                 if (checksum.sha256 && checksum.sha256 === sha256) {

@@ -23,7 +23,7 @@ class HTTPS {
                 }
 
                 if (list.type === 'upgrade list') {
-                    this.upgradeLists.set(list.name, this.createBloomFilter(list.data))
+                    this.upgradeLists.set(list.name, this.createBloomFilter(list))
                 } else if (list.type === 'whitelist') {
                     this.whitelist = list.data
                 }
@@ -37,6 +37,7 @@ class HTTPS {
             // validation of the data should happen before calling setLists
             this.isReady = false
             console.log('HTTPS: setLists error, not ready')
+            console.log(e)
         })
     }
 
@@ -44,7 +45,7 @@ class HTTPS {
     // filterData is assumed to be base64 encoded 8 bit typed array
     createBloomFilter (filterData) {
         let bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
-        let buffer = Buffer.from(filterData.bloomFilter, 'base64')
+        let buffer = Buffer.from(filterData.data, 'base64')
         bloom.importData(buffer)
         return bloom
     }
