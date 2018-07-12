@@ -53,7 +53,7 @@ class HTTPSStorage {
         } else {
             // No new data, look up old data from DB
             return this.getDataFromLocalDB(listDetails.name).then(storedData => {
-                if (!storedData) return 
+                if (!storedData) return
 
                 return this.hasCorrectChecksum(storedData.data, storedData.checksum).then((isValid) => {
                     if (isValid) {

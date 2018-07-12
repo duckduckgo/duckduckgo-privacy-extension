@@ -1,7 +1,6 @@
 const testDomains = require('./../data/httpsTestDomains.json')
 const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
-const settings = require('../../shared/js/background/settings.es6')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 let dataFromStorage = []
@@ -35,7 +34,7 @@ describe('Https storage', () => {
         it('should be ready to upgrade', () => {
             expect(https.isReady).toEqual(true)
         })
-        
+
         it('should upgrade known upgradable domains', () => {
             testDomains.shouldUpgrade.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(true)
@@ -49,7 +48,6 @@ describe('Https storage', () => {
         })
 
     })
-
     describe('https off', () => {
         beforeEach(() => {
             https.isReady = false

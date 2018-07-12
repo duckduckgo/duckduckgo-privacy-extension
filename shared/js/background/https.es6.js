@@ -52,7 +52,7 @@ class HTTPS {
 
     canUpgradeHost (host) {
         if (!this.isReady) {
-            //console.warn('HTTPS: not ready')
+            // console.warn('HTTPS: not ready')
             return false
         }
 
