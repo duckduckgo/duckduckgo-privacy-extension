@@ -6,23 +6,25 @@ const settings = require('../../shared/js/background/settings.es6')
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 let dataFromStorage = []
 
-describe('Https ready', () => {
+describe('Https storage', () => {
     beforeAll(() => {
-        return new Promise((resolve) => {
-            settings.ready().then(() => {
-                httpsStorage.getLists().then(lists => {
-                    dataFromStorage = lists
-                    https.setLists(dataFromStorage)
-                })
-            })
-
-            setTimeout(() => resolve(), 9000)
+        return httpsStorage.getLists().then(lists => {
+            dataFromStorage = lists
+            https.setLists(dataFromStorage)
         })
     })
 
     it('httpsStorage gets list data', () => {
         let haveData = !!dataFromStorage.length
         expect(haveData).toEqual(true)
+    })
+
+    it('should have data in indexeddb', () => {
+        dataFromStorage.map(list => {
+            httpsStorage.getDataFromLocalDB(list.name).then((data) => {
+                expect(!!data).toEqual(true)
+            })
+        })
     })
 
     describe('https on', () => {
