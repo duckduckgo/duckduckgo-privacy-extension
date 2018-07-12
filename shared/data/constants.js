@@ -48,7 +48,7 @@ module.exports = {
         {
             "type": "upgrade list",
             "name": "httpsUpgradeList",
-            "url": "https://staticcdn.duckduckgo.com/https/https-bloom2.json"
+            "url": "https://staticcdn.duckduckgo.com/https/https-bloom.json"
         },
         {
             "type": "whitelist",

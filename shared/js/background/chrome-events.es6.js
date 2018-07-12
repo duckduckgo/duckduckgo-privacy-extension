@@ -224,7 +224,9 @@ let onStartup = () => {
         }
     })
 
-    httpsStorage.getLists().then(lists => https.setLists(lists)).catch((e) => console.warn(e))
+    settings.ready().then(() => {
+        httpsStorage.getLists().then(lists => https.setLists(lists)).catch((e) => console.warn(e))
+    })
 }
 
 module.exports = {

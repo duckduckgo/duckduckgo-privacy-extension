@@ -1,17 +1,21 @@
 const testDomains = require('./../data/httpsTestDomains.json')
 const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
-let originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL
+const settings = require('../../shared/js/background/settings.es6')
+
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
 let dataFromStorage = []
 
 describe('Https ready', () => {
     beforeAll(() => {
         return new Promise((resolve) => {
-            httpsStorage.getLists().then(lists => {
-                dataFromStorage = lists
-                https.setLists(dataFromStorage)
+            settings.ready().then(() => {
+                httpsStorage.getLists().then(lists => {
+                    dataFromStorage = lists
+                    https.setLists(dataFromStorage)
+                })
             })
+
             setTimeout(() => resolve(), 9000)
         })
     })
