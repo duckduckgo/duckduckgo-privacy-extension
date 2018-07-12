@@ -46,8 +46,8 @@ describe('Https storage', () => {
                 expect(https.canUpgradeHost(domain)).toEqual(false)
             })
         })
-
     })
+
     describe('https off', () => {
         beforeEach(() => {
             https.isReady = false
