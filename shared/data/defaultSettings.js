@@ -18,7 +18,8 @@ module.exports = {
     "set_atb": null,
     "trackersWhitelistTemporary-etag": null,
     "trackersWhitelist-etag": null,
-    "https-etag": null,
     "surrogateList-etag": null,
+    "httpsWhitelist-etag": null,
+    "httpsUpgradeList-etag": null,
     "hasSeenPostInstall": false
 }
