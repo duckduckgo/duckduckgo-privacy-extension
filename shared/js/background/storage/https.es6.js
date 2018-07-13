@@ -44,7 +44,7 @@ class HTTPSStorage {
     processData (listDetails, xhrData) {
         if (xhrData) {
             xhrData = JSON.parse(xhrData)
-            return this.hasCorrectChecksum(xhrData.data, xhrData.checksum).then((isValid) => {
+            return this.hasCorrectChecksum(xhrData).then((isValid) => {
                 if (isValid) {
                     this.storeInLocalDB(listDetails.name, listDetails.type, xhrData)
                     return Object.assign(listDetails, xhrData)
@@ -55,7 +55,7 @@ class HTTPSStorage {
             return this.getDataFromLocalDB(listDetails.name).then(storedData => {
                 if (!storedData) return
 
-                return this.hasCorrectChecksum(storedData.data, storedData.checksum).then((isValid) => {
+                return this.hasCorrectChecksum(storedData.data).then((isValid) => {
                     if (isValid) {
                         if (storedData && storedData.data) {
                             return Object.assign(listDetails, storedData.data)
@@ -91,17 +91,17 @@ class HTTPSStorage {
             .catch((err) => console.log(`Error saving https data: ${err}`))
     }
 
-    hasCorrectChecksum (data, checksum) {
+    hasCorrectChecksum (data) {
         // not everything has a checksum
-        if (!checksum) return Promise.resolve(true)
+        if (!data.checksum) return Promise.resolve(true)
 
         return new Promise((resolve, reject) => {
             // need a buffer to send to crypto.subtle
-            let buffer = Buffer.from(data, 'base64')
+            let buffer = Buffer.from(data.data, 'base64')
 
             crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
                 let sha256 = Buffer.from(arrayBuffer).toString('base64')
-                if (checksum.sha256 && checksum.sha256 === sha256) {
+                if (data.checksum.sha256 && data.checksum.sha256 === sha256) {
                     resolve(true)
                 } else {
                     resolve(false)
