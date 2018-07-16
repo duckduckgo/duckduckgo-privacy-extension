@@ -28,17 +28,15 @@ class HTTPS {
                     this.whitelist = list.data
                 }
             })
+            this.isReady = true
+            console.log('HTTPS: is ready')
         } catch(e) {
             // a failed setLists update will turn https off
             // validation of the data should happen before calling setLists
             this.isReady = false
             console.log('HTTPS: setLists error, not ready')
             console.log(e)
-            return
         }
-       
-        this.isReady = true
-        console.log('HTTPS: is ready')
     }
 
     // create a new BloomFilter
