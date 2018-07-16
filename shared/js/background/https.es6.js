@@ -17,26 +17,26 @@ class HTTPS {
     // 'whitelist' is an array
     setLists (lists) {
         try {
-            
-            if (!list.data) {
-                throw new Error(`HTTPS: ${list.name} missing data`))
-            }
+            lists.map(list => {
+                if (!list.data) {
+                    throw new Error(`HTTPS: ${list.name} missing data`)
+                }
 
-            if (list.type === 'upgrade list') {
-                this.upgradeLists.set(list.name, this.createBloomFilter(list))
-            } else if (list.type === 'whitelist') {
-                this.whitelist = list.data
-            }
-            
-            
+                if (list.type === 'upgrade list') {
+                    this.upgradeLists.set(list.name, this.createBloomFilter(list))
+                } else if (list.type === 'whitelist') {
+                    this.whitelist = list.data
+                }
+            })
         } catch(e) {
             // a failed setLists update will turn https off
             // validation of the data should happen before calling setLists
             this.isReady = false
             console.log('HTTPS: setLists error, not ready')
             console.log(e)
+            return
         }
-        
+       
         this.isReady = true
         console.log('HTTPS: is ready')
     }

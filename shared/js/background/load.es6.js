@@ -80,7 +80,8 @@ function loadExtensionFile (params) {
                     xhr.data = returnResponse(xhr, params.returnType)
                     resolve(xhr)
                 } else if (xhr.status === 304) {
-                    reject(new Error(`${url} returned 304, resource not changed`))
+                    console.log(`${url} returned 304, resource not changed`)
+                    resolve({status: 304})
                 } else {
                     reject(new Error(`${url} returned ${xhr.status}`))
                 }

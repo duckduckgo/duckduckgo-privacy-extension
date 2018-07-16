@@ -188,7 +188,7 @@ const https = require('./https.es6')
 const httpsStorage = require('./storage/https.es6')
 
 // recheck adblock plus and https lists every 30 minutes
-chrome.alarms.create('updateLists', {periodInMinutes: 30})
+chrome.alarms.create('updateLists', {periodInMinutes: 3})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 
@@ -196,7 +196,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateLists') {
         settings.ready().then(() => {
             abpLists.updateLists()
-            httpsStorage.getLists().then(lists => https.setLists(lists)).catch((e) => console.warn(e))
+            httpsStorage.getLists().then(lists => https.setLists(lists)).catch(e => console.log(e))
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
@@ -222,7 +222,7 @@ let onStartup = () => {
     })
 
     settings.ready().then(() => {
-        httpsStorage.getLists().then(lists => https.setLists(lists)).catch((e) => console.warn(e))
+        httpsStorage.getLists().then(lists => https.setLists(lists)).catch(e => console.log(e))
     })
 }
 

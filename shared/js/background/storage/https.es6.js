@@ -12,28 +12,32 @@ class HTTPSStorage {
     }
 
     // Load https data defined in constants.httpsLists.
-    // First try to grab new data via xhr. If that fails
-    // fall back to local db.
+    // We wait until all promises resolve to send datd to https.
+    // This is all or nothing. We gather data for each of the lists
+    // and validate. If any list fails validation then promise.all will
+    // reject the whole update.
     getLists () {
         return Promise.all(constants.httpsLists.map(list => {
-            return new Promise((resolve, reject) => {
-                let etag = settings.getSetting(`${list.name}-etag`) || ''
-
-                this.getDataXHR(list.url, etag).then((response) => {
-                    if (response.xhr) {
-                        const newEtag = response.xhr.getResponseHeader('etag') || ''
-                        settings.updateSetting(`${list.name}-etag`, newEtag)
+            let etag = settings.getSetting(`${list.name}-etag`) || ''
+            
+            return this.getDataXHR(list.url, etag).then(response => {
+                // for 200 response we update etags
+                if (response && response.status === 200) {
+                    const newEtag = response.getResponseHeader('etag') || ''
+                    settings.updateSetting(`${list.name}-etag`, newEtag)
+                }
+                
+                // We try to process both 200 and 304 responses. 200s will validate
+                // and update the db. 304s will try to grab the previous data from db
+                // or throw an error if none exists. 
+                return this.processData(list, response.data).then(resultData => {
+                    if (resultData) {
+                        return resultData
+                    } else {
+                        // reset etag to force us to get fresh server data in case of an error
+                        settings.updateSetting(`${list.name}-etag`, '')
+                        throw new Error(`HTTPS: data update for ${list.name} failed`)
                     }
-
-                    this.processData(list, response.data).then(resultData => {
-                        if (resultData) {
-                            resolve(resultData)
-                        } else {
-                            // reset etag to force us to get fresh server data in case of an error
-                            settings.updateSetting(`${list.name}-etag`, '')
-                            reject(new Error(`HTTPS: data update for ${list.name} failed`))
-                        }
-                    })
                 })
             })
         }))
@@ -43,7 +47,6 @@ class HTTPSStorage {
     // verify the checksum before returning the processData result
     processData (listDetails, xhrData) {
         if (xhrData) {
-            xhrData = JSON.parse(xhrData)
             return this.hasCorrectChecksum(xhrData).then((isValid) => {
                 if (isValid) {
                     this.storeInLocalDB(listDetails.name, listDetails.type, xhrData)
@@ -67,17 +70,11 @@ class HTTPSStorage {
     }
 
     getDataXHR (url, etag) {
-        return new Promise((resolve, reject) => {
-            load.loadExtensionFile({url: url, etag: etag, returnType: 'json', source: 'external'}, (data, xhr) => {
-                resolve({data: data, xhr: xhr})
-            })
-            // if load fails, resolve and try to load from db instead
-            setTimeout(() => resolve({data: '', xhr: ''}), 30000)
-        })
+        return load.loadExtensionFile({url: url, etag: etag, returnType: 'json', source: 'external'})
     }
 
     getDataFromLocalDB (name) {
-        console.log(`HTTPS: gettin ${name} from db`)
+        console.log(`HTTPS: getting ${name} from db`)
         return this.dbc.open()
             .then(() => this.dbc.table('httpsStorage').get({name: name}))
             .catch((err) => {
@@ -94,19 +91,17 @@ class HTTPSStorage {
     hasCorrectChecksum (data) {
         // not everything has a checksum
         if (!data.checksum) return Promise.resolve(true)
+            
+        // need a buffer to send to crypto.subtle
+        let buffer = Buffer.from(data.data, 'base64')
 
-        return new Promise((resolve, reject) => {
-            // need a buffer to send to crypto.subtle
-            let buffer = Buffer.from(data.data, 'base64')
-
-            crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
-                let sha256 = Buffer.from(arrayBuffer).toString('base64')
-                if (data.checksum.sha256 && data.checksum.sha256 === sha256) {
-                    resolve(true)
-                } else {
-                    resolve(false)
-                }
-            })
+        return crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
+            let sha256 = Buffer.from(arrayBuffer).toString('base64')
+            if (data.checksum.sha256 && data.checksum.sha256 === sha256) {
+                return true
+            } else {
+                return false
+            }
         })
     }
 }
