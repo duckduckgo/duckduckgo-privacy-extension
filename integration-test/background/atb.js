@@ -52,7 +52,7 @@ describe('install workflow', () => {
     })
     describe('workflow with success page', () => {
         beforeEach(async () => {
-            ({ browser, bgPage, requests } = await helpers.setup())
+            ({ browser, bgPage, requests } = await helpers.setup({ withSuccessPage: true }))
             await helpers.wait(2000)
         })
         afterEach(async () => {
