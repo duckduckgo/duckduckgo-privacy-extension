@@ -1,7 +1,16 @@
+/**
+ * DuckDuckGo's ATB pipeline to facilitate various experiments.
+ * Please see https://duck.co/help/privacy/atb for more information.
+ */
+
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const load = require('./load.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
-var ATB = (() => {
+let dev = false
+
+const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
     const regExpAboutPage = /^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
@@ -9,39 +18,16 @@ var ATB = (() => {
 
     return {
         updateSetAtb: () => {
-            return new Promise((resolve) => {
-                let atbSetting = settings.getSetting('atb')
-                let setAtbSetting = settings.getSetting('set_atb')
+            let atbSetting = settings.getSetting('atb')
+            let setAtbSetting = settings.getSetting('set_atb')
 
-                if (!atbSetting || !setAtbSetting) { resolve(null) }
+            if (!atbSetting) return Promise.resolve()
 
-                ATB.getSetAtb(atbSetting, setAtbSetting).then((newAtb) => {
-                    if (newAtb !== setAtbSetting) {
-                        settings.updateSetting('set_atb', newAtb)
-                    }
-                    resolve(newAtb)
-                })
-            })
-        },
+            let randomValue = Math.ceil(Math.random() * 1e7)
+            let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
 
-        getSetAtb: (atbSetting, setAtb) => {
-            return new Promise((resolve) => {
-                var xhr = new XMLHttpRequest()
-
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            let curATB = JSON.parse(xhr.responseText)
-                            resolve(curATB.version)
-                        }
-                    }
-                }
-
-                let randomValue = Math.ceil(Math.random() * 1e7)
-                let AtbRequestURL = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtb
-
-                xhr.open('GET', AtbRequestURL, true)
-                xhr.send()
+            return load.JSONfromExternalFile(url).then((res) => {
+                settings.updateSetting('set_atb', res.data.version)
             })
         },
 
@@ -60,87 +46,83 @@ var ATB = (() => {
                 // handle anchor tags for pages like about#newsletter
                 let urlParts = request.url.split('#')
                 let newURL = request.url
+                let anchor = ''
 
                 // if we have an anchor tag
                 if (urlParts.length === 2) {
-                    newURL = urlParts[0] + '&atb=' + atbSetting + '#' + urlParts[1]
-                } else {
-                    newURL = request.url + '&atb=' + atbSetting
+                    newURL = urlParts[0]
+                    anchor = '#' + urlParts[1]
                 }
+
+                if (request.url.indexOf('?') !== -1) {
+                    newURL += '&'
+                } else {
+                    newURL += '?'
+                }
+
+                newURL += 'atb=' + atbSetting + anchor
 
                 return {redirectUrl: newURL}
             }
         },
 
-        setInitialVersions: () => {
-            if (!settings.getSetting('atb')) {
-                let versions = ATB.calculateInitialVersions()
-                if (versions && versions.major && versions.minor) {
-                    settings.updateSetting('atb', `v${versions.major}-${versions.minor}`)
-                }
-            }
-        },
+        setInitialVersions: (numTries) => {
+            numTries = numTries || 0
+            if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
-        calculateInitialVersions: () => {
-            let oneWeek = 604800000
-            let oneDay = 86400000
-            let oneHour = 3600000
-            let oneMinute = 60000
-            let estEpoch = 1456290000000
-            let localDate = new Date()
-            let localTime = localDate.getTime()
-            let utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute)
-            let est = new Date(utcTime + (oneHour * -5))
-            let dstStartDay = 13 - ((est.getFullYear() - 2016) % 6)
-            let dstStopDay = 6 - ((est.getFullYear() - 2016) % 6)
-            let isDST = (est.getMonth() > 2 || (est.getMonth() === 2 && est.getDate() >= dstStartDay)) && (est.getMonth() < 10 || (est.getMonth() === 10 && est.getDate() < dstStopDay))
-            let epoch = isDST ? estEpoch - oneHour : estEpoch
-            let timeSinceEpoch = new Date().getTime() - epoch
-            let majorVersion = Math.ceil(timeSinceEpoch / oneWeek)
-            let minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
+            let randomValue = Math.ceil(Math.random() * 1e7)
+            let url = ddgAtbURL + randomValue
 
-            return {'major': majorVersion, 'minor': minorVersion}
+            return load.JSONfromExternalFile(url).then((res) => {
+                settings.updateSetting('atb', res.data.version)
+            }, () => {
+                console.log('couldn\'t reach atb.js for initial server call, trying again')
+                numTries += 1
+
+                return new Promise((resolve) => {
+                    setTimeout(resolve, 500)
+                }).then(() => {
+                    return ATB.setInitialVersions(numTries)
+                })
+            })
         },
 
         setAtbValuesFromSuccessPage: (atb) => {
-            if (settings.getSetting('set_atb')) { return }
+            if (!atb) return
 
             settings.updateSetting('atb', atb)
+
+            ATB.finalizeATB()
+        },
+
+        finalizeATB: () => {
+            let atb = settings.getSetting('atb')
+
+            // make this request only once
+            if (settings.getSetting('extiSent')) return
+
+            settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
 
-            let xhr = new XMLHttpRequest()
-            xhr.open('GET', 'https://duckduckgo.com/exti/?atb=' + atb, true)
-            xhr.send()
+            // just a GET request, we only care that the request was made
+            load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
         },
 
         inject: () => {
-            // skip this for non webextension browsers
-            if (!window.chrome) return
+            browserWrapper.injectATBScripts()
 
-            chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, function (tabs) {
-                let i = tabs.length
-                let tab
-                while (i--) {
-                    tab = tabs[i]
-
-                    chrome.tabs.executeScript(tab.id, {
-                        file: '/public/js/content-scripts/on-install.js'
-                    })
-
-                    chrome.tabs.insertCSS(tab.id, {
-                        file: '/public/css/noatb.css'
-                    })
-                }
-            })
+            // if there's no DDG tabs open or no tabs that can give us an ATB version,
+            // fall back to version from atb.js
+            setTimeout(ATB.finalizeATB, 500)
         },
 
         updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
-            settings.ready().then(() => {
-                ATB.inject()
-                ATB.migrate()
-                ATB.setInitialVersions()
-            })
+            return settings.ready()
+                .then(ATB.setInitialVersions)
+                .then(() => {
+                    return ATB.inject()
+                })
         },
 
         openPostInstallPage: () => {
@@ -174,19 +156,8 @@ var ATB = (() => {
                 !domain.match(regExpSoftwarePage)
         },
 
-        migrate: () => {
-            // migrate localStorage ATB from the old extension over to settings
-            if (!settings.getSetting('atb') && localStorage['atb']) {
-                settings.updateSetting('atb', localStorage['atb'])
-            }
-
-            if (!settings.getSetting('set_atb') && localStorage['set_atb']) {
-                settings.updateSetting('set_atb', localStorage['set_atb'])
-            }
-        },
-
         getSurveyURL: () => {
-            let url = 'https://duckduckgo.com/atb.js?' + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
+            let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             let atb = settings.getSetting('atb')
             let setAtb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
@@ -195,25 +166,24 @@ var ATB = (() => {
             let browserInfo = parseUserAgentString()
             let browserName = browserInfo.browser
             let browserVersion = browserInfo.version
-            let extensionVersion = window.chrome.runtime.getManifest().version
-
+            let extensionVersion = browserWrapper.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
+            if (dev) url += `&dev=1`
 
             return url
+        },
+
+        setDevMode: () => {
+            dev = true
         }
     }
 })()
 
 settings.ready().then(() => {
-    // migrate over any localStorage values from the old extension
-    ATB.migrate()
-
-    // set initial uninstall url. webextension only
-    if (window.chrome) {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
-    }
+    // set initial uninstall url
+    browserWrapper.setUninstallURL(ATB.getSurveyURL())
 })
 
 module.exports = ATB

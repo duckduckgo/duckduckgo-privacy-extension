@@ -20,5 +20,6 @@ module.exports = {
     "trackersWhitelist-etag": null,
     "https-etag": null,
     "surrogateList-etag": null,
-    "hasSeenPostInstall": false
+    "hasSeenPostInstall": false,
+    "extiSent": false
 }
