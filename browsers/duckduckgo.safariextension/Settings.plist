@@ -12,5 +12,9 @@
 		<key>Type</key>
 		<string>CheckBox</string>
 	</dict>
+	<dict>
+		<key>Key</key>
+		<string>installed</string>
+	</dict>
 </array>
 </plist>

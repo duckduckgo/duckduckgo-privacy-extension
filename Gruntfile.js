@@ -52,7 +52,7 @@ module.exports = function(grunt) {
 
     // for the dev version of the extension only, add some extra debug code
     if (buildType === 'dev') {
-        baseFileMap.background['<%= dirs.public.js %>/background.js'].push('<%= dirs.src.js %>/background/debug.es6.js')
+        baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.es6.js')
     }
 
     /* watch any base files and browser specific files */

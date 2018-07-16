@@ -21,5 +21,6 @@ module.exports = {
     "surrogateList-etag": null,
     "httpsWhitelist-etag": null,
     "httpsUpgradeList-etag": null,
-    "hasSeenPostInstall": false
+    "hasSeenPostInstall": false,
+    "extiSent": false
 }
