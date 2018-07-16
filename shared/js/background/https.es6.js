@@ -30,7 +30,7 @@ class HTTPS {
             })
             this.isReady = true
             console.log('HTTPS: is ready')
-        } catch(e) {
+        } catch (e) {
             // a failed setLists update will turn https off
             // validation of the data should happen before calling setLists
             this.isReady = false

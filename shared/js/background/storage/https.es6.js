@@ -19,17 +19,17 @@ class HTTPSStorage {
     getLists () {
         return Promise.all(constants.httpsLists.map(list => {
             let etag = settings.getSetting(`${list.name}-etag`) || ''
-            
+
             return this.getDataXHR(list.url, etag).then(response => {
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.getResponseHeader('etag') || ''
                     settings.updateSetting(`${list.name}-etag`, newEtag)
                 }
-                
+
                 // We try to process both 200 and 304 responses. 200s will validate
                 // and update the db. 304s will try to grab the previous data from db
-                // or throw an error if none exists. 
+                // or throw an error if none exists.
                 return this.processData(list, response.data).then(resultData => {
                     if (resultData) {
                         return resultData
@@ -91,7 +91,7 @@ class HTTPSStorage {
     hasCorrectChecksum (data) {
         // not everything has a checksum
         if (!data.checksum) return Promise.resolve(true)
-            
+
         // need a buffer to send to crypto.subtle
         let buffer = Buffer.from(data.data, 'base64')
 
