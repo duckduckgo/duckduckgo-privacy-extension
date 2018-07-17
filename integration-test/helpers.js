@@ -57,7 +57,11 @@ const teardown = async (browser) => {
 
     // necessary so e.g. local storage
     // doesn't carry over between test runs
-    execSync('rm -rf temp-profile-*')
+    //
+    // irrelevant on travis, where everything is clear with each new run
+    if (process.env.TRAVIS) {
+        execSync('rm -rf temp-profile-*')
+    }
 }
 
 module.exports = {
