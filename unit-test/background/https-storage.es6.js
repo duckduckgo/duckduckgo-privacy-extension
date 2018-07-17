@@ -52,7 +52,12 @@ describe('Https storage bad xhr update', () => {
             dbStub[name] = JSON.parse(JSON.stringify(data))
         })
         spyOn(httpsStorage, 'getDataFromLocalDB').and.callFake((name) => {
-            return Promise.resolve({data: dbStub[name] || ''})
+            let val = dbStub[name]
+            if (val) {
+                return Promise.resolve({data: val})
+            } else {
+                return Promise.resolve(false)
+            }
         })
     })
 
@@ -64,6 +69,7 @@ describe('Https storage bad xhr update', () => {
         it('should fail if there is no db fallback', () => {
             return httpsStorage.getLists().then(lists => {
                 // this should never resolve
+                console.log(lists)
                 expect(true).toEqual(false)
             }).catch(e => {
                 // a failed update should always thow an error

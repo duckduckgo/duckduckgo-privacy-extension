@@ -18,25 +18,34 @@ class HTTPSStorage {
     // reject the whole update.
     getLists () {
         return Promise.all(constants.httpsLists.map(list => {
-            let etag = settings.getSetting(`${list.name}-etag`) || ''
+            let listCopy = JSON.parse(JSON.stringify(list))
+            let etag = settings.getSetting(`${listCopy.name}-etag`) || ''
 
-            return this.getDataXHR(list.url, etag).then(response => {
+            return this.getDataXHR(listCopy.url, etag).then(response => {
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.getResponseHeader('etag') || ''
-                    settings.updateSetting(`${list.name}-etag`, newEtag)
+                    settings.updateSetting(`${listCopy.name}-etag`, newEtag)
                 }
 
                 // We try to process both 200 and 304 responses. 200s will validate
                 // and update the db. 304s will try to grab the previous data from db
                 // or throw an error if none exists.
-                return this.processData(list, response.data).then(resultData => {
+                return this.processData(listCopy, response.data).then(resultData => {
                     if (resultData) {
                         return resultData
                     } else {
+                        throw new Error(`HTTPS: process list xhr failed  ${listCopy.name}`)
+                    }
+                })
+            }).catch(e => {
+                return this.fallbackToDB(listCopy).then(backupFromDB => {
+                    if (backupFromDB) {
+                        return backupFromDB
+                    } else {
                         // reset etag to force us to get fresh server data in case of an error
-                        settings.updateSetting(`${list.name}-etag`, '')
-                        throw new Error(`HTTPS: data update for ${list.name} failed`)
+                        settings.updateSetting(`${listCopy.name}-etag`, '')
+                        throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
                     }
                 })
             })
@@ -46,20 +55,15 @@ class HTTPSStorage {
     // validate xhr data and lookup previous data from local db if needed
     // verify the checksum before returning the processData result
     processData (listDetails, xhrData) {
-        // make a copy of constants list
-        listDetails = Object.assign({}, listDetails)
-
         if (xhrData) {
             return this.hasCorrectChecksum(xhrData).then((isValid) => {
                 if (isValid) {
                     this.storeInLocalDB(listDetails.name, listDetails.type, xhrData)
                     return Object.assign(listDetails, xhrData)
-                } else {
-                    return this.fallbackToDB(listDetails)
                 }
             })
         } else {
-            return this.fallbackToDB(listDetails)
+            return Promise.resolve()
         }
     }
 
@@ -85,15 +89,11 @@ class HTTPSStorage {
         console.log(`HTTPS: getting ${name} from db`)
         return this.dbc.open()
             .then(() => this.dbc.table('httpsStorage').get({name: name}))
-            .catch((err) => {
-                console.log(`Error getting https data: ${err}`)
-            })
     }
 
     storeInLocalDB (name, type, data) {
         console.log(`HTTPS: storing ${name} in db`)
         return this.dbc.httpsStorage.put({name: name, type: type, data: data})
-            .catch((err) => console.log(`Error saving https data: ${err}`))
     }
 
     hasCorrectChecksum (data) {
