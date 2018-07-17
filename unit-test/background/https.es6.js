@@ -76,18 +76,18 @@ describe('Https storage', () => {
 
                 // if the data we got back came from the db it should match the checksum from the first test
                 expect(lists[0].checksum.sha256).toEqual(goodDataChecksum)
-            })
-            
-            it('should fail if it tries to fallback and no db data exists', () => {
-                // clear data in indexdb
-                return httpsStorage.dbc.table('httpsStorage').delete('httpsUpgradeList').then(() => {
-                    let badListData = Object.assign([], httpsLists)
-                    badListData[0].url = 'http://ddg-staticcdn.s3.amazonaws.com/https/https-bloom-broken-test.json'
-                    expect(false).toEqual(true)
-
-                    return httpsStorage.getLists(badListData).then(lists => { 
-                        // this should never resolve
+                
+                it('should fail if it tries to fallback and no db data exists', () => {
+                    // clear data in indexdb
+                    return httpsStorage.dbc.table('httpsStorage').delete('httpsUpgradeList').then(() => {
+                        let badListData = Object.assign([], httpsLists)
+                        badListData[0].url = 'http://ddg-staticcdn.s3.amazonaws.com/https/https-bloom-broken-test.json'
                         expect(false).toEqual(true)
+
+                        return httpsStorage.getLists(badListData).then(lists => { 
+                            // this should never resolve
+                            expect(false).toEqual(true)
+                        })
                     })
                 })
             })
