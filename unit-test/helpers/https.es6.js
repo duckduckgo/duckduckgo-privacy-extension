@@ -1,4 +1,4 @@
-// stub out https list loading and indexedDB
+// stub out https list loading
 const load = require('../../shared/js/background/load.es6')
 
 const loadStub = (stubData) => {
