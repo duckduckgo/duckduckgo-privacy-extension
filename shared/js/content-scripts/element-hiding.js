@@ -118,9 +118,11 @@
      * At this point, kick off process by requesting list of blocked requests from
      * background page.
      */
-    document.onreadystatechange = () => {
-        if (document.readyState === 'interactive') {
-            chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: contentScript.frameType})
-        }
+    if (document.readyState !== 'complete') {
+        document.addEventListener('readystatechange', () => {
+            if (document.readyState === 'interactive') {
+                chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: contentScript.frameType})
+            }
+        })
     }
 })()
