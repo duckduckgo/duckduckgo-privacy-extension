@@ -196,7 +196,9 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateLists') {
         settings.ready().then(() => {
             abpLists.updateLists()
-            httpsStorage.getLists().then(lists => https.setLists(lists)).catch(e => console.log(e))
+            httpsStorage.getLists(constants.httpsLists)
+                .then(lists => https.setLists(lists))
+                .catch(e => console.log(e))
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
@@ -222,7 +224,9 @@ let onStartup = () => {
     })
 
     settings.ready().then(() => {
-        httpsStorage.getLists().then(lists => https.setLists(lists)).catch(e => console.log(e))
+        httpsStorage.getLists(constants.httpsLists)
+            .then(lists => https.setLists(lists))
+            .catch(e => console.log(e))
     })
 }
 

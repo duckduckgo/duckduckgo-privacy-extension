@@ -1,0 +1,12 @@
+[
+    {
+        "type": "upgrade list",
+        "name": "httpsUpgradeList",
+        "url": "https://ddg-staticcdn.s3.amazonaws.com/https/https-bloom-test.json"
+    },
+    {
+        "type": "whitelist",
+        "name": "httpsWhitelist",
+        "url": "https://ddg-staticcdn.s3.amazonaws.com/https/https-whitelist-test.json"
+    }
+]

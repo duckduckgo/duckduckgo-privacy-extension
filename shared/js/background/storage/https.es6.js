@@ -5,7 +5,7 @@ const settings = require('./../settings.es6')
 
 class HTTPSStorage {
     constructor () {
-        this.dbc = new Dexie('https')
+        this.dbc = new Dexie(constants.httpsDBName)
         this.dbc.version(1).stores({
             httpsStorage: 'name,type,data,checksum'
         })
@@ -16,8 +16,8 @@ class HTTPSStorage {
     // This is all or nothing. We gather data for each of the lists
     // and validate. If any list fails validation then promise.all will
     // reject the whole update.
-    getLists () {
-        return Promise.all(constants.httpsLists.map(list => {
+    getLists (httpsListData) {
+        return Promise.all(httpsListData.map(list => {
             let etag = settings.getSetting(`${list.name}-etag`) || ''
 
             return this.getDataXHR(list.url, etag).then(response => {
@@ -51,22 +51,27 @@ class HTTPSStorage {
                 if (isValid) {
                     this.storeInLocalDB(listDetails.name, listDetails.type, xhrData)
                     return Object.assign(listDetails, xhrData)
+                } else {
+                    return this.fallbackToDB(listDetails)
                 }
             })
         } else {
-            // No new data, look up old data from DB
-            return this.getDataFromLocalDB(listDetails.name).then(storedData => {
-                if (!storedData) return
-
-                return this.hasCorrectChecksum(storedData.data).then((isValid) => {
-                    if (isValid) {
-                        if (storedData && storedData.data) {
-                            return Object.assign(listDetails, storedData.data)
-                        }
-                    }
-                })
-            })
+            return this.ballbackToDB(listDetails)
         }
+    }
+
+    fallbackToDB (listDetails) {
+        return this.getDataFromLocalDB(listDetails.name).then(storedData => {
+            if (!storedData) return
+            
+            return this.hasCorrectChecksum(storedData.data).then((isValid) => {
+                if (isValid) {
+                    if (storedData && storedData.data) {
+                        return Object.assign(listDetails, storedData.data)
+                    }
+                }
+            })
+        })
     }
 
     getDataXHR (url, etag) {
