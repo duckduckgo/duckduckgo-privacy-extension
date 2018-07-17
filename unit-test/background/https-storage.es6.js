@@ -1,24 +1,11 @@
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
-const load = require('../../shared/js/background/load.es6')
-const settingHelper = require('../helpers/settings.es6')
+const load = require('./../helpers/https.es6.js')
 
 describe('Https storage normal update', () => {
     beforeAll(() => {
-        settingHelper.stub()
-
-        spyOn(load, 'loadExtensionFile').and.callFake((data) => {
-            let response = {getResponseHeader: () => 'fakeEtagValue'}
-
-            if (data.url.match('https-bloom.json')) {
-                return Promise.resolve(Object.assign(response, {status: 200, data: httpsBloom}))
-            } else if (data.url.match('https-whitelist.json')) {
-                return Promise.resolve(Object.assign(response, {status: 200, data: httpsWhitelist}))
-            } else {
-                return Promise.reject(new Error('load error'))
-            }
-        })
+        load.loadStub({httpsBloom: httpsBloom, httpsWhitelist: httpsWhitelist})
     })
 
     it('should have list data', () => {
@@ -33,19 +20,9 @@ describe('Https storage bad xhr update', () => {
     let dbStub = {}
 
     beforeEach(() => {
-        spyOn(load, 'loadExtensionFile').and.callFake((data) => {
-            let response = {getResponseHeader: () => 'fakeEtagValue'}
-
-            if (data.url.match('https-bloom.json')) {
-                let badBloom = JSON.parse(JSON.stringify(httpsBloom))
-                badBloom.checksum.sha256 = 'badchecksum'
-                return Promise.resolve(Object.assign(response, {status: 200, data: badBloom}))
-            } else if (data.url.match('https-whitelist.json')) {
-                return Promise.resolve(Object.assign(response, {status: 200, data: httpsWhitelist}))
-            } else {
-                return Promise.reject(new Error('load error'))
-            }
-        })
+        let badBloom = JSON.parse(JSON.stringify(httpsBloom))
+        badBloom.checksum.sha256 = 'badchecksum'
+        load.loadStub({httpsBloom: badBloom, httpsWhitelist: httpsWhitelist})
 
         // stub for db storage
         spyOn(httpsStorage, 'storeInLocalDB').and.callFake((name, type, data) => {
@@ -69,7 +46,6 @@ describe('Https storage bad xhr update', () => {
         it('should fail if there is no db fallback', () => {
             return httpsStorage.getLists().then(lists => {
                 // this should never resolve
-                console.log(lists)
                 expect(true).toEqual(false)
             }).catch(e => {
                 // a failed update should always thow an error

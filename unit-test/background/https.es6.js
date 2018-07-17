@@ -3,21 +3,11 @@ const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
-const load = require('../../shared/js/background/load.es6')
+const load = require('./../helpers/https.es6')
 
 describe('Https upgrades', () => {
     beforeAll(() => {
-        spyOn(load, 'loadExtensionFile').and.callFake((data) => {
-            let response = {getResponseHeader: () => 'fakeEtagValue'}
-
-            if (data.url.match('https-bloom.json')) {
-                return Promise.resolve(Object.assign(response, {status: 200, data: httpsBloom}))
-            } else if (data.url.match('https-whitelist.json')) {
-                return Promise.resolve(Object.assign(response, {status: 200, data: httpsWhitelist}))
-            } else {
-                return Promise.reject(new Error('load error'))
-            }
-        })
+        load.loadStub({httpsBloom: httpsBloom, httpsWhitelist: httpsWhitelist})
 
         return httpsStorage.getLists()
             .then(lists => {
