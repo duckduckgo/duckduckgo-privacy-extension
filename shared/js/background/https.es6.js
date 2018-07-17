@@ -16,31 +16,27 @@ class HTTPS {
     // 'upgrade list' is assumed to be a bloom filter
     // 'whitelist' is an array
     setLists (lists) {
-        return new Promise((resolve, reject) => {
-            try {
-                lists.map(list => {
-                    if (!list.data) {
-                        throw new Error(`HTTPS: ${list.name} missing data`)
-                    }
+        try {
+            lists.map(list => {
+                if (!list.data) {
+                    throw new Error(`HTTPS: ${list.name} missing data`)
+                }
 
-                    if (list.type === 'upgrade list') {
-                        this.upgradeLists.set(list.name, this.createBloomFilter(list))
-                    } else if (list.type === 'whitelist') {
-                        this.whitelist = list.data
-                    }
-                })
-                this.isReady = true
-                console.log('HTTPS: is ready')
-                resolve()
-            } catch (e) {
-                // a failed setLists update will turn https off
-                // validation of the data should happen before calling setLists
-                this.isReady = false
-                console.log('HTTPS: setLists error, not ready')
-                console.log(e)
-                resolve()
-            }
-        })
+                if (list.type === 'upgrade list') {
+                    this.upgradeLists.set(list.name, this.createBloomFilter(list))
+                } else if (list.type === 'whitelist') {
+                    this.whitelist = list.data
+                }
+            })
+            this.isReady = true
+            console.log('HTTPS: is ready')
+        } catch (e) {
+            // a failed setLists update will turn https off
+            // validation of the data should happen before calling setLists
+            this.isReady = false
+            console.log('HTTPS: setLists error, not ready')
+            console.log(e)
+        }
     }
 
     // create a new BloomFilter
