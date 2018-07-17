@@ -81,9 +81,8 @@ function loadExtensionFile (params) {
                     resolve(xhr)
                 } else if (xhr.status === 304) {
                     console.log(`${url} returned 304, resource not changed`)
-                    resolve({status: 304})
+                    resolve(xhr)
                 } else {
-                    console.log(xhr)
                     reject(new Error(`${url} returned ${xhr.status}`))
                 }
             }
