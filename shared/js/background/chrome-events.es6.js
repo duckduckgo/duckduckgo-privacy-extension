@@ -188,7 +188,7 @@ const https = require('./https.es6')
 const httpsStorage = require('./storage/https.es6')
 
 // recheck adblock plus and https lists every 30 minutes
-chrome.alarms.create('updateLists', {periodInMinutes: 30})
+chrome.alarms.create('updateLists', {periodInMinutes: 2})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 

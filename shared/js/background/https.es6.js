@@ -38,7 +38,7 @@ class HTTPS {
                 this.isReady = false
                 console.log('HTTPS: setLists error, not ready')
                 console.log(e)
-                reject()
+                resolve()
             }
         })
     }

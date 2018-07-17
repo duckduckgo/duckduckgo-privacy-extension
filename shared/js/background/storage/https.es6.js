@@ -16,8 +16,8 @@ class HTTPSStorage {
     // This is all or nothing. We gather data for each of the lists
     // and validate. If any list fails validation then promise.all will
     // reject the whole update.
-    getLists (httpsListData) {
-        return Promise.all(httpsListData.map(list => {
+    getLists () {
+        return Promise.all(constants.httpsLists.map(list => {
             let etag = settings.getSetting(`${list.name}-etag`) || ''
 
             return this.getDataXHR(list.url, etag).then(response => {
@@ -46,6 +46,9 @@ class HTTPSStorage {
     // validate xhr data and lookup previous data from local db if needed
     // verify the checksum before returning the processData result
     processData (listDetails, xhrData) {
+        // make a copy of constants list
+        listDetails = Object.assign({}, listDetails)
+
         if (xhrData) {
             return this.hasCorrectChecksum(xhrData).then((isValid) => {
                 if (isValid) {
@@ -56,14 +59,14 @@ class HTTPSStorage {
                 }
             })
         } else {
-            return this.ballbackToDB(listDetails)
+            return this.fallbackToDB(listDetails)
         }
     }
 
     fallbackToDB (listDetails) {
         return this.getDataFromLocalDB(listDetails.name).then(storedData => {
             if (!storedData) return
-            
+
             return this.hasCorrectChecksum(storedData.data).then((isValid) => {
                 if (isValid) {
                     if (storedData && storedData.data) {
