@@ -14,6 +14,11 @@ const setup = async (ops) => {
         `--user-data-dir=temp-profile-${Math.random()}`
     ]
 
+    // travis requires this to work
+    if (process.env.TRAVIS) {
+        args.push('--no-sandbox')
+    }
+
     if (ops.withSuccessPage) {
         args.push('https://duckduckgo.com/?exti=2')
     }
