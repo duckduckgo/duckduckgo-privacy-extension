@@ -96,6 +96,8 @@ describe('search workflow', () => {
         // request needs to be promisified
         await new Promise(resolve => {
             request('https://duckduckgo.com/atb.js', (err, res, body) => {
+                expect(err).toBeFalsy()
+
                 let data = JSON.parse(body)
                 todaysAtb = data.version
                 lastWeeksAtb = `${data.majorVersion - 1}-${data.minorVersion}`
