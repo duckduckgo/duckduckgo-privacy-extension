@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         setTimeout(() => ATB.updateATBValues(), 1000)
 
-        // wait a bit for ATB to have settled
+        // need to wait a bit for ATB to be set
         setTimeout(() => ATB.openPostInstallPage(), 3000)
     }
 })

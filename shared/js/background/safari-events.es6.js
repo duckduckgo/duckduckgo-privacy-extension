@@ -21,8 +21,8 @@ let _getSafariTabIndex = (target) => {
  * 3. open post install page only if we're on a DDG page or Safari gallery page
  */
 let onStartup = () => {
-    if (!localStorage['installed']) {
-        localStorage['installed'] = true
+    if (!safari.extension.settings.installed) {
+        safari.extension.settings.installed = true
         // if there's a success page, it's just reloaded
         // give it a bit of time to settle before kicking off the ATB process
         setTimeout(ATB.updateATBValues, 2000)
