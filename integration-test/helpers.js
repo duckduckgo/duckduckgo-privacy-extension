@@ -59,7 +59,7 @@ const teardown = async (browser) => {
     // doesn't carry over between test runs
     //
     // irrelevant on travis, where everything is clear with each new run
-    if (process.env.TRAVIS) {
+    if (!process.env.TRAVIS) {
         execSync('rm -rf temp-profile-*')
     }
 }
