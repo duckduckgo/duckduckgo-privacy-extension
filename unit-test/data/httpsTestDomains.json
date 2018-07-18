@@ -1,0 +1,19 @@
+{
+    "shouldUpgrade" : [
+        "en.wikipedia.org",
+        "youtube.com",
+        "facebook.com",
+        "stackoverflow.com",
+        "reddit.com",
+        "en.m.wikipedia.org",
+        "amazon.com",
+        "m.youtube.com",
+        "twitter.com",
+        "google.com",
+        "de.wikipedia.org",
+        "instagram.com",
+        "rover.ebay.com",
+        "quora.com",
+        "github.com"
+    ]
+}
