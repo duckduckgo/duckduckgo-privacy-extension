@@ -65,7 +65,7 @@ function loadExtensionFile (params) {
         xhr.open('GET', browserWrapper.getExtensionURL(url))
     }
 
-    xhr.timeout = 20000
+    xhr.timeout = params.timeout || 30000
 
     xhr.send(null)
 
@@ -80,7 +80,8 @@ function loadExtensionFile (params) {
                     xhr.data = returnResponse(xhr, params.returnType)
                     resolve(xhr)
                 } else if (xhr.status === 304) {
-                    reject(new Error(`${url} returned 304, resource not changed`))
+                    console.log(`${url} returned 304, resource not changed`)
+                    resolve(xhr)
                 } else {
                     reject(new Error(`${url} returned ${xhr.status}`))
                 }
