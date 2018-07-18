@@ -94,6 +94,9 @@ describe('search workflow', () => {
     beforeEach(async () => {
         ({ browser, bgPage, requests } = await helpers.setup())
 
+        // wait until normal exti workflow is done so we don't confuse atb.js requests
+        // when the actual tests run
+        await helpers.waitForSetting(bgPage, 'extiSent')
         await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v112-1'))
 
         // request needs to be promisified
@@ -107,8 +110,6 @@ describe('search workflow', () => {
                 resolve()
             })
         })
-
-        await helpers.wait(3000)
     })
     afterEach(async () => {
         await helpers.teardown(browser)
@@ -117,26 +118,28 @@ describe('search workflow', () => {
         // set set_atb to today's version
         await bgPage.evaluate((todaysAtb) => dbg.settings.updateSetting('set_atb', todaysAtb), todaysAtb)
 
+        // run a search
         const searchPage = await browser.newPage()
-        await searchPage.goto('https://duckduckgo.com/?q=test')
+        searchPage.goto('https://duckduckgo.com/?q=test')
 
-        await helpers.wait(1000)
+        await bgPage.waitForRequest(req => req.url().match(/atb\.js/))
+        await helpers.wait(100)
 
         let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-
         expect(newSetAtb).toEqual(todaysAtb)
     })
     it('should update set_atb if a repeat search is made on a different day', async () => {
         // set set_atb to an older version
         await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
 
+        // run a search
         const searchPage = await browser.newPage()
-        await searchPage.goto('https://duckduckgo.com/?q=test')
+        searchPage.goto('https://duckduckgo.com/?q=test')
 
+        await bgPage.waitForRequest(req => req.url().match(/atb\.js/))
         await helpers.wait(1000)
 
         let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-
         expect(newSetAtb).toEqual(todaysAtb)
     })
 })
