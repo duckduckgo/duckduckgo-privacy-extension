@@ -1,7 +1,7 @@
-const httpsStorage = require('../../shared/js/background/storage/https.es6')
-const httpsBloom = require('./../data/httpsBloom.json')
-const httpsWhitelist = require('./../data/httpsWhitelist.json')
-const load = require('./../helpers/https.es6.js')
+const httpsStorage = require('../../../shared/js/background/storage/https.es6')
+const httpsBloom = require('./../../data/httpsBloom.json')
+const httpsWhitelist = require('./../../data/httpsWhitelist.json')
+const load = require('./../../helpers/https.es6.js')
 
 describe('Https storage normal update', () => {
     beforeAll(() => {
