@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer')
 const execSync = require('child_process').execSync
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000
+
 const wait = async (ms) => {
     return new Promise((resolve) => { setTimeout(resolve, ms) })
 }
