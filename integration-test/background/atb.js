@@ -10,13 +10,13 @@ describe('install workflow', () => {
     describe('basic workflow (no success page)', () => {
         beforeEach(async () => {
             ({ browser, bgPage, requests } = await helpers.setup())
-            await helpers.wait(2000)
         })
         afterEach(async () => {
             await helpers.teardown(browser)
         })
 
         it('should open the postinstall page correctly', async () => {
+            await helpers.wait(2000)
             let postInstallOpened = await browser.targets().some(async (target) => {
                 let url = await target.url()
 
@@ -26,6 +26,8 @@ describe('install workflow', () => {
             expect(postInstallOpened).toBeTruthy()
         })
         it('should get its ATB param from atb.js correctly', async () => {
+            await helpers.waitForSetting(bgPage, 'extiSent')
+
             let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
             let setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
             let extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
@@ -54,13 +56,14 @@ describe('install workflow', () => {
     describe('workflow with success page', () => {
         beforeEach(async () => {
             ({ browser, bgPage, requests } = await helpers.setup({ withSuccessPage: true }))
-            await helpers.wait(2000)
         })
         afterEach(async () => {
             await helpers.teardown(browser)
         })
 
         it('should get its atb param from the success page correctly', async () => {
+            await helpers.waitForSetting(bgPage, 'extiSent')
+
             let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
             let setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
             let extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))

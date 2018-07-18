@@ -4,7 +4,33 @@ const execSync = require('child_process').execSync
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000
 
 const wait = async (ms) => {
-    return new Promise((resolve) => { setTimeout(resolve, ms) })
+    await new Promise((resolve) => { setTimeout(resolve, ms) })
+}
+
+const waitForSettingsReady = async (bgPage) => {
+    await bgPage.waitForFunction(() => {
+        if (!window.dbg) return
+
+        return dbg.settings.getSetting('all')
+    }, { polling: 100 })
+}
+
+const waitForSetting = async (bgPage, key) => {
+    await bgPage.waitForFunction((key) => {
+        if (!window.dbg) return
+
+        return dbg.settings.getSetting(key)
+    }, { polling: 100 }, key)
+}
+
+const waitForSettingToEqual = async (bgPage, key, val) => {
+    await bgPage.waitForFunction((key, val) => {
+        if (!window.dbg) return
+
+        let setting = dbg.settings.getSetting(key)
+
+        return setting === val
+    }, { polling: 100 }, key, val)
 }
 
 const setup = async (ops) => {
@@ -71,5 +97,8 @@ const teardown = async (browser) => {
 module.exports = {
     setup,
     teardown,
-    wait
+    wait,
+    waitForSettingsReady,
+    waitForSetting,
+    waitForSettingToEqual
 }
