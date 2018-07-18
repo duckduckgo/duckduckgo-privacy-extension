@@ -33,10 +33,12 @@ const setup = async (ops) => {
     const targets = await browser.targets()
     let bgPage
 
+    // grab a handle on the background page for the extension
+    // we can't use the long ID as it could possibly change
     for (let t of targets) {
-        let url = await t.url()
+        let title = t._targetInfo.title
 
-        if (url.match(/ogigmfedpbpnnbcpgjloacccaibkaoip/)) {
+        if (title === 'DuckDuckGo Privacy Essentials') {
             bgPage = await t.page()
         }
     }
