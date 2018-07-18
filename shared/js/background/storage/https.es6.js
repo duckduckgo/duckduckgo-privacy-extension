@@ -82,7 +82,7 @@ class HTTPSStorage {
     }
 
     getDataXHR (url, etag) {
-        return load.loadExtensionFile({url: url, etag: etag, returnType: 'json', source: 'external'})
+        return load.loadExtensionFile({url: url, etag: etag, returnType: 'json', source: 'external', timeout: 60000})
     }
 
     getDataFromLocalDB (name) {

@@ -65,7 +65,7 @@ function loadExtensionFile (params) {
         xhr.open('GET', browserWrapper.getExtensionURL(url))
     }
 
-    xhr.timeout = 60000
+    xhr.timeout = params.timeout || 30000
 
     xhr.send(null)
 
