@@ -123,8 +123,7 @@ describe('search workflow', () => {
         const searchPage = await browser.newPage()
         searchPage.goto('https://duckduckgo.com/?q=test')
 
-        await bgPage.waitForRequest(req => req.url().match(/atb\.js/))
-        await wait.ms(100)
+        await bgPage.waitForResponse(req => req.url().match(/atb\.js/))
 
         let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         expect(newSetAtb).toEqual(todaysAtb)
@@ -137,8 +136,7 @@ describe('search workflow', () => {
         const searchPage = await browser.newPage()
         searchPage.goto('https://duckduckgo.com/?q=test')
 
-        await bgPage.waitForRequest(req => req.url().match(/atb\.js/))
-        await wait.ms(1000)
+        await bgPage.waitForResponse(req => req.url().match(/atb\.js/))
 
         let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         expect(newSetAtb).toEqual(todaysAtb)
