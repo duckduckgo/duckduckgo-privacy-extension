@@ -1,5 +1,6 @@
 /* global dbg:false */
-const helpers = require('../helpers')
+const harness = require('../helpers/harness')
+const wait = require('../helpers/wait')
 const request = require('request')
 
 let browser
@@ -9,14 +10,14 @@ let requests
 describe('install workflow', () => {
     describe('basic workflow (no success page)', () => {
         beforeEach(async () => {
-            ({ browser, bgPage, requests } = await helpers.setup())
+            ({ browser, bgPage, requests } = await harness.setup())
         })
         afterEach(async () => {
-            await helpers.teardown(browser)
+            await harness.teardown(browser)
         })
 
         it('should open the postinstall page correctly', async () => {
-            await helpers.wait(2000)
+            await wait.ms(2000)
             let postInstallOpened = await browser.targets().some(async (target) => {
                 let url = await target.url()
 
@@ -26,7 +27,7 @@ describe('install workflow', () => {
             expect(postInstallOpened).toBeTruthy()
         })
         it('should get its ATB param from atb.js correctly', async () => {
-            await helpers.waitForSetting(bgPage, 'extiSent')
+            await wait.forSetting(bgPage, 'extiSent')
 
             let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
             let setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
@@ -55,14 +56,14 @@ describe('install workflow', () => {
     })
     describe('workflow with success page', () => {
         beforeEach(async () => {
-            ({ browser, bgPage, requests } = await helpers.setup({ withSuccessPage: true }))
+            ({ browser, bgPage, requests } = await harness.setup({ withSuccessPage: true }))
         })
         afterEach(async () => {
-            await helpers.teardown(browser)
+            await harness.teardown(browser)
         })
 
         it('should get its atb param from the success page correctly', async () => {
-            await helpers.waitForSetting(bgPage, 'extiSent')
+            await wait.forSetting(bgPage, 'extiSent')
 
             let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
             let setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
@@ -92,11 +93,11 @@ describe('search workflow', () => {
     let lastWeeksAtb
 
     beforeEach(async () => {
-        ({ browser, bgPage, requests } = await helpers.setup())
+        ({ browser, bgPage, requests } = await harness.setup())
 
         // wait until normal exti workflow is done so we don't confuse atb.js requests
         // when the actual tests run
-        await helpers.waitForSetting(bgPage, 'extiSent')
+        await wait.forSetting(bgPage, 'extiSent')
         await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v112-1'))
 
         // request needs to be promisified
@@ -112,7 +113,7 @@ describe('search workflow', () => {
         })
     })
     afterEach(async () => {
-        await helpers.teardown(browser)
+        await harness.teardown(browser)
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version
@@ -123,7 +124,7 @@ describe('search workflow', () => {
         searchPage.goto('https://duckduckgo.com/?q=test')
 
         await bgPage.waitForRequest(req => req.url().match(/atb\.js/))
-        await helpers.wait(100)
+        await wait.ms(100)
 
         let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         expect(newSetAtb).toEqual(todaysAtb)
@@ -137,7 +138,7 @@ describe('search workflow', () => {
         searchPage.goto('https://duckduckgo.com/?q=test')
 
         await bgPage.waitForRequest(req => req.url().match(/atb\.js/))
-        await helpers.wait(1000)
+        await wait.ms(1000)
 
         let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         expect(newSetAtb).toEqual(todaysAtb)

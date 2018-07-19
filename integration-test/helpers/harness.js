@@ -1,8 +1,8 @@
+/* global dbg:false */
 const puppeteer = require('puppeteer')
 const execSync = require('child_process').execSync
 
-// integration tests and therefore a bit slower, allow more time to fail
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 15000
 
 const setup = async (ops) => {
     ops = ops || {}
