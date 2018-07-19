@@ -74,16 +74,19 @@ function updateLists () {
             // get a fresh copy of the list to process
             if (Object.keys(list.parsed).length === 0) etag = ''
 
-            load.loadExtensionFile({url: url, source: 'external', etag: etag}, (listData, response) => {
-                const newEtag = response.getResponseHeader('etag') || ''
-                console.log('Updating list: ', name)
+            load.loadExtensionFile({url: url, source: 'external', etag: etag}).then((response) => {
+                if (response && response.status === 200) {
+                    const listData = response.data
+                    const newEtag = response.getResponseHeader('etag') || ''
+                    console.log('Updating list: ', name)
 
-                // sync new etag to storage
-                settings.updateSetting(constantsName + '-etag', newEtag)
+                    // sync new etag to storage
+                    settings.updateSetting(constantsName + '-etag', newEtag)
 
-                list.parser.parse(listData, list.parsed)
+                    list.parser.parse(listData, list.parsed)
 
-                list.isLoaded = true
+                    list.isLoaded = true
+                }
             })
         }
     }
@@ -94,11 +97,13 @@ function updateLists () {
 
     // load broken site list
     // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist-temporary.txt
-    load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}, (listData, response) => {
-        const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
-        settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag)
-
-        trackersWhitelistTemporary = listData.trim().split('\n')
+    load.loadExtensionFile({url: constants.trackersWhitelistTemporary, etag: trackersWhitelistTemporaryEtag, source: 'external'}).then((response) => {
+        if (response && response.status === 200) {
+            const listData = response.data
+            const newTrackersWhitelistTemporaryEtag = response.getResponseHeader('etag') || ''
+            settings.updateSetting('trackersWhitelistTemporary-etag', newTrackersWhitelistTemporaryEtag)
+            trackersWhitelistTemporary = listData.trim().split('\n')
+        }
     })
 }
 

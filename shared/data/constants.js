@@ -10,7 +10,6 @@ module.exports = {
     "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
     "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
     "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
-    "httpsUpgradeList": "https://duckduckgo.com/contentblocking.js?l=https2",
     "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
@@ -44,5 +43,18 @@ module.exports = {
         "oath": 9,
         "maxcdn": 7,
         "automattic": 7
-    }
+    },
+    "httpsDBName": "https",
+    "httpsLists": [
+        {
+            "type": "upgrade list",
+            "name": "httpsUpgradeList",
+            "url": "https://staticcdn.duckduckgo.com/https/https-bloom.json"
+        },
+        {
+            "type": "whitelist",
+            "name": "httpsWhitelist",
+            "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
+        }
+    ]
 }
