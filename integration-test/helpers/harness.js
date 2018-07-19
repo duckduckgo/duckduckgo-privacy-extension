@@ -1,4 +1,3 @@
-/* global dbg:false */
 const puppeteer = require('puppeteer')
 const execSync = require('child_process').execSync
 
