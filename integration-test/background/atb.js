@@ -92,7 +92,7 @@ describe('search workflow', () => {
     let todaysAtb
     let lastWeeksAtb
 
-    beforeEach(async () => {
+    beforeAll(async () => {
         ({ browser, bgPage, requests } = await harness.setup())
 
         // wait until normal exti workflow is done so we don't confuse atb.js requests
@@ -112,7 +112,7 @@ describe('search workflow', () => {
             })
         })
     })
-    afterEach(async () => {
+    afterAll(async () => {
         await harness.teardown(browser)
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
