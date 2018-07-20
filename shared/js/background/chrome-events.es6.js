@@ -8,10 +8,10 @@ const ATB = require('./atb.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
-        setTimeout(() => ATB.updateATBValues(), 1000)
+        ATB.updateATBValues()
 
         // need to wait a bit for ATB to be set
-        setTimeout(() => ATB.openPostInstallPage(), 3000)
+        setTimeout(() => ATB.openPostInstallPage(), 2000)
     }
 })
 
