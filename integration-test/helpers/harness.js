@@ -24,11 +24,6 @@ const setup = async (ops) => {
         puppeteerOps.path = 'google-chrome-stable'
     }
 
-    // pre-open the success page
-    if (ops.withSuccessPage) {
-        puppeteerOps.args.push('https://duckduckgo.com/?exti=2')
-    }
-
     const browser = await puppeteer.launch(puppeteerOps)
     // for some reason we need to init a blank page
     // before the extension is initialized

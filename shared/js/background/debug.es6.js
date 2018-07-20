@@ -11,7 +11,8 @@ const atb = require('./atb.es6')
 window.dbg = {
     settings,
     abp,
-    tabManager
+    tabManager,
+    atb
 }
 
 // mark this as a dev build
