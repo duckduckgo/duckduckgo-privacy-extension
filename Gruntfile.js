@@ -215,7 +215,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
 
     let devTasks = ['build']
-    if (grunt.option.watch) { devTasks.push('watch') }
+    if (grunt.option('watch')) { devTasks.push('watch') }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)
     grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
