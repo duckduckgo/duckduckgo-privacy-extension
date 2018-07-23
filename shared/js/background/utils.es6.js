@@ -1,13 +1,23 @@
 const tldjs = require('tldjs')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
-function extractHostFromURL (url) {
+function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return
 
     let urlObj = tldjs.parse(url)
     let hostname = urlObj.hostname
-    hostname = hostname.replace(/^www\./, '')
+
+    if (!shouldKeepWWW) {
+        hostname = stripWWWFromHost(hostname)
+    }
+
     return hostname
+}
+
+function stripWWWFromHost (host) {
+    if (!host) return
+
+    return host.replace(/^www\./, '')
 }
 
 function extractTopSubdomainFromHost (host) {
