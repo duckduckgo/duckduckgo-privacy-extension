@@ -8,7 +8,7 @@ let bgPage
 let requests
 
 describe('install workflow', () => {
-    describe('basic workflow (no success page)', () => {
+    describe('postinstall page', () => {
         beforeEach(async () => {
             ({ browser, bgPage, requests } = await harness.setup())
         })
@@ -26,7 +26,39 @@ describe('install workflow', () => {
 
             expect(postInstallOpened).toBeTruthy()
         })
-        it('should get its ATB param from atb.js correctly', async () => {
+    })
+
+    describe('atb values', () => {
+        beforeEach(async () => {
+            ({ browser, bgPage, requests } = await harness.setup())
+
+            /**
+             * It's pretty difficult to test the install flow as it
+             * immediately happens when the extension is installed,
+             * (e.g. we can't add event listeners on time, or set up an install success page)
+             *
+             * Instead we load up the extension, wait for the ATB process to finish up,
+             * then reset everything and simulate a fresh install by calling atb.updateATBValues()
+             */
+            await wait.forSetting(bgPage, 'extiSent')
+
+            await bgPage.evaluate(() => {
+                dbg.settings.removeSetting('atb')
+                dbg.settings.removeSetting('set_atb')
+                dbg.settings.removeSetting('extiSent')
+            })
+
+            while (requests.length) {
+                requests.shift()
+            }
+        })
+        afterEach(async () => {
+            await harness.teardown(browser)
+        })
+
+        it('should get its ATB param from atb.js when there\'s no install success page', async () => {
+            // try get ATB params
+            await bgPage.evaluate(() => dbg.atb.updateATBValues())
             await wait.forSetting(bgPage, 'extiSent')
 
             let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -53,44 +85,13 @@ describe('install workflow', () => {
             expect(numAtbCalled).toEqual(1)
             expect(numExtiCalled).toEqual(1)
         })
-    })
-    describe('workflow with success page', () => {
-        beforeEach(async () => {
-            ({ browser, bgPage, requests } = await harness.setup())
-
-            /**
-             * This situation from prod is really difficult to reproduce since it requires
-             * the install success page to already be opened by the time the extension is installed
-             *
-             * Here's what we do instead:
-             * 1. Load up the extension without a success page
-             * 2. Clear out the extension's state so it's as if it's a fresh install
-             * 3. Open the success page
-             * 4. Simulate an install by calling atb.updateATBValues()
-             */
-
-            await wait.forSetting(bgPage, 'extiSent')
-
-            await bgPage.evaluate(() => {
-                dbg.settings.removeSetting('atb')
-                dbg.settings.removeSetting('set_atb')
-                dbg.settings.removeSetting('extiSent')
-            })
-
-            while (requests.length) {
-                requests.shift()
-            }
-
+        it('should get its ATB param from the success page when one is present', async () => {
+            // open a success page and wait for it to have finished loading
             let successPage = await browser.newPage()
-
             await successPage.goto('https://duckduckgo.com/?exti=2')
             await successPage.waitFor(() => document.querySelector('html').getAttribute('data-chromeatb'))
-        })
-        afterEach(async () => {
-            await harness.teardown(browser)
-        })
 
-        it('should get its atb param from the success page correctly', async () => {
+            // try get ATB params again
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
             await wait.forSetting(bgPage, 'extiSent')
 
