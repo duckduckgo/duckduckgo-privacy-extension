@@ -48,26 +48,17 @@ class HTTPS {
         return bloom
     }
 
-    canUpgradeHost (hostArray) {
+    canUpgradeHost (host) {
         if (!this.isReady) {
             // console.warn('HTTPS: not ready')
             return false
         }
 
-        if (!hostArray || !hostArray.length) {
+        if (this.whitelist.includes(host)) {
             return false
         }
 
-        // Check if whitelist already has either
-        // of the values
-        if (this.whitelist.includes(hostArray)) {
-            return false
-        }
-
-        // Try both the hostname with and without 'www'
-        return Array.from(this.upgradeLists.values()).some(list => 
-            { for (const host of hostArray.values()) list.checkEntry(host) }
-        )
+        return Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
@@ -95,15 +86,9 @@ class HTTPS {
         }
 
         // Determine host without stripping 'www',
-        // then strip it and put both versions in an array
-        // since some entries in the https upgrade list will have 'www'
-        // and some others won't
         const host = utils.extractHostFromURL(reqUrl, false) || ''
-        const hostWithoutWWW = utils.stripWWWFromHost(host)  || ''
 
-        const hostArray = [host, hostWithoutWWW]
-
-        if (this.canUpgradeHost(hostArray)) {
+        if (this.canUpgradeHost(host)) {
             return reqUrl.replace(/^(http|https):\/\//i, 'https://')
         }
 
