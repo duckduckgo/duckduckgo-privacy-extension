@@ -8,7 +8,7 @@ cache:
   directories:
     - "node_modules"
 addons:
-  chrome: stable
+  chrome: beta
 notifications:
   hipchat:
     rooms:
