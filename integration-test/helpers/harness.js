@@ -19,9 +19,13 @@ const setup = async (ops) => {
         // travis requires this to work
         puppeteerOps.args.push('--no-sandbox')
 
-        // use the latest beta Chrome on Travis,
+        // use the latest stable or beta Chrome versions on Travis
         // rather than the bundled one
-        puppeteerOps.path = 'google-chrome-beta'
+        if (process.env.CHROME_CHANNEL === 'beta') {
+            puppeteerOps.path = 'google-chrome-beta'
+        } else if (process.env.CHROME_CHANNEL === 'stable') {
+            puppeteerOps.path = 'google-chrome-stable'
+        }
     }
 
     const browser = await puppeteer.launch(puppeteerOps)

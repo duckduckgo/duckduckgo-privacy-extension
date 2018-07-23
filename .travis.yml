@@ -8,7 +8,15 @@ cache:
   directories:
     - "node_modules"
 addons:
-  chrome: beta
+  chrome:
+    - beta
+    - stable
+matrix:
+  include:
+    - name: 'Stable Chrome integration tests'
+      env: CHROME_CHANNEL=stable
+    - name: 'Beta Chrome integration tests'
+      env: CHROME_CHANNEL=beta
 notifications:
   hipchat:
     rooms:
