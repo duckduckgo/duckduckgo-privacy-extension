@@ -86,7 +86,7 @@ class HTTPS {
         }
 
         // Determine host without stripping 'www',
-        const host = utils.extractHostFromURL(reqUrl, false) || ''
+        const host = utils.extractHostFromURL(reqUrl, true) || ''
 
         if (this.canUpgradeHost(host)) {
             return reqUrl.replace(/^(http|https):\/\//i, 'https://')
