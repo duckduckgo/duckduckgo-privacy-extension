@@ -8,16 +8,10 @@ function extractHostFromURL (url, shouldKeepWWW) {
     let hostname = urlObj.hostname
 
     if (!shouldKeepWWW) {
-        hostname = stripWWWFromHost(hostname)
+        hostname = hostname.replace(/^www\./, '')
     }
 
     return hostname
-}
-
-function stripWWWFromHost (host) {
-    if (!host) return
-
-    return host.replace(/^www\./, '')
 }
 
 function extractTopSubdomainFromHost (host) {
