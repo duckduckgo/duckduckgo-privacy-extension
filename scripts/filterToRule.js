@@ -80,7 +80,7 @@ function parseFilter (filterOrig) {
     filter = filter.replace(/\|\|/,'')
 
     // escape some chars for json
-    filter = filter.replace(/(\/|\?|\.)/g,'\\$1')
+    filter = filter.replace(/(\(|\)|\/|\?|\.)/g,'\\$1')
 
     // ending ^
     filter = filter.replace(/\^$/, '($|[?/])')
@@ -90,8 +90,6 @@ function parseFilter (filterOrig) {
 
     // single wild card
     filter = filter.replace(/([^\.\^])\*/g, '$1.*')
-
-    console.log(filter)
 
     // make sure this is a valid regex
     assert.doesNotThrow(() => new RegExp(filter))
