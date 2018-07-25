@@ -8,7 +8,7 @@
 
 (function () {
     class ContentScript {
-        constructor() {
+        constructor () {
             // Determine if content script is running in iframe or main frame
             this.frameType = window === window.top ? 'main' : window.parent === window.top ? 'topLevelFrame' : 'nestedFrame'
             this.possibleTargets = []
@@ -67,7 +67,7 @@
          * 2. main frame sends messages back to iframes with their id (setFrameId)
          * 3. iframes send messages to main frame when they contain blocked elements (hideFrame)
          */
-        frameListener(e) {
+        frameListener (e) {
             if (e.data.type === 'frameIdRequest') {
                 this.foundFrames = document.getElementsByTagName('iframe')
                 let i = this.foundFrames.length
@@ -92,7 +92,7 @@
          * of blocked requests. In the main frame all we care about is iframes, but within iframes
          * we also look for blocked scripts that may have loaded a nested iframe
          */
-        locateBlockedFrames(requests) {
+        locateBlockedFrames (requests) {
             if (this.frameType === 'main') {
                 let i = this.foundFrames.length
                 while (i--) {
@@ -121,7 +121,7 @@
          * and remove event listeners so that other content scripts no longer
          * interact with hidden frames
          */
-        hideFrame(frame) {
+        hideFrame (frame) {
             frame.style.setProperty('display', 'none', 'important')
             frame.hidden = true
             frame.classList.add('ddg-hidden')
@@ -132,8 +132,6 @@
         }
     }
 
-    // Initialize content script if it doesn't already exist
-    if (!contentScript) {
-        var contentScript = new ContentScript();
-    }
+    // Instantiate content script
+    var contentScript = new ContentScript()
 })()
