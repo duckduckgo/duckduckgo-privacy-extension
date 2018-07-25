@@ -19,6 +19,7 @@
     "test-debug": "grunt test --browser=chrome --type=dev --test-debug",
     "test-int": "make dev browser=chrome type=dev && jasmine --config=integration-test/config.json",
     "test-int-x": "xvfb-run --server-args='-screen 0 1024x768x24' npm run test-int",
+    "test-ci": "npm run lint && npm test && npm run test-int-x",
     "dev-firefox": "make dev browser=firefox type=dev watch=1",
     "release-firefox": "make browser=firefox type=release",
     "dev-chrome": "make dev browser=chrome type=dev watch=1",

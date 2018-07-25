@@ -1,7 +1,7 @@
 language: node_js
 node_js:
   - 8.11.1
-script: npm run lint && npm test && npm run test-int-x
+script: npm run test-ci
 before_script:
   - npm install -g grunt-cli
 cache:
