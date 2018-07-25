@@ -1,6 +1,10 @@
 const program = require('commander')
 const fs = require('fs')
 const chalk = require('chalk')
+const merge = require('deepmerge')
+
+// store process rule regexes in key/val to look for duplicates
+let rules = {}
 
 program
     .option('-f, --file <name>', 'Text file with newline-separated filter list')
@@ -16,11 +20,18 @@ if (!(program.file && program.output)) {
 
     filters.map(f => {
         let rule = parseFilter(f)
-    })
 
+        // add to rules or merge duplicates
+        if (!rules[rule.regex]) {
+            rules[rule.regex] = rule
+        } else {
+            rules[rule.regex] = merge(rules[rule.regex], rule)
+        }
+    })
+    console.log(JSON.stringify(rules))
 })()
 
-function parseFilter(filterOrig) {
+function parseFilter (filterOrig) {
     let rule = {}
     let filter = filterOrig
     let optionStr = ''
@@ -37,7 +48,7 @@ function parseFilter(filterOrig) {
     // remove host anchors
     filter = filter.replace(/\|\|/,'')
 
-    // double excape some chars for json
+    // escape some chars for json
     filter = filter.replace(/(\/|\?|\.)/gi,'\\$1')
 
     // ending ^
@@ -47,7 +58,7 @@ function parseFilter(filterOrig) {
     filter = filter.replace(/\^\*/, '[?/].*')
 
     // single wild card
-    filter = filter.replace(/[^.]\*/, '.*')
+    filter = filter.replace(/([^\.\^])\*/, '$1.*')
 
     // add final filter to rule object
     rule.regex = filter
@@ -57,9 +68,6 @@ function parseFilter(filterOrig) {
     if (Object.keys(options).length) {
         rule.options = options
     }
-
-    console.log(filterOrig)
-    console.log(rule)
 
     return rule
 }
@@ -74,13 +82,15 @@ function parseOptions (optionStr) {
     optionList.map(o => {
         // skip third party option. All of our rules
         // are by default third party
-        if (!o || o.match('third-party')) {
+        if (!o || o.match(/third-party|first-party/)) {
             return 
         }
 
         // look for domain list indicator 
         if (o.match(/^domain=/)) {
             options.domains = o.replace('domain=', '').split('|')
+            // we don't deal with negation in domain lists
+            options.domains.filter(d => !d.match('~'))
         } else {
             // request type options
             if (!options.types) options.types = []
