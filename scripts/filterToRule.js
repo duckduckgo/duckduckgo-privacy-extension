@@ -91,6 +91,11 @@ function parseFilter (filterOrig) {
     // single wild card
     filter = filter.replace(/([^\.\^])\*/g, '$1.*')
 
+    console.log(filter)
+
+    // make sure this is a valid regex
+    assert.doesNotThrow(() => new RegExp(filter))
+    
     // add final filter to rule object
     rule.rule = filter
 
