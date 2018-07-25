@@ -1,7 +1,7 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
 const wait = require('../helpers/wait')
-const request = require('request')
+const request = require('request-promise-native')
 
 let browser
 let bgPage
@@ -130,17 +130,10 @@ describe('search workflow', () => {
         await wait.forSetting(bgPage, 'extiSent')
         await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v112-1'))
 
-        // request needs to be promisified
-        await new Promise(resolve => {
-            request('https://duckduckgo.com/atb.js', (err, res, body) => {
-                expect(err).toBeFalsy()
-
-                let data = JSON.parse(body)
-                todaysAtb = data.version
-                lastWeeksAtb = `${data.majorVersion - 1}-${data.minorVersion}`
-                resolve()
-            })
-        })
+        // grab current atb data
+        let data = await request('https://duckduckgo.com/atb.js', { json: true })
+        todaysAtb = data.version
+        lastWeeksAtb = `${data.majorVersion - 1}-${data.minorVersion}`
     })
     afterAll(async () => {
         await harness.teardown(browser)

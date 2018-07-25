@@ -54,6 +54,7 @@
     "localStorage": "1.0.3",
     "puppeteer": "1.6.0",
     "request": "2.83.0",
+    "request-promise-native": "^1.0.5",
     "selenium-webdriver": "3.0.1",
     "standard": "10.0.3",
     "timekeeper": "^2.1.1"
