@@ -1,7 +1,9 @@
 const program = require('commander')
 const fs = require('fs')
-const chalk = require('chalk')
 const merge = require('deepmerge')
+const tests = require('./tests.json')
+const _ = require('underscore')
+const assert = require('assert')
 
 // store process rule regexes in key/val to look for duplicates
 let rules = {}
@@ -19,17 +21,46 @@ if (!(program.file && program.output)) {
     let filters = fs.readFileSync(program.file).toString().split('\n')
 
     filters.map(f => {
-        let rule = parseFilter(f)
+        if (!f) return 
+
+        let rule = parseFilter(f.toLowerCase())
 
         // add to rules or merge duplicates
-        if (!rules[rule.regex]) {
-            rules[rule.regex] = rule
+        if (!rules[rule.rule]) {
+            rules[rule.rule] = rule
         } else {
-            rules[rule.regex] = merge(rules[rule.regex], rule)
+            // merge and combine unique array elements
+            rules[rule.rule] = merge(
+                rules[rule.rule], 
+                rule, 
+                { arrayMerge: (a1, a2) => _.union(a1, a2) }
+            )
         }
     })
-    console.log(JSON.stringify(rules))
+
+    writeFile(rules)
+
+    // run tests on known input-output
+    Object.keys(tests).map(f => {
+        let rule = parseFilter(f.toLowerCase())
+        assert(_.isEqual(tests[f], rule), true)
+    })
 })()
+
+function writeFile (rules) {
+    // write a file with one rule per line sorted by rule to make
+    // manual copying easier later on
+    let out = Object.values(rules)
+        .sort((a, b) => {
+            if (a.rule > b.rule) return 1
+            if (a.rule < b.rule) return -1
+            return 0
+        })
+        .reduce((result, val) => `${result}${JSON.stringify(val)},\n`, '')
+
+    fs.writeFileSync(program.output, `[\n${out}]`)
+    console.log(`Wrote: ${program.output}`)
+}
 
 function parseFilter (filterOrig) {
     let rule = {}
@@ -49,19 +80,19 @@ function parseFilter (filterOrig) {
     filter = filter.replace(/\|\|/,'')
 
     // escape some chars for json
-    filter = filter.replace(/(\/|\?|\.)/gi,'\\$1')
+    filter = filter.replace(/(\/|\?|\.)/g,'\\$1')
 
     // ending ^
     filter = filter.replace(/\^$/, '($|[?/])')
     
     // ^* pattern 
-    filter = filter.replace(/\^\*/, '[?/].*')
+    filter = filter.replace(/\^\*/g, '[?/].*')
 
     // single wild card
-    filter = filter.replace(/([^\.\^])\*/, '$1.*')
+    filter = filter.replace(/([^\.\^])\*/g, '$1.*')
 
     // add final filter to rule object
-    rule.regex = filter
+    rule.rule = filter
 
     let options = parseOptions(optionStr)
 
