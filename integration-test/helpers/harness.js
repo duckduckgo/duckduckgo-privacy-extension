@@ -42,6 +42,7 @@ const setup = async (ops) => {
 
         if (title === 'DuckDuckGo Privacy Essentials') {
             bgPage = await t.page()
+            break
         }
     }
 
