@@ -17,12 +17,18 @@ describe('install workflow', () => {
         })
 
         it('should open the postinstall page correctly', async () => {
-            await wait.ms(2000)
-            let postInstallOpened = await browser.targets().some(async (target) => {
-                let url = await target.url()
+            let postInstallOpened
 
-                return url.match(/duckduckgo\.com\/install\?post=1/)
-            })
+            // wait for post install page to open
+            // if it never does, jasmine timeout will kick in
+            while (!postInstallOpened) {
+                await wait.ms(100)
+                postInstallOpened = await browser.targets().some(async (target) => {
+                    let url = await target.url()
+
+                    return url.match(/duckduckgo\.com\/install\?post=1/)
+                })
+            }
 
             expect(postInstallOpened).toBeTruthy()
         })
