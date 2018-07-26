@@ -149,30 +149,6 @@
       });
   });
 
-  // Some basic tests for the abp module. These should be expanded to cover all abp filter options
-  QUnit.test("Test abp matching", (assert) => {
-      
-      // testEasylist is defined in testEasylist.js
-      let fakeEasylist = testEasylist.join('\n')
-      let fakeRegexList = regexList.join('\n')
-
-      let parsedList = {}
-      bkg.abp.parse(fakeEasylist, parsedList)
-      bkg.abp.parse(fakeRegexList, parsedList)
-
-      easylistTestCases.forEach((e) => {
-          let domain = e.options.domain || 'test.com'
-          let type = e.options.type || 'script'
-
-          let match = bkg.abp.matches(parsedList, e.url, {
-              domain: domain,
-              elementTypeMask: bkg.abp.elementTypes[type]
-          })
-          
-          assert.ok(match === e.block, `Got correct blocking decision. ${match} === ${e.block}, ${e.url} ${JSON.stringify(e.options)}`)
-      })
-  })
-
   var surrogateBlocking = [
     { url: 'https://google-analytics.com/ga.js' },
     { url: 'https://www.google-analytics.com/ga.js' },
@@ -197,4 +173,18 @@
       });
   });
 
+  QUnit.test("Whitelists rules", (assert) => {
+      bkg.settings.updateSetting('trackerBlockingEnabled', true);
+      
+      let testTab = Object.assign({}, JSON.parse(JSON.stringify(fakeTab)))
+      testTab.url = 'https://convert-me.com'
+      testTab.site.domain = 'convert-me.com'
+      
+      let testurl = "https://2mdn.net/asdf/1x1image.jpg"
+      fakeRequest.type = 'image'
+      fakeRequest.url = testurl
+
+      let toBlock = bkg.trackers.isTracker(testurl, testTab, fakeRequest) || {block: false};
+      assert.ok(toBlock.block === false, 'shouldn\'t block whitelist rules')
+  })
 })();

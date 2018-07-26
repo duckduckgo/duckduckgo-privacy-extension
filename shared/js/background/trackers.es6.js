@@ -1,6 +1,4 @@
-const abp = require('abp-filter-parser')
 const tldjs = require('tldjs')
-
 const load = require('./load.es6')
 const settings = require('./settings.es6')
 const surrogates = require('./surrogates.es6')
@@ -64,15 +62,6 @@ function isTracker (urlToCheck, thisTab, request) {
 
         let urlSplit = hostname.split('.')
 
-        var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
-        if (whitelistedTracker) {
-            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
-            if (commonParent) {
-                return addCommonParent(whitelistedTracker, commonParent)
-            }
-            return whitelistedTracker
-        }
-
         let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
         if (surrogateTracker) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
@@ -103,24 +92,6 @@ function addCommonParent (trackerObj, parentName) {
     trackerObj.block = false
     trackerObj.reason = 'first party'
     return trackerObj
-}
-
-function checkWhitelist (url, currLocation, request) {
-    let result = false
-    let match
-    const whitelists = abpLists.getWhitelists()
-
-    if (whitelists.trackersWhitelist.isLoaded) {
-        match = checkABPParsedList(whitelists.trackersWhitelist.parsed, url, currLocation, request)
-    }
-
-    if (match) {
-        result = getTrackerDetails(url, 'trackersWhitelist')
-        result.block = false
-        result.reason = 'whitelisted'
-    }
-
-    return result
 }
 
 function checkSurrogateList (url, parsedUrl, currLocation) {
@@ -190,6 +161,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             type: trackerType,
             block: true,
             rule: '',
+            trackerData: '',
             reason: 'trackersWithParentCompany'
         }
 
@@ -198,6 +170,8 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             tracker.rules.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
                     toBlock.rule = ruleObj
+                    toBlock.trackerData = tracker
+
                     match = true
                     // found a match so break loop early
                     return true
@@ -206,6 +180,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         } else {
             // no filters so we always block this tracker
             match = true
+            toBlock.trackerData = tracker
             return true
         }
 
@@ -220,7 +195,20 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
     })
 
     if (toBlock) {
-        return toBlock
+        // we have a blocked tracker but need to see if it should be whitelisted
+        if (toBlock.trackerData && toBlock.trackerData.whitelist) {
+            // check whitelist
+            toBlock.trackerData.whitelist.some(ruleObj => {
+                if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
+                    toBlock = null
+                }
+            })
+
+            return toBlock
+
+        } else {
+            return toBlock
+        }
     } else {
         // remove the subdomain and recheck for trackers. This is recursive, we'll continue
         // to pull off subdomains until we either find a match or have no url to check.
@@ -293,15 +281,6 @@ function getTrackerDetails (trackerUrl, listName) {
         url: host,
         type: listName
     }
-}
-
-function checkABPParsedList (list, url, siteDomain, request) {
-    let match = abp.matches(list, url,
-        {
-            domain: siteDomain,
-            elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
-        })
-    return match
 }
 
 module.exports = {
