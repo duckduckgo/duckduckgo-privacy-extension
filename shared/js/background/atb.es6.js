@@ -170,7 +170,7 @@ const ATB = (() => {
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
-            if (dev) url += `&dev=1`
+            if (dev) url += `&test=1`
 
             return url
         },
