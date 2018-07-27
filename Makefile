@@ -17,7 +17,7 @@ grunt-dev:
 	cp -r test build/$(browser)/dev/
 	cp -r shared/img build/$(browser)/dev/test/html
 	cp -r shared/data build/$(browser)/dev/test/html
-	grunt dev --browser=$(browser) --type=$(type)
+	grunt dev --browser=$(browser) --type=$(type) --watch=$(watch)
 
 tosdr:
 	grunt execute:tosdr --browser=$(browser) --type=$(type)
