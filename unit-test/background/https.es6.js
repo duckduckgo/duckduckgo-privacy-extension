@@ -30,6 +30,12 @@ describe('Https upgrades', () => {
             })
         })
 
+        it('should not upgrade domains missing from the list', () => {
+            testDomains.shouldNotUpgrade.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+
         it('should not upgrade whitelisted domains', () => {
             https.whitelist.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(false)
