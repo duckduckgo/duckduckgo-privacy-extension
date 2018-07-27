@@ -15,48 +15,41 @@
             this.foundScripts = []
             this.foundFrames = []
             this.frameListener = this.frameListener.bind(this)
+            this.messageListener = this.messageListener.bind(this)
+
             // Initialize event listener for interframe messaging
             window.addEventListener('message', this.frameListener)
+            // Initialize event listener for background page messaging
+            chrome.runtime.onMessage.addListener(this.messageListener)
+        }
 
-            /**
-             * Set up messaging between frames and background page. When frames are
-             * first loaded, they send a message to the background page requesting
-             * a list of relevant requests that have been blocked. If element hiding
-             * is not enabled on domain, background script will reply with 'disable',
-             * at which point event listeners are removed. Otherwise gather relevant
-             * DOM elements and then-
-             * 1. if in main frame, proceed to locateBlockedFrames
-             * 2. If in iframe, message main frame requesting id
-             */
-            chrome.runtime.onMessage.addListener((req, sender, res) => {
-                if (req.type === 'blockedRequests') {
-                    this.foundFrames = document.getElementsByTagName('iframe')
-                    if (req.frame === 'main') {
-                        this.locateBlockedFrames(req.blockedRequests)
-                    } else if (req.frame === 'topLevelFrame') {
-                        this.foundScripts = document.getElementsByTagName('script')
-                        this.possibleTargets = Array.from(this.foundFrames).concat(Array.from(this.foundScripts))
-                        window.top.postMessage({frameUrl: document.location.href, blockedRequests: req.blockedRequests, type: 'frameIdRequest'}, req.mainFrameUrl)
-                    }
-                } else if (req.type === 'disable') {
-                    window.removeEventListener('message', this.frameListener)
+        /* Request list of blocked requests from background page to kick off the process. */
+        init () {
+            chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: this.frameType})
+        }
+
+        /**
+         * Set up messaging between frames and background page. When frames are
+         * first loaded, they send a message to the background page requesting
+         * a list of relevant requests that have been blocked. If element hiding
+         * is not enabled on domain, background script will reply with 'disable',
+         * at which point event listeners are removed. Otherwise gather relevant
+         * DOM elements and then-
+         * 1. if in main frame, proceed to locateBlockedFrames
+         * 2. If in iframe, message main frame requesting id
+         */
+        messageListener (req, sender, res) {
+            if (req.type === 'blockedRequests') {
+                this.foundFrames = document.getElementsByTagName('iframe')
+                if (req.frame === 'main') {
+                    this.locateBlockedFrames(req.blockedRequests)
+                } else if (req.frame === 'topLevelFrame') {
+                    this.foundScripts = document.getElementsByTagName('script')
+                    this.possibleTargets = Array.from(this.foundFrames).concat(Array.from(this.foundScripts))
+                    window.top.postMessage({frameUrl: document.location.href, blockedRequests: req.blockedRequests, type: 'frameIdRequest'}, req.mainFrameUrl)
                 }
-            })
-
-            /**
-             * When document hits 'interactive' readystate, all DOM elements have
-             * been added to page and all requests for this document have been initiated.
-             * At this point, kick off process by requesting list of blocked requests from
-             * background page.
-             */
-            if (document.readyState === 'loading') {
-                document.addEventListener('readystatechange', () => {
-                    if (document.readyState === 'interactive') {
-                        chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: this.frameType})
-                    }
-                })
-            } else {
-                chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: this.frameType})
+            } else if (req.type === 'disable') {
+                window.removeEventListener('message', this.frameListener)
             }
         }
 
@@ -133,5 +126,21 @@
     }
 
     // Instantiate content script
-    var contentScript = new ContentScript()
+    const contentScript = new ContentScript()
+
+    /**
+     * When document hits 'interactive' readystate, all DOM elements have
+     * been added to page and all requests for this document have been initiated.
+     * At this point, kick off process by requesting list of blocked requests from
+     * background page.
+     */
+    if (document.readyState === 'loading') {
+        document.addEventListener('readystatechange', () => {
+            if (document.readyState === 'interactive') {
+                contentScript.init()
+            }
+        })
+    } else {
+        contentScript.init()
+    }
 })()
