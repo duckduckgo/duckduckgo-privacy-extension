@@ -6,7 +6,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
 const setup = async (ops) => {
     ops = ops || {}
 
-    let puppeteerOps = {
+    const puppeteerOps = {
         args: [
             '--disable-extensions-except=build/chrome/dev',
             '--load-extension=build/chrome/dev',
@@ -37,8 +37,8 @@ const setup = async (ops) => {
 
     // grab a handle on the background page for the extension
     // we can't use the long ID as it could possibly change
-    for (let t of targets) {
-        let title = t._targetInfo.title
+    for (const t of targets) {
+        const title = t._targetInfo.title
 
         if (title === 'DuckDuckGo Privacy Essentials') {
             bgPage = await t.page()

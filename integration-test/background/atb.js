@@ -24,7 +24,7 @@ describe('install workflow', () => {
             while (!postInstallOpened) {
                 await wait.ms(100)
                 postInstallOpened = await browser.targets().some(async (target) => {
-                    let url = await target.url()
+                    const url = await target.url()
 
                     return url.match(/duckduckgo\.com\/install\?post=1/)
                 })
@@ -67,9 +67,9 @@ describe('install workflow', () => {
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
             await wait.forSetting(bgPage, 'extiSent')
 
-            let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
-            let setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-            let extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
+            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+            const setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+            const extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
 
             // check the extension's internal state is correct
             expect(atb).toMatch(/v\d+-[1-7]/)
@@ -93,7 +93,7 @@ describe('install workflow', () => {
         })
         it('should get its ATB param from the success page when one is present', async () => {
             // open a success page and wait for it to have finished loading
-            let successPage = await browser.newPage()
+            const successPage = await browser.newPage()
             await successPage.goto('https://duckduckgo.com/?exti=2')
             await successPage.waitFor(() => document.querySelector('html').getAttribute('data-chromeatb'))
 
@@ -101,9 +101,9 @@ describe('install workflow', () => {
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
             await wait.forSetting(bgPage, 'extiSent')
 
-            let atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
-            let setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-            let extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
+            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+            const setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+            const extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
 
             // check the extension's internal state is correct
             expect(atb).toMatch(/v\d+-[1-7][a-z_]{2}/)
@@ -137,7 +137,7 @@ describe('search workflow', () => {
         await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v112-1'))
 
         // grab current atb data
-        let data = await request('https://duckduckgo.com/atb.js', { json: true })
+        const data = await request('https://duckduckgo.com/atb.js', { json: true })
         todaysAtb = data.version
         lastWeeksAtb = `${data.majorVersion - 1}-${data.minorVersion}`
     })
@@ -155,7 +155,7 @@ describe('search workflow', () => {
         await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
         await wait.ms(1000)
 
-        let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+        const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         expect(newSetAtb).toEqual(todaysAtb)
     })
     it('should update set_atb if a repeat search is made on a different day', async () => {
@@ -169,7 +169,7 @@ describe('search workflow', () => {
         await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
         await wait.ms(1000)
 
-        let newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+        const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         expect(newSetAtb).toEqual(todaysAtb)
     })
 })
