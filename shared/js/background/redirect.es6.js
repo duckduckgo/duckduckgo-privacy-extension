@@ -29,8 +29,8 @@ function handleRequest (requestData) {
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    if (requestData.type === 'main_frame') {
-        if (!thisTab || (thisTab.requestId !== requestData.requestId)) {
+    if (requestData.type === 'main_frame' && window.chrome) {
+        if (!thisTab || thisTab.requestId !== requestData.requestId) {
             let newTab = tabManager.create(requestData)
 
             // persist the last URL the tab was trying to upgrade to HTTPS
