@@ -104,10 +104,10 @@ let getBackgroundTabData = () => {
     })
 }
 
-let createBrowserTab = (url) => {
+let search = (url) => {
     // in Chrome, this is handled by ATB.redirectURL()
     fetch({ getSetting: { name: 'atb' }}).then((atb) => {
-        safari.application.activeBrowserWindow.openTab().url = `${url}&bext=safari&atb=${atb}`
+        safari.application.activeBrowserWindow.openTab().url = `https://duckduckgo.com/?q=${url}&bext=safari&atb=${atb}`
         safari.self.hide()
     })
 }
@@ -145,7 +145,7 @@ module.exports = {
     closePopup: closePopup,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
-    createBrowserTab: createBrowserTab,
+    search: search,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
     getExtensionURL: getExtensionURL
