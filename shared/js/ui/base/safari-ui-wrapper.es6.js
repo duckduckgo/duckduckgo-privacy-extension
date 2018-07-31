@@ -105,8 +105,10 @@ let getBackgroundTabData = () => {
 }
 
 let createBrowserTab = (url) => {
-    safari.application.activeBrowserWindow.openTab().url = `${url}&bext=safari`
-    safari.self.hide()
+    fetch({ getSetting: { name: 'atb' }}).then((atb) => {
+        safari.application.activeBrowserWindow.openTab().url = `${url}&bext=safari&atb=${atb}`
+        safari.self.hide()
+    })
 }
 
 let getExtensionURL = (path) => {
