@@ -9,7 +9,7 @@ module.exports = function () {
             name="q" class="search-form__input js-search-input"
             value="${this.model.searchText}" />
         <input class="search-form__go js-search-go" tabindex="2" value="" type="button" />
-        <input type="submit" class="search-form__submit" />
+        <input type="submit" class="search-form__submit" aria-label="Search" />
         ${hamburgerButton('js-search-hamburger-button')}
     </form>
 </section>`
