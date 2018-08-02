@@ -24,7 +24,7 @@ function BaseView (ops) {
     this.$parent = (typeof ops.appendTo === 'string') ? $(ops.appendTo) : ops.appendTo
     this.$before = (typeof ops.before === 'string') ? $(ops.before) : ops.before
     this.$after = (typeof ops.after === 'string') ? $(ops.after) : ops.after
-
+    
     if (ops.events) {
         for (var id in ops.events) {
             this.on(id, ops.events[id])

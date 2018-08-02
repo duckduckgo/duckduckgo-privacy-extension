@@ -20,7 +20,8 @@ HamburgerMenu.prototype = window.$.extend({},
                 'close',
                 'options-link',
                 'feedback-link',
-                'broken-site-link'
+                'broken-site-link',
+                'heading'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeMenu],
@@ -30,6 +31,11 @@ HamburgerMenu.prototype = window.$.extend({},
                 [this.model.store.subscribe, 'action:search', this._handleAction],
                 [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
             ])
+
+            // Find all focusable elements so that we can add tabindex="-1" to everything
+            // outside of the modal.
+            this.$allFocusableEls = this.$el.find('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"]')
+            this.$firstFocusableEl = this.$allFocusableEls[0];
         },
 
         _handleAction: function (notification) {
@@ -38,6 +44,7 @@ HamburgerMenu.prototype = window.$.extend({},
 
         _openMenu: function (e) {
             this.$el.removeClass('is-hidden')
+            this.$heading.focus();
         },
 
         _closeMenu: function (e) {

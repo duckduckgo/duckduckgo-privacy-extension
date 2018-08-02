@@ -80,13 +80,13 @@ body {
                     padding-left: 20px;
                     color: $slate;
                     font-weight: bold;
+                    display: block;
 
-                    span {
+                    span, p {
                         font-size: 14px;
                         color: $color--grey;
                         display: block;
                         font-weight: normal;
-                        padding-left: 20px;
                     }
 
                     &:hover {
