@@ -9,7 +9,7 @@ module.exports = function (ops) {
     <h1 class="hero__title">
         ${ops.title}
     </h1>
-    <h2 class="hero__subtitle">
+    <h2 class="hero__subtitle" aria-label="${ops.subtitleLabel ? ops.subtitleLabel : ops.subtitle}">
         ${ops.subtitle}
     </h2>
 </div>`
