@@ -173,18 +173,33 @@
       });
   });
 
-  QUnit.test("Whitelists rules", (assert) => {
+  QUnit.test("test blocking and whitelist rules", (assert) => {
       bkg.settings.updateSetting('trackerBlockingEnabled', true);
-      
-      let testTab = Object.assign({}, JSON.parse(JSON.stringify(fakeTab)))
-      testTab.url = 'https://convert-me.com'
-      testTab.site.domain = 'convert-me.com'
-      
-      let testurl = "https://2mdn.net/asdf/1x1image.jpg"
-      fakeRequest.type = 'image'
-      fakeRequest.url = testurl
 
-      let toBlock = bkg.trackers.isTracker(testurl, testTab, fakeRequest) || {block: false};
-      assert.ok(toBlock.block === false, 'shouldn\'t block whitelist rules')
+      trackerTests.map(tracker => {
+          ['whitelist', 'block'].map(type => {
+              if (!tracker[type]) return
+
+              const shouldBlock = type.match('block') ? true : false
+
+              tracker[type].map(test => {
+                  let testTab = JSON.parse(JSON.stringify(fakeTab))
+                  let testRequest = { url: test.tracker }
+
+                  if (test.site) {
+                    testTab.url = `http://${test.domain}`
+                    testTab.site.domain = test.domain
+                  }
+
+                  if (test.type) {
+                      testRequest.type = test.type
+                  }
+                
+                  let toBlock = bkg.trackers.isTracker(test.tracker, testTab, fakeRequest) || {block: false}
+                  assert.ok(toBlock.block === shouldBlock, `tracker: ${test.tracker}, type: ${type}, block: ${shouldBlock}`)
+
+              })
+          })
+      })
   })
 })();
