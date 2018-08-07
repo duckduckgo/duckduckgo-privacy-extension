@@ -58,8 +58,8 @@
     { url: 'https://facebook.net', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
     { url: 'https://twitter.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
     { url: 'https://linkedin.com', block: false, options:{domain: 'test.com'}}, // we have rules so shouldn't block this
-    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'trackersWithParentCompany'}},
-    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com.*\\/impression\\.php'}, reason: 'first party'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: true, options: {type: 'script', domain: 'yahoo.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/.*\\/impression\\.php'}, reason: 'trackersWithParentCompany'}},
+    { url: 'https://facebook.com/asdf/impression.php', block: false, options: {type: 'script', domain: 'facebook.com'}, result: {parent: 'Facebook', rule:{rule:'facebook\\.com\\/.*\\/impression\\.php'}, reason: 'first party'}},
     { url: 'https://connect.facebook.net/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
     { url: 'https://connect.facebook.net/asdf/en_US/fbevents.js', block: true, options: {type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'trackersWithParentCompany'}},
     { url: 'https://connect.facebook.net/en_US/fbevents.js', block: false, options: {domain: 'facebook.com', type: 'object'}, result: {parent: 'Facebook', rule:{rule:'connect\\.facebook\\.net[?/].*\\/fbevents\\.js'}, reason: 'first party'}},
@@ -173,33 +173,67 @@
       });
   });
 
-  QUnit.test("test blocking and whitelist rules", (assert) => {
+  QUnit.test("test tracker data blocking and whitelisting", (assert) => {
       bkg.settings.updateSetting('trackerBlockingEnabled', true);
 
-      trackerTests.map(tracker => {
-          ['whitelist', 'block'].map(type => {
-              if (!tracker[type]) return
+      let done = assert.async()
 
-              const shouldBlock = type.match('block') ? true : false
+      $.getJSON(chrome.extension.getURL('data/tracker_lists/trackersWithParentCompany.json'), trackers => {
+          ['Advertising', 'Analytics', 'Social'].map(category => {
+              Object.keys(trackers[category]).map(trackerName => {
+                  let tracker = trackers[category][trackerName]
 
-              tracker[type].map(test => {
-                  let testTab = JSON.parse(JSON.stringify(fakeTab))
-                  let testRequest = { url: test.tracker }
+                  // if no specific rules for this tracker then we block all 3rd party requests
+                  if (!(tracker.rules || tracker.whitelist)) {
+                      let testTab = JSON.parse(JSON.stringify(fakeTab))
+                      let request = JSON.parse(JSON.stringify(fakeRequest))
+                      request.url = trackerName
 
-                  if (test.site) {
-                    testTab.url = `http://${test.domain}`
-                    testTab.site.domain = test.domain
+                      const toBlock = bkg.trackers.isTracker(trackerName, testTab, request)
+                      assert.ok(toBlock.block === true, `should block all 3rd party for: ${tracker.u}`)
+
+                  } else {
+                      // test rules and whitelist entries
+                      ['whitelist', 'rules'].map(type => {
+                          if (!tracker[type]) { return }
+                          
+                          const shouldBlock = type.match('whitelist') ? false : true
+
+                          tracker[type].map(test => {
+                              const trackerURL = regexToURL(test.rule)
+
+                              let testRequest = { url: trackerURL }
+                              let testTab = JSON.parse(JSON.stringify(fakeTab))
+
+                              // check for options
+                              if (test.options) {
+                                  if (test.options.domains) {
+                                      testTab.url = `http://${test.options.domains[0]}`
+                                      testTab.site.domain = test.options.domains[0]
+                                  }
+
+                                  if (test.options.types) {
+                                      testRequest.type = test.options.types[0]
+                                  }
+                              }
+
+                              let toBlock = bkg.trackers.isTracker(trackerURL, testTab, testRequest) || {block: false}
+                              assert.ok(toBlock.block === shouldBlock, `tracker: ${trackerURL}, rule: ${test.rule}, block: ${shouldBlock}, ${JSON.stringify(testTab)}, ${JSON.stringify(testRequest)}`)
+                          })
+                      })
                   }
-
-                  if (test.type) {
-                      testRequest.type = test.type
-                  }
-                
-                  let toBlock = bkg.trackers.isTracker(test.tracker, testTab, fakeRequest) || {block: false}
-                  assert.ok(toBlock.block === shouldBlock, `tracker: ${test.tracker}, type: ${type}, block: ${shouldBlock}`)
-
               })
           })
+          done()
       })
   })
 })();
+
+// Get a URL from a regex entry, add random chars in place of wildcards
+function regexToURL (re) {
+    let url = re.replace('[?/]', '/')
+        .replace('($|/)', `/${Math.random().toString(36).substring(4)}`)
+        .replace(/\.\*/g, Math.random().toString(36).substring(4))
+        .replace(/\\/g, '')
+    return `http://${url}`
+}
