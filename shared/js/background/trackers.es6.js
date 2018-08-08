@@ -28,62 +28,59 @@ function loadLists () {
 function isTracker (urlToCheck, thisTab, request) {
     let currLocation = thisTab.url || ''
     let siteDomain = thisTab.site ? thisTab.site.domain : ''
-    if (!siteDomain) return
+    if (!siteDomain || !settings.getSetting('trackerBlockingEnabled')) return
+        
+    let parsedUrl = tldjs.parse(urlToCheck)
 
-    if (settings.getSetting('trackerBlockingEnabled')) {
-        let parsedUrl = tldjs.parse(urlToCheck)
-        let hostname
+    let embeddedTweets = checkEmbeddedTweets(urlToCheck, settings.getSetting('embeddedTweetsEnabled'))
+    if (embeddedTweets) {
+        return checkFirstParty(embeddedTweets, currLocation, urlToCheck)
+    }
 
-        if (parsedUrl && parsedUrl.hostname) {
-            hostname = parsedUrl.hostname
-        } else {
-            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
-            // if the subdomain name has underscores in it
-            try {
-                // last ditch attempt to try and grab a hostname
-                // this will fail on more complicated URLs with e.g. ports
-                // but will allow us to block simple trackers with _ in the subdomains
-                hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
-            } catch (e) {
-                // give up
-                return false
-            }
-        }
+    let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
+    if (surrogateTracker) {
+        return checkFirstParty(surrogateTracker, currLocation, urlToCheck) 
+    }
 
-        let urlSplit = hostname.split('.')
-
-        let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
-        if (surrogateTracker) {
-            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
-            if (commonParent) {
-                return addCommonParent(surrogateTracker, commonParent)
-            }
-            return surrogateTracker
-        }
-
-        // Look up trackers by parent company. This function also checks to see if the poential
-        // tracker is related to the current site. If this is the case we consider it to be the
-        // same as a first party requrest and return
-        let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
-        if (trackerByParentCompany) {
-            
-            if (settings.getSetting('embeddedTweetsEnabled') === false) {
-                if (/platform.twitter.com/.test(urlToCheck)) {
-                    console.log('blocking tweet embedded code on ' + urlToCheck)
-                    return {parentCompany: 'Twitter', url: 'platform.twitter.com', type: 'Analytics', block: true}
-                }
-            }
-
-            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
-            if (commonParent) {
-                return addCommonParent(trackerByParentCompany, commonParent)
-            }
-            return trackerByParentCompany
-        }
+    // Look up trackers by parent company. This function also checks to see if the poential
+    // tracker is related to the current site. If this is the case we consider it to be the
+    // same as a first party requrest and return
+    let urlSplit = getSplitURL(parsedUrl)
+    let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
+    if (trackerByParentCompany) {
+        return checkFirstParty(trackerByParentCompany, currLocation, urlToCheck)
     }
     return false
 }
 
+function getSplitURL (parsedUrl) {
+    let hostname
+
+    if (parsedUrl && parsedUrl.hostname) {
+        hostname = parsedUrl.hostname
+    } else {
+        // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
+        // if the subdomain name has underscores in it
+        try {
+            // last ditch attempt to try and grab a hostname
+            // this will fail on more complicated URLs with e.g. ports
+            // but will allow us to block simple trackers with _ in the subdomains
+            hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
+        } catch (e) {
+            // give up
+            return false
+        }
+    }
+    return hostname.split('.')
+}
+
+function checkFirstParty (returnObj, currLocation, urlToCheck) {
+    let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+    if (commonParent) {
+        return addCommonParent(returnObj, commonParent)
+    }
+    return returnObj
+}
 // add common parent info to the final tracker object returned by isTracker
 function addCommonParent (trackerObj, parentName) {
     trackerObj.parentCompany = parentName
@@ -92,15 +89,21 @@ function addCommonParent (trackerObj, parentName) {
     return trackerObj
 }
 
+function checkEmbeddedTweets (urlToCheck, embeddedOn) {
+    if (!embeddedOn && /platform.twitter.com/.test(urlToCheck)) {
+        console.log('blocking tweet embedded code on ' + urlToCheck)
+        return {parentCompany: 'Twitter', url: 'platform.twitter.com', type: 'Analytics', block: true}
+    }
+    return false
+}
+
 function checkSurrogateList (url, parsedUrl, currLocation) {
     let dataURI = surrogates.getContentForUrl(url, parsedUrl)
-    let result = false
 
     if (dataURI) {
-        result = getTrackerDetails(url, 'surrogatesList')
-        if (result && !isRelatedEntity(result.parentCompany, currLocation)) {
-            result.block = true
-            result.reason = 'surrogate'
+        const parent = utils.findParent(url)
+        if (parent && !isRelatedEntity(parent, currLocation)) {
+            let result = getReturnTrackerObj(parent, url, 'surrogatesList', true) 
             result.redirectUrl = dataURI
             console.log('serving surrogate content for: ', url)
             return result
@@ -108,6 +111,76 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
     }
 
     return false
+}
+
+function checkTrackersWithParentCompany (url, siteDomain, request) {
+    let matchedTracker
+
+    // base case
+    if (url.length < 2) { return false }
+
+    let trackerURL = url.join('.')
+
+    constants.blocking.some(function (trackerType) {
+        // Some trackers are listed under just the host name of their parent company without
+        // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
+        // Other trackers are listed using their subdomains. Ex: developers.google.com.
+        // We'll start by checking the full host with subdomains and then if no match is found
+        // try pulling off the subdomain and checking again.
+        if (!trackerLists.trackersWithParentCompany[trackerType]) return
+        let tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
+        if (!tracker) return
+
+        let match = false
+
+        // Check to see if this request matches any of the blocking rules for this tracker
+        if (tracker.rules) {
+            tracker.rules.some(ruleObj => {
+                if (requestMatchesRule(request, ruleObj, siteDomain)) {
+                    matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType} 
+                    // found a match so break loop early
+                    return true
+                }
+            })
+        } else {
+            // no filters so we always block this tracker
+            matchedTracker = {data: tracker, type: trackerType}
+            return true
+        }
+    })
+
+    if (matchedTracker) {
+
+        // check for whitelisted rules
+        if (matchedTracker.data.whitelist) {
+            const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
+                if (requestMatchesRule(request, ruleObj, siteDomain)) {
+                    return true
+                }
+                return false
+            })
+            
+            if (foundOnWhitelist) {
+                return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany', false)
+            }
+        } else {
+            return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany', true)
+        }
+    } else {
+        // remove the subdomain and recheck for trackers. This is recursive, we'll continue
+        // to pull off subdomains until we either find a match or have no url to check.
+        // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
+        url.shift()
+        return checkTrackersWithParentCompany(url, siteDomain, request)
+    }
+}
+
+function requestMatchesRule (request, ruleObj, siteDomain) {
+    if (ruleObj.rule.exec(request.url)) {
+        return matchRuleOptions(ruleObj, request, siteDomain)
+    } else {
+        return false
+    }
 }
 
 /* Check the matched rule  options against the request data
@@ -133,82 +206,18 @@ function matchRuleOptions (rule, request, siteDomain) {
     return true
 }
 
-function checkTrackersWithParentCompany (url, siteDomain, request) {
-    let matchedTracker
-    let matchedRule
-
-    // base case
-    if (url.length < 2) { return false }
-
-    let trackerURL = url.join('.')
-
-    constants.blocking.some(function (trackerType) {
-        // Some trackers are listed under just the host name of their parent company without
-        // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
-        // Other trackers are listed using their subdomains. Ex: developers.google.com.
-        // We'll start by checking the full host with subdomains and then if no match is found
-        // try pulling off the subdomain and checking again.
-        if (!trackerLists.trackersWithParentCompany[trackerType]) return
-        let tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
-        if (!tracker) return
-
-        let match = false
-
-        // Check to see if this request matches any of the blocking rules for this tracker
-        if (tracker.rules) {
-            tracker.rules.some(ruleObj => {
-                if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
-                    matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType} 
-                    // found a match so break loop early
-                    return true
-                }
-            })
-        } else {
-            // no filters so we always block this tracker
-            matchedTracker = {data: tracker, type: trackerType}
-            return true
-        }
-    })
-
-    if (matchedTracker) {
-
-        // check for whitelisted rules
-        if (matchedTracker.data.whitelist) {
-            const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
-                if (requestMatchesRule(request, ruleObj.rule) && matchRuleOptions(ruleObj, request, siteDomain)) {
-                    return true
-                }
-                return false
-            })
-            
-            if (foundOnWhitelist) {
-                return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany', false)
-            }
-        } else {
-            return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany', true)
-        }
-    } else {
-        // remove the subdomain and recheck for trackers. This is recursive, we'll continue
-        // to pull off subdomains until we either find a match or have no url to check.
-        // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
-        url.shift()
-        return checkTrackersWithParentCompany(url, siteDomain, request)
-    }
-}
-
-function requestMatchesRule (request, rule) {
-    return !!rule.exec(request.url)
-}
-
-
+// isTracker return object. Takes either surrogate or tracker info
+// and returns a common data sturucture
 function getReturnTrackerObj (tracker, request, reason, block) {
+    let fullURL = request.url ? request.url : request
+
     return {
-        parentCompany: tracker.data.c,
-        url: utils.extractHostFromURL(request.url),
-        type: tracker.type,
+        parentCompany: tracker.data ? tracker.data.c : tracker,
+        url: utils.extractHostFromURL(fullURL),
+        type: tracker.type || 'surrogatesList',
         block: block,
-        rule: tracker.data.rule,
-        reason: 'trackersWithParentCompany'
+        rule: tracker.data ? tracker.data.rule : null,
+        reason: reason
     }
 }
 
@@ -249,32 +258,7 @@ function getCommonParentEntity (currLocation, urlToCheck) {
     return false
 }
 
-/* Fetch parent entity for a domain. If domain is not in
- * entityMap, return 'unknown'
- */
-function getParentEntity (urlToCheck) {
-    if (!entityMap) { return 'unknown' }
-    const urlToCheckParsed = tldjs.parse(urlToCheck)
-    const parentEntity = entityMap[urlToCheckParsed.domain]
-    if (parentEntity) {
-        return parentEntity
-    } else {
-        return 'unknown'
-    }
-}
-
-function getTrackerDetails (trackerUrl, listName) {
-    let host = utils.extractHostFromURL(trackerUrl)
-    let parentCompany = utils.findParent(host.split('.')) || 'unknown'
-    return {
-        parentCompany: parentCompany,
-        url: host,
-        type: listName
-    }
-}
-
 module.exports = {
     isTracker: isTracker,
-    loadLists: loadLists,
-    getParentEntity: getParentEntity
+    loadLists: loadLists
 }

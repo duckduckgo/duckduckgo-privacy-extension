@@ -6056,7 +6056,7 @@
                 {"rule":"2mdn\\.net\\/crossdomain\\.xml","options":{"domains":["rte.ie"]}},
                 {"rule":"2mdn\\.net\\/instream\\/.*\\/adsapi_","options":{"types":["object-subrequest"],"domains":["3news.co.nz","49ers.com","atlantafalcons.com","azcardinals.com","baltimoreravens.com","buccaneers.com","buffalobills.com","chargers.com","chicagobears.com","clevelandbrowns.com","colts.com","dallascowboys.com","denverbroncos.com","detroitlions.com","egirlgames.net","euronews.com","giants.com","globaltv.com","houstontexans.com","jaguars.com","kcchiefs.com","ktvu.com","miamidolphins.com","neworleanssaints.com","newyorkjets.com","packers.com","panthers.com","patriots.com","philadelphiaeagles.com","raiders.com","redskins.com","rte.ie","seahawks.com","steelers.com","stlouisrams.com","thecomedynetwork.ca","titansonline.com","vikings.com","wpcomwidgets.com"]}},
                 {"rule":"2mdn\\.net\\/instream\\/flash\\/.*\\/adsapi\\.swf","options":{"types":["object-subrequest"]}},
-                {"rule":"2mdn\\.net\\/instream\\/html5\\/ima3\\.js","options":{"domains":["~superfilm.pl"]}},
+                {"rule":"2mdn\\.net\\/instream\\/html5\\/ima3\\.js","options":{}},
                 {"rule":"2mdn\\.net\\/instream\\/video\\/client\\.js","options":{"domains":["cbc.ca","antena3.com","atresmedia.com","atresplayer.com","lasexta.com","majorleaguegaming.com"]}},
                 {"rule":"2mdn\\.net\\/viewad\\/.*\\.jpg|","options":{"domains":["dafiti.cl","dafiti.com.ar","dafiti.com.br","dafiti.com.co","kbb.com"]}},
                 {"rule":"2mdn\\.net\\/viewad\\/.*\\/b.*_","options":{"types":["image"],"domains":["jabong.com"]}}
@@ -7209,7 +7209,7 @@
                 {"rule": "facebook\\.com\\/ai\\.php\\?"},
                 {"rule": "facebook\\.com\\/audience_network\\/", "options": {"types": ["image"]}},
                 {"rule": "pixel\\.facebook\\.com($|[?/])"},
-                {"rule": "facebook\\.com.*\\/impression\\.php"},
+                {"rule": "facebook\\.com\\/.*\\/impression\\.php"},
                 {"rule": "graph\\.facebook\\.com\\/\\?ids=.*&callback=.*", "options": {"types": ["script"]}},
                 {"rule": "facebook\\.com\\/.*\\/plugins\\/send_to_messenger\\.php\\?app_id="},
                 {"rule": "facebook\\.com\\/brandlift\\.php"},

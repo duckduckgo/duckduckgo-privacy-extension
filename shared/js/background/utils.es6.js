@@ -21,6 +21,10 @@ function extractTopSubdomainFromHost (host) {
 
 // pull off subdomains and look for parent companies
 function findParent (url) {
+    if (!Array.isArray(url)) {
+        url = extractHostFromURL(url).split('.')
+    }
+
     if (!entityMap || url.length < 2) return
     let joinURL = url.join('.')
     if (entityMap[joinURL]) {

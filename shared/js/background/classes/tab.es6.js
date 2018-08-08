@@ -39,7 +39,7 @@ class Tab {
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
-        this.parentEntity = trackers.getParentEntity(tabData.url)
+        this.parentEntity = utils.findParent(tabData.url)
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
         this.httpsRedirects = new HttpsRedirects()
