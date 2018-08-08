@@ -176,7 +176,7 @@ describe('atb.updateSetAtb()', () => {
         let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=(null|undefined)/))
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v1-1/))
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/set_atb=v112-1/))
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/e=1/))
 

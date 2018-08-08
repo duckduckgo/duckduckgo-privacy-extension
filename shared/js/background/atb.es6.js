@@ -8,6 +8,8 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
+const ATB_ERROR_COHORT = 'v1-1'
+
 let dev = false
 
 const ATB = (() => {
@@ -21,23 +23,22 @@ const ATB = (() => {
             let atbSetting = settings.getSetting('atb')
             let setAtbSetting = settings.getSetting('set_atb')
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
+            let errorParam = ''
 
             // client shouldn't have a falsy ATB value,
             // so mark them as having gone into an errored state
+            // next time they won't send the e=1 param
             if (!atbSetting) {
-                url += '&e=1'
+                atbSetting = ATB_ERROR_COHORT
+                settings.updateSetting('atb', ATB_ERROR_COHORT)
+                errorParam = '&e=1'
             }
+
+            let randomValue = Math.ceil(Math.random() * 1e7)
+            let url = `${ddgAtbURL}${randomValue}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
-
-                // if client errored, place them in the special ATB cohort
-                // next time they won't send the e=1 param
-                if (!atbSetting) {
-                    settings.updateSetting('atb', 'v1-1')
-                }
             })
         },
 
