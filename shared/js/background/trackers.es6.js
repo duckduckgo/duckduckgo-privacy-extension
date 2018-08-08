@@ -206,7 +206,7 @@ function matchRuleOptions (rule, request, siteDomain) {
 // isTracker return object. Takes either surrogate or tracker info
 // and returns a common data sturucture
 function getReturnTrackerObj (tracker, request, reason, block) {
-    if (!(tracker && tracker.data && tracker.block)) {
+    if (!(tracker && tracker.data && (typeof tracker.block !== 'undefined'))) {
         console.warn('Missing correct tracker info to block')
         return false
     }
