@@ -16,11 +16,11 @@ function loadLists () {
 
 /*
  * The main parts of the isTracker algo looks like this:
- * 1. check the request against our own whitelist
- * 2. check the request against the trackersWithParentCompany list
- * 3. check the request against the easylists
+ * 1. check the request for embedded tweets
+ * 2. check the request against our surrogate list
+ * 3. check the request against the trackersWithParentCompany list
  *
- * If a tracker is found in steps #2,3 we check it against getCommonParentEntity
+ * If a tracker is found we check it against checkFirstParty
  * to determine if this tracker is owned by the current site's parent company.
  * In this case we don't block the request but still return the tracker obj
  * for transparency.
@@ -74,6 +74,10 @@ function getSplitURL (parsedUrl) {
     return hostname.split('.')
 }
 
+/*
+ * Check current location and tracker url to determine if they are first-party
+ * or related entities. Sets block status to 'false' if they are first-party
+ */
 function checkFirstParty (returnObj, currLocation, urlToCheck) {
     let commonParent = getCommonParentEntity(currLocation, urlToCheck)
     if (commonParent) {
@@ -81,6 +85,7 @@ function checkFirstParty (returnObj, currLocation, urlToCheck) {
     }
     return returnObj
 }
+
 // add common parent info to the final tracker object returned by isTracker
 function addCommonParent (trackerObj, parentName) {
     trackerObj.parentCompany = parentName
@@ -109,12 +114,11 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
             return result
         }
     }
-
     return false
 }
 
 function checkTrackersWithParentCompany (url, siteDomain, request) {
-    let matchedTracker
+    let matchedTracker = false
 
     // base case
     if (url.length < 2) { return false }
@@ -130,8 +134,6 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         if (!trackerLists.trackersWithParentCompany[trackerType]) return
         let tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
         if (!tracker) return
-
-        let match = false
 
         // Check to see if this request matches any of the blocking rules for this tracker
         if (tracker.rules) {
@@ -150,7 +152,6 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
     })
 
     if (matchedTracker) {
-
         // check for whitelisted rules
         if (matchedTracker.data.whitelist) {
             const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
