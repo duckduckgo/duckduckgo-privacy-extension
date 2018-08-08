@@ -31,7 +31,7 @@
               let request = JSON.parse(JSON.stringify(fakeRequest))
               request.url = test.url
 
-              var toBlock = bkg.trackers.isTracker(test.url, fakeTab, fakeRequest);
+              var toBlock = bkg.trackers.isTracker(test.url, fakeTab, request);
               toBlock = toBlock ? true : false;
               assert.ok(toBlock === test.block, 'url should be blocked');
 
