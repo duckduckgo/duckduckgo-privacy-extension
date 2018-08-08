@@ -26,7 +26,7 @@ const ATB = (() => {
 
             // client shouldn't have a falsy ATB value,
             // so mark them as having gone into an errored state
-            f (!atbSetting) {
+            if (!atbSetting) {
                 url += '&e=1'
             }
 
