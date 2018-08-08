@@ -21,13 +21,23 @@ const ATB = (() => {
             let atbSetting = settings.getSetting('atb')
             let setAtbSetting = settings.getSetting('set_atb')
 
-            if (!atbSetting) return Promise.resolve()
-
             let randomValue = Math.ceil(Math.random() * 1e7)
             let url = ddgAtbURL + randomValue + '&atb=' + atbSetting + '&set_atb=' + setAtbSetting
 
+            // client shouldn't have a falsy ATB value,
+            // so mark them as having gone into an errored state
+            f (!atbSetting) {
+                url += '&e=1'
+            }
+
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
+
+                // if client errored, place them in the special ATB cohort
+                // next time they won't send the e=1 param
+                if (!atbSetting) {
+                    settings.updateSetting('atb', 'v0-1')
+                }
             })
         },
 
