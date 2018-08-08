@@ -180,7 +180,7 @@ describe('atb.updateSetAtb()', () => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/set_atb=v112-1/))
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/e=1/))
 
-            expect(settings.getSetting('atb')).toEqual('v0-1')
+            expect(settings.getSetting('atb')).toEqual('v1-1')
             expect(settings.getSetting('set_atb')).toEqual('v112-2')
 
             done()
