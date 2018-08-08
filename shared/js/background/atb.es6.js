@@ -36,7 +36,7 @@ const ATB = (() => {
                 // if client errored, place them in the special ATB cohort
                 // next time they won't send the e=1 param
                 if (!atbSetting) {
-                    settings.updateSetting('atb', 'v0-1')
+                    settings.updateSetting('atb', 'v1-1')
                 }
             })
         },
