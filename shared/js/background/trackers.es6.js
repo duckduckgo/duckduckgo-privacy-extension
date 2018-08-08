@@ -108,7 +108,8 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
     if (dataURI) {
         const parent = utils.findParent(url)
         if (parent && !isRelatedEntity(parent, currLocation)) {
-            let result = getReturnTrackerObj(parent, url, 'surrogatesList', true) 
+            const trackerObj = {data: {c: parent}, block: true, type: 'surrogate'}
+            let result = getReturnTrackerObj(trackerObj, url, 'surrogatesList') 
             result.redirectUrl = dataURI
             console.log('serving surrogate content for: ', url)
             return result
@@ -139,34 +140,29 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         if (tracker.rules) {
             tracker.rules.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
-                    matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType} 
-                    // found a match so break loop early
+                    matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType, block: true} 
+                    // break loop early
                     return true
                 }
             })
         } else {
             // no filters so we always block this tracker
-            matchedTracker = {data: tracker, type: trackerType}
+            matchedTracker = {data: tracker, type: trackerType, block: true}
             return true
         }
     })
 
     if (matchedTracker) {
-        // check for whitelisted rules
         if (matchedTracker.data.whitelist) {
             const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
+                    matchedTracker.block = false
+                    // break loop early
                     return true
                 }
-                return false
             })
-            
-            if (foundOnWhitelist) {
-                return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany', false)
-            }
-        } else {
-            return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany', true)
         }
+        return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany')
     } else {
         // remove the subdomain and recheck for trackers. This is recursive, we'll continue
         // to pull off subdomains until we either find a match or have no url to check.
@@ -210,14 +206,18 @@ function matchRuleOptions (rule, request, siteDomain) {
 // isTracker return object. Takes either surrogate or tracker info
 // and returns a common data sturucture
 function getReturnTrackerObj (tracker, request, reason, block) {
-    let fullURL = request.url ? request.url : request
+    if (!(tracker && tracker.data && tracker.block)) {
+        console.warn('Missing correct tracker info to block')
+        return false
+    }
 
+    let fullURL = request.url ? request.url : request
     return {
-        parentCompany: tracker.data ? tracker.data.c : tracker,
+        parentCompany: tracker.data.c,
         url: utils.extractHostFromURL(fullURL),
-        type: tracker.type || 'surrogatesList',
-        block: block,
-        rule: tracker.data ? tracker.data.rule : null,
+        type: tracker.type,
+        block: tracker.block,
+        rule: tracker.data.rule || null,
         reason: reason
     }
 }
