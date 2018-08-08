@@ -1,9 +1,15 @@
+/*
+ * Convert adblock filters to regex rules
+ * node filterToRule.js -f <filterlist> -o <outputfile>
+ */
+
 const program = require('commander')
 const fs = require('fs')
 const merge = require('deepmerge')
 const tests = require('./tests.json')
 const _ = require('underscore')
 const assert = require('assert')
+const utils = require('../shared/js/background/utils.es6')
 
 // store process rule regexes in key/val to look for duplicates
 let rules = {}
@@ -11,6 +17,7 @@ let rules = {}
 program
     .option('-f, --file <name>', 'Text file with newline-separated filter list')
     .option('-o, --output <name>', 'Output file name')
+    .option('-c, --combine <path>', 'Path of trackers file to combine with')
     .parse(process.argv)
 
 if (!(program.file && program.output)) {
@@ -45,6 +52,12 @@ if (!(program.file && program.output)) {
         let rule = parseFilter(f.toLowerCase())
         assert(_.isEqual(tests[f], rule), true)
     })
+
+    // combine with tracker list
+    if (program.combine) {
+        const trackers = require(program.combine)
+
+    }
 })()
 
 function writeFile (rules) {
