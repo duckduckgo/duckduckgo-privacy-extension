@@ -105,8 +105,8 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
     if (dataURI) {
         const parent = utils.findParent(url)
         if (parent && !isRelatedEntity(parent, currLocation)) {
-            const trackerObj = {data: {c: parent}, block: true, type: 'surrogate'}
-            let result = getReturnTrackerObj(trackerObj, url, 'surrogatesList') 
+            const trackerObj = {data: {c: parent}, block: true, type: 'surrogatesList'}
+            let result = getReturnTrackerObj(trackerObj, url, 'surrogate') 
             result.redirectUrl = dataURI
             console.log('serving surrogate content for: ', url)
             return result
@@ -202,7 +202,7 @@ function matchRuleOptions (rule, request, siteDomain) {
 
 // isTracker return object. Takes either surrogate or tracker info
 // and returns a common data sturucture
-function getReturnTrackerObj (tracker, request, reason, block) {
+function getReturnTrackerObj (tracker, request, reason) {
     if (!(tracker && tracker.data && (typeof tracker.block !== 'undefined'))) {
         console.warn('Missing correct tracker info to block')
         return false
