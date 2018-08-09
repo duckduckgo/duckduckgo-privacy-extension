@@ -3,7 +3,6 @@ const bel = require('bel')
 module.exports = function (ops) {
     const slidingSubviewClass = ops.showClose ? 'js-sliding-subview-close' : ''
     return bel`<div class="hero border--bottom text--center ${slidingSubviewClass} silver-bg">
-    ${renderOpenOrCloseButton(ops.showClose)}
     <div class="hero__icon hero__icon--${ops.status}">
     </div>
     <h1 class="hero__title">
@@ -12,6 +11,7 @@ module.exports = function (ops) {
     <h2 class="hero__subtitle" aria-label="${ops.subtitleLabel ? ops.subtitleLabel : ops.subtitle}">
         ${ops.subtitle}
     </h2>
+    ${renderOpenOrCloseButton(ops.showClose)}
 </div>`
 }
 
