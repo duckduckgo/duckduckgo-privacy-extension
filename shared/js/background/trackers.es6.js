@@ -16,33 +16,30 @@ function loadLists () {
 
 /*
  * The main parts of the isTracker algo looks like this:
- * 1. check the request for embedded tweets
- * 2. check the request against our surrogate list
- * 3. check the request against the trackersWithParentCompany list
- *
- * If a tracker is found we check it against checkFirstParty
- * to determine if this tracker is owned by the current site's parent company.
- * In this case we don't block the request but still return the tracker obj
- * for transparency.
+ * 1. Is this a tracker
+ *     - a quick check for embedded twitter trackers
+ *     - a longer check through our blocklist 
+ * 2. If a tracker was found in 1
+ *     - see if we have surrogate JS for this tracker, set redirectUrl
+ *     - see if we have a whitelist entry, set block=false
+ * 3. Check to see if the tracker is first party or owned by the current
+ *    site's parent company. If this is the case we mark the tracker as
+ *    'first party' for transparency but don't block.
+ * 4. Return a standard tracker object that includes the block decision,
+ *    info about the tracker, and surrogate JS
  */
 function isTracker (urlToCheck, thisTab, request) {
-    let currLocation = thisTab.url || ''
-    let siteDomain = thisTab.site ? thisTab.site.domain : ''
+    const currLocation = thisTab.url || ''
+    const siteDomain = thisTab.site ? thisTab.site.domain : ''
     if (!siteDomain || !settings.getSetting('trackerBlockingEnabled')) return
-        
-    let parsedUrl = tldjs.parse(urlToCheck)
 
     let embeddedTweets = checkEmbeddedTweets(urlToCheck, settings.getSetting('embeddedTweetsEnabled'))
     if (embeddedTweets) {
         return checkFirstParty(embeddedTweets, currLocation, urlToCheck)
     }
 
-    let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
-    if (surrogateTracker) {
-        return checkFirstParty(surrogateTracker, currLocation, urlToCheck) 
-    }
-
-    let urlSplit = getSplitURL(parsedUrl)
+    const parsedUrl = tldjs.parse(urlToCheck)
+    const urlSplit = getSplitURL(parsedUrl)
     let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
     if (trackerByParentCompany) {
         return checkFirstParty(trackerByParentCompany, currLocation, urlToCheck)
@@ -99,22 +96,6 @@ function checkEmbeddedTweets (urlToCheck, embeddedOn) {
     return false
 }
 
-function checkSurrogateList (url, parsedUrl, currLocation) {
-    let dataURI = surrogates.getContentForUrl(url, parsedUrl)
-
-    if (dataURI) {
-        const parent = utils.findParent(url)
-        if (parent && !isRelatedEntity(parent, currLocation)) {
-            const trackerObj = {data: {c: parent}, block: true, type: 'surrogatesList'}
-            let result = getReturnTrackerObj(trackerObj, url, 'surrogate') 
-            result.redirectUrl = dataURI
-            console.log('serving surrogate content for: ', url)
-            return result
-        }
-    }
-    return false
-}
-
 function checkTrackersWithParentCompany (url, siteDomain, request) {
     let matchedTracker = false
 
@@ -130,7 +111,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         // We'll start by checking the full host with subdomains and then if no match is found
         // try pulling off the subdomain and checking again.
         if (!trackerLists.trackersWithParentCompany[trackerType]) return
-        let tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
+        const tracker = trackerLists.trackersWithParentCompany[trackerType][trackerURL]
         if (!tracker) return
 
         // Check to see if this request matches any of the blocking rules for this tracker
@@ -143,13 +124,17 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
                 }
             })
         } else {
-            // no filters so we always block this tracker
+            // no rules so we always block this tracker
             matchedTracker = {data: tracker, type: trackerType, block: true}
             return true
         }
     })
 
     if (matchedTracker) {
+        
+        // if we have a match, check to see if we have surrogate JS for this tracker
+        matchedTracker.redirectUrl = surrogates.getContentForUrl(request.url, tldjs.parse(request.url)) || null
+
         if (matchedTracker.data.whitelist) {
             const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
@@ -215,7 +200,8 @@ function getReturnTrackerObj (tracker, request, reason) {
         type: tracker.type,
         block: tracker.block,
         rule: tracker.data.rule || null,
-        reason: reason
+        reason: reason,
+        redirectUrl: tracker.redirectUrl || null
     }
 }
 

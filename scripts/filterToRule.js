@@ -18,15 +18,18 @@ program
     .option('-f, --file <name>', 'Text file with newline-separated filter list')
     .option('-o, --output <name>', 'Output file name')
     .option('-c, --combine <path>', 'Path of trackers file to combine with')
+    .option('-t, --ruleType <name>', 'Type of filtes, rules or whitelist')
     .parse(process.argv)
 
 if (!(program.file && program.output)) {
     program.help()
 }
 
+
 (() => {
     let filters = fs.readFileSync(program.file).toString().split('\n')
 
+    // process filters, translate to rules, merge duplicates
     filters.map(f => {
         if (!f) return 
 
@@ -45,7 +48,11 @@ if (!(program.file && program.output)) {
         }
     })
 
-    writeFile(rules)
+    const rulesByHost = groupRulesByHost(rules)
+
+    writeRules(rules)
+
+    combineWithTrackers(rulesByHost) 
 
     // run tests on known input-output
     Object.keys(tests).map(f => {
@@ -53,14 +60,70 @@ if (!(program.file && program.output)) {
         assert(_.isEqual(tests[f], rule), true)
     })
 
-    // combine with tracker list
-    if (program.combine) {
-        const trackers = require(program.combine)
-
-    }
 })()
 
-function writeFile (rules) {
+function combineWithTrackers (rulesToAdd) {
+    let trackers = require(program.combine)
+    const trackerCategories = ['Analytics', 'Social', 'Advertising']
+    // rules that don't have a host match in the trackers file. We can't add these
+    // but we can write them to a file a save for later
+    let unMatchedRules = []
+    
+    Object.keys(rulesToAdd).map(host => {
+        let foundTracker = false
+
+        trackerCategories.map(c => {
+            if (trackers[c][host]) {
+                foundTracker = true
+                // if we don't have existing rules for this tracker the no need to merge rules
+                if (!trackers[c][host][program.ruleType]) {
+                    trackers[c][host][program.ruleType] = rulesToAdd[host][program.ruleType]
+                } else {
+                    // or we have to find duplicate rules and merge them
+                    trackers[c][host][program.ruleType] = mergeTrackerEntry(
+                        rulesToAdd[host][program.ruleType], 
+                        trackers[c][host][program.ruleType]
+                    )
+                }
+            }
+        })
+
+        if (!foundTracker) unMatchedRules.push(rulesToAdd[host])
+    })
+
+    fs.writeFileSync('trackers.json', JSON.stringify(trackers, null, 4))
+    fs.writeFileSync('unMatchedRules.json', JSON.stringify(unMatchedRules, null, 4))
+}
+
+// merge rule lists for a single tracker
+function mergeTrackerEntry (a, b) {
+    let newRules = []
+    let oldUnmatchedRules = []
+
+    // loop through 'a', then look for a matching rule in 'b'. If a match is found, merge, otherwise
+    // just use the new 'a' rule
+    a.map(aRule => {
+        let combined
+
+        b.map(bRule => {
+            if (aRule.rule === bRule.rule) {
+                combined = merge(aRule, bRule, { arrayMerge: (b,c) => _.union(b,c) })
+            } else {
+                oldUnmatchedRules.push(bRule)
+            }
+        })
+
+        // add either the combined rule or the new 'a' rule
+        combined ? newRules.push(combined) : newRules.push(aRule)
+
+    })
+
+    // combine any non-matched old 'b' rules. The result here should be a new array with 
+    // new 'a' rules, merged a,b matches, and old unmatched 'b' rules
+    return newRules.concat(oldUnmatchedRules)
+}
+
+function writeRules (rules) {
     // write a file with one rule per line sorted by rule to make
     // manual copying easier later on
     let out = Object.values(rules)
@@ -147,3 +210,26 @@ function parseOptions (optionStr) {
     return options
 }
 
+function groupRulesByHost (rules) {
+    let byHost = {}
+
+    Object.keys(rules).map(r => {
+            const host = utils.extractHostFromURL(regexToURL(r))
+
+            if (!byHost[host]) {
+                byHost[host] = {}
+                byHost[host][program.ruleType] = []
+            }
+            byHost[host][program.ruleType].push(rules[r])
+    })
+
+    return byHost
+}
+
+function regexToURL (re) {
+    let url = re.replace('[?/]', '/')
+        .replace('($|/)', `/${Math.random().toString(36).substring(4)}`)
+        .replace(/\.\*/g, Math.random().toString(36).substring(4))
+        .replace(/\\/g, '')
+        return `http://${url}`
+}
