@@ -5,7 +5,7 @@ const majorTrackingNetworks = constants.majorTrackingNetworks
 module.exports = function (companyListMap) {
     return companyListMap.map((data) => {
         return bel`<li class="top-blocked__li top-blocked__li--truncated">
-    <div class="top-blocked__pill">
+    <div class="top-blocked__pill" aria-label="${data.name} found on ${data.percent} of sites">
         <div class="top-blocked__pill-site__icon-container">
             <div class="top-blocked__pill-site__icon ${getScssClass(data.normalizedName)}"></div>
         </div>
