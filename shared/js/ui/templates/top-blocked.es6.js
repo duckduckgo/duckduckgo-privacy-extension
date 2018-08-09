@@ -34,7 +34,7 @@ function renderPctPagesWithTrackers (model) {
 
 function renderList (model) {
     if (model.companyListMap.length > 0) {
-        return bel`<ol class="default-list top-blocked__list card">
+        return bel`<ol aria-label="List of Trackers Found" class="default-list top-blocked__list card">
     ${listItems(model.companyListMap)}
 </ol>`
     } else {
