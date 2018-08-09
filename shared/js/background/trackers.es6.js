@@ -42,9 +42,6 @@ function isTracker (urlToCheck, thisTab, request) {
         return checkFirstParty(surrogateTracker, currLocation, urlToCheck) 
     }
 
-    // Look up trackers by parent company. This function also checks to see if the poential
-    // tracker is related to the current site. If this is the case we consider it to be the
-    // same as a first party requrest and return
     let urlSplit = getSplitURL(parsedUrl)
     let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
     if (trackerByParentCompany) {
