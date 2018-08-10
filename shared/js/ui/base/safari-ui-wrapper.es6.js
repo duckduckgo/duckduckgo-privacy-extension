@@ -104,9 +104,13 @@ let getBackgroundTabData = () => {
     })
 }
 
-let createBrowserTab = (url) => {
-    safari.application.activeBrowserWindow.openTab().url = `${url}&bext=safari`
-    safari.self.hide()
+let search = (url) => {
+    // in Chrome, adding the ATB param is handled by ATB.redirectURL()
+    // which doesn't happen on Safari
+    fetch({ getSetting: { name: 'atb' } }).then((atb) => {
+        safari.application.activeBrowserWindow.openTab().url = `https://duckduckgo.com/?q=${url}&bext=safari&atb=${atb}`
+        safari.self.hide()
+    })
 }
 
 let getExtensionURL = (path) => {
@@ -142,7 +146,7 @@ module.exports = {
     closePopup: closePopup,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
-    createBrowserTab: createBrowserTab,
+    search: search,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
     getExtensionURL: getExtensionURL
