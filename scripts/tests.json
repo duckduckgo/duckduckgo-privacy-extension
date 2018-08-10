@@ -41,5 +41,6 @@
     "||linkedin.com/analytics/": {"rule": "linkedin\\.com\\/analytics\\/"},
     "||ads.linkedin.com^$third-party": {"rule": "ads\\.linkedin\\.com($|[?/])"},
     "||linkedin.com/csp/dtag?$subdocument,third-party": {"rule": "linkedin\\.com\\/csp\\/dtag\\?", "options": {"types": ["subdocument"]}},
-    "||linkedin.com/emimp/$image": {"rule": "linkedin\\.com\\/emimp\\/", "options": {"types": ["image"]}}
+    "||linkedin.com/emimp/$image": {"rule": "linkedin\\.com\\/emimp\\/", "options": {"types": ["image"]}},
+    "||doubleclick.net/pfadx/nfl.*/html5;": {"rule": "doubleclick\\.net\\/pfadx\\/nfl\\..*\\/html5;"}
 }

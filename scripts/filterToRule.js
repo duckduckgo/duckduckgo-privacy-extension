@@ -165,7 +165,7 @@ function parseFilter (filterOrig) {
     filter = filter.replace(/\^\*/g, '[?/].*')
 
     // single wild card
-    filter = filter.replace(/([^\.\^])\*/g, '$1.*')
+    filter = filter.replace(/\*/g, '.*')
 
     // make sure this is a valid regex
     assert.doesNotThrow(() => new RegExp(filter))
@@ -198,9 +198,8 @@ function parseOptions (optionStr) {
 
         // look for domain list indicator 
         if (o.match(/^domain=/)) {
-            options.domains = o.replace('domain=', '').split('|')
-            // we don't deal with negation in domain lists
-            options.domains.filter(d => !d.match('~'))
+            // Turn domain list to array, skip domains with negation '~'
+            options.domains = o.replace('domain=', '').split('|').filter(d => !d.match('~'))
         } else {
             // request type options
             if (!options.types) options.types = []
@@ -227,8 +226,8 @@ function groupRulesByHost (rules) {
 }
 
 function regexToURL (re) {
-    let url = re.replace('[?/]', '/')
-        .replace('($|/)', `/${Math.random().toString(36).substring(4)}`)
+    let url = re.replace(/\[\?\/\]/g, '/')
+        .replace(/\(\$\|\/\)/g, `/${Math.random().toString(36).substring(4)}`)
         .replace(/\.\*/g, Math.random().toString(36).substring(4))
         .replace(/\\/g, '')
         return `http://${url}`
