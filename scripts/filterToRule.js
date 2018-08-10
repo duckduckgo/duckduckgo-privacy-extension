@@ -1,6 +1,6 @@
 /*
  * Convert adblock filters to regex rules
- * node filterToRule.js -f <filterlist> -o <outputfile>
+ * node filterToRule.js -f <filterlist> -o <outputfile> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>
  */
 
 const program = require('commander')
