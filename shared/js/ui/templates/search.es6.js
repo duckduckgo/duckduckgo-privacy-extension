@@ -8,8 +8,8 @@ module.exports = function () {
         <input type="text" autocomplete="off" placeholder="Search DuckDuckGo"
             name="q" class="search-form__input js-search-input"
             value="${this.model.searchText}" />
-        <input class="search-form__go js-search-go" tabindex="2" value="" type="button" />
-        <input type="submit" class="search-form__submit" aria-label="Search" />
+        <input class="search-form__go js-search-go" tabindex="2" value="" type="button" aria-label="Search" />
+        <input type="submit" class="search-form__submit" />
         ${hamburgerButton('js-search-hamburger-button')}
     </form>
 </section>`
