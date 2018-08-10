@@ -38,8 +38,7 @@ function isTracker (urlToCheck, thisTab, request) {
         return checkFirstParty(embeddedTweets, currLocation, urlToCheck)
     }
 
-    const parsedUrl = tldjs.parse(urlToCheck)
-    const urlSplit = getSplitURL(parsedUrl)
+    const urlSplit = getSplitURL(urlToCheck)
     let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
     if (trackerByParentCompany) {
         return checkFirstParty(trackerByParentCompany, currLocation, urlToCheck)
@@ -47,8 +46,10 @@ function isTracker (urlToCheck, thisTab, request) {
     return false
 }
 
-function getSplitURL (parsedUrl) {
-    let hostname
+// return a hostname split on '.'  
+function getSplitURL (url) {
+    const parsedUrl = tldjs.parse(url)
+    let hostname = ''
 
     if (parsedUrl && parsedUrl.hostname) {
         hostname = parsedUrl.hostname
@@ -139,10 +140,15 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
             const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
                     matchedTracker.block = false
+                    matchedTracker.type = 'trackersWhitelist'
                     // break loop early
                     return true
                 }
             })
+
+            if (foundOnWhitelist) {
+                return getReturnTrackerObj(matchedTracker, request, 'whitelisted')
+            }
         }
         return getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany')
     } else {
