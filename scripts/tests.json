@@ -42,5 +42,8 @@
     "||ads.linkedin.com^$third-party": {"rule": "ads\\.linkedin\\.com($|[?/])"},
     "||linkedin.com/csp/dtag?$subdocument,third-party": {"rule": "linkedin\\.com\\/csp\\/dtag\\?", "options": {"types": ["subdocument"]}},
     "||linkedin.com/emimp/$image": {"rule": "linkedin\\.com\\/emimp\\/", "options": {"types": ["image"]}},
-    "||doubleclick.net/pfadx/nfl.*/html5;": {"rule": "doubleclick\\.net\\/pfadx\\/nfl\\..*\\/html5;"}
+    "||doubleclick.net/pfadx/nfl.*/html5;": {"rule": "doubleclick\\.net\\/pfadx\\/nfl\\..*\\/html5;"},
+    "||smartadserver.com/diff/*/show*.asp?*blq": {"rule": "smartadserver\\.com\\/diff\\/.*\\/show.*\\.asp\\?.*blq"},
+    "||doubleclick.net/adi/*.mlb/photos;*;sz=300x250;": {"rule": "doubleclick\\.net\\/adi\\/.*\\.mlb\\/photos;.*;sz=300x250;"},
+    "||doubleclick.net/adi/ebay.*/video;$subdocument,domain=ebay.com": {"rule": "doubleclick\\.net\\/adi\\/ebay\\..*\\/video;", "options": {"domains": ["ebay.com"], "types": ["subdocument"]}}
 }

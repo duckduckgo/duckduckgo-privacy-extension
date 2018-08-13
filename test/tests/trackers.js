@@ -236,7 +236,7 @@
 function regexToURL (re) {
     let url = re.replace(/\[\?\/\]/g, '/')
         .replace(/\(\$\|\/\)/g, `/${Math.random().toString(36).substring(4)}`)
-        .replace(/\.\*/g, Math.random().toString(36).substring(4))
+        .replace(/(?<!\\)\.\*/g, Math.random().toString(36).substring(4))
         .replace(/\\/g, '')
     return `http://${url}`
 }

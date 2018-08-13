@@ -869,7 +869,7 @@
                     }
                 },
                 {
-                    "rule": "adocean\\.pl[?/].*^aocodetype=",
+                    "rule": "adocean\\.pl^[?/].*aocodetype=",
                     "options": {
                         "types": [
                             "object-subrequest"
@@ -9380,7 +9380,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net\\/adi\\/amzn\\.*;ri=digital-music-track;",
+                    "rule": "doubleclick\\.net\\/adi\\/amzn\\..*;ri=digital-music-track;",
                     "options": {
                         "types": [
                             "subdocument"
@@ -9399,7 +9399,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net\\/adi\\/ebay\\.*\\/video;",
+                    "rule": "doubleclick\\.net\\/adi\\/ebay\\..*\\/video;",
                     "options": {
                         "types": [
                             "subdocument"
@@ -9432,7 +9432,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net\\/adi\\/mlb\\.mlb\\/.*^free_agent_tracker_12($|[?/])",
+                    "rule": "doubleclick\\.net\\/adi\\/mlb\\.mlb\\/[?/].*free_agent_tracker_12($|[?/])",
                     "options": {
                         "types": [
                             "subdocument"
@@ -9487,7 +9487,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net\\/adj\\/bbccom\\.live\\.site\\.auto\\/.*^sz=1x1($|[?/])",
+                    "rule": "doubleclick\\.net\\/adj\\/bbccom\\.live\\.site\\.auto\\/[?/].*sz=1x1($|[?/])",
                     "options": {
                         "types": [
                             "script"
@@ -9708,7 +9708,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net\\/pfadx\\/nfl\\.*\\/html5;",
+                    "rule": "doubleclick\\.net\\/pfadx\\/nfl\\..*\\/html5;",
                     "options": {
                         "types": [
                             "xmlhttprequest"
@@ -9719,7 +9719,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net\\/pfadx\\/umg\\.*;sz=10x",
+                    "rule": "doubleclick\\.net\\/pfadx\\/umg\\..*;sz=10x",
                     "options": {
                         "types": [
                             "script"
@@ -9727,7 +9727,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net[?/].*\\/ad\\/nfl\\.*\\.smartclip\\/",
+                    "rule": "doubleclick\\.net[?/].*\\/ad\\/nfl\\..*\\.smartclip\\/",
                     "options": {
                         "types": [
                             "object-subrequest"
@@ -9768,7 +9768,7 @@
                     }
                 },
                 {
-                    "rule": "doubleclick\\.net[?/].*\\/ftcom\\.*;sz=1x1;.*;pos=refresh;",
+                    "rule": "doubleclick\\.net[?/].*\\/ftcom\\..*;sz=1x1;.*;pos=refresh;",
                     "options": {
                         "types": [
                             "script"
@@ -12076,7 +12076,7 @@
                     "rule": "pixel\\.facebook\\.com($|[?/])"
                 },
                 {
-                    "rule": "facebook\\.com.*\\/impression\\.php"
+                    "rule": "facebook\\.com[?/].*\\/impression\\.php"
                 },
                 {
                     "rule": "graph\\.facebook\\.com\\/\\?ids=.*&callback=.*",

@@ -38,17 +38,19 @@ function isTracker (urlToCheck, thisTab, request) {
         return checkFirstParty(embeddedTweets, currLocation, urlToCheck)
     }
 
-    const urlSplit = getSplitURL(urlToCheck)
+    const parsedUrl = tldjs.parse(urlToCheck)
+    const urlSplit = getSplitURL(parsedUrl)
     let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
     if (trackerByParentCompany) {
+        // if we have a match, check to see if we have surrogate JS for this tracker
+        trackerByParentCompany.redirectUrl = surrogates.getContentForUrl(urlToCheck, parsedUrl)
         return checkFirstParty(trackerByParentCompany, currLocation, urlToCheck)
     }
     return false
 }
 
 // return a hostname split on '.'  
-function getSplitURL (url) {
-    const parsedUrl = tldjs.parse(url)
+function getSplitURL (parsedUrl) {
     let hostname = ''
 
     if (parsedUrl && parsedUrl.hostname) {
@@ -133,9 +135,6 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
 
     if (matchedTracker) {
         
-        // if we have a match, check to see if we have surrogate JS for this tracker
-        matchedTracker.redirectUrl = surrogates.getContentForUrl(request.url, tldjs.parse(request.url)) || null
-
         if (matchedTracker.data.whitelist) {
             const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {

@@ -59,7 +59,7 @@ if (!(program.file && program.output)) {
     // run tests on known input-output
     Object.keys(tests).map(f => {
         let rule = parseFilter(f.toLowerCase())
-        //assert(_.isEqual(tests[f], rule), true)
+        assert(_.isEqual(tests[f], rule), `Parsed: ${JSON.stringify(rule)}, Expected: ${JSON.stringify(tests[f])}`)
     })
 
 })()
@@ -166,14 +166,18 @@ function parseFilter (filter) {
     // escape some chars for json
     filter = filter.replace(/(\(|\)|\/|\?|\.)/g,'\\$1')
 
-    // ending ^
+    // ending ^ to ($|[?/])
     filter = filter.replace(/\^$/, '($|[?/])')
-    
-    // ^* pattern 
+
+    // *^ pattern to ^*, we replace this to the correct regex in the next step
+    filter = filter.replace(/\*\^/g, '^*')
+
+    // ^* pattern to [?/].*
     filter = filter.replace(/\^\*/g, '[?/].*')
 
-    // single wild card
-    filter = filter.replace(/\*/g, '.*')
+    // single wild card * to .*
+    // don't match on [?/].* pattern from above
+    filter = filter.replace(/(?<!\[\?\/\]\.)\*/g, '.*')
 
     // make sure this is a valid regex
     assert.doesNotThrow(() => new RegExp(filter))
