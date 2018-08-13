@@ -3,7 +3,6 @@ const load = require('./load.es6')
 const settings = require('./settings.es6')
 const surrogates = require('./surrogates.es6')
 const trackerLists = require('./tracker-lists.es6').getLists()
-const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
@@ -18,7 +17,7 @@ function loadLists () {
  * The main parts of the isTracker algo looks like this:
  * 1. Is this a tracker
  *     - a quick check for embedded twitter trackers
- *     - a longer check through our blocklist 
+ *     - a longer check through our blocklist
  * 2. If a tracker was found in 1
  *     - see if we have surrogate JS for this tracker, set redirectUrl
  *     - see if we have a whitelist entry, set block=false
@@ -39,7 +38,7 @@ function isTracker (urlToCheck, thisTab, request) {
     }
 
     const parsedUrl = tldjs.parse(urlToCheck)
-    const urlSplit = getSplitURL(parsedUrl)
+    const urlSplit = getSplitURL(parsedUrl, urlToCheck)
     let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
     if (trackerByParentCompany) {
         // if we have a match, check to see if we have surrogate JS for this tracker
@@ -49,8 +48,8 @@ function isTracker (urlToCheck, thisTab, request) {
     return false
 }
 
-// return a hostname split on '.'  
-function getSplitURL (parsedUrl) {
+// return a hostname split on '.'
+function getSplitURL (parsedUrl, urlToCheck) {
     let hostname = ''
 
     if (parsedUrl && parsedUrl.hostname) {
@@ -121,7 +120,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         if (tracker.rules) {
             tracker.rules.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
-                    matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType, block: true} 
+                    matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType, block: true}
                     // break loop early
                     return true
                 }
@@ -134,7 +133,6 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
     })
 
     if (matchedTracker) {
-        
         if (matchedTracker.data.whitelist) {
             const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
