@@ -117,7 +117,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
         if (!tracker) return
 
         // Check to see if this request matches any of the blocking rules for this tracker
-        if (tracker.rules) {
+        if (tracker.rules && tracker.rules.length) {
             tracker.rules.some(ruleObj => {
                 if (requestMatchesRule(request, ruleObj, siteDomain)) {
                     matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType, block: true}
@@ -172,17 +172,11 @@ function matchRuleOptions (rule, request, siteDomain) {
     if (!rule.options) return true
 
     if (rule.options.types) {
-        let matchesType = rule.options.types.findIndex(t => { return t === request.type })
-        if (matchesType === -1) {
-            return false
-        }
+        return rule.options.types.includes(request.type)
     }
 
     if (rule.options.domains) {
-        let matchesDomain = rule.options.domains.findIndex(d => { return d === siteDomain })
-        if (matchesDomain === -1) {
-            return false
-        }
+        return rule.options.domains.includes(siteDomain)
     }
 
     return true
