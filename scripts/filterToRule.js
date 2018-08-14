@@ -6,10 +6,10 @@
 const program = require('commander')
 const fs = require('fs')
 const merge = require('deepmerge')
-const tests = require('./tests.json')
 const _ = require('underscore')
 const assert = require('assert')
 const utils = require('../shared/js/background/utils.es6')
+const RandExp = require('randexp')
 
 // store process rule regexes in key/val to look for duplicates
 let rules = {}
@@ -50,19 +50,23 @@ if (!(program.file && program.output)) {
         }
     })
 
-    const rulesByHost = groupRulesByHost(rules)
+    if (program.test) {
+        runTests()
+    }
 
-    writeRules(rules)
+    combineWithTrackers(groupRulesByHost(rules)) 
 
-    combineWithTrackers(rulesByHost) 
+})()
 
+// run parser against known outputs
+function runTests () {
+    const tests = require('./tests.json')
     // run tests on known input-output
     Object.keys(tests).map(f => {
         let rule = parseFilter(f.toLowerCase())
         assert(_.isEqual(tests[f], rule), `Parsed: ${JSON.stringify(rule)}, Expected: ${JSON.stringify(tests[f])}`)
     })
-
-})()
+}
 
 function combineWithTrackers (rulesToAdd) {
     let trackers = require(program.combine)
@@ -93,8 +97,12 @@ function combineWithTrackers (rulesToAdd) {
         if (!foundTracker) unMatchedRules.push(rulesToAdd[host])
     })
 
-    fs.writeFileSync('trackers.json', JSON.stringify(trackers, null, 4))
+    fs.writeFileSync('new-trackersWithParentCompany.json', JSON.stringify(trackers, null, 4))
+    console.log("Wrote new trackers file to: new-trackersWithParentCompany.json")
     fs.writeFileSync('unMatchedRules.json', JSON.stringify(unMatchedRules, null, 4))
+    console.log("Wrote unmatched rules to: unMatchedRules.json")
+
+
 }
 
 // merge rule lists for a single tracker
@@ -125,21 +133,6 @@ function mergeTrackerEntry (a, b) {
     return newRules.concat(oldUnmatchedRules)
 }
 
-function writeRules (rules) {
-    // write a file with one rule per line sorted by rule to make
-    // manual copying easier later on
-    let out = Object.values(rules)
-        .sort((a, b) => {
-            if (a.rule > b.rule) return 1
-            if (a.rule < b.rule) return -1
-            return 0
-        })
-        .reduce((result, val) => `${result}${JSON.stringify(val)},\n`, '')
-
-    fs.writeFileSync(program.output, `[\n${out}]`)
-    console.log(`Wrote: ${program.output}`)
-}
-
 function parseFilter (filter) {
     let rule = {}
     let optionStr = ''
@@ -163,15 +156,15 @@ function parseFilter (filter) {
     // remove host anchors
     filter = filter.replace(/\|\|/,'')
 
-    // escape some chars for json
-    filter = filter.replace(/(\(|\)|\/|\?|\.)/g,'\\$1')
+    // escape some chars for json, ()/?.|
+    filter = filter.replace(/(\(|\)|\/|\?|\.|\|)/g,'\\$1')
 
     // ending ^ to ($|[?/])
     filter = filter.replace(/\^$/, '($|[?/])')
 
-    // *^ pattern to ^*, we replace this to the correct regex in the next step
-    filter = filter.replace(/\*\^/g, '^*')
-
+    // *^ pattern to [?/].*
+    filter = filter.replace(/\*\^/g, '[?/].*')
+    
     // ^* pattern to [?/].*
     filter = filter.replace(/\^\*/g, '[?/].*')
 
@@ -225,22 +218,21 @@ function groupRulesByHost (rules) {
     let byHost = {}
 
     Object.keys(rules).map(r => {
-            const host = utils.extractHostFromURL(regexToURL(r))
+        if (!r) return 
 
-            if (!byHost[host]) {
-                byHost[host] = {}
-                byHost[host][program.ruleType] = []
-            }
-            byHost[host][program.ruleType].push(rules[r])
+        const host = utils.extractHostFromURL(regexToURL(r))
+        
+        if (!byHost[host]) {
+            byHost[host] = {}
+            byHost[host][program.ruleType] = []
+        }
+        byHost[host][program.ruleType].push(rules[r])
     })
 
     return byHost
 }
 
 function regexToURL (re) {
-    let url = re.replace(/\[\?\/\]/g, '/')
-        .replace(/\(\$\|\/\)/g, `/${Math.random().toString(36).substring(4)}`)
-        .replace(/\.\*/g, Math.random().toString(36).substring(4))
-        .replace(/\\/g, '')
-        return `http://${url}`
+    let randExp = new RandExp(re).gen()
+    return `http://${randExp}`
 }
