@@ -19,6 +19,7 @@ program
     .option('-o, --output <name>', 'Output file name')
     .option('-c, --combine <path>', 'Path of trackers file to combine with')
     .option('-t, --ruleType <name>', 'Type of filtes, rules or whitelist')
+    .option('--test', 'Run parser tests')
     .parse(process.argv)
 
 if (!(program.file && program.output)) {
@@ -66,6 +67,7 @@ function runTests () {
         let rule = parseFilter(f.toLowerCase())
         assert(_.isEqual(tests[f], rule), `Parsed: ${JSON.stringify(rule)}, Expected: ${JSON.stringify(tests[f])}`)
     })
+    console.log('All tests passed')
 }
 
 function combineWithTrackers (rulesToAdd) {
