@@ -182,14 +182,16 @@
       let done = assert.async()
 
       $.getJSON(chrome.extension.getURL('data/tracker_lists/trackersWithParentCompany.json'), trackers => {
-          ['Advertising', 'Analytics', 'Social'].map(category => {
+          let request = JSON.parse(JSON.stringify(fakeRequest))
+          const categories = ['Advertising', 'Analytics', 'Social']
+
+          categories.map(category => {
               Object.keys(trackers[category]).map(trackerName => {
                   let tracker = trackers[category][trackerName]
 
                   // if no specific rules for this tracker then we block all 3rd party requests
                   if (!(tracker.rules || tracker.whitelist)) {
                       let testTab = JSON.parse(JSON.stringify(fakeTab))
-                      let request = JSON.parse(JSON.stringify(fakeRequest))
                       request.url = trackerName
 
                       const toBlock = bkg.trackers.isTracker(trackerName, testTab, request)
@@ -197,12 +199,12 @@
 
                   } else {
                       // test rules and whitelist entries
-                      ['whitelist', 'rules'].map(type => {
+                      ['whitelist', 'rules'].forEach(type => {
                           if (!tracker[type]) { return }
                           
                           const shouldBlock = type.match('whitelist') ? false : true
 
-                          tracker[type].map(test => {
+                          tracker[type].forEach(test => {
                               const trackerURL = regexToURL(test.rule)
 
                               let testRequest = { url: trackerURL }

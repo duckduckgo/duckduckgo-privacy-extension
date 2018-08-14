@@ -63,7 +63,7 @@ if (!(program.file && program.output)) {
 function runTests () {
     const tests = require('./tests.json')
     // run tests on known input-output
-    Object.keys(tests).map(f => {
+    Object.keys(tests).forEach(f => {
         let rule = parseFilter(f.toLowerCase())
         assert(_.isEqual(tests[f], rule), `Parsed: ${JSON.stringify(rule)}, Expected: ${JSON.stringify(tests[f])}`)
     })
@@ -77,10 +77,10 @@ function combineWithTrackers (rulesToAdd) {
     // but we can write them to a file a save for later
     let unMatchedRules = []
     
-    Object.keys(rulesToAdd).map(host => {
+    Object.keys(rulesToAdd).forEach(host => {
         let foundTracker = false
 
-        trackerCategories.map(c => {
+        trackerCategories.forEach(c => {
             if (trackers[c][host]) {
                 foundTracker = true
                 // if we don't have existing rules for this tracker the no need to merge rules
