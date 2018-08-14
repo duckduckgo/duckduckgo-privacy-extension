@@ -30,21 +30,21 @@ if (!(program.file && program.output)) {
     let filters = fs.readFileSync(program.file).toString().split('\n')
 
     // process filters, translate to rules, merge duplicates
-    filters.map(f => {
+    filters.forEach(f => {
         if (!f) return 
 
-        let rule = parseFilter(f.toLowerCase())
+        let ruleObj = parseFilter(f.toLowerCase())
 
-        if (!rule) return 
+        if (!ruleObj) return 
 
         // add to rules or merge duplicates
-        if (!rules[rule.rule]) {
-            rules[rule.rule] = rule
+        if (!rules[ruleObj.rule]) {
+            rules[ruleObj.rule] = ruleObj
         } else {
             // merge and combine unique array elements
-            rules[rule.rule] = merge(
-                rules[rule.rule], 
-                rule, 
+            rules[ruleObj.rule] = merge(
+                rules[ruleObj.rule], 
+                ruleObj, 
                 { arrayMerge: (a1, a2) => _.union(a1, a2) }
             )
         }
@@ -112,10 +112,10 @@ function mergeTrackerEntry (a, b) {
 
     // loop through 'a', then look for a matching rule in 'b'. If a match is found, merge, otherwise
     // just use the new 'a' rule
-    a.map(aRule => {
+    a.forEach(aRule => {
         let combined
 
-        b.map(bRule => {
+        b.forEach(bRule => {
             if (aRule.rule === bRule.rule) {
                 combined = merge(aRule, bRule, { arrayMerge: (b,c) => _.union(b,c) })
             } else {
@@ -150,6 +150,12 @@ function parseFilter (filter) {
     // separate the filter from the option string
     if (optionIndex !== -1) {
         optionStr = filter.substr(optionIndex+1)
+        // skip options with first-party, we would never block these
+        if (optionStr.match('first-party')) {
+            console.log(`Skipping first-party filter: ${filter}`)
+            return false
+        }
+
         filter = filter.substr(0,optionIndex)
     }
 
@@ -194,17 +200,17 @@ function parseOptions (optionStr) {
     let optionList = optionStr.split(',')
 
 
-    optionList.map(o => {
+    optionList.forEach(o => {
         // skip third party option. All of our rules
         // are by default third party
-        if (!o || o.match(/third-party|first-party/)) {
+        if (!o || o.match("third-party")) {
             return 
         }
 
         // look for domain list indicator 
         if (o.match(/^domain=/)) {
             // Turn domain list to array, skip domains with negation '~'
-            options.domains = o.replace('domain=', '').split('|').filter(d => !d.match('~'))
+            options.domains = o.replace('domain=', '').split('|').filter(d => !d.startsWith('~'))
         } else {
             // request type options
             if (!options.types) options.types = []
@@ -217,7 +223,7 @@ function parseOptions (optionStr) {
 function groupRulesByHost (rules) {
     let byHost = {}
 
-    Object.keys(rules).map(r => {
+    Object.keys(rules).forEach(r => {
         if (!r) return 
 
         const host = utils.extractHostFromURL(regexToURL(r))
