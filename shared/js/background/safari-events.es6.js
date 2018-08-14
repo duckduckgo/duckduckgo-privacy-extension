@@ -116,6 +116,10 @@ let handleUIMessage = (req, res) => {
         res('safari')
     } else if (req.whitelisted) {
         res(tabManager.whitelistDomain(req.whitelisted))
+    } else if (req.getSetting) {
+        settings.ready().then(() => {
+            res(settings.getSetting(req.getSetting.name))
+        })
     } else if (req.getSiteScore) {
         let tab = tabManager.get({tabId: req.getSiteScore})
         if (tab) res(tab.site.score.get())

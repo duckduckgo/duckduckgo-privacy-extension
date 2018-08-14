@@ -8,7 +8,7 @@ module.exports = function () {
             More Options
         </h2>
         <nav class="pull-right hamburger-menu__close-container">
-            <a href="javascript:void(0)" class="icon icon__close js-hamburger-menu-close"></a>
+            <a href="javascript:void(0)" class="icon icon__close js-hamburger-menu-close" role="button" aria-label="Close options"></a>
         </nav>
         <ul class="hamburger-menu__links padded default-list">
             <li>

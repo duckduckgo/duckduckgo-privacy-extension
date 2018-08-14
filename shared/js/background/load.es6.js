@@ -50,7 +50,7 @@ function loadExtensionFile (params) {
                 url += '?'
             }
 
-            url += 'dev=1'
+            url += 'test=1'
         }
 
         xhr.open('GET', url)

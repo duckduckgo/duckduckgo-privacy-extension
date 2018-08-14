@@ -18,6 +18,33 @@ const findParentTestCases = [
         'parent': 'undefined'
     }
 ]
+const extractHostFromURLTestCases = [
+    {
+        'url': 'http://google.com',
+        'result': 'google.com',
+        'resultWithWWW': 'google.com'
+    },
+    {
+        'url': 'https://www.duckduckgo.com/?q=test&atb=v126-7&ia=web',
+        'result': 'duckduckgo.com',
+        'resultWithWWW': 'www.duckduckgo.com'
+    },
+    {
+        'url': 'asdasdasd',
+        'result': 'asdasdasd',
+        'resultWithWWW': 'asdasdasd'
+    },
+    {
+        'url': 'www.bttf.duckduckgo.com',
+        'result': 'bttf.duckduckgo.com',
+        'resultWithWWW': 'www.bttf.duckduckgo.com'
+    },
+    {
+        'url': 'https://www.amazon.co.uk',
+        'result': 'amazon.co.uk',
+        'resultWithWWW': 'www.amazon.co.uk'
+    }
+]
 
 describe('utils.findParent()', () => {
     findParentTestCases.forEach((test) => {
@@ -44,5 +71,19 @@ describe('utils.getUpgradeToSecureSupport()', () => {
     it('should return false in headless chrome', () => {
         let result = utils.getUpgradeToSecureSupport()
         expect(result).toEqual(false)
+    })
+})
+
+describe('utils.extractHostFromURL()', () => {
+    extractHostFromURLTestCases.forEach((test) => {
+        it(`should return ${test.result} as host for the url: ${test.url}`, () => {
+            let result = utils.extractHostFromURL(test.url)
+            expect(result).toEqual(test.result)
+        })
+
+        it(`should return ${test.resultWithWWW} as host for the url: ${test.url}`, () => {
+            let result = utils.extractHostFromURL(test.url, true)
+            expect(result).toEqual(test.resultWithWWW)
+        })
     })
 })

@@ -33,7 +33,14 @@ module.exports = function () {
             ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
         </div>
         <div class="privacy-practices__attrib padded text--center">
-            Privacy Practice results from ${crossplatformLink('https://tosdr.org/', {className: 'bold', target: '_blank', text: 'ToS;DR'})}
+            Privacy Practice results from ${crossplatformLink('https://tosdr.org/', {
+        className: 'bold',
+        target: '_blank',
+        text: 'ToS;DR',
+        attributes: {
+            'aria-label': 'Terms of Service; Didn\'t Read'
+        }
+    })}
         </div>
     </div>
 </section>`

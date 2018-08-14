@@ -17,9 +17,7 @@ Search.prototype = window.$.extend({},
 
             console.log(`doSearch() for ${s}`)
 
-            let url = 'https://duckduckgo.com/?q=' + s
-
-            browserUIWrapper.createBrowserTab(url)
+            browserUIWrapper.search(s)
         }
     }
 )

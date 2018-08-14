@@ -28,8 +28,8 @@ let getBackgroundTabData = () => {
     })
 }
 
-let createBrowserTab = (url) => {
-    window.chrome.tabs.create({url: `${url}&bext=${window.localStorage['os']}cr`})
+let search = (url) => {
+    window.chrome.tabs.create({url: `https://duckduckgo.com/?q=${url}&bext=${window.localStorage['os']}cr`})
 }
 
 let getExtensionURL = (path) => {
@@ -64,7 +64,7 @@ module.exports = {
     closePopup: closePopup,
     backgroundMessage: backgroundMessage,
     getBackgroundTabData: getBackgroundTabData,
-    createBrowserTab: createBrowserTab,
+    search: search,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
     getExtensionURL: getExtensionURL
