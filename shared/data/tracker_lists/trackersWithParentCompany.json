@@ -12081,7 +12081,7 @@
                     "rule": "pixel\\.facebook\\.com($|[?/])"
                 },
                 {
-                    "rule": "facebook\\.com\\/.*\\/impression\\.php"
+                    "rule": "facebook\\.com.*\\/impression\\.php"
                 },
                 {
                     "rule": "graph\\.facebook\\.com\\/\\?ids=.*&callback=.*",
