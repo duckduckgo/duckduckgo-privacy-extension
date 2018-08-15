@@ -698,6 +698,17 @@
                     }
                 },
                 {
+                    "rule": "ad4game\\.com[?/].*\\/images\\/",
+                    "options": {
+                        "types": [
+                            "image"
+                        ],
+                        "domains": [
+                            "kissanime.com"
+                        ]
+                    }
+                },
+                {
                     "rule": "ad4game\\.com\\/js\\/",
                     "options": {
                         "types": [
@@ -10914,7 +10925,7 @@
             "u": "http://www.ibm.com/",
             "whitelist": [
                 {
-                    "rule": "coremetrics\\.com.*\\/eluminate\\.js"
+                    "rule": "coremetrics\\.com[?/].*\\/eluminate\\.js"
                 }
             ]
         },
@@ -12081,7 +12092,7 @@
                     "rule": "pixel\\.facebook\\.com($|[?/])"
                 },
                 {
-                    "rule": "facebook\\.com.*\\/impression\\.php"
+                    "rule": "facebook\\.com\\/.*\\/impression\\.php"
                 },
                 {
                     "rule": "graph\\.facebook\\.com\\/\\?ids=.*&callback=.*",
