@@ -10911,7 +10911,12 @@
         },
         "coremetrics.com": {
             "c": "IBM",
-            "u": "http://www.ibm.com/"
+            "u": "http://www.ibm.com/",
+            "whitelist": [
+                {
+                    "rule": "coremetrics\\.com.*\\/eluminate\\.js"
+                }
+            ]
         },
         "ibm.com": {
             "c": "IBM",
@@ -12076,7 +12081,7 @@
                     "rule": "pixel\\.facebook\\.com($|[?/])"
                 },
                 {
-                    "rule": "facebook\\.com[?/].*\\/impression\\.php"
+                    "rule": "facebook\\.com\\/.*\\/impression\\.php"
                 },
                 {
                     "rule": "graph\\.facebook\\.com\\/\\?ids=.*&callback=.*",

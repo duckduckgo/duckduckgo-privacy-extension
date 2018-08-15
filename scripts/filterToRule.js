@@ -1,6 +1,6 @@
 /*
  * Convert adblock filters to regex rules
- * node filterToRule.js -f <filterlist> -o <outputfile> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>
+ * node filterToRule.js -f <filterlist> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>
  */
 
 const program = require('commander')
@@ -15,17 +15,16 @@ const RandExp = require('randexp')
 let rules = {}
 
 program
-    .option('-f, --file <name>', 'Text file with newline-separated filter list')
-    .option('-o, --output <name>', 'Output file name')
-    .option('-c, --combine <path>', 'Path of trackers file to combine with')
-    .option('-t, --ruleType <name>', 'Type of filtes, rules or whitelist')
-    .option('--test', 'Run parser tests')
+    .usage("node filterToRule.js -f <filterlist> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>")
+    .option('-f, --file <name>', 'Required - Text file with newline-separated filter list')
+    .option('-c, --combine <path>', 'Required - Path of trackers file to combine with')
+    .option('-t, --ruleType <name>', 'Required - Type of filtes, rules or whitelist')
+    .option('--test', 'Optional - Run parser tests')
     .parse(process.argv)
 
-if (!(program.file && program.output)) {
+if (!(program.file && program.combine && program.ruleType)) {
     program.help()
 }
-
 
 (() => {
     let filters = fs.readFileSync(program.file).toString().split('\n')
@@ -103,8 +102,6 @@ function combineWithTrackers (rulesToAdd) {
     console.log("Wrote new trackers file to: new-trackersWithParentCompany.json")
     fs.writeFileSync('unMatchedRules.json', JSON.stringify(unMatchedRules, null, 4))
     console.log("Wrote unmatched rules to: unMatchedRules.json")
-
-
 }
 
 // merge rule lists for a single tracker
