@@ -16,7 +16,6 @@
             this.disabled = false
             this.frameListener = this.frameListener.bind(this)
             this.messageListener = this.messageListener.bind(this)
-
         }
 
         init () {
@@ -27,14 +26,12 @@
         }
 
         /**
-         * Set up messaging between frames and background page. When frames are
-         * first loaded, they send a message to the background page requesting
-         * a list of relevant requests that have been blocked. If element hiding
-         * is not enabled on domain, background script will reply with 'disable',
-         * at which point event listeners are removed. Otherwise gather relevant
-         * DOM elements and then-
-         * 1. if in main frame, proceed to locateBlockedFrames
-         * 2. If in iframe, message main frame requesting id
+         * Set up messaging between frames and background page. When a request
+         * is blocked in background page, a message is passed to the content script
+         * in the frame that originated the request (or the parent frame, if the
+         * blocked request has type sub_frame. If element hiding is not enabled
+         * on current domain, background will send a 'disable' message to all
+         * frames on the page, at which point event listeners are removed.
          */
         messageListener (req, sender, res) {
             if (sender.id === req.extId) {
@@ -51,7 +48,15 @@
                     }
                 } else if (req.type === 'blockedFrame') {
                     this.foundFrames = document.getElementsByTagName('iframe')
-                    this.locateBlockedFrames(req.request.url)
+                    let i = thisfoundFrames.length
+
+                    while (i--) {
+                        let frame = this.froundFrames[i]
+
+                        if (frame.src === req.request.url) {
+                            this.collapseDomNode(frame)
+                        }
+                    }
                 } else if (req.type === 'disable') {
                     this.disabled = true
                     window.removeEventListener('message', this.frameListener)
@@ -94,23 +99,6 @@
         }
 
         /**
-         * Iterate through collection of potentially blocked elements, comparing against list
-         * of blocked requests. In the main frame all we care about is iframes, but within iframes
-         * we also look for blocked scripts that may have loaded a nested iframe
-         */
-        locateBlockedFrames (requests) {
-            let i = this.foundFrames.length
-
-            while (i--) {
-                let frame = this.foundFrames[i]
-
-                if (requests === frame.src) {
-                    this.collapseDomNode(frame)
-                }
-            }
-        }
-
-        /**
          * Hide frames that were either themselves blocked, or that contain scripts
          * or other frames that were blocked. Then traverse DOM upward, hiding
          * parent selector if it only contains the blocked frame. Add class
@@ -131,5 +119,4 @@
     // Instantiate content script
     const contentScript = new ContentScript()
     contentScript.init()
-
 })()

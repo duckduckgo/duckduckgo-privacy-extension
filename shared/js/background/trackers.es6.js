@@ -285,15 +285,21 @@ function getParentEntity (urlToCheck) {
     }
 }
 
+/*
+ * If element hiding is enabled on current domain, send messages
+ * to content scripts to start the process of hiding blocked ads
+ */
 function tryElementHide (requestData, tab) {
     if (tab.parentEntity === 'Oath') {
-        if (requestData.parentFrameId == 0 && requestData.type === 'sub_frame') {
-            chrome.tabs.sendMessage(requestData.tabId, {type: 'blockedFrame', request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: requestData.parentFrameId})
-        } else if (requestData.type === 'sub_frame') {
-            chrome.tabs.sendMessage(requestData.tabId, {type: 'blockedFrameAsset', request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: requestData.parentFrameId})
+        let frameId, messageType
+        if (requestData.type === 'sub_frame') {
+            frameId = requestData.parentFrameId
+            messageType = frameId === 0 ? 'blockedFrame' : 'blockedFrameAsset'
         } else if (requestData.frameId != 0 && (requestData.type === 'image' || requestData.type === 'script')) {
-            chrome.tabs.sendMessage(requestData.tabId, {type: 'blockedFrameAsset', request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: requestData.frameId})
+            frameId = requestData.frameId
+            messageType = 'blockedFrameAsset'
         }
+        chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: frameId})
     } else if (!tab.elementHidingDisabled) {
         chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
         tab.elementHidingDisabled = true
