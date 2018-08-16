@@ -285,6 +285,21 @@ function getParentEntity (urlToCheck) {
     }
 }
 
+function tryElementHide (requestData, tab) {
+    if (tab.parentEntity === 'Oath') {
+        if (requestData.parentFrameId == 0 && requestData.type === 'sub_frame') {
+            chrome.tabs.sendMessage(requestData.tabId, {type: 'blockedFrame', request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: requestData.parentFrameId})
+        } else if (requestData.type === 'sub_frame') {
+            chrome.tabs.sendMessage(requestData.tabId, {type: 'blockedFrameAsset', request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: requestData.parentFrameId})
+        } else if (requestData.frameId != 0 && (requestData.type === 'image' || requestData.type === 'script')) {
+            chrome.tabs.sendMessage(requestData.tabId, {type: 'blockedFrameAsset', request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: requestData.frameId})
+        }
+    } else if (!tab.elementHidingDisabled) {
+        chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
+        tab.elementHidingDisabled = true
+    }
+}
+
 function getTrackerDetails (trackerUrl, listName) {
     let host = utils.extractHostFromURL(trackerUrl)
     let parentCompany = utils.findParent(host.split('.')) || 'unknown'
@@ -307,5 +322,6 @@ function checkABPParsedList (list, url, siteDomain, request) {
 module.exports = {
     isTracker: isTracker,
     loadLists: loadLists,
-    getParentEntity: getParentEntity
+    getParentEntity: getParentEntity,
+    tryElementHide: tryElementHide
 }
