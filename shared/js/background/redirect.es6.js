@@ -107,8 +107,10 @@ function handleRequest (requestData) {
                     }
                 }
 
-                // Initiate hiding of blocked ad DOM elements
-                trackers.tryElementHide(requestData, thisTab)
+                if (!window.safari) {
+                    // Initiate hiding of blocked ad DOM elements
+                    trackers.tryElementHide(requestData, thisTab)
+                }
 
                 console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                              ' [' + tracker.parentCompany + '] ' + requestData.url)
