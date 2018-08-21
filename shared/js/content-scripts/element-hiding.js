@@ -34,33 +34,32 @@
          * frames on the page, at which point event listeners are removed.
          */
         messageListener (req, sender, res) {
-            if (sender.id === req.extId) {
-                if (req.type === 'blockedFrameAsset' && !this.containsBlockedRequest && this.frameType === 'topLevelFrame') {
-                    this.containsBlockedRequest = true
-                    this.mainFrameUrl = req.mainFrameUrl
+            if (req.type === 'blockedFrameAsset' && !this.containsBlockedRequest && this.frameType === 'topLevelFrame') {
+                this.containsBlockedRequest = true
+                this.mainFrameUrl = req.mainFrameUrl
 
-                    // If iframe doesn't have a src, we can access its frameElement
-                    // from within and hide immediately
-                    if (window.frameElement && window.frameElement.src === '') {
-                        this.collapseDomNode(window.frameElement)
-                    } else {
-                        window.top.postMessage({frameUrl: document.location.href, type: 'frameIdRequest'}, req.mainFrameUrl)
-                    }
-                } else if (req.type === 'blockedFrame') {
-                    this.foundFrames = document.getElementsByTagName('iframe')
-                    let i = thisfoundFrames.length
-
-                    while (i--) {
-                        let frame = this.froundFrames[i]
-
-                        if (frame.src === req.request.url) {
-                            this.collapseDomNode(frame)
-                        }
-                    }
-                } else if (req.type === 'disable') {
-                    this.disabled = true
-                    window.removeEventListener('message', this.frameListener)
+                // If iframe doesn't have a src, we can access its frameElement
+                // from within and hide immediately
+                if (window.frameElement && window.frameElement.src === '') {
+                    this.collapseDomNode(window.frameElement)
+                } else {
+                    window.top.postMessage({frameUrl: document.location.href, type: 'frameIdRequest'}, req.mainFrameUrl)
                 }
+            } else if (req.type === 'blockedFrame') {
+                this.foundFrames = document.getElementsByTagName('iframe')
+                let i = this.foundFrames.length
+
+                while (i--) {
+                    let frame = this.foundFrames[i]
+
+                    if (frame.src === req.request.url) {
+                        this.collapseDomNode(frame)
+                    }
+                }
+            } else if (req.type === 'disable') {
+                this.disabled = true
+                chrome.runtime.onMessage.removeListener(this.messageListener)
+                window.removeEventListener('message', this.frameListener)
             }
         }
 
@@ -72,29 +71,28 @@
          * 3. iframes send messages to main frame when they contain blocked elements (hideFrame)
          */
         frameListener (e) {
-            if (!this.disabled) {
-                if (e.data.type === 'frameIdRequest') {
-                    this.foundFrames = document.getElementsByTagName('iframe')
-                    let i = this.foundFrames.length
+            if (this.disabled) return
+            if (e.data.type === 'frameIdRequest') {
+                this.foundFrames = document.getElementsByTagName('iframe')
+                let i = this.foundFrames.length
 
-                    while (i--) {
-                        let frame = this.foundFrames[i]
+                while (i--) {
+                    let frame = this.foundFrames[i]
 
-                        if (frame.id && !frame.className.includes('ddg-hidden') && frame.src) {
-                            frame.contentWindow.postMessage({frameId: frame.id, mainFrameUrl: document.location.href, type: 'setFrameId'}, '*')
-                        }
+                    if (frame.id && !frame.className.includes('ddg-hidden') && frame.src) {
+                        frame.contentWindow.postMessage({frameId: frame.id, mainFrameUrl: document.location.href, type: 'setFrameId'}, '*')
                     }
-                } else if (e.data.type === 'setFrameId') {
-                    this.frameId = e.data.frameId
-                    this.mainFrameUrl = e.data.mainFrameUrl
-
-                    if (this.containsBlockedRequest) {
-                        window.top.postMessage({frameId: this.frameId, type: 'hideFrame'}, this.mainFrameUrl)
-                    }
-                } else if (e.data.type === 'hideFrame') {
-                    let frame = document.getElementById(e.data.frameId)
-                    this.collapseDomNode(frame)
                 }
+            } else if (e.data.type === 'setFrameId') {
+                this.frameId = e.data.frameId
+                this.mainFrameUrl = e.data.mainFrameUrl
+
+                if (this.containsBlockedRequest) {
+                    window.top.postMessage({frameId: this.frameId, type: 'hideFrame'}, this.mainFrameUrl)
+                }
+            } else if (e.data.type === 'hideFrame') {
+                let frame = document.getElementById(e.data.frameId)
+                this.collapseDomNode(frame)
             }
         }
 
@@ -106,6 +104,7 @@
          * interact with hidden frames
          */
         collapseDomNode (element) {
+            if (!element) return
             element.style.setProperty('display', 'none', 'important')
             element.hidden = true
             element.classList.add('ddg-hidden')

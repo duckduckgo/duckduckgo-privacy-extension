@@ -295,11 +295,11 @@ function tryElementHide (requestData, tab) {
         if (requestData.type === 'sub_frame') {
             frameId = requestData.parentFrameId
             messageType = frameId === 0 ? 'blockedFrame' : 'blockedFrameAsset'
-        } else if (requestData.frameId != 0 && (requestData.type === 'image' || requestData.type === 'script')) {
+        } else if (requestData.frameId !== 0 && (requestData.type === 'image' || requestData.type === 'script')) {
             frameId = requestData.frameId
             messageType = 'blockedFrameAsset'
         }
-        chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url, extId: chrome.runtime.id}, {frameId: frameId})
+        chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url}, {frameId: frameId})
     } else if (!tab.elementHidingDisabled) {
         chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
         tab.elementHidingDisabled = true
