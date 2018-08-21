@@ -26,7 +26,6 @@ const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const utils = require('../utils.es6')
-const trackers = require('../trackers.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
 
@@ -38,7 +37,7 @@ class Tab {
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
-        this.parentEntity = trackers.getParentEntity(tabData.url)
+        this.parentEntity = utils.findParent(tabData.url)
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
         this.httpsRedirects = new HttpsRedirects()
