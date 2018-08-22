@@ -109,7 +109,7 @@
             element.hidden = true
             element.classList.add('ddg-hidden')
 
-            if (element.parentNode.childElementCount === 1) {
+            if (element.parentNode.childElementCount === 1 && !element.parentNode.textContent.trim()) {
                 this.collapseDomNode(element.parentNode)
             }
         }
