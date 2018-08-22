@@ -40,7 +40,7 @@ Trackers.prototype = window.$.extend({},
                 appendTo: this.$parent,
                 template: searchTemplate
             })
-
+            /*
             this.views.hamburgerMenu = new HamburgerMenuView({
                 pageView: this,
                 model: new HamburgerMenuModel(),
@@ -73,6 +73,7 @@ Trackers.prototype = window.$.extend({},
                 appendTo: null,
                 template: autocompleteTemplate
             })
+            */
         }
     }
 )

@@ -10,7 +10,6 @@ module.exports = function () {
             value="${this.model.searchText}" />
         <input class="search-form__go js-search-go" tabindex="2" value="" type="button" />
         <input type="submit" class="search-form__submit" />
-        ${hamburgerButton('js-search-hamburger-button')}
     </form>
 </section>`
 }

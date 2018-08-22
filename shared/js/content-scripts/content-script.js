@@ -25,16 +25,8 @@ var onBeforeLoad = (e) => {
         }
 
         // console.log(`MAYBE BLOCK ${e.url}`)
-        let block = window.safari.self.tab.canLoad(e, requestDetails)
-        if (block.cancel) {
-            // console.log(`DDG BLOCKING ${e.url}`)
-            e.preventDefault()
-        } else if (block.redirectUrl) {
-            // console.log(`DDG BLOCKING AND USING SURROGATE ${e.url}`)
-            e.preventDefault()
-            loadSurrogate(block.redirectUrl)
+        //
         }
-    }
 }
 
 var onBeforeUnload = (e) => {
