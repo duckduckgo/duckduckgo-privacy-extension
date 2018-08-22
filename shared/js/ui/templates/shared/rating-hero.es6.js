@@ -12,12 +12,18 @@ module.exports = function (site, ops) {
         site.siteRating,
         site.isWhitelisted
     )
+    const label = subtitleLabel(
+        site.isCalculatingSiteRating,
+        site.siteRating,
+        site.isWhitelisted
+    )
 
     return bel`<div class="rating-hero-container js-rating-hero">
      ${hero({
         status: status,
         title: site.domain,
         subtitle: subtitle,
+        subtitleLabel: label,
         showClose: ops.showClose,
         showOpen: ops.showOpen
     })}
@@ -75,4 +81,22 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
     }
 
     return bel`${msg}`
+}
+
+// to avoid duplicating messages between the icon and the subtitle,
+// we combine information for both here
+function subtitleLabel (isCalculating, rating, isWhitelisted) {
+    if (isCalculating) return
+
+    if (isWhitelisted && rating.before) {
+        return `Privacy Protection Disabled, Privacy Grade ${rating.before}`
+    }
+
+    if (rating.before && rating.before === rating.after) {
+        return `Privacy Grade ${rating.before}`
+    }
+
+    if (rating.before && rating.after) {
+        return `Enhanced from ${rating.before} to ${rating.after}`
+    }
 }
