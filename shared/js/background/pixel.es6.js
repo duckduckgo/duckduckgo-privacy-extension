@@ -5,7 +5,6 @@
  *
  */
 
-const utils = require('./utils.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
@@ -20,12 +19,23 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  *
  */
 
-function fire (pixelName) {
+function fire () {
     if (!arguments.length) return
 
     let args = Array.prototype.slice.call(arguments)
     const pixelName = args[0]
-    const paramString = concatParams(args)
+
+    if (typeof pixelName !== 'string') return
+
+    const url = getURL(pixelName)
+
+    if (!url) return
+
+    args = args.slice(1)
+    const paramString = concatParams(args) || ''
+
+    // Send the request
+    load.url(url + paramString)
 }
 
 /**
@@ -33,11 +43,11 @@ function fire (pixelName) {
  * Return URL for the pixel request
  *
  */
-function getURL () {
-    const domain = 'improving.duckduckgo.com'
-    const path = '/t/'
+function getURL (pixelName) {
+    if (!pixelName) return
 
-    return domain + path
+    const url = 'https://improving.duckduckgo.com/t/'
+    return url + pixelName
 }
 
 /**
@@ -61,9 +71,26 @@ function getAdditionalParams () {
  *
  */
 function concatParams (args) {
-    args = args ? args : []
-    
+    args = args || []
+
     args.push(getAdditionalParams())
+
+    let paramString = ''
+
+    args.forEach((arg) => {
+        // append keys if object
+        if (typeof arg === 'object') {
+            paramString = Object.keys(arg).reduce((params, key) => {
+                const val = arg[key]
+                return params + '&' + key + '=' + val
+            }, '')
+        } else {
+            // otherwise just add args separated by _
+            paramString += '_' + arg
+        }
+    })
+
+    return paramString
 }
 
 module.exports = {
