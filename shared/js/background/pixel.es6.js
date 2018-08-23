@@ -21,12 +21,16 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  */
 
 function fire (pixelName) {
+    if (!arguments.length) return
+
     let args = Array.prototype.slice.call(arguments)
+    const pixelName = args[0]
+    const paramString = concatParams(args)
 }
 
 /**
  *
- * returns URL for the pixel request
+ * Return URL for the pixel request
  *
  */
 function getURL () {
@@ -36,6 +40,11 @@ function getURL () {
     return domain + path
 }
 
+/**
+ *
+ * Return additional params for the pixel request
+ *
+ */
 function getAdditionalParams () {
     const browserInfo = parseUserAgentString()
 
@@ -44,6 +53,17 @@ function getAdditionalParams () {
         extensionVersion: browserWrapper.getExtensionVersion(),
         atb: settings.getSetting('atb')
     }
+}
+
+/**
+ *
+ * @param {array} args - data we need to append
+ *
+ */
+function concatParams (args) {
+    args = args ? args : []
+    
+    args.push(getAdditionalParams())
 }
 
 module.exports = {
