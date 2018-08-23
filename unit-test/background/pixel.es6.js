@@ -91,11 +91,5 @@ describe('pixel.concatParams()', () => {
             let result = pixel.concatParams(test.params)
             expect(result).toMatch(test.partialResult)
         })
-
-/*
-        it(`should return ${test.resultWithWWW} as host for the url: ${test.url}`, () => {
-            let result = pixel.extractHostFromURL(test.url, true)
-            expect(result).toEqual(test.resultWithWWW)
-        }) */
     })
 })
