@@ -96,5 +96,6 @@ function concatParams (args) {
 module.exports = {
     fire: fire,
     getURL: getURL,
+    getAdditionalParams: getAdditionalParams,
     concatParams: concatParams
 }
