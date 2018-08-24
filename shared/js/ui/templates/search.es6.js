@@ -11,5 +11,6 @@ module.exports = function () {
         <input class="search-form__go js-search-go" tabindex="2" value="" type="button" />
         <input type="submit" class="search-form__submit" />
     </form>
+    <a class="js-search-help" href="">Where is my tracker blocker?</a>
 </section>`
 }

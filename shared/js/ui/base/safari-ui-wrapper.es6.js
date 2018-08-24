@@ -113,6 +113,11 @@ let search = (url) => {
     })
 }
 
+let openHelp = () => {
+    safari.application.activeBrowserWindow.openTab().url = 'https://duck.co/help/add-ons'
+    safari.self.hide()
+}
+
 let getExtensionURL = (path) => {
     return safari.extension.baseURI + path
 }
@@ -149,5 +154,6 @@ module.exports = {
     search: search,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
-    getExtensionURL: getExtensionURL
+    getExtensionURL: getExtensionURL,
+    openHelp: openHelp
 }

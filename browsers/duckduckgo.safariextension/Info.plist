@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>DuckDuckGo</string>
 	<key>Builder Version</key>
-	<string>13604.5.6</string>
+	<string>13605.3.8</string>
 	<key>CFBundleDisplayName</key>
 	<string>DuckDuckGo Privacy Essentials</string>
 	<key>CFBundleIdentifier</key>
@@ -28,7 +28,7 @@
 				<key>Filename</key>
 				<string>html/popup.html</string>
 				<key>Height</key>
-				<integer>600</integer>
+				<integer>60</integer>
 				<key>Identifier</key>
 				<string>popup</string>
 				<key>Width</key>
@@ -38,6 +38,8 @@
 		<key>Toolbar Items</key>
 		<array>
 			<dict>
+				<key>Command</key>
+				<string>clickIcon</string>
 				<key>Identifier</key>
 				<string>popup_button</string>
 				<key>Image</key>

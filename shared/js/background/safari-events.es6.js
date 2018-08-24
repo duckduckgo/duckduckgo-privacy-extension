@@ -20,12 +20,16 @@ let _getSafariTabIndex = (target) => {
  * 2. go through all current tabs and recreate our own internal tab objects
  * 3. open post install page only if we're on a DDG page or Safari gallery page
  */
-let onStartup = () => {
+let onStartup = (e) => {
     if (!safari.extension.settings.installed) {
         safari.extension.settings.installed = true
         // if there's a success page, it's just reloaded
         // give it a bit of time to settle before kicking off the ATB process
         setTimeout(ATB.updateATBValues, 2000)
+    }
+    
+    if (!localStorage['seenIcon']) {
+         browserWrapper.setBadgeIcon({path: 'img/arrow@2x.png', target: safari.application.activeBrowserWindow})
     }
 
     // show post install page
@@ -71,6 +75,7 @@ let onStartup = () => {
 
     // reload popup
     browserWrapper.notifyPopup()
+
 }
 
 const redirect = require('./redirect.es6')
@@ -336,6 +341,17 @@ let onClose = (e) => {
 // update blocking lists on interval
 setInterval(abpLists.updateLists, 30 * 60 * 1000)
 
+let seenIcon = (evt) => {
+    console.log(`button event`)
+    console.log(evt)
+
+    if (evt.command === 'clickIcon') {
+        localStorage['seenIcon'] = 1
+        browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: safari.application.activeBrowserWindow})
+        safari.extension.toolbarItems[0].showPopover()
+    }
+}
+
 // event listeners
 // true for event capture. Deciding to enable capture was mostly trial/error.
 // https://developer.apple.com/library/content/documentation/Tools/Conceptual/SafariExtensionGuide/WorkingwithWindowsandTabs/WorkingwithWindowsandTabs.html
@@ -345,6 +361,7 @@ safari.application.addEventListener('beforeNavigate', onBeforeNavigation, true)
 safari.application.addEventListener('navigate', onNavigate, false)
 safari.application.addEventListener('beforeSearch', onBeforeSearch, false)
 safari.application.addEventListener('close', onClose, false)
+safari.application.addEventListener("command", seenIcon, false)
 
 module.exports = {
     onStartup: onStartup
