@@ -119,6 +119,17 @@ const ATB = (() => {
             load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
         },
 
+        getNewATBFromURL: (url) => {
+            let atb = ''
+            const matches = url.match(/\Wnatb=(v\d+-\d([a-z_]{2})?)(&|$)/)
+
+            if (matches && matches[1]) {
+                atb = matches[1]
+            }
+
+            return atb
+        },
+
         updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
@@ -128,12 +139,8 @@ const ATB = (() => {
                     let atb
 
                     urls.some(url => {
-                        const matches = url.match(/\Wnatb=([a-z0-9\-_]+)/)
-
-                        if (matches && matches[1]) {
-                            atb = matches[1]
-                            return true
-                        }
+                        atb = ATB.getNewATBFromURL(url)
+                        return !!atb
                     })
 
                     if (atb) {
