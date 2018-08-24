@@ -38,6 +38,12 @@ let getDDGTabUrls = () => {
         chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, (tabs) => {
             tabs = tabs || []
 
+            tabs.forEach(tab => {
+                chrome.tabs.insertCSS(tab.id, {
+                    file: '/public/css/noatb.css'
+                })
+            })
+
             resolve(tabs.map(tab => tab.url))
         })
     })
