@@ -95,9 +95,11 @@ describe('pixel.concatParams()', () => {
 
             Object.keys(test.constantParams).forEach((key) => {
                 let val = test.constantParams[key]
+                let paramString = '&' + key + '=' + val
                 if (val) {
-                    let paramString = '&' + key + '=' + val
                     expect(result).toMatch(paramString)
+                } else {
+                    expect(result).not.toMatch(paramString)
                 }
             })
         })
