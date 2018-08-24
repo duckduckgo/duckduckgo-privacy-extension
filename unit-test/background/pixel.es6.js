@@ -81,13 +81,21 @@ describe('pixel.concatParams()', () => {
     concatParamsTestCases.forEach((test) => {
         beforeEach(function () {
             spyOn(pixel, 'getAdditionalParams').and.callFake(function () {
-                return test.contantParams
+                return test.constantParams
             })
         })
 
-        it(`should return a string containing ${test.partialResult} for params: ${test.params}`, () => {
+        it(`should return a string containing ${test.partialResult} and ${test.constantParams} for params: ${test.params}`, () => {
             let result = pixel.concatParams(test.params)
             expect(result).toMatch(test.partialResult)
+
+            Object.keys(test.constantParams).forEach((key) => {
+                let val = test.constantParams[key]
+                if (val) {
+                    let paramString = '&' + key + '=' + val
+                    expect(result).toMatch(paramString)
+                }
+            })
         })
     })
 })
