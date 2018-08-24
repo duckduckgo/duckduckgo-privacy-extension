@@ -20,7 +20,7 @@ module.exports = function () {
     </div>
     <div class="tracker-networks__details padded
         js-tracker-networks-details">
-        <ol class="default-list site-info__trackers__company-list">
+        <ol class="default-list site-info__trackers__company-list" aria-label="List of tracker networks">
             ${renderTrackerDetails(
         this.model,
         this.model.DOMAIN_MAPPINGS
@@ -64,7 +64,7 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
         </span>
     </div>
     <h1 class="site-info__domain block">${c.name}</h1>
-    <ol class="default-list site-info__trackers__company-list__url-list">
+    <ol class="default-list site-info__trackers__company-list__url-list" aria-label="Tracker domains for ${c.name}">
         ${c.urlsList.map((url) => {
         let category = ''
         if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
