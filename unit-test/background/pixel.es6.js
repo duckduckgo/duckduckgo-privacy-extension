@@ -62,6 +62,12 @@ const concatParamsTestCases = [
     }
 ]
 
+const stubGetAdditionalParams = (ops) => {
+    spyOn(pixel, 'getAdditionalParams').and.callFake(function () {
+        return ops
+    })
+}
+
 describe('pixel.getURL()', () => {
     getURLTestCases.forEach((test) => {
         beforeEach(function () {
@@ -80,12 +86,10 @@ describe('pixel.getURL()', () => {
 describe('pixel.concatParams()', () => {
     concatParamsTestCases.forEach((test) => {
         beforeEach(function () {
-            spyOn(pixel, 'getAdditionalParams').and.callFake(function () {
-                return test.constantParams
-            })
         })
 
         it(`should return a string containing ${test.partialResult} and ${test.constantParams} for params: ${test.params}`, () => {
+            stubGetAdditionalParams(test.constantParams)
             let result = pixel.concatParams(test.params)
             expect(result).toMatch(test.partialResult)
 
