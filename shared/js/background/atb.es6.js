@@ -98,14 +98,6 @@ const ATB = (() => {
             })
         },
 
-        setAtbValuesFromSuccessPage: (atb) => {
-            if (!atb) return
-
-            settings.updateSetting('atb', atb)
-
-            ATB.finalizeATB()
-        },
-
         finalizeATB: () => {
             let atb = settings.getSetting('atb')
 
