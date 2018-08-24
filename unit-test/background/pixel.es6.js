@@ -4,23 +4,23 @@ const url = 'https://improving.duckduckgo.com/t/'
 const getURLTestCases = [
     {
         'pixelName': 'ep',
-        'result' : url + 'ep'
+        'result': url + 'ep'
     },
     {
         'pixelName': '',
-        'result' : 'undefined'
+        'result': 'undefined'
     },
     {
         'pixelName': 'undefined',
-        'result' : 'undefined'
+        'result': 'undefined'
     }
 ]
 const concatParamsTestCases = [
     {
-        'constantParams' : {
-            'browser' : 'firefox',
-            'extensionVersion' : '8.18.2018',
-            'atb' : 'v129-2a'
+        'constantParams': {
+            'browser': 'firefox',
+            'extensionVersion': '8.18.2018',
+            'atb': 'v129-2a'
         },
         'params': [
             'param1',
@@ -29,19 +29,19 @@ const concatParamsTestCases = [
         'partialResult': '_param1_param2'
     },
     {
-        'constantParams' : {
-            'browser' : 'chrome',
-            'extensionVersion' : '',
-            'atb' : 'v129-2a'
+        'constantParams': {
+            'browser': 'chrome',
+            'extensionVersion': '',
+            'atb': 'v129-2a'
         },
         'params': [],
         'partialResult': ''
     },
     {
-        'constantParams' : {
-            'browser' : 'firefox',
-            'extensionVersion' : '8.18.2018',
-            'atb' : ''
+        'constantParams': {
+            'browser': 'firefox',
+            'extensionVersion': '8.18.2018',
+            'atb': ''
         },
         'params': [
             'param1'
@@ -49,10 +49,10 @@ const concatParamsTestCases = [
         'partialResult': '_param1'
     },
     {
-        'constantParams' : {
-            'browser' : '',
-            'extensionVersion' : '',
-            'atb' : ''
+        'constantParams': {
+            'browser': '',
+            'extensionVersion': '',
+            'atb': ''
         },
         'params': [
             'param1',
@@ -64,13 +64,12 @@ const concatParamsTestCases = [
 
 describe('pixel.getURL()', () => {
     getURLTestCases.forEach((test) => {
-        beforeEach(function() {
+        beforeEach(function () {
             Object.keys(test).forEach((key) => {
-                let val = test[key]
-                val = (val === 'undefined') ? undefined : val
+                test[key] = (test[key] === 'undefined') ? undefined : test[key]
             })
         })
-      
+
         it(`should return ${test.result} as a result given the pixelName: ${test.pixelName}`, () => {
             let result = pixel.getURL(test.pixelName)
             expect(result).toBe(test.result)
@@ -80,9 +79,8 @@ describe('pixel.getURL()', () => {
 
 describe('pixel.concatParams()', () => {
     concatParamsTestCases.forEach((test) => {
-
-        beforeEach(function() {
-            spyOn(pixel, 'getAdditionalParams').and.callFake(function() {
+        beforeEach(function () {
+            spyOn(pixel, 'getAdditionalParams').and.callFake(function () {
                 return test.contantParams
             })
         })
