@@ -57,12 +57,16 @@ function getURL (pixelName) {
  */
 function getAdditionalParams () {
     const browserInfo = parseUserAgentString()
+    const browser = browserInfo.browser
+    const extensionVersion = browserWrapper.getExtensionVersion()
+    const atb = settings.getSetting('atb')
+    const result = {}
 
-    return {
-        browser: browserInfo.browser,
-        extensionVersion: browserWrapper.getExtensionVersion(),
-        atb: settings.getSetting('atb')
-    }
+    if (browser) result.browser = browser
+    if (extensionVersion) result.extensionVersion = extensionVersion
+    if (atb) result.atb = atb
+
+    return result
 }
 
 /**
@@ -82,9 +86,9 @@ function concatParams (args) {
         if (typeof arg === 'object') {
             paramString = Object.keys(arg).reduce((params, key) => {
                 const val = arg[key]
-                return params + '&' + key + '=' + val
+                if (val) return params + '&' + key + '=' + val
             }, '')
-        } else {
+        } else if (arg) {
             // otherwise just add args separated by _
             paramString += '_' + arg
         }
