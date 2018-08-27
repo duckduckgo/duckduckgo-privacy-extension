@@ -32,6 +32,7 @@ function fire () {
     if (!url) return
 
     args = args.slice(1)
+    args.push(getAdditionalParams())
     const paramString = concatParams(args) || ''
 
     // Send the request
@@ -77,8 +78,6 @@ function getAdditionalParams () {
 function concatParams (args) {
     args = args || []
 
-    args.push(getAdditionalParams())
-
     let paramString = ''
 
     args.forEach((arg) => {
@@ -100,6 +99,5 @@ function concatParams (args) {
 module.exports = {
     fire: fire,
     getURL: getURL,
-    getAdditionalParams: getAdditionalParams,
     concatParams: concatParams
 }

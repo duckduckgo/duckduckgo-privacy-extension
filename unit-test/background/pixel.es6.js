@@ -17,43 +17,16 @@ const getURLTestCases = [
 ]
 const concatParamsTestCases = [
     {
-        'constantParams': {
-            'browser': 'firefox',
-            'extensionVersion': '8.18.2018',
-            'atb': 'v129-2a'
-        },
-        'params': [
-            'param1',
-            'param2'
-        ],
-        'partialResult': '_param1_param2'
-    },
-    {
-        'constantParams': {
-            'browser': 'chrome',
-            'extensionVersion': '',
-            'atb': 'v129-2a'
-        },
         'params': [],
         'partialResult': ''
     },
     {
-        'constantParams': {
-            'browser': 'firefox',
-            'extensionVersion': '8.18.2018',
-            'atb': ''
-        },
         'params': [
             'param1'
         ],
         'partialResult': '_param1'
     },
     {
-        'constantParams': {
-            'browser': '',
-            'extensionVersion': '',
-            'atb': ''
-        },
         'params': [
             'param1',
             'param2'
@@ -61,12 +34,6 @@ const concatParamsTestCases = [
         'partialResult': '_param1_param2'
     }
 ]
-
-const stubGetAdditionalParams = (ops) => {
-    spyOn(pixel, 'getAdditionalParams').and.callFake(function () {
-        return ops
-    })
-}
 
 describe('pixel.getURL()', () => {
     getURLTestCases.forEach((test) => {
@@ -85,23 +52,9 @@ describe('pixel.getURL()', () => {
 
 describe('pixel.concatParams()', () => {
     concatParamsTestCases.forEach((test) => {
-        beforeEach(function () {
-        })
-
-        it(`should return a string containing ${test.partialResult} and ${test.constantParams} for params: ${test.params}`, () => {
-            stubGetAdditionalParams(test.constantParams)
+        it(`should return a string containing ${test.partialResult} and for params: ${test.params}`, () => {
             let result = pixel.concatParams(test.params)
             expect(result).toMatch(test.partialResult)
-
-            Object.keys(test.constantParams).forEach((key) => {
-                let val = test.constantParams[key]
-                let paramString = '&' + key + '=' + val
-                if (val) {
-                    expect(result).toMatch(paramString)
-                } else {
-                    expect(result).not.toMatch(paramString)
-                }
-            })
         })
     })
 })
