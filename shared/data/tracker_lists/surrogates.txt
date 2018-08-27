@@ -1,0 +1,278 @@
+google-analytics.com/ga.js application/javascript
+(function() {
+  var noop = function(){};
+  var noopCallArg = function(a){ if (typeof a === 'function') { return a(); }};
+  var noopReturnArg = function(a){ return a; };
+  var noopReturnTracker = function(){
+    return {
+      _addIgnoredOrganic: noop,
+      _addIgnoredRef: noop,
+      _addItem: noop,
+      _addOrganic: noop,
+      _addTrans: noop,
+      _clearIgnoredOrganic: noop,
+      _clearIgnoredRef: noop,
+      _clearOrganic: noop,
+      _cookiePathCopy: noop,
+      _deleteCustomVar: noop,
+      _getName: noop,
+      _setAccount: noop,
+      _getAccount: noop,
+      _getClientInfo: noop,
+      _getDetectFlash: noop,
+      _getDetectTitle: noop,
+      _getLinkerUrl: noopReturnArg,
+      _getLocalGifPath: noop,
+      _getServiceMode: noop,
+      _getVersion: noop,
+      _getVisitorCustomVar: noop,
+      _initData: noop,
+      _link: noop,
+      _linkByPost: noop,
+      _setAllowAnchor: noop,
+      _setAllowHash: noop,
+      _setAllowLinker: noop,
+      _setCampContentKey: noop,
+      _setCampMediumKey: noop,
+      _setCampNameKey: noop,
+      _setCampNOKey: noop,
+      _setCampSourceKey: noop,
+      _setCampTermKey: noop,
+      _setCampaignCookieTimeout: noop,
+      _setCampaignTrack: noop,
+      _setClientInfo: noop,
+      _setCookiePath: noop,
+      _setCookiePersistence: noop,
+      _setCookieTimeout: noop,
+      _setCustomVar: noop,
+      _setDetectFlash: noop,
+      _setDetectTitle: noop,
+      _setDomainName: noop,
+      _setLocalGifPath: noop,
+      _setLocalRemoteServerMode: noop,
+      _setLocalServerMode: noop,
+      _setReferrerOverride: noop,
+      _setRemoteServerMode: noop,
+      _setSampleRate: noop,
+      _setSessionTimeout: noop,
+      _setSiteSpeedSampleRate: noop,
+      _setSessionCookieTimeout: noop,
+      _setVar: noop,
+      _setVisitorCookieTimeout: noop,
+      _trackEvent: noop,
+      _trackPageLoadTime: noop,
+      _trackPageview: noop,
+      _trackSocial: noop,
+      _trackTiming: noop,
+      _trackTrans: noop,
+      _visitCode: noop
+    };
+  };
+  var existingGaq = window._gaq;
+  window._gat = {
+	  _anonymizeIP: noop,
+	  _createTracker: noop,
+    _forceSSL: noop,
+    _getPlugin: noop,
+    _getTrackers: noop,
+	  _getTracker: noopReturnTracker,
+    _getTrackerByName: noopReturnTracker
+  };
+  window._gaq = {
+    push: noopCallArg,
+    _createAsyncTracker: noop,
+    _getAsyncTracker: noop,
+    _getPlugin: noop
+  };
+  if (Array.isArray(existingGaq)) {
+    existingGaq.forEach(function(arg) {
+      window._gaq.push(arg);
+    });
+  }
+})();
+
+google-analytics.com/analytics.js application/javascript
+(function() {
+  var noop = function(){};
+  var noopReturnArray = function(){ return []; }
+  var noopReturnNull = function(){ return null; }
+  var noopCallLastArg = function(){ 
+    var lastArg = arguments[arguments.length - 1]; 
+    if (typeof lastArg === 'function') { 
+      return lastArg(); 
+    }
+  };
+  var noopReturnTracker = function(){
+    return {
+      get: noop,
+      set: noop,
+      send: noop
+    };
+  };
+  var ga = noopCallLastArg;
+  ga.create = noopReturnTracker;
+  ga.getByName = noopReturnNull;
+  ga.getAll = noopReturnArray;
+  ga.remove = noop;
+	var name = window.GoogleAnalyticsObject || 'ga';
+  window[name] = window[name] || ga;
+  if (window.dataLayer && window.dataLayer.hide && window.dataLayer.hide.end) {
+    window.dataLayer.hide.end();
+  }
+})();
+
+google-analytics.com/inpage_linkid.js application/javascript
+(function() {
+  var noop = function(){};
+	window._gaq = window._gaq || {
+		push: noop
+	};
+})();
+
+google-analytics.com/cx/api.js application/javascript
+(function() {
+	var noop = function(){};
+  var noopReturnZero = function(){ return 0; }
+	window.cxApi = window.cxApi || {
+		chooseVariation: noopReturnZero,
+		getChosenVariation: noop,
+		setAllowHash: noop,
+		setChosenVariation: noop,
+		setCookiePath: noop,
+		setDomainName: noop
+  };
+})();
+
+googletagservices.com/gpt.js application/javascript
+(function() {
+	var noop = function(){};
+  var noopReturnThis = function(){ return this; }
+  var noopReturnNull = function(){ return null; }
+  var noopReturnArray = function(){ return []; }
+  var noopReturnString = function(){ return ''; }
+  var noopReturnCompanionAds = function() {
+    return {
+      addEventListener: noopReturnThis,
+      enableSyncLoading: noop,
+      setRefreshUnfilledSlots: noop
+    };
+  };
+	var noopReturnContentService = function() {
+    return {
+      addEventListener: noopReturnThis,
+      setContent: noop
+    };
+  };
+  var noopReturnPassback = function() {
+    return {
+      display: noop,
+      get: noopReturnNull,
+      set: noopReturnThis,
+      setClickUrl: noopReturnThis,
+      setTagForChildDirectedTreatment: noopReturnThis,
+      setTargeting: noopReturnThis,
+      updateTargetingFromMap: noopReturnThis,
+    };
+  };
+	var noopReturnPubAds = function() {
+    return {
+      addEventListener: noopReturnThis,
+      clear: noop,
+      clearCategoryExclusions: noopReturnThis,
+      clearTagForChildDirectedTreatment: noopReturnThis,
+      clearTargeting: noopReturnThis,
+      collapseEmptyDivs: noop,
+      defineOutOfPagePassback: noopReturnPassback,
+      definePassback: noopReturnPassback,
+      disableInitialLoad: noop,
+      display: noop,
+      enableAsyncRendering: noop,
+      enableSingleRequest: noop,
+      enableSyncRendering: noop,
+      enableVideoAds: noop,
+      get: noopReturnNull,
+      getAttributeKeys: noopReturnArray,
+      getTargeting: noop,
+      getTargetingKeys: noopReturnArray,
+      getSlots: noopReturnArray,
+      refresh: noop,
+      set: noopReturnThis,
+      setCategoryExclusion: noopReturnThis,
+      setCentering: noop,
+      setCookieOptions: noopReturnThis,
+      setForceSafeFrame: noopReturnThis,
+      setLocation: noopReturnThis,
+      setPublisherProvidedId: noopReturnThis,
+      setSafeFrameConfig: noopReturnThis,
+      setTagForChildDirectedTreatment: noopReturnThis,
+      setTargeting: noopReturnThis,
+      setVideoContent: noopReturnThis,
+      updateCorrelator: noop
+    };
+  };
+  var noopReturnSizeMap = function() {
+    return {
+      addSize: noopReturnThis,
+      build: noopReturnNull
+    };
+  };
+	var noopReturnSlot = function() {
+	  return {
+      addService: noopReturnThis,
+      clearCategoryExclusions: noopReturnThis,
+      clearTargeting: noopReturnThis,
+      defineSizeMapping: noopReturnThis,
+      get: noopReturnNull,
+      getAdUnitPath: noopReturnArray,
+      getAttributeKeys: noopReturnArray,
+      getCategoryExclusions: noopReturnArray,
+      getDomId: noopReturnString,
+      getSlotElementId: noopReturnString,
+      getSlotId: noopReturnThis,
+      getTargeting: noopReturnArray,
+      getTargetingKeys: noopReturnArray,
+      set: noopReturnThis,
+      setCategoryExclusion: noopReturnThis,
+      setClickUrl: noopReturnThis,
+      setCollapseEmptyDiv: noopReturnThis,
+      setTargeting: noopReturnThis,
+    }
+  };
+  var existingCmd = window.googletag && window.googletag.cmd;
+	window.googletag = window.googletag || {
+    cmd: [],
+    apiReady: true,
+	  companionAds: noopReturnCompanionAds,
+	  content: noopReturnContentService,
+    defineOutOfPageSlot: noopReturnSlot,
+    defineSlot: noopReturnSlot,
+	  destroySlots: noop,
+	  disablePublisherConsole: noop,
+    display: noop,
+    enableServices: noop,
+    getVersion: noopReturnString,
+    pubads: noopReturnPubAds,
+    pubadsReady: true,
+	  setAdIframeTitle: noop,
+    sizeMapping: noopReturnSizeMap
+  };
+  if (Array.isArray(existingCmd)) {
+    existingCmd.forEach(function(cmd) {
+      window.googletag.cmd.push(cmd);
+    });
+  }
+})();
+
+googletagmanager.com/gtm.js application/javascript
+(function() {
+	var noop = function() {};
+  window.ga = window.ga || noop;
+  if (window.dataLayer) {
+    if (window.dataLayer.hide && typeof window.dataLayer.hide.end === 'function') {
+      window.dataLayer.hide.end();
+    }
+    if (typeof window.dataLayer.push === 'function') {
+      window.dataLayer.push = function(a){ if (a && a.eventCallback && typeof a.eventCallback === 'function') { return a.eventCallback(); }};
+    }
+  };
+})();
