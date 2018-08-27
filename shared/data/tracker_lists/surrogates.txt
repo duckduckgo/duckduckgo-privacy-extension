@@ -70,12 +70,12 @@ google-analytics.com/ga.js application/javascript
   };
   var existingGaq = window._gaq;
   window._gat = {
-	  _anonymizeIP: noop,
-	  _createTracker: noop,
+    _anonymizeIP: noop,
+    _createTracker: noop,
     _forceSSL: noop,
     _getPlugin: noop,
     _getTrackers: noop,
-	  _getTracker: noopReturnTracker,
+    _getTracker: noopReturnTracker,
     _getTrackerByName: noopReturnTracker
   };
   window._gaq = {
@@ -114,7 +114,7 @@ google-analytics.com/analytics.js application/javascript
   ga.getByName = noopReturnNull;
   ga.getAll = noopReturnArray;
   ga.remove = noop;
-	var name = window.GoogleAnalyticsObject || 'ga';
+  var name = window.GoogleAnalyticsObject || 'ga';
   window[name] = window[name] || ga;
   if (window.dataLayer && window.dataLayer.hide && window.dataLayer.hide.end) {
     window.dataLayer.hide.end();
@@ -124,28 +124,28 @@ google-analytics.com/analytics.js application/javascript
 google-analytics.com/inpage_linkid.js application/javascript
 (function() {
   var noop = function(){};
-	window._gaq = window._gaq || {
-		push: noop
-	};
+  window._gaq = window._gaq || {
+    push: noop
+  };
 })();
 
 google-analytics.com/cx/api.js application/javascript
 (function() {
-	var noop = function(){};
+  var noop = function(){};
   var noopReturnZero = function(){ return 0; }
-	window.cxApi = window.cxApi || {
-		chooseVariation: noopReturnZero,
-		getChosenVariation: noop,
-		setAllowHash: noop,
-		setChosenVariation: noop,
-		setCookiePath: noop,
-		setDomainName: noop
+  window.cxApi = window.cxApi || {
+    chooseVariation: noopReturnZero,
+    getChosenVariation: noop,
+    setAllowHash: noop,
+    setChosenVariation: noop,
+    setCookiePath: noop,
+    setDomainName: noop
   };
 })();
 
 googletagservices.com/gpt.js application/javascript
 (function() {
-	var noop = function(){};
+  var noop = function(){};
   var noopReturnThis = function(){ return this; }
   var noopReturnNull = function(){ return null; }
   var noopReturnArray = function(){ return []; }
@@ -157,7 +157,7 @@ googletagservices.com/gpt.js application/javascript
       setRefreshUnfilledSlots: noop
     };
   };
-	var noopReturnContentService = function() {
+  var noopReturnContentService = function() {
     return {
       addEventListener: noopReturnThis,
       setContent: noop
@@ -174,7 +174,7 @@ googletagservices.com/gpt.js application/javascript
       updateTargetingFromMap: noopReturnThis,
     };
   };
-	var noopReturnPubAds = function() {
+  var noopReturnPubAds = function() {
     return {
       addEventListener: noopReturnThis,
       clear: noop,
@@ -216,8 +216,8 @@ googletagservices.com/gpt.js application/javascript
       build: noopReturnNull
     };
   };
-	var noopReturnSlot = function() {
-	  return {
+  var noopReturnSlot = function() {
+    return {
       addService: noopReturnThis,
       clearCategoryExclusions: noopReturnThis,
       clearTargeting: noopReturnThis,
@@ -239,21 +239,21 @@ googletagservices.com/gpt.js application/javascript
     }
   };
   var existingCmd = window.googletag && window.googletag.cmd;
-	window.googletag = window.googletag || {
+  window.googletag = window.googletag || {
     cmd: [],
     apiReady: true,
-	  companionAds: noopReturnCompanionAds,
-	  content: noopReturnContentService,
+    companionAds: noopReturnCompanionAds,
+    content: noopReturnContentService,
     defineOutOfPageSlot: noopReturnSlot,
     defineSlot: noopReturnSlot,
-	  destroySlots: noop,
-	  disablePublisherConsole: noop,
+    destroySlots: noop,
+    disablePublisherConsole: noop,
     display: noop,
     enableServices: noop,
     getVersion: noopReturnString,
     pubads: noopReturnPubAds,
     pubadsReady: true,
-	  setAdIframeTitle: noop,
+    setAdIframeTitle: noop,
     sizeMapping: noopReturnSizeMap
   };
   if (Array.isArray(existingCmd)) {
@@ -265,7 +265,7 @@ googletagservices.com/gpt.js application/javascript
 
 googletagmanager.com/gtm.js application/javascript
 (function() {
-	var noop = function() {};
+  var noop = function() {};
   window.ga = window.ga || noop;
   if (window.dataLayer) {
     if (window.dataLayer.hide && typeof window.dataLayer.hide.end === 'function') {
