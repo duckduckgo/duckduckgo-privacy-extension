@@ -11,6 +11,9 @@ const SiteModel = require('./../models/site.es6.js')
 const siteTemplate = require('./../templates/site.es6.js')
 const SearchView = require('./../views/search.es6.js')
 const SearchModel = require('./../models/search.es6.js')
+const UpdateMessageView = require('./../views/updated-message.es6.js')
+const UpdateMessageModel = require('./../models/updated-message.es6.js')
+const updateMessageTemplate = require('./../templates/updated-message.es6.js')
 const searchTemplate = require('./../templates/search.es6.js')
 const AutocompleteView = require('./../views/autocomplete.es6.js')
 const AutocompleteModel = require('./../models/autocomplete.es6.js')
@@ -40,6 +43,23 @@ Trackers.prototype = window.$.extend({},
                 appendTo: this.$parent,
                 template: searchTemplate
             })
+
+            // show updated message in popup only on first click after update
+            // 'seenIcon' tells us that the popup is being created from a user click
+            // on the icon and not from a rerender. We set a flag to avoid seeing this 
+            // message again.
+            if (localStorage['seenIcon']) {
+                this.views.updateMessage = new UpdateMessageView({
+                    pageView: this, 
+                    model: new UpdateMessageModel({seenAlert: localStorage['seenUpdateAlert']}),
+                    appendTo: this.$parent,
+                    template: updateMessageTemplate
+                })
+
+                // set flag so we don't show alert again
+                localStorage['seenUpdateAlert'] = 1
+            }
+
             /*
             this.views.hamburgerMenu = new HamburgerMenuView({
                 pageView: this,

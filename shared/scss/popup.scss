@@ -18,6 +18,43 @@ body {
 
 #popup-container {
 
+    .update-alert {
+        background-color: $red;
+        width: -webkit-fill-available;
+        height: 25px
+    }
+
+    .update-alert-text {
+        color: $white;
+        display: inline-block;
+        margin-left: 11px;
+        position: fixed;
+        top: 47px;
+        font-size: 90%
+    }
+
+    .update-text {
+        text-align: left;
+        margin-left: 55px;
+        margin-right: 30px;
+        margin-top: 8px;
+        font-size: 90%;
+    }
+
+    .update-alert-icon {
+        @include alert_icon()
+        height: 25px;
+        width: 25px;
+        margin-left: 19px;
+        display: inline-block;
+    }
+
+    .help--text {
+        display: inline-block;
+        margin-left: 55px;
+        margin-top: 5px;
+    }
+
     .failover.card {
         position: absolute;
         top: 14px;

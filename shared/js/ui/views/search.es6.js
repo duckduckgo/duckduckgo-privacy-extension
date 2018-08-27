@@ -10,8 +10,7 @@ function Search (ops) {
         'form',
         'input',
         'go',
-        'hamburger-button',
-        'help'
+        'hamburger-button'
     ])
 
     this.bindEvents([
@@ -28,12 +27,6 @@ function Search (ops) {
 Search.prototype = window.$.extend({},
     Parent.prototype,
     {
-        _handleHelpClick: function (e) {
-            e.preventDefault()
-            console.log('click help link')
-            this.model.openHelp()
-        },
-
         _handleKeyup: function (e) {
             this.model.set('searchText', this.$input.val())
         },

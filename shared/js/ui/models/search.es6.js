@@ -11,10 +11,6 @@ Search.prototype = window.$.extend({},
 
         modelName: 'search',
 
-        openHelp: function () {
-            browserUIWrapper.openHelp()
-        },
-
         doSearch: function (s) {
             this.searchText = s
             s = encodeURIComponent(s)

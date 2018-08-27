@@ -28,7 +28,7 @@
 				<key>Filename</key>
 				<string>html/popup.html</string>
 				<key>Height</key>
-				<integer>60</integer>
+				<integer>200</integer>
 				<key>Identifier</key>
 				<string>popup</string>
 				<key>Width</key>

@@ -1,6 +1,11 @@
 @import "vars";
 @import "tracker-network-icons";
 
+@mixin alert_icon {
+    @include cross_platform_bg_image("error.svg")
+    background-size: contain;
+}
+
 /* Logo */
 @mixin ddg_logo () {
     @include cross_platform_bg_image("logo-horizontal@2x.png");
