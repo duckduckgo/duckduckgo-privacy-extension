@@ -188,37 +188,29 @@ describe('atb.updateSetAtb()', () => {
     })
 })
 
-describe('atb.setAtbValuesFromSuccessPage()', () => {
-    let loadURLSpy
+describe('getNewATBFromURL()', () => {
+    const tests = [
+        { url: 'https://duckduckgo.com/?natb=v123-4ab', output: 'v123-4ab' },
+        { url: 'https://duckduckgo.com/?natb=v123-4', output: 'v123-4' },
+        { url: 'https://duckduckgo.com/?natb=v123-4_b', output: 'v123-4_b' },
+        { url: 'https://duckduckgo.com/?natb=v123-4__', output: 'v123-4__' },
+        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__', output: 'v123-4__' },
+        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&foo=bar', output: 'v123-4__' },
 
-    beforeEach(() => {
-        loadURLSpy = spyOn(load, 'url')
-    })
-    it('should call /exti with the atb param', () => {
-        settingHelper.stub()
+        { url: 'https://duckduckgo.com/about', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v123-4a', output: '' },
+        { url: 'https://duckduckgo.com/?nnatb=v123-4ab', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v123-4abc', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v123-4___', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v123_sdf', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v11111111', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v111-4444', output: '' }
+    ]
 
-        atb.setAtbValuesFromSuccessPage('v123-4ab')
-
-        expect(settings.getSetting('atb')).toEqual('v123-4ab')
-        expect(settings.getSetting('set_atb')).toEqual('v123-4ab')
-        expect(loadURLSpy).toHaveBeenCalledWith('https://duckduckgo.com/exti/?atb=v123-4ab')
-    })
-
-    it('should do nothing if the page sends a blank atb', () => {
-        settingHelper.stub()
-
-        atb.setAtbValuesFromSuccessPage('')
-
-        expect(settings.getSetting('set_atb')).toBeFalsy()
-        expect(loadURLSpy).not.toHaveBeenCalled()
-    })
-
-    it('should do nothing if another page already came back with atb', () => {
-        settingHelper.stub({ atb: 'v123-4ab', set_atb: 'v123-4ab', extiSent: true })
-
-        atb.setAtbValuesFromSuccessPage('v123-4ab')
-
-        expect(loadURLSpy).not.toHaveBeenCalled()
+    tests.forEach((test) => {
+        it(`should get atb ${test.output} from ${test.url}`, () => {
+            expect(atb.getNewATBFromURL(test.url)).toEqual(test.output)
+        })
     })
 })
 
@@ -242,53 +234,47 @@ describe('complex install workflow cases', () => {
     }
 
     beforeEach(() => {
-        spyOn(browserWrapper, 'injectATBScripts')
         stubLoadJSON({ returnedAtb: 'v112-2' })
         loadURLSpy = stubLoadURL()
         settingHelper.stub()
     })
 
-    it(`should handle the install process correctly if there's no DDG pages open`, (done) => {
-        atb.updateATBValues()
+    it(`should handle the install process correctly if there's no DDG pages open`, () => {
+        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([]))
 
-        setTimeout(() => {
-            validateExtiWasHit('v112-2')
-            expect(settings.getSetting('atb')).toEqual('v112-2')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2')
-
-            done()
-        }, 600)
+        return atb.updateATBValues()
+            .then(() => {
+                validateExtiWasHit('v112-2')
+                expect(settings.getSetting('atb')).toEqual('v112-2')
+                expect(settings.getSetting('set_atb')).toEqual('v112-2')
+            })
     })
-    it(`should handle the install process correctly if there's DDG pages open that pass an ATB param`, (done) => {
-        atb.updateATBValues()
+    it(`should handle the install process correctly if there's DDG pages open that pass an ATB param`, () => {
+        // pretend one of the pages has an ATB to pass
+        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
+            'https://duckduckgo.com/about',
+            'https://duckduckgo.com/?natb=v112-2ab'
+        ]))
 
-        // pretend one of the pages injected ATB correctly
-        setTimeout(() => {
-            atb.setAtbValuesFromSuccessPage('v112-2ab')
-        }, 200)
-
-        setTimeout(() => {
-            validateExtiWasHit('v112-2ab')
-            expect(settings.getSetting('atb')).toEqual('v112-2ab')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
-
-            done()
-        }, 600)
+        return atb.updateATBValues()
+            .then(() => {
+                validateExtiWasHit('v112-2ab')
+                expect(settings.getSetting('atb')).toEqual('v112-2ab')
+                expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
+            })
     })
-    it(`should handle the install process correctly if there's DDG pages open that do not pass an ATB param`, (done) => {
-        atb.updateATBValues()
+    it(`should handle the install process correctly if there's DDG pages open that do not pass an ATB param`, () => {
+        // pretend no pages have ATB to pass
+        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
+            'https://duckduckgo.com/about',
+            'https://duckduckgo.com/?q=test'
+        ]))
 
-        // pretend one of the pages didn't manage to inject ATB correctly
-        setTimeout(() => {
-            atb.setAtbValuesFromSuccessPage('')
-        }, 200)
-
-        setTimeout(() => {
-            validateExtiWasHit('v112-2')
-            expect(settings.getSetting('atb')).toEqual('v112-2')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2')
-
-            done()
-        }, 600)
+        return atb.updateATBValues()
+            .then(() => {
+                validateExtiWasHit('v112-2')
+                expect(settings.getSetting('atb')).toEqual('v112-2')
+                expect(settings.getSetting('set_atb')).toEqual('v112-2')
+            })
     })
 })

@@ -59,7 +59,6 @@
 		<dict>
 			<key>Start</key>
 			<array>
-				<string>public/js/content-scripts/on-install.js</string>
 				<string>public/js/content-scripts/content-script.js</string>
 			</array>
 		</dict>

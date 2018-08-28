@@ -93,14 +93,9 @@ let mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
 
-let injectATBScripts = () => {
-    // in Safari we can't inject a script whenever we want, so instead add it everywhere
-    // and wait for the background process to tell us when to execute it
-    safari.application.activeBrowserWindow.tabs.forEach((tab) => {
-        if (tab.url.match(/https:\/\/([^/]+\.)?duckduckgo.com/)) {
-            tab.page.dispatchMessage('getATB')
-        }
-    })
+let getDDGTabUrls = () => {
+    // we don't currently support getting ATB from install page on Safari
+    return Promise.resolve([])
 }
 
 // no-ops, in cases where Safari lacks support for something
@@ -117,6 +112,6 @@ module.exports = {
     normalizeTabData: normalizeTabData,
     getTabId: getTabId,
     mergeSavedSettings: mergeSavedSettings,
-    injectATBScripts: injectATBScripts,
+    getDDGTabUrls: getDDGTabUrls,
     setUninstallURL: noop
 }
