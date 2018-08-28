@@ -40,6 +40,7 @@ Search.prototype = window.$.extend({},
 
         _handleBurgerClick: function (e) {
             e.preventDefault()
+            this.model.fetch({ fire: 'eph' })
             this.model.send('burgerClick')
         }
     }
