@@ -34,6 +34,7 @@ Search.prototype = window.$.extend({},
         _handleSubmit: function (e) {
             e.preventDefault()
             console.log(`Search submit for ${this.$input.val()}`)
+            this.model.fetch({ fire: 'epq' })
             this.model.doSearch(this.$input.val())
             window.close()
         },
