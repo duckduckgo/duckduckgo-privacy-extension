@@ -19,25 +19,20 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  *
  */
 function fire () {
-    console.log('firing...')
-    console.log(arguments)
-    console.log(typeof arguments)
     if (!arguments.length) return
 
     let args = Array.prototype.slice.call(arguments)
     const pixelName = args[0]
-    console.log('firing ' + pixelName) 
 
     if (typeof pixelName !== 'string') return
 
     const url = getURL(pixelName)
-    console.log('firing url: ' + url) 
 
     if (!url) return
 
-    args = Array.prototype.slice.call(args, 1)
+    args = args.slice(1)
     args.push(getAdditionalParams())
-    const paramString = concatParams(args) || ''
+    const paramString = concatParams(args)
 
     // Send the request
     load.url(url + paramString)
@@ -87,7 +82,7 @@ function concatParams (args) {
     args.forEach((arg) => {
         // append keys if object
         if (typeof arg === 'object') {
-            paramString = Object.keys(arg).reduce((params, key) => {
+            paramString += Object.keys(arg).reduce((params, key) => {
                 const val = arg[key]
                 if (val) return params + '&' + key + '=' + val
             }, '')

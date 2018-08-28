@@ -182,7 +182,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.fire) {
         let fireArgs = req.fire
         if (fireArgs.constructor !== Array) {
-            console.log('isnotarray')
             fireArgs = [req.fire]
         }
         res(pixel.fire.apply(null, fireArgs))
