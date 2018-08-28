@@ -48,11 +48,11 @@ Trackers.prototype = window.$.extend({},
             // 'seenIcon' tells us that the popup is being created from a user click
             // on the icon and not from a rerender. We set a flag to avoid seeing this 
             // message again.
-            if (!localStorage || localStorage['seenIcon']) {
+            if (safari.extension.globalPage.contentWindow.localStorage['seenIcon']) {
                 // for some reason searches from the popup lose access to localStorage
                 // since the search comes from the popup we can assum the user
                 // saw the alert and just set seenAlert to true in this case
-                let seenAlert = localStorage ? localStorage['seenUpdateAlert'] : true
+                let seenAlert = safari.extension.globalPage.contentWindow.localStorage['seenUpdateAlert'] || false
                 this.views.updateMessage = new UpdateMessageView({
                     pageView: this, 
                     model: new UpdateMessageModel({seenAlert: seenAlert}),
@@ -61,7 +61,7 @@ Trackers.prototype = window.$.extend({},
                 })
 
                 // set flag so we don't show alert again
-                if (localStorage) localStorage['seenUpdateAlert'] = 1
+                safari.extension.globalPage.contentWindow.localStorage['seenUpdateAlert'] = 1
             }
 
             /*
