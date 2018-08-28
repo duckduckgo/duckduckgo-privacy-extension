@@ -18,12 +18,13 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  * @param {...*} args - any number of extra data
  *
  */
-
 function fire () {
+    console.log('firing...')
     if (!arguments.length) return
 
     let args = Array.prototype.slice.call(arguments)
     const pixelName = args[0]
+    console.log('firing ' + pixelName) 
 
     if (typeof pixelName !== 'string') return
 
