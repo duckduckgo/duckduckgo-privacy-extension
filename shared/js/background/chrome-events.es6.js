@@ -180,7 +180,12 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.fire) {
-        res(pixel.fire(req.fire))
+        let fireArgs = req.fire
+        if (fireArgs.constructor !== Array) {
+            console.log('isnotarray')
+            fireArgs = [req.fire]
+        }
+        res(pixel.fire.apply(null, fireArgs))
         return true
     }
 })

@@ -250,6 +250,8 @@ Site.prototype = window.$.extend({},
             if (this.tab && this.tab.site) {
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
+                const whitelistOnOrOff = this.isWhitelisted ? 'on' : 'off'
+                this.fetch({ fire: ['ept', whitelistOnOrOff] })
 
                 this.fetch({'whitelisted':
                     {

@@ -20,6 +20,8 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  */
 function fire () {
     console.log('firing...')
+    console.log(arguments)
+    console.log(typeof arguments)
     if (!arguments.length) return
 
     let args = Array.prototype.slice.call(arguments)
@@ -29,10 +31,11 @@ function fire () {
     if (typeof pixelName !== 'string') return
 
     const url = getURL(pixelName)
+    console.log('firing url: ' + url) 
 
     if (!url) return
 
-    args = args.slice(1)
+    args = Array.prototype.slice.call(args, 1)
     args.push(getAdditionalParams())
     const paramString = concatParams(args) || ''
 
