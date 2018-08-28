@@ -22,6 +22,7 @@ TruncatedTopBlocked.prototype = window.$.extend({},
     {
 
         _seeAllClick: function () {
+            this.model.fetch({ fire: 'eps' })
             this.views.slidingSubview = new TopBlockedFullView({
                 template: topBlockedFullTemplate,
                 numItems: 10
