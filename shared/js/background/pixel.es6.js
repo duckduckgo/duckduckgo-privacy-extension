@@ -31,7 +31,7 @@ function fire () {
     if (!url) return
 
     args = args.slice(1)
-    args.push(getAdditionalParams())
+    args = args.concat(getAdditionalParams())
     const paramString = concatParams(args)
 
     // Send the request
@@ -60,11 +60,14 @@ function getAdditionalParams () {
     const browser = browserInfo.browser
     const extensionVersion = browserWrapper.getExtensionVersion()
     const atb = settings.getSetting('atb')
-    const result = {}
+    const queryStringParams = {}
+    const result = []
 
-    if (browser) result.browser = browser
-    if (extensionVersion) result.extensionVersion = extensionVersion
-    if (atb) result.atb = atb
+    if (browser) result.push(browser.toLowerCase())
+    if (extensionVersion) queryStringParams.extensionVersion = extensionVersion
+    if (atb) queryStringParams.atb = atb
+
+    result.push(queryStringParams)
 
     return result
 }
