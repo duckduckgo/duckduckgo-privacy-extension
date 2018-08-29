@@ -82,6 +82,7 @@ function concatParams (args) {
 
     let paramString = ''
     let objParamString = ''
+    let resultString = ''
     let randomNum = Math.ceil(Math.random() * 1e7)
 
     args.forEach((arg) => {
@@ -97,7 +98,11 @@ function concatParams (args) {
         }
     })
 
-    return `${paramString}?${randomNum}${objParamString}`
+    if (paramString.length) { 
+        resultString = `${paramString}?${randomNum}${objParamString}`
+    }
+
+    return resultString
 }
 
 module.exports = {
