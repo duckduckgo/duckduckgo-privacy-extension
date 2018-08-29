@@ -8,11 +8,11 @@ const getURLTestCases = [
     },
     {
         'pixelName': '',
-        'result': 'undefined'
+        'result': undefined
     },
     {
-        'pixelName': 'undefined',
-        'result': 'undefined'
+        'pixelName': undefined,
+        'result': undefined
     }
 ]
 const concatParamsTestCases = [
@@ -37,12 +37,6 @@ const concatParamsTestCases = [
 
 describe('pixel.getURL()', () => {
     getURLTestCases.forEach((test) => {
-        beforeEach(function () {
-            Object.keys(test).forEach((key) => {
-                test[key] = (test[key] === 'undefined') ? undefined : test[key]
-            })
-        })
-
         it(`should return ${test.result} as a result given the pixelName: ${test.pixelName}`, () => {
             let result = pixel.getURL(test.pixelName)
             expect(result).toBe(test.result)
