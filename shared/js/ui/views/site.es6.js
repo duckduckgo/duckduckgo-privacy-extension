@@ -22,7 +22,7 @@ function Site (ops) {
                 (this.model.tab.status === 'complete' || this.model.domain === 'new tab')) {
             // render template for the first time here
             Parent.call(this, ops)
-            this.model.fetch({ fire: 'ep' })
+            this.model.fetch({ firePixel: 'ep' })
             this._setup()
         } else {
             // the timeout helps buffer the re-render cycle during heavy
@@ -127,7 +127,7 @@ Site.prototype = window.$.extend({},
 
         _showPageTrackers: function () {
             if (this.$body.hasClass('is-disabled')) return
-            this.model.fetch({ fire: 'epn' })
+            this.model.fetch({ firePixel: 'epn' })
             this.views.slidingSubview = new TrackerNetworksView({
                 template: trackerNetworksTemplate
             })
@@ -135,7 +135,7 @@ Site.prototype = window.$.extend({},
 
         _showPrivacyPractices: function () {
             if (this.model.disabled) return
-            this.model.fetch({ fire: 'epp' })
+            this.model.fetch({ firePixel: 'epp' })
 
             this.views.privacyPractices = new PrivacyPracticesView({
                 template: privacyPracticesTemplate,
@@ -145,7 +145,7 @@ Site.prototype = window.$.extend({},
 
         _showGradeScorecard: function () {
             if (this.model.disabled) return
-            this.model.fetch({ fire: 'epc' })
+            this.model.fetch({ firePixel: 'epc' })
 
             this.views.gradeScorecard = new GradeScorecardView({
                 template: gradeScorecardTemplate,

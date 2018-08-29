@@ -179,10 +179,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (req.fire) {
-        let fireArgs = req.fire
+    if (req.firePixel) {
+        let fireArgs = req.firePixel
         if (fireArgs.constructor !== Array) {
-            fireArgs = [req.fire]
+            fireArgs = [req.firePixel]
         }
         res(pixel.fire.apply(null, fireArgs))
         return true

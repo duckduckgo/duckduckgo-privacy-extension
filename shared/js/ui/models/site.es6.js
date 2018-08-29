@@ -66,7 +66,7 @@ Site.prototype = window.$.extend({},
 
         setSiteProperties: function () {
             if (!this.tab) {
-                this.domain = 'new tab' // tab can be null for firefox new tabs
+                this.domain = 'new tab' // tab can be null for firePixelfox new tabs
                 this.set({isCalculatingSiteRating: false})
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted
@@ -251,7 +251,7 @@ Site.prototype = window.$.extend({},
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
-                this.fetch({ fire: ['ept', whitelistOnOrOff] })
+                this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
 
                 this.fetch({'whitelisted':
                     {
