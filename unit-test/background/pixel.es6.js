@@ -67,7 +67,7 @@ const concatParamsTestCases = [
             'param2'
         ],
         'result': '_param1_param2?1000000&p3=param3&p4=param4&p5=param5&p6=param6'
-    },
+    }
 ]
 
 describe('pixel.getURL()', () => {
