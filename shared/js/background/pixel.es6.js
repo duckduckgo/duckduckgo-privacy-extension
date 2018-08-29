@@ -79,22 +79,22 @@ function concatParams (args) {
 
     let paramString = ''
     let objParamString = ''
+    let randomNum = Math.ceil(Math.random() * 1e7)
 
     args.forEach((arg) => {
         // append keys if object
         if (typeof arg === 'object') {
             objParamString += Object.keys(arg).reduce((params, key) => {
                 const val = arg[key]
-                params += (params === '') ? '?' : '&'
-                if (val) return params + key + '=' + val
+                if (val) return `${params}&${key}=${val}`
             }, '')
         } else if (arg) {
             // otherwise just add args separated by _
-            paramString += '_' + arg
+            paramString += `_${arg}`
         }
     })
 
-    return paramString + objParamString
+    return `${paramString}?${randomNum}${objParamString}`
 }
 
 module.exports = {
