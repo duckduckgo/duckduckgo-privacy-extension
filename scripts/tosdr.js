@@ -30,7 +30,7 @@ function getSitePoints (sites) {
         return resolve()
     }
 
-    let site = sites.pop()
+    let site = encodeURIComponent(sites.pop())
     nProcessed += 1
 
     let githubRepo = 'https://raw.githubusercontent.com/tosdr/tosdr.org/master'

@@ -9,9 +9,7 @@ const ATB = require('./atb.es6')
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
-
-        // need to wait a bit for ATB to be set
-        setTimeout(() => ATB.openPostInstallPage(), 2000)
+            .then(ATB.openPostInstallPage)
     }
 })
 
@@ -118,10 +116,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         })
 
         return true
-    }
-
-    if (req.atb) {
-        ATB.setAtbValuesFromSuccessPage(req.atb)
     }
 
     // popup will ask for the browser type then it is created

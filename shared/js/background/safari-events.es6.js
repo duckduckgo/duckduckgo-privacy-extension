@@ -23,9 +23,7 @@ let _getSafariTabIndex = (target) => {
 let onStartup = () => {
     if (!safari.extension.settings.installed) {
         safari.extension.settings.installed = true
-        // if there's a success page, it's just reloaded
-        // give it a bit of time to settle before kicking off the ATB process
-        setTimeout(ATB.updateATBValues, 2000)
+        ATB.updateATBValues()
     }
 
     // show post install page
@@ -82,8 +80,6 @@ const redirect = require('./redirect.es6')
 let handleMessage = (e) => {
     if (e.name === 'canLoad') {
         onBeforeRequest(e)
-    } else if (e.name === 'atb') {
-        ATB.setAtbValuesFromSuccessPage(e.message.atb)
     } else if (e.name === 'unloadTab') {
         onClose(e)
     } else if (e.name === 'getSetting') {
