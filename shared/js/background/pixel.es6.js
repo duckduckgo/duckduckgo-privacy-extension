@@ -78,13 +78,15 @@ function concatParams (args) {
     args = args || []
 
     let paramString = ''
+    let objParamString = ''
 
     args.forEach((arg) => {
         // append keys if object
         if (typeof arg === 'object') {
-            paramString += Object.keys(arg).reduce((params, key) => {
+            objParamString += Object.keys(arg).reduce((params, key) => {
                 const val = arg[key]
-                if (val) return params + '&' + key + '=' + val
+                params += (params === '') ? '?' : '&'
+                if (val) return params + key + '=' + val
             }, '')
         } else if (arg) {
             // otherwise just add args separated by _
@@ -92,7 +94,7 @@ function concatParams (args) {
         }
     })
 
-    return paramString
+    return paramString + objParamString
 }
 
 module.exports = {
