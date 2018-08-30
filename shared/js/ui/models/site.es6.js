@@ -66,7 +66,7 @@ Site.prototype = window.$.extend({},
 
         setSiteProperties: function () {
             if (!this.tab) {
-                this.domain = 'new tab' // tab can be null for firePixelfox new tabs
+                this.domain = 'new tab' // tab can be null for firefox new tabs
                 this.set({isCalculatingSiteRating: false})
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted

@@ -98,9 +98,7 @@ function concatParams (args) {
         }
     })
 
-    if (paramString.length) {
-        resultString = `${paramString}?${randomNum}${objParamString}`
-    }
+    resultString = `${paramString}?${randomNum}${objParamString}`
 
     return resultString
 }

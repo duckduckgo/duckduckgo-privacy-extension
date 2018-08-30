@@ -18,7 +18,7 @@ const getURLTestCases = [
 const concatParamsTestCases = [
     {
         'params': [],
-        'result': ''
+        'result': '?1000'
     },
     {
         'params': [
