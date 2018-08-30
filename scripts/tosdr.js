@@ -41,7 +41,15 @@ function getSitePoints (sites) {
     // get the detailed points data for this site
     request.get(url, (err, res, body) => {
         let points = {score: 0, all: {bad: [], good: []}, match: {bad: [], good: []}}
-        let allData = JSON.parse(body)
+        let allData
+
+        try {
+            allData = JSON.parse(body)
+        } catch (e) {
+            console.log(`error getting privacy data for: ${site}`)
+            return resolve(getSitePoints(sites))
+        }
+
         let pointsData = allData.pointsData
         let relatedUrls = allData.urls || []
 
