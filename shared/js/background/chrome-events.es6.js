@@ -20,6 +20,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
 const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
+const pixel = require('./pixel.es6')
 
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
@@ -169,6 +170,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     } else if (req.getSiteScore) {
         let tab = tabManager.get({tabId: req.getSiteScore})
         res(tab.site.score.get())
+        return true
+    }
+
+    if (req.firePixel) {
+        let fireArgs = req.firePixel
+        if (fireArgs.constructor !== Array) {
+            fireArgs = [req.firePixel]
+        }
+        res(pixel.fire.apply(null, fireArgs))
         return true
     }
 })
