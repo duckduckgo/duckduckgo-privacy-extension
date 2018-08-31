@@ -115,7 +115,7 @@ describe('isaMajorNetwork', () => {
             score = new Score(test.specialPage, test.domain)
 
             if (test.parent) {
-                expect(utils.findParent).toHaveBeenCalledWith(test.slicedDomain.join('.'))
+                expect(utils.findParent).toHaveBeenCalledWith(test.slicedDomain)
             }
 
             let result = score.isaMajorTrackingNetwork
