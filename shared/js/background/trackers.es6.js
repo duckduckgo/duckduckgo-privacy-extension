@@ -6,6 +6,7 @@ const trackerLists = require('./tracker-lists.es6').getLists()
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
+const prevalence = require('../../data/tracker_lists/prevalence')
 
 let entityList = {}
 
@@ -193,6 +194,7 @@ function getReturnTrackerObj (tracker, request, reason) {
     let fullURL = request.url ? request.url : request
     return {
         parentCompany: tracker.data.c,
+        prevalence: prevalence[tracker.data.c],
         url: utils.extractHostFromURL(fullURL),
         type: tracker.type,
         block: tracker.block,
