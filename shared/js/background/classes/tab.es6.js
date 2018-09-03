@@ -115,11 +115,6 @@ class Tab {
         return this.blockedAssets.filter(asset => types.includes(asset.type)).map(asset => asset.url)
     };
 
-    checkHttpsRequestsOnComplete () {
-        // TODO later: watch all requests for http/https status and
-        // report mixed content
-    }
-
     endStopwatch () {
         this.stopwatch.end = Date.now()
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)

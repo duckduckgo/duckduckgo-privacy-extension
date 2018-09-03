@@ -91,7 +91,6 @@ class TabManager {
                     if (tab.url && tab.url.match(/^https:\/\//)) {
                         tab.site.score.update({hasHTTPS: true})
                     }
-                    tab.checkHttpsRequestsOnComplete()
                     console.info(tab.site.score)
                     tab.updateBadgeIcon()
 
