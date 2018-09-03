@@ -231,7 +231,7 @@ let onNavigate = (e) => {
     if (tab) {
         // update site https status. We should move this out
         if (tab.url.match(/^https:\/\//)) {
-            tab.site.score.setHTTPS(true, true)
+            tab.site.score.setHttps(true, true)
         }
 
         tab.updateBadgeIcon(e.target)

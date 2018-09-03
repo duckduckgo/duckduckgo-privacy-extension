@@ -89,7 +89,7 @@ class TabManager {
                  */
                 if (tab.status === 'complete') {
                     if (tab.url && tab.url.match(/^https:\/\//)) {
-                        tab.site.score.setHTTPS(true, true)
+                        tab.site.score.setHttps(true, true)
                     }
                     console.info(tab.site.score)
                     tab.updateBadgeIcon()
