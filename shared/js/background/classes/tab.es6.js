@@ -16,7 +16,9 @@
  */
 const scoreIconLocations = {
     'A': 'img/toolbar-rating-a@2x.png',
+    'B+': 'img/toolbar-rating-b-plus@2x.png',
     'B': 'img/toolbar-rating-b@2x.png',
+    'C+': 'img/toolbar-rating-c-plus@2x.png',
     'C': 'img/toolbar-rating-c@2x.png',
     'D': 'img/toolbar-rating-d@2x.png',
     'F': 'img/toolbar-rating-f@2x.png'
