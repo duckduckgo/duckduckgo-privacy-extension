@@ -60,9 +60,13 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
             // wrap this in a single root span otherwise bel complains
             return bel`<span>Enhanced from
     <span class="rating__text-only ${rating.before.toLowerCase()}">
-    ${rating.before}</span> to
+    ${rating.before}
+    <span class="icon icon__plus"></span>
+    </span> to
     <span class="rating__text-only ${rating.after.toLowerCase()}">
-    ${rating.after}</span>
+    ${rating.after}
+    <span class="icon icon__plus"></span>
+    </span>
 </span>`
         }
     }

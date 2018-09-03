@@ -244,17 +244,29 @@ a {
     width: 20px;
     height: 20px;
     display: inline-block;
-    padding-left: 1px;
+    padding: 1px;
+    padding-left: 2px;
 
+    .icon__plus {
+        display: none;
+    }
+
+    &.b-plus .icon__plus,
+    &.c-plus .icon__plus {
+        display: inline-block;
+    }
+    
     &.a {
         background-color: $color--site-rating--a;
     }
 
-    &.b {
+    &.b,
+    &.b-plus {
         background-color: $color--site-rating--b;
     }
 
-    &.c {
+    &.c,
+    &.c-plus {
         background-color: $color--site-rating--c;
     }
 
@@ -321,6 +333,17 @@ a {
         vertical-align: top;
 
         @include cross_platform_bg_image("check.svg");
+    }
+    
+    &.icon__plus {
+        width: 5px;
+        height: 6px;
+        margin-top: 7px;
+        margin-right: 1px;
+        margin-left: -3.5px;
+        vertical-align: top;
+
+        @include cross_platform_bg_image("plus.svg");
     }
     
     &.icon__shield {
