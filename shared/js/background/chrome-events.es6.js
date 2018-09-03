@@ -221,7 +221,7 @@ let onStartup = () => {
                 let newTab = tabManager.create(tab)
                 // check https status of saved tabs so we have the correct site score
                 if (newTab.url.match(/^https:\/\//)) {
-                    newTab.site.score.update({hasHTTPS: true})
+                    newTab.site.score.setHTTPS(true, true)
                 }
             }
         }
