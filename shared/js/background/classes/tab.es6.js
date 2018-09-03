@@ -63,11 +63,14 @@ class Tab {
             this.resetBadgeIcon()
         } else {
             let scoreIcon
+            let score = this.site.score.get()
+
             if (this.site.whitelisted) {
-                scoreIcon = scoreIconLocations[this.site.score.get().before]
+                scoreIcon = scoreIconLocations[score.site.grade]
             } else {
-                scoreIcon = scoreIconLocations[this.site.score.get().after]
+                scoreIcon = scoreIconLocations[score.enhanced.grade]
             }
+
             let badgeData = {path: scoreIcon, tabId: this.id}
             if (target) badgeData.target = target
 
