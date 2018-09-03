@@ -71,7 +71,12 @@ class Site {
     addTracker (tracker) {
         if (this.trackerUrls.indexOf(tracker.url) === -1) {
             this.trackerUrls.push(tracker.url)
-            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
+
+            if (tracker.blocked) {
+                this.score.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
+            } else {
+                this.score.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
+            }
         }
     }
 
