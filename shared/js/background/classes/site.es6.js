@@ -10,6 +10,7 @@ const settings = require('../settings.es6')
 const Score = require('./score.es6')
 const utils = require('../utils.es6')
 const abpLists = require('../abp-lists.es6')
+const privacyPolicy = require('../privacy-policy.es6')
 
 class Site {
     constructor (domain) {
@@ -21,6 +22,8 @@ class Site {
         this.setWhitelistStatusFromGlobal(domain)
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
         this.didIncrementCompaniesData = false
+
+        this.tosdr = privacyPolicy.getTosdr(domain)
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
