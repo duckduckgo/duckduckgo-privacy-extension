@@ -48,33 +48,37 @@ class Tab {
             end: null,
             completeMs: null
         }
-        // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
+        this.resetBadgeIcon()
     };
+
+    resetBadgeIcon () {
+        // set the new tab icon to the dax logo
+        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
+    }
 
     updateBadgeIcon (target) {
-        if (!this.site.specialDomain()) {
-            if (this.site.isBroken) {
-                browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
-            } else {
-                let scoreIcon
-                if (this.site.whitelisted) {
-                    scoreIcon = scoreIconLocations[this.site.score.get().before]
-                } else {
-                    scoreIcon = scoreIconLocations[this.site.score.get().after]
-                }
-                let badgeData = {path: scoreIcon, tabId: this.id}
-                if (target) badgeData.target = target
+        if (this.site.specialDomain()) return
 
-                browserWrapper.setBadgeIcon(badgeData)
+        if (this.site.isBroken) {
+            this.resetBadgeIcon()
+        } else {
+            let scoreIcon
+            if (this.site.whitelisted) {
+                scoreIcon = scoreIconLocations[this.site.score.get().before]
+            } else {
+                scoreIcon = scoreIconLocations[this.site.score.get().after]
             }
+            let badgeData = {path: scoreIcon, tabId: this.id}
+            if (target) badgeData.target = target
+
+            browserWrapper.setBadgeIcon(badgeData)
         }
-    };
+    }
 
     updateSite () {
         this.site = new Site(utils.extractHostFromURL(this.url))
         // reset badge to dax whenever we go to a new site
-        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
+        this.resetBadgeIcon()
     };
 
     // Store all trackers for a given tab even if we don't block them.
