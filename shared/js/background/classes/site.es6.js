@@ -25,6 +25,8 @@ class Site {
 
         this.tosdr = privacyPolicy.getTosdr(domain)
 
+        this.score.setPrivacyScore(privacyPolicy.getTosdrScore(domain))
+
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
         this.isSpecialDomain = this.specialDomain()
