@@ -60,6 +60,7 @@
     "timekeeper": "2.1.1"
   },
   "dependencies": {
+    "privacy-grade": "0.9.1",
     "bel": "4.6.0",
     "chalk": "2.1.0",
     "change-case": "3.0.1",

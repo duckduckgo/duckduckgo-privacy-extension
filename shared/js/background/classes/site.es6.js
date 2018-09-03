@@ -7,17 +7,17 @@
  * privacy score used in the popup.
  */
 const settings = require('../settings.es6')
-const Score = require('./score.es6')
 const utils = require('../utils.es6')
 const abpLists = require('../abp-lists.es6')
 const privacyPolicy = require('../privacy-policy.es6')
+const Grade = require('privacy-grade').Grade
 
 class Site {
     constructor (domain) {
         if (domain) domain = domain.toLowerCase()
         this.domain = domain
         this.trackerUrls = []
-        this.score = new Score(this.specialDomain(), this.domain)
+        this.score = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain)
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
