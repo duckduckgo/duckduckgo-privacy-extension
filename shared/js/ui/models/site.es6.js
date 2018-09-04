@@ -113,17 +113,25 @@ Site.prototype = window.$.extend({},
             if (this.tab) {
                 // got siteRating back fr/ background process,
                 // 'after' rating changed, template needs re-render
-                if (ops && ops.siteRating &&
-                        (ops.siteRating.after !== this.siteRating.after)) {
-                    this.set({
-                        'siteRating': ops.siteRating,
-                        'isCalculatingSiteRating': false
-                    })
+                if (ops && ops.siteRating) {
+                    const before = ops.siteRating.site.grade
+                    const after = ops.siteRating.site.grade
 
-                    // got site rating from background process,
-                    // but no change in 'after' rating
-                } else if (ops && ops.siteRating) {
-                    if (this.isCalculatingSiteRating) {
+                    const newSiteRating = {
+                        displayBefore: before.replace('+', '-plus').toLowerCase(),
+                        displayAfter: after.replace('+', '-plus').toLowerCase(),
+                        before,
+                        after
+                    }
+
+                    if (newSiteRating.after !== this.siteRating.after) {
+                        this.set({
+                            'siteRating': newSiteRating,
+                            'isCalculatingSiteRating': false
+                        })
+                    } else if (this.isCalculatingSiteRating) {
+                        // got site rating from background process,
+                        // but no change in 'after' rating
                         this.set('isCalculatingSiteRating', false)
                     }
                 }

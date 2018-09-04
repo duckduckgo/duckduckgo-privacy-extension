@@ -40,9 +40,9 @@ function siteRatingStatus (isCalculating, rating, isWhitelisted) {
         isActive = isWhitelisted ? '' : '--active'
 
         if (isActive && rating.after) {
-            status = rating.after.toLowerCase()
+            status = rating.displayAfter
         } else {
-            status = rating.before.toLowerCase()
+            status = rating.displayBefore
         }
     } else {
         status = 'null'
@@ -59,11 +59,11 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
         if (rating.before !== rating.after) {
             // wrap this in a single root span otherwise bel complains
             return bel`<span>Enhanced from
-    <span class="rating__text-only ${rating.before.toLowerCase()}">
+    <span class="rating__text-only ${rating.displayBefore}">
     ${rating.before}
     <span class="icon icon__plus"></span>
     </span> to
-    <span class="rating__text-only ${rating.after.toLowerCase()}">
+    <span class="rating__text-only ${rating.displayAfter}">
     ${rating.after}
     <span class="icon icon__plus"></span>
     </span>
