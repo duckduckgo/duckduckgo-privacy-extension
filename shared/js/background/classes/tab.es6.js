@@ -35,7 +35,6 @@ class Tab {
         this.id = tabData.id || tabData.tabId
         this.trackers = {}
         this.trackersBlocked = {}
-        this.blockedAssets = []
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
@@ -105,15 +104,6 @@ class Tab {
             this.trackersBlocked[t.parentCompany] = newTracker
             return newTracker
         }
-    };
-
-    addBlockedAsset (url, type) {
-        this.blockedAssets.push({url, type})
-    };
-
-    // return list of asset urls of specific type
-    getBlockedAssets (types) {
-        return this.blockedAssets.filter(asset => types.includes(asset.type)).map(asset => asset.url)
     };
 
     checkHttpsRequestsOnComplete () {
