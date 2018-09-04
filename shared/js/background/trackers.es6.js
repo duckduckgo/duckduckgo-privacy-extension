@@ -271,10 +271,43 @@ function getCommonParentEntity (currLocation, urlToCheck) {
     return false
 }
 
-/*
- * If element hiding is enabled on current domain, send messages
- * to content scripts to start the process of hiding blocked ads
+/* Fetch parent entity for a domain. If domain is not in
+ * entityMap, return 'unknown'
  */
+function getParentEntity (urlToCheck) {
+    if (!entityMap) { return 'unknown' }
+    const urlToCheckParsed = tldjs.parse(urlToCheck)
+    const parentEntity = entityMap[urlToCheckParsed.domain]
+    if (parentEntity) {
+        return parentEntity
+    } else {
+        return 'unknown'
+    }
+}
+
+function getTrackerDetails (trackerUrl, listName) {
+    let host = utils.extractHostFromURL(trackerUrl)
+    let parentCompany = utils.findParent(host.split('.')) || 'unknown'
+    return {
+        parentCompany: parentCompany,
+        url: host,
+        type: listName
+    }
+}
+
+function checkABPParsedList (list, url, siteDomain, request) {
+    let match = abp.matches(list, url,
+        {
+            domain: siteDomain,
+            elementTypeMask: abp.elementTypes[request.type.toUpperCase()]
+        })
+    return match
+}
+
+/*
+ *  * If element hiding is enabled on current domain, send messages
+ *   * to content scripts to start the process of hiding blocked ads
+ *    */
 function tryElementHide (requestData, tab) {
     if (tab.parentEntity === 'Oath') {
         let frameId, messageType
@@ -284,16 +317,16 @@ function tryElementHide (requestData, tab) {
         } else if (requestData.frameId !== 0 && (requestData.type === 'image' || requestData.type === 'script')) {
             frameId = requestData.frameId
             messageType = 'blockedFrameAsset'
-        }
+        }   
         chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url}, {frameId: frameId})
     } else if (!tab.elementHidingDisabled) {
         chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
         tab.elementHidingDisabled = true
     }
 }
-
 module.exports = {
     isTracker: isTracker,
     loadLists: loadLists,
+    getParentEntity: getParentEntity,
     tryElementHide: tryElementHide
 }
