@@ -115,16 +115,16 @@ Site.prototype = window.$.extend({},
                 // 'after' rating changed, template needs re-render
                 if (ops && ops.siteRating) {
                     const before = ops.siteRating.site.grade
-                    const after = ops.siteRating.site.grade
+                    const after = ops.siteRating.enhanced.grade
 
-                    const newSiteRating = {
-                        displayBefore: before.replace('+', '-plus').toLowerCase(),
-                        displayAfter: after.replace('+', '-plus').toLowerCase(),
-                        before,
-                        after
-                    }
+                    if (after !== this.siteRating.after) {
+                        const newSiteRating = {
+                            displayBefore: before.replace('+', '-plus').toLowerCase(),
+                            displayAfter: after.replace('+', '-plus').toLowerCase(),
+                            before,
+                            after
+                        }
 
-                    if (newSiteRating.after !== this.siteRating.after) {
                         this.set({
                             'siteRating': newSiteRating,
                             'isCalculatingSiteRating': false
