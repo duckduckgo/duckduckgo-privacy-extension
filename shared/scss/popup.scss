@@ -24,7 +24,7 @@ body {
         margin-right: 42px;
     }
 
-    .update-text {
+    .update-message__text {
         font-size: 12px;
         font-style: normal;
         font-stretch: normal;
@@ -32,7 +32,7 @@ body {
         letter-spacing: normal;
     }
 
-    .update-text--bold {
+    .update-message__text--bold {
         font-size: 12px;
         font-style: normal;
         font-stretch: normal;
@@ -45,7 +45,7 @@ body {
 
     .update__close-btn {
         position: absolute;
-        left: 266px;
+        left: 277px;
         top: 4px;
         width: 10px;
         height: 10px;

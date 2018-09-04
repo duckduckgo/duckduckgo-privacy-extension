@@ -3,10 +3,10 @@ const bel = require('bel')
 module.exports = function (ops) {
     return bel`<section>
         <div class="update-container">
-            <div class="update-text--bold">
+            <div class="update-message__text--bold">
                 Our Safari extension now only includes DuckDuckGo Private Search.
             </div>
-            <div class="update-text">
+            <div class="update-message__text">
                 Due to changes in Safari 12, this extension no longer includes a tracker blocker.
             </div>
             <div class="help-link">
