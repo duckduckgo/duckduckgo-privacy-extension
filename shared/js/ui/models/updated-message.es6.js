@@ -12,6 +12,10 @@ UpdatedMessage.prototype = window.$.extend({},
 
         openHelpPage: function () {
             browserUIWrapper.openHelpPage()
+        },
+
+        closeUpdateMessage: function () {
+            browserUIWrapper.closeUpdateMessage()
         }
     }
 )

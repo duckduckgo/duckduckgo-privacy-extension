@@ -6,8 +6,11 @@ function UpdatedMessage (ops) {
     this.template = ops.template
     Parent.call(this, ops)
 
-    this._cacheElems('.js-update-message', ['help'])
-    this.bindEvents([[this.$help, 'click', this._helpClick]])
+    this._cacheElems('.js-update-message', ['help', 'close'])
+    this.bindEvents([
+        [this.$help, 'click', this._helpClick],
+        [this.$close, 'click', this._closeUpdateMessage]
+    ])
 }
 
 UpdatedMessage.prototype = window.$.extend({}, 
@@ -16,6 +19,11 @@ UpdatedMessage.prototype = window.$.extend({},
         _helpClick: function (e) {
             e.preventDefault()
             this.model.openHelpPage()
+        },
+
+        _closeUpdateMessage: function (e) {
+            e.preventDefault()
+            this.model.closeUpdateMessage()
         }
     }
 )

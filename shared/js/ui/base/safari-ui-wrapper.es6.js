@@ -145,6 +145,16 @@ let openOptionsPage = () => {
     openExtensionPage('/html/options.html')
 }
 
+let resizePopup = () => {
+    safari.extension.popovers[0].height = 42
+}
+
+let closeUpdateMessage = () => {
+    resizePopup()
+    closePopup()
+    safari.extension.globalPage.contentWindow.localStorage['closedUpdateMessage'] = 1
+}
+
 module.exports = {
     fetch: fetch,
     reloadTab: reloadTab,
@@ -155,5 +165,6 @@ module.exports = {
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
     getExtensionURL: getExtensionURL,
-    openHelpPage: openHelpPage
+    openHelpPage: openHelpPage,
+    closeUpdateMessage: closeUpdateMessage
 }

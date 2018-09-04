@@ -24,7 +24,7 @@ let setBadgeIcon = (badgeUpdate) => {
     if (badgeUpdate.path && windowId !== undefined) {
         
         if (!localStorage['seenIcon']) {
-            badgeUpdate.path = 'img/arrow@2x.png'
+            badgeUpdate.path = 'img/alert_icon.png'
         } else {
             badgeUpdate.path = 'img/ddg-icon@2x.png'
         }
@@ -110,6 +110,10 @@ let injectATBScripts = () => {
     })
 }
 
+let resizePopup = () => {
+    safari.extension.popovers[0].height = 42
+}
+
 // no-ops, in cases where Safari lacks support for something
 // or we've achieved it in a different way
 let noop = () => { /* noop */ }
@@ -125,5 +129,6 @@ module.exports = {
     getTabId: getTabId,
     mergeSavedSettings: mergeSavedSettings,
     injectATBScripts: injectATBScripts,
-    setUninstallURL: noop
+    setUninstallURL: noop,
+    resizePopup: resizePopup
 }

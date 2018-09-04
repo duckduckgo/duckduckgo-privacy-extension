@@ -18,41 +18,45 @@ body {
 
 #popup-container {
 
-    .update-alert {
-        background-color: $red;
-        width: -webkit-fill-available;
-        height: 25px
-    }
-
-    .update-alert-text {
-        color: $white;
-        display: inline-block;
-        margin-left: 11px;
-        position: fixed;
-        top: 47px;
-        font-size: 90%
+    .update-container {
+        margin-left: 20px;
+        margin-top: 12px;
+        margin-right: 42px;
     }
 
     .update-text {
-        text-align: left;
-        margin-left: 55px;
-        margin-right: 30px;
-        margin-top: 8px;
-        font-size: 90%;
+        font-size: 12px;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.33;
+        letter-spacing: normal;
     }
 
-    .update-alert-icon {
-        @include alert_icon()
-        height: 25px;
-        width: 25px;
-        margin-left: 19px;
-        display: inline-block;
+    .update-text--bold {
+        font-size: 12px;
+        font-style: normal;
+        font-stretch: normal;
+        line-height: 1.33;
+        letter-spacing: normal;
+        color: #4a4c4f;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .update__close-btn {
+        position: absolute;
+        left: 279px;
+        right: 19px;
+        top: 4px;
+        width: 10px;
+        height: 10px;
     }
 
     .help--text {
         display: inline-block;
-        margin-left: 55px;
-        margin-top: 5px;
+        margin-top: 8px;
+        font-size: 12px;
+        text-decoration: underline;
     }
 
     .failover.card {

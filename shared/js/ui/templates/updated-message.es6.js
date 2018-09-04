@@ -2,24 +2,18 @@ const bel = require('bel')
 
 module.exports = function (ops) {
     return bel`<section>
-        ${alertBox(this.model)}
-        <div class="update-text">
-            Please Note: Our Safari extension now <b>only includes DuckDuckGo Search</b>. Due to changes in Safari 12, it no longer includes a tracker blocker or other additional features.
+        <div class="update-container">
+            <div class="update-text--bold">
+                Our Safari extension now only includes DuckDuckGo Private Search.
+            </div>
+            <div class="update-text">
+                Due to changes in Safari 12, this extension no longer includes a tracker blocker.
+            </div>
+            <div class="help-link">
+                <a class="js-update-message-help help--text" href="https://duckduckgo.com">Why did this happen?</a>
+            </div>
         </div>
-        <div class="help-link">
-            <a class="js-update-message-help help--text" href="https://duckduckgo.com">Read more here</a>
-        </div>
+        <span class="icon icon__close update__close-btn js-update-message-close"></span>
 </section>`
-    
-    function alertBox (model) {
-        if (!model.seenAlert) {
-            return bel`<div class="update-alert">
-                            <span class="update-alert-icon"></span>
-                            <span class="update-alert-text"> 
-                                DuckDuckGo Extension Updated
-                            </span>
-                        </div>`
-        }
-    }
 }
 

@@ -29,7 +29,11 @@ let onStartup = (e) => {
     }
     
     if (!localStorage['seenIcon']) {
-         browserWrapper.setBadgeIcon({path: 'img/arrow@2x.png', target: safari.application.activeBrowserWindow})
+         browserWrapper.setBadgeIcon({path: 'img/alert_icon.png', target: safari.application.activeBrowserWindow})
+    }
+
+    if (safari.extension.globalPage.contentWindow.localStorage['closedUpdateMessage']) {
+        browserWrapper.resizePopup()
     }
 
     // show post install page

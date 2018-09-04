@@ -49,55 +49,15 @@ Trackers.prototype = window.$.extend({},
             // on the icon and not from a rerender. We set a flag to avoid seeing this 
             // message again.
             if (safari.extension.globalPage.contentWindow.localStorage['seenIcon']) {
-                // for some reason searches from the popup lose access to localStorage
-                // since the search comes from the popup we can assum the user
-                // saw the alert and just set seenAlert to true in this case
-                let seenAlert = safari.extension.globalPage.contentWindow.localStorage['seenUpdateAlert'] || false
-                this.views.updateMessage = new UpdateMessageView({
-                    pageView: this, 
-                    model: new UpdateMessageModel({seenAlert: seenAlert}),
-                    appendTo: this.$parent,
-                    template: updateMessageTemplate
-                })
-
-                // set flag so we don't show alert again
-                safari.extension.globalPage.contentWindow.localStorage['seenUpdateAlert'] = 1
+                if (!safari.extension.globalPage.contentWindow.localStorage['closedUpdateMessage']) {
+                    this.views.updateMessage = new UpdateMessageView({
+                        pageView: this, 
+                        model: new UpdateMessageModel(),
+                        appendTo: this.$parent,
+                        template: updateMessageTemplate
+                    })
+                }
             }
-
-            /*
-            this.views.hamburgerMenu = new HamburgerMenuView({
-                pageView: this,
-                model: new HamburgerMenuModel(),
-                appendTo: this.$parent,
-                template: hamburgerMenuTemplate
-            })
-
-            this.views.site = new SiteView({
-                pageView: this,
-                model: new SiteModel(),
-                appendTo: this.$parent,
-                template: siteTemplate
-            })
-
-            this.views.topblocked = new TopBlockedView({
-                pageView: this,
-                model: new TopBlockedModel({numCompanies: 3}),
-                appendTo: this.$parent,
-                template: topBlockedTemplate
-            })
-
-            // TODO: hook up model query to actual ddg ac endpoint.
-            // For now this is just here to demonstrate how to
-            // listen to another component via model.set() +
-            // store.subscribe()
-            this.views.autocomplete = new AutocompleteView({
-                pageView: this,
-                model: new AutocompleteModel({suggestions: []}),
-                // appendTo: this.views.search.$el,
-                appendTo: null,
-                template: autocompleteTemplate
-            })
-            */
         }
     }
 )

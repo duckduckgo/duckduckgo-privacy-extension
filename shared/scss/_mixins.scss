@@ -1,8 +1,8 @@
 @import "vars";
 @import "tracker-network-icons";
 
-@mixin alert_icon {
-    @include cross_platform_bg_image("error.svg")
+@mixin x_button_icon {
+    @include cross_platform_bg_image("x_button.svg")
     background-size: contain;
 }
 
