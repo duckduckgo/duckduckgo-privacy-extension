@@ -28,7 +28,7 @@
 				<key>Filename</key>
 				<string>html/popup.html</string>
 				<key>Height</key>
-				<integer>200</integer>
+				<integer>165</integer>
 				<key>Identifier</key>
 				<string>popup</string>
 				<key>Width</key>
@@ -62,7 +62,6 @@
 			<key>Start</key>
 			<array>
 				<string>public/js/content-scripts/on-install.js</string>
-				<string>public/js/content-scripts/content-script.js</string>
 			</array>
 		</dict>
 		<key>Stylesheets</key>
