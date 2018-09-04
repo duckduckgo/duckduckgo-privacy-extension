@@ -25,7 +25,7 @@ function extractTopSubdomainFromHost (host) {
 
 // pull off subdomains and look for parent companies
 function findParent (url) {
-    if (typeof(url) !== 'object') {
+    if (typeof url !== 'object') {
         url = url.split('.')
     }
 
