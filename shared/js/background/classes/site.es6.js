@@ -74,7 +74,7 @@ class Site {
         if (this.trackerUrls.indexOf(tracker.url) === -1) {
             this.trackerUrls.push(tracker.url)
 
-            if (tracker.blocked) {
+            if (tracker.block) {
                 this.score.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
             } else {
                 this.score.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
