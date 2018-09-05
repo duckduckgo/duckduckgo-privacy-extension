@@ -21,7 +21,6 @@ function Site (attrs) {
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
-    attrs.isUserPrivacyUpgraded = false
     attrs.trackersCount = 0 // unique trackers count
     attrs.majorTrackerNetworksCount = 0
     attrs.totalTrackerNetworksCount = 0
@@ -174,11 +173,6 @@ Site.prototype = window.$.extend({},
                 if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
                     this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
                 }
-
-                const newUserPrivacy = this.getIsUserPrivacyUpgraded()
-                if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
-                    this.set('isUserPrivacyUpgraded', newUserPrivacy)
-                }
             }
         },
 
@@ -243,18 +237,6 @@ Site.prototype = window.$.extend({},
                 .map((t) => t.toLowerCase())
                 .filter((t) => t !== 'unknown')
             return networks
-        },
-
-        getIsUserPrivacyUpgraded: function () {
-            // console.log('getIsUserPrivacyUpgraded()')
-            if (!this.tab) return false
-
-            if (this.tab.upgradedHttps ||
-                    Object.keys(this.tab.trackersBlocked).length > 0) {
-                return true
-            }
-
-            return false
         },
 
         toggleWhitelist: function () {
