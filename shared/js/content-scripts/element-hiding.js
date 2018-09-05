@@ -11,6 +11,7 @@
         constructor () {
             // Determine if content script is running in iframe or main frame
             this.frameType = window === window.top ? 'main' : window.parent === window.top ? 'topLevelFrame' : 'nestedFrame'
+            this.foundFrames = []
             this.containsBlockedRequest = false
             this.disabled = false
             this.frameListener = this.frameListener.bind(this)
@@ -45,7 +46,8 @@
                     window.top.postMessage({frameUrl: document.location.href, type: 'frameIdRequest'}, req.mainFrameUrl)
                 }
             } else if (req.type === 'blockedFrame') {
-                document.getElementsByTagName('iframe').forEach((frame) => {
+                this.foundFrames = document.getElementsByTagName('iframe')
+                Array.prototype.forEach.call(this.foundFrames, (frame) => {
                     if (frame.src === req.request.url) {
                         this.collapseDomNode(frame)
                     }
@@ -67,7 +69,8 @@
         frameListener (e) {
             if (this.disabled) return
             if (e.data.type === 'frameIdRequest') {
-                document.getElementsByTagName('iframe').forEach((frame) => {
+                this.foundFrames = document.getElementsByTagName('iframe')
+                Array.prototype.forEach.call(this.foundFrames, (frame) => {
                     if (frame.id && !frame.className.includes('ddg-hidden') && frame.src) {
                         frame.contentWindow.postMessage({frameId: frame.id, mainFrameUrl: document.location.href, type: 'setFrameId'}, '*')
                     }
