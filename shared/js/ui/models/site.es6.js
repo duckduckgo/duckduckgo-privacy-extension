@@ -1,7 +1,15 @@
 const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
+const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const httpsMessages = constants.httpsMessages
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+
+// for now we consider tracker networks found on more than 7% of sites
+// as "major"
+const majorTrackingNetworks = Object.keys(trackerPrevalence)
+    .filter(t => trackerPrevalence[t] >= 7)
+    // lowercase them cause we only use them for comparing
+    .map(t => t.toLowerCase())
 
 function Site (attrs) {
     attrs = attrs || {}
@@ -218,11 +226,10 @@ Site.prototype = window.$.extend({},
             // Show only blocked major trackers count, unless site is whitelisted
             const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
             const count = Object.keys(trackers).reduce((total, name) => {
-                let tempTracker = name.toLowerCase()
-                const majorTrackingNetworks = Object.keys(constants.majorTrackingNetworks)
-                    .filter((t) => t.toLowerCase() === tempTracker)
-                // in case a major tracking network is in the list more than once somehow
-                total += majorTrackingNetworks.length ? 1 : 0
+                const tempTracker = name.toLowerCase()
+                const idx = majorTrackingNetworks.indexOf(tempTracker)
+
+                total += idx > -1 ? 1 : 0
                 return total
             }, 0)
 
