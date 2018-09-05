@@ -233,49 +233,19 @@ a {
 }
 
 
-/* Text-only rating icons */
-.rating__text-only {
-    text-transform: uppercase;
-    font-weight: bold;
-    color: $color--white;
-    text-align: center;
-    line-height: 21px;
-    border-radius: 20px;
+/* Rating letter icons */
+.rating-letter {
     width: 20px;
     height: 20px;
     display: inline-block;
-    padding: 1px;
-    padding-left: 2px;
+    background-size: contain;
+    vertical-align: middle;
+    margin-bottom: 2px;
 
-    .icon__plus {
-        display: none;
-    }
-
-    &.b-plus .icon__plus,
-    &.c-plus .icon__plus {
-        display: inline-block;
-    }
-    
-    &.a {
-        background-color: $color--site-rating--a;
-    }
-
-    &.b,
-    &.b-plus {
-        background-color: $color--site-rating--b;
-    }
-
-    &.c,
-    &.c-plus {
-        background-color: $color--site-rating--c;
-    }
-
-    &.d {
-        background-color: $color--site-rating--d;
-    }
-
-    &.f {
-        background-color: $color--site-rating--f;
+    @each $rating in $ratings {
+        &.rating-letter--#{$rating} {
+            @include cross_platform_bg_image("rating-letters/#{$rating}.svg");
+        }
     }
 }
 

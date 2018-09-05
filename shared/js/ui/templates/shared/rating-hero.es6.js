@@ -59,13 +59,9 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
         if (rating.before !== rating.after) {
             // wrap this in a single root span otherwise bel complains
             return bel`<span>Enhanced from
-    <span class="rating__text-only ${rating.displayBefore}">
-    ${rating.before}
-    <span class="icon icon__plus"></span>
+    <span class="rating-letter rating-letter--${rating.displayBefore}">
     </span> to
-    <span class="rating__text-only ${rating.displayAfter}">
-    ${rating.after}
-    <span class="icon icon__plus"></span>
+    <span class="rating-letter rating-letter--${rating.displayAfter}">
     </span>
 </span>`
         }
