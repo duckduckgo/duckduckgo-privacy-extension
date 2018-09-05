@@ -98,14 +98,6 @@ const ATB = (() => {
             })
         },
 
-        setAtbValuesFromSuccessPage: (atb) => {
-            if (!atb) return
-
-            settings.updateSetting('atb', atb)
-
-            ATB.finalizeATB()
-        },
-
         finalizeATB: () => {
             let atb = settings.getSetting('atb')
 
@@ -119,20 +111,35 @@ const ATB = (() => {
             load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
         },
 
-        inject: () => {
-            browserWrapper.injectATBScripts()
+        getNewATBFromURL: (url) => {
+            let atb = ''
+            const matches = url.match(/\Wnatb=(v\d+-\d([a-z_]{2})?)(&|$)/)
 
-            // if there's no DDG tabs open or no tabs that can give us an ATB version,
-            // fall back to version from atb.js
-            setTimeout(ATB.finalizeATB, 500)
+            if (matches && matches[1]) {
+                atb = matches[1]
+            }
+
+            return atb
         },
 
         updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
                 .then(ATB.setInitialVersions)
-                .then(() => {
-                    return ATB.inject()
+                .then(browserWrapper.getDDGTabUrls)
+                .then((urls) => {
+                    let atb
+
+                    urls.some(url => {
+                        atb = ATB.getNewATBFromURL(url)
+                        return !!atb
+                    })
+
+                    if (atb) {
+                        settings.updateSetting('atb', atb)
+                    }
+
+                    ATB.finalizeATB()
                 })
         },
 

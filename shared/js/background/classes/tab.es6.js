@@ -34,13 +34,12 @@ class Tab {
         this.id = tabData.id || tabData.tabId
         this.trackers = {}
         this.trackersBlocked = {}
-        this.blockedAssets = []
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
-        this.parentEntity = utils.findParent(tabData.url)
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
+        this.parentEntity = utils.findParent(this.site.domain)
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
@@ -104,15 +103,6 @@ class Tab {
             this.trackersBlocked[t.parentCompany] = newTracker
             return newTracker
         }
-    };
-
-    addBlockedAsset (url, type) {
-        this.blockedAssets.push({url, type})
-    };
-
-    // return list of asset urls of specific type
-    getBlockedAssets (types) {
-        return this.blockedAssets.filter(asset => types.includes(asset.type)).map(asset => asset.url)
     };
 
     checkHttpsRequestsOnComplete () {

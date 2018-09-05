@@ -90,8 +90,6 @@ function handleRequest (requestData) {
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.block) {
                 thisTab.addOrUpdateTrackersBlocked(tracker)
-                // store list of blocked request urls for content scripts to use
-                thisTab.addBlockedAsset(requestData.url, requestData.type)
 
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
@@ -107,6 +105,11 @@ function handleRequest (requestData) {
                         console.log('UNBLOCKED: ', tracker.url)
                         return
                     }
+                }
+
+                if (!window.safari) {
+                    // Initiate hiding of blocked ad DOM elements
+                    trackers.tryElementHide(requestData, thisTab)
                 }
 
                 console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +

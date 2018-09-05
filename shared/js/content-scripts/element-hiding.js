@@ -11,44 +11,48 @@
         constructor () {
             // Determine if content script is running in iframe or main frame
             this.frameType = window === window.top ? 'main' : window.parent === window.top ? 'topLevelFrame' : 'nestedFrame'
-            this.possibleTargets = []
-            this.foundScripts = []
-            this.foundFrames = []
+            this.containsBlockedRequest = false
+            this.disabled = false
             this.frameListener = this.frameListener.bind(this)
             this.messageListener = this.messageListener.bind(this)
-
-            // Initialize event listener for interframe messaging
-            window.addEventListener('message', this.frameListener)
-            // Initialize event listener for background page messaging
-            chrome.runtime.onMessage.addListener(this.messageListener)
         }
 
-        /* Request list of blocked requests from background page to kick off the process. */
         init () {
-            chrome.runtime.sendMessage({hideElements: true, url: document.location.href, frame: this.frameType})
+            // Listen for messages from background page
+            chrome.runtime.onMessage.addListener(this.messageListener)
+            // Listen for interframe messages
+            window.addEventListener('message', this.frameListener)
         }
 
         /**
-         * Set up messaging between frames and background page. When frames are
-         * first loaded, they send a message to the background page requesting
-         * a list of relevant requests that have been blocked. If element hiding
-         * is not enabled on domain, background script will reply with 'disable',
-         * at which point event listeners are removed. Otherwise gather relevant
-         * DOM elements and then-
-         * 1. if in main frame, proceed to locateBlockedFrames
-         * 2. If in iframe, message main frame requesting id
+         * Set up messaging between frames and background page. When a request
+         * is blocked in background page, a message is passed to the content script
+         * in the frame that originated the request (or the parent frame, if the
+         * blocked request has type sub_frame. If element hiding is not enabled
+         * on current domain, background will send a 'disable' message to all
+         * frames on the page, at which point event listeners are removed.
          */
         messageListener (req, sender, res) {
-            if (req.type === 'blockedRequests') {
-                this.foundFrames = document.getElementsByTagName('iframe')
-                if (req.frame === 'main') {
-                    this.locateBlockedFrames(req.blockedRequests)
-                } else if (req.frame === 'topLevelFrame') {
-                    this.foundScripts = document.getElementsByTagName('script')
-                    this.possibleTargets = Array.from(this.foundFrames).concat(Array.from(this.foundScripts))
-                    window.top.postMessage({frameUrl: document.location.href, blockedRequests: req.blockedRequests, type: 'frameIdRequest'}, req.mainFrameUrl)
+            if (req.type === 'blockedFrameAsset' && !this.containsBlockedRequest && this.frameType === 'topLevelFrame') {
+                this.containsBlockedRequest = true
+                this.mainFrameUrl = req.mainFrameUrl
+
+                // If iframe doesn't have a src, we can access its frameElement
+                // from within and hide immediately
+                if (window.frameElement && window.frameElement.src === '') {
+                    this.collapseDomNode(window.frameElement)
+                } else {
+                    window.top.postMessage({frameUrl: document.location.href, type: 'frameIdRequest'}, req.mainFrameUrl)
                 }
+            } else if (req.type === 'blockedFrame') {
+                document.querySelectorAll('iframe').forEach((frame) => {
+                    if (frame.src === req.request.url) {
+                        this.collapseDomNode(frame)
+                    }
+                })
             } else if (req.type === 'disable') {
+                this.disabled = true
+                chrome.runtime.onMessage.removeListener(this.messageListener)
                 window.removeEventListener('message', this.frameListener)
             }
         }
@@ -61,49 +65,23 @@
          * 3. iframes send messages to main frame when they contain blocked elements (hideFrame)
          */
         frameListener (e) {
+            if (this.disabled) return
             if (e.data.type === 'frameIdRequest') {
-                this.foundFrames = document.getElementsByTagName('iframe')
-                let i = this.foundFrames.length
-                while (i--) {
-                    let frame = this.foundFrames[i]
-                    if (frame.src && frame.id && !e.data.blockedRequests.includes(frame.src) && !frame.className.includes('ddg-hidden')) {
-                        frame.contentWindow.postMessage({frameId: frame.id, mainFrameUrl: document.location.href, blockedRequests: e.data.blockedRequests, type: 'setFrameId'}, '*')
+                document.querySelectorAll('iframe').forEach((frame) => {
+                    if (frame.id && !frame.className.includes('ddg-hidden') && frame.src) {
+                        frame.contentWindow.postMessage({frameId: frame.id, mainFrameUrl: document.location.href, type: 'setFrameId'}, '*')
                     }
-                }
-            } else if (e.data.type === 'hideFrame') {
-                let frame = document.getElementById(e.data.frameId)
-                this.hideFrame(frame)
+                })
             } else if (e.data.type === 'setFrameId') {
                 this.frameId = e.data.frameId
                 this.mainFrameUrl = e.data.mainFrameUrl
-                this.locateBlockedFrames(e.data.blockedRequests)
-            }
-        }
 
-        /**
-         * Iterate through collection of potentially blocked elements, comparing against list
-         * of blocked requests. In the main frame all we care about is iframes, but within iframes
-         * we also look for blocked scripts that may have loaded a nested iframe
-         */
-        locateBlockedFrames (requests) {
-            if (this.frameType === 'main') {
-                let i = this.foundFrames.length
-                while (i--) {
-                    let frame = this.foundFrames[i]
-                    if (requests.includes(frame.src)) {
-                        this.hideFrame(frame)
-                    }
+                if (this.containsBlockedRequest) {
+                    window.top.postMessage({frameId: this.frameId, type: 'hideFrame'}, this.mainFrameUrl)
                 }
-            } else if (this.frameType === 'topLevelFrame') {
-                let i = this.possibleTargets.length
-                while (i--) {
-                    let elem = this.possibleTargets[i]
-                    if (elem.src && requests.includes(elem.src)) {
-                        window.top.postMessage({frameId: this.frameId, type: 'hideFrame'}, this.mainFrameUrl)
-                        window.removeEventListener('message', this.frameListener)
-                        break
-                    }
-                }
+            } else if (e.data.type === 'hideFrame') {
+                let frame = document.getElementById(e.data.frameId)
+                this.collapseDomNode(frame)
             }
         }
 
@@ -114,33 +92,19 @@
          * and remove event listeners so that other content scripts no longer
          * interact with hidden frames
          */
-        hideFrame (frame) {
-            frame.style.setProperty('display', 'none', 'important')
-            frame.hidden = true
-            frame.classList.add('ddg-hidden')
+        collapseDomNode (element) {
+            if (!element) return
+            element.style.setProperty('display', 'none', 'important')
+            element.hidden = true
+            element.classList.add('ddg-hidden')
 
-            if (frame.parentNode.childElementCount === 1) {
-                this.hideFrame(frame.parentNode)
+            if (element.parentNode.childElementCount === 1 && !element.parentNode.textContent.trim()) {
+                this.collapseDomNode(element.parentNode)
             }
         }
     }
 
     // Instantiate content script
     const contentScript = new ContentScript()
-
-    /**
-     * When document hits 'interactive' readystate, all DOM elements have
-     * been added to page and all requests for this document have been initiated.
-     * At this point, kick off process by requesting list of blocked requests from
-     * background page.
-     */
-    if (document.readyState === 'loading') {
-        document.addEventListener('readystatechange', () => {
-            if (document.readyState === 'interactive') {
-                contentScript.init()
-            }
-        })
-    } else {
-        contentScript.init()
-    }
+    contentScript.init()
 })()

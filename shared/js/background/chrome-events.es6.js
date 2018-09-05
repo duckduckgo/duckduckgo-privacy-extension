@@ -9,9 +9,7 @@ const ATB = require('./atb.es6')
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
-
-        // need to wait a bit for ATB to be set
-        setTimeout(() => ATB.openPostInstallPage(), 2000)
+            .then(ATB.openPostInstallPage)
     }
 })
 
@@ -22,6 +20,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
 const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
+const pixel = require('./pixel.es6')
 
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
@@ -120,32 +119,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (req.atb) {
-        ATB.setAtbValuesFromSuccessPage(req.atb)
-    }
-
-    // listen for messages from content scripts injected into frames
-    // on specific domains. Respond with list of blocked requests.
-    if (req.hideElements) {
-        const requestTab = tabManager.get({tabId: sender.tab.id})
-        if (requestTab.parentEntity === 'Oath' && !requestTab.site.whitelisted) {
-            if (req.frame === 'main') {
-                // in main frame, we only care about blocked frames
-                let blockedAssets = requestTab.getBlockedAssets('sub_frame').join('|')
-                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, frame: 'main'}, {frameId: sender.frameId})
-            } else if (req.frame === 'topLevelFrame') {
-                // in iframes, we need both blocked frames and blocked scripts, since
-                // these blocked scripts often were going to load a nested iframe
-                let blockedAssets = requestTab.getBlockedAssets(['sub_frame', 'script']).join('|')
-                chrome.tabs.sendMessage(sender.tab.id, {type: 'blockedRequests', blockedRequests: blockedAssets, mainFrameUrl: requestTab.url, frame: 'topLevelFrame'}, {frameId: sender.frameId})
-            }
-        } else {
-            // if site does not belong to parent company or is whitelisted, disable content scripts
-            chrome.tabs.sendMessage(sender.tab.id, {type: 'disable'}, {frameId: sender.frameId})
-        }
-        return true
-    }
-
     // popup will ask for the browser type then it is created
     if (req.getBrowser) {
         res(utils.getBrowserName())
@@ -175,6 +148,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     } else if (req.getSiteScore) {
         let tab = tabManager.get({tabId: req.getSiteScore})
         res(tab.site.score.get())
+        return true
+    }
+
+    if (req.firePixel) {
+        let fireArgs = req.firePixel
+        if (fireArgs.constructor !== Array) {
+            fireArgs = [req.firePixel]
+        }
+        res(pixel.fire.apply(null, fireArgs))
         return true
     }
 })
