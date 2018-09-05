@@ -114,7 +114,7 @@ let search = (url) => {
 }
 
 let openHelpPage = () => {
-    safari.application.activeBrowserWindow.openTab().url = 'https://duck.co/help/add-ons'
+    safari.application.activeBrowserWindow.openTab().url = 'https://duck.co/help/add-ons/safari-12'
     safari.self.hide()
 }
 
