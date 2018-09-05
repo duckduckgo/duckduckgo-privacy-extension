@@ -166,7 +166,6 @@ Site.prototype = window.$.extend({},
                 if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
                     this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
                 }
-                this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
 
                 const newUserPrivacy = this.getIsUserPrivacyUpgraded()
                 if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
@@ -228,13 +227,6 @@ Site.prototype = window.$.extend({},
             }, 0)
 
             return count
-        },
-
-        getIsPartOfMajorTrackingNetwork: function () {
-            return this.isaMajorTrackingNetwork ||
-                this.trackerNetworks.some((tracker) =>
-                    constants.majorTrackingNetworks[tracker]
-                )
         },
 
         getTrackerNetworksOnPage: function () {

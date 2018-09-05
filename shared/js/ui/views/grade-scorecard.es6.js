@@ -56,7 +56,7 @@ GradeScorecard.prototype = window.$.extend({},
             // (e.g. https, tosdr)
             // doesn't change dynamically
             if (e.change.attribute === 'trackerNetworks' ||
-                    e.change.attribute === 'isPartOfMajorTrackingNetwork') {
+                    e.change.attribute === 'isaMajorTrackingNetwork') {
                 this._rerenderReasons()
             }
 
