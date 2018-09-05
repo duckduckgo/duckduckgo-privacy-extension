@@ -45,7 +45,7 @@
                     window.top.postMessage({frameUrl: document.location.href, type: 'frameIdRequest'}, req.mainFrameUrl)
                 }
             } else if (req.type === 'blockedFrame') {
-                document.getElementsByTagName('iframe').forEach((frame) => {
+                document.querySelectorAll('iframe').forEach((frame) => {
                     if (frame.src === req.request.url) {
                         this.collapseDomNode(frame)
                     }
@@ -67,7 +67,7 @@
         frameListener (e) {
             if (this.disabled) return
             if (e.data.type === 'frameIdRequest') {
-                document.getElementsByTagName('iframe').forEach((frame) => {
+                document.querySelectorAll('iframe').forEach((frame) => {
                     if (frame.id && !frame.className.includes('ddg-hidden') && frame.src) {
                         frame.contentWindow.postMessage({frameId: frame.id, mainFrameUrl: document.location.href, type: 'setFrameId'}, '*')
                     }
