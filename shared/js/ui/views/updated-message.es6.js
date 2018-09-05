@@ -13,7 +13,7 @@ function UpdatedMessage (ops) {
     ])
 }
 
-UpdatedMessage.prototype = window.$.extend({}, 
+UpdatedMessage.prototype = window.$.extend({},
     Parent.prototype,
     {
         _helpClick: function (e) {

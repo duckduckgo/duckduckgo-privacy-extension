@@ -1,5 +1,4 @@
 const bel = require('bel')
-const hamburgerButton = require('./shared/hamburger-button.es6.js')
 
 module.exports = function () {
     return bel`<section>

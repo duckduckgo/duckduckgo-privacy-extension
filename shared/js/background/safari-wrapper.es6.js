@@ -22,14 +22,13 @@ let setBadgeIcon = (badgeUpdate) => {
 
     let windowId = _getSafariWindowId(badgeUpdate.target)
     if (badgeUpdate.path && windowId !== undefined) {
-        
         if (!localStorage['seenIcon']) {
             badgeUpdate.path = 'img/alert_icon.png'
         } else {
             badgeUpdate.path = 'img/ddg-icon@2x.png'
         }
-        
-            safari.extension.toolbarItems[windowId].image = getExtensionURL(badgeUpdate.path)
+
+        safari.extension.toolbarItems[windowId].image = getExtensionURL(badgeUpdate.path)
         safari.extension.popovers[0].contentWindow.location.reload()
     }
 }

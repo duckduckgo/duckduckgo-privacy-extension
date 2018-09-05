@@ -16,4 +16,3 @@ module.exports = function (ops) {
         <span class="icon icon__close update__close-btn js-update-message-close"></span>
 </section>`
 }
-

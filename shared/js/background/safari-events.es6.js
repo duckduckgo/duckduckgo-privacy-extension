@@ -27,9 +27,9 @@ let onStartup = (e) => {
         // give it a bit of time to settle before kicking off the ATB process
         setTimeout(ATB.updateATBValues, 2000)
     }
-    
+
     if (!localStorage['seenIcon']) {
-         browserWrapper.setBadgeIcon({path: 'img/alert_icon.png', target: safari.application.activeBrowserWindow})
+        browserWrapper.setBadgeIcon({path: 'img/alert_icon.png', target: safari.application.activeBrowserWindow})
     }
 
     if (safari.extension.globalPage.contentWindow.localStorage['closedUpdateMessage']) {
@@ -79,7 +79,6 @@ let onStartup = (e) => {
 
     // reload popup
     browserWrapper.notifyPopup()
-
 }
 
 const redirect = require('./redirect.es6')
@@ -346,7 +345,6 @@ let onClose = (e) => {
 setInterval(abpLists.updateLists, 30 * 60 * 1000)
 
 let seenIcon = (evt) => {
-
     if (evt.command === 'clickIcon') {
         localStorage['seenIcon'] = 1
         browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: safari.application.activeBrowserWindow})
@@ -363,7 +361,7 @@ safari.application.addEventListener('beforeNavigate', onBeforeNavigation, true)
 safari.application.addEventListener('navigate', onNavigate, false)
 safari.application.addEventListener('beforeSearch', onBeforeSearch, false)
 safari.application.addEventListener('close', onClose, false)
-safari.application.addEventListener("command", seenIcon, false)
+safari.application.addEventListener('command', seenIcon, false)
 
 module.exports = {
     onStartup: onStartup
