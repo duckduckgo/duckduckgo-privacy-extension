@@ -32,7 +32,7 @@ body {
         letter-spacing: normal;
     }
 
-    .update-message__text--bold {
+    .update-message__text--top {
         font-size: 12px;
         font-style: normal;
         font-stretch: normal;
@@ -40,6 +40,9 @@ body {
         letter-spacing: normal;
         color: #4a4c4f;
         margin-bottom: 8px;
+    }
+
+    .update-message__text--bold {
         font-weight: 600;
     }
 

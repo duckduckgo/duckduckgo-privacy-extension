@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2018.8.16</string>
+	<string>2018.9.5</string>
 	<key>CFBundleVersion</key>
-	<string>53</string>
+	<string>54</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Database Quota</key>
@@ -70,7 +70,7 @@
 		</array>
 	</dict>
 	<key>Description</key>
-	<string>Due to changes in Safari 12, this extension no longer includes a tracker blocker.</string>
+	<string>The search engine that doesn't track you.</string>
 	<key>DeveloperIdentifier</key>
 	<string>HKE973VLUW</string>
 	<key>ExtensionInfoDictionaryVersion</key>
