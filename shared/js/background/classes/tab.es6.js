@@ -21,6 +21,8 @@ const scoreIconLocations = {
     'C+': 'img/toolbar-rating-c-plus@2x.png',
     'C': 'img/toolbar-rating-c@2x.png',
     'D': 'img/toolbar-rating-d@2x.png',
+    // we don't currently show the D- grade
+    'D-': 'img/toolbar-rating-d@2x.png',
     'F': 'img/toolbar-rating-f@2x.png'
 }
 

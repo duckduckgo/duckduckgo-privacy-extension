@@ -114,8 +114,12 @@ Site.prototype = window.$.extend({},
                 // got siteRating back fr/ background process,
                 // 'after' rating changed, template needs re-render
                 if (ops && ops.siteRating) {
-                    const before = ops.siteRating.site.grade
-                    const after = ops.siteRating.enhanced.grade
+                    let before = ops.siteRating.site.grade
+                    let after = ops.siteRating.enhanced.grade
+
+                    // we don't currently show D- grades
+                    if (before === 'D-') before = 'D'
+                    if (after === 'D-') after = 'D'
 
                     if (after !== this.siteRating.after) {
                         const newSiteRating = {
