@@ -11,6 +11,7 @@ const utils = require('../utils.es6')
 const abpLists = require('../abp-lists.es6')
 const privacyPolicy = require('../privacy-policy.es6')
 const Grade = require('privacy-grade').Grade
+const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 
 class Site {
     constructor (domain) {
@@ -24,6 +25,13 @@ class Site {
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPolicy.getTosdr(domain)
+
+        this.parentEntity = utils.findParent(domain) || ''
+        this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
+
+        if (this.parentEntity && this.parentPrevalence) {
+            this.score.setParentEntity(this.parentEntity, this.parentPrevalence)
+        }
 
         this.score.setPrivacyScore(privacyPolicy.getTosdrScore(domain))
 
