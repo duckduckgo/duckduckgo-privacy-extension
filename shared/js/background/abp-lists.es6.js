@@ -2,6 +2,7 @@
  * Load the abp-filter-parser node module and
  * pre-process the easylists.
  */
+const abp = require('abp-filter-parser')
 const constants = require('../../data/constants')
 const surrogates = require('./surrogates.es6')
 const settings = require('./settings.es6')
@@ -11,6 +12,15 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 const ONEDAY = 1000 * 60 * 60 * 24
 
 let lists = {
+    whitelists: {
+        // source: https://github.com/duckduckgo/content-blocking-whitelist/blob/master/trackers-whitelist.txt
+        trackersWhitelist: {
+            constantsName: 'trackersWhitelist',
+            parser: abp,
+            parsed: {},
+            isLoaded: false
+        }
+    },
     surrogates: {
         surrogateList: {
             constantsName: 'surrogateList',
@@ -25,6 +35,10 @@ var trackersWhitelistTemporary
 
 function getTemporaryWhitelist () {
     return trackersWhitelistTemporary
+}
+
+function getWhitelists () {
+    return lists.whitelists
 }
 
 /*
@@ -123,5 +137,6 @@ function getVersionParam () {
 
 module.exports = {
     getTemporaryWhitelist,
+    getWhitelists,
     updateLists
 }

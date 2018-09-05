@@ -27,12 +27,6 @@ function loadLists () {
                             tracker.rules[i].rule = new RegExp(tracker.rules[i].rule + '.*', 'i')
                         }
                     }
-                    if (tracker.whitelist) {
-                        for (let i in tracker.whitelist) {
-                            // All of our rules are host anchored and have an implied wildcard at the end.
-                            tracker.whitelist[i].rule = new RegExp(tracker.whitelist[i].rule + '.*', 'i')
-                        }
-                    }
                 })
             })
             console.log(`Loaded tracker list: ${listLocation}/${listName}`)

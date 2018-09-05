@@ -76,7 +76,7 @@ class Score {
     isaMajorTrackingNetwork () {
         let result = 0
         if (this.specialPage || !this.domain) return result
-        const parentCompany = utils.findParent(this.domain)
+        const parentCompany = utils.findParent(this.domain.split('.'))
         if (!parentCompany) return result
         const isMajorNetwork = pagesSeenOn[parentCompany.toLowerCase()]
         if (isMajorNetwork) {
