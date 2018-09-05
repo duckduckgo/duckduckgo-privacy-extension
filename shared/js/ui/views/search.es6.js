@@ -26,6 +26,7 @@ function Search (ops) {
 Search.prototype = window.$.extend({},
     Parent.prototype,
     {
+
         _handleKeyup: function (e) {
             this.model.set('searchText', this.$input.val())
         },
