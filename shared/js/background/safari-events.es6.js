@@ -32,7 +32,7 @@ let onStartup = (e) => {
         browserWrapper.setBadgeIcon({path: 'img/alert_icon.png', target: safari.application.activeBrowserWindow})
     }
 
-    if (safari.extension.globalPage.contentWindow.localStorage['closedUpdateMessage']) {
+    if (localStorage['closedUpdateMessage']) {
         browserWrapper.resizePopup()
     }
 
