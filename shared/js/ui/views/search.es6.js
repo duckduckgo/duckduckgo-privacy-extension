@@ -26,7 +26,6 @@ function Search (ops) {
 Search.prototype = window.$.extend({},
     Parent.prototype,
     {
-
         _handleKeyup: function (e) {
             this.model.set('searchText', this.$input.val())
         },
@@ -34,14 +33,12 @@ Search.prototype = window.$.extend({},
         _handleSubmit: function (e) {
             e.preventDefault()
             console.log(`Search submit for ${this.$input.val()}`)
-            this.model.fetch({ firePixel: 'epq' })
             this.model.doSearch(this.$input.val())
             window.close()
         },
 
         _handleBurgerClick: function (e) {
             e.preventDefault()
-            this.model.fetch({ firePixel: 'eph' })
             this.model.send('burgerClick')
         }
     }

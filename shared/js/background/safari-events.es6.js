@@ -346,8 +346,6 @@ let onClose = (e) => {
 setInterval(abpLists.updateLists, 30 * 60 * 1000)
 
 let seenIcon = (evt) => {
-    console.log(`button event`)
-    console.log(evt)
 
     if (evt.command === 'clickIcon') {
         localStorage['seenIcon'] = 1
