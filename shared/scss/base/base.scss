@@ -305,17 +305,6 @@ a {
         @include cross_platform_bg_image("check.svg");
     }
     
-    &.icon__plus {
-        width: 5px;
-        height: 6px;
-        margin-top: 7px;
-        margin-right: 1px;
-        margin-left: -3.5px;
-        vertical-align: top;
-
-        @include cross_platform_bg_image("plus.svg");
-    }
-    
     &.icon__shield {
         width: 22px;
         height: 22px;
