@@ -103,6 +103,8 @@ let injectATBScripts = () => {
     // in Safari we can't inject a script whenever we want, so instead add it everywhere
     // and wait for the background process to tell us when to execute it
     safari.application.activeBrowserWindow.tabs.forEach((tab) => {
+        if (!(tab && tab.url)) return
+
         if (tab.url.match(/https:\/\/([^/]+\.)?duckduckgo.com/)) {
             tab.page.dispatchMessage('getATB')
         }

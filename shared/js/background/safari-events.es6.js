@@ -35,50 +35,6 @@ let onStartup = (e) => {
     if (localStorage['closedUpdateMessage']) {
         browserWrapper.resizePopup()
     }
-
-    // show post install page
-    let showPostInstallPage = false
-    let postInstallRegex = /duckduckgo.com\/\?t=|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/
-
-    safari.application.browserWindows.forEach((safariWindow) => {
-        safariWindow.tabs.forEach((safariTab) => {
-            // create a random safari tab id and store it in safariTab
-            safariTab.ddgTabId = Math.floor(Math.random() * (10000000 - 10 + 1)) + 10
-
-            if (safariTab.url.match(postInstallRegex)) {
-                showPostInstallPage = true
-            }
-
-            // recreate our internal tab objects for any existing tabs
-            // first create a fake request so we can let tab-manager handle this for us
-            let req = {
-                url: safariTab.url,
-                target: safariTab,
-                message: {currentURL: safariTab.url}
-            }
-            tabManager.create(req)
-        })
-    })
-
-    if (showPostInstallPage) {
-        // need at least 3s before atb is available in safari
-        setTimeout(() => {
-            // we'll open the post install page in a new tab but keep the current tab active. To do this
-            // we need to open a tab then reset the active tab
-            let activeTabIdx = _getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
-            let postInstallURL = 'https://duckduckgo.com/app?post=1'
-            // show atb in postinstall page
-            const atb = settings.getSetting('atb')
-            postInstallURL += atb ? `&atb=${atb}` : ''
-            safari.application.activeBrowserWindow.openTab().url = postInstallURL
-
-            // reactive the previous tab
-            safari.application.activeBrowserWindow.tabs[activeTabIdx].activate()
-        }, 3000)
-    }
-
-    // reload popup
-    browserWrapper.notifyPopup()
 }
 
 const redirect = require('./redirect.es6')
@@ -277,7 +233,10 @@ let onNavigate = (e) => {
         }
     }
 
-    var urlMatch = e.target.url.match(/https?:\/\/duckduckgo.com\/\?*/)
+    var urlMatch
+    if (e.target && e.target.url) {
+        urlMatch = e.target.url.match(/https?:\/\/duckduckgo.com\/\?*/)
+    }
 
     if (urlMatch && urlMatch[0]) {
         ATB.updateSetAtb()
