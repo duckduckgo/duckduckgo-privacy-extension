@@ -6,14 +6,6 @@ const settings = require('./settings.es6')
 const abpLists = require('./abp-lists.es6')
 const browserWrapper = require('./safari-wrapper.es6')
 
-let _getSafariTabIndex = (target) => {
-    for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
-        if (target === safari.application.activeBrowserWindow.tabs[i]) {
-            return i
-        }
-    }
-}
-
 /** onStartup
  * Safari doesn't have a onInstalled event so we'll set a flag in localStorage.
  * 1. check installed flag
