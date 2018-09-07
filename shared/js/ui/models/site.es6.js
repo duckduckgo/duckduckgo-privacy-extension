@@ -48,6 +48,7 @@ Site.prototype = window.$.extend({},
                         this.domain = tab.site.domain
                         this.fetchSiteRating()
                         this.set('tosdr', tab.site.tosdr)
+                        this.set('hibp', tab.site.hibp)
                         this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= 7)
                     } else {
                         console.debug('Site model: no tab')

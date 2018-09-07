@@ -26,8 +26,11 @@ class Site {
 
         this.tosdr = privacyPolicy.getTosdr(domain)
 
-        this.hibp = privacyPolicy.getHibp(domain)
-        console.log(this.hibp)
+        let dismissedSetting = settings.getSetting(`hibpDismissed-${domain}`)
+        if (!dismissedSetting) {
+            this.hibp = privacyPolicy.getHibp(domain)
+            console.log(this.hibp)
+        }
 
         this.parentEntity = utils.findParent(domain) || ''
         this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
