@@ -89,6 +89,7 @@ Trackers.prototype = window.$.extend({},
                 new PwnedMessageView({
                     appendTo: window.$('#popup-container'),
                     domain: e.attributes.domain,
+                    tabId: e.attributes.tab.id,
                     hibp
                 })
             }
