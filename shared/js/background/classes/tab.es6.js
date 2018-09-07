@@ -78,7 +78,7 @@ class Tab {
             let badgeData = {path: scoreIcon, tabId: this.id}
             if (target) badgeData.target = target
 
-            if (this.site.hibp) {
+            if (this.site.hibp && this.site.showHibp) {
                 let urgency = this.site.hibp.urgency
 
                 if (urgency > 20) {

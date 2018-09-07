@@ -53,6 +53,13 @@ function getReasons (site) {
         })
     }
 
+    if (site.hibp && site.hibp) {
+        reasons.push({
+            modifier: 'bad',
+            msg: `Site has suffered a data breach`
+        })
+    }
+
     // privacy practices from tosdr
     const unknownPractices = constants.tosdrMessages.unknown
     const privacyMessage = (site.tosdr && site.tosdr.message) || unknownPractices

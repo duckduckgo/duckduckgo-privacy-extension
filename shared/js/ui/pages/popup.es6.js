@@ -81,7 +81,7 @@ Trackers.prototype = window.$.extend({},
         },
 
         _onSiteChanged: (e) => {
-            if (e.change.attribute === 'hibp') {
+            if (e.change.attribute === 'hibp' && e.attributes.showHibp) {
                 let hibp = e.attributes.hibp
 
                 if (!hibp) return

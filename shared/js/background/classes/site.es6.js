@@ -26,11 +26,11 @@ class Site {
 
         this.tosdr = privacyPolicy.getTosdr(domain)
 
-        let dismissedSetting = settings.getSetting(`hibpDismissed-${domain}`)
-        if (!dismissedSetting) {
-            this.hibp = privacyPolicy.getHibp(domain)
-            console.log(this.hibp)
-        }
+        this.hibp = privacyPolicy.getHibp(domain)
+        let hibpUrgency = this.hibp && this.hibp.urgency || 0
+
+        // don't show it in the UI if it was previously dismissed
+        this.showHibp = !settings.getSetting(`hibpDismissed-${domain}`)
 
         this.parentEntity = utils.findParent(domain) || ''
         this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
@@ -39,7 +39,10 @@ class Site {
             this.score.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.score.setPrivacyScore(privacyPolicy.getTosdrScore(domain))
+        let privacyScore = privacyPolicy.getTosdrScore(domain) || 0
+        privacyScore += hibpUrgency
+
+        this.score.setPrivacyScore(privacyScore)
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
