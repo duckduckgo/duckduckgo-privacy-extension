@@ -78,6 +78,18 @@ class Tab {
             let badgeData = {path: scoreIcon, tabId: this.id}
             if (target) badgeData.target = target
 
+            if (this.site.hibp) {
+                let urgency = this.site.hibp.urgency
+
+                if (urgency > 20) {
+                    badgeData.path = 'img/veryverybad.png'
+                } else if (urgency > 10) {
+                    badgeData.path = 'img/verybad.png'
+                } else if (urgency) {
+                    badgeData.path = 'img/bad.png'
+                }
+            }
+
             browserWrapper.setBadgeIcon(badgeData)
         }
     }
