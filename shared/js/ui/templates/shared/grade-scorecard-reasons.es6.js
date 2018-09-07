@@ -54,9 +54,12 @@ function getReasons (site) {
     }
 
     if (site.hibp && site.hibp) {
+        let timeQualifier = site.hibp.recent ? 'recently ' : ''
+        let sizeQualifier = site.hibp.major ? 'major ' :''
+
         reasons.push({
             modifier: 'bad',
-            msg: `Site has suffered a data breach`
+            msg: `Site has ${timeQualifier}suffered a ${sizeQualifier}data breach`
         })
     }
 

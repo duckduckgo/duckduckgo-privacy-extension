@@ -129,8 +129,10 @@ class PrivacyPolicy {
 
         if (discoveredAge < ONE_WEEK) {
             urgency += 10
+            data.recent = true
         } else if (discoveredAge < ONE_MONTH) {
             urgency += 5
+            data.recent = true
         } else if (discoveredAge < SIX_MONTHS) {
             urgency += 2
         }
@@ -141,6 +143,10 @@ class PrivacyPolicy {
 
         if (data.Description.match(/plain text/)) {
             urgency += 5
+        }
+
+        if (data.PwnCount > 1000000) {
+            data.major = true
         }
 
         // this is not good but OK
