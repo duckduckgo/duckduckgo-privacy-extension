@@ -122,15 +122,10 @@ class PrivacyPolicy {
             return
         }
 
-        // convert to usable JS dates
-        data.BreachDate = new Date(data.BreachDate)
-        data.AddedDate = new Date(data.AddedDate)
-        data.ModifiedDate = new Date(data.ModifiedDate)
-
         // how worried should the user be?
         let urgency = 0
 
-        let discoveredAge = Date.now() - data.AddedDate.getTime()
+        let discoveredAge = Date.now() - new Date(data.AddedDate).getTime()
 
         if (discoveredAge < ONE_WEEK) {
             urgency += 10
