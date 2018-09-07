@@ -3,6 +3,19 @@ const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 
+const hibpArray = require('../../data/breaches')
+const hibp = {}
+const hibpRegexList = []
+
+hibpArray.forEach(x => {
+    hibp[x.Domain] = x
+    hibpRegexList.push(new RegExp(`(^)${tldjs.getDomain(x.Domain)}`))
+})
+
+const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
+const ONE_MONTH = ONE_WEEK * 30 // close enough
+const SIX_MONTHS = ONE_MONTH * 6
+
 // only match domains, and from the start of the URL
 const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${tldjs.getDomain(x)}`))
 
@@ -83,6 +96,64 @@ class PrivacyPolicy {
         }
 
         return score
+    }
+
+    getHibp (url) {
+        let domain = tldjs.getDomain(url)
+        let data
+
+        hibpRegexList.some(site => {
+            let match = site.exec(domain)
+
+            if (!match) return
+
+            data = hibp[match[0]]
+
+            return data
+        })
+
+        if (!data) return
+
+        // we don't care about those
+        if (data.IsSpamList ||
+                data.IsFabricated ||
+                data.IsRetired ||
+                !data.IsActive) {
+            return
+        }
+
+        // convert to usable JS dates
+        data.BreachDate = new Date(data.BreachDate)
+        data.AddedDate = new Date(data.AddedDate)
+        data.ModifiedDate = new Date(data.ModifiedDate)
+
+        // how worried should the user be?
+        let urgency = 0
+
+        let discoveredAge = Date.now() - data.AddedDate.getTime()
+
+        if (discoveredAge < ONE_WEEK) {
+            urgency += 10
+        } else if (discoveredAge < ONE_MONTH) {
+            urgency += 5
+        } else if (discoveredAge < SIX_MONTHS) {
+            urgency += 2
+        }
+
+        if (data.IsSensitive) {
+            urgency += 3
+        }
+
+        if (data.Description.match(/plain text/)) {
+            urgency += 5
+        }
+
+        // this is not good but OK
+        urgency += data.DataClasses.length
+
+        data.urgency = urgency
+
+        return data
     }
 }
 
