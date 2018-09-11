@@ -65,7 +65,7 @@
          * 3. iframes send messages to main frame when they contain blocked elements (hideFrame)
          */
         frameListener (e) {
-            if (this.disabled) return
+            if (this.disabled || !e.data) return
             if (e.data.type === 'frameIdRequest') {
                 document.querySelectorAll('iframe').forEach((frame) => {
                     if (frame.id && !frame.className.includes('ddg-hidden') && frame.src) {
