@@ -96,14 +96,19 @@ class PrivacyPractices {
         }
     }
 
-    getTosdrScore (url) {
-        const hostname = utils.extractHostFromURL(url)
-        const domain = tldjs.getDomain(url)
+    getTosdrScore (hostname) {
+        const domain = tldjs.getDomain(hostname)
         const parent = utils.findParent(hostname)
 
-        return tosdrScores[parent] ||
-            tosdrScores[domain] ||
+        // grab the first available val
+        // starting with most general first
+        const score = [
+            tosdrScores[parent],
+            tosdrScores[domain],
             tosdrScores[hostname]
+        ].find(s => typeof s === 'number')
+
+        return score
     }
 }
 

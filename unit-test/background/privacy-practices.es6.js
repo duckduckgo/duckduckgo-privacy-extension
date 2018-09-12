@@ -47,3 +47,29 @@ describe('getTosdr', () => {
         })
     })
 })
+
+describe('getTosdrScore', () => {
+    const tests = [
+        // known good
+        { domain: 'duckduckgo.com', expectedScore: 0 },
+        { domain: 'duck.co', expectedScore: 0 },
+        { domain: 'start.duckduckgo.com', expectedScore: 0 },
+
+        // known meh
+        { domain: 'steampowered.com', expectedScore: 5 },
+
+        // known bad (with shared parent entity)
+        { domain: 'youtube.com', expectedScore: 10 },
+        { domain: 'google.es', expectedScore: 10 },
+        { domain: 'mail.google.com', expectedScore: 10 },
+
+        // we don't know
+        { domain: 'en.wikipedia.org', expectedScore: undefined }
+    ]
+
+    tests.forEach((test) => {
+        it(`should give ${test.domain} score ${test.expectedScore}`, () => {
+            expect(privacyPractices.getTosdrScore(test.domain)).toEqual(test.expectedScore)
+        })
+    })
+})
