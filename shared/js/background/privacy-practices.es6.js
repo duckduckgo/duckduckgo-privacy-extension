@@ -60,7 +60,7 @@ class PrivacyPractices {
             return tosdrData
         })
 
-        if (!tosdrData) return
+        if (!tosdrData) return {}
 
         const matchGood = (tosdrData.match && tosdrData.match.good) || []
         const matchBad = (tosdrData.match && tosdrData.match.bad) || []
