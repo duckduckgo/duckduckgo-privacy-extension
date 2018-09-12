@@ -168,8 +168,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(tabManager.get({'tabId': req.getTab}))
         return true
     } else if (req.getSiteScore) {
-        let tab = tabManager.get({tabId: req.getSiteScore})
-        res(tab.site.score.get())
+        const tab = tabManager.get({tabId: req.getSiteScore})
+        let score = {}
+
+        if (!tab.site.isSpecialDomain) {
+            score = tab.site.score.get()
+        }
+
+        res(score)
         return true
     }
 

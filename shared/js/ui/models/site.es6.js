@@ -120,7 +120,10 @@ Site.prototype = window.$.extend({},
             if (this.tab) {
                 // got siteRating back fr/ background process,
                 // 'after' rating changed, template needs re-render
-                if (ops && ops.siteRating) {
+                if (ops &&
+                        ops.siteRating &&
+                        ops.siteRating.site &&
+                        ops.siteRating.enhanced) {
                     let before = ops.siteRating.site.grade
                     let after = ops.siteRating.enhanced.grade
 
