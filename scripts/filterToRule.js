@@ -2,7 +2,6 @@
  * Convert adblock filters to regex rules
  * node filterToRule.js -f <filterlist> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>
  */
-
 const program = require('commander')
 const fs = require('fs')
 const merge = require('deepmerge')
@@ -10,19 +9,22 @@ const _ = require('underscore')
 const assert = require('assert')
 const utils = require('../shared/js/background/utils.es6')
 const RandExp = require('randexp')
+const tldjs = require('tldjs')
+const trackers = require('./../shared/data/tracker_lists/trackersWithParentCompany.json')
 
 // store process rule regexes in key/val to look for duplicates
 let rules = {}
+let filterStats = {}
 
 program
     .usage("node filterToRule.js -f <filterlist> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>")
     .option('-f, --file <name>', 'Required - Text file with newline-separated filter list')
-    .option('-c, --combine <path>', 'Required - Path of trackers file to combine with')
     .option('-t, --ruleType <name>', 'Required - Type of filtes, rules or whitelist')
     .option('--test', 'Optional - Run parser tests')
+    .option('--verbose', 'Optional - Print verbose log messages to screen')
     .parse(process.argv)
 
-if (!(program.file && program.combine && program.ruleType)) {
+if (!(program.file && program.ruleType)) {
     program.help()
 }
 
@@ -33,9 +35,33 @@ if (!(program.file && program.combine && program.ruleType)) {
     filters.forEach(f => {
         if (!f) return 
 
+        // skip ! comment lines
+        if (f.match(/^\!/)) return 
+
+        // todo: handle filters with .* as their tld
+        if (f.match(/google\.\*/)) {
+            printLog(`Can't parse wild card hostnames ${f}`)
+            addToLog({type: 'unsupported', count: 1, filter: [f]})
+            return
+        }
+
+        // make a copy of the filter and remove any filter special
+        // characters. We're going to throw this at a URL parser
+        // and see if it can extract the hostname from the filter
+        let fCopy = f.replace('||', '').replace('^','/').replace('*','/').replace(/\$.*/, '')
+        let host = tldjs.parse(fCopy)
+
+        if (!host.isValid && !(host.domain || host.hostname)) {
+            //console.log(`Cant parse host. ${f} ${fCopy}`)
+            addToLog({type: 'unknown', count: 1, filter: [f]})
+            return
+        }
+
         let ruleObj = parseFilter(f.toLowerCase())
 
         if (!ruleObj) return 
+
+        ruleObj.tldObj = host
 
         // add to rules or merge duplicates
         if (!rules[ruleObj.rule]) {
@@ -55,7 +81,6 @@ if (!(program.file && program.combine && program.ruleType)) {
     }
 
     combineWithTrackers(groupRulesByHost(rules)) 
-
 })()
 
 // run parser against known outputs
@@ -70,18 +95,20 @@ function runTests () {
 }
 
 function combineWithTrackers (rulesToAdd) {
-    let trackers = require(program.combine)
     const trackerCategories = ['Analytics', 'Social', 'Advertising']
     // rules that don't have a host match in the trackers file. We can't add these
     // but we can write them to a file a save for later
     let unMatchedRules = []
-    
+
     Object.keys(rulesToAdd).forEach(host => {
         let foundTracker = false
 
         trackerCategories.forEach(c => {
             if (trackers[c][host]) {
                 foundTracker = true
+
+                addToLog({type: 'added', count: rulesToAdd[host][program.ruleType].length})
+
                 // if we don't have existing rules for this tracker the no need to merge rules
                 if (!trackers[c][host][program.ruleType]) {
                     trackers[c][host][program.ruleType] = rulesToAdd[host][program.ruleType]
@@ -95,13 +122,19 @@ function combineWithTrackers (rulesToAdd) {
             }
         })
 
-        if (!foundTracker) unMatchedRules.push(rulesToAdd[host])
+        if (!foundTracker) {
+            unMatchedRules.push(rulesToAdd[host])
+            addToLog({type: 'unmatched', count: rulesToAdd[host][program.ruleType].length, domains: [host]})
+        }
     })
 
+    console.log(`\nAdded ${filterStats.added.count} new rules. Skipped ${filterStats.unmatched.count} filters for sites we don't block\n`)
     fs.writeFileSync('new-trackersWithParentCompany.json', JSON.stringify(trackers, null, 4))
     console.log("Wrote new trackers file to: new-trackersWithParentCompany.json")
     fs.writeFileSync('unMatchedRules.json', JSON.stringify(unMatchedRules, null, 4))
     console.log("Wrote unmatched rules to: unMatchedRules.json")
+    fs.writeFileSync('log.json', JSON.stringify(filterStats, null, 4))
+    console.log("Wrote summary to: log.json")
 }
 
 // merge rule lists for a single tracker
@@ -139,7 +172,8 @@ function parseFilter (filter) {
     // check that this is a filter we currently support parsing
     // Only host anchored filters are supported right now. '||'
     if (!filter.match(/^\|\|/)) {
-        console.warn(`Unsuported filter: ${filter}`)
+        printLog(`Unsuported filter: ${filter}`)
+        addToLog({type: 'unsupported', count: 1, filter: [filter]})
         return false
     }
 
@@ -151,7 +185,7 @@ function parseFilter (filter) {
         optionStr = filter.substr(optionIndex+1)
         // skip options with first-party, we would never block these
         if (optionStr.match('first-party')) {
-            console.log(`Skipping first-party filter: ${filter}`)
+            printLog(`Skipping first-party filter: ${filter}`)
             return false
         }
 
@@ -162,7 +196,7 @@ function parseFilter (filter) {
     filter = filter.replace(/\|\|/,'')
 
     // escape some chars for json, ()/?.|
-    filter = filter.replace(/(\(|\)|\/|\?|\.|\|)/g,'\\$1')
+    filter = filter.replace(/(\(|\)|\/|\?|\.|\||\[)/g,'\\$1')
 
     // ending ^ to ($|[?/])
     filter = filter.replace(/\^$/, '($|[?/])')
@@ -178,7 +212,7 @@ function parseFilter (filter) {
     filter = filter.replace(/(?<!\[\?\/\]\.)\*/g, '.*')
 
     // make sure this is a valid regex
-    assert.doesNotThrow(() => new RegExp(filter))
+    assert.doesNotThrow(() => new RegExp(filter), `invalid regex: ${filter}`)
     
     // add final filter to rule object
     rule.rule = filter
@@ -197,7 +231,6 @@ function parseOptions (optionStr) {
 
     // split option string on commas
     let optionList = optionStr.split(',')
-
 
     optionList.forEach(o => {
         // skip third party option. All of our rules
@@ -225,8 +258,11 @@ function groupRulesByHost (rules) {
     Object.keys(rules).forEach(r => {
         if (!r) return 
 
-        const host = utils.extractHostFromURL(regexToURL(r))
-        
+        const host = rules[r].tldObj.domain || rules[r].tldObj.hostname
+
+        // drop tldObj, we don't need it anymore
+        delete rules[r].tldObj
+
         if (!byHost[host]) {
             byHost[host] = {}
             byHost[host][program.ruleType] = []
@@ -240,4 +276,27 @@ function groupRulesByHost (rules) {
 function regexToURL (re) {
     let randExp = new RandExp(re).gen()
     return `http://${randExp}`
+}
+
+function addToLog (ops) {
+    if (!filterStats[ops.type]) {
+        filterStats[ops.type] = {count: 0, filters: [], domains: []}
+    }
+
+    filterStats[ops.type].count += ops.count
+    
+    if (ops.filter) {
+        filterStats[ops.type].filters = filterStats[ops.type].filters.concat(ops.filter)
+    }
+
+    if (ops.domains) {
+        filterStats[ops.type].domains = filterStats[ops.type].domains.concat(ops.domains).sort()
+    }
+    return
+}
+
+function printLog (message) {
+    if (program.verbose) {
+        console.log(message)
+    }
 }

@@ -171,11 +171,11 @@ function requestMatchesRule (request, ruleObj, siteDomain) {
 function matchRuleOptions (rule, request, siteDomain) {
     if (!rule.options) return true
 
-    if (rule.options.types && !rule.options.types.includes(request.type)) {
+    if (rule.options.types && rule.options.types.length && !rule.options.types.includes(request.type)) {
         return false
     }
 
-    if (rule.options.domains && !rule.options.domains.includes(siteDomain)) {
+    if (rule.options.domains && rule.options.domains.length && !rule.options.domains.includes(siteDomain)) {
         return false
     }
 
