@@ -69,7 +69,7 @@ describe('HttpsRedirects', () => {
 
             expect(canRedirect).toEqual(true, 'it should let non-mainframe redirects pass')
         })
-        it('once a main frame redirect has been marked as not working, the URL should be blacklisted', () => {
+        it('once a main frame redirect has been marked as not working, the domain should be blacklisted', () => {
             fastForward(1500)
 
             let canRedirect = httpsRedirects.canRedirect({
@@ -89,6 +89,23 @@ describe('HttpsRedirects', () => {
             })
 
             expect(canRedirect).toEqual(false)
+
+            canRedirect = httpsRedirects.canRedirect({
+                requestId: 12,
+                url: 'http://example.com/foo/bar.jpg',
+                type: 'image'
+            })
+
+            expect(canRedirect).toEqual(false)
+
+            // different subdomains should still be fine
+            canRedirect = httpsRedirects.canRedirect({
+                requestId: 12,
+                url: 'http://www.example.com/foo/bar.jpg',
+                type: 'image'
+            })
+
+            expect(canRedirect).toEqual(true)
         })
     })
     describe('normal request redirect protection', () => {

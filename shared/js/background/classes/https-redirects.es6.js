@@ -1,9 +1,11 @@
+const utils = require('../utils.es6')
+
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
 
 class HttpsRedirects {
     constructor () {
-        this.failedUpgradeUrls = {}
+        this.failedUpgradeHosts = {}
         this.redirectCounts = {}
 
         this.mainFrameRedirect = null
@@ -28,9 +30,11 @@ class HttpsRedirects {
     canRedirect (request) {
         let canRedirect = true
 
-        // this URL previously failed, don't try to upgrade it
-        if (this.failedUpgradeUrls[request.url]) {
-            console.log(`HTTPS: not upgrading, url previously failed: ${request.url}`)
+        const hostname = utils.extractHostFromURL(request.url, true)
+
+        // this hostname previously failed, don't try to upgrade it
+        if (this.failedUpgradeHosts[hostname]) {
+            console.log(`HTTPS: not upgrading ${request.url}, hostname previously failed: ${hostname}`)
             return false
         }
 
@@ -58,9 +62,9 @@ class HttpsRedirects {
             canRedirect = this.redirectCounts[request.requestId] < REQUEST_REDIRECT_LIMIT
         }
 
-        // remember this URL as previously failed, don't try to upgrade it
+        // remember this hostname as previously failed, don't try to upgrade it
         if (!canRedirect) {
-            this.failedUpgradeUrls[request.url] = true
+            this.failedUpgradeHosts[hostname] = true
             console.log(`HTTPS: not upgrading, redirect loop protection kicked in for url: ${request.url}`)
         }
 
