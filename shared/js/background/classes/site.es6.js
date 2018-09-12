@@ -9,7 +9,7 @@
 const settings = require('../settings.es6')
 const utils = require('../utils.es6')
 const abpLists = require('../abp-lists.es6')
-const privacyPolicy = require('../privacy-policy.es6')
+const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 
@@ -24,7 +24,7 @@ class Site {
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
         this.didIncrementCompaniesData = false
 
-        this.tosdr = privacyPolicy.getTosdr(domain)
+        this.tosdr = privacyPractices.getTosdr(domain)
 
         this.parentEntity = utils.findParent(domain) || ''
         this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
@@ -33,7 +33,7 @@ class Site {
             this.score.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.score.setPrivacyScore(privacyPolicy.getTosdrScore(domain))
+        this.score.setPrivacyScore(privacyPractices.getTosdrScore(domain))
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener

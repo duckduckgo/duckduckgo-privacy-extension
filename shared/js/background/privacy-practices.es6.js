@@ -6,7 +6,7 @@ const utils = require('./utils.es6')
 const tosdrRegexList = []
 const tosdrScores = {}
 
-class PrivacyPolicy {
+class PrivacyPractices {
     constructor () {
         Object.keys(tosdr).forEach((site) => {
             // only match domains, and from the start of the URL
@@ -107,4 +107,4 @@ class PrivacyPolicy {
     }
 }
 
-module.exports = new PrivacyPolicy()
+module.exports = new PrivacyPractices()
