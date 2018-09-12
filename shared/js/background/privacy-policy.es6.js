@@ -3,29 +3,62 @@ const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 
-// only match domains, and from the start of the URL
-const tosdrRegexList = Object.keys(tosdr).map(x => new RegExp(`(^)${tldjs.getDomain(x)}`))
+const tosdrRegexList = []
+const tosdrScores = {}
 
 class PrivacyPolicy {
-    getTosdrData (url) {
+    constructor () {
+        Object.keys(tosdr).forEach((site) => {
+            // only match domains, and from the start of the URL
+            tosdrRegexList.push(new RegExp(`(^)${tldjs.getDomain(site)}`))
+
+            // generate scores for the privacy grade
+            const tosdrClass = tosdr[site].class
+            const tosdrScore = tosdr[site].score
+
+            if (tosdrClass || tosdrScore) {
+                let score = 5
+
+                // asign a score value to the classes/scores provided in the JSON file
+                if (tosdrClass === 'A') {
+                    score = 0
+                } else if (tosdrClass === 'B') {
+                    score = 1
+                } else if (tosdrClass === 'D' || tosdrScore > 150) {
+                    score = 10
+                } else if (tosdrClass === 'C' || tosdrScore > 100) {
+                    score = 7
+                }
+
+                tosdrScores[site] = score
+
+                // if the site has a parent entity, propagate the score to that, too
+                // but only if the score is higher
+                //
+                // basically, a parent entity's privacy score is as bad as
+                // that of the worst site it owns
+                const parentEntity = utils.findParent(site)
+
+                if (parentEntity && (!tosdrScores[parentEntity] || tosdrScores[parentEntity] < score)) {
+                    tosdrScores[parentEntity] = score
+                }
+            }
+        })
+    }
+
+    getTosdr (url) {
         let domain = tldjs.getDomain(url)
-        let data
+        let tosdrData
 
         tosdrRegexList.some(tosdrSite => {
             let match = tosdrSite.exec(domain)
 
             if (!match) return
 
-            data = tosdr[match[0]]
+            tosdrData = tosdr[match[0]]
 
-            return data
+            return tosdrData
         })
-
-        return data
-    }
-
-    getTosdr (url) {
-        const tosdrData = this.getTosdrData(url)
 
         if (!tosdrData) return
 
@@ -64,25 +97,13 @@ class PrivacyPolicy {
     }
 
     getTosdrScore (url) {
-        let tosdrData = this.getTosdrData(url)
+        const hostname = utils.extractHostFromURL(url)
+        const domain = tldjs.getDomain(url)
+        const parent = utils.findParent(hostname)
 
-        if (!tosdrData) return
-
-        if (!tosdrData.class && !tosdrData.score) return
-
-        let score = 5
-
-        if (tosdrData.class === 'A') {
-            score = 0
-        } else if (tosdrData.class === 'B') {
-            score = 1
-        } else if (tosdrData.class === 'D' || tosdrData.score > 150) {
-            score = 10
-        } else if (tosdrData.class === 'C' || tosdrData.score > 100) {
-            score = 7
-        }
-
-        return score
+        return tosdrScores[parent] ||
+            tosdrScores[domain] ||
+            tosdrScores[hostname]
     }
 }
 
