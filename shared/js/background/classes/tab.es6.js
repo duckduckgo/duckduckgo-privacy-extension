@@ -14,7 +14,7 @@
  *          }
  *      }
  */
-const scoreIconLocations = {
+const gradeIconLocations = {
     'A': 'img/toolbar-rating-a@2x.png',
     'B+': 'img/toolbar-rating-b-plus@2x.png',
     'B': 'img/toolbar-rating-b@2x.png',
@@ -66,16 +66,16 @@ class Tab {
         if (this.site.isBroken) {
             this.resetBadgeIcon()
         } else {
-            let scoreIcon
-            let score = this.site.score.get()
+            let gradeIcon
+            let grade = this.site.grade.get()
 
             if (this.site.whitelisted) {
-                scoreIcon = scoreIconLocations[score.site.grade]
+                gradeIcon = gradeIconLocations[grade.site.grade]
             } else {
-                scoreIcon = scoreIconLocations[score.enhanced.grade]
+                gradeIcon = gradeIconLocations[grade.enhanced.grade]
             }
 
-            let badgeData = {path: scoreIcon, tabId: this.id}
+            let badgeData = {path: gradeIcon, tabId: this.id}
             if (target) badgeData.target = target
 
             browserWrapper.setBadgeIcon(badgeData)

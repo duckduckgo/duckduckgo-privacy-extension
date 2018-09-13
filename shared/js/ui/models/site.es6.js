@@ -66,7 +66,7 @@ Site.prototype = window.$.extend({},
         fetchSiteRating: function () {
             // console.log('[model] fetchSiteRating()')
             if (this.tab) {
-                this.fetch({getSiteScore: this.tab.id}).then((rating) => {
+                this.fetch({getSiteGrade: this.tab.id}).then((rating) => {
                     console.log('fetchSiteRating: ', rating)
                     if (rating) this.update({siteRating: rating})
                 })

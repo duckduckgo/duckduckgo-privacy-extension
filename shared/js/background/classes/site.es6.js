@@ -1,10 +1,10 @@
 /**
- * Each Site creates its own Score instance. The attributes
- * of the Score are updated as we process new events e.g. trackers
+ * Each Site creates its own Grade instance. The attributes
+ * of the Grade are updated as we process new events e.g. trackers
  * blocked or https status.
  *
- * The Score attributes are then used generate a site
- * privacy score used in the popup.
+ * The Grade attributes are then used generate a site
+ * privacy grade used in the popup.
  */
 const settings = require('../settings.es6')
 const utils = require('../utils.es6')
@@ -18,7 +18,7 @@ class Site {
         if (domain) domain = domain.toLowerCase()
         this.domain = domain
         this.trackerUrls = []
-        this.score = new Grade()
+        this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain)
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
@@ -30,10 +30,10 @@ class Site {
         this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
 
         if (this.parentEntity && this.parentPrevalence) {
-            this.score.setParentEntity(this.parentEntity, this.parentPrevalence)
+            this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.score.setPrivacyScore(privacyPractices.getTosdrScore(domain))
+        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain))
 
         // set isSpecialDomain when the site is created. This value may be
         // updated later by the onComplete listener
@@ -83,9 +83,9 @@ class Site {
             this.trackerUrls.push(tracker.url)
 
             if (tracker.block) {
-                this.score.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
+                this.grade.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
             } else {
-                this.score.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
+                this.grade.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
             }
         }
     }

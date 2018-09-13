@@ -81,7 +81,7 @@ class TabManager {
 
                 /**
                  * Re: HTTPS. When the tab finishes loading:
-                 * 1. check main_frame url (via tab.url) for http/s, update site score
+                 * 1. check main_frame url (via tab.url) for http/s, update site grade
                  * 2. check for incomplete upgraded https upgrade requests, whitelist
                  * the entire site if there are any then notify tabManager
                  * NOTE: we aren't making a distinction between active and passive
@@ -89,9 +89,9 @@ class TabManager {
                  */
                 if (tab.status === 'complete') {
                     if (tab.url && tab.url.match(/^https:\/\//)) {
-                        tab.site.score.setHttps(true, true)
+                        tab.site.grade.setHttps(true, true)
                     }
-                    console.info(tab.site.score)
+                    console.info(tab.site.grade)
                     tab.updateBadgeIcon()
 
                     if (tab.statusCode === 200 &&
