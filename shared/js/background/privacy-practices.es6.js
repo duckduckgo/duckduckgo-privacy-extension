@@ -102,6 +102,11 @@ class PrivacyPractices {
 
         // grab the first available val
         // starting with most general first
+
+        // minor potential for an edge case:
+        // foo.bar.com and bar.com have entries in tosdr.json
+        // and different scores - should they propagate
+        // the same way parent entity ones do?
         const score = [
             tosdrScores[parent],
             tosdrScores[domain],
