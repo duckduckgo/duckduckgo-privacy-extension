@@ -113,7 +113,6 @@ function combineWithTrackers (rulesToAdd) {
                 if (!trackers[c][host][program.ruleType]) {
                     trackers[c][host][program.ruleType] = rulesToAdd[host][program.ruleType]
                 } else {
-                    // or we have to find duplicate rules and merge them
                     trackers[c][host][program.ruleType] = mergeTrackerEntry(
                         rulesToAdd[host][program.ruleType], 
                         trackers[c][host][program.ruleType]
@@ -128,7 +127,7 @@ function combineWithTrackers (rulesToAdd) {
         }
     })
 
-    console.log(`\nAdded ${filterStats.added.count} new rules. Skipped ${filterStats.unmatched.count} filters for sites we don't block\n`)
+    console.log(`\nAdded ${filterStats.added ? filterStats.added.count : 0} new rules. Skipped ${filterStats.unmatched ? filterStats.unmatched.count : 0} filters for sites we don't block\n`)
     fs.writeFileSync('new-trackersWithParentCompany.json', JSON.stringify(trackers, null, 4))
     console.log("Wrote new trackers file to: new-trackersWithParentCompany.json")
     fs.writeFileSync('unMatchedRules.json', JSON.stringify(unMatchedRules, null, 4))
@@ -138,31 +137,33 @@ function combineWithTrackers (rulesToAdd) {
 }
 
 // merge rule lists for a single tracker
-function mergeTrackerEntry (a, b) {
-    let newRules = []
-    let oldUnmatchedRules = []
+function mergeTrackerEntry (newRules, existingRules) {
+    let result = []
+    let mergedRuleKeys = {}
 
     // loop through 'a', then look for a matching rule in 'b'. If a match is found, merge, otherwise
     // just use the new 'a' rule
-    a.forEach(aRule => {
+    newRules.forEach(newRule => {
         let combined
-
-        b.forEach(bRule => {
-            if (aRule.rule === bRule.rule) {
-                combined = merge(aRule, bRule, { arrayMerge: (b,c) => _.union(b,c) })
-            } else {
-                oldUnmatchedRules.push(bRule)
+        existingRules.some(oldRule => {
+            if (newRule.rule === oldRule.rule) {
+                mergedRuleKeys[oldRule.rule] = 1
+                return combined = merge(newRule, oldRule, { arrayMerge: (b,c) => _.union(b,c) })
             }
         })
-
-        // add either the combined rule or the new 'a' rule
-        combined ? newRules.push(combined) : newRules.push(aRule)
-
+        // add either the combined rule or the new rule
+        combined ? result.push(combined) : result.push(newRule)
     })
 
-    // combine any non-matched old 'b' rules. The result here should be a new array with 
-    // new 'a' rules, merged a,b matches, and old unmatched 'b' rules
-    return newRules.concat(oldUnmatchedRules)
+    // loop through the old rule list and find old rules that we didn't merge above. 
+    // these need to be added to the list so that we keep all the old rules too.
+    existingRules.forEach(r => {
+        if (!mergedRuleKeys[r.rule]) {
+            result.push(r)
+        }
+    })
+
+    return result
 }
 
 function parseFilter (filter) {
