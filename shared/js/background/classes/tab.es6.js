@@ -37,9 +37,9 @@ class Tab {
         this.url = tabData.url
         this.upgradedHttps = false
         this.requestId = tabData.requestId
+        this.parentEntity = utils.findParent(tabData.url)
         this.status = tabData.status
         this.site = new Site(utils.extractHostFromURL(tabData.url))
-        this.parentEntity = utils.findParent(this.site.domain)
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {

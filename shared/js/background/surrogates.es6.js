@@ -66,7 +66,11 @@ class Surrogates {
         filename = filename.split('?')[0]
         // concat with domain to match the original rule:
         let ruleToMatch = parsedUrl.domain + '/' + filename
-        return surrogateList[ruleToMatch]
+
+        let surrogate = surrogateList[ruleToMatch]
+
+        if (surrogate) console.log(`Serving surrogate for ${url}`)
+        return surrogate
     }
 }
 
