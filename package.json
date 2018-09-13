@@ -1,11 +1,12 @@
 {
   "name": "duckduckgo-privacy-extension",
   "engines": {
-    "node": ">=10.8.0"
+    "node": ">=6.2.2"
   },
   "repository": "duckduckgo/duckduckgo-privacy-extension",
   "scripts": {
-    "postinstall": "export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+    "abp": "cd node_modules/abp-filter-parser && npm install",
+    "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
     "update:tldjs": "npm install --tldjs-update-rules",
     "update": "npm run update:tldjs",
     "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
@@ -57,16 +58,16 @@
     "request-promise-native": "^1.0.5",
     "selenium-webdriver": "3.0.1",
     "standard": "10.0.3",
-    "timekeeper": "2.1.1"
+    "timekeeper": "^2.1.1"
   },
   "dependencies": {
     "privacy-grade": "https://github.com/duckduckgo/privacy-grade#master",
+    "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git#0.2.0",
     "bel": "4.6.0",
     "chalk": "2.1.0",
     "change-case": "3.0.1",
     "commander": "2.11.0",
     "deep-freeze": "0.0.1",
-    "deepmerge": "2.1.1",
     "dexie": "2.0.4",
     "eventemitter2": "4.1.0",
     "file-url": "2.0.2",
@@ -78,7 +79,6 @@
     "opn": "5.1.0",
     "parse-link-header": "1.0.0",
     "psl": "1.1.18",
-    "randexp": "0.5.3",
     "runtimer": "1.0.3",
     "tabular-json": "0.1.3",
     "tldjs": "2.2.0",

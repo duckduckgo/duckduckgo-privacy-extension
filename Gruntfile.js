@@ -156,7 +156,7 @@ module.exports = function(grunt) {
                 src: ['scripts/buildEntityMap.js']
             },
             tosdr: {
-                src: ['scripts/tosdr.js']
+                src: []//'scripts/tosdr.js']
             }
         },
 

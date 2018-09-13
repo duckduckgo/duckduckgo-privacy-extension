@@ -37,7 +37,7 @@ class PrivacyPractices {
                 //
                 // basically, a parent entity's privacy score is as bad as
                 // that of the worst site it owns
-                const parentEntity = utils.findParent(site)
+                const parentEntity = utils.findParent(site.split('.'))
 
                 if (parentEntity && (!tosdrScores[parentEntity] || tosdrScores[parentEntity] < score)) {
                     tosdrScores[parentEntity] = score
