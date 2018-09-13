@@ -6,8 +6,10 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 // for now we consider tracker networks found on more than 7% of sites
 // as "major"
+const MAJOR_TRACKER_THRESHOLD_PCT = 7
+
 const majorTrackingNetworks = Object.keys(trackerPrevalence)
-    .filter(t => trackerPrevalence[t] >= 7)
+    .filter(t => trackerPrevalence[t] >= MAJOR_TRACKER_THRESHOLD_PCT)
     // lowercase them cause we only use them for comparing
     .map(t => t.toLowerCase())
 
@@ -48,7 +50,7 @@ Site.prototype = window.$.extend({},
                         this.domain = tab.site.domain
                         this.fetchSiteRating()
                         this.set('tosdr', tab.site.tosdr)
-                        this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= 7)
+                        this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
                     } else {
                         console.debug('Site model: no tab')
                     }
