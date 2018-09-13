@@ -120,8 +120,6 @@ describe('isaMajorNetwork', () => {
 
             let result = score.isaMajorTrackingNetwork
 
-            console.log(`IS major network: ${result}`)
-
             if (test.isZeroResult) {
                 expect(result).toEqual(0)
             } else {
