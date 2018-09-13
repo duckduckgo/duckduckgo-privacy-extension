@@ -1,9 +1,11 @@
 const HttpsRedirects = require('../../../shared/js/background/classes/https-redirects.es6')
 const tk = require('timekeeper')
+const pixel = require('../../../shared/js/background/pixel.es6')
 let httpsRedirects
 
 const setup = () => {
     httpsRedirects = new HttpsRedirects()
+    spyOn(pixel, 'fire')
 }
 
 const teardown = () => {
