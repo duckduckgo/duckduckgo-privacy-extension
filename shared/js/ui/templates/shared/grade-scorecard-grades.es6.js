@@ -13,8 +13,8 @@ function getGrades (rating, isWhitelisted) {
 
     // transform site ratings into grades
     // that the template can display more easily
-    const before = rating.displayBefore
-    const after = rating.displayAfter
+    const before = rating.cssBefore
+    const after = rating.cssAfter
 
     let grades = []
 

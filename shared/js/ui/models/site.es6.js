@@ -135,8 +135,8 @@ Site.prototype = window.$.extend({},
 
                     if (after !== this.siteRating.after) {
                         const newSiteRating = {
-                            displayBefore: before.replace('+', '-plus').toLowerCase(),
-                            displayAfter: after.replace('+', '-plus').toLowerCase(),
+                            cssBefore: before.replace('+', '-plus').toLowerCase(),
+                            cssAfter: after.replace('+', '-plus').toLowerCase(),
                             before,
                             after
                         }
