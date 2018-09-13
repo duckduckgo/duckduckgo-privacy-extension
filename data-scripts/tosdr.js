@@ -73,16 +73,16 @@ function getSitePoints (sites) {
             points.match.bad = points.all.bad
         }
 
-        if (points.class === 'A' || points.class === 'B' || points.score) {
+        if (points.class || points.score) {
             let normalizedScore = 5
 
             if (points.class === 'A') {
                 normalizedScore = 0
             } else if (points.class === 'B') {
                 normalizedScore = 1
-            } else if (points.score > 150) {
+            } else if (points.class === 'D' || points.score > 150) {
                 normalizedScore = 10
-            } else if (points.score > 100) {
+            } else if (points.class === 'C' || points.score > 100) {
                 normalizedScore = 7
             }
 
