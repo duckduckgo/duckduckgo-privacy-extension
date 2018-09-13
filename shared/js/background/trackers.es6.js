@@ -287,7 +287,7 @@ function getParentEntity (urlToCheck) {
 
 function getTrackerDetails (trackerUrl, listName) {
     let host = utils.extractHostFromURL(trackerUrl)
-    let parentCompany = utils.findParent(host.split('.')) || 'unknown'
+    let parentCompany = utils.findParent(host) || 'unknown'
     return {
         parentCompany: parentCompany,
         url: host,

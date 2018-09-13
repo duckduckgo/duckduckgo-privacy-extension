@@ -5,7 +5,7 @@ const isaMajorNetworkTestCases = [
     {
         'specialPage': 0,
         'domain': 'facebook.com',
-        'slicedDomain': ['facebook', 'com'],
+        'callWith': 'facebook.com',
         'parent': 'Facebook',
         'isZeroResult': 0,
         'descr': 'a number greater than zero for Facebook (major network)'
@@ -13,7 +13,7 @@ const isaMajorNetworkTestCases = [
     {
         'specialPage': 0,
         'domain': 'encrypted.google.com',
-        'slicedDomain': ['google', 'com'],
+        'callWith': 'google.com',
         'parent': 'Google',
         'isZeroResult': 0,
         'descr': 'a number greater than zero for Google (major network)'
@@ -21,7 +21,7 @@ const isaMajorNetworkTestCases = [
     {
         'specialPage': 0,
         'domain': '',
-        'slicedDomain': [],
+        'callWith': '',
         'parent': '',
         'isZeroResult': 1,
         'descr': 'zero, because we have no domain'
@@ -29,7 +29,7 @@ const isaMajorNetworkTestCases = [
     {
         'specialPage': 1,
         'domain': '',
-        'slicedDomain': [],
+        'callWith': '',
         'parent': '',
         'isZeroResult': 1,
         'descr': "zero, because it's a special page"
@@ -37,7 +37,7 @@ const isaMajorNetworkTestCases = [
     {
         'specialPage': 0,
         'domain': 'duckduckgo.com',
-        'slicedDomain': ['duckduckgo', 'com'],
+        'callWith': 'duckduckgo.com',
         'parent': '',
         'isZeroResult': 1,
         'descr': 'zero, because of no major network parent'
@@ -45,7 +45,7 @@ const isaMajorNetworkTestCases = [
     {
         'specialPage': 0,
         'domain': 'bttf.duckduckgo.com',
-        'slicedDomain': ['duckduckgo', 'com'],
+        'callWith': 'duckduckgo.com',
         'parent': '',
         'isZeroResult': 1,
         'descr': 'zero, because of no major network parent'
@@ -115,10 +115,12 @@ describe('isaMajorNetwork', () => {
             score = new Score(test.specialPage, test.domain)
 
             if (test.parent) {
-                expect(utils.findParent).toHaveBeenCalledWith(test.slicedDomain)
+                expect(utils.findParent).toHaveBeenCalledWith(test.callWith)
             }
 
             let result = score.isaMajorTrackingNetwork
+
+            console.log(`IS major network: ${result}`)
 
             if (test.isZeroResult) {
                 expect(result).toEqual(0)
