@@ -194,7 +194,7 @@ function getReturnTrackerObj (tracker, request, reason) {
     let fullURL = request.url ? request.url : request
     return {
         parentCompany: tracker.data.c,
-        prevalence: prevalence[tracker.data.c],
+        prevalence: prevalence[tracker.data.c] || 0,
         url: utils.extractHostFromURL(fullURL),
         type: tracker.type,
         block: tracker.block,
