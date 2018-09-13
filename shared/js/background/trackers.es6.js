@@ -239,7 +239,29 @@ function getCommonParentEntity (currLocation, urlToCheck) {
     return false
 }
 
+/*
+ * If element hiding is enabled on current domain, send messages
+ * to content scripts to start the process of hiding blocked ads
+ */
+function tryElementHide (requestData, tab) {
+    if (tab.parentEntity === 'Oath') {
+        let frameId, messageType
+        if (requestData.type === 'sub_frame') {
+            frameId = requestData.parentFrameId
+            messageType = frameId === 0 ? 'blockedFrame' : 'blockedFrameAsset'
+        } else if (requestData.frameId !== 0 && (requestData.type === 'image' || requestData.type === 'script')) {
+            frameId = requestData.frameId
+            messageType = 'blockedFrameAsset'
+        }
+        chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url}, {frameId: frameId})
+    } else if (!tab.elementHidingDisabled) {
+        chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
+        tab.elementHidingDisabled = true
+    }
+}
+
 module.exports = {
     isTracker: isTracker,
-    loadLists: loadLists
+    loadLists: loadLists,
+    tryElementHide: tryElementHide
 }

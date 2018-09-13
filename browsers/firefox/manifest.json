@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2018.8.9",
+    "version": "2018.9.5",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -52,6 +52,7 @@
           "http://*/*",
           "https://*/*"
         ],
+        "match_about_blank": true,
         "all_frames": true,
         "run_at": "document_start"
       }
