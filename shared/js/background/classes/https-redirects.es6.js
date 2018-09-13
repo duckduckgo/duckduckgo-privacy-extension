@@ -1,4 +1,5 @@
 const utils = require('../utils.es6')
+const pixel = require('../pixel.es6')
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
@@ -64,6 +65,10 @@ class HttpsRedirects {
 
         // remember this hostname as previously failed, don't try to upgrade it
         if (!canRedirect) {
+            if (request.type === 'main_frame') {
+                pixel.fire('ehd')
+            }
+
             this.failedUpgradeHosts[hostname] = true
             console.log(`HTTPS: not upgrading, redirect loop protection kicked in for url: ${request.url}`)
         }
