@@ -313,7 +313,7 @@ function checkABPParsedList (list, url, siteDomain, request) {
  *   * to content scripts to start the process of hiding blocked ads
  *    */
 function tryElementHide (requestData, tab) {
-    if (tab.parentEntity === 'Oath') {
+    if (tab.site.parentEntity === 'Oath') {
         let frameId, messageType
         if (requestData.type === 'sub_frame') {
             frameId = requestData.parentFrameId
