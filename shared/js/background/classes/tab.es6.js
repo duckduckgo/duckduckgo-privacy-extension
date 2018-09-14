@@ -115,15 +115,6 @@ class Tab {
         }
     };
 
-    addBlockedAsset (url, type) {
-        this.blockedAssets.push({url, type})
-    };
-
-    // return list of asset urls of specific type
-    getBlockedAssets (types) {
-        return this.blockedAssets.filter(asset => types.includes(asset.type)).map(asset => asset.url)
-    };
-
     endStopwatch () {
         this.stopwatch.end = Date.now()
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
