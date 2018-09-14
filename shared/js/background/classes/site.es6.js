@@ -10,7 +10,7 @@ const settings = require('../settings.es6')
 const utils = require('../utils.es6')
 const abpLists = require('../abp-lists.es6')
 const privacyPractices = require('../privacy-practices.es6')
-const Grade = require('privacy-grade').Grade
+const Grade = require('@duckduckgo/privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 
 class Site {
