@@ -4,7 +4,11 @@ const harness = require('../helpers/harness')
 const tests = [
     { url: 'duckduckgo.com', siteGrade: 'A', enhancedGrade: 'A' },
     { url: 'theguardian.com', siteGrade: 'D-', enhancedGrade: 'B+' },
-    { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' }
+    { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' },
+    { url: 'amazon.com', siteGrade: 'D-', enhancedGrade: 'C+' },
+    { url: 'facebook.com', siteGrade: ['D','C+'], enhancedGrade: 'C+' },
+    { url: 'twitter.com', siteGrade: 'C', enhancedGrade: 'B' },
+    { url: 'en.wikipedia.org', siteGrade: 'B+', enhancedGrade: 'B+' }
 ]
 
 let browser
@@ -27,6 +31,16 @@ const getGradeByUrl = (url) => {
     })
 
     return tab.site.grade.get()
+}
+
+// allow a flexible range defined via an array,
+// e.g. if the site serves a variable number of trackers
+const checkGrade = (result, expected) => {
+    if (expected instanceof Array) {
+        expect(expected).toContain(result)
+    } else {
+        expect(result).toEqual(expected)
+    }
 }
 
 describe('grade sanity checks', () => {
@@ -59,8 +73,8 @@ describe('grade sanity checks', () => {
 
             const grades = await bgPage.evaluate(getGradeByUrl, test.url)
 
-            expect(grades.site.grade).toEqual(test.siteGrade)
-            expect(grades.enhanced.grade).toEqual(test.enhancedGrade)
+            checkGrade(grades.site.grade, test.siteGrade)
+            checkGrade(grades.enhanced.grade, test.enhancedGrade)
 
             await page.close()
         })
