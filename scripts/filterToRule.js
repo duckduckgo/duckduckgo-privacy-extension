@@ -148,6 +148,15 @@ function mergeTrackerEntry (newRules, existingRules) {
         existingRules.some(oldRule => {
             if (newRule.rule === oldRule.rule) {
                 mergedRuleKeys[oldRule.rule] = 1
+
+                // there can be cases where an existing url has domain options but the new rule doesn't. In this
+                // case we assume that the new rule is meant to replace the old rule domains. Print out a log just incase this isn't intended 
+                if ((oldRule.options && oldRule.options.domains)
+                    && !(newRule.options && newRule.options.domains)) {
+                        console.log(`New rule overrides domains optons for existing rule: ${JSON.stringify(oldRule)}`)
+                        return combined = newRule
+                }
+
                 return combined = merge(newRule, oldRule, { arrayMerge: (b,c) => _.union(b,c) })
             }
         })
