@@ -64,7 +64,7 @@ describe('grade sanity checks', () => {
             await page.setUserAgent(ua.replace(/Headless /, ''))
 
             try {
-                await page.goto(`http://${test.url}`, { waitUntil: 'networkidle2' })
+                await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
             }
