@@ -11,10 +11,12 @@ const utils = require('../shared/js/background/utils.es6')
 const RandExp = require('randexp')
 const tldjs = require('tldjs')
 const trackers = require('./../shared/data/tracker_lists/trackersWithParentCompany.json')
+const chalk = require('chalk')
 
 // store process rule regexes in key/val to look for duplicates
 let rules = {}
 let filterStats = {}
+let skipRules = {}
 
 program
     .usage("node filterToRule.js -f <filterlist> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>")
@@ -63,10 +65,27 @@ if (!(program.file && program.ruleType)) {
 
         ruleObj.tldObj = host
 
+        // check to see if we have alredy found conflicting entries for this rule
+        if (skipRules[ruleObj.rule]) {
+            chalk.red(`Skipping conflicting rules for ${f}, see README: conflicting rules`)
+            return
+        }
+
         // add to rules or merge duplicates
         if (!rules[ruleObj.rule]) {
             rules[ruleObj.rule] = ruleObj
         } else {
+            // before combining rules, check to make sure their options are consistent.
+            hasConflictingRules = checkConflictingRuleOptions(rules[ruleObj.rule], ruleObj)
+            if (hasConflictingRules) {
+                console.log(chalk.red(`Skipping conflicting rules for ${f}, see README: conflicting rules`))
+
+                // add this rule to skipRules and delete the entry so that we don't add it to the final output.
+                skipRules[ruleObj.rule] = 1
+                delete rules[ruleObj.rule]
+                return
+            }
+
             // merge and combine unique array elements
             rules[ruleObj.rule] = merge(
                 rules[ruleObj.rule], 
@@ -82,6 +101,25 @@ if (!(program.file && program.ruleType)) {
 
     combineWithTrackers(groupRulesByHost(rules)) 
 })()
+
+// Check two rules to make sure they have consistent options. For example, if one rule
+// has domain options and the other doesn't then it's not clear which filter should be used. It's
+// better to manually combine these filters and rerun the script when they are correct.
+function checkConflictingRuleOptions(ruleA, ruleB) {
+    const aKeys = ruleA.options ? Object.keys(ruleA.options) : []
+    const bKeys = ruleB.options ? Object.keys(ruleB.options) : []
+
+    const diff = _.difference(aKeys,bKeys).concat(_.difference(bKeys,aKeys))
+    
+    if (diff && diff.length) {
+        printLog(`Skipping inconsistent rule options Diff: ${JSON.stringify(diff)}`)
+        printLog(`A: ${JSON.stringify(ruleA)}`)
+        printLog(`B: ${JSON.stringify(ruleB)}`)
+        return true
+    }
+
+    return false
+}
 
 // run parser against known outputs
 function runTests () {
@@ -127,7 +165,7 @@ function combineWithTrackers (rulesToAdd) {
         }
     })
 
-    console.log(`\nAdded ${filterStats.added ? filterStats.added.count : 0} new rules. Skipped ${filterStats.unmatched ? filterStats.unmatched.count : 0} filters for sites we don't block\n`)
+    console.log(chalk.green(`\nAdded ${filterStats.added ? filterStats.added.count : 0} new rules. Skipped ${filterStats.unmatched ? filterStats.unmatched.count : 0} filters for sites we don't block\n`))
     fs.writeFileSync('new-trackersWithParentCompany.json', JSON.stringify(trackers, null, 4))
     console.log("Wrote new trackers file to: new-trackersWithParentCompany.json")
     fs.writeFileSync('unMatchedRules.json', JSON.stringify(unMatchedRules, null, 4))
@@ -153,7 +191,7 @@ function mergeTrackerEntry (newRules, existingRules) {
                 // case we assume that the new rule is meant to replace the old rule domains. Print out a log just incase this isn't intended 
                 if ((oldRule.options && oldRule.options.domains)
                     && !(newRule.options && newRule.options.domains)) {
-                        console.log(`New rule overrides domains optons for existing rule: ${JSON.stringify(oldRule)}`)
+                        chalk.red(`New rule overrides domains optons for existing rule: ${JSON.stringify(oldRule)}`)
                         return combined = newRule
                 }
 
