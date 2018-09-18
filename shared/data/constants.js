@@ -1,9 +1,4 @@
 module.exports = {
-    "trackerListLoc": "data/tracker_lists",
-    "blockLists": [
-        "trackersWithParentCompany.json"
-    ],
-    "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
     "blocking": ["Advertising", "Analytics", "Social"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
@@ -55,6 +50,18 @@ module.exports = {
             "type": "whitelist",
             "name": "httpsWhitelist",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
+        }
+    ],
+    "trackersLists": [
+        {
+            "type": "tracker list",
+            "name": "trackersWithParentCompany",
+            "url": "https://jason.duckduckgo.com/contentblocking.js?l=trackers"
+        },
+        {
+            "type": "entity list",
+            "name": "entityList",
+            "url": "https://duckduckgo.com/contentblocking.js?l=entitylist2"
         }
     ]
 }

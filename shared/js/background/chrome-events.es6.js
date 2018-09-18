@@ -167,7 +167,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
 const abpLists = require('./abp-lists.es6')
 const https = require('./https.es6')
+const trackers = require('./trackers.es6')
 const httpsStorage = require('./storage/https.es6')
+const trackersStorage = require('./storage/trackers.es6')
 
 // recheck adblock plus and https lists every 30 minutes
 chrome.alarms.create('updateLists', {periodInMinutes: 30})
@@ -180,6 +182,10 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             abpLists.updateLists()
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
+                .catch(e => console.log(e))
+            
+            trackersStorage.getLists(constants.trackersLists)
+                .then(lists => trackers.setLists(lists))
                 .catch(e => console.log(e))
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
@@ -208,6 +214,10 @@ let onStartup = () => {
     settings.ready().then(() => {
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
+            .catch(e => console.log(e))
+
+        trackersStorage.getLists(constants.trackersLists)
+            .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
     })
 }

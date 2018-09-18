@@ -8,8 +8,6 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 var debugRequest = false
 
-trackers.loadLists()
-
 /**
  * Where most of the extension work happens.
  *
