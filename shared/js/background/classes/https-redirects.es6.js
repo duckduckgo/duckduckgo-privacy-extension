@@ -66,7 +66,8 @@ class HttpsRedirects {
         // remember this hostname as previously failed, don't try to upgrade it
         if (!canRedirect) {
             if (request.type === 'main_frame') {
-                pixel.fire('ehd', hostname)
+                const encodedHostname = encodeURIComponent(hostname)
+                pixel.fire('ehd', {'hostname': encodedHostname})
             }
 
             this.failedUpgradeHosts[hostname] = true
