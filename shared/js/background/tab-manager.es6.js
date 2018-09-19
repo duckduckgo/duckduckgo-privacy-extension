@@ -88,9 +88,9 @@ class TabManager {
                  * content when https content is mixed after a forced upgrade
                  */
                 if (tab.status === 'complete') {
-                    if (tab.url && tab.url.match(/^https:\/\//)) {
-                        tab.site.grade.setHttps(true, true)
-                    }
+                    const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//))
+                    tab.site.grade.setHttps(hasHttps, hasHttps)
+
                     console.info(tab.site.grade)
                     tab.updateBadgeIcon()
 

@@ -14,8 +14,12 @@ const Grade = require('@duckduckgo/privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 
 class Site {
-    constructor (domain) {
-        if (domain) domain = domain.toLowerCase()
+    constructor (url) {
+        this.url = url || ''
+
+        let domain = utils.extractHostFromURL(this.url) || ''
+        domain = domain.toLowerCase()
+
         this.domain = domain
         this.trackerUrls = []
         this.grade = new Grade()
@@ -35,8 +39,11 @@ class Site {
 
         this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain))
 
-        // set isSpecialDomain when the site is created. This value may be
-        // updated later by the onComplete listener
+        if (this.url.match(/^https:\/\//)) {
+            this.grade.setHttps(true, true)
+        }
+
+        // set isSpecialDomain when the site is created
         this.isSpecialDomain = this.specialDomain()
     }
 

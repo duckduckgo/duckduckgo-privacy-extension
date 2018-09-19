@@ -29,7 +29,6 @@ const gradeIconLocations = {
 const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
-const utils = require('../utils.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
 
@@ -42,7 +41,7 @@ class Tab {
         this.upgradedHttps = false
         this.requestId = tabData.requestId
         this.status = tabData.status
-        this.site = new Site(utils.extractHostFromURL(tabData.url))
+        this.site = new Site(this.url)
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
@@ -81,7 +80,8 @@ class Tab {
     }
 
     updateSite () {
-        this.site = new Site(utils.extractHostFromURL(this.url))
+        this.site = new Site(this.url)
+
         // reset badge to dax whenever we go to a new site
         this.resetBadgeIcon()
     };

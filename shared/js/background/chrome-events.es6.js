@@ -202,11 +202,7 @@ let onStartup = () => {
             var tab = savedTabs[i]
 
             if (tab.url) {
-                let newTab = tabManager.create(tab)
-                // check https status of saved tabs so we have the correct site grade
-                if (newTab.url.match(/^https:\/\//)) {
-                    newTab.site.grade.setHttps(true, true)
-                }
+                tabManager.create(tab)
             }
         }
     })

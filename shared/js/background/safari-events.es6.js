@@ -229,11 +229,6 @@ let onNavigate = (e) => {
     let tab = tabManager.get({tabId: tabId})
 
     if (tab) {
-        // update site https status. We should move this out
-        if (tab.url.match(/^https:\/\//)) {
-            tab.site.grade.setHttps(true, true)
-        }
-
         tab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
 
