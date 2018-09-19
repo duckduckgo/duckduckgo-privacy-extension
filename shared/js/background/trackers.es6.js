@@ -9,6 +9,7 @@ const abpLists = require('./abp-lists.es6')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
+const prevalence = require('../../data/tracker_lists/prevalence')
 
 let entityList = {}
 
@@ -100,6 +101,7 @@ function isTracker (urlToCheck, thisTab, request) {
 // add common parent info to the final tracker object returned by isTracker
 function addCommonParent (trackerObj, parentName) {
     trackerObj.parentCompany = parentName
+    trackerObj.prevalence = prevalence[parentName] || 0
     trackerObj.block = false
     trackerObj.reason = 'first party'
     return trackerObj
@@ -186,6 +188,7 @@ function checkTrackersWithParentCompany (url, siteDomain, request) {
 
         toBlock = {
             parentCompany: tracker.c,
+            prevalence: prevalence[tracker.c] || 0,
             url: utils.extractHostFromURL(request.url),
             type: trackerType,
             block: true,
@@ -290,6 +293,7 @@ function getTrackerDetails (trackerUrl, listName) {
     let parentCompany = utils.findParent(host) || 'unknown'
     return {
         parentCompany: parentCompany,
+        prevalence: prevalence[parentCompany] || 0,
         url: host,
         type: listName
     }
@@ -309,7 +313,7 @@ function checkABPParsedList (list, url, siteDomain, request) {
  *   * to content scripts to start the process of hiding blocked ads
  *    */
 function tryElementHide (requestData, tab) {
-    if (tab.parentEntity === 'Oath') {
+    if (tab.site.parentEntity === 'Oath') {
         let frameId, messageType
         if (requestData.type === 'sub_frame') {
             frameId = requestData.parentFrameId

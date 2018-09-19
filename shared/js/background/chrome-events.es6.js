@@ -145,9 +145,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     } else if (req.getTab) {
         res(tabManager.get({'tabId': req.getTab}))
         return true
-    } else if (req.getSiteScore) {
-        let tab = tabManager.get({tabId: req.getSiteScore})
-        res(tab.site.score.get())
+    } else if (req.getSiteGrade) {
+        const tab = tabManager.get({tabId: req.getSiteGrade})
+        let grade = {}
+
+        if (!tab.site.isSpecialDomain) {
+            grade = tab.site.grade.get()
+        }
+
+        res(grade)
         return true
     }
 
@@ -196,11 +202,7 @@ let onStartup = () => {
             var tab = savedTabs[i]
 
             if (tab.url) {
-                let newTab = tabManager.create(tab)
-                // check https status of saved tabs so we have the correct site score
-                if (newTab.url.match(/^https:\/\//)) {
-                    newTab.site.score.update({hasHTTPS: true})
-                }
+                tabManager.create(tab)
             }
         }
     })

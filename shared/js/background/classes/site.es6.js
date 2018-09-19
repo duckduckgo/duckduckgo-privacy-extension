@@ -1,29 +1,49 @@
 /**
- * Each Site creates its own Score instance. The attributes
- * of the Score are updated as we process new events e.g. trackers
+ * Each Site creates its own Grade instance. The attributes
+ * of the Grade are updated as we process new events e.g. trackers
  * blocked or https status.
  *
- * The Score attributes are then used generate a site
- * privacy score used in the popup.
+ * The Grade attributes are then used generate a site
+ * privacy grade used in the popup.
  */
 const settings = require('../settings.es6')
-const Score = require('./score.es6')
 const utils = require('../utils.es6')
 const abpLists = require('../abp-lists.es6')
+const privacyPractices = require('../privacy-practices.es6')
+const Grade = require('@duckduckgo/privacy-grade').Grade
+const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 
 class Site {
-    constructor (domain) {
-        if (domain) domain = domain.toLowerCase()
+    constructor (url) {
+        this.url = url || ''
+
+        let domain = utils.extractHostFromURL(this.url) || ''
+        domain = domain.toLowerCase()
+
         this.domain = domain
         this.trackerUrls = []
-        this.score = new Score(this.specialDomain(), this.domain)
+        this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.setWhitelistStatusFromGlobal(domain)
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
         this.didIncrementCompaniesData = false
 
-        // set isSpecialDomain when the site is created. This value may be
-        // updated later by the onComplete listener
+        this.tosdr = privacyPractices.getTosdr(domain)
+
+        this.parentEntity = utils.findParent(domain) || ''
+        this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
+
+        if (this.parentEntity && this.parentPrevalence) {
+            this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
+        }
+
+        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain))
+
+        if (this.url.match(/^https:\/\//)) {
+            this.grade.setHttps(true, true)
+        }
+
+        // set isSpecialDomain when the site is created
         this.isSpecialDomain = this.specialDomain()
     }
 
@@ -68,7 +88,12 @@ class Site {
     addTracker (tracker) {
         if (this.trackerUrls.indexOf(tracker.url) === -1) {
             this.trackerUrls.push(tracker.url)
-            this.score.update({trackerBlocked: tracker, totalBlocked: this.trackerUrls.length})
+
+            if (tracker.block) {
+                this.grade.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
+            } else {
+                this.grade.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
+            }
         }
     }
 

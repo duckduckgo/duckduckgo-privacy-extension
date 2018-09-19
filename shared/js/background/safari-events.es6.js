@@ -116,9 +116,9 @@ let handleUIMessage = (req, res) => {
         settings.ready().then(() => {
             res(settings.getSetting(req.getSetting.name))
         })
-    } else if (req.getSiteScore) {
-        let tab = tabManager.get({tabId: req.getSiteScore})
-        if (tab) res(tab.site.score.get())
+    } else if (req.getSiteGrade) {
+        let tab = tabManager.get({tabId: req.getSiteGrade})
+        if (tab) res(tab.site.grade.get())
     } else if (req.getTopBlockedByPages) {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
     } else if (req.resetTrackersData) {
@@ -229,11 +229,6 @@ let onNavigate = (e) => {
     let tab = tabManager.get({tabId: tabId})
 
     if (tab) {
-        // update site https status. We should move this out
-        if (tab.url.match(/^https:\/\//)) {
-            tab.site.score.update({hasHTTPS: true})
-        }
-
         tab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
 

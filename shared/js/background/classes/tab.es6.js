@@ -14,18 +14,21 @@
  *          }
  *      }
  */
-const scoreIconLocations = {
+const gradeIconLocations = {
     'A': 'img/toolbar-rating-a@2x.png',
+    'B+': 'img/toolbar-rating-b-plus@2x.png',
     'B': 'img/toolbar-rating-b@2x.png',
+    'C+': 'img/toolbar-rating-c-plus@2x.png',
     'C': 'img/toolbar-rating-c@2x.png',
     'D': 'img/toolbar-rating-d@2x.png',
+    // we don't currently show the D- grade
+    'D-': 'img/toolbar-rating-d@2x.png',
     'F': 'img/toolbar-rating-f@2x.png'
 }
 
 const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
-const utils = require('../utils.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
 
@@ -38,8 +41,7 @@ class Tab {
         this.upgradedHttps = false
         this.requestId = tabData.requestId
         this.status = tabData.status
-        this.site = new Site(utils.extractHostFromURL(tabData.url))
-        this.parentEntity = utils.findParent(this.site.domain)
+        this.site = new Site(this.url)
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
@@ -47,33 +49,41 @@ class Tab {
             end: null,
             completeMs: null
         }
-        // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: tabData.tabId})
+        this.resetBadgeIcon()
     };
+
+    resetBadgeIcon () {
+        // set the new tab icon to the dax logo
+        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
+    }
 
     updateBadgeIcon (target) {
-        if (!this.site.specialDomain()) {
-            if (this.site.isBroken) {
-                browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
-            } else {
-                let scoreIcon
-                if (this.site.whitelisted) {
-                    scoreIcon = scoreIconLocations[this.site.score.get().before]
-                } else {
-                    scoreIcon = scoreIconLocations[this.site.score.get().after]
-                }
-                let badgeData = {path: scoreIcon, tabId: this.id}
-                if (target) badgeData.target = target
+        if (this.site.specialDomain()) return
 
-                browserWrapper.setBadgeIcon(badgeData)
+        if (this.site.isBroken) {
+            this.resetBadgeIcon()
+        } else {
+            let gradeIcon
+            let grade = this.site.grade.get()
+
+            if (this.site.whitelisted) {
+                gradeIcon = gradeIconLocations[grade.site.grade]
+            } else {
+                gradeIcon = gradeIconLocations[grade.enhanced.grade]
             }
+
+            let badgeData = {path: gradeIcon, tabId: this.id}
+            if (target) badgeData.target = target
+
+            browserWrapper.setBadgeIcon(badgeData)
         }
-    };
+    }
 
     updateSite () {
-        this.site = new Site(utils.extractHostFromURL(this.url))
+        this.site = new Site(this.url)
+
         // reset badge to dax whenever we go to a new site
-        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
+        this.resetBadgeIcon()
     };
 
     // Store all trackers for a given tab even if we don't block them.
@@ -104,11 +114,6 @@ class Tab {
             return newTracker
         }
     };
-
-    checkHttpsRequestsOnComplete () {
-        // TODO later: watch all requests for http/https status and
-        // report mixed content
-    }
 
     endStopwatch () {
         this.stopwatch.end = Date.now()

@@ -77,9 +77,10 @@ TrackerNetworks.prototype = window.$.extend({},
 
         _rerender: function (e) {
             if (e && e.change) {
-                if (e.change.attribute === 'isPartOfMajorTrackingNetwork' ||
-            e.change.attribute === 'isWhitelisted' ||
-            e.change.attribute === 'totalTrackerNetworksCount') {
+                if (e.change.attribute === 'isaMajorTrackingNetwork' ||
+                    e.change.attribute === 'isWhitelisted' ||
+                    e.change.attribute === 'totalTrackerNetworksCount' ||
+                    e.change.attribute === 'siteRating') {
                     this._renderHeroTemplate()
                     this.unbindEvents()
                     this.setup()
