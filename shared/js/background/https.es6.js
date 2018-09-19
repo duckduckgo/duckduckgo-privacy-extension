@@ -95,6 +95,52 @@ class HTTPS {
         // If it falls to here, default to reqUrl
         return reqUrl
     }
+
+    setUpgradeInsecureRequestHeader (request) {
+        // Only set headers on main frame when page is served over https
+        if (request.type === 'main_frame' && request.url && request.url.indexOf('https://') === 0) {
+            let headersChanged = false
+            let cspHeaderExists = false
+
+            for (const header in request.responseHeaders) {
+                // If CSP header exists and doesn't include upgrade-insecure-request
+                // directive, append it.
+                if (request.responseHeaders[header].name.match(/Content-Security-Policy/i)) {
+                    cspHeaderExists = true
+                    const cspValue = request.responseHeaders[header].value
+
+                    if (!cspValue.match(/upgrade-insecure-requests/i)) {
+                        request.responseHeaders[header].value = 'upgrade-insecure-requests; ' + cspValue
+                        headersChanged = true
+                    }
+                }
+                // Make sure to tweak header to allow https resources if site has
+                // Access-Control-Allow-Origin header
+                if (request.responseHeaders[header].name.match(/Access-Control-Allow-Origin/i)) {
+                    const accessControlValue = request.responseHeaders[header].value
+
+                    if (accessControlValue.match(/http:/)) {
+                        request.responseHeaders[header].value = accessControlValue.replace(/http:/g, 'https:')
+                        headersChanged = true
+                    }
+                }
+            }
+            // If no CSP header, add one
+            if (!cspHeaderExists) {
+                const upgradeInsecureRequests = {
+                    name: 'Content-Security-Policy',
+                    value: 'upgrade-insecure-requests'
+                }
+                request.responseHeaders.push(upgradeInsecureRequests)
+                headersChanged = true
+            }
+            // If headers altered at all, return new headers
+            if (headersChanged) {
+                return {responseHeaders: request.responseHeaders}
+            }
+        }
+        return {}
+    }
 }
 
 module.exports = new HTTPS()

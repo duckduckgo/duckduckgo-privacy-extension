@@ -21,6 +21,7 @@ const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
+const https = require('./https.es6')
 
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
@@ -45,6 +46,14 @@ chrome.webRequest.onHeadersReceived.addListener(
     {
         urls: ['<all_urls>']
     }
+)
+
+chrome.webRequest.onHeadersReceived.addListener(
+    https.setUpgradeInsecureRequestHeader,
+    {
+        urls: ['<all_urls>']
+    },
+    ['blocking', 'responseHeaders']
 )
 
 /**
@@ -166,7 +175,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 
 const abpLists = require('./abp-lists.es6')
-const https = require('./https.es6')
 const httpsStorage = require('./storage/https.es6')
 
 // recheck adblock plus and https lists every 30 minutes
