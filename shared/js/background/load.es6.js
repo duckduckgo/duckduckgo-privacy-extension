@@ -15,7 +15,7 @@ function url (url) {
 }
 
 function returnResponse (xhr, returnType) {
-    if (returnType === 'json') {
+    if (returnType === 'json' && xhr && xhr.responseText) {
         let res
 
         try {
@@ -78,7 +78,7 @@ function loadExtensionFile (params) {
             if (xhr.readyState === done) {
                 if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
                     xhr.data = returnResponse(xhr, params.returnType)
-                    resolve(xhr)
+                    if (!xhr.data) reject(new Error(`${url} returned no data`))
                 } else if (xhr.status === 304) {
                     console.log(`${url} returned 304, resource not changed`)
                     resolve(xhr)
