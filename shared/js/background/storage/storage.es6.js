@@ -11,6 +11,7 @@ class Storage {
         const dataType = {}
         dataType[ops.tableName] = 'name,type,data,checksum'
         this.dbc.version(1).stores(dataType)
+        this.validateChecksum = ops.validateChecksum || ''
     }
 
     getLists (lists) {
@@ -53,7 +54,7 @@ class Storage {
     // verify the checksum before returning the processData result
     processData (listDetails, xhrData) {
         if (xhrData) {
-            return this.hasCorrectChecksum(xhrData).then((isValid) => {
+            return this.hasCorrectChecksum(xhrData, listDetails).then((isValid) => {
                 if (isValid) {
                     this.storeInLocalDB(listDetails.name, listDetails.type, xhrData)
                     return Object.assign(listDetails, xhrData)
@@ -68,7 +69,7 @@ class Storage {
         return this.getDataFromLocalDB(listDetails.name).then(storedData => {
             if (!storedData) return
 
-            return this.hasCorrectChecksum(storedData.data).then((isValid) => {
+            return this.hasCorrectChecksum(storedData.data, listDetails).then((isValid) => {
                 if (isValid) {
                     if (storedData && storedData.data) {
                         return Object.assign(listDetails, storedData.data)
@@ -93,8 +94,13 @@ class Storage {
         return this.dbc[this.tableName].put({name: name, type: type, data: data})
     }
 
-    hasCorrectChecksum (data, fn) {
-        return Promise.resolve(true)
+    // caller can pass data and a function for validating the checksum otherwise just resolve
+    hasCorrectChecksum (data, listDetails) {
+        if (!(data && this.validateChecksum)) {
+            return Promise.resolve(true)
+        } else {
+            return Promise.resolve(this.validateChecksum(data, listDetails))
+        }
     }
 }
 

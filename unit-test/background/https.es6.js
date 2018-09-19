@@ -4,12 +4,13 @@ const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
 const load = require('./../helpers/https.es6')
+const constants = require('./../../shared/data/constants.js')
 
 describe('Https upgrades', () => {
     beforeAll(() => {
         load.loadStub({httpsBloom: httpsBloom, httpsWhitelist: httpsWhitelist})
 
-        return httpsStorage.getLists()
+        return httpsStorage.getLists(constants.httpsLists)
             .then(lists => {
                 return https.setLists(lists)
             })

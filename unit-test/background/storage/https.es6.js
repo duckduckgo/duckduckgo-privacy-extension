@@ -2,6 +2,8 @@ const httpsStorage = require('../../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../../data/httpsBloom.json')
 const httpsWhitelist = require('./../../data/httpsWhitelist.json')
 const load = require('./../../helpers/https.es6.js')
+const constants = require('./../../../shared/data/constants.js')
+const Storage = require('../../../shared/js/background/storage/storage.es6')
 
 describe('Https storage normal update', () => {
     beforeAll(() => {
@@ -9,7 +11,7 @@ describe('Https storage normal update', () => {
     })
 
     it('should have list data', () => {
-        return httpsStorage.getLists().then(lists => {
+        return httpsStorage.getLists(constants.httpsLists).then(lists => {
             expect(!!lists.length).toEqual(true)
         })
     })
@@ -17,34 +19,23 @@ describe('Https storage normal update', () => {
 
 // Set a bad checksum in one of the https lists and try to call setLists
 describe('Https storage bad xhr update', () => {
-    let dbStub = {}
-
-    beforeEach(() => {
-        let badBloom = JSON.parse(JSON.stringify(httpsBloom))
-        badBloom.checksum.sha256 = 'badchecksum'
-        load.loadStub({httpsBloom: badBloom, httpsWhitelist: httpsWhitelist})
-
-        // stub for db storage
-        spyOn(httpsStorage, 'storeInLocalDB').and.callFake((name, type, data) => {
-            dbStub[name] = JSON.parse(JSON.stringify(data))
-        })
-        spyOn(httpsStorage, 'getDataFromLocalDB').and.callFake((name) => {
-            let val = dbStub[name]
-            if (val) {
-                return Promise.resolve({data: val})
-            } else {
-                return Promise.resolve(false)
-            }
-        })
-    })
 
     describe('no db fallback data', () => {
+        let dbStub = {}
+
         beforeAll(() => {
-            dbStub = {}
+            spyOn(httpsStorage.storage, 'getDataFromLocalDB').and.callFake((name) => {
+                let val = dbStub[name]
+                if (val) {
+                    return Promise.resolve({data: val})
+                } else {
+                    return Promise.resolve(false)
+                }
+            })
         })
 
         it('should fail if there is no db fallback', () => {
-            return httpsStorage.getLists().then(lists => {
+            return httpsStorage.getLists(constants.httpsLists).then(lists => {
                 // this should never resolve
                 expect(true).toEqual(false)
             }).catch(e => {
@@ -56,14 +47,16 @@ describe('Https storage bad xhr update', () => {
 
     describe('has fallback db data', () => {
         beforeAll(() => {
-            dbStub = {}
+            // set some good data in local db for us to fall back to
+            httpsStorage.storage.storeInLocalDB('httpsUpgradeList', 'upgrade list', httpsBloom)
+            // try to update with a bad checksum
+            let badBloom = JSON.parse(JSON.stringify(httpsBloom))
+            badBloom.checksum.sha256 = 'badchecksum'
+            load.loadStub({httpsBloom: badBloom, httpsWhitelist: httpsWhitelist})
         })
 
         it('should have list data', () => {
-            // set some good data in local db
-            httpsStorage.storeInLocalDB('httpsUpgradeList', 'upgrade list', httpsBloom)
-
-            return httpsStorage.getLists().then(lists => {
+            return httpsStorage.getLists(constants.httpsLists).then(lists => {
                 expect(!!lists.length).toEqual(true)
                 // we should get the check sum from the good list back
                 expect(lists[0].checksum.sha256).toEqual(httpsBloom.checksum.sha256)
@@ -71,3 +64,4 @@ describe('Https storage bad xhr update', () => {
         })
     })
 })
+

@@ -39,7 +39,6 @@ module.exports = {
         "maxcdn": 7,
         "automattic": 7
     },
-    "httpsDBName": "https",
     "httpsLists": [
         {
             "type": "upgrade list",
