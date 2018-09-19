@@ -1,7 +1,7 @@
 const httpsStorage = require('../../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../../data/httpsBloom.json')
 const httpsWhitelist = require('./../../data/httpsWhitelist.json')
-const load = require('./../../helpers/https.es6.js')
+const load = require('./../../helpers/load.es6.js')
 const constants = require('./../../../shared/data/constants.js')
 const Storage = require('../../../shared/js/background/storage/storage.es6')
 

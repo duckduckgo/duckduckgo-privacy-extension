@@ -1,0 +1,11 @@
+{
+    "basicBlocking": [
+        { "url": "https://doubleclick.net", "block": true},
+        { "url": "https://duckduckgo.com", "block": false},
+        { "url": "https://developers.google.com", "block": true},
+        { "url": "https://x.y.z.doubleclick.net", "block": true},
+        { "url": "https://foo_bar.duckduckgo.com", "block": false},
+        { "url": "https://foo_bar.doubleclick.net", "block": true},
+        { "url": "sdfsdfs", "block": false}
+    ]
+}

@@ -3,7 +3,7 @@ const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
-const load = require('./../helpers/https.es6')
+const load = require('./../helpers/load.es6')
 const constants = require('./../../shared/data/constants.js')
 
 describe('Https upgrades', () => {
