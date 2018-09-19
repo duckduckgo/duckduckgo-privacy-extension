@@ -120,8 +120,7 @@ Site.prototype = window.$.extend({},
         update: function (ops) {
             // console.log('[model] update()')
             if (this.tab) {
-                // got siteRating back fr/ background process,
-                // 'after' rating changed, template needs re-render
+                // got siteRating back from background process
                 if (ops &&
                         ops.siteRating &&
                         ops.siteRating.site &&
@@ -133,7 +132,8 @@ Site.prototype = window.$.extend({},
                     if (before === 'D-') before = 'D'
                     if (after === 'D-') after = 'D'
 
-                    if (after !== this.siteRating.after) {
+                    if (before !== this.siteRating.before ||
+                        after !== this.siteRating.after) {
                         const newSiteRating = {
                             cssBefore: before.replace('+', '-plus').toLowerCase(),
                             cssAfter: after.replace('+', '-plus').toLowerCase(),
@@ -146,8 +146,7 @@ Site.prototype = window.$.extend({},
                             'isCalculatingSiteRating': false
                         })
                     } else if (this.isCalculatingSiteRating) {
-                        // got site rating from background process,
-                        // but no change in 'after' rating
+                        // got site rating from background process
                         this.set('isCalculatingSiteRating', false)
                     }
                 }
