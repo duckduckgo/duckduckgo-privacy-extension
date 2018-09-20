@@ -3,7 +3,6 @@ const httpsBloom = require('./../../data/httpsBloom.json')
 const httpsWhitelist = require('./../../data/httpsWhitelist.json')
 const load = require('./../../helpers/load.es6.js')
 const constants = require('./../../../shared/data/constants.js')
-const Storage = require('../../../shared/js/background/storage/storage.es6')
 
 describe('Https storage normal update', () => {
     beforeAll(() => {
@@ -19,7 +18,6 @@ describe('Https storage normal update', () => {
 
 // Set a bad checksum in one of the https lists and try to call setLists
 describe('Https storage bad xhr update', () => {
-
     describe('no db fallback data', () => {
         let dbStub = {}
 
@@ -64,4 +62,3 @@ describe('Https storage bad xhr update', () => {
         })
     })
 })
-

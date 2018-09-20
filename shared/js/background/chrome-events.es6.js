@@ -183,7 +183,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
-            
+
             trackersStorage.getLists(constants.trackersLists)
                 .then(lists => trackers.setLists(lists))
                 .catch(e => console.log(e))

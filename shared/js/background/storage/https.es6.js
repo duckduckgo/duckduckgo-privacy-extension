@@ -23,7 +23,7 @@ class HTTPSStorage {
 
         // need a buffer to send to crypto.subtle
         let buffer = Buffer.from(data.data, 'base64')
-            
+
         return crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
             let sha256 = Buffer.from(arrayBuffer).toString('base64')
             if (data.checksum.sha256 && data.checksum.sha256 === sha256) {

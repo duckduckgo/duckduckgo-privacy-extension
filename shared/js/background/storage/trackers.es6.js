@@ -4,7 +4,7 @@ class TrackersStorage {
     constructor (ops) {
         this.storage = new Storage(ops)
     }
-    
+
     getLists (lists) {
         return this.storage.getLists(lists)
     }

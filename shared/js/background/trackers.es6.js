@@ -1,5 +1,4 @@
 const tldjs = require('tldjs')
-const load = require('./load.es6')
 const settings = require('./settings.es6')
 const surrogates = require('./surrogates.es6')
 const constants = require('../../data/constants')
@@ -23,15 +22,14 @@ class Trackers {
         })
 
         this.isReady = true
-        console.log("Trackers: ready to block")
+        console.log('Trackers: ready to block')
     }
 
     // compile regex entries in the tracker list
     processTrackerList (data) {
-        
         Object.keys(data).forEach(categoryName => {
             let category = data[categoryName]
-            
+
             Object.keys(category).forEach(trackerName => {
                 let tracker = category[trackerName]
                 // Look for regex rules and pre-compile to speed up the blocking algo later on
@@ -69,7 +67,7 @@ class Trackers {
     */
     isTracker (urlToCheck, thisTab, request) {
         if (!this.isReady) {
-            console.log("Trackers: not ready to block")
+            console.log('Trackers: not ready to block')
             return false
         }
 
@@ -134,7 +132,7 @@ class Trackers {
         trackerObj.reason = 'first party'
         return trackerObj
     }
-    
+
     checkEmbeddedTweets (urlToCheck, embeddedOn) {
         if (!embeddedOn && /platform.twitter.com/.test(urlToCheck)) {
             console.log('blocking tweet embedded code on ' + urlToCheck)
@@ -226,7 +224,7 @@ class Trackers {
 
         return true
     }
-    
+
     // isTracker return object. Takes either surrogate or tracker info
     // and returns a common data sturucture
     getReturnTrackerObj (tracker, request, reason) {

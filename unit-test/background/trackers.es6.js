@@ -5,7 +5,6 @@ const trackersWithParentCompany = require('./../data/trackersWithParentCompany.j
 const entitylist = require('./../data/entitylist.json')
 const load = require('./../helpers/load.es6')
 const trackerTests = require('./../data/trackertests.json')
-const settings = require('../../shared/js/background/settings.es6')
 const settingHelper = require('../helpers/settings.es6')
 
 function getRequestTab (ops) {
@@ -90,11 +89,11 @@ describe('Trackers', () => {
     })
     */
 
-   // test all trackers that don't have regex rules
+    // test all trackers that don't have regex rules
     it('block all 3rd party rules', () => {
         Object.entries(trackers.trackersWithParentCompany).forEach(([category, trackerList]) => {
             // only test categories that we're blocking on
-            if(constants.blocking.includes(category)) {
+            if (constants.blocking.includes(category)) {
                 Object.entries(trackerList).forEach(([domain, trackerObj]) => {
                     if (!trackerObj.rules && !trackerObj.whitelist) {
                         const stubRequestData = getRequestTab({reqUrl: `http://${domain}`})
