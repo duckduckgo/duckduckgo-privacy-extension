@@ -1020,15 +1020,13 @@
             "u": "http://www.adocean-global.com/",
             "whitelist": [
                 {
-                    "rule": "adocean\\.pl[?/].*\\/ad\\.js\\?id=",
+                    "rule": "adocean\\.pl[?/].*ad\\.js\\?id=",
                     "options": {
                         "types": [
-                            "script",
-                            "object-subrequest"
+                            "script"
                         ],
                         "domains": [
-                            "tvn24.pl",
-                            "open.fm"
+                            "tvn24.pl"
                         ]
                     }
                 },
@@ -1060,7 +1058,18 @@
                     }
                 },
                 {
-                    "rule": "adocean\\.pl^[?/].*aocodetype=",
+                    "rule": "adocean\\.pl[?/].*\\/ad\\.js\\?id=",
+                    "options": {
+                        "types": [
+                            "object-subrequest"
+                        ],
+                        "domains": [
+                            "open.fm"
+                        ]
+                    }
+                },
+                {
+                    "rule": "adocean\\.pl[?/].*aocodetype=",
                     "options": {
                         "types": [
                             "object-subrequest"
@@ -1168,12 +1177,7 @@
                     }
                 },
                 {
-                    "rule": "app\\.adroll\\.com($|[?/])",
-                    "options": {
-                        "types": [
-                            "generichide"
-                        ]
-                    }
+                    "rule": "app\\.adroll\\.com($|[?/])"
                 }
             ]
         },
@@ -8084,12 +8088,7 @@
                     }
                 },
                 {
-                    "rule": "games\\.pch\\.com($|[?/])",
-                    "options": {
-                        "types": [
-                            "generichide"
-                        ]
-                    }
+                    "rule": "games\\.pch\\.com($|[?/])"
                 }
             ]
         },
@@ -13914,7 +13913,6 @@
                     "rule": "pagead2\\.googlesyndication\\.com\\/pagead\\/static\\?format=in_video_ads&",
                     "options": {
                         "types": [
-                            "generichide",
                             "subdocument"
                         ]
                     }
@@ -16463,12 +16461,7 @@
                     }
                 },
                 {
-                    "rule": "www\\.facebook\\.com\\/ads\\/",
-                    "options": {
-                        "types": [
-                            "generichide"
-                        ]
-                    }
+                    "rule": "www\\.facebook\\.com\\/ads\\/"
                 },
                 {
                     "rule": "www\\.facebook\\.com\\/ajax\\/ads\\/",

@@ -261,7 +261,15 @@ function parseFilter (filter) {
 
     // make sure this is a valid regex
     assert.doesNotThrow(() => new RegExp(filter), `invalid regex: ${filter}`)
-    
+
+    // we should be able to match the rule on a random url 
+    const randUrl = regexToURL(filter)
+
+    if (!(new RegExp(filter).exec(randUrl))){
+        console.log(chalk.red(`Filter does not match on test url: ${filter}`))
+        return
+    }
+
     // add final filter to rule object
     rule.rule = filter
 
@@ -286,6 +294,9 @@ function parseOptions (optionStr) {
         if (!o || o.match("third-party")) {
             return 
         }
+
+        // we don't support this option
+        if (o === 'generichide') return 
 
         // look for domain list indicator 
         if (o.match(/^domain=/)) {
