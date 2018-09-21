@@ -7,12 +7,14 @@ const abp = require('abp-filter-parser')
 const tabManager = require('./tab-manager.es6')
 const load = require('./load.es6')
 const atb = require('./atb.es6')
+const https = require('./https.es6')
 
 window.dbg = {
     settings,
     abp,
     tabManager,
-    atb
+    atb,
+    https
 }
 
 // mark this as a dev build

@@ -51,7 +51,9 @@ $statuses: ("good", "bad", "mixed");
 
 $rating-colors: (
   "a": $color--site-rating--a,
+  "b-plus": $color--site-rating--b,
   "b": $color--site-rating--b,
+  "c-plus": $color--site-rating--c,
   "c": $color--site-rating--c,
   "d": $color--site-rating--d,
   "f": $color--site-rating--f
@@ -60,7 +62,7 @@ $rating-colors: (
 @each $rating, $color in $rating-colors {
     .status-list__item--#{$rating} {
         &:before {
-            @include cross_platform_bg_image("status--#{$rating}.svg");
+            @include cross_platform_bg_image("rating-letters/#{$rating}.svg");
         }
 
         &.is-highlighted {

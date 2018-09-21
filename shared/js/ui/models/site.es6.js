@@ -1,7 +1,17 @@
 const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
+const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const httpsMessages = constants.httpsMessages
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+
+// for now we consider tracker networks found on more than 7% of sites
+// as "major"
+const MAJOR_TRACKER_THRESHOLD_PCT = 7
+
+const majorTrackingNetworks = Object.keys(trackerPrevalence)
+    .filter(t => trackerPrevalence[t] >= MAJOR_TRACKER_THRESHOLD_PCT)
+    // lowercase them cause we only use them for comparing
+    .map(t => t.toLowerCase())
 
 function Site (attrs) {
     attrs = attrs || {}
@@ -13,7 +23,6 @@ function Site (attrs) {
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
-    attrs.isUserPrivacyUpgraded = false
     attrs.trackersCount = 0 // unique trackers count
     attrs.majorTrackerNetworksCount = 0
     attrs.totalTrackerNetworksCount = 0
@@ -40,8 +49,8 @@ Site.prototype = window.$.extend({},
                         this.set('tab', tab)
                         this.domain = tab.site.domain
                         this.fetchSiteRating()
-                        this.set('tosdr', tab.site.score.tosdr)
-                        this.set('isaMajorTrackingNetwork', tab.site.score.isaMajorTrackingNetwork)
+                        this.set('tosdr', tab.site.tosdr)
+                        this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
                     } else {
                         console.debug('Site model: no tab')
                     }
@@ -57,7 +66,7 @@ Site.prototype = window.$.extend({},
         fetchSiteRating: function () {
             // console.log('[model] fetchSiteRating()')
             if (this.tab) {
-                this.fetch({getSiteScore: this.tab.id}).then((rating) => {
+                this.fetch({getSiteGrade: this.tab.id}).then((rating) => {
                     console.log('fetchSiteRating: ', rating)
                     if (rating) this.update({siteRating: rating})
                 })
@@ -111,19 +120,33 @@ Site.prototype = window.$.extend({},
         update: function (ops) {
             // console.log('[model] update()')
             if (this.tab) {
-                // got siteRating back fr/ background process,
-                // 'after' rating changed, template needs re-render
-                if (ops && ops.siteRating &&
-                        (ops.siteRating.after !== this.siteRating.after)) {
-                    this.set({
-                        'siteRating': ops.siteRating,
-                        'isCalculatingSiteRating': false
-                    })
+                // got siteRating back from background process
+                if (ops &&
+                        ops.siteRating &&
+                        ops.siteRating.site &&
+                        ops.siteRating.enhanced) {
+                    let before = ops.siteRating.site.grade
+                    let after = ops.siteRating.enhanced.grade
 
-                    // got site rating from background process,
-                    // but no change in 'after' rating
-                } else if (ops && ops.siteRating) {
-                    if (this.isCalculatingSiteRating) {
+                    // we don't currently show D- grades
+                    if (before === 'D-') before = 'D'
+                    if (after === 'D-') after = 'D'
+
+                    if (before !== this.siteRating.before ||
+                        after !== this.siteRating.after) {
+                        const newSiteRating = {
+                            cssBefore: before.replace('+', '-plus').toLowerCase(),
+                            cssAfter: after.replace('+', '-plus').toLowerCase(),
+                            before,
+                            after
+                        }
+
+                        this.set({
+                            'siteRating': newSiteRating,
+                            'isCalculatingSiteRating': false
+                        })
+                    } else if (this.isCalculatingSiteRating) {
+                        // got site rating from background process
                         this.set('isCalculatingSiteRating', false)
                     }
                 }
@@ -153,12 +176,6 @@ Site.prototype = window.$.extend({},
                 const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
                 if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
                     this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
-                }
-                this.set('isPartOfMajorTrackingNetwork', this.getIsPartOfMajorTrackingNetwork())
-
-                const newUserPrivacy = this.getIsUserPrivacyUpgraded()
-                if (newUserPrivacy !== this.isUserPrivacyUpgraded) {
-                    this.set('isUserPrivacyUpgraded', newUserPrivacy)
                 }
             }
         },
@@ -207,22 +224,14 @@ Site.prototype = window.$.extend({},
             // Show only blocked major trackers count, unless site is whitelisted
             const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
             const count = Object.keys(trackers).reduce((total, name) => {
-                let tempTracker = name.toLowerCase()
-                const majorTrackingNetworks = Object.keys(constants.majorTrackingNetworks)
-                    .filter((t) => t.toLowerCase() === tempTracker)
-                // in case a major tracking network is in the list more than once somehow
-                total += majorTrackingNetworks.length ? 1 : 0
+                const tempTracker = name.toLowerCase()
+                const idx = majorTrackingNetworks.indexOf(tempTracker)
+
+                total += idx > -1 ? 1 : 0
                 return total
             }, 0)
 
             return count
-        },
-
-        getIsPartOfMajorTrackingNetwork: function () {
-            return this.isaMajorTrackingNetwork ||
-                this.trackerNetworks.some((tracker) =>
-                    constants.majorTrackingNetworks[tracker]
-                )
         },
 
         getTrackerNetworksOnPage: function () {
@@ -232,18 +241,6 @@ Site.prototype = window.$.extend({},
                 .map((t) => t.toLowerCase())
                 .filter((t) => t !== 'unknown')
             return networks
-        },
-
-        getIsUserPrivacyUpgraded: function () {
-            // console.log('getIsUserPrivacyUpgraded()')
-            if (!this.tab) return false
-
-            if (this.tab.upgradedHttps ||
-                    Object.keys(this.tab.trackersBlocked).length > 0) {
-                return true
-            }
-
-            return false
         },
 
         toggleWhitelist: function () {
