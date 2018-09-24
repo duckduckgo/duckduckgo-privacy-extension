@@ -1,5 +1,6 @@
 const utils = require('../utils.es6')
 const pixel = require('../pixel.es6')
+const constants = require('../../../data/constants')
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
@@ -67,7 +68,8 @@ class HttpsRedirects {
         if (!canRedirect) {
             if (request.type === 'main_frame') {
                 const encodedHostname = encodeURIComponent(hostname)
-                pixel.fire('ehd', {'hostname': encodedHostname})
+                const errCode = constants.httpsErrorCodes['downgrade_redirect_loop']
+                pixel.fire('ehd', {'url': encodedHostname, error: errCode})
             }
 
             this.failedUpgradeHosts[hostname] = true
