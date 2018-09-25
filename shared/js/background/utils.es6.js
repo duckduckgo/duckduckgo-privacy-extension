@@ -1,4 +1,5 @@
 const tldjs = require('tldjs')
+const constants = require('../../data/constants')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
 function extractHostFromURL (url, shouldKeepWWW) {
@@ -91,6 +92,22 @@ function getUpgradeToSecureSupport () {
     return upgradeToSecureSupport
 }
 
+// Add beacon or ping to the blocked types of requests
+// Depending on browser
+// Chrome errors with 'beacon', but supports 'ping'
+// Firefox only blocks 'beacon' (even though it should support 'ping')
+function updateRequestListenerTypes () {
+    if (!constants.requestListenerTypes) return
+
+    const beaconName = {
+        'chrome': 'ping',
+        'moz': 'beacon'
+    }
+    if (constants.requestListenerTypes.find(beaconName[browser])) return
+
+    constants.requestListenerTypes.push(beaconName[browser])
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -99,5 +116,6 @@ module.exports = {
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    findParent: findParent
+    findParent: findParent,
+    updateRequestListenerTypes: updateRequestListenerTypes
 }

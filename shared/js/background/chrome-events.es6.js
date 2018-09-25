@@ -5,12 +5,15 @@
  * if we do too much before adding it
  */
 const ATB = require('./atb.es6')
+const utils = require('./utils.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
             .then(ATB.openPostInstallPage)
     }
+
+    utils.updateRequestListenerTypes()
 })
 
 /**
@@ -87,7 +90,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
  * MESSAGES
  */
 
-const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
 
