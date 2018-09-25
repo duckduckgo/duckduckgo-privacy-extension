@@ -39,6 +39,8 @@ class Tab {
         this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
+        this.hasHttpsError = false
+        this.mainFrameUpgraded = false
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(this.url)
