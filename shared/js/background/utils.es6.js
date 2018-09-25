@@ -92,20 +92,27 @@ function getUpgradeToSecureSupport () {
     return upgradeToSecureSupport
 }
 
-// Add beacon or ping to the blocked types of requests
-// Depending on browser
 // Chrome errors with 'beacon', but supports 'ping'
 // Firefox only blocks 'beacon' (even though it should support 'ping')
+const beaconNamesByBrowser = {
+    'chrome': 'ping',
+    'moz': 'beacon'
+}
+const beaconName = beaconNamesByBrowser[browser]
+
+// Add beacon or ping to the blocked types of requests
+// Depending on browser
 function updateRequestListenerTypes () {
-    if (!constants.requestListenerTypes) return
-
-    const beaconName = {
-        'chrome': 'ping',
-        'moz': 'beacon'
+    if (!constants.requestListenerTypes ||
+        constants.requestListenerTypes.find(beaconName)) {
+        return
     }
-    if (constants.requestListenerTypes.find(beaconName[browser])) return
 
-    constants.requestListenerTypes.push(beaconName[browser])
+    constants.requestListenerTypes.push(beaconName)
+}
+
+function getBeaconName () {
+    return beaconName
 }
 
 module.exports = {
@@ -117,5 +124,6 @@ module.exports = {
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
     findParent: findParent,
+    getBeaconName: getBeaconName,
     updateRequestListenerTypes: updateRequestListenerTypes
 }

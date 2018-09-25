@@ -88,6 +88,7 @@ function isTracker (urlToCheck, thisTab, request) {
         // same as a first party requrest and return
         let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
         if (trackerByParentCompany) {
+            trackerByParentCompany = checkReason(trackerByParentCompany)
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
                 return addCommonParent(trackerByParentCompany, commonParent)
@@ -96,6 +97,15 @@ function isTracker (urlToCheck, thisTab, request) {
         }
     }
     return false
+}
+
+// Check for reason to block the tracker
+// And add it
+// For now it just adds "beacon" if that's the tracker type
+function checkReason (trackerObj) {
+    if (trackerObj.type === utils.getBeaconName()) {
+        trackerObj.reason = 'beacon'
+    }
 }
 
 // add common parent info to the final tracker object returned by isTracker
