@@ -217,7 +217,7 @@ let onStartup = () => {
 // Listen for main_frame HTTPs upgrade errors
 chrome.webRequest.onErrorOccurred.addListener((e) => {
     if (!(e.type === 'main_frame')) return
-    
+
     let tab = tabManager.get({tabId: e.tabId})
 
     // We're only looking at failed main_frame upgrades. A tab can send multiple
