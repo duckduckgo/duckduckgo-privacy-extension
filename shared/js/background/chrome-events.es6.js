@@ -214,6 +214,32 @@ let onStartup = () => {
     })
 }
 
+// Fire pixel on https upgrade failures to allow bad data to be removed from lists
+chrome.webRequest.onErrorOccurred.addListener((e) => {
+    if (!(e.type === 'main_frame')) return
+
+    let tab = tabManager.get({tabId: e.tabId})
+
+    // We're only looking at failed main_frame upgrades. A tab can send multiple
+    // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
+    if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
+        return
+    }
+
+    if (e.error && e.url.match(/^https/)) {
+        const errCode = constants.httpsErrorCodes[e.error]
+        tab.hasHttpsError = true
+
+        if (errCode) {
+            const url = new URL(e.url)
+            pixel.fire('ehd', {
+                'url': `${encodeURIComponent(url.hostname + url.pathname)}`,
+                'error': errCode
+            })
+        }
+    }
+}, {urls: ['<all_urls>']})
+
 module.exports = {
     onStartup: onStartup
 }

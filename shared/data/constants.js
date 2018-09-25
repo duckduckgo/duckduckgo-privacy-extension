@@ -56,5 +56,20 @@ module.exports = {
             "name": "httpsWhitelist",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
         }
-    ]
+    ],
+    "httpsErrorCodes": {
+        "net::ERR_CONNECTION_REFUSED": 1,
+        "net::ERR_ABORTED": 2,
+        "net::ERR_SSL_PROTOCOL_ERROR": 3,
+        "net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH": 4,
+        "net::ERR_NAME_NOT_RESOLVED": 5,
+        "NS_ERROR_CONNECTION_REFUSED": 6,
+        "NS_ERROR_UNKNOWN_HOST": 7,
+        "An additional policy constraint failed when validating this certificate.": 8,
+        "Unable to communicate securely with peer: requested domain name does not match the server’s certificate.": 9,
+        "Cannot communicate securely with peer: no common encryption algorithm(s).": 10,
+        "SSL received a record that exceeded the maximum permissible length.": 11,
+        "The certificate is not trusted because it is self-signed.": 12,
+        "downgrade_redirect_loop": 13
+    }
 }
