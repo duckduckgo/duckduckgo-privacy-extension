@@ -89,6 +89,7 @@ class HTTPS {
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
         if (host && this.canUpgradeHost(host)) {
+            if (isMainFrame) tab.mainFrameUpgraded = true
             return reqUrl.replace(/^(http|https):\/\//i, 'https://')
         }
 
