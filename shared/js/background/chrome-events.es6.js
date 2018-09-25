@@ -214,7 +214,7 @@ let onStartup = () => {
     })
 }
 
-// Listen for main_frame HTTPs upgrade errors
+// Fire pixel on https upgrade failures to allow bad data to be removed from lists
 chrome.webRequest.onErrorOccurred.addListener((e) => {
     if (!(e.type === 'main_frame')) return
 
