@@ -109,6 +109,7 @@ class HTTPS {
 
         // only send if we have data
         if (upgrades || failed) {
+            // clear the counts
             settings.updateSetting('totalUpgrades', 0)
             settings.updateSetting('failedUpgrades', 0)
             pixel.fire('ehs', {'total': upgrades, 'failures': failed})
