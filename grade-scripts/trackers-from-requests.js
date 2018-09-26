@@ -14,6 +14,7 @@ program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites" (required)')
     .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades" (required)')
     .option('-f, --file <name>', 'Allow processing a subset of dumped site data, defined in a file')
+    .option('-p, --regenerate-prevalence', 'Regenerate prevalence data from this run')
     .parse(process.argv)
 
 const input = program.input
@@ -41,6 +42,8 @@ const run = async () => {
     let siteDataArray = scriptUtils.getSiteData(inputPath, fileForSubset)
 
     for (let siteData of siteDataArray) {
+        if (siteData.failed) continue
+
         let url = siteData.url
         let hostname = url.replace(/https?:\/\//, '')
 
@@ -93,53 +96,57 @@ const calculateTrackerPrevalence = () => {
     // get all the files that we've just processed
     let siteDataArray = scriptUtils.getSiteData(outputPath)
     let entityList = listManager.getList('entityList')
-
-    let networksSeen = {}
-
-    // count up all the tracker networks seen on each site
-    siteDataArray.forEach((siteData) => {
-        let networksOnThisSite = {}
-
-        // get all the tracker networks seen on a specific site
-        Object.keys(siteData.trackersBlocked).forEach((network) => {
-            Object.keys(siteData.trackersBlocked[network]).forEach((trackerUrl) => {
-                let parent = entityList[trackerUrl] || network
-                networksOnThisSite[parent] = true
-            })
-        })
-        Object.keys(siteData.trackersNotBlocked).forEach((network) => {
-            Object.keys(siteData.trackersNotBlocked[network]).forEach((trackerUrl) => {
-                let parent = entityList[trackerUrl] || network
-                networksOnThisSite[parent] = true
-            })
-        })
-
-        // add them to the global counts
-        Object.keys(networksOnThisSite).forEach((network) => {
-            if (network === 'unknown') return
-
-            if (!networksSeen[network]) {
-                networksSeen[network] = 0
-            }
-
-            networksSeen[network] += 1
-        })
-    })
-
-    // calculate overall prevalence
     let networkPrevalence = {}
-    let totalSites = siteDataArray.length
 
-    Object.keys(networksSeen).forEach((network) => {
-        let percent = networksSeen[network] / totalSites * 100
-        // round to 2 significant digits
-        percent = Math.round(percent * 100) / 100
+    if (program.regeneratePrevalence) {
+        let networksSeen = {}
 
-        networkPrevalence[network] = percent
-    })
+        // count up all the tracker networks seen on each site
+        siteDataArray.forEach((siteData) => {
+            let networksOnThisSite = {}
 
-    // write the prevalence to file, then add it to all the file data
-    fs.writeFileSync(`data/generated/prevalence.json`, JSON.stringify(networkPrevalence))
+            // get all the tracker networks seen on a specific site
+            Object.keys(siteData.trackersBlocked).forEach((network) => {
+                Object.keys(siteData.trackersBlocked[network]).forEach((trackerUrl) => {
+                    let parent = entityList[trackerUrl] || network
+                    networksOnThisSite[parent] = true
+                })
+            })
+            Object.keys(siteData.trackersNotBlocked).forEach((network) => {
+                Object.keys(siteData.trackersNotBlocked[network]).forEach((trackerUrl) => {
+                    let parent = entityList[trackerUrl] || network
+                    networksOnThisSite[parent] = true
+                })
+            })
+
+            // add them to the global counts
+            Object.keys(networksOnThisSite).forEach((network) => {
+                if (network === 'unknown') return
+
+                if (!networksSeen[network]) {
+                    networksSeen[network] = 0
+                }
+
+                networksSeen[network] += 1
+            })
+        })
+
+        // calculate overall prevalence
+        let totalSites = siteDataArray.length
+
+        Object.keys(networksSeen).forEach((network) => {
+            let percent = networksSeen[network] / totalSites * 100
+            // round to 2 significant digits
+            percent = Math.round(percent * 100) / 100
+
+            networkPrevalence[network] = percent
+        })
+
+        // write the prevalence to file, then add it to all the file data
+        fs.writeFileSync(`data/generated/prevalence.json`, JSON.stringify(networkPrevalence))
+    } else {
+        networkPrevalence = require(`../data/generated/prevalence.json`)
+    }
 
     siteDataArray.forEach((siteData) => {
         let hostname = siteData.url.replace(/https?:\/\//, '')
