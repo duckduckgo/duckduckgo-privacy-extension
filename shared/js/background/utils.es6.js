@@ -1,5 +1,4 @@
 const tldjs = require('tldjs')
-const constants = require('../../data/constants')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
 function extractHostFromURL (url, shouldKeepWWW) {
