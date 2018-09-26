@@ -61,7 +61,6 @@ describe('Https upgrades', () => {
 
         httpsRequests.forEach((test) => {
             it(`should ${test.testCase}`, () => {
-                console.log(test.expectedResult)
                 expect(https.setUpgradeInsecureRequestHeader(test.request)).toEqual(test.expectedResult)
             })
         })

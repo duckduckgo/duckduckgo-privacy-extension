@@ -103,55 +103,53 @@ class HTTPS {
      *    to allow resources to be loaded on the https version of site.
      */
     setUpgradeInsecureRequestHeader (request) {
-        // skip requests to background tabs
-        if (request.tabId === -1) return {}
+        // Skip header modifications if request is not https
+        if (request.url.indexOf('https://') !== 0) return {}
 
-        // Don't alter headers if site is whitelisted or http
-        if (request.url && request.url.indexOf('https://') === 0) {
-            let headersChanged = false
-            if (request.type === 'main_frame') {
-                let cspHeaderExists = false
+        let headersChanged = false
 
-                for (const header in request.responseHeaders) {
-                    // If CSP header exists and doesn't include upgrade-insecure-request
-                    // directive, append it.
-                    if (request.responseHeaders[header].name.match(/Content-Security-Policy/i)) {
-                        cspHeaderExists = true
-                        const cspValue = request.responseHeaders[header].value
+        if (request.type === 'main_frame') {
+            let cspHeaderExists = false
 
-                        if (!cspValue.match(/upgrade-insecure-requests/i)) {
-                            request.responseHeaders[header].value = 'upgrade-insecure-requests; ' + cspValue
-                            headersChanged = true
-                        }
-                    }
-                }
-                // If no CSP header, add one
-                if (!cspHeaderExists) {
-                    const upgradeInsecureRequests = {
-                        name: 'Content-Security-Policy',
-                        value: 'upgrade-insecure-requests'
-                    }
-                    request.responseHeaders.push(upgradeInsecureRequests)
+            for (const header in request.responseHeaders) {
+                // If CSP header exists and doesn't include upgrade-insecure-request
+                // directive, append it.
+                if (request.responseHeaders[header].name.match(/Content-Security-Policy/i)) {
+                    cspHeaderExists = true
+                    const cspValue = request.responseHeaders[header].value
+                    // exit loop if upgrade-insecure-requests directive present
+                    if (cspValue.match(/upgrade-insecure-requests/i)) break
+
+                    request.responseHeaders[header].value = 'upgrade-insecure-requests; ' + cspValue
                     headersChanged = true
                 }
-            } else {
-                for (const header in request.responseHeaders) {
-                    // If Access-Control-Allow-Origin header exists and contains http urls,
-                    // replace them with https versions
-                    if (request.responseHeaders[header].name.match(/Access-Control-Allow-Origin/i)) {
-                        const accessControlValue = request.responseHeaders[header].value
+            }
+            // If no CSP header, add one
+            if (!cspHeaderExists) {
+                const upgradeInsecureRequests = {
+                    name: 'Content-Security-Policy',
+                    value: 'upgrade-insecure-requests'
+                }
+                request.responseHeaders.push(upgradeInsecureRequests)
+                headersChanged = true
+            }
+        } else {
+            for (const header in request.responseHeaders) {
+                // If Access-Control-Allow-Origin header exists and contains http urls,
+                // replace them with https versions
+                if (request.responseHeaders[header].name.match(/Access-Control-Allow-Origin/i)) {
+                    const accessControlValue = request.responseHeaders[header].value
+                    // exit loop if no http urls found
+                    if (!accessControlValue.match(/http:/i)) break
 
-                        if (accessControlValue.match(/http:/)) {
-                            request.responseHeaders[header].value = accessControlValue.replace(/http:/g, 'https:')
-                            headersChanged = true
-                        }
-                    }
+                    request.responseHeaders[header].value = accessControlValue.replace(/http:/g, 'https:')
+                    headersChanged = true
                 }
             }
-            // If headers altered at all, return new headers
-            if (headersChanged) {
-                return {responseHeaders: request.responseHeaders}
-            }
+        }
+        // If headers altered at all, return new headers
+        if (headersChanged) {
+            return {responseHeaders: request.responseHeaders}
         }
         // response headers unchanged
         return {}

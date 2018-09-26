@@ -215,6 +215,6 @@
               }
             ]
         },
-        "testCase": "convert http domains in Access-Contorl-Allow-Origin to https for subrequests"
+        "testCase": "convert http domains in Access-Control-Allow-Origin header to https for subrequests"
     }
 ]

@@ -49,7 +49,16 @@ chrome.webRequest.onHeadersReceived.addListener(
 )
 
 chrome.webRequest.onHeadersReceived.addListener(
-    https.setUpgradeInsecureRequestHeader,
+    (request) => {
+        // ignore background requests and requests without urls
+        if (request.tabId === -1 || !request.url) return {}
+
+        const tab = tabManager.get(request)
+
+        if (tab && tab.site && !tab.site.whitelisted) {
+            return https.setUpgradeInsecureRequestHeader(request)
+        }
+    },
     {
         urls: ['<all_urls>']
     },
