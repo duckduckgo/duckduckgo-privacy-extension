@@ -53,7 +53,7 @@ describe('Https upgrades', () => {
             expect(https.isReady).toEqual(false)
         })
     })
-    
+
     describe('https headers', () => {
         beforeAll(() => {
             https.isReady = true
