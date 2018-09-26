@@ -54,8 +54,6 @@ The step runs tracker blocking as it goes. The idea is, if you *don't* run track
 
 will take request data from `50k-sites` and output it at `50k-trackers`.
 
-This script will also calculate tracker prevalence %'s, which is necessary for the next step.
-
 ### 3. Get the grade for each list of trackers
 
 `$ node ./grade-scripts/grades-from-trackers.js -i 50k -o 50k`
@@ -63,6 +61,13 @@ This script will also calculate tracker prevalence %'s, which is necessary for t
 will take request data from `50k-trackers` and output it at `50k-grades`.
 
 It'll also produce a histogram and a CSV file with all the grades.
+
+Regenerating tracker prevalence
+---
+
+The second step appends prevalence data from `data/generated/prevalence.json`. To regenerate this data, you can use all the trackers from a previous run of step 2.
+
+`$ node ./grade-scripts/post-process/regenerate-prevalence.js -i 50k`
 
 Caveats
 ---
