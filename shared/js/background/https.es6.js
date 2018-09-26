@@ -142,7 +142,7 @@ class HTTPS {
                     // exit loop if no http urls found
                     if (!accessControlValue.match(/http:/i)) break
 
-                    request.responseHeaders[header].value = accessControlValue.replace(/http:/g, 'https:')
+                    request.responseHeaders[header].value = accessControlValue.replace(/http:/ig, 'https:')
                     headersChanged = true
                 }
             }
