@@ -26,7 +26,7 @@ const pixel = require('./pixel.es6')
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 let requestListenerTypes = constants.requestListenerTypes.slice()
-requestListenerTypes.push(utils.getBeacon())
+requestListenerTypes.push(utils.getBeaconName())
 
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
