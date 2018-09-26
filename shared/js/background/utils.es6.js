@@ -100,17 +100,6 @@ const beaconNamesByBrowser = {
 }
 const beaconName = beaconNamesByBrowser[browser]
 
-// Add beacon or ping to the blocked types of requests
-// Depending on browser
-function updateRequestListenerTypes () {
-    if (!constants.requestListenerTypes ||
-        constants.requestListenerTypes.find(beaconName)) {
-        return
-    }
-
-    constants.requestListenerTypes.push(beaconName)
-}
-
 function getBeaconName () {
     return beaconName
 }
