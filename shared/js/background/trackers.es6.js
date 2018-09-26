@@ -105,6 +105,8 @@ function addBeaconReason (trackerObj) {
     if (trackerObj.type === utils.getBeaconName()) {
         trackerObj.reason = 'beacon'
     }
+
+    return trackerObj
 }
 
 // add common parent info to the final tracker object returned by isTracker
