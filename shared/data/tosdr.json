@@ -7142,6 +7142,22 @@
         },
         "class": "A"
     },
+    "privacyheroes.io": {
+        "score": -100,
+        "all": {
+            "bad": [],
+            "good": [
+                "no tracking"
+            ]
+        },
+        "match": {
+            "bad": [],
+            "good": [
+                "no tracking"
+            ]
+        },
+        "class": "A"
+    },
     "spreadprivacy.com": {
         "score": -100,
         "all": {
