@@ -111,12 +111,12 @@ class HTTPS {
         if (upgrades || failed) {
             settings.updateSetting('attemptedUpgrades', 0)
             settings.updateSetting('failedUpgrades', 0)
-            pixel.fire('ehs', {'successes': upgrades,'failures': failed})
+            pixel.fire('ehs', {'successes': upgrades, 'failures': failed})
         }
     }
 
     // Increment upgrade or failed upgrade settings
-    incrementUpgradeCount(setting) {
+    incrementUpgradeCount (setting) {
         let value = parseInt(settings.getSetting(setting)) || 0
         value += 1
         settings.updateSetting(setting, value)
