@@ -24,5 +24,5 @@ module.exports = {
     "hasSeenPostInstall": false,
     "extiSent": false,
     "failedUpgrades": 0,
-    "attemptedUpgrades": 0
+    "totalUpgrades": 0
 }

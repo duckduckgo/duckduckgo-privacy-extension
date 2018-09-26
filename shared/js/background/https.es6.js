@@ -92,7 +92,7 @@ class HTTPS {
         if (host && this.canUpgradeHost(host)) {
             if (isMainFrame) {
                 tab.mainFrameUpgraded = true
-                this.incrementUpgradeCount('attemptedUpgrades')
+                this.incrementUpgradeCount('totalUpgrades')
             }
 
             return reqUrl.replace(/^(http|https):\/\//i, 'https://')
@@ -104,14 +104,14 @@ class HTTPS {
 
     // Send https upgrade and failure totals
     sendHttpsUpgradeTotals () {
-        const upgrades = settings.getSetting('attemptedUpgrades')
+        const upgrades = settings.getSetting('totalUpgrades')
         const failed = settings.getSetting('failedUpgrades')
 
         // only send if we have data
         if (upgrades || failed) {
-            settings.updateSetting('attemptedUpgrades', 0)
+            settings.updateSetting('totalUpgrades', 0)
             settings.updateSetting('failedUpgrades', 0)
-            pixel.fire('ehs', {'successes': upgrades, 'failures': failed})
+            pixel.fire('ehs', {'total': upgrades, 'failures': failed})
         }
     }
 
