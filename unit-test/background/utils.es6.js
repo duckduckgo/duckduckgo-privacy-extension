@@ -86,3 +86,11 @@ describe('utils.extractHostFromURL()', () => {
         })
     })
 })
+
+describe('utils.getUpgradeToSecureSupport()', () => {
+    const chromeBeaconName = "ping"
+    it('should return ${chromeBeaconName} in headless chrome', () => {
+        let result = utils.getBeaconName()
+        expect(result).toEqual(chromeBeaconName)
+    })
+})
