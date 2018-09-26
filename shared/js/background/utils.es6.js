@@ -113,6 +113,5 @@ module.exports = {
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
     findParent: findParent,
-    getBeaconName: getBeaconName,
-    updateRequestListenerTypes: updateRequestListenerTypes
+    getBeaconName: getBeaconName
 }
