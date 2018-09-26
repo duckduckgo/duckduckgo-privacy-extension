@@ -187,6 +187,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
+
+            https.sendHttpsUpgradeTotals()
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
@@ -211,6 +213,8 @@ let onStartup = () => {
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
+
+        https.sendHttpsUpgradeTotals()
     })
 }
 
@@ -227,10 +231,12 @@ chrome.webRequest.onErrorOccurred.addListener((e) => {
     }
 
     if (e.error && e.url.match(/^https/)) {
-        const errCode = constants.httpsErrorCodes[e.error]
+        // map error message to an int code or zero if we haven't defined this code yet
+        const errCode = constants.httpsErrorCodes[e.error] || 0
         tab.hasHttpsError = true
 
         if (errCode) {
+            https.incrementUpgradeCount('failedUpgrades')
             const url = new URL(e.url)
             pixel.fire('ehd', {
                 'url': `${encodeURIComponent(url.hostname + url.pathname)}`,
