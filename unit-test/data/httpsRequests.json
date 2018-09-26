@@ -116,5 +116,105 @@
         },
         "expectedResult": {},
         "testCase": "not alter headers on http sites"
+    },
+    {
+        "request": {
+            "frameId": 1,
+            "initiator": "https://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": 0,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "image",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {},
+        "testCase": "not alter CSP on subrequests"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "initiator": "https://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              },
+              {
+                  "name": "Content-Security-Policy",
+                  "value": "upgrade-insecure-requests"
+              }
+            ]
+        },
+        "testCase": "not alter Access-Control-Allow-Origin header on main frame"
+    },
+    {
+        "request": {
+            "frameId": 1,
+            "initiator": "https://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": 0,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "image",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "https://duckduckgo.com"
+              }
+            ]
+        },
+        "testCase": "convert http domains in Access-Contorl-Allow-Origin to https for subrequests"
     }
 ]

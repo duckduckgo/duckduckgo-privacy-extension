@@ -96,49 +96,64 @@ class HTTPS {
         return reqUrl
     }
 
+    /**
+     * Modify response headers on https pages to fix mixed content.
+     * 1. For main frame requests, add uprade-insecure-requests directive
+     * 2. For subrequests, edit Access-Control-Allow-Origin header if it exists
+     *    to allow resources to be loaded on the https version of site.
+     */
     setUpgradeInsecureRequestHeader (request) {
-        // Only set headers on main frame when page is served over https
-        if (request.type === 'main_frame' && request.url && request.url.indexOf('https://') === 0) {
+        // skip requests to background tabs
+        if (request.tabId === -1) return {}
+
+        // Don't alter headers if site is whitelisted or http
+        if (request.url && request.url.indexOf('https://') === 0) {
             let headersChanged = false
-            let cspHeaderExists = false
+            if (request.type === 'main_frame') {
+                let cspHeaderExists = false
 
-            for (const header in request.responseHeaders) {
-                // If CSP header exists and doesn't include upgrade-insecure-request
-                // directive, append it.
-                if (request.responseHeaders[header].name.match(/Content-Security-Policy/i)) {
-                    cspHeaderExists = true
-                    const cspValue = request.responseHeaders[header].value
+                for (const header in request.responseHeaders) {
+                    // If CSP header exists and doesn't include upgrade-insecure-request
+                    // directive, append it.
+                    if (request.responseHeaders[header].name.match(/Content-Security-Policy/i)) {
+                        cspHeaderExists = true
+                        const cspValue = request.responseHeaders[header].value
 
-                    if (!cspValue.match(/upgrade-insecure-requests/i)) {
-                        request.responseHeaders[header].value = 'upgrade-insecure-requests; ' + cspValue
-                        headersChanged = true
+                        if (!cspValue.match(/upgrade-insecure-requests/i)) {
+                            request.responseHeaders[header].value = 'upgrade-insecure-requests; ' + cspValue
+                            headersChanged = true
+                        }
                     }
                 }
-                // Make sure to tweak header to allow https resources if site has
-                // Access-Control-Allow-Origin header
-                if (request.responseHeaders[header].name.match(/Access-Control-Allow-Origin/i)) {
-                    const accessControlValue = request.responseHeaders[header].value
+                // If no CSP header, add one
+                if (!cspHeaderExists) {
+                    const upgradeInsecureRequests = {
+                        name: 'Content-Security-Policy',
+                        value: 'upgrade-insecure-requests'
+                    }
+                    request.responseHeaders.push(upgradeInsecureRequests)
+                    headersChanged = true
+                }
+            } else {
+                for (const header in request.responseHeaders) {
+                    // If Access-Control-Allow-Origin header exists and contains http urls,
+                    // replace them with https versions
+                    if (request.responseHeaders[header].name.match(/Access-Control-Allow-Origin/i)) {
+                        const accessControlValue = request.responseHeaders[header].value
 
-                    if (accessControlValue.match(/http:/)) {
-                        request.responseHeaders[header].value = accessControlValue.replace(/http:/g, 'https:')
-                        headersChanged = true
+                        if (accessControlValue.match(/http:/)) {
+                            request.responseHeaders[header].value = accessControlValue.replace(/http:/g, 'https:')
+                            headersChanged = true
+                        }
                     }
                 }
-            }
-            // If no CSP header, add one
-            if (!cspHeaderExists) {
-                const upgradeInsecureRequests = {
-                    name: 'Content-Security-Policy',
-                    value: 'upgrade-insecure-requests'
-                }
-                request.responseHeaders.push(upgradeInsecureRequests)
-                headersChanged = true
             }
             // If headers altered at all, return new headers
             if (headersChanged) {
                 return {responseHeaders: request.responseHeaders}
             }
         }
+        // response headers unchanged
         return {}
     }
 }
