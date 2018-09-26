@@ -231,8 +231,7 @@ chrome.webRequest.onErrorOccurred.addListener((e) => {
     }
 
     if (e.error && e.url.match(/^https/)) {
-        // map error message to an int code or zero if we haven't defined this code yet
-        const errCode = constants.httpsErrorCodes[e.error] || 0
+        const errCode = constants.httpsErrorCodes[e.error]
         tab.hasHttpsError = true
 
         if (errCode) {
