@@ -2,10 +2,10 @@ const tldjs = require('tldjs')
 const entityMap = require('../../data/tracker_lists/entityMap')
 
 function extractHostFromURL (url, shouldKeepWWW) {
-    if (!url) return
+    if (!url) return ''
 
     let urlObj = tldjs.parse(url)
-    let hostname = urlObj.hostname
+    let hostname = urlObj.hostname || ''
 
     if (!shouldKeepWWW) {
         hostname = hostname.replace(/^www\./, '')
@@ -91,6 +91,18 @@ function getUpgradeToSecureSupport () {
     return upgradeToSecureSupport
 }
 
+// Chrome errors with 'beacon', but supports 'ping'
+// Firefox only blocks 'beacon' (even though it should support 'ping')
+const beaconNamesByBrowser = {
+    'chrome': 'ping',
+    'moz': 'beacon'
+}
+const beaconName = beaconNamesByBrowser[browser]
+
+function getBeaconName () {
+    return beaconName
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -99,5 +111,6 @@ module.exports = {
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    findParent: findParent
+    findParent: findParent,
+    getBeaconName: getBeaconName
 }

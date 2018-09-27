@@ -79,8 +79,8 @@ Site.prototype = window.$.extend({},
                 this.set({isCalculatingSiteRating: false})
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted
-                if (this.tab.site.isSpecialDomain) {
-                    this.domain = this.tab.site.isSpecialDomain // eg "extensions", "options", "new tab"
+                if (this.tab.site.specialDomainName) {
+                    this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
                     this.set({isCalculatingSiteRating: false})
                 } else {
                     this.set({'disabled': false})

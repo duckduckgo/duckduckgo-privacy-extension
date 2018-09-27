@@ -17,16 +17,23 @@ chrome.runtime.onInstalled.addListener(function (details) {
  * REQUESTS
  */
 
+const utils = require('./utils.es6')
 const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
+const https = require('./https.es6')
+
+// Shallow copy of request types
+// And add beacon type based on browser, so we can block it
+let requestListenerTypes = constants.requestListenerTypes.slice()
+requestListenerTypes.push(utils.getBeaconName())
 
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
     {
         urls: ['<all_urls>'],
-        types: constants.requestListenerTypes
+        types: requestListenerTypes
     },
     ['blocking']
 )
@@ -45,6 +52,23 @@ chrome.webRequest.onHeadersReceived.addListener(
     {
         urls: ['<all_urls>']
     }
+)
+
+chrome.webRequest.onHeadersReceived.addListener(
+    (request) => {
+        // ignore background requests and requests without urls
+        if (request.tabId === -1 || !request.url) return {}
+
+        const tab = tabManager.get(request)
+
+        if (tab && tab.site && !tab.site.whitelisted) {
+            return https.setUpgradeInsecureRequestHeader(request)
+        }
+    },
+    {
+        urls: ['<all_urls>']
+    },
+    ['blocking', 'responseHeaders']
 )
 
 /**
@@ -87,7 +111,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
  * MESSAGES
  */
 
-const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
 
@@ -149,7 +172,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         const tab = tabManager.get({tabId: req.getSiteGrade})
         let grade = {}
 
-        if (!tab.site.isSpecialDomain) {
+        if (!tab.site.specialDomainName) {
             grade = tab.site.grade.get()
         }
 
@@ -172,7 +195,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 
 const abpLists = require('./abp-lists.es6')
-const https = require('./https.es6')
 const httpsStorage = require('./storage/https.es6')
 
 // recheck adblock plus and https lists every 30 minutes

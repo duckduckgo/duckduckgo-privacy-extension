@@ -12,6 +12,7 @@ const abpLists = require('../abp-lists.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
+const browserWrapper = require('../$BROWSER-wrapper.es6')
 
 class Site {
     constructor (url) {
@@ -43,8 +44,8 @@ class Site {
             this.grade.setHttps(true, true)
         }
 
-        // set isSpecialDomain when the site is created
-        this.isSpecialDomain = this.specialDomain()
+        // set specialDomainName when the site is created
+        this.specialDomainName = this.getSpecialDomain()
     }
 
     /*
@@ -103,24 +104,56 @@ class Site {
      * determine if domain is a special page
      *
      * returns: a useable special page description string.
-     *          or false if not a special page.
+     *          or null if not a special page.
      */
-    specialDomain () {
-        if (this.domain === 'extensions') { return 'extensions' }
+    getSpecialDomain () {
+        const extensionId = browserWrapper.getExtensionId()
+        const url = this.url
+        let domain = this.domain
 
-        if (window.chrome && this.domain === chrome.runtime.id) { return 'options' }
-
-        if (this.domain === 'newtab') { return 'new tab' }
-
-        if (this.domain === 'about') {
-            return 'about'
-        }
-
-        if (utils.getBrowserName() === 'moz' && !this.domain) {
+        if (url === '') {
             return 'new tab'
         }
 
-        return false
+        if (domain === 'localhost') {
+            return domain
+        }
+
+        // for special pages with a protocol, just return whatever
+        // word comes after the protocol
+        // e.g. 'chrome://extensions' -> 'extensions'
+        if (url.match(/^chrome:\/\//) ||
+                url.match(/^vivaldi:\/\//)) {
+            if (domain === 'newtab') {
+                domain = 'new tab'
+            }
+
+            return domain
+        }
+
+        // FF-style about: pages don't get their domains parsed properly
+        // so just extract the bit after about:
+        if (url.match(/^about:/)) {
+            domain = url.match(/^about:([a-z-]+)/)[1]
+            return domain
+        }
+
+        // extension pages
+        if (url.match(/^(chrome|moz)-extension:\/\//)) {
+            // this is our own extension, let's try and get a meaningful description
+            if (domain === extensionId) {
+                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
+
+                if (matches && matches[1]) {
+                    return matches[1]
+                }
+            }
+
+            // if we failed, or this is not our extension, return a generic message
+            return 'extension page'
+        }
+
+        return null
     }
 }
 

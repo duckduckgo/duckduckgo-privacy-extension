@@ -21,6 +21,10 @@ let getFromStorage = (key, cb) => {
     })
 }
 
+let getExtensionId = () => {
+    return chrome.runtime.id
+}
+
 let notifyPopup = (message) => {
     chrome.runtime.sendMessage(message)
 }
@@ -63,5 +67,6 @@ module.exports = {
     normalizeTabData: normalizeTabData,
     mergeSavedSettings: mergeSavedSettings,
     getDDGTabUrls: getDDGTabUrls,
-    setUninstallURL: setUninstallURL
+    setUninstallURL: setUninstallURL,
+    getExtensionId: getExtensionId
 }
