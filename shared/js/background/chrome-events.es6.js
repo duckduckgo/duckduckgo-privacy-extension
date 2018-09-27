@@ -167,7 +167,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         const tab = tabManager.get({tabId: req.getSiteGrade})
         let grade = {}
 
-        if (!tab.site.isSpecialDomain) {
+        if (!tab.site.specialDomainName) {
             grade = tab.site.grade.get()
         }
 

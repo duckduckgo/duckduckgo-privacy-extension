@@ -43,8 +43,8 @@ class Site {
             this.grade.setHttps(true, true)
         }
 
-        // set isSpecialDomain when the site is created
-        this.isSpecialDomain = this.specialDomain()
+        // set specialDomainName when the site is created
+        this.specialDomainName = this.specialDomain()
     }
 
     /*
