@@ -106,9 +106,11 @@ class Site {
      *          or false if not a special page.
      */
     specialDomain () {
+        let extensionId = browserWrapper.getExtensionId()
+
         if (this.domain === 'extensions') { return 'extensions' }
 
-        if (window.chrome && this.domain === chrome.runtime.id) { return 'options' }
+        if (this.domain === extensionId) { return 'options' }
 
         if (this.domain === 'newtab') { return 'new tab' }
 
