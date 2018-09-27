@@ -107,20 +107,50 @@ class Site {
      *          or null if not a special page.
      */
     getSpecialDomain () {
-        let extensionId = browserWrapper.getExtensionId()
+        const extensionId = browserWrapper.getExtensionId()
+        const url = this.url
+        let domain = this.domain
 
-        if (this.domain === 'extensions') { return 'extensions' }
-
-        if (this.domain === extensionId) { return 'options' }
-
-        if (this.domain === 'newtab') { return 'new tab' }
-
-        if (this.domain === 'about') {
-            return 'about'
+        if (url === '') {
+            return 'new tab'
         }
 
-        if (utils.getBrowserName() === 'moz' && !this.domain) {
-            return 'new tab'
+        if (domain === 'localhost') {
+            return domain
+        }
+
+        // for special pages with a protocol, just return whatever
+        // word comes after the protocol
+        // e.g. 'chrome://extensions' -> 'extensions'
+        if (url.match(/^chrome:\/\//) ||
+                url.match(/^vivaldi:\/\//)) {
+            if (domain === 'newtab') {
+                domain = 'new tab'
+            }
+
+            return domain
+        }
+
+        // FF-style about: pages don't get their domains parsed properly
+        // so just extract the bit after about:
+        if (url.match(/^about:/)) {
+            domain = url.match(/^about:([a-z\-]+)/)[1]
+            return domain
+        }
+
+        // extension pages
+        if (url.match(/^(chrome|moz)-extension:\/\//)) {
+            // this is our own extension, let's try and get a meaningful description
+            if (domain === extensionId) {
+                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z\-]+).html/)
+
+                if (matches && matches[1]) {
+                    return matches[1]
+                }
+            }
+
+            // if we failed, or this is not our extension, return a generic message
+            return 'extension page'
         }
 
         return null
