@@ -3,6 +3,7 @@ const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
+const httpsRequests = require('./../data/httpsRequests.json')
 const load = require('./../helpers/https.es6')
 
 describe('Https upgrades', () => {
@@ -50,6 +51,18 @@ describe('Https upgrades', () => {
 
         it('failed update should turn https off', () => {
             expect(https.isReady).toEqual(false)
+        })
+    })
+
+    describe('https headers', () => {
+        beforeAll(() => {
+            https.isReady = true
+        })
+
+        httpsRequests.forEach((test) => {
+            it(`should ${test.testCase}`, () => {
+                expect(https.setUpgradeInsecureRequestHeader(test.request)).toEqual(test.expectedResult)
+            })
         })
     })
 })
