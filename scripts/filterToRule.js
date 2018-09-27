@@ -21,7 +21,7 @@ let skipRules = {}
 program
     .usage("node filterToRule.js -f <filterlist> -c <path to tracker file> -t <rule type: 'rule' or 'whitelist'>")
     .option('-f, --file <name>', 'Required - Text file with newline-separated filter list')
-    .option('-t, --ruleType <name>', 'Required - Type of filtes, rules or whitelist')
+    .option('-t, --ruleType <name>', 'Required - Type of filtes, rule for blocking or whitelist for whitelisting')
     .option('--test', 'Optional - Run parser tests')
     .option('--verbose', 'Optional - Print verbose log messages to screen')
     .parse(process.argv)
