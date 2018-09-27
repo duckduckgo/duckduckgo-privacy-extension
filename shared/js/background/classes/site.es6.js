@@ -134,7 +134,7 @@ class Site {
         // FF-style about: pages don't get their domains parsed properly
         // so just extract the bit after about:
         if (url.match(/^about:/)) {
-            domain = url.match(/^about:([a-z\-]+)/)[1]
+            domain = url.match(/^about:([a-z-]+)/)[1]
             return domain
         }
 
@@ -142,7 +142,7 @@ class Site {
         if (url.match(/^(chrome|moz)-extension:\/\//)) {
             // this is our own extension, let's try and get a meaningful description
             if (domain === extensionId) {
-                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z\-]+).html/)
+                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
 
                 if (matches && matches[1]) {
                     return matches[1]
