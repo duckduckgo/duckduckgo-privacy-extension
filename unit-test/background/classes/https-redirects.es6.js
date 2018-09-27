@@ -120,7 +120,7 @@ describe('HttpsRedirects', () => {
         it('once a main frame redirect has been marked as not working, the domain should be blacklisted', () => {
             fastForward(1500)
 
-            for (let i =0; i < 8; i++) {
+            for (let i = 0; i < 8; i++) {
                 httpsRedirects.registerRedirect(getMainFrameRequest())
             }
 
