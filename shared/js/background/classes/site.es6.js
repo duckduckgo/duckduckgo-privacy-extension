@@ -12,6 +12,7 @@ const abpLists = require('../abp-lists.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
+const browserWrapper = require('../$BROWSER-wrapper.es6')
 
 class Site {
     constructor (url) {
@@ -103,7 +104,7 @@ class Site {
      * determine if domain is a special page
      *
      * returns: a useable special page description string.
-     *          or false if not a special page.
+     *          or null if not a special page.
      */
     getSpecialDomain () {
         let extensionId = browserWrapper.getExtensionId()
@@ -122,7 +123,7 @@ class Site {
             return 'new tab'
         }
 
-        return false
+        return null
     }
 }
 
