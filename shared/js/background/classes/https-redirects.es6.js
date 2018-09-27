@@ -16,9 +16,16 @@ class HttpsRedirects {
 
     registerRedirect (request) {
         if (request.type === 'main_frame') {
+            if (this.mainFrameRedirect &&
+                    request.url === this.mainFrameRedirect.url) {
+                this.mainFrameRedirect.count += 1
+                return
+            }
+
             this.mainFrameRedirect = {
                 url: request.url,
-                time: Date.now()
+                time: Date.now(),
+                count: 0
             }
 
             clearTimeout(this.clearMainFrameTimeout)
@@ -54,7 +61,12 @@ class HttpsRedirects {
         if (request.type === 'main_frame') {
             if (this.mainFrameRedirect &&
                     this.mainFrameRedirect.url === request.url) {
-                canRedirect = Date.now() - this.mainFrameRedirect.time > MAINFRAME_RESET_MS
+                const timeSinceFirstHit = Date.now() - this.mainFrameRedirect.time
+
+                if (timeSinceFirstHit < MAINFRAME_RESET_MS && this.mainFrameRedirect.count >= REQUEST_REDIRECT_LIMIT) {
+                    console.log(`blocking redirect time: ${timeSinceFirstHit}, hits: ${this.mainFrameRedirect.count}`)
+                    canRedirect = false
+                }
             }
         } else if (this.redirectCounts[request.requestId]) {
             /**

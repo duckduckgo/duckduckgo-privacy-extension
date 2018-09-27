@@ -3,110 +3,143 @@ const tk = require('timekeeper')
 const pixel = require('../../../shared/js/background/pixel.es6')
 let httpsRedirects
 
+/**
+ * HELPERS
+ */
+
 const setup = () => {
     httpsRedirects = new HttpsRedirects()
     spyOn(pixel, 'fire')
 }
 
+let id = 5
+
 const teardown = () => {
     httpsRedirects.resetMainFrameRedirect()
     tk.reset()
+
+    id = 5
 }
 
 const fastForward = (ms) => {
     tk.travel(new Date(Date.now() + ms))
 }
 
+const getMainFrameRequest = () => {
+    id += 1
+
+    return {
+        requestId: id,
+        type: 'main_frame',
+        url: 'http://example.com'
+    }
+}
+
+const getImageRequest = () => {
+    id += 1
+
+    return {
+        requestId: id,
+        type: 'image',
+        url: 'http://example.com/cat.gif'
+    }
+}
+
+/**
+ * TESTS
+ */
+
 describe('HttpsRedirects', () => {
     describe('main frame redirecting loop protection', () => {
         beforeEach(() => {
             setup()
 
-            httpsRedirects.registerRedirect({
-                requestId: 5,
-                url: 'http://example.com',
-                type: 'main_frame'
-            })
+            httpsRedirects.registerRedirect(getMainFrameRequest())
         })
         afterEach(teardown)
 
-        it('should prevent any repeated main frame redirects in the first 3s', () => {
+        it('should allow the first few redirects in the first 3s', () => {
             fastForward(1500)
 
-            let canRedirect = httpsRedirects.canRedirect({
-                requestId: 6,
-                url: 'http://example.com',
-                type: 'main_frame'
-            })
+            let canRedirect
+
+            for (let i = 0; i < 5; i++) {
+                httpsRedirects.registerRedirect(getMainFrameRequest())
+                canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
+                expect(canRedirect).toEqual(true)
+            }
+        })
+        it('should block a repeated main frame redirect for the same URL after 7 attempts within 3s', () => {
+            fastForward(1500)
+
+            for (let i = 0; i < 8; i++) {
+                httpsRedirects.registerRedirect(getMainFrameRequest())
+            }
+
+            let canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
 
             expect(canRedirect).toEqual(false)
         })
-        it('should allow a repeated main frame redirect after 3s', () => {
+        it('should allow repeated main frame redirect after 3s', () => {
+            for (let i = 0; i < 5; i++) {
+                httpsRedirects.registerRedirect(getMainFrameRequest())
+            }
+
             fastForward(4500)
 
-            let canRedirect = httpsRedirects.canRedirect({
-                requestId: 6,
-                url: 'http://example.com',
-                type: 'main_frame'
-            })
+            for (let i = 0; i < 5; i++) {
+                httpsRedirects.registerRedirect(getMainFrameRequest())
+            }
+
+            let canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
 
             expect(canRedirect).toEqual(true)
         })
         it('should let other requests pass', () => {
             fastForward(1500)
 
-            let canRedirect = httpsRedirects.canRedirect({
-                requestId: 6,
-                url: 'http://example.test',
-                type: 'main_frame'
-            })
+            for (let i = 0; i < 8; i++) {
+                httpsRedirects.registerRedirect(getMainFrameRequest())
+            }
 
+            let canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
+            expect(canRedirect).toEqual(false)
+
+            let anotherRequest = getMainFrameRequest()
+            anotherRequest.url = 'http://example.test'
+
+            canRedirect = httpsRedirects.canRedirect(anotherRequest)
             expect(canRedirect).toEqual(true, 'it should let other mainframe redirects pass')
 
-            canRedirect = httpsRedirects.canRedirect({
-                requestId: 8,
-                url: 'http://example.com/cat.gif',
-                type: 'image'
-            })
+            anotherRequest = getImageRequest()
+            anotherRequest.url = 'http://example.test/cat.gif'
 
+            canRedirect = httpsRedirects.canRedirect(anotherRequest)
             expect(canRedirect).toEqual(true, 'it should let non-mainframe redirects pass')
         })
         it('once a main frame redirect has been marked as not working, the domain should be blacklisted', () => {
             fastForward(1500)
 
-            let canRedirect = httpsRedirects.canRedirect({
-                requestId: 6,
-                url: 'http://example.com',
-                type: 'main_frame'
-            })
+            for (let i =0; i < 8; i++) {
+                httpsRedirects.registerRedirect(getMainFrameRequest())
+            }
 
+            let canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
             expect(canRedirect).toEqual(false)
 
             fastForward(7000)
 
-            canRedirect = httpsRedirects.canRedirect({
-                requestId: 7,
-                url: 'http://example.com',
-                type: 'main_frame'
-            })
-
+            canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
             expect(canRedirect).toEqual(false)
 
-            canRedirect = httpsRedirects.canRedirect({
-                requestId: 12,
-                url: 'http://example.com/foo/bar.jpg',
-                type: 'image'
-            })
-
+            canRedirect = httpsRedirects.canRedirect(getImageRequest())
             expect(canRedirect).toEqual(false)
 
             // different subdomains should still be fine
-            canRedirect = httpsRedirects.canRedirect({
-                requestId: 12,
-                url: 'http://www.example.com/foo/bar.jpg',
-                type: 'image'
-            })
+            let anotherRequest = getImageRequest()
+            anotherRequest.url = 'http://www.example.com/cat.gif'
 
+            canRedirect = httpsRedirects.canRedirect(anotherRequest)
             expect(canRedirect).toEqual(true)
         })
     })
@@ -116,11 +149,7 @@ describe('HttpsRedirects', () => {
 
         it('should block repeated redirects to non-mainframe requests', () => {
             let canRedirect
-            const request = {
-                requestId: 102,
-                url: 'http://example.com/something/another.js',
-                type: 'xhr'
-            }
+            const request = getImageRequest()
 
             for (let i = 1; i < 10; i += 1) {
                 httpsRedirects.registerRedirect(request)
@@ -131,11 +160,7 @@ describe('HttpsRedirects', () => {
         })
 
         it('should not allow https redirects for a URL after it\'s failed', () => {
-            const request = {
-                requestId: 102,
-                url: 'http://example.com/something/another.js',
-                type: 'xhr'
-            }
+            const request = getImageRequest()
 
             for (let i = 1; i < 10; i += 1) {
                 httpsRedirects.registerRedirect(request)
@@ -149,24 +174,6 @@ describe('HttpsRedirects', () => {
             })
 
             expect(canRedirect).toEqual(false)
-        })
-
-        it('should let other requests through', () => {
-            for (let i = 1; i < 10; i += 1) {
-                httpsRedirects.registerRedirect({
-                    requestId: 102,
-                    url: 'http://example.com/something/another.js',
-                    type: 'xhr'
-                })
-            }
-
-            let canRedirect = httpsRedirects.canRedirect({
-                requestId: 105,
-                url: 'http://example.com/something/completely/different.js',
-                type: 'xhr'
-            })
-
-            expect(canRedirect).toEqual(true)
         })
     })
     describe('getting/persisting the main frame redirect', () => {
