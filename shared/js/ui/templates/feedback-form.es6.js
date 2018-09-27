@@ -16,7 +16,7 @@ module.exports = function () {
             <label class='frm__label'>Which website is broken?</label>
             <input class='js-feedback-url frm__input' type='text' placeholder='Copy and paste your URL' value='${this.model.url}'/>
             <label class='frm__label'>Describe the issue you encountered:</label>
-            <textarea class='frm__text js-feedback-message' placeholder='Which website content or functionality is broken? Please be as specific as possible.'></textarea>
+            <textarea class='frm__text js-feedback-message' required placeholder='Which website content or functionality is broken? Please be as specific as possible.'></textarea>
         </div>`
     } else {
         fields = bel`<div>
