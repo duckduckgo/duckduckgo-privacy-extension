@@ -74,7 +74,6 @@ class HttpsRedirects {
                 const timeSinceFirstHit = Date.now() - this.mainFrameRedirect.time
 
                 if (timeSinceFirstHit < MAINFRAME_RESET_MS && this.mainFrameRedirect.count >= REQUEST_REDIRECT_LIMIT) {
-                    console.log(`blocking redirect time: ${timeSinceFirstHit}, hits: ${this.mainFrameRedirect.count}`)
                     canRedirect = false
                 }
             }
