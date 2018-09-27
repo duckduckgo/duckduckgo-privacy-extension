@@ -38,7 +38,7 @@ function handleRequest (requestData) {
             // andrey: temporary disable this. it was letting redirect loops through on Tumblr
             // persist the last URL the tab was trying to upgrade to HTTPS
             // if (thisTab && thisTab.httpsRedirects) {
-                // newTab.httpsRedirects.persistMainFrameRedirect(thisTab.httpsRedirects.getMainFrameRedirect())
+            //     newTab.httpsRedirects.persistMainFrameRedirect(thisTab.httpsRedirects.getMainFrameRedirect())
             // }
             thisTab = newTab
         }
