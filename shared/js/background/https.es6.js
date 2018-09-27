@@ -121,6 +121,7 @@ class HTTPS {
         let value = parseInt(settings.getSetting(setting)) || 0
         value += 1
         settings.updateSetting(setting, value)
+    }
 
     /**
      * Modify response headers on https pages to fix mixed content.

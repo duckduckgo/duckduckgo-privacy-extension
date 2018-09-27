@@ -90,8 +90,7 @@ function concatParams (args) {
         if (typeof arg === 'object') {
             objParamString += Object.keys(arg).reduce((params, key) => {
                 const val = arg[key]
-                // val can be zero
-                if (typeof val !== 'undefined') return `${params}&${key}=${val}`
+                if (val || val === 0) return `${params}&${key}=${val}`
             }, '')
         } else if (arg) {
             // otherwise just add args separated by _
