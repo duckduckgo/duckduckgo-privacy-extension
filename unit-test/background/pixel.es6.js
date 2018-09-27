@@ -56,6 +56,16 @@ const concatParamsTestCases = [
     {
         'params': [
             {
+                'p2': 1,
+                'p3': 0
+            },
+            'param1'
+        ],
+        'result': '_param1?1000000&p2=1&p3=0'
+    },
+    {
+        'params': [
+            {
                 'p3': 'param3',
                 'p4': 'param4'
             },

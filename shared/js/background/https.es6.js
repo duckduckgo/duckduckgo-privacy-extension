@@ -1,6 +1,7 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const BloomFilter = require('jsbloom').filter
+const pixel = require('./pixel.es6')
 
 class HTTPS {
     constructor () {
@@ -89,12 +90,37 @@ class HTTPS {
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
         if (host && this.canUpgradeHost(host)) {
-            if (isMainFrame) tab.mainFrameUpgraded = true
+            if (isMainFrame) {
+                tab.mainFrameUpgraded = true
+                this.incrementUpgradeCount('totalUpgrades')
+            }
+
             return reqUrl.replace(/^(http|https):\/\//i, 'https://')
         }
 
         // If it falls to here, default to reqUrl
         return reqUrl
+    }
+
+    // Send https upgrade and failure totals
+    sendHttpsUpgradeTotals () {
+        const upgrades = settings.getSetting('totalUpgrades')
+        const failed = settings.getSetting('failedUpgrades')
+
+        // only send if we have data
+        if (upgrades || failed) {
+            // clear the counts
+            settings.updateSetting('totalUpgrades', 0)
+            settings.updateSetting('failedUpgrades', 0)
+            pixel.fire('ehs', {'total': upgrades, 'failures': failed})
+        }
+    }
+
+    // Increment upgrade or failed upgrade settings
+    incrementUpgradeCount (setting) {
+        let value = parseInt(settings.getSetting(setting)) || 0
+        value += 1
+        settings.updateSetting(setting, value)
     }
 
     /**
