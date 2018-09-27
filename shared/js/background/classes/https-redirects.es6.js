@@ -5,6 +5,14 @@ const constants = require('../../../data/constants')
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
 
+/**
+ * This class protects users from accidentally being sent into a redirect loop
+ * if a site we've included into our HTTPS list redirects them back to HTTP.
+ *
+ * Every redirect we perform on a tab gets registered against this class.
+ * If we hit too many redirects for a request, we block it via canRedirect().
+ */
+
 class HttpsRedirects {
     constructor () {
         this.failedUpgradeHosts = {}
@@ -51,12 +59,14 @@ class HttpsRedirects {
          * Redirect loop detection is different when the request is for the main frame vs
          * any other request on the page.
          *
-         * For main frames, the redirect loop could happen like this:
-         * 1. We upgrade a page to HTTPS
-         * 2. The server gives 200 but prints out some HTML that redirects the page to HTTP
-         * 3. We try to upgrade again
+         * For main frames, the redirect loop could happen as part of several distinct hits to the same URL
+         * (e.g. we saw a case where a site returned 200 and the redirected to HTTP via Javascript)
          *
-         * To prevent this, block redirects to the same URL for the next few seconds
+         * To prevent this, we count main frame hits against the same URL within a short period of time,
+         * and if they hit a certain threshold, we block any further attempts to upgrade this URL.
+         *
+         * We need to keep this threshold high, otherwise users can accidentally trigger redirect protection
+         * by trying to open the same URL repeatedly before it's loaded.
          */
         if (request.type === 'main_frame') {
             if (this.mainFrameRedirect &&
