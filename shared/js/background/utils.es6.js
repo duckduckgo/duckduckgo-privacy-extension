@@ -5,7 +5,7 @@ function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return
 
     let urlObj = tldjs.parse(url)
-    let hostname = urlObj.hostname
+    let hostname = urlObj.hostname || ''
 
     if (!shouldKeepWWW) {
         hostname = hostname.replace(/^www\./, '')
