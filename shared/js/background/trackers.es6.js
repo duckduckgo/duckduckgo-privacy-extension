@@ -88,6 +88,10 @@ function isTracker (urlToCheck, thisTab, request) {
         // same as a first party requrest and return
         let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
         if (trackerByParentCompany) {
+            if (trackerByParentCompany.type === utils.getBeaconName()) {
+                trackerByParentCompany.reason = 'beacon'
+            }
+
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
                 return addCommonParent(trackerByParentCompany, commonParent)

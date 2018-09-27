@@ -91,6 +91,18 @@ function getUpgradeToSecureSupport () {
     return upgradeToSecureSupport
 }
 
+// Chrome errors with 'beacon', but supports 'ping'
+// Firefox only blocks 'beacon' (even though it should support 'ping')
+const beaconNamesByBrowser = {
+    'chrome': 'ping',
+    'moz': 'beacon'
+}
+const beaconName = beaconNamesByBrowser[browser]
+
+function getBeaconName () {
+    return beaconName
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -99,5 +111,6 @@ module.exports = {
     getProtocol: getProtocol,
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    findParent: findParent
+    findParent: findParent,
+    getBeaconName: getBeaconName
 }

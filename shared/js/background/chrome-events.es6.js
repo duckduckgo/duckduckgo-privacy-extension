@@ -17,17 +17,23 @@ chrome.runtime.onInstalled.addListener(function (details) {
  * REQUESTS
  */
 
+const utils = require('./utils.es6')
 const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 
+// Shallow copy of request types
+// And add beacon type based on browser, so we can block it
+let requestListenerTypes = constants.requestListenerTypes.slice()
+requestListenerTypes.push(utils.getBeaconName())
+
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
     {
         urls: ['<all_urls>'],
-        types: constants.requestListenerTypes
+        types: requestListenerTypes
     },
     ['blocking']
 )
@@ -105,7 +111,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
  * MESSAGES
  */
 
-const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
 
