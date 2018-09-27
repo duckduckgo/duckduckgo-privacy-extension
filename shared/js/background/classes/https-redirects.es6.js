@@ -9,7 +9,7 @@ const REQUEST_REDIRECT_LIMIT = 7
  * This class protects users from accidentally being sent into a redirect loop
  * if a site we've included into our HTTPS list redirects them back to HTTP.
  *
- * Every redirect we perform on a tab gets registered against this class.
+ * Every redirect we perform on a tab gets registered against an instance of this class.
  * If we hit too many redirects for a request, we block it via canRedirect().
  */
 
@@ -101,6 +101,12 @@ class HttpsRedirects {
         return canRedirect
     }
 
+    /**
+     * We regenerate tab objects every time a new main_frame request is made.
+     *
+     * persistMainFrameRedirect() is used whenever a tab object is regenerated,
+     * so we can maintain redirect loop protection across multiple main_frame requests
+     */
     persistMainFrameRedirect (redirectData) {
         if (!redirectData) { return }
 
