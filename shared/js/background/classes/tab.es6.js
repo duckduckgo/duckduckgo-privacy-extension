@@ -60,7 +60,7 @@ class Tab {
     }
 
     updateBadgeIcon (target) {
-        if (this.site.specialDomain()) return
+        if (this.site.specialDomainName) return
 
         if (this.site.isBroken) {
             this.resetBadgeIcon()

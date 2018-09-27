@@ -44,7 +44,7 @@ class Site {
         }
 
         // set specialDomainName when the site is created
-        this.specialDomainName = this.specialDomain()
+        this.specialDomainName = this.getSpecialDomain()
     }
 
     /*
@@ -105,7 +105,7 @@ class Site {
      * returns: a useable special page description string.
      *          or false if not a special page.
      */
-    specialDomain () {
+    getSpecialDomain () {
         let extensionId = browserWrapper.getExtensionId()
 
         if (this.domain === 'extensions') { return 'extensions' }
