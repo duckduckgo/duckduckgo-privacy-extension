@@ -22,5 +22,7 @@ module.exports = {
     "httpsWhitelist-etag": null,
     "httpsUpgradeList-etag": null,
     "hasSeenPostInstall": false,
-    "extiSent": false
+    "extiSent": false,
+    "failedUpgrades": 0,
+    "totalUpgrades": 0
 }

@@ -1,0 +1,241 @@
+[
+    {
+        "request": {
+            "frameId": 0,
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {
+            "responseHeaders": [
+                {
+                    "name": "status",
+                    "value": "200"
+                },
+                {
+                    "name": "Content-Security-Policy",
+                    "value": "upgrade-insecure-requests"
+                }
+            ]
+        },
+        "testCase": "create new upgrade-insecure-requests header when no CSP present"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Content-Security-Policy",
+                  "value": "default-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {
+            "responseHeaders": [
+                {
+                    "name": "status",
+                    "value": "200"
+                },
+                {
+                    "name": "Content-Security-Policy",
+                    "value": "upgrade-insecure-requests; default-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'"
+                }
+            ]
+        },
+        "testCase": "prepend upgrade-insecure-requests header to existing CSP"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "initiator": "https://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Content-Security-Policy",
+                  "value": "default-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {},
+        "testCase": "not alter headers when main frame request is made to same url as main frame to avoid redirect loop"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Content-Security-Policy",
+                  "value": "frame-ancestors 'self'; upgrade-insecure-requests"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {},
+        "testCase": "not alter CSP header when upgrade-insecure-requests directive already present"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "http://www.duckduckgo.com"
+        },
+        "expectedResult": {},
+        "testCase": "not alter headers on http sites"
+    },
+    {
+        "request": {
+            "frameId": 1,
+            "initiator": "https://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": 0,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "image",
+            "url": "https://www.duckduckgo.com/image.png"
+        },
+        "expectedResult": {},
+        "testCase": "not alter CSP on subrequests"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              },
+              {
+                  "name": "Content-Security-Policy",
+                  "value": "upgrade-insecure-requests"
+              }
+            ]
+        },
+        "testCase": "not alter Access-Control-Allow-Origin header on main frame"
+    },
+    {
+        "request": {
+            "frameId": 1,
+            "initiator": "https://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": 0,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "image",
+            "url": "https://www.duckduckgo.com/image.png"
+        },
+        "expectedResult": {
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "https://duckduckgo.com"
+              }
+            ]
+        },
+        "testCase": "convert http domains in Access-Control-Allow-Origin header to https for subrequests"
+    }
+]

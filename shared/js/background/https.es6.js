@@ -1,6 +1,7 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const BloomFilter = require('jsbloom').filter
+const pixel = require('./pixel.es6')
 
 class HTTPS {
     constructor () {
@@ -89,12 +90,104 @@ class HTTPS {
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
         if (host && this.canUpgradeHost(host)) {
-            if (isMainFrame) tab.mainFrameUpgraded = true
+            if (isMainFrame) {
+                tab.mainFrameUpgraded = true
+                this.incrementUpgradeCount('totalUpgrades')
+            }
+
             return reqUrl.replace(/^(http|https):\/\//i, 'https://')
         }
 
         // If it falls to here, default to reqUrl
         return reqUrl
+    }
+
+    // Send https upgrade and failure totals
+    sendHttpsUpgradeTotals () {
+        const upgrades = settings.getSetting('totalUpgrades')
+        const failed = settings.getSetting('failedUpgrades')
+
+        // only send if we have data
+        if (upgrades || failed) {
+            // clear the counts
+            settings.updateSetting('totalUpgrades', 0)
+            settings.updateSetting('failedUpgrades', 0)
+            pixel.fire('ehs', {'total': upgrades, 'failures': failed})
+        }
+    }
+
+    // Increment upgrade or failed upgrade settings
+    incrementUpgradeCount (setting) {
+        let value = parseInt(settings.getSetting(setting)) || 0
+        value += 1
+        settings.updateSetting(setting, value)
+    }
+
+    /**
+     * Modify response headers on https pages to fix mixed content.
+     * 1. For main frame requests, add uprade-insecure-requests directive
+     * 2. For subrequests, edit Access-Control-Allow-Origin header if it exists
+     *    to allow resources to be loaded on the https version of site.
+     */
+    setUpgradeInsecureRequestHeader (request) {
+        // Skip header modifications if request is not https
+        if (request.url.indexOf('https://') !== 0) return {}
+
+        let headersChanged = false
+
+        if (request.type === 'main_frame') {
+            // Catch edge case where a webpage served over https redirects to the
+            // http version of itself via a js window.location rewrite. Request
+            // objects include an attr when they are when they are triggered by a
+            // webpage. Chrome calls this initiator; firefox calls it originUrl.
+            let requestInitiator = request.originUrl || request.initiator
+
+            if (requestInitiator && (requestInitiator.replace(/\/$/, '') === request.url.replace(/\/$/, ''))) return {}
+
+            let cspHeaderExists = false
+
+            for (const header in request.responseHeaders) {
+                // If CSP header exists and doesn't include upgrade-insecure-request
+                // directive, append it.
+                if (request.responseHeaders[header].name.match(/Content-Security-Policy/i)) {
+                    cspHeaderExists = true
+                    const cspValue = request.responseHeaders[header].value
+                    // exit loop if upgrade-insecure-requests directive present
+                    if (cspValue.match(/upgrade-insecure-requests/i)) break
+
+                    request.responseHeaders[header].value = 'upgrade-insecure-requests; ' + cspValue
+                    headersChanged = true
+                }
+            }
+            // If no CSP header, add one
+            if (!cspHeaderExists) {
+                const upgradeInsecureRequests = {
+                    name: 'Content-Security-Policy',
+                    value: 'upgrade-insecure-requests'
+                }
+                request.responseHeaders.push(upgradeInsecureRequests)
+                headersChanged = true
+            }
+        } else {
+            for (const header in request.responseHeaders) {
+                // If Access-Control-Allow-Origin header exists and contains http urls,
+                // replace them with https versions
+                if (request.responseHeaders[header].name.match(/Access-Control-Allow-Origin/i)) {
+                    const accessControlValue = request.responseHeaders[header].value
+                    // exit loop if no http urls found
+                    if (!accessControlValue.match(/http:/i)) break
+
+                    request.responseHeaders[header].value = accessControlValue.replace(/http:/ig, 'https:')
+                    headersChanged = true
+                }
+            }
+        }
+        // If headers altered at all, return new headers
+        if (headersChanged) {
+            return {responseHeaders: request.responseHeaders}
+        }
+        // response headers unchanged
+        return {}
     }
 }
 
