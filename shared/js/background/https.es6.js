@@ -136,6 +136,14 @@ class HTTPS {
         let headersChanged = false
 
         if (request.type === 'main_frame') {
+            // Catch edge case where a webpage served over https redirects to the
+            // http version of itself via a js window.location rewrite. Request
+            // objects include an attr when they are when they are triggered by a
+            // webpage. Chrome calls this initiator; firefox calls it originUrl.
+            let requestInitiator = request.originUrl || request.initiator
+
+            if (requestInitiator && (requestInitiator.replace(/\/$/, '') === request.url.replace(/\/$/, ''))) return {}
+
             let cspHeaderExists = false
 
             for (const header in request.responseHeaders) {

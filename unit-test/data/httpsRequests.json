@@ -2,7 +2,6 @@
     {
         "request": {
             "frameId": 0,
-            "initiator": "https://www.duckduckgo.com",
             "method": "GET",
             "parentFrameId": -1,
             "requestId": "1",
@@ -35,7 +34,6 @@
     {
         "request": {
             "frameId": 0,
-            "initiator": "https://www.duckduckgo.com",
             "method": "GET",
             "parentFrameId": -1,
             "requestId": "1",
@@ -83,6 +81,31 @@
               },
               {
                   "name": "Content-Security-Policy",
+                  "value": "default-src https: blob: data: 'unsafe-inline' 'unsafe-eval'; frame-ancestors 'self'"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "main_frame",
+            "url": "https://www.duckduckgo.com"
+        },
+        "expectedResult": {},
+        "testCase": "not alter headers when main frame request is made to same url as main frame to avoid redirect loop"
+    },
+    {
+        "request": {
+            "frameId": 0,
+            "method": "GET",
+            "parentFrameId": -1,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Content-Security-Policy",
                   "value": "frame-ancestors 'self'; upgrade-insecure-requests"
               }
             ],
@@ -98,7 +121,6 @@
     {
         "request": {
             "frameId": 0,
-            "initiator": "http://www.duckduckgo.com",
             "method": "GET",
             "parentFrameId": -1,
             "requestId": "1",
@@ -134,7 +156,7 @@
             "statusLine": "HTTP/1.1 200",
             "tabId": 1,
             "type": "image",
-            "url": "https://www.duckduckgo.com"
+            "url": "https://www.duckduckgo.com/image.png"
         },
         "expectedResult": {},
         "testCase": "not alter CSP on subrequests"
@@ -142,7 +164,6 @@
     {
         "request": {
             "frameId": 0,
-            "initiator": "https://www.duckduckgo.com",
             "method": "GET",
             "parentFrameId": -1,
             "requestId": "1",
@@ -201,7 +222,7 @@
             "statusLine": "HTTP/1.1 200",
             "tabId": 1,
             "type": "image",
-            "url": "https://www.duckduckgo.com"
+            "url": "https://www.duckduckgo.com/image.png"
         },
         "expectedResult": {
             "responseHeaders": [
