@@ -130,18 +130,16 @@ class HTTPS {
      *    to allow resources to be loaded on the https version of site.
      */
     setUpgradeInsecureRequestHeader (request) {
+        // Request objects include an attr when they are triggered by a webpage.
+        // Chrome calls this initiator, firefox calls it originUrl.
+        let requestInitiator = request.originUrl || request.initiator
+        let headersChanged = false
         // Skip header modifications if request is not https
         if (request.url.indexOf('https://') !== 0) return {}
 
-        let headersChanged = false
-
         if (request.type === 'main_frame') {
             // Catch edge case where a webpage served over https redirects to the
-            // http version of itself via a js window.location rewrite. Request
-            // objects include an attr when they are when they are triggered by a
-            // webpage. Chrome calls this initiator; firefox calls it originUrl.
-            let requestInitiator = request.originUrl || request.initiator
-
+            // http version of itself via a js window.location rewrite.
             if (requestInitiator && (requestInitiator.replace(/\/$/, '') === request.url.replace(/\/$/, ''))) return {}
 
             let cspHeaderExists = false
@@ -169,6 +167,10 @@ class HTTPS {
                 headersChanged = true
             }
         } else {
+            // Don't alter headers of subrequests served over https when they are
+            // coming from http pages.
+            if (requestInitiator && (requestInitiator.indexOf('https://') !==0)) return {}
+
             for (const header in request.responseHeaders) {
                 // If Access-Control-Allow-Origin header exists and contains http urls,
                 // replace them with https versions

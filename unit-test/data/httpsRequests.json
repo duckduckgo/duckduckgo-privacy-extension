@@ -237,5 +237,31 @@
             ]
         },
         "testCase": "convert http domains in Access-Control-Allow-Origin header to https for subrequests"
+    },
+    {
+        "request": {
+            "frameId": 1,
+            "initiator": "http://www.duckduckgo.com",
+            "method": "GET",
+            "parentFrameId": 0,
+            "requestId": "1",
+            "responseHeaders": [
+              {
+                  "name": "status",
+                  "value": "200"
+              },
+              {
+                  "name": "Access-Control-Allow-Origin",
+                  "value": "http://duckduckgo.com"
+              }
+            ],
+            "statusCode": 200,
+            "statusLine": "HTTP/1.1 200",
+            "tabId": 1,
+            "type": "image",
+            "url": "https://www.duckduckgo.com/image.png"
+        },
+        "expectedResult": {},
+        "testCase": "not change http domains in Access-Control-Allow-Origin header to https on http pages"
     }
 ]
