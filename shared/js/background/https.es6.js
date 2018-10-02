@@ -169,7 +169,7 @@ class HTTPS {
         } else {
             // Don't alter headers of subrequests served over https when they are
             // coming from http pages.
-            if (requestInitiator && (requestInitiator.indexOf('https://') !==0)) return {}
+            if (requestInitiator && (requestInitiator.indexOf('https://') !== 0)) return {}
 
             for (const header in request.responseHeaders) {
                 // If Access-Control-Allow-Origin header exists and contains http urls,
