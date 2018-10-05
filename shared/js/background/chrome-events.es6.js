@@ -54,7 +54,7 @@ chrome.webRequest.onHeadersReceived.addListener(
     }
 )
 
-// Temporarily disabling temporarily due to CSP causing problems.
+// Disable temporarily due to CSP causing problems.
 // Also, since the new HTTPS upgrade list does not allow mixed content
 // this will be less of an issue.
 // https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/322
@@ -63,9 +63,9 @@ chrome.webRequest.onHeadersReceived.addListener(
 //     (request) => {
 //         // ignore background requests and requests without urls
 //         if (request.tabId === -1 || !request.url) return {}
-
+//
 //         const tab = tabManager.get(request)
-
+//
 //         if (tab && tab.site && !tab.site.whitelisted) {
 //             return https.setUpgradeInsecureRequestHeader(request)
 //         }
