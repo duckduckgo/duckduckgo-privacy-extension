@@ -76,7 +76,6 @@ try {
     chrome.runtime.getBrowserInfo((info) => {
         if (info.name === 'Firefox') {
             browser = 'moz'
-            console.log(browser)
             var browserVersion = info.version.match(/^(\d+)/)[1]
             if (browserVersion >= 59) {
                 upgradeToSecureSupport = true
