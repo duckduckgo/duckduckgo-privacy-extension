@@ -65,7 +65,6 @@ function getCurrentTab (callback) {
 // Browser / Version detection
 // 1. Set browser for popup asset paths
 // 2. Determine if upgradeToSecure supported (firefox 59+)
-// 3. Set beacon request type name ('beacon' or 'ping')
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox.
 
@@ -112,6 +111,7 @@ function getBeaconName () {
     return beaconNamesByBrowser[getBrowserName()]
 }
 
+// Return requestListenerTypes + beacon or ping
 function getUpdatedRequestListenerTypes () {
     let requestListenerTypes = constants.requestListenerTypes.slice()
     requestListenerTypes.push(getBeaconName())
