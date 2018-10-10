@@ -1,5 +1,6 @@
 const tldjs = require('tldjs')
 const entityMap = require('../../data/tracker_lists/entityMap')
+const constants = require('../../data/constants')
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -64,6 +65,7 @@ function getCurrentTab (callback) {
 // Browser / Version detection
 // 1. Set browser for popup asset paths
 // 2. Determine if upgradeToSecure supported (firefox 59+)
+// 3. Set beacon request type name ('beacon' or 'ping')
 // chrome doesn't have getBrowserInfo so we'll default to chrome
 // and try to detect if this is firefox.
 
@@ -74,7 +76,7 @@ try {
     chrome.runtime.getBrowserInfo((info) => {
         if (info.name === 'Firefox') {
             browser = 'moz'
-
+            console.log(browser)
             var browserVersion = info.version.match(/^(\d+)/)[1]
             if (browserVersion >= 59) {
                 upgradeToSecureSupport = true
@@ -83,7 +85,16 @@ try {
     })
 } catch (e) {}
 
+// Sometimes getBrowserInfo won't be available yet at this point
+// Double check the user agent to get at least the right browser name
 function getBrowserName () {
+    let uaString = window.navigator.userAgent
+    try {
+        if (uaString.match(/(Firefox)/)) {
+            browser = 'moz'
+        }
+    } catch (e) {}
+
     return browser
 }
 
@@ -93,14 +104,20 @@ function getUpgradeToSecureSupport () {
 
 // Chrome errors with 'beacon', but supports 'ping'
 // Firefox only blocks 'beacon' (even though it should support 'ping')
-const beaconNamesByBrowser = {
-    'chrome': 'ping',
-    'moz': 'beacon'
-}
-const beaconName = beaconNamesByBrowser[browser]
-
 function getBeaconName () {
-    return beaconName
+    const beaconNamesByBrowser = {
+        'chrome': 'ping',
+        'moz': 'beacon'
+    }
+
+    return beaconNamesByBrowser[getBrowserName()]
+}
+
+function getUpdatedRequestListenerTypes () {
+    let requestListenerTypes = constants.requestListenerTypes.slice()
+    requestListenerTypes.push(getBeaconName())
+
+    return requestListenerTypes
 }
 
 module.exports = {
@@ -112,5 +129,6 @@ module.exports = {
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
     findParent: findParent,
-    getBeaconName: getBeaconName
+    getBeaconName: getBeaconName,
+    getUpdatedRequestListenerTypes
 }
