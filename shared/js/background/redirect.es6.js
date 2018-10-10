@@ -5,7 +5,6 @@ const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
-const constants = require('../../data/constants')
 
 var debugRequest = false
 
