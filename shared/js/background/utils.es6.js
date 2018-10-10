@@ -1,6 +1,8 @@
 const tldjs = require('tldjs')
 const entityMap = require('../../data/tracker_lists/entityMap')
 const constants = require('../../data/constants')
+const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const browserInfo = parseUserAgentString()
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -63,35 +65,24 @@ function getCurrentTab (callback) {
 }
 
 // Browser / Version detection
-
-// Get browser name for popup asset paths 
-// and beacon vs ping request type
+// Get correct name for fetching UI assets
 function getBrowserName () {
-    let uaString = window.navigator.userAgent
-    let browserName = 'chrome'
-    try {
-        if (uaString.match(/(Firefox)/)) {
-            browserName = 'moz'
-        }
-    } catch (e) {}
+    if (!browserInfo || !browserInfo.browser) return
 
-    return browserName
+    let browser = browserInfo.browser.toLowerCase()
+    if (browser === 'firefox') browser = 'moz'
+
+    return browser
 }
 
-// Determine if upgradeToSecure supported (firefox 59+)
-// Chrome doesn't have getBrowserInfo so we'll default to Chrome
-// and try to detect if this is Firefox.
+// Determine if upgradeToSecure supported (Firefox 59+)
 function getUpgradeToSecureSupport () {
     let canUpgrade = false
     if (getBrowserName() !== 'moz') return canUpgrade
 
-    let uaString = window.navigator.userAgent
-    try {
-        const browserVersion = uaString.match(/([0-9]+)/)
-        if (browserVersion >= 59) {
-            canUpgrade = true
-        }
-    } catch (e) {}
+    if (browserInfo && browserInfo.version >= 59) {
+        canUpgrade = true
+    }
 
     return canUpgrade
 }
