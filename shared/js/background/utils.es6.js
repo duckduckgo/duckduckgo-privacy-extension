@@ -63,41 +63,37 @@ function getCurrentTab (callback) {
 }
 
 // Browser / Version detection
-// 1. Set browser for popup asset paths
-// 2. Determine if upgradeToSecure supported (firefox 59+)
-// chrome doesn't have getBrowserInfo so we'll default to chrome
-// and try to detect if this is firefox.
 
-var browser = 'chrome'
-var upgradeToSecureSupport = false
-
-try {
-    chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') {
-            browser = 'moz'
-            var browserVersion = info.version.match(/^(\d+)/)[1]
-            if (browserVersion >= 59) {
-                upgradeToSecureSupport = true
-            }
-        }
-    })
-} catch (e) {}
-
-// Sometimes getBrowserInfo won't be available yet at this point
-// Double check the user agent to get at least the right browser name
+// Get browser name for popup asset paths 
+// and beacon vs ping request type
 function getBrowserName () {
     let uaString = window.navigator.userAgent
+    let browserName = 'chrome'
     try {
         if (uaString.match(/(Firefox)/)) {
-            browser = 'moz'
+            browserName = 'moz'
         }
     } catch (e) {}
 
-    return browser
+    return browserName
 }
 
+// Determine if upgradeToSecure supported (firefox 59+)
+// Chrome doesn't have getBrowserInfo so we'll default to Chrome
+// and try to detect if this is Firefox.
 function getUpgradeToSecureSupport () {
-    return upgradeToSecureSupport
+    let canUpgrade = false
+    if (getBrowserName() !== 'moz') return canUpgrade
+
+    let uaString = window.navigator.userAgent
+    try {
+        const browserVersion = uaString.match(/([0-9]+)/)
+        if (browserVersion >= 59) {
+            canUpgrade = true
+        }
+    } catch (e) {}
+
+    return canUpgrade
 }
 
 // Chrome errors with 'beacon', but supports 'ping'
