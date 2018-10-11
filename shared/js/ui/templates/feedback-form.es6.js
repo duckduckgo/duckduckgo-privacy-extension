@@ -34,7 +34,7 @@ module.exports = function () {
         </label>
         ${fields}
         <input class='btn js-feedback-submit ${this.model.canSubmit ? '' : 'is-disabled'}'
-            type='submit' value='Submit'/>
+            type='submit' value='Submit' ${this.model.canSubmit ? '' : 'disabled'}/>
     </form>`
 }
 
