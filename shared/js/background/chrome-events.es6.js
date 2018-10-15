@@ -243,7 +243,7 @@ chrome.webRequest.onErrorOccurred.addListener((e) => {
             https.incrementUpgradeCount('failedUpgrades')
             const url = new URL(e.url)
             pixel.fire('ehd', {
-                'url': `${encodeURIComponent(url.hostname + url.pathname)}`,
+                'url': `${encodeURIComponent(url.hostname)}`,
                 'error': errCode
             })
         }
