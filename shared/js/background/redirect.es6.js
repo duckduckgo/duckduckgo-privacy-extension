@@ -21,7 +21,6 @@ trackers.loadLists()
 
 function handleRequest (requestData) {
     let tabId = requestData.tabId
-
     // Skip requests to background tabs
     if (tabId === -1) { return }
 

@@ -1,5 +1,8 @@
 const tldjs = require('tldjs')
 const entityMap = require('../../data/tracker_lists/entityMap')
+const constants = require('../../data/constants')
+const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const browserInfo = parseUserAgentString()
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -62,45 +65,45 @@ function getCurrentTab (callback) {
 }
 
 // Browser / Version detection
-// 1. Set browser for popup asset paths
-// 2. Determine if upgradeToSecure supported (firefox 59+)
-// chrome doesn't have getBrowserInfo so we'll default to chrome
-// and try to detect if this is firefox.
-
-var browser = 'chrome'
-var upgradeToSecureSupport = false
-
-try {
-    chrome.runtime.getBrowserInfo((info) => {
-        if (info.name === 'Firefox') {
-            browser = 'moz'
-
-            var browserVersion = info.version.match(/^(\d+)/)[1]
-            if (browserVersion >= 59) {
-                upgradeToSecureSupport = true
-            }
-        }
-    })
-} catch (e) {}
-
+// Get correct name for fetching UI assets
 function getBrowserName () {
+    if (!browserInfo || !browserInfo.browser) return
+
+    let browser = browserInfo.browser.toLowerCase()
+    if (browser === 'firefox') browser = 'moz'
+
     return browser
 }
 
+// Determine if upgradeToSecure supported (Firefox 59+)
 function getUpgradeToSecureSupport () {
-    return upgradeToSecureSupport
+    let canUpgrade = false
+    if (getBrowserName() !== 'moz') return canUpgrade
+
+    if (browserInfo && browserInfo.version >= 59) {
+        canUpgrade = true
+    }
+
+    return canUpgrade
 }
 
 // Chrome errors with 'beacon', but supports 'ping'
 // Firefox only blocks 'beacon' (even though it should support 'ping')
-const beaconNamesByBrowser = {
-    'chrome': 'ping',
-    'moz': 'beacon'
-}
-const beaconName = beaconNamesByBrowser[browser]
-
 function getBeaconName () {
-    return beaconName
+    const beaconNamesByBrowser = {
+        'chrome': 'ping',
+        'moz': 'beacon'
+    }
+
+    return beaconNamesByBrowser[getBrowserName()]
+}
+
+// Return requestListenerTypes + beacon or ping
+function getUpdatedRequestListenerTypes () {
+    let requestListenerTypes = constants.requestListenerTypes.slice()
+    requestListenerTypes.push(getBeaconName())
+
+    return requestListenerTypes
 }
 
 module.exports = {
@@ -112,5 +115,6 @@ module.exports = {
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
     findParent: findParent,
-    getBeaconName: getBeaconName
+    getBeaconName: getBeaconName,
+    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes
 }

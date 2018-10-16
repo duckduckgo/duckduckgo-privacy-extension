@@ -5,6 +5,7 @@
  * if we do too much before adding it
  */
 const ATB = require('./atb.es6')
+const utils = require('./utils.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
@@ -17,18 +18,15 @@ chrome.runtime.onInstalled.addListener(function (details) {
  * REQUESTS
  */
 
-const utils = require('./utils.es6')
-const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
+const constants = require('../../data/constants')
+let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
-let requestListenerTypes = constants.requestListenerTypes.slice()
-requestListenerTypes.push(utils.getBeaconName())
-
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
     {
