@@ -54,12 +54,10 @@ class Site {
     checkBrokenSites (domain) {
         let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
 
-        if (!trackersWhitelistTemporary) {
+        if (!trackersWhitelistTemporary) return
 
-        } else {
-            return trackersWhitelistTemporary.indexOf(domain) !== -1
-        }
-    };
+        return trackersWhitelistTemporary.some(brokenSiteDomain => brokenSiteDomain.match(new RegExp(domain + '$')))
+    }
 
     /*
      * When site objects are created we check the stored whitelists
