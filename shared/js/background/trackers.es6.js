@@ -27,26 +27,14 @@ class Trackers {
 
     // compile regex entries in the tracker list
     processTrackerList (data) {
-        Object.keys(data).forEach(categoryName => {
-            let category = data[categoryName]
-
-            Object.keys(category).forEach(trackerName => {
-                let tracker = category[trackerName]
-                // Look for regex rules and pre-compile to speed up the blocking algo later on
-                if (tracker.rules) {
-                    for (let i in tracker.rules) {
-                        // All of our rules are host anchored and have an implied wildcard at the end.
-                        tracker.rules[i].rule = new RegExp(tracker.rules[i].rule + '.*', 'i')
-                    }
+        Object.entries(data).forEach(([name, tracker])  => {
+            // Look for regex rules and pre-compile to speed up the blocking algo later on
+            if (tracker.rules) {
+                for (let i in tracker.rules) {
+                    tracker.rules[i].rule = new RegExp(tracker.rules[i].rule, 'ig')
                 }
-
-                if (tracker.whitelist) {
-                    for (let i in tracker.whitelist) {
-                        // All of our rules are host anchored and have an implied wildcard at the end.
-                        tracker.whitelist[i].rule = new RegExp(tracker.whitelist[i].rule + '.*', 'i')
-                    }
-                }
-            })
+            }
+            data[name] = tracker
         })
         return data
     }
@@ -142,61 +130,49 @@ class Trackers {
     }
 
     checkTrackersWithParentCompany (url, siteDomain, request) {
-        let matchedTracker = false
+        let matchedTracker = ''
 
-        // base case
-        if (url.length < 2) { return false }
+        while (url.length > 1) {
+            let trackerURL = url.join('.')
+            url.shift()
 
-        let trackerURL = url.join('.')
-
-        constants.blocking.some(function (trackerType) {
             // Some trackers are listed under just the host name of their parent company without
             // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
             // Other trackers are listed using their subdomains. Ex: developers.google.com.
             // We'll start by checking the full host with subdomains and then if no match is found
             // try pulling off the subdomain and checking again.
-            if (!this.trackersWithParentCompany[trackerType]) return
-            const tracker = this.trackersWithParentCompany[trackerType][trackerURL]
-            if (!tracker) return
-
+            const tracker = this.trackersWithParentCompany[trackerURL]
+            if (!tracker) continue
+            
+            matchedTracker = {data: tracker, block: true}
+            
             // Check to see if this request matches any of the blocking rules for this tracker
             if (tracker.rules && tracker.rules.length) {
                 tracker.rules.some(ruleObj => {
                     if (this.requestMatchesRule(request, ruleObj, siteDomain)) {
-                        matchedTracker = {data: tracker, rule: ruleObj.rule, type: trackerType, block: true}
+                        matchedTracker.rule = ruleObj
                         // break loop early
                         return true
                     }
                 })
             } else {
-                // no rules so we always block this tracker
-                matchedTracker = {data: tracker, type: trackerType, block: true}
-                return true
+                // should we always block third party requests for this tracker
+                if (tracker.default === 'ignore') {
+                    matchedTracker.block = false
+                    matchedTracker.reason = 'ignore'
+                }
+                break
             }
-        }, this)
+        }
 
         if (matchedTracker) {
-            if (matchedTracker.data.whitelist) {
-                const foundOnWhitelist = matchedTracker.data.whitelist.some(ruleObj => {
-                    if (this.requestMatchesRule(request, ruleObj, siteDomain)) {
-                        matchedTracker.block = false
-                        matchedTracker.type = 'trackersWhitelist'
-                        // break loop early
-                        return true
-                    }
-                })
-
-                if (foundOnWhitelist) {
-                    return this.getReturnTrackerObj(matchedTracker, request, 'whitelisted')
-                }
+            // check to see if this tracker is whitelisted
+            if (this.matchesExceptions(matchedTracker, request, siteDomain)) {
+                matchedTracker.block = false
+                matchedTracker.type = 'trackersWhitelist'
+                return this.getReturnTrackerObj(matchedTracker, request, 'whitelisted')
             }
             return this.getReturnTrackerObj(matchedTracker, request, 'trackersWithParentCompany')
-        } else {
-            // remove the subdomain and recheck for trackers. This is recursive, we'll continue
-            // to pull off subdomains until we either find a match or have no url to check.
-            // Ex: x.y.z.analytics.com would be checked 4 times pulling off a subdomain each time.
-            url.shift()
-            return this.checkTrackersWithParentCompany(url, siteDomain, request)
         }
     }
 
@@ -206,6 +182,46 @@ class Trackers {
         } else {
             return false
         }
+    }
+
+
+    /* Check the matched rule exceptions against the request data
+    * return: false (not whitelisted), true (whitelisted)
+    */
+    matchesExceptions (tracker, request, siteDomain) {
+        if (tracker.rule && tracker.rule.exceptions) {
+            if (tracker.rule.exceptions.types &&
+                tracker.rule.exceptions.types.length && 
+                !tracker.rule.exceptions.types.includes(request.type)) {
+                return false
+            }
+
+            if (tracker.rule.exceptions.domains && 
+                tracker.rule.exceptions.domains.length && 
+                !tracker.rule.exceptions.domains.includes(siteDomain)) {
+                return false
+            }
+            // passed domain and type checks
+            return true
+        }
+        return false
+    }
+
+    /* Check the matched rule  options against the request data
+    * return: true (all options matched)
+    */
+    matchRuleOptions (rule, request, siteDomain) {
+        if (!rule.options) return true
+
+        if (rule.options.types && rule.options.types.length && !rule.options.types.includes(request.type)) {
+            return false
+        }
+
+        if (rule.options.domains && rule.options.domains.length && !rule.options.domains.includes(siteDomain)) {
+            return false
+        }
+
+        return true
     }
 
     /* Check the matched rule  options against the request data
@@ -233,9 +249,13 @@ class Trackers {
             return false
         }
 
+        if (tracker.default === 'ignore' && tracker.block === 'false') {
+            return false
+        }
+
         let fullURL = request.url ? request.url : request
         return {
-            parentCompany: tracker.data.c,
+            parentCompany: tracker.data.owner.name,
             url: utils.extractHostFromURL(fullURL),
             type: tracker.type,
             block: tracker.block,
