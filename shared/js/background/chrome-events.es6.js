@@ -188,7 +188,7 @@ chrome.alarms.create('updateLists', {periodInMinutes: 30})
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
-    if (alarmEvent.name === 'updateLists') {
+    if (alarmEvent.name === 'updateHTTPSLists') {
         settings.ready().then(() => {
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
