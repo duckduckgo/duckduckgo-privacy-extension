@@ -13,6 +13,7 @@ const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const browserWrapper = require('../$BROWSER-wrapper.es6')
+const tldjs = require('tldjs')
 
 class Site {
     constructor (url) {
@@ -54,12 +55,15 @@ class Site {
     checkBrokenSites (domain) {
         let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
 
-        if (!trackersWhitelistTemporary) {
+        if (!trackersWhitelistTemporary) return
 
-        } else {
-            return trackersWhitelistTemporary.indexOf(domain) !== -1
-        }
-    };
+        // Match independently of subdomain
+        domain = tldjs.getDomain(domain) || domain
+
+        // Make sure we match at the end of the URL
+        // so we're extra sure it's the legit main domain
+        return trackersWhitelistTemporary.some(brokenSiteDomain => brokenSiteDomain.match(new RegExp(domain + '$')))
+    }
 
     /*
      * When site objects are created we check the stored whitelists
@@ -109,13 +113,21 @@ class Site {
     getSpecialDomain () {
         const extensionId = browserWrapper.getExtensionId()
         const url = this.url
+        const localhostName = 'localhost'
         let domain = this.domain
 
         if (url === '') {
             return 'new tab'
         }
 
-        if (domain === 'localhost') {
+        // Both 'localhost' and the loopback ip have to be specified
+        // since they're treated as different domains
+        if (domain === localhostName || domain.match(/^127\.0\.0\.1/)) {
+            return localhostName
+        }
+
+        // Handle non-routable meta-address
+        if (domain.match(/^0\.0\.0\.0/)) {
             return domain
         }
 

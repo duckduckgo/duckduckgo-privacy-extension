@@ -5,6 +5,7 @@
  * if we do too much before adding it
  */
 const ATB = require('./atb.es6')
+const utils = require('./utils.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
@@ -17,18 +18,15 @@ chrome.runtime.onInstalled.addListener(function (details) {
  * REQUESTS
  */
 
-const utils = require('./utils.es6')
-const constants = require('../../data/constants')
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
+const constants = require('../../data/constants')
+let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
-let requestListenerTypes = constants.requestListenerTypes.slice()
-requestListenerTypes.push(utils.getBeaconName())
-
 chrome.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
     {
@@ -53,28 +51,6 @@ chrome.webRequest.onHeadersReceived.addListener(
         urls: ['<all_urls>']
     }
 )
-
-// Disable temporarily due to CSP causing problems.
-// Also, since the new HTTPS upgrade list does not allow mixed content
-// this will be less of an issue.
-// https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/322
-//
-// chrome.webRequest.onHeadersReceived.addListener(
-//     (request) => {
-//         // ignore background requests and requests without urls
-//         if (request.tabId === -1 || !request.url) return {}
-//
-//         const tab = tabManager.get(request)
-//
-//         if (tab && tab.site && !tab.site.whitelisted) {
-//             return https.setUpgradeInsecureRequestHeader(request)
-//         }
-//     },
-//     {
-//         urls: ['<all_urls>']
-//     },
-//     ['blocking', 'responseHeaders']
-// )
 
 /**
  * TABS
@@ -202,23 +178,27 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 const abpLists = require('./abp-lists.es6')
 const httpsStorage = require('./storage/https.es6')
 
-// recheck adblock plus and https lists every 30 minutes
+// recheck tracker and https lists every 12 hrs
+chrome.alarms.create('updateHTTPSLists', {periodInMinutes: 12 * 60})
+// tracker lists / whitelists are 30 minutes
 chrome.alarms.create('updateLists', {periodInMinutes: 30})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
-    if (alarmEvent.name === 'updateLists') {
+    if (alarmEvent.name === 'updateHTTPSLists') {
         settings.ready().then(() => {
-            abpLists.updateLists()
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
-
-            https.sendHttpsUpgradeTotals()
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+    } else if (alarmEvent.name === 'updateLists') {
+        settings.ready().then(() => {
+            abpLists.updateLists()
+            https.sendHttpsUpgradeTotals()
+        })
     }
 })
 
@@ -265,7 +245,7 @@ chrome.webRequest.onErrorOccurred.addListener((e) => {
             https.incrementUpgradeCount('failedUpgrades')
             const url = new URL(e.url)
             pixel.fire('ehd', {
-                'url': `${encodeURIComponent(url.hostname + url.pathname)}`,
+                'url': `${encodeURIComponent(url.hostname)}`,
                 'error': errCode
             })
         }
