@@ -63,7 +63,7 @@ chrome.webNavigation.onCommitted.addListener(
         // ignore navigation on iframes
         if (details.frameId !== 0) return
 
-        let tab = tabManager.get({tabId: e.tabId})
+        const tab = tabManager.get({tabId: details.tabId})
 
         if (!tab) return
 
