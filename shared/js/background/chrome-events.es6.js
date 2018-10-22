@@ -52,6 +52,25 @@ chrome.webRequest.onHeadersReceived.addListener(
     }
 )
 
+// keep track of URLs that the browser navigates to.
+//
+// this is currently meant to supplement tabManager.updateTabUrl() above:
+// tabManager.updateTabUrl only fires when a tab has finished loading with a 200,
+// which misses a couple of edge cases like browser special pages
+// and Gmail's weird redirect which returns a 200 via a service worker
+chrome.webNavigation.onCommitted.addListener(
+    (details) => {
+        // ignore navigation on iframes
+        if (details.frameId !== 0) return
+
+        let tab = tabManager.get({tabId: e.tabId})
+
+        if (!tab) return
+
+        tab.updateSite(details.url)
+    }
+)
+
 /**
  * TABS
  */

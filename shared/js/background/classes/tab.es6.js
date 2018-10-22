@@ -81,8 +81,11 @@ class Tab {
         }
     }
 
-    updateSite () {
-        this.site = new Site(this.url)
+    updateSite (url) {
+        if (this.site.url === url) return
+
+        this.url = url
+        this.site = new Site(url)
 
         // reset badge to dax whenever we go to a new site
         this.resetBadgeIcon()
