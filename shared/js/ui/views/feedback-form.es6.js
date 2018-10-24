@@ -39,6 +39,7 @@ FeedbackForm.prototype = window.$.extend({},
                 this._setup()
             } else if (e.change.attribute === 'canSubmit') {
                 this.$submit.toggleClass('is-disabled', !this.model.canSubmit)
+                this.$submit.attr('disabled', !this.model.canSubmit)
             }
         },
 
