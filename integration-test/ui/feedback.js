@@ -20,6 +20,7 @@ describe('feedback flow', () => {
     beforeEach(async () => {
         feedbackPage = await browser.newPage()
 
+        // make sure running the tests doesn't spam our feedback endpoint
         await feedbackPage.setRequestInterception(true)
         feedbackPage.on('request', async (req) => {
             if (req.url().match(/duckduckgo\.com\/feedback\.js/)) {
