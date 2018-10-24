@@ -54,6 +54,7 @@ describe('feedback flow', () => {
             await feedbackPage.keyboard.type('\n')
 
             let content = await feedbackPage.content()
+            expect(content).toContain('js-feedback-submit')
             expect(content).not.toMatch(/thank you/i)
 
             await feedbackPage.type('.js-feedback-url', EXAMPLE_URL)
@@ -65,6 +66,7 @@ describe('feedback flow', () => {
             await feedbackPage.waitForResponse(r => r.url().match(/feedback\.js/))
 
             content = await feedbackPage.content()
+            expect(content).not.toContain('js-feedback-message')
             expect(content).toMatch(/thank you/i)
         })
     })
@@ -77,6 +79,7 @@ describe('feedback flow', () => {
             await feedbackPage.keyboard.type('\n')
 
             let content = await feedbackPage.content()
+            expect(content).toContain('js-feedback-submit')
             expect(content).not.toMatch(/thank you/i)
 
             await feedbackPage.type('.js-feedback-message', 'Everything is good!')
@@ -87,6 +90,7 @@ describe('feedback flow', () => {
             await feedbackPage.waitForResponse(r => r.url().match(/feedback\.js/))
 
             content = await feedbackPage.content()
+            expect(content).not.toContain('js-feedback-message')
             expect(content).toMatch(/thank you/i)
         })
     })
