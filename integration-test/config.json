@@ -1,6 +1,7 @@
 {
     "spec_dir": "integration-test",
     "spec_files": [
-        "background/*.js"
+        "background/*.js",
+        "ui/*.js"
     ]
 }
