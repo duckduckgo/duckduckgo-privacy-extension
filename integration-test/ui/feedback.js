@@ -1,19 +1,14 @@
-/* global dbg:false */
 const harness = require('../helpers/harness')
-const wait = require('../helpers/wait')
-const request = require('request-promise-native')
-
 const EXAMPLE_URL = `https://example.com/test`
 
 let browser
 let bgPage
-let requests
 let feedbackUrl
 let feedbackPage
 
 describe('feedback flow', () => {
     beforeAll(async () => {
-        ({ browser, bgPage, requests } = await harness.setup())
+        ({ browser, bgPage } = await harness.setup())
 
         const extId = await bgPage.evaluate(() => chrome.runtime.id)
 
@@ -48,15 +43,15 @@ describe('feedback flow', () => {
             const val = await feedbackPage.evaluate(() => document.querySelector('.js-feedback-url').value)
 
             expect(val).toMatch(EXAMPLE_URL)
-        });
+        })
         it('should be possible to submit after everything has been filled out', async () => {
             await feedbackPage.goto(`${feedbackUrl}?broken=1`)
             await feedbackPage.waitForSelector('.js-feedback-submit')
 
             // clicking times out for some reason, so we try and enter instead
             // (stolen from https://github.com/GoogleChrome/puppeteer/issues/1805#issuecomment-418965009)
-            await feedbackPage.focus('.js-feedback-submit' )
-            await feedbackPage.keyboard.type('\n');
+            await feedbackPage.focus('.js-feedback-submit')
+            await feedbackPage.keyboard.type('\n')
 
             let content = await feedbackPage.content()
             expect(content).not.toMatch(/thank you/i)
@@ -64,8 +59,8 @@ describe('feedback flow', () => {
             await feedbackPage.type('.js-feedback-url', EXAMPLE_URL)
             await feedbackPage.type('.js-feedback-message', 'Everything is broken!')
 
-            await feedbackPage.focus('.js-feedback-submit' )
-            await feedbackPage.keyboard.type('\n');
+            await feedbackPage.focus('.js-feedback-submit')
+            await feedbackPage.keyboard.type('\n')
 
             await feedbackPage.waitForResponse(r => r.url().match(/feedback\.js/))
 
@@ -78,16 +73,16 @@ describe('feedback flow', () => {
             await feedbackPage.goto(`${feedbackUrl}`)
             await feedbackPage.waitForSelector('.js-feedback-submit')
 
-            await feedbackPage.focus('.js-feedback-submit' )
-            await feedbackPage.keyboard.type('\n');
+            await feedbackPage.focus('.js-feedback-submit')
+            await feedbackPage.keyboard.type('\n')
 
             let content = await feedbackPage.content()
             expect(content).not.toMatch(/thank you/i)
 
             await feedbackPage.type('.js-feedback-message', 'Everything is good!')
 
-            await feedbackPage.focus('.js-feedback-submit' )
-            await feedbackPage.keyboard.type('\n');
+            await feedbackPage.focus('.js-feedback-submit')
+            await feedbackPage.keyboard.type('\n')
 
             await feedbackPage.waitForResponse(r => r.url().match(/feedback\.js/))
 
