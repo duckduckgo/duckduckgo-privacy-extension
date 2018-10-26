@@ -44,6 +44,7 @@ class Tab {
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(this.url)
+        this.httpsUpgrades = {}
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {

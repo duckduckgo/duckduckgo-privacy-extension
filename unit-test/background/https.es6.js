@@ -4,6 +4,7 @@ const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
 const load = require('./../helpers/https.es6')
+const newTab = require('./../data/newTab.json')
 
 describe('Https upgrades', () => {
     beforeAll(() => {
@@ -26,13 +27,17 @@ describe('Https upgrades', () => {
 
         it('should upgrade known upgradable domains', () => {
             testDomains.shouldUpgrade.forEach(domain => {
-                expect(https.canUpgradeHost(domain)).toEqual(true)
+                let tab = JSON.parse(JSON.stringify(newTab))
+                expect(https.canUpgradeHost(domain, tab)).toEqual(true)
+                expect(tab.httpsUpgrades[domain]).toEqual(true)
             })
         })
 
         it('should not upgrade domains missing from the list', () => {
             testDomains.shouldNotUpgrade.forEach(domain => {
-                expect(https.canUpgradeHost(domain)).toEqual(false)
+                let tab = JSON.parse(JSON.stringify(newTab))
+                expect(https.canUpgradeHost(domain, tab)).toEqual(false)
+                expect(tab.httpsUpgrades[domain]).toEqual(false)
             })
         })
 
@@ -40,6 +45,18 @@ describe('Https upgrades', () => {
             https.whitelist.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(false)
             })
+        })
+
+        it('should store all previous bloom filter results in tab object', () => {
+            let tab = JSON.parse(JSON.stringify(newTab))
+            const domainListLength = testDomains.shouldUpgrade.length + testDomains.shouldNotUpgrade.length
+            testDomains.shouldUpgrade.forEach(domain => {
+                https.canUpgradeHost(domain, tab)
+            })
+            testDomains.shouldNotUpgrade.forEach(domain => {
+                https.canUpgradeHost(domain, tab)
+            })
+            expect(Object.keys(tab.httpsUpgrades).length).toEqual(domainListLength)
         })
     })
 

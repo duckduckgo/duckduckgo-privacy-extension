@@ -1,0 +1,42 @@
+{
+    "id": 1,
+    "trackers": {},
+    "trackersBlocked": {},
+    "url": "http://www.example.com/",
+    "upgradedHttps": false,
+    "hasHttpsError": false,
+    "mainFrameUpgraded": false,
+    "requestId": "555",
+    "site": {
+        "url": "http://www.example.com",
+        "domain": "example..com",
+        "trackerUrls": [],
+        "grade": {
+            "https": false,
+            "httpsAutoUpgrade": false,
+            "privacyScore": 2,
+            "entitiesBlocked": {},
+            "entitiesNotBlocked": {},
+            "scores": null
+        },
+        "isBroken": false,
+        "didIncrementCompaniesData": false,
+        "tosdr": {},
+        "parentEntity": "",
+        "parentPrevalence": 0,
+        "specialDomainName": null
+    },
+    "httpsUpgrades": {},
+    "httpsRedirects": {
+        "failedUpgradeHosts": {},
+        "redirectCounts": {},
+        "mainFrameRedirect": null,
+        "clearMainFrameTimeout": null
+    },
+    "statusCode": null,
+    "stopwatch": {
+        "begin": 1540540405003,
+        "end": null,
+        "completeMs": null
+    }
+}

@@ -49,7 +49,7 @@ class HTTPS {
         return bloom
     }
 
-    canUpgradeHost (host) {
+    canUpgradeHost (host, tab) {
         if (!this.isReady) {
             // console.warn('HTTPS: not ready')
             return false
@@ -59,7 +59,15 @@ class HTTPS {
             return false
         }
 
-        return Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
+        let upgradeable = false
+        if (host in tab.httpsUpgrades) {
+            upgradeable = tab.httpsUpgrades[host]
+        } else {
+            upgradeable = Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
+            tab.httpsUpgrades[host] = upgradeable
+        }
+
+        return upgradeable
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
@@ -89,7 +97,7 @@ class HTTPS {
         // Determine host without stripping 'www',
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
-        if (host && this.canUpgradeHost(host)) {
+        if (host && this.canUpgradeHost(host, tab)) {
             if (isMainFrame) {
                 tab.mainFrameUpgraded = true
                 this.incrementUpgradeCount('totalUpgrades')
