@@ -78,6 +78,7 @@ class Tab {
             if (target) badgeData.target = target
 
             browserWrapper.setBadgeIcon(badgeData)
+            browserWrapper.setBadgeTitle(this.site.whitelisted ? grade.site.grade : grade.enhanced.grade)
         }
     }
 

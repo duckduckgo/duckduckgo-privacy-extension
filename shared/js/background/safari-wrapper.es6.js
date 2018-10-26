@@ -27,6 +27,17 @@ let setBadgeIcon = (badgeUpdate) => {
     }
 }
 
+let setBadgeTitle = (badgeUpdate) => {
+    if (badgeUpdate.target && badgeUpdate.target.activeTab) {
+        badgeUpdate.target = badgeUpdate.target.activeTab
+    }
+
+    let windowId = _getSafariWindowId(badgeUpdate.target);
+    if (windowId !== undefined) {
+        safari.extension.toolbarItems[windowId].label = grade;
+    }
+}
+
 let syncToStorage = (data) => {
     if (data) {
         let key = Object.keys(data)[0]
@@ -106,6 +117,7 @@ module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
+    setBadgeTitle: setBadgeTitle,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage,
     notifyPopup: notifyPopup,

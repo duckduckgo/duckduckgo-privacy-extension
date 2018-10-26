@@ -11,6 +11,11 @@ let setBadgeIcon = (badgeData) => {
     chrome.browserAction.setIcon(badgeData)
 }
 
+let setBadgeTitle = (grade) => {
+    const title = `Privacy Grade: ${grade} - ${chrome.i18n.getMessage('appName')}`
+    chrome.browserAction.setTitle({ title: title })
+}
+
 let syncToStorage = (data) => {
     chrome.storage.local.set(data, function () { })
 }
@@ -61,6 +66,7 @@ module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
+    setBadgeTitle: setBadgeTitle,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage,
     notifyPopup: notifyPopup,
