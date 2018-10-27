@@ -52,6 +52,7 @@ Trackers.prototype = window.$.extend({},
                 pageView: this,
                 model: new SiteModel(),
                 appendTo: this.$parent,
+                before: '.top-blocked',
                 template: siteTemplate
             })
 
