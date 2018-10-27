@@ -60,4 +60,8 @@
     &:hover, &.selected {
         @include cross_platform_bg_image("loupe--highlight.svg");
     }
+
+    &:focus {
+        outline: auto 2px rgb(59, 153, 252);
+    }
 }

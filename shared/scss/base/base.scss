@@ -190,12 +190,15 @@ a {
 /* Hamburger Button */
 .hamburger-button {
     position: absolute;
-    top: 3px;
+    top: 4px;
     right: 10px;
     font-size: 20px;
+    margin-bottom: 2px;
+    padding-bottom: 5px;
     width: 20px;
-    height: 30px;
+    height: 34px;
     background-color: inherit;
+
 
     span {
         display: block;
@@ -210,6 +213,10 @@ a {
         span {
             background-color: $color--silver;
         }
+    }
+
+    &:focus {
+        outline: auto 2px rgb(59, 153, 252);
     }
 }
 
