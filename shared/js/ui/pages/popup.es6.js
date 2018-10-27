@@ -17,7 +17,7 @@ const AutocompleteModel = require('./../models/autocomplete.es6.js')
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
 
-function Trackers (ops) {
+function Trackers(ops) {
     this.$parent = window.$('#popup-container')
     Parent.call(this, ops)
 }
@@ -36,7 +36,7 @@ Trackers.prototype = window.$.extend({},
 
             this.views.search = new SearchView({
                 pageView: this,
-                model: new SearchModel({searchText: ''}),
+                model: new SearchModel({ searchText: '' }),
                 appendTo: this.$parent,
                 template: searchTemplate
             })
@@ -52,12 +52,13 @@ Trackers.prototype = window.$.extend({},
                 pageView: this,
                 model: new SiteModel(),
                 appendTo: this.$parent,
+                before: '.top-blocked',
                 template: siteTemplate
             })
 
             this.views.topblocked = new TopBlockedView({
                 pageView: this,
-                model: new TopBlockedModel({numCompanies: 3}),
+                model: new TopBlockedModel({ numCompanies: 3 }),
                 appendTo: this.$parent,
                 template: topBlockedTemplate
             })
@@ -68,7 +69,7 @@ Trackers.prototype = window.$.extend({},
             // store.subscribe()
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
-                model: new AutocompleteModel({suggestions: []}),
+                model: new AutocompleteModel({ suggestions: [] }),
                 // appendTo: this.views.search.$el,
                 appendTo: null,
                 template: autocompleteTemplate
