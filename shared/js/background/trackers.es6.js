@@ -45,7 +45,6 @@ function isTracker (urlToCheck, thisTab, request) {
     }
 
     if (settings.getSetting('trackerBlockingEnabled')) {
-
         if (abbrUrl in thisTab.trackerChecks) {
             return thisTab.trackerChecks[abbrUrl]
         }
