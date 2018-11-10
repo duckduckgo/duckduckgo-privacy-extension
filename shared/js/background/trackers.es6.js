@@ -31,6 +31,7 @@ function loadLists () {
 function isTracker (urlToCheck, thisTab, request) {
     let currLocation = thisTab.url || ''
     let siteDomain = thisTab.site ? thisTab.site.domain : ''
+    let abbrUrl = urlToCheck.slice(0, urlToCheck.indexOf('?')).substring(0, 75)
     if (!siteDomain) return
 
     // DEMO embedded tweet option
@@ -44,6 +45,11 @@ function isTracker (urlToCheck, thisTab, request) {
     }
 
     if (settings.getSetting('trackerBlockingEnabled')) {
+
+        if (abbrUrl in thisTab.trackerChecks) {
+            return thisTab.trackerChecks[abbrUrl]
+        }
+
         let parsedUrl = tldjs.parse(urlToCheck)
         let hostname
 
@@ -69,8 +75,11 @@ function isTracker (urlToCheck, thisTab, request) {
         if (whitelistedTracker) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
-                return addCommonParent(whitelistedTracker, commonParent)
+                let commonParentTracker = addCommonParent(whitelistedTracker, commonParent)
+                thisTab.trackerChecks[abbrUrl] = commonParentTracker
+                return commonParentTracker
             }
+            thisTab.trackerChecks[abbrUrl] = whitelistedTracker
             return whitelistedTracker
         }
 
@@ -78,8 +87,11 @@ function isTracker (urlToCheck, thisTab, request) {
         if (surrogateTracker) {
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
-                return addCommonParent(surrogateTracker, commonParent)
+                let commonParentTracker = addCommonParent(surrogateTracker, commonParent)
+                thisTab.trackerChecks[abbrUrl] = commonParentTracker
+                return commonParentTracker
             }
+            thisTab.trackerChecks[abbrUrl] = surrogateTracker
             return surrogateTracker
         }
 
@@ -94,8 +106,11 @@ function isTracker (urlToCheck, thisTab, request) {
 
             let commonParent = getCommonParentEntity(currLocation, urlToCheck)
             if (commonParent) {
-                return addCommonParent(trackerByParentCompany, commonParent)
+                let commonParentTracker = addCommonParent(trackerByParentCompany, commonParent)
+                thisTab.trackerChecks[abbrUrl] = commonParentTracker
+                return commonParentTracker
             }
+            thisTab.trackerChecks[abbrUrl] = trackerByParentCompany
             return trackerByParentCompany
         }
     }

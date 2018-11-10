@@ -36,6 +36,7 @@ class Tab {
     constructor (tabData) {
         this.id = tabData.id || tabData.tabId
         this.trackers = {}
+        this.trackerChecks = {}
         this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
