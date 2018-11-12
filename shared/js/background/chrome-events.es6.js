@@ -241,6 +241,8 @@ let onStartup = () => {
             .catch(e => console.log(e))
 
         https.sendHttpsUpgradeTotals()
+
+        Companies.buildFromStorage()
     })
 }
 

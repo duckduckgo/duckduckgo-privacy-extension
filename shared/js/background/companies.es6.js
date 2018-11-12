@@ -145,6 +145,4 @@ var Companies = (() => {
     }
 })()
 
-Companies.buildFromStorage()
-
 module.exports = Companies
