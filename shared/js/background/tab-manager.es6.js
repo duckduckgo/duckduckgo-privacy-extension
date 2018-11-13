@@ -118,8 +118,7 @@ class TabManager {
         if (tab) {
             tab.statusCode = request.statusCode
             if (tab.statusCode === 200) {
-                tab.url = request.url
-                tab.updateSite()
+                tab.updateSite(request.url)
             }
         }
     }

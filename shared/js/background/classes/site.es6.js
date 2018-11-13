@@ -131,6 +131,14 @@ class Site {
             return domain
         }
 
+        // for some reason chrome passes this back from webNavigation events
+        // for new tabs instead of chrome://newtab
+        //
+        // "local-ntp" -> "local new tab page"
+        if (url.match(/^chrome-search:\/\/local-ntp/)) {
+            return 'new tab'
+        }
+
         // for special pages with a protocol, just return whatever
         // word comes after the protocol
         // e.g. 'chrome://extensions' -> 'extensions'
