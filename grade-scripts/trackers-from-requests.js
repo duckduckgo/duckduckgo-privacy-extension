@@ -31,7 +31,7 @@ const run = async () => {
     await listManager.loadLists()
     trackers.addLists({
         entityList: listManager.getList('entityList'),
-        whitelist: listManager.getList('whitelist')
+        trackerList: listManager.getList('trackerList'),
     })
     surrogates.addLists(listManager.getList('surrogates'))
 
@@ -54,7 +54,7 @@ const run = async () => {
 
         // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach((request) => {
-            let tracker = trackers.isTracker(request[0], url, request[1])
+            const tracker = trackers.isTracker(request[0], url, {url: request[0], type: request[1]})
 
             if (tracker) {
                 if (tracker.block) {

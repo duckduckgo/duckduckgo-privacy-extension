@@ -9,8 +9,8 @@ const baseUrl = 'https://duckduckgo.com/contentblocking'
 
 const listsToLoad = {
     surrogates: `${baseUrl}.js?l=surrogates`,
-    whitelist: `${baseUrl}/trackers-whitelist.txt`,
-    entityList: `${baseUrl}.js?l=entitylist2`
+    entityList: 'https://65679750.ngrok.io/entityList.json',
+    trackerList: 'https://65679750.ngrok.io/trackerList.json'
 }
 let loadedLists = {}
 
@@ -62,8 +62,8 @@ let loadLists = async () => {
     }
 
     // large https lists don't have an endpoint just yet
-    loadedLists.https = getSymlinkedLocalList('https_list.txt')
-    loadedLists.httpsAutoUpgrade = getSymlinkedLocalList('https_autoupgrade_list.txt')
+    //loadedLists.https = getSymlinkedLocalList('https_list.txt')
+    //loadedLists.httpsAutoUpgrade = getSymlinkedLocalList('https_autoupgrade_list.txt')
 }
 
 let getList = (listName) => loadedLists[listName]
