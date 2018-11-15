@@ -7,15 +7,16 @@ const entityMap = require('../data/generated/entity-map')
 const utils = require('../src/utils')
 const scriptUtils = require('./shared/utils')
 
-const trackers = require('../src/trackers')
 const surrogates = require('../src/surrogates')
 
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites" (required)')
     .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades" (required)')
     .option('-f, --file <name>', 'Allow processing a subset of dumped site data, defined in a file')
+    .option('-t, --tracker <name>', 'Name of tracker module to load')
     .parse(process.argv)
 
+const trackers = require(`../src/${program.tracker}`)
 const input = program.input
 const inputPath = `${input}-sites`
 const output = program.output
@@ -32,6 +33,7 @@ const run = async () => {
     trackers.addLists({
         entityList: listManager.getList('entityList'),
         trackerList: listManager.getList('trackerList'),
+        whitelists: {trackersWhitelist: { data: listManager.getList('whitelists'), parsed: {}}}
     })
     surrogates.addLists(listManager.getList('surrogates'))
 
@@ -51,7 +53,7 @@ const run = async () => {
         let trackersBlocked = {}
         let trackersNotBlocked = {}
         let totalBlocked = 0
-
+        let requestsBlocked = []
         // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach((request) => {
             const t = process.hrtime()
@@ -65,7 +67,8 @@ const run = async () => {
                         trackersBlocked[tracker.parentCompany] = {}
                     }
                     trackersBlocked[tracker.parentCompany][tracker.url] = tracker
-                    totalBlocked += 1
+                    totalBlocked +=1
+                    requestsBlocked.push(request[0])
                 } else {
                     if (!trackersNotBlocked[tracker.parentCompany]) {
                         trackersNotBlocked[tracker.parentCompany] = {}
@@ -81,7 +84,8 @@ const run = async () => {
             url: siteData.url,
             trackersBlocked,
             trackersNotBlocked,
-            totalBlocked
+            totalBlocked,
+            reqBlocked: requestsBlocked
         }
 
         if (siteData.rank) {

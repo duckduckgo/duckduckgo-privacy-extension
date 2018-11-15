@@ -98,7 +98,7 @@ class Trackers {
 
     checkEmbeddedTweets (urlToCheck, embeddedOn) {
         if (!embeddedOn && /platform.twitter.com/.test(urlToCheck)) {
-            console.log('blocking tweet embedded code on ' + urlToCheck)
+            //console.log('blocking tweet embedded code on ' + urlToCheck)
             return {parentCompany: 'Twitter', url: 'platform.twitter.com', type: 'Analytics', block: true}
         }
         return false
@@ -140,14 +140,18 @@ class Trackers {
         // Determine the blocking decision and reason. 
         // 1. check for exceptions -> don't block
         // 2. no matching rule and default ignore -> don't block
-        // 3. no rules and default block -> block
-        // 4. matches rule -> block
+        // 3. matched a rule but the rule has action ignore -> don't block
+        // 4. no rules and default block -> block
+        // 5. matches rule -> block
         if (this.matchesExceptions(matchedTracker, request, siteDomain)) {
             matchedTracker.block = false
             matchedTracker.reason = 'exception'
         } else if (!matchedTracker.rule && matchedTracker.data.default === 'ignore') {
             matchedTracker.block = false
             matchedTracker.reason = 'ignore'
+        } else if (matchedTracker.rule && matchedTracker.rule.action === 'ignore') {
+            matchedTracker.block = false
+            matchedTracker.reason = 'action ignore'
         } else if (!matchedTracker.rule && matchedTracker.data.default === 'block') {
             matchedTracker.block = true
             matchedTracker.reason = 'default'
