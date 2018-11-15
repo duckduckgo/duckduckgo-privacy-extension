@@ -2,6 +2,7 @@ const utils = require('./utils')
 const tldjs = require('tldjs')
 const entityMap = require('../data/generated/entity-map')
 const surrogates = require('./surrogates')
+const chalk = require('chalk')
 
 class Trackers {
     addLists (lists) {
@@ -128,7 +129,8 @@ class Trackers {
         // Find a matching rule from this tracker
         if (matchedTracker.data.rules && matchedTracker.data.rules.length) {
             matchedTracker.data.rules.some(ruleObj => {
-                if (this.requestMatchesRule(request, ruleObj, siteDomain)) {
+                const matchesRule = this.requestMatchesRule(request, ruleObj, siteDomain)
+                if (matchesRule) {
                     matchedTracker.rule = ruleObj
                     return true
                 }
@@ -161,7 +163,7 @@ class Trackers {
     }
 
     requestMatchesRule (request, ruleObj, siteDomain) {
-        if (ruleObj.rule.exec(request.url)) {
+        if (!!request.url.match(ruleObj.rule)) {
             return this.matchRuleOptions(ruleObj, request, siteDomain)
         } else {
             return false
@@ -239,8 +241,9 @@ class Trackers {
 
         let result = {
             parentCompany: tracker.data.owner.name,
-            url: utils.extractHostFromURL(request.url),
+            url: utils.getDomain(request.url),
             requestUrl: request.url,
+            requestType: request.type,
             type: tracker.type,
             block: tracker.block,
             reason: tracker.reason,
