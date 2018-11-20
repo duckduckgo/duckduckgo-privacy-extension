@@ -54,6 +54,8 @@ const run = async () => {
         let trackersNotBlocked = {}
         let totalBlocked = 0
         let requestsBlocked = []
+        let rulesUsed = {}
+
         // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach((request) => {
             const t = process.hrtime()
@@ -75,6 +77,20 @@ const run = async () => {
                     }
                     trackersNotBlocked[tracker.parentCompany][tracker.url] = tracker
                 }
+
+                if (tracker.rule) {
+                    if (!rulesUsed[tracker.rule.rule]) {
+                        rulesUsed[tracker.rule.rule] = {count: 0, urls: {}}
+                    }
+
+                    rulesUsed[tracker.rule.rule].count += 1
+
+                    if (rulesUsed[tracker.rule.rule].urls[tracker.requestUrl]) {
+                        rulesUsed[tracker.rule.rule].urls[tracker.requestUrl] += 1
+                    } else {
+                        rulesUsed[tracker.rule.rule].urls[tracker.requestUrl] = 1
+                    }
+                }
             }
         })
 
@@ -85,7 +101,8 @@ const run = async () => {
             trackersBlocked,
             trackersNotBlocked,
             totalBlocked,
-            reqBlocked: requestsBlocked
+            reqBlocked: requestsBlocked,
+            rulesUsed: rulesUsed
         }
 
         if (siteData.rank) {

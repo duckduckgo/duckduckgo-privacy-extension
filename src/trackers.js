@@ -4,6 +4,7 @@ const entityMap = require('../data/generated/entity-map')
 const surrogates = require('./surrogates')
 const chalk = require('chalk')
 
+
 class Trackers {
     addLists (lists) {
         this.entityList = lists.entityList
@@ -23,120 +24,144 @@ class Trackers {
         return data
     }
 
-    isTracker (urlToCheck, currLocation, request, ops) {
+    getTrackerData (urlToCheck, siteUrl, request, ops) {
         ops = ops || {}
-
+        
         if (!this.entityList || !this.trackerList) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        let currLocationDomain = utils.getDomain(currLocation)
-        let hostnameToCheck = utils.extractHostFromURL(urlToCheck)
-        let parsedUrl = { domain: utils.getDomain(urlToCheck) }
+        const tracker = {
+            data: null,
+            block: false,
+            surrogate: null,
+            owner: null
+            firstParty: false,
+            rule: null,
+            exception: false
+        }
 
-        if (!hostnameToCheck) {
+        // sets tracker.data
+        this.findTracker(tracker, urlToCheck)
+
+        if (!tracker.data) {
             return false
         }
 
-        let urlSplit = hostnameToCheck.split('.')
+        // sets tracker.rule
+        this.findRule(tracker, siteUrl, request)
 
-        let embeddedTweets = this.checkEmbeddedTweets(urlToCheck, ops.embeddedTweetsEnabled)
-        if (embeddedTweets) {
-            return this.checkFirstParty(embeddedTweets, currLocation, urlToCheck)
-        }
+        // sets tracker.exception
+        this.matchesException(tracker, siteUrl, request)
+        
+        // sets tracker.surrogate
+        this.findSurrogate(tracker)
 
-        let trackerByParentCompany = this.checkTrackersWithParentCompany(urlSplit, currLocationDomain, request)
-        if (trackerByParentCompany) {
-            // if we have a match, check to see if we have surrogate JS for this tracker
-            trackerByParentCompany.redirectUrl = surrogates.getContentForUrl(urlToCheck, parsedUrl)
-            return this.checkFirstParty(trackerByParentCompany, currLocation, urlToCheck)
-        }
-        return false
-    }
+        // sets tracker.owner and tracker.firstParty
+        this.findOwner(tracker)
 
-    // return a hostname split on '.'
-    getSplitURL (parsedUrl, urlToCheck) {
-        let hostname = ''
+        // sets tracker.block
+        this.setBlockDecision(tracker)
 
-        if (parsedUrl && parsedUrl.hostname) {
-            hostname = parsedUrl.hostname
-        } else {
-            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
-            // if the subdomain name has underscores in it
-            try {
-                // last ditch attempt to try and grab a hostname
-                // this will fail on more complicated URLs with e.g. ports
-                // but will allow us to block simple trackers with _ in the subdomains
-                hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
-            } catch (e) {
-                // give up
-                return false
-            }
-        }
-        return hostname.split('.')
+        return tracker
     }
 
     /*
-    * Check current location and tracker url to determine if they are first-party
-    * or related entities. Sets block status to 'false' if they are first-party
+     * Pull subdomains off of the reqeust rule and look for a matching tracker object in our data
+     */
+    findTracker (urlToCheck) {
+        let urlList = urlToCheck.split('.')
+
+        while (urlList.length > 1) {
+            let trackerDomain = urlList.join('.')
+            urlList.shift()
+
+            const matchedTracker = this.trackerList[trackerDomain]
+            if (matchedTracker) {
+                tracker.data = matchedTracker
+            }
+        }
+    }
+
+    /*
+    * Set parent and first party values on tracker
     */
-    checkFirstParty (returnObj, currLocation, urlToCheck) {
+    setParent(tracker, currLocation, urlToCheck) {
         let commonParent = this.getCommonParentEntity(currLocation, urlToCheck)
         if (commonParent) {
-            return this.addCommonParent(returnObj, commonParent)
+            tracker.parent = commoonParent
+            tracker.firstParty = true
         }
-        return returnObj
+        return 
     }
 
-    // add common parent info to the final tracker object returned by isTracker
-    addCommonParent (trackerObj, parentName) {
-        trackerObj.parentCompany = parentName
-        trackerObj.block = false
-        trackerObj.reason = `${trackerObj.reason} - first party`
-        return trackerObj
-    }
-
-    checkEmbeddedTweets (urlToCheck, embeddedOn) {
-        if (!embeddedOn && /platform.twitter.com/.test(urlToCheck)) {
-            //console.log('blocking tweet embedded code on ' + urlToCheck)
-            return {parentCompany: 'Twitter', url: 'platform.twitter.com', type: 'Analytics', block: true}
-        }
-        return false
-    }
-
-    checkTrackersWithParentCompany (url, siteDomain, request) {
-        let matchedTracker = ''
-
-        // find the matching tracker object
-        while (url.length > 1) {
-            let trackerURL = url.join('.')
-            url.shift()
-
-            // Some trackers are listed under just the host name of their parent company without
-            // any subdomain. Ex: ssl.google-analytics.com would be listed under just google-analytics.com.
-            // Other trackers are listed using their subdomains. Ex: developers.google.com.
-            // We'll start by checking the full host with subdomains and then if no match is found
-            // try pulling off the subdomain and checking again.
-            const tracker = this.trackerList[trackerURL]
-            if (!tracker) continue
-
-            matchedTracker = {data: tracker}
-            break
-        }
-
-        if (!matchedTracker) return
-
+    /*
+     * Iterate through a tracker rule list and return the first matching rule, if any.
+     */
+    setMatchingRule(tracker) {
+        let matchedRule = false
         // Find a matching rule from this tracker
-        if (matchedTracker.data.rules && matchedTracker.data.rules.length) {
-            matchedTracker.data.rules.some(ruleObj => {
-                const matchesRule = this.requestMatchesRule(request, ruleObj, siteDomain)
-                if (matchesRule) {
-                    matchedTracker.rule = ruleObj
-                    return true
-                }
+        if (tracker.rules && tracker.rules.length) {
+            tracker.rules.some(ruleObj => {
+                return matchedRule = this.requestMatchesRule(request, ruleObj, siteDomain)
             })
         }
+        tracker.rule = matchedRule
+        return
+    }
 
+    requestMatchesRule (request, ruleObj, siteDomain) {
+        if (!!request.url.match(ruleObj.rule)) {
+            return this.matchRuleOptions(ruleObj, request, siteDomain)
+        } else {
+            return false
+        }
+    }
+
+    /* Check the matched rule exceptions against the request data
+    *  return: false (not whitelisted), true (whitelisted)
+    */
+    setMatchingException (tracker, request, siteDomain) {
+        if (tracker.rule && tracker.rule.exceptions) {
+            if (tracker.rule.exceptions.types &&
+                tracker.rule.exceptions.types.length && 
+                !tracker.rule.exceptions.types.includes(request.type)) {
+                tracker.exception = 'request-type'
+                return
+            }
+
+            if (tracker.rule.exceptions.domains && 
+                tracker.rule.exceptions.domains.length && 
+                !tracker.rule.exceptions.domains.includes(siteDomain)) {
+                tracker.exception = 'site'
+                return
+            }
+        }
+        return
+    }
+
+    /* Check the matched rule  options against the request data
+    *  return: true (all options matched)
+    */
+    matchRuleOptions (rule, request, siteDomain) {
+        if (!rule.options) return true
+
+        if (rule.options.types && 
+            rule.options.types.length && 
+            !rule.options.types.includes(request.type)) {
+            return false
+        }
+
+        if (rule.options.domains && 
+            rule.options.domains.length && 
+            !rule.options.domains.includes(siteDomain)) {
+            return false
+        }
+
+        return true
+    }
+
+    getBlockingDecision (tracker) {
         // Determine the blocking decision and reason. 
         // 1. check for exceptions -> don't block
         // 2. no matching rule and default ignore -> don't block
@@ -166,119 +191,23 @@ class Trackers {
         return this.getReturnTrackerObj(matchedTracker, request)
     }
 
-    requestMatchesRule (request, ruleObj, siteDomain) {
-        if (!!request.url.match(ruleObj.rule)) {
-            return this.matchRuleOptions(ruleObj, request, siteDomain)
-        } else {
-            return false
-        }
-    }
-
-
-    /* Check the matched rule exceptions against the request data
-    * return: false (not whitelisted), true (whitelisted)
-    */
-    matchesExceptions (tracker, request, siteDomain) {
-        if (tracker.rule && tracker.rule.exceptions) {
-            if (tracker.rule.exceptions.types &&
-                tracker.rule.exceptions.types.length && 
-                !tracker.rule.exceptions.types.includes(request.type)) {
-                return false
-            }
-
-            if (tracker.rule.exceptions.domains && 
-                tracker.rule.exceptions.domains.length && 
-                !tracker.rule.exceptions.domains.includes(siteDomain)) {
-                return false
-            }
-            // passed domain and type checks
-            return true
-        }
-        return false
-    }
-
-    /* Check the matched rule  options against the request data
-    * return: true (all options matched)
-    */
-    matchRuleOptions (rule, request, siteDomain) {
-        if (!rule.options) return true
-
-        if (rule.options.types && rule.options.types.length && !rule.options.types.includes(request.type)) {
-            return false
-        }
-
-        if (rule.options.domains && rule.options.domains.length && !rule.options.domains.includes(siteDomain)) {
-            return false
-        }
-
-        return true
-    }
-
-    /* Check the matched rule  options against the request data
-    * return: true (all options matched)
-    */
-    matchRuleOptions (rule, request, siteDomain) {
-        if (!rule.options) return true
-
-        if (rule.options.types && rule.options.types.length && !rule.options.types.includes(request.type)) {
-            return false
-        }
-
-        if (rule.options.domains && rule.options.domains.length && !rule.options.domains.includes(siteDomain)) {
-            return false
-        }
-
-        return true
-    }
-
-    // isTracker return object. Takes either surrogate or tracker info
-    // and returns a common data sturucture
-    getReturnTrackerObj (tracker, request) {
-        if (!(tracker && tracker.data && (typeof tracker.block !== 'undefined'))) {
-            console.warn('Missing correct tracker info to block')
-            return false
-        }
-
-        if (tracker.default === 'ignore' && tracker.block === 'false') {
-            return false
-        }
-
-        let result = {
-            parentCompany: tracker.data.owner.name,
-            url: utils.getDomain(request.url),
-            requestUrl: request.url,
-            requestType: request.type,
-            type: tracker.type,
-            block: tracker.block,
-            reason: tracker.reason,
-            redirectUrl: tracker.redirectUrl || null
-        }
-        tracker.rule ? result.rule = tracker.rule.ruleStr : null
-        return result
-    }
-
-    /* Check to see if this tracker is related to the current page through their parent companies
+    /*
+    * Check to see if this tracker is related to the current page through their parent companies
     * Only block request to 3rd parties
     */
-    isRelatedEntity (parentCompany, currLocation) {
+    isRelatedEntity (parentCompany, requestDetails) {
         var parentEntity = this.entityList[parentCompany]
-        var host = utils.extractHostFromURL(currLocation)
 
-        if (parentEntity && parentEntity.properties) {
-        // join parent entities to use as regex and store in parentEntity so we don't have to do this again
-            if (!parentEntity.regexProperties) {
-                parentEntity.regexProperties = parentEntity.properties.join('|')
-            }
-
-            if (host.match(parentEntity.regexProperties)) {
+        if (parentEntity && parentEntity.regexProperties) {
+            if (requestDetails.siteUrl.match(parentEntity.regexProperties)) {
                 return true
             }
         }
-
         return false
     }
 
-    /* Compare two urls to determine if they came from the same hostname
+    /* 
+    * Compare two urls to determine if they came from the same hostname
     * pull off any subdomains before comparison.
     * Return parent company name from entityMap if one is found or unknown
     * if domains match but we don't have this site in our entityMap.
