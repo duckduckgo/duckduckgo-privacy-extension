@@ -131,7 +131,7 @@ class Trackers {
             result.block = false
             result.reason = 'whitelisted'
         }
-    
+
         return result
     }
     
@@ -206,14 +206,10 @@ class Trackers {
                 reason: 'trackersWithParentCompany'
             }
 
-            console.log(request.url)
-
             // Check to see if this request matches any of the blocking rules for this tracker
             if (tracker.rules) {
                 tracker.rules.some(ruleObj => {
                     if (this.requestMatchesRule(request, ruleObj.rule) && this.matchRuleOptions(ruleObj, request, siteDomain)) {
-                        console.log(request.url)
-                        consoole.log(ruleObj)
                         toBlock.rule = ruleObj
                         match = true
                         // found a match so break loop early
@@ -248,7 +244,7 @@ class Trackers {
     }
     
     requestMatchesRule (request, rule) {
-        return !!rule.exec(request.url)
+        return !!request.url.match(rule)
     }
     
     /* Check to see if this tracker is related to the current page through their parent companies

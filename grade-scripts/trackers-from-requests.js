@@ -65,30 +65,30 @@ const run = async () => {
             if (tracker) {
                 tracker.time = time
                 if (tracker.block) {
-                    if (!trackersBlocked[tracker.parentCompany]) {
-                        trackersBlocked[tracker.parentCompany] = {}
+                    if (!trackersBlocked[tracker.data.owner.name]) {
+                        trackersBlocked[tracker.data.owner.name] = {}
                     }
-                    trackersBlocked[tracker.parentCompany][tracker.url] = tracker
+                    trackersBlocked[tracker.data.owner.name][tracker.data.domain] = tracker
                     totalBlocked +=1
                     requestsBlocked.push(request[0])
                 } else {
-                    if (!trackersNotBlocked[tracker.parentCompany]) {
-                        trackersNotBlocked[tracker.parentCompany] = {}
+                    if (!trackersNotBlocked[tracker.data.owner.name]) {
+                        trackersNotBlocked[tracker.data.owner.name] = {}
                     }
-                    trackersNotBlocked[tracker.parentCompany][tracker.url] = tracker
+                    trackersNotBlocked[tracker.data.owner.name][tracker.data.domain] = tracker
                 }
 
                 if (tracker.rule) {
-                    if (!rulesUsed[tracker.rule.rule]) {
-                        rulesUsed[tracker.rule.rule] = {count: 0, urls: {}}
+                    if (!rulesUsed[tracker.rule.ruleStr]) {
+                        rulesUsed[tracker.rule.ruleStr] = {count: 0, urls: {}}
                     }
 
-                    rulesUsed[tracker.rule.rule].count += 1
+                    rulesUsed[tracker.rule.ruleStr].count += 1
 
-                    if (rulesUsed[tracker.rule.rule].urls[tracker.requestUrl]) {
-                        rulesUsed[tracker.rule.rule].urls[tracker.requestUrl] += 1
+                    if (rulesUsed[tracker.rule.ruleStr].urls[request[0]]) {
+                        rulesUsed[tracker.rule.ruleStr].urls[request[0]] += 1
                     } else {
-                        rulesUsed[tracker.rule.rule].urls[tracker.requestUrl] = 1
+                        rulesUsed[tracker.rule.ruleStr].urls[request[0]] = 1
                     }
                 }
             }
