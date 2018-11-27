@@ -7258,6 +7258,13 @@
                 {"rule": "linkedin\\.com\\/csp\\/dtag\\?"},
                 {"rule": "linkedin\\.com\\/emimp\\/", "options": {"types": ["image"]}}
             ]
+        },
+        "kinja-static.com": {
+            "c": "Gizmodo",
+            "u": "https://kinja-static.com",
+            "rules": [
+                {"rule": "x\\.kinja-static\\.com\\/assets\\/packaged-js\\/OnionAM\\.", "options": {"types": ["script"], "domains": ["avclub.com","deadspin.com","earther.com","gizmodo.com","jalopnik.com","jezebel.com","kotaku.com","lifehacker.com","splinternews.com","theroot.com","thetakeout.com"]}}
+            ]
         }
     }
 }
