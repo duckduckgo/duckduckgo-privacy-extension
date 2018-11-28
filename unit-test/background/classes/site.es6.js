@@ -1,11 +1,14 @@
 const Site = require('../../../shared/js/background/classes/site.es6')
 const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6')
+const abpLists = require('../../../shared/js/background/abp-lists.es6')
 
 const EXT_ID = `ogigmfedpbpnnbcpgjloacccaibkaoip`
+const tempWhitelist = ['suntrust.com', 'onlinebanking.nationwide.co.uk']
 
 describe('Site', () => {
     beforeEach(() => {
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
+        spyOn(abpLists, 'getTemporaryWhitelist').and.returnValue(tempWhitelist)
     })
 
     describe('getSpecialDomain()', () => {
@@ -38,6 +41,22 @@ describe('Site', () => {
                 const site = new Site(test.url)
 
                 expect(site.specialDomainName).toEqual(test.expected)
+            })
+        })
+    })
+
+    describe('checkBrokenSites()', () => {
+        const tests = [
+            { url: 'https://suntrust.com', expected: true },
+            { url: 'https://www1.onlinebanking.suntrust.com', expected: true },
+            { url: 'https://nationwide.co.uk', expected: false }
+        ]
+
+        tests.forEach((test) => {
+            it(`should return "${test.expected}" for: ${test.url}`, () => {
+                const site = new Site(test.url)
+
+                expect(site.isBroken).toEqual(test.expected)
             })
         })
     })

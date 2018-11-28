@@ -60,9 +60,8 @@ class Site {
         // Match independently of subdomain
         domain = tldjs.getDomain(domain) || domain
 
-        // Make sure we match at the end of the URL
-        // so we're extra sure it's the legit main domain
-        return trackersWhitelistTemporary.some(brokenSiteDomain => brokenSiteDomain.match(new RegExp(domain + '$')))
+        // If root domain in temp whitelist, return true
+        return trackersWhitelistTemporary.indexOf(domain) !== -1
     }
 
     /*
