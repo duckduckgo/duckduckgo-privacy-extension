@@ -56,7 +56,7 @@ describe('Site', () => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
                 const site = new Site(test.url)
 
-                expect(site.checkBrokenSites(test.url)).toEqual(test.expected)
+                expect(site.isBroken).toEqual(test.expected)
             })
         })
     })
