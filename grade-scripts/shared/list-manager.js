@@ -10,8 +10,7 @@ const baseUrl = 'https://duckduckgo.com/contentblocking'
 const listsToLoad = {
     surrogates: `${baseUrl}.js?l=surrogates`,
     entityList: 'https://8beed9a0.ngrok.io/entityList.json',
-    trackerList: 'https://8beed9a0.ngrok.io/trackerList.json',
-    whitelists: 'https://duckduckgo.com/contentblocking/trackers-whitelist.txt'
+    trackerList: 'https://8beed9a0.ngrok.io/trackerList.json'
 }
 let loadedLists = {}
 

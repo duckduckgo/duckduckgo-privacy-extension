@@ -30,7 +30,6 @@ const run = async () => {
     trackers.addLists({
         entityList: listManager.getList('entityList'),
         trackerList: listManager.getList('trackerList'),
-        whitelists: {trackersWhitelist: { data: listManager.getList('whitelists'), parsed: {}}},
         surrogates: listManager.getList('surrogates')
     })
 
