@@ -1,8 +1,6 @@
 const trackers = require('../src/trackers')
-const surrogates = require('../src/surrogates')
 
 let dummyLists = {
-    whitelist: `||scorecardresearch.com/sometracker.js$domain=example.com`,
     entityList: {
         'comScore': {
             'properties': [
@@ -30,11 +28,8 @@ let dummyLists = {
 
 trackers.addLists(dummyLists)
 
-describe('isTracker', () => {
-    beforeEach(() => {
-        spyOn(surrogates, 'getContentForUrl').and.returnValue(false)
-    })
-    describe('trackers with parent company', () => {
+describe('getTrackerData', () => {
+    describe('trackers', () => {
         let tests = [
             {
                 urlToCheck: 'https://sb.scorecardresearch.com/',
@@ -102,72 +97,12 @@ describe('isTracker', () => {
 
         tests.forEach((test) => {
             it(`should not block first party trackers on ${test.currLocation}`, () => {
-                let tracker = trackers.isTracker(test.urlToCheck, test.currLocation, 'xhr')
+                let tracker = trackers.getTrackerData(test.urlToCheck, test.currLocation, {url: test.currLocation, type: 'xhr'})
 
-                expect(tracker.block).toEqual(false)
-                expect(tracker.parentCompany).toEqual(test.expectedParentCompany)
-                expect(tracker.url).toEqual(test.expectedUrl)
+                expect(tracker.action).toEqual('ignore')
+                expect(tracker.owner).toEqual(test.expectedParentCompany)
                 expect(tracker.reason).toEqual('first party')
             })
-        })
-    })
-    describe('surrogates', () => {
-        beforeEach(() => {
-            surrogates.getContentForUrl.and.returnValue('base64encodedstring')
-        })
-
-        it(`should format tracker for surrogates correctly`, () => {
-            let tracker = trackers.isTracker(
-                'https://some.surrogateable.tracker.com/tracker.js',
-                'https://example.com',
-                'script'
-            )
-
-            expect(tracker.block).toEqual(true)
-            // not on the entity list we injected
-            expect(tracker.parentCompany).toEqual('unknown')
-            expect(tracker.url).toEqual('some.surrogateable.tracker.com')
-            expect(tracker.reason).toEqual('surrogate')
-            expect(tracker.redirectUrl).toEqual('base64encodedstring')
-        })
-        it(`should respect first party rules`, () => {
-            let tracker = trackers.isTracker(
-                'https://some.surrogateable.tracker.com/tracker.js',
-                'https://something.tracker.com',
-                'script'
-            )
-
-            expect(tracker.block).toEqual(false)
-            // not on the entity list we injected
-            expect(tracker.parentCompany).toEqual('tracker.com')
-            expect(tracker.url).toEqual('some.surrogateable.tracker.com')
-            expect(tracker.reason).toEqual('first party')
-            expect(tracker.redirectUrl).toEqual('base64encodedstring')
-        })
-    })
-    describe('whitelist', () => {
-        it(`should not block anything that's on the whitelist`, () => {
-            let tracker = trackers.isTracker(
-                'https://scorecardresearch.com/sometracker.js',
-                'https://example.com',
-                'script'
-            )
-
-            expect(tracker.block).toEqual(false)
-            expect(tracker.parentCompany).toEqual('comScore')
-            expect(tracker.url).toEqual('scorecardresearch.com')
-            expect(tracker.reason).toEqual('whitelisted')
-        })
-    })
-    describe('things that can\'t be blocked', () => {
-        it(`should not try and block malformed urls`, () => {
-            let tracker = trackers.isTracker(
-                'http://%20%20s.src%20%3D/',
-                'https://example.com',
-                'script'
-            )
-
-            expect(tracker).toEqual(false)
         })
     })
 })
