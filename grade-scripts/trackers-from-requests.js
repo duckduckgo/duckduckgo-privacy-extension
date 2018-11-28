@@ -7,8 +7,6 @@ const entityMap = require('../data/generated/entity-map')
 const utils = require('../src/utils')
 const scriptUtils = require('./shared/utils')
 
-const surrogates = require('../src/surrogates')
-
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites" (required)')
     .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades" (required)')
@@ -33,9 +31,9 @@ const run = async () => {
     trackers.addLists({
         entityList: listManager.getList('entityList'),
         trackerList: listManager.getList('trackerList'),
-        whitelists: {trackersWhitelist: { data: listManager.getList('whitelists'), parsed: {}}}
+        whitelists: {trackersWhitelist: { data: listManager.getList('whitelists'), parsed: {}}},
+        surrogates: listManager.getList('surrogates')
     })
-    surrogates.addLists(listManager.getList('surrogates'))
 
     execSync(`mkdir -p ${outputPath}`)
 
@@ -64,31 +62,32 @@ const run = async () => {
 
             if (tracker) {
                 tracker.time = time
-                if (tracker.block) {
-                    if (!trackersBlocked[tracker.data.owner.name]) {
-                        trackersBlocked[tracker.data.owner.name] = {}
+                if (tracker.action.match('block|redirect')) {
+                    if (!trackersBlocked[tracker.definition.owner.name]) {
+                        trackersBlocked[tracker.definition.owner.name] = {}
                     }
-                    trackersBlocked[tracker.data.owner.name][tracker.data.domain] = tracker
+                    trackersBlocked[tracker.definition.owner.name][tracker.definition.domain] = tracker
                     totalBlocked +=1
                     requestsBlocked.push(request[0])
                 } else {
-                    if (!trackersNotBlocked[tracker.data.owner.name]) {
-                        trackersNotBlocked[tracker.data.owner.name] = {}
+
+                    if (!trackersNotBlocked[tracker.definition.owner.name]) {
+                        trackersNotBlocked[tracker.definition.owner.name] = {}
                     }
-                    trackersNotBlocked[tracker.data.owner.name][tracker.data.domain] = tracker
+                    trackersNotBlocked[tracker.definition.owner.name][tracker.definition.domain] = tracker
                 }
 
-                if (tracker.rule) {
-                    if (!rulesUsed[tracker.rule.ruleStr]) {
-                        rulesUsed[tracker.rule.ruleStr] = {count: 0, urls: {}}
+                if (tracker.matchedRule) {
+                    if (!rulesUsed[tracker.matchedRule.ruleStr]) {
+                        rulesUsed[tracker.matchedRule.ruleStr] = {count: 0, urls: {}}
                     }
 
-                    rulesUsed[tracker.rule.ruleStr].count += 1
+                    rulesUsed[tracker.matchedRule.ruleStr].count += 1
 
-                    if (rulesUsed[tracker.rule.ruleStr].urls[request[0]]) {
-                        rulesUsed[tracker.rule.ruleStr].urls[request[0]] += 1
+                    if (rulesUsed[tracker.matchedRule.ruleStr].urls[request[0]]) {
+                        rulesUsed[tracker.matchedRule.ruleStr].urls[request[0]] += 1
                     } else {
-                        rulesUsed[tracker.rule.ruleStr].urls[request[0]] = 1
+                        rulesUsed[tracker.matchedRule.ruleStr].urls[request[0]] = 1
                     }
                 }
             }

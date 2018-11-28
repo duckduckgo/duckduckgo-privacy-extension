@@ -1,7 +1,7 @@
 const utils = require('./utils')
 const tldjs = require('tldjs')
 const entityMap = require('../data/generated/entity-map')
-const surrogates = require('./surrogates')
+const btoa = require('btoa')
 const chalk = require('chalk')
 
 
@@ -9,6 +9,10 @@ class Trackers {
     addLists (lists) {
         this.entityList = this.processEntityList(lists.entityList)
         this.trackerList = this.processTrackerList(lists.trackerList)
+        this.surrogateList = this.processSurrogateList(lists.surrogates)
+        this.exceptionTypes = ['domains', 'types']
+
+        console.log(Object.keys(this.surrogateList))
     }
 
     processTrackerList (data) {
@@ -24,7 +28,7 @@ class Trackers {
         return data
     }
 
-    processEntityList(data) {
+    processEntityList (data) {
         let processed = {}
         Object.keys(data).forEach(entity => {
             data[entity].properties.forEach(domain => {
@@ -32,6 +36,28 @@ class Trackers {
             })
         })
         return processed
+    }
+
+    processSurrogateList (text) {
+        const b64dataheader = 'data:application/javascript;base64,'
+        let surrogateList = {}
+        let splitSurrogateList = text.trim().split('\n\n')
+
+        splitSurrogateList.forEach(sur => {
+            // remove comment lines
+            let lines = sur.split('\n').filter((line) => {
+                return !(/^#.*/).test(line)
+            })
+
+            // remove first line, store it
+            let firstLine = lines.shift()
+
+            // take identifier from first line
+            let pattern = firstLine.split(' ')[0]
+            let b64surrogate = btoa(lines.join('\n'))
+            surrogateList[pattern] = b64dataheader + b64surrogate
+        })
+        return surrogateList
     }
 
     isTracker (urlToCheck, siteUrl, request, ops) {
@@ -61,38 +87,33 @@ class Trackers {
 
         // tracker object returned by getTrackerData
         const tracker = {
-            data: null,
-            block: false,
+            definition: null,
+            action: false,
             redirectUrl: null,
             owner: null,
             firstParty: false,
-            rule: null,
-            exception: false
+            matchedRule: null,
+            matchedRuleException: false
         }
 
-        // sets tracker.data
-        this.findTracker(tracker, requestData)
+        // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
+        tracker.definition = this.findTracker(tracker, requestData)
 
-        if (!tracker.data) {
-            return false
+        if (!tracker.definition) {
+            return null
         }
 
-        // sets tracker.rule
-        this.findRule(tracker, requestData)
+        // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
+        tracker.matchedRule = this.findRule(tracker, requestData)
 
-        // sets tracker.exception
-        this.matchesException(tracker, requestData)
-        
-        // sets tracker.redirectUrl
-        this.findSurrogate(tracker, requestData)
+        // sets tracker.exception by looking at tracker.rule exceptions (if any)
+        tracker.matchedRuleException = this.matchesException(tracker, requestData)
 
-        // sets tracker.firstParty
-        this.setFirstParty(tracker, requestData)
+        // compare the site owner to the tracker owner and set firstParty
+        tracker.firstParty = this.setFirstParty(tracker, requestData)
 
-        // sets tracker.block
-        this.setBlockDecision(tracker, requestData)
+        this.setAction(tracker, requestData)
 
-        //console.log(chalk.blue(`Block: ${tracker.block}, reason: ${tracker.reason}, rule: ${JSON.stringify(tracker.rule)}, redirect: ${tracker.redirectUrl}`))
         return tracker
     }
 
@@ -108,7 +129,7 @@ class Trackers {
 
             const matchedTracker = this.trackerList[trackerDomain]
             if (matchedTracker) {
-                tracker.data = matchedTracker
+                return matchedTracker
             }
         }
         return
@@ -121,6 +142,7 @@ class Trackers {
 
         // find the owner of the tracker
         let owner = this.entityList[requestData.urlToCheckDomain]
+        tracker.owner = owner
 
         // find the site owner
         let siteUrlList = Object.assign([], requestData.siteUrlSplit)
@@ -137,29 +159,30 @@ class Trackers {
         }
 
         if (matchedEntity && matchedEntity === owner) {
-            tracker.firstParty = true
+            return true
         }
-        return
-    }
-
-    findSurrogate(tracker, requestData) {
-        tracker.redirectUrl = surrogates.getContentForUrl(requestData.urlToCheck, requestData.urlToCheckDomain)
+        return false
     }
 
     /*
      * Iterate through a tracker rule list and return the first matching rule, if any.
      */
     findRule(tracker, requestData) {
+        let matchedRule = null
         // Find a matching rule from this tracker
-        if (tracker.data.rules && tracker.data.rules.length) {
-            tracker.data.rules.some(ruleObj => {
+        if (tracker.definition.rules && tracker.definition.rules.length) {
+            tracker.definition.rules.some(ruleObj => {
                 if (this.requestMatchesRule(requestData, ruleObj)) {
-                    tracker.rule = ruleObj
-                    return true
+                    return matchedRule = ruleObj
                 }
             })
         }
-        return
+
+        // look up surrogate
+        if (matchedRule && matchedRule.surrogate) {
+            tracker.redirectUrl = this.surrogateList[matchedRule.surrogate]
+        } 
+        return matchedRule
     }
 
     requestMatchesRule (requestData, ruleObj) {
@@ -171,25 +194,21 @@ class Trackers {
     }
 
     /* Check the matched rule exceptions against the request data
-    *  return: false (not whitelisted), true (whitelisted)
+     * Both domains and types need to match (if they exist) in order
+     * for the exception to match.
     */
-    matchesException (tracker, request, siteDomain) {
-        if (tracker.rule && tracker.rule.exceptions) {
-            if (tracker.rule.exceptions.types &&
-                tracker.rule.exceptions.types.length && 
-                !tracker.rule.exceptions.types.includes(request.type)) {
-                tracker.exception = 'request-type'
-                return
-            }
-
-            if (tracker.rule.exceptions.domains && 
-                tracker.rule.exceptions.domains.length && 
-                !tracker.rule.exceptions.domains.includes(siteDomain)) {
-                tracker.exception = 'site'
-                return
-            }
+    matchesException (tracker, requestData) {
+        if (tracker.matchedRule && tracker.matchedRule.exceptions) {
+            // all exception types need to match for this to return true
+            return !this.exceptionTypes.some(exceptionType => {
+                const requestParamToCheck = exceptionType === 'domains' ? requestData.siteDomain : requestData.request.type
+                return !(tracker.matchedRule.exceptions[exceptionType] &&
+                          tracker.matchedRule.exceptions[exceptionType].length &&
+                          tracker.matchedRule.exceptions[exceptionType].includes(requestParamToCheck))
+            })
+        } else {
+            return false
         }
-        return
     }
 
     /* Check the matched rule  options against the request data
@@ -213,57 +232,35 @@ class Trackers {
         return true
     }
 
-    setBlockDecision (tracker, requestData) {
+    setAction (tracker, requestData) {
         // Determine the blocking decision and reason. 
         if (tracker.firstParty) {
-            tracker.block = false
+            tracker.action = 'ignore'
             tracker.reason = 'first party'
         }
-        else if (this.matchesException(tracker, requestData)) {
-            tracker.block = false
+        else if (tracker.matchedRuleException) {
+            tracker.action = 'ignore'
             tracker.reason = 'exception'
-        } else if (!tracker.rule && tracker.data.default === 'ignore') {
-            tracker.block = false
-            tracker.reason = 'ignore'
-        } else if (tracker.rule && tracker.rule.action === 'ignore') {
-            tracker.block = false
-            tracker.reason = 'action ignore'
-        } else if (!tracker.rule && tracker.data.default === 'block') {
-            tracker.block = true
-            tracker.reason = 'default'
-        } else if (tracker.rule){
-            tracker.block = true
-            tracker.reason = 'rule'
+        } else if (!tracker.matchedRule && tracker.definition.default === 'ignore') {
+            tracker.action = 'ignore'
+            tracker.reason = 'tracker set to ignore'
+        } else if (tracker.matchedRule && tracker.matchedRule.action === 'ignore') {
+            tracker.action = 'ignore'
+            tracker.reason = 'rule action ignore'
+        } else if (!tracker.matchedRule && tracker.definition.default === 'block') {
+            tracker.action = 'block'
+            tracker.reason = 'tracker set to default block'
+        } else if (tracker.matchedRule){
+            if (tracker.redirectUrl) {
+                tracker.action = 'redirect'
+            } else {
+                tracker.action = 'block'
+            }
+            tracker.reason = 'matched rule'
         } else {
-            // what could fall through here?
             return false
         }
-
-        return
     }
-
-    /*
-    
-    * If element hiding is enabled on current domain, send messages
-    * to content scripts to start the process of hiding blocked ads
-    
-    tryElementHide (requestData, tab) {
-        if (tab.parentEntity === 'Oath') {
-            let frameId, messageType
-            if (requestData.type === 'sub_frame') {
-                frameId = requestData.parentFrameId
-                messageType = frameId === 0 ? 'blockedFrame' : 'blockedFrameAsset'
-            } else if (requestData.frameId !== 0 && (requestData.type === 'image' || requestData.type === 'script')) {
-                frameId = requestData.frameId
-                messageType = 'blockedFrameAsset'
-            }
-            chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url}, {frameId: frameId})
-        } else if (!tab.elementHidingDisabled) {
-            chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
-            tab.elementHidingDisabled = true
-        }
-    }
-    */
 }
 
 module.exports = new Trackers()
