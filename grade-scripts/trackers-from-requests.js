@@ -55,7 +55,7 @@ const run = async () => {
         // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach((request) => {
             const t = process.hrtime()
-            const tracker = trackers.isTracker(request[0], url, {url: request[0], type: request[1]})
+            const tracker = trackers.getTrackerData(request[0], url, {url: request[0], type: request[1]})
             const time = process.hrtime(t);
 
             if (tracker) {

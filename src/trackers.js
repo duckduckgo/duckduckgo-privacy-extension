@@ -1,9 +1,6 @@
 const utils = require('./utils')
 const tldjs = require('tldjs')
-const entityMap = require('../data/generated/entity-map')
 const btoa = require('btoa')
-const chalk = require('chalk')
-
 
 class Trackers {
     addLists (lists) {
@@ -58,23 +55,19 @@ class Trackers {
         return surrogateList
     }
 
-    isTracker (urlToCheck, siteUrl, request, ops) {
-        return this.getTrackerData(urlToCheck, siteUrl, request, ops)
-    }
-
     getTrackerData (urlToCheck, siteUrl, request, ops) {
         ops = ops || {}
-        
+
         if (!this.entityList || !this.trackerList) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        // single object with all of our requeest and site data split and 
-        // processed into the correct format for the tracker set/get functions. 
+        // single object with all of our requeest and site data split and
+        // processed into the correct format for the tracker set/get functions.
         // This avoids repeat calls to split and util functions.
         const requestData = {
             ops: ops,
-            siteUrl: siteUrl, 
+            siteUrl: siteUrl,
             request: request,
             siteDomain: tldjs.parse(siteUrl).domain,
             siteUrlSplit: utils.extractHostFromURL(siteUrl).split('.'),
@@ -130,14 +123,12 @@ class Trackers {
                 return matchedTracker
             }
         }
-        return
     }
 
     /*
     * Set parent and first party values on tracker
     */
     setFirstParty (tracker, requestData) {
-
         // find the owner of the tracker
         let owner = this.entityList[requestData.urlToCheckDomain]
         tracker.owner = owner
@@ -165,13 +156,14 @@ class Trackers {
     /*
      * Iterate through a tracker rule list and return the first matching rule, if any.
      */
-    findRule(tracker, requestData) {
+    findRule (tracker, requestData) {
         let matchedRule = null
         // Find a matching rule from this tracker
         if (tracker.definition.rules && tracker.definition.rules.length) {
             tracker.definition.rules.some(ruleObj => {
                 if (this.requestMatchesRule(requestData, ruleObj)) {
-                    return matchedRule = ruleObj
+                    matchedRule = ruleObj
+                    return true
                 }
             })
         }
@@ -179,12 +171,12 @@ class Trackers {
         // look up surrogate
         if (matchedRule && matchedRule.surrogate) {
             tracker.redirectUrl = this.surrogateList[matchedRule.surrogate]
-        } 
+        }
         return matchedRule
     }
 
     requestMatchesRule (requestData, ruleObj) {
-        if (!!requestData.urlToCheck.match(ruleObj.rule)) {
+        if (requestData.urlToCheck.match(ruleObj.rule)) {
             return this.matchRuleOptions(ruleObj, requestData)
         } else {
             return false
@@ -215,14 +207,14 @@ class Trackers {
     matchRuleOptions (rule, requestData) {
         if (!rule.options) return true
 
-        if (rule.options.types && 
-            rule.options.types.length && 
+        if (rule.options.types &&
+            rule.options.types.length &&
             !rule.options.types.includes(requestData.request.type)) {
             return false
         }
 
-        if (rule.options.domains && 
-            rule.options.domains.length && 
+        if (rule.options.domains &&
+            rule.options.domains.length &&
             !rule.options.domains.includes(requestData.siteDomain)) {
             return false
         }
@@ -231,12 +223,11 @@ class Trackers {
     }
 
     setAction (tracker, requestData) {
-        // Determine the blocking decision and reason. 
+        // Determine the blocking decision and reason.
         if (tracker.firstParty) {
             tracker.action = 'ignore'
             tracker.reason = 'first party'
-        }
-        else if (tracker.matchedRuleException) {
+        } else if (tracker.matchedRuleException) {
             tracker.action = 'ignore'
             tracker.reason = 'exception'
         } else if (!tracker.matchedRule && tracker.definition.default === 'ignore') {
@@ -248,7 +239,7 @@ class Trackers {
         } else if (!tracker.matchedRule && tracker.definition.default === 'block') {
             tracker.action = 'block'
             tracker.reason = 'tracker set to default block'
-        } else if (tracker.matchedRule){
+        } else if (tracker.matchedRule) {
             if (tracker.redirectUrl) {
                 tracker.action = 'redirect'
             } else {
