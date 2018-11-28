@@ -11,8 +11,6 @@ class Trackers {
         this.trackerList = this.processTrackerList(lists.trackerList)
         this.surrogateList = this.processSurrogateList(lists.surrogates)
         this.exceptionTypes = ['domains', 'types']
-
-        console.log(Object.keys(this.surrogateList))
     }
 
     processTrackerList (data) {

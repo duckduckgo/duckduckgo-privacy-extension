@@ -6,15 +6,14 @@ const chalk = require('chalk')
 const entityMap = require('../data/generated/entity-map')
 const utils = require('../src/utils')
 const scriptUtils = require('./shared/utils')
+const trackers = require('../src/trackers')
 
 program
     .option('-i, --input <name>', 'The name to use when looking for sites, e.g. "test" will look in "test-sites" (required)')
     .option('-o, --output <name>', 'Output name, e.g. "test" will output files at "test-grades" (required)')
     .option('-f, --file <name>', 'Allow processing a subset of dumped site data, defined in a file')
-    .option('-t, --tracker <name>', 'Name of tracker module to load')
     .parse(process.argv)
 
-const trackers = require(`../src/${program.tracker}`)
 const input = program.input
 const inputPath = `${input}-sites`
 const output = program.output
