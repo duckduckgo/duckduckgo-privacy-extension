@@ -1,0 +1,47 @@
+{
+    "entityList": {
+        "Oath": {
+            "properties": [
+                "yahoo.com",
+                "aol.com",
+                "advertising.com"
+            ]
+        }
+    },
+    "trackerList": {
+        "yahoo.com": {
+            "domain": "yahoo.com",
+            "default": "block",
+            "owner": {
+                "name": "Yahoo",
+                "url": "yahoo.com"
+            },
+            "rules": [
+                {
+                    "rule": "geo\\.yahoo\\.com"
+                },
+                {
+                    "rule": "a\\.yahoo\\.com($|[?/])",
+                    "surrogate": "yahoo.com/a.js",
+                    "exceptions" : {
+                        "domains": ["example2.com"],
+                        "types": ["image"]
+                    }
+                },
+                {
+                    "rule": "b\\.yahoo\\.com\\/.*\\?ad=asdf",
+                    "action": "ignore"
+                }
+            ]
+        },
+        "example.com": {
+            "domain": "example.com",
+            "default": "ignore",
+            "owner": {
+                "name": "Example",
+                "url": "example.com"
+            }
+        }
+    },
+    "surrogates": "yahoo.com/a.js application/javascript\n(function() {})"
+}

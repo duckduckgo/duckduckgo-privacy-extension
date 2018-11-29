@@ -1,107 +1,134 @@
 const trackers = require('../src/trackers')
+const trackerLists = require('./data/tracker-lists')
 
-let dummyLists = {
-    entityList: {
-        'comScore': {
-            'properties': [
-                'comscore.com',
-                'adxpose.com',
-                'scorecardresearch.com',
-                'sitestat.com',
-                'voicefive.com'
-            ],
-            'resources': [
-                'comscore.com',
-                'adxpose.com',
-                'certifica.com',
-                'scorecardresearch.com',
-                'sitestat.com',
-                'voicefive.com',
-                'mdotlabs.com',
-                'proximic.com',
-                'proxilinks.com',
-                'proximic.net'
-            ]
-        }
-    }
-}
-
-trackers.addLists(dummyLists)
+trackers.addLists(trackerLists)
 
 describe('getTrackerData', () => {
-    describe('trackers', () => {
+    describe('find tracker data', () => {
         let tests = [
+            // matched rule with no exceptions or first party => block
             {
-                urlToCheck: 'https://sb.scorecardresearch.com/',
-                currLocation: 'https://example.com',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
+                action: 'block',
+                urlToCheck: 'https://geo.yahoo.com/asdf',
+                siteUrl: 'https://example.com',
+                requestType: 'image',
+                expectedOwner: 'Oath',
+                expectedReason: 'matched rule',
+                firstParty: false,
+                expectedRule: 'geo.yahoo.com',
+                redirectUrl: false,
+                matchedRuleException: false
             },
+            // request from a site owned by the same company => ignore
             {
-                urlToCheck: 'https://sb.scorecardresearch.com/p?query=string',
-                currLocation: 'https://test.example.com',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
+                action: 'ignore',
+                urlToCheck: 'https://geo.yahoo.com/asdf',
+                siteUrl: 'https://news.aol.com',
+                requestType: 'image',
+                expectedOwner: 'Oath',
+                expectedReason: 'first party',
+                firstParty: true,
+                expectedRule: 'geo.yahoo.com',
+                redirectUrl: false,
+                matchedRuleException: false
             },
+            // matched a rule with a surrogate => rediect
             {
-                urlToCheck: 'https://foo.bar.scorecardresearch.com/p?query=string',
-                currLocation: 'https://example.com',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
+                action: 'redirect',
+                urlToCheck: 'https://ads.a.yahoo.com/?b=asdf',
+                siteUrl: 'https://example.com',
+                requestType: 'image',
+                expectedOwner: 'Oath',
+                expectedReason: 'matched rule',
+                firstParty: false,
+                expectedRule: 'a.yahoo.com($|[?/])',
+                redirectUrl: true,
+                matchedRuleException: false
             },
+            // request matches a rule exception => ignore
             {
-                urlToCheck: 'https://underscore_domain.scorecardresearch.com/p?query=string',
-                currLocation: 'https://example.com',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
+                action: 'ignore',
+                urlToCheck: 'https://ads.a.yahoo.com/?b=asdf',
+                siteUrl: 'https://a.example2.com',
+                requestType: 'image',
+                expectedOwner: 'Oath',
+                expectedReason: 'exception',
+                firstParty: false,
+                expectedRule: 'a.yahoo.com($|[?/])',
+                redirectUrl: true,
+                matchedRuleException: true
+            },
+            // request from the same domain => ignore
+            {
+                action: 'ignore',
+                urlToCheck: 'https://ads.a.yahoo.com/?b=asdf',
+                siteUrl: 'https://news.yahoo.com',
+                requestType: 'image',
+                expectedOwner: 'Oath',
+                expectedReason: 'first party',
+                firstParty: true,
+                expectedRule: 'a.yahoo.com($|[?/])',
+                redirectUrl: true,
+                matchedRuleException: false
+            },
+            // rule with a action 'ignore' => ignore
+            {
+                action: 'ignore',
+                urlToCheck: 'https://b.yahoo.com/ads?ad=asdf',
+                siteUrl: 'https://example.com',
+                requestType: 'image',
+                expectedOwner: 'Oath',
+                expectedReason: 'rule action ignore',
+                firstParty: false,
+                expectedRule: 'b.yahoo.com/.*?ad=asdf',
+                redirectUrl: false,
+                matchedRuleException: false
+            },
+            // request without a rule, tracker definition default action is block => block
+            {
+                action: 'block',
+                urlToCheck: 'https://asdf.yahoo.com/tracker1/asdf',
+                siteUrl: 'https://example.com',
+                requestType: 'script',
+                expectedOwner: 'Oath',
+                expectedReason: 'tracker set to default block',
+                firstParty: false,
+                expectedRule: null,
+                redirectUrl: false,
+                matchedRuleException: false
+            },
+            // tracker with default ignore => ignore
+            {
+                action: 'ignore',
+                urlToCheck: 'https://example.com/tracker1/asdf',
+                siteUrl: 'https://aol.com',
+                requestType: 'script',
+                expectedOwner: 'Example',
+                expectedReason: 'tracker set to ignore',
+                firstParty: false,
+                expectedRule: null,
+                redirectUrl: false,
+                matchedRuleException: false
             }
         ]
+
         tests.forEach((test) => {
             it(`should block ${test.urlToCheck}`, () => {
-                let tracker = trackers.isTracker(test.urlToCheck, test.currLocation, 'xhr')
+                let tracker = trackers.getTrackerData(
+                    test.urlToCheck,
+                    test.siteUrl,
+                    {url: test.urlToCheck, type: test.requestType})
 
-                expect(tracker.block).toEqual(true)
-                expect(tracker.parentCompany).toEqual(test.expectedParentCompany)
-                expect(tracker.url).toEqual(test.expectedUrl)
-                expect(tracker.reason).toEqual('trackersWithParentCompany')
-            })
-        })
-    })
-    describe('first party rule', () => {
-        let tests = [
-            {
-                urlToCheck: 'https://sb.scorecardresearch.com/p?query=string',
-                currLocation: 'https://comscore.com/',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
-            },
-            {
-                urlToCheck: 'https://sb.scorecardresearch.com/p?query=string',
-                currLocation: 'https://something.or.another.comscore.com/',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
-            },
-            {
-                urlToCheck: 'https://sb.scorecardresearch.com/p?query=string',
-                currLocation: 'https://voicefive.com/something',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'scorecardresearch.com'
-            },
-            {
-                urlToCheck: 'https://sitestat.com/something.js?or=another',
-                currLocation: 'https://voicefive.com/foo',
-                expectedParentCompany: 'comScore',
-                expectedUrl: 'sitestat.com'
-            }
-        ]
+                expect(tracker.action).toEqual(test.action)
+                expect(tracker.reason).toEqual(test.expectedReason)
 
-        tests.forEach((test) => {
-            it(`should not block first party trackers on ${test.currLocation}`, () => {
-                let tracker = trackers.getTrackerData(test.urlToCheck, test.currLocation, {url: test.currLocation, type: 'xhr'})
+                if (test.expectedRule) {
+                    expect(tracker.matchedRule.ruleStr.replace(/\\/g, '')).toEqual(test.expectedRule)
+                }
 
-                expect(tracker.action).toEqual('ignore')
-                expect(tracker.owner).toEqual(test.expectedParentCompany)
-                expect(tracker.reason).toEqual('first party')
+                expect(tracker.firstParty).toEqual(test.firstParty)
+                expect(!!tracker.redirectUrl).toEqual(test.redirectUrl)
+                expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
             })
         })
     })
