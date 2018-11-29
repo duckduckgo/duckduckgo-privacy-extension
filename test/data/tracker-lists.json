@@ -18,7 +18,10 @@
             },
             "rules": [
                 {
-                    "rule": "geo\\.yahoo\\.com"
+                    "rule": "geo\\.yahoo\\.com",
+                    "options": {
+                        "domains": ["example.com", "aol.com"]
+                    }
                 },
                 {
                     "rule": "a\\.yahoo\\.com($|[?/])",

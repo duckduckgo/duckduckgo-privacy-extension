@@ -5,7 +5,7 @@ trackers.addLists(trackerLists)
 
 describe('getTrackerData', () => {
     describe('find tracker data', () => {
-        let tests = [
+        let trackerTests = [
             // matched rule with no exceptions or first party => block
             {
                 action: 'block',
@@ -112,7 +112,7 @@ describe('getTrackerData', () => {
             }
         ]
 
-        tests.forEach((test) => {
+        trackerTests.forEach((test) => {
             it(`should block ${test.urlToCheck}`, () => {
                 let tracker = trackers.getTrackerData(
                     test.urlToCheck,
@@ -129,6 +129,32 @@ describe('getTrackerData', () => {
                 expect(tracker.firstParty).toEqual(test.firstParty)
                 expect(!!tracker.redirectUrl).toEqual(test.redirectUrl)
                 expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
+            })
+        })
+
+        let nonTrackerTests = [
+            // non tracker requests
+            {
+                urlToCheck: 'http://somecdn.com/jquery',
+                siteUrl: 'https://example.com',
+                requestType: 'script'
+            },
+            // malformed urls
+            {
+                urlToCheck: 'http://%20%20s.src%20%3D/',
+                siteUrl: 'https://example.com',
+                requestType: 'image'
+            }
+        ]
+
+        nonTrackerTests.forEach((test) => {
+            it(`should not block ${test.urlToCheck}`, () => {
+                let tracker = trackers.getTrackerData(
+                    test.urlToCheck,
+                    test.siteUrl,
+                    {url: test.urlToCheck, type: test.requestType})
+
+                expect(tracker).toEqual(null)
             })
         })
     })
