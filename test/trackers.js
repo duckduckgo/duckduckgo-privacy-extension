@@ -131,19 +131,19 @@ describe('getTrackerData', () => {
                 expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
             })
         })
-        
+
         let nonTrackerTests = [
             // non tracker requests
             {
                 urlToCheck: 'http://somecdn.com/jquery',
                 siteUrl: 'https://example.com',
-                requestType: 'script',
+                requestType: 'script'
             },
             // malformed urls
             {
                 urlToCheck: 'http://%20%20s.src%20%3D/',
                 siteUrl: 'https://example.com',
-                requestType: 'image',
+                requestType: 'image'
             }
         ]
 
