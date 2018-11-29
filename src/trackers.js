@@ -229,23 +229,24 @@ class Trackers {
             tracker.reason = 'first party'
         } else if (tracker.matchedRuleException) {
             tracker.action = 'ignore'
-            tracker.reason = 'exception'
+            tracker.reason = 'matched rule - exception'
         } else if (!tracker.matchedRule && tracker.definition.default === 'ignore') {
             tracker.action = 'ignore'
-            tracker.reason = 'tracker set to ignore'
+            tracker.reason = 'default ignore'
         } else if (tracker.matchedRule && tracker.matchedRule.action === 'ignore') {
             tracker.action = 'ignore'
-            tracker.reason = 'rule action ignore'
+            tracker.reason = 'matched rule - ignore'
         } else if (!tracker.matchedRule && tracker.definition.default === 'block') {
             tracker.action = 'block'
-            tracker.reason = 'tracker set to default block'
+            tracker.reason = 'default block'
         } else if (tracker.matchedRule) {
             if (tracker.redirectUrl) {
                 tracker.action = 'redirect'
+                tracker.reason = 'matched rule - surrogate'
             } else {
                 tracker.action = 'block'
+                tracker.reason = 'matched rule - block'
             }
-            tracker.reason = 'matched rule'
         } else {
             return false
         }

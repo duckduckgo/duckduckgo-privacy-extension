@@ -13,7 +13,7 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://example.com',
                 requestType: 'image',
                 expectedOwner: 'Oath',
-                expectedReason: 'matched rule',
+                expectedReason: 'matched rule - block',
                 firstParty: false,
                 expectedRule: 'geo.yahoo.com',
                 redirectUrl: false,
@@ -39,7 +39,7 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://example.com',
                 requestType: 'image',
                 expectedOwner: 'Oath',
-                expectedReason: 'matched rule',
+                expectedReason: 'matched rule - surrogate',
                 firstParty: false,
                 expectedRule: 'a.yahoo.com($|[?/])',
                 redirectUrl: true,
@@ -52,7 +52,7 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://a.example2.com',
                 requestType: 'image',
                 expectedOwner: 'Oath',
-                expectedReason: 'exception',
+                expectedReason: 'matched rule - exception',
                 firstParty: false,
                 expectedRule: 'a.yahoo.com($|[?/])',
                 redirectUrl: true,
@@ -78,7 +78,7 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://example.com',
                 requestType: 'image',
                 expectedOwner: 'Oath',
-                expectedReason: 'rule action ignore',
+                expectedReason: 'matched rule - ignore',
                 firstParty: false,
                 expectedRule: 'b.yahoo.com/.*?ad=asdf',
                 redirectUrl: false,
@@ -91,7 +91,7 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://example.com',
                 requestType: 'script',
                 expectedOwner: 'Oath',
-                expectedReason: 'tracker set to default block',
+                expectedReason: 'default block',
                 firstParty: false,
                 expectedRule: null,
                 redirectUrl: false,
@@ -104,7 +104,7 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://aol.com',
                 requestType: 'script',
                 expectedOwner: 'Example',
-                expectedReason: 'tracker set to ignore',
+                expectedReason: 'default ignore',
                 firstParty: false,
                 expectedRule: null,
                 redirectUrl: false,
@@ -131,19 +131,19 @@ describe('getTrackerData', () => {
                 expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
             })
         })
-
+        
         let nonTrackerTests = [
             // non tracker requests
             {
                 urlToCheck: 'http://somecdn.com/jquery',
                 siteUrl: 'https://example.com',
-                requestType: 'script'
+                requestType: 'script',
             },
             // malformed urls
             {
                 urlToCheck: 'http://%20%20s.src%20%3D/',
                 siteUrl: 'https://example.com',
-                requestType: 'image'
+                requestType: 'image',
             }
         ]
 
