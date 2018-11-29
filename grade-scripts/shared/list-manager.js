@@ -9,8 +9,8 @@ const baseUrl = 'https://duckduckgo.com/contentblocking'
 
 const listsToLoad = {
     surrogates: `${baseUrl}.js?l=surrogates`,
-    entityList: 'https://8beed9a0.ngrok.io/entityList.json',
-    trackerList: 'https://8beed9a0.ngrok.io/trackerList.json'
+    entityList: 'https://b54fde2a.ngrok.io/entityList.json',
+    trackerList: 'https://b54fde2a.ngrok.io/trackerList.json'
 }
 let loadedLists = {}
 
@@ -44,7 +44,8 @@ let getSymlinkedLocalList = (fileName) => {
     try {
         list = fs.readFileSync(path, { encoding: 'utf8' })
     } catch (e) {
-        throw new Error(`couldn't find and parse list ${fileName}, tried looking in: ${path}`)
+        console.warn(`couldn't find and parse list ${fileName}, tried looking in: ${path}`)
+        return
     }
 
     if (fileName.match(/\.txt$/)) {
@@ -62,8 +63,8 @@ let loadLists = async () => {
     }
 
     // large https lists don't have an endpoint just yet
-    //loadedLists.https = getSymlinkedLocalList('https_list.txt')
-    //loadedLists.httpsAutoUpgrade = getSymlinkedLocalList('https_autoupgrade_list.txt')
+    loadedLists.https = getSymlinkedLocalList('https_list.txt')
+    loadedLists.httpsAutoUpgrade = getSymlinkedLocalList('https_autoupgrade_list.txt')
 }
 
 let getList = (listName) => loadedLists[listName]
