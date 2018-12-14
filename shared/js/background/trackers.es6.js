@@ -1,7 +1,6 @@
 const abp = require('abp-filter-parser')
 const tldjs = require('tldjs')
 
-const load = require('./load.es6')
 const settings = require('./settings.es6')
 const surrogates = require('./surrogates.es6')
 const trackerLists = require('./tracker-lists.es6').getLists()
@@ -10,12 +9,6 @@ const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 const entityMap = require('../../data/tracker_lists/entityMap')
 const prevalence = require('../../data/tracker_lists/prevalence')
-
-let entityList = {}
-
-function loadLists () {
-    load.JSONfromExternalFile(constants.entityList).then((response) => { entityList = response.data })
-}
 
 /*
  * The main parts of the isTracker algo looks like this:
@@ -135,7 +128,7 @@ function checkSurrogateList (url, parsedUrl, currLocation) {
 
     if (dataURI) {
         result = getTrackerDetails(url, 'surrogatesList')
-        if (result && !isRelatedEntity(result.parentCompany, currLocation)) {
+        if (result && !utils.isRelatedEntity(result.parentCompany, currLocation)) {
             result.block = true
             result.reason = 'surrogate'
             result.redirectUrl = dataURI
@@ -241,35 +234,6 @@ function requestMatchesRule (request, rule) {
     return !!rule.exec(request.url)
 }
 
-/* Check to see if this tracker is related to the current page through their parent companies
- * Only block request to 3rd parties
- */
-function isRelatedEntity (parentCompany, currLocation) {
-    var parentEntity = entityList[parentCompany]
-    var host = utils.extractHostFromURL(currLocation)
-
-    if (parentEntity && parentEntity.properties) {
-    // join parent entities to use as regex and store in parentEntity so we don't have to do this again
-        if (!parentEntity.regexProperties) {
-            let propertyList = parentEntity.properties
-
-            if (parentEntity.resources) {
-                propertyList = propertyList.concat(parentEntity.resources)
-            }
-
-            parentEntity.regexProperties = new RegExp(propertyList.map(e => {
-                return e.replace(/\./g, '\\.').replace(/$/, '$')
-            }).join('|'))
-        }
-
-        if (parentEntity.regexProperties.test(host)) {
-            return true
-        }
-    }
-
-    return false
-}
-
 /* Compare two urls to determine if they came from the same hostname
  * pull off any subdomains before comparison.
  * Return parent company name from entityMap if one is found or unknown
@@ -281,7 +245,7 @@ function getCommonParentEntity (currLocation, urlToCheck) {
     let urlToCheckParsed = tldjs.parse(urlToCheck)
     let parentEntity = entityMap[urlToCheckParsed.domain]
     if (currentLocationParsed.domain === urlToCheckParsed.domain ||
-        isRelatedEntity(parentEntity, currLocation)) { return parentEntity || currentLocationParsed.domain }
+        utils.isRelatedEntity(parentEntity, currLocation)) { return parentEntity || currentLocationParsed.domain }
 
     return false
 }
@@ -342,7 +306,6 @@ function tryElementHide (requestData, tab) {
 }
 module.exports = {
     isTracker: isTracker,
-    loadLists: loadLists,
     getParentEntity: getParentEntity,
     tryElementHide: tryElementHide
 }
