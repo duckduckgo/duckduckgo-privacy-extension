@@ -1,0 +1,14 @@
+{
+    "Oath": {
+        "properties": [
+            "yahoo.com",
+            "yahoostudios.com",
+            "aol.com",
+            "advertising.com"
+        ],
+        "resources": [
+            "analytics.yahoo.com",
+            "adrevolver.com"
+        ]
+    }
+}
