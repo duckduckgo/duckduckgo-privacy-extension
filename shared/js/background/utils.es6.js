@@ -11,12 +11,13 @@ function loadLists () {
     load.JSONfromExternalFile(constants.entityList).then((response) => { entityList = response.data })
 }
 
-/* Check to see if this tracker is related to the current page through their parent companies
- * Only block request to 3rd parties
+/* Check to see if a company is related to a domain.
+ * @param {string} entity - company name
+ * @param {string} domain - domain or url
  */
-function isRelatedEntity (parentCompany, currLocation) {
-    var parentEntity = entityList[parentCompany]
-    var host = extractHostFromURL(currLocation)
+function isRelatedEntity (entityName, domain) {
+    var parentEntity = entityList[entityName]
+    var host = extractHostFromURL(domain)
 
     if (parentEntity && parentEntity.properties) {
     // join parent entities to use as regex and store in parentEntity so we don't have to do this again

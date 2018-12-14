@@ -57,6 +57,11 @@ const isRelatedEntityTestCases = [
     },
     {
         'parentCompany': 'Oath',
+        'currLocation': 'https://yahoo.com',
+        'result': true
+    },
+    {
+        'parentCompany': 'Oath',
         'currLocation': 'abc.com',
         'result': false
     },
