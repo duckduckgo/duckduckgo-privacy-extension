@@ -29,7 +29,7 @@ function isRelatedEntity (entityName, domain) {
             }
 
             parentEntity.regexProperties = new RegExp(propertyList.map(e => {
-                // excape for regex and $ for strict matching on end of domain.
+                // escape regex, add $ to match on end of domains
                 return e.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&').replace(/$/, '$')
             }).join('|'))
         }
