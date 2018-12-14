@@ -251,7 +251,13 @@ function isRelatedEntity (parentCompany, currLocation) {
     if (parentEntity && parentEntity.properties) {
     // join parent entities to use as regex and store in parentEntity so we don't have to do this again
         if (!parentEntity.regexProperties) {
-            parentEntity.regexProperties = new RegExp(parentEntity.properties.map(e => {
+            let propertyList = parentEntity.properties
+
+            if (parentEntity.resources) {
+                propertyList = propertyList.concat(parentEntity.resources)
+            }
+
+            parentEntity.regexProperties = new RegExp(propertyList.map(e => {
                 return e.replace(/\./g, '\\.').replace(/$/, '\$')
             }).join('|'))
         }
