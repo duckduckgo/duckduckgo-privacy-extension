@@ -258,7 +258,7 @@ function isRelatedEntity (parentCompany, currLocation) {
             }
 
             parentEntity.regexProperties = new RegExp(propertyList.map(e => {
-                return e.replace(/\./g, '\\.').replace(/$/, '\$')
+                return e.replace(/\./g, '\\.').replace(/$/, '$')
             }).join('|'))
         }
 
