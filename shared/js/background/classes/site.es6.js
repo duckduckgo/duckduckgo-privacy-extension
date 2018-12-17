@@ -57,11 +57,11 @@ class Site {
 
         if (!trackersWhitelistTemporary) return
 
-        // Match independently of subdomain
-        domain = tldjs.getDomain(domain) || domain
+        let parsedDomain = tldjs.parse(domain)
+        let hostname = parsedDomain.hostname || domain
 
         // If root domain in temp whitelist, return true
-        return trackersWhitelistTemporary.indexOf(domain) !== -1
+        return trackersWhitelistTemporary.some((brokenSiteDomain) => hostname.match(new RegExp(brokenSiteDomain + '$')))
     }
 
     /*
