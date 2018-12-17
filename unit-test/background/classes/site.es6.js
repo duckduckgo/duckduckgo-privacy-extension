@@ -3,7 +3,7 @@ const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6
 const abpLists = require('../../../shared/js/background/abp-lists.es6')
 
 const EXT_ID = `ogigmfedpbpnnbcpgjloacccaibkaoip`
-const tempWhitelist = ['suntrust.com', 'onlinebanking.nationwide.co.uk']
+const tempWhitelist = ['suntrust.com', 'onlinebanking.nationwide.co.uk', 'accounts.google.com']
 
 describe('Site', () => {
     beforeEach(() => {
@@ -49,7 +49,8 @@ describe('Site', () => {
         const tests = [
             { url: 'https://suntrust.com', expected: true },
             { url: 'https://www1.onlinebanking.suntrust.com', expected: true },
-            { url: 'https://nationwide.co.uk', expected: false }
+            { url: 'https://nationwide.co.uk', expected: false },
+            { url: 'https://accounts.google.com', expected: true }
         ]
 
         tests.forEach((test) => {
