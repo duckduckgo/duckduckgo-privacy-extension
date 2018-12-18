@@ -7,8 +7,7 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 var debugRequest = false
-
-trackers.loadLists()
+utils.loadLists()
 
 /**
  * Where most of the extension work happens.

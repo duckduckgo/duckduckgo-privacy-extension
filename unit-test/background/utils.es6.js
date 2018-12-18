@@ -1,5 +1,8 @@
 
 const utils = require('../../shared/js/background/utils.es6')
+const entityList = require('./../data/entityList')
+const load = require('./../helpers/utils.es6.js')
+
 const findParentTestCases = [
     {
         'url': 'google.com',
@@ -45,6 +48,63 @@ const extractHostFromURLTestCases = [
         'resultWithWWW': 'www.amazon.co.uk'
     }
 ]
+
+const isRelatedEntityTestCases = [
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'yahoo.com',
+        'result': true
+    },
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'https://yahoo.com',
+        'result': true
+    },
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'abc.com',
+        'result': false
+    },
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'analytics.yahoo.com',
+        'result': true
+    },
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'asdf.yahoo.com',
+        'result': true
+    },
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'yahoo.com.com',
+        'result': false
+    },
+    {
+        'parentCompany': 'Oath',
+        'currLocation': 'yahooocom.com',
+        'result': false
+    },
+    {
+        'parentCompany': '',
+        'currLocation': 'yahoo.com',
+        'result': false
+    }
+]
+
+describe('utils.isRelatedEntity()', () => {
+    beforeAll(() => {
+        load.loadStub({entityList: entityList})
+        utils.loadLists()
+    })
+
+    isRelatedEntityTestCases.forEach(test => {
+        it(`should return ${test.result} for ${test.parentCompany} and ${test.currLocation}`, () => {
+            let result = utils.isRelatedEntity(test.parentCompany, test.currLocation)
+            expect(result).toEqual(test.result)
+        })
+    })
+})
 
 describe('utils.findParent()', () => {
     findParentTestCases.forEach((test) => {

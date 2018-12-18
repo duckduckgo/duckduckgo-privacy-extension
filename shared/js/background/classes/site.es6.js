@@ -57,12 +57,11 @@ class Site {
 
         if (!trackersWhitelistTemporary) return
 
-        // Match independently of subdomain
-        domain = tldjs.getDomain(domain) || domain
+        let parsedDomain = tldjs.parse(domain)
+        let hostname = parsedDomain.hostname || domain
 
-        // Make sure we match at the end of the URL
-        // so we're extra sure it's the legit main domain
-        return trackersWhitelistTemporary.some(brokenSiteDomain => brokenSiteDomain.match(new RegExp(domain + '$')))
+        // If root domain in temp whitelist, return true
+        return trackersWhitelistTemporary.some((brokenSiteDomain) => hostname.match(new RegExp(brokenSiteDomain + '$')))
     }
 
     /*
@@ -129,6 +128,14 @@ class Site {
         // Handle non-routable meta-address
         if (domain.match(/^0\.0\.0\.0/)) {
             return domain
+        }
+
+        // for some reason chrome passes this back from webNavigation events
+        // for new tabs instead of chrome://newtab
+        //
+        // "local-ntp" -> "local new tab page"
+        if (url.match(/^chrome-search:\/\/local-ntp/)) {
+            return 'new tab'
         }
 
         // for special pages with a protocol, just return whatever
