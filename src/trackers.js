@@ -20,6 +20,7 @@ class Trackers {
     }
 
     processEntityList (data) {
+        console.log(data)
         const processed = {}
         for (let entity in data) {
             data[entity].properties.forEach(domain => {

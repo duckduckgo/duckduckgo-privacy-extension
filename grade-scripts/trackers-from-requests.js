@@ -20,6 +20,12 @@ const output = program.output
 const outputPath = `${output}-trackers`
 const fileForSubset = program.file
 
+const ACTION_BLOCK = 'block';
+const ACTION_REDIRECT = 'redirect';
+
+// total time ms
+let duration = 0.0
+
 if (!input || !output) {
     return program.help()
 }
@@ -36,13 +42,13 @@ const run = async () => {
     execSync(`mkdir -p ${outputPath}`)
 
     // get initial file data
-    let siteDataArray = scriptUtils.getSiteData(inputPath, fileForSubset)
+    const siteDataArray = scriptUtils.getSiteData(inputPath, fileForSubset)
 
     for (let siteData of siteDataArray) {
         if (siteData.failed) continue
 
-        let url = siteData.url
-        let hostname = url.replace(/https?:\/\//, '')
+        const url = siteData.url
+        const hostname = url.replace(/https?:\/\//, '')
 
         if (scriptUtils.dataFileExists(hostname, outputPath)) continue
 
@@ -50,43 +56,57 @@ const run = async () => {
         let trackersNotBlocked = {}
         let totalBlocked = 0
         let requestsBlocked = []
-        let rulesUsed = {}
+        let rulesUsed = new Map()
 
         // requests are stored as a tuple like: [url, requestType]
-        siteData.requests.forEach((request) => {
-            const t = process.hrtime()
-            const tracker = trackers.getTrackerData(request[0], url, {url: request[0], type: request[1]})
-            const time = process.hrtime(t);
+        siteData.requests.forEach(([trackerUrl, requestType]) => {
+            const start = process.hrtime()
+            const trackerData = trackers.getTrackerData(trackerUrl, url, {url: trackerUrl, type: requestType})
 
-            if (tracker) {
-                tracker.time = time
-                if (tracker.action.match('block|redirect')) {
-                    if (!trackersBlocked[tracker.definition.owner.name]) {
-                        trackersBlocked[tracker.definition.owner.name] = {}
+            // add time to process tracker to total time, convert to sec first
+            const [sec, ns] = process.hrtime(start)
+            duration += (sec + ns/Math.pow(10, 9))
+
+            if (trackerData) {
+                const tracker = trackerData.tracker
+
+                if (trackerData.action === ACTION_BLOCK || trackerData.action === ACTION_REDIRECT) {
+                    totalBlocked += 1
+                    
+                    if (!trackersBlocked[tracker.owner.name]) {
+                        trackersBlocked[tracker.owner.name] = {}
                     }
-                    trackersBlocked[tracker.definition.owner.name][tracker.definition.domain] = tracker
-                    totalBlocked +=1
-                    requestsBlocked.push(request[0])
+                    
+                    trackersBlocked[tracker.owner.name][tracker.domain] = tracker
+                    requestsBlocked.push(trackerUrl)
                 } else {
 
-                    if (!trackersNotBlocked[tracker.definition.owner.name]) {
-                        trackersNotBlocked[tracker.definition.owner.name] = {}
+                    if (!trackersNotBlocked[tracker.owner.name]) {
+                        trackersNotBlocked[tracker.owner.name] = {}
                     }
-                    trackersNotBlocked[tracker.definition.owner.name][tracker.definition.domain] = tracker
+                    trackersNotBlocked[tracker.owner.name][tracker.domain] = tracker
                 }
 
-                if (tracker.matchedRule) {
-                    if (!rulesUsed[tracker.matchedRule.ruleStr]) {
-                        rulesUsed[tracker.matchedRule.ruleStr] = {count: 0, urls: {}}
+                // update rule count and urls for this matched rule
+                if (trackerData.matchedRule) {
+                    const rule = trackerData.matchedRule.rule.toString()
+                    
+                    if (!rulesUsed.has(rule)) {
+                        rulesUsed.set(rule, {count: 0, urls: {}})
                     }
 
-                    rulesUsed[tracker.matchedRule.ruleStr].count += 1
+                    let ruleObj = rulesUsed.get(rule)
 
-                    if (rulesUsed[tracker.matchedRule.ruleStr].urls[request[0]]) {
-                        rulesUsed[tracker.matchedRule.ruleStr].urls[request[0]] += 1
+                    // update rule count
+                    ruleObj.count += 1
+
+                    if (ruleObj.urls[trackerUrl]) {
+                        ruleObj.urls[trackerUrl] += 1
                     } else {
-                        rulesUsed[tracker.matchedRule.ruleStr].urls[request[0]] = 1
+                        ruleObj.urls[trackerUrl] = 1
                     }
+
+                    rulesUsed.set(rule, ruleObj)
                 }
             }
         })
@@ -99,7 +119,7 @@ const run = async () => {
             trackersNotBlocked,
             totalBlocked,
             reqBlocked: requestsBlocked,
-            rulesUsed: rulesUsed
+            rulesUsed
         }
 
         if (siteData.rank) {
@@ -108,6 +128,8 @@ const run = async () => {
 
         fs.writeFileSync(`${outputPath}/${hostname}.json`, JSON.stringify(outputData))
     }
+
+    console.log(chalk.green(`Total time: ${duration} sec`))
 }
 
 const calculateTrackerPrevalence = () => {
