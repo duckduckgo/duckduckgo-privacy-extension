@@ -9,8 +9,8 @@ const baseUrl = 'https://duckduckgo.com/contentblocking'
 
 const listsToLoad = {
     surrogates: `${baseUrl}.js?l=surrogates`,
-    entityList: 'https://b54fde2a.ngrok.io/entityList.json',
-    trackerList: 'https://b54fde2a.ngrok.io/trackerList.json'
+    entityList: `${baseUrl}/entityList.json`,
+    trackerList: `${baseUrl/trackerList.json`
 }
 let loadedLists = {}
 
