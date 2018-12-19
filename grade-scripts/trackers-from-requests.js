@@ -23,8 +23,8 @@ const fileForSubset = program.file
 const ACTION_BLOCK = 'block';
 const ACTION_REDIRECT = 'redirect';
 
-// total time ms
-let duration = 0.0
+// total time sec
+let duration = 0
 
 if (!input || !output) {
     return program.help()
