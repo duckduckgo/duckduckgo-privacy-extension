@@ -96,7 +96,7 @@ const run = async () => {
                     }
 
                     let ruleObj = rulesUsed.get(rule)
-
+                    
                     // update rule count
                     ruleObj.count += 1
 
@@ -112,14 +112,14 @@ const run = async () => {
         })
 
         console.log(chalk.green(`${url}: ${totalBlocked} trackers`))
-
+        
         let outputData = {
             url: siteData.url,
             trackersBlocked,
             trackersNotBlocked,
             totalBlocked,
             reqBlocked: requestsBlocked,
-            rulesUsed
+            rulesUsed: JSON.parse(JSON.stringify([...rulesUsed]))
         }
 
         if (siteData.rank) {
