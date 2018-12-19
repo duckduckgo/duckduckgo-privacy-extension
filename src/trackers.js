@@ -82,7 +82,7 @@ class Trackers {
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
         const matchedRule = this.findRule(tracker, requestData)
 
-        const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate]: null
+        const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate]: false
 
         // sets tracker.exception by looking at tracker.rule exceptions (if any)
         const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false

@@ -42,7 +42,7 @@ describe('getTrackerData', () => {
                 expectedReason: 'matched rule - surrogate',
                 firstParty: false,
                 expectedRule: 'a\\.yahoo\\.com($|[?/])',
-                redirectUrl: true,
+                redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
                 matchedRuleException: false
             },
             // request matches a rule exception => ignore
@@ -55,7 +55,7 @@ describe('getTrackerData', () => {
                 expectedReason: 'matched rule - exception',
                 firstParty: false,
                 expectedRule: 'a\\.yahoo\\.com($|[?/])',
-                redirectUrl: true,
+                redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
                 matchedRuleException: true
             },
             // request from the same domain => ignore
@@ -68,7 +68,7 @@ describe('getTrackerData', () => {
                 expectedReason: 'first party',
                 firstParty: true,
                 expectedRule: 'a\\.yahoo\\.com($|[?/])',
-                redirectUrl: true,
+                redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
                 matchedRuleException: false
             },
             // rule with a action 'ignore' => ignore
@@ -127,7 +127,7 @@ describe('getTrackerData', () => {
                 }
 
                 expect(tracker.firstParty).toEqual(test.firstParty)
-                expect(!!tracker.redirectUrl).toEqual(test.redirectUrl)
+                expect(tracker.redirectUrl).toEqual(test.redirectUrl)
                 expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
             })
         })
