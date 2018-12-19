@@ -20,7 +20,6 @@ class Trackers {
     }
 
     processEntityList (data) {
-        console.log(data)
         const processed = {}
         for (let entity in data) {
             data[entity].properties.forEach(domain => {
@@ -83,7 +82,7 @@ class Trackers {
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
         const matchedRule = this.findRule(tracker, requestData)
 
-        const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate]: false
+        const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate] : false
 
         // sets tracker.exception by looking at tracker.rule exceptions (if any)
         const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false
@@ -190,11 +189,11 @@ class Trackers {
 
         const ruleDefinition = rule[type]
 
-        const matchTypes = (ruleDefinition.types && ruleDefinition.types.length) ?
-            ruleDefinition.types.includes(requestData.request.type) : true 
+        const matchTypes = (ruleDefinition.types && ruleDefinition.types.length)
+            ? ruleDefinition.types.includes(requestData.request.type) : true
 
-        const matchDomains = (ruleDefinition.domains && ruleDefinition.domains.length) ?
-            ruleDefinition.domains.includes(requestData.siteDomain) : true
+        const matchDomains = (ruleDefinition.domains && ruleDefinition.domains.length)
+            ? ruleDefinition.domains.includes(requestData.siteDomain) : true
 
         return (matchTypes && matchDomains)
     }
