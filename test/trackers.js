@@ -15,7 +15,7 @@ describe('getTrackerData', () => {
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - block',
                 firstParty: false,
-                expectedRule: 'geo.yahoo.com',
+                expectedRule: 'geo\\.yahoo\\.com',
                 redirectUrl: false,
                 matchedRuleException: false
             },
@@ -28,7 +28,7 @@ describe('getTrackerData', () => {
                 expectedOwner: 'Oath',
                 expectedReason: 'first party',
                 firstParty: true,
-                expectedRule: 'geo.yahoo.com',
+                expectedRule: 'geo\\.yahoo\\.com',
                 redirectUrl: false,
                 matchedRuleException: false
             },
@@ -41,7 +41,7 @@ describe('getTrackerData', () => {
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - surrogate',
                 firstParty: false,
-                expectedRule: 'a.yahoo.com($|[?/])',
+                expectedRule: 'a\\.yahoo\\.com($|[?/])',
                 redirectUrl: true,
                 matchedRuleException: false
             },
@@ -54,7 +54,7 @@ describe('getTrackerData', () => {
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - exception',
                 firstParty: false,
-                expectedRule: 'a.yahoo.com($|[?/])',
+                expectedRule: 'a\\.yahoo\\.com($|[?/])',
                 redirectUrl: true,
                 matchedRuleException: true
             },
@@ -67,7 +67,7 @@ describe('getTrackerData', () => {
                 expectedOwner: 'Oath',
                 expectedReason: 'first party',
                 firstParty: true,
-                expectedRule: 'a.yahoo.com($|[?/])',
+                expectedRule: 'a\\.yahoo\\.com($|[?/])',
                 redirectUrl: true,
                 matchedRuleException: false
             },
@@ -80,7 +80,7 @@ describe('getTrackerData', () => {
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - ignore',
                 firstParty: false,
-                expectedRule: 'b.yahoo.com/.*?ad=asdf',
+                expectedRule: 'b\\.yahoo\\.com\\/.*\\?ad=asdf',
                 redirectUrl: false,
                 matchedRuleException: false
             },
@@ -123,7 +123,7 @@ describe('getTrackerData', () => {
                 expect(tracker.reason).toEqual(test.expectedReason)
 
                 if (test.expectedRule) {
-                    expect(tracker.matchedRule.ruleStr.replace(/\\/g, '')).toEqual(test.expectedRule)
+                    expect(tracker.matchedRule.rule.toString()).toEqual(new RegExp(test.expectedRule, 'gi').toString())
                 }
 
                 expect(tracker.firstParty).toEqual(test.firstParty)

@@ -8,14 +8,11 @@
     "test-debug": "grunt test --type=dev --test-debug",
     "lint": "eslint src test",
     "lint-fix": "eslint src test --fix",
-    "updateLists": "grunt updateLists",
-    "abp": "(cd node_modules/abp-filter-parser && npm install) || true",
-    "postinstall": "npm run abp"
+    "updateLists": "grunt updateLists"
   },
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "btoa": "1.2.1",
     "chalk": "2.4.0",
     "commander": "2.15.1",
     "eslint": "4.19.1",

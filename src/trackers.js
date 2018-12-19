@@ -1,55 +1,51 @@
 const utils = require('./utils')
 const tldjs = require('tldjs')
-const btoa = require('btoa')
 
 class Trackers {
     addLists (lists) {
         this.entityList = this.processEntityList(lists.entityList)
         this.trackerList = this.processTrackerList(lists.trackerList)
         this.surrogateList = this.processSurrogateList(lists.surrogates)
-        this.exceptionTypes = ['domains', 'types']
     }
 
     processTrackerList (data) {
-        Object.keys(data).forEach(name => {
+        for (let name in data) {
             if (data[name].rules) {
                 for (let i in data[name].rules) {
-                    // fix this later. make a toString to serialize RegExp?
-                    data[name].rules[i].ruleStr = data[name].rules[i].rule
                     data[name].rules[i].rule = new RegExp(data[name].rules[i].rule, 'ig')
                 }
             }
-        })
+        }
         return data
     }
 
     processEntityList (data) {
-        let processed = {}
-        Object.keys(data).forEach(entity => {
+        const processed = {}
+        for (let entity in data) {
             data[entity].properties.forEach(domain => {
                 processed[domain] = entity
             })
-        })
+        }
         return processed
     }
 
     processSurrogateList (text) {
         const b64dataheader = 'data:application/javascript;base64,'
-        let surrogateList = {}
-        let splitSurrogateList = text.trim().split('\n\n')
+        const surrogateList = {}
+        const splitSurrogateList = text.trim().split('\n\n')
 
         splitSurrogateList.forEach(sur => {
             // remove comment lines
-            let lines = sur.split('\n').filter((line) => {
+            const lines = sur.split('\n').filter((line) => {
                 return !(/^#.*/).test(line)
             })
 
             // remove first line, store it
-            let firstLine = lines.shift()
+            const firstLine = lines.shift()
 
             // take identifier from first line
-            let pattern = firstLine.split(' ')[0]
-            let b64surrogate = btoa(lines.join('\n'))
+            const pattern = firstLine.split(' ')[0]
+            const b64surrogate = Buffer.from(lines.join('\n').toString(), 'binary').toString('base64')
             surrogateList[pattern] = b64dataheader + b64surrogate
         })
         return surrogateList
@@ -76,43 +72,51 @@ class Trackers {
             urlToCheckSplit: utils.extractHostFromURL(urlToCheck).split('.')
         }
 
-        // tracker object returned by getTrackerData
-        const tracker = {
-            definition: null,
-            action: false,
-            redirectUrl: null,
-            owner: null,
-            firstParty: false,
-            matchedRule: null,
-            matchedRuleException: false
-        }
-
         // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
-        tracker.definition = this.findTracker(tracker, requestData)
+        const tracker = this.findTracker(requestData)
 
-        if (!tracker.definition) {
+        if (!tracker) {
             return null
         }
 
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
-        tracker.matchedRule = this.findRule(tracker, requestData)
+        const matchedRule = this.findRule(tracker, requestData)
+
+        const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate]: null
 
         // sets tracker.exception by looking at tracker.rule exceptions (if any)
-        tracker.matchedRuleException = this.matchesException(tracker, requestData)
+        const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false
 
-        // compare the site owner to the tracker owner and set firstParty
-        tracker.firstParty = this.setFirstParty(tracker, requestData)
+        const trackerOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
 
-        this.setAction(tracker, requestData)
+        const websiteOwner = this.findWebsiteOwner(requestData)
 
-        return tracker
+        const firstParty = (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
+
+        const {action, reason} = this.getAction({
+            firstParty,
+            matchedRule,
+            matchedRuleException,
+            defaultAction: tracker.default,
+            redirectUrl
+        })
+
+        return {
+            action,
+            reason,
+            firstParty,
+            redirectUrl,
+            matchedRule,
+            matchedRuleException,
+            tracker
+        }
     }
 
     /*
      * Pull subdomains off of the reqeust rule and look for a matching tracker object in our data
      */
-    findTracker (tracker, requestData) {
-        let urlList = Object.assign([], requestData.urlToCheckSplit)
+    findTracker (requestData) {
+        let urlList = Array.from(requestData.urlToCheckSplit)
 
         while (urlList.length > 1) {
             let trackerDomain = urlList.join('.')
@@ -125,32 +129,25 @@ class Trackers {
         }
     }
 
+    findTrackerOwner (trackerDomain) {
+        return this.entityList[trackerDomain]
+    }
+
     /*
     * Set parent and first party values on tracker
     */
-    setFirstParty (tracker, requestData) {
-        // find the owner of the tracker
-        let owner = this.entityList[requestData.urlToCheckDomain]
-        tracker.owner = owner
-
+    findWebsiteOwner (requestData) {
         // find the site owner
-        let siteUrlList = Object.assign([], requestData.siteUrlSplit)
-        let matchedEntity = ''
+        let siteUrlList = Array.from(requestData.siteUrlSplit)
 
         while (siteUrlList.length > 1) {
             let siteToCheck = siteUrlList.join('.')
             siteUrlList.shift()
 
-            matchedEntity = this.entityList[siteToCheck]
-            if (matchedEntity) {
-                break
+            if (this.entityList[siteToCheck]) {
+                return this.entityList[siteToCheck]
             }
         }
-
-        if (matchedEntity && matchedEntity === owner) {
-            return true
-        }
-        return false
     }
 
     /*
@@ -159,43 +156,24 @@ class Trackers {
     findRule (tracker, requestData) {
         let matchedRule = null
         // Find a matching rule from this tracker
-        if (tracker.definition.rules && tracker.definition.rules.length) {
-            tracker.definition.rules.some(ruleObj => {
+        if (tracker.rules && tracker.rules.length) {
+            tracker.rules.some(ruleObj => {
                 if (this.requestMatchesRule(requestData, ruleObj)) {
                     matchedRule = ruleObj
                     return true
                 }
             })
         }
-
-        // look up surrogate
-        if (matchedRule && matchedRule.surrogate) {
-            tracker.redirectUrl = this.surrogateList[matchedRule.surrogate]
-        }
         return matchedRule
     }
 
     requestMatchesRule (requestData, ruleObj) {
         if (requestData.urlToCheck.match(ruleObj.rule)) {
-            return this.matchRuleOptions(ruleObj, requestData)
-        } else {
-            return false
-        }
-    }
-
-    /* Check the matched rule exceptions against the request data
-     * Both domains and types need to match (if they exist) in order
-     * for the exception to match.
-    */
-    matchesException (tracker, requestData) {
-        if (tracker.matchedRule && tracker.matchedRule.exceptions) {
-            // all exception types need to match for this to return true
-            return !this.exceptionTypes.some(exceptionType => {
-                const requestParamToCheck = exceptionType === 'domains' ? requestData.siteDomain : requestData.request.type
-                return !(tracker.matchedRule.exceptions[exceptionType] &&
-                          tracker.matchedRule.exceptions[exceptionType].length &&
-                          tracker.matchedRule.exceptions[exceptionType].includes(requestParamToCheck))
-            })
+            if (ruleObj.options) {
+                return this.matchesRuleDefinition(ruleObj, 'options', requestData)
+            } else {
+                return true
+            }
         } else {
             return false
         }
@@ -204,52 +182,51 @@ class Trackers {
     /* Check the matched rule  options against the request data
     *  return: true (all options matched)
     */
-    matchRuleOptions (rule, requestData) {
-        if (!rule.options) return true
-
-        if (rule.options.types &&
-            rule.options.types.length &&
-            !rule.options.types.includes(requestData.request.type)) {
+    matchesRuleDefinition (rule, type, requestData) {
+        if (!rule[type]) {
             return false
         }
 
-        if (rule.options.domains &&
-            rule.options.domains.length &&
-            !rule.options.domains.includes(requestData.siteDomain)) {
-            return false
-        }
+        const ruleDefinition = rule[type]
 
-        return true
+        const matchTypes = (ruleDefinition.types && ruleDefinition.types.length) ?
+            ruleDefinition.types.includes(requestData.request.type) : true 
+
+        const matchDomains = (ruleDefinition.domains && ruleDefinition.domains.length) ?
+            ruleDefinition.domains.includes(requestData.siteDomain) : true
+
+        return (matchTypes && matchDomains)
     }
 
-    setAction (tracker, requestData) {
+    getAction (tracker) {
         // Determine the blocking decision and reason.
+        let action, reason
         if (tracker.firstParty) {
-            tracker.action = 'ignore'
-            tracker.reason = 'first party'
+            action = 'ignore'
+            reason = 'first party'
         } else if (tracker.matchedRuleException) {
-            tracker.action = 'ignore'
-            tracker.reason = 'matched rule - exception'
-        } else if (!tracker.matchedRule && tracker.definition.default === 'ignore') {
-            tracker.action = 'ignore'
-            tracker.reason = 'default ignore'
+            action = 'ignore'
+            reason = 'matched rule - exception'
+        } else if (!tracker.matchedRule && tracker.defaultAction === 'ignore') {
+            action = 'ignore'
+            reason = 'default ignore'
         } else if (tracker.matchedRule && tracker.matchedRule.action === 'ignore') {
-            tracker.action = 'ignore'
-            tracker.reason = 'matched rule - ignore'
-        } else if (!tracker.matchedRule && tracker.definition.default === 'block') {
-            tracker.action = 'block'
-            tracker.reason = 'default block'
+            action = 'ignore'
+            reason = 'matched rule - ignore'
+        } else if (!tracker.matchedRule && tracker.defaultAction === 'block') {
+            action = 'block'
+            reason = 'default block'
         } else if (tracker.matchedRule) {
             if (tracker.redirectUrl) {
-                tracker.action = 'redirect'
-                tracker.reason = 'matched rule - surrogate'
+                action = 'redirect'
+                reason = 'matched rule - surrogate'
             } else {
-                tracker.action = 'block'
-                tracker.reason = 'matched rule - block'
+                action = 'block'
+                reason = 'matched rule - block'
             }
-        } else {
-            return false
         }
+
+        return {action, reason}
     }
 }
 
