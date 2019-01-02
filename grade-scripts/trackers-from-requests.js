@@ -58,7 +58,6 @@ const run = async () => {
         let requestsBlocked = []
         let rulesUsed = new Map()
 
-        // requests are stored as a tuple like: [url, requestType]
         siteData.requests.forEach(([trackerUrl, requestType]) => {
             const start = process.hrtime()
             const trackerData = trackers.getTrackerData(trackerUrl, url, {url: trackerUrl, type: requestType})
@@ -91,21 +90,9 @@ const run = async () => {
                 if (trackerData.matchedRule) {
                     const rule = trackerData.matchedRule.rule.toString()
                     
-                    if (!rulesUsed.has(rule)) {
-                        rulesUsed.set(rule, {count: 0, urls: {}})
-                    }
-
-                    let ruleObj = rulesUsed.get(rule)
-                    
-                    // update rule count
+                    const ruleObj = rulesUsed.get(rule) || {count: 0, urls: {}}
                     ruleObj.count += 1
-
-                    if (ruleObj.urls[trackerUrl]) {
-                        ruleObj.urls[trackerUrl] += 1
-                    } else {
-                        ruleObj.urls[trackerUrl] = 1
-                    }
-
+                    ruleObj.urls[trackerUrl] = ruleObj.urls[trackerUrl] ? ruleObj.urls[trackerUrl] + 1 : 1
                     rulesUsed.set(rule, ruleObj)
                 }
             }
