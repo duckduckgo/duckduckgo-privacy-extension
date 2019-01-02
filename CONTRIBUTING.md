@@ -40,8 +40,8 @@ Right now all new feature development is handled internally.
 
 ## Bug fixes
 
-Most bug fixes are handled internally, however, we will except pull requests for bug fixes if you:
-1. Create an issue describing the bug. see Reporting bugs
+Most bug fixes are handled internally, but we will except pull requests for bug fixes if you first:
+1. Create an issue describing the bug. see [Reporting bugs](https://github.com/duckduckgo/duckduckgo-privacy-extension/CONTRIBUTING.md#reporting-bugs)
 2. Get approval from DDG staff before working on it. Since most bug fixes and feature development are handled internally, we want to make sure that your work doesn't conflict with an already progress project.
 
 ## Local Development
@@ -103,7 +103,7 @@ After running the build task it will continue watching for changes to any of the
 **Using XVFB** To test on a remote server with XVBF installed, add `-x` flag: `./selenium-test/ratings.js -x -u https://website.com`
 
 ## Extension Development and Release Plan
-**See [contributing]() before working on any bug fixes. New features are not accepted at this time**
+**New features are not accepted at this time. See [bug fixes]() for how to fix issues**
 
 ## Development
 - New features and bug fixes should be made against the `develop` branch
