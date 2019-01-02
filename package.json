@@ -8,9 +8,7 @@
     "test-debug": "grunt test --type=dev --test-debug",
     "lint": "eslint src test",
     "lint-fix": "eslint src test --fix",
-    "updateLists": "grunt updateLists",
-    "abp": "(cd node_modules/abp-filter-parser && npm install) || true",
-    "postinstall": "npm run abp"
+    "updateLists": "grunt updateLists"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -37,9 +35,7 @@
     "load-grunt-tasks": "3.5.2",
     "puppeteer": "1.3.0",
     "request": "2.85.0",
-    "abp-filter-parser": "https://github.com/duckduckgo/abp-filter-parser/tarball/master",
-    "btoa": "1.2.1",
-    "tldjs": "2.3.1",
+    "tldjs": "^2.3.1",
     "url-parse-lax": "^3.0.0"
   },
   "dependencies": {}

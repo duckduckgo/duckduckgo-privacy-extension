@@ -9,8 +9,8 @@ const baseUrl = 'https://duckduckgo.com/contentblocking'
 
 const listsToLoad = {
     surrogates: `${baseUrl}.js?l=surrogates`,
-    whitelist: `${baseUrl}/trackers-whitelist.txt`,
-    entityList: `${baseUrl}.js?l=entitylist2`
+    entityList: `${baseUrl}/entityList.json`,
+    trackerList: `${baseUrl}/trackerList.json`
 }
 let loadedLists = {}
 
@@ -44,7 +44,8 @@ let getSymlinkedLocalList = (fileName) => {
     try {
         list = fs.readFileSync(path, { encoding: 'utf8' })
     } catch (e) {
-        throw new Error(`couldn't find and parse list ${fileName}, tried looking in: ${path}`)
+        console.warn(`couldn't find and parse list ${fileName}, tried looking in: ${path}`)
+        return
     }
 
     if (fileName.match(/\.txt$/)) {
