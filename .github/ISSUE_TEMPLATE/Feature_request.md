@@ -1,3 +1,9 @@
+---
+name: Feature request
+about: Suggest new features for the extension
+
+---
+
 ## Summary
 <!-- Explanation of the feature. -->
 

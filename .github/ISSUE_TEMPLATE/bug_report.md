@@ -1,3 +1,9 @@
+---
+name: Bug report
+about: Use this template for reporting a bug.
+
+---
+
 <!--
 This form is for reporting bugs or issues with the extension and not to report broken sites. To report a broken site use the 'Report Broken Site' link on the extension popup.
 -->

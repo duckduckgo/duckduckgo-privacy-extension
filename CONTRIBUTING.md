@@ -9,7 +9,7 @@ Report broken websites using the "Report Broken Site" link on the extension popu
 - First check to see if the bug has not already been [reported](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
 - Make sure that you are using the latest version of the extension.
 
-**How to report a bug**
+**How to write a bug report**
 1. Use a short clear title that describes the issue.
 2. Describe the steps required to reproduce the issue. Include screenshots if you think they would be helpful.
 3. Include is your browser version, OS, and extension version.
@@ -19,13 +19,14 @@ Provide additional context (optional):
 2. Did this issue start after an upgrade to a new extension version? If so, can you repeat it using a pervious extension version?
 3. Are there any errors in the extension debugging console?
 
+
 # Feature requests
 
 There are two ways to submit feedback:
 1. You can send anonymous feedback using the "Send feedback" link on the extension's options page.
 2. You can submit your request as a GitHub issue.
 
-**How to create a feature request issue**
+**How to write a feature request**
 1. First check to see that there isn't an existing issue that covers your request.
 2. Use a short and descriptive title.
 3. Explain why you would like to see this feature and why it would be useful.
@@ -41,17 +42,17 @@ Right now all new feature development is handled internally.
 ## Bug fixes
 
 Most bug fixes are handled internally, but we will except pull requests for bug fixes if you first:
-1. Create an issue describing the bug. see [Reporting bugs](https://github.com/duckduckgo/duckduckgo-privacy-extension/CONTRIBUTING.md#reporting-bugs)
-2. Get approval from DDG staff before working on it. Since most bug fixes and feature development are handled internally, we want to make sure that your work doesn't conflict with an already progress project.
+1. Create an issue describing the bug. see [Reporting bugs](CONTRIBUTING.md#reporting-bugs)
+2. Get approval from DDG staff before working on it. Since most bug fixes and feature development are handled internally, we want to make sure that your work doesn't conflict with any current projects.
 
 ## Testing locally
 
 ### Pre-Requisites
 - [Node.js](https://nodejs.org) installation
+- [Grunt](https://www.npmjs.com/package/grunt)
 - Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html).
 
-### Set up development environment
-- `npm install` from root directory
+### Set up development environments
 
 ### Building the extension
 - Firefox
