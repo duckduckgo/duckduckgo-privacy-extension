@@ -18,8 +18,8 @@ Report broken sites using the anonymous "Report Broken Site" link in the extensi
 
 ## Reporting bugs
 
-See [Reporting bugs](https://github.com/duckduckgo/duckduckgo-privacy-extension/CONTRIBUTING.md#reporting-bugs)
+See [Reporting bugs](CONTRIBUTING.md#reporting-bugs)
 
 ## Development
 
-See [Development](https://github.com/duckduckgo/duckduckgo-privacy-extension/blob/jd/update-readme/CONTRIBUTING.md#development)
+We're not accepting new feature pull requests right now. For bug fixes see [Development](CONTRIBUTING.md#development)

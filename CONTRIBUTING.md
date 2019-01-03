@@ -6,7 +6,7 @@ Report broken websites using the "Report Broken Site" link on the extension popu
 
 # Reporting bugs
 
-- First check to see if the bug has not already been [reported]().
+- First check to see if the bug has not already been [reported](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
 - Make sure that you are using the latest version of the extension.
 
 **How to report a bug**
