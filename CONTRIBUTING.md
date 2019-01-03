@@ -19,7 +19,6 @@ Provide additional context (optional):
 2. Did this issue start after an upgrade to a new extension version? If so, can you repeat it using a pervious extension version?
 3. Are there any errors in the extension debugging console?
 
-
 # Feature requests
 
 There are two ways to submit feedback:
@@ -68,7 +67,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 - Safari
 
   The Safari extension is no longer supported.
-
 
 ### Development flow
 

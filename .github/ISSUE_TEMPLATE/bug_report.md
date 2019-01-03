@@ -17,7 +17,6 @@ This form is for reporting bugs or issues with the extension and not to report b
 2. step 2
 3. ...
 
-
 **Expected behavior:**
 <!-- What you expect to happen -->
 
@@ -25,11 +24,14 @@ This form is for reporting bugs or issues with the extension and not to report b
 <!-- What actually happens -->
 
 **Versions**
-<!-- To find the extension versions:
+
+<!--
+To find the extension versions:
      Firefox: go to about:addons in the address bar, click DuckDuckGo Privacy Essentials, version is toward the bottom of the page.
 
      Chrome: go to about:extensions in the address bar, click "details" on DuckDuckGo Privacy Essentials, the version is listed near the top of the page.
 -->
+
 - Extension: 20xx-xx-xx
 - Browser: <!-- Firefox, Chrome, Vivaldi ... Version number is not needed, but let us know if you're not on the normal production version of the browser. -->
 - OS: <!-- Windows, Linux, Mac. Version number for the OS is not needed -->
