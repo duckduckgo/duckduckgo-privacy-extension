@@ -6,31 +6,14 @@ Report broken websites using the "Report Broken Site" link on the extension popu
 
 # Reporting bugs
 
-- First check to see if the bug has not already been [reported](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
-- Make sure that you are using the latest version of the extension.
-
-**How to write a bug report**
-1. Use a short clear title that describes the issue.
-2. Describe the steps required to reproduce the issue. Include screenshots if you think they would be helpful.
-3. Include is your browser version, OS, and extension version.
-
-Provide additional context (optional):
-1. Is the issue repeatable or intermittent?
-2. Did this issue start after an upgrade to a new extension version? If so, can you repeat it using a pervious extension version?
-3. Are there any errors in the extension debugging console?
+1. First check to see if the bug has not already been [reported](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
+2. Create a bug report [issue](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/new?template=bug_report.md).
 
 # Feature requests
 
 There are two ways to submit feedback:
 1. You can send anonymous feedback using the "Send feedback" link on the extension's options page.
-2. You can submit your request as a GitHub issue.
-
-**How to write a feature request**
-1. First check to see that there isn't an existing issue that covers your request.
-2. Use a short and descriptive title.
-3. Explain why you would like to see this feature and why it would be useful.
-4. Describe the current extension behavior and the expected behavior you would like to see.
-5. Do you have any examples of other extensions that have this feature?
+2. You can submit your request as an [issue](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/new?template=feature_request.md). First check to see if the feature has not already been [suggested](https://github.com/duckduckgo/duckduckgo-privacy-extension/issues).
 
 # Development
 
@@ -50,8 +33,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 - [Node.js](https://nodejs.org) installation
 - [Grunt](https://www.npmjs.com/package/grunt)
 - Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html).
-
-### Set up development environments
 
 ### Building the extension
 - Firefox
@@ -83,13 +64,16 @@ Run the dev build task for your browser from the 'Build' section above. The gene
 After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
 
 ### Testing
-- `npm test`
+- Unit tests: `npm test`
+- Integration Tests
+  - Local, requires Chrome: `npm run test-int`
+  - Headless, requires xvfb: `npm run test-ci`
 
 ### Selenium Testing (ratings.js)
 
 **Setup**
 
-1. For remote linux machine, first setup xvbf: `source selenium-test/setup.sh`
+1. For remote linux machine, first setup xvfb: `source selenium-test/setup.sh`
 2. `npm install`
 3. `grunt`
 

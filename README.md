@@ -4,7 +4,7 @@
 
 DuckDuckGo Firefox and Chrome extensions
 
-This software is licensed under the terms of the Apache License, Version 2.0 (see [LICENSE](LICENSE)). Copyright (c) 2012 - 2018 [duckduckgo.com](https://duckduckgo.com)
+This software is licensed under the terms of the Apache License, Version 2.0 (see [LICENSE](LICENSE)). Copyright (c) 2012 - 2019 [duckduckgo.com](https://duckduckgo.com)
 
 ## Latest Versions
 
