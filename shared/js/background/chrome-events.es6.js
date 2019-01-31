@@ -92,7 +92,7 @@ chrome.tabs.onRemoved.addListener((id, info) => {
 })
 
 // message popup to close when the active tab changes
-chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({closePopup: true}))
+chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({closePopup: true}, () => chrome.runtime.lastError))
 
 // search via omnibox
 

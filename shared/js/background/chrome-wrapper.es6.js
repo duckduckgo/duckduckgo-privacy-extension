@@ -26,7 +26,8 @@ let getExtensionId = () => {
 }
 
 let notifyPopup = (message) => {
-    chrome.runtime.sendMessage(message)
+    // this can send an error message when the popup is not open. check lastError to hide it
+    chrome.runtime.sendMessage(message, () => chrome.runtime.lastError)
 }
 
 let normalizeTabData = (tabData) => {

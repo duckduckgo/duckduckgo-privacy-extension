@@ -84,7 +84,7 @@ class Site {
      * Send message to the popup to rerender the whitelist
      */
     notifyWhitelistChanged () {
-        chrome.runtime.sendMessage({'whitelistChanged': true})
+        chrome.runtime.sendMessage({'whitelistChanged': true}, () => chrome.runtime.lastError)
     }
 
     isWhiteListed () { return this.whitelisted }

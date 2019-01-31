@@ -67,7 +67,7 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
         if (window.chrome) {
-            chrome.runtime.sendMessage({'updateTabData': true})
+            chrome.runtime.sendMessage({'updateTabData': true}, () => chrome.runtime.lastError)
         }
 
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData)
