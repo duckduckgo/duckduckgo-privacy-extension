@@ -91,7 +91,7 @@ chrome.tabs.onRemoved.addListener((id, info) => {
     tabManager.delete(id)
 })
 
-// message popup to close when the active tab changes
+// message popup to close when the active tab changes. this can send an error message when the popup is not open. check lastError to hide it
 chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({closePopup: true}, () => chrome.runtime.lastError))
 
 // search via omnibox
