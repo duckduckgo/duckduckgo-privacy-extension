@@ -15,15 +15,15 @@
  *      }
  */
 const gradeIconLocations = {
-    'A': 'img/toolbar-rating-a@2x.png',
-    'B+': 'img/toolbar-rating-b-plus@2x.png',
-    'B': 'img/toolbar-rating-b@2x.png',
-    'C+': 'img/toolbar-rating-c-plus@2x.png',
-    'C': 'img/toolbar-rating-c@2x.png',
-    'D': 'img/toolbar-rating-d@2x.png',
+    'A': 'img/toolbar-rating-a.svg',
+    'B+': 'img/toolbar-rating-b-plus.svg',
+    'B': 'img/toolbar-rating-b.svg',
+    'C+': 'img/toolbar-rating-c-plus.svg',
+    'C': 'img/toolbar-rating-c.svg',
+    'D': 'img/toolbar-rating-d.svg',
     // we don't currently show the D- grade
-    'D-': 'img/toolbar-rating-d@2x.png',
-    'F': 'img/toolbar-rating-f@2x.png'
+    'D-': 'img/toolbar-rating-d.svg',
+    'F': 'img/toolbar-rating-f.svg'
 }
 
 const Site = require('./site.es6')
