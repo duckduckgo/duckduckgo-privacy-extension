@@ -84,7 +84,8 @@ class Site {
      * Send message to the popup to rerender the whitelist
      */
     notifyWhitelistChanged () {
-        chrome.runtime.sendMessage({'whitelistChanged': true})
+        // this can send an error message when the popup is not open check lastError to hide it
+        chrome.runtime.sendMessage({'whitelistChanged': true}, () => chrome.runtime.lastError)
     }
 
     isWhiteListed () { return this.whitelisted }
