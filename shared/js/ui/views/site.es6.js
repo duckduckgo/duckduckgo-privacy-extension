@@ -39,8 +39,11 @@ Site.prototype = window.$.extend({},
     {
         _onWhitelistClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
+
+            this.model.send('whitelistClick')
+            /*
             this.model.toggleWhitelist()
-            this._showWhitelistedStatusMessage()
+            this._showWhitelistedStatusMessage()*/
         },
 
         // If we just whitelisted a site, show a message briefly before reloading
