@@ -14,10 +14,12 @@ BreakageForm.prototype = window.$.extend({},
     {
         _setup: function () {
             this._cacheElems('.js-breakage-form', [
-                'close'
+                'close',
+                'submit'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeForm],
+                [this.$submit, 'click', this._submitForm],
                 [this.model.store.subscribe, 'action:site', this._handleAction]
             ])
         },
@@ -33,6 +35,13 @@ BreakageForm.prototype = window.$.extend({},
         _closeForm: function (e) {
             if (e) e.preventDefault()
             this.$el.addClass('is-hidden')
+            this.model.toggleWhitelist()
+        },
+
+        _submitForm: function(e) {
+            if (e) e.preventDefault()
+            this.$el.addClass('is-hidden')
+            this.model.toggleWhitelist()
         }
     }
 )

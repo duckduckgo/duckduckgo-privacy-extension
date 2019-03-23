@@ -19,8 +19,9 @@
 
     &__content {
         z-index: 1;
-        margin-top: 20px;
+        margin-top: 110px;
         position: relative;
+        padding: 40px 20px 15px;
 
         .breakage-form__close-container {
             top: 15px;
@@ -30,12 +31,12 @@
             }
         }
 
-        .form__label {
+        .form__label__select {
             display: block;
             text-align: left;
             font-weight: normal;
             font-size: 1.1em;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: $breakage-form__text-color;
         }
 
@@ -48,7 +49,7 @@
             overflow: hidden;
             line-height: 2.2;
             height: 2.2em;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             width: 100%;
             display: block;
             border: 1px solid #ddd;
@@ -57,6 +58,82 @@
             padding: 0;
             vertical-align: middle;
             cursor: pointer;
+        }
+
+        .form__select:after {
+            speak: none;
+            font-style: normal;
+            font-weight: normal;
+            text-decoration: none;
+            -webkit-font-smoothing: antialiased;
+            content: "\203A";
+            margin-top: -8px;
+            font-size: 18px;
+            line-height: 1;
+            pointer-events: none;
+            vertical-align: middle;
+            display: inline-block;
+            right: 12px;
+            top: 50%;
+            position: absolute;
+            -webkit-transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            transform: rotate(90deg);
+        }
+
+        .form__select:hover {
+            background-color: $white;
+        }
+
+        .form__select select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -ms-appearance: none;
+            appearance: none;
+            background: none;
+            cursor: pointer;
+            margin: 0;
+            padding: 0 28px 0 .75em;
+            position: relative;
+            display: block;
+            font-size: 1em;
+            line-height: inherit;
+            min-width: 10em;
+            width: 100% !important;
+            height: 2.2em !important;
+            outline: none !important;
+            border: none !important
+        }
+
+        .form__checkbox__container {
+            margin-bottom: 20px;
+        }
+
+        .form__checkbox {
+            display: inline-block;
+            vertical-align: top;
+            margin: 3px 5px 0 0;
+        }
+
+        .form__label__checkbox {
+            display: inline-block;
+            width: 225px;
+        }
+
+        .form__submit {
+            height: 2em;
+            width: 100%;
+            border-radius: 4px;
+            background-color: $blue;
+            line-height: 2;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            color: $white;
+            padding: 3px 0;
+            cursor: pointer;
+            display: inline-block;
+            text-decoration: none;
         }
     }
 }

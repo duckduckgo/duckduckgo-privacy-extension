@@ -124,8 +124,10 @@ Site.prototype = window.$.extend({},
                 return
             }
 
+            this.model.send('whitelistClick')
+            /*
             let url = encodeURIComponent(this.model.tab.url)
-            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1&url=${url}`)
+            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1&url=${url}`)*/
         },
 
         _showPageTrackers: function () {
