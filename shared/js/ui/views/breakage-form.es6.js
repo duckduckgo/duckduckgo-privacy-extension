@@ -4,6 +4,7 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 function BreakageForm (ops) {
     this.model = ops.model
     this.template = ops.template
+    this.$root = window.$('.js-breakage-form')
     Parent.call(this, ops)
 
     this._setup()
@@ -15,17 +16,14 @@ BreakageForm.prototype = window.$.extend({},
         _setup: function () {
             this._cacheElems('.js-breakage-form', [
                 'close',
-                'submit'
+                'submit',
+                'element',
+                'message'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeForm],
-                [this.$submit, 'click', this._submitForm],
-                [this.model.store.subscribe, 'action:site', this._handleAction]
+                [this.$submit, 'click', this._submitForm]
             ])
-        },
-
-        _handleAction: function (notification) {
-            if (notification.action === 'whitelistClick') this._openForm()
         },
 
         _openForm: function (e) {
@@ -34,14 +32,24 @@ BreakageForm.prototype = window.$.extend({},
 
         _closeForm: function (e) {
             if (e) e.preventDefault()
-            this.$el.addClass('is-hidden')
-            this.model.toggleWhitelist()
+
+            this._reloadPage(300)
         },
 
         _submitForm: function(e) {
             if (e) e.preventDefault()
-            this.$el.addClass('is-hidden')
-            this.model.toggleWhitelist()
+
+            this.$element.addClass('is-hidden')
+            this.$message.removeClass('is-hidden')
+            this._reloadPage(1000)
+        },
+
+        _reloadPage: function(delay) {
+            setTimeout(() => {
+                browserUIWrapper.closePopup()
+                browserUIWrapper.reloadTab(this.model.tab.id)
+                this.destroy()
+            }, delay)
         }
     }
 )

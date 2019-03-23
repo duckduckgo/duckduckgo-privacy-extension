@@ -3,9 +3,6 @@ const mixins = require('./mixins/index.es6.js')
 const HamburgerMenuView = require('./../views/hamburger-menu.es6.js')
 const HamburgerMenuModel = require('./../models/hamburger-menu.es6.js')
 const hamburgerMenuTemplate = require('./../templates/hamburger-menu.es6.js')
-const BreakageFormView = require('./../views/breakage-form.es6.js')
-const BreakageFormModel = require('./../models/breakage-form.es6.js')
-const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const TopBlockedView = require('./../views/top-blocked-truncated.es6.js')
 const TopBlockedModel = require('./../models/top-blocked.es6.js')
 const topBlockedTemplate = require('./../templates/top-blocked-truncated.es6.js')
@@ -56,13 +53,6 @@ Trackers.prototype = window.$.extend({},
                 model: new SiteModel(),
                 appendTo: this.$parent,
                 template: siteTemplate
-            })
-
-            this.views.breakageForm = new BreakageFormView({
-                pageView: this,
-                model: new BreakageFormModel(),
-                appendTo: this.$parent,
-                template: breakageFormTemplate
             })
 
             this.views.topblocked = new TopBlockedView({

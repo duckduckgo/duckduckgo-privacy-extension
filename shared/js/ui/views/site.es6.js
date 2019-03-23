@@ -2,9 +2,11 @@ const Parent = window.DDG.base.View
 const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const TrackerNetworksView = require('./../views/tracker-networks.es6.js')
 const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
+const BreakageFormView = require('./../views/breakage-form.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
+const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
@@ -39,11 +41,18 @@ Site.prototype = window.$.extend({},
     {
         _onWhitelistClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
-
-            this.model.send('whitelistClick')
-            /*
-            this.model.toggleWhitelist()
-            this._showWhitelistedStatusMessage()*/
+            
+            if (this.model.isWhitelisted) {
+                this.model.toggleWhitelist()
+                this._showWhitelistedStatusMessage()
+            } else {
+                this.model.toggleWhitelist()
+                setTimeout(() => {
+                    this._showBreakageForm()
+                }, 500)
+                setTimeout(() => this.$whiteliststatus.removeClass('is-transparent'), 10)
+                setTimeout(() => this.$protection.addClass('is-transparent'), 10)
+            }
         },
 
         // If we just whitelisted a site, show a message briefly before reloading
@@ -124,10 +133,15 @@ Site.prototype = window.$.extend({},
                 return
             }
 
-            this.model.send('whitelistClick')
-            /*
-            let url = encodeURIComponent(this.model.tab.url)
-            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1&url=${url}`)*/
+            this._onWhitelistClick()
+        },
+
+        _showBreakageForm: function () {
+            this.views.breakageForm = new BreakageFormView({
+                template: breakageFormTemplate,
+                model: this.model,
+                appendTo: this.$body
+            })
         },
 
         _showPageTrackers: function () {

@@ -21,7 +21,7 @@
         z-index: 1;
         margin-top: 110px;
         position: relative;
-        padding: 40px 20px 15px;
+        padding: 40px 20px 20px;
 
         .breakage-form__close-container {
             top: 15px;
@@ -31,12 +31,35 @@
             }
         }
 
-        .form__label__select {
+        .breakage-form__explanation {
             display: block;
             text-align: left;
             font-weight: normal;
             font-size: 1.1em;
             margin-bottom: 15px;
+            margin-top: 5px;
+            color: $breakage-form__text-color;
+        }
+
+        .breakage-form__message {
+            text-align: center;
+            font-weight: normal;
+            font-size: 1.1em;
+            color: $breakage-form__text-color;
+            padding-bottom: 20px;
+        }
+
+        .breakage-form__success {
+            font-size: 1.25em;
+            margin-bottom: 10px;
+        }
+
+        .form__label__select {
+            display: block;
+            text-align: left;
+            font-weight: normal;
+            font-size: 1.1em;
+            margin-bottom: 10px;
             color: $breakage-form__text-color;
         }
 
@@ -49,7 +72,7 @@
             overflow: hidden;
             line-height: 2.2;
             height: 2.2em;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             width: 100%;
             display: block;
             border: 1px solid #ddd;
