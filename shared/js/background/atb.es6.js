@@ -39,6 +39,10 @@ const ATB = (() => {
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
+
+                if (res.data.updateVersion) {
+                    settings.updateSetting('atb', res.data.updateVersion)
+                }
             })
         },
 
