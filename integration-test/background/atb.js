@@ -140,11 +140,12 @@ describe('search workflow', () => {
         todaysAtb = data.version
         lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
         twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
-
-        await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
     })
     afterAll(async () => {
         await harness.teardown(browser)
+    })
+    beforeEach(async () => {
+        await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version
