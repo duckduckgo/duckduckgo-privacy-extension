@@ -194,5 +194,5 @@ describe('search workflow', () => {
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
         expect(atb).toEqual('v123-1')
-    });
+    })
 })
