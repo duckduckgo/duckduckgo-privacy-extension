@@ -10,6 +10,9 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
 
+// list of accepted params in ATB url
+const ACCEPTED_URL_PARAMS = ['cp']
+
 let dev = false
 
 const ATB = (() => {
@@ -102,7 +105,7 @@ const ATB = (() => {
             })
         },
 
-        finalizeATB: () => {
+        finalizeATB: (params) => {
             let atb = settings.getSetting('atb')
 
             // make this request only once
@@ -112,7 +115,7 @@ const ATB = (() => {
             settings.updateSetting('set_atb', atb)
 
             // just a GET request, we only care that the request was made
-            load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
+            load.url(`https://duckduckgo.com/exti/?atb=${atb}${params}`)
         },
 
         getNewATBFromURL: (url) => {
@@ -126,6 +129,21 @@ const ATB = (() => {
             return atb
         },
 
+        // iterate over a list of accepted params, and retrieve them from a URL
+        // builds a new query string containing only accepted params
+        getAcceptedParamsFromURL: (url) => {
+            let validParams = new URLSearchParams()
+            const parsedUrl = new URL(url)
+
+            ACCEPTED_URL_PARAMS.forEach(param => {
+                if (parsedUrl.searchParams.has(param)) {
+                    validParams.append(param, parsedUrl.searchParams.get(param))
+                }
+            })
+
+            return validParams.toString()
+        },
+
         updateATBValues: () => {
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
@@ -133,9 +151,11 @@ const ATB = (() => {
                 .then(browserWrapper.getDDGTabUrls)
                 .then((urls) => {
                     let atb
+                    let params
 
                     urls.some(url => {
                         atb = ATB.getNewATBFromURL(url)
+                        params = ATB.getAcceptedParamsFromURL(url)
                         return !!atb
                     })
 
@@ -143,7 +163,8 @@ const ATB = (() => {
                         settings.updateSetting('atb', atb)
                     }
 
-                    ATB.finalizeATB()
+                    // only pass params if we have an ATB
+                    ATB.finalizeATB(atb ? params : '')
                 })
         },
 
