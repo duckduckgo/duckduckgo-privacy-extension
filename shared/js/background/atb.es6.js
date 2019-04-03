@@ -115,7 +115,7 @@ const ATB = (() => {
             settings.updateSetting('set_atb', atb)
 
             // just a GET request, we only care that the request was made
-            load.url(`https://duckduckgo.com/exti/?atb=${atb}${params}`)
+            load.url(`https://duckduckgo.com/exti/?atb=${atb}&${params}`)
         },
 
         getNewATBFromURL: (url) => {
