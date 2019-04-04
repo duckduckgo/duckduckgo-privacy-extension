@@ -9,9 +9,10 @@ const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
+const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)/
 
 // list of accepted params in ATB url
-const ACCEPTED_URL_PARAMS = ['cp']
+const ACCEPTED_URL_PARAMS = ['natb', 'cp']
 
 let dev = false
 
@@ -115,33 +116,30 @@ const ATB = (() => {
             settings.updateSetting('set_atb', atb)
 
             // just a GET request, we only care that the request was made
-            load.url(`https://duckduckgo.com/exti/?atb=${atb}&${params}`)
-        },
-
-        getNewATBFromURL: (url) => {
-            let atb = ''
-            const matches = url.match(/\Wnatb=(v\d+-\d([a-z_]{2})?)(&|$)/)
-
-            if (matches && matches[1]) {
-                atb = matches[1]
-            }
-
-            return atb
+            load.url(`https://duckduckgo.com/exti/?${params.toString()}`)
         },
 
         // iterate over a list of accepted params, and retrieve them from a URL
         // builds a new query string containing only accepted params
         getAcceptedParamsFromURL: (url) => {
-            let validParams = new URLSearchParams()
-            const parsedUrl = new URL(url)
+            const validParams = new URLSearchParams()
+            const parsedParams = (new URL(url)).searchParams
 
             ACCEPTED_URL_PARAMS.forEach(param => {
-                if (parsedUrl.searchParams.has(param)) {
-                    validParams.append(param, parsedUrl.searchParams.get(param))
+                if (parsedParams.has(param)) {
+                    validParams.append(
+                        param === 'natb' ? 'atb' : param,
+                        parsedParams.get(param)
+                    )
                 }
             })
 
-            return validParams.toString()
+            // Only return params if URL contains valid atb value
+            if (validParams.has('atb') && ATB_FORMAT_RE.test(validParams.get('atb'))) {
+                return validParams
+            }
+
+            return new URLSearchParams()
         },
 
         updateATBValues: () => {
@@ -154,8 +152,8 @@ const ATB = (() => {
                     let params
 
                     urls.some(url => {
-                        atb = ATB.getNewATBFromURL(url)
                         params = ATB.getAcceptedParamsFromURL(url)
+                        atb = params.has('atb') && params.get('atb')
                         return !!atb
                     })
 
@@ -164,7 +162,7 @@ const ATB = (() => {
                     }
 
                     // only pass params if we have an ATB
-                    ATB.finalizeATB(atb ? params : '')
+                    ATB.finalizeATB(params)
                 })
         },
 
