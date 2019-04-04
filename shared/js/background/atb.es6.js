@@ -9,7 +9,7 @@ const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
-const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)/
+const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
 // list of accepted params in ATB url
 const ACCEPTED_URL_PARAMS = ['natb', 'cp']
@@ -109,6 +109,9 @@ const ATB = (() => {
         finalizeATB: (params) => {
             let atb = settings.getSetting('atb')
 
+            // build query string when atb param wasn't acquired from any URLs
+            const paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+
             // make this request only once
             if (settings.getSetting('extiSent')) return
 
@@ -116,7 +119,7 @@ const ATB = (() => {
             settings.updateSetting('set_atb', atb)
 
             // just a GET request, we only care that the request was made
-            load.url(`https://duckduckgo.com/exti/?${params.toString()}`)
+            load.url(`https://duckduckgo.com/exti/?${paramString}`)
         },
 
         // iterate over a list of accepted params, and retrieve them from a URL
@@ -131,6 +134,11 @@ const ATB = (() => {
                         param === 'natb' ? 'atb' : param,
                         parsedParams.get(param)
                     )
+
+                    // Remove 'natb' after renaming it to 'atb'
+                    if (param === 'natb') {
+                        parsedParams.delete(param)
+                    }
                 }
             })
 
@@ -161,7 +169,6 @@ const ATB = (() => {
                         settings.updateSetting('atb', atb)
                     }
 
-                    // only pass params if we have an ATB
                     ATB.finalizeATB(params)
                 })
         },
