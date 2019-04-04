@@ -134,11 +134,6 @@ const ATB = (() => {
                         param === 'natb' ? 'atb' : param,
                         parsedParams.get(param)
                     )
-
-                    // Remove 'natb' after renaming it to 'atb'
-                    if (param === 'natb') {
-                        parsedParams.delete(param)
-                    }
                 }
             })
 
