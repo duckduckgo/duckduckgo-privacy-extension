@@ -188,14 +188,14 @@ describe('atb.updateSetAtb()', () => {
     })
 })
 
-describe('getNewATBFromURL()', () => {
+describe('getAcceptedParamsFromURL()', () => {
     const tests = [
-        { url: 'https://duckduckgo.com/?natb=v123-4ab', output: 'v123-4ab' },
-        { url: 'https://duckduckgo.com/?natb=v123-4', output: 'v123-4' },
-        { url: 'https://duckduckgo.com/?natb=v123-4_b', output: 'v123-4_b' },
-        { url: 'https://duckduckgo.com/?natb=v123-4__', output: 'v123-4__' },
-        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__', output: 'v123-4__' },
-        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&foo=bar', output: 'v123-4__' },
+        { url: 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc', output: 'atb=v123-4ab&cp=atbhc' },
+        { url: 'https://duckduckgo.com/?natb=v123-4&cp=atbhc', output: 'atb=v123-4&cp=atbhc' },
+        { url: 'https://duckduckgo.com/?natb=v123-4_b&cp=atbhc', output: 'atb=v123-4_b&cp=atbhc' },
+        { url: 'https://duckduckgo.com/?natb=v123-4__&cp=atbhc', output: 'atb=v123-4__&cp=atbhc' },
+        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&cp=atbhc', output: 'atb=v123-4__&cp=atbhc' },
+        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&foo=bar&cp=atbhc', output: 'atb=v123-4__&cp=atbhc' },
 
         { url: 'https://duckduckgo.com/about', output: '' },
         { url: 'https://duckduckgo.com/?natb=v123-4a', output: '' },
@@ -204,35 +204,13 @@ describe('getNewATBFromURL()', () => {
         { url: 'https://duckduckgo.com/?natb=v123-4___', output: '' },
         { url: 'https://duckduckgo.com/?natb=v123_sdf', output: '' },
         { url: 'https://duckduckgo.com/?natb=v11111111', output: '' },
-        { url: 'https://duckduckgo.com/?natb=v111-4444', output: '' }
+        { url: 'https://duckduckgo.com/?natb=v111-4444', output: '' },
+        { url: 'https://duckduckgo.com/?natb=v123-4abcd&foo=bar', output: '' }
     ]
 
     tests.forEach((test) => {
         it(`should get atb ${test.output} from ${test.url}`, () => {
-            expect(atb.getNewATBFromURL(test.url)).toEqual(test.output)
-        })
-    })
-})
-
-describe('getAcceptedParamsFromURL()', () => {
-    const tests = [
-        { url: 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc', output: 'cp=atbhc' },
-        { url: 'https://duckduckgo.com/?natb=v123-4&cp=atbhc', output: 'cp=atbhc' },
-        { url: 'https://duckduckgo.com/?natb=v123-4_b&cp=atbhc', output: 'cp=atbhc' },
-        { url: 'https://duckduckgo.com/?natb=v123-4__&cp=atbhc', output: 'cp=atbhc' },
-        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&cp=atbhc', output: 'cp=atbhc' },
-        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&foo=bar&cp=atbhc', output: 'cp=atbhc' },
-
-        { url: 'https://duckduckgo.com/about', output: '' },
-        { url: 'https://duckduckgo.com/?natb=v123-4a', output: '' },
-        { url: 'https://duckduckgo.com/?nnatb=v123-4ab', output: '' },
-        { url: 'https://duckduckgo.com/?natb=v123-4abc', output: '' },
-        { url: 'https://duckduckgo.com/?natb=v123-4ab&foo=bar', output: '' }
-    ]
-
-    tests.forEach((test) => {
-        it(`should get atb ${test.output} from ${test.url}`, () => {
-            expect(atb.getAcceptedParamsFromURL(test.url)).toEqual(test.output)
+            expect((atb.getAcceptedParamsFromURL(test.url)).toString()).toEqual(test.output)
         })
     })
 })
