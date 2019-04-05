@@ -94,7 +94,7 @@ describe('install workflow', () => {
         it('should get its ATB param from the success page when one is present', async () => {
             // open a success page and wait for it to have finished loading
             const successPage = await browser.newPage()
-            await successPage.goto('https://duckduckgo.com/?natb=v123-4ab')
+            await successPage.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
 
             // try get ATB params again
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
@@ -115,6 +115,7 @@ describe('install workflow', () => {
                 if (url.match(/exti/)) {
                     numExtiCalled += 1
                     expect(url).toContain(`atb=${atb}`)
+                    expect(url).toContain(`cp=atbhc`)
                 }
             })
 
