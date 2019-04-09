@@ -18,7 +18,9 @@ BreakageForm.prototype = window.$.extend({},
                 'close',
                 'submit',
                 'element',
-                'message'
+                'message',
+                'dropdown',
+                'checkbox'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeForm],
@@ -33,15 +35,23 @@ BreakageForm.prototype = window.$.extend({},
         _closeForm: function (e) {
             if (e) e.preventDefault()
 
+            this.model.fetch({ firePixel: ['ept', 'off'] })
             this._reloadPage(300)
         },
 
         _submitForm: function(e) {
             if (e) e.preventDefault()
 
+            if (this.$checkbox.is(':checked')) {
+                this.model.set('whitelistOptIn', true)
+                this.model.fetch({ firePixel: ['ept', 'off', this.$dropdown.val()] })
+            } else {
+                this.model.fetch({ firePixel: ['ept', 'off'] })
+            }
+
             this.$element.addClass('is-hidden')
             this.$message.removeClass('is-hidden')
-            this._reloadPage(1000)
+            this._reloadPage(2000)
         },
 
         _reloadPage: function(delay) {

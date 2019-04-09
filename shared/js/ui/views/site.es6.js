@@ -44,33 +44,29 @@ Site.prototype = window.$.extend({},
             
             if (this.model.isWhitelisted) {
                 this.model.toggleWhitelist()
-                this._showWhitelistedStatusMessage()
+                this._showWhitelistedStatusMessage(true)
             } else {
                 this.model.toggleWhitelist()
                 setTimeout(() => {
-                    this._showBreakageForm()
-                }, 500)
-                setTimeout(() => this.$whiteliststatus.removeClass('is-transparent'), 10)
-                setTimeout(() => this.$protection.addClass('is-transparent'), 10)
+                    this._showBreakageConfirmation()
+                }, 100)
+                this._showWhitelistedStatusMessage(false)
             }
         },
 
         // If we just whitelisted a site, show a message briefly before reloading
         // otherwise just reload the tab and close the popup
-        _showWhitelistedStatusMessage: function () {
+        _showWhitelistedStatusMessage: function (reload) {
             const isTransparentClass = 'is-transparent'
             // Wait for the rerendering to be done
             // 10ms timeout is the minimum to render the transition smoothly
             setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
             setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
-            // Wait a bit more before closing the popup and reloading the tab
 
-            setTimeout(() => {
-                browserUIWrapper.reloadTab(this.model.tab.id)
-            }, 1500)
-            setTimeout(() => {
-                browserUIWrapper.closePopup()
-            }, 1500)
+            if (reload) {
+                // Wait a bit more before closing the popup and reloading the tab
+                this._reloadPage(1500)
+            }
         },
 
         // NOTE: after ._setup() is called this view listens for changes to
@@ -85,7 +81,10 @@ Site.prototype = window.$.extend({},
                 'show-page-trackers',
                 'manage-whitelist',
                 'report-broken',
-                'privacy-practices'
+                'privacy-practices',
+                'confirm-breakage',
+                'confirm-breakage-yes',
+                'confirm-breakage-no'
             ])
 
             this.$gradescorecard = this.$('.js-hero-open')
@@ -94,6 +93,8 @@ Site.prototype = window.$.extend({},
                 [this.$toggle, 'click', this._onWhitelistClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
+                [this.$confirmbreakageyes, 'click', this._showBreakageForm],
+                [this.$confirmbreakageno, 'click', this._reloadPage],
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
                 [this.$managewhitelist, 'click', this._onManageWhitelistClick],
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
@@ -118,6 +119,16 @@ Site.prototype = window.$.extend({},
             }
         },
 
+        _reloadPage: function (delay) {
+            delay = delay ? delay : 0
+            setTimeout(() => {
+                browserUIWrapper.reloadTab(this.model.tab.id)
+            }, delay)
+            setTimeout(() => {
+                browserUIWrapper.closePopup()
+            }, delay)
+        },
+
         _onManageWhitelistClick: function () {
             if (this.model && this.model.disabled) {
                 return
@@ -133,11 +144,16 @@ Site.prototype = window.$.extend({},
                 return
             }
 
-            this._onWhitelistClick()
+            this._showBreakageForm()
+        },
+
+        _showBreakageConfirmation: function () {
+            this.$confirmbreakage.removeClass('is-hidden')
         },
 
         _showBreakageForm: function () {
             this.views.breakageForm = new BreakageFormView({
+                siteView: this,
                 template: breakageFormTemplate,
                 model: this.model,
                 appendTo: this.$body

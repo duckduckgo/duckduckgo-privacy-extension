@@ -248,7 +248,14 @@ Site.prototype = window.$.extend({},
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
-                this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
+                
+                if (this.isWhitelisted) {
+                    if (this.whitelistOptIn) {
+                        this.fetch({ firePixel: ['ept', 'on', this.tab.site.domain] })
+                    } else {
+                        this.fetch({ firePixel: ['ept', 'on'] })
+                    }
+                }
 
                 this.fetch({'whitelisted':
                     {
