@@ -94,7 +94,7 @@ describe('install workflow', () => {
         it('should get its ATB param from the success page when one is present', async () => {
             // open a success page and wait for it to have finished loading
             const successPage = await browser.newPage()
-            await successPage.goto('https://duckduckgo.com/?natb=v123-4ab')
+            await successPage.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
 
             // try get ATB params again
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
@@ -115,6 +115,7 @@ describe('install workflow', () => {
                 if (url.match(/exti/)) {
                     numExtiCalled += 1
                     expect(url).toContain(`atb=${atb}`)
+                    expect(url).toContain(`cp=atbhc`)
                 }
             })
 
@@ -126,6 +127,7 @@ describe('install workflow', () => {
 describe('search workflow', () => {
     let todaysAtb
     let lastWeeksAtb
+    let twoWeeksAgoAtb
 
     beforeAll(async () => {
         ({ browser, bgPage, requests } = await harness.setup())
@@ -133,15 +135,18 @@ describe('search workflow', () => {
         // wait until normal exti workflow is done so we don't confuse atb.js requests
         // when the actual tests run
         await wait.forSetting(bgPage, 'extiSent')
-        await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v112-1'))
 
         // grab current atb data
         const data = await request('https://duckduckgo.com/atb.js', { json: true })
         todaysAtb = data.version
-        lastWeeksAtb = `${data.majorVersion - 1}-${data.minorVersion}`
+        lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
+        twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
     })
     afterAll(async () => {
         await harness.teardown(browser)
+    })
+    beforeEach(async () => {
+        await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version
@@ -155,7 +160,9 @@ describe('search workflow', () => {
         await wait.ms(1000)
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
+        expect(atb).toEqual(twoWeeksAgoAtb)
     })
     it('should update set_atb if a repeat search is made on a different day', async () => {
         // set set_atb to an older version
@@ -169,6 +176,25 @@ describe('search workflow', () => {
         await wait.ms(1000)
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
+        expect(atb).toEqual(twoWeeksAgoAtb)
+    })
+    it('should update atb if the server passes back updateVersion', async () => {
+        // set set_atb and atb to older versions
+        await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
+        await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v123-6'))
+
+        // run a search
+        const searchPage = await browser.newPage()
+        searchPage.goto('https://duckduckgo.com/?q=test')
+
+        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
+        await wait.ms(1000)
+
+        const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
+        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+        expect(newSetAtb).toEqual(todaysAtb)
+        expect(atb).toEqual('v123-1')
     })
 })

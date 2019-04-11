@@ -9,6 +9,10 @@ const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
+const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
+
+// list of accepted params in ATB url
+const ACCEPTED_URL_PARAMS = ['natb', 'cp']
 
 let dev = false
 
@@ -39,6 +43,10 @@ const ATB = (() => {
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
+
+                if (res.data.updateVersion) {
+                    settings.updateSetting('atb', res.data.updateVersion)
+                }
             })
         },
 
@@ -98,8 +106,11 @@ const ATB = (() => {
             })
         },
 
-        finalizeATB: () => {
+        finalizeATB: (params) => {
             let atb = settings.getSetting('atb')
+
+            // build query string when atb param wasn't acquired from any URLs
+            const paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
 
             // make this request only once
             if (settings.getSetting('extiSent')) return
@@ -108,18 +119,30 @@ const ATB = (() => {
             settings.updateSetting('set_atb', atb)
 
             // just a GET request, we only care that the request was made
-            load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
+            load.url(`https://duckduckgo.com/exti/?${paramString}`)
         },
 
-        getNewATBFromURL: (url) => {
-            let atb = ''
-            const matches = url.match(/\Wnatb=(v\d+-\d([a-z_]{2})?)(&|$)/)
+        // iterate over a list of accepted params, and retrieve them from a URL
+        // builds a new query string containing only accepted params
+        getAcceptedParamsFromURL: (url) => {
+            const validParams = new URLSearchParams()
+            const parsedParams = (new URL(url)).searchParams
 
-            if (matches && matches[1]) {
-                atb = matches[1]
+            ACCEPTED_URL_PARAMS.forEach(param => {
+                if (parsedParams.has(param)) {
+                    validParams.append(
+                        param === 'natb' ? 'atb' : param,
+                        parsedParams.get(param)
+                    )
+                }
+            })
+
+            // Only return params if URL contains valid atb value
+            if (validParams.has('atb') && ATB_FORMAT_RE.test(validParams.get('atb'))) {
+                return validParams
             }
 
-            return atb
+            return new URLSearchParams()
         },
 
         updateATBValues: () => {
@@ -129,9 +152,11 @@ const ATB = (() => {
                 .then(browserWrapper.getDDGTabUrls)
                 .then((urls) => {
                     let atb
+                    let params
 
                     urls.some(url => {
-                        atb = ATB.getNewATBFromURL(url)
+                        params = ATB.getAcceptedParamsFromURL(url)
+                        atb = params.has('atb') && params.get('atb')
                         return !!atb
                     })
 
@@ -139,7 +164,7 @@ const ATB = (() => {
                         settings.updateSetting('atb', atb)
                     }
 
-                    ATB.finalizeATB()
+                    ATB.finalizeATB(params)
                 })
         },
 
