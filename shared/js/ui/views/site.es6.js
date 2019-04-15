@@ -41,7 +41,7 @@ Site.prototype = window.$.extend({},
     {
         _onWhitelistClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
-            
+
             if (this.model.isWhitelisted) {
                 this.model.toggleWhitelist()
                 this._showWhitelistedStatusMessage(true)
@@ -120,7 +120,7 @@ Site.prototype = window.$.extend({},
         },
 
         _reloadPage: function (delay) {
-            delay = delay ? delay : 0
+            delay = delay || 0
             setTimeout(() => {
                 browserUIWrapper.reloadTab(this.model.tab.id)
             }, delay)

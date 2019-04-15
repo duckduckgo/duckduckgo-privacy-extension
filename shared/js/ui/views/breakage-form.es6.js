@@ -19,12 +19,12 @@ BreakageForm.prototype = window.$.extend({},
                 'submit',
                 'element',
                 'message',
-                'dropdown',
-                'checkbox'
+                'dropdown'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeForm],
-                [this.$submit, 'click', this._submitForm]
+                [this.$submit, 'click', this._submitForm],
+                [this.$dropdown, 'change', this._selectCategory]
             ])
         },
 
@@ -39,22 +39,28 @@ BreakageForm.prototype = window.$.extend({},
             this._reloadPage(300)
         },
 
-        _submitForm: function(e) {
+        _submitForm: function (e) {
             if (e) e.preventDefault()
-
-            if (this.$checkbox.is(':checked')) {
-                this.model.set('whitelistOptIn', true)
-                this.model.fetch({ firePixel: ['ept', 'off', this.$dropdown.val()] })
-            } else {
-                this.model.fetch({ firePixel: ['ept', 'off'] })
+            if (this.$submit.hasClass('btn-disabled')) {
+                return
             }
+
+            this.model.fetch({ firePixel: ['ept', 'off', this.$dropdown.val()] })
 
             this.$element.addClass('is-hidden')
             this.$message.removeClass('is-hidden')
-            this._reloadPage(2000)
+//            this._reloadPage(2000)
         },
 
-        _reloadPage: function(delay) {
+        _selectCategory: function () {
+            if (this.$dropdown.val()) {
+                this.$submit.removeClass('btn-disabled')
+            } else if (!this.$submit.hasClass('btn-disabled')) {
+                this.$submit.addClass('btn-disabled')
+            }
+        },
+
+        _reloadPage: function (delay) {
             setTimeout(() => {
                 browserUIWrapper.closePopup()
                 browserUIWrapper.reloadTab(this.model.tab.id)
