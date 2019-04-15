@@ -5,79 +5,96 @@
     right: 0;
     bottom: 0;
     left: 0;
-
-    &__bg {
-        z-index: -1;
-        background-color: $breakage-form__bg-color;
-        opacity: 0.9;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
+    background: $white;
 
     &__content {
         z-index: 1;
-        margin-top: 110px;
+        margin-top: 0;
         position: relative;
         padding: 40px 20px 20px;
+        background-color: $white;
+        margin: 0;
+        text-align: center;
 
         .breakage-form__close-container {
-            top: 15px;
+            top: 13px;
+            right: 15px;
+            position: absolute;
+        }
 
-            .icon__close {
-                top: 15px;
-            }
+        .form__icon--wrapper {
+            padding: 0 20px 15px 20px;
+            position: relative;
+        }
+
+        .form__icon {
+            @include cross_platform_bg_image("breakage--clipboard.svg");
+            width: 120px;
+            height: 120px;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: inline-block;
+            vertical-align: middle;
+            margin-top: 50px;
+        }
+
+        .breakage-form__title {
+            font-size: 18px;
+            padding: 5px 0 0;
         }
 
         .breakage-form__explanation {
             display: block;
-            text-align: left;
-            font-weight: normal;
-            font-size: 1.1em;
-            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1em;
+            line-height: 1.35em;
+            margin-bottom: 20px;
             margin-top: 5px;
-            color: $breakage-form__text-color;
+            color: $slate-light;
         }
 
         .breakage-form__message {
             text-align: center;
             font-weight: normal;
-            font-size: 1.1em;
-            color: $breakage-form__text-color;
+            color: $slate;
             padding-bottom: 20px;
         }
 
-        .breakage-form__success {
-            font-size: 1.25em;
+        .breakage-form__success--title {
+            font-size: 1.3em;
             margin-bottom: 10px;
+        }
+
+        .breakage-form__success--message {
+            font-size: 1em;
+            line-height: 1.45em;
+            font-weight: bold;
+            color: $slate-light;
         }
 
         .form__label__select {
             display: block;
             text-align: left;
-            font-weight: normal;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-            color: $breakage-form__text-color;
+            font-weight: bold;
+            font-size: 1em;
+            margin-bottom: 8px;
+            color: $slate;
         }
 
         .form__select {
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
             box-sizing: border-box;
-            border-radius: 4px;
+            border-radius: 3px;
             position: relative;
             overflow: hidden;
-            line-height: 2.2;
-            height: 2.2em;
-            margin-bottom: 25px;
+            line-height: 2.3;
+            height: 2.6em;
+            margin-bottom: 20px;
             width: 100%;
             display: block;
-            border: 1px solid #ddd;
+            border: 1px solid $color--dark-silver;
             background-color: #fafafa;
-            color: $breakage-form__text-color;
             padding: 0;
             vertical-align: middle;
             cursor: pointer;
@@ -90,8 +107,9 @@
             text-decoration: none;
             -webkit-font-smoothing: antialiased;
             content: "\203A";
-            margin-top: -8px;
-            font-size: 18px;
+            color: $color--medium-dark-slate;
+            margin-top: -9px;
+            font-size: 20px;
             line-height: 1;
             pointer-events: none;
             vertical-align: middle;
@@ -114,49 +132,47 @@
             -ms-appearance: none;
             appearance: none;
             background: none;
+            color: $slate-light;
             cursor: pointer;
             margin: 0;
-            padding: 0 28px 0 .75em;
+            padding: 0 28px 0 1em;
             position: relative;
             display: block;
             font-size: 1em;
             line-height: inherit;
             min-width: 10em;
             width: 100% !important;
-            height: 2.2em !important;
+            height: 2.5em !important;
             outline: none !important;
             border: none !important
         }
 
-        .form__checkbox__container {
-            margin-bottom: 20px;
-        }
-
-        .form__checkbox {
-            display: inline-block;
-            vertical-align: top;
-            margin: 3px 5px 0 0;
-        }
-
-        .form__label__checkbox {
-            display: inline-block;
-            width: 225px;
-        }
-
         .form__submit {
-            height: 2em;
+            height: 2.75em;
             width: 100%;
             border-radius: 4px;
             background-color: $blue;
-            line-height: 2;
-            font-size: 1.2em;
+            line-height: 2.85;
+            font-size: 1.1em;
             font-weight: bold;
             text-align: center;
             color: $white;
             padding: 3px 0;
+            margin-bottom: 15px;
             cursor: pointer;
             display: inline-block;
             text-decoration: none;
+
+            &.btn-disabled {
+                background-color: #e3e3e3;
+                color: $slate-light;
+                cursor: default;
+            }
+        }
+
+        .breakage-form__footer {
+            font-size: 11px;
+            color: $slate-light;
         }
     }
 }

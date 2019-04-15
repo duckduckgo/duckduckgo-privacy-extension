@@ -54,11 +54,13 @@ module.exports = function () {
         </li>
         <li class="site-info__li--manage-whitelist padded border--bottom">
             <div class="js-site-confirm-breakage site-info--confirm-breakage padded border--bottom is-hidden">
-                <a href="javascript:void(0)" class="js-site-confirm-breakage-yes site-info__confirm-breakage-yes link-secondary bold">
+                <span class="site-info--is-site-broken bold">
+                    Is the website broken?
+                </span>
+                <a href="javascript:void(0)" class="js-site-confirm-breakage-yes site-info__confirm-breakage-yes btn-pill">
                     Yes
                 </a>
-                <div class="separator"></div>
-                <a href="javascript:void(0)" class="js-site-confirm-breakage-no site-info__confirm-breakage-no link-secondary bold">
+                <a href="javascript:void(0)" class="js-site-confirm-breakage-no site-info__confirm-breakage-no btn-pill">
                     No
                 </a>
             </div>

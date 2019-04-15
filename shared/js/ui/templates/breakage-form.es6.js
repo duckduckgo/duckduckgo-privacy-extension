@@ -1,12 +1,12 @@
 const bel = require('bel')
 const categories = [
-    'Broken Videos',
-    'Broken Images',
-    'Comment section is missing',
-    'Page content is missing',
-    'Broken buttons or links',
-    'Broken Login',
-    'Paywall or site is forcing me to whitelist'
+    "Video didn't play",
+    "Images didn't load",
+    "Comments didn't load",
+    "Content is missing",
+    "Links or buttons don't work",
+    "I can't login",
+    "The site asked me to disable"
 ]
 
 function shuffle(arr) {
@@ -25,32 +25,32 @@ function shuffle(arr) {
 
 module.exports = function () {
     return bel`<div class="breakage-form js-breakage-form">
-    <div class="breakage-form__bg"></div>
-    <div class="breakage-form__content card">
-        <nav class="pull-right breakage-form__close-container">
+    <div class="breakage-form__content">
+        <nav class="breakage-form__close-container">
             <a href="javascript:void(0)" class="icon icon__close js-breakage-form-close" role="button" aria-label="Dismiss form"></a>
         </nav>
+        <div class="form__icon--wrapper">
+            <div class="form__icon"></div>
+        </div>
         <div class="breakage-form__element js-breakage-form-element">
-            <div class="breakage-form__explanation">Would you like to anonymously report this site as broken?</div>
-            <div class="form__label__select">Help us categorize what's broken</div>
+            <h2 class="breakage-form__title">Something Broken?</h2>
+            <div class="breakage-form__explanation">Submitting an anonymous broken site report helps us debug these issues and improve the extension.</div>
+            <div class="form__label__select">Describe What Happened</div>
             <div class="form__select breakage-form__input--dropdown">
                 <select class="js-breakage-form-dropdown">
-                    <option value>Pick a category</option>
+                    <option value>Pick your issue from the list...</option>
                     ${shuffle(categories).map(function (item) {
                         return bel`<option value=${item}>${item}</option>`
                     })}
-                    <option value='Other'>Other</option>
+                    <option value='Other'>Something else</option>
                 </select>
             </div>
-            <div class="form__checkbox__container">
-                <input class="form__checkbox js-breakage-form-checkbox" type="checkbox" checked="checked">
-                <span class="form__label__checkbox">Include trackers and domain in breakage report</span>
-            </div>
-            <a href="javascript:void(0)" class="form__submit js-breakage-form-submit" role="button">Submit</a>
+            <a href="javascript:void(0)" class="form__submit js-breakage-form-submit btn-disabled" role="button">Send Report</a>
+            <div class="breakage-form__footer">Reports sent to DuckDuckGo are 100% anonymous and only include your selection above, the URL, and a list of trackers we found on the site.</div>
         </div>
         <div class="breakage-form__message js-breakage-form-message is-hidden">
-            <h2 class="breakage-form__success">Feedback Sent</h2>
-            Thank you! We use feedback like this to improve DuckDuckGo Privacy Essentials. It really helps.
+            <h2 class="breakage-form__success--title">Thank You!</h2>
+            <div class="breakage-form__success--message">Your report will help improve the extension and make the experience better for other people.</div>
         </div>
     </div>
 </div>`

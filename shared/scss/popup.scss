@@ -303,12 +303,28 @@ body {
         }
 
         .site-info--confirm-breakage {
-            background-color: $green;
+            background-color: $white;
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+            padding: 0 20px;
+        }
+
+        .site-info--is-site-broken {
+            display: inline-block;
+            margin: 15px 10px 0 3px;
+        }
+
+        .btn-pill {
+            @include btn-pill(12px);
+            margin: -2px 0 0 2px;
+        }
+
+        .site-info__confirm-breakage-yes {
+            color: $white;
+            background: $color--medium-dark-slate;
         }
 
         .link-secondary {
