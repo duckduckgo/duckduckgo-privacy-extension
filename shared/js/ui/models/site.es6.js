@@ -273,7 +273,7 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        generateBreakagePixel: function(category) {
+        generateBreakagePixel: function (category) {
             if (!this.tab) return 'epbf'
 
             let blockedTrackers = []

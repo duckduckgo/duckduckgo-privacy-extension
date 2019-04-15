@@ -8,6 +8,7 @@ npm-debug.log
 public/js/*.*
 public/css/*.*
 *.swp
+*.swo
 build/firefox
 build/chrome
 build/safari
