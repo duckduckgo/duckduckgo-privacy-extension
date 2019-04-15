@@ -9,7 +9,7 @@ const categories = [
     {category: 'The site asked me to disable', value: 'paywall'}
 ]
 
-function shuffle(arr) {
+function shuffle (arr) {
     let len = arr.length
     let temp
     let index

@@ -147,11 +147,12 @@ Site.prototype = window.$.extend({},
             this._showBreakageForm()
         },
 
-        _showBreakageConfirmation: function () {
+        _showBreakageConfirmation: function (e) {
             this.$confirmbreakage.removeClass('is-hidden')
         },
 
-        _showBreakageForm: function () {
+        _showBreakageForm: function (e) {
+            if (e) e.preventDefault()
             this.views.breakageForm = new BreakageFormView({
                 siteView: this,
                 template: breakageFormTemplate,

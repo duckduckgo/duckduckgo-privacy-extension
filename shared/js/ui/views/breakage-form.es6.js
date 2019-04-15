@@ -45,7 +45,36 @@ BreakageForm.prototype = window.$.extend({},
                 return
             }
 
-            this.model.fetch({ firePixel: ['ept', 'off', this.$dropdown.val()] })
+            let pixelParams = {}
+
+            pixelParams.category = this.$dropdown.val()
+            pixelParams.surrogates = []
+            pixelParams.blockedTrackers = []
+            pixelParams.siteUrl = encodeURIComponent(this.model.tab.url)
+            pixelParams.upgradedHttps = this.model.tab.upgradedHttps.toString()
+            const trackerObjects = this.model.tab.trackersBlocked
+
+            for (let tracker in trackerObjects) {
+                let trackerUrls = trackerObjects[tracker].urls
+                Object.keys(trackerUrls).forEach((u) => {
+                    if (trackerUrls[u].isBlocked) {
+                        pixelParams.blockedTrackers.push(u)
+                        if (trackerUrls[u].reason === 'surrogate') {
+                            pixelParams.surrogates.push(u)
+                        }
+                    }
+                })
+            }
+
+            this.model.fetch({ firePixel: ['ept',
+                                           'off',
+                                           {category: pixelParams.category},
+                                           {url: pixelParams.siteUrl},
+                                           {upgradedHttps: pixelParams.upgradedHttps},
+                                           {blockedTrackers: pixelParams.blockedTrackers},
+                                           {surrogates: pixelParams.surrogates}
+                                          ]
+                             })
 
             this.$element.addClass('is-hidden')
             this.$message.removeClass('is-hidden')
