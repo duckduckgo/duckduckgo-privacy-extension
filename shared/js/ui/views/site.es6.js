@@ -144,13 +144,13 @@ Site.prototype = window.$.extend({},
                 return
             }
 
-            this._showBreakageForm('reportBrokenSite')
+            this.showBreakageForm('reportBrokenSite')
         },
 
         _onConfirmBreakageClick: function (e) {
             if (e) e.preventDefault()
 
-            this._showBreakageForm('toggle')
+            this.showBreakageForm('toggle')
         },
 
         _showBreakageConfirmation: function () {
@@ -159,7 +159,7 @@ Site.prototype = window.$.extend({},
 
         // pass clickSource to specify whether page should reload
         // after submitting breakage form.
-        _showBreakageForm: function (clickSource) {
+        showBreakageForm: function (clickSource) {
             this.views.breakageForm = new BreakageFormView({
                 siteView: this,
                 template: breakageFormTemplate,
