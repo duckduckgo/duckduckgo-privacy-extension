@@ -4,6 +4,7 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 function BreakageForm (ops) {
     this.model = ops.model
     this.template = ops.template
+    this.clickSource = ops.clickSource
     this.$root = window.$('.js-breakage-form')
     Parent.call(this, ops)
 
@@ -34,9 +35,13 @@ BreakageForm.prototype = window.$.extend({},
 
         _closeForm: function (e) {
             if (e) e.preventDefault()
-
-            this.model.fetch({ firePixel: ['ept', 'off'] })
-            this._reloadPage(300)
+            // reload page after closing form if user got to form from
+            // toggling privacy protection. otherwise destroy view.
+            if (this.clickSource === 'toggle') {
+                this._reloadPage(300)
+            } else {
+                this.destroy()
+            }
         },
 
         _submitForm: function (e) {
@@ -45,40 +50,22 @@ BreakageForm.prototype = window.$.extend({},
                 return
             }
 
-            let pixelParams = {}
+            const category = this.$dropdown.val()
+            const pixelParams = this.model.generateBreakagePixel(category)
 
-            pixelParams.category = this.$dropdown.val()
-            pixelParams.surrogates = []
-            pixelParams.blockedTrackers = []
-            pixelParams.siteUrl = encodeURIComponent(this.model.tab.url)
-            pixelParams.upgradedHttps = this.model.tab.upgradedHttps.toString()
-            const trackerObjects = this.model.tab.trackersBlocked
-
-            for (let tracker in trackerObjects) {
-                let trackerUrls = trackerObjects[tracker].urls
-                Object.keys(trackerUrls).forEach((u) => {
-                    if (trackerUrls[u].isBlocked) {
-                        pixelParams.blockedTrackers.push(u)
-                        if (trackerUrls[u].reason === 'surrogate') {
-                            pixelParams.surrogates.push(u)
-                        }
-                    }
-                })
-            }
-
-            this.model.fetch({ firePixel: ['ept',
-                                           'off',
-                                           {category: pixelParams.category},
-                                           {url: pixelParams.siteUrl},
-                                           {upgradedHttps: pixelParams.upgradedHttps},
-                                           {blockedTrackers: pixelParams.blockedTrackers},
-                                           {surrogates: pixelParams.surrogates}
-                                          ]
-                             })
+            this.model.fetch({ firePixel: pixelParams })
 
             this.$element.addClass('is-hidden')
             this.$message.removeClass('is-hidden')
-//            this._reloadPage(2000)
+            // reload page after form submission if user got to form from
+            // toggling privacy protection, otherwise destroy view.
+            if (this.clickSource === 'toggle') {
+                this._reloadPage(5000)
+            } else {
+                setTimeout(() => {
+                    this.destroy()
+                }, 5000)
+            }
         },
 
         _selectCategory: function () {

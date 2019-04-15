@@ -93,7 +93,7 @@ Site.prototype = window.$.extend({},
                 [this.$toggle, 'click', this._onWhitelistClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
-                [this.$confirmbreakageyes, 'click', this._showBreakageForm],
+                [this.$confirmbreakageyes, 'click', this._onConfirmBreakageClick],
                 [this.$confirmbreakageno, 'click', this._reloadPage],
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
                 [this.$managewhitelist, 'click', this._onManageWhitelistClick],
@@ -144,20 +144,28 @@ Site.prototype = window.$.extend({},
                 return
             }
 
-            this._showBreakageForm()
+            this._showBreakageForm('reportBrokenSite')
         },
 
-        _showBreakageConfirmation: function (e) {
+        _onConfirmBreakageClick: function (e) {
+            if (e) e.preventDefault()
+
+            this._showBreakageForm('toggle')
+        },
+
+        _showBreakageConfirmation: function () {
             this.$confirmbreakage.removeClass('is-hidden')
         },
 
-        _showBreakageForm: function (e) {
-            if (e) e.preventDefault()
+        // pass clickSource to specify whether page should reload
+        // after submitting breakage form.
+        _showBreakageForm: function (clickSource) {
             this.views.breakageForm = new BreakageFormView({
                 siteView: this,
                 template: breakageFormTemplate,
                 model: this.model,
-                appendTo: this.$body
+                appendTo: this.$body,
+                clickSource: clickSource
             })
         },
 

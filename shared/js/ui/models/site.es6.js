@@ -249,12 +249,18 @@ Site.prototype = window.$.extend({},
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
 
+                // fire ept.on pixel if just turned privacy protection on,
+                // fire ept.off pixel if just turned privacy protection off.
                 if (whitelistOnOrOff === 'on') {
+                    // If user reported broken site and opted to share data on site,
+                    // attach domain to ept.on pixel if they turn privacy protection back on.
                     if (this.whitelistOptIn) {
                         this.fetch({ firePixel: ['ept', 'on', this.tab.site.domain] })
                     } else {
                         this.fetch({ firePixel: ['ept', 'on'] })
                     }
+                } else {
+                    this.fetch({ firePixel: ['ept', 'off'] })
                 }
 
                 this.fetch({'whitelisted':
@@ -265,6 +271,36 @@ Site.prototype = window.$.extend({},
                     }
                 })
             }
+        },
+
+        generateBreakagePixel: function(category) {
+            if (!this.tab) return 'epbf'
+
+            let blockedTrackers = []
+            let surrogates = []
+            const upgradedHttps = this.tab.upgradedHttps
+            // remove params and fragments from url to avoid including sensitive data
+            const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+            const trackerObjects = this.tab.trackersBlocked
+            const pixelParams = ['epbf',
+                {category: category},
+                {siteUrl: encodeURIComponent(siteUrl)},
+                {upgradedHttps: upgradedHttps.toString()}
+            ]
+
+            for (let tracker in trackerObjects) {
+                let trackerDomains = trackerObjects[tracker].urls
+                Object.keys(trackerDomains).forEach((domain) => {
+                    if (trackerDomains[domain].isBlocked) {
+                        blockedTrackers.push(domain)
+                        if (trackerDomains[domain].reason === 'surrogate') {
+                            surrogates.push(domain)
+                        }
+                    }
+                })
+            }
+            pixelParams.push({blockedTrackers: blockedTrackers}, {surrogates: surrogates})
+            return pixelParams
         }
     }
 )
