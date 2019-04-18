@@ -65,7 +65,7 @@ Site.prototype = window.$.extend({},
 
             if (reload) {
                 // Wait a bit more before closing the popup and reloading the tab
-                this.pageView.closeAndReloadPage(1500)
+                this.closePopupAndReload(1500)
             }
         },
 
@@ -146,7 +146,7 @@ Site.prototype = window.$.extend({},
         _onDontConfirmBreakageClick: function (e) {
             if (e) e.preventDefault()
 
-            this.pageView.closeAndReloadPage(1500)
+            this.closePopupAndReload(1500)
         },
 
         _showBreakageConfirmation: function () {
@@ -191,6 +191,14 @@ Site.prototype = window.$.extend({},
                 template: gradeScorecardTemplate,
                 model: this.model
             })
+        },
+
+        closePopupAndReload: function (delay) {
+            delay = delay || 0
+            setTimeout(() => {
+                browserUIWrapper.reloadTab(this.model.tab.id)
+                browserUIWrapper.closePopup()
+            }, delay)
         }
     }
 )

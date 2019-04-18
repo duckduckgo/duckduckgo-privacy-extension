@@ -73,14 +73,6 @@ Trackers.prototype = window.$.extend({},
                 appendTo: null,
                 template: autocompleteTemplate
             })
-        },
-
-        closeAndReloadPage: function (delay) {
-            delay = delay || 0
-            setTimeout(() => {
-                browserUIWrapper.closePopup()
-                browserUIWrapper.reloadTab(this.model.tab.id)
-            }, delay)
         }
     }
 )

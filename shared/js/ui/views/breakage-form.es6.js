@@ -4,6 +4,7 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 function BreakageForm (ops) {
     this.model = ops.model
     this.template = ops.template
+    this.siteView = ops.siteView
     this.clickSource = ops.clickSource
     this.$root = window.$('.js-breakage-form')
     Parent.call(this, ops)
@@ -38,7 +39,8 @@ BreakageForm.prototype = window.$.extend({},
             // reload page after closing form if user got to form from
             // toggling privacy protection. otherwise destroy view.
             if (this.clickSource === 'toggle') {
-                this.siteView.pageView.closeAndReloadPage(300)
+                this.siteView.closePopupAndReload(1000)
+                this.destroy()
             } else {
                 this.destroy()
             }
@@ -61,7 +63,7 @@ BreakageForm.prototype = window.$.extend({},
             // reload page after form submission if user got to form from
             // toggling privacy protection, otherwise destroy view.
             if (this.clickSource === 'toggle') {
-                this.siteView.pageView.closeAndReloadPage(3500)
+                this.siteView.closePopupAndReload(3500)
             } else {
                 setTimeout(() => {
                     this.destroy()
