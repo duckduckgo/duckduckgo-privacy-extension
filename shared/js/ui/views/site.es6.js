@@ -65,7 +65,7 @@ Site.prototype = window.$.extend({},
 
             if (reload) {
                 // Wait a bit more before closing the popup and reloading the tab
-                this._reloadPage(1500)
+                this.pageView.closeAndReloadPage(1500)
             }
         },
 
@@ -94,7 +94,7 @@ Site.prototype = window.$.extend({},
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
                 [this.$confirmbreakageyes, 'click', this._onConfirmBreakageClick],
-                [this.$confirmbreakageno, 'click', this._reloadPage],
+                [this.$confirmbreakageno, 'click', this._onDontConfirmBreakageClick],
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
                 [this.$managewhitelist, 'click', this._onManageWhitelistClick],
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
@@ -119,16 +119,6 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        _reloadPage: function (delay) {
-            delay = delay || 0
-            setTimeout(() => {
-                browserUIWrapper.reloadTab(this.model.tab.id)
-            }, delay)
-            setTimeout(() => {
-                browserUIWrapper.closePopup()
-            }, delay)
-        },
-
         _onManageWhitelistClick: function () {
             if (this.model && this.model.disabled) {
                 return
@@ -151,6 +141,12 @@ Site.prototype = window.$.extend({},
             if (e) e.preventDefault()
 
             this.showBreakageForm('toggle')
+        },
+
+        _onDontConfirmBreakageClick: function (e) {
+            if (e) e.preventDefault()
+
+            this.pageView.closeAndReloadPage(1500)
         },
 
         _showBreakageConfirmation: function () {

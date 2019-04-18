@@ -38,7 +38,7 @@ BreakageForm.prototype = window.$.extend({},
             // reload page after closing form if user got to form from
             // toggling privacy protection. otherwise destroy view.
             if (this.clickSource === 'toggle') {
-                this._reloadPage(300)
+                this.siteView.pageView.closeAndReloadPage(300)
             } else {
                 this.destroy()
             }
@@ -51,20 +51,21 @@ BreakageForm.prototype = window.$.extend({},
             }
 
             const category = this.$dropdown.val()
-            const pixelParams = this.model.generateBreakagePixel(category)
+            this.model.submitBreakageForm(category)
+            this._showThankYouMessage()
+        },
 
-            this.model.fetch({ firePixel: pixelParams })
-
+        _showThankYouMessage: function() {
             this.$element.addClass('is-hidden')
             this.$message.removeClass('is-hidden')
             // reload page after form submission if user got to form from
             // toggling privacy protection, otherwise destroy view.
             if (this.clickSource === 'toggle') {
-                this._reloadPage(5000)
+                this.siteView.pageView.closeAndReloadPage(3500)
             } else {
                 setTimeout(() => {
                     this.destroy()
-                }, 5000)
+                }, 3500)
             }
         },
 
@@ -74,14 +75,6 @@ BreakageForm.prototype = window.$.extend({},
             } else if (!this.$submit.hasClass('btn-disabled')) {
                 this.$submit.addClass('btn-disabled')
             }
-        },
-
-        _reloadPage: function (delay) {
-            setTimeout(() => {
-                browserUIWrapper.closePopup()
-                browserUIWrapper.reloadTab(this.model.tab.id)
-                this.destroy()
-            }, delay)
         }
     }
 )

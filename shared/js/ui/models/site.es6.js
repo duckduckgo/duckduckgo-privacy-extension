@@ -19,6 +19,7 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
+    attrs.whitelistOptIn = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
@@ -79,6 +80,7 @@ Site.prototype = window.$.extend({},
                 this.set({isCalculatingSiteRating: false})
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted
+                this.whitelistOptIn = this.tab.site.whitelistOptIn
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
                     this.set({isCalculatingSiteRating: false})
@@ -251,16 +253,21 @@ Site.prototype = window.$.extend({},
 
                 // fire ept.on pixel if just turned privacy protection on,
                 // fire ept.off pixel if just turned privacy protection off.
-                if (whitelistOnOrOff === 'on') {
+                if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
                     // If user reported broken site and opted to share data on site,
-                    // attach domain to ept.on pixel if they turn privacy protection back on.
-                    if (this.whitelistOptIn) {
-                        this.fetch({ firePixel: ['ept', 'on', this.tab.site.domain] })
-                    } else {
-                        this.fetch({ firePixel: ['ept', 'on'] })
-                    }
+                    // attach domain and path to ept.on pixel if they turn privacy protection back on.
+                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                    this.set('whitelistOptIn', false)
+                    this.fetch({ firePixel: ['ept', 'on', {siteUrl: encodeURIComponent(siteUrl)}] })
+                    this.fetch({'whitelistOptIn':
+                        {
+                            list: 'whitelistOptIn',
+                            domain: this.tab.site.domain,
+                            value: false
+                        }
+                    })
                 } else {
-                    this.fetch({ firePixel: ['ept', 'off'] })
+                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
                 }
 
                 this.fetch({'whitelisted':
@@ -273,8 +280,8 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        generateBreakagePixel: function (category) {
-            if (!this.tab) return 'epbf'
+        submitBreakageForm: function (category) {
+            if (!this.tab) return
 
             let blockedTrackers = []
             let surrogates = []
@@ -300,7 +307,19 @@ Site.prototype = window.$.extend({},
                 })
             }
             pixelParams.push({blockedTrackers: blockedTrackers}, {surrogates: surrogates})
-            return pixelParams
+            this.fetch({firePixel: pixelParams})
+
+            // remember that user opted into sharing site breakage data
+            // for this domain, so that we can attach domain when they
+            // remove site from whitelist
+            this.set('whitelistOptIn', true)
+            this.fetch({'whitelistOptIn':
+                {
+                    list: 'whitelistOptIn',
+                    domain: this.tab.site.domain,
+                    value: true
+                }
+            })
         }
     }
 )

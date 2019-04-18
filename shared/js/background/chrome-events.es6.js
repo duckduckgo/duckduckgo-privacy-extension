@@ -165,6 +165,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.whitelisted) {
         tabManager.whitelistDomain(req.whitelisted)
+    } else if (req.whitelistOptIn) {
+        tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value)
     } else if (req.getTab) {
         res(tabManager.get({'tabId': req.getTab}))
         return true
