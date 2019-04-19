@@ -93,8 +93,8 @@ Site.prototype = window.$.extend({},
                 [this.$toggle, 'click', this._onWhitelistClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
-                [this.$confirmbreakageyes, 'click', this._onConfirmBreakageClick],
-                [this.$confirmbreakageno, 'click', this._onDontConfirmBreakageClick],
+                [this.$confirmbreakageyes, 'click', this._onConfirmBrokenClick],
+                [this.$confirmbreakageno, 'click', this._onConfirmNotBrokenClick],
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
                 [this.$managewhitelist, 'click', this._onManageWhitelistClick],
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
@@ -137,13 +137,13 @@ Site.prototype = window.$.extend({},
             this.showBreakageForm('reportBrokenSite')
         },
 
-        _onConfirmBreakageClick: function () {
+        _onConfirmBrokenClick: function () {
             this.$managewhitelistli.removeClass('is-hidden')
             this.$confirmbreakageli.addClass('is-hidden')
             this.showBreakageForm('toggle')
         },
 
-        _onDontConfirmBreakageClick: function () {
+        _onConfirmNotBrokenClick: function () {
             const isTransparentClass = 'is-transparent'
             this.$confirmbreakagemessage.removeClass(isTransparentClass)
             this.$confirmbreakage.addClass(isTransparentClass)
