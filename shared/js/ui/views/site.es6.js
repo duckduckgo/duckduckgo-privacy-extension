@@ -42,15 +42,12 @@ Site.prototype = window.$.extend({},
         _onWhitelistClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
 
-            if (this.model.isWhitelisted) {
-                this.model.toggleWhitelist()
-                this._showWhitelistedStatusMessage(true)
-            } else {
-                this.model.toggleWhitelist()
-                setTimeout(() => {
-                    this._showBreakageConfirmation()
-                }, 100)
-                this._showWhitelistedStatusMessage(false)
+            this.model.toggleWhitelist()
+            const whitelisted = this.model.isWhitelisted
+            this._showWhitelistedStatusMessage(!whitelisted)
+
+            if (whitelisted) {
+                this._showBreakageConfirmation()
             }
         },
 
