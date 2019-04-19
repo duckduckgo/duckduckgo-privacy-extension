@@ -28,7 +28,7 @@
         }
 
         .form__icon {
-            @include cross_platform_bg_image("breakage--clipboard.svg");
+            @include cross_platform_bg_image("broken-site.svg");
             width: 120px;
             height: 120px;
             background-repeat: no-repeat;
