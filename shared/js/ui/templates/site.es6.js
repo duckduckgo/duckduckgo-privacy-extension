@@ -63,7 +63,7 @@ module.exports = function () {
             </div>
             <div class="js-site-confirm-breakage site-info--confirm-breakage">
                 <span class="site-info--is-site-broken bold">
-                    Is the website broken?
+                    Is this website broken?
                 </span>
                 <btn class="js-site-confirm-breakage-yes site-info__confirm-breakage-yes btn-pill">
                     Yes

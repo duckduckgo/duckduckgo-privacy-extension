@@ -58,10 +58,6 @@ BreakageForm.prototype = window.$.extend({},
             // toggling privacy protection, otherwise destroy view.
             if (this.clickSource === 'toggle') {
                 this.siteView.closePopupAndReload(3500)
-            } else {
-                setTimeout(() => {
-                    this.destroy()
-                }, 3500)
             }
         },
 

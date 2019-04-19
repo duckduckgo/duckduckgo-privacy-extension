@@ -29,9 +29,9 @@
         }
 
         .form__icon {
-            @include cross_platform_bg_image("broken-site.svg");
-            width: 160px;
-            height: 160px;
+            @include cross_platform_bg_image("broken-bicycle.svg");
+            width: 150px;
+            height: 150px;
             background-repeat: no-repeat;
             background-size: cover;
             display: inline-block;
@@ -80,14 +80,14 @@
 
         .breakage-form__success--title {
             font-size: 18px;
-            margin-bottom: 10px;
             padding-top: 5px;
         }
 
         .breakage-form__success--message {
             font-size: 1em;
-            line-height: 1.45em;
+            line-height: 1.35em;
             font-weight: bold;
+            margin-top: 5px;
             color: $slate-light;
         }
 
@@ -184,7 +184,7 @@
 
             &.btn-disabled {
                 background-color: #e3e3e3;
-                color: $slate-light;
+                color: $grey;
                 cursor: default;
             }
         }

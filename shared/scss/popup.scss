@@ -140,8 +140,8 @@ body {
        }
 
        .site-info__whitelist-status.is-transparent, .site-info__confirm-thanks.is-transparent {
-           margin-top: -16px;           
-           
+           margin-top: -18px; 
+
            .icon.icon__check,
            .icon.icon__shield,
            .text-line-after-icon,
@@ -330,7 +330,7 @@ body {
 
         .site-info--is-site-broken {
             display: inline-block;
-            margin: 0 10px 0 3px;
+            margin: 0 8px 0 3px;
         }
 
         .btn-pill {

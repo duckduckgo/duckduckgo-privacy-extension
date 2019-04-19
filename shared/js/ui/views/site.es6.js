@@ -103,7 +103,10 @@ Site.prototype = window.$.extend({},
         },
 
         rerender: function () {
-            // console.log('[site view] rerender()')
+            // Prevent rerenders when confirmation form is active,
+            // otherwise form will disappear on rerender.
+            if (this.$body.hasClass('confirmation-active')) return
+
             if (this.model && this.model.disabled) {
                 if (!this.$body.hasClass('is-disabled')) {
                     console.log('$body.addClass() is-disabled')
@@ -138,8 +141,10 @@ Site.prototype = window.$.extend({},
         },
 
         _onConfirmBrokenClick: function () {
-            this.$managewhitelistli.removeClass('is-hidden')
-            this.$confirmbreakageli.addClass('is-hidden')
+            const isHiddenClass = 'is-hidden'
+            this.$managewhitelistli.removeClass(isHiddenClass)
+            this.$confirmbreakageli.addClass(isHiddenClass)
+            this.$body.removeClass('confirmation-active')
             this.showBreakageForm('toggle')
         },
 
@@ -147,10 +152,12 @@ Site.prototype = window.$.extend({},
             const isTransparentClass = 'is-transparent'
             this.$confirmbreakagemessage.removeClass(isTransparentClass)
             this.$confirmbreakage.addClass(isTransparentClass)
+            this.$body.removeClass('confirmation-active')
             this.closePopupAndReload(1500)
         },
 
         _showBreakageConfirmation: function () {
+            this.$body.addClass('confirmation-active')
             this.$confirmbreakageli.removeClass('is-hidden')
             this.$managewhitelistli.addClass('is-hidden')
         },
