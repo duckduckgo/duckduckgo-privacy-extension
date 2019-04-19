@@ -1,5 +1,4 @@
 const Parent = window.DDG.base.View
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
 function BreakageForm (ops) {
     this.model = ops.model
@@ -30,24 +29,19 @@ BreakageForm.prototype = window.$.extend({},
             ])
         },
 
-        _openForm: function (e) {
-            this.$el.removeClass('is-hidden')
-        },
-
         _closeForm: function (e) {
             if (e) e.preventDefault()
             // reload page after closing form if user got to form from
             // toggling privacy protection. otherwise destroy view.
             if (this.clickSource === 'toggle') {
-                this.siteView.closePopupAndReload(1000)
+                this.siteView.closePopupAndReload(500)
                 this.destroy()
             } else {
                 this.destroy()
             }
         },
 
-        _submitForm: function (e) {
-            if (e) e.preventDefault()
+        _submitForm: function () {
             if (this.$submit.hasClass('btn-disabled')) {
                 return
             }
@@ -57,9 +51,9 @@ BreakageForm.prototype = window.$.extend({},
             this._showThankYouMessage()
         },
 
-        _showThankYouMessage: function() {
-            this.$element.addClass('is-hidden')
-            this.$message.removeClass('is-hidden')
+        _showThankYouMessage: function () {
+            this.$element.addClass('is-transparent')
+            this.$message.removeClass('is-transparent')
             // reload page after form submission if user got to form from
             // toggling privacy protection, otherwise destroy view.
             if (this.clickSource === 'toggle') {
@@ -74,8 +68,10 @@ BreakageForm.prototype = window.$.extend({},
         _selectCategory: function () {
             if (this.$dropdown.val()) {
                 this.$submit.removeClass('btn-disabled')
+                this.$submit.attr('disabled', false)
             } else if (!this.$submit.hasClass('btn-disabled')) {
                 this.$submit.addClass('btn-disabled')
+                this.$submit.attr('disabled', true)
             }
         }
     }

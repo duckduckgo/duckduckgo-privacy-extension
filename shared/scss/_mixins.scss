@@ -241,6 +241,7 @@
 @mixin btn-pill ($size) {
     border-radius: 28px;
     font-weight: bold;
+    cursor: pointer;
     border: 1px solid $color--medium-dark-slate;
     color: $color--medium-dark-slate;
     background: $white;

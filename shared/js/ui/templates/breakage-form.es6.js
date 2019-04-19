@@ -43,10 +43,10 @@ module.exports = function () {
                     <option value='Other'>Something else</option>
                 </select>
             </div>
-            <a href="javascript:void(0)" class="form__submit js-breakage-form-submit btn-disabled" role="button">Send Report</a>
+            <btn class="form__submit js-breakage-form-submit btn-disabled" role="button" disabled="true">Send Report</btn>
             <div class="breakage-form__footer">Reports sent to DuckDuckGo are 100% anonymous and only include your selection above, the URL, and a list of trackers we found on the site.</div>
         </div>
-        <div class="breakage-form__message js-breakage-form-message is-hidden">
+        <div class="breakage-form__message js-breakage-form-message is-transparent">
             <h2 class="breakage-form__success--title">Thank You!</h2>
             <div class="breakage-form__success--message">Your report will help improve the extension and make the experience better for other people.</div>
         </div>

@@ -80,11 +80,14 @@ Site.prototype = window.$.extend({},
                 'show-all-trackers',
                 'show-page-trackers',
                 'manage-whitelist',
+                'manage-whitelist-li',
                 'report-broken',
                 'privacy-practices',
+                'confirm-breakage-li',
                 'confirm-breakage',
                 'confirm-breakage-yes',
-                'confirm-breakage-no'
+                'confirm-breakage-no',
+                'confirm-breakage-message'
             ])
 
             this.$gradescorecard = this.$('.js-hero-open')
@@ -137,20 +140,22 @@ Site.prototype = window.$.extend({},
             this.showBreakageForm('reportBrokenSite')
         },
 
-        _onConfirmBreakageClick: function (e) {
-            if (e) e.preventDefault()
-
+        _onConfirmBreakageClick: function () {
+            this.$managewhitelistli.removeClass('is-hidden')
+            this.$confirmbreakageli.addClass('is-hidden')
             this.showBreakageForm('toggle')
         },
 
-        _onDontConfirmBreakageClick: function (e) {
-            if (e) e.preventDefault()
-
+        _onDontConfirmBreakageClick: function () {
+            const isTransparentClass = 'is-transparent'
+            this.$confirmbreakagemessage.removeClass(isTransparentClass)
+            this.$confirmbreakage.addClass(isTransparentClass)
             this.closePopupAndReload(1500)
         },
 
         _showBreakageConfirmation: function () {
-            this.$confirmbreakage.removeClass('is-hidden')
+            this.$confirmbreakageli.removeClass('is-hidden')
+            this.$managewhitelistli.addClass('is-hidden')
         },
 
         // pass clickSource to specify whether page should reload

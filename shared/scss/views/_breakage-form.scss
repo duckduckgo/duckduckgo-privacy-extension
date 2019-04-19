@@ -11,7 +11,7 @@
         z-index: 1;
         margin-top: 0;
         position: relative;
-        padding: 40px 20px 20px;
+        padding: 20px 20px 20px;
         background-color: $white;
         margin: 0;
         text-align: center;
@@ -23,19 +23,31 @@
         }
 
         .form__icon--wrapper {
-            padding: 0 20px 15px 20px;
+            padding-bottom: 5px;
+            margin: 0 20px;
             position: relative;
         }
 
         .form__icon {
             @include cross_platform_bg_image("broken-site.svg");
-            width: 120px;
-            height: 120px;
+            width: 160px;
+            height: 160px;
             background-repeat: no-repeat;
             background-size: cover;
             display: inline-block;
             vertical-align: middle;
-            margin-top: 50px;
+            margin-top: 35px;
+        }
+
+        .breakage-form__element {
+            opacity: 1;
+            transition: all .2s ease-in-out;
+
+            &.is-transparent {
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+            }
         }
 
         .breakage-form__title {
@@ -58,11 +70,18 @@
             font-weight: normal;
             color: $slate;
             padding-bottom: 20px;
+            transition: all .2s ease-in-out;
+            opacity: 1;
+
+            &.is-transparent {
+                opacity: 0;
+            }
         }
 
         .breakage-form__success--title {
-            font-size: 1.3em;
+            font-size: 18px;
             margin-bottom: 10px;
+            padding-top: 5px;
         }
 
         .breakage-form__success--message {
@@ -151,7 +170,7 @@
             height: 2.75em;
             width: 100%;
             border-radius: 4px;
-            background-color: $blue;
+            background-color: #6e90f7;
             line-height: 2.85;
             font-size: 1.1em;
             font-weight: bold;
