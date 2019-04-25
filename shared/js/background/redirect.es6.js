@@ -66,10 +66,6 @@ function handleRequest (requestData) {
          * Tracker blocking
          * If request is a tracker, cancel the request
          */
-        if (window.chrome) {
-            // this can send an error message when the popup is not open. check lastError to hide it
-            chrome.runtime.sendMessage({'updateTabData': true}, () => chrome.runtime.lastError)
-        }
 
         var tracker = trackers.isTracker(requestData.url, thisTab, requestData)
 

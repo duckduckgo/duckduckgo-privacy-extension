@@ -74,6 +74,12 @@ body {
 
             .hamburger-menu__links {
                 padding-top: 0;
+                /* hide report broken site option on special urls */
+                li:last-child {
+                    .is-disabled & {
+                        display: none;
+                    }
+                }
 
                 .menu-title {
                     padding-top: 0;
@@ -116,24 +122,30 @@ body {
            margin-left: 12px;
         }
 
-       .site-info__whitelist-status {
+        .site-info__confirm-thanks {
+            text-align: center;
+        }
+
+       .site-info__whitelist-status, .site-info__confirm-thanks {
            margin-top: 0;
            transition: margin 0.3s ease;
 
            .icon.icon__check,
            .icon.icon__shield,
-           .text-line-after-icon {
+           .text-line-after-icon,
+           .site-info__message {
                opacity: 1;
                transition: opacity 0.3s ease;
            }
        }
 
-       .site-info__whitelist-status.is-transparent {
-           margin-top: -16px;           
-           
+       .site-info__whitelist-status.is-transparent, .site-info__confirm-thanks.is-transparent {
+           margin-top: -18px; 
+
            .icon.icon__check,
            .icon.icon__shield,
-           .text-line-after-icon {
+           .text-line-after-icon,
+           .site-info__message {
                opacity: 0;
            }
        }
@@ -144,7 +156,13 @@ body {
             max-height: 20px;
         }
 
-        .site-info__protection.is-transparent {
+        .site-info--confirm-breakage {
+            opacity: 1;
+            margin-top: -3px;
+            max-height: 20px;
+        }
+
+        .site-info__protection.is-transparent, .site-info--confirm-breakage.is-transparent {
             margin-top: 16px;
             opacity: 0;
             max-height: 0;
@@ -300,6 +318,24 @@ body {
             .is-disabled & {
                 @include is_disabled();
             }
+        }
+
+        .site-info__li--confirm-breakage {
+            background-color: $white;
+            color: $slate;
+            font-weight: bold;
+            max-height: 18px;
+            overflow: hidden;
+        }
+
+        .site-info--is-site-broken {
+            display: inline-block;
+            margin: 0 8px 0 3px;
+        }
+
+        .btn-pill {
+            @include btn-pill(12px);
+            margin: -2px 0 0 2px;
         }
 
         .link-secondary {
@@ -595,6 +631,7 @@ body {
 @import "views/status-list";
 @import "views/privacy-practices";
 @import "views/tracker-networks";
+@import "views/breakage-form";
 
 
 /* Generic menu list styling */

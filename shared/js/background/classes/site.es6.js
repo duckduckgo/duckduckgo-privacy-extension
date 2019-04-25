@@ -26,6 +26,7 @@ class Site {
         this.trackerUrls = []
         this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
+        this.whitelistOptIn = false
         this.setWhitelistStatusFromGlobal(domain)
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
         this.didIncrementCompaniesData = false
@@ -69,7 +70,7 @@ class Site {
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal () {
-        let globalwhitelists = ['whitelisted']
+        let globalwhitelists = ['whitelisted', 'whitelistOptIn']
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {}
             this.setWhitelisted(name, list[this.domain])
