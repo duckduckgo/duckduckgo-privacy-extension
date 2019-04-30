@@ -237,3 +237,17 @@
     border-bottom: $size solid transparent;
     border-right: $size solid $color;
 }
+
+@mixin btn-pill ($size) {
+    border-radius: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid $color--medium-dark-slate;
+    color: $color--medium-dark-slate;
+    background: $white;
+    padding: 0.4em 1.2em;
+    text-decoration: none;
+    text-align: center;
+    font-size: $size;
+    display: inline-block;
+}

@@ -25,6 +25,14 @@ Whitelist.prototype = window.$.extend({},
                     value: false
                 }
             })
+            // Remove domain whitelist opt-in status, if present
+            this.fetch({
+                'whitelistOptIn': {
+                    list: 'whitelistOptIn',
+                    domain: domain,
+                    value: false
+                }
+            })
 
             // Update list
             // use splice() so it reindexes the array

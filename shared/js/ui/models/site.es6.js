@@ -19,6 +19,7 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
+    attrs.whitelistOptIn = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
@@ -79,6 +80,7 @@ Site.prototype = window.$.extend({},
                 this.set({isCalculatingSiteRating: false})
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted
+                this.whitelistOptIn = this.tab.site.whitelistOptIn
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
                     this.set({isCalculatingSiteRating: false})
@@ -248,7 +250,25 @@ Site.prototype = window.$.extend({},
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
-                this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
+
+                // fire ept.on pixel if just turned privacy protection on,
+                // fire ept.off pixel if just turned privacy protection off.
+                if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
+                    // If user reported broken site and opted to share data on site,
+                    // attach domain and path to ept.on pixel if they turn privacy protection back on.
+                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                    this.set('whitelistOptIn', false)
+                    this.fetch({ firePixel: ['ept', 'on', {siteUrl: encodeURIComponent(siteUrl)}] })
+                    this.fetch({'whitelistOptIn':
+                        {
+                            list: 'whitelistOptIn',
+                            domain: this.tab.site.domain,
+                            value: false
+                        }
+                    })
+                } else {
+                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
+                }
 
                 this.fetch({'whitelisted':
                     {
@@ -258,6 +278,48 @@ Site.prototype = window.$.extend({},
                     }
                 })
             }
+        },
+
+        submitBreakageForm: function (category) {
+            if (!this.tab) return
+
+            let blockedTrackers = []
+            let surrogates = []
+            const upgradedHttps = this.tab.upgradedHttps
+            // remove params and fragments from url to avoid including sensitive data
+            const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+            const trackerObjects = this.tab.trackersBlocked
+            const pixelParams = ['epbf',
+                {category: category},
+                {siteUrl: encodeURIComponent(siteUrl)},
+                {upgradedHttps: upgradedHttps.toString()}
+            ]
+
+            for (let tracker in trackerObjects) {
+                let trackerDomains = trackerObjects[tracker].urls
+                Object.keys(trackerDomains).forEach((domain) => {
+                    if (trackerDomains[domain].isBlocked) {
+                        blockedTrackers.push(domain)
+                        if (trackerDomains[domain].reason === 'surrogate') {
+                            surrogates.push(domain)
+                        }
+                    }
+                })
+            }
+            pixelParams.push({blockedTrackers: blockedTrackers}, {surrogates: surrogates})
+            this.fetch({firePixel: pixelParams})
+
+            // remember that user opted into sharing site breakage data
+            // for this domain, so that we can attach domain when they
+            // remove site from whitelist
+            this.set('whitelistOptIn', true)
+            this.fetch({'whitelistOptIn':
+                {
+                    list: 'whitelistOptIn',
+                    domain: this.tab.site.domain,
+                    value: true
+                }
+            })
         }
     }
 )
