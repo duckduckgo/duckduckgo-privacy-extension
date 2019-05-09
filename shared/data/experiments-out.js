@@ -1,15 +1,15 @@
 module.exports = {
     "_": {},
     "j": {
-        "name": "tracker_blocking_optin",
-        "description": "Opt in retention control group",
+        "name": "optin_control",
+        "description": "Tracker Blocking opt in control group",
         "settings": {
             "trackerBlockingEnabled": true
         }
     },
     "k": {
-        "name": "tracker_blocking_optin",
-        "description": "Opt in retention experiment group",
+        "name": "optin_experiment",
+        "description": "Tracker Blocking opt in experiment group",
         "settings": {
             "trackerBlockingEnabled": false
         }

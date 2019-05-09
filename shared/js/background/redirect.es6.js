@@ -1,3 +1,4 @@
+const settings = require('./settings.es6')
 const trackers = require('./trackers.es6')
 const utils = require('./utils.es6')
 const https = require('./https.es6')
@@ -83,8 +84,8 @@ function handleRequest (requestData) {
 
             browserWrapper.notifyPopup({'updateTabData': true})
 
-            // Block the request if the site is not whitelisted
-            if (!thisTab.site.whitelisted && tracker.block) {
+            // Block the request if the site is not whitelisted and tracker blocking is on
+            if (!thisTab.site.whitelisted && settings.getSetting('trackerBlockingEnabled') && tracker.block) {
                 thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // update badge icon for any requests that come in after

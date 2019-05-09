@@ -32,6 +32,10 @@ PrivacyOptions.prototype = window.$.extend({},
                     self.trackerBlockingEnabled = settings['trackerBlockingEnabled']
                     self.httpsEverywhereEnabled = settings['httpsEverywhereEnabled']
                     self.embeddedTweetsEnabled = settings['embeddedTweetsEnabled']
+
+                    if (settings['activeExperiment'] && (settings['activeExperiment'].name === 'optin_experiment')) {
+                        self.trackerBlockingOptIn = true
+                    }
                     resolve()
                 })
             })

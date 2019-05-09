@@ -4,6 +4,7 @@ const retentionExperiments = require('../../data/experiments-out')
 class Experiment {
     constructor () {
         this.variant = ''
+        this.activeExperiment = {}
     }
 
     getVariant () {
@@ -20,9 +21,9 @@ class Experiment {
         settings.ready()
         .then(this.getVariant.bind(this))
         .then(() => {
-            this.activeExperiment = retentionExperiments[this.variant]
+            this.activeExperiment = retentionExperiments[this.variant] || {}
 
-            if (this.activeExperiment) {
+            if (this.activeExperiment.name) {
                 settings.updateSetting('activeExperiment', this.activeExperiment)
 
                 if (this.activeExperiment.settings) {

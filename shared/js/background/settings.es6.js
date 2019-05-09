@@ -71,12 +71,6 @@ function updateSetting (name, value) {
 
     settings[name] = value
     syncSettingTolocalStorage()
-
-/*    if (name === 'atb') {
-        if (value[value.length-1] === 'k') {
-            settings['trackerBlockingEnabled'] = false
-        }
-    }*/
 }
 
 function removeSetting (name) {
