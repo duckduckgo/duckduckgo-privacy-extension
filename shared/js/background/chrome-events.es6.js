@@ -6,11 +6,15 @@
  */
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
+const experiment = require('./experiments.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
-            .then(ATB.openPostInstallPage)
+            .then(() => {
+                experiment.setActiveExperiment()
+                ATB.openPostInstallPage()
+            })
     }
 })
 
@@ -38,6 +42,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 chrome.webRequest.onHeadersReceived.addListener(
     (request) => {
+                experiment.setActiveExperiment()
         if (request.type === 'main_frame') {
             tabManager.updateTabUrl(request)
         }
@@ -242,6 +247,7 @@ let onStartup = () => {
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
 
+//        experiment.setActiveExperiment()
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()
