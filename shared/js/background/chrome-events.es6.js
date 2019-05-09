@@ -42,7 +42,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 chrome.webRequest.onHeadersReceived.addListener(
     (request) => {
-                experiment.setActiveExperiment()
         if (request.type === 'main_frame') {
             tabManager.updateTabUrl(request)
         }

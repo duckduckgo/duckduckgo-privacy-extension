@@ -6,23 +6,22 @@ module.exports = function () {
     <h2 class="menu-title">Options</h2>
     <ul class="default-list">
         <li>
+            Block Trackers
+            ${toggleButton(this.model.trackerBlockingEnabled,
+               'js-options-blocktrackers',
+               'trackerBlockingEnabled')}
+        </li>
+        <li>
             Show Embedded Tweets
             ${toggleButton(this.model.embeddedTweetsEnabled,
-        'js-options-embedded-tweets-enabled',
-        'embeddedTweetsEnabled')}
+                'js-options-embedded-tweets-enabled',
+                'embeddedTweetsEnabled')}
         </li>
     </ul>
 </section>`
 
 /**
  * TODO: revisit these global options later:
-    <li>
-  Block Trackers
-  ${toggleButton(this.model.trackerBlockingEnabled,
-           'js-options-blocktrackers',
-           'trackerBlockingEnabled')}
-    </li>
-    <li>
   Force Secure Connection
   ${toggleButton(this.model.httpsEverywhereEnabled,
            'js-options-https-everywhere-enabled',

@@ -18,8 +18,10 @@ PrivacyOptions.prototype = window.$.extend({},
         toggle: function (k) {
             if (this.hasOwnProperty(k)) {
                 this[k] = !this[k]
+                const onOrOff = this[k] ? 'on' : 'off'
                 console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`)
                 this.fetch({updateSetting: {name: k, value: this[k]}})
+                this.fetch({firePixel: ['epst', k, onOrOff]})
             }
         },
 
