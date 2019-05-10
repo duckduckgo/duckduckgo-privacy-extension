@@ -64,6 +64,21 @@ class TabManager {
         settings.updateSetting(list, globalwhitelist)
     }
 
+    /* Update icon and popup of every open tab
+     */
+    handleTrackerBlockingToggle (value) {
+        for (let tabId in this.tabContainer) {
+            let tab = this.tabContainer[tabId]
+            if (tab.site) {
+                if (value) {
+                    tab.site.setWhitelistStatusFromGlobal()
+                } else {
+                    tab.site.whitelisted = true
+                }
+                tab.updateBadgeIcon()
+            }
+        }
+    }
     /* This handles the new tab case. You have clicked to
      * open a new tab and haven't typed in a url yet.
      * This will fire an onUpdated event and we can create

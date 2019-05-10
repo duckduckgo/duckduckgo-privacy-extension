@@ -136,6 +136,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         let value = req.updateSetting['value']
         settings.ready().then(() => {
             settings.updateSetting(name, value)
+            if (name === 'trackerBlockingEnabled') {
+                tabManager.handleTrackerBlockingToggle(value)
+            }
         })
     } else if (req.getSetting) {
         let name = req.getSetting['name']
