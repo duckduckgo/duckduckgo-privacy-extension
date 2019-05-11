@@ -34,7 +34,7 @@ function getSitePoints (sites) {
     nProcessed += 1
 
     let githubRepo = 'https://raw.githubusercontent.com/tosdr/tosdr.org/master'
-    let url = `${githubRepo}/api/1/service/${site}.json`
+    let url = `${githubRepo}/dist/api/1/service/${site}.json`
 
     if (nProcessed % 5 === 0) process.stdout.write('.')
 
