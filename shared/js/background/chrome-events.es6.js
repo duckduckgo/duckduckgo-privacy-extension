@@ -249,7 +249,6 @@ let onStartup = () => {
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
 
-//        experiment.setActiveExperiment()
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()

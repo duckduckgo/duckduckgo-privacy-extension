@@ -1,9 +1,11 @@
 'use strict';
 
 (function () {
-    document.getElementById('blocking-toggle').addEventListener('click', function() {
-        chrome.runtime.sendMessage({
-            updateSetting: {name: 'trackerBlockingEnabled', value: true}
+    document.querySelectorAll('.js-addons-activate-blocking').forEach((selector) => {
+        selector.addEventListener('click', (e) => {
+            chrome.runtime.sendMessage({
+                updateSetting: {name: 'trackerBlockingEnabled', value: true}
+            })
         })
     })
 
