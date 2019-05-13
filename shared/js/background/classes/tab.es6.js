@@ -31,6 +31,7 @@ const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
+const settings = require('./../settings.es6')
 
 class Tab {
     constructor (tabData) {
@@ -78,6 +79,13 @@ class Tab {
             if (target) badgeData.target = target
 
             browserWrapper.setBadgeIcon(badgeData)
+
+            // tracker blocking opt in experiment - show notification over grade if tracker blocking off
+            if (!settings.getSetting('trackerBlockingEnabled')) {
+                browserWrapper.setBadgeText({text: '!', backgroundColor: 'red', tabId: this.id})
+            } else {
+                browserWrapper.setBadgeText({text: ''})
+            }
         }
     }
 

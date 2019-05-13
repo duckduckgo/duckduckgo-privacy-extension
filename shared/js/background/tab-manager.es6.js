@@ -64,7 +64,7 @@ class TabManager {
         settings.updateSetting(list, globalwhitelist)
     }
 
-    /* Update icon and popup of every open tab
+    /* Update icon and popup of every open tab for opt in experiment
      */
     handleTrackerBlockingToggle (value) {
         for (let tabId in this.tabContainer) {

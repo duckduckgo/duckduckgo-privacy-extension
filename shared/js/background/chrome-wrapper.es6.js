@@ -11,6 +11,16 @@ let setBadgeIcon = (badgeData) => {
     chrome.browserAction.setIcon(badgeData)
 }
 
+let setBadgeText = (badgeData) => {
+    if (badgeData.text) {
+        chrome.browserAction.setBadgeText({text: badgeData.text})
+        chrome.browserAction.setBadgeBackgroundColor({color: badgeData.backgroundColor})
+    } else {
+        // if no text provided, remove badge
+        chrome.browserAction.setBadgeText({text: ''})
+    }
+}
+
 let syncToStorage = (data) => {
     chrome.storage.local.set(data, function () { })
 }
@@ -62,6 +72,7 @@ module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
     setBadgeIcon: setBadgeIcon,
+    setBadgeText: setBadgeText,
     syncToStorage: syncToStorage,
     getFromStorage: getFromStorage,
     notifyPopup: notifyPopup,
