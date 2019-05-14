@@ -1,0 +1,58 @@
+.enable-prompt {
+    z-index: 19;
+    position: absolute;
+    background: $white;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 345px;
+    padding: 5px 20px;
+    text-align: center;
+
+    &--icon {
+        @include cross_platform_bg_image("icon-block-trackers-inactive.svg");
+        margin: 0 auto;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 85px;
+        width: 85px;
+    }
+
+    &--title {
+        font-weight: 800;
+        font-size: 18px;
+        color: #230545;
+        margin-bottom: 10px;
+    }
+
+    &--copy {
+        font-size: 15px;
+        margin-bottom: 10px;
+    }
+
+    &--footer {
+    }
+
+    &--button {
+        display: inline-block;
+        border: 1.5px solid #230545;
+        height: 40px;
+        width: 120px;
+        font-size: 15px;
+        line-height: 1.1;
+        cursor: pointer;
+        font-weight: bold;
+        border-radius: 25px;
+    }
+
+    &--dismiss {
+        background-color: transparent;
+        color: #230545;
+        margin-right: 10px;
+    }
+
+    &--activate {
+        background-color: #230545;
+        color: $white;
+    }
+}

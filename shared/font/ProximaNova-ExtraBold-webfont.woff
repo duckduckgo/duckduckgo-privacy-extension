@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0" />
+<script type="text/javascript" src="/resources/script.js"></script>
+<title>DuckDuckGo Single Sign On</title>
+
+	<link rel="stylesheet" type="text/css" href="https://sso.duckduckgo.com/module.php/ddgtheme/resources/default.css" />
+	<link rel="icon" type="image/icon" href="https://sso.duckduckgo.com/module.php/ddgtheme/resources/icons/favicon_duo.ico" />
+	<script type="text/javascript" src="https://sso.duckduckgo.com/module.php/ddgtheme/resources/js/jquery.min.js" ></script>
+
+
+
+    
+    <meta name="robots" content="noindex, nofollow" />
+    
+
+</head>
+<body onload="SimpleSAML_focus('username');">
+
+<div id="wrap">
+    
+    <div id="header">
+        <h1><a style="text-decoration: none; color: white" href="/">
+            DuckDuckGo Single Sign On
+        </a></h1>
+    </div>
+
+    
+        <div id="content">
+
+
+
+
+<div class="login-form">
+
+    <form action="?" method="post" name="f">
+                <label for="username">Username</label><br>
+                <input id="username" type="text" tabindex="1" name="username" value=""/><br><br>
+                <label for="password">Password</label><br>
+                <input id="password" type="password" tabindex="2" name="password"/><br><br>
+                                <input type="checkbox" id="remember_username" tabindex="4"
+                                                      name="remember_username" value="Yes"/>
+                    <small>Remember my username</small><br><br>
+                            <button class="login-button btn" onclick="this.value='Processing...'; this.disabled=true; this.form.submit(); return true;" tabindex="6">
+                    Log in
+                </button><br>
+        <input type="hidden" name="AuthState" value="_b873fb7cd23a8929d67a4c982420f34e6b7b99f1e4:https://sso.duckduckgo.com/saml2/idp/SSOService.php?spentityid=https%3A%2F%2Fdub.duckduckgo.com&amp;cookieTime=1557868149&amp;RelayState=x55X8-DoUQrVvVx2HxA3QT12jUqjOUr6rdfOQMkPfaprwFZjXzFlrZwH8ts5HqnAzKHA1jsMlk74_C8cK6ViIBoauwVv4qnG97P3MXIbahg" />    </form>
+</div>
+
+	</div><!-- #content -->
+
+</div><!-- #wrap -->
+
+</body>
+</html>

@@ -3,6 +3,9 @@ const mixins = require('./mixins/index.es6.js')
 const HamburgerMenuView = require('./../views/hamburger-menu.es6.js')
 const HamburgerMenuModel = require('./../models/hamburger-menu.es6.js')
 const hamburgerMenuTemplate = require('./../templates/hamburger-menu.es6.js')
+const EnablePromptView = require('./../views/enable-prompt.es6.js')
+//const EnablePromptModel = require('./../models/enable-prompt.es6.js')
+const enablePromptTemplate = require('./../templates/enable-prompt.es6.js')
 const TopBlockedView = require('./../views/top-blocked-truncated.es6.js')
 const TopBlockedModel = require('./../models/top-blocked.es6.js')
 const topBlockedTemplate = require('./../templates/top-blocked-truncated.es6.js')
@@ -60,6 +63,13 @@ Trackers.prototype = window.$.extend({},
                 model: new TopBlockedModel({numCompanies: 3}),
                 appendTo: this.$parent,
                 template: topBlockedTemplate
+            })
+
+            this.views.enablePrompt = new EnablePromptView({
+                pageView: this,
+//                model: new EnablePromptModel(),
+                appendTo: this.$parent,
+                template: enablePromptTemplate
             })
 
             // TODO: hook up model query to actual ddg ac endpoint.
