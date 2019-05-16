@@ -72,8 +72,10 @@ class TabManager {
             if (tab.site) {
                 if (value) {
                     tab.site.setWhitelistStatusFromGlobal()
+                    tab.site.blockingDisabled = false
                 } else {
                     tab.site.whitelisted = true
+                    tab.site.blockingDisabled = true
                 }
                 tab.updateBadgeIcon()
             }

@@ -82,7 +82,7 @@ class Tab {
 
             // tracker blocking opt in experiment - show notification over grade if tracker blocking off
             if (!settings.getSetting('trackerBlockingEnabled')) {
-                browserWrapper.setBadgeText({text: '!', backgroundColor: 'red', tabId: this.id})
+                browserWrapper.setBadgeText({text: '!', backgroundColor: '#D0021B', tabId: this.id})
             } else {
                 browserWrapper.setBadgeText({text: ''})
             }

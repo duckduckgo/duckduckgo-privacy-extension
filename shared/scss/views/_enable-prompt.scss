@@ -5,8 +5,8 @@
     left: 0;
     bottom: 0;
     right: 0;
-    top: 345px;
-    padding: 5px 20px;
+    top: 346px;
+    padding: 8px 20px 20px;
     text-align: center;
 
     &--icon {
@@ -14,20 +14,23 @@
         margin: 0 auto;
         background-repeat: no-repeat;
         background-size: cover;
-        height: 85px;
-        width: 85px;
+        height: 72px;
+        width: 72px;
+        margin-bottom: 4px;
     }
 
     &--title {
         font-weight: 800;
         font-size: 18px;
         color: #230545;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     &--copy {
         font-size: 15px;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
+        line-height: 1.27;
+        color: #666666;
     }
 
     &--footer {
@@ -35,24 +38,14 @@
 
     &--button {
         display: inline-block;
-        border: 1.5px solid #230545;
-        height: 40px;
-        width: 120px;
+        background-color: #230545;
+        color: $white;
+        height: 44px;
+        width: 260px;
         font-size: 15px;
         line-height: 1.1;
         cursor: pointer;
-        font-weight: bold;
+        font-weight: 800;
         border-radius: 25px;
-    }
-
-    &--dismiss {
-        background-color: transparent;
-        color: #230545;
-        margin-right: 10px;
-    }
-
-    &--activate {
-        background-color: #230545;
-        color: $white;
     }
 }

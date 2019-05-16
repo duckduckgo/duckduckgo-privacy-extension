@@ -3,6 +3,8 @@ const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const TrackerNetworksView = require('./../views/tracker-networks.es6.js')
 const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const BreakageFormView = require('./../views/breakage-form.es6.js')
+const EnablePromptView = require('./../views/enable-prompt.es6.js')
+const enablePromptTemplate = require('./../templates/enable-prompt.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
@@ -17,6 +19,7 @@ function Site (ops) {
 
     // cache 'body' selector
     this.$body = window.$('body')
+    this.$parent = window.$('#popup-container')
 
     // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
@@ -100,6 +103,8 @@ Site.prototype = window.$.extend({},
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
+
+            this._showEnablePrompt()
         },
 
         rerender: function () {
@@ -203,6 +208,15 @@ Site.prototype = window.$.extend({},
                 template: gradeScorecardTemplate,
                 model: this.model
             })
+        },
+
+        _showEnablePrompt: function () {
+            if (this.model.blockingDisabled && !this.views.enablePrompt) {
+                this.views.enablePrompt = new EnablePromptView({
+                    template: enablePromptTemplate,
+                    appendTo: this.$parent
+                })
+            }
         },
 
         closePopupAndReload: function (delay) {

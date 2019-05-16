@@ -12,8 +12,7 @@ module.exports = function () {
             third parties from tracking you while you browse?
         </p>
         <div class="enable-prompt--footer">
-            <button class="enable-prompt--button enable-prompt--dismiss js-enable-prompt-dismiss">Dismiss</button>
-            <button class="enable-prompt--button enable-prompt--activate js-enable-prompt-activate">Activate</button>
+            <button class="enable-prompt--button enable-prompt--activate js-enable-prompt-activate">Activate Tracker Blocking</button>
         </div>
     </div>`
 }

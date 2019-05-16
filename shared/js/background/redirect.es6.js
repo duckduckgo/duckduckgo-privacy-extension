@@ -84,8 +84,8 @@ function handleRequest (requestData) {
 
             browserWrapper.notifyPopup({'updateTabData': true})
 
-            // Block the request if the site is not whitelisted and tracker blocking is on
-            if (!thisTab.site.whitelisted && settings.getSetting('trackerBlockingEnabled') && tracker.block) {
+            // Block the request if the site is not whitelisted
+            if (!thisTab.site.whitelisted && tracker.block) {
                 thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // update badge icon for any requests that come in after

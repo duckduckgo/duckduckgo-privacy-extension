@@ -1,7 +1,6 @@
 const Parent = window.DDG.base.View
 
 function EnablePrompt (ops) {
-//    this.model = ops.model
     this.template = ops.template
 
     Parent.call(this, ops)
