@@ -14,7 +14,9 @@ EnablePrompt.prototype = window.$.extend({},
     {
         _setup: function () {
             this._cacheElems('.js-enable-prompt', [
-                'activate'
+                'activate',
+                'content',
+                'success'
             ])
 
             this.bindEvents([
@@ -24,6 +26,12 @@ EnablePrompt.prototype = window.$.extend({},
 
         _onActivateClick: function () {
             this.model.fetch({updateSetting: {name: 'trackerBlockingEnabled', value: true}})
+            this._showSuccessState()
+        },
+
+        _showSuccessState: function () {
+            this.$content.addClass('is-transparent')
+            this.$success.removeClass('is-transparent')
         }
     }
 )

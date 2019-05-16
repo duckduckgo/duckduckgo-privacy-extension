@@ -19,16 +19,21 @@
         margin-bottom: 4px;
     }
 
+    &--icon--success {
+        @include cross_platform_bg_image("icon-block-trackers-active.svg");
+        margin-top: 45px;
+    }
+
     &--title {
         font-weight: 800;
         font-size: 18px;
         color: #230545;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
     }
 
     &--copy {
         font-size: 15px;
-        margin-bottom: 20px;
+        margin-bottom: 19px;
         line-height: 1.27;
         color: #666666;
     }
@@ -47,5 +52,23 @@
         cursor: pointer;
         font-weight: 800;
         border-radius: 25px;
+    }
+
+    &--content {
+        opacity: 1;
+        transition: all .2s ease-in-out;
+        &.is-transparent {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+        }
+    }
+
+    &--success {
+        opacity: 1;
+        transition:  all .2s ease-in-out;
+        &.is-transparent {
+            opacity: 0;
+        }
     }
 }
