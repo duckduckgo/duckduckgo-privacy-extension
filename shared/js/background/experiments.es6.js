@@ -8,29 +8,29 @@ class Experiment {
     }
 
     getVariant () {
-            const atbVal = settings.getSetting('atb')
-            if (atbVal && atbVal[atbVal.length - 2].match(/[a-z]/i)) {
-                this.variant = atbVal[atbVal.length - 2] 
-            } else {
-                this.variant = '_'
-            }
-            return this.variant
+        const atbVal = settings.getSetting('atb')
+        if (atbVal && atbVal[atbVal.length - 2].match(/[a-z]/i)) {
+            this.variant = atbVal[atbVal.length - 2]
+        } else {
+            this.variant = '_'
+        }
+        return this.variant
     }
 
     setActiveExperiment () {
         settings.ready()
-        .then(this.getVariant.bind(this))
-        .then(() => {
-            this.activeExperiment = retentionExperiments[this.variant] || {}
+            .then(this.getVariant.bind(this))
+            .then(() => {
+                this.activeExperiment = retentionExperiments[this.variant] || {}
 
-            if (this.activeExperiment.name) {
-                settings.updateSetting('activeExperiment', this.activeExperiment)
+                if (this.activeExperiment.name) {
+                    settings.updateSetting('activeExperiment', this.activeExperiment)
 
-                if (this.activeExperiment.settings) {
-                    this.applySettingsChanges()
+                    if (this.activeExperiment.settings) {
+                        this.applySettingsChanges()
+                    }
                 }
-            }
-        })
+            })
     }
 
     applySettingsChanges () {

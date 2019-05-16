@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-    chrome.runtime.onMessage.addListener(function(req, sender, res) {
+    chrome.runtime.onMessage.addListener((req, sender, res) => {
         if (req.trackerBlockingEnabled) {
             window.top.postMessage({type: 'blockingActivated'}, req.url)
         }

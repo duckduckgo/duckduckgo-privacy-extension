@@ -81,10 +81,14 @@ class Tab {
             browserWrapper.setBadgeIcon(badgeData)
 
             // tracker blocking opt in experiment - show notification over grade if tracker blocking off
-            if (!settings.getSetting('trackerBlockingEnabled')) {
-                browserWrapper.setBadgeText({text: '!', backgroundColor: '#D0021B', tabId: this.id})
-            } else {
-                browserWrapper.setBadgeText({text: ''})
+            // settings have already been loaded by the time updateBadgeIcon is called.
+            if (settings.getSetting('activeExperiment') && (settings.getSetting('activeExperiment').name === 'optin_experiment')) {
+                if (!settings.getSetting('trackerBlockingEnabled')) {
+                    browserWrapper.setBadgeText({text: '!', backgroundColor: '#D0021B', tabId: this.id})
+                } else {
+                    // sending an empty string clears the notification
+                    browserWrapper.setBadgeText({text: ''})
+                }
             }
         }
     }
