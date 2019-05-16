@@ -213,6 +213,7 @@ Site.prototype = window.$.extend({},
         _showEnablePrompt: function () {
             if (this.model.blockingDisabled && !this.views.enablePrompt) {
                 this.views.enablePrompt = new EnablePromptView({
+                    siteView: this,
                     template: enablePromptTemplate,
                     appendTo: this.$parent,
                     model: this.model
