@@ -4,6 +4,7 @@ function EnablePrompt (ops) {
     this.template = ops.template
     this.model = ops.model
     this.siteView = ops.siteView
+    this.$body = window.$('body')
 
     Parent.call(this, ops)
 
@@ -23,6 +24,8 @@ EnablePrompt.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$activate, 'click', this._onActivateClick]
             ])
+
+            this.$body.addClass('blocking-disabled')
         },
 
         _onActivateClick: function () {

@@ -76,7 +76,7 @@ body {
                 padding-top: 0;
                 /* hide report broken site option on special urls */
                 li:last-child {
-                    .is-disabled & {
+                    .is-disabled &, .blocking-disabled & {
                         display: none;
                     }
                 }
