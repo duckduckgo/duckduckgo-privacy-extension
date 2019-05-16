@@ -73,6 +73,9 @@ class TabManager {
                 if (value) {
                     tab.site.setWhitelistStatusFromGlobal()
                     tab.site.blockingDisabled = false
+                    if (tab.url.match(/duckduckgo\.com\/app\?post=1/)) {
+                        chrome.tabs.sendMessage(parseInt(tabId, 10), {trackerBlockingEnabled: true, url: tab.url})
+                    }
                 } else {
                     tab.site.whitelisted = true
                     tab.site.blockingDisabled = true

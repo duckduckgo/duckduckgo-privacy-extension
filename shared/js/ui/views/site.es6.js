@@ -214,7 +214,8 @@ Site.prototype = window.$.extend({},
             if (this.model.blockingDisabled && !this.views.enablePrompt) {
                 this.views.enablePrompt = new EnablePromptView({
                     template: enablePromptTemplate,
-                    appendTo: this.$parent
+                    appendTo: this.$parent,
+                    model: this.model
                 })
             }
         },

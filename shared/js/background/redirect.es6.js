@@ -1,4 +1,3 @@
-const settings = require('./settings.es6')
 const trackers = require('./trackers.es6')
 const utils = require('./utils.es6')
 const https = require('./https.es6')
