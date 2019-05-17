@@ -1,5 +1,6 @@
 const settings = require('./settings.es6')
 const retentionExperiments = require('../../data/experiments-out')
+const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
 class Experiment {
     constructor () {
@@ -9,7 +10,7 @@ class Experiment {
 
     getVariant () {
         const atbVal = settings.getSetting('atb')
-        if (atbVal && atbVal[atbVal.length - 2].match(/[a-z]/i)) {
+        if (atbVal && atbVal.match(ATB_FORMAT_RE) && atbVal[atbVal.length - 2].match(/[a-z]/i)) {
             this.variant = atbVal[atbVal.length - 2]
         } else {
             this.variant = '_'
