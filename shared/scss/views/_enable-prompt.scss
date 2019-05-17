@@ -1,0 +1,74 @@
+.enable-prompt {
+    z-index: 19;
+    position: absolute;
+    background: $white;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 346px;
+    padding: 8px 20px 20px;
+    text-align: center;
+
+    &--icon {
+        @include cross_platform_bg_image("icon-block-trackers-inactive.svg");
+        margin: 0 auto;
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 72px;
+        width: 72px;
+        margin-bottom: 4px;
+    }
+
+    &--icon--success {
+        @include cross_platform_bg_image("icon-block-trackers-active.svg");
+        margin-top: 45px;
+    }
+
+    &--title {
+        font-weight: 800;
+        font-size: 18px;
+        color: #230545;
+        margin-bottom: 6px;
+    }
+
+    &--copy {
+        font-size: 15px;
+        margin-bottom: 19px;
+        line-height: 1.27;
+        color: #666666;
+    }
+
+    &--footer {
+    }
+
+    &--button {
+        display: inline-block;
+        background-color: #230545;
+        color: $white;
+        height: 44px;
+        width: 260px;
+        font-size: 15px;
+        line-height: 1.1;
+        cursor: pointer;
+        font-weight: 800;
+        border-radius: 25px;
+    }
+
+    &--content {
+        opacity: 1;
+        transition: all .2s ease-in-out;
+        &.is-transparent {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+        }
+    }
+
+    &--success {
+        opacity: 1;
+        transition:  all .2s ease-in-out;
+        &.is-transparent {
+            opacity: 0;
+        }
+    }
+}
