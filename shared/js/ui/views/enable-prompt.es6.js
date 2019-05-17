@@ -26,10 +26,12 @@ EnablePrompt.prototype = window.$.extend({},
             ])
 
             this.$body.addClass('blocking-disabled')
+            this.model.fetch({firePixel: 'epabi'})
         },
 
         _onActivateClick: function () {
             this.model.fetch({updateSetting: {name: 'trackerBlockingEnabled', value: true}})
+            this.model.fetch({firePixel: 'epabc'})
             this._showSuccessState()
         },
 
