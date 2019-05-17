@@ -30,6 +30,8 @@ PrivacyOptions.prototype = window.$.extend({},
                 [this.$httpseverywhereenabled, 'click', this._clickSetting],
                 [this.$embeddedtweetsenabled, 'click', this._clickSetting]
             ])
+
+            this.model.fetch({firePixel: 'epsi'})
         },
 
         rerender: function () {

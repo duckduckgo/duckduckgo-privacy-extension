@@ -20,6 +20,7 @@ function Site (attrs) {
     attrs.domain = '-'
     attrs.isWhitelisted = false
     attrs.whitelistOptIn = false
+    attrs.blockingDisabled = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
@@ -81,6 +82,7 @@ Site.prototype = window.$.extend({},
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted
                 this.whitelistOptIn = this.tab.site.whitelistOptIn
+                this.blockingDisabled = this.tab.site.blockingDisabled
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
                     this.set({isCalculatingSiteRating: false})

@@ -5,6 +5,7 @@ module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
     <h2 class="menu-title">Options</h2>
     <ul class="default-list">
+        ${showTrackerBlockingToggle(this.model.trackerBlockingOptIn, this.model.trackerBlockingEnabled)}
         <li>
             Show Embedded Tweets
             ${toggleButton(this.model.embeddedTweetsEnabled,
@@ -13,21 +14,15 @@ module.exports = function () {
         </li>
     </ul>
 </section>`
+}
 
-/**
- * TODO: revisit these global options later:
-    <li>
-  Block Trackers
-  ${toggleButton(this.model.trackerBlockingEnabled,
-           'js-options-blocktrackers',
-           'trackerBlockingEnabled')}
-    </li>
-    <li>
-  Force Secure Connection
-  ${toggleButton(this.model.httpsEverywhereEnabled,
-           'js-options-https-everywhere-enabled',
-           'httpsEverywhereEnabled')}
-    </li>
- *
- */
+function showTrackerBlockingToggle (optInStatus, enabledStatus) {
+    if (optInStatus) {
+        return bel`<li>
+        Block Trackers
+        ${toggleButton(enabledStatus,
+        'js-options-blocktrackers',
+        'trackerBlockingEnabled')}
+        </li>`
+    }
 }
