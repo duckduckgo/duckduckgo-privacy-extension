@@ -10,7 +10,9 @@ module.exports = function (site, ops) {
     const subtitle = siteRatingSubtitle(
         site.isCalculatingSiteRating,
         site.siteRating,
-        site.isWhitelisted
+        site.isWhitelisted,
+        site.blockingDisabled,
+        site.totalTrackerNetworksCount
     )
     const label = subtitleLabel(
         site.isCalculatingSiteRating,
@@ -51,7 +53,7 @@ function siteRatingStatus (isCalculating, rating, isWhitelisted) {
     return status + isActive
 }
 
-function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
+function siteRatingSubtitle (isCalculating, rating, isWhitelisted, blockingDisabled, trackersFound) {
     let isActive = true
     if (isWhitelisted) isActive = false
     // site grade/rating was upgraded by extension
@@ -69,8 +71,15 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
 
     // deal with other states
     let msg = 'Privacy Grade'
-    // site is whitelisted
-    if (!isActive) {
+    // tracker blocking opt in experiment
+    if (blockingDisabled) {
+        if (trackersFound === 0) {
+            msg = `Privacy Grade`
+        } else {
+            msg = `Trackers Found`
+        }
+    } else if (!isActive) {
+        // site is whitelisted
         msg = `Privacy Protection Disabled`
         // "null" state (empty tab, browser's "about:" pages)
     } else if (!isCalculating && !rating.before && !rating.after) {

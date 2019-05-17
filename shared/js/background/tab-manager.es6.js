@@ -64,6 +64,27 @@ class TabManager {
         settings.updateSetting(list, globalwhitelist)
     }
 
+    /* Update icon and popup of every open tab for opt in experiment
+     */
+    handleTrackerBlockingToggle (value) {
+        for (let tabId in this.tabContainer) {
+            let tab = this.tabContainer[tabId]
+            if (tab.site) {
+                if (value) {
+                    tab.site.setWhitelistStatusFromGlobal()
+                    tab.site.blockingDisabled = false
+                    // update post install page when tracker blocking enabled in popup
+                    if (tab.url.match(/duckduckgo\.com\/app\?post=1/)) {
+                        chrome.tabs.sendMessage(parseInt(tabId, 10), {trackerBlockingEnabled: true, url: tab.url})
+                    }
+                } else {
+                    tab.site.whitelisted = true
+                    tab.site.blockingDisabled = true
+                }
+                tab.updateBadgeIcon()
+            }
+        }
+    }
     /* This handles the new tab case. You have clicked to
      * open a new tab and haven't typed in a url yet.
      * This will fire an onUpdated event and we can create

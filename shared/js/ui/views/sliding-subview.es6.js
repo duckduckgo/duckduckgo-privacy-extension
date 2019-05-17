@@ -21,7 +21,8 @@ SlidingSubview.prototype = window.$.extend({},
             ])
         },
 
-        _destroy: function () {
+        _destroy: function (e) {
+            if (e) e.preventDefault()
             this.$root.removeClass('sliding-subview--open')
             window.setTimeout(() => {
                 this.destroy()

@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2019.4.26",
+    "version": "2019.5.17",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -30,6 +30,7 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
+        "prepopulated_id": 92,
         "search_url": "https://duckduckgo.com/?q={searchTerms}",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
@@ -40,6 +41,13 @@
         "all_frames": true,
         "css": ["public/css/noatb.css"],
         "run_at": "document_start"
+      },
+      {
+        "js": [
+            "public/js/content-scripts/settings-toggle.js"
+        ],
+        "matches": ["https://duckduckgo.com/app?post=1*"],
+        "run_at": "document_idle"
       },
       {
         "js": [
