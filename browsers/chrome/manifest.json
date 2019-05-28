@@ -44,13 +44,6 @@
       },
       {
         "js": [
-            "public/js/content-scripts/settings-toggle.js"
-        ],
-        "matches": ["https://duckduckgo.com/app?post=1*"],
-        "run_at": "document_idle"
-      },
-      {
-        "js": [
           "public/js/content-scripts/element-hiding.js"
         ],
         "matches": [

@@ -27,14 +27,7 @@ class Site {
         this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.whitelistOptIn = false
-        this.blockingDisabled = false
         this.setWhitelistStatusFromGlobal(domain)
-        // show everything as whitelisted when tracker blocking turned off
-        if (!settings.getSetting('trackerBlockingEnabled')) {
-            this.whitelisted = true
-            this.blockingDisabled = true
-        }
-
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
         this.didIncrementCompaniesData = false
 
