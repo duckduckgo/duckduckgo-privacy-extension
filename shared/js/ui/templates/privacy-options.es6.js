@@ -14,4 +14,3 @@ module.exports = function () {
     </ul>
 </section>`
 }
-
