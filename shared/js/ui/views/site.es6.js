@@ -17,6 +17,7 @@ function Site (ops) {
 
     // cache 'body' selector
     this.$body = window.$('body')
+    this.$parent = window.$('#popup-container')
 
     // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
@@ -100,6 +101,8 @@ Site.prototype = window.$.extend({},
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
+
+            this._showEnablePrompt()
         },
 
         rerender: function () {
@@ -174,7 +177,20 @@ Site.prototype = window.$.extend({},
             })
         },
 
-        _showPageTrackers: function () {
+        // pass clickSource to specify whether page should reload
+        // after submitting breakage form.
+        showBreakageForm: function (clickSource) {
+            this.views.breakageForm = new BreakageFormView({
+                siteView: this,
+                template: breakageFormTemplate,
+                model: this.model,
+                appendTo: this.$body,
+                clickSource: clickSource
+            })
+        },
+
+        _showPageTrackers: function (e) {
+            if (e) e.preventDefault()
             if (this.$body.hasClass('is-disabled')) return
             this.model.fetch({ firePixel: 'epn' })
             this.views.slidingSubview = new TrackerNetworksView({
@@ -182,7 +198,8 @@ Site.prototype = window.$.extend({},
             })
         },
 
-        _showPrivacyPractices: function () {
+        _showPrivacyPractices: function (e) {
+            if (e) e.preventDefault()
             if (this.model.disabled) return
             this.model.fetch({ firePixel: 'epp' })
 
@@ -192,7 +209,8 @@ Site.prototype = window.$.extend({},
             })
         },
 
-        _showGradeScorecard: function () {
+        _showGradeScorecard: function (e) {
+            if (e) e.preventDefault()
             if (this.model.disabled) return
             this.model.fetch({ firePixel: 'epc' })
 

@@ -297,6 +297,7 @@ body {
             @include icon_display();
             @include site_status_icons();
             left: 23px;
+            top: 12px;
             
             &.is-good {
                 @include cross_platform_bg_image("privacy--good.svg");
