@@ -6,15 +6,11 @@
  */
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
-const experiment = require('./experiments.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
-            .then(() => {
-                experiment.setActiveExperiment()
-                ATB.openPostInstallPage()
-            })
+            .then(ATB.openPostInstallPage)
     }
 })
 
@@ -136,9 +132,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         let value = req.updateSetting['value']
         settings.ready().then(() => {
             settings.updateSetting(name, value)
-            if (name === 'trackerBlockingEnabled') {
-                tabManager.handleTrackerBlockingToggle(value)
-            }
         })
     } else if (req.getSetting) {
         let name = req.getSetting['name']

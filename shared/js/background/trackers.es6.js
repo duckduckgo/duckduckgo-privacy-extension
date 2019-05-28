@@ -36,59 +36,61 @@ function isTracker (urlToCheck, thisTab, request) {
         }
     }
 
-    let parsedUrl = tldjs.parse(urlToCheck)
-    let hostname
+    if (settings.getSetting('trackerBlockingEnabled')) {
+        let parsedUrl = tldjs.parse(urlToCheck)
+        let hostname
 
-    if (parsedUrl && parsedUrl.hostname) {
-        hostname = parsedUrl.hostname
-    } else {
-        // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
-        // if the subdomain name has underscores in it
-        try {
-            // last ditch attempt to try and grab a hostname
-            // this will fail on more complicated URLs with e.g. ports
-            // but will allow us to block simple trackers with _ in the subdomains
-            hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
-        } catch (e) {
-            // give up
-            return false
-        }
-    }
-
-    let urlSplit = hostname.split('.')
-
-    var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
-    if (whitelistedTracker) {
-        let commonParent = getCommonParentEntity(currLocation, urlToCheck)
-        if (commonParent) {
-            return addCommonParent(whitelistedTracker, commonParent)
-        }
-        return whitelistedTracker
-    }
-
-    let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
-    if (surrogateTracker) {
-        let commonParent = getCommonParentEntity(currLocation, urlToCheck)
-        if (commonParent) {
-            return addCommonParent(surrogateTracker, commonParent)
-        }
-        return surrogateTracker
-    }
-
-    // Look up trackers by parent company. This function also checks to see if the poential
-    // tracker is related to the current site. If this is the case we consider it to be the
-    // same as a first party requrest and return
-    let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
-    if (trackerByParentCompany) {
-        if (trackerByParentCompany.type === utils.getBeaconName()) {
-            trackerByParentCompany.reason = 'beacon'
+        if (parsedUrl && parsedUrl.hostname) {
+            hostname = parsedUrl.hostname
+        } else {
+            // fail gracefully if tldjs chokes on the URL e.g. it doesn't parse
+            // if the subdomain name has underscores in it
+            try {
+                // last ditch attempt to try and grab a hostname
+                // this will fail on more complicated URLs with e.g. ports
+                // but will allow us to block simple trackers with _ in the subdomains
+                hostname = urlToCheck.match(/^(?:.*:\/\/)([^/]+)/)[1]
+            } catch (e) {
+                // give up
+                return false
+            }
         }
 
-        let commonParent = getCommonParentEntity(currLocation, urlToCheck)
-        if (commonParent) {
-            return addCommonParent(trackerByParentCompany, commonParent)
+        let urlSplit = hostname.split('.')
+
+        var whitelistedTracker = checkWhitelist(urlToCheck, siteDomain, request)
+        if (whitelistedTracker) {
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(whitelistedTracker, commonParent)
+            }
+            return whitelistedTracker
         }
-        return trackerByParentCompany
+
+        let surrogateTracker = checkSurrogateList(urlToCheck, parsedUrl, currLocation)
+        if (surrogateTracker) {
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(surrogateTracker, commonParent)
+            }
+            return surrogateTracker
+        }
+
+        // Look up trackers by parent company. This function also checks to see if the poential
+        // tracker is related to the current site. If this is the case we consider it to be the
+        // same as a first party requrest and return
+        let trackerByParentCompany = checkTrackersWithParentCompany(urlSplit, siteDomain, request)
+        if (trackerByParentCompany) {
+            if (trackerByParentCompany.type === utils.getBeaconName()) {
+                trackerByParentCompany.reason = 'beacon'
+            }
+
+            let commonParent = getCommonParentEntity(currLocation, urlToCheck)
+            if (commonParent) {
+                return addCommonParent(trackerByParentCompany, commonParent)
+            }
+            return trackerByParentCompany
+        }
     }
     return false
 }

@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2019.5.17",
+    "version": "2019.5.29",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -43,13 +43,6 @@
         "all_frames": true,
         "css": ["public/css/noatb.css"],
         "run_at": "document_start"
-      },
-      {
-        "js": [
-            "public/js/content-scripts/settings-toggle.js"
-        ],
-        "matches": ["https://duckduckgo.com/app?post=1*"],
-        "run_at": "document_idle"
       },
       {
         "js": [
