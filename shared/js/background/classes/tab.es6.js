@@ -31,7 +31,6 @@ const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
-const settings = require('./../settings.es6')
 
 class Tab {
     constructor (tabData) {
@@ -79,17 +78,6 @@ class Tab {
             if (target) badgeData.target = target
 
             browserWrapper.setBadgeIcon(badgeData)
-
-            // tracker blocking opt in experiment - show notification over grade if tracker blocking off
-            // settings have already been loaded by the time updateBadgeIcon is called.
-            if (settings.getSetting('activeExperiment') && (settings.getSetting('activeExperiment').name === 'optin_experiment')) {
-                if (!settings.getSetting('trackerBlockingEnabled')) {
-                    browserWrapper.setBadgeText({text: '!', backgroundColor: '#D0021B', tabId: this.id})
-                } else {
-                    // sending an empty string clears the notification
-                    browserWrapper.setBadgeText({text: ''})
-                }
-            }
         }
     }
 
