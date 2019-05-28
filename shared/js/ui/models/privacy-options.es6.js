@@ -30,6 +30,7 @@ PrivacyOptions.prototype = window.$.extend({},
                     self.trackerBlockingEnabled = settings['trackerBlockingEnabled']
                     self.httpsEverywhereEnabled = settings['httpsEverywhereEnabled']
                     self.embeddedTweetsEnabled = settings['embeddedTweetsEnabled']
+
                     resolve()
                 })
             })

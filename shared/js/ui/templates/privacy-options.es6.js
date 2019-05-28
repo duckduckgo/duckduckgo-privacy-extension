@@ -13,21 +13,5 @@ module.exports = function () {
         </li>
     </ul>
 </section>`
-
-/**
- * TODO: revisit these global options later:
-    <li>
-  Block Trackers
-  ${toggleButton(this.model.trackerBlockingEnabled,
-           'js-options-blocktrackers',
-           'trackerBlockingEnabled')}
-    </li>
-    <li>
-  Force Secure Connection
-  ${toggleButton(this.model.httpsEverywhereEnabled,
-           'js-options-https-everywhere-enabled',
-           'httpsEverywhereEnabled')}
-    </li>
- *
- */
 }
+

@@ -28,6 +28,7 @@ class Site {
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.whitelistOptIn = false
         this.setWhitelistStatusFromGlobal(domain)
+
         this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
         this.didIncrementCompaniesData = false
 

@@ -174,7 +174,7 @@ Site.prototype = window.$.extend({},
             })
         },
 
-        _showPageTrackers: function () {
+        _showPageTrackers: function (e) {
             if (this.$body.hasClass('is-disabled')) return
             this.model.fetch({ firePixel: 'epn' })
             this.views.slidingSubview = new TrackerNetworksView({
@@ -182,7 +182,7 @@ Site.prototype = window.$.extend({},
             })
         },
 
-        _showPrivacyPractices: function () {
+        _showPrivacyPractices: function (e) {
             if (this.model.disabled) return
             this.model.fetch({ firePixel: 'epp' })
 
@@ -192,7 +192,7 @@ Site.prototype = window.$.extend({},
             })
         },
 
-        _showGradeScorecard: function () {
+        _showGradeScorecard: function (e) {
             if (this.model.disabled) return
             this.model.fetch({ firePixel: 'epc' })
 
