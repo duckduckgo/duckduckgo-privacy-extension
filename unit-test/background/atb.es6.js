@@ -190,12 +190,12 @@ describe('atb.updateSetAtb()', () => {
 
 describe('getAcceptedParamsFromURL()', () => {
     const tests = [
-        { url: 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc', output: 'atb=v123-4ab&cp=atbhc' },
-        { url: 'https://duckduckgo.com/?natb=v123-4&cp=atbhc', output: 'atb=v123-4&cp=atbhc' },
-        { url: 'https://duckduckgo.com/?natb=v123-4_b&cp=atbhc', output: 'atb=v123-4_b&cp=atbhc' },
-        { url: 'https://duckduckgo.com/?natb=v123-4__&cp=atbhc', output: 'atb=v123-4__&cp=atbhc' },
-        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&cp=atbhc', output: 'atb=v123-4__&cp=atbhc' },
-        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&foo=bar&cp=atbhc', output: 'atb=v123-4__&cp=atbhc' },
+        { url: 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc&atbd=1', output: 'atb=v123-4ab&cp=atbhc&atbd=1' },
+        { url: 'https://duckduckgo.com/?natb=v123-4&cp=atbhc&atbd=1', output: 'atb=v123-4&cp=atbhc&atbd=1' },
+        { url: 'https://duckduckgo.com/?natb=v123-4_b&cp=atbhc&atbd=1', output: 'atb=v123-4_b&cp=atbhc&atbd=1' },
+        { url: 'https://duckduckgo.com/?natb=v123-4__&cp=atbhc&atbd=1', output: 'atb=v123-4__&cp=atbhc&atbd=1' },
+        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&cp=atbhc&atbd=1', output: 'atb=v123-4__&cp=atbhc&atbd=1' },
+        { url: 'https://duckduckgo.com/?q=123&natb=v123-4__&foo=bar&cp=atbhc&atbd=1', output: 'atb=v123-4__&cp=atbhc&atbd=1' },
 
         { url: 'https://duckduckgo.com/about', output: '' },
         { url: 'https://duckduckgo.com/?natb=v123-4a', output: '' },
