@@ -12,7 +12,7 @@ const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
 // list of accepted params in ATB url
-const ACCEPTED_URL_PARAMS = ['natb', 'cp']
+const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'atbd']
 
 let dev = false
 
