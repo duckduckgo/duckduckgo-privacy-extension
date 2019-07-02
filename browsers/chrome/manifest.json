@@ -30,6 +30,7 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
+        "prepopulated_id": 92,
         "search_url": "https://duckduckgo.com/?q={searchTerms}",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
