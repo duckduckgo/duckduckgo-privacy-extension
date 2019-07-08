@@ -21,7 +21,6 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
     "background": {
             "scripts": [
                 "public/js/background.js"
