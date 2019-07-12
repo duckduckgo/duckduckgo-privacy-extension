@@ -68,9 +68,17 @@ class HTTPS {
             return reqUrl
         }
 
+        let urlObj
+
+        try {
+            urlObj = new URL(reqUrl)
+        } catch (e) {
+            // invalid URL
+            return reqUrl
+        }
+
         // Only deal with http calls
-        const protocol = utils.getProtocol(reqUrl).toLowerCase()
-        if (protocol !== 'http:') {
+        if (urlObj.protocol !== 'http:') {
             return reqUrl
         }
 
@@ -82,7 +90,7 @@ class HTTPS {
         // Skip upgrading sites that have been whitelisted by user
         // via on/off toggle in popup
         if (tab.site.whitelisted) {
-            console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. skip upgrade check.`)
+            console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. Skip upgrade check.`)
             return reqUrl
         }
 
@@ -95,7 +103,9 @@ class HTTPS {
                 this.incrementUpgradeCount('totalUpgrades')
             }
 
-            return reqUrl.replace(/^(http|https):\/\//i, 'https://')
+            // Upgrade the request to HTTPS
+            urlObj.protocol = 'https:'
+            return urlObj.toString()
         }
 
         // If it falls to here, default to reqUrl

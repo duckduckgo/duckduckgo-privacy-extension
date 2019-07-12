@@ -78,12 +78,6 @@ function findParent (url) {
     }
 }
 
-function getProtocol (url) {
-    var a = document.createElement('a')
-    a.href = url
-    return a.protocol
-}
-
 function getCurrentURL (callback) {
     chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
         if (tabData.length) {
@@ -149,7 +143,6 @@ module.exports = {
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
-    getProtocol: getProtocol,
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
     findParent: findParent,
