@@ -7126,6 +7126,22 @@
         },
         "class": "A"
     },
+    "duck.com": {
+        "score": -100,
+        "all": {
+            "bad": [],
+            "good": [
+                "no tracking"
+            ]
+        },
+        "match": {
+            "bad": [],
+            "good": [
+                "no tracking"
+            ]
+        },
+        "class": "A"
+    },
     "donttrack.us": {
         "score": -100,
         "all": {
