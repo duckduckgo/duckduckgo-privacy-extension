@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2019.7.2",
+    "version": "2019.7.19",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -21,7 +21,7 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
+    "omnibox": {"keyword": "ddg"},
     "background": {
             "scripts": [
                 "public/js/background.js"
