@@ -2,6 +2,7 @@ const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const BloomFilter = require('jsbloom').filter
 const pixel = require('./pixel.es6')
+const httpsService = require('./https-service.es6')
 
 class HTTPS {
     constructor () {
@@ -49,37 +50,43 @@ class HTTPS {
         return bloom
     }
 
+    /**
+     * @param {string} host
+     * @returns {Boolean|Promise<Boolean>} returns true if host can be upgraded, false if it shouldn't be upgraded and a promise if we don't know yet and we are checking against a remote service
+     */
     canUpgradeHost (host) {
         if (!this.isReady) {
-            // console.warn('HTTPS: not ready')
-            return false
+            console.warn('HTTPS: not ready')
+            return null
         }
 
         if (this.whitelist.includes(host)) {
             return false
         }
 
-        return Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
+        const foundInPositiveBloomFilter = Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
+
+        if (foundInPositiveBloomFilter) {
+            console.log('Bloom filter - host is upgradable', host)
+            return true
+        }
+
+        // TODO foundInNegativeBloomFilter
+
+        const foundInServiceCache = httpsService.checkInCache(host)
+
+        if (foundInServiceCache !== null) {
+            console.log(`Service cache - host is${foundInServiceCache ? '' : ' not'} upgradable: ${host}`)
+            return foundInServiceCache
+        }
+
+        return httpsService.checkInService(host)
     }
 
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
-            return reqUrl
-        }
-
-        let urlObj
-
-        try {
-            urlObj = new URL(reqUrl)
-        } catch (e) {
-            // invalid URL
-            return reqUrl
-        }
-
-        // Only deal with http calls
-        if (urlObj.protocol !== 'http:') {
-            return reqUrl
+            return reqUrl // should we use service in this case?
         }
 
         // Obey global settings (options page)
@@ -94,22 +101,63 @@ class HTTPS {
             return reqUrl
         }
 
+        let urlObj
+
+        try {
+            urlObj = new URL(reqUrl)
+        } catch (e) {
+            // invalid URL
+            console.warn(`Invalid url: ${reqUrl}`)
+            return reqUrl
+        }
+
+        // Only deal with http calls
+        if (urlObj.protocol !== 'http:') {
+            console.warn(`Not a http request: ${reqUrl}`)
+            return reqUrl
+        }
+
         // Determine host without stripping 'www',
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
-        if (host && this.canUpgradeHost(host)) {
-            if (isMainFrame) {
-                tab.mainFrameUpgraded = true
-                this.incrementUpgradeCount('totalUpgrades')
-            }
-
-            // Upgrade the request to HTTPS
-            urlObj.protocol = 'https:'
-            return urlObj.toString()
+        if (!host) {
+            console.warn(`Error parsing out hostname: ${reqUrl}`)
+            return reqUrl
         }
 
-        // If it falls to here, default to reqUrl
-        return reqUrl
+        const isUpgradable = this.canUpgradeHost(host)
+
+        // we know that request should not be upgraded
+        if (isUpgradable === false) {
+            return reqUrl
+        }
+
+        // we don't know if request should be upgraded and we are consulting a remote service
+        if (isUpgradable instanceof Promise) {
+            isUpgradable
+                .then(result => {
+                    if (result === false) {
+                        // TODO downgrade the tab
+                        console.log('Remote check returned - downgrade request', reqUrl)
+                    } else {
+                        console.log('Remote check returned - let request continue', reqUrl)
+                    }
+                })
+                .catch(e => {
+                    console.error('Error connecting to the HTTPS service: ' + e.message)
+                })
+        }
+
+        // if request is upgradable or if we don't yet know if it is upgradable (we are waiting for a response from a service)
+        // upgrade the request to HTTPS
+
+        if (isMainFrame) {
+            tab.mainFrameUpgraded = true
+            this.incrementUpgradeCount('totalUpgrades')
+        }
+
+        urlObj.protocol = 'https:'
+        return urlObj.toString()
     }
 
     // Send https upgrade and failure totals
