@@ -3,6 +3,8 @@ const utils = require('./utils.es6')
 const BloomFilter = require('jsbloom').filter
 const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
+const tabManager = require('./tab-manager.es6')
+const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 class HTTPS {
     constructor () {
@@ -83,6 +85,19 @@ class HTTPS {
         return httpsService.checkInService(host)
     }
 
+    downgradeTab ({tabId, expectedUrl, targetUrl}) {
+        // make sure that tab still has expected url (user could have navigated away or been redirected)
+        const tab = tabManager.get({tabId})
+
+        //TODO is tabManager data up to date?
+
+        if (tab.url !== expectedUrl && tab.url !== targetUrl) {
+            console.warn(`Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`)
+        } else {
+            browserWrapper.changeTabURL(tabId, targetUrl)
+        }
+    }
+
     getUpgradedUrl (reqUrl, tab, isMainFrame) {
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
@@ -113,7 +128,7 @@ class HTTPS {
 
         // Only deal with http calls
         if (urlObj.protocol !== 'http:') {
-            console.warn(`Not a http request: ${reqUrl}`)
+            // console.warn(`Not a http request: ${reqUrl}`)
             return reqUrl
         }
 
@@ -132,15 +147,31 @@ class HTTPS {
             return reqUrl
         }
 
-        // we don't know if request should be upgraded and we are consulting a remote service
+        // create an upgraded URL
+        urlObj.protocol = 'https:'
+        const upgradedUrl = urlObj.toString()
+
+        // if this is a non-navigational request, upgrade it if we know that it can be upgraded,
+        // continue as http otherwise
+        if (!isMainFrame) {
+            return (isUpgradable === true) ? upgradedUrl : reqUrl
+        }
+
+        // if this is a navigational request and we don't yet know if it is upgradable
+        // we upgrade it proactively while waiting for a response from a remote service
         if (isUpgradable instanceof Promise) {
             isUpgradable
                 .then(result => {
                     if (result === false) {
-                        // TODO downgrade the tab
-                        console.log('Remote check returned - downgrade request', reqUrl)
+                        console.info('Remote check returned - downgrade request', reqUrl)
+
+                        this.downgradeTab({
+                            tabId: tab.id,
+                            expectedUrl: upgradedUrl,
+                            targetUrl: reqUrl
+                        })
                     } else {
-                        console.log('Remote check returned - let request continue', reqUrl)
+                        console.info('Remote check returned - let request continue', reqUrl)
                     }
                 })
                 .catch(e => {
@@ -148,16 +179,10 @@ class HTTPS {
                 })
         }
 
-        // if request is upgradable or if we don't yet know if it is upgradable (we are waiting for a response from a service)
-        // upgrade the request to HTTPS
+        tab.mainFrameUpgraded = true
+        this.incrementUpgradeCount('totalUpgrades')
 
-        if (isMainFrame) {
-            tab.mainFrameUpgraded = true
-            this.incrementUpgradeCount('totalUpgrades')
-        }
-
-        urlObj.protocol = 'https:'
-        return urlObj.toString()
+        return upgradedUrl
     }
 
     // Send https upgrade and failure totals
