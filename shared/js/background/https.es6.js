@@ -73,8 +73,6 @@ class HTTPS {
             return true
         }
 
-        // TODO foundInNegativeBloomFilter
-
         const foundInServiceCache = httpsService.checkInCache(host)
 
         if (foundInServiceCache !== null) {
