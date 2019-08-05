@@ -87,11 +87,10 @@ class HTTPS {
         // make sure that tab still has expected url (user could have navigated away or been redirected)
         const tab = tabManager.get({tabId})
 
-        //TODO is tabManager data up to date?
-
         if (tab.url !== expectedUrl && tab.url !== targetUrl) {
-            console.warn(`Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`)
+            console.warn(`HTTPS: Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`)
         } else {
+            console.log(`HTTPS: Downgrading from ${tab.url} to ${targetUrl}`)
             browserWrapper.changeTabURL(tabId, targetUrl)
         }
     }
@@ -120,7 +119,7 @@ class HTTPS {
             urlObj = new URL(reqUrl)
         } catch (e) {
             // invalid URL
-            console.warn(`Invalid url: ${reqUrl}`)
+            console.warn(`HTTPS: Invalid url - ${reqUrl}`)
             return reqUrl
         }
 
@@ -134,7 +133,7 @@ class HTTPS {
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
         if (!host) {
-            console.warn(`Error parsing out hostname: ${reqUrl}`)
+            console.warn(`HTTPS: Error parsing out hostname - ${reqUrl}`)
             return reqUrl
         }
 
@@ -161,7 +160,7 @@ class HTTPS {
             isUpgradable
                 .then(result => {
                     if (result === false) {
-                        console.info('Remote check returned - downgrade request', reqUrl)
+                        console.info('HTTPS: Remote check returned - downgrade request', reqUrl)
 
                         this.downgradeTab({
                             tabId: tab.id,
@@ -169,11 +168,11 @@ class HTTPS {
                             targetUrl: reqUrl
                         })
                     } else {
-                        console.info('Remote check returned - let request continue', reqUrl)
+                        console.info('HTTPS: Remote check returned - let request continue', reqUrl)
                     }
                 })
                 .catch(e => {
-                    console.error('Error connecting to the HTTPS service: ' + e.message)
+                    console.error('HTTPS: Error connecting to the HTTPS service: ' + e.message)
                 })
         }
 

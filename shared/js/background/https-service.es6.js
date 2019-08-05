@@ -44,11 +44,11 @@ class HTTPSService {
         const query = hash.substring(0, HASH_PREFIX_SIZE)
 
         if (this._activeRequests.has(query)) {
-            console.info(`Request for ${host} is already in progress.`)
+            console.info(`HTTPS Service: Request for ${host} is already in progress.`)
             return this._activeRequests.get(query)
         }
 
-        console.info(`Requesting info for ${host} (${hash}).`)
+        console.info(`HTTPS Service: Requesting information for ${host} (${hash}).`)
 
         const queryUrl = new URL(BASE_URL)
         queryUrl.searchParams.append('pv1', query)
@@ -60,11 +60,13 @@ class HTTPSService {
             })
             .then(data => {
                 this._cacheResponse(query, data)
-                return data.includes(hash)
+                const result = data.includes(hash)
+                console.info(`HTTPS Service: ${host} is ${result ? '' : 'NOT'} upgradable.`)
+                return result
             })
             .catch(e => {
                 this._activeRequests.delete(query)
-                console.error('Failed contacting service: ' + e.message)
+                console.error('HTTPS Service: Failed contacting service: ' + e.message)
                 throw e
             })
 
