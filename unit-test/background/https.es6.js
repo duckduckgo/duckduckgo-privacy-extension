@@ -39,7 +39,7 @@ describe('Https upgrades', () => {
 
         it('should request information from a service for domains missing from the bloom filters', () => {
             httpsService.clearCache()
-            
+
             const spy = spyOn(httpsService, '_fetch').and.returnValue(Promise.resolve({
                 json: () => []
             }))

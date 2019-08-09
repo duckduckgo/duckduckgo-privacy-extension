@@ -1,6 +1,7 @@
 const sha1 = require('../shared-utils/sha1')
+// eslint-disable-next-line node/no-deprecated-api
 const punycode = require('punycode')
-const BASE_URL = ''
+const BASE_URL = 'https://to-be-decided.com'
 const HASH_PREFIX_SIZE = 4
 
 class HTTPSService {
@@ -25,7 +26,7 @@ class HTTPSService {
 
     /**
      * @param {string} host
-     * @returns {Boolean|null} 
+     * @returns {Boolean|null}
      */
     checkInCache (host) {
         // TODO make sure we use punnycode + lowercase
