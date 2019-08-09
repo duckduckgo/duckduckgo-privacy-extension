@@ -1,22 +1,16 @@
 const tldjs = require('tldjs')
-const entityMap = require('../../data/tracker_lists/entityMap')
+const tdsStorage = require('./storage/tds.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
 const load = require('./load.es6')
-
-let entityList = {}
-
-function loadLists () {
-    load.JSONfromExternalFile(constants.entityList).then((response) => { entityList = response.data })
-}
 
 /* Check to see if a company is related to a domain.
  * @param {string} entity - company name
  * @param {string} domain - domain or url
  */
 function isRelatedEntity (entityName, domain) {
-    var parentEntity = entityList[entityName]
+    var parentEntity = tdsStorage.tds.entities[entityName]
     var host = extractHostFromURL(domain)
 
     if (parentEntity && parentEntity.properties) {
@@ -71,8 +65,8 @@ function findParent (url) {
     while (parts.length > 1) {
         const joinURL = parts.join('.')
 
-        if (entityMap[joinURL]) {
-            return entityMap[joinURL]
+        if (tdsStorage.tds.domains[joinURL]) {
+            return tdsStorage.tds.domains[joinURL]
         }
         parts.shift()
     }
@@ -155,6 +149,5 @@ module.exports = {
     findParent: findParent,
     getBeaconName: getBeaconName,
     getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
-    isRelatedEntity: isRelatedEntity,
-    loadLists: loadLists
+    isRelatedEntity: isRelatedEntity
 }

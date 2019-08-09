@@ -52,6 +52,9 @@ Site.prototype = window.$.extend({},
                         this.fetchSiteRating()
                         this.set('tosdr', tab.site.tosdr)
                         this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
+
+                        this.fetch({getSetting: {name: 'tds-etag'}}).then(etag => this.set('tds', etag))
+
                     } else {
                         console.debug('Site model: no tab')
                     }
@@ -292,7 +295,8 @@ Site.prototype = window.$.extend({},
             const pixelParams = ['epbf',
                 {category: category},
                 {siteUrl: encodeURIComponent(siteUrl)},
-                {upgradedHttps: upgradedHttps.toString()}
+                {upgradedHttps: upgradedHttps.toString()},
+                {tds: this.tds}
             ]
 
             for (let tracker in trackerObjects) {

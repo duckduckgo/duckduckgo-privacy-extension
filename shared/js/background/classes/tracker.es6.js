@@ -2,9 +2,12 @@ const Companies = require('../companies.es6')
 
 class Tracker {
     constructor (t) {
-        this.parentCompany = Companies.get(t.parentCompany)
+        this.parentCompany = Companies.get(t.tracker.owner.name)
         this.urls = {}
-        this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
+        this.urls[t.tracker.domain] = {
+            isBlocked: t.action === 'block' ? true : false, 
+            reason: t.reason
+        }
         this.count = 1 // request count
         this.type = t.type || ''
     }
@@ -18,8 +21,8 @@ class Tracker {
      * We store a list of all unique urls here.
      */
     update (t) {
-        if (!this.urls[t.url]) {
-            this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
+        if (!this.urls[t.tracker.domain]) {
+            this.urls[t.tracker.domain] = {isBlocked: t.action, reason: t.reason}
         }
     }
 }

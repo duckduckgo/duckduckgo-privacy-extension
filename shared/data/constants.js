@@ -1,15 +1,8 @@
 module.exports = {
-    "trackerListLoc": "data/tracker_lists",
-    "blockLists": [
-        "trackersWithParentCompany.json"
-    ],
     "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
     "blocking": ["Advertising", "Analytics", "Social"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
-    "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
-    "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
-    "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
     "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
@@ -55,6 +48,23 @@ module.exports = {
             "type": "whitelist",
             "name": "httpsWhitelist",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
+        }
+    ],
+    "tdsLists": [
+        {
+            "name": "tds",
+            "url": "https://jason.duckduckgo.com/tds3.json",
+            "format": "json"
+        },
+        {
+            "name": "surrogates",
+            "url": "https://duckduckgo.com/contentblocking.js?l=surrogates",
+            "format": "text"
+        },
+        {
+            "name": "brokenSiteList",
+            "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
+            "format": "text"
         }
     ],
     "httpsErrorCodes": {

@@ -196,8 +196,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  * ALARMS
  */
 
-const abpLists = require('./abp-lists.es6')
 const httpsStorage = require('./storage/https.es6')
+const tdsStorage = require('./storage/tds.es6')
+const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', {periodInMinutes: 12 * 60})
@@ -212,12 +213,15 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
+
+            tdsStorage.getLists()
+                .then(lists => trackers.setLists(lists))
+                .catch(e => console.log(e))
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
     } else if (alarmEvent.name === 'updateLists') {
         settings.ready().then(() => {
-            abpLists.updateLists()
             https.sendHttpsUpgradeTotals()
         })
     }
@@ -240,6 +244,10 @@ let onStartup = () => {
     settings.ready().then(() => {
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
+            .catch(e => console.log(e))
+        
+        tdsStorage.getLists()
+            .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
 
         https.sendHttpsUpgradeTotals()

@@ -8,7 +8,7 @@
  */
 const settings = require('../settings.es6')
 const utils = require('../utils.es6')
-const abpLists = require('../abp-lists.es6')
+const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
@@ -55,15 +55,13 @@ class Site {
      * check to see if this is a broken site reported on github
     */
     checkBrokenSites (domain) {
-        let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
-
-        if (!trackersWhitelistTemporary) return
+        if (!tdsStorage || !tdsStorage.brokenSiteList) return
 
         let parsedDomain = tldjs.parse(domain)
         let hostname = parsedDomain.hostname || domain
 
         // If root domain in temp whitelist, return true
-        return trackersWhitelistTemporary.some((brokenSiteDomain) => hostname.match(new RegExp(brokenSiteDomain + '$')))
+        return tdsStorage.brokenSiteList.some((brokenSiteDomain) => hostname.match(new RegExp(brokenSiteDomain + '$')))
     }
 
     /*
@@ -93,13 +91,13 @@ class Site {
     isWhiteListed () { return this.whitelisted }
 
     addTracker (tracker) {
-        if (this.trackerUrls.indexOf(tracker.url) === -1) {
-            this.trackerUrls.push(tracker.url)
+        if (this.trackerUrls.indexOf(tracker.tracker.domain) === -1) {
+            this.trackerUrls.push(tracker.tracker.domain)
 
-            if (tracker.block) {
-                this.grade.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
+            if (tracker.action == 'block') {
+                this.grade.addEntityBlocked(tracker.tracker.owner.name, tracker.tracker.prevalence)
             } else {
-                this.grade.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
+                this.grade.addEntityNotBlocked(tracker.tracker.owner.name, tracker.tracker.prevalence)
             }
         }
     }
