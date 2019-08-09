@@ -142,9 +142,10 @@ function handleRequest (requestData) {
 
     // Is this request from the tab's main frame?
     const isMainFrame = requestData.type === 'main_frame'
+    const isPost = requestData.method === 'POST'
 
     // Fetch upgrade rule from https module:
-    const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame)
+    const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame, isPost)
     if (url.toLowerCase() !== requestData.url.toLowerCase() &&
             thisTab.httpsRedirects.canRedirect(requestData)) {
         console.log('HTTPS: upgrade request url to ' + url)

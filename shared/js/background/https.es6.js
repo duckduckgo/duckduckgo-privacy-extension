@@ -95,7 +95,7 @@ class HTTPS {
         }
     }
 
-    getUpgradedUrl (reqUrl, tab, isMainFrame) {
+    getUpgradedUrl (reqUrl, tab, isMainFrame, isPost) {
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
             return reqUrl // should we use service in this case?
@@ -148,9 +148,9 @@ class HTTPS {
         urlObj.protocol = 'https:'
         const upgradedUrl = urlObj.toString()
 
-        // if this is a non-navigational request, upgrade it if we know that it can be upgraded,
-        // continue as http otherwise
-        if (!isMainFrame) {
+        // if this is a non-navigational request or a navigational POST request,
+        // upgrade it only if we know that it can be upgraded, continue as http otherwise
+        if (!isMainFrame || isPost) {
             return (isUpgradable === true) ? upgradedUrl : reqUrl
         }
 
