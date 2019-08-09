@@ -18,6 +18,11 @@ class HTTPSService {
         return sha1(punycode.toASCII(host.toLowerCase()))
     }
 
+    // added here for easy mocking in tests
+    _fetch (url) {
+        return fetch(url)
+    }
+
     /**
      * @param {string} host
      * @returns {Boolean|null} 
@@ -53,7 +58,7 @@ class HTTPSService {
         const queryUrl = new URL(BASE_URL)
         queryUrl.searchParams.append('pv1', query)
 
-        const request = fetch(queryUrl.toString())
+        const request = this._fetch(queryUrl.toString())
             .then(response => {
                 this._activeRequests.delete(query)
                 return response.json()
@@ -74,6 +79,10 @@ class HTTPSService {
 
         // TODO handle failures gracefully
         return request
+    }
+
+    clearCache () {
+        this._cache.clear()
     }
 }
 
