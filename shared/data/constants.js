@@ -37,6 +37,22 @@ module.exports = {
         "maxcdn": 7,
         "automattic": 7
     },
+    /*
+     * Mapping entity names to CSS class name for popup icons
+     */
+    "entityNameMapping": {
+        "Google LLC": "google",
+        "Facebook, Inc.": "facebook",
+        "Twitter, Inc.": "twitter",
+        "Amazon Technologies, Inc.": "amazon",
+        "AppNexus, Inc.": "appnexus",
+        "Oracle Corporation": "oracle",
+        "MediaMath, Inc.": "mediamath",
+        "Verizon Media": "oath",
+        "StackPath, LLC": "maxcdn",
+        "Automattic, Inc.": "automattic",
+        "Adobe Inc.": "adobe"
+    },
     "httpsDBName": "https",
     "httpsLists": [
         {
