@@ -24,7 +24,7 @@ module.exports = function (companyListMap) {
 
         // TODO: remove Oath special case when we have an icon for it
         if ((companyName !== 'oath') && iconClassName) {
-            return iconClassName
+            return iconClassName.toLowerCase()
         } else {
             return genericName
         }

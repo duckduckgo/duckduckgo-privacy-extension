@@ -41,17 +41,18 @@ module.exports = {
      * Mapping entity names to CSS class name for popup icons
      */
     "entityNameMapping": {
-        "Google LLC": "google",
-        "Facebook, Inc.": "facebook",
-        "Twitter, Inc.": "twitter",
-        "Amazon Technologies, Inc.": "amazon",
-        "AppNexus, Inc.": "appnexus",
-        "Oracle Corporation": "oracle",
-        "MediaMath, Inc.": "mediamath",
-        "Verizon Media": "oath",
-        "StackPath, LLC": "maxcdn",
-        "Automattic, Inc.": "automattic",
-        "Adobe Inc.": "adobe"
+        "Google LLC": "Google",
+        "Facebook, Inc.": "Facebook",
+        "Twitter, Inc.": "Twitter",
+        "Amazon Technologies, Inc.": "Amazon",
+        "AppNexus, Inc.": "AppNexus",
+        "Oracle Corporation": "Oracle",
+        "MediaMath, Inc.": "MediaMath",
+        "Verizon Media": "Oath",
+        "StackPath, LLC": "Maxcdn",
+        "Automattic, Inc.": "Automattic",
+        "Adobe Inc.": "Adobe",
+        "Quantcast Corporation": "Quantcast"
     },
     "httpsDBName": "https",
     "httpsLists": [
@@ -68,14 +69,14 @@ module.exports = {
     ],
     "tdsLists": [
         {
-            "name": "tds",
-            "url": "https://jason.duckduckgo.com/tds3.json",
-            "format": "json"
-        },
-        {
             "name": "surrogates",
             "url": "https://duckduckgo.com/contentblocking.js?l=surrogates",
             "format": "text"
+        },
+        {
+            "name": "tds",
+            "url": "https://staticcdn.duckduckgo.com/trackerblocking/tds.json",
+            "format": "json"
         },
         {
             "name": "brokenSiteList",

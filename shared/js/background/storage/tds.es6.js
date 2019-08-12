@@ -2,6 +2,7 @@ const load = require('./../load.es6')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
+const browserWrapper = require('./../$BROWSER-wrapper.es6')
 
 class TDSStorage {
     constructor () {
@@ -16,36 +17,39 @@ class TDSStorage {
 
     getLists () {
         return Promise.all(constants.tdsLists.map(list => {
-            const etag = settings.getSetting(`${list.name}-etag`) || ''
+            const listCopy = JSON.parse(JSON.stringify(list))
+            const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+            const version = this.getVersionParam()
+            version ? listCopy.url += version : ''
 
-            return this.getDataXHR(list, etag).then(response => {
+            return this.getDataXHR(listCopy, etag).then(response => {
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.getResponseHeader('etag') || ''
-                    settings.updateSetting(`${list.name}-etag`, newEtag)
+                    settings.updateSetting(`${listCopy.name}-etag`, newEtag)
                 }
 
                 // We try to process both 200 and 304 responses. 200s will validate
                 // and update the db. 304s will try to grab the previous data from db
                 // or throw an error if none exists.
-                return this.processData(list.name, response.data).then(resultData => {
+                return this.processData(listCopy.name, response.data).then(resultData => {
                     if (resultData) {
                         // store tds in memory so we can access it later if needed
-                        this[list.name] = resultData
-                        return {name: list.name, data: resultData}
+                        this[listCopy.name] = resultData
+                        return {name: listCopy.name, data: resultData}
                     } else {
                         throw new Error(`TDS: process list xhr failed`)
                     }
                 })
             }).catch(e => {
-                return this.fallbackToDB(list.name).then(backupFromDB => {
+                return this.fallbackToDB(listCopy.name).then(backupFromDB => {
                     if (backupFromDB) {
                         // store tds in memory so we can access it later if needed
-                        this[list.name] = backupFromDB
-                        return {name: list.name, data: backupFromDB}
+                        this[listCopy.name] = backupFromDB
+                        return {name: listCopy.name, data: backupFromDB}
                     } else {
                         // reset etag to force us to get fresh server data in case of an error
-                        settings.updateSetting(`${list.name}-etag`, '')
+                        settings.updateSetting(`${listCopy.name}-etag`, '')
                         throw new Error(`TDS: data update failed`)
                     }
                 })
@@ -99,6 +103,30 @@ class TDSStorage {
         } else {
             return data
         }
+    }
+
+    // add version param to url on the first install and only once a day after that
+    getVersionParam () {
+        const ONEDAY = 1000 * 60 * 60 * 24
+        const version = browserWrapper.getExtensionVersion()
+        const lastTdsUpdate = settings.getSetting('lastTdsUpdate')
+        const now = Date.now()
+        let versionParam
+        
+        // check delta for last update
+        if (lastTdsUpdate) {
+            const delta = now - new Date(lastTdsUpdate)
+    
+            if (delta > ONEDAY) {
+                versionParam = `&v=${version}`
+            }
+        } else {
+            versionParam = `&v=${version}`
+        }
+        
+        if (versionParam) settings.updateSetting('lastTdsUpdate', now)
+       
+        return versionParam
     }
 }
 module.exports = new TDSStorage()
