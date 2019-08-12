@@ -32,10 +32,14 @@ describe('Https upgrades', () => {
                 json: () => []
             }))
 
-            httpsService.checkInService('example.com')
+            httpsService.checkInService('☃.social')
+            expect(spy.calls.argsFor(0)[0]).toBe('https://duckduckgo.com/smarter_encryption.js?pv1=1427')
 
-            expect(spy.calls.count()).toBe(1)
-            expect(spy.calls.argsFor(0)[0]).toBe('https://duckduckgo.com/smarter_encryption.js?pv1=0caa')
+            httpsService.checkInService('kraków.pl')
+            expect(spy.calls.argsFor(1)[0]).toBe('https://duckduckgo.com/smarter_encryption.js?pv1=0fd1')
+
+            httpsService.checkInService('フード.jp')
+            expect(spy.calls.argsFor(2)[0]).toBe('https://duckduckgo.com/smarter_encryption.js?pv1=e21a')
         })
 
         it('should return a true/false result via promise 1/2', () => {
