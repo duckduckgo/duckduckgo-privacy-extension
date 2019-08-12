@@ -22,6 +22,7 @@ module.exports = {
         "unknown": "Unknown",
         "mixed": "Mixed"
     },
+    "httpsService": "https://duckduckgo.com/smarter_encryption.js",
     "httpsMessages": {
         "secure": "Encrypted Connection",
         "upgraded": "Forced Encryption",

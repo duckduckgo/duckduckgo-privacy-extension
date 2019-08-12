@@ -29,7 +29,6 @@ class HTTPSService {
      * @returns {Boolean|null}
      */
     checkInCache (host) {
-        // TODO make sure we use punnycode + lowercase
         const hash = this._hostToHash(host)
         const query = hash.substr(0, HASH_PREFIX_SIZE)
         const result = this._cache.get(query)
