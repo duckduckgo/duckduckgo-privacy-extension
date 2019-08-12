@@ -1,7 +1,7 @@
 const sha1 = require('../shared-utils/sha1')
 // eslint-disable-next-line node/no-deprecated-api
 const punycode = require('punycode')
-const BASE_URL = 'https://to-be-decided.com'
+const constants = require('../../data/constants')
 const HASH_PREFIX_SIZE = 4
 
 class HTTPSService {
@@ -56,7 +56,7 @@ class HTTPSService {
 
         console.info(`HTTPS Service: Requesting information for ${host} (${hash}).`)
 
-        const queryUrl = new URL(BASE_URL)
+        const queryUrl = new URL(constants.httpsService)
         queryUrl.searchParams.append('pv1', query)
 
         const request = this._fetch(queryUrl.toString())
