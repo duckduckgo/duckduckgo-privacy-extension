@@ -40,19 +40,37 @@ module.exports = {
     /*
      * Mapping entity names to CSS class name for popup icons
      */
-    "entityNameMapping": {
-        "Google LLC": "Google",
-        "Facebook, Inc.": "Facebook",
-        "Twitter, Inc.": "Twitter",
-        "Amazon Technologies, Inc.": "Amazon",
-        "AppNexus, Inc.": "AppNexus",
-        "Oracle Corporation": "Oracle",
-        "MediaMath, Inc.": "MediaMath",
-        "Verizon Media": "Oath",
-        "StackPath, LLC": "Maxcdn",
-        "Automattic, Inc.": "Automattic",
-        "Adobe Inc.": "Adobe",
-        "Quantcast Corporation": "Quantcast"
+    "entityIconMapping": {
+        "Google LLC": "google",
+        "Facebook, Inc.": "facebook",
+        "Twitter, Inc.": "twitter",
+        "Amazon Technologies, Inc.": "amazon",
+        "AppNexus, Inc.": "appnexus",
+        "MediaMath, Inc.": "mediamath",
+        "Verizon Media": "oath",
+        "StackPath, LLC": ",axcdn",
+        "Automattic, Inc.": "automattic",
+        "Adobe Inc.": "adobe",
+        "Quantcast Corporation": "quantcast",
+        "Salesforce.com, Inc.": "salesforce",
+        "The Nielsen Company": "nielsen"
+    },
+    /*
+    * Mapping new entity names to old entity names for data migration
+    */
+    "entityRenameMapping": {
+        "Google": "Google LLC",
+        "Facebook": "Facebook, Inc.",
+        "Twitter": "Twitter, Inc.",
+        "Amazon": "Amazon Technologies, Inc.",
+        "AppNexus": "AppNexus, Inc.",
+        "Oracle": "Oracle Corporation",
+        "MediaMath": "MediaMath, Inc.",
+        "Oath": "Verizon Media",
+        "Maxcdn": "StackPath, LLC",
+        "Automattic": "Automattic, Inc.",
+        "Adobe": "Adobe Inc.",
+        "Quantcast": "Quantcast Corporation"
     },
     "httpsDBName": "https",
     "httpsLists": [

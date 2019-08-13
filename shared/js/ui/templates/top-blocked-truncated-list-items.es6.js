@@ -1,6 +1,6 @@
 const bel = require('bel')
 const constants = require('../../../data/constants')
-const entityNameMapping = constants.entityNameMapping
+const entityIconMapping = constants.entityIconMapping
 
 module.exports = function (companyListMap) {
     console.log(companyListMap)
@@ -20,11 +20,11 @@ module.exports = function (companyListMap) {
 
     function getScssClass (companyName) {
         const genericName = 'generic'
-        const iconClassName = entityNameMapping[companyName]
+        const iconClassName = entityIconMapping[companyName]
 
         // TODO: remove Oath special case when we have an icon for it
         if ((companyName !== 'oath') && iconClassName) {
-            return iconClassName.toLowerCase()
+            return iconClassName
         } else {
             return genericName
         }

@@ -3,13 +3,6 @@ const Company = require('./classes/company.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const constants = require('../../data/constants.js')
 
-// old to new entity names. used for migrating old entity names over
-const entityRemap = Object.keys(constants.entityNameMapping).reduce((o, newName) => {
-        const oldName = constants.entityNameMapping[newName]
-        o[oldName] = newName
-        return o
-},{})
-
 var Companies = (() => {
     var companyContainer = {}
     var topBlocked = new TopBlocked()
@@ -134,9 +127,9 @@ var Companies = (() => {
 
                 for (let company in storageData) {
                     // remap old entity names to new entity names
-                    if (entityRemap[company]) {
+                    if (constants.entityRenameMapping[company]) {
                             const oldName = company
-                            const newName = entityRemap[company]
+                            const newName = constants.entityRenameMapping[company]
                             storageData[newName] = storageData[oldName]
                             storageData[newName].name = newName
                             delete storageData[oldName]
