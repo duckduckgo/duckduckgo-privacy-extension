@@ -8,17 +8,20 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 class HTTPS {
     constructor () {
-        // Store multiple upgrades lists keyed by list name
-        this.upgradeLists = new Map()
-        // One whitelist arrray
-        this.whitelist = []
+        // Store multiple upgrade / don't upgrade bloom filters
+        this.upgradeBloomFilters = new Map()
+        this.dontUpgradeBloomFilters = new Map()
+        // Upgrade / don't upgrade safelists for the bloom filters
+        this.dontUpgradeList = []
+        this.upgradeList = []
+
         this.isReady = false
     }
 
     // Sets a list by type and name. This is data that
     // is gathered from HTTPSStorage.
-    // 'upgrade list' is assumed to be a bloom filter
-    // 'whitelist' is an array
+    // 'upgrade bloom filter' and 'don't upgrade bloom filter' are assumed to be bloom filters
+    // 'upgrade safelist' and 'don't upgrade safelist' should be arrays
     setLists (lists) {
         try {
             lists.map(list => {
@@ -26,10 +29,14 @@ class HTTPS {
                     throw new Error(`HTTPS: ${list.name} missing data`)
                 }
 
-                if (list.type === 'upgrade list') {
-                    this.upgradeLists.set(list.name, this.createBloomFilter(list))
-                } else if (list.type === 'whitelist') {
-                    this.whitelist = list.data
+                if (list.type === 'upgrade bloom filter') {
+                    this.upgradeBloomFilters.set(list.name, this.createBloomFilter(list))
+                } else if (list.type === 'don\'t upgrade bloom filter') {
+                    this.dontUpgradeBloomFilters.set(list.name, this.createBloomFilter(list))
+                } else if (list.type === 'upgrade safelist') {
+                    this.upgradeList = list.data
+                } else if (list.type === 'don\'t upgrade safelist') {
+                    this.dontUpgradeList = list.data
                 }
             })
             this.isReady = true
@@ -62,21 +69,34 @@ class HTTPS {
             return null
         }
 
-        if (this.whitelist.includes(host)) {
+        if (this.dontUpgradeList.includes(host)) {
+            console.log('HTTPS: Safelist - host is not upgradable', host)
             return false
         }
 
-        const foundInPositiveBloomFilter = Array.from(this.upgradeLists.values()).some(list => list.checkEntry(host))
+        if (this.upgradeList.includes(host)) {
+            console.log('HTTPS: Safelist - host is upgradable', host)
+            return true
+        }
 
-        if (foundInPositiveBloomFilter) {
-            console.log('Bloom filter - host is upgradable', host)
+        const foundInDontUpgradeBloomFilters = Array.from(this.dontUpgradeBloomFilters.values()).some(list => list.checkEntry(host))
+
+        if (foundInDontUpgradeBloomFilters) {
+            console.log('HTTPS: Bloom filter - host is not upgradable', host)
+            return false
+        }
+
+        const foundInUpgradeBloomFilters = Array.from(this.upgradeBloomFilters.values()).some(list => list.checkEntry(host))
+
+        if (foundInUpgradeBloomFilters) {
+            console.log('HTTPS: Bloom filter - host is upgradable', host)
             return true
         }
 
         const foundInServiceCache = httpsService.checkInCache(host)
 
         if (foundInServiceCache !== null) {
-            console.log(`Service cache - host is${foundInServiceCache ? '' : ' not'} upgradable: ${host}`)
+            console.log(`HTTPS: Service cache - host is${foundInServiceCache ? '' : ' not'} upgradable`, host)
             return foundInServiceCache
         }
 
@@ -98,7 +118,7 @@ class HTTPS {
     getUpgradedUrl (reqUrl, tab, isMainFrame, isPost) {
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
-            return reqUrl // should we use service in this case?
+            return reqUrl
         }
 
         // Obey global settings (options page)
@@ -125,11 +145,10 @@ class HTTPS {
 
         // Only deal with http calls
         if (urlObj.protocol !== 'http:') {
-            // console.warn(`Not a http request: ${reqUrl}`)
             return reqUrl
         }
 
-        // Determine host without stripping 'www',
+        // Determine host without stripping 'www'
         const host = utils.extractHostFromURL(reqUrl, true) || ''
 
         if (!host) {
@@ -139,8 +158,8 @@ class HTTPS {
 
         const isUpgradable = this.canUpgradeHost(host)
 
-        // we know that request should not be upgraded
-        if (isUpgradable === false) {
+        // request is not upgradable or extension is not ready yet
+        if (isUpgradable === false || isUpgradable === null) {
             return reqUrl
         }
 
@@ -148,15 +167,50 @@ class HTTPS {
         urlObj.protocol = 'https:'
         const upgradedUrl = urlObj.toString()
 
-        // if this is a non-navigational request or a navigational POST request,
-        // upgrade it only if we know that it can be upgraded, continue as http otherwise
-        if (!isMainFrame || isPost) {
-            return (isUpgradable === true) ? upgradedUrl : reqUrl
+        // request is upgradable
+        if (isUpgradable === true) {
+            return upgradedUrl
         }
 
-        // if this is a navigational request and we don't yet know if it is upgradable
-        // we upgrade it proactively while waiting for a response from a remote service
-        if (isUpgradable instanceof Promise) {
+        /**
+         * If we got to this point hostname was not recognized by our bloom filters and safelists,
+         * we are waiting for a response from our remote service
+         */
+        if (!(isUpgradable instanceof Promise)) {
+            console.error('HTTPS: Fatal error - unexpected type of isUpgradable')
+            return reqUrl
+        }
+
+        // if this is a non-navigational request (subresource request) let it continue over HTTP
+        if (!isMainFrame) {
+            return reqUrl
+        }
+
+        // if this is a POST navigational request and browser doesn't support async blocking
+        // let it continue over HTTP to avoid data loss
+        if (isMainFrame && isPost && !utils.getAsyncBlockingSupport()) {
+            return reqUrl
+        }
+
+        // if async blocking is available:
+        // we hold the request until we hear back from our service
+        if (utils.getAsyncBlockingSupport()) {
+            return isUpgradable
+                .then(result => {
+                    if (result) {
+                        tab.mainFrameUpgraded = true
+                        this.incrementUpgradeCount('totalUpgrades')
+                    }
+
+                    return result ? upgradedUrl : reqUrl
+                })
+                .catch(e => {
+                    console.error('HTTPS: Error connecting to the HTTPS service: ' + e.message)
+                    return upgradedUrl
+                })
+        } else {
+            // if async blocking is NOT available:
+            // we upgrade it proactively while waiting for a response from a remote service
             isUpgradable
                 .then(result => {
                     if (result === false) {
@@ -174,12 +228,12 @@ class HTTPS {
                 .catch(e => {
                     console.error('HTTPS: Error connecting to the HTTPS service: ' + e.message)
                 })
+
+            tab.mainFrameUpgraded = true
+            this.incrementUpgradeCount('totalUpgrades')
+
+            return upgradedUrl
         }
-
-        tab.mainFrameUpgraded = true
-        this.incrementUpgradeCount('totalUpgrades')
-
-        return upgradedUrl
     }
 
     // Send https upgrade and failure totals

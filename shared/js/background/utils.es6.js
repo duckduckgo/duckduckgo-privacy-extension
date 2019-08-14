@@ -138,6 +138,19 @@ function getUpdatedRequestListenerTypes () {
     return requestListenerTypes
 }
 
+function getAsyncBlockingSupport () {
+    const browser = getBrowserName()
+
+    if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
+        return true
+    } else if (browser === 'chrome') {
+        return false
+    }
+
+    console.warn(`Unrecognized browser "${browser}" - async response disallowed`)
+    return false
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -145,6 +158,7 @@ module.exports = {
     getCurrentTab: getCurrentTab,
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
+    getAsyncBlockingSupport: getAsyncBlockingSupport,
     findParent: findParent,
     getBeaconName: getBeaconName,
     getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,

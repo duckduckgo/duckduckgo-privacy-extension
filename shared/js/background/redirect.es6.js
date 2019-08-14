@@ -9,6 +9,24 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 var debugRequest = false
 utils.loadLists()
 
+function buildResponse (url, requestData, tab, isMainFrame) {
+    if (url.toLowerCase() !== requestData.url.toLowerCase()) {
+        console.log('HTTPS: upgrade request url to ' + url)
+        tab.httpsRedirects.registerRedirect(requestData)
+
+        if (isMainFrame) {
+            tab.upgradedHttps = true
+        }
+        if (utils.getUpgradeToSecureSupport()) {
+            return {upgradeToSecure: true}
+        } else {
+            return {redirectUrl: url}
+        }
+    } else if (isMainFrame) {
+        tab.upgradedHttps = false
+    }
+}
+
 /**
  * Where most of the extension work happens.
  *
@@ -144,23 +162,21 @@ function handleRequest (requestData) {
     const isMainFrame = requestData.type === 'main_frame'
     const isPost = requestData.method === 'POST'
 
-    // Fetch upgrade rule from https module:
-    const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame, isPost)
-    if (url.toLowerCase() !== requestData.url.toLowerCase() &&
-            thisTab.httpsRedirects.canRedirect(requestData)) {
-        console.log('HTTPS: upgrade request url to ' + url)
-        thisTab.httpsRedirects.registerRedirect(requestData)
-
+    // Skip https upgrade if host failed before or if we detect redirect loop
+    if (!thisTab.httpsRedirects.canRedirect(requestData)) {
         if (isMainFrame) {
-            thisTab.upgradedHttps = true
+            thisTab.upgradedHttps = false
         }
-        if (utils.getUpgradeToSecureSupport()) {
-            return {upgradeToSecure: true}
-        } else {
-            return {redirectUrl: url}
-        }
-    } else if (isMainFrame) {
-        thisTab.upgradedHttps = false
+        return
+    }
+
+    // Fetch upgrade rule from https module:
+    const resultUrl = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame, isPost)
+
+    if (resultUrl instanceof Promise) {
+        return resultUrl.then(url => buildResponse(url, requestData, thisTab, isMainFrame))
+    } else {
+        return buildResponse(resultUrl, requestData, thisTab, isMainFrame)
     }
 }
 

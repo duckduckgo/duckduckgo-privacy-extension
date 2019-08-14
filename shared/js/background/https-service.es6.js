@@ -66,7 +66,7 @@ class HTTPSService {
             .then(data => {
                 this._cacheResponse(query, data)
                 const result = data.includes(hash)
-                console.info(`HTTPS Service: ${host} is ${result ? '' : 'NOT'} upgradable.`)
+                console.info(`HTTPS Service: ${host} is${result ? '' : ' not'} upgradable.`)
                 return result
             })
             .catch(e => {
