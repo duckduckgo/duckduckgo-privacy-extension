@@ -102,7 +102,7 @@ class Tab {
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
-            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner.name)
+            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
 
             return newTracker
         }

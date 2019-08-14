@@ -70,9 +70,7 @@ function handleRequest (requestData) {
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
-            // Chrome and Firefox use different names for the initiator
-            const reqInitiator = requestData.initiator || requestData.documentUrl
-            const sameDomain = thisTab.url === reqInitiator
+            const sameDomain = thisTab.id === requestData.tabId
 
             // only count trackers on pages with 200 response. Trackers on these sites are still
             // blocked below but not counted on the popup. We can also run into a case where
@@ -97,7 +95,7 @@ function handleRequest (requestData) {
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
 
                 if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200) {
-                    Companies.add(tracker.tracker.owner.name)
+                    Companies.add(tracker.tracker.owner)
                 }
 
                 // for debugging specific requests. see test/tests/debugSite.js

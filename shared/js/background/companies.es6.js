@@ -24,22 +24,22 @@ var Companies = (() => {
 
         getTotalPages: () => { return totalPages },
 
-        add: (name) => {
-            if (!companyContainer[name]) {
-                companyContainer[name] = new Company(name)
-                topBlocked.add(name)
+        add: (c) => {
+            if (!companyContainer[c.name]) {
+                companyContainer[c.name] = new Company(c)
+                topBlocked.add(c.name)
             }
-            companyContainer[name].incrementCount()
-            return companyContainer[name]
+            companyContainer[c.name].incrementCount()
+            return companyContainer[c.name]
         },
 
         // This is used by tab.js to count only unique tracking networks on a tab
-        countCompanyOnPage: (name) => {
-            if (!companyContainer[name]) {
-                companyContainer[name] = new Company(name)
-                topBlocked.add(name)
+        countCompanyOnPage: (c) => {
+            if (!companyContainer[c.name]) {
+                companyContainer[c.name] = new Company(c)
+                topBlocked.add(c.name)
             }
-            if (name !== 'unknown') companyContainer[name].incrementPagesSeenOn()
+            if (name !== 'unknown') companyContainer[c.name].incrementPagesSeenOn()
         },
 
         all: () => { return Object.keys(companyContainer) },
@@ -48,7 +48,7 @@ var Companies = (() => {
             var topBlockedData = []
             topBlocked.getTop(n, sortByCount).forEach((name) => {
                 let c = Companies.get(name)
-                topBlockedData.push({name: c.name, count: c.count})
+                topBlockedData.push({name: c.name, count: c.count, displayName: c.displayName})
             })
 
             return topBlockedData
@@ -60,6 +60,7 @@ var Companies = (() => {
                 let c = Companies.get(name)
                 topBlockedData.push({
                     name: c.name,
+                    displayName: c.displayName,
                     percent: Math.min(100, Math.round((c.pagesSeenOn / totalPages) * 100))
                 })
             })
@@ -127,7 +128,7 @@ var Companies = (() => {
 
                 for (let company in storageData) {
                     [company, storageData] = migrate.migrateCompanyData(company, storageData)
-                    let newCompany = Companies.add(company)
+                    let newCompany = Companies.add(storageData[company])
                     newCompany.set('count', storageData[company].count || 0)
                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
                 }
