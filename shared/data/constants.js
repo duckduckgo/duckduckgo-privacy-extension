@@ -55,23 +55,6 @@ module.exports = {
         "Salesforce.com, Inc.": "salesforce",
         "The Nielsen Company": "nielsen"
     },
-    /*
-    * Mapping new entity names to old entity names for data migration
-    */
-    "entityRenameMapping": {
-        "Google": "Google LLC",
-        "Facebook": "Facebook, Inc.",
-        "Twitter": "Twitter, Inc.",
-        "Amazon": "Amazon Technologies, Inc.",
-        "AppNexus": "AppNexus, Inc.",
-        "Oracle": "Oracle Corporation",
-        "MediaMath": "MediaMath, Inc.",
-        "Oath": "Verizon Media",
-        "Maxcdn": "StackPath, LLC",
-        "Automattic": "Automattic, Inc.",
-        "Adobe": "Adobe Inc.",
-        "Quantcast": "Quantcast Corporation"
-    },
     "httpsDBName": "https",
     "httpsLists": [
         {

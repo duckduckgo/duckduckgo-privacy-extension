@@ -1,7 +1,7 @@
 const TopBlocked = require('./classes/top-blocked.es6')
 const Company = require('./classes/company.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
-const constants = require('../../data/constants.js')
+const migrate = require('./migrate.es6')
 
 var Companies = (() => {
     var companyContainer = {}
@@ -126,16 +126,7 @@ var Companies = (() => {
                 storageData = Companies.sanitizeData(storageData)
 
                 for (let company in storageData) {
-                    // remap old entity names to new entity names
-                    if (constants.entityRenameMapping[company]) {
-                            const oldName = company
-                            const newName = constants.entityRenameMapping[company]
-                            storageData[newName] = storageData[oldName]
-                            storageData[newName].name = newName
-                            delete storageData[oldName]
-                            company = newName
-                    }
-
+                    [company, storageData] = migrate.migrateCompanyData(company, storageData)
                     let newCompany = Companies.add(company)
                     newCompany.set('count', storageData[company].count || 0)
                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
