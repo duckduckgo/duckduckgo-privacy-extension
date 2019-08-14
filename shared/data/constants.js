@@ -52,7 +52,6 @@ module.exports = {
         "Automattic, Inc.": "automattic",
         "Adobe Inc.": "adobe",
         "Quantcast Corporation": "quantcast",
-        "Salesforce.com, Inc.": "salesforce",
         "The Nielsen Company": "nielsen"
     },
     "httpsDBName": "https",

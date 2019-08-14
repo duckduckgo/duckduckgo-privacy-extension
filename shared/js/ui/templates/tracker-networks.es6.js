@@ -63,7 +63,7 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
         <span class="site-info__tracker__icon ${c.normalizedName}">
         </span>
     </div>
-    <h1 class="site-info__domain block">${c.name}</h1>
+    <h1 title="${c.name}" class="site-info__domain block">${c.name}</h1>
     <ol class="default-list site-info__trackers__company-list__url-list" aria-label="Tracker domains for ${c.name}">
         ${c.urlsList.map((url) => {
         let category = ''
