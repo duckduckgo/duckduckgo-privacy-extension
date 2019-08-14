@@ -214,9 +214,6 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
 
-            tdsStorage.getLists()
-                .then(lists => trackers.setLists(lists))
-                .catch(e => console.log(e))
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
         chrome.runtime.setUninstallURL(ATB.getSurveyURL())
@@ -224,6 +221,10 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         settings.ready().then(() => {
             https.sendHttpsUpgradeTotals()
         })
+        
+        tdsStorage.getLists()
+            .then(lists => trackers.setLists(lists))
+            .catch(e => console.log(e))
     }
 })
 
