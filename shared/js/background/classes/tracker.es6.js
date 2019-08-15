@@ -5,7 +5,7 @@ class Tracker {
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
         this.urls = {}
-        this.urls[t.tracker.domain] = {
+        this.urls[t.fullTrackerDomain] = {
             isBlocked: t.action === 'block' ? true : false, 
             reason: t.reason
         }
@@ -22,8 +22,8 @@ class Tracker {
      * We store a list of all unique urls here.
      */
     update (t) {
-        if (!this.urls[t.tracker.domain]) {
-            this.urls[t.tracker.domain] = {isBlocked: t.action, reason: t.reason}
+        if (!this.urls[t.fullTrackerDomain]) {
+            this.urls[t.fullTrackerDomain] = {isBlocked: t.action, reason: t.reason}
         }
     }
 }

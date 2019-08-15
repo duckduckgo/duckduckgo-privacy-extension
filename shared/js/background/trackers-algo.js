@@ -102,6 +102,8 @@
 
         const firstParty = (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
 
+        const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
+
         const {action, reason} = this.getAction({
             firstParty,
             matchedRule,
@@ -117,7 +119,8 @@
             redirectUrl,
             matchedRule,
             matchedRuleException,
-            tracker
+            tracker,
+            fullTrackerDomain
         }
     }
 
