@@ -76,7 +76,7 @@ function handleRequest (requestData) {
             // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the 
             // request anyway but deciding to show it in the popup or not. If we have a documentUrl, use it, otherwise
             // just default to true.
-            const sameDomain = requestData.documentUrl ? (requestData.documentUrl === thisTab.url) : true
+            const sameDomain = isSameDomainRequest(thisTab, requestData)
 
             // only count trackers on pages with 200 response. Trackers on these sites are still
             // blocked below but not counted on the popup. We can also run into a case where
@@ -191,4 +191,20 @@ function tryElementHide (requestData, tab) {
     }
 }
 
+function isSameDomainRequest (tab, req) {
+    if (req.documentUrl) {
+        if (req.frameAncestors && req.frameAncestors.length) {
+            const ancestors = req.frameAncestors.reduce((lst, f) => {
+                lst.push(f.url)
+                return lst
+            },[])
+            return ancestors.includes(tab.url)
+        } else {
+            return req.documentUrl === tab.url
+        }
+    } else {
+        return true
+    }
+
+}
 exports.handleRequest = handleRequest

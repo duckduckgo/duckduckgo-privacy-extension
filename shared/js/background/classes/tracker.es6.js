@@ -8,7 +8,7 @@ class Tracker {
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
         this.urls = {}
         this.urls[t.fullTrackerDomain] = {
-            isBlocked: t.action === 'block' ? true : false, 
+            isBlocked: this.isBlocked(t.action),
             reason: t.reason
         }
         this.count = 1 // request count
@@ -25,8 +25,12 @@ class Tracker {
      */
     update (t) {
         if (!this.urls[t.fullTrackerDomain]) {
-            this.urls[t.fullTrackerDomain] = {isBlocked: t.action, reason: t.reason}
+            this.urls[t.fullTrackerDomain] = {isBlocked: this.isBlocked(t.action), reason: t.reason}
         }
+    }
+
+    isBlocked (action) {
+        return action.match(/block|redirect/) ? true : false
     }
 }
 
