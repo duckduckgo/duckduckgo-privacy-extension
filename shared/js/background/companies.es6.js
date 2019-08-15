@@ -39,7 +39,7 @@ var Companies = (() => {
                 companyContainer[c.name] = new Company(c)
                 topBlocked.add(c.name)
             }
-            if (name !== 'unknown') companyContainer[c.name].incrementPagesSeenOn()
+            if (c.name !== 'unknown') companyContainer[c.name].incrementPagesSeenOn()
         },
 
         all: () => { return Object.keys(companyContainer) },

@@ -56,8 +56,8 @@ SiteCompanyList.prototype = window.$.extend({},
                     // max width: 300 - (horizontal padding in css) = 260
                     return {
                         name: companyName,
-                        displayName: company.parentCompany ? company.parentCompany.displayName : company.name,
-                        normalizedName: this.normalizeCompanyName(company.name),
+                        displayName: company.displayName || companyName,
+                        normalizedName: this.normalizeCompanyName(companyName),
                         count: this._setCount(company, companyName, urlsList),
                         urls: company.urls,
                         urlsList: urlsList

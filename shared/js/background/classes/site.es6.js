@@ -11,7 +11,6 @@ const utils = require('../utils.es6')
 const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
-const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const browserWrapper = require('../$BROWSER-wrapper.es6')
 const tldjs = require('tldjs')
 
@@ -35,7 +34,7 @@ class Site {
         this.tosdr = privacyPractices.getTosdr(domain)
 
         this.parentEntity = utils.findParent(domain) || ''
-        this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
+        this.parentPrevalence = tdsStorage.tds.entities[this.parentEntity] ? tdsStorage.tds.entities[this.parentEntity].prevalence : 0
 
         if (this.parentEntity && this.parentPrevalence) {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)

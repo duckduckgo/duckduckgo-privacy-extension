@@ -3,6 +3,7 @@ const Companies = require('../companies.es6')
 class Tracker {
     constructor (t) {
         this.parentCompany = Companies.get(t.tracker.owner.name)
+        this.displayName = t.tracker.owner.displayName
         this.urls = {}
         this.urls[t.tracker.domain] = {
             isBlocked: t.action === 'block' ? true : false, 

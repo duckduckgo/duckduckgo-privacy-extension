@@ -70,7 +70,8 @@ function handleRequest (requestData) {
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
-            const sameDomain = thisTab.id === requestData.tabId
+            const sameDomain = (thisTab.id === requestData.tabId) &&
+                        (thisTab.url === requestData.documentUrl)
 
             // only count trackers on pages with 200 response. Trackers on these sites are still
             // blocked below but not counted on the popup. We can also run into a case where
