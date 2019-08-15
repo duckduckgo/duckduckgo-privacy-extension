@@ -1,9 +1,11 @@
 const Companies = require('../companies.es6')
+const tdsStorage = require('../storage/tds.es6')
 
 class Tracker {
     constructor (t) {
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
+        this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
         this.urls = {}
         this.urls[t.fullTrackerDomain] = {
             isBlocked: t.action === 'block' ? true : false, 

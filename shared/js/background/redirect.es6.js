@@ -70,8 +70,13 @@ function handleRequest (requestData) {
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
-            const sameDomain = (thisTab.id === requestData.tabId) &&
-                        (thisTab.url === requestData.documentUrl)
+
+            // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
+            // comes through on document unload and by the time we block it we have updated our tab data to the new 
+            // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the 
+            // request anyway but deciding to show it in the popup or not. If we have a documentUrl, use it, otherwise
+            // just default to true.
+            const sameDomain = requestData.documentUrl ? (requestData.documentUrl === thisTab.url) : true
 
             // only count trackers on pages with 200 response. Trackers on these sites are still
             // blocked below but not counted on the popup. We can also run into a case where
