@@ -198,6 +198,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
 const abpLists = require('./abp-lists.es6')
 const httpsStorage = require('./storage/https.es6')
+const httpsService = require('./https-service.es6')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', {periodInMinutes: 12 * 60})
@@ -205,6 +206,8 @@ chrome.alarms.create('updateHTTPSLists', {periodInMinutes: 12 * 60})
 chrome.alarms.create('updateLists', {periodInMinutes: 30})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
+// remove expired HTTPS service entries
+chrome.alarms.create('clearExpiredHTTPSServiceCache', {periodInMinutes: 60})
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
@@ -220,6 +223,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             abpLists.updateLists()
             https.sendHttpsUpgradeTotals()
         })
+    } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
+        httpsService.clearExpiredCache()
     }
 })
 

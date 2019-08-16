@@ -3,6 +3,7 @@ const sha1 = require('../shared-utils/sha1')
 const punycode = require('punycode')
 const constants = require('../../data/constants')
 const HASH_PREFIX_SIZE = 4
+const ONE_HOUR_MS = 60 * 60 * 1000
 
 class HTTPSService {
     constructor () {
@@ -10,9 +11,18 @@ class HTTPSService {
         this._activeRequests = new Map()
     }
 
-    _cacheResponse (query, response) {
-        // TODO add TTL
-        this._cache.set(query, response)
+    _cacheResponse (query, data, expires) {
+        let expiryDate = (new Date(expires)).getTime()
+
+        if (isNaN(expiryDate)) {
+            console.warn(`Expiry date is invalid: "${expires}", caching for 1h`)
+            expiryDate = Date.now() + ONE_HOUR_MS
+        }
+
+        this._cache.set(query, {
+            expires: expiryDate,
+            data: data
+        })
     }
 
     _hostToHash (host) {
@@ -34,7 +44,7 @@ class HTTPSService {
         const result = this._cache.get(query)
 
         if (result) {
-            return result.includes(hash)
+            return result.data.includes(hash)
         }
 
         return null
@@ -61,10 +71,15 @@ class HTTPSService {
         const request = this._fetch(queryUrl.toString())
             .then(response => {
                 this._activeRequests.delete(query)
+
                 return response.json()
+                    .then(data => {
+                        const expires = response.headers.get('expires')
+                        this._cacheResponse(query, data, expires)
+                        return data
+                    })
             })
             .then(data => {
-                this._cacheResponse(query, data)
                 const result = data.includes(hash)
                 console.info(`HTTPS Service: ${host} is${result ? '' : ' not'} upgradable.`)
                 return result
@@ -83,6 +98,14 @@ class HTTPSService {
 
     clearCache () {
         this._cache.clear()
+    }
+
+    clearExpiredCache () {
+        const now = Date.now()
+
+        Array.from(this._cache.keys())
+            .filter(key => this._cache.get(key).expires < now)
+            .forEach(key => this._cache.delete(key))
     }
 }
 
