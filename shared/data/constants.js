@@ -55,12 +55,12 @@ module.exports = {
         {
             "type": "don\'t upgrade bloom filter",
             "name": "httpsDontUpgradeBloomFilters",
-            "url": "http://ddg-sandbox.s3.amazonaws.com/negative-bloom.json"
+            "url": "https://ddg-sandbox.s3.amazonaws.com/negative-bloom.json"
         },
         {
             "type": "upgrade safelist",
             "name": "httpsUpgradeList",
-            "url": "http://ddg-sandbox.s3.amazonaws.com/negative-whitelist.json"
+            "url": "https://ddg-sandbox.s3.amazonaws.com/negative-whitelist.json"
         },
         {
             "type": "don\'t upgrade safelist",
