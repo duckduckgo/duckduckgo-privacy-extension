@@ -48,15 +48,25 @@ module.exports = {
     "httpsDBName": "https",
     "httpsLists": [
         {
-            "type": "upgrade list",
-            "name": "httpsUpgradeList",
+            "type": "upgrade bloom filter",
+            "name": "httpsUpgradeBloomFilter",
             "url": "https://staticcdn.duckduckgo.com/https/https-bloom.json"
         },
         {
-            "type": "whitelist",
-            "name": "httpsWhitelist",
+            "type": "don\'t upgrade bloom filter",
+            "name": "httpsDontUpgradeBloomFilters",
+            "url": "http://ddg-sandbox.s3.amazonaws.com/negative-bloom.json"
+        },
+        {
+            "type": "upgrade safelist",
+            "name": "httpsUpgradeList",
+            "url": "http://ddg-sandbox.s3.amazonaws.com/negative-whitelist.json"
+        },
+        {
+            "type": "don\'t upgrade safelist",
+            "name": "httpsDontUpgradeList",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
-        }
+        },
     ],
     "httpsErrorCodes": {
         "net::ERR_CONNECTION_REFUSED": 1,
