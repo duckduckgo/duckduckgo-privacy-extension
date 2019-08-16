@@ -8,6 +8,10 @@ const loadStub = (stubData) => {
             return Promise.resolve(Object.assign(response, {status: 200, data: stubData.httpsBloom}))
         } else if (data.url.match('https-whitelist.json')) {
             return Promise.resolve(Object.assign(response, {status: 200, data: stubData.httpsWhitelist}))
+        } else if (data.url.match('negative-bloom.json')) {
+            return Promise.resolve(Object.assign(response, {status: 200, data: stubData.httpsNegativeBloom}))
+        } else if (data.url.match('negative-whitelist.json')) {
+            return Promise.resolve(Object.assign(response, {status: 200, data: stubData.httpsNegativeWhitelist}))
         } else {
             return Promise.reject(new Error('load error'))
         }

@@ -3,12 +3,19 @@ const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsWhitelist = require('./../data/httpsWhitelist.json')
+const httpsNegativeBloom = require('./../data/httpsNegativeBloom.json')
+const httpsNegativeWhitelist = require('./../data/httpsNegativeWhitelist.json')
 const load = require('./../helpers/https.es6')
 const httpsService = require('../../shared/js/background/https-service.es6')
 
 describe('Https upgrades', () => {
     beforeAll(() => {
-        load.loadStub({httpsBloom: httpsBloom, httpsWhitelist: httpsWhitelist})
+        load.loadStub({
+            httpsBloom: httpsBloom,
+            httpsWhitelist: httpsWhitelist,
+            httpsNegativeBloom: httpsNegativeBloom,
+            httpsNegativeWhitelist: httpsNegativeWhitelist
+        })
 
         return httpsStorage.getLists()
             .then(lists => {
@@ -31,9 +38,21 @@ describe('Https upgrades', () => {
             })
         })
 
-        it('should not upgrade whitelisted domains', () => {
-            https.whitelist.forEach(domain => {
+        it('should not upgrade domains found in the negative bloom filter', () => {
+            testDomains.shouldNotUpgrade.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+
+        it('should not upgrade domains on the "don\'t upgrade" safelist', () => {
+            https.dontUpgradeList.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+
+        it('should upgrade domains on the "upgrade" safelist', () => {
+            https.upgradeList.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(true)
             })
         })
 
@@ -41,11 +60,14 @@ describe('Https upgrades', () => {
             httpsService.clearCache()
 
             const spy = spyOn(httpsService, '_fetch').and.returnValue(Promise.resolve({
-                json: () => []
+                headers: {
+                    get: () => {}
+                },
+                json: () => Promise.resolve([])
             }))
             const requests = []
 
-            testDomains.shouldNotUpgrade.forEach(domain => {
+            testDomains.notInBloomFilters.forEach(domain => {
                 const result = https.canUpgradeHost(domain)
                 expect(result instanceof Promise).toBe(true)
                 requests.push(result)
@@ -54,11 +76,11 @@ describe('Https upgrades', () => {
             // when all promises resolve, make sure that the cache is used next time
             return Promise.all(requests)
                 .then(() => {
-                    testDomains.shouldNotUpgrade.forEach(domain => {
+                    testDomains.notInBloomFilters.forEach(domain => {
                         expect(https.canUpgradeHost(domain)).toEqual(false)
                     })
 
-                    expect(spy.calls.count()).toEqual(testDomains.shouldNotUpgrade.length)
+                    expect(spy.calls.count()).toEqual(testDomains.notInBloomFilters.length)
                     // disable the spy
                     spy.and.callThrough()
                 })
