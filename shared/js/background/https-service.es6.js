@@ -92,7 +92,6 @@ class HTTPSService {
 
         this._activeRequests.set(query, request)
 
-        // TODO handle failures gracefully
         return request
     }
 

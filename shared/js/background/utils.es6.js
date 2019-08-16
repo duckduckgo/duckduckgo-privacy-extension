@@ -138,6 +138,7 @@ function getUpdatedRequestListenerTypes () {
     return requestListenerTypes
 }
 
+// return true if browser allows to handle request async
 function getAsyncBlockingSupport () {
     const browser = getBrowserName()
 
