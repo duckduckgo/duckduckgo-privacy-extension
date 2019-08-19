@@ -9,7 +9,8 @@ class Tracker {
         this.urls = {}
         this.urls[t.fullTrackerDomain] = {
             isBlocked: this.isBlocked(t.action),
-            reason: t.reason
+            reason: t.reason,
+            categories: t.tracker.categories
         }
         this.count = 1 // request count
         this.type = t.type || ''
@@ -25,7 +26,11 @@ class Tracker {
      */
     update (t) {
         if (!this.urls[t.fullTrackerDomain]) {
-            this.urls[t.fullTrackerDomain] = {isBlocked: this.isBlocked(t.action), reason: t.reason}
+            this.urls[t.fullTrackerDomain] = {
+                isBlocked: this.isBlocked(t.action), 
+                reason: t.reason,
+                categories: t.tracker.categories
+            }
         }
     }
 

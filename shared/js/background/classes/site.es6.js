@@ -34,13 +34,14 @@ class Site {
         this.tosdr = privacyPractices.getTosdr(domain)
 
         this.parentEntity = utils.findParent(domain) || ''
-        this.parentPrevalence = tdsStorage.tds.entities[this.parentEntity] ? tdsStorage.tds.entities[this.parentEntity].prevalence : 0
+        const parent = tdsStorage.tds.entities[this.parentEntity]
+        this.parentPrevalence = parent ? parent.prevalence : 0
 
         if (this.parentEntity && this.parentPrevalence) {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain))
+        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain, parent))
 
         if (this.url.match(/^https:\/\//)) {
             this.grade.setHttps(true, true)

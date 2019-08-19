@@ -2,6 +2,7 @@ const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
+const displayCategories = require('./../../../data/constants.js').displayCategories
 
 module.exports = function () {
     if (!this.model) {
@@ -42,7 +43,7 @@ function renderHero (site) {
     })}`
 }
 
-function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
+function renderTrackerDetails (model) {
     const companyListMap = model.companyListMap || {}
     if (companyListMap.length === 0) {
         return bel`<li class="is-empty">None</li>`
@@ -66,10 +67,17 @@ function renderTrackerDetails (model, DOMAIN_MAPPINGS) {
     <h1 title="${c.name}" class="site-info__domain block">${c.displayName}</h1>
     <ol class="default-list site-info__trackers__company-list__url-list" aria-label="Tracker domains for ${c.name}">
         ${c.urlsList.map((url) => {
-        let category = ''
-        if (DOMAIN_MAPPINGS[url.toLowerCase()]) {
-            category = DOMAIN_MAPPINGS[url.toLowerCase()].t
-        }
+            // find first matchign category from our list of allowed display categories
+            let category = ''
+            if (c.urls[url] && c.urls[url].categories) {
+                displayCategories.some(displayCat => {
+                    let match = c.urls[url].categories.find(cat => cat === displayCat)
+                    if (match) {
+                        category = match
+                        return true
+                    }
+                })
+            }
         return bel`<li>
                 <div class="url">${url}</div>
                 <div class="category">${category}</div>
