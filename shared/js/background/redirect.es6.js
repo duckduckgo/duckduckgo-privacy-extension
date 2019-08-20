@@ -5,6 +5,7 @@ const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
+const settings = require('./settings.es6')
 
 var debugRequest = false
 
@@ -68,6 +69,11 @@ function handleRequest (requestData) {
 
         var tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
 
+        // allow embedded twitter content if user enabled this setting
+        if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
+            tracker = null
+        }
+
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
         if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
 
@@ -100,7 +106,7 @@ function handleRequest (requestData) {
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
 
-                if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200) {
+                if (thisTab.statusCode === 200) {
                     Companies.add(tracker.tracker.owner)
                 }
 
