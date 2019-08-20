@@ -53,7 +53,7 @@
             const firstLine = lines.shift()
 
             // take identifier from first line
-            const pattern = firstLine.split(' ')[0]
+            const pattern = firstLine.split(' ')[0].split('/')[1]
             const b64surrogate = Buffer.from(lines.join('\n').toString(), 'binary').toString('base64')
             surrogateList[pattern] = b64dataheader + b64surrogate
         })
