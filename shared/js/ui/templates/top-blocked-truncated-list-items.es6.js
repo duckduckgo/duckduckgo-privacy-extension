@@ -3,7 +3,6 @@ const constants = require('../../../data/constants')
 const entityIconMapping = constants.entityIconMapping
 
 module.exports = function (companyListMap) {
-    console.log(companyListMap)
     return companyListMap.map((data) => {
         return bel`<li class="top-blocked__li top-blocked__li--truncated">
     <div class="top-blocked__pill" aria-label="${data.name} found on ${data.percent}% of sites">
