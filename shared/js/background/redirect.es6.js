@@ -98,7 +98,7 @@ function handleRequest (requestData) {
             browserWrapper.notifyPopup({'updateTabData': true})
 
             // Block the request if the site is not whitelisted
-            if (!thisTab.site.whitelisted && tracker.action === 'block') {
+            if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
                 
                 if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
 
