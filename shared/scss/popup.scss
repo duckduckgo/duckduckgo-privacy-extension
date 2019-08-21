@@ -593,6 +593,7 @@ body {
             font-size: 13px;
             overflow: hidden;
             text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .top-blocked__li__blocker-bar {
