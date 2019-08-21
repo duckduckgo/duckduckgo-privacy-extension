@@ -18,14 +18,7 @@ module.exports = function (companyListMap) {
     })
 
     function getScssClass (companyName) {
-        const genericName = 'generic'
-        const iconClassName = entityIconMapping[companyName]
-
-        // TODO: remove Oath special case when we have an icon for it
-        if ((companyName !== 'oath') && iconClassName) {
-            return iconClassName
-        } else {
-            return genericName
-        }
+        const iconClassName = entityIconMapping[companyName] || 'generic'
+        return iconClassName
     }
 }

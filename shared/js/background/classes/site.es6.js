@@ -95,7 +95,7 @@ class Site {
             this.trackerUrls.push(t.tracker.domain)
             const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
 
-            if (t.action == 'block') {
+            if (t.action.match(/block|redirect/)) {
                 this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
             } else {
                 this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)

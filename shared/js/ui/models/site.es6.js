@@ -297,7 +297,7 @@ Site.prototype = window.$.extend({},
                 Object.keys(trackerDomains).forEach((domain) => {
                     if (trackerDomains[domain].isBlocked) {
                         blockedTrackers.push(domain)
-                        if (trackerDomains[domain].reason === 'surrogate') {
+                        if (trackerDomains[domain].reason === 'matched rule - surrogate') {
                             surrogates.push(domain)
                         }
                     }
