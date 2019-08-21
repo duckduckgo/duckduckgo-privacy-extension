@@ -96,10 +96,21 @@ class PrivacyPractices {
         }
     }
 
-    getTosdrScore (hostname) {
+    getTosdrScore (hostname, parent) {
         const domain = tldjs.getDomain(hostname)
-        const parent = utils.findParent(hostname)
 
+        // look for tosdr match in list of parent properties
+        let parentMatch = ''
+        if (parent && parent.domains) {
+            Object.keys(tosdrScores).some((tosdrName)=> {
+                const match = parent.domains.find(d => d === tosdrName)
+                if (match) {
+                    parentMatch = match
+                    return true
+                }
+            })
+        }
+                
         // grab the first available val
         // starting with most general first
 
@@ -108,7 +119,7 @@ class PrivacyPractices {
         // and different scores - should they propagate
         // the same way parent entity ones do?
         const score = [
-            tosdrScores[parent],
+            tosdrScores[parentMatch],
             tosdrScores[domain],
             tosdrScores[hostname]
         ].find(s => typeof s === 'number')

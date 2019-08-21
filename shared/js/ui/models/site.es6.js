@@ -8,11 +8,6 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 // as "major"
 const MAJOR_TRACKER_THRESHOLD_PCT = 7
 
-const majorTrackingNetworks = Object.keys(trackerPrevalence)
-    .filter(t => trackerPrevalence[t] >= MAJOR_TRACKER_THRESHOLD_PCT)
-    // lowercase them cause we only use them for comparing
-    .map(t => t.toLowerCase())
-
 function Site (attrs) {
     attrs = attrs || {}
     attrs.disabled = true // disabled by default
@@ -52,6 +47,9 @@ Site.prototype = window.$.extend({},
                         this.fetchSiteRating()
                         this.set('tosdr', tab.site.tosdr)
                         this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
+
+                        this.fetch({getSetting: {name: 'tds-etag'}}).then(etag => this.set('tds', etag))
+
                     } else {
                         console.debug('Site model: no tab')
                     }
@@ -225,11 +223,9 @@ Site.prototype = window.$.extend({},
             // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is whitelisted
             const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
-            const count = Object.keys(trackers).reduce((total, name) => {
-                const tempTracker = name.toLowerCase()
-                const idx = majorTrackingNetworks.indexOf(tempTracker)
-
-                total += idx > -1 ? 1 : 0
+            const count = Object.values(trackers).reduce((total, t) => {
+                const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
+                total += isMajor ? 1 : 0
                 return total
             }, 0)
 
@@ -292,7 +288,8 @@ Site.prototype = window.$.extend({},
             const pixelParams = ['epbf',
                 {category: category},
                 {siteUrl: encodeURIComponent(siteUrl)},
-                {upgradedHttps: upgradedHttps.toString()}
+                {upgradedHttps: upgradedHttps.toString()},
+                {tds: this.tds}
             ]
 
             for (let tracker in trackerObjects) {
@@ -300,7 +297,7 @@ Site.prototype = window.$.extend({},
                 Object.keys(trackerDomains).forEach((domain) => {
                     if (trackerDomains[domain].isBlocked) {
                         blockedTrackers.push(domain)
-                        if (trackerDomains[domain].reason === 'surrogate') {
+                        if (trackerDomains[domain].reason === 'matched rule - surrogate') {
                             surrogates.push(domain)
                         }
                     }

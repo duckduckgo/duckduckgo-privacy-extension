@@ -16,13 +16,14 @@ module.exports = {
     "version": null,
     "atb": null,
     "set_atb": null,
-    "trackersWhitelistTemporary-etag": null,
-    "trackersWhitelist-etag": null,
-    "surrogateList-etag": null,
     "httpsWhitelist-etag": null,
     "httpsUpgradeList-etag": null,
     "hasSeenPostInstall": false,
     "extiSent": false,
     "failedUpgrades": 0,
-    "totalUpgrades": 0
+    "totalUpgrades": 0,
+    "tds-etag": null,
+    "surrogates-etag": null,
+    "brokenSiteList-etag": null,
+    "lastTdsUpdate": 0
 }

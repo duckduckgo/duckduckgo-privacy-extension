@@ -93,29 +93,29 @@ class Tab {
 
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
-        let tracker = this.trackers[t.parentCompany]
+        let tracker = this.trackers[t.tracker.owner.name]
         if (tracker) {
             tracker.increment()
             tracker.update(t)
         } else {
             let newTracker = new Tracker(t)
-            this.trackers[t.parentCompany] = newTracker
+            this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
-            if (t.parentCompany !== 'unknown') Companies.countCompanyOnPage(t.parentCompany)
+            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
 
             return newTracker
         }
     };
 
     addOrUpdateTrackersBlocked (t) {
-        let tracker = this.trackersBlocked[t.parentCompany]
+        let tracker = this.trackersBlocked[t.tracker.owner.name]
         if (tracker) {
             tracker.increment()
             tracker.update(t)
         } else {
             let newTracker = new Tracker(t)
-            this.trackersBlocked[t.parentCompany] = newTracker
+            this.trackersBlocked[newTracker.parentCompany.name] = newTracker
             return newTracker
         }
     };
