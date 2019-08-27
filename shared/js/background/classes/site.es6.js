@@ -61,7 +61,13 @@ class Site {
         let hostname = parsedDomain.hostname || domain
 
         // If root domain in temp whitelist, return true
-        return tdsStorage.brokenSiteList.some((brokenSiteDomain) => hostname.match(new RegExp(brokenSiteDomain + '$')))
+        return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+                if (brokenSiteDomain) {
+                    return hostname.match(new RegExp(brokenSiteDomain + '$'))
+                } else {
+                    return false
+                }
+        })
     }
 
     /*
