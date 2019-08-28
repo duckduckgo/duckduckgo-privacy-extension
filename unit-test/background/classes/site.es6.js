@@ -1,14 +1,11 @@
 const Site = require('../../../shared/js/background/classes/site.es6')
 const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6')
-const abpLists = require('../../../shared/js/background/abp-lists.es6')
 
 const EXT_ID = `ogigmfedpbpnnbcpgjloacccaibkaoip`
-const tempWhitelist = ['suntrust.com', 'onlinebanking.nationwide.co.uk', 'accounts.google.com']
 
 describe('Site', () => {
     beforeEach(() => {
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
-        spyOn(abpLists, 'getTemporaryWhitelist').and.returnValue(tempWhitelist)
     })
 
     describe('getSpecialDomain()', () => {
