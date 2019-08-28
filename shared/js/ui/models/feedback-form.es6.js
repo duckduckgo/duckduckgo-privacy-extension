@@ -22,7 +22,7 @@ function FeedbackForm (attrs) {
     this.fetch({ getExtensionVersion: true })
         .then((extensionVersion) => { this.extensionVersion = extensionVersion })
     this.fetch({ getSetting: { name: 'tds-etag' } })
-        .then((etag) => this.tds = etag)
+        .then((etag) => { this.tds = etag })
 }
 
 FeedbackForm.prototype = window.$.extend({},

@@ -3,7 +3,6 @@ const tdsStorage = require('./storage/tds.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
-const load = require('./load.es6')
 
 /* Check to see if a company is related to a domain.
  * @param {string} entity - company name

@@ -102,7 +102,7 @@ class PrivacyPractices {
         // look for tosdr match in list of parent properties
         let parentMatch = ''
         if (parent && parent.domains) {
-            Object.keys(tosdrScores).some((tosdrName)=> {
+            Object.keys(tosdrScores).some((tosdrName) => {
                 const match = parent.domains.find(d => d === tosdrName)
                 if (match) {
                     parentMatch = match
@@ -110,7 +110,7 @@ class PrivacyPractices {
                 }
             })
         }
-                
+
         // grab the first available val
         // starting with most general first
 

@@ -1,6 +1,5 @@
 const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
-const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const httpsMessages = constants.httpsMessages
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
@@ -49,7 +48,6 @@ Site.prototype = window.$.extend({},
                         this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
 
                         this.fetch({getSetting: {name: 'tds-etag'}}).then(etag => this.set('tds', etag))
-
                     } else {
                         console.debug('Site model: no tab')
                     }

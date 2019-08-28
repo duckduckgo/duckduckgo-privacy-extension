@@ -27,7 +27,7 @@ class Tracker {
     update (t) {
         if (!this.urls[t.fullTrackerDomain]) {
             this.urls[t.fullTrackerDomain] = {
-                isBlocked: this.isBlocked(t.action), 
+                isBlocked: this.isBlocked(t.action),
                 reason: t.reason,
                 categories: t.tracker.categories
             }
@@ -35,7 +35,7 @@ class Tracker {
     }
 
     isBlocked (action) {
-        return action.match(/block|redirect/) ? true : false
+        return !!action.match(/block|redirect/)
     }
 }
 
