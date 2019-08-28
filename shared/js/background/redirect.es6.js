@@ -197,7 +197,17 @@ function tryElementHide (requestData, tab) {
     }
 }
 
+/* Check to see if a request came from our current tab. This generally handles the
+ * case of pings that fire on document unload. We can get into a case where we count the
+ * ping to the new site we navigated to. 
+ *
+ * In Firefox we can check the request frameAncestors to see if our current
+ * tab url is one of the ancestors. 
+ * In Chrome we don't have access to a sub_frame ancestors. We can check that a request
+ * is coming from the main_frame and that it matches our current tab url
+ */
 function isSameDomainRequest (tab, req) {
+    // Firefox
     if (req.documentUrl) {
         if (req.frameAncestors && req.frameAncestors.length) {
             const ancestors = req.frameAncestors.reduce((lst, f) => {
@@ -208,6 +218,9 @@ function isSameDomainRequest (tab, req) {
         } else {
             return req.documentUrl === tab.url
         }
+    // Chrome
+    } else if (req.initiator && req.frameId === 0) {
+        return tab.url === `${req.initiator}/`
     } else {
         return true
     }
