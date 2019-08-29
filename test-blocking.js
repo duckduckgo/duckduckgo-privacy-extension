@@ -13,6 +13,7 @@ const headers = ['tracker', 'site', 'action']
 program
     .usage('node test-blocking.js --file [path to csv blocking results to compare]')
     .option('--in [csv]', 'csv file to request to test')
+    .option('--verbose [verbose]', 'Verbose output for incorrect results')
     .parse(process.argv)
 
 if (!program.in) {
@@ -50,7 +51,12 @@ function cmp_blocking (req) {
     const result = trackers.getTrackerData(req.tracker, req.site,{type: 'script'})
     if (result && result.action !== req.action) {
         errors += 1
-        console.log(result)
-        console.log(req)
+
+        if (program.verbose) {
+            console.log(chalk.blue('Tracker algo results'))
+            console.log(result)
+            console.log(chalk.blue('CSV result'))
+            console.log(req)
+        }
     }
 }
