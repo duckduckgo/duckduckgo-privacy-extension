@@ -220,7 +220,7 @@ function isSameDomainRequest (tab, req) {
         }
     // Chrome
     } else if (req.initiator && req.frameId === 0) {
-        return tab.url === `${req.initiator}/`
+        return !!tab.url.match(req.initiator)
     } else {
         return true
     }
