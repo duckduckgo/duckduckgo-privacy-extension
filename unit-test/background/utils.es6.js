@@ -1,6 +1,7 @@
 
 const utils = require('../../shared/js/background/utils.es6')
-const entityList = require('./../data/entityList')
+const tdsStorage = require('../../shared/js/background/storage/tds.es6')
+const tds = require('./../data/tds')
 const load = require('./../helpers/utils.es6.js')
 
 const findParentTestCases = [
@@ -51,37 +52,37 @@ const extractHostFromURLTestCases = [
 
 const isRelatedEntityTestCases = [
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'yahoo.com',
         'result': true
     },
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'https://yahoo.com',
         'result': true
     },
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'abc.com',
         'result': false
     },
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'analytics.yahoo.com',
         'result': true
     },
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'asdf.yahoo.com',
         'result': true
     },
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'yahoo.com.com',
         'result': false
     },
     {
-        'parentCompany': 'Oath',
+        'parentCompany': 'Verizon Media',
         'currLocation': 'yahooocom.com',
         'result': false
     },
@@ -94,8 +95,8 @@ const isRelatedEntityTestCases = [
 
 describe('utils.isRelatedEntity()', () => {
     beforeAll(() => {
-        load.loadStub({entityList: entityList})
-        utils.loadLists()
+        load.loadStub({tds: tds})
+        tdsStorage.getLists()
     })
 
     isRelatedEntityTestCases.forEach(test => {
