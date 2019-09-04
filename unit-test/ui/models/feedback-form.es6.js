@@ -12,7 +12,7 @@ function setup () {
 
     spy.withArgs({ getSetting: { name: 'tds-etag' } })
         .and.returnValue(Promise.resolve('1234asdf'))
-    
+
     spy.withArgs({ getExtensionVersion: true })
         .and.returnValue(Promise.resolve('2018.5.1'))
 

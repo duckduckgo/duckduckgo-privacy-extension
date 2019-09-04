@@ -3,9 +3,10 @@ const utils = require('../../shared/js/background/utils.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tds = require('./../data/tds')
 const load = require('./../helpers/utils.es6.js')
-const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
-const brokenSites = 'google.com\nsuntrust.com'
-const surrogates = ''
+const brokenSites = require('./../data/brokensites').brokenSites
+const surrogates = require('./../data/surrogates').surrogates
+
+const tdsStorageStub = require('../helpers/tds.es6')
 
 const findParentTestCases = [
     {
@@ -56,7 +57,7 @@ const extractHostFromURLTestCases = [
 describe('utils find owner and parent function', () => {
     beforeAll(() => {
         load.loadStub({tds, surrogates, brokenSites})
-        spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
+        tdsStorageStub.stub()
         return tdsStorage.getLists()
     })
 
