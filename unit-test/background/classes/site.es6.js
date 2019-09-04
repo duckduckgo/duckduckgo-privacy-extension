@@ -1,10 +1,15 @@
 const Site = require('../../../shared/js/background/classes/site.es6')
 const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6')
-
+const load = require('./../../helpers/utils.es6')
+const fakeBrokenSites = require('./../../data/brokensites')
+const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const EXT_ID = `ogigmfedpbpnnbcpgjloacccaibkaoip`
 
+tdsStorage.getVersionParam = (() => '123')
+
 describe('Site', () => {
-    beforeEach(() => {
+    beforeAll(() => {
+        load.loadStub({brokenSites: fakeBrokenSites})
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
     })
 
@@ -43,6 +48,7 @@ describe('Site', () => {
     })
 
     describe('checkBrokenSites()', () => {
+
         const tests = [
             { url: 'https://suntrust.com', expected: true },
             { url: 'https://www1.onlinebanking.suntrust.com', expected: true },
@@ -50,11 +56,12 @@ describe('Site', () => {
             { url: 'https://accounts.google.com', expected: true }
         ]
 
-        tests.forEach((test) => {
-            it(`should return "${test.expected}" for: ${test.url}`, () => {
-                const site = new Site(test.url)
-
-                expect(site.isBroken).toEqual(test.expected)
+        tdsStorage.getLists().then(() => {
+            tests.forEach((test) => {
+                it(`should return "${test.expected}" for: ${test.url}`, () => {
+                    const site = new Site(test.url)
+                    expect(site.isBroken).toEqual(test.expected)
+                })
             })
         })
     })

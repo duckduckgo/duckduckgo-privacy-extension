@@ -3,19 +3,22 @@ const utils = require('../../shared/js/background/utils.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tds = require('./../data/tds')
 const load = require('./../helpers/utils.es6.js')
+const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
+const brokenSites = 'google.com\nsuntrust.com'
+const surrogates = ''
 
 const findParentTestCases = [
     {
         'url': 'google.com',
-        'parent': 'Google'
+        'parent': 'Google LLC'
     },
     {
         'url': 'youtube.com',
-        'parent': 'Google'
+        'parent': 'Google LLC'
     },
     {
         'url': 'encrypted.google.com',
-        'parent': 'Google'
+        'parent': 'Google LLC'
     },
     {
         'url': 'duckduckgo.com',
@@ -50,72 +53,23 @@ const extractHostFromURLTestCases = [
     }
 ]
 
-const isRelatedEntityTestCases = [
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'yahoo.com',
-        'result': true
-    },
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'https://yahoo.com',
-        'result': true
-    },
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'abc.com',
-        'result': false
-    },
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'analytics.yahoo.com',
-        'result': true
-    },
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'asdf.yahoo.com',
-        'result': true
-    },
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'yahoo.com.com',
-        'result': false
-    },
-    {
-        'parentCompany': 'Verizon Media',
-        'currLocation': 'yahooocom.com',
-        'result': false
-    },
-    {
-        'parentCompany': '',
-        'currLocation': 'yahoo.com',
-        'result': false
-    }
-]
-
-describe('utils.isRelatedEntity()', () => {
+describe('utils find owner and parent function', () => {
     beforeAll(() => {
-        load.loadStub({tds: tds})
-        tdsStorage.getLists()
+        load.loadStub({tds, surrogates, brokenSites})
+        spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
+        return tdsStorage.getLists()
     })
 
-    isRelatedEntityTestCases.forEach(test => {
-        it(`should return ${test.result} for ${test.parentCompany} and ${test.currLocation}`, () => {
-            let result = utils.isRelatedEntity(test.parentCompany, test.currLocation)
-            expect(result).toEqual(test.result)
-        })
-    })
-})
-
-describe('utils.findParent()', () => {
-    findParentTestCases.forEach((test) => {
-        it(`should return ${test.parent} as a parent for: ${test.url}`, () => {
-            let result = utils.findParent(test.url)
-            if (test.parent === 'undefined') {
-                expect(result).toBe(undefined)
-            } else {
-                expect(result).toEqual(test.parent)
-            }
+    describe('utils.findParent()', () => {
+        findParentTestCases.forEach((test) => {
+            it(`should return ${test.parent} as a parent for: ${test.url}`, () => {
+                let result = utils.findParent(test.url)
+                if (test.parent === 'undefined') {
+                    expect(result).toBe(undefined)
+                } else {
+                    expect(result).toEqual(test.parent)
+                }
+            })
         })
     })
 })
