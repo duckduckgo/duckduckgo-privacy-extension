@@ -48,7 +48,7 @@ fs.createReadStream(program.in)
         }
 
         if (program.trackers) {
-            console.log(chalk.blue('Trackers domains'))
+            console.log(chalk.blue('Tracker domains'))
             console.log(trackerDomains)
         }
 
