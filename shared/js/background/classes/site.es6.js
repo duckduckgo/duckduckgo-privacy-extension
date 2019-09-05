@@ -8,10 +8,9 @@
  */
 const settings = require('../settings.es6')
 const utils = require('../utils.es6')
-const abpLists = require('../abp-lists.es6')
+const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
-const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const browserWrapper = require('../$BROWSER-wrapper.es6')
 const tldjs = require('tldjs')
 
@@ -35,13 +34,14 @@ class Site {
         this.tosdr = privacyPractices.getTosdr(domain)
 
         this.parentEntity = utils.findParent(domain) || ''
-        this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
+        const parent = tdsStorage.tds.entities[this.parentEntity]
+        this.parentPrevalence = parent ? parent.prevalence : 0
 
         if (this.parentEntity && this.parentPrevalence) {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain))
+        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain, parent))
 
         if (this.url.match(/^https:\/\//)) {
             this.grade.setHttps(true, true)
@@ -55,15 +55,17 @@ class Site {
      * check to see if this is a broken site reported on github
     */
     checkBrokenSites (domain) {
-        let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
-
-        if (!trackersWhitelistTemporary) return
+        if (!tdsStorage || !tdsStorage.brokenSiteList) return
 
         let parsedDomain = tldjs.parse(domain)
         let hostname = parsedDomain.hostname || domain
 
         // If root domain in temp whitelist, return true
-        return trackersWhitelistTemporary.some((brokenSiteDomain) => hostname.match(new RegExp(brokenSiteDomain + '$')))
+        return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+            if (brokenSiteDomain) {
+                return hostname.match(new RegExp(brokenSiteDomain + '$'))
+            }
+        })
     }
 
     /*
@@ -92,14 +94,15 @@ class Site {
 
     isWhiteListed () { return this.whitelisted }
 
-    addTracker (tracker) {
-        if (this.trackerUrls.indexOf(tracker.url) === -1) {
-            this.trackerUrls.push(tracker.url)
+    addTracker (t) {
+        if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
+            this.trackerUrls.push(t.tracker.domain)
+            const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
 
-            if (tracker.block) {
-                this.grade.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
+            if (t.action.match(/block|redirect/)) {
+                this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
             } else {
-                this.grade.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
+                this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
             }
         }
     }

@@ -28,6 +28,7 @@ TopBlocked.prototype = window.$.extend({},
                         this.companyListMap = this.companyList.map((company) => {
                             return {
                                 name: company.name,
+                                displayName: company.displayName,
                                 normalizedName: this.normalizeCompanyName(company.name),
                                 percent: company.percent,
                                 // calc graph bars using pixels instead of % to

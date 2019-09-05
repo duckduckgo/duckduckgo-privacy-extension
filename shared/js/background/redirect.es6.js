@@ -1,13 +1,13 @@
-const trackers = require('./trackers.es6')
 const utils = require('./utils.es6')
+const trackers = require('./trackers.es6')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
+const settings = require('./settings.es6')
 
 var debugRequest = false
-utils.loadLists()
 
 /**
  * Where most of the extension work happens.
@@ -67,13 +67,27 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
-        var tracker = trackers.isTracker(requestData.url, thisTab, requestData)
+        var tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+
+        // allow embedded twitter content if user enabled this setting
+        if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
+            tracker = null
+        }
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
-        if (tracker && !(tracker.type === 'trackersWhitelist' && tracker.reason !== 'first party')) {
+        if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
+
+            // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
+            // comes through on document unload and by the time we block it we have updated our tab data to the new 
+            // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the 
+            // request anyway but deciding to show it in the popup or not. If we have a documentUrl, use it, otherwise
+            // just default to true.
+            const sameDomain = isSameDomainRequest(thisTab, requestData)
+
             // only count trackers on pages with 200 response. Trackers on these sites are still
-            // blocked below but not counted toward company stats
-            if (window.safari || thisTab.statusCode === 200) {
+            // blocked below but not counted on the popup. We can also run into a case where
+            // we block a tracker faster then we can update the tab so we check sameDomain.
+            if (thisTab.statusCode === 200 && sameDomain) {
                 // record all tracker urls on a site even if we don't block them
                 thisTab.site.addTracker(tracker)
 
@@ -84,15 +98,16 @@ function handleRequest (requestData) {
             browserWrapper.notifyPopup({'updateTabData': true})
 
             // Block the request if the site is not whitelisted
-            if (!thisTab.site.whitelisted && tracker.block) {
-                thisTab.addOrUpdateTrackersBlocked(tracker)
+            if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
+                
+                if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
 
-                if (tracker.parentCompany !== 'unknown' && thisTab.statusCode === 200) {
-                    Companies.add(tracker.parentCompany)
+                if (thisTab.statusCode === 200) {
+                    Companies.add(tracker.tracker.owner)
                 }
 
                 // for debugging specific requests. see test/tests/debugSite.js
@@ -105,11 +120,11 @@ function handleRequest (requestData) {
 
                 if (!window.safari) {
                     // Initiate hiding of blocked ad DOM elements
-                    trackers.tryElementHide(requestData, thisTab)
+                    tryElementHide(requestData, thisTab)
                 }
 
                 console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
-                             ' [' + tracker.parentCompany + '] ' + requestData.url)
+                             ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
 
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
@@ -163,4 +178,52 @@ function handleRequest (requestData) {
     }
 }
 
+function tryElementHide (requestData, tab) {
+    if (tab.site.parentEntity === 'Verizon Media') {
+        let frameId, messageType
+        
+        if (requestData.type === 'sub_frame') {
+            frameId = requestData.parentFrameId
+            messageType = frameId === 0 ? 'blockedFrame' : 'blockedFrameAsset'
+        } else if (requestData.frameId !== 0 && (requestData.type === 'image' || requestData.type === 'script')) {
+            frameId = requestData.frameId
+            messageType = 'blockedFrameAsset'
+        }
+        
+        chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url}, {frameId: frameId})
+    } else if (!tab.elementHidingDisabled) {
+        chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
+        tab.elementHidingDisabled = true
+    }
+}
+
+/* Check to see if a request came from our current tab. This generally handles the
+ * case of pings that fire on document unload. We can get into a case where we count the
+ * ping to the new site we navigated to. 
+ *
+ * In Firefox we can check the request frameAncestors to see if our current
+ * tab url is one of the ancestors. 
+ * In Chrome we don't have access to a sub_frame ancestors. We can check that a request
+ * is coming from the main_frame and that it matches our current tab url
+ */
+function isSameDomainRequest (tab, req) {
+    // Firefox
+    if (req.documentUrl) {
+        if (req.frameAncestors && req.frameAncestors.length) {
+            const ancestors = req.frameAncestors.reduce((lst, f) => {
+                lst.push(f.url)
+                return lst
+            },[])
+            return ancestors.includes(tab.url)
+        } else {
+            return req.documentUrl === tab.url
+        }
+    // Chrome
+    } else if (req.initiator && req.frameId === 0) {
+        return !!tab.url.match(req.initiator)
+    } else {
+        return true
+    }
+
+}
 exports.handleRequest = handleRequest

@@ -44,6 +44,9 @@
     font-weight: bold;
     line-height: 1.38;
     letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 12px;
 }
 
 .site-info__trackers__company-list__url-list {
