@@ -14,6 +14,7 @@ program
     .usage('node test-blocking.js --file [path to csv blocking results to compare]')
     .option('--in [csv]', 'csv file to request to test')
     .option('--verbose [verbose]', 'Verbose output for incorrect results')
+    .option('--trackers [trackers]', 'Dump tracker count at the end')
     .parse(process.argv)
 
 if (!program.in) {
@@ -32,6 +33,7 @@ trackers.setLists([
 ])
 
 let errors = 0
+let trackerDomains = {}
 
 fs.createReadStream(program.in)
     .pipe(csv({headers}))
@@ -44,13 +46,25 @@ fs.createReadStream(program.in)
         } else {
             console.log('No incorrect blocking tests 👍')
         }
+
+        if (program.trackers) {
+            console.log(chalk.blue('Trackers domains'))
+            console.log(trackerDomains)
+        }
+
         console.log(chalk.green('DONE'))
     })
 
 function cmp_blocking (req) {
     const result = trackers.getTrackerData(req.tracker, req.site,{type: 'script'})
-    if (result && result.action !== req.action) {
-        errors += 1
+    if (result) {
+
+        const trackerDomain = utils.extractHostFromURL(req.tracker);
+        trackerDomains[trackerDomain] = (trackerDomains[trackerDomain] || 0) + 1;
+
+        if (result.action !== req.action) {
+            errors += 1
+        }
 
         if (program.verbose) {
             console.log(chalk.blue('Tracker algo results'))
