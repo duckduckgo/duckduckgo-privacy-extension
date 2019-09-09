@@ -67,17 +67,17 @@ function renderTrackerDetails (model) {
     <h1 title="${c.name}" class="site-info__domain block">${c.displayName}</h1>
     <ol class="default-list site-info__trackers__company-list__url-list" aria-label="Tracker domains for ${c.name}">
         ${c.urlsList.map((url) => {
-            // find first matchign category from our list of allowed display categories
-            let category = ''
-            if (c.urls[url] && c.urls[url].categories) {
-                displayCategories.some(displayCat => {
-                    let match = c.urls[url].categories.find(cat => cat === displayCat)
-                    if (match) {
-                        category = match
-                        return true
-                    }
-                })
-            }
+        // find first matchign category from our list of allowed display categories
+        let category = ''
+        if (c.urls[url] && c.urls[url].categories) {
+            displayCategories.some(displayCat => {
+                let match = c.urls[url].categories.find(cat => cat === displayCat)
+                if (match) {
+                    category = match
+                    return true
+                }
+            })
+        }
         return bel`<li>
                 <div class="url">${url}</div>
                 <div class="category">${category}</div>

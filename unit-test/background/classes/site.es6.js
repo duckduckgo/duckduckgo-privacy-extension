@@ -1,14 +1,18 @@
 const Site = require('../../../shared/js/background/classes/site.es6')
 const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6')
-const abpLists = require('../../../shared/js/background/abp-lists.es6')
+const load = require('./../../helpers/utils.es6')
+const fakeBrokenSites = require('./../../data/brokensites')
+const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const tdsStorageStub = require('./../../helpers/tds.es6')
 
 const EXT_ID = `ogigmfedpbpnnbcpgjloacccaibkaoip`
-const tempWhitelist = ['suntrust.com', 'onlinebanking.nationwide.co.uk', 'accounts.google.com']
 
 describe('Site', () => {
-    beforeEach(() => {
+    beforeAll(() => {
+        load.loadStub({brokenSites: fakeBrokenSites})
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
-        spyOn(abpLists, 'getTemporaryWhitelist').and.returnValue(tempWhitelist)
+        tdsStorageStub.stub()
+        return tdsStorage.getLists()
     })
 
     describe('getSpecialDomain()', () => {
@@ -56,7 +60,6 @@ describe('Site', () => {
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
                 const site = new Site(test.url)
-
                 expect(site.isBroken).toEqual(test.expected)
             })
         })

@@ -20,7 +20,10 @@ class TDSStorage {
             const listCopy = JSON.parse(JSON.stringify(list))
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
             const version = this.getVersionParam()
-            version ? listCopy.url += version : ''
+
+            if (version) {
+                listCopy.url += version
+            }
 
             return this.getDataXHR(listCopy, etag).then(response => {
                 // for 200 response we update etags
@@ -93,9 +96,9 @@ class TDSStorage {
 
     parsedata (name, data) {
         const parsers = {
-            'brokenSiteList': ((data) => {
+            'brokenSiteList': data => {
                 return data.split('\n')
-            })
+            }
         }
 
         if (parsers[name]) {
@@ -112,20 +115,20 @@ class TDSStorage {
         const lastTdsUpdate = settings.getSetting('lastTdsUpdate')
         const now = Date.now()
         let versionParam
-        
+
         // check delta for last update
         if (lastTdsUpdate) {
             const delta = now - new Date(lastTdsUpdate)
-    
+
             if (delta > ONEDAY) {
                 versionParam = `&v=${version}`
             }
         } else {
             versionParam = `&v=${version}`
         }
-        
+
         if (versionParam) settings.updateSetting('lastTdsUpdate', now)
-       
+
         return versionParam
     }
 }

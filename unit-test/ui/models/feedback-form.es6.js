@@ -10,6 +10,9 @@ function setup () {
     spy.withArgs({ getSetting: { name: 'atb' } })
         .and.returnValue(Promise.resolve('v110-1'))
 
+    spy.withArgs({ getSetting: { name: 'tds-etag' } })
+        .and.returnValue(Promise.resolve('1234asdf'))
+
     spy.withArgs({ getExtensionVersion: true })
         .and.returnValue(Promise.resolve('2018.5.1'))
 
