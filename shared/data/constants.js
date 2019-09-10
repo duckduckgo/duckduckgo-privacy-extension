@@ -64,12 +64,12 @@ module.exports = {
         {
             "type": "don\'t upgrade bloom filter",
             "name": "httpsDontUpgradeBloomFilters",
-            "url": "https://ddg-sandbox.s3.amazonaws.com/negative-bloom.json"
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-bloom.json"
         },
         {
             "type": "upgrade safelist",
             "name": "httpsUpgradeList",
-            "url": "https://ddg-sandbox.s3.amazonaws.com/negative-whitelist.json"
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-whitelist.json"
         },
         {
             "type": "don\'t upgrade safelist",
