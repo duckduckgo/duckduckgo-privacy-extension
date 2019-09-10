@@ -1,15 +1,8 @@
 module.exports = {
-    "trackerListLoc": "data/tracker_lists",
-    "blockLists": [
-        "trackersWithParentCompany.json"
-    ],
     "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
-    "blocking": ["Advertising", "Analytics", "Social"],
+    "displayCategories": ["Analytics", "Advertising", "Social Network"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
-    "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
-    "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
-    "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
     "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
@@ -45,6 +38,22 @@ module.exports = {
         "maxcdn": 7,
         "automattic": 7
     },
+    /*
+     * Mapping entity names to CSS class name for popup icons
+     */
+    "entityIconMapping": {
+        "Google LLC": "google",
+        "Facebook, Inc.": "facebook",
+        "Twitter, Inc.": "twitter",
+        "Amazon Technologies, Inc.": "amazon",
+        "AppNexus, Inc.": "appnexus",
+        "MediaMath, Inc.": "mediamath",
+        "StackPath, LLC": "maxcdn",
+        "Automattic, Inc.": "automattic",
+        "Adobe Inc.": "adobe",
+        "Quantcast Corporation": "quantcast",
+        "The Nielsen Company": "nielsen"
+    },
     "httpsDBName": "https",
     "httpsLists": [
         {
@@ -67,6 +76,23 @@ module.exports = {
             "name": "httpsDontUpgradeList",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
         },
+    ],
+    "tdsLists": [
+        {
+            "name": "surrogates",
+            "url": "https://duckduckgo.com/contentblocking.js?l=surrogates",
+            "format": "text"
+        },
+        {
+            "name": "tds",
+            "url": "https://staticcdn.duckduckgo.com/trackerblocking/tds.json",
+            "format": "json"
+        },
+        {
+            "name": "brokenSiteList",
+            "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
+            "format": "text"
+        }
     ],
     "httpsErrorCodes": {
         "net::ERR_CONNECTION_REFUSED": 1,

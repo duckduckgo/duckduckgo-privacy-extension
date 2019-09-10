@@ -1,4 +1,3 @@
-const DOMAIN_MAPPINGS = require('./../../../data/tracker_lists/trackersWithParentCompany.json').TopTrackerDomains
 const Parent = window.DDG.base.Model
 const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
@@ -6,7 +5,6 @@ function SiteCompanyList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
     attrs.companyListMap = []
-    attrs.DOMAIN_MAPPINGS = DOMAIN_MAPPINGS
     Parent.call(this, attrs)
 }
 
@@ -56,6 +54,7 @@ SiteCompanyList.prototype = window.$.extend({},
                     // max width: 300 - (horizontal padding in css) = 260
                     return {
                         name: companyName,
+                        displayName: company.displayName || companyName,
                         normalizedName: this.normalizeCompanyName(companyName),
                         count: this._setCount(company, companyName, urlsList),
                         urls: company.urls,

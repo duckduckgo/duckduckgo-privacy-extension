@@ -1,46 +1,8 @@
 const tldjs = require('tldjs')
-const entityMap = require('../../data/tracker_lists/entityMap')
+const tdsStorage = require('./storage/tds.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
-const load = require('./load.es6')
-
-let entityList = {}
-
-function loadLists () {
-    load.JSONfromExternalFile(constants.entityList).then((response) => { entityList = response.data })
-}
-
-/* Check to see if a company is related to a domain.
- * @param {string} entity - company name
- * @param {string} domain - domain or url
- */
-function isRelatedEntity (entityName, domain) {
-    var parentEntity = entityList[entityName]
-    var host = extractHostFromURL(domain)
-
-    if (parentEntity && parentEntity.properties) {
-    // join parent entities to use as regex and store in parentEntity so we don't have to do this again
-        if (!parentEntity.regexProperties) {
-            let propertyList = parentEntity.properties
-
-            if (parentEntity.resources) {
-                propertyList = propertyList.concat(parentEntity.resources)
-            }
-
-            parentEntity.regexProperties = new RegExp(propertyList.map(e => {
-                // escape regex, add $ to match on end of domains
-                return e.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&').replace(/$/, '$')
-            }).join('|'))
-        }
-
-        if (parentEntity.regexProperties.test(host)) {
-            return true
-        }
-    }
-
-    return false
-}
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -71,8 +33,8 @@ function findParent (url) {
     while (parts.length > 1) {
         const joinURL = parts.join('.')
 
-        if (entityMap[joinURL]) {
-            return entityMap[joinURL]
+        if (tdsStorage.tds.domains[joinURL]) {
+            return tdsStorage.tds.domains[joinURL]
         }
         parts.shift()
     }
@@ -162,7 +124,5 @@ module.exports = {
     getAsyncBlockingSupport: getAsyncBlockingSupport,
     findParent: findParent,
     getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
-    isRelatedEntity: isRelatedEntity,
-    loadLists: loadLists
+    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes
 }

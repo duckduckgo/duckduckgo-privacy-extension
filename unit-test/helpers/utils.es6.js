@@ -2,10 +2,14 @@
 const load = require('../../shared/js/background/load.es6')
 
 const loadStub = (stubData) => {
-    return spyOn(load, 'JSONfromExternalFile').and.callFake((data) => {
-        let response = {getResponseHeader: () => 'fakeEtagValue'}
-        if (data.match('entitylist')) {
-            return Promise.resolve(Object.assign(response, {status: 200, data: stubData.entityList}))
+    return spyOn(load, 'loadExtensionFile').and.callFake((data) => {
+        let response = {getResponseHeader: () => Math.floor(Math.random() * Math.floor(10))}
+        if (data.url.match('tds')) {
+            return Promise.resolve(Object.assign(response, {status: 200, data: stubData.tds}))
+        } else if (data.url.match('surrogates')) {
+            return Promise.resolve(Object.assign(response, {status: 200, data: stubData.surrogates}))
+        } else if (data.url.match('whitelist-temporary')) {
+            return Promise.resolve(Object.assign(response, {status: 200, data: stubData.brokenSitess}))
         } else {
             return Promise.reject(new Error('load error'))
         }

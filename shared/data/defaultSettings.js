@@ -26,5 +26,9 @@ module.exports = {
     "hasSeenPostInstall": false,
     "extiSent": false,
     "failedUpgrades": 0,
-    "totalUpgrades": 0
+    "totalUpgrades": 0,
+    "tds-etag": null,
+    "surrogates-etag": null,
+    "brokenSiteList-etag": null,
+    "lastTdsUpdate": 0
 }
