@@ -40,12 +40,6 @@ function findParent (url) {
     }
 }
 
-function getProtocol (url) {
-    var a = document.createElement('a')
-    a.href = url
-    return a.protocol
-}
-
 function getCurrentURL (callback) {
     chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
         if (tabData.length) {
@@ -106,14 +100,28 @@ function getUpdatedRequestListenerTypes () {
     return requestListenerTypes
 }
 
+// return true if browser allows to handle request async
+function getAsyncBlockingSupport () {
+    const browser = getBrowserName()
+
+    if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
+        return true
+    } else if (browser === 'chrome') {
+        return false
+    }
+
+    console.warn(`Unrecognized browser "${browser}" - async response disallowed`)
+    return false
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
     getCurrentURL: getCurrentURL,
     getCurrentTab: getCurrentTab,
-    getProtocol: getProtocol,
     getBrowserName: getBrowserName,
     getUpgradeToSecureSupport: getUpgradeToSecureSupport,
+    getAsyncBlockingSupport: getAsyncBlockingSupport,
     findParent: findParent,
     getBeaconName: getBeaconName,
     getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes

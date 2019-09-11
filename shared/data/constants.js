@@ -15,6 +15,7 @@ module.exports = {
         "unknown": "Unknown",
         "mixed": "Mixed"
     },
+    "httpsService": "https://duckduckgo.com/smarter_encryption.js",
     "httpsMessages": {
         "secure": "Encrypted Connection",
         "upgraded": "Forced Encryption",
@@ -56,15 +57,25 @@ module.exports = {
     "httpsDBName": "https",
     "httpsLists": [
         {
-            "type": "upgrade list",
-            "name": "httpsUpgradeList",
+            "type": "upgrade bloom filter",
+            "name": "httpsUpgradeBloomFilter",
             "url": "https://staticcdn.duckduckgo.com/https/https-bloom.json"
         },
         {
-            "type": "whitelist",
-            "name": "httpsWhitelist",
+            "type": "don\'t upgrade bloom filter",
+            "name": "httpsDontUpgradeBloomFilters",
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-bloom.json"
+        },
+        {
+            "type": "upgrade safelist",
+            "name": "httpsUpgradeList",
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-whitelist.json"
+        },
+        {
+            "type": "don\'t upgrade safelist",
+            "name": "httpsDontUpgradeList",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
-        }
+        },
     ],
     "tdsLists": [
         {

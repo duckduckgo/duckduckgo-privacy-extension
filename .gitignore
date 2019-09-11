@@ -12,4 +12,5 @@ public/css/*.*
 build/firefox
 build/chrome
 build/safari
+build/test
 test/background.js

@@ -19,8 +19,17 @@
         "www.banche.roma.it",
         "www.carteblanchedesignmc.com"
     ],
-    "shouldNotUpgrade" : [
-        "www.en.wikipedia.org",
+    "shouldNotUpgrade": [
+        "example.com",
+        "www.staggeringbeauty.com",
+        "eelslap.com",
+        "www.espn.com",
+        "www.sohu.com",
+        "www.xinhuanet.com",
+        "www.news.cn",
+        "www.tianya.cn"
+    ],
+    "notInBloomFilters" : [
         "www.youtube.com",
         "www.facebook.com",
         "www.stackoverflow.com",

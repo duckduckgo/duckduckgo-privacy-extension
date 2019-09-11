@@ -58,6 +58,12 @@ let setUninstallURL = (url) => {
     chrome.runtime.setUninstallURL(url)
 }
 
+const changeTabURL = (tabId, url) => {
+    return new Promise((resolve) => {
+        chrome.tabs.update(tabId, {url}, resolve)
+    })
+}
+
 module.exports = {
     getExtensionURL: getExtensionURL,
     getExtensionVersion: getExtensionVersion,
@@ -69,5 +75,6 @@ module.exports = {
     mergeSavedSettings: mergeSavedSettings,
     getDDGTabUrls: getDDGTabUrls,
     setUninstallURL: setUninstallURL,
-    getExtensionId: getExtensionId
+    getExtensionId: getExtensionId,
+    changeTabURL
 }

@@ -9,6 +9,24 @@ const settings = require('./settings.es6')
 
 var debugRequest = false
 
+function buildResponse (url, requestData, tab, isMainFrame) {
+    if (url.toLowerCase() !== requestData.url.toLowerCase()) {
+        console.log('HTTPS: upgrade request url to ' + url)
+        tab.httpsRedirects.registerRedirect(requestData)
+
+        if (isMainFrame) {
+            tab.upgradedHttps = true
+        }
+        if (utils.getUpgradeToSecureSupport()) {
+            return {upgradeToSecure: true}
+        } else {
+            return {redirectUrl: url}
+        }
+    } else if (isMainFrame) {
+        tab.upgradedHttps = false
+    }
+}
+
 /**
  * Where most of the extension work happens.
  *
@@ -155,24 +173,23 @@ function handleRequest (requestData) {
 
     // Is this request from the tab's main frame?
     const isMainFrame = requestData.type === 'main_frame'
+    const isPost = requestData.method === 'POST'
+
+    // Skip https upgrade if host failed before or if we detect redirect loop
+    if (!thisTab.httpsRedirects.canRedirect(requestData)) {
+        if (isMainFrame) {
+            thisTab.upgradedHttps = false
+        }
+        return
+    }
 
     // Fetch upgrade rule from https module:
-    const url = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame)
-    if (url.toLowerCase() !== requestData.url.toLowerCase() &&
-            thisTab.httpsRedirects.canRedirect(requestData)) {
-        console.log('HTTPS: upgrade request url to ' + url)
-        thisTab.httpsRedirects.registerRedirect(requestData)
+    const resultUrl = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame, isPost)
 
-        if (isMainFrame) {
-            thisTab.upgradedHttps = true
-        }
-        if (utils.getUpgradeToSecureSupport()) {
-            return {upgradeToSecure: true}
-        } else {
-            return {redirectUrl: url}
-        }
-    } else if (isMainFrame) {
-        thisTab.upgradedHttps = false
+    if (resultUrl instanceof Promise) {
+        return resultUrl.then(url => buildResponse(url, requestData, thisTab, isMainFrame))
+    } else {
+        return buildResponse(resultUrl, requestData, thisTab, isMainFrame)
     }
 }
 

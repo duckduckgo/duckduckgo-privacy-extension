@@ -197,6 +197,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 
 const httpsStorage = require('./storage/https.es6')
+const httpsService = require('./https-service.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 
@@ -206,6 +207,8 @@ chrome.alarms.create('updateHTTPSLists', {periodInMinutes: 12 * 60})
 chrome.alarms.create('updateLists', {periodInMinutes: 30})
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
+// remove expired HTTPS service entries
+chrome.alarms.create('clearExpiredHTTPSServiceCache', {periodInMinutes: 60})
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
@@ -224,6 +227,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
+    } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
+        httpsService.clearExpiredCache()
     }
 })
 
