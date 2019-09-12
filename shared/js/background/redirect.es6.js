@@ -80,6 +80,11 @@ function handleRequest (requestData) {
             return
         }
 
+        // skip blocking on new tab and extension pages
+        if (thisTab.site.specialDomainName) {
+            return
+        }
+
         /**
          * Tracker blocking
          * If request is a tracker, cancel the request
