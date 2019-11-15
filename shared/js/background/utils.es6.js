@@ -7,8 +7,15 @@ const browserInfo = parseUserAgentString()
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
 
-    let urlObj = tldjs.parse(url)
+    const urlObj = tldjs.parse(url)
     let hostname = urlObj.hostname || ''
+
+    if (!hostname) {
+        // if tldjs fails to extract the hostname, try falling back to native URL as it supports IPv6
+        try {
+            hostname = (new URL(url)).hostname
+        } catch (e) {}
+    }
 
     if (!shouldKeepWWW) {
         hostname = hostname.replace(/^www\./, '')
