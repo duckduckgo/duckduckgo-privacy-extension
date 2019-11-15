@@ -5,6 +5,7 @@ const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
+const ip = require('ip')
 
 class HTTPS {
     constructor () {
@@ -60,6 +61,20 @@ class HTTPS {
     }
 
     /**
+     * Checks if provided hostname is local (e.g. ::1) or a private (e.g. 192.168.1.1)
+     * @param {string} host
+     * @returns {boolean} 
+     */
+    isLocalOrPrivate (host) {
+        // if it looks like IP v6 remove [ and ] that wrap it ("[::1]" -> "::1") for ip library to work
+        if (host.startsWith('[') && host.endsWith(']')) {
+            host = host.slice(1, -1)
+        }
+
+        return host === 'localhost' || ip.isPrivate(host)
+    }
+
+    /**
      * @param {string} host
      * @returns {Boolean|Promise<Boolean>} returns true if host can be upgraded, false if it shouldn't be upgraded and a promise if we don't know yet and we are checking against a remote service
      */
@@ -67,6 +82,11 @@ class HTTPS {
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
             return null
+        }
+
+        if (this.isLocalOrPrivate(host)) {
+            console.warn('HTTPS: Private IP or localhost - host is not upgradable', host)
+            return false
         }
 
         if (this.dontUpgradeList.includes(host)) {
