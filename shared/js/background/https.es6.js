@@ -63,7 +63,7 @@ class HTTPS {
     /**
      * Checks if provided hostname is local (e.g. ::1) or a private (e.g. 192.168.1.1)
      * @param {string} host
-     * @returns {boolean} 
+     * @returns {boolean}
      */
     isLocalOrPrivate (host) {
         // if it looks like IP v6 remove [ and ] that wrap it ("[::1]" -> "::1") for ip library to work
