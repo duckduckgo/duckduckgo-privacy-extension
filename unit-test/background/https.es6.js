@@ -38,6 +38,12 @@ describe('Https upgrades', () => {
             })
         })
 
+        it('should not upgrade any private or local IPs', () => {
+            testDomains.privateHostnames.forEach(domain => {
+                expect(https.canUpgradeHost(domain)).toEqual(false)
+            })
+        })
+
         it('should not upgrade domains found in the negative bloom filter', () => {
             testDomains.shouldNotUpgrade.forEach(domain => {
                 expect(https.canUpgradeHost(domain)).toEqual(false)
