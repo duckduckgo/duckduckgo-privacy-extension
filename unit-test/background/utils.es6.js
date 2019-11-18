@@ -59,8 +59,8 @@ const extractHostFromURLTestCases = [
     },
     {
         'url': 'https://[::1]/test',
-        'result': '[::1]',
-        'resultWithWWW': '[::1]'
+        'result': '::1',
+        'resultWithWWW': '::1'
     }
 ]
 
