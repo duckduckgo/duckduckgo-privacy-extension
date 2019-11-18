@@ -1,4 +1,4 @@
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
@@ -10,7 +10,7 @@ class PrivacyPractices {
     constructor () {
         Object.keys(tosdr).forEach((site) => {
             // only match domains, and from the start of the URL
-            tosdrRegexList.push(new RegExp(`(^)${tldjs.getDomain(site)}`))
+            tosdrRegexList.push(new RegExp(`(^)${tldts.getDomain(site)}`))
 
             // generate scores for the privacy grade
             const tosdrClass = tosdr[site].class
@@ -47,7 +47,7 @@ class PrivacyPractices {
     }
 
     getTosdr (url) {
-        let domain = tldjs.getDomain(url)
+        let domain = tldts.getDomain(url)
         let tosdrData
 
         tosdrRegexList.some(tosdrSite => {
@@ -97,7 +97,7 @@ class PrivacyPractices {
     }
 
     getTosdrScore (hostname, parent) {
-        const domain = tldjs.getDomain(hostname)
+        const domain = tldts.getDomain(hostname)
 
         // look for tosdr match in list of parent properties
         let parentMatch = ''

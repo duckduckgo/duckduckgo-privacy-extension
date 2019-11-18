@@ -12,7 +12,7 @@ const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../$BROWSER-wrapper.es6')
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 
 class Site {
     constructor (url) {
@@ -57,7 +57,7 @@ class Site {
     checkBrokenSites (domain) {
         if (!tdsStorage || !tdsStorage.brokenSiteList) return
 
-        let parsedDomain = tldjs.parse(domain)
+        const parsedDomain = tldts.parse(domain)
         let hostname = parsedDomain.hostname || domain
 
         // If root domain in temp whitelist, return true
