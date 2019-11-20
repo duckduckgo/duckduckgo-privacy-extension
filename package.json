@@ -69,7 +69,6 @@
     "dexie": "2.0.4",
     "eventemitter2": "4.1.0",
     "file-url": "2.0.2",
-    "ip": "^1.1.5",
     "is-plain-object": "2.0.1",
     "jquery": "3.4.1",
     "jsbloom": "git://github.com/duckduckgo/jsbloom.git#1.0.2",
