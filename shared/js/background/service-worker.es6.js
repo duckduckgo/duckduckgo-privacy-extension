@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2016, 2019 DuckDuckGo, Inc.
+ * Copyright (C) 2019 DuckDuckGo, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,16 +20,4 @@
 const events = require('./$BROWSER-events.es6')
 const settings = require('./settings.es6')
 
-settings.ready().then(() => {
-    // clearing last search on browser startup
-    settings.updateSetting('last_search', '')
-
-    var os = 'o'
-    if (globalThis.navigator.userAgent.indexOf('Windows') !== -1) os = 'w'
-    if (globalThis.navigator.userAgent.indexOf('Mac') !== -1) os = 'm'
-    if (globalThis.navigator.userAgent.indexOf('Linux') !== -1) os = 'l'
-
-    globalThis.localStorage = {os}
-
-    events.onStartup()
-})
+settings.ready().then(() => events.onStartup())

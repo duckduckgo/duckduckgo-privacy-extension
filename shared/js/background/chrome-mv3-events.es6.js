@@ -43,7 +43,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 
         if (/^https?:\/\/(.*?\.)?duckduckgo.com\/\?/.test(request.url)) {
             // returns a promise
-            return ATB.updateSetAtb(request)
+            return ATB.updateSetAtb()
         }
     },
     {

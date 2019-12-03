@@ -3,6 +3,11 @@ module.exports = (uaString) => {
 
     let browser
     let version
+    let os = 'o'
+
+    if (uaString.indexOf('Windows') !== -1) os = 'w'
+    if (uaString.indexOf('Mac') !== -1) os = 'm'
+    if (uaString.indexOf('Linux') !== -1) os = 'l'
 
     try {
         const parsedUaParts = uaString.match(/(Firefox|Chrome|Safari)\/([0-9]+)/)
@@ -20,6 +25,7 @@ module.exports = (uaString) => {
     }
 
     return {
+        os: os,
         browser: browser,
         version: version
     }
