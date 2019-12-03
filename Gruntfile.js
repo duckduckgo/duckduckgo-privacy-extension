@@ -1,10 +1,10 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     const through = require('through2')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
 
-    var values = require('object.values');
+    var values = require('object.values')
 
     if (!Object.values) {
         values.shim()
@@ -65,7 +65,7 @@ module.exports = function(grunt) {
     let karmaOps = {
         configFile: 'karma.conf.js',
         basePath: 'build/test/',
-        files: ['background.js','ui.js','shared-utils.js']
+        files: ['background.js', 'ui.js', 'shared-utils.js']
     }
 
     // override some options to allow the devs
@@ -113,12 +113,11 @@ module.exports = function(grunt) {
                 transform: [
                     ['babelify'],
                     [(file) => {
-                        return through( function(buf, enc, next) {
+                        return through(function (buf, enc, next) {
                             let requireName = browser
-                            if(browser === 'duckduckgo.safariextension') {
+                            if (browser === 'duckduckgo.safariextension') {
                                 requireName = 'safari'
-                            }
-                            else if (browser === 'firefox') {
+                            } else if (browser === 'firefox') {
                                 requireName = 'chrome'
                             }
                             this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
@@ -157,15 +156,15 @@ module.exports = function(grunt) {
                 src: ['scripts/buildEntityMap.js']
             },
             tosdr: {
-                src: []//'scripts/tosdr.js']
+                src: []// 'scripts/tosdr.js']
             }
         },
 
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`, 
-            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`, 
+            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
+            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
             mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
         },
 
@@ -175,7 +174,7 @@ module.exports = function(grunt) {
                 tasks: ['sass']
             },
             ui: {
-                files: watch.ui, 
+                files: watch.ui,
                 tasks: ['browserify:ui', 'watchSafari']
 
             },
@@ -198,20 +197,20 @@ module.exports = function(grunt) {
 
     // sets up safari directory structure so that it can be loaded in extension builder
     // duckduckgo.safariextension -> build type -> duckduckgo.safariextension -> build files
-    grunt.registerTask('safari', 'Move Safari build', (() => {
+    grunt.registerTask('safari', 'Move Safari build', () => {
         if (browser === 'duckduckgo.safariextension') {
-            console.log("Moving Safari build")
+            console.log('Moving Safari build')
             grunt.task.run('exec:tmpSafari')
             grunt.task.run('exec:mvSafari')
         }
-    }))
+    })
 
     // moves generated files from watch into the correct build directory
-    grunt.registerTask('watchSafari', 'Moves Safari files after watch', (() => {
+    grunt.registerTask('watchSafari', 'Moves Safari files after watch', () => {
         if (browser === 'duckduckgo.safariextension') {
             grunt.task.run('exec:mvWatchSafari')
         }
-    }))
+    })
 
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
 
@@ -219,6 +218,6 @@ module.exports = function(grunt) {
     if (grunt.option('watch')) { devTasks.push('watch') }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)
-    grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
+    grunt.registerTask('test', 'Build and run tests', ['browserify:unitTest', 'karma'])
     grunt.registerTask('default', 'build')
 }
