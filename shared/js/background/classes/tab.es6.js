@@ -77,7 +77,7 @@ class Tab {
             let badgeData = {path: gradeIcon, tabId: this.id}
             if (target) badgeData.target = target
 
-            browserWrapper.setBadgeIcon(badgeData)
+            browserWrapper.setBadgeIcon(badgeData, grade.site.grade)
         }
     }
 

@@ -43,7 +43,6 @@ function loadExtensionFile (params) {
     }
 
     //TODO params.timeout || 30000
-    //TODO XML parsing?
 
     return fetch(url, {
         method: 'GET',
@@ -62,18 +61,16 @@ function loadExtensionFile (params) {
                             data
                         }
                     })
-            } else if (params.returnType === 'xml' || params.returnType === 'text') {
-                return response.text()
-                    .then(data => {
-                        return {
-                            status,
-                            etag,
-                            data
-                        }
-                    })
-            } else {
-                throw new Error(`Unknown returnType (${params.returnType}})`)
             }
+
+            return response.text()
+                .then(data => {
+                    return {
+                        status,
+                        etag,
+                        data
+                    }
+                })
         } else if (status === 304) {
             console.log(`${url} returned 304, resource not changed`)
             return {

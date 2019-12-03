@@ -32,8 +32,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     {
         urls: ['<all_urls>'],
         types: requestListenerTypes
-    },
-    ['blocking']
+    }
 )
 
 chrome.webRequest.onHeadersReceived.addListener(
