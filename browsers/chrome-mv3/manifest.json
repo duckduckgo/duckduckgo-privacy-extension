@@ -19,7 +19,7 @@
     "omnibox": {"keyword": "ddg"},
     "options_page": "html/options.html",
     "background": {
-        "service_worker": "v3-background.js"
+        "service_worker": "service-worker.js"
     },
     "chrome_settings_overrides": {
       "search_provider": {

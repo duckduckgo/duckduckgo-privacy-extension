@@ -6,20 +6,19 @@ module.exports = function(grunt) {
 
     var values = require('object.values');
 
-    if(!Object.values) {
+    if (!Object.values) {
         values.shim()
     }
 
     let browser = grunt.option('browser')
     let buildType = grunt.option('type')
 
-    if(!(browser && buildType)) {
-        console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
+    if (!(browser && buildType)) {
+        console.error('Missing browser or  build type: --browser=<browser-name> --type=<dev,release>')
         process.exit(1)
     }
 
     let buildPath = `build/${browser}/${buildType}`
-
 
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
@@ -31,7 +30,8 @@ module.exports = function(grunt) {
             '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js']
         },
         background: {
-            '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
+            '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js'],
+            '<%= dirs.root %>/service-worker.js': ['<%= dirs.src.js %>/background/service-worker.es6.js']
         },
         backgroundTest: {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
@@ -58,8 +58,8 @@ module.exports = function(grunt) {
     /* watch any base files and browser specific files */
     let watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
-        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js','<%= dirs.data %>/*.js'],
-        background: ['<%= dirs.src.js %>/background/**/*.js','<%= dirs.data %>/*.js']
+        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
+        background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js']
     }
 
     let karmaOps = {
@@ -91,6 +91,7 @@ module.exports = function(grunt) {
                 templates: 'shared/templates'
             },
             data: 'shared/data',
+            root: buildPath,
             public: {
                 js: `${buildPath}/public/js`,
                 css: `${buildPath}/public/css`
