@@ -51,6 +51,16 @@ const extractHostFromURLTestCases = [
         'url': 'https://www.amazon.co.uk',
         'result': 'amazon.co.uk',
         'resultWithWWW': 'www.amazon.co.uk'
+    },
+    {
+        'url': 'https://127.0.0.1/test',
+        'result': '127.0.0.1',
+        'resultWithWWW': '127.0.0.1'
+    },
+    {
+        'url': 'https://[::1]/test',
+        'result': '::1',
+        'resultWithWWW': '::1'
     }
 ]
 

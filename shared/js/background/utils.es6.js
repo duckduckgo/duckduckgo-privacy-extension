@@ -1,4 +1,4 @@
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
@@ -7,7 +7,7 @@ const browserInfo = parseUserAgentString()
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
 
-    let urlObj = tldjs.parse(url)
+    const urlObj = tldts.parse(url)
     let hostname = urlObj.hostname || ''
 
     if (!shouldKeepWWW) {

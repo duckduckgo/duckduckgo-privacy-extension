@@ -43,7 +43,7 @@ class Surrogates {
     }
 
     /****
-     * Takes a full url, along with a tldjs parsed url object, and the full
+     * Takes a full url, along with a tldts parsed url object, and the full
      * parsed list of rules, returning surrogate content if there is some available
      * for the given url.
      */

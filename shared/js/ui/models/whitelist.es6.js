@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.Model
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 
 function Whitelist (attrs) {
     attrs.list = {}
@@ -47,8 +47,8 @@ Whitelist.prototype = window.$.extend({},
             // and whitelisting won't work for that site
             url = url ? url.replace('www.', '') : ''
             const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null
-            const subDomain = tldjs.getSubdomain(url)
-            const domain = tldjs.getDomain(url) || localDomain
+            const subDomain = tldts.getSubdomain(url)
+            const domain = tldts.getDomain(url) || localDomain
             if (domain) {
                 const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
                 console.log(`whitelist: add ${domainToWhitelist}`)

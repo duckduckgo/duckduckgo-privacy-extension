@@ -27,7 +27,8 @@
         "www.sohu.com",
         "www.xinhuanet.com",
         "www.news.cn",
-        "www.tianya.cn"
+        "www.tianya.cn",
+        "1.1.1.1"
     ],
     "notInBloomFilters" : [
         "www.youtube.com",
@@ -47,5 +48,19 @@
         "nerdvana-games.com",
         "banche.roma.it",
         "carteblanchedesignmc.com"
+    ],
+    "shouldNotUpgradePrivate" : [
+        "localhost",
+        "test.localhost",
+        "local.test",
+        "sub.test.example",
+        "http://full.url.invalid/website",
+        "127.0.0.1",
+        "192.168.0.1",
+        "10.0.0.1",
+        "169.254.1.1",
+        "172.31.255.255",
+        "[::1]",
+        "[fd7b:d40d:c3f5:4cfd::]"
     ]
 }

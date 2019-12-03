@@ -5,6 +5,9 @@ const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
+const tldts = require('tldts')
+// as defined in https://tools.ietf.org/html/rfc6761
+const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
 
 class HTTPS {
     constructor () {
@@ -60,10 +63,28 @@ class HTTPS {
     }
 
     /**
-     * @param {string} host
+     * @param {string} url either domain (example.com) or a full URL (http://example.com/about)
      * @returns {Boolean|Promise<Boolean>} returns true if host can be upgraded, false if it shouldn't be upgraded and a promise if we don't know yet and we are checking against a remote service
      */
-    canUpgradeHost (host) {
+    canUpgradeUrl (url) {
+        const parsedUrl = tldts.parse(url)
+        const host = parsedUrl.hostname
+
+        if (!host) {
+            console.warn('HTTPS: Error parsing out hostname', url)
+            return false
+        }
+
+        if (parsedUrl.isIp) {
+            console.warn('HTTPS: hostname is an IP - host is not upgradable', host)
+            return false
+        }
+
+        if (host === 'localhost' || PRIVATE_TLDS.includes(parsedUrl.publicSuffix)) {
+            console.warn('HTTPS: localhost or local TLD - host is not upgradable', host)
+            return false
+        }
+
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
             return null
@@ -148,15 +169,7 @@ class HTTPS {
             return reqUrl
         }
 
-        // Determine host without stripping 'www'
-        const host = utils.extractHostFromURL(reqUrl, true) || ''
-
-        if (!host) {
-            console.warn(`HTTPS: Error parsing out hostname - ${reqUrl}`)
-            return reqUrl
-        }
-
-        const isUpgradable = this.canUpgradeHost(host)
+        const isUpgradable = this.canUpgradeUrl(reqUrl)
 
         // request is not upgradable or extension is not ready yet
         if (isUpgradable === false || isUpgradable === null) {

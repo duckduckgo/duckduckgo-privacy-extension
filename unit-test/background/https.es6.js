@@ -34,25 +34,31 @@ describe('Https upgrades', () => {
 
         it('should upgrade domains found in the positive bloom filter', () => {
             testDomains.shouldUpgrade.forEach(domain => {
-                expect(https.canUpgradeHost(domain)).toEqual(true)
+                expect(https.canUpgradeUrl(domain)).toEqual(true)
+            })
+        })
+
+        it('should not upgrade any local or private URLs', () => {
+            testDomains.shouldNotUpgradePrivate.forEach(domain => {
+                expect(https.canUpgradeUrl(domain)).toEqual(false)
             })
         })
 
         it('should not upgrade domains found in the negative bloom filter', () => {
             testDomains.shouldNotUpgrade.forEach(domain => {
-                expect(https.canUpgradeHost(domain)).toEqual(false)
+                expect(https.canUpgradeUrl(domain)).toEqual(false)
             })
         })
 
         it('should not upgrade domains on the "don\'t upgrade" safelist', () => {
             https.dontUpgradeList.forEach(domain => {
-                expect(https.canUpgradeHost(domain)).toEqual(false)
+                expect(https.canUpgradeUrl(domain)).toEqual(false)
             })
         })
 
         it('should upgrade domains on the "upgrade" safelist', () => {
             https.upgradeList.forEach(domain => {
-                expect(https.canUpgradeHost(domain)).toEqual(true)
+                expect(https.canUpgradeUrl(domain)).toEqual(true)
             })
         })
 
@@ -68,7 +74,7 @@ describe('Https upgrades', () => {
             const requests = []
 
             testDomains.notInBloomFilters.forEach(domain => {
-                const result = https.canUpgradeHost(domain)
+                const result = https.canUpgradeUrl(domain)
                 expect(result instanceof Promise).toBe(true)
                 requests.push(result)
             })
@@ -77,7 +83,7 @@ describe('Https upgrades', () => {
             return Promise.all(requests)
                 .then(() => {
                     testDomains.notInBloomFilters.forEach(domain => {
-                        expect(https.canUpgradeHost(domain)).toEqual(false)
+                        expect(https.canUpgradeUrl(domain)).toEqual(false)
                     })
 
                     expect(spy.calls.count()).toEqual(testDomains.notInBloomFilters.length)
