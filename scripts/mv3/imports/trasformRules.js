@@ -1,4 +1,4 @@
-const SURROGATES_FOLDER = 'surrogates/'
+const SURROGATES_FOLDER = '/surrogates/'
 const mv3ResourceTypes = ['main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'font', 'object', 'xmlhttprequest', 'ping', 'csp_report', 'media', 'websocket', 'other']
 
 function transformRegex (regex) {
@@ -36,6 +36,8 @@ function transformResourceRule (inputRule, id) {
     }
 
     if (inputRule.surrogate) {
+        // for redirect rules priority is required - surrogates should have a higher priority than HTTPS upgrade rules
+        rule.priority = 2
         rule.action.type = 'redirect'
         rule.action.redirect = {
             extensionPath: SURROGATES_FOLDER + inputRule.surrogate
@@ -166,6 +168,7 @@ function transform (tds) {
  * @property {Number} id
  * @property {MV3Action} action
  * @property {MV3Condition} condition
+ * @property {Number=} priority
  */
 
 /**

@@ -189,10 +189,11 @@ describe('transform TDS into MV3 rules', () => {
         expect(result.stats.surrogates).toEqual(1)
         expect(result.rules).toEqual([{
             id: 1,
+            priority: 2,
             action: {
                 type: 'redirect',
                 redirect: {
-                    extensionPath: 'surrogates/tracker-tracker.js'
+                    extensionPath: '/surrogates/tracker-tracker.js'
                 }
             },
             condition: {
