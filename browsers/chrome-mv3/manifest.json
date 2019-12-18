@@ -1,72 +1,82 @@
 {
-    "name": "__MSG_appName__",
-    "description": "__MSG_appDesc__",
-    "default_locale": "en",
-    "version": "2019.9.12",
-    "icons": {
-        "16": "img/icon_16.png",
-        "48": "img/icon_48.png",
-        "128": "img/icon_128.png"
+  "name": "__MSG_appName__",
+  "description": "__MSG_appDesc__",
+  "default_locale": "en",
+  "version": "2019.9.12",
+  "icons": {
+    "16": "img/icon_16.png",
+    "48": "img/icon_48.png",
+    "128": "img/icon_128.png"
+  },
+  "manifest_version": 3,
+  "browser_action": {
+    "default_icon": {
+      "19": "img/icon_19.png",
+      "38": "img/icon_38.png"
     },
-    "manifest_version": 3,
-    "browser_action": {
-        "default_icon": {
-            "19": "img/icon_19.png",
-            "38": "img/icon_38.png"
-        },
-        "default_popup": "html/popup.html"
+    "default_popup": "html/popup.html"
+  },
+  "omnibox": {
+    "keyword": "ddg"
+  },
+  "options_page": "html/options.html",
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "chrome_settings_overrides": {
+    "search_provider": {
+      "encoding": "UTF-8",
+      "favicon_url": "https://duckduckgo.com/favicon.ico",
+      "is_default": true,
+      "keyword": "duckduckgo.com",
+      "name": "DuckDuckGo",
+      "prepopulated_id": 92,
+      "search_url": "https://duckduckgo.com/?q={searchTerms}",
+      "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "all_frames": true,
+      "css": [
+        "public/css/noatb.css"
+      ],
+      "run_at": "document_start"
     },
-    "omnibox": {"keyword": "ddg"},
-    "options_page": "html/options.html",
-    "background": {
-        "service_worker": "service-worker.js"
-    },
-    "chrome_settings_overrides": {
-      "search_provider": {
-        "encoding": "UTF-8",
-        "favicon_url": "https://duckduckgo.com/favicon.ico",
-        "is_default": true,
-        "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo",
-        "prepopulated_id": 92,
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
-        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
-      }
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "all_frames": true,
-        "css": ["public/css/noatb.css"],
-        "run_at": "document_start"
-      },
-      {
-        "js": [
-          "public/js/content-scripts/element-hiding.js"
-        ],
-        "matches": [
-          "http://*/*",
-          "https://*/*"
-        ],
-        "match_about_blank": true,
-        "all_frames": true,
-        "run_at": "document_start"
-      }
-    ],
-    "permissions": [
-        "contextMenus",
-        "webRequest",
-        "webNavigation",
-        "activeTab",
-        "tabs",
-        "cookies",
-        "storage",
-        "alarms"
-    ],
-    "host_permissions": [
-      "<all_urls>"
-    ],
-    "web_accessible_resources": [
-        "img/*"
-    ]
+    {
+      "js": [
+        "public/js/content-scripts/element-hiding.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "match_about_blank": true,
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ],
+  "declarative_net_request": {
+    "rule_resources" : ["./data/tracker_lists/rules.json"]
+  },
+  "permissions": [
+    "contextMenus",
+    "webRequest",
+    "declarativeNetRequest",
+    "webNavigation",
+    "activeTab",
+    "tabs",
+    "cookies",
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    "img/*"
+  ]
 }
