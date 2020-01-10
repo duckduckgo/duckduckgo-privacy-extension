@@ -1,4 +1,4 @@
-const SURROGATES_FOLDER = '/surrogates/'
+const SURROGATES_FOLDER = '/data/tracker_lists/surrogates/'
 const mv3ResourceTypes = ['main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'font', 'object', 'xmlhttprequest', 'ping', 'csp_report', 'media', 'websocket', 'other']
 
 function transformRegex (regex) {
@@ -24,6 +24,8 @@ function transformResourceRule (inputRule, id) {
     /** @type {MV3Rule} */
     const rule = {
         id,
+        // block rules should have a higher priority than HTTPS upgrade rules
+        priority: 2,
         condition: {
             urlFilter: `||${transformRegex(inputRule.rule)}`,
             isUrlFilterCaseSensitive: false,
@@ -31,17 +33,24 @@ function transformResourceRule (inputRule, id) {
             domainType: 'thirdParty'
         },
         action: {
-            type: inputRule.action === 'ignore' ? 'allow' : 'block'
+            type: 'block'
         }
     }
 
     if (inputRule.surrogate) {
-        // for redirect rules priority is required - surrogates should have a higher priority than HTTPS upgrade rules
-        rule.priority = 2
+        // surrogates should have a higher priority than block rules
+        rule.priority = 3
         rule.action.type = 'redirect'
         rule.action.redirect = {
             extensionPath: SURROGATES_FOLDER + inputRule.surrogate
         }
+    }
+
+    if (inputRule.action === 'ignore') {
+        // ignore rules should have higher priority than surrogates and block rules
+        // TODO but should not have higher priority than https upgrades
+        rule.priority = 4
+        rule.action.type = 'allow'
     }
 
     if (inputRule.exceptions) {
@@ -82,6 +91,7 @@ function transform (tds) {
             /** @type {MV3Rule} */
             const rule = {
                 id: ruleId++,
+                priority: 2,
                 condition: {
                     urlFilter: `||${tracker.domain}`,
                     isUrlFilterCaseSensitive: false,
@@ -168,7 +178,7 @@ function transform (tds) {
  * @property {Number} id
  * @property {MV3Action} action
  * @property {MV3Condition} condition
- * @property {Number=} priority
+ * @property {Number} priority
  */
 
 /**

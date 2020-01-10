@@ -30,6 +30,7 @@ describe('transform TDS into MV3 rules', () => {
         expect(result.rules.length).toEqual(1)
         expect(result.rules).toEqual([{
             id: 1,
+            priority: 2,
             action: {type: 'block'},
             condition: {
                 urlFilter: '||tracker.com',
@@ -66,6 +67,7 @@ describe('transform TDS into MV3 rules', () => {
         expect(result.stats.blockRules).toEqual(1)
         expect(result.rules).toEqual([{
             id: 1,
+            priority: 2,
             action: {type: 'block'},
             condition: {
                 urlFilter: '||tracker.com',
@@ -109,6 +111,7 @@ describe('transform TDS into MV3 rules', () => {
         expect(result.stats.ignoreRules).toEqual(1)
         expect(result.rules).toEqual([{
             id: 1,
+            priority: 2,
             action: {type: 'block'},
             condition: {
                 urlFilter: '||tracker.com',
@@ -118,6 +121,7 @@ describe('transform TDS into MV3 rules', () => {
             }
         }, {
             id: 2,
+            priority: 4,
             action: {type: 'allow'},
             condition: {
                 urlFilter: '||tracker.com/picture.jpg',
@@ -153,6 +157,7 @@ describe('transform TDS into MV3 rules', () => {
         expect(result.stats.ignoreRules).toEqual(0)
         expect(result.rules).toEqual([{
             id: 1,
+            priority: 2,
             action: {type: 'block'},
             condition: {
                 urlFilter: '||good.com/tracker.js',
@@ -189,11 +194,11 @@ describe('transform TDS into MV3 rules', () => {
         expect(result.stats.surrogates).toEqual(1)
         expect(result.rules).toEqual([{
             id: 1,
-            priority: 2,
+            priority: 3,
             action: {
                 type: 'redirect',
                 redirect: {
-                    extensionPath: '/surrogates/tracker-tracker.js'
+                    extensionPath: '/data/tracker_lists/surrogates/tracker-tracker.js'
                 }
             },
             condition: {

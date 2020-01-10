@@ -1,8 +1,11 @@
 // fetch latest TDS, make sure it's valid JSON, and save it on disk
 
-const tdsURL = 'https://staticcdn.duckduckgo.com/trackerblocking/tds.json'
+const constants = require('../../shared/data/constants')
+const tdsURL = constants.tdsLists.find(item => item.name === 'tds').url
 const https = require('https')
 const fs = require('fs')
+
+console.log(`Downloading from "${tdsURL}"…`)
 
 https.get(tdsURL, res => {
     const { statusCode } = res

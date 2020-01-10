@@ -77,6 +77,7 @@
     "<all_urls>"
   ],
   "web_accessible_resources": [
-    "img/*"
+    "img/*",
+    "data/tracker_lists/surrogates/*.js"
   ]
 }
