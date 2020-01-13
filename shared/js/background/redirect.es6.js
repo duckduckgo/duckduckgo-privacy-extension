@@ -142,8 +142,8 @@ function handleRequest (requestData) {
                 // Initiate hiding of blocked ad DOM elements
                 tryElementHide(requestData, thisTab)
 
-                console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
-                             ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
+                console.info('blocked on ' + utils.extractHostFromURL(thisTab.url) +
+                             ': [' + tracker.tracker.owner.name + '] ' + requestData.url)
 
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
