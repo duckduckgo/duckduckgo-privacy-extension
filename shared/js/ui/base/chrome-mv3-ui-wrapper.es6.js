@@ -14,7 +14,7 @@ const backgroundMessage = (thisModel) => {
         if (req.whitelistChanged) thisModel.send('whitelistChanged')
         if (req.updateTabData) thisModel.send('updateTabData')
         if (req.didResetTrackersData) thisModel.send('didResetTrackersData', req.didResetTrackersData)
-        if (req.closePopup) window.close()// FIXME
+        if (req.closePopup) closePopup()
     })
 }
 
@@ -46,7 +46,7 @@ const openExtensionPage = (path) => {
 const openOptionsPage = (browser) => {
     if (browser === 'moz') {
         openExtensionPage('/html/options.html')
-        window.close()
+        closePopup()
     } else if (browser === 'chrome') {
         chrome.runtime.openOptionsPage()
     }
@@ -57,8 +57,7 @@ const reloadTab = (id) => {
 }
 
 const closePopup = () => {
-    const w = chrome.extension.getViews({type: 'popup'})[0]
-    w.close()
+    window.close()
 }
 
 module.exports = {
