@@ -24,6 +24,7 @@ const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
 let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
+const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
@@ -100,8 +101,10 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
         'currentWindow': true,
         'active': true
     }, function (tabs) {
+        const os = parseUserAgentString().os
+
         chrome.tabs.update(tabs[0].id, {
-            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage['os'] + 'cl'
+            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + os + 'cl'
         })
     })
 })
@@ -163,7 +166,17 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.whitelisted) {
-        tabManager.whitelistDomain(req.whitelisted)
+        const addWhitelistEntry = (req.whitelisted.value === true)
+        const action = addWhitelistEntry ? chrome.declarativeNetRequest.addAllowedPages : chrome.declarativeNetRequest.removeAllowedPages
+
+        action([`*://*.${req.whitelisted.domain}/*`], () => {
+            if (chrome.runtime.lastError) {
+                console.warn(`Error ${addWhitelistEntry ? 'adding' : 'removing'} whitelist entry.`, req.whitelisted, chrome.runtime.lastError.message)
+                return
+            }
+
+            tabManager.whitelistDomain(req.whitelisted)
+        })
     } else if (req.whitelistOptIn) {
         tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value)
     } else if (req.getTab) {
