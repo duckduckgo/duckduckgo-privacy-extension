@@ -18,21 +18,45 @@ chrome.runtime.onInstalled.addListener(function (details) {
  * REQUESTS
  */
 
-const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
 let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const {countBlockedRequests, verifyRedirect} = require('./chrome-mv3-redirect.es6')
 
-// Shallow copy of request types
-// And add beacon type based on browser, so we can block it
+// collect stats on blocked requests
 chrome.webRequest.onBeforeRequest.addListener(
-    redirect.handleRequest,
+    countBlockedRequests,
     {
         urls: ['<all_urls>'],
+        // And add beacon type based on browser, so we can block it
         types: requestListenerTypes
+    }
+)
+
+// verify upgrades to HTTPS to make sure they were valid
+chrome.webRequest.onBeforeRedirect.addListener(
+    verifyRedirect,
+    {
+        urls: ['http://*/*'],
+        types: ['main_frame']
+    }
+)
+
+// append ATB to duckduckgo.com requests
+chrome.webRequest.onBeforeRequest.addListener(
+    (requestData) => {
+        const shouldRedirect = ATB.redirectURL(requestData)
+
+        if (shouldRedirect) {
+            chrome.tabs.update(requestData.tabId, {url: shouldRedirect.redirectUrl})
+        }
+    },
+    {
+        urls: ['*://*.duckduckgo.com/*', '*://duckduckgo.com/*'],
+        types: ['main_frame']
     }
 )
 
