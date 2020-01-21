@@ -31,7 +31,7 @@ function addToHTTPSafelist (url) {
     console.log('adding new exception', newException)
     chrome.declarativeNetRequest.updateDynamicRules([], [newException], () => {
         if (chrome.runtime.lastError) {
-            console.error('Error creating a rule', runtime.lastError)
+            console.error('Error creating a rule', chrome.runtime.lastError)
             ruleNotCreated()
             return
         }
