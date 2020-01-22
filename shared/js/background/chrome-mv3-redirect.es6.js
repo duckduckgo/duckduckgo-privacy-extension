@@ -7,39 +7,6 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
 const {addToHTTPSafelist} = require('./dynamic-rules.es6')
 
-const debugRequest = false
-
-function downgrade (tabManagerTab, url) {
-    const httpUrl = new URL(url)
-    httpUrl.protocol = 'http:'
-    const httpsUrl = new URL(url)
-    httpsUrl.protocol = 'https:'
-
-    const tabId = tabManagerTab.id
-
-    return addToHTTPSafelist(httpUrl)
-        .then(() => {
-            let tabUrl = null
-            try {
-                tabUrl = new URL(tabManagerTab.url)
-            } catch (e) {
-                throw new Error('Invalid URL.')
-            }
-
-            // we want to make sure that user hasn't navigated away from the page before we downgrade it
-            if (tabUrl && tabUrl.hostname === httpUrl.hostname && tabUrl.pathname === httpUrl.pathname) {
-                console.info('Redirecting to page', httpUrl.toString())
-
-                setTimeout(() => {
-                    chrome.tabs.update(tabId, {url: httpUrl.toString()})
-                }, 25)
-            } else {
-                console.warn(`Tab ${tabId} changed URL or was closed before upgrade.`, httpsUrl.toString(), tabUrl)
-                throw new Error('URL changed.')
-            }
-        })
-}
-
 function tryElementHide (requestData, tab) {
     if (tab.site.parentEntity === 'Verizon Media') {
         let frameId, messageType
@@ -73,7 +40,7 @@ function isSameDomainRequest (tab, req) {
 }
 
 /**
- * - Block tracker requests
+ * Count blocked trackers and trackers that were not blocked due to first-party rule
  */
 function countBlockedRequests (requestData) {
     const tabId = requestData.tabId
@@ -160,14 +127,6 @@ function countBlockedRequests (requestData) {
                 Companies.add(tracker.tracker.owner)
             }
 
-            // for debugging specific requests. see test/tests/debugSite.js
-            if (debugRequest && debugRequest.length) {
-                if (debugRequest.includes(tracker.url)) {
-                    console.log('UNBLOCKED: ', tracker.url)
-                    return
-                }
-            }
-
             // Initiate hiding of blocked ad DOM elements
             tryElementHide(requestData, thisTab)
 
@@ -177,14 +136,13 @@ function countBlockedRequests (requestData) {
 }
 
 /**
- * - Upgrade http -> https where possible
+ * Make sure that HTTPS upgrade done by declarativeNetRequest rules was valid
  */
 function verifyRedirect (requestData) {
-    const { url, redirectUrl, statusCode } = requestData
+    const { tabId, url, redirectUrl, statusCode } = requestData
 
     // We are only interested in internal redirects (done by the extension)
     if (statusCode !== 307) {
-        console.warn('not a 307 redirect', requestData)
         return
     }
 
@@ -193,14 +151,12 @@ function verifyRedirect (requestData) {
         fromUrl = new URL(url)
         toUrl = new URL(redirectUrl)
     } catch (e) {
-        console.warn('invalid url', url, redirectUrl)
         // Ingore invalid URLs
         return
     }
 
     // Ignore if redirect is not from HTTP to HTTPS
     if (fromUrl.protocol !== 'http:' || toUrl.protocol !== 'https:') {
-        console.warn('not a http->https change', url, redirectUrl)
         return
     }
 
@@ -209,7 +165,6 @@ function verifyRedirect (requestData) {
 
     // Ignore if redirect changed anything about the request other than the protocol
     if (upgradedFromUrl.toString() !== toUrl.toString()) {
-        console.warn('urls don\'t match', url, redirectUrl)
         return
     }
 
@@ -217,33 +172,34 @@ function verifyRedirect (requestData) {
 
     // get information about the tab
     const tabManagerTab = tabManager.get(requestData)
-
     const isMainFrame = requestData.type === 'main_frame'
-    const isPost = requestData.method === 'POST'
+    let isUpgradable = https.canUpgradeUrl(requestData.url)
 
-    let result = https.getUpgradedUrl(requestData.url, tabManagerTab, isMainFrame, isPost)
-
-    // if returned result is an url, and not a promise, put it into a resolved promise for easier handling
-    if (!(result instanceof Promise)) {
-        result = Promise.resolve(result)
+    // if returned result is an boolean, and not a promise, put it into a resolved promise for easier handling
+    if (!(isUpgradable instanceof Promise)) {
+        isUpgradable = Promise.resolve(isUpgradable)
     }
 
-    result.then(url => {
-        if (url.toLowerCase() !== requestData.url.toLowerCase()) {
-            console.log('HTTPS: upgrade request url to ' + url)
+    isUpgradable.then(isUpgradableResult => {
+        // if url is upgradable and we haven't seen circular redirects in the past
+        if (isUpgradableResult && tabManagerTab.httpsRedirects.canRedirect(requestData)) {
             tabManagerTab.httpsRedirects.registerRedirect(requestData)
 
             if (isMainFrame) {
                 tabManagerTab.upgradedHttps = true
+                https.incrementUpgradeCount('totalUpgrades')
             }
-
-            console.info(`✅ ${url} - can be upgraded, continue as nothing happened…`)
         } else if (isMainFrame) {
             tabManagerTab.upgradedHttps = false
 
-            console.info(`🔴 ${url} - can't be upgraded.`)
-
-            downgrade(tabManagerTab, url)
+            addToHTTPSafelist(fromUrl)
+                .then(() => {
+                    https.downgradeTab({
+                        tabId: tabId,
+                        expectedUrl: toUrl.toString(),
+                        targetUrl: fromUrl.toString()
+                    })
+                })
         }
     }).catch(e => {
         console.error('Error checking if URL is upgradable', e)
