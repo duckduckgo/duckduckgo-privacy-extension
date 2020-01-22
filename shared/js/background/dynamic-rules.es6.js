@@ -11,7 +11,7 @@ function addToHTTPSafelist (url) {
     const promise = new Promise((resolve, reject) => { ruleCreated = resolve; ruleNotCreated = reject })
 
     if (dynamicDomains.includes(url.hostname)) {
-        console.log('hostname is alrady safelisted:', dynamicDomains)
+        console.log('Hostname is alrady safelisted:', dynamicDomains)
         ruleCreated()
         return promise
     }
@@ -37,7 +37,9 @@ function addToHTTPSafelist (url) {
         }
 
         dynamicDomains.push(url.hostname)
-        ruleCreated()
+
+        // we need to give the new rule some time to get applied, this is a bug in Chrome
+        setTimeout(ruleCreated, 25)
     })
 
     return promise
