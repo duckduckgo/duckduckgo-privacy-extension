@@ -18,9 +18,10 @@ function transformType (tdsType) {
 /**
  * @param {TDSRule} inputRule
  * @param {Number} id
+ * @param {string[]} firstPartyDomains
  * @returns {MV3Rule}
  */
-function transformResourceRule (inputRule, id) {
+function transformResourceRule (inputRule, id, firstPartyDomains) {
     /** @type {MV3Rule} */
     const rule = {
         id,
@@ -37,6 +38,11 @@ function transformResourceRule (inputRule, id) {
         }
     }
 
+    if (firstPartyDomains) {
+        // note: make a copy of an array not to modify the original
+        rule.condition.excludedDomains = Array.from(firstPartyDomains)
+    }
+
     if (inputRule.surrogate) {
         // surrogates should have a higher priority than block rules
         rule.priority = 3
@@ -48,18 +54,20 @@ function transformResourceRule (inputRule, id) {
 
     if (inputRule.action === 'ignore') {
         // ignore rules should have higher priority than surrogates and block rules
-        // TODO but should not have higher priority than https upgrades
+        // TODO but should not have higher priority than https upgrades i.e. even though it's ignored
+        // it should still be upgraded if domain is upgradable to HTTPS
         rule.priority = 4
         rule.action.type = 'allow'
     }
 
     if (inputRule.exceptions) {
         if (inputRule.exceptions.domains && inputRule.exceptions.domains.length) {
-            rule.condition.excludedDomains = inputRule.exceptions.domains
+            rule.condition.excludedDomains = rule.condition.excludedDomains || []
+            inputRule.exceptions.domains.map(domain => rule.condition.excludedDomains.push(domain))
         }
 
         if (inputRule.exceptions.types && inputRule.exceptions.types.length) {
-            inputRule.exceptions.types.map(tdsType => rule.condition.excludedResourceTypes.push(transformType(tdsType)))
+            inputRule.exceptions.types.forEach(tdsType => rule.condition.excludedResourceTypes.push(transformType(tdsType)))
         }
     }
 
@@ -123,7 +131,7 @@ function transform (tds) {
                     throw new Error(`Unknown rule.action: ${resourceRule.action}`)
                 }
 
-                rules.push(transformResourceRule(resourceRule, ruleId++))
+                rules.push(transformResourceRule(resourceRule, ruleId++, ownerOtherDomains))
             })
         }
     })

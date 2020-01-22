@@ -209,4 +209,74 @@ describe('transform TDS into MV3 rules', () => {
             }
         }])
     })
+
+    it('should merge first-party domains with domains on exceptions list', () => {
+        const result = transform({
+            trackers: {
+                'tracker.com': {
+                    domain: 'tracker.com',
+                    default: 'ignore',
+                    owner: {
+                        name: 'Tracker Org'
+                    },
+                    rules: [
+                        {
+                            rule: 'tracker.com/tracker1.js',
+                            exceptions: {
+                                domains: ['a.com', 'b.com']
+                            }
+                        },
+                        {
+                            rule: 'tracker.com/tracker2.js',
+                            surrogate: 'tracker-tracker.js',
+                            exceptions: {
+                                domains: ['c.com', 'd.com']
+                            }
+                        }
+                    ]
+                }
+            },
+            entities: {
+                'Tracker Org': {
+                    domains: [
+                        'tracker.com',
+                        'a-tracker.com',
+                        'b-tracker.com'
+                    ]
+                }
+            }
+        })
+
+        expect(result.stats.allRules).toEqual(2)
+        expect(result.stats.blockRules).toEqual(1)
+        expect(result.stats.surrogates).toEqual(1)
+        expect(result.rules).toEqual([{
+            id: 1,
+            priority: 2,
+            action: {type: 'block'},
+            condition: {
+                urlFilter: '||tracker.com/tracker1.js',
+                isUrlFilterCaseSensitive: false,
+                excludedResourceTypes: [ 'main_frame' ],
+                excludedDomains: ['a-tracker.com', 'b-tracker.com', 'a.com', 'b.com'],
+                domainType: 'thirdParty'
+            }
+        }, {
+            id: 2,
+            priority: 3,
+            action: {
+                type: 'redirect',
+                redirect: {
+                    extensionPath: '/data/tracker_lists/surrogates/tracker-tracker.js'
+                }
+            },
+            condition: {
+                urlFilter: '||tracker.com/tracker2.js',
+                isUrlFilterCaseSensitive: false,
+                excludedResourceTypes: [ 'main_frame' ],
+                excludedDomains: ['a-tracker.com', 'b-tracker.com', 'c.com', 'd.com'],
+                domainType: 'thirdParty'
+            }
+        }])
+    })
 })
