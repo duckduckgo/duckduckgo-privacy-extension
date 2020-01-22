@@ -1,9 +1,3 @@
-/**
- * NOTE: this needs to be the first listener that's added
- *
- * on FF, we might actually miss the onInstalled event
- * if we do too much before adding it
- */
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 
@@ -22,7 +16,7 @@ const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
-let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
+const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const {countBlockedRequests, verifyRedirect} = require('./chrome-mv3-redirect.es6')
 
@@ -40,8 +34,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 chrome.webRequest.onBeforeRedirect.addListener(
     verifyRedirect,
     {
-        urls: ['http://*/*'],
-        types: ['main_frame']
+        urls: ['http://*/*']
     }
 )
 
@@ -323,6 +316,14 @@ chrome.webRequest.onErrorOccurred.addListener((e) => {
         }
     }
 }, {urls: ['<all_urls>']})
+
+// for debugging - logs information about matched static and dynamic declarativeNetRequest rules
+// only avaiable for unpacked extensions and when "declarativeNetRequestFeedback" permission is requested in the manifest
+if (chrome.declarativeNetRequest.onRuleMatchedDebug) {
+    chrome.declarativeNetRequest.onRuleMatchedDebug.addListener(rules => {
+        console.log('Matched declarativeNetRequest rules:', rules)
+    })
+}
 
 module.exports = {
     onStartup: onStartup
