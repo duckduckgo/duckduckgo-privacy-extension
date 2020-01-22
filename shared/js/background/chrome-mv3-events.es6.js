@@ -19,6 +19,7 @@ const constants = require('../../data/constants')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const {countBlockedRequests, verifyRedirect} = require('./chrome-mv3-redirect.es6')
+const {addDomainToSafelist, removeDomainFromSafelist, syncSafelistEntries} = require('./allow-pages.es6')
 
 // collect stats on blocked requests
 chrome.webRequest.onBeforeRequest.addListener(
@@ -184,14 +185,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.whitelisted) {
         const addWhitelistEntry = (req.whitelisted.value === true)
-        const action = addWhitelistEntry ? chrome.declarativeNetRequest.addAllowedPages : chrome.declarativeNetRequest.removeAllowedPages
+        const action = addWhitelistEntry ? addDomainToSafelist : removeDomainFromSafelist
 
-        action([`*://*.${req.whitelisted.domain}/*`], () => {
-            if (chrome.runtime.lastError) {
-                console.warn(`Error ${addWhitelistEntry ? 'adding' : 'removing'} whitelist entry.`, req.whitelisted, chrome.runtime.lastError.message)
-                return
-            }
-
+        action(req.whitelisted.domain).then(() => {
             tabManager.whitelistDomain(req.whitelisted)
         })
     } else if (req.whitelistOptIn) {
@@ -255,6 +251,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
 
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
+            .then(() => syncSafelistEntries())
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()

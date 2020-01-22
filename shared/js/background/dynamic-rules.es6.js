@@ -6,6 +6,11 @@ chrome.declarativeNetRequest.getDynamicRules(rules => {
     console.log('Dynamic rules loaded:', dynamicDomains)
 })
 
+/**
+ * Create a dynamic rule (temporary exception) that will prevent domain from being automatically upgraded to HTTPS,
+ * trackers on that domain and from that domain will still be blocked.
+ * @param {string} url
+ */
 function addToHTTPSafelist (url) {
     let ruleCreated, ruleNotCreated
     const promise = new Promise((resolve, reject) => { ruleCreated = resolve; ruleNotCreated = reject })
