@@ -2,7 +2,7 @@ const tdsStorage = require('./storage/tds.es6')
 const settings = require('./settings.es6')
 
 /**
- * Creates ann 'allow page' rule for given domain. Our extension will not try to upgrade it or block
+ * Creates an 'allow page' rule for given domain. Our extension will not try to upgrade it or block
  * any trackers on that domain. Trackers from that domain loaded on other pages will still be blocked.
  * @param {string} domain
  */

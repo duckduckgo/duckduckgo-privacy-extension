@@ -1,3 +1,5 @@
+// fetch latest surrogats and save them in the shared data folder
+
 const constants = require('../../shared/data/constants')
 const surrogatesUrl = constants.tdsLists.find(item => item.name === 'surrogates').url
 const https = require('https')
