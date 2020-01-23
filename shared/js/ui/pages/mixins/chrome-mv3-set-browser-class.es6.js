@@ -1,9 +1,2 @@
-module.exports = {
-    setBrowserClassOnBodyTag: function () {
-        window.chrome.runtime.sendMessage({'getBrowser': true}, (browser) => {
-            let browserClass = 'is-browser--' + browser
-            window.$('html').addClass(browserClass)
-            window.$('body').addClass(browserClass)
-        })
-    }
-}
+// this file is the same for Chrome MV2 and MV3
+module.exports = require('./chrome-set-browser-class.es6')
