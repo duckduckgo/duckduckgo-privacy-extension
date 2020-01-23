@@ -279,6 +279,7 @@ let onStartup = () => {
 
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
+            .then(() => syncSafelistEntries())
             .catch(e => console.log(e))
 
         https.sendHttpsUpgradeTotals()
