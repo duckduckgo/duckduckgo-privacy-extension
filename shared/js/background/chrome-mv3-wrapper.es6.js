@@ -8,6 +8,25 @@ mv2.setBadgeIcon = (badgeData, grade) => {
         text: grade || '?',
         tabId: badgeData.tabId
     })
+    // just for fun - this can be removed as soon as we can use setIcon again
+    let color = '#FF0000'// red
+
+    if (grade) {
+        if (grade.startsWith('A') || grade.startsWith('B')) {
+            color = '#057017'// green
+        }
+
+        if (grade.startsWith('C')) {
+            color = '#FF9900'// orange
+        }
+    } else {
+        color = '#AAAAAA'// gray
+    }
+
+    chrome.browserAction.setBadgeBackgroundColor({
+        color: color,
+        tabId: badgeData.tabId
+    })
 }
 
 module.exports = mv2

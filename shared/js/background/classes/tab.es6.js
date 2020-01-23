@@ -65,19 +65,14 @@ class Tab {
         if (this.site.isBroken) {
             this.resetBadgeIcon()
         } else {
-            let gradeIcon
-            let grade = this.site.grade.get()
+            const grade = this.site.grade.get()
+            const shownGrade = this.site.whitelisted ? grade.site.grade : grade.enhanced.grade
+            const gradeIcon = gradeIconLocations[shownGrade]
 
-            if (this.site.whitelisted) {
-                gradeIcon = gradeIconLocations[grade.site.grade]
-            } else {
-                gradeIcon = gradeIconLocations[grade.enhanced.grade]
-            }
-
-            let badgeData = {path: gradeIcon, tabId: this.id}
+            const badgeData = {path: gradeIcon, tabId: this.id}
             if (target) badgeData.target = target
 
-            browserWrapper.setBadgeIcon(badgeData, grade.site.grade)
+            browserWrapper.setBadgeIcon(badgeData, shownGrade)
         }
     }
 

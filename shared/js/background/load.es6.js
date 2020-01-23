@@ -42,8 +42,6 @@ function loadExtensionFile (params) {
         url = browserWrapper.getExtensionURL(url)
     }
 
-    // TODO params.timeout || 30000
-
     return fetch(url, {
         method: 'GET',
         headers
