@@ -43,8 +43,7 @@ function addToHTTPSafelist (url) {
 
         dynamicDomains.push(url.hostname)
 
-        // we need to give the new rule some time to get applied, this is a bug in Chrome
-        setTimeout(ruleCreated, 25)
+        ruleCreated()
     })
 
     return promise
