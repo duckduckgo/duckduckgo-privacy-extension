@@ -54,7 +54,7 @@ function transformResourceRule (inputRule, id, firstPartyDomains) {
 
     if (inputRule.action === 'ignore') {
         // ignore rules should have higher priority than surrogates and block rules
-        // TODO but should not have higher priority than https upgrades i.e. even though it's ignored
+        // but should not have higher priority than https upgrades i.e. even though it's ignored
         // it should still be upgraded if domain is upgradable to HTTPS
         rule.priority = 4
         rule.action.type = 'allow'

@@ -42,10 +42,16 @@ function loadExtensionFile (params) {
         url = browserWrapper.getExtensionURL(url)
     }
 
-    return fetch(url, {
+    let rej
+    const timeoutPromise = new Promise((resolve, reject) => { rej = reject })
+    const fetchTimeout = setTimeout(rej, params.timeout || 30000)
+
+    const fetchResult = fetch(url, {
         method: 'GET',
         headers
     }).then(response => {
+        clearTimeout(fetchTimeout)
+
         const status = response.status
         const etag = response.headers.get('etag')
 
@@ -79,6 +85,8 @@ function loadExtensionFile (params) {
             throw new Error(`${url} returned ${response.status}`)
         }
     })
+
+    return Promise.race([timeoutPromise, fetchResult])
 }
 
 function setDevMode () {
