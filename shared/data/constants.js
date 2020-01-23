@@ -85,7 +85,7 @@ module.exports = {
         },
         {
             "name": "tds",
-            "url": "https://staticcdn.duckduckgo.com/trackerblocking/tds.json",
+            "url": "https://staticcdn.duckduckgo.com/trackerblocking/v2/tds.json",
             "format": "json"
         },
         {
