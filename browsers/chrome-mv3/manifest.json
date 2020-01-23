@@ -66,6 +66,7 @@
     "contextMenus",
     "webRequest",
     "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
     "webNavigation",
     "activeTab",
     "tabs",
