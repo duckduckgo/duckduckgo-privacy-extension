@@ -4,8 +4,14 @@ const https = require('https')
 const zlib = require('zlib')
 const url = require('url')
 const fs = require('fs')
+const path = require('path')
+const SURROGATES_DIR = '../../shared/data/tracker_lists/surrogates/'
 
 console.log(`Downloading from "${surrogatesUrl}"…`)
+
+if (!fs.existsSync(SURROGATES_DIR)) {
+    fs.mkdirSync(SURROGATES_DIR)
+}
 
 https.get(surrogatesUrl, res => {
     const { statusCode } = res
@@ -45,7 +51,7 @@ https.get(surrogatesUrl, res => {
                 const file = pathname.match(/\/([^/]+)$/)[1]
 
                 console.log(`Creating surrogate for "${file}".`)
-                fs.writeFileSync(`./data/surrogates/${file}`, body)
+                fs.writeFileSync(path.join(SURROGATES_DIR, file), body)
             })
     })
 })

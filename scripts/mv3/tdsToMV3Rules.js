@@ -1,5 +1,7 @@
 const fs = require('fs')
 const transform = require('./imports/trasformRules')
+const path = require('path')
+const RULES_DIR = '../../shared/data/tracker_lists/'
 
 const buff = fs.readFileSync('./data/tds.json')
 const tds = JSON.parse(buff.toString())
@@ -24,4 +26,4 @@ rules.push({
 
 console.log(stats)
 
-fs.writeFileSync('./data/rules.json', JSON.stringify(rules, null, 2))
+fs.writeFileSync(path.join(RULES_DIR, 'rules.json'), JSON.stringify(rules, null, 2))
