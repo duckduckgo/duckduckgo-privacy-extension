@@ -114,6 +114,10 @@ function getAsyncBlockingSupport () {
     return false
 }
 
+function getPersistentBackgroundPageSupport () {
+    return (typeof chrome.runtime.getBackgroundPage) === 'function'
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -124,5 +128,6 @@ module.exports = {
     getAsyncBlockingSupport: getAsyncBlockingSupport,
     findParent: findParent,
     getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes
+    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
+    getPersistentBackgroundPageSupport: getPersistentBackgroundPageSupport
 }

@@ -38,14 +38,14 @@ class Tab {
         this.trackers = {}
         this.trackersBlocked = {}
         this.url = tabData.url
-        this.upgradedHttps = false
+        this.upgradedHttps = tabData.upgradedHttps === true
         this.hasHttpsError = false
         this.mainFrameUpgraded = false
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(this.url)
         this.httpsRedirects = new HttpsRedirects()
-        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+        this.statusCode = tabData.statusCode || null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
             begin: Date.now(),
             end: null,

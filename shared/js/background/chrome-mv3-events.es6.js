@@ -267,15 +267,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
  * on start up
  */
 let onStartup = () => {
-    chrome.tabs.query({currentWindow: true, status: 'complete'}, function (savedTabs) {
-        for (var i = 0; i < savedTabs.length; i++) {
-            var tab = savedTabs[i]
-
-            if (tab.url) {
-                tabManager.create(tab)
-            }
-        }
-    })
+    clearDynamicRules()
 
     settings.ready().then(() => {
         httpsStorage.getLists(constants.httpsLists)
@@ -285,6 +277,7 @@ let onStartup = () => {
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
             .then(() => syncSafelistEntries())
+            .then(() => tabManager.loadStateFromStorage())
             .catch(e => console.log(e))
 
         https.sendHttpsUpgradeTotals()
