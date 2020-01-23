@@ -79,12 +79,17 @@ class TabManager {
      * later on when webrequests start coming in.
      */
     createOrUpdateTab (id, info) {
-        if (!tabManager.get({'tabId': id})) {
+        const tab = tabManager.get({'tabId': id})
+
+        if (!tab) {
             info.id = id
             tabManager.create(info)
         } else {
-            let tab = tabManager.get({tabId: id})
-            if (tab && info.status) {
+            if (info.url) {
+                tab.url = info.url
+            }
+
+            if (info.status) {
                 tab.status = info.status
 
                 /**
@@ -102,17 +107,18 @@ class TabManager {
                     console.info(tab.site.grade)
                     tab.updateBadgeIcon()
 
-                    if (tab.statusCode === 200 &&
-                        !tab.site.didIncrementCompaniesData) {
-                        if (tab.trackers && Object.keys(tab.trackers).length > 0) {
-                            Companies.incrementTotalPagesWithTrackers()
+                    if (tab.statusCode === 200) {
+                        if (!tab.site.didIncrementCompaniesData) {
+                            if (tab.trackers && Object.keys(tab.trackers).length > 0) {
+                                Companies.incrementTotalPagesWithTrackers()
+                            }
+
+                            Companies.incrementTotalPages()
+                            tab.site.didIncrementCompaniesData = true
                         }
 
-                        Companies.incrementTotalPages()
-                        tab.site.didIncrementCompaniesData = true
+                        tab.endStopwatch()
                     }
-
-                    if (tab.statusCode === 200) tab.endStopwatch()
                 }
             }
         }
@@ -162,7 +168,7 @@ class TabManager {
                     }
 
                     // verify that URL hasn't changed
-                    if (sha1(tab.url).substr(0, 6) !== tabState.urlHash) {
+                    if (sha1(tab.url || '').substr(0, 6) !== tabState.urlHash) {
                         return
                     }
 
@@ -215,7 +221,7 @@ class TabManager {
                 id: tabInfo.id,
                 // don't store browsing history in storage, just a partial hash of the url so that we can
                 // validate if url haven't changed when restoring tabInfo information
-                urlHash: sha1(tabInfo.url).substr(0, 6),
+                urlHash: sha1(tabInfo.url || '').substr(0, 6),
                 upgradedHttps: tabInfo.upgradedHttps,
                 statusCode: tabInfo.statusCode,
                 trackers: trackers,
