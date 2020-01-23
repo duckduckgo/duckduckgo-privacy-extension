@@ -20,6 +20,7 @@ const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const {countBlockedRequests, verifyRedirect} = require('./chrome-mv3-redirect.es6')
 const {addDomainToSafelist, removeDomainFromSafelist, syncSafelistEntries} = require('./allow-pages.es6')
+const {clearDynamicRules} = require('./dynamic-rules.es6')
 
 // collect stats on blocked requests
 chrome.webRequest.onBeforeRequest.addListener(
@@ -234,6 +235,8 @@ chrome.alarms.create('updateLists', {periodInMinutes: 30})
 chrome.alarms.create('updateUninstallURL', {periodInMinutes: 10})
 // remove expired HTTPS service entries
 chrome.alarms.create('clearExpiredHTTPSServiceCache', {periodInMinutes: 60})
+// periodically remove dynamic rules because they map to browsing history
+chrome.alarms.create('clearDynamicRules', {periodInMinutes: 10})
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
@@ -255,6 +258,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
+    } else if (alarmEvent.name === 'clearDynamicRules') {
+        clearDynamicRules()
     }
 })
 
