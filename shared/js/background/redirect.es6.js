@@ -47,7 +47,7 @@ function handleRequest (requestData) {
     // don't have a tab instance for this tabId or this is a new requestId.
     //
     // Safari doesn't have specific requests for main frames
-    if (requestData.type === 'main_frame' && globalThis.chrome) {
+    if (requestData.type === 'main_frame' && window.chrome) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             let newTab = tabManager.create(requestData)
 
@@ -164,7 +164,7 @@ function handleRequest (requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-    if (!thisTab.site || !globalThis.chrome) return
+    if (!thisTab.site || !window.chrome) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {

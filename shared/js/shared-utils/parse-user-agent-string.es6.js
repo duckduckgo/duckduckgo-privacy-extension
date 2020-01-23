@@ -1,5 +1,5 @@
 module.exports = (uaString) => {
-    if (!uaString) uaString = globalThis.navigator.userAgent
+    if (!uaString) uaString = navigator.userAgent
 
     let browser
     let version

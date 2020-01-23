@@ -7,8 +7,5 @@
         "webextensions": true,
         "browser": true,
         "jasmine": true
-    },
-    "globals": {
-		"globalThis": false,
-	}
+    }
 }

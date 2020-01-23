@@ -3,7 +3,7 @@ const getExtensionURL = (path) => {
 }
 
 const getExtensionVersion = () => {
-    const manifest = globalThis.chrome && chrome.runtime.getManifest()
+    const manifest = chrome && chrome.runtime.getManifest()
     return manifest.version
 }
 
