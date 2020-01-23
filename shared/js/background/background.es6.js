@@ -19,16 +19,4 @@
 const events = require('./$BROWSER-events.es6')
 const settings = require('./settings.es6')
 
-settings.ready().then(() => {
-    // clearing last search on browser startup
-    settings.updateSetting('last_search', '')
-
-    var os = 'o'
-    if (window.navigator.userAgent.indexOf('Windows') !== -1) os = 'w'
-    if (window.navigator.userAgent.indexOf('Mac') !== -1) os = 'm'
-    if (window.navigator.userAgent.indexOf('Linux') !== -1) os = 'l'
-
-    localStorage['os'] = os
-
-    events.onStartup()
-})
+settings.ready().then(() => events.onStartup())
