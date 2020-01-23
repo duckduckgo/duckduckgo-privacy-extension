@@ -15,3 +15,6 @@ build/chrome-mv3
 build/safari
 build/test
 test/background.js
+scripts/mv3/data/
+shared/data/tracker_list/surrogates
+shared/data/tracker_list/rules.json
