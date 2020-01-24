@@ -49,6 +49,9 @@ function removeDomainFromSafelist (domain) {
  * are in sync with actual 'allow page' rules
  */
 function syncSafelistEntries () {
+    let res, rej
+    const promise = new Promise((resolve, reject) => { res = resolve; rej = reject })
+
     chrome.declarativeNetRequest.getAllowedPages(allowedPagesRules => {
         settings.ready().then(() => {
             // convert rules back to domains
@@ -56,10 +59,11 @@ function syncSafelistEntries () {
             const brokenSitesSafelist = (tdsStorage.brokenSiteList || [])
             const userSafelist = Object.keys(settings.getSetting('whitelisted') || {})
 
-            const expectedDomains = userSafelist.concat(brokenSitesSafelist)
+            // merge both lists, make sure that there are no duplicates
+            const expectedDomains = Array.from(new Set(userSafelist.concat(brokenSitesSafelist)))
             const stats = {added: 0, removed: 0}
 
-            if (expectedDomains > chrome.declarativeNetRequest.MAX_NUMBER_OF_ALLOWED_PAGES) {
+            if (expectedDomains.length > chrome.declarativeNetRequest.MAX_NUMBER_OF_ALLOWED_PAGES) {
                 console.warn(`Number of safelisted domains is bigger than the allowed limit (${chrome.declarativeNetRequest.MAX_NUMBER_OF_ALLOWED_PAGES}). List will be trimmed.`)
                 expectedDomains.length = chrome.declarativeNetRequest.MAX_NUMBER_OF_ALLOWED_PAGES
             }
@@ -81,8 +85,10 @@ function syncSafelistEntries () {
             })
 
             console.log('Broken pages and manual safelist synced with "allow page" rules.', stats)
-        })
+        }).then(res).catch(rej)
     })
+
+    return promise
 }
 
 exports.addDomainToSafelist = addDomainToSafelist
