@@ -104,7 +104,7 @@ describe('Allow pages - syncSafelistEntries', () => {
                 MAX_NUMBER_OF_ALLOWED_PAGES: 100,
                 addAllowedPages: (domain, callback) => { callback() },
                 removeAllowedPages: (domain, callback) => { callback() },
-                getAllowedPages: (callback) => { callback(['*://*.remove.me/*']) }
+                getAllowedPages: (callback1) => { callback1(['*://*.remove.me/*']) }
             }
         }
 
@@ -142,7 +142,7 @@ describe('Allow pages - syncSafelistEntries', () => {
                 MAX_NUMBER_OF_ALLOWED_PAGES: 6,
                 addAllowedPages: (domain, callback) => { callback() },
                 removeAllowedPages: (domain, callback) => { callback() },
-                getAllowedPages: (callback) => { callback([]) }
+                getAllowedPages: (callback1) => { callback1([]) }
             }
         }
 

@@ -9,13 +9,13 @@ chrome.declarativeNetRequest.getDynamicRules(rules => {
 /**
  * Create a dynamic rule (temporary exception) that will prevent domain from being automatically upgraded to HTTPS,
  * trackers on that domain and from that domain will still be blocked.
- * @param {string} url
+ * @param {string} domain
  */
-function addToHTTPSafelist (url) {
+function addToHTTPSafelist (domain) {
     let ruleCreated, ruleNotCreated
     const promise = new Promise((resolve, reject) => { ruleCreated = resolve; ruleNotCreated = reject })
 
-    if (dynamicDomains.includes(url.hostname)) {
+    if (dynamicDomains.includes(domain)) {
         console.log('Hostname is alrady safelisted:', dynamicDomains)
         ruleCreated()
         return promise
@@ -28,7 +28,7 @@ function addToHTTPSafelist (url) {
             type: 'allow'
         },
         condition: {
-            urlFilter: `||${url.hostname}`,
+            urlFilter: `||${domain}`,
             resourceTypes: ['main_frame']
         }
     }
@@ -36,12 +36,12 @@ function addToHTTPSafelist (url) {
     console.log('adding new exception', newException)
     chrome.declarativeNetRequest.updateDynamicRules([], [newException], () => {
         if (chrome.runtime.lastError) {
-            console.error('Error creating a rule', chrome.runtime.lastError)
+            console.error('Error creating a rule', chrome.runtime.lastError.message)
             ruleNotCreated()
             return
         }
 
-        dynamicDomains.push(url.hostname)
+        dynamicDomains.push(domain)
 
         ruleCreated()
     })
@@ -50,12 +50,24 @@ function addToHTTPSafelist (url) {
 }
 
 function clearDynamicRules () {
+    let rulesCleared, rulesNotCleared
+    const promise = new Promise((resolve, reject) => { rulesCleared = resolve; rulesNotCleared = reject })
+
     chrome.declarativeNetRequest.getDynamicRules(rules => {
         console.log('Remove existing dynamic rules:', rules.length)
         chrome.declarativeNetRequest.updateDynamicRules(rules.map(r => r.id), [], () => {
+            if (chrome.runtime.lastError) {
+                console.error('Error clearing dynamic rules', chrome.runtime.lastError.message)
+                rulesNotCleared()
+                return
+            }
+
             dynamicDomains = []
+            rulesCleared()
         })
     })
+
+    return promise
 }
 
 exports.addToHTTPSafelist = addToHTTPSafelist

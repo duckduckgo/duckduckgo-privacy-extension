@@ -192,7 +192,7 @@ function verifyRedirect (requestData) {
         } else if (isMainFrame) {
             tabManagerTab.upgradedHttps = false
 
-            addToHTTPSafelist(fromUrl)
+            addToHTTPSafelist(fromUrl.hostname)
                 .then(() => {
                     https.downgradeTab({
                         tabId: tabId,
