@@ -148,6 +148,11 @@ class Site {
             return domain
         }
 
+        if (url.match(/^file:/)){
+            domain = url.match(/^file:([a-z-]+)/)[1]
+            return domain
+        }
+
         // extension pages
         if (url.match(/^(chrome|moz)-extension:\/\//)) {
             // this is our own extension, let's try and get a meaningful description
