@@ -25,7 +25,7 @@ class TDSStorage {
 
             // if we have a copy of that list and it was recently updated, don't try to update it
             if (etag && Date.now() - lastUpdate < MIN_UPDATE_TIME) {
-                console.warn(`Loading "${listCopy.name}" from memory as it was recently updated.`)
+                console.warn(`Skipping update of "${listCopy.name}" as it was recently updated.`)
                 return this.getListFromDB(listCopy.name)
             }
 
