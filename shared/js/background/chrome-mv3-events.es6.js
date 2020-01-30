@@ -149,13 +149,13 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.updateSetting) {
-        let name = req.updateSetting['name']
-        let value = req.updateSetting['value']
+        const name = req.updateSetting['name']
+        const value = req.updateSetting['value']
         settings.ready().then(() => {
             settings.updateSetting(name, value)
         })
     } else if (req.getSetting) {
-        let name = req.getSetting['name']
+        const name = req.getSetting['name']
         settings.ready().then(() => {
             res(settings.getSetting(name))
         })
@@ -266,11 +266,11 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
 /**
  * on start up
  */
-let onStartup = () => {
+const onStartup = () => {
     clearDynamicRules()
 
     settings.ready().then(() => {
-        httpsStorage.getLists(constants.httpsLists)
+        httpsStorage.getLists()
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
 
@@ -290,7 +290,7 @@ let onStartup = () => {
 chrome.webRequest.onErrorOccurred.addListener((e) => {
     if (!(e.type === 'main_frame')) return
 
-    let tab = tabManager.get({tabId: e.tabId})
+    const tab = tabManager.get({tabId: e.tabId})
 
     // We're only looking at failed main_frame upgrades. A tab can send multiple
     // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.

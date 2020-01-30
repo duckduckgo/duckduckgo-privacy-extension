@@ -2,6 +2,7 @@ const load = require('./../load.es6')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
+const MIN_UPDATE_TIME = 12 * 60 * 60 * 1000 // 12h
 
 class HTTPSStorage {
     constructor () {
@@ -18,14 +19,25 @@ class HTTPSStorage {
     // reject the whole update.
     getLists () {
         return Promise.all(constants.httpsLists.map(list => {
-            let listCopy = JSON.parse(JSON.stringify(list))
-            let etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+            const listCopy = JSON.parse(JSON.stringify(list))
+            const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+            const lastUpdate = settings.getSetting(`${listCopy.name}-last-update`) || ''
+
+            // if we have a fresh opy of that list we shouldn't try to update it
+            if (etag && Date.now() - lastUpdate < MIN_UPDATE_TIME) {
+                console.warn(`Loading "${listCopy.name}" from memory as it was recently updated.`)
+                return this.getListFromDB(listCopy)
+            }
 
             return this.getDataXHR(listCopy.url, etag).then(response => {
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.etag || ''
                     settings.updateSetting(`${listCopy.name}-etag`, newEtag)
+                }
+
+                if (response && (response.status === 200 || response.status === 304)) {
+                    settings.updateSetting(`${listCopy.name}-last-update`, Date.now())
                 }
 
                 // We try to process both 200 and 304 responses. 200s will validate
@@ -38,18 +50,21 @@ class HTTPSStorage {
                         throw new Error(`HTTPS: process list xhr failed  ${listCopy.name}`)
                     }
                 })
-            }).catch(e => {
-                return this.fallbackToDB(listCopy).then(backupFromDB => {
-                    if (backupFromDB) {
-                        return backupFromDB
-                    } else {
-                        // reset etag to force us to get fresh server data in case of an error
-                        settings.updateSetting(`${listCopy.name}-etag`, '')
-                        throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
-                    }
-                })
-            })
+            }).catch(e => this.getListFromDB(listCopy))
         }))
+    }
+
+    getListFromDB (listCopy) {
+        return this.fallbackToDB(listCopy).then(backupFromDB => {
+            if (backupFromDB) {
+                return backupFromDB
+            } else {
+                // reset etag to force us to get fresh server data in case of an error
+                settings.updateSetting(`${listCopy.name}-etag`, '')
+                settings.updateSetting(`${listCopy.name}-last-update`, 0)
+                throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
+            }
+        })
     }
 
     // validate xhr data and lookup previous data from local db if needed

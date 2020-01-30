@@ -3,6 +3,7 @@ const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
+const MIN_UPDATE_TIME = 30 * 60 * 1000 // 30min
 
 class TDSStorage {
     constructor () {
@@ -19,7 +20,14 @@ class TDSStorage {
         return Promise.all(constants.tdsLists.map(list => {
             const listCopy = JSON.parse(JSON.stringify(list))
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+            const lastUpdate = settings.getSetting(`${listCopy.name}-last-update`) || ''
             const version = this.getVersionParam()
+
+            // if we have a copy of that list and it was recently updated, don't try to update it
+            if (etag && Date.now() - lastUpdate < MIN_UPDATE_TIME) {
+                console.warn(`Loading "${listCopy.name}" from memory as it was recently updated.`)
+                return this.getListFromDB(listCopy.name)
+            }
 
             if (version) {
                 listCopy.url += version
@@ -30,6 +38,10 @@ class TDSStorage {
                 if (response && response.status === 200) {
                     const newEtag = response.etag || ''
                     settings.updateSetting(`${listCopy.name}-etag`, newEtag)
+                }
+
+                if (response && (response.status === 200 || response.status === 304)) {
+                    settings.updateSetting(`${listCopy.name}-last-update`, Date.now())
                 }
 
                 // We try to process both 200 and 304 responses. 200s will validate
@@ -44,20 +56,23 @@ class TDSStorage {
                         throw new Error(`TDS: process list xhr failed`)
                     }
                 })
-            }).catch(e => {
-                return this.fallbackToDB(listCopy.name).then(backupFromDB => {
-                    if (backupFromDB) {
-                        // store tds in memory so we can access it later if needed
-                        this[listCopy.name] = backupFromDB
-                        return {name: listCopy.name, data: backupFromDB}
-                    } else {
-                        // reset etag to force us to get fresh server data in case of an error
-                        settings.updateSetting(`${listCopy.name}-etag`, '')
-                        throw new Error(`TDS: data update failed`)
-                    }
-                })
-            })
+            }).catch(e => this.getListFromDB(listCopy.name))
         }))
+    }
+
+    getListFromDB (listName) {
+        return this.fallbackToDB(listName).then(backupFromDB => {
+            if (backupFromDB) {
+                // store tds in memory so we can access it later if needed
+                this[listName] = backupFromDB
+                return {name: listName, data: backupFromDB}
+            } else {
+                // reset etag to force us to get fresh server data in case of an error
+                settings.updateSetting(`${listName}-etag`, '')
+                settings.updateSetting(`${listName}-last-update`, 0)
+                throw new Error(`TDS: data update failed`)
+            }
+        })
     }
 
     processData (name, xhrData) {
