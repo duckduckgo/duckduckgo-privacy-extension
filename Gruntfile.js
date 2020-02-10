@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     const through = require('through2')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
@@ -6,14 +6,14 @@ module.exports = function(grunt) {
 
     var values = require('object.values');
 
-    if(!Object.values) {
+    if (!Object.values) {
         values.shim()
     }
 
     let browser = grunt.option('browser')
     let buildType = grunt.option('type')
 
-    if(!(browser && buildType)) {
+    if (!(browser && buildType)) {
         console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
         process.exit(1)
     }
@@ -46,7 +46,8 @@ module.exports = function(grunt) {
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
             '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
             '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
-            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss']
+            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss'],
+            '<%= dirs.public.css %>/banner.css': ['<%= dirs.src.scss %>/banner.scss']
         }
     }
 
@@ -58,14 +59,15 @@ module.exports = function(grunt) {
     /* watch any base files and browser specific files */
     let watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
-        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js','<%= dirs.data %>/*.js'],
-        background: ['<%= dirs.src.js %>/background/**/*.js','<%= dirs.data %>/*.js']
+        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
+        background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
+        contentScripts: ['<%= dirs.src.js %>/content-scripts/**/*.js']
     }
 
     let karmaOps = {
         configFile: 'karma.conf.js',
         basePath: 'build/test/',
-        files: ['background.js','ui.js','shared-utils.js']
+        files: ['background.js', 'ui.js', 'shared-utils.js']
     }
 
     // override some options to allow the devs
@@ -112,9 +114,9 @@ module.exports = function(grunt) {
                 transform: [
                     ['babelify'],
                     [(file) => {
-                        return through( function(buf, enc, next) {
+                        return through(function (buf, enc, next) {
                             let requireName = browser
-                            if(browser === 'duckduckgo.safariextension') {
+                            if (browser === 'duckduckgo.safariextension') {
                                 requireName = 'safari'
                             }
                             else if (browser === 'firefox') {
@@ -163,8 +165,9 @@ module.exports = function(grunt) {
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`, 
-            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`, 
+            copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
+            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
             mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
         },
 
@@ -174,7 +177,7 @@ module.exports = function(grunt) {
                 tasks: ['sass']
             },
             ui: {
-                files: watch.ui, 
+                files: watch.ui,
                 tasks: ['browserify:ui', 'watchSafari']
 
             },
@@ -185,6 +188,10 @@ module.exports = function(grunt) {
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs', 'watchSafari']
+            },
+            contentScripts: {
+                files: watch.contentScripts,
+                tasks: ['exec:copyContentScripts']
             }
         },
 
@@ -218,6 +225,6 @@ module.exports = function(grunt) {
     if (grunt.option('watch')) { devTasks.push('watch') }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)
-    grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
+    grunt.registerTask('test', 'Build and run tests', ['browserify:unitTest', 'karma'])
     grunt.registerTask('default', 'build')
 }
