@@ -42,8 +42,8 @@ class TabManager {
 
         for (let tabId in this.tabContainer) {
             let tab = this.tabContainer[tabId]
-            if (tab.site && tab.site.domain === data.domain) {
-                tab.site.setWhitelisted(data.list, data.value)
+            if (tab.site && tab.site.domain === data.domain || data.domain.startsWith('*.') ? tab.site.domain.endsWith(data.domain.substr(2)) : false) {
+                tab.site.setWhitelistStatusFromGlobal()
             }
         }
 
