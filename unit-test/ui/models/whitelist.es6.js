@@ -10,7 +10,7 @@ const domainTestCases = [
     },
     {
         'url': 'bttf.duckduckgo.com',
-        'whitelistedDomain': 'duckduckgo.com',
+        'whitelistedDomain': 'bttf.duckduckgo.com',
         'valid': true
     },
     {
@@ -47,8 +47,22 @@ const domainTestCases = [
         'url': '',
         'whitelistedDomain': '',
         'valid': false
-    }
-]
+    },
+    {
+        'url': '*.duckduckgo.com/test.html',
+        'whitelistedDomain': '*.duckduckgo.com',
+        'valid': true
+    },
+    {
+        'url': 'test*.duckduckgo.com',
+        'whitelistedDomain': '',
+        'valid': false
+    },
+    {
+        'url': 'duckduckgo*.com',
+        'whitelistedDomain': '',
+        'valid': false
+    }]
 
 describe('whitelist.addDomain()', () => {
     whitelist = new Whitelist({})
