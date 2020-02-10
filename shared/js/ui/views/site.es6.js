@@ -46,7 +46,7 @@ Site.prototype = window.$.extend({},
             const whitelisted = this.model.isWhitelisted
             this._showWhitelistedStatusMessage(!whitelisted)
 
-            if (whitelisted) {
+            if (whitelisted && !this.model.tab.site.wildcard) {
                 this._showBreakageConfirmation()
             }
         },
