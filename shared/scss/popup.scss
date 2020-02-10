@@ -179,6 +179,10 @@ body {
                 background-color: $color--green;
             }
 
+            &.is-wildcard {
+                background-color: $color--orange;
+            }
+
             .is-disabled & {
                 @include is_disabled();
             }

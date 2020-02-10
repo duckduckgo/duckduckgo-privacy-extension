@@ -40,11 +40,11 @@ module.exports = function () {
                 <span class="icon icon__arrow pull-right"></span>
             </a>
         </li>
-        <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
+        <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'} ${this.model.tab.site.wildcard ? 'is-wildcard' : ''}">
             <h2 class="is-transparent site-info__whitelist-status js-site-whitelist-status">
-                <span class="icon ${setTransitionIcon(!this.model.isWhitelisted)}"></span>
+                <span class="icon ${setTransitionIcon(this.model)}"></span>
                 <span class="text-line-after-icon">
-                    ${setTransitionText(!this.model.isWhitelisted)}
+                    ${setTransitionText(this.model)}
                 </span>
             </h2>
             <h2 class="site-info__protection js-site-protection">Site Privacy Protection</h2>
@@ -76,22 +76,26 @@ module.exports = function () {
     </ul>
 </section>`
 
-    function setTransitionIcon (isSiteWhitelisted) {
-        isSiteWhitelisted = isSiteWhitelisted || false
+    function setTransitionIcon (model) {
+        if (model.tab.site.wildcard) { return }
+        const isWhitelisted = !model.isWhitelisted || false
+        console.log('setTransitionIcon', isWhitelisted)
         let icon = 'icon__check'
 
-        if (isSiteWhitelisted) {
+        if (isWhitelisted) {
             icon = 'icon__shield'
         }
 
         return icon
     }
 
-    function setTransitionText (isSiteWhitelisted) {
-        isSiteWhitelisted = isSiteWhitelisted || false
+    function setTransitionText (model) {
+        if (model.tab.site.wildcard) { return 'Edit wildcards in whitelist'}
+        const isWhitelisted = !model.isWhitelisted || false
+        console.log('setTransitionText', isWhitelisted)
         let text = 'Added to '
 
-        if (isSiteWhitelisted) {
+        if (isWhitelisted) {
             text = 'Removed From '
         }
 

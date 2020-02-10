@@ -241,6 +241,8 @@ Site.prototype = window.$.extend({},
 
         toggleWhitelist: function () {
             if (this.tab && this.tab.site) {
+                if(this.tab.site.wildcard) return console.log('Willfully refusing to toggle wildcard site')
+
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
