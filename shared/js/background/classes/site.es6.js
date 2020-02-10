@@ -25,6 +25,7 @@ class Site {
         this.trackerUrls = []
         this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
+        this.wildcard = false
         this.whitelistOptIn = false
         this.setWhitelistStatusFromGlobal(domain)
 
@@ -73,10 +74,15 @@ class Site {
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal () {
-        let globalwhitelists = ['whitelisted', 'whitelistOptIn']
+        let globalwhitelists = ['whitelistOptIn', 'whitelisted']
         globalwhitelists.map((name) => {
             let list = settings.getSetting(name) || {}
-            this.setWhitelisted(name, list[this.domain])
+            let whitelisted = list[this.domain]
+            if (!whitelisted) { // handle wildcards
+                this.wildcard = Object.keys(list).some(dom => dom.startsWith('*.') ? this.domain.endsWith(dom.substr(2)) : false)
+                whitelisted = this.wildcard
+            }
+            this.setWhitelisted(name, whitelisted)
         })
     }
 

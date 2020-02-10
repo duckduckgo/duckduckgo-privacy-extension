@@ -46,11 +46,18 @@ Whitelist.prototype = window.$.extend({},
             // But first, strip the 'www.' part, otherwise getSubDomain will include it
             // and whitelisting won't work for that site
             url = url ? url.replace('www.', '') : ''
+
+            let wildcard = url.startsWith('*.')
+            if (wildcard) { url = url.substr(2) }
+
             const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null
             const subDomain = tldts.getSubdomain(url)
             const domain = tldts.getDomain(url) || localDomain
+
+            let domainToWhitelist = null
             if (domain) {
-                const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
+                domainToWhitelist = wildcard ? '*.' : ''
+                domainToWhitelist += subDomain ? subDomain + '.' + domain : domain
                 console.log(`whitelist: add ${domainToWhitelist}`)
 
                 this.fetch({
@@ -64,7 +71,7 @@ Whitelist.prototype = window.$.extend({},
                 this.setWhitelistFromSettings()
             }
 
-            return domain
+            return domainToWhitelist
         },
 
         setWhitelistFromSettings: function () {
