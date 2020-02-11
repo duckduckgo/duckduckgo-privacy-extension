@@ -86,6 +86,12 @@ chrome.tabs.onUpdated.addListener((id, info) => {
     tabManager.createOrUpdateTab(id, info)
 })
 
+
+// PRIVACY NUDGE BANNER
+const Banner = require('./banner.es6')
+chrome.tabs.onUpdated.addListener(Banner.handleUpdated, Banner.filter)
+// END PRIVACY NUDGE BANNER
+
 chrome.tabs.onRemoved.addListener((id, info) => {
     // remove the tab object
     tabManager.delete(id)

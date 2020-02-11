@@ -1,0 +1,183 @@
+// VARS
+$banner-height: 42px;
+
+%blurred {
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+}
+
+// GOOGLE ELEMENTS
+.ddg-viewport {
+    .has-modal & {
+        top: $banner-height !important;
+    }
+
+    .is-blurred & {
+        @extend %blurred;
+    }
+}
+
+
+// DDG BANNER ELEMENTS
+%flexrow {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+%ddgb-text,
+.ddgb__text {
+    font-size: 13px;
+    line-height: 15px;
+}
+
+%close-icon {
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.ddgb {
+    @extend %flexrow;
+    box-sizing: border-box;
+    height: 42px;
+    background: #F8F9FB;
+    border: 1px solid #EEEEEE;
+    color: #454648;
+    padding: 10px;
+
+    .is-blurred & {
+        @extend %blurred;
+    }
+}
+
+.ddgb-left,
+.ddgb-center,
+.ddgb-right {
+    @extend %flexrow;
+}
+
+.ddgb-left,
+.ddgb-right {
+    flex: 1;
+    max-width: 50px;
+}
+
+.ddgb-center {
+    margin: 0 auto;
+    flex: 2;
+    text-align: center;
+    justify-content: center;
+}
+
+.ddgb__logo {
+    height: 24px;
+}
+
+.ddgb__divider {
+    height: 12px;
+    width: 1px;
+    background-color: #C9C9CB;
+    margin: 0 13px;
+}
+
+.ddgb__btn {
+    @extend %ddgb-text;
+    text-decoration: underline;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.ddgb__close {
+    @extend %close-icon;
+}
+
+// DDG BANNER MODAL
+.ddgm-overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9000;
+    background: #99999991;
+
+    &.is-hidden {
+        display: none;;
+    }
+}
+
+.ddgm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+
+.ddgm__logo {
+    margin: -44px 0 0;
+}
+
+.ddgm-content {
+    position: relative;
+    width: 440px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    text-align: center;
+    background: #678FFF;
+
+    &__top {
+        padding: 20px 45px;
+        min-height: 220px;
+        border-radius: 4px 4px 0 0;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+        background: white;
+
+        &__title {
+            font-size: 22px;
+            line-height: 26px;
+            letter-spacing: -0.33px;
+            margin-bottom: 10px;
+            color: #333333;
+        }
+
+        &__text {
+            font-size: 15px;
+            line-height: 20px;
+            letter-spacing: -0.09375px;
+            font-style: italic;
+            color: #333333;
+        }
+    }
+
+    &__bottom {
+        min-height: 110px;
+        padding: 20px 45px;
+        color: white;
+
+        &__title {
+            font-style: italic;
+            font-size: 15px;
+            line-height: 20px;
+            margin-bottom: 10px;
+        }
+
+        &__text {
+            text-decoration: underline;
+            font-size: 12px;
+            line-height: 14px;
+        }
+    }
+}
+
+.ddgm__close {
+    @extend %close-icon;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
