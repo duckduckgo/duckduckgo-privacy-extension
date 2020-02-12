@@ -86,7 +86,6 @@ chrome.tabs.onUpdated.addListener((id, info) => {
     tabManager.createOrUpdateTab(id, info)
 })
 
-
 // PRIVACY NUDGE BANNER
 const Banner = require('./banner.es6')
 chrome.tabs.onUpdated.addListener(Banner.handleUpdated, Banner.filter)

@@ -1,17 +1,17 @@
-console.log("Hello from Banner.js Content Script!");
+console.log('Hello from Banner.js Content Script!')
 
 /**
  * CONSTS
  */
-const BANNER_HEIGHT = 42;
-const IS_GOOGLE_SERP = document.URL.indexOf("/search") !== -1;
+const BANNER_HEIGHT = 42
+const IS_GOOGLE_SERP = document.URL.indexOf('/search') !== -1
 
-const HIDDEN_CLASS = 'is-hidden';
-const BLUR_CLASS = 'is-blurred';
-const HAS_MODAL_CLASS = 'has-modal';
+const HIDDEN_CLASS = 'is-hidden'
+const BLUR_CLASS = 'is-blurred'
+const HAS_MODAL_CLASS = 'has-modal'
 
-const ATTN_ICON = '<path fill-rule="evenodd" clip-rule="evenodd" d="M13.0011 10.0831L7.70435 0.656118C7.47638 0.250617 7.04772 0 6.58253 0C6.11785 0 5.68919 0.250604 5.46122 0.656118L0.164979 10.0831C-0.0588695 10.4814 -0.0547592 10.9687 0.1763 11.3634C0.40684 11.7576 0.829322 12 1.28681 12H11.8803C12.3373 12 12.7598 11.7576 12.9903 11.3634C13.1082 11.1628 13.1663 10.9384 13.1663 10.7135C13.1658 10.4958 13.1107 10.2787 13.0011 10.0831H13.0011ZM5.80233 7.29964V3.89607C5.81365 3.36809 6.11674 3.01971 6.58864 3.01971C7.06001 3.01971 7.37495 3.37942 7.37495 3.89607V7.46839C7.36363 8.0077 7.06054 8.34423 6.58864 8.34423C6.11674 8.34423 5.80233 7.99586 5.80233 7.46839V7.29964ZM6.58811 10.6616C6.09101 10.6616 5.68653 10.2576 5.68653 9.75999C5.68653 9.26238 6.09049 8.86871 6.58811 8.86871C7.08572 8.86871 7.4794 9.26238 7.4794 9.75999C7.47888 10.2576 7.08521 10.6616 6.58811 10.6616Z" fill="#DE5833" />';
-const CLOSE_ICON = '<path fill-rule="evenodd" clip-rule="evenodd" d="M8.21694 0.188564L5 3.4055L1.78306 0.188564C1.5337 -0.0608011 1.14698 -0.0608011 0.897615 0.188564L0.187024 0.899156C-0.0623413 1.14852 -0.0623413 1.53524 0.187024 1.7846L3.40396 5.00154L0.199742 8.20576C-0.0496235 8.45513 -0.0496235 8.84184 0.199742 9.09121L0.910333 9.8018C1.1597 10.0512 1.54641 10.0512 1.79578 9.8018L5 6.57227L8.21694 9.78921C8.4663 10.0386 8.85302 10.0386 9.10238 9.78921L9.81298 9.07861C10.0623 8.82925 10.0623 8.44253 9.81298 8.19317L6.58345 4.98895L9.80038 1.77201C10.0497 1.52264 10.0497 1.13593 9.80038 0.886563L9.08979 0.175971C8.85261 -0.0607263 8.45371 -0.0607263 8.21701 0.188634L8.21694 0.188564Z" fill="#BCBDBF" />';
+const ATTN_ICON = '<path fill-rule="evenodd" clip-rule="evenodd" d="M13.0011 10.0831L7.70435 0.656118C7.47638 0.250617 7.04772 0 6.58253 0C6.11785 0 5.68919 0.250604 5.46122 0.656118L0.164979 10.0831C-0.0588695 10.4814 -0.0547592 10.9687 0.1763 11.3634C0.40684 11.7576 0.829322 12 1.28681 12H11.8803C12.3373 12 12.7598 11.7576 12.9903 11.3634C13.1082 11.1628 13.1663 10.9384 13.1663 10.7135C13.1658 10.4958 13.1107 10.2787 13.0011 10.0831H13.0011ZM5.80233 7.29964V3.89607C5.81365 3.36809 6.11674 3.01971 6.58864 3.01971C7.06001 3.01971 7.37495 3.37942 7.37495 3.89607V7.46839C7.36363 8.0077 7.06054 8.34423 6.58864 8.34423C6.11674 8.34423 5.80233 7.99586 5.80233 7.46839V7.29964ZM6.58811 10.6616C6.09101 10.6616 5.68653 10.2576 5.68653 9.75999C5.68653 9.26238 6.09049 8.86871 6.58811 8.86871C7.08572 8.86871 7.4794 9.26238 7.4794 9.75999C7.47888 10.2576 7.08521 10.6616 6.58811 10.6616Z" fill="#DE5833" />'
+const CLOSE_ICON = '<path fill-rule="evenodd" clip-rule="evenodd" d="M8.21694 0.188564L5 3.4055L1.78306 0.188564C1.5337 -0.0608011 1.14698 -0.0608011 0.897615 0.188564L0.187024 0.899156C-0.0623413 1.14852 -0.0623413 1.53524 0.187024 1.7846L3.40396 5.00154L0.199742 8.20576C-0.0496235 8.45513 -0.0496235 8.84184 0.199742 9.09121L0.910333 9.8018C1.1597 10.0512 1.54641 10.0512 1.79578 9.8018L5 6.57227L8.21694 9.78921C8.4663 10.0386 8.85302 10.0386 9.10238 9.78921L9.81298 9.07861C10.0623 8.82925 10.0623 8.44253 9.81298 8.19317L6.58345 4.98895L9.80038 1.77201C10.0497 1.52264 10.0497 1.13593 9.80038 0.886563L9.08979 0.175971C8.85261 -0.0607263 8.45371 -0.0607263 8.21701 0.188634L8.21694 0.188564Z" fill="#BCBDBF" />'
 const LOGO_HORIZONTAL = `
 <path fill-rule="evenodd" clip-rule="evenodd" d="M23.9731 11.9864C23.9731 18.6064 18.6065 23.9728 11.9865 23.9728C5.36646 23.9728 0.00012207 18.6064 0.00012207 11.9864C0.00012207 5.36642 5.36646 9.15527e-05 11.9865 9.15527e-05C18.6065 9.15527e-05 23.9731 5.36642 23.9731 11.9864Z" fill="#DE5833"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M14.3849 21.8903C13.7456 20.8096 12.0719 17.7916 12.0719 15.5589C12.0719 10.3959 15.5359 14.8146 15.5359 10.6983C15.5359 9.71059 15.0463 6.27759 12.0549 5.56159C11.3156 4.58692 9.57659 3.63559 6.81726 4.02359C6.81726 4.02359 7.28359 4.15792 7.80126 4.42326C7.80126 4.42326 6.80626 4.55592 6.75292 5.24592C6.75292 5.24592 8.73026 5.13826 9.86026 5.50326C7.27992 5.83792 5.94826 7.18392 6.18992 9.65192C6.53126 13.1449 8.00326 19.3953 8.53292 21.5743C4.60592 20.1596 1.79792 16.4009 1.79792 11.9866C1.79792 6.35959 6.35959 1.79792 11.9866 1.79792C17.6136 1.79792 22.1753 6.35959 22.1753 11.9866C22.1753 16.7873 18.8546 20.8119 14.3849 21.8903ZM22.1473 7.69392C21.5919 6.38059 20.7966 5.20126 19.7843 4.18892C18.7719 3.17626 17.5926 2.38126 16.2793 1.82592C14.9193 1.25059 13.4749 0.958923 11.9866 0.958923C10.4983 0.958923 9.05392 1.25059 7.69392 1.82592C6.38059 2.38126 5.20126 3.17626 4.18892 4.18892C3.17659 5.20126 2.38126 6.38059 1.82592 7.69392C1.25059 9.05392 0.958923 10.4983 0.958923 11.9866C0.958923 13.4749 1.25059 14.9193 1.82592 16.2793C2.38126 17.5923 3.17659 18.7719 4.18892 19.7843C5.20126 20.7969 6.38059 21.5916 7.69392 22.1473C9.05392 22.7223 10.4983 23.0139 11.9866 23.0139C13.4749 23.0139 14.9193 22.7223 16.2793 22.1473C17.5926 21.5916 18.7719 20.7969 19.7843 19.7843C20.7966 18.7719 21.5919 17.5923 22.1473 16.2793C22.7226 14.9193 23.0143 13.4749 23.0143 11.9866C23.0143 10.4983 22.7226 9.05392 22.1473 7.69392Z" fill="white"/>
@@ -68,12 +68,12 @@ const LOGO_ROUND = `
  */
 
 // Create HTML element from string
-function htmlToElement(html) {
-    var template = document.createElement('template');
+function htmlToElement (html) {
+    var template = document.createElement('template')
     // Never return a text node of whitespace as the result
-    html = html.trim();
-    template.innerHTML = html;
-    return template.content.firstChild;
+    html = html.trim()
+    template.innerHTML = html
+    return template.content.firstChild
 }
 
 /**
@@ -107,8 +107,7 @@ const bannerHTML = `
         </span>
     </div>
 </div>
-`;
-
+`
 
 const modalHTML = `
 <div class="ddgm-overlay ${HIDDEN_CLASS}">
@@ -143,60 +142,56 @@ const modalHTML = `
         </div>
     </div>
 </div >
-`;
-
+`
 
 /**
  * DOM MODIFICATION
  */
-const banner = htmlToElement(bannerHTML);
-const modal = htmlToElement(modalHTML);
-const body = document.body;
-
+const banner = htmlToElement(bannerHTML)
+const modal = htmlToElement(modalHTML)
+const body = document.body
 
 // EVENT HANDLERS
-const bannerClose = banner.querySelector('.js-ddgb-close');
-const bannerMore = banner.querySelector('.js-ddgb-more');
-const modalClose = modal.querySelector('.js-ddgm-close');
+const bannerClose = banner.querySelector('.js-ddgb-close')
+const bannerMore = banner.querySelector('.js-ddgb-more')
+const modalClose = modal.querySelector('.js-ddgm-close')
 
 // Banner Close Click
-bannerClose.addEventListener("click", (event) => {
-    banner.remove();
+bannerClose.addEventListener('click', (event) => {
+    banner.remove()
     body.classList.remove(HAS_MODAL_CLASS)
-});
+})
 
 // Banner Learn More Click
-bannerMore.addEventListener("click", (event) => {
-    body.classList.add(BLUR_CLASS);
-    modal.classList.remove(HIDDEN_CLASS);
-
-});
+bannerMore.addEventListener('click', (event) => {
+    body.classList.add(BLUR_CLASS)
+    modal.classList.remove(HIDDEN_CLASS)
+})
 
 // Modal Close Click
-modalClose.addEventListener("click", (event) => {
-    body.classList.remove(BLUR_CLASS);
-    modal.classList.add(HIDDEN_CLASS);
-});
-
+modalClose.addEventListener('click', (event) => {
+    body.classList.remove(BLUR_CLASS)
+    modal.classList.add(HIDDEN_CLASS)
+})
 
 // DOM INJECTIOM
 // Insert content and update styles accordingly
 if (IS_GOOGLE_SERP) {
-    console.log('Google SERP Detected!');
+    console.log('Google SERP Detected!')
 
-    const searchform = document.getElementById("searchform")
+    const searchform = document.getElementById('searchform')
     searchform.insertAdjacentElement('afterbegin', banner)
 
     // On Google Homepage
 } else {
-    console.log('Google Homepage Detected!');
+    console.log('Google Homepage Detected!')
 
-    const viewport = document.getElementById('viewport');
-    viewport.classList.add('ddg-viewport');
+    const viewport = document.getElementById('viewport')
+    viewport.classList.add('ddg-viewport')
 
-    body.insertAdjacentElement('afterbegin', banner);
+    body.insertAdjacentElement('afterbegin', banner)
 }
 
 // Insert Modal
-body.insertAdjacentElement('beforeend', modal);
-body.classList.add(HAS_MODAL_CLASS);
+body.insertAdjacentElement('beforeend', modal)
+body.classList.add(HAS_MODAL_CLASS)
