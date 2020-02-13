@@ -49,7 +49,7 @@ module.exports = function (grunt) {
             '<%= dirs.public.css %>/banner.css': ['<%= dirs.src.scss %>/banner.scss']
         },
         banner: {
-            '<%= dirs.src.js %>/content-scripts/banner.js': ['<%= dirs.src.js %>/banner/index.es6.js']
+            '<%= dirs.public.js %>/content-scripts/banner.js': ['<%= dirs.src.js %>/banner/index.es6.js']
         }
     }
 
