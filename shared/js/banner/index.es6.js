@@ -34,13 +34,15 @@ modalClose.addEventListener('click', (event) => {
     modal.classList.add(consts.HIDDEN_CLASS)
 })
 
-// DOM INJECTIOM
+// DOM INJECTION
 // Insert content and update styles accordingly
 if (utils.isGoogleSerp()) {
     console.log('Google SERP Detected!')
 
     const searchform = document.getElementById('searchform')
     searchform.insertAdjacentElement('afterbegin', banner)
+    searchform.classList.add('ddg-searchform')
+    body.classList.add('is-serp')
 
     // On Google Homepage
 } else {

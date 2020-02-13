@@ -1,12 +1,14 @@
 // VARS
 $banner-height: 42px;
+$banner-margin: 20px;
 
 %blurred {
     filter: blur(2px);
     -webkit-filter: blur(2px);
 }
 
-// GOOGLE ELEMENTS
+
+// DDG ADDED CLASSES
 .ddg-viewport {
     .has-modal & {
         top: $banner-height !important;
@@ -14,6 +16,26 @@ $banner-height: 42px;
 
     .is-blurred & {
         @extend %blurred;
+    }
+}
+
+.ddg-searchform {
+    .is-serp.has-modal & {
+        // need to override inline styles
+        top: 0px !important;
+    }
+}
+
+// GOOGLE SERP CLASSES
+.is-serp.has-modal {
+    // Push Google tabs down
+    #main #cnt {
+        padding-top: $banner-height + $banner-margin;
+    }
+    
+    // force floating searchbar shadow below banner
+    .minidiv .sfbg {
+        z-index: -1 !important;
     }
 }
 
@@ -48,6 +70,10 @@ $banner-height: 42px;
 
     .is-blurred & {
         @extend %blurred;
+    }
+
+    .is-serp & {
+        margin-bottom: 20px;
     }
 }
 
