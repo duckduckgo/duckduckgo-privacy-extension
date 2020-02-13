@@ -3,16 +3,7 @@ const pattern2 = 'https://www.google.com/search'
 const pattern3 = 'https://www.google.com/webhp'
 
 const filter = {
-    urls: [pattern1, pattern2, pattern3],
-    properties: ['status']
-}
-
-function onExecuted (result) {
-    console.log('We executed!')
-}
-
-function onError (error) {
-    console.log(`Error: ${error}`)
+    urls: [pattern1, pattern2, pattern3]
 }
 
 function handleUpdated (tabId, changeInfo, tabInfo) {
@@ -25,17 +16,22 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
     console.log('New tab Info: ', tabInfo)
 
     //  Inject JS
-    const executing = browser.tabs.executeScript({
+    chrome.tabs.executeScript({
         file: '/public/js/content-scripts/banner.js',
         runAt: 'document_start'
+    },
+    function (array) {
+        console.log('Content Script injected!')
     })
-    executing.then(onExecuted, onError)
 
     // Inject CSS
-    var insertingCSS = browser.tabs.insertCSS({
-        file: '/public/css/banner.css'
+    chrome.tabs.insertCSS({
+        file: '/public/css/banner.css',
+        runAt: 'document_start'
+    },
+    function () {
+        console.log('CSS injected!')
     })
-    insertingCSS.then(null, onError)
 }
 
 var Banner = (() => {

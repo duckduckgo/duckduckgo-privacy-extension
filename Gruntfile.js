@@ -4,7 +4,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
 
-    var values = require('object.values');
+    var values = require('object.values')
 
     if (!Object.values) {
         values.shim()
@@ -14,12 +14,11 @@ module.exports = function (grunt) {
     let buildType = grunt.option('type')
 
     if (!(browser && buildType)) {
-        console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
+        console.error('Missing browser or  build type: --browser=<browser-name> --type=<dev,release>')
         process.exit(1)
     }
 
     let buildPath = `build/${browser}/${buildType}`
-
 
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
@@ -48,6 +47,9 @@ module.exports = function (grunt) {
             '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
             '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss'],
             '<%= dirs.public.css %>/banner.css': ['<%= dirs.src.scss %>/banner.scss']
+        },
+        banner: {
+            '<%= dirs.src.js %>/content-scripts/banner.js': ['<%= dirs.src.js %>/banner/index.es6.js']
         }
     }
 
@@ -61,7 +63,7 @@ module.exports = function (grunt) {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
-        contentScripts: ['<%= dirs.src.js %>/content-scripts/**/*.js']
+        contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js', '<%= dirs.src.js %>/banner/*.js']
     }
 
     let karmaOps = {
@@ -118,8 +120,7 @@ module.exports = function (grunt) {
                             let requireName = browser
                             if (browser === 'duckduckgo.safariextension') {
                                 requireName = 'safari'
-                            }
-                            else if (browser === 'firefox') {
+                            } else if (browser === 'firefox') {
                                 requireName = 'chrome'
                             }
                             this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
@@ -136,6 +137,9 @@ module.exports = function (grunt) {
             },
             backgroundTest: {
                 files: baseFileMap.backgroundTest
+            },
+            banner: {
+                files: baseFileMap.banner
             },
             unitTest: {
                 options: {
@@ -158,7 +162,7 @@ module.exports = function (grunt) {
                 src: ['scripts/buildEntityMap.js']
             },
             tosdr: {
-                src: []//'scripts/tosdr.js']
+                src: []// 'scripts/tosdr.js']
             }
         },
 
@@ -191,7 +195,7 @@ module.exports = function (grunt) {
             },
             contentScripts: {
                 files: watch.contentScripts,
-                tasks: ['exec:copyContentScripts']
+                tasks: ['browserify:banner', 'exec:copyContentScripts']
             }
         },
 
@@ -204,22 +208,22 @@ module.exports = function (grunt) {
 
     // sets up safari directory structure so that it can be loaded in extension builder
     // duckduckgo.safariextension -> build type -> duckduckgo.safariextension -> build files
-    grunt.registerTask('safari', 'Move Safari build', (() => {
+    grunt.registerTask('safari', 'Move Safari build', () => {
         if (browser === 'duckduckgo.safariextension') {
-            console.log("Moving Safari build")
+            console.log('Moving Safari build')
             grunt.task.run('exec:tmpSafari')
             grunt.task.run('exec:mvSafari')
         }
-    }))
+    })
 
     // moves generated files from watch into the correct build directory
-    grunt.registerTask('watchSafari', 'Moves Safari files after watch', (() => {
+    grunt.registerTask('watchSafari', 'Moves Safari files after watch', () => {
         if (browser === 'duckduckgo.safariextension') {
             grunt.task.run('exec:mvWatchSafari')
         }
-    }))
+    })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'browserify:banner', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }
