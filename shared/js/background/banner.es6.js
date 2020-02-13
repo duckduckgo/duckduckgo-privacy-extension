@@ -1,16 +1,23 @@
-const filterUrls = [
-    'https://www.google.com/',
-    'https://www.google.com/search',
-    'https://www.google.com/webhp'
-]
+const filterUrls = {
+    valid: [
+        'https://www.google.com/',
+        'https://www.google.com/search',
+        'https://www.google.com/webhp',
+        'https://images.google.com/'
+    ],
+    invalid: [
+        'https://www.google.com/maps'
+    ]
+}
 
 let updatedTabs = {}
 
 function isValidURL (url) {
     url = url.toLowerCase()
     console.log(`Validating URL: ${url}`)
-    // ensure match is at beginning of  string
-    return filterUrls.some(pattern => url.indexOf(pattern) === 0)
+    // ensure match is at beginning of string
+    return filterUrls.valid.some(pattern => url.indexOf(pattern) === 0) &&
+        !filterUrls.invalid.some(pattern => url.indexOf(pattern) === 0)
 }
 
 function handleUpdated (tabId, changeInfo, tabInfo) {
@@ -28,7 +35,7 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
         runAt: 'document_start'
     },
     function (array) {
-        console.log('Content Script injected!')
+        console.log(`Tab ${tabId}: Content Script injected!`)
     })
 
     // Inject CSS
@@ -37,7 +44,7 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
         runAt: 'document_start'
     },
     function () {
-        console.log('CSS injected!')
+        console.log(`Tab ${tabId}: CSS injected!`)
     })
 
     // prevent injecting more than once
