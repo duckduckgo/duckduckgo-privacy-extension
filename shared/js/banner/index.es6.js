@@ -38,11 +38,17 @@ modalClose.addEventListener('click', (event) => {
 // Insert content and update styles accordingly
 if (utils.isGoogleSerp()) {
     console.log('Google SERP Detected!')
+    body.classList.add('is-serp')
 
     const searchform = document.getElementById('searchform')
-    searchform.insertAdjacentElement('afterbegin', banner)
-    searchform.classList.add('ddg-searchform')
-    body.classList.add('is-serp')
+
+    if (searchform) {
+        searchform.insertAdjacentElement('afterbegin', banner)
+        searchform.classList.add('ddg-searchform')
+    } else {
+        body.insertAdjacentElement('afterbegin', banner)
+        body.classList.add('no-margin')
+    }
 
     // On Google Homepage
 } else {

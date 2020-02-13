@@ -75,6 +75,10 @@ $banner-margin: 20px;
     .is-serp & {
         margin-bottom: 20px;
     }
+
+    .is-serp.no-margin & {
+        margin-bottom: 0;
+    }
 }
 
 .ddgb-left,
