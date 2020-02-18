@@ -61,24 +61,35 @@ $banner-margin: 20px;
 
 .ddgb {
     @extend %flexrow;
-    box-sizing: border-box;
-    height: 42px;
-    background: #F8F9FB;
-    border: 1px solid #EEEEEE;
-    color: #454648;
-    padding: 10px;
+    background: white;
 
     .is-blurred & {
         @extend %blurred;
     }
 
     .is-serp & {
-        margin-bottom: 20px;
+        padding-bottom: 10px;
     }
 
-    .is-serp.no-margin & {
-        margin-bottom: 0;
+    .is-serp.no-padding & {
+        padding-bottom: 0;
     }
+
+    // Remove padding when showing fixed, scrolling search bar
+    .is-serp.has-modal .ddg-searchform.minidiv & {
+        padding-bottom: 0 !important;
+    }
+}
+
+.ddgb-inner {
+    @extend %flexrow;
+    flex: 1;
+    box-sizing: border-box;
+    height: 42px;
+    background: #F8F9FB;
+    border: 1px solid #EEEEEE;
+    color: #454648;
+    padding: 10px;
 }
 
 .ddgb-left,

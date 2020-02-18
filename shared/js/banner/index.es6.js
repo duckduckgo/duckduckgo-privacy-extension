@@ -47,7 +47,7 @@ if (utils.isGoogleSerp()) {
         searchform.classList.add('ddg-searchform')
     } else {
         body.insertAdjacentElement('afterbegin', banner)
-        body.classList.add('no-margin')
+        body.classList.add('no-padding')
     }
 
     // On Google Homepage
