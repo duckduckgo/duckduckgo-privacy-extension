@@ -3,7 +3,7 @@
 const consts = require('./consts.es6')
 
 module.exports = `
-<div class="ddgb">
+<div id="ddgb" class="ddgb">
     <div class="ddgb-inner">
         <div class="ddgb-left"></div>
 
