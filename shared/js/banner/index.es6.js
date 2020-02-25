@@ -36,31 +36,16 @@ modalClose.addEventListener('click', (event) => {
 
 function updateDOM () {
     // DOM INJECTION
-    // Insert content and update styles accordingly
-    if (utils.isGoogleSerp()) {
-        console.log('Google SERP Detected!')
-        body.classList.add('is-serp')
 
-        const searchform = document.getElementById('searchform')
+    // Check if Google SERP or Homepage
+    // if (utils.isGoogleSerp()) {
+    //     console.log('Google SERP Detected!')
+    // } else {
+    //     console.log('Google Homepage Detected!')
+    // }
 
-        if (searchform) {
-            searchform.insertAdjacentElement('afterbegin', banner)
-            searchform.classList.add('ddg-searchform')
-        } else {
-            body.insertAdjacentElement('afterbegin', banner)
-            body.classList.add('no-padding')
-        }
-
-        // On Google Homepage
-    } else {
-        console.log('Google Homepage Detected!')
-
-        const viewport = document.getElementById('viewport')
-        viewport.classList.add('ddg-viewport')
-
-        body.insertAdjacentElement('afterbegin', banner)
-    }
-
+    // Insert Banner
+    body.insertAdjacentElement('beforeend', banner)
     // Insert Modal
     body.insertAdjacentElement('beforeend', modal)
     body.classList.add(consts.HAS_MODAL_CLASS)
