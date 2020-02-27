@@ -4,9 +4,9 @@ const consts = require('./consts.es6')
 const logoUrl = chrome.runtime.getURL('img/banner/logo.svg')
 
 module.exports = `
-<div id="ddgb" class="ddgb">
+<div id="ddgb" class="ddgb slideIn">
+    <img class="js-ddgb-logo ddgb__logo" src="${logoUrl}"></img>
     <div class="ddgb-inner">
-        <img class="ddgb__logo" src="${logoUrl}"></img>
         <div class="ddgb__content">
             <div class="ddgb__title">Google added this query to your personal advertising profile.</div>
             <div class="ddgb__text">

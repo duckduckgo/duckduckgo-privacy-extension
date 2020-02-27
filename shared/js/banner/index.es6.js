@@ -10,12 +10,27 @@ const banner = utils.htmlToElement(bannerHTML)
 const modal = utils.htmlToElement(modalHTML)
 
 // Banner & Modal Elements
+const bannerLogo = banner.querySelector('.js-ddgb-logo')
 const bannerClose = banner.querySelector('.js-ddgb-close')
 const bannerMore = banner.querySelector('.js-ddgb-more')
 const modalClose = modal.querySelector('.js-ddgm-close')
 const body = document.body
 
 // EVENT HANDLERS
+// Banner Logo Hovere
+banner.addEventListener('mouseover', (event) => {
+    console.log('HOVERED ON BANNER')
+
+    banner.classList.remove('slideIn')
+    banner.classList.remove('hideBanner')
+    banner.classList.add('showBanner')
+})
+
+bannerLogo.addEventListener('click', (event) => {
+    banner.classList.remove('showBanner')
+    banner.classList.add('hideBanner')
+})
+
 // Banner Close Click
 bannerClose.addEventListener('click', (event) => {
     banner.remove()

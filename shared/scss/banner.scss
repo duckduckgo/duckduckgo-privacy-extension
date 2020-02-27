@@ -1,9 +1,29 @@
 // VARS
 $banner-background: #4F535C;
-$banner-width: 650px;
+$banner-width: 600px;
 $banner-height: 70px;
 $banner-logo-height: 80px;
 $banner-margin: 20px;
+
+// Animations
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to { opacity: 1 }
+}
+
+@keyframes showBanner {
+    from { right: -640px; }
+    to { right: 0px; }
+}
+
+@keyframes hideBanner {
+    from { right: 0px; }
+    to { right: -640px; }
+}
+
 
 %blurred {
     filter: blur(2px);
@@ -22,26 +42,8 @@ $banner-margin: 20px;
     }
 }
 
-// .ddg-searchform {
-//     .is-serp.has-modal & {
-//         // need to override inline styles
-//         top: 0px !important;
-//     }
-// }
-
 // GOOGLE SERP CLASSES
-.is-serp.has-modal {
-    // Push Google tabs down
-    // #main #cnt {
-    //     padding-top: $banner-height + $banner-margin;
-    // }
-
-    // // force floating searchbar shadow below banner
-    // .minidiv .sfbg {
-    //     z-index: -1 !important;
-    // }
-}
-
+.is-serp.has-modal {}
 
 // DDG BANNER ELEMENTS
 %flexrow {
@@ -66,25 +68,27 @@ $banner-margin: 20px;
     @extend %flexrow;
 
     position: fixed;
-    right: 0;
-    top: 20px;
+    top: 70px;
+    right: -640px;
+    height: $banner-height;
     z-index: 1000;
+
+    &.slideIn {
+        // animated slide-in from offscreen on load
+        animation: slideIn 400ms ease-out forwards;
+        animation-iteration-count: 1;
+    }
+
+    &.hideBanner {
+        animation: hideBanner 250ms ease-in forwards;
+    }
+
+    &.showBanner {
+        animation: showBanner 400ms ease-out forwards;
+    }
 
     .is-blurred & {
         @extend %blurred;
-    }
-
-    // used to put white background behind logo
-    // prevents use of negative margins
-    &::before {
-        content: '';
-        display: block;
-        height: $banner-height;
-        width: 50px;
-        background: white;
-        position: absolute;
-        top: 0;
-        left: 0;
     }
 }
 
@@ -102,6 +106,15 @@ $banner-margin: 20px;
     width: $banner-width;
     background: $banner-background;
     color: white;
+
+    padding-left: 50px;
+    margin-left: 50px;
+
+    transition: margin 200ms ease-in 50ms;
+
+    .showBanner & {
+        margin-left: -50px;
+    }
 }
 
 .ddgb__content {
