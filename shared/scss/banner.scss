@@ -30,6 +30,14 @@ $banner-margin: 20px;
     -webkit-filter: blur(2px);
 }
 
+%btn-link, .btn--link {
+    text-decoration: underline;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 
 // DDG ADDED CLASSES
 .ddg-viewport {
@@ -126,17 +134,14 @@ $banner-margin: 20px;
     font-weight: bold;
     margin-bottom: 7px;
 }
+
 .ddgb__text {
     font-style: italic;
 }
 
 .ddgb__btn {
     @extend %ddgb-text;
-    text-decoration: underline;
-
-    &:hover {
-        cursor: pointer;
-    }
+    @extend %btn-link;
 }
 
 .ddgb__close {
@@ -220,7 +225,8 @@ $banner-margin: 20px;
         }
 
         &__text {
-            text-decoration: underline;
+            @extend %btn-link;
+            
             font-size: 12px;
             line-height: 14px;
         }

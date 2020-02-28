@@ -23,14 +23,14 @@ module.exports = `
                 <p class="${id}-content__bottom__title">
                     In the Firefox menu, go to
                     <br>
-                        Preferences, Search, and Default Search Engine.
+                    Preferences, Search, and Default Search Engine.
                 </p>
-                <p class="${id}-content__bottom__text">
+                <span class="js-${id}-dont-remind ${id}-content__bottom__text">
                     Don’t remind me about this again.
-                </p>
+                </span>
             </div>
 
-            <svg class="js-${id}-close ${id}__close" width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <svg class="js-${id}-close ${id}__close" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                 ${consts.CLOSE_ICON}
             </svg>
         </div>
