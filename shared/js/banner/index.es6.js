@@ -61,6 +61,7 @@ modalDontRemind.addEventListener('click', (event) => {
 
 // Hide Banner
 function closeBanner () {
+    modal.remove()
     banner.remove()
     body.classList.remove(consts.HAS_MODAL_CLASS)
 }
