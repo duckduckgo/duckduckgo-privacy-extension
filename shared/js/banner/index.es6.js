@@ -13,7 +13,8 @@ const modal = utils.htmlToElement(modalHTML)
 const bannerLogo = banner.querySelector(`.js-${consts.BANNER_ID}-logo`)
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
 const bannerMore = banner.querySelector(`.js-${consts.BANNER_ID}-more`)
-const modalClose = modal.querySelector(`.js-${consts.BANNER_ID}-close`)
+const modalClose = modal.querySelector(`.js-${consts.BANNER_MODAL_ID}-close`)
+const modalDontRemind = modal.querySelector(`.js-${consts.BANNER_MODAL_ID}-dont-remind`)
 const body = document.body
 
 // EVENT HANDLERS
@@ -29,15 +30,8 @@ banner.addEventListener('mouseover', (event) => {
 bannerLogo.addEventListener('click', (event) => {
     banner.classList.remove('showBanner')
     banner.classList.add('hideBanner')
-    // TODO: Update hasClicked in storage
-})
 
-// Banner Close Click
-bannerClose.addEventListener('click', (event) => {
-    banner.remove()
-    body.classList.remove(consts.HAS_MODAL_CLASS)
-    chrome.runtime.sendMessage({ firePixel: consts.BANNER_DISMISS })
-    // TODO: Update isDismissed in storage
+    // TODO: Update hasClicked in storage
 })
 
 // Banner Learn More Click
@@ -47,11 +41,35 @@ bannerMore.addEventListener('click', (event) => {
     chrome.runtime.sendMessage({ firePixel: consts.BANNER_CLICK })
 })
 
+// Banner Close Click
+bannerClose.addEventListener('click', (event) => {
+    closeBanner()
+    chrome.runtime.sendMessage({ firePixel: consts.BANNER_DISMISS })
+    // TODO: Update isDismissed in storage
+})
+
 // Modal Close Click
 modalClose.addEventListener('click', (event) => {
+    closeModal()
+})
+
+// Modal Do-Not-Remind-Me Click
+modalDontRemind.addEventListener('click', (event) => {
+    closeModal()
+    closeBanner()
+})
+
+// Hide Banner
+function closeBanner () {
+    banner.remove()
+    body.classList.remove(consts.HAS_MODAL_CLASS)
+}
+
+// Hide Modal
+function closeModal () {
     body.classList.remove(consts.BLUR_CLASS)
     modal.classList.add(consts.HIDDEN_CLASS)
-})
+}
 
 function updateDOM () {
     // DOM INJECTION
