@@ -3,14 +3,14 @@
 const consts = require('./consts.es6')
 const id = consts.BANNER_MODAL_ID
 
+const logoUrl = chrome.runtime.getURL('img/banner/logo-round.svg')
+
 module.exports = `
 <div class="${id}-overlay ${consts.HIDDEN_CLASS}">
     <div id="${id}" class="${id}" >
         <div class="${id}-content">
             <div class="${id}-content__top">
-                <svg class="${id}__logo" width="100" height="100" viewBox="0 0 100 100" fill="none">
-                    ${consts.LOGO_ROUND}
-                </svg>
+                <img class="js-${id}-logo ${id}__logo" src="${logoUrl}"></img>
                 <p class="${id}-content__top__title">
                     DuckDuckGo can’t block Google from tracking your searches
                 </p>
