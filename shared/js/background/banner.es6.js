@@ -52,7 +52,9 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
     if (changeInfo.status && changeInfo.status === 'loading') {
         // reset updated status as this is a fresh page load
         resetTab(tabId)
+    }
 
+    if (changeInfo.status && changeInfo.status === 'complete') {
         // Inject CSS
         chrome.tabs.insertCSS({
             file: '/public/css/banner.css',
@@ -63,9 +65,7 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
             console.log(`Tab ${tabId}: CSS injected!`)
             console.groupEnd()
         })
-    }
 
-    if (changeInfo.status && changeInfo.status === 'complete') {
         //  Inject JS
         chrome.tabs.executeScript({
             file: '/public/js/content-scripts/banner.js',
