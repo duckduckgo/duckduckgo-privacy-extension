@@ -3,6 +3,8 @@ const filterUrls = {
         'https://www.google.com/',
         'https://www.google.com/search',
         'https://www.google.com/webhp',
+        'https://www.google.com/videohp',
+        'https://www.google.com/shopping',
         'https://images.google.com/'
     ],
     invalid: [
