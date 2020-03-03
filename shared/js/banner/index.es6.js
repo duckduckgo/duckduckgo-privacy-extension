@@ -30,8 +30,6 @@ banner.addEventListener('mouseover', (event) => {
 bannerLogo.addEventListener('click', (event) => {
     banner.classList.remove('showBanner')
     banner.classList.add('hideBanner')
-
-    // TODO: Update hasClicked in storage
 })
 
 // Banner Learn More Click
@@ -39,13 +37,19 @@ bannerMore.addEventListener('click', (event) => {
     body.classList.add(consts.BLUR_CLASS)
     modal.classList.remove(consts.HIDDEN_CLASS)
     chrome.runtime.sendMessage({ firePixel: consts.BANNER_CLICK })
+    chrome.storage.local.set({ bannerClicked: true }, function () {
+        console.log('MARKED BANNER AS CLICKED')
+    })
 })
 
 // Banner Close Click
 bannerClose.addEventListener('click', (event) => {
     closeBanner()
+
     chrome.runtime.sendMessage({ firePixel: consts.BANNER_DISMISS })
-    // TODO: Update isDismissed in storage
+    chrome.storage.local.set({ bannerDismissed: true }, function () {
+        console.log('MARKED BANNER AS DISMISSED')
+    })
 })
 
 // Modal Close Click
