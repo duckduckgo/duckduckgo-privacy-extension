@@ -28,13 +28,7 @@ function resetTab (tabId) {
     }
 }
 
-function handleUpdated (tabId, changeInfo, tabInfo) {
-    console.group('DDG BANNER')
-
-    console.log(`🔔 Updated tab: ${tabId}`)
-    console.log('ℹ️ Changed attributes: ', changeInfo)
-    console.log('ℹ️ New tab Info: ', tabInfo)
-
+function createBanner (tabId, changeInfo, tabInfo) {
     const url = changeInfo.url || tabInfo.url || false
 
     if (!updatedTabs[tabId]) resetTab(tabId)
@@ -80,6 +74,25 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
         // prevent injecting more than once
         updatedTabs[tabId].js = true
     }
+    console.groupEnd()
+}
+
+function handleUpdated (tabId, changeInfo, tabInfo) {
+    console.group('DDG BANNER')
+
+    chrome.storage.local.get(['bannerDismissed'], function (result) {
+        if (result.bannerDismissed) {
+            console.log('IGNORING. BANNER DISMISSED')
+            console.groupEnd()
+            return
+        }
+
+        console.log(`🔔 Updated tab: ${tabId}`)
+        console.log('ℹ️ Changed attributes: ', changeInfo)
+        console.log('ℹ️ New tab Info: ', tabInfo)
+
+        createBanner(tabId, changeInfo, tabInfo)
+    })
     console.groupEnd()
 }
 
