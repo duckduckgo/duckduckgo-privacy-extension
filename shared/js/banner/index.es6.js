@@ -10,31 +10,59 @@ const banner = utils.htmlToElement(bannerHTML)
 const modal = utils.htmlToElement(modalHTML)
 
 // Banner & Modal Elements
-const bannerLogo = banner.querySelector(`.js-${consts.BANNER_ID}-logo`)
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
 const bannerMore = banner.querySelector(`.js-${consts.BANNER_ID}-more`)
-const modalClose = modal.querySelector(`.js-${consts.BANNER_MODAL_ID}-close`)
-const modalDontRemind = modal.querySelector(`.js-${consts.BANNER_MODAL_ID}-dont-remind`)
+const modalContent = modal.querySelector(`#${consts.MODAL_ID}`)
+const modalClose = modal.querySelector(`.js-${consts.MODAL_ID}-close`)
+const modalDontRemind = modal.querySelector(`.js-${consts.MODAL_ID}-dont-remind`)
 const body = document.body
 
 // EVENT HANDLERS
-// Banner Logo Hovere
-banner.addEventListener('mouseover', (event) => {
-    console.log('HOVERED ON BANNER')
-
-    banner.classList.remove('slideIn')
-    banner.classList.remove('hideBanner')
-    banner.classList.add('showBanner')
+// Remove animating class after entrance
+banner.addEventListener('animationend', () => {
+    banner.classList.remove(consts.IS_ANIMATING_CLASS)
 })
 
-bannerLogo.addEventListener('click', (event) => {
-    banner.classList.remove('showBanner')
-    banner.classList.add('hideBanner')
+// Hide banner on page click after entrance animation
+// Also hide modal on overlay click
+body.addEventListener('click', (event) => {
+    // ignore if banner is animating
+    if (banner.classList.contains(consts.IS_ANIMATING_CLASS)) return
+
+    // ignore clicks on banner, modal, and banner children
+    if (banner.contains(event.target) || modalContent.contains(event.target)) return
+
+    // hide on modal background click
+    if (body.classList.contains(consts.HAS_MODAL_CLASS)) {
+        hideModal()
+    }
+
+    // hide on page click
+    // if (body.classList.contains(consts.HAS_BANNER_CLASS)) {
+    //     hideModal()
+    //     hideBanner()
+    // }
+})
+
+// Hide banner on key press
+body.addEventListener('keydown', (event) => {
+    // Hide if escape key pressed
+    if (body.classList.contains(consts.HAS_BANNER_CLASS) && event.keyCode === 27) {
+        hideModal()
+        hideBanner()
+    }
+
+    // Hide on any key press except arrows
+    // if (body.classList.contains(consts.HAS_BANNER_CLASS) &&
+    // event.key.indexOf('Arrow') === -1) {
+    //     hideModal()
+    //     hideBanner()
+    // }
 })
 
 // Banner Learn More Click
 bannerMore.addEventListener('click', (event) => {
-    body.classList.add(consts.BLUR_CLASS)
+    body.classList.add(consts.HAS_MODAL_CLASS, consts.BLUR_CLASS)
     modal.classList.remove(consts.HIDDEN_CLASS)
     chrome.runtime.sendMessage({ firePixel: consts.BANNER_CLICK })
     chrome.storage.local.set({ bannerClicked: true }, function () {
@@ -44,35 +72,44 @@ bannerMore.addEventListener('click', (event) => {
 
 // Banner Close Click
 bannerClose.addEventListener('click', (event) => {
-    closeBanner()
+    disableBanner()
+})
+
+// Modal Close Click
+modalClose.addEventListener('click', (event) => {
+    hideModal()
+    hideBanner()
+})
+
+// Modal Do-Not-Remind-Me Click
+modalDontRemind.addEventListener('click', (event) => {
+    hideModal()
+    disableBanner()
+})
+
+// Close banner, permanently
+function disableBanner () {
+    modal.remove()
+    banner.remove()
+    body.classList.remove(consts.HAS_BANNER_CLASS, consts.HAS_MODAL_CLASS)
 
     chrome.runtime.sendMessage({ firePixel: consts.BANNER_DISMISS })
     chrome.storage.local.set({ bannerDismissed: true }, function () {
         console.log('MARKED BANNER AS DISMISSED')
     })
-})
+}
 
-// Modal Close Click
-modalClose.addEventListener('click', (event) => {
-    closeModal()
-})
-
-// Modal Do-Not-Remind-Me Click
-modalDontRemind.addEventListener('click', (event) => {
-    closeModal()
-    closeBanner()
-})
-
-// Hide Banner
-function closeBanner () {
+// Hide banner
+function hideBanner () {
+    // remove elements from DOM
     modal.remove()
     banner.remove()
-    body.classList.remove(consts.HAS_MODAL_CLASS)
+    body.classList.remove(consts.HAS_BANNER_CLASS)
 }
 
 // Hide Modal
-function closeModal () {
-    body.classList.remove(consts.BLUR_CLASS)
+function hideModal () {
+    body.classList.remove(consts.HAS_MODAL_CLASS, consts.BLUR_CLASS)
     modal.classList.add(consts.HIDDEN_CLASS)
 }
 
@@ -93,11 +130,11 @@ function updateDOM () {
 
     // Insert Modal
     body.insertAdjacentElement('beforeend', modal)
-    body.classList.add(consts.HAS_MODAL_CLASS)
+    body.classList.add(consts.HAS_BANNER_CLASS)
 }
 
 // Skip if DDG banner already in DOM
-if (!(document.getElementById(consts.BANNER_ID) || document.getElementById(consts.BANNER_MODAL_ID))) {
+if (!(document.getElementById(consts.BANNER_ID) || document.getElementById(consts.MODAL_ID))) {
     updateDOM()
 } else {
     console.log('DDG Banner already exists')
