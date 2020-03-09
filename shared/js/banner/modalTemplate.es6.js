@@ -1,36 +1,34 @@
 'use strict'
 
 const consts = require('./consts.es6')
-const id = consts.BANNER_MODAL_ID
+const id = consts.MODAL_ID
 
 const logoUrl = chrome.runtime.getURL('img/banner/logo-round.svg')
 
 module.exports = `
 <div class="${id}-overlay ${consts.HIDDEN_CLASS}">
-    <div id="${id}" class="${id}" >
-        <div class="${id}-content">
-            <div class="${id}-content__top">
-                <img class="js-${id}-logo ${id}__logo" src="${logoUrl}"></img>
-                <p class="${id}-content__top__title">
-                    DuckDuckGo can’t block Google from tracking your searches
-                </p>
-                <p class="${id}-content__top__text">
-                    For truly private search, make DuckDuckGo your default search engine.
-                </p>
-            </div>
+    <div class="js-${id}-wrap ${id}-wrap">
+        <div id="${id}" class="${id}">
+            <img class="js-${id}-logo ${id}__logo" src="${logoUrl}"></img>
+            <h1 class="${id}__title">
+                DuckDuckGo can't protect you
+                <br>
+                when you search on Google.
+            </h1>
 
-            <div class="${id}-content__bottom">
-                <p class="${id}-content__bottom__title">
-                    In the Firefox menu, go to
-                    <br>
-                    Preferences, Search, and Default Search Engine.
-                </p>
-                <span class="js-${id}-dont-remind ${id}-content__bottom__text">
-                    Don’t remind me about this again.
-                </span>
-            </div>
+            <p class="${id}__text">
+                What’s the harm? Google remembers everything you search and uses that data to profile you with ads that follow you around.
+            </p>
 
-            <svg class="js-${id}-close ${id}__close" width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <a href="https://duckduckgo.com" class="js-${id}-btn ${id}__btn">
+                Search Privately on DuckDuckGo
+            </a>
+
+            <span class="js-${id}-dont-remind ${id}__link">
+                Don’t remind me about this again.
+            </span>
+
+            <svg class="js-${id}-close ${id}__close" width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
                 ${consts.CLOSE_ICON}
             </svg>
         </div>
