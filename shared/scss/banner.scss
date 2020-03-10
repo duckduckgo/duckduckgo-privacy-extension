@@ -58,12 +58,17 @@ body.is-blurred > *:not(.ddgm-overlay) {
     width: $banner-width;
     height: $banner-height;
     position: fixed;
-    top: 70px;
+    top: 80px;
     right: 29px;
     z-index: 1000;
     overflow: hidden;
     border-radius: 4px;
     background: $banner-background;
+
+    // Adjust position for Google Privacy Policy banner
+    .has-promos & {
+        top: 100px;
+    }
 
     &.slideIn {
         // animated slide-in from offscreen on load

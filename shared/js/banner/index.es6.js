@@ -17,6 +17,26 @@ const modalClose = modal.querySelector(`.js-${consts.MODAL_ID}-close`)
 const modalDontRemind = modal.querySelector(`.js-${consts.MODAL_ID}-dont-remind`)
 const body = document.body
 
+// For handling Google's own banner
+const HAS_PROMOS_CLASS = 'has-promos'
+const PROMOS_SELECTOR = '#promos, .og-pdp'
+let promos = document.querySelector(PROMOS_SELECTOR)
+// Observe and react when Google banner dismissed
+// See: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+const promosConfig = { attributes: true, childList: true, subtree: true }
+const promosCallback = function (mutationsList) {
+    for (let mutation of mutationsList) {
+        if (mutation.type !== 'attributes' && mutation.attributeName !== 'aria-hidden') return
+        // Update banner position when Google banner dismissed
+        if (body.classList.contains(HAS_PROMOS_CLASS)) {
+            body.classList.remove(HAS_PROMOS_CLASS)
+            // Stop observing after dimissed
+            promosObserver.disconnect()
+        }
+    }
+}
+const promosObserver = new MutationObserver(promosCallback)
+
 // EVENT HANDLERS
 // Remove animating class after entrance
 banner.addEventListener('animationend', () => {
@@ -122,6 +142,13 @@ function updateDOM () {
     // } else {
     //     console.log('Google Homepage Detected!')
     // }
+
+    // Start observing the target node for configured mutations
+
+    if (promos) {
+        promosObserver.observe(promos, promosConfig)
+        body.classList.add(HAS_PROMOS_CLASS)
+    }
 
     // Insert Banner
     body.insertAdjacentElement('beforeend', banner)
