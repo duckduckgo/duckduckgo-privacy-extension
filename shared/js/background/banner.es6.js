@@ -23,9 +23,31 @@ function isValidURL (url) {
 }
 
 function resetTab (tabId) {
-    updatedTabs[tabId] = {
-        js: false
-    }
+    updatedTabs[tabId] = false
+}
+
+function injectAssets () {
+    // Inject CSS
+    chrome.tabs.insertCSS({
+        file: '/public/css/banner.css',
+        runAt: 'document_start'
+    },
+    function () {
+        console.group('DDG BANNER')
+        console.log(`Tab ${tabId}: CSS injected!`)
+        console.groupEnd()
+    })
+
+    //  Inject JS
+    chrome.tabs.executeScript({
+        file: '/public/js/content-scripts/banner.js',
+        runAt: 'document_start'
+    },
+    function (array) {
+        console.group('DDG BANNER')
+        console.log(`Tab ${tabId}: Content Script injected!`)
+        console.groupEnd()
+    })
 }
 
 function createBanner (tabId, changeInfo, tabInfo) {
@@ -34,13 +56,13 @@ function createBanner (tabId, changeInfo, tabInfo) {
     if (!updatedTabs[tabId]) resetTab(tabId)
 
     // Check if this banner should be displayed
-    if (isValidURL(url)) {
-        console.log('✅ URL IS VALID')
-    } else {
+    if (!isValidURL(url)) {
         console.log('❌ URL IS NOT VALID')
         console.groupEnd()
         return
     }
+
+    console.log('✅ URL IS VALID')
 
     // Check if tab is loading a URL
     if (changeInfo.status && changeInfo.status === 'loading') {
@@ -49,30 +71,10 @@ function createBanner (tabId, changeInfo, tabInfo) {
     }
 
     if (changeInfo.status && changeInfo.status === 'complete') {
-        // Inject CSS
-        chrome.tabs.insertCSS({
-            file: '/public/css/banner.css',
-            runAt: 'document_start'
-        },
-        function () {
-            console.group('DDG BANNER')
-            console.log(`Tab ${tabId}: CSS injected!`)
-            console.groupEnd()
-        })
-
-        //  Inject JS
-        chrome.tabs.executeScript({
-            file: '/public/js/content-scripts/banner.js',
-            runAt: 'document_idle'
-        },
-        function (array) {
-            console.group('DDG BANNER')
-            console.log(`Tab ${tabId}: Content Script injected!`)
-            console.groupEnd()
-        })
+        injectAssets()
 
         // prevent injecting more than once
-        updatedTabs[tabId].js = true
+        updatedTabs[tabId] = true
     }
     console.groupEnd()
 }
@@ -80,6 +82,7 @@ function createBanner (tabId, changeInfo, tabInfo) {
 function handleUpdated (tabId, changeInfo, tabInfo) {
     console.group('DDG BANNER')
 
+    // Check if banner dismissed before loading
     chrome.storage.local.get(['bannerDismissed'], function (result) {
         if (result.bannerDismissed) {
             console.log('IGNORING. BANNER DISMISSED')
