@@ -13,20 +13,39 @@ const filterUrls = {
 }
 
 let updatedTabs = {}
+let tabState = {}
 
 function isValidURL (url) {
-    url = url.toLowerCase()
-    console.log(`Validating URL: ${url}`)
+    const urlObj = new URL(url)
+    const href = urlObj.href
+    console.log(`Validating URL: ${href}`)
     // ensure match is at beginning of string
-    return filterUrls.valid.some(pattern => url.indexOf(pattern) === 0) &&
-        !filterUrls.invalid.some(pattern => url.indexOf(pattern) === 0)
+    return filterUrls.valid.some(pattern => href.indexOf(pattern) === 0) &&
+        !filterUrls.invalid.some(pattern => href.indexOf(pattern) === 0)
+}
+
+function isDdgURL (url) {
+    const urlObj = new URL(url)
+    const href = urlObj.href
+    const hostname = urlObj.hostname
+    console.log(`Validating DDG URL: ${href}`)
+
+    if (hostname !== 'duckduckgo.com') return false
+
+    const params = urlObj.searchParams
+    const hasIaParam = params.has('ia')
+
+    // Ignore static pages, but not DDG cached pages e.g. duckduckgo.com/apple?ia=web
+    if (urlObj.pathname && !hasIaParam) return false
+
+    return true
 }
 
 function resetTab (tabId) {
     updatedTabs[tabId] = false
 }
 
-function injectAssets () {
+function injectAssets (tabId) {
     // Inject CSS
     chrome.tabs.insertCSS({
         file: '/public/css/banner.css',
@@ -50,19 +69,29 @@ function injectAssets () {
     })
 }
 
+// Check if we can show the banner
+function canShowBanner (url) {
+    if (isValidURL(url)) {
+        console.log('✅ URL IS VALID')
+        return true
+    } else if (isDdgURL(url)) {
+        console.log('🦆 URL IS DDG URL')
+        return false
+    } else {
+        console.log('❌ URL IS NOT VALID')
+        return false
+    }
+}
+
 function createBanner (tabId, changeInfo, tabInfo) {
     const url = changeInfo.url || tabInfo.url || false
+    // if (!updatedTabs[tabId]) resetTab(tabId)
 
-    if (!updatedTabs[tabId]) resetTab(tabId)
-
-    // Check if this banner should be displayed
-    if (!isValidURL(url)) {
-        console.log('❌ URL IS NOT VALID')
+    // Ignore page if url is invalid
+    if (!canShowBanner(url)) {
         console.groupEnd()
         return
     }
-
-    console.log('✅ URL IS VALID')
 
     // Check if tab is loading a URL
     if (changeInfo.status && changeInfo.status === 'loading') {
@@ -71,8 +100,7 @@ function createBanner (tabId, changeInfo, tabInfo) {
     }
 
     if (changeInfo.status && changeInfo.status === 'complete') {
-        injectAssets()
-
+        injectAssets(tabId)
         // prevent injecting more than once
         updatedTabs[tabId] = true
     }
@@ -81,7 +109,6 @@ function createBanner (tabId, changeInfo, tabInfo) {
 
 function handleUpdated (tabId, changeInfo, tabInfo) {
     console.group('DDG BANNER')
-
     // Check if banner dismissed before loading
     chrome.storage.local.get(['bannerDismissed'], function (result) {
         if (result.bannerDismissed) {
@@ -90,11 +117,13 @@ function handleUpdated (tabId, changeInfo, tabInfo) {
             return
         }
 
-        console.log(`🔔 Updated tab: ${tabId}`)
-        console.log('ℹ️ Changed attributes: ', changeInfo)
-        console.log('ℹ️ New tab Info: ', tabInfo)
+        if (changeInfo.status === 'complete') {
+            console.log(`🔔 Updated tab: ${tabId}`)
+            console.log('ℹ️ Changed attributes: ', changeInfo)
+            console.log('ℹ️ New tab Info: ', tabInfo)
 
-        createBanner(tabId, changeInfo, tabInfo)
+            createBanner(tabId, changeInfo, tabInfo)
+        }
     })
     console.groupEnd()
 }
