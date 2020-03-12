@@ -24,18 +24,39 @@ function isValidURL(url) {
   );
 }
 
+function isDdgHome(url) {
+  const urlObj = new URL(url);
+  const params = urlObj.searchParams;
+  const hasQuery = params.has("q");
+
+  // match duckduckgo.com/
+  // match duckduckgo.com/?atb=v123-4
+  // ignore duckduckgo.com/?q=apple
+  return urlObj.pathname === "/" && !hasQuery;
+}
+
+function isDdgSerp(url) {
+  const urlObj = new URL(url);
+  const params = urlObj.searchParams;
+  const hasQuery = params.has("q");
+  const hasIA = params.has("ia");
+
+  // match duckduckgo.com/?q=apple
+  // match duckduckgo.com/apple?ia=web
+  // ignore duckduckgo.com/about
+  if (urlObj.pathname !== "/" && !hasIA) return false;
+  return urlObj.pathname === "/" && hasQuery;
+}
+
 function isDdgURL(url) {
   const urlObj = new URL(url);
   const href = urlObj.href;
   const hostname = urlObj.hostname;
   const params = urlObj.searchParams;
-  const hasIaParam = params.has("ia");
 
   if (hostname !== "duckduckgo.com") return false;
-  // Ignore static pages, but not DDG cached pages e.g. duckduckgo.com/apple?ia=web
-  if (urlObj.pathname !== "/" && !hasIaParam) return false;
-
-  return true;
+  if (isDdgHome(url) || isDdgSerp(url)) return true;
+  return false;
 }
 
 function resetTab(tabId) {
@@ -104,7 +125,7 @@ function handleUpdated(details) {
   if (isDdgURL(url) && details.transitionType === "form_submit") {
     chrome.storage.local.get(["bannerDismissed"], result => {
       // cast boolean to int
-      pixel.fire("evg", { b: +result.bannerDismissed });
+      pixel.fire("evd", { b: +result.bannerDismissed });
     });
   }
 
