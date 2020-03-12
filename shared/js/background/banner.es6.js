@@ -36,7 +36,7 @@ function isDdgURL (url) {
     const hasIaParam = params.has('ia')
 
     // Ignore static pages, but not DDG cached pages e.g. duckduckgo.com/apple?ia=web
-    if (urlObj.pathname && !hasIaParam) return false
+  if (urlObj.pathname !== "/" && !hasIaParam) return false;
 
     return true
 }
