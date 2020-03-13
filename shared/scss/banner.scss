@@ -1,7 +1,6 @@
 // VARS
 $banner-background: #fff;
 $banner-text: #334652;
-$banner-width: 570px;
 $banner-height: 75px;
 $banner-logo-height: 55px;
 
@@ -55,7 +54,7 @@ body.is-blurred > *:not(.ddgm-overlay) {
 .ddgb {
     @extend %flexrow;
 
-    width: $banner-width;
+    width: auto;
     height: $banner-height;
     position: fixed;
     top: 80px;
@@ -64,10 +63,10 @@ body.is-blurred > *:not(.ddgm-overlay) {
     overflow: hidden;
     border-radius: 4px;
     background: $banner-background;
-
     border: 1px solid #DADADA;
     box-sizing: border-box;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+    font-family: $font__face--default;
 
     // Adjust position for Google Privacy Policy banner
     .has-promos & {
@@ -94,7 +93,6 @@ body.is-blurred > *:not(.ddgm-overlay) {
 
 .ddgb-inner {
     @extend %flexrow;
-    flex: 1;
     box-sizing: border-box;
     height: $banner-height;
     padding: 12px;
@@ -114,6 +112,8 @@ body.is-blurred > *:not(.ddgm-overlay) {
 }
 
 .ddgb__text {
+    font-size: 14px;
+    line-height: 20px;
     font-style: italic;
 }
 
@@ -139,14 +139,16 @@ body.is-blurred > *:not(.ddgm-overlay) {
 .ddgb__btn {
     @extend %ddgb-btn;
     background: #DE5833;
-    border-color: 1px solid #D14E2A;
+    border: solid #D14E2A;
+    border-width: 0 0 1px 1px;
     color: white;
 }
 
 .ddgb__close {
     @extend %ddgb-btn;
     background: #F8F8F8;
-    border: 1px solid #DADADA;
+    border: solid #DADADA;
+    border-width: 1px 0 0 1px;
     color: #334652;
 }
 
@@ -193,6 +195,7 @@ body.is-blurred > *:not(.ddgm-overlay) {
     align-items: center;
     background: white;
     color: #333333;
+    font-family: $font__face--default;
 }
 
 .ddgm__logo {
