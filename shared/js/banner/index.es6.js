@@ -10,6 +10,8 @@ const banner = utils.htmlToElement(bannerHTML)
 const modal = utils.htmlToElement(modalHTML)
 const pageType = utils.isGoogleSerp() ? 'serp' : 'home'
 
+let daysSinceInstall = 0
+
 // Banner & Modal Elements
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
 const bannerMore = banner.querySelector(`.js-${consts.BANNER_ID}-more`)
@@ -35,6 +37,14 @@ const promosHiddenCallback = function () {
     }
 }
 const promosObserver = new MutationObserver(promosHiddenCallback)
+
+function _firePixel (id, ops) {
+    const defaultOps = { p: pageType, d: daysSinceInstall }
+
+    ops = Object.assign(defaultOps, ops)
+
+    chrome.runtime.sendMessage({ firePixel: [id, ops] })
+}
 
 // EVENT HANDLERS
 // Remove animating class after entrance
@@ -72,18 +82,17 @@ body.addEventListener('keydown', (event) => {
     }
 
     // Hide on any key press except arrows
-    // if (body.classList.contains(consts.HAS_BANNER_CLASS) &&
-    // event.key.indexOf('Arrow') === -1) {
-    //     hideModal()
-    //     hideBanner()
-    // }
+    if (body.classList.contains(consts.HAS_BANNER_CLASS) && event.key.indexOf('Arrow') === -1) {
+        hideModal()
+        hideBanner()
+    }
 })
 
 // Banner Learn More Click
 bannerMore.addEventListener('click', (event) => {
     body.classList.add(consts.HAS_MODAL_CLASS, consts.BLUR_CLASS)
     modal.classList.remove(consts.HIDDEN_CLASS)
-    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_CLICK, {p: pageType}] })
+    _firePixel(consts.BANNER_CLICK)
     chrome.storage.local.set({ bannerClicked: true }, function () {
         console.log('MARKED BANNER AS CLICKED')
     })
@@ -102,12 +111,12 @@ modalClose.addEventListener('click', (event) => {
 
 // Modal Do-Not-Remind-Me Click
 modalButton.addEventListener('click', (event) => {
-    chrome.runtime.sendMessage({ firePixel: [consts.MODAL_CLICK, { p: pageType }] })
+    _firePixel(consts.MODAL_CLICK)
 })
 
 // Modal Do-Not-Remind-Me Click
 modalDontRemind.addEventListener('click', (event) => {
-    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_DISMISS, { s: 'modal' }] })
+    _firePixel(consts.BANNER_DISMISS, { s: 'modal' })
     hideModal()
     disableBanner()
 })
@@ -118,7 +127,7 @@ function disableBanner () {
     banner.remove()
     body.classList.remove(consts.HAS_BANNER_CLASS, consts.HAS_MODAL_CLASS)
 
-    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_DISMISS, {p: pageType}] })
+    _firePixel(consts.BANNER_DISMISS)
     chrome.storage.local.set({ bannerDismissed: true }, function () {
         console.log('MARKED BANNER AS DISMISSED')
     })
@@ -148,7 +157,7 @@ function updateDOM () {
 
     // Insert Banner
     body.insertAdjacentElement('beforeend', banner)
-    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_IMPRESSION, {p: pageType}] })
+    _firePixel(consts.BANNER_IMPRESSION)
 
     // Insert Modal
     body.insertAdjacentElement('beforeend', modal)
@@ -157,7 +166,7 @@ function updateDOM () {
 
 // Skip if DDG banner already in DOM
 if (!(document.getElementById(consts.BANNER_ID) || document.getElementById(consts.MODAL_ID))) {
-    updateDOM()
+        updateDOM()
 } else {
     console.log('DDG Banner already exists')
 }
