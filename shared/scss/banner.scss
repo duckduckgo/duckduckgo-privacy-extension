@@ -1,9 +1,9 @@
 // VARS
-$banner-background: #C0D8E9;
+$banner-background: #fff;
 $banner-text: #334652;
-$banner-width: 600px;
+$banner-width: 570px;
 $banner-height: 75px;
-$banner-logo-height: 50px;
+$banner-logo-height: 55px;
 
 // Animations
 @keyframes slideIn {
@@ -65,6 +65,10 @@ body.is-blurred > *:not(.ddgm-overlay) {
     border-radius: 4px;
     background: $banner-background;
 
+    border: 1px solid #DADADA;
+    box-sizing: border-box;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+
     // Adjust position for Google Privacy Policy banner
     .has-promos & {
         top: 100px;
@@ -93,14 +97,14 @@ body.is-blurred > *:not(.ddgm-overlay) {
     flex: 1;
     box-sizing: border-box;
     height: $banner-height;
-    padding: 13px 25px 13px 12px;
+    padding: 12px;
     color: $banner-text;
     border-radius: 4px;
 }
 
 .ddgb__content {
     white-space: nowrap;
-    padding: 0 10px 0 16px;
+    padding: 0 16px 0 14px;
 }
 
 .ddgb__title {
@@ -113,15 +117,37 @@ body.is-blurred > *:not(.ddgm-overlay) {
     font-style: italic;
 }
 
+.ddgb__buttons {
+    height: 100%;
+    width: 104px;
+    display: flex;
+    flex-direction: column;
+}
+
+%ddgb-btn {
+    flex: 1;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.278571px;
+    cursor: pointer;
+}
+
 .ddgb__btn {
-    @extend %ddgb-text;
-    @extend %btn-link;
+    @extend %ddgb-btn;
+    background: #DE5833;
+    border-color: 1px solid #D14E2A;
+    color: white;
 }
 
 .ddgb__close {
-    position: absolute;
-    top: 11px;
-    right: 11px;
+    @extend %ddgb-btn;
+    background: #F8F8F8;
+    border: 1px solid #DADADA;
+    color: #334652;
 }
 
 .ddgb__close__icon {

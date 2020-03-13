@@ -1,4 +1,4 @@
-romehehrom'use strict'
+'use strict'
 
 console.log('Banner.js Content Script Loaded')
 
