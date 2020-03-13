@@ -6,8 +6,10 @@
  */
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
+const experiment = require('./experiments.es6')
 
 chrome.runtime.onInstalled.addListener(function (details) {
+    experiment.setActiveExperiment()
     if (details.reason.match(/install/)) {
         ATB.updateATBValues().then(ATB.openPostInstallPage)
     }
@@ -55,7 +57,6 @@ chrome.webRequest.onHeadersReceived.addListener(
  * Web Navigation
  */
 const Banner = require('./banner.es6')
-
 chrome.webNavigation.onCompleted.addListener(Banner.handleOnCompleted)
 
 // keep track of URLs that the browser navigates to.
@@ -65,6 +66,7 @@ chrome.webNavigation.onCompleted.addListener(Banner.handleOnCompleted)
 // which misses a couple of edge cases like browser special pages
 // and Gmail's weird redirect which returns a 200 via a service worker
 chrome.webNavigation.onCommitted.addListener(details => {
+    // binding a second listener was firing duplicate events
     Banner.handleOnCommitted(details)
 
     // ignore navigation on iframes
