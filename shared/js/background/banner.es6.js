@@ -69,7 +69,10 @@ function isValidTransitionType (details) {
 
     return details.transitionType === 'form_submit' ||
         details.transitionType === 'generated' ||
-        (details.transitionType === 'link' && params.has('bext'))
+        // search from extension popup
+        (details.transitionType === 'link' && params.has('bext')) || 
+        // redirect from DDG via !bang
+        (details.transitionType === 'link' && details.transitionQualfiers.indexOf('server_redirect') !== -1
 }
 
 function createBanner (tabId) {
@@ -115,7 +118,7 @@ function handleOnCommitted (details) {
             pixel.fire('evd', { bd: +result.bannerDismissed })
             console.warn('🎇 DDG SERP VISITED PIXEL')
         })
-    } else if (isOtherSerp(url)) {
+    } else if (isOtherSerp(url) && isValidTransitionType(details)) {
         console.warn('😬 IS OTHER SERP')
         chrome.storage.local.get(['bannerDismissed'], result => {
             // cast boolean to int
@@ -123,9 +126,8 @@ function handleOnCommitted (details) {
             console.warn('🎇 OTHER SERP VISITED PIXEL')
         })
     } else {
-        console.warn('❌ URL IS NOT A SERP')
+        // console.warn('❌ URL IS NOT A SERP')
     }
-
     console.groupEnd()
 }
 
@@ -139,7 +141,7 @@ function handleOnCompleted (details) {
     console.group('DDG BANNER -- ON COMPLETED')
 
     if (!isBannerURL(url)) {
-        console.warn('❌ URL IS NOT VALID')
+        // console.warn('❌ URL IS NOT VALID')
         console.groupEnd()
         return
     }
