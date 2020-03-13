@@ -1,152 +1,169 @@
-const pixel = require("./pixel.es6");
+const pixel = require('./pixel.es6')
 
-const filterUrls = {
-  valid: [
-    "https://www.google.com/",
-    "https://www.google.com/search",
-    "https://www.google.com/webhp",
-    "https://www.google.com/videohp",
-    "https://www.google.com/shopping",
-    "https://images.google.com/"
-  ],
-  invalid: ["https://www.google.com/maps"]
-};
-
-let updatedTabs = {};
-
-function isValidURL(url) {
-  const urlObj = new URL(url);
-  const href = urlObj.href;
-  // ensure match is at beginning of string
-  return (
-    filterUrls.valid.some(pattern => href.indexOf(pattern) === 0) &&
-    !filterUrls.invalid.some(pattern => href.indexOf(pattern) === 0)
-  );
+const bannerUrls = {
+    valid: [
+        'https://www.google.com/',
+        'https://www.google.com/search',
+        'https://www.google.com/webhp',
+        'https://www.google.com/videohp',
+        'https://www.google.com/shopping',
+        'https://images.google.com/'
+    ],
+    invalid: ['https://www.google.com/maps']
 }
 
-function isDdgHome(url) {
-  const urlObj = new URL(url);
-  const params = urlObj.searchParams;
-  const hasQuery = params.has("q");
+function isBannerURL (url) {
+    const urlObj = new URL(url)
+    const href = urlObj.href
 
-  // match duckduckgo.com/
-  // match duckduckgo.com/?atb=v123-4
-  // ignore duckduckgo.com/?q=apple
-  return urlObj.pathname === "/" && !hasQuery;
+    // ensure match is at beginning of string
+    return (bannerUrls.valid.some(pattern => href.indexOf(pattern) === 0) &&
+    !bannerUrls.invalid.some(pattern => href.indexOf(pattern) === 0))
 }
 
-function isDdgSerp(url) {
-  const urlObj = new URL(url);
-  const params = urlObj.searchParams;
-  const hasQuery = params.has("q");
-  const hasIA = params.has("ia");
+function isDDGHome (url) {
+    const urlObj = new URL(url)
+    const hostname = urlObj.hostname
+    const params = urlObj.searchParams
+    const hasQuery = params.has('q')
 
-  // match duckduckgo.com/?q=apple
-  // match duckduckgo.com/apple?ia=web
-  // ignore duckduckgo.com/about
-  if (urlObj.pathname !== "/" && !hasIA) return false;
-  return urlObj.pathname === "/" && hasQuery;
+    if (hostname !== 'duckduckgo.com') return false
+
+    // match duckduckgo.com/
+    // match duckduckgo.com/?atb=v123-4
+    // ignore duckduckgo.com/?q=apple
+    return urlObj.pathname === '/' && !hasQuery
 }
 
-function isDdgURL(url) {
-  const urlObj = new URL(url);
-  const href = urlObj.href;
-  const hostname = urlObj.hostname;
-  const params = urlObj.searchParams;
+function isDDGSerp (url) {
+    const urlObj = new URL(url)
+    const hostname = urlObj.hostname
+    const params = urlObj.searchParams
+    const hasQuery = params.has('q')
+    const hasIA = params.has('ia')
 
-  if (hostname !== "duckduckgo.com") return false;
-  if (isDdgHome(url) || isDdgSerp(url)) return true;
-  return false;
+    if (hostname !== 'duckduckgo.com') return false
+
+    // match duckduckgo.com/?q=apple
+    // match duckduckgo.com/apple?ia=web
+    // ignore duckduckgo.com/about
+    if (urlObj.pathname !== '/' && !hasIA) return false
+    return urlObj.pathname === '/' && hasQuery
 }
 
-function resetTab(tabId) {
-  updatedTabs[tabId] = false;
+function isOtherSerp (url) {
+    const urlObj = new URL(url)
+    const params = urlObj.searchParams
+    const hasQuery = params.has('q')
+
+    // match google.com/search?q=apple
+    return urlObj.hostname === 'www.google.com' &&
+        urlObj.pathname === '/search' &&
+        hasQuery
 }
 
-function injectAssets(tabId) {
-  // Inject CSS
-  chrome.tabs.insertCSS(
-    {
-      file: "/public/css/banner.css",
-      runAt: "document_start"
-    },
-    function() {
-      console.group("DDG BANNER");
-      console.warn(`Tab ${tabId}: CSS injected!`);
-      console.groupEnd();
+function isValidTransitionType (details) {
+    const { url } = details
+    const urlObj = new URL(url)
+    const params = urlObj.searchParams
+
+    return details.transitionType === 'form_submit' ||
+        details.transitionType === 'generated' ||
+        (details.transitionType === 'link' && params.has('bext'))
+}
+
+function createBanner (tabId) {
+    // Inject CSS
+    chrome.tabs.insertCSS(
+        {
+            file: '/public/css/banner.css',
+            runAt: 'document_start'
+        },
+        function () {
+            console.group('DDG BANNER -- INJECT ASSETS')
+            console.warn(`Tab ${tabId}: CSS injected!`)
+            console.groupEnd()
+        }
+    )
+
+    //  Inject JS
+    chrome.tabs.executeScript(
+        {
+            file: '/public/js/content-scripts/banner.js',
+            runAt: 'document_start'
+        },
+        function () {
+            console.group('DDG BANNER -- INJECT ASSETS')
+            console.warn(`Tab ${tabId}: Content Script injected!`)
+            console.groupEnd()
+        }
+    )
+}
+
+function handleOnCommitted (details) {
+    const { url, tabId } = details
+
+    console.group('DDG BANNER -- ON COMMITTED')
+    console.warn(`🔔 Updated tab: ${tabId} -- Details: `, details)
+    console.warn(`ℹ️ URL: ${url}`)
+    console.warn('TRANSITION TYPE:', details.transitionType)
+
+    if (isDDGSerp(url) && isValidTransitionType(details)) {
+        console.warn('🦆 IS DDG SERP')
+        chrome.storage.local.get(['bannerDismissed'], result => {
+            // cast boolean to int
+            pixel.fire('evd', { bd: +result.bannerDismissed })
+            console.warn('🎇 DDG SERP VISITED PIXEL')
+        })
+    } else if (isOtherSerp(url)) {
+        console.warn('😬 IS OTHER SERP')
+        chrome.storage.local.get(['bannerDismissed'], result => {
+            // cast boolean to int
+            pixel.fire('evg', { bd: +result.bannerDismissed })
+            console.warn('🎇 OTHER SERP VISITED PIXEL')
+        })
+    } else {
+        console.warn('❌ URL IS NOT A SERP')
     }
-  );
 
-  //  Inject JS
-  chrome.tabs.executeScript(
-    {
-      file: "/public/js/content-scripts/banner.js",
-      runAt: "document_start"
-    },
-    function(array) {
-      console.group("DDG BANNER");
-      console.warn(`Tab ${tabId}: Content Script injected!`);
-      console.groupEnd();
+    console.groupEnd()
+}
+
+// Check if we can show banner
+function handleOnCompleted (details) {
+    const { url, tabId, frameId } = details
+
+    // ignore navigation on iframes
+    if (frameId !== 0) return
+
+    console.group('DDG BANNER -- ON COMPLETED')
+
+    if (!isBannerURL(url)) {
+        console.warn('❌ URL IS NOT VALID')
+        console.groupEnd()
+        return
     }
-  );
-}
 
-// Check if we can show the banner
-function canShowBanner(url) {
-  console.warn("ℹ️ Checking URL: ", url);
-  let isValid = false;
-  if (isValidURL(url)) {
-    console.warn("✅ URL IS VALID");
-    isValid = true;
-  } else if (isDdgURL(url)) {
-    console.warn("🦆 URL IS DDG URL");
-  } else {
-    console.warn("❌ URL IS NOT VALID");
-  }
-  return isValid;
-}
+    console.warn(`🔔 Updated tab: ${tabId} -- Details: `, details)
+    console.warn('✅ URL IS VALID')
+    console.warn(`ℹ️ URL: ${url}`)
 
-function createBanner(tabId) {
-  injectAssets(tabId);
-  // prevent injecting more than once
-  updatedTabs[tabId] = true;
-}
-
-function handleUpdated(details) {
-  console.group("DDG BANNER");
-  const { url, tabId } = details;
-
-  console.warn(`🔔 Updated tab: ${tabId}`);
-  console.warn("ℹ️ Details: ", details);
-
-  // TODO: RESET TAB?
-  //   resetTab(tabId);
-
-  if (isDdgURL(url) && details.transitionType === "form_submit") {
-    chrome.storage.local.get(["bannerDismissed"], result => {
-      // cast boolean to int
-      pixel.fire("evd", { b: +result.bannerDismissed });
-    });
-  }
-
-  if (canShowBanner(url)) {
-    // Check if banner dismissed before loading
-    chrome.storage.local.get(["bannerDismissed"], result => {
-      if (!result.bannerDismissed) {
-        createBanner(tabId);
-      } else {
-        console.warn("IGNORING. BANNER DISMISSED");
-      }
-      console.groupEnd();
-    });
-  }
-  console.groupEnd();
+    // Show banner if not dismissed
+    chrome.storage.local.get(['bannerDismissed'], result => {
+        if (!result.bannerDismissed) {
+            createBanner(tabId)
+        } else {
+            console.warn('❌ IGNORING. BANNER DISMISSED')
+        }
+        console.groupEnd()
+    })
 }
 
 var Banner = (() => {
-  return {
-    handleUpdated
-  };
-})();
+    return {
+        handleOnCommitted,
+        handleOnCompleted
+    }
+})()
 
-module.exports = Banner;
+module.exports = Banner

@@ -1,4 +1,4 @@
-'use strict'
+romehehrom'use strict'
 
 console.log('Banner.js Content Script Loaded')
 
@@ -23,19 +23,16 @@ const PROMOS_SELECTOR = '#promos, .og-pdp'
 let promos = document.querySelector(PROMOS_SELECTOR)
 // Observe and react when Google banner dismissed
 // See: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
-const promosConfig = { attributes: true, childList: true, subtree: true }
-const promosCallback = function (mutationsList) {
-    for (let mutation of mutationsList) {
-        if (mutation.type !== 'attributes' && mutation.attributeName !== 'aria-hidden') return
-        // Update banner position when Google banner dismissed
-        if (body.classList.contains(HAS_PROMOS_CLASS)) {
-            body.classList.remove(HAS_PROMOS_CLASS)
-            // Stop observing after dimissed
-            promosObserver.disconnect()
-        }
+const promosConfig = { attributes: true, attributeFilter: ['aria-hidden'], subtree: true }
+const promosHiddenCallback = function () {
+    // Update banner position when Google banner dismissed
+    if (body.classList.contains(HAS_PROMOS_CLASS)) {
+        body.classList.remove(HAS_PROMOS_CLASS)
+        // Stop observing after dimissed
+        promosObserver.disconnect()
     }
 }
-const promosObserver = new MutationObserver(promosCallback)
+const promosObserver = new MutationObserver(promosHiddenCallback)
 
 // EVENT HANDLERS
 // Remove animating class after entrance
@@ -143,9 +140,8 @@ function updateDOM () {
     //     console.log('Google Homepage Detected!')
     // }
 
-    // Start observing the target node for configured mutations
-
     if (promos) {
+        // Start observing the target node for configured mutations
         promosObserver.observe(promos, promosConfig)
         body.classList.add(HAS_PROMOS_CLASS)
     }
