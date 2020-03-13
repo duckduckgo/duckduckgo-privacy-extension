@@ -8,9 +8,6 @@ const bannerHTML = require('./bannerTemplate.es6')
 const modalHTML = require('./modalTemplate.es6')
 const banner = utils.htmlToElement(bannerHTML)
 const modal = utils.htmlToElement(modalHTML)
-const pageType = utils.isGoogleSerp() ? 'serp' : 'home'
-
-let daysSinceInstall = 0
 
 // Banner & Modal Elements
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
@@ -39,11 +36,7 @@ const promosHiddenCallback = function () {
 const promosObserver = new MutationObserver(promosHiddenCallback)
 
 function _firePixel (id, ops) {
-    const defaultOps = { p: pageType, d: daysSinceInstall }
-
-    ops = Object.assign(defaultOps, ops)
-
-    chrome.runtime.sendMessage({ firePixel: [id, ops] })
+    chrome.runtime.sendMessage({ bannerPixel: true, pixelArgs: [id, ops] })
 }
 
 // EVENT HANDLERS
@@ -93,9 +86,6 @@ bannerMore.addEventListener('click', (event) => {
     body.classList.add(consts.HAS_MODAL_CLASS, consts.BLUR_CLASS)
     modal.classList.remove(consts.HIDDEN_CLASS)
     _firePixel(consts.BANNER_CLICK)
-    chrome.storage.local.set({ bannerClicked: true }, function () {
-        console.log('MARKED BANNER AS CLICKED')
-    })
 })
 
 // Banner Close Click
@@ -116,9 +106,9 @@ modalButton.addEventListener('click', (event) => {
 
 // Modal Do-Not-Remind-Me Click
 modalDontRemind.addEventListener('click', (event) => {
-    _firePixel(consts.BANNER_DISMISS, { s: 'modal' })
     hideModal()
     disableBanner()
+    _firePixel(consts.BANNER_DISMISS, { s: 'modal' })
 })
 
 // Close banner, permanently
@@ -126,11 +116,7 @@ function disableBanner () {
     modal.remove()
     banner.remove()
     body.classList.remove(consts.HAS_BANNER_CLASS, consts.HAS_MODAL_CLASS)
-
     _firePixel(consts.BANNER_DISMISS)
-    chrome.storage.local.set({ bannerDismissed: true }, function () {
-        console.log('MARKED BANNER AS DISMISSED')
-    })
 }
 
 // Hide banner
@@ -166,7 +152,7 @@ function updateDOM () {
 
 // Skip if DDG banner already in DOM
 if (!(document.getElementById(consts.BANNER_ID) || document.getElementById(consts.MODAL_ID))) {
-        updateDOM()
+    updateDOM()
 } else {
     console.log('DDG Banner already exists')
 }

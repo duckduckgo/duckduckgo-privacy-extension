@@ -1,4 +1,9 @@
 const pixel = require('./pixel.es6')
+const settings = require('./settings.es6')
+const experiment = require('./experiments.es6')
+
+const BANNER_CLICK = 'ebc'
+const BANNER_DISMISS = 'ebd'
 
 const bannerUrls = {
     valid: [
@@ -19,20 +24,6 @@ function isBannerURL (url) {
     // ensure match is at beginning of string
     return (bannerUrls.valid.some(pattern => href.indexOf(pattern) === 0) &&
     !bannerUrls.invalid.some(pattern => href.indexOf(pattern) === 0))
-}
-
-function isDDGHome (url) {
-    const urlObj = new URL(url)
-    const hostname = urlObj.hostname
-    const params = urlObj.searchParams
-    const hasQuery = params.has('q')
-
-    if (hostname !== 'duckduckgo.com') return false
-
-    // match duckduckgo.com/
-    // match duckduckgo.com/?atb=v123-4
-    // ignore duckduckgo.com/?q=apple
-    return urlObj.pathname === '/' && !hasQuery
 }
 
 function isDDGSerp (url) {
@@ -151,20 +142,46 @@ function handleOnCompleted (details) {
     console.warn(`ℹ️ URL: ${url}`)
 
     // Show banner if not dismissed
-    chrome.storage.local.get(['bannerDismissed'], result => {
-        if (!result.bannerDismissed) {
-            createBanner(tabId)
-        } else {
-            console.warn('❌ IGNORING. BANNER DISMISSED')
-        }
-        console.groupEnd()
-    })
+    if (settings.getSetting('bannerEnabled')) {
+        createBanner(tabId)
+    } else {
+        console.warn('❌ IGNORING. BANNER DISMISSED')
+    }
+    console.groupEnd()
+}
+
+function firePixel (args) {
+    const defaultOps = {
+        d: experiment.getDaysSinceInstall() || -1,
+        p: isOtherSerp ? 'serp' : 'home'
+    }
+    const id = args[0]
+    const ops = args[1] || {}
+    const pixelOps = Object.assign(defaultOps, ops)
+
+    pixel.fire.apply(null, [id, pixelOps])
+
+    // If dismissed, prevent from showing again
+    if (id === BANNER_DISMISS) {
+        settings.ready().then(() => {
+            settings.updateSetting('bannerEnabled', false)
+            console.warn('MARKED AS DISMISSED')
+        })
+    }
+
+    // Mark as clicked
+    if (id === BANNER_CLICK) {
+        chrome.storage.local.set({ bannerClicked: true }, function () {
+            console.log('MARKED BANNER AS CLICKED')
+        })
+    }
 }
 
 var Banner = (() => {
     return {
         handleOnCommitted,
-        handleOnCompleted
+        handleOnCompleted,
+        firePixel
     }
 })()
 

@@ -206,6 +206,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    if (req.bannerPixel) {
+        Banner.firePixel(req.pixelArgs)
+    }
+
     if (req.firePixel) {
         let fireArgs = req.firePixel
         if (fireArgs.constructor !== Array) {
