@@ -11,7 +11,8 @@ const experiment = require('./experiments.es6')
 chrome.runtime.onInstalled.addListener(function (details) {
     experiment.setActiveExperiment()
     if (details.reason.match(/install/)) {
-        ATB.updateATBValues().then(ATB.openPostInstallPage)
+        ATB.updateATBValues()
+            .then(ATB.openPostInstallPage)
     }
 })
 
@@ -109,21 +110,15 @@ chrome.tabs.onActivated.addListener(() =>
 
 // search via omnibox
 chrome.omnibox.onInputEntered.addListener(function (text) {
-    chrome.tabs.query(
-        {
-            currentWindow: true,
-            active: true
-        },
-        function (tabs) {
-            chrome.tabs.update(tabs[0].id, {
-                url:
-          'https://duckduckgo.com/?q=' +
-          encodeURIComponent(text) +
-          '&bext=' +
-          localStorage['os'] +
-          'cl'
-            })
-        }
+    chrome.tabs.query({
+        currentWindow: true,
+        active: true
+    },
+    function (tabs) {
+        chrome.tabs.update(tabs[0].id, {
+            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage['os'] + 'cl'
+        })
+    }
     )
 })
 
@@ -266,9 +261,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
  * on start up
  */
 let onStartup = () => {
-    chrome.tabs.query({ currentWindow: true, status: 'complete' }, function (
-        savedTabs
-    ) {
+    chrome.tabs.query({ currentWindow: true, status: 'complete' }, function (savedTabs) {
         for (var i = 0; i < savedTabs.length; i++) {
             var tab = savedTabs[i]
 
@@ -296,34 +289,31 @@ let onStartup = () => {
 }
 
 // Fire pixel on https upgrade failures to allow bad data to be removed from lists
-chrome.webRequest.onErrorOccurred.addListener(
-    e => {
-        if (!(e.type === 'main_frame')) return
+chrome.webRequest.onErrorOccurred.addListener(e => {
+    if (!(e.type === 'main_frame')) return
 
-        let tab = tabManager.get({ tabId: e.tabId })
+    let tab = tabManager.get({ tabId: e.tabId })
 
-        // We're only looking at failed main_frame upgrades. A tab can send multiple
-        // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
-        if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
-            return
+    // We're only looking at failed main_frame upgrades. A tab can send multiple
+    // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
+    if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
+        return
+    }
+
+    if (e.error && e.url.match(/^https/)) {
+        const errCode = constants.httpsErrorCodes[e.error]
+        tab.hasHttpsError = true
+
+        if (errCode) {
+            https.incrementUpgradeCount('failedUpgrades')
+            const url = new URL(e.url)
+            pixel.fire('ehd', {
+                url: `${encodeURIComponent(url.hostname)}`,
+                error: errCode
+            })
         }
-
-        if (e.error && e.url.match(/^https/)) {
-            const errCode = constants.httpsErrorCodes[e.error]
-            tab.hasHttpsError = true
-
-            if (errCode) {
-                https.incrementUpgradeCount('failedUpgrades')
-                const url = new URL(e.url)
-                pixel.fire('ehd', {
-                    url: `${encodeURIComponent(url.hostname)}`,
-                    error: errCode
-                })
-            }
-        }
-    },
-    { urls: ['<all_urls>'] }
-)
+    }
+}, { urls: ['<all_urls>'] })
 
 module.exports = {
     onStartup: onStartup
