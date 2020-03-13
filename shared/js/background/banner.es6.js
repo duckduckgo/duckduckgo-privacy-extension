@@ -70,9 +70,9 @@ function isValidTransitionType (details) {
     return details.transitionType === 'form_submit' ||
         details.transitionType === 'generated' ||
         // search from extension popup
-        (details.transitionType === 'link' && params.has('bext')) || 
+        (details.transitionType === 'link' && params.has('bext')) ||
         // redirect from DDG via !bang
-        (details.transitionType === 'link' && details.transitionQualfiers.indexOf('server_redirect') !== -1
+        (details.transitionType === 'link' && details.transitionQualifiers.indexOf('server_redirect') !== -1)
 }
 
 function createBanner (tabId) {
