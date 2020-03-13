@@ -8,12 +8,14 @@ const bannerHTML = require('./bannerTemplate.es6')
 const modalHTML = require('./modalTemplate.es6')
 const banner = utils.htmlToElement(bannerHTML)
 const modal = utils.htmlToElement(modalHTML)
+const pageType = utils.isGoogleSerp() ? 'serp' : 'home'
 
 // Banner & Modal Elements
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
 const bannerMore = banner.querySelector(`.js-${consts.BANNER_ID}-more`)
 const modalContent = modal.querySelector(`#${consts.MODAL_ID}`)
 const modalClose = modal.querySelector(`.js-${consts.MODAL_ID}-close`)
+const modalButton = modal.querySelector(`.js-${consts.MODAL_ID}-btn`)
 const modalDontRemind = modal.querySelector(`.js-${consts.MODAL_ID}-dont-remind`)
 const body = document.body
 
@@ -81,7 +83,7 @@ body.addEventListener('keydown', (event) => {
 bannerMore.addEventListener('click', (event) => {
     body.classList.add(consts.HAS_MODAL_CLASS, consts.BLUR_CLASS)
     modal.classList.remove(consts.HIDDEN_CLASS)
-    chrome.runtime.sendMessage({ firePixel: consts.BANNER_CLICK })
+    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_CLICK, {p: pageType}] })
     chrome.storage.local.set({ bannerClicked: true }, function () {
         console.log('MARKED BANNER AS CLICKED')
     })
@@ -99,7 +101,13 @@ modalClose.addEventListener('click', (event) => {
 })
 
 // Modal Do-Not-Remind-Me Click
+modalButton.addEventListener('click', (event) => {
+    chrome.runtime.sendMessage({ firePixel: [consts.MODAL_CLICK, { p: pageType }] })
+})
+
+// Modal Do-Not-Remind-Me Click
 modalDontRemind.addEventListener('click', (event) => {
+    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_DISMISS, { s: 'modal' }] })
     hideModal()
     disableBanner()
 })
@@ -110,7 +118,7 @@ function disableBanner () {
     banner.remove()
     body.classList.remove(consts.HAS_BANNER_CLASS, consts.HAS_MODAL_CLASS)
 
-    chrome.runtime.sendMessage({ firePixel: consts.BANNER_DISMISS })
+    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_DISMISS, {p: pageType}] })
     chrome.storage.local.set({ bannerDismissed: true }, function () {
         console.log('MARKED BANNER AS DISMISSED')
     })
@@ -130,16 +138,8 @@ function hideModal () {
     modal.classList.add(consts.HIDDEN_CLASS)
 }
 
+// DOM INJECTION
 function updateDOM () {
-    // DOM INJECTION
-
-    // Check if Google SERP or Homepage
-    // if (utils.isGoogleSerp()) {
-    //     console.log('Google SERP Detected!')
-    // } else {
-    //     console.log('Google Homepage Detected!')
-    // }
-
     if (promos) {
         // Start observing the target node for configured mutations
         promosObserver.observe(promos, promosConfig)
@@ -148,8 +148,7 @@ function updateDOM () {
 
     // Insert Banner
     body.insertAdjacentElement('beforeend', banner)
-
-    chrome.runtime.sendMessage({ firePixel: consts.BANNER_IMPRESSION })
+    chrome.runtime.sendMessage({ firePixel: [consts.BANNER_IMPRESSION, {p: pageType}] })
 
     // Insert Modal
     body.insertAdjacentElement('beforeend', modal)
