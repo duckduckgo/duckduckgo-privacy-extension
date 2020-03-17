@@ -48,6 +48,8 @@ class Experiment {
 
     setActiveExperiment () {
         settings.ready()
+            // TODO: REMOVE THIS
+            .then(settings.updateSetting('atb', 'v212-5zg'))
             .then(this.getVariant.bind(this))
             .then(() => {
                 this.activeExperiment = retentionExperiments[this.variant] || {}
@@ -56,6 +58,7 @@ class Experiment {
                 console.warn('VARIANT: "%s"', this.variant)
                 console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
                 console.warn('CURRENT ATB: "%s"', getCurrentATB())
+                console.warn('BANNER ENABLED: ', settings.getSetting('bannerEnabled'))
 
                 if (this.activeExperiment.name) {
                     settings.updateSetting('activeExperiment', this.activeExperiment)
@@ -75,6 +78,10 @@ class Experiment {
 
     getDaysSinceInstall () {
         const cohort = settings.getSetting('atb')
+
+        console.warn(cohort)
+        if (!cohort) return false
+
         const split = cohort.split('-')
         let majorVersion = split[0]
         let minorVersion = split[1]
