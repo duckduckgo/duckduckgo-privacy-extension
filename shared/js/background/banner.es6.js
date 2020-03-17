@@ -3,7 +3,9 @@ const settings = require('./settings.es6')
 const experiment = require('./experiments.es6')
 
 const BANNER_CLICK = 'ebc'
-const BANNER_DISMISS = 'ebd'
+const BANNER_DISMISS = 'ebx'
+const BANNER_SETTING = 'bannerEnabled'
+const BANNER_EXP_NAME = 'privacy_nudge'
 
 const bannerUrls = {
     valid: [
@@ -77,9 +79,7 @@ function createBanner (tabId) {
             runAt: 'document_start'
         },
         function () {
-            console.group('DDG BANNER -- INJECT ASSETS')
             console.warn(`Tab ${tabId}: CSS injected!`)
-            console.groupEnd()
         }
     )
 
@@ -90,67 +90,73 @@ function createBanner (tabId) {
             runAt: 'document_start'
         },
         function () {
-            console.group('DDG BANNER -- INJECT ASSETS')
             console.warn(`Tab ${tabId}: Content Script injected!`)
-            console.groupEnd()
         }
     )
 }
 
 function handleOnCommitted (details) {
-    const { url, tabId } = details
+    const { url } = details
+    let pixelOps = {}
+    let pixelID
 
-    console.group('DDG BANNER -- ON COMMITTED')
-    console.warn(`🔔 Updated tab: ${tabId} -- Details: `, details)
-    console.warn(`ℹ️ URL: ${url}`)
-    console.warn('TRANSITION TYPE:', details.transitionType)
+    if (!isValidTransitionType(details)) return
 
-    if (isDDGSerp(url) && isValidTransitionType(details)) {
-        console.warn('🦆 IS DDG SERP')
-        chrome.storage.local.get(['bannerDismissed'], result => {
-            // cast boolean to int
-            pixel.fire('evd', { bd: +result.bannerDismissed })
-            console.warn('🎇 DDG SERP VISITED PIXEL')
-        })
-    } else if (isOtherSerp(url) && isValidTransitionType(details)) {
-        console.warn('😬 IS OTHER SERP')
-        chrome.storage.local.get(['bannerDismissed'], result => {
-            // cast boolean to int
-            pixel.fire('evg', { bd: +result.bannerDismissed })
-            console.warn('🎇 OTHER SERP VISITED PIXEL')
-        })
+    if (isDDGSerp(url)) {
+        pixelID = 'evd'
+    } else if (isOtherSerp(url)) {
+        pixelID = 'evg'
     } else {
-        // console.warn('❌ URL IS NOT A SERP')
+        return
     }
-    console.groupEnd()
+
+    const activeExp = settings.getSetting('activeExperiment')
+
+    if (activeExp && activeExp.name === BANNER_EXP_NAME) {
+        let enabled = settings.getSetting(BANNER_SETTING)
+        // cast bool to int
+        pixelOps.be = +enabled
+    } else {
+        pixelOps.be = -1
+    }
+
+    pixel.fire(pixelID, pixelOps)
+
+    // TODO: REMOVE THIS
+    console.warn('DDG BANNER -- ON COMMITTED')
+    if (pixelID === 'evd') {
+        console.warn('🎇 DDG SERP VISITED PIXEL')
+    } else {
+        console.warn('🎇 OTHER SERP VISITED PIXEL')
+    }
 }
 
 // Check if we can show banner
 function handleOnCompleted (details) {
     const { url, tabId, frameId } = details
+    const activeExp = settings.getSetting('activeExperiment')
 
-    // ignore navigation on iframes
-    if (frameId !== 0) return
-
-    console.group('DDG BANNER -- ON COMPLETED')
-
-    if (!isBannerURL(url)) {
-        // console.warn('❌ URL IS NOT VALID')
-        console.groupEnd()
+    // Exclude unless in active experiment, and banner not disabled
+    if (!activeExp ||
+        !activeExp.name === BANNER_EXP_NAME ||
+        !settings.getSetting(BANNER_SETTING)) {
         return
     }
 
-    console.warn(`🔔 Updated tab: ${tabId} -- Details: `, details)
-    console.warn('✅ URL IS VALID')
-    console.warn(`ℹ️ URL: ${url}`)
+    // Ignore navigation on iframes
+    if (frameId !== 0) return
 
-    // Show banner if not dismissed
-    if (settings.getSetting('bannerEnabled')) {
-        createBanner(tabId)
-    } else {
-        console.warn('❌ IGNORING. BANNER DISMISSED')
+    // Ignore invalid urls
+    if (!isBannerURL(url)) {
+        return
     }
-    console.groupEnd()
+
+    // TODO: REMOVE THIS
+    console.warn('DDG BANNER -- ON COMPLETED')
+    console.warn('✅ URL IS VALID')
+
+    // Show banner
+    createBanner(tabId)
 }
 
 function firePixel (args) {
@@ -173,6 +179,7 @@ function firePixel (args) {
 
     // Mark as clicked
     if (id === BANNER_CLICK) {
+        // TODO: REMOVE CALLBACK
         chrome.storage.local.set({ bannerClicked: true }, function () {
             console.log('MARKED BANNER AS CLICKED')
         })
