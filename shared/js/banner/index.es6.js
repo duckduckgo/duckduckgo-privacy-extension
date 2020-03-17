@@ -12,6 +12,7 @@ const modal = utils.htmlToElement(modalHTML)
 // Banner & Modal Elements
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
 const bannerMore = banner.querySelector(`.js-${consts.BANNER_ID}-more`)
+const bannerTitle = banner.querySelector(`.js-${consts.BANNER_ID}-title`)
 const modalContent = modal.querySelector(`#${consts.MODAL_ID}`)
 const modalClose = modal.querySelector(`.js-${consts.MODAL_ID}-close`)
 const modalButton = modal.querySelector(`.js-${consts.MODAL_ID}-btn`)
@@ -140,6 +141,8 @@ function _firePixel (id, ops) {
 function updateDOM () {
     if (window.location.pathname === '/search') {
         isSerp = true
+        // Adjust copy for SERP
+        bannerTitle.textContent = bannerTitle.textContent.replace('can', 'may')
     }
 
     if (promos) {
