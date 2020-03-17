@@ -27,7 +27,7 @@ function getCurrentATB () {
     let majorVersion = Math.ceil(timeSinceEpoch / oneWeek)
     let minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
 
-    return 'v' + majorVersion + '-' + minorVersion
+    return {majorVersion, minorVersion}
 }
 
 class Experiment {
@@ -58,7 +58,6 @@ class Experiment {
                 console.warn('VARIANT: "%s"', this.variant)
                 console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
                 console.warn('CURRENT ATB: "%s"', getCurrentATB())
-                console.warn('BANNER ENABLED: ', settings.getSetting('bannerEnabled'))
 
                 if (this.activeExperiment.name) {
                     settings.updateSetting('activeExperiment', this.activeExperiment)
@@ -67,6 +66,9 @@ class Experiment {
                         this.applySettingsChanges()
                     }
                 }
+
+                // TODO: REMOVE THIS
+                console.warn('BANNER ENABLED: ', settings.getSetting('bannerEnabled'))
             })
     }
 
@@ -78,8 +80,6 @@ class Experiment {
 
     getDaysSinceInstall () {
         const cohort = settings.getSetting('atb')
-
-        console.warn(cohort)
         if (!cohort) return false
 
         const split = cohort.split('-')
@@ -91,7 +91,7 @@ class Experiment {
         majorVersion = majorVersion.substring(1)
 
         // remove any atb variant that may be appended to the setting.
-        minorVersion = minorVersion.replace(/[a-z_]/, '')
+        minorVersion = minorVersion.replace(/[a-z_]/g, '')
 
         return _getDaysBetweenCohorts({
             majorVersion: parseInt(majorVersion, 10),
