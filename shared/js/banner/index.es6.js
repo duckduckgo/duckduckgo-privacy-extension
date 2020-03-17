@@ -140,9 +140,14 @@ function _firePixel (id, ops) {
 // DOM INJECTION
 function updateDOM () {
     if (window.location.pathname === '/search') {
+        const url = new URL(window.location.href)
+        const query = url.searchParams.get('q')
+
         isSerp = true
+
         // Adjust copy for SERP
-        bannerTitle.textContent = bannerTitle.textContent.replace('can', 'may')
+        bannerTitle.textContent = bannerTitle.textContent.replace('can', 'may').replace('searches', 'search')
+        modalButton.href += `?q=${query}`
     }
 
     if (promos) {
