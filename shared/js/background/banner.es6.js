@@ -14,7 +14,10 @@ const bannerUrls = {
         'https://www.google.com/shopping',
         'https://images.google.com/'
     ],
-    invalid: ['https://www.google.com/maps']
+    invalid: [
+        'https://www.google.com/maps',
+        'https://www.google.com/preferences'
+    ]
 }
 
 function isBannerURL (url) {
@@ -23,7 +26,7 @@ function isBannerURL (url) {
 
     // ensure match is at beginning of string
     return (bannerUrls.valid.some(pattern => href.indexOf(pattern) === 0) &&
-    !bannerUrls.invalid.some(pattern => href.indexOf(pattern) === 0))
+        !bannerUrls.invalid.some(pattern => href.indexOf(pattern) === 0))
 }
 
 function isDDGSerp (url) {
@@ -152,8 +155,7 @@ function handleOnCompleted (details) {
 
 function firePixel (args) {
     const defaultOps = {
-        d: experiment.getDaysSinceInstall() || -1,
-        p: isOtherSerp ? 'serp' : 'home'
+        d: experiment.getDaysSinceInstall() || -1
     }
     const id = args[0]
     const ops = args[1] || {}

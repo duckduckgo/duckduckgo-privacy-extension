@@ -18,6 +18,8 @@ const modalButton = modal.querySelector(`.js-${consts.MODAL_ID}-btn`)
 const modalDontRemind = modal.querySelector(`.js-${consts.MODAL_ID}-dont-remind`)
 const body = document.body
 
+let isSerp = false
+
 // For handling Google's own banner
 const HAS_PROMOS_CLASS = 'has-promos'
 const PROMOS_SELECTOR = '#promos, .og-pdp'
@@ -34,10 +36,6 @@ const promosHiddenCallback = function () {
     }
 }
 const promosObserver = new MutationObserver(promosHiddenCallback)
-
-function _firePixel (id, ops) {
-    chrome.runtime.sendMessage({ bannerPixel: true, pixelArgs: [id, ops] })
-}
 
 // EVENT HANDLERS
 // Remove animating class after entrance
@@ -133,8 +131,18 @@ function hideModal () {
     modal.classList.add(consts.HIDDEN_CLASS)
 }
 
+function _firePixel (id, ops) {
+    const defaultOps = { p: isSerp ? 'serp' : 'home' }
+    const pixelOps = Object.assign(defaultOps, ops)
+    chrome.runtime.sendMessage({ bannerPixel: true, pixelArgs: [id, pixelOps] })
+}
+
 // DOM INJECTION
 function updateDOM () {
+    if (window.location.pathname === '/search') {
+        isSerp = true
+    }
+
     if (promos) {
         // Start observing the target node for configured mutations
         promosObserver.observe(promos, promosConfig)
