@@ -56,24 +56,23 @@ body.addEventListener('click', (event) => {
     if (body.classList.contains(consts.HAS_MODAL_CLASS)) {
         hideModal()
     }
-
-    // hide on page click
-    // if (body.classList.contains(consts.HAS_BANNER_CLASS)) {
-    //     hideModal()
-    //     hideBanner()
-    // }
 })
 
 // Hide banner on key press
 body.addEventListener('keydown', (event) => {
-    // Hide if escape key pressed
-    if (body.classList.contains(consts.HAS_BANNER_CLASS) && event.keyCode === 27) {
-        hideModal()
-        hideBanner()
-    }
+    // Ignore on homepage where the notification isn't in the way
+    if (!isSerp) return
 
-    // Hide on any key press except arrows
-    if (body.classList.contains(consts.HAS_BANNER_CLASS) && event.key.indexOf('Arrow') === -1) {
+    // ignore if banner is animating
+    if (banner.classList.contains(consts.IS_ANIMATING_CLASS)) return
+
+    // Ignore if banner is dismissed
+    if (!body.classList.contains(consts.HAS_BANNER_CLASS)) return
+
+    // Hide if escape key pressed
+    if (event.code.indexOf('Key') !== -1 ||
+        event.code.indexOf('Digit') !== -1 ||
+        event.code.indexOf('Numpad') !== -1) {
         hideModal()
         hideBanner()
     }
