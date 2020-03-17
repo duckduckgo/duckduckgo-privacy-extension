@@ -69,7 +69,6 @@ body.is-blurred > *:not(.ddgm-overlay) {
   border: 1px solid #dadada;
   box-sizing: border-box;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-  font-family: $font__face--default;
 
   // Adjust position for Google Privacy Policy banner
   .has-promos & {
@@ -189,7 +188,6 @@ body.is-blurred > *:not(.ddgm-overlay) {
   align-items: center;
   background: white;
   color: #333333;
-  font-family: $font__face--default;
 }
 
 .ddgm__logo {
