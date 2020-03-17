@@ -9,11 +9,10 @@ module.exports = `
     <div class="${id}-inner">
         <img class="${id}__logo" src="${logoUrl}"></img>
         <div class="${id}__content">
-            <div class="${id}__title">
-                Google may use your search to profile you.
-            </div>
-            <div class="${id}__text">
-                Ads about this topic may follow you across sites and devices
+            <div class="js-${id}-title ${id}__title">
+            Google can use your searches
+            <br>
+            to profile you.
             </div>
         </div>
     </div>

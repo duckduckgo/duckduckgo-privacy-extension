@@ -23,20 +23,24 @@
  */
 
 @font-face {
-    font-family: 'DDG_ProximaNova';
-    src: url('chrome-extension://__MSG_@@extension_id__//public/font/ProximaNova-Reg-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "DDG_ProximaNova";
+  src: url("chrome-extension://__MSG_@@extension_id__//public/font/ProximaNova-Reg-webfont.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'DDG_ProximaNova';
-    src: url('chrome-extension://__MSG_@@extension_id__/public/font/ProximaNova-Sbold-webfont.woff') format('woff');
-    font-weight: 600;
-    font-style: bold;
+  font-family: "DDG_ProximaNova";
+  src: url("chrome-extension://__MSG_@@extension_id__/public/font/ProximaNova-Sbold-webfont.woff")
+    format("woff");
+  font-weight: 600;
+  font-style: bold;
 }
 
-$font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
+$font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica",
+  "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial,
+  sans-serif;
 
 // VARS
 $banner-background: #fff;
@@ -46,256 +50,249 @@ $banner-logo-height: 55px;
 
 // Animations
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(5%);
-    }
-    to { opacity: 1 }
+  from {
+    opacity: 0;
+    transform: translateX(5%);
+  }
+  to {
+    opacity: 1;
+  }
 }
-
 
 %blurred {
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
 }
 
-%btn-link, .btn--link {
-    text-decoration: underline;
+%btn-link,
+.btn--link {
+  text-decoration: underline;
 
-    &:hover {
-        cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 // GOOGLE SERP CLASSES
 body.is-blurred > *:not(.ddgm-overlay) {
-    @extend %blurred;
+  @extend %blurred;
 }
 
 // DDG BANNER ELEMENTS
 %flexrow {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
 %ddgb-text,
 .ddgb__text {
-    font-size: 14px;
-    line-height: 15px;
+  font-size: 14px;
+  line-height: 15px;
 }
 
 %close-icon {
-    &:hover {
-        cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .ddgb {
-    @extend %flexrow;
+  @extend %flexrow;
 
-    width: auto;
-    height: $banner-height;
-    position: fixed;
-    top: 80px;
-    right: 29px;
-    z-index: 1000;
-    overflow: hidden;
-    border-radius: 4px;
-    background: $banner-background;
-    border: 1px solid #DADADA;
-    box-sizing: border-box;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-    font-family: $font__face--default;
+  width: auto;
+  max-width: 410px;
+  height: $banner-height;
+  position: fixed;
+  top: 80px;
+  right: 29px;
+  z-index: 1000;
+  overflow: hidden;
+  border-radius: 4px;
+  background: $banner-background;
+  border: 1px solid #dadada;
+  box-sizing: border-box;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: $font__face--default;
 
-    // Adjust position for Google Privacy Policy banner
-    .has-promos & {
-        top: 100px;
-    }
+  // Adjust position for Google Privacy Policy banner
+  .has-promos & {
+    top: 100px;
+  }
 
-    &.slideIn {
-        // animated slide-in from offscreen on load
-        animation: slideIn 200ms ease-out forwards;
-        animation-iteration-count: 1;
-    }
+  &.slideIn {
+    // animated slide-in from offscreen on load
+    animation: slideIn 200ms ease-out forwards;
+    animation-iteration-count: 1;
+  }
 
-    .is-blurred & {
-        @extend %blurred;
-    }
+  .is-blurred & {
+    @extend %blurred;
+  }
 }
 
 .ddgb__logo {
-    display: block;
-    height: $banner-logo-height;
-    width: auto;
-
+  display: block;
+  height: $banner-logo-height;
+  width: auto;
 }
 
 .ddgb-inner {
-    @extend %flexrow;
-    box-sizing: border-box;
-    height: $banner-height;
-    padding: 12px;
-    color: $banner-text;
-    border-radius: 4px;
+  @extend %flexrow;
+  box-sizing: border-box;
+  height: $banner-height;
+  padding: 12px;
+  color: $banner-text;
+  border-radius: 4px;
 }
 
 .ddgb__content {
-    white-space: nowrap;
-    padding: 0 16px 0 14px;
+  padding: 0 16px 0 14px;
 }
 
 .ddgb__title {
-    font-size: 17px;
-    line-height: 26px;
-    font-weight: bold;
-}
-
-.ddgb__text {
-    font-size: 14px;
-    line-height: 20px;
-    font-style: italic;
+  font-size: 14px;
+  line-height: 22px;
 }
 
 .ddgb__buttons {
-    height: 100%;
-    width: 104px;
-    display: flex;
-    flex-direction: column;
+  flex: 1 0 auto;
+  height: 100%;
+  width: 104px;
+  display: flex;
+  flex-direction: column;
 }
 
 %ddgb-btn {
-    flex: 1;
-    display: flex;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: -0.278571px;
-    cursor: pointer;
+  flex: 1;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.278571px;
+  cursor: pointer;
 }
 
 .ddgb__btn {
-    @extend %ddgb-btn;
-    background: #DE5833;
-    border: solid #D14E2A;
-    border-width: 0 0 1px 1px;
-    color: white;
+  @extend %ddgb-btn;
+  background: #de5833;
+  border: solid #d14e2a;
+  border-width: 0 0 1px 1px;
+  color: white;
 }
 
 .ddgb__close {
-    @extend %ddgb-btn;
-    background: #F8F8F8;
-    border: solid #DADADA;
-    border-width: 1px 0 0 1px;
-    color: #334652;
+  @extend %ddgb-btn;
+  background: #f8f8f8;
+  border: solid #dadada;
+  border-width: 1px 0 0 1px;
+  color: #334652;
 }
 
 .ddgb__close__icon {
-    @extend %close-icon;
-    color: #95ABBB;
+  @extend %close-icon;
+  color: #95abbb;
 }
-
 
 // DDG BANNER MODAL
 .ddgm-overlay {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 9000;
-    background: #99999991;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  background: #99999991;
 
-    &.is-hidden {
-        display: none;;
-    }
+  &.is-hidden {
+    display: none;
+  }
 }
 
 // fills the page to position modal
 .ddgm-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .ddgm {
-    position: relative;
-    width: 440px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    padding: 20px 20px 40px;
-    border-radius: 4px;
-    text-align: center;
-    justify-content: start;
-    align-items: center;
-    background: white;
-    color: #333333;
-    font-family: $font__face--default;
+  position: relative;
+  width: 440px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 40px;
+  border-radius: 4px;
+  text-align: center;
+  justify-content: start;
+  align-items: center;
+  background: white;
+  color: #333333;
+  font-family: $font__face--default;
 }
 
 .ddgm__logo {
-    margin: -44px 0 20px;
+  margin: -44px 0 20px;
 }
 
 .ddgm__title {
-    font-size: 22px;
-    line-height: 26px;
-    font-weight: 600px;
-    letter-spacing: -0.33px;
-    margin-bottom: 10px;
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: 600px;
+  letter-spacing: -0.33px;
+  margin-bottom: 10px;
 }
 
 .ddgm__text {
-    margin-bottom: 24px;
-    font-size: 15px;
-    line-height: 20px;
-    letter-spacing: -0.09375px;
-    font-style: italic;
+  margin-bottom: 24px;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: -0.09375px;
+  font-style: italic;
 }
 
 .ddgm__btn {
-    display: flex;
-    width: 100%;
-    height: 50px;
-    margin-bottom: 17px;
-    border-radius: 4px;
-    justify-content: center;
-    align-items: center;
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 14px;
-    letter-spacing: -0.1px;
-    background: #678FFF;
+  display: flex;
+  width: 100%;
+  height: 50px;
+  margin-bottom: 17px;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 14px;
+  letter-spacing: -0.1px;
+  background: #678fff;
+  text-decoration: none;
+  // important to override dynamic styles
+  color: white !important;
+
+  &:hover {
     text-decoration: none;
-    // important to override dynamic styles
-    color: white !important;
+  }
 
-    &:hover {
-        text-decoration: none;
-    }
-
-    &:visited {
-        color: white;
-    }
+  &:visited {
+    color: white;
+  }
 }
 
 .ddgm__link {
-    @extend %btn-link;
+  @extend %btn-link;
 
-    font-size: 12px;
-    line-height: 14px;
+  font-size: 12px;
+  line-height: 14px;
 }
 
 .ddgm__close {
-    @extend %close-icon;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    color: #666;
+  @extend %close-icon;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #666;
 }
-
