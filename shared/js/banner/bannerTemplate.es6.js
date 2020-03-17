@@ -17,7 +17,7 @@ module.exports = `
         </div>
     </div>
     <div class="${id}__buttons">
-        <span class="js-${id}-more ${id}__btn">Show More</span>
+        <span class="js-${id}-more ${id}__btn">See More</span>
         <span class="js-${id}-close ${id}__close">Dismiss</span>
     </div>
 </div>
