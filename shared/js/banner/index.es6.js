@@ -95,7 +95,6 @@ bannerClose.addEventListener('click', (event) => {
 modalClose.addEventListener('click', (event) => {
     hideModal()
     hideBanner()
-    _firePixel(consts.BANNER_DISMISS)
 })
 
 // Modal CTA Click
@@ -106,15 +105,14 @@ modalButton.addEventListener('click', (event) => {
 // Modal Do-Not-Remind-Me Click
 modalDontRemind.addEventListener('click', (event) => {
     hideModal()
-    disableBanner()
-    _firePixel(consts.BANNER_DISMISS, { s: 'modal' })
+    disableBanner(true)
 })
 
 // Close banner, permanently
-function disableBanner () {
-    modal.remove()
-    banner.remove()
-    body.classList.remove(consts.HAS_BANNER_CLASS, consts.HAS_MODAL_CLASS)
+function disableBanner (fromModal) {
+    const ops = fromModal ? {} : {s: 'modal'}
+    // Disables banner via Banner.es6.js
+    _firePixel(consts.BANNER_DISMISS, ops)
 }
 
 // Hide banner
