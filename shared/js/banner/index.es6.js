@@ -74,7 +74,6 @@ body.addEventListener('keydown', (event) => {
     if (event.code.indexOf('Key') !== -1 ||
         event.code.indexOf('Digit') !== -1 ||
         event.code.indexOf('Numpad') !== -1) {
-        hideModal()
         hideBanner()
     }
 })
@@ -88,12 +87,11 @@ bannerMore.addEventListener('click', (event) => {
 
 // Banner Close Click
 bannerClose.addEventListener('click', (event) => {
-    disableBanner()
+    hideBanner({disable: true})
 })
 
 // Modal Close Click
 modalClose.addEventListener('click', (event) => {
-    hideModal()
     hideBanner()
 })
 
@@ -104,23 +102,23 @@ modalButton.addEventListener('click', (event) => {
 
 // Modal Do-Not-Remind-Me Click
 modalDontRemind.addEventListener('click', (event) => {
-    hideModal()
-    disableBanner(true)
+    hideBanner({disable: true, fromModal: true})
 })
 
-// Close banner, permanently
-function disableBanner (fromModal) {
-    const ops = fromModal ? {} : {s: 'modal'}
-    // Disables banner via Banner.es6.js
-    _firePixel(consts.BANNER_DISMISS, ops)
-}
-
 // Hide banner
-function hideBanner () {
+function hideBanner (ops) {
+    hideModal()
     // remove elements from DOM
     modal.remove()
     banner.remove()
     body.classList.remove(consts.HAS_BANNER_CLASS)
+
+    // Disable permananetly
+    if (ops && ops.disable) {
+        const pixelOps = ops.fromModal ? {s: 'modal'} : {}
+        // Disables banner via Banner.es6.js
+        _firePixel(consts.BANNER_DISMISS, pixelOps)
+    }
 }
 
 // Hide Modal
