@@ -75,8 +75,8 @@ function createBanner (tabId) {
     // Inject CSS
     chrome.tabs.insertCSS(
         {
-            file: '/public/css/banner.css',
-            runAt: 'document_start'
+        file: '/public/css/banner.css',
+        runAt: 'document_start'
         },
         function () {
             console.warn(`Tab ${tabId}: CSS injected!`)
@@ -86,12 +86,12 @@ function createBanner (tabId) {
     //  Inject JS
     chrome.tabs.executeScript(
         {
-            file: '/public/js/content-scripts/banner.js',
-            runAt: 'document_start'
+        file: '/public/js/content-scripts/banner.js',
+        runAt: 'document_start'
         },
         function () {
             console.warn(`Tab ${tabId}: Content Script injected!`)
-        }
+}
     )
 }
 
@@ -132,7 +132,7 @@ function handleOnCommitted (details) {
 }
 
 // Check if we can show banner
-function handleOnCompleted (details) {
+function handleOnDOMContentLoaded (details) {
     const { url, tabId, frameId } = details
     const activeExp = settings.getSetting('activeExperiment')
 
@@ -189,7 +189,7 @@ function firePixel (args) {
 var Banner = (() => {
     return {
         handleOnCommitted,
-        handleOnCompleted,
+        handleOnDOMContentLoaded,
         firePixel
     }
 })()

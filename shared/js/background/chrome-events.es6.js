@@ -58,7 +58,7 @@ chrome.webRequest.onHeadersReceived.addListener(
  * Web Navigation
  */
 const Banner = require('./banner.es6')
-chrome.webNavigation.onCompleted.addListener(Banner.handleOnCompleted)
+chrome.webNavigation.onDOMContentLoaded.addListener(Banner.handleOnDOMContentLoaded)
 
 // keep track of URLs that the browser navigates to.
 //
