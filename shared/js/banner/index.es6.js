@@ -1,7 +1,5 @@
 'use strict'
 
-console.log('Banner.js Content Script Loaded')
-
 const consts = require('./consts.es6')
 const utils = require('./utils.es6')
 const bannerHTML = require('./bannerTemplate.es6')
@@ -28,10 +26,11 @@ let promos = document.querySelector(PROMOS_SELECTOR)
 // Observe and react when Google banner dismissed
 // See: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
 const promosConfig = { attributes: true, attributeFilter: ['aria-hidden'], subtree: true }
-const promosHiddenCallback = function () {
-    // Update banner position when Google banner dismissed
-    if (body.classList.contains(HAS_PROMOS_CLASS)) {
-        body.classList.remove(HAS_PROMOS_CLASS)
+// Update banner position when Google banner dismissed
+const promosHiddenCallback = function (mutationsList, observer) {
+    // First child of #promos will be hidden when button is clicked
+    if (mutationsList.length && mutationsList[0].target.hasAttribute('aria-hidden', 'true')) {
+        banner.classList.remove(HAS_PROMOS_CLASS)
         // Stop observing after dimissed
         promosObserver.disconnect()
     }
@@ -149,7 +148,7 @@ function updateDOM () {
     if (promos) {
         // Start observing the target node for configured mutations
         promosObserver.observe(promos, promosConfig)
-        body.classList.add(HAS_PROMOS_CLASS)
+        banner.classList.add(HAS_PROMOS_CLASS)
     }
 
     // Insert Banner
@@ -161,9 +160,11 @@ function updateDOM () {
     body.classList.add(consts.HAS_BANNER_CLASS)
 }
 
+const lang = document.documentElement.lang.split('-')[0]
+
 // Skip if DDG banner already in DOM
-if (!(document.getElementById(consts.BANNER_ID) || document.getElementById(consts.MODAL_ID))) {
+if (!document.getElementById(consts.BANNER_ID) ||
+    !document.getElementById(consts.MODAL_ID) ||
+    lang !== 'en') {
     updateDOM()
-} else {
-    console.log('DDG Banner already exists')
 }

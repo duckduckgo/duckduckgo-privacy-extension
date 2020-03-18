@@ -70,7 +70,7 @@ body.is-blurred > *:not(.ddgm-overlay) {
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
 
   // Adjust position for Google Privacy Policy banner
-  .has-promos & {
+  &.has-promos {
     top: 100px;
   }
 
