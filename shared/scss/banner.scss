@@ -57,7 +57,6 @@ body.is-blurred > *:not(.ddgm-overlay) {
   @extend %flexrow;
 
   width: auto;
-  max-width: 410px;
   height: $banner-height;
   position: fixed;
   top: 80px;
@@ -106,8 +105,8 @@ body.is-blurred > *:not(.ddgm-overlay) {
 }
 
 .ddgb__title {
-  font-size: 14px;
-  line-height: 22px;
+  font-size: 17px;
+  line-height: 20px;
 }
 
 .ddgb__buttons {
