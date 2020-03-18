@@ -73,26 +73,16 @@ function isValidTransitionType (details) {
 
 function createBanner (tabId) {
     // Inject CSS
-    chrome.tabs.insertCSS(
-        {
+    chrome.tabs.insertCSS({
         file: '/public/css/banner.css',
         runAt: 'document_start'
-        },
-        function () {
-            console.warn(`Tab ${tabId}: CSS injected!`)
-        }
-    )
+    })
 
     //  Inject JS
-    chrome.tabs.executeScript(
-        {
+    chrome.tabs.executeScript({
         file: '/public/js/content-scripts/banner.js',
         runAt: 'document_start'
-        },
-        function () {
-            console.warn(`Tab ${tabId}: Content Script injected!`)
-}
-    )
+    })
 }
 
 function handleOnCommitted (details) {
@@ -121,14 +111,6 @@ function handleOnCommitted (details) {
     }
 
     pixel.fire(pixelID, pixelOps)
-
-    // TODO: REMOVE THIS
-    console.warn('DDG BANNER -- ON COMMITTED')
-    if (pixelID === 'evd') {
-        console.warn('🎇 DDG SERP VISITED PIXEL')
-    } else {
-        console.warn('🎇 OTHER SERP VISITED PIXEL')
-    }
 }
 
 // Check if we can show banner
@@ -151,20 +133,16 @@ function handleOnDOMContentLoaded (details) {
         return
     }
 
-    // TODO: REMOVE THIS
-    console.warn('DDG BANNER -- ON COMPLETED')
-    console.warn('✅ URL IS VALID')
-
     // Show banner
     createBanner(tabId)
 }
 
 function firePixel (args) {
+    const id = args[0]
+    const ops = args[1] || {}
     const defaultOps = {
         d: experiment.getDaysSinceInstall() || -1
     }
-    const id = args[0]
-    const ops = args[1] || {}
     const pixelOps = Object.assign(defaultOps, ops)
 
     pixel.fire.apply(null, [id, pixelOps])
@@ -173,16 +151,12 @@ function firePixel (args) {
     if (id === BANNER_DISMISS) {
         settings.ready().then(() => {
             settings.updateSetting('bannerEnabled', false)
-            console.warn('MARKED AS DISMISSED')
         })
     }
 
     // Mark as clicked
     if (id === BANNER_CLICK) {
-        // TODO: REMOVE CALLBACK
-        chrome.storage.local.set({ bannerClicked: true }, function () {
-            console.log('MARKED BANNER AS CLICKED')
-        })
+        chrome.storage.local.set({ bannerClicked: true })
     }
 }
 
