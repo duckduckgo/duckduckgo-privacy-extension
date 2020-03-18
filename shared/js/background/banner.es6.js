@@ -128,6 +128,10 @@ function handleOnDOMContentLoaded (details) {
     // Ignore navigation on iframes
     if (frameId !== 0) return
 
+    const params = new URL(url).searchParams
+    // Ignore if Google UI is non-English
+    if (params.has('hl') && params.get('hl') !== 'en') return
+
     // Ignore invalid urls
     if (!isBannerURL(url)) {
         return
