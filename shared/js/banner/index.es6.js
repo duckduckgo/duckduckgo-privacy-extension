@@ -142,7 +142,7 @@ function updateDOM () {
         isSerp = true
 
         // Adjust copy for SERP
-        bannerTitle.textContent = bannerTitle.textContent.replace('can', 'may').replace('searches', 'search')
+        bannerTitle.innerHTML = bannerTitle.innerHTML.replace('can', 'may').replace('searches', 'search')
         modalButton.href += `?q=${query}`
     }
 
