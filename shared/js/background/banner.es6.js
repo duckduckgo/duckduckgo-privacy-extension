@@ -8,27 +8,39 @@ const BANNER_SETTING = 'bannerEnabled'
 const BANNER_EXP_NAME = 'privacy_nudge'
 
 const bannerUrls = {
-    valid: [
-        'https://www.google.com/',
-        'https://www.google.com/search',
-        'https://www.google.com/webhp',
-        'https://www.google.com/videohp',
-        'https://www.google.com/shopping',
-        'https://images.google.com/'
+    hostnames: [
+        'www.google.com',
+        'images.google.com',
+        'books.google.com'
     ],
-    invalid: [
-        'https://www.google.com/maps',
-        'https://www.google.com/preferences'
+    paths: [
+        // homepage
+        '/',
+        // SERP
+        '/search',
+        // clicking google icon from SERP redirects here
+        '/webhp',
+        // video.google.com redirects here
+        '/videohp',
+        // shopping.google.com redirects here
+        '/shopping',
+        // shopping.google.com redirects here
+        '/finance'
     ]
 }
 
 function isBannerURL (url) {
     const urlObj = new URL(url)
-    const href = urlObj.href
+    const hostname = urlObj.hostname
+    const pathname = urlObj.pathname
 
-    // ensure match is at beginning of string
-    return (bannerUrls.valid.some(pattern => href.indexOf(pattern) === 0) &&
-        !bannerUrls.invalid.some(pattern => href.indexOf(pattern) === 0))
+    // ignore non-google hostnames
+    if (bannerUrls.hostnames.indexOf(hostname) === -1) return
+
+    // Ignore excluded domains/paths
+    if (bannerUrls.paths.indexOf(pathname) === -1) return
+
+    return true
 }
 
 function isDDGSerp (url) {
