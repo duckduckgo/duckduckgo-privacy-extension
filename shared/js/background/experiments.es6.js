@@ -33,6 +33,7 @@ function getCurrentATB () {
 class Experiment {
     constructor () {
         this.variant = ''
+        this.atbVariant = ''
         this.activeExperiment = {}
     }
 
@@ -46,20 +47,38 @@ class Experiment {
         return this.variant
     }
 
+    getATBVariant () {
+        const atbVal = settings.getSetting('atb')
+        if (atbVal && atbVal.match(ATB_FORMAT_RE) && atbVal[atbVal.length - 1].match(/[a-z]/i)) {
+            this.atbVariant = atbVal[atbVal.length - 1]
+        } else {
+            this.atbVariant = '_'
+        }
+        return this.atbVariant
+    }
+
     setActiveExperiment () {
         settings.ready()
             // TODO: REMOVE THIS
-            .then(settings.updateSetting('atb', 'v212-5zg'))
+            .then(settings.updateSetting('atb', 'v212-5ry'))
             .then(this.getVariant.bind(this))
+            .then(this.getATBVariant.bind(this))
             .then(() => {
                 this.activeExperiment = retentionExperiments[this.variant] || {}
 
                 console.warn('ATB: "%s"', settings.getSetting('atb'))
                 console.warn('VARIANT: "%s"', this.variant)
+                console.warn('ATB VARIANT: "%s"', this.atbVariant)
                 console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
-                console.warn('CURRENT ATB: "%s"', getCurrentATB())
+                console.warn('IS ATB EXPERIMENT: ', !!this.activeExperiment.atbExperiments)
+                console.warn('TODAY\'S ATB: "%o"', getCurrentATB())
 
                 if (this.activeExperiment.name) {
+                    if (this.atbExperiments && this.atbExperiments[this.atbVariant]) {
+                        console.warn('IS ATB EXPERIMENT')
+                        this.activeExperiment.settings = this.atbExperiments[this.atbVariant].settings
+                    }
+
                     settings.updateSetting('activeExperiment', this.activeExperiment)
 
                     if (this.activeExperiment.settings) {
