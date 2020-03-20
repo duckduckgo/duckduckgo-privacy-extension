@@ -17,7 +17,9 @@ module.exports = `
             </h1>
 
             <p class="${id}__text">
-                What’s the harm? Google remembers everything you search and uses that data to profile you with ads that follow you around.
+                What’s the harm?
+                <br>
+                Google remembers what you search and uses that data profile to follow you around with ads.
             </p>
 
             <a href="https://duckduckgo.com" class="js-${id}-btn ${id}__btn">
