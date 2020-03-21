@@ -60,23 +60,23 @@ class Experiment {
     setActiveExperiment () {
         settings.ready()
             // TODO: REMOVE THIS
-            .then(settings.updateSetting('atb', 'v212-5ry'))
+            .then(settings.updateSetting('atb', 'v212-5rz'))
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
                 this.activeExperiment = retentionExperiments[this.variant] || {}
 
+                // TODO: REMOVE THIS
                 console.warn('ATB: "%s"', settings.getSetting('atb'))
                 console.warn('VARIANT: "%s"', this.variant)
                 console.warn('ATB VARIANT: "%s"', this.atbVariant)
                 console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
                 console.warn('IS ATB EXPERIMENT: ', !!this.activeExperiment.atbExperiments)
-                console.warn('TODAY\'S ATB: "%o"', getCurrentATB())
+                console.warn('TODAY\'S ATB', getCurrentATB())
 
                 if (this.activeExperiment.name) {
-                    if (this.atbExperiments && this.atbExperiments[this.atbVariant]) {
-                        console.warn('IS ATB EXPERIMENT')
-                        this.activeExperiment.settings = this.atbExperiments[this.atbVariant].settings
+                    if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
+                        this.activeExperiment.settings = this.activeExperiment.atbExperiments[this.atbVariant].settings
                     }
 
                     settings.updateSetting('activeExperiment', this.activeExperiment)
