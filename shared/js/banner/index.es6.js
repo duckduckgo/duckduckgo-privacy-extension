@@ -11,6 +11,7 @@ const modal = utils.htmlToElement(modalHTML)
 const bannerClose = banner.querySelector(`.js-${consts.BANNER_ID}-close`)
 const bannerMore = banner.querySelector(`.js-${consts.BANNER_ID}-more`)
 const bannerTitle = banner.querySelector(`.js-${consts.BANNER_ID}-title`)
+const modalWrap = modal.querySelector(`.js-${consts.MODAL_ID}-wrap`)
 const modalContent = modal.querySelector(`#${consts.MODAL_ID}`)
 const modalClose = modal.querySelector(`.js-${consts.MODAL_ID}-close`)
 const modalButton = modal.querySelector(`.js-${consts.MODAL_ID}-btn`)
@@ -43,14 +44,10 @@ banner.addEventListener('animationend', () => {
     banner.classList.remove(consts.IS_ANIMATING_CLASS)
 })
 
-// Hide banner on page click after entrance animation
-// Also hide modal on overlay click
-body.addEventListener('click', (event) => {
-    // ignore if banner is animating
-    if (banner.classList.contains(consts.IS_ANIMATING_CLASS)) return
-
-    // ignore clicks on banner, modal, and banner children
-    if (banner.contains(event.target) || modalContent.contains(event.target)) return
+// Hide modal on overlay click
+modalWrap.addEventListener('click', (event) => {
+    // ignore clicks on modal
+    if (modalContent.contains(event.target)) return true
 
     // hide on modal background click
     if (body.classList.contains(consts.HAS_MODAL_CLASS)) {
