@@ -8,12 +8,8 @@ cache:
   directories:
     - "node_modules"
 addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-beta
-      - google-chrome-stable
+    chrome: stable
+    chrome: beta
 matrix:
   include:
     - name: 'Stable Chrome integration tests'
