@@ -21,7 +21,7 @@ function getCurrentATB () {
     let dstStopDay = 6 - ((est.getFullYear() - 2016) % 6)
     let isDST = (
         est.getMonth() > 2 || (est.getMonth() === 2 && est.getDate() >= dstStartDay)) &&
-            (est.getMonth() < 10 || (est.getMonth() == 10 && est.getDate() < dstStopDay))
+            (est.getMonth() < 10 || (est.getMonth() === 10 && est.getDate() < dstStopDay))
     let epoch = isDST ? estEpoch - oneHour : estEpoch
     let timeSinceEpoch = new Date().getTime() - epoch
     let majorVersion = Math.ceil(timeSinceEpoch / oneWeek)
