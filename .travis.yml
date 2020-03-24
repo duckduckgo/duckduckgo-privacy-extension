@@ -4,19 +4,17 @@ node_js:
 script: npm run test-ci
 before_script:
     - npm install -g grunt-cli
-    - wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 cache:
     directories:
         - "node_modules"
 addons:
     chrome: stable
-    chrome: beta
 matrix:
     include:
         - name: "Stable Chrome integration tests"
           env: CHROME_CHANNEL=stable
-        - name: "Beta Chrome integration tests"
-          env: CHROME_CHANNEL=beta
+        # - name: "Beta Chrome integration tests"
+        #   env: CHROME_CHANNEL=beta
 notifications:
     hipchat:
         rooms:
