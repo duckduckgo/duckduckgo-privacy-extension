@@ -1,9 +1,9 @@
-module.exports = function(config) {
+module.exports = function (config) {
     process.env.CHROME_BIN = require('puppeteer').executablePath()
 
     let configuration = {
         basePath: '',
-        frameworks: ['jasmine','source-map-support'],
+        frameworks: ['jasmine', 'source-map-support'],
         singleRun: true,
         files: [],
         logLevel: config.LOG_ERROR,
@@ -17,9 +17,9 @@ module.exports = function(config) {
         }
     }
 
-    if(process.env.TRAVIS){
-        configuration.browsers = ['Chrome_travis_ci'];
+    if (process.env.TRAVIS) {
+        configuration.browsers = ['Chrome_travis_ci']
     }
 
     config.set(configuration)
-};
+}
