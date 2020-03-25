@@ -68,6 +68,9 @@ function isOtherSerp (url) {
     const params = urlObj.searchParams
     const hasQuery = params.has('q')
 
+    // Ignore if Google UI is non-English
+    if (params.has('hl') && params.get('hl') !== 'en') return false
+
     // match google.com/search?q=apple
     return urlObj.hostname === 'www.google.com' &&
         urlObj.pathname === '/search' &&
