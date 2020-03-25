@@ -33,12 +33,16 @@ function isBannerURL (url) {
     const urlObj = new URL(url)
     const hostname = urlObj.hostname
     const pathname = urlObj.pathname
+    const params = new URL(url).searchParams
 
     // ignore non-google hostnames
     if (bannerUrls.hostnames.indexOf(hostname) === -1) return
 
     // Ignore excluded domains/paths
     if (bannerUrls.paths.indexOf(pathname) === -1) return
+
+    // Ignore if Google UI is non-English
+    if (params.has('hl') && params.get('hl') !== 'en') return
 
     return true
 }
@@ -83,7 +87,7 @@ function isValidTransitionType (details) {
         (details.transitionType === 'link' && details.transitionQualifiers.indexOf('server_redirect') !== -1)
 }
 
-function createBanner (tabId) {
+function createBanner () {
     // Inject CSS
     chrome.tabs.insertCSS({
         file: '/public/css/banner.css',
@@ -102,7 +106,11 @@ function handleOnCommitted (details) {
     let pixelOps = {}
     let pixelID
 
+    console.log('a')
+
     if (!isValidTransitionType(details)) return
+
+    console.log('b')
 
     if (isDDGSerp(url)) {
         pixelID = 'evd'
@@ -112,7 +120,11 @@ function handleOnCommitted (details) {
         return
     }
 
+    console.log('c')
+
     const activeExp = settings.getSetting('activeExperiment')
+
+    console.log('d')
 
     if (activeExp && activeExp.name === BANNER_EXP_NAME) {
         let enabled = settings.getSetting(BANNER_SETTING)
@@ -122,7 +134,11 @@ function handleOnCommitted (details) {
         pixelOps.be = -1
     }
 
+    console.log('e')
+
     pixel.fire(pixelID, pixelOps)
+
+    console.log('f')
 }
 
 // Check if we can show banner
@@ -180,7 +196,13 @@ var Banner = (() => {
     return {
         handleOnCommitted,
         handleOnDOMContentLoaded,
-        firePixel
+        firePixel,
+
+        // for unit testing only
+        test_isBannerURL: isBannerURL,
+        test_isDDGSerp: isDDGSerp,
+        test_isOtherSerp: isOtherSerp,
+        test_isValidTransitionType: isValidTransitionType
     }
 })()
 
