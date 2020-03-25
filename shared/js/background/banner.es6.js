@@ -36,13 +36,13 @@ function isBannerURL (url) {
     const params = new URL(url).searchParams
 
     // ignore non-google hostnames
-    if (bannerUrls.hostnames.indexOf(hostname) === -1) return
+    if (bannerUrls.hostnames.indexOf(hostname) === -1) return false
 
     // Ignore excluded domains/paths
-    if (bannerUrls.paths.indexOf(pathname) === -1) return
+    if (bannerUrls.paths.indexOf(pathname) === -1) return false
 
     // Ignore if Google UI is non-English
-    if (params.has('hl') && params.get('hl') !== 'en') return
+    if (params.has('hl') && params.get('hl') !== 'en') return false
 
     return true
 }
