@@ -106,11 +106,7 @@ function handleOnCommitted (details) {
     let pixelOps = {}
     let pixelID
 
-    console.log('a')
-
     if (!isValidTransitionType(details)) return
-
-    console.log('b')
 
     if (isDDGSerp(url)) {
         pixelID = 'evd'
@@ -120,11 +116,7 @@ function handleOnCommitted (details) {
         return
     }
 
-    console.log('c')
-
     const activeExp = settings.getSetting('activeExperiment')
-
-    console.log('d')
 
     if (activeExp && activeExp.name === BANNER_EXP_NAME) {
         let enabled = settings.getSetting(BANNER_SETTING)
@@ -134,11 +126,7 @@ function handleOnCommitted (details) {
         pixelOps.be = -1
     }
 
-    console.log('e')
-
     pixel.fire(pixelID, pixelOps)
-
-    console.log('f')
 }
 
 // Check if we can show banner
