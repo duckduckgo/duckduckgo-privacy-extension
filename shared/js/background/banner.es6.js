@@ -190,7 +190,8 @@ var Banner = (() => {
         test_isBannerURL: isBannerURL,
         test_isDDGSerp: isDDGSerp,
         test_isOtherSerp: isOtherSerp,
-        test_isValidTransitionType: isValidTransitionType
+        test_isValidTransitionType: isValidTransitionType,
+        test_createBanner: createBanner
     }
 })()
 
