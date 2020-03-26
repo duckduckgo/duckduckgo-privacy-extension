@@ -19,7 +19,6 @@ describe('banner._isBannerURL', () => {
             })
         } else {
             it(`does not accept ${test.url}`, () => {
-                const result = banner.test_isBannerURL(test.url)
                 expect(result).toBeFalsy()
             })
         }
@@ -36,7 +35,6 @@ describe('banner._isDDGSerp', () => {
             })
         } else {
             it(`does not accept ${test.url}`, () => {
-                const result = banner.test_isDDGSerp(test.url)
                 expect(result).toBeFalsy()
             })
         }
@@ -53,7 +51,6 @@ describe('banner._isOtherSerp', () => {
             })
         } else {
             it(`does not accept ${test.url}`, () => {
-                const result = banner.test_isOtherSerp(test.url)
                 expect(result).toBeFalsy()
             })
         }
