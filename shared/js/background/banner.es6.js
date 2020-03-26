@@ -152,12 +152,12 @@ function handleOnDOMContentLoaded (details) {
     if (params.has('hl') && params.get('hl') !== 'en') return
 
     // Ignore invalid urls
-    if (!isBannerURL(url)) {
-        return
-    }
+    if (!isBannerURL(url)) return
 
     // Show banner
     createBanner(tabId)
+
+    return true
 }
 
 function firePixel (args) {
