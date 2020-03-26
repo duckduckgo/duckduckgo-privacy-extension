@@ -1,14 +1,9 @@
-const chrome = require('sinon-chrome/extensions')
-
 const banner = require('../../shared/js/background/banner.es6')
 const pixel = require('../../shared/js/background/pixel.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const settingHelper = require('../helpers/settings.es6')
 
 const testURLs = require('./../data/bannerTestURLs.json')
-
-const BANNER_EXP_NAME = 'privacy_nudge'
-const BANNER_SETTING = 'bannerEnabled'
 
 fdescribe('banner ', () => {
     describe('banner._isBannerURL', () => {
@@ -177,7 +172,23 @@ fdescribe('banner ', () => {
         }]
 
         beforeAll(() => {
-            window.chrome = chrome
+            const chrome = {
+                tabs: {
+                    insertCSS: function () {
+                        return true
+                    },
+                    executeScript: function () {
+                        return true
+                    }
+                }
+            }
+
+            global.chrome = chrome
+        })
+
+        beforeEach(() => {
+            spyOn(chrome.tabs, 'insertCSS')
+            spyOn(chrome.tabs, 'executeScript')
         })
 
         passingTests.forEach((test) => {
@@ -186,8 +197,10 @@ fdescribe('banner ', () => {
                     activeExperiment: { name: 'privacy_nudge' },
                     bannerEnabled: true
                 })
-                const result = banner.handleOnDOMContentLoaded(test)
-                expect(result).toBeTruthy()
+                banner.handleOnDOMContentLoaded(test)
+
+                expect(chrome.tabs.insertCSS).toHaveBeenCalled()
+                expect(chrome.tabs.executeScript).toHaveBeenCalled()
             })
         })
 
@@ -198,7 +211,10 @@ fdescribe('banner ', () => {
                     bannerEnabled: true
                 })
                 const result = banner.handleOnDOMContentLoaded(test)
+
                 expect(result).toBeFalsy()
+                expect(chrome.tabs.insertCSS).not.toHaveBeenCalled()
+                expect(chrome.tabs.executeScript).not.toHaveBeenCalled()
             })
         })
 

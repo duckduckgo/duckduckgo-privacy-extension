@@ -36,10 +36,10 @@ function isBannerURL (url) {
     const params = new URL(url).searchParams
 
     // ignore non-google hostnames
-    if (bannerUrls.hostnames.indexOf(hostname) === -1) return false
+    if (!bannerUrls.hostnames.includes(hostname)) return false
 
     // Ignore excluded domains/paths
-    if (bannerUrls.paths.indexOf(pathname) === -1) return false
+    if (!bannerUrls.paths.includes(pathname)) return false
 
     // Ignore if Google UI is non-English
     if (params.has('hl') && params.get('hl') !== 'en') return false
@@ -140,9 +140,7 @@ function handleOnDOMContentLoaded (details) {
     // Exclude unless in active experiment, and banner not disabled
     if (!activeExp ||
         !activeExp.name === BANNER_EXP_NAME ||
-        !settings.getSetting(BANNER_SETTING)) {
-        return
-    }
+        !settings.getSetting(BANNER_SETTING)) return
 
     // Ignore navigation on iframes
     if (frameId !== 0) return
@@ -156,8 +154,6 @@ function handleOnDOMContentLoaded (details) {
 
     // Show banner
     createBanner(tabId)
-
-    return true
 }
 
 function firePixel (args) {
