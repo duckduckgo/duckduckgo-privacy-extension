@@ -101,25 +101,18 @@ chrome.tabs.onRemoved.addListener((id, info) => {
 })
 
 // message popup to close when the active tab changes. this can send an error message when the popup is not open. check lastError to hide it
-chrome.tabs.onActivated.addListener(() =>
-    chrome.runtime.sendMessage(
-        { closePopup: true },
-        () => chrome.runtime.lastError
-    )
-)
+chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError))
 
 // search via omnibox
 chrome.omnibox.onInputEntered.addListener(function (text) {
     chrome.tabs.query({
         currentWindow: true,
         active: true
-    },
-    function (tabs) {
+    }, function (tabs) {
         chrome.tabs.update(tabs[0].id, {
             url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage['os'] + 'cl'
         })
-    }
-    )
+    })
 })
 
 /**
@@ -181,11 +174,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.whitelisted) {
         tabManager.whitelistDomain(req.whitelisted)
     } else if (req.whitelistOptIn) {
-        tabManager.setGlobalWhitelist(
-            'whitelistOptIn',
-            req.whitelistOptIn.domain,
-            req.whitelistOptIn.value
-        )
+        tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value)
     } else if (req.getTab) {
         res(tabManager.get({ tabId: req.getTab }))
         return true
@@ -236,8 +225,7 @@ chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
         settings.ready().then(() => {
-            httpsStorage
-                .getLists(constants.httpsLists)
+            httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
         })
@@ -248,8 +236,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             https.sendHttpsUpgradeTotals()
         })
 
-        tdsStorage
-            .getLists()
+        tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
@@ -272,13 +259,11 @@ let onStartup = () => {
     })
 
     settings.ready().then(() => {
-        httpsStorage
-            .getLists(constants.httpsLists)
+        httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
 
-        tdsStorage
-            .getLists()
+        tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
 
