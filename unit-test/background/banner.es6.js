@@ -259,6 +259,7 @@ describe('banner.firePixel', () => {
         spyOn(chrome.storage.local, 'set')
         spyOn(experiment, 'getDaysSinceInstall')
 
+        spyOn(settings, 'updateSetting')
         spyOn(settings, 'ready')
             .and.callFake(() => Promise.resolve())
     })
