@@ -1,35 +1,7 @@
 const settings = require('./settings.es6')
+const atbUtils = require('./atb-utils.es6')
 const retentionExperiments = require('../../data/experiments-out')
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
-
-function _getDaysBetweenCohorts (cohort1, cohort2) {
-    return 7 * (cohort2.majorVersion - cohort1.majorVersion) +
-        (cohort2.minorVersion - cohort1.minorVersion)
-}
-
-function getCurrentATB () {
-    let oneWeek = 604800000
-    let oneDay = 86400000
-    let oneHour = 3600000
-    let oneMinute = 60000
-    let estEpoch = 1456290000000
-    let localDate = new Date()
-    let localTime = localDate.getTime()
-    let utcTime = localTime + (localDate.getTimezoneOffset() * oneMinute)
-    let est = new Date(utcTime + (oneHour * -5))
-    let dstStartDay = 13 - ((est.getFullYear() - 2016) % 6)
-    let dstStopDay = 6 - ((est.getFullYear() - 2016) % 6)
-    let isDST = (
-        est.getMonth() > 2 || (est.getMonth() === 2 && est.getDate() >= dstStartDay)) &&
-            (est.getMonth() < 10 || (est.getMonth() === 10 && est.getDate() < dstStopDay))
-    let epoch = isDST ? estEpoch - oneHour : estEpoch
-    let timeSinceEpoch = new Date().getTime() - epoch
-    let majorVersion = Math.ceil(timeSinceEpoch / oneWeek)
-    let minorVersion = Math.ceil(timeSinceEpoch % oneWeek / oneDay)
-
-    return {majorVersion, minorVersion}
-}
-
 class Experiment {
     constructor () {
         this.variant = ''
@@ -60,7 +32,7 @@ class Experiment {
     setActiveExperiment () {
         settings.ready()
             // TODO: REMOVE THIS
-            .then(settings.updateSetting('atb', 'v212-5rz'))
+            // .then(settings.updateSetting('atb', 'v212-5rz'))
 
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
@@ -73,7 +45,7 @@ class Experiment {
                 console.warn('ATB VARIANT: "%s"', this.atbVariant)
                 console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
                 console.warn('IS ATB EXPERIMENT: ', !!this.activeExperiment.atbExperiments)
-                console.warn('TODAY\'S ATB', getCurrentATB())
+                console.warn('TODAY\'S ATB', this.getCurrentATB())
 
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
@@ -113,10 +85,10 @@ class Experiment {
         // remove any atb variant that may be appended to the setting.
         minorVersion = minorVersion.replace(/[a-z_]/g, '')
 
-        return _getDaysBetweenCohorts({
+        return atbUtils.getDaysBetweenCohorts({
             majorVersion: parseInt(majorVersion, 10),
             minorVersion: parseInt(minorVersion, 10)
-        }, getCurrentATB())
+        }, atbUtils.getCurrentATB())
     }
 }
 
