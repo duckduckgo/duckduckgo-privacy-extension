@@ -143,8 +143,6 @@ function handleOnDOMContentLoaded (details) {
     const { url, tabId, frameId, parentFrameId } = details
     const activeExp = settings.getSetting('activeExperiment')
 
-    console.warn(details)
-
     // Exclude unless in active experiment, and banner not disabled
     if (!activeExp ||
         !activeExp.name === BANNER_EXP_NAME ||
@@ -152,9 +150,6 @@ function handleOnDOMContentLoaded (details) {
 
     // Ignore navigation on iframes
     if (frameId !== 0) return
-
-    // Ignore omnibox prefetch requests
-    if (parentFrameId !== -1) return
 
     const params = new URL(url).searchParams
     // Ignore if Google UI is non-English
