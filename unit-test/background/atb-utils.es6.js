@@ -1,7 +1,7 @@
 
 const atbUtils = require('../../shared/js/background/atb-utils.es6')
 
-fdescribe('utils.getCurrentATB', () => {
+describe('utils.getCurrentATB', () => {
     var result = atbUtils.getCurrentATB()
 
     it('should return a majorVersion that is an integer', function () {
