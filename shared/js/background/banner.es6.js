@@ -106,7 +106,9 @@ function createBanner () {
 
 function handleOnCommitted (details) {
     const { url } = details
-    let pixelOps = {}
+    let pixelOps = {
+        d: experiment.getDaysSinceInstall() || -1
+    }
     let pixelID
 
     if (!isValidTransitionType(details)) return
@@ -134,8 +136,10 @@ function handleOnCommitted (details) {
 
 // Check if we can show banner
 function handleOnDOMContentLoaded (details) {
-    const { url, tabId, frameId } = details
+    const { url, tabId, frameId, parentFrameId } = details
     const activeExp = settings.getSetting('activeExperiment')
+
+    console.warn(details)
 
     // Exclude unless in active experiment, and banner not disabled
     if (!activeExp ||
@@ -144,6 +148,9 @@ function handleOnDOMContentLoaded (details) {
 
     // Ignore navigation on iframes
     if (frameId !== 0) return
+
+    // Ignore omnibox prefetch requests
+    if (parentFrameId === -1) return
 
     const params = new URL(url).searchParams
     // Ignore if Google UI is non-English
