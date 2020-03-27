@@ -29,6 +29,10 @@ const bannerUrls = {
     ]
 }
 
+function isEnglish (hl) {
+    return /en/i.test(hl)
+}
+
 function isBannerURL (url) {
     const urlObj = new URL(url)
     const hostname = urlObj.hostname
@@ -42,7 +46,7 @@ function isBannerURL (url) {
     if (!bannerUrls.paths.includes(pathname)) return false
 
     // Ignore if Google UI is non-English
-    if (params.has('hl') && params.get('hl') !== 'en') return false
+    if (params.has('hl') && !isEnglish(params.get('hl'))) return false
 
     return true
 }
@@ -69,7 +73,7 @@ function isOtherSerp (url) {
     const hasQuery = params.has('q')
 
     // Ignore if Google UI is non-English
-    if (params.has('hl') && params.get('hl') !== 'en') return false
+    if (params.has('hl') && !isEnglish(params.get('hl'))) return false
 
     // match google.com/search?q=apple
     return urlObj.hostname === 'www.google.com' &&
@@ -154,7 +158,7 @@ function handleOnDOMContentLoaded (details) {
 
     const params = new URL(url).searchParams
     // Ignore if Google UI is non-English
-    if (params.has('hl') && params.get('hl') !== 'en') return
+    if (params.has('hl') && !isEnglish(params.get('hl'))) return
 
     // Ignore invalid urls
     if (!isBannerURL(url)) return
