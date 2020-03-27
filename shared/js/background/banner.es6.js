@@ -150,7 +150,7 @@ function handleOnDOMContentLoaded (details) {
     if (frameId !== 0) return
 
     // Ignore omnibox prefetch requests
-    if (parentFrameId === -1) return
+    if (parentFrameId !== -1) return
 
     const params = new URL(url).searchParams
     // Ignore if Google UI is non-English
