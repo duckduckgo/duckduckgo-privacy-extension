@@ -56,6 +56,13 @@
         ]
     },
     {
+        "url": "https: //www.google.com/search?hl=en-US&q=test",
+        "passes": [
+            "isBannerURL",
+            "isOtherSerp"
+        ]
+    },
+    {
         "url": "https://www.google.com/search?source=hp&q=test",
         "passes": [
             "isBannerURL",
