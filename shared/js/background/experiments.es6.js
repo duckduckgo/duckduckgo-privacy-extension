@@ -45,7 +45,7 @@ class Experiment {
                 console.warn('ATB VARIANT: "%s"', this.atbVariant)
                 console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
                 console.warn('IS ATB EXPERIMENT: ', !!this.activeExperiment.atbExperiments)
-                console.warn('TODAY\'S ATB', this.getCurrentATB())
+                console.warn('TODAY\'S ATB', atbUtils.getCurrentATB())
 
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
