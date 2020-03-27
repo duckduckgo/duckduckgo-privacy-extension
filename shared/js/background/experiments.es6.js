@@ -32,7 +32,7 @@ class Experiment {
     setActiveExperiment () {
         settings.ready()
             // TODO: REMOVE THIS
-            // .then(settings.updateSetting('atb', 'v212-5rz'))
+            .then(settings.updateSetting('atb', 'v212-5rz'))
 
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
