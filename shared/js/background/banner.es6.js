@@ -111,6 +111,7 @@ function createBanner () {
 function handleOnCommitted (details) {
     const { url } = details
     let pixelOps = {
+        bc: 0,
         d: experiment.getDaysSinceInstall() || -1
     }
     let pixelID
@@ -135,7 +136,12 @@ function handleOnCommitted (details) {
         pixelOps.be = -1
     }
 
-    pixel.fire(pixelID, pixelOps)
+    chrome.storage.local.get(['bannerClicked'], function (result) {
+        if (result && result.bannerClicked) {
+            pixelOps.bc = 1
+        }
+        pixel.fire(pixelID, pixelOps)
+    })
 }
 
 // Check if we can show banner
