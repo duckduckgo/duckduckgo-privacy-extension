@@ -140,7 +140,7 @@ function handleOnCommitted (details) {
 
 // Check if we can show banner
 function handleOnDOMContentLoaded (details) {
-    const { url, tabId, frameId, parentFrameId } = details
+    const { url, tabId, frameId } = details
     const activeExp = settings.getSetting('activeExperiment')
 
     // Exclude unless in active experiment, and banner not disabled
