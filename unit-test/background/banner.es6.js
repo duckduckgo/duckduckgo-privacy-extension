@@ -108,7 +108,16 @@ describe('banner.handleOnCommitted', () => {
     const passingTests = [
         {
             pixelID: 'evg',
-            pixelOps: { be: 1 },
+            pixelOps: { d: -1, bc: 0, be: 1 },
+            details: {
+                transitionType: 'form_submit',
+                url: 'https://www.google.com/search?q=test'
+            }
+        },
+        {
+            pixelID: 'evg',
+            isClicked: true,
+            pixelOps: { d: -1, bc: 1, be: 1 },
             details: {
                 transitionType: 'form_submit',
                 url: 'https://www.google.com/search?q=test'
@@ -116,7 +125,7 @@ describe('banner.handleOnCommitted', () => {
         },
         {
             pixelID: 'evd',
-            pixelOps: { be: 1 },
+            pixelOps: { d: -1, bc: 0, be: 1 },
             details: {
                 tabId: 0,
                 frameId: 0,
@@ -125,6 +134,19 @@ describe('banner.handleOnCommitted', () => {
             }
         }
     ]
+
+    beforeAll(() => {
+        const chrome = {
+            storage: {
+                local: {
+                    get: function () {
+
+                    }
+                }
+            }
+        }
+        global.chrome = chrome
+    })
 
     beforeEach(() => {
         spyOn(pixel, 'fire')
@@ -136,6 +158,19 @@ describe('banner.handleOnCommitted', () => {
                 activeExperiment: {name: 'privacy_nudge'},
                 bannerEnabled: true
             })
+
+            if (test.isClicked) {
+                spyOn(chrome.storage.local, 'get').and.callFake(function (array, cb) {
+                    // eslint-disable-next-line standard/no-callback-literal
+                    cb({ bannerClicked: true })
+                })
+            } else {
+                spyOn(chrome.storage.local, 'get').and.callFake(function (array, cb) {
+                    // eslint-disable-next-line standard/no-callback-literal
+                    cb({})
+                })
+            }
+
             banner.handleOnCommitted(test.details)
             expect(pixel.fire).toHaveBeenCalledWith(test.pixelID, test.pixelOps)
         })
