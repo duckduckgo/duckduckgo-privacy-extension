@@ -61,8 +61,8 @@ chrome.webRequest.onHeadersReceived.addListener(
 /**
  * Web Navigation
  */
+const Banner = require('./banner.es6')
 if (browser === 'chrome') {
-    const Banner = require('./banner.es6')
     chrome.webNavigation.onDOMContentLoaded.addListener(Banner.handleOnDOMContentLoaded)
 }
 

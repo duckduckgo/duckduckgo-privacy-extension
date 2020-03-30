@@ -98,13 +98,15 @@ function createBanner () {
     // Inject CSS
     chrome.tabs.insertCSS({
         file: '/public/css/banner.css',
-        runAt: 'document_start'
+        runAt: 'document_start',
+        allFrames: false
     })
 
     //  Inject JS
     chrome.tabs.executeScript({
         file: '/public/js/content-scripts/banner.js',
-        runAt: 'document_start'
+        runAt: 'document_start',
+        allFrames: false
     })
 }
 
@@ -164,8 +166,16 @@ function handleOnDOMContentLoaded (details) {
     // Ignore invalid urls
     if (!isBannerURL(url)) return
 
-    // Show banner
-    createBanner(tabId)
+    // Check to make sure this isn't omnibox preload
+    chrome.tabs.query({
+        active: true,
+        lastFocusedWindow: true
+    }, function (array) {
+        const url = array[0].url
+        if (!isBannerURL(url)) return
+        // Show banner
+        createBanner()
+    })
 }
 
 function firePixel (args) {
