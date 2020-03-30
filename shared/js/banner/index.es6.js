@@ -162,6 +162,8 @@ const lang = document.documentElement.lang.split('-')[0]
 // Skip if DDG banner already in DOM
 if (!document.getElementById(consts.BANNER_ID) ||
     !document.getElementById(consts.MODAL_ID) ||
-    lang !== 'en') {
+    lang !== 'en' ||
+    // Prevent from showing when omnibox preloads Google in another tab
+    !/google/i.test(document.URL)) {
     updateDOM()
 }
