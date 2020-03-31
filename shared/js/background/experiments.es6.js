@@ -31,21 +31,10 @@ class Experiment {
 
     setActiveExperiment () {
         settings.ready()
-            // TODO: REMOVE THIS
-            .then(settings.updateSetting('atb', 'v212-5rz'))
-
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
                 this.activeExperiment = retentionExperiments[this.variant] || {}
-
-                // TODO: REMOVE THIS
-                console.warn('ATB: "%s"', settings.getSetting('atb'))
-                console.warn('VARIANT: "%s"', this.variant)
-                console.warn('ATB VARIANT: "%s"', this.atbVariant)
-                console.warn('ACTIVE EXPERIMENT: ', this.activeExperiment)
-                console.warn('IS ATB EXPERIMENT: ', !!this.activeExperiment.atbExperiments)
-                console.warn('TODAY\'S ATB', atbUtils.getCurrentATB())
 
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
@@ -58,9 +47,6 @@ class Experiment {
                         this.applySettingsChanges()
                     }
                 }
-
-                // TODO: REMOVE THIS
-                console.warn('BANNER ENABLED: ', settings.getSetting('bannerEnabled'))
             })
     }
 
