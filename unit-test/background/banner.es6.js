@@ -206,6 +206,8 @@ describe('banner.handleOnDOMContentLoaded', () => {
         url: 'https://www.duckduckgo.com'
     }]
 
+    let mockChromeTabsQuery
+
     beforeAll(() => {
         const chrome = {
             tabs: {
@@ -214,6 +216,9 @@ describe('banner.handleOnDOMContentLoaded', () => {
                 },
                 executeScript: function () {
                     return true
+                },
+                query: function (ops, cb) {
+                    cb()
                 }
             }
         }
@@ -224,10 +229,16 @@ describe('banner.handleOnDOMContentLoaded', () => {
     beforeEach(() => {
         spyOn(chrome.tabs, 'insertCSS')
         spyOn(chrome.tabs, 'executeScript')
+        mockChromeTabsQuery = spyOn(chrome.tabs, 'query')
     })
 
     passingTests.forEach((test) => {
         it(`shows a banner for ${test.url}`, () => {
+            mockChromeTabsQuery.and.callFake((ops, cb) =>
+                // eslint-disable-next-line standard/no-callback-literal
+                cb([ { url: test.url } ])
+            )
+
             settingHelper.stub({
                 activeExperiment: { name: 'privacy_nudge' },
                 bannerEnabled: true
