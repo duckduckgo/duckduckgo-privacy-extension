@@ -1,30 +1,19 @@
 language: node_js
 node_js:
-  - 8.11.1
-script: npm run test-ci
-before_script:
-  - npm install -g grunt-cli
+    - 10
 cache:
-  directories:
-    - "node_modules"
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-beta
-      - google-chrome-stable
-matrix:
-  include:
-    - name: 'Stable Chrome integration tests'
-      env: CHROME_CHANNEL=stable
-    - name: 'Beta Chrome integration tests'
-      env: CHROME_CHANNEL=beta
-notifications:
-  hipchat:
-    rooms:
-      secure: Jlr2cunb80cwdqZtRqAZEl+qLxiRtye9lmJLMnzOG4PLxa3YQWAnpzbiv3xVGz8YqPAgbYFAyKWUYm5rG9eKjcsPiIvzc6aDVpz9Zl6fSHVEQRdK1C8fRNoWERzqN3WfpKpbCZ4+JsD2prf6JRvTTum+N+FvWq0W+73Az76k18c6cIJuhD9bveqC8CnecXD2Vccn0X549G6myTHbMSzfaJKZXk8QawGm/V0Z5o7+S6FWp/eQ2w2ha8gsobloAKlJPBudSrvXgnpF2Koko5C2dnJmT36jtP8e+3VOzrrnTZ9k+NVrqUgAh/GxH6hqW29kUQYgA2roNwcpbpSR5O59zf2KJuv7+S1NFrULibyweJ0+//Y/p6F2UDS+NuZdEMEVJZwY9tThHUougYiox44UsupHy5trna/R4A8Xo4l3ylkZGgjR7PgXNa/ODFv1B2i423j7TyiH5/iWnpoWeVeMNbDFKV29/AYK10FPosYgp2nbC2Fjq5r2QhCXgmGU7//JkG5EjYXu9RCVUIu8an6a/k0EXs5ByVz8CC1bPLJJaeG6IkWMeaDTUiXofyyfCN6hcn2E4wzQ9uZjZvrXOryLEpjv7KJ9bg/hvcr6SEjHXLoa4dVIAAn2JF3gi4QDyY0y0hD+HhzxNxYJGYThw18CBRPIBRWhFHCE9eQxdhRE/bU=
-    template:
-      - '%{repository_slug}#<a href="%{build_url}">%{build_number}</a> (<a href="%{compare_url}">%{branch} - %{commit}</a> : %{author}): %{message}'
-    format: html
-    on_pull_requests: false
+    npm: true
+jobs:
+    include:
+        - name: "Stable Chrome integration tests"
+          env: CHROME_CHANNEL=stable
+          addons:
+              chrome: stable
+        - name: "Beta Chrome integration tests"
+          env: CHROME_CHANNEL=beta
+          addons:
+              chrome: beta
+before_script:
+    - npm install -g grunt-cli
+script:
+    - npm run test-ci

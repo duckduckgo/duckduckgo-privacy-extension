@@ -5,7 +5,7 @@ module.exports = (uaString) => {
     let version
 
     try {
-        const parsedUaParts = uaString.match(/(Firefox|Chrome|Safari)\/([0-9]+)/)
+        const parsedUaParts = uaString.match(/(Firefox|Chrome|Safari|Edg)\/([0-9]+)/)
         browser = parsedUaParts[1]
         version = parsedUaParts[2]
 

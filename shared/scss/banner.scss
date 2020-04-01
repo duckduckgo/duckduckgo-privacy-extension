@@ -1,0 +1,251 @@
+// VARS
+$banner-background: #fff;
+$banner-text: #334652;
+$banner-height: 75px;
+$banner-logo-height: 55px;
+
+// Animations
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(5%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+%blurred {
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+}
+
+%btn-link,
+.btn--link {
+  text-decoration: underline;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+// GOOGLE SERP CLASSES
+body.is-blurred > *:not(.ddgm-overlay) {
+  @extend %blurred;
+}
+
+// DDG BANNER ELEMENTS
+%flexrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+%ddgb-text,
+.ddgb__text {
+  font-size: 14px;
+  line-height: 15px;
+}
+
+%close-icon {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.ddgb {
+  @extend %flexrow;
+
+  width: auto;
+  height: $banner-height;
+  position: fixed;
+  top: 80px;
+  right: 29px;
+  z-index: 1000;
+  overflow: hidden;
+  border-radius: 4px;
+  background: $banner-background;
+  border: 1px solid #dadada;
+  box-sizing: border-box;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+
+  // Adjust position for Google Privacy Policy banner
+  &.has-promos {
+    top: 100px;
+  }
+
+  &.slideIn {
+    // animated slide-in from offscreen on load
+    animation: slideIn 200ms ease-out forwards;
+    animation-iteration-count: 1;
+  }
+
+  .is-blurred & {
+    @extend %blurred;
+  }
+}
+
+.ddgb__logo {
+  display: block;
+  height: $banner-logo-height;
+  width: auto;
+}
+
+.ddgb-inner {
+  @extend %flexrow;
+  box-sizing: border-box;
+  height: $banner-height;
+  padding: 12px;
+  color: $banner-text;
+  border-radius: 4px;
+}
+
+.ddgb__content {
+  padding: 0 16px 0 14px;
+}
+
+.ddgb__title {
+  font-size: 17px;
+  line-height: 20px;
+}
+
+.ddgb__buttons {
+  flex: 1 0 auto;
+  height: 100%;
+  width: 104px;
+  display: flex;
+  flex-direction: column;
+}
+
+%ddgb-btn {
+  flex: 1;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.278571px;
+  cursor: pointer;
+}
+
+.ddgb__btn {
+  @extend %ddgb-btn;
+  background: #de5833;
+  border: solid #d14e2a;
+  border-width: 0 0 1px 1px;
+  color: white;
+}
+
+.ddgb__close {
+  @extend %ddgb-btn;
+  background: #f8f8f8;
+  border: solid #dadada;
+  border-width: 1px 0 0 1px;
+  color: #334652;
+}
+
+.ddgb__close__icon {
+  @extend %close-icon;
+  color: #95abbb;
+}
+
+// DDG BANNER MODAL
+.ddgm-overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  background: #99999991;
+
+  &.is-hidden {
+    display: none;
+  }
+}
+
+// fills the page to position modal
+.ddgm-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.ddgm {
+  position: relative;
+  width: 440px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 40px;
+  border-radius: 4px;
+  text-align: center;
+  justify-content: start;
+  align-items: center;
+  background: white;
+  color: #333333;
+}
+
+.ddgm__logo {
+  margin: -44px 0 20px;
+}
+
+.ddgm__title {
+  font-size: 22px;
+  line-height: 26px;
+  font-weight: 600px;
+  letter-spacing: -0.33px;
+  margin-bottom: 10px;
+}
+
+.ddgm__text {
+  margin-bottom: 24px;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: -0.09375px;
+  font-style: italic;
+}
+
+.ddgm__btn {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  margin-bottom: 17px;
+  border-radius: 4px;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 14px;
+  letter-spacing: -0.1px;
+  background: #678fff;
+  text-decoration: none;
+  // important to override dynamic styles
+  color: white !important;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:visited {
+    color: white;
+  }
+}
+
+.ddgm__link {
+  @extend %btn-link;
+
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.ddgm__close {
+  @extend %close-icon;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: #666;
+}

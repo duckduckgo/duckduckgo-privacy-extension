@@ -1,0 +1,146 @@
+[
+	{
+		"url": "https://www.google.com/",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://www.google.com/webhp",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://www.google.com/videohp",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://www.google.com/shopping",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://www.google.com/finance",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://images.google.com/",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://books.google.com/",
+		"passes": [
+			"isBannerURL"
+		]
+	},
+	{
+		"url": "https://www.google.com/search?q=test",
+		"passes": [
+			"isBannerURL",
+			"isOtherSerp"
+		]
+	},
+	{
+		"url": "https://www.google.com/search?hl=en&q=test",
+		"passes": [
+			"isBannerURL",
+			"isOtherSerp"
+		]
+	},
+	{
+		"url": "https://www.google.com/search?hl=en-US&q=test",
+		"passes": [
+			"isBannerURL",
+			"isOtherSerp"
+		]
+	},
+	{
+		"url": "https://www.google.com/search?source=hp&q=test",
+		"passes": [
+			"isBannerURL",
+			"isOtherSerp"
+		]
+	},
+	{
+		"url": "https://duckduckgo.com/?q=test",
+		"passes": [
+			"isDDGSerp"
+		]
+	},
+	{
+		"url": "https://duckduckgo.com/",
+		"fail": "DDG home page"
+	},
+	{
+		"url": "https://duckduckgo.com/about",
+		"fail": "DDG static page"
+	},
+	{
+		"url": "https://mail.google.com",
+		"fail": "wrong subdomain"
+	},
+	{
+		"url": "https://mail.google.com/mail/u/0/?pli=1#inbox",
+		"fail": "wrong subdomain"
+	},
+	{
+		"url": "https://www.google.com/gmail/about/#",
+		"fail": "wrong subdomain"
+	},
+	{
+		"url": "https://news.google.com/",
+		"fail": "wrong subdomain"
+	},
+	{
+		"url": "https://news.google.com/search?q=test",
+		"fail": "wrong subdomain"
+	},
+	{
+		"url": "https://accounts.google.com/",
+		"fail": "wrong subdomain"
+	},
+	{
+		"url": "https://www.google.com/?hl=de",
+		"fail": "non-english"
+	},
+	{
+		"url": "https://www.google.com/search?q=test&hl=de",
+		"fail": "non-english"
+	},
+	{
+		"url": "https://www.google.ca/",
+		"fail": "wrong TLD"
+	},
+	{
+		"url": "https://www.google.ca/search?q=test",
+		"fail": "wrong TLD"
+	},
+	{
+		"url": "https://www.google.ca/search?source=hp&q=test",
+		"fail": "wrong TLD"
+	},
+	{
+		"url": "https://www.google.co.uk/",
+		"fail": "wrong TLD"
+	},
+	{
+		"url": "https://amazon.com",
+		"fail": "wrong domain"
+	},
+	{
+		"url": "https://www.facebook.com",
+		"fail": "wrong domain"
+	},
+	{
+		"url": "https://www.wikipedia.org",
+		"fail": "wrong domain"
+	}
+]
