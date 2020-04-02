@@ -15,13 +15,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
             .then(ATB.openPostInstallPage)
             .then(function () {
                 if (browser === 'chrome') {
-                    console.warn('ON INSTALLED')
                     experiment.setActiveExperiment()
                 }
             })
     } else {
         if (details.reason.match(/update/) && browser === 'chrome') {
-            console.warn('ON UPDATE')
             experiment.setActiveExperiment()
         }
     }
@@ -287,7 +285,6 @@ let onStartup = () => {
         Companies.buildFromStorage()
 
         if (browser === 'chrome') {
-            console.warn('SETTING EXPERIMENT ON STARTUP')
             experiment.setActiveExperiment()
         }
     })
