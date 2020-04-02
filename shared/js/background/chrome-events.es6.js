@@ -18,10 +18,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
                     experiment.setActiveExperiment()
                 }
             })
-    } else {
-        if (details.reason.match(/update/) && browser === 'chrome') {
-            experiment.setActiveExperiment()
-        }
+    } else if (details.reason.match(/update/) && browser === 'chrome') {
+        experiment.setActiveExperiment()
     }
 })
 
