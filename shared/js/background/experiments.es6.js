@@ -34,6 +34,13 @@ class Experiment {
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
+                // Only set active experiment once
+                if (settings.getSetting('activeExperiment')) {
+                    // TODO: REMOVE THIS AFTER TESTING
+                    console.warn('ACTIVE EXPERIMENT ALREADY SET. SKIPPING')
+                    return
+                }
+
                 this.activeExperiment = retentionExperiments[this.variant] || {}
 
                 if (this.activeExperiment.name) {
@@ -44,6 +51,7 @@ class Experiment {
                     settings.updateSetting('activeExperiment', this.activeExperiment)
 
                     if (this.activeExperiment.settings) {
+                        console.warn('NO ACTIVE EXPERIMENT. SETTING EXPERIMENT...')
                         this.applySettingsChanges()
                     }
                 }
