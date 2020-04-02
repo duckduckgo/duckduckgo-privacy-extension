@@ -108,7 +108,7 @@ describe('banner.handleOnCommitted', () => {
     const passingTests = [
         {
             pixelID: 'evg',
-            pixelOps: { d: -1, bc: 0, be: 1 },
+            pixelOps: { d: 1, bc: 0, be: 1 },
             details: {
                 transitionType: 'form_submit',
                 url: 'https://www.google.com/search?q=test'
@@ -117,7 +117,7 @@ describe('banner.handleOnCommitted', () => {
         {
             pixelID: 'evg',
             isClicked: true,
-            pixelOps: { d: -1, bc: 1, be: 1 },
+            pixelOps: { d: 1, bc: 1, be: 1 },
             details: {
                 transitionType: 'form_submit',
                 url: 'https://www.google.com/search?q=test'
@@ -125,7 +125,7 @@ describe('banner.handleOnCommitted', () => {
         },
         {
             pixelID: 'evd',
-            pixelOps: { d: -1, bc: 0, be: 1 },
+            pixelOps: { d: 1, bc: 0, be: 1 },
             details: {
                 tabId: 0,
                 frameId: 0,
@@ -150,6 +150,7 @@ describe('banner.handleOnCommitted', () => {
 
     beforeEach(() => {
         spyOn(pixel, 'fire')
+        spyOn(experiment, 'getDaysSinceInstall').and.returnValue(1)
     })
 
     passingTests.forEach((test) => {
@@ -274,12 +275,12 @@ describe('banner.firePixel', () => {
         {
             args: [BANNER_DISMISS, {p: 'serp'}],
             id: BANNER_DISMISS,
-            pixelOps: {d: -1, p: 'serp'}
+            pixelOps: {d: 1, p: 'serp'}
         },
         {
             args: [BANNER_CLICK, {}],
             id: BANNER_CLICK,
-            pixelOps: {d: -1}
+            pixelOps: {d: 1}
         }
     ]
 
@@ -300,7 +301,7 @@ describe('banner.firePixel', () => {
     beforeEach(() => {
         spyOn(pixel, 'fire')
         spyOn(chrome.storage.local, 'set')
-        spyOn(experiment, 'getDaysSinceInstall')
+        spyOn(experiment, 'getDaysSinceInstall').and.returnValue(1)
 
         spyOn(settings, 'updateSetting')
         spyOn(settings, 'ready')
