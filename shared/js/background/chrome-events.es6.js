@@ -10,13 +10,20 @@ const experiment = require('./experiments.es6')
 const browser = utils.getBrowserName()
 
 chrome.runtime.onInstalled.addListener(function (details) {
-    if (browser === 'chrome') {
-        experiment.setActiveExperiment()
-    }
-
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
             .then(ATB.openPostInstallPage)
+            .then(function () {
+                if (browser === 'chrome') {
+                    console.warn('ON INSTALLED')
+                    experiment.setActiveExperiment()
+                }
+            })
+    } else {
+        if (details.reason.match(/update/) && browser === 'chrome') {
+            console.warn('ON UPDATE')
+            experiment.setActiveExperiment()
+        }
     }
 })
 
@@ -278,6 +285,11 @@ let onStartup = () => {
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()
+
+        if (browser === 'chrome') {
+            console.warn('SETTING EXPERIMENT ON STARTUP')
+            experiment.setActiveExperiment()
+        }
     })
 }
 
