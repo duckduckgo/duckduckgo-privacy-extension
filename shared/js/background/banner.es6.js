@@ -114,7 +114,7 @@ function handleOnCommitted (details) {
     const { url } = details
     let pixelOps = {
         bc: 0,
-        d: experiment.getDaysSinceInstall() || -1
+        d: experiment.getDaysSinceInstall()
     }
     let pixelID
 
@@ -182,7 +182,7 @@ function firePixel (args) {
     const id = args[0]
     const ops = args[1] || {}
     const defaultOps = {
-        d: experiment.getDaysSinceInstall() || -1
+        d: experiment.getDaysSinceInstall()
     }
     const pixelOps = Object.assign(defaultOps, ops)
 
