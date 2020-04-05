@@ -12,7 +12,7 @@ const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
 // list of accepted params in ATB url
-const ACCEPTED_URL_PARAMS = ['natb', 'cp']
+const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'npi']
 
 let dev = false
 
@@ -157,6 +157,15 @@ const ATB = (() => {
                     urls.some(url => {
                         params = ATB.getAcceptedParamsFromURL(url)
                         atb = params.has('atb') && params.get('atb')
+
+                        if (params.has('npi')) {
+                            window.params = params
+                            console.warn('SKIPPING POST INSTALL')
+                            settings.updateSetting('atb', atb)
+                            settings.updateSetting('hasSeenPostInstall', true)
+                            settings.updateSetting('isMultiStepOnboarding', true)
+                        }
+
                         return !!atb
                     })
 
@@ -175,6 +184,7 @@ const ATB = (() => {
             settings.ready().then(() => {
                 chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+
                     if (ATB.canShowPostInstall(domain)) {
                         settings.updateSetting('hasSeenPostInstall', true)
                         let postInstallURL = 'https://duckduckgo.com/app?post=1'
@@ -184,19 +194,48 @@ const ATB = (() => {
                             url: postInstallURL
                         })
                     }
+
+                    if (settings.getSetting('isMultiStepOnboarding')) {
+                        console.warn('IS MULTI-STEP ONBOARD')
+
+                        chrome.tabs.query({currentWindow: true}, function (tabs) {
+                            let ddgInstallTab = false
+
+                            tabs.forEach(function (tab, id) {
+                                console.warn(tab)
+
+                                // Find and close chrome store tab
+                                if (tab.url.indexOf('https://chrome.google.com/webstore/detail/duckduckgo-privacy-essent') === 0) {
+                                    console.warn('CLOSING CHROME TAB', tab)
+                                    chrome.tabs.remove(tab.id)
+                                }
+
+                                if (tab.url.indexOf('duckduckgo.com/?natb=') !== -1) {
+                                    console.warn('FOUND DDG TAB', tab)
+                                    ddgInstallTab = tab.index
+                                }
+                            })
+
+                            if (ddgInstallTab) {
+                                chrome.tabs.highlight({tabs: ddgInstallTab})
+                            } else {
+                                chrome.tabs.create({
+                                    url: 'https://duckduckgo.com'
+                                })
+                            }
+                        })
+                    }
                 })
             })
         },
 
         canShowPostInstall: (domain) => {
             const regExpPostInstall = /duckduckgo\.com\/app/
-            const regExpSoftwarePage = /duckduckgo\.com\/software/
 
             if (!(domain && settings)) return false
 
             return !settings.getSetting('hasSeenPostInstall') &&
-                !domain.match(regExpPostInstall) &&
-                !domain.match(regExpSoftwarePage)
+                !domain.match(regExpPostInstall)
         },
 
         getSurveyURL: () => {
