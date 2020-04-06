@@ -65,7 +65,6 @@
         "webNavigation",
         "activeTab",
         "tabs",
-        "cookies",
         "storage",
         "<all_urls>",
         "alarms"
