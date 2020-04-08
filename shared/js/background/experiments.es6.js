@@ -34,22 +34,20 @@ class Experiment {
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
-                // Only set active experiment once
-                if (settings.getSetting('activeExperiment')) return
-
                 this.activeExperiment = retentionExperiments[this.variant] || {}
+                settings.updateSetting('activeExperiment', this.activeExperiment)
 
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
                         this.activeExperiment.settings = this.activeExperiment.atbExperiments[this.atbVariant].settings
                     }
 
-                    settings.updateSetting('activeExperiment', this.activeExperiment)
 
                     if (this.activeExperiment.settings) {
                         this.applySettingsChanges()
                     }
                 }
+
             })
     }
 

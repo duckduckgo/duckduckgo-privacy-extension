@@ -20,6 +20,16 @@ class TDSStorage {
             const listCopy = JSON.parse(JSON.stringify(list))
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
             const version = this.getVersionParam()
+            const experiment = settings.getSetting('activeExperiment')
+
+            console.warn(experiment)
+            console.warn(listCopy)
+
+            if (experiment && experiment.settings && experiment.settings.name === listCopy.name) {
+                listCopy.url = experiment.settings.url
+                console.warn('Setting full TDS experiment')
+                console.warn(listCopy)
+            }
 
             if (version) {
                 listCopy.url += version
