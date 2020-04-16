@@ -47,7 +47,6 @@ class Experiment {
                         this.applySettingsChanges()
                     }
                 }
-
             })
     }
 
