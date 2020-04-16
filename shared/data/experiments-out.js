@@ -22,10 +22,6 @@ module.exports = {
         name: 'full tracker list',
         description: 'Testing full Tracker Radar list',
         atbExperiments: {
-            'n': {
-                description: 'Full list control group',
-                settings: false
-            },
             'm': {
                 descripiton: 'Full list experiment group',
                 settings: { 
