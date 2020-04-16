@@ -28,10 +28,11 @@ module.exports = {
             },
             'm': {
                 descripiton: 'Full list experiment group',
-                settings: {
-                    name: 'tds',
-                    url: 'https://staticcdn.duckduckgo.com/trackerblocking/lm/tds.json',
-                    format: 'json'
+                settings: { 
+                    experimentData: {
+                        listName: 'tds',
+                        url: 'https://staticcdn.duckduckgo.com/trackerblocking/lm/tds.json'
+                    }
                 }
             }
         }
