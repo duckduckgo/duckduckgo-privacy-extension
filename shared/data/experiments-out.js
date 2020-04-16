@@ -22,11 +22,11 @@ module.exports = {
         name: 'full tracker list',
         description: 'Testing full Tracker Radar list',
         atbExperiments: {
-            'm': {
+            'n': {
                 description: 'Full list control group',
                 settings: false
             },
-            'n': {
+            'm': {
                 descripiton: 'Full list experiment group',
                 settings: {
                     name: 'tds',
