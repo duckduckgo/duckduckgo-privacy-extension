@@ -22,15 +22,15 @@ module.exports = {
         name: 'full tracker list',
         description: 'Testing full Tracker Radar list',
         atbExperiments: {
-            'b': {
+            'm': {
                 description: 'Full list control group',
                 settings: false
             },
-            'z': {
+            'n': {
                 descripiton: 'Full list experiment group',
                 settings: {
                     name: 'tds',
-                    url: 'https://jason.duckduckgo.com//tds-whole-2.json',
+                    url: 'https://staticcdn.duckduckgo.com/trackerblocking/lm/tds.json',
                     format: 'json'
                 }
             }

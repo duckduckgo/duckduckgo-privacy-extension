@@ -151,6 +151,10 @@ function handleOnDOMContentLoaded (details) {
     const { url, frameId } = details
     const activeExp = settings.getSetting('activeExperiment')
 
+    if (browser !== 'chrome') {
+        return 
+    }
+
     // Exclude unless in active experiment, and banner not disabled
     if (!activeExp ||
         !activeExp.name === BANNER_EXP_NAME ||
