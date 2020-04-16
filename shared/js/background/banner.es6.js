@@ -1,6 +1,7 @@
 const pixel = require('./pixel.es6')
 const settings = require('./settings.es6')
 const experiment = require('./experiments.es6')
+const utils = require('./utils.es6')
 
 const BANNER_CLICK = 'ebc'
 const BANNER_DISMISS = 'ebx'
@@ -151,7 +152,7 @@ function handleOnDOMContentLoaded (details) {
     const { url, frameId } = details
     const activeExp = settings.getSetting('activeExperiment')
 
-    if (browser !== 'chrome') {
+    if (utils.getBrowserName() !== 'chrome') {
         return 
     }
 
