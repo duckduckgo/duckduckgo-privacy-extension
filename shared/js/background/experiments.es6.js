@@ -34,7 +34,18 @@ class Experiment {
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
+                // Only set active experiment once
+                const currentExp = settings.getSetting('activeExperiment')
+                if (currentExp && currentExp.active) return
+
                 this.activeExperiment = retentionExperiments[this.variant] || {}
+
+                // Clear out non-active experiments
+                if (!this.activeExperiment.active) {
+                    settings.updateSetting('activeExperiment', '')
+                    return
+                }
+
                 settings.updateSetting('activeExperiment', this.activeExperiment)
 
                 if (this.activeExperiment.name) {

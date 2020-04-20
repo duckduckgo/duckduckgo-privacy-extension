@@ -3,6 +3,7 @@ module.exports = {
     r: {
         name: 'privacy_nudge',
         description: 'Privacy nudge experiment',
+        active: true,
         atbExperiments: {
             'y': {
                 description: 'Privacy nudge control group',
@@ -21,6 +22,7 @@ module.exports = {
     l: {
         name: 'full tracker list',
         description: 'Testing full Tracker Radar list',
+        active: true,
         atbExperiments: {
             'm': {
                 descripiton: 'Full list experiment group',
