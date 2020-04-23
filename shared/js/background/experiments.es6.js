@@ -37,13 +37,8 @@ class Experiment {
                 const currentExp = settings.getSetting('activeExperiment')
                 this.activeExperiment = retentionExperiments[this.variant] || {}
                 
-                // If both settings and activeExperiemnt are active nothing needs to to be changed
-                if ((currentExp && currentExp.active) &&
-                    (this.activeExperiment && this.activeExperiment.active)) return
-
-                // If settings an activeExperiment don't agree we give preference to activeExperiment. This
-                // happens after an experiment has been active, but later set to inactive in experiments-out
-                if (!this.activeExperiment.active) {
+                // clear out non-active experiments
+                if (!this.activeExperiment.active === true) {
                     settings.updateSetting('activeExperiment', '')
                     return
                 }
