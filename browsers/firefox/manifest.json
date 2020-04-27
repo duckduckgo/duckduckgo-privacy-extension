@@ -33,7 +33,7 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
+        "search_url": "https://duckduckgo.com/?q={searchTerms}&t=newext",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
