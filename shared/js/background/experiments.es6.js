@@ -36,7 +36,7 @@ class Experiment {
             .then(() => {
                 const currentExp = settings.getSetting('activeExperiment')
                 this.activeExperiment = retentionExperiments[this.variant] || {}
-                
+
                 // clear out non-active experiments
                 if (!this.activeExperiment.active === true) {
                     settings.updateSetting('activeExperiment', '')
@@ -44,6 +44,13 @@ class Experiment {
                 }
 
                 settings.updateSetting('activeExperiment', this.activeExperiment)
+                
+                // We already have an active experiemnt. Bail here to avoid overriding
+                // any of the settings for this experiment. 
+                if (currentExp && currentExp.active === true && this.activeExperiment.active === true) {
+                    return
+                }
+
 
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
