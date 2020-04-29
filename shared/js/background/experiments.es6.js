@@ -34,17 +34,35 @@ class Experiment {
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
-                // Only set active experiment once
-                if (settings.getSetting('activeExperiment')) return
-
+                const currentExp = settings.getSetting('activeExperiment')
                 this.activeExperiment = retentionExperiments[this.variant] || {}
 
+                // special case for existing users that were in an experiment before
+                // we added the active property
+                if (currentExp && !currentExp.hasOwnProperty('active')) {
+                    currentExp.active = this.activeExperiment.active
+                    settings.updateSetting('activeExperiment', currentExp)
+                }
+
+                // We already have an active experiemnt. Bail here to avoid overriding
+                // any of the settings for this experiment. 
+                if (currentExp && currentExp.active === true && this.activeExperiment.active === true) {
+                    return
+                }
+
+                // clear out non-active experiments
+                if (this.activeExperiment.active !== true) {
+                    settings.updateSetting('activeExperiment', '')
+                    return
+                }
+
+                settings.updateSetting('activeExperiment', this.activeExperiment)
+                
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
                         this.activeExperiment.settings = this.activeExperiment.atbExperiments[this.atbVariant].settings
                     }
 
-                    settings.updateSetting('activeExperiment', this.activeExperiment)
 
                     if (this.activeExperiment.settings) {
                         this.applySettingsChanges()
