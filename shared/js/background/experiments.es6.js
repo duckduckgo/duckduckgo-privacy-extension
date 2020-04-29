@@ -51,7 +51,7 @@ class Experiment {
                 }
 
                 // clear out non-active experiments
-                if (!this.activeExperiment.active === true) {
+                if (this.activeExperiment.active !== true) {
                     settings.updateSetting('activeExperiment', '')
                     return
                 }
