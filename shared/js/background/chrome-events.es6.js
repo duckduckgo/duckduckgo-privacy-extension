@@ -270,6 +270,8 @@ let onStartup = () => {
     })
 
     settings.ready().then(() => {
+        experiment.setActiveExperiment()
+        
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
@@ -282,9 +284,6 @@ let onStartup = () => {
 
         Companies.buildFromStorage()
 
-        if (browser === 'chrome') {
-            experiment.setActiveExperiment()
-        }
     })
 }
 
