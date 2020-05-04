@@ -62,10 +62,6 @@ chrome.webRequest.onHeadersReceived.addListener(
 /**
  * Web Navigation
  */
-const Banner = require('./banner.es6')
-if (browser === 'chrome') {
-    chrome.webNavigation.onDOMContentLoaded.addListener(Banner.handleOnDOMContentLoaded)
-}
 
 // keep track of URLs that the browser navigates to.
 //
@@ -74,11 +70,6 @@ if (browser === 'chrome') {
 // which misses a couple of edge cases like browser special pages
 // and Gmail's weird redirect which returns a 200 via a service worker
 chrome.webNavigation.onCommitted.addListener(details => {
-    if (browser === 'chrome') {
-        // binding a second listener was firing duplicate events
-        Banner.handleOnCommitted(details)
-    }
-
     // ignore navigation on iframes
     if (details.frameId !== 0) return
 
@@ -197,10 +188,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
         res(grade)
         return true
-    }
-
-    if (req.bannerPixel) {
-        Banner.firePixel(req.pixelArgs)
     }
 
     if (req.firePixel) {
