@@ -202,16 +202,7 @@ const ATB = (() => {
                             let ddgInstallTab = false
 
                             tabs.forEach(function (tab, id) {
-                                console.warn(tab)
-
-                                // Find and close chrome store tab
-                                if (tab.url.indexOf('https://chrome.google.com/webstore/detail/duckduckgo-privacy-essent') === 0) {
-                                    console.warn('CLOSING CHROME TAB', tab)
-                                    chrome.tabs.remove(tab.id)
-                                }
-
                                 if (tab.url.indexOf('duckduckgo.com/?natb=') !== -1) {
-                                    console.warn('FOUND DDG TAB', tab)
                                     ddgInstallTab = tab.index
                                 }
                             })
