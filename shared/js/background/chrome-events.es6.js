@@ -18,8 +18,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
                     experiment.setActiveExperiment()
                 }
             })
-    } else if (details.reason.match(/update/) && browser === 'chrome') {
-        experiment.setActiveExperiment()
     }
 })
 
@@ -271,7 +269,7 @@ let onStartup = () => {
 
     settings.ready().then(() => {
         experiment.setActiveExperiment()
-        
+
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
@@ -283,7 +281,6 @@ let onStartup = () => {
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()
-
     })
 }
 
