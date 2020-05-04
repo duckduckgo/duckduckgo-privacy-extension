@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2019.12.12",
+    "version": "2020.4.30",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -33,7 +33,7 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
+        "search_url": "https://duckduckgo.com/?q={searchTerms}&t=newext",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
@@ -65,7 +65,6 @@
         "webNavigation",
         "activeTab",
         "tabs",
-        "cookies",
         "storage",
         "<all_urls>",
         "alarms"

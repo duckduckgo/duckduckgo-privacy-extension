@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2019.12.12",
+    "version": "2020.4.30",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -63,7 +63,6 @@
         "webNavigation",
         "activeTab",
         "tabs",
-        "cookies",
         "storage",
         "<all_urls>",
         "alarms"
