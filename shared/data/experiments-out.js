@@ -1,20 +1,13 @@
 module.exports = {
     _: {},
     r: {
-        name: 'privacy_nudge',
-        description: 'Privacy nudge experiment',
-        active: true,
+        name: 'multi_step_onboarding',
+        description: 'Multi-Step Onboarding',
         atbExperiments: {
-            'y': {
-                description: 'Privacy nudge control group',
+            'x': {
+                description: 'Multi-Step Onboarding Experiment',
                 settings: {
-                    bannerEnabled: false
-                }
-            },
-            'z': {
-                description: 'Privacy nudge experiment group',
-                settings: {
-                    bannerEnabled: true
+                    isMultiStepOnboarding: true
                 }
             }
         }
@@ -25,8 +18,8 @@ module.exports = {
         active: true,
         atbExperiments: {
             'm': {
-                descripiton: 'Full list experiment group',
-                settings: { 
+                description: 'Full list experiment group',
+                settings: {
                     experimentData: {
                         listName: 'tds',
                         url: 'https://staticcdn.duckduckgo.com/trackerblocking/lm/tds.json'
