@@ -45,7 +45,7 @@ class Experiment {
                 }
 
                 // We already have an active experiemnt. Bail here to avoid overriding
-                // any of the settings for this experiment. 
+                // any of the settings for this experiment.
                 if (currentExp && currentExp.active === true && this.activeExperiment.active === true) {
                     return
                 }
@@ -57,12 +57,11 @@ class Experiment {
                 }
 
                 settings.updateSetting('activeExperiment', this.activeExperiment)
-                
+
                 if (this.activeExperiment.name) {
                     if (this.activeExperiment.atbExperiments && this.activeExperiment.atbExperiments[this.atbVariant]) {
                         this.activeExperiment.settings = this.activeExperiment.atbExperiments[this.atbVariant].settings
                     }
-
 
                     if (this.activeExperiment.settings) {
                         this.applySettingsChanges()

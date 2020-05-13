@@ -21,7 +21,7 @@ class TDSStorage {
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
             const version = this.getVersionParam()
             const activeExperiment = settings.getSetting('activeExperiment')
-            
+
             let experiment = ''
             if (activeExperiment) {
                 experiment = settings.getSetting('experimentData')
