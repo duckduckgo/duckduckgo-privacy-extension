@@ -160,7 +160,6 @@ const ATB = (() => {
 
                         if (params.has('npi')) {
                             window.params = params
-                            console.warn('SKIPPING POST INSTALL')
                             settings.updateSetting('atb', atb)
                             settings.updateSetting('hasSeenPostInstall', true)
                             settings.updateSetting('isMultiStepOnboarding', true)
@@ -196,23 +195,25 @@ const ATB = (() => {
                     }
 
                     if (settings.getSetting('isMultiStepOnboarding')) {
-                        console.warn('IS MULTI-STEP ONBOARD')
-
                         chrome.tabs.query({currentWindow: true}, function (tabs) {
-                            let ddgInstallTab = false
+                            let highlightInfo = false
+                            let url = 'https://duckduckgo.com?t=hx&step=2'
 
-                            tabs.forEach(function (tab, id) {
+                            tabs.some(function (tab) {
                                 if (tab.url.indexOf('duckduckgo.com/?natb=') !== -1) {
-                                    ddgInstallTab = tab.index
+                                    highlightInfo = {
+                                        tabs: [tab.index],
+                                        windowId: tab.windowId
+                                    }
+                                    return true
                                 }
                             })
 
-                            if (ddgInstallTab) {
-                                chrome.tabs.highlight({tabs: ddgInstallTab})
+                            if (highlightInfo) {
+                                chrome.tabs.highlight(highlightInfo)
+                                chrome.tabs.update({ url })
                             } else {
-                                chrome.tabs.create({
-                                    url: 'https://duckduckgo.com'
-                                })
+                                chrome.tabs.create({url})
                             }
                         })
                     }
