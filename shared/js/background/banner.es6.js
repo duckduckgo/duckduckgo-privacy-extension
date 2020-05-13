@@ -153,7 +153,7 @@ function handleOnDOMContentLoaded (details) {
     const activeExp = settings.getSetting('activeExperiment')
 
     if (utils.getBrowserName() !== 'chrome') {
-        return 
+        return
     }
 
     // Exclude unless in active experiment, and banner not disabled

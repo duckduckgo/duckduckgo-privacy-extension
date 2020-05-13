@@ -27,7 +27,7 @@ function fire () {
 
     // Only allow broken site reports
     if (pixelName !== 'epbf') return
-    
+
     const url = getURL(pixelName)
 
     if (!url) return
