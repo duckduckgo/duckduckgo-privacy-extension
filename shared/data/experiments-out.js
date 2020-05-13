@@ -3,6 +3,7 @@ module.exports = {
     r: {
         name: 'multi_step_onboarding',
         description: 'Multi-Step Onboarding',
+        active: true,
         atbExperiments: {
             'x': {
                 description: 'Multi-Step Onboarding Experiment',
