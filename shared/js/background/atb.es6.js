@@ -200,7 +200,10 @@ const ATB = (() => {
                             let url = 'https://duckduckgo.com?t=hx&step=2'
 
                             tabs.some(function (tab) {
-                                if (tab.url.indexOf('duckduckgo.com/?natb=') !== -1) {
+                                const urlObj = new URL(tab.url)
+                                const params = urlObj.searchParams
+
+                                if (urlObj.hostname.includes('duckduckgo.com') && !!params.get('natb')) {
                                     highlightInfo = {
                                         tabs: [tab.index],
                                         windowId: tab.windowId
