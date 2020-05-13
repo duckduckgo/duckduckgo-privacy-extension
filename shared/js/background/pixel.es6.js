@@ -4,7 +4,6 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
@@ -25,6 +24,9 @@ function fire () {
     const pixelName = args[0]
 
     if (typeof pixelName !== 'string') return
+
+    // Only allow broken site reports
+    if (pixelName !== 'epbf') return
 
     const url = getURL(pixelName)
 
