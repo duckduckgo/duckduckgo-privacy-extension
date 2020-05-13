@@ -4,7 +4,6 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-const utils = require('./utils.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
@@ -26,8 +25,8 @@ function fire () {
 
     if (typeof pixelName !== 'string') return
 
-    // only allow broken site pixel on Firefox
-    if (utils.getBrowserName() === 'moz' && pixelName !== 'epbf') return
+    // Only allow broken site reports
+    if (pixelName !== 'epbf') return
     
     const url = getURL(pixelName)
 
