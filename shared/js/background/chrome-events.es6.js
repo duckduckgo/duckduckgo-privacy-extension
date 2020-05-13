@@ -7,17 +7,12 @@
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
-const browser = utils.getBrowserName()
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
+            .then(experiment.setActiveExperiment())
             .then(ATB.openPostInstallPage)
-            .then(function () {
-                if (browser === 'chrome') {
-                    experiment.setActiveExperiment()
-                }
-            })
     }
 })
 
