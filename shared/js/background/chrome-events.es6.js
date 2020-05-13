@@ -11,7 +11,6 @@ const experiment = require('./experiments.es6')
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
-            .then(experiment.setActiveExperiment())
             .then(ATB.openPostInstallPage)
     }
 })
