@@ -197,13 +197,17 @@ const ATB = (() => {
                     if (settings.getSetting('isMultiStepOnboarding')) {
                         chrome.tabs.query({currentWindow: true}, function (tabs) {
                             let highlightInfo = false
-                            let url = 'https://duckduckgo.com?t=hx&step=2'
+                            let params = '?t=hx&step=2'
+                            let url = 'https://duckduckgo.com' + params
 
                             tabs.some(function (tab) {
                                 const urlObj = new URL(tab.url)
-                                const params = urlObj.searchParams
+                                const searchParams = urlObj.searchParams
+                                const hostname = urlObj.hostname
 
-                                if (urlObj.hostname.includes('duckduckgo.com') && !!params.get('natb')) {
+                                url = 'https://' + hostname + params
+
+                                if (hostname.includes('duckduckgo.com') && !!searchParams.get('natb')) {
                                     highlightInfo = {
                                         tabs: [tab.index],
                                         windowId: tab.windowId
@@ -216,7 +220,7 @@ const ATB = (() => {
                                 chrome.tabs.highlight(highlightInfo)
                                 chrome.tabs.update({ url })
                             } else {
-                                chrome.tabs.create({url})
+                                chrome.tabs.create({ url })
                             }
                         })
                     }
