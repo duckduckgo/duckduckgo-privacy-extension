@@ -173,6 +173,30 @@ const ATB = (() => {
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
             settings.ready().then(() => {
+                // TODO XXX only run that for CPPD experiment
+                chrome.tabs.query({currentWindow: true}, (tabs) => {
+                    const tab = tabs.find((tab) => {
+                        const { hostname, searchParams } = new URL(tab.url)
+
+                        return (hostname.includes('duckduckgo.com') /*&& !!searchParams.get('natb')*/)
+                    })
+
+                    if (tab) {
+                        chrome.tabs.highlight({
+                            tabs: [tab.index],
+                            windowId: tab.windowId
+                        }, () => {
+                            chrome.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/onboarding.js' })
+                        })
+                    } else {
+                        // TODO XXX recreate the tab?
+                        // chrome.tabs.create({ url })
+                    }
+                })
+
+                // TODO  XXX delete
+                return
+
                 chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                     if (ATB.canShowPostInstall(domain)) {
