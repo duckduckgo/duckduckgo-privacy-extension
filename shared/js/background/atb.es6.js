@@ -12,7 +12,7 @@ const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
 // list of accepted params in ATB url
-const ACCEPTED_URL_PARAMS = ['natb', 'cp']
+const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'npi']
 
 let dev = false
 
@@ -162,6 +162,9 @@ const ATB = (() => {
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
+                        if (params && params.has('npi')) {
+                            settings.updateSetting('isMultiStepOnboarding', true)
+                        }
                     }
 
                     ATB.finalizeATB(params)
@@ -173,42 +176,43 @@ const ATB = (() => {
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
             settings.ready().then(() => {
-                // TODO XXX only run that for CPPD experiment
-                chrome.tabs.query({currentWindow: true}, (tabs) => {
-                    const tab = tabs.find((tab) => {
-                        const { hostname, searchParams } = new URL(tab.url)
+                // Special case for the cross product promotion on desktop (cppd) experiment
+                if (settings.getSetting('isMultiStepOnboarding')) {
+                    // We find the tab containing the cross product promotion modal
+                    // and inject a content script that will notify the page that the
+                    // extension was successfully installed
+                    // Note: that we don't know on which window that tab is
+                    chrome.tabs.query({}, (tabs) => {
+                        const tab = tabs.find((tab) => {
+                            const { hostname, searchParams } = new URL(tab.url)
 
-                        return (hostname.includes('duckduckgo.com') /*&& !!searchParams.get('natb')*/)
+                            return (hostname.includes('duckduckgo.com') && !!searchParams.get('natb'))
+                        })
+
+                        const file = 'public/js/content-scripts/onboarding.js'
+                        if (tab) {
+                            chrome.tabs.highlight({
+                                tabs: [tab.index],
+                                windowId: tab.windowId
+                            }, () => {
+                                chrome.tabs.executeScript(tab.id, { file })
+                            })
+                        }
                     })
-
-                    if (tab) {
-                        chrome.tabs.highlight({
-                            tabs: [tab.index],
-                            windowId: tab.windowId
-                        }, () => {
-                            chrome.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/onboarding.js' })
-                        })
-                    } else {
-                        // TODO XXX recreate the tab?
-                        // chrome.tabs.create({ url })
-                    }
-                })
-
-                // TODO  XXX delete
-                return
-
-                chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
-                    const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                    if (ATB.canShowPostInstall(domain)) {
-                        settings.updateSetting('hasSeenPostInstall', true)
-                        let postInstallURL = 'https://duckduckgo.com/app?post=1'
-                        const atb = settings.getSetting('atb')
-                        postInstallURL += atb ? `&atb=${atb}` : ''
-                        chrome.tabs.create({
-                            url: postInstallURL
-                        })
-                    }
-                })
+                } else {
+                    chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+                        const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+                        if (ATB.canShowPostInstall(domain)) {
+                            settings.updateSetting('hasSeenPostInstall', true)
+                            let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                            const atb = settings.getSetting('atb')
+                            postInstallURL += atb ? `&atb=${atb}` : ''
+                            chrome.tabs.create({
+                                url: postInstallURL
+                            })
+                        }
+                    })
+                }
             })
         },
 
