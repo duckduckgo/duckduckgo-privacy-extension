@@ -1,8 +1,5 @@
 (function () {
-    // Note: this is injected by atb.es6.js
-    // This is currently used for the cross product promotion on desktop experiment.
-    // For this experiment we need to notify the page when the extension has been
-    // successfully installed
+    // Note: this is only used on duckduckgo.com to assist with user onboarding
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
         start()
     } else {
