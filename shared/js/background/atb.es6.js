@@ -186,7 +186,11 @@ const ATB = (() => {
                         const tab = tabs.find((tab) => {
                             const { hostname, searchParams } = new URL(tab.url)
 
-                            return (hostname.includes('duckduckgo.com') && !!searchParams.get('natb'))
+                            return (
+                                hostname.split('.').slice(-2).join('.') === 'duckduckgo.com' &&
+                                searchParams.has('natb') &&
+                                searchParams.has('npi')
+                            )
                         })
 
                         const file = 'public/js/content-scripts/onboarding.js'
