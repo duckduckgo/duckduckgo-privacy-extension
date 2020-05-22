@@ -170,6 +170,9 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
+            // make sure that sed works on both linux and OSX (see https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux)
+            devifyOnboarding: `sed -i.bak "s/\\/\\* __ \\*\\/ 'https:\\/\\/duckduckgo\\.com' \\/\\* __ \\*\\//'*'/" build/${browser}/${buildType}/public/js/content-scripts/onboarding.js && rm build/${browser}/${buildType}/public/js/content-scripts/onboarding.js.bak`,
             tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
             mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
             mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
@@ -195,7 +198,7 @@ module.exports = function (grunt) {
             },
             contentScripts: {
                 files: watch.contentScripts,
-                tasks: ['browserify:banner', 'exec:copyContentScripts']
+                tasks: ['browserify:banner', 'exec:copyContentScripts', 'exec:devifyOnboarding']
             }
         },
 
@@ -225,7 +228,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'browserify:banner', 'execute:preProcessLists', 'safari'])
 
-    const devTasks = ['build']
+    const devTasks = ['build', 'exec:devifyOnboarding']
     if (grunt.option('watch')) { devTasks.push('watch') }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)

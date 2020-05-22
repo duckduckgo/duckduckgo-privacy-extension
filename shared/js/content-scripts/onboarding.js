@@ -7,6 +7,12 @@
     }
 
     function start () {
-        window.postMessage({ type: 'onboarding', ready: true }, '*')
+        window.postMessage(
+            { type: 'onboarding', ready: true },
+            // Note: the line below is replaced by the Gruntfile so that this
+            // can be easily tested in local dev.
+            // Do not edit the /* __ */ and  /* __ */
+            /* __ */ 'https://duckduckgo.com' /* __ */
+        )
     }
 })()
