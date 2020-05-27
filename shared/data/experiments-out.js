@@ -22,7 +22,7 @@ module.exports = {
     l: {
         name: 'full tracker list',
         description: 'Testing full Tracker Radar list',
-        active: true,
+        active: false,
         atbExperiments: {
             'm': {
                 descripiton: 'Full list experiment group',
