@@ -12,6 +12,13 @@ This software is licensed under the terms of the Apache License, Version 2.0 (se
 
 [Chrome](https://chrome.google.com/webstore/detail/duckduckgo-privacy-essent/bkdgflcldnnnapblkhphbgpggdiikppg)
 
+### Safari
+
+The code for the Safari extension is an Xcode project which you can find [here](https://github.com/duckduckgo/privacy-essentials-safari).
+
+The Safari extension can be installed from the [App Store](https://apps.apple.com/us/app/duckduckgo-privacy-essentials/id1482920575?mt=12).
+
+
 ## Reporting a broken site
 
 Report broken sites using the anonymous "Report Broken Site" link in the extension popup.
