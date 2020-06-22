@@ -43,7 +43,7 @@ function showThankYou (isBrokenSite) {
         return bel`<div>
             <p>Thank you for your feedback!</p>
             <p>Your broken site reports help our development team fix these breakages.</p>
-            <p>To fix the issue for the time being, you can turn off "Privacy Protection" to add the site to the extension whitelist.</p>
+            <p>To fix the issue for the time being, you can turn off "Privacy Protection" for the site.</p>
         </div>`
     } else {
         return bel`<p>Thank you for your feedback!</p>`

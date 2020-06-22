@@ -14,7 +14,7 @@ module.exports = function () {
             <li>
                 <a href="javascript:void(0)" class="menu-title js-hamburger-menu-options-link">
                     Settings
-                    <span>Manage whitelist and other options</span>
+                    <span>Manage protection and other options</span>
                 </a>
             </li>
             <li>
