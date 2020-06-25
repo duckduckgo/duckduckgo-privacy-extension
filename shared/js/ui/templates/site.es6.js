@@ -75,17 +75,6 @@ module.exports = function () {
     </ul>
 </section>`
 
-    function setTransitionIcon (isSiteWhitelisted) {
-        isSiteWhitelisted = isSiteWhitelisted || false
-        let icon = 'icon__check'
-
-        if (isSiteWhitelisted) {
-            icon = 'icon__shield'
-        }
-
-        return icon
-    }
-
     function setTransitionText (isSiteWhitelisted) {
         isSiteWhitelisted = isSiteWhitelisted || false
         let text = 'Protection Off'
