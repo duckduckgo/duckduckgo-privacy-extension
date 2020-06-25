@@ -45,11 +45,7 @@ module.exports = function (grunt) {
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
             '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
             '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
-            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss'],
-            '<%= dirs.public.css %>/banner.css': ['<%= dirs.src.scss %>/banner.scss']
-        },
-        banner: {
-            '<%= dirs.public.js %>/content-scripts/banner.js': ['<%= dirs.src.js %>/banner/index.es6.js']
+            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss']
         }
     }
 
@@ -63,7 +59,7 @@ module.exports = function (grunt) {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
-        contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js', '<%= dirs.src.js %>/banner/*.js']
+        contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js']
     }
 
     let karmaOps = {
@@ -138,9 +134,6 @@ module.exports = function (grunt) {
             backgroundTest: {
                 files: baseFileMap.backgroundTest
             },
-            banner: {
-                files: baseFileMap.banner
-            },
             unitTest: {
                 options: {
                     browserifyOptions: {
@@ -198,7 +191,7 @@ module.exports = function (grunt) {
             },
             contentScripts: {
                 files: watch.contentScripts,
-                tasks: ['browserify:banner', 'exec:copyContentScripts', 'exec:devifyOnboarding']
+                tasks: ['exec:copyContentScripts', 'exec:devifyOnboarding']
             }
         },
 
@@ -226,7 +219,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'browserify:banner', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build', 'exec:devifyOnboarding']
     if (grunt.option('watch')) { devTasks.push('watch') }
