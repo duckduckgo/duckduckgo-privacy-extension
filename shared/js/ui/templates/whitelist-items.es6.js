@@ -9,5 +9,5 @@ module.exports = function (list) {
     <button class="remove pull-right js-whitelist-remove" data-item="${i++}">×</button>
 </li>`)}`
     }
-    return bel`<li>Privacy Protection is on for all sites</li>`
+    return bel`<li>Privacy Protection enabled for all sites</li>`
 }
