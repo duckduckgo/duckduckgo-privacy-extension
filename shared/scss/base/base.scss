@@ -264,8 +264,8 @@ a {
     }
 
     &.icon__arrow {
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
 
         @include cross_platform_bg_image("arrow@2x.png");
 
@@ -274,7 +274,7 @@ a {
         }
 
         &.icon__arrow--large {
-            width: 9.5px;
+            width: 7px;
             @include cross_platform_bg_image("arrow--large.svg");
         }
     }
@@ -432,7 +432,7 @@ a {
 .separator {
     width: 1px;
     height: 18px;
-    background-color: $color--medium-silver;
+    background-color: $color--medium-light-platinum;
     display: inline-block;
     vertical-align: bottom;
     margin: 0 7px;
