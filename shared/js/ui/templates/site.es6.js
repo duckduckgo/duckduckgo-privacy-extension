@@ -100,7 +100,7 @@ module.exports = function () {
     function renderManageWhitelist (model) {
         return bel`<div>
     <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
-        Manage Protection
+        Unprotected Sites
     </a>
     <div class="separator"></div>
     <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
