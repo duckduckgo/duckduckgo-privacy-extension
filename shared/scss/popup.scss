@@ -221,25 +221,24 @@ body {
 
         @mixin site_status_icons () {
             position: absolute;
-            width: 17px;
-            height: 22px;
-            top: 10px;
+            width: 18px;
+            height: 18px;
+            top: 15px;
+            left: 19px;
         }
 
         .site-info__https-status__icon {
             @include icon_display();
             @include site_status_icons();
-            width: 15px;
-            left: 24px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
-                @include cross_platform_bg_image("https--on.svg");
+                @include cross_platform_bg_image($status--good);
             }
 
             &.is-none,
             &.is-insecure { // none = insecure, http
-                @include cross_platform_bg_image("https--off.svg");
+                @include cross_platform_bg_image($status--bad);
             }
         }
 
@@ -257,9 +256,6 @@ body {
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    height: 30px;
-                    width: 27px;
-                    left: 20px;
 
                     &.is-blocking--true {
                         @include cross_platform_bg_image("blocking--on.svg");
@@ -296,20 +292,18 @@ body {
         .site-info__privacy-practices__icon {
             @include icon_display();
             @include site_status_icons();
-            left: 23px;
-            top: 12px;
             
             &.is-good {
-                @include cross_platform_bg_image("privacy--good.svg");
+                @include cross_platform_bg_image($status--good);
             }
 
             &.is-bad {
-                @include cross_platform_bg_image("privacy--bad.svg");
+                @include cross_platform_bg_image($status--bad);
             }
 
             &.is-mixed,
             &.is-unknown {
-                @include cross_platform_bg_image("privacy--mixed.svg");
+                @include cross_platform_bg_image($status--mixed);
             }
         }
 

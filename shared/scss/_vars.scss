@@ -2,6 +2,11 @@
 $font__size--default: 14px;
 $font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
 
+/* Status icons */
+$status--good: "status--good.svg";
+$status--mixed: "status--mixed.svg";
+$status--bad: "status--bad.svg";
+
 /* Colors */
 @import "../../node_modules/duckduckgo-colors/colors";
 $color--green: #3fa248;
