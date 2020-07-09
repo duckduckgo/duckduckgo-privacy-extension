@@ -13,7 +13,6 @@
 }
 
 .search-form__input {
-    width: 160px;
     -moz-appearance: none;
     font-size: 14px;
     font-weight: normal;
@@ -21,13 +20,21 @@
     outline: medium none;
     border: medium none;
     padding: 12px 0;
-    line-height: 24px;
-    height: 24px;
+    /* line-height: 24px; */
+    height: 16px;
     z-index: 1;
-    margin-left: 54px;
-    margin-top: 9px;
+    margin-left: 6px;
+    margin-top: 21px;
     color: $slate;
+    position: relative;
     background-color: $color--dark-platinum;
+    width: 160px;
+    background-image: url(chrome-extension://omakkkngbdgnmbdbhcgdkdcnpaijmcna/img/logo-small.svg);
+    padding-left: 44px;
+    background-repeat: no-repeat;
+    background-position-x: 8px;
+    background-position-y: 8px;
+    border-radius: 10px 0 0 10px; 
 
     &::placeholder {
         color: $grey;
@@ -38,18 +45,18 @@
 .search-form__go {
     @include cross_platform_bg_image("loupe.svg");
     position: absolute;
-    top: 4px;
-    right: 30px;
+    top: 21px;
+    right: 46px;
+    background-color: $color--dark-platinum;
     background-position: 47% 46%;
     background-size: 18px 18px;
-    height: 34px;
+    height: 40px;
     width: 42px;
     padding: 0px 0.64em;
     min-height: 1.8em;
     margin-bottom: 2px;
     margin-right: 2px;
     border-radius: 2px;
-    background-color: transparent;
     background-repeat: no-repeat;
     -moz-appearance: none;
     display: block;
@@ -57,8 +64,11 @@
     text-align: center;
     border: medium none;
     outline: medium none;
+    z-index: 2;
+    border-radius: 0 10px 10px 0;
 
     &:hover, &.selected {
         @include cross_platform_bg_image("loupe--highlight.svg");
+        background-color: $green;
     }
 }
