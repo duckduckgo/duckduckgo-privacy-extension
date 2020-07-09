@@ -17,7 +17,10 @@
     color: $slate;
     position: absolute;
     width: 160px;
-    background:no-repeat 8px 8px url(chrome-extension://omakkkngbdgnmbdbhcgdkdcnpaijmcna/img/logo-small.svg) $color--dark-platinum;
+    background-color: $color--dark-platinum;
+    @include cross_platform_bg_image("logo--small.svg");
+    background-repeat: no-repeat;
+    background-position: 8px 8px;
     padding-left: 44px;
     border-radius: 10px 0 0 10px; 
 
