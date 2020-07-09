@@ -1,39 +1,24 @@
 .search-form {
     background-color: $white;
-
-    .ddg-logo {
-        @include ddg_logo--small();
-        background-size: cover;
-        width: 22px;
-        height: 22px;
-        position: absolute;
-        top: 9px;
-        left: 19px;
-    }
 }
 
 .search-form__input {
     -moz-appearance: none;
     font-size: 14px;
     font-weight: normal;
-    background: none repeat scroll 0% 0% transparent;
     outline: medium none;
     border: medium none;
     padding: 12px 0;
-    /* line-height: 24px; */
+    line-height: 24px;
     height: 16px;
     z-index: 1;
     margin-left: 6px;
-    margin-top: 21px;
+    margin-top: 0;
     color: $slate;
-    position: relative;
-    background-color: $color--dark-platinum;
+    position: absolute;
     width: 160px;
-    background-image: url(chrome-extension://omakkkngbdgnmbdbhcgdkdcnpaijmcna/img/logo-small.svg);
+    background:no-repeat 8px 8px url(chrome-extension://omakkkngbdgnmbdbhcgdkdcnpaijmcna/img/logo-small.svg) $color--dark-platinum;
     padding-left: 44px;
-    background-repeat: no-repeat;
-    background-position-x: 8px;
-    background-position-y: 8px;
     border-radius: 10px 0 0 10px; 
 
     &::placeholder {
@@ -44,10 +29,9 @@
 
 .search-form__go {
     @include cross_platform_bg_image("loupe.svg");
-    position: absolute;
-    top: 21px;
+    top: 0;
     right: 46px;
-    background-color: $color--dark-platinum;
+    background: $color--dark-platinum;
     background-position: 47% 46%;
     background-size: 18px 18px;
     height: 40px;
@@ -65,6 +49,7 @@
     border: medium none;
     outline: medium none;
     z-index: 2;
+    position: absolute;
     border-radius: 0 10px 10px 0;
 
     &:hover, &.selected {
