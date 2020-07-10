@@ -6,6 +6,10 @@
 html, body {
     width: $popup__width;
     height: $popup__height;
+
+    & top-blocked.top-blocked--truncated {
+        height: $popup__height--max;
+    }
 }
 
 body {
@@ -191,7 +195,7 @@ body {
 
             .toggle-button {
                 position: absolute;
-                right: 0;
+                right: -4px;
             }
 
             .toggle-button--is-active-true {
@@ -208,6 +212,10 @@ body {
 
         .site-info__rating-li {
             padding-top: 8px;
+
+            &.main-rating {
+                padding-top: 0;
+            }
         }
 
         .site-info__li--https-status {
@@ -358,13 +366,13 @@ body {
         top: 440px;
         left: 0;
         right: 0;
-        margin-top: 0;
+        margin-top: 10px;
         padding-bottom: 15px;
 
         &.top-blocked--truncated {
-            padding-top: 12px;
-            top: 438px;
-            bottom: 0px;
+            padding-top: 0;
+            top: 450px;
+            bottom: 0;
         }
 
         .top-blocked__list {
@@ -433,7 +441,7 @@ body {
 .top-blocked__see-all {
    padding-top: 14px;
    padding-left: 20px;
-   margin: 48px 0 0 0;
+   margin: 65px 0 0 0;
    cursor: pointer;
 
    .link-secondary {

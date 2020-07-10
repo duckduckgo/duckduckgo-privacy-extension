@@ -4,8 +4,11 @@
         height: 65px;
     }
     .hero__subtitle {
-        height: 32px;
         line-height: 18px;
+    }
+
+    .tracker-networks__explainer {
+        @include explainer-padding();
     }
 }
 
@@ -40,8 +43,8 @@
     .site-info__tracker__icon {
         @include icon_display();
         @include tracker_network_icons_subview();
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         overflow: hidden;
         background-size: contain;
     }

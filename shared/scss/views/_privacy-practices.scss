@@ -1,8 +1,8 @@
 #popup-container .site-info.privacy-practices {
     box-sizing: border-box;
 
-    .padded {
-        padding: 20px;
+    .privacy-practices__explainer {
+        @include explainer-padding();
     }
 
     .hero {
@@ -14,7 +14,7 @@
     }
 
     .hero__icon {
-        width: 48px;
+        width: 68px;
         height: 65px;
     }
 

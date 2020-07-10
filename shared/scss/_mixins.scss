@@ -172,7 +172,7 @@
         }
 
         &.sliding-subview--has-fixed-header {
-            padding: 42px 0 0 0;
+            padding: 60px 0 0 0;
         }
 
         .sliding-subview__header {
@@ -250,4 +250,8 @@
     text-align: center;
     font-size: $size;
     display: inline-block;
+}
+
+@mixin explainer-padding {
+    padding: 10px 24px 20px;
 }
