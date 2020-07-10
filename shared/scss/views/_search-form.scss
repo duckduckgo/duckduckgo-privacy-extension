@@ -12,11 +12,11 @@
     line-height: 24px;
     height: 16px;
     z-index: 1;
-    margin-left: 6px;
+    margin-left: 11px;
     margin-top: 0;
     color: $slate;
     position: absolute;
-    width: 160px;
+    width: 155px;
     background-color: $color--dark-platinum;
     @include cross_platform_bg_image("logo-small.svg");
     background-repeat: no-repeat;
@@ -58,5 +58,9 @@
     &:hover, &.selected {
         @include cross_platform_bg_image("loupe--highlight.svg");
         background-color: $green;
+    }
+
+    &:active {
+        background-color: #222;
     }
 }

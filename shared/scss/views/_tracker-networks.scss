@@ -9,11 +9,18 @@
     }
 }
 
-.hero__icon--major-networks-blocked,
+.hero__icon--major-networks-blocked {
+    @include cross_platform_bg_image("hero-on-major-networks.svg");
+}
+
 .icon-major-networks-blocked {
     @include cross_platform_bg_image($status--good);
 }
-.hero__icon--major-networks-warning,
+
+.hero__icon--major-networks-warning {
+    @include cross_platform_bg_image("hero-warning-major-networks.svg");
+}
+
 .icon-major-networks-warning {
     @include cross_platform_bg_image($status--bad);
 }

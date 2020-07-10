@@ -308,7 +308,8 @@ body {
         }
 
         .site-info__li--manage-whitelist {
-            background-color: $white; 
+            background-color: $white;
+            border-top: 1px solid rgba(0, 0, 0, 0.05); 
 
             .is-disabled & {
                 @include is_disabled();

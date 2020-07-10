@@ -1,8 +1,13 @@
 .hero {
-    padding: 0 20px 15px 20px;
+    padding: 15px 20px;
     text-align: center;
     position: relative;
     cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+    .sliding-subview--open & {
+        border-bottom: 0;
+    }
 }
 
 .hero__icon {

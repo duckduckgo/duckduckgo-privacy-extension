@@ -16,7 +16,7 @@
 
 html, body {
     height: 100%;
-    min-height: 100%;
+    min-height: 90%;
 
     &.body--neutral {
         background: $color--white;
@@ -202,7 +202,6 @@ a {
 .card {
     background-color: $card__bg-color;
     border-radius: $card__border-radius;
-    box-shadow: $card__box-shadow;
     padding: $card__padding;
     margin: $card__margin;
 
