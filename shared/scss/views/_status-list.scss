@@ -50,6 +50,11 @@ $statuses: ("good", "bad", "mixed");
     }
 }
 
+/* privacy practices uses the modifier 'poor' */
+.status-list__item--poor:before {
+    @include cross_platform_bg_image("status--bad.svg");
+}
+
 $rating-colors: (
   "a": $color--site-rating--a,
   "b-plus": $color--site-rating--b,

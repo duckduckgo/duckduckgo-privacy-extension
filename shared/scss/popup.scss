@@ -305,7 +305,7 @@ body {
                 @include cross_platform_bg_image($status--good);
             }
 
-            &.is-bad {
+            &.is-poor {
                 @include cross_platform_bg_image($status--bad);
             }
 

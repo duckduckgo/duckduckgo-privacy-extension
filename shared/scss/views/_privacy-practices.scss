@@ -21,7 +21,7 @@
     .hero__icon--good {
         @include cross_platform_bg_image("hero-ribbon__good.svg");
     }
-    .hero__icon--bad {
+    .hero__icon--poor {
         @include cross_platform_bg_image("hero-ribbon__bad.svg");
     }
     .hero__icon--mixed,
