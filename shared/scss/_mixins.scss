@@ -50,12 +50,8 @@
         padding-bottom: 14px;
         margin-top: 0;
 
-        li {
-            padding-top: 16px;
-
-            .icon__arrow {
+        li .icon__arrow {
                 right: 15px;
-            }
         }
     }
 }
