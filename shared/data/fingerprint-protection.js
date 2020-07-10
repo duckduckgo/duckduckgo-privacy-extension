@@ -182,6 +182,8 @@
                 }
             `
             return batteryScript
+        } else {
+            return ''
         }
     }
 
@@ -212,7 +214,10 @@
     }
 
     /**
-     * Fix window dimensions according to the extension context.
+     * Fix window dimensions. The extension runs in a different JS context than the
+     * page, so we can inject the correct screen values as the window is resized,
+     * ensuring that no information is leaked as the dimensions change, but also that the
+     * values change correctly for valid use cases.
      */
     function setWindowDimensions () {
         let windowScript = ''
@@ -264,6 +269,9 @@
             let fe = document.createElement('script')
             fe.textContent = scriptToInject
             frame.contentDocument.head.appendChild(fe)
+            if (removeAfterExec) {
+                fe.remove()
+            }
         }
         if (removeAfterExec) {
             e.remove()
