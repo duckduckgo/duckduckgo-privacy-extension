@@ -34,7 +34,9 @@ TruncatedTopBlocked.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$seeall, 'click', this._seeAllClick]
             ])
-            $('html').addClass('has-top-blocked--truncated');
+            if ($('.top-blocked--truncated').length) {
+                $('html').addClass('has-top-blocked--truncated');
+            }
         },
 
         rerenderList: function () {
