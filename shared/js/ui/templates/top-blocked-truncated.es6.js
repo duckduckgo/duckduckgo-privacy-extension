@@ -8,6 +8,9 @@ module.exports = function () {
         <a href="javascript:void(0)" class="link-secondary">
             <span class="icon icon__arrow pull-right"></span>
             Top Tracking Offenders
+            <span class="is-hidden top-blocked__list top-blocked__list--truncated top-blocked__list--icons">
+                ${listItems(this.model.companyListMap)}
+            </span>
         </a>
     </div>
 </section>`

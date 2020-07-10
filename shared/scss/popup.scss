@@ -455,7 +455,21 @@ body {
        .icon__arrow {
            padding-top: 1px;
            right: 15px;
+           top: 7px;
        }
+   }
+
+   .top-blocked__list--icons {
+       margin-left: 36px;
+   }
+
+   .top-blocked__pill-site__icon {
+        @include icon_display();
+        @include tracker_network_icons_subview();
+
+        height: 24px;
+        width: 24px;
+        border: 1px solid $white;
    }
 }
 
@@ -485,52 +499,6 @@ body {
 
            &:first-child {
                margin-left: 24px;
-           }
-       }
-
-       .top-blocked__pill {
-           border-radius: 100px;
-           background-color: $color--medium-slate;
-           height: 27px;
-
-           .top-blocked__pill__blocker-pct {
-               float: left;
-               color: $white;
-               font-size: 16px;
-               letter-spacing: 1.2px;
-               font-weight: bold;
-               text-align: right;
-               width: 34px;
-               height: 19px;
-               margin: 4px 9px 3px 0;
-           }
-
-           .top-blocked__pill__divider {
-               width: 1px;
-               height: 17px;
-               opacity: 0.4;
-               border-radius: 0.5px;
-               background-color: $white;
-               margin: 5px 5px 6px 5px;
-               float: left;
-           }
-
-           .top-blocked__pill-site__icon-container {
-                margin: 7px 0 7px 9px;
-                float: left;
-                box-sizing: border-box;
-           }
-
-           .top-blocked__pill-site__icon {
-                @include icon_display();
-                @include tracker_network_icons();
-
-                background-size: contain;
-                margin: auto;
-                background-position-x: center;
-                vertical-align: unset;
-                height: 13px;
-                width: 13.5px;
            }
        }
 
