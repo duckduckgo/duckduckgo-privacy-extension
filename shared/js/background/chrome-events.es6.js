@@ -81,6 +81,22 @@ chrome.webNavigation.onCommitted.addListener(details => {
     tab.updateSite(details.url)
 })
 
+// Inject fingerprint protection into sites when
+// they are not whitelisted.
+console.log("Inject fingerprint protection")
+chrome.webNavigation.onCommitted.addListener(details => {
+    let whitelisted = settings.getSetting('whitelisted')
+    let tabURL = new URL(details.url) || {}
+    if (!whitelisted || !whitelisted[tabURL.hostname]) {
+        let scriptDetails = {
+            'file': '/data/fingerprint-protection.js',
+            'runAt': 'document_start',
+            'allFrames': true
+        }
+        chrome.tabs.executeScript(details.tabId, scriptDetails)
+    }
+})
+
 /**
  * TABS
  */
