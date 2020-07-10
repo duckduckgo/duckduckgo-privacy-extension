@@ -7,7 +7,7 @@ html, body {
     width: $popup__width;
     height: $popup__height;
 
-    & top-blocked.top-blocked--truncated {
+    &.has-top-blocked--truncated {
         height: $popup__height--max;
     }
 }
@@ -371,7 +371,7 @@ body {
 
         &.top-blocked--truncated {
             padding-top: 0;
-            top: 450px;
+            top: 470px;
             bottom: 0;
         }
 
@@ -399,10 +399,11 @@ body {
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
-            padding-top: 0;
+            padding-top: 15px;
             padding-bottom: 30px;
             margin-top: 0;
-            max-height: 315px;
+            max-height: 305px;
+            height: 305px;
         }
 
         .top-blocked__pct {
@@ -416,7 +417,7 @@ body {
             top: 470px;
             left: 0;
             right: 0;
-            padding: 15px 20px;
+            padding: 20px;
             text-align: center;
 
             button {
@@ -424,12 +425,12 @@ body {
                 border: 1px solid $slate-light;
                 padding: 7.5px 15px;
                 border-radius: 3px;
-                background-color: $color--neutral-bg;
+                background-color: $white;
             }
 
             p {
-                margin-top: 15px;
-                color: $color--grey;
+                margin-top: 21px;
+                color: $slate;
             }
         }
     }
@@ -453,6 +454,7 @@ body {
 
        .icon__arrow {
            padding-top: 1px;
+           right: 15px;
        }
    }
 }
@@ -472,6 +474,7 @@ body {
         margin-left: 20px;
         margin-right: 20px;
         clear: both;
+        margin-bottom: 12px;
 
        &.top-blocked__li--truncated {
            float: left;
