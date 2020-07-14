@@ -6,7 +6,7 @@
 
 (function protect () {
     // Property values to be set and their original values.
-    let fingerprintPropertyValues = {
+    const fingerprintPropertyValues = {
         'screen': {
             'availTop': {
                 'object': 'screen',
@@ -48,12 +48,12 @@
             'hardwareConcurrency': {
                 'object': 'navigator',
                 'origValue': navigator.hardwareConcurrency,
-                'targetValue': isMobile() ? 2 : 8
+                'targetValue': 8
             },
             'deviceMemory': {
                 'object': 'navigator',
                 'origValue': navigator.deviceMemory,
-                'targetValue': isMobile() ? 2 : 8
+                'targetValue': 8
             }
         },
         'storage': {
@@ -72,7 +72,7 @@
             'doNotTrack': {
                 'object': 'navigator',
                 'origValue': navigator.doNotTrack,
-                'targetValue': defaultDoNotTrack()
+                'targetValue': /Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null
             }
         }
     }
@@ -80,53 +80,19 @@
     /*
      * Return device specific battery value that prevents fingerprinting.
      * On Desktop/Laptop - fully charged and plugged in.
-     * On Mobile, not plugged in with random battery values every load.
+     * On Mobile, should not plugged in with random battery values every load.
      * Property event functions are also defined, for setting later.
      */
     function getBattery () {
         let battery = {}
-
-        // Set initial values
-        if (isMobile()) {
-            let minCharge = 0.01
-            let maxCharge = 0.99
-            let chargeValue = Math.random() * (maxCharge - minCharge) + minCharge
-            let maxDischargeTime = 86400 // 24 hours
-
-            battery.value = {
-                charging: false,
-                chargingTime: Infinity,
-                dischargingTime: (-(chargeValue * maxDischargeTime)).toFixed(),
-                level: chargeValue.toFixed(2)
-            }
-        } else {
-            battery.value = {
-                charging: true,
-                chargingTime: 0,
-                dischargingTime: Infinity,
-                level: 1
-            }
+        battery.value = {
+            charging: true,
+            chargingTime: 0,
+            dischargingTime: Infinity,
+            level: 1
         }
         battery.properties = ['onchargingchange', 'onchargingtimechange', 'ondischargingtimechange', 'onlevelchange']
         return battery
-    }
-
-    /*
-     * Determine if this is running on a mobile device or desktop device
-     * @return bool - true if this is a mobile browser.
-     */
-    function isMobile () {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-    }
-
-    /*
-     * Return the default Do Not Track value for this browser.
-     */
-    function defaultDoNotTrack () {
-        if (/Firefox/i.test(navigator.userAgent)) {
-            return '"unspecified"'
-        }
-        return null
     }
 
     /**
@@ -134,7 +100,7 @@
      */
     function buildScriptProperties () {
         let script = ''
-        for (let category in fingerprintPropertyValues) {
+        for (const category in fingerprintPropertyValues) {
             for (const [name, prop] of Object.entries(fingerprintPropertyValues[category])) {
                 // Don't update if existing value is undefined or null
                 if (!(prop.origValue === undefined)) {
@@ -152,12 +118,12 @@
      */
     function buildBatteryScript () {
         if (navigator.getBattery) {
-            let battery = getBattery()
+            const battery = getBattery()
             let batteryScript = `
                 navigator.getBattery = function getBattery () {
                 let battery = ${JSON.stringify(battery.value)}
             `
-            for (let prop of battery.properties) {
+            for (const prop of battery.properties) {
                 // Prevent setting events via event handlers
                 batteryScript += `
                     Object.defineProperty(battery, '${prop}', {
@@ -170,7 +136,7 @@
             }
 
             // Wrap event listener functions so handlers aren't added
-            for (let handler of ['addEventListener', 'removeEventListener', 'dispatchEvent']) {
+            for (const handler of ['addEventListener']) {
                 batteryScript += `
                     battery.${handler} = function ${handler} () {
                         return
@@ -221,8 +187,8 @@
      */
     function setWindowDimensions () {
         let windowScript = ''
-        let normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
-        let normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
+        const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
+        const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
 
         if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
             windowScript += `
@@ -264,8 +230,8 @@
         (document.head || document.documentElement).appendChild(e)
 
         // Inject into any and all iFrames
-        let frames = document.getElementsByTagName('iframe')
-        for (let frame of frames) {
+        const frames = document.getElementsByTagName('iframe')
+        for (const frame of frames) {
             let fe = document.createElement('script')
             fe.textContent = scriptToInject
             frame.contentDocument.head.appendChild(fe)
@@ -279,10 +245,10 @@
     }
 
     window.addEventListener('resize', function () {
-        let windowScript = setWindowDimensions()
+        const windowScript = setWindowDimensions()
         inject(windowScript, true)
     })
 
-    let injectionScript = buildInjectionScript()
+    const injectionScript = buildInjectionScript()
     inject(injectionScript)
 })()
