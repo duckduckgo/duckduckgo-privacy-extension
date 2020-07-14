@@ -84,10 +84,10 @@ chrome.webNavigation.onCommitted.addListener(details => {
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
-    let whitelisted = settings.getSetting('whitelisted')
-    let tabURL = new URL(details.url) || {}
+    const whitelisted = settings.getSetting('whitelisted')
+    const tabURL = new URL(details.url) || {}
     if (!whitelisted || !whitelisted[tabURL.hostname]) {
-        let scriptDetails = {
+        const scriptDetails = {
             'file': '/data/fingerprint-protection.js',
             'runAt': 'document_start',
             'allFrames': true
@@ -95,6 +95,19 @@ chrome.webNavigation.onCommitted.addListener(details => {
         chrome.tabs.executeScript(details.tabId, scriptDetails)
     }
 })
+
+// Remove DNT header if set, to match other anti-fingerprinting
+// api results.
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    function filterDNTHeader (e) {
+        if (e.requestHeaders) {
+            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'dnt')
+            return {requestHeaders: requestHeaders}
+        }
+    },
+    {urls: ['<all_urls>']},
+    ['blocking', 'requestHeaders']
+)
 
 /**
  * TABS
