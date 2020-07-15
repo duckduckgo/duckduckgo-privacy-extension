@@ -179,6 +179,18 @@
         return value
     }
 
+    function setWindowPropertyValue (property, value, catchErrors=false) {
+        let script = `window.${property} = ${value}\n`
+        if (catchErrors) {
+            script = `
+                try {
+                    ${script}
+                } catch (e) {}
+            `
+        }
+        return script
+    }
+
     /**
      * Fix window dimensions. The extension runs in a different JS context than the
      * page, so we can inject the correct screen values as the window is resized,
@@ -191,30 +203,30 @@
         const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
 
         if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
-            windowScript += `
-                window.screenY = 0
-                window.screenTop = 0
-                top.window.outerHeight = window.screen.height
-            `
+            windowScript += setWindowPropertyValue('window.screenY', 0)
+            windowScript += setWindowPropertyValue('window.screenTop', 0)
+            windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height', true)
         } else {
-            windowScript += `
-                window.screenY = ${normalizedY}
-                window.screenTop = ${normalizedY}
-                top.window.outerHeight = ${top.window.outerHeight}
-            `
+            windowScript += setWindowPropertyValue('window.screenY', normalizedY)
+            windowScript += setWindowPropertyValue('window.screenTop', normalizedY)
+            try {
+                windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight, true)
+            } catch (e) {
+                // top not accessible to certain iFrames, so ignore.
+            }
         }
-        if (normalizedX<= fingerprintPropertyValues.screen.availLeft.origValue) {
-            windowScript += `
-                window.screenX = 0
-                window.screenLeft = 0
-                top.window.outerWidth = window.screen.width
-            `
+        if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
+            windowScript += setWindowPropertyValue('window.screenX', 0)
+            windowScript += setWindowPropertyValue('window.screenLeft', 0)
+            windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
         } else {
-            windowScript += `
-                window.screenX = ${normalizedX}
-                window.screenLeft = ${normalizedX}
-                top.window.outerWidth = ${top.window.outerWidth}
-            `
+            windowScript += setWindowPropertyValue('window.screenY', normalizedX)
+            windowScript += setWindowPropertyValue('window.screenTop', normalizedX)
+            try {
+                windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerWidth, true)
+            } catch (e) {
+                // top not accessible to certain iFrames, so ignore.
+            }
         }
 
         return windowScript
@@ -232,11 +244,15 @@
         // Inject into any and all iFrames
         const frames = document.getElementsByTagName('iframe')
         for (const frame of frames) {
-            let fe = document.createElement('script')
-            fe.textContent = scriptToInject
-            frame.contentDocument.head.appendChild(fe)
-            if (removeAfterExec) {
-                fe.remove()
+            try {
+                let fe = document.createElement('script')
+                fe.textContent = scriptToInject
+                frame.contentDocument.head.appendChild(fe)
+                if (removeAfterExec) {
+                    fe.remove()
+                }
+            } catch (e) {
+                console.log(`Couldn't inject into subframe. Sometimes this is due to cross domain frames, which are injected separately.`)
             }
         }
         if (removeAfterExec) {
