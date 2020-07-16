@@ -220,8 +220,8 @@
             windowScript += setWindowPropertyValue('window.screenLeft', 0)
             windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
         } else {
-            windowScript += setWindowPropertyValue('window.screenY', normalizedX)
-            windowScript += setWindowPropertyValue('window.screenTop', normalizedX)
+            windowScript += setWindowPropertyValue('window.screenX', normalizedX)
+            windowScript += setWindowPropertyValue('window.screenLeft', normalizedX)
             try {
                 windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerWidth, true)
             } catch (e) {
