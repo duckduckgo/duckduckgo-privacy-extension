@@ -80,18 +80,21 @@ module.exports = {
     "tdsLists": [
         {
             "name": "surrogates",
-            "url": "https://duckduckgo.com/contentblocking.js?l=surrogates",
-            "format": "text"
+            "url": "/data/surrogates.txt",
+            "format": "text",
+            "source": "local"
         },
         {
             "name": "tds",
             "url": "https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json",
-            "format": "json"
+            "format": "json",
+            "source": "external"
         },
         {
             "name": "brokenSiteList",
             "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
-            "format": "text"
+            "format": "text",
+            "source": "external"
         }
     ],
     "httpsErrorCodes": {
