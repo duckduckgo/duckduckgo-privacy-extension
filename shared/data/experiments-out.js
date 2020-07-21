@@ -16,12 +16,12 @@ module.exports = {
             }
         }
     },
-    i: {
+    f: {
         name: 'Fingerprint protection',
         description: 'Testing basic fingerprint protection',
         active: true,
         atbExperiments: {
-            'f': {
+            'k': {
                 description: 'Basic fingerprint protection experiment group',
                 settings: {
                     experimentData: {
