@@ -31,11 +31,13 @@ class TDSStorage {
                 listCopy.url = experiment.url
             }
 
-            if (version) {
+            if (version && listCopy.source === 'external') {
                 listCopy.url += version
             }
 
-            return this.getDataXHR(listCopy, etag).then(response => {
+            const source = listCopy.source ? listCopy.source : 'external'
+
+            return this.getDataXHR(listCopy, etag, source).then(response => {
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.getResponseHeader('etag') || ''
@@ -90,8 +92,8 @@ class TDSStorage {
         })
     }
 
-    getDataXHR (list, etag) {
-        return load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source: 'external', timeout: 60000})
+    getDataXHR (list, etag, source) {
+        return load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source, timeout: 60000})
     }
 
     getDataFromLocalDB (name) {

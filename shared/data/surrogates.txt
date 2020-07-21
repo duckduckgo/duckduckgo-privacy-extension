@@ -1,0 +1,360 @@
+google-analytics.com/ga.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const noopReturnEmptyArray = () => { return [] }
+    const noopHandler = {
+        get: function(target, prop) {
+            if (typeof target[prop] !== 'undefined') {
+                return Reflect.get(...arguments)
+            }
+            return noop
+        }
+    }
+    const trackerTarget = {
+        _getLinkerUrl: function(arg) { return arg }
+    }
+    const gaqTarget = {
+        push: function(arg) {
+            if (typeof arg === 'function') {
+                try {
+                    arg()
+                } catch(error) {}
+                return
+            }
+            if (Array.isArray(arg) === false) { return }
+            if (arg[0] === '_link' && typeof arg[1] === 'string' ) {
+                window.location.assign(arg[1])
+            }
+            if (arg[0] === '_set' && arg[1] === 'hitCallback' && typeof arg[2] === 'function' ) {
+                try {
+                    arg[2]()
+                } catch(error) {}
+                return
+            }
+        }
+    }
+    const gatTarget = {
+        _getTracker: function() { return new Proxy(trackerTarget, noopHandler) },
+        _getTrackerByName: function() { return new Proxy(trackerTarget, noopHandler) },
+        _getTrackers: noopReturnEmptyArray
+    }
+    const gaqObj = new Proxy(gaqTarget, noopHandler)
+    const gatObj = new Proxy(gatTarget, noopHandler)
+    window._gat = gatObj
+    const commandQueue = (window._gaq && Array.isArray(window._gaq)) ? window._gaq : []
+    while (commandQueue.length > 0) {
+        gaqObj.push(commandQueue.shift())
+    }
+    window._gaq = gaqObj
+})()
+
+google-analytics.com/analytics.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const noopReturnNull = () => {
+        return null
+    }
+    const noopHandler = {
+        get: function(target, prop) {
+            return noop
+        }
+    }
+    const noopReturnArray = () => {
+        return []
+    }
+    const gaPointer = window.GoogleAnalyticsObject = (window.GoogleAnalyticsObject === void 0) ? 'ga' : window.GoogleAnalyticsObject
+    const datalayer = window.dataLayer
+    // execute callback if exists, see https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference#hitCallback
+    const ga = function() {
+        const params = Array.from(arguments)
+        params.forEach((param) => {
+            if (param instanceof Object && typeof param.hitCallback === 'function') {
+                try {
+                    param.hitCallback()
+                } catch (error) {}
+            }
+        })
+    }
+    ga.answer = 42
+    ga.loaded = true
+    ga.create = function() { return new Proxy({}, noopHandler) }
+    ga.getByName = noopReturnNull
+    ga.getAll = noopReturnArray
+    ga.remove = noop
+    window[gaPointer] = ga
+    // prevent page delay, see https://developers.google.com/optimize
+    if (datalayer && datalayer.hide && typeof datalayer.hide.end === 'function') {
+        try {
+            datalayer.hide.end()
+        } catch (error) {}
+    }
+})()
+
+google-analytics.com/inpage_linkid.js application/javascript
+(() => {
+    const gaqObj = {
+        push: () => {}
+    }
+    window._gaq = (window._gaq === void 0) ? gaqObj : window._gaq
+})()
+
+google-analytics.com/api.js application/javascript
+(() => {
+    const noop = () => {}
+    const cxApiHandler = {
+        get: function(target, prop) {
+            if (typeof target[prop] !== 'undefined') {
+                return Reflect.get(...arguments)
+            }
+            return noop
+        }
+    }
+    const cxApiTarget = {
+        chooseVariation: () => { return 0 }
+    }
+    window.cxApi = new Proxy(cxApiTarget, cxApiHandler)
+})()
+
+googletagservices.com/gpt.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const noopReturnNull = () => { return null }
+    const noopReturnEmptyArray = () => { return [] }
+    const noopReturnEmptyString = () => { return '' }
+    const noopReturnThis = function() {
+        return this
+    }
+    const noopHandler = {
+        get: function(target, prop, receiver) {
+            if (typeof target[prop] !== 'undefined') {
+                return Reflect.get(...arguments)
+            }
+            return noop
+        }
+    }
+    const noopReturnThisHandler = {
+        get: function(target, prop, receiver) {
+            if (typeof target[prop] !== 'undefined') {
+                return Reflect.get(...arguments)
+            }
+            return noopReturnThis
+        }
+    }
+    const passbackTarget = {
+        display: noop,
+        get: noopReturnNull
+    }
+    const pubadsTarget = {
+        addEventListener: noopReturnThis,
+        clearCategoryExclusions: noopReturnThis,
+        clearTagForChildDirectedTreatment:noopReturnThis,
+        clearTargeting: noopReturnThis,
+        definePassback: function() { return new Proxy(passbackTarget, noopReturnThisHandler) },
+        defineOutOfPagePassback: function() { return new Proxy(passbackTarget, noopReturnThisHandler) },
+        get: noopReturnNull,
+        getAttributeKeys: noopReturnEmptyArray,
+        getTargetingKeys: noopReturnEmptyArray,
+        getSlots: noopReturnEmptyArray,
+        set: noopReturnThis,
+        setCategoryExclusion: noopReturnThis,
+        setCookieOptions: noopReturnThis,
+        setForceSafeFrame: noopReturnThis,
+        setLocation: noopReturnThis,
+        setPublisherProvidedId: noopReturnThis,
+        setRequestNonPersonalizedAds: noopReturnThis,
+        setSafeFrameConfig: noopReturnThis,
+        setTagForChildDirectedTreatment: noopReturnThis,
+        setTargeting: noopReturnThis,
+        setVideoContent: noopReturnThis
+    }
+    const companionadsTarget = {
+        addEventListener: noopReturnThis
+    }
+    const sizeMappingTarget = {
+        build: noopReturnNull
+    }
+    const contentTarget = {
+        addEventListener: noopReturnThis
+    }
+    const slotTarget = {
+        get: noopReturnNull,
+        getAdUnitPath: noopReturnEmptyArray,
+        getAttributeKeys: noopReturnEmptyArray,
+        getCategoryExclusions: noopReturnEmptyArray,
+        getDomId: noopReturnEmptyString,
+        getSlotElementId: noopReturnEmptyString,
+        getTargeting: noopReturnEmptyArray,
+        getTargetingKeys: noopReturnEmptyArray
+    }
+    const gptObj = {
+        _loadStarted_: true,
+        apiReady: true,
+        pubadsReady: true,
+        cmd: [],
+        pubads: function() { return new Proxy(pubadsTarget, noopHandler) },
+        companionAds: function() { return new Proxy(companionadsTarget, noopHandler)},
+        sizeMapping: function() { return new Proxy(sizeMappingTarget, noopReturnThisHandler)},
+        content: function() { return new Proxy(contentTarget, noopHandler)},
+        defineSlot: function() { return new Proxy(slotTarget, noopReturnThisHandler)},
+        defineOutOfPageSlot: function() { return new Proxy(slotTarget, noopReturnThisHandler)},
+        defineUnit: noopReturnNull,
+        destroySlots: noop,
+        disablePublisherConsole: noop,
+        display: noop,
+        enableServices: noop,
+        getVersion: noopReturnEmptyString
+    }
+    const commandQueue = (window.googletag && window.googletag.cmd.length) ? window.googletag.cmd : []
+    gptObj.cmd.push = function(arg) {
+        if (typeof arg === 'function') {
+            try {
+                arg()
+            } catch (error) {
+            }
+        }
+        return 1
+    }
+    window.googletag = gptObj
+    while(commandQueue.length > 0) {
+        gptObj.cmd.push(commandQueue.shift())
+    }
+})()
+
+googletagmanager.com/gtm.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const datalayer = window.dataLayer
+    window.ga = (window.ga === void 0) ? noop : window.ga
+    if (datalayer) {
+        // execute callback if exists, see https://www.simoahava.com/gtm-tips/use-eventtimeout-eventcallback/
+        if (typeof datalayer.push === 'function') {
+            datalayer.push = (obj) => {
+                if (typeof obj === 'object' && typeof obj.eventCallback === 'function') {
+                    const timeout = obj.eventTimeout || 10
+                    try {
+                        setTimeout(obj.eventCallback, timeout)
+                    } catch(error) {}
+                }
+            }
+        }
+        // prevent page delay, see https://developers.google.com/optimize
+        if (datalayer.hide && datalayer.hide.end) {
+            try {
+                datalayer.hide.end()
+            } catch (error) {}
+        }
+    }
+})()
+
+googlesyndication.com/adsbygoogle.js application/javascript
+(() => {
+    'use strict'
+})()
+
+doubleclick.net/ad_status.js application/javascript
+(() => {
+    'use strict'
+    window.google_ad_status = 1
+})()
+
+scorecardresearch.com/beacon.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    window.udm_ = noop
+    window._comscore = []
+    window.COMSCORE = {
+        beacon: noop,
+        purge: () => {
+            window._comscore = []
+        }
+    }
+})()
+
+outbrain.com/outbrain.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const noopHandler = {
+        get: () => {
+            return noop
+        }
+    }
+    const noopObrExternHandler = {
+        get: function(target, prop, receiver) {
+            if (prop === 'video' || prop === 'feed' || prop === 'recReasons') {
+                return Reflect.get(...arguments)
+            }
+            return noop
+        }
+    }
+    const noopProxy = new Proxy({}, noopHandler)
+    const obrExternTarget = {
+        video: {
+            getVideoRecs: noop,
+            initInPlayerWidget: noop,
+            videoClicked: noop
+        },
+        feed: {
+            loadNextChunk: noop
+        },
+        recReasons: {
+            backFromScopedWidget: noop,
+            loadScopedWidget: noop,
+            onRecFollowClick: noop,
+            onRecLinkHover: noop,
+            onRecLinkHoverOut: noop
+        }
+    }
+    const obrObj = {
+        ready: true,
+        error: noop,
+        extern: new Proxy(obrExternTarget, noopObrExternHandler),
+        display: noopProxy,
+        controller: noopProxy,
+        printLog: noop,
+        IntersectionObserver: noop,
+        proxy: noopProxy,
+        languageManager: noopProxy
+    }
+    window['OBR$'] = noop
+    window.OB_releaseVer = '200037'
+    window.OBR = (window.OBR === void 0) ? obrObj : window.OBR
+    window.OB_PROXY = (window.OB_PROXY === void 0) ? noopProxy : window.OB_PROXY
+    window.outbrain = (window.outbrain === void 0) ? noopProxy : window.outbrain
+    window.outbrain_rater = (window.outbrain_rater === void 0) ? noopProxy : window.outbrain_rater
+})()
+
+amazon-adsystem.com/amzn_ads.js application/javascript
+(() => {
+    'use strict'
+    if (window.amznads) { return }
+    const noop = () => {}
+    const noopHandler = {
+        get: () => {
+            return noop
+        }
+    }
+    window.amznads = new Proxy({}, noopHandler)
+    window.amzn_ads = (window.amzn_ads === void 0) ? noop : window.amzn_ads
+    window.aax_write = (window.aax_write === void 0) ? noop : window.aax_write
+    window.aax_render_ad = (window.aax_render_ad === void 0) ? noop : window.aax_render_ad
+})()
+
+chartbeat.com/chartbeat.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const noopHandler = {
+        get: () => {
+            return noop
+        }
+    }
+    const noopProxy = new Proxy({}, noopHandler)
+    window.pSUPERFLY = noopProxy
+    window.pSUPERFLY_mab = noopProxy
+})()
