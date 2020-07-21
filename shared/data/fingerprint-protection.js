@@ -241,20 +241,6 @@
         e.textContent = scriptToInject;
         (document.head || document.documentElement).appendChild(e)
 
-        // Inject into any and all iFrames
-        const frames = document.getElementsByTagName('iframe')
-        for (const frame of frames) {
-            try {
-                let fe = document.createElement('script')
-                fe.textContent = scriptToInject
-                frame.contentDocument.head.appendChild(fe)
-                if (removeAfterExec) {
-                    fe.remove()
-                }
-            } catch (e) {
-                console.log(`Couldn't inject into subframe. Sometimes this is due to cross domain frames, which are injected separately.`)
-            }
-        }
         if (removeAfterExec) {
             e.remove()
         }

@@ -220,7 +220,8 @@ chrome.webNavigation.onCommitted.addListener(details => {
                 const scriptDetails = {
                     'file': '/data/fingerprint-protection.js',
                     'runAt': 'document_start',
-                    'allFrames': true
+                    'allFrames': true,
+                    'matchAboutBlank': true
                 }
                 chrome.tabs.executeScript(details.tabId, scriptDetails)
             }
