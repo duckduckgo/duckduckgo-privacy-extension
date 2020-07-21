@@ -100,7 +100,7 @@ google-analytics.com/inpage_linkid.js application/javascript
     window._gaq = (window._gaq === void 0) ? gaqObj : window._gaq
 })()
 
-google-analytics.com/cx/api.js application/javascript
+google-analytics.com/api.js application/javascript
 (() => {
     const noop = () => {}
     const cxApiHandler = {
@@ -255,7 +255,7 @@ googlesyndication.com/adsbygoogle.js application/javascript
     'use strict'
 })()
 
-doubleclick.net/instream/ad_status.js application/javascript
+doubleclick.net/ad_status.js application/javascript
 (() => {
     'use strict'
     window.google_ad_status = 1
@@ -329,7 +329,7 @@ outbrain.com/outbrain.js application/javascript
     window.outbrain_rater = (window.outbrain_rater === void 0) ? noopProxy : window.outbrain_rater
 })()
 
-amazon-adsystem.com/aax2/amzn_ads.js application/javascript
+amazon-adsystem.com/amzn_ads.js application/javascript
 (() => {
     'use strict'
     if (window.amznads) { return }
