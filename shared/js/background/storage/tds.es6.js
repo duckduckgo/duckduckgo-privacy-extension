@@ -31,7 +31,7 @@ class TDSStorage {
                 listCopy.url = experiment.url
             }
 
-            if (version) {
+            if (version && listCopy.source === 'external') {
                 listCopy.url += version
             }
 
