@@ -203,12 +203,12 @@
         const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
 
         if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
-            windowScript += setWindowPropertyValue('window.screenY', 0)
-            windowScript += setWindowPropertyValue('window.screenTop', 0)
+            windowScript += setWindowPropertyValue('screenY', 0)
+            windowScript += setWindowPropertyValue('screenTop', 0)
             windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height', true)
         } else {
-            windowScript += setWindowPropertyValue('window.screenY', normalizedY)
-            windowScript += setWindowPropertyValue('window.screenTop', normalizedY)
+            windowScript += setWindowPropertyValue('screenY', normalizedY)
+            windowScript += setWindowPropertyValue('screenTop', normalizedY)
             try {
                 windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight, true)
             } catch (e) {
@@ -216,14 +216,14 @@
             }
         }
         if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
-            windowScript += setWindowPropertyValue('window.screenX', 0)
-            windowScript += setWindowPropertyValue('window.screenLeft', 0)
+            windowScript += setWindowPropertyValue('screenX', 0)
+            windowScript += setWindowPropertyValue('screenLeft', 0)
             windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
         } else {
-            windowScript += setWindowPropertyValue('window.screenX', normalizedX)
-            windowScript += setWindowPropertyValue('window.screenLeft', normalizedX)
+            windowScript += setWindowPropertyValue('screenX', normalizedX)
+            windowScript += setWindowPropertyValue('screenLeft', normalizedX)
             try {
-                windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerWidth, true)
+                windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth, true)
             } catch (e) {
                 // top not accessible to certain iFrames, so ignore.
             }
