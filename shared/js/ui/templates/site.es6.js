@@ -77,10 +77,10 @@ module.exports = function () {
 
     function setTransitionText (isSiteWhitelisted) {
         isSiteWhitelisted = isSiteWhitelisted || false
-        let text = 'Removed from Unprotected Sites'
+        let text = 'Added to Unprotected Sites'
 
         if (isSiteWhitelisted) {
-            text = 'Added to Unprotected Sites'
+            text = 'Removed from Unprotected Sites'
         }
 
         return text
