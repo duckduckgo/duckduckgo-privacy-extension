@@ -66,8 +66,5 @@
         "storage",
         "<all_urls>",
         "alarms"
-    ],
-    "web_accessible_resources": [
-        "img/*"
     ]
 }
