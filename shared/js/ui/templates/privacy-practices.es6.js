@@ -71,7 +71,6 @@ function renderDetails (reasons) {
 
 function renderNoDetails () {
     return bel`<div class="text--center">
-    <div class="privacy-practices__details__no-detail-icon"></div>
     <h1 class="privacy-practices__details__title">
         No Privacy Practices Found
     </h1>

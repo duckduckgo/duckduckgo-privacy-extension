@@ -16,6 +16,8 @@
     .hero__icon {
         width: 68px;
         height: 65px;
+        margin-bottom: 12px;
+        margin-top: 0;
     }
 
     .hero__icon--good {
@@ -35,14 +37,7 @@
 }
 
 .privacy-practices__details {
-    min-height: 205px;
-}
-
-.privacy-practices__details__no-detail-icon {
-    @include cross_platform_bg_image("unknown.svg");
-    width: 53px;
-    height: 53px;
-    margin: 10px auto 15px;
+    min-height: 112px;
 }
 
 .privacy-practices__details__title {

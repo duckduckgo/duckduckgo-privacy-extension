@@ -258,6 +258,7 @@ a {
 
         &.icon__arrow--large {
             width: 7px;
+            margin-top: -20px;
             @include cross_platform_bg_image("arrow--large.svg");
         }
     }
