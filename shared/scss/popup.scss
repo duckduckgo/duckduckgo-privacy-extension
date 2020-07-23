@@ -162,6 +162,7 @@ body {
             opacity: 1;
             margin-top: 0;
             max-height: 20px;
+            margin-left: 3px;
         }
 
         .site-info--confirm-breakage {
@@ -191,7 +192,7 @@ body {
         .site-info__toggle-container {
             position: absolute;
             right: 20px;
-            top: 15.7px;
+            top: 12px;
 
             .toggle-button {
                 position: absolute;
@@ -317,7 +318,8 @@ body {
 
         .site-info__li--manage-whitelist {
             background-color: $white;
-            border-top: 1px solid rgba(0, 0, 0, 0.05); 
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center; 
 
             .is-disabled & {
                 @include is_disabled();
