@@ -41,9 +41,9 @@ $color--site-rating--f: $color--red;
 
 /* Popup */
 $popup__width: 300px;
-$popup__height: 545px;
-$popup__height--max: 600px;
-$popup__height--moz: 600px;
+$popup__height: 497px;
+$popup__height--max: 520px;
+$popup__height--moz: 520px;
 
 /* Hamburger Button & Menu */
 $hamburger-button__color: #afafaf;
@@ -58,7 +58,7 @@ $card__border-radius: 0;
 $card__border: 1px solid $color--medium-light-platinum;
 $card__box-shadow: 0px 1px 1px $color--default-box-shadow;
 $card__padding: 0;
-$card--padded: 20px;
+$card--padded: 16px 20px;
 $card__margin--top: 7.5px;
 $card__margin--right: 0;
 $card__margin--bottom: 0;
