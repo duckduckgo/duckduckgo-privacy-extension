@@ -37,9 +37,6 @@ body {
         }
     }
 
-    .hamburger-button {
-    }
-
     .hamburger-menu {
         z-index: 20;
         position: fixed;
@@ -77,7 +74,10 @@ body {
             }
 
             .hamburger-menu__links {
-                padding-top: 0;
+                li:not(:first-child) {
+                    margin-top: 5px;
+                }
+
                 /* hide report broken site option on special urls */
                 li:last-child {
                     .is-disabled & {
