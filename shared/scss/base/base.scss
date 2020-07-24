@@ -173,6 +173,10 @@ a {
     padding: $card--padded;
 }
 
+.padded--top {
+    padding: $card--padded--top;
+}
+
 .padded--no-bottom-padding {
     padding-bottom: 0;
 }

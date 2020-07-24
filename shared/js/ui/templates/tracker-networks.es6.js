@@ -57,7 +57,7 @@ function renderTrackerDetails (model) {
                 const additionalText = ' associated domains'
                 const domain = model.site ? model.site.domain : c.displayName
                 c.displayName = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
-                borderClass = companyListMap.length > 1 ? 'border--top' : ''
+                borderClass = companyListMap.length > 1 ? 'border--top padded--top' : ''
             }
             return bel`<li class="${borderClass}">
     <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
