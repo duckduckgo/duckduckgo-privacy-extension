@@ -55,7 +55,8 @@
     position: absolute;
     border-radius: 0 10px 10px 0;
 
-    &:hover, &.selected {
+    &:hover,
+    &.go--focused {
         @include cross_platform_bg_image("loupe--highlight.svg");
         background-color: $green;
     }
