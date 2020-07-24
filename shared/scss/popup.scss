@@ -398,14 +398,20 @@ body {
             display: none;
         }
 
+        &.top-blocked-header .icon.icon__arrow {
+            width: 16px;
+            height: 16px;
+        }
+
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
             padding-top: 15px;
             padding-bottom: 30px;
             margin-top: 0;
-            max-height: 305px;
             padding-bottom: 5px;
+            max-height: 290px;
+            height: 290px;
         }
 
         .top-blocked__pct {
@@ -417,7 +423,7 @@ body {
         .top-blocked__reset-stats {
             position: absolute;
             height: 50px;
-            top: 407px;
+            top: 427px;
             left: 0;
             right: 0;
             padding: 20px;
