@@ -454,6 +454,7 @@ body {
        padding-bottom: 3.5px;
        display: block;
        margin-left: 4px;
+       text-decoration: none;
 
        .icon__arrow {
            padding-top: 1px;
@@ -470,9 +471,11 @@ body {
         @include icon_display();
         @include tracker_network_icons_subview();
 
-        height: 24px;
-        width: 24px;
+        height: 18px;
+        width: 18px;
         border: 1px solid $white;
+        border-radius: 50%;
+        margin-left: -3px;
    }
 }
 

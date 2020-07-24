@@ -6,7 +6,7 @@ $subview-icons: ("adobe", "adtech", "amazon", "aol", "appnexus", "casale", "char
 
     @each $name in $icons {
         &.#{$name} {
-            @include cross_platform_bg_image("tn-#{$name}.svg");
+            @include cross_platform_bg_image("tn-subview-#{$name}.svg");
         }
     }
 }
