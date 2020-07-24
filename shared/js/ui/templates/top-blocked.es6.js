@@ -26,7 +26,7 @@ function renderPctPagesWithTrackers (model) {
     }
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
-    Trackers were found on ${model.pctPagesWithTrackers}%
+    Trackers were found on <b>${model.pctPagesWithTrackers}%</b>
     of web sites you've visited${msg}.
 </p>`
     }

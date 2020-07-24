@@ -405,18 +405,19 @@ body {
             padding-bottom: 30px;
             margin-top: 0;
             max-height: 305px;
-            height: 305px;
+            padding-bottom: 5px;
         }
 
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
+            text-align: center;
         }
 
         .top-blocked__reset-stats {
             position: absolute;
             height: 50px;
-            top: 470px;
+            top: 407px;
             left: 0;
             right: 0;
             padding: 20px;
@@ -495,6 +496,7 @@ body {
         margin-right: 20px;
         clear: both;
         margin-bottom: 12px;
+        height: 15px;
 
        &.top-blocked__li--truncated {
            float: left;
@@ -603,6 +605,8 @@ body {
             transition: all 0.5s ease-in-out;
             padding-left: 5px;
             vertical-align: middle;
+            position: absolute;
+            right: 0;
         }
     }
 }
