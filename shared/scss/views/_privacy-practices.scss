@@ -38,6 +38,10 @@
 
 .privacy-practices__details {
     min-height: 112px;
+
+    .has-top-blocked--truncated & {
+        min-height: 162px;
+    }
 }
 
 .privacy-practices__details__title {

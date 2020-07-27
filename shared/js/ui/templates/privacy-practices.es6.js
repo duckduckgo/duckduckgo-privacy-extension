@@ -28,11 +28,11 @@ module.exports = function () {
             Privacy practices indicate how much the personal information
             that you share with a website is protected.
         </div>
-        <div class="privacy-practices__details padded border--bottom--inner
+        <div class="privacy-practices__details padded
             js-privacy-practices-details">
             ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
         </div>
-        <div class="privacy-practices__attrib padded text--center">
+        <div class="privacy-practices__attrib padded text--center border--top--inner">
             Privacy Practice results from ${crossplatformLink('https://tosdr.org/', {
         className: 'bold',
         target: '_blank',

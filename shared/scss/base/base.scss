@@ -167,6 +167,19 @@ a {
     }
 }
 
+.border--top--inner {
+    position: relative;
+
+    &:before {
+        content: "";
+        border-top: $card__border;
+        position: absolute;
+        top: 0;
+        left: 20px;
+        right: 20px;
+    }
+}
+
 
 /* Padding */
 .padded {
