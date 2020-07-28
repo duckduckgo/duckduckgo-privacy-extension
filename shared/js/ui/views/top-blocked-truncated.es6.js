@@ -35,8 +35,8 @@ TruncatedTopBlocked.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$seeall, 'click', this._seeAllClick]
             ])
-            if ($('.top-blocked--truncated').length) {
-                $('html').addClass(TOP_BLOCKED_CLASS);
+            if (this.$('.top-blocked--truncated').length) {
+                this.$('html').addClass(TOP_BLOCKED_CLASS)
             }
         },
 
@@ -52,7 +52,7 @@ TruncatedTopBlocked.prototype = window.$.extend({},
                 this.model.reset()
                 setTimeout(() => this.rerenderList(), 750)
                 this.rerenderList()
-                $('html').removeClass(TOP_BLOCKED_CLASS);
+                this.$('html').removeClass(TOP_BLOCKED_CLASS)
             }
         }
     }

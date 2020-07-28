@@ -36,12 +36,12 @@ Search.prototype = window.$.extend({},
             }
         },
 
-        _removeHoverEffect: function() {
+        _removeHoverEffect: function () {
             if (this.$go.hasClass(FOCUS_CLASS)) {
                 this.$go.removeClass(FOCUS_CLASS)
             }
         },
-        
+
         _handleBlur: function (e) {
             this._removeHoverEffect()
         },
@@ -49,7 +49,7 @@ Search.prototype = window.$.extend({},
         _handleInput: function (e) {
             const searchText = this.$input.val()
             this.model.set('searchText', searchText)
-            
+
             if (searchText.length) {
                 this._addHoverEffect()
             } else {
