@@ -56,9 +56,9 @@
         evaluatePageHeadings () {
             const headings = document.querySelectorAll('h1, h2, h3')
             if (headings) {
-                headings.forEach(({textContent}) => {
-                    if (textContent.match(this.loginRegex)) this.decreaseSignalBy(0.5, `generic: ${textContent}`)
-                    if (textContent.match(this.conservativeSignupRegex)) this.increaseSignalBy(0.5, `generic: ${textContent}`)
+                headings.forEach(({innerText}) => {
+                    if (innerText.match(this.loginRegex)) this.decreaseSignalBy(0.5, `generic: ${innerText}`)
+                    if (innerText.match(this.conservativeSignupRegex)) this.increaseSignalBy(0.5, `generic: ${innerText}`)
                 })
             }
         }
@@ -80,6 +80,47 @@
             })
         }
 
+        getText (el) {
+            // for buttons, we don't care about descendants, just get the whole text as is
+            // this is important in order to give proper attribution of the text to the button
+            if (el.nodeName.toUpperCase() === 'BUTTON') return el.innerText
+
+            if (el.nodeName.toUpperCase() === 'INPUT' && el.type === 'submit') return el.value
+
+            return Array.from(el.childNodes).reduce((text, child) =>
+                child.nodeName === '#text' ? text + ' ' + child.textContent : text, '')
+        }
+
+        evaluateElement (el) {
+            // Skip select and option elements because they contain too much noise
+            if (['OPTION', 'SELECT'].includes(el.nodeName.toUpperCase())) return
+
+            const elText = this.getText(el)
+
+            // check button contents
+            if (
+                (el.nodeName.toUpperCase() === 'INPUT' && el.type === 'submit') ||
+                (el.nodeName.toUpperCase() === 'BUTTON' && el.type === 'submit') ||
+                ((el.getAttribute('role') || '').toUpperCase() === 'BUTTON')
+            ) {
+                if (elText.match(this.loginRegex)) this.decreaseSignalBy(2, `submit: ${elText}`)
+                if (elText.match(this.signupRegex)) this.increaseSignalBy(2, `submit: ${elText}`)
+            }
+            // if a link points to relevant urls or contain contents outside the page…
+            if (
+                el.nodeName === 'A' && el.href && el.href !== '#' ||
+                (el.getAttribute('role') || '').toUpperCase() === 'LINK'
+            ) {
+                // …and matches one of the regexes, we assume the match is not pertinent to the current form
+                if (elText.match(this.loginRegex)) this.increaseSignalBy(1, `external link: ${elText}`)
+                if (elText.match(this.signupRegex)) this.decreaseSignalBy(1, `external link: ${elText}`)
+            } else {
+                // any other case
+                if (elText.match(this.loginRegex)) this.decreaseSignalBy(1, `generic: ${elText}`)
+                if (elText.match(this.signupRegex)) this.increaseSignalBy(1, `generic: ${elText}`)
+            }
+        }
+
         evaluateForm () {
             // Check page title
             this.evaluatePageTitle()
@@ -88,37 +129,8 @@
             this.evaluateElAttributes(this.form)
 
             // Check form contents
-            this.form.querySelectorAll('*').forEach(el => {
-                // Skip select and option elements because they contain a lot of noise
-                if (!['OPTION', 'SELECT'].includes(el.nodeName.toUpperCase())) {
-                    // check submit button or input[type=submit]
-                    if (el.nodeName.toUpperCase() === 'INPUT' && el.type === 'submit') {
-                        if (el.value.match(this.loginRegex)) this.decreaseSignalBy(2, `submit: ${el.value}`)
-                        if (el.value.match(this.signupRegex)) this.increaseSignalBy(2, `submit: ${el.value}`)
-                    }
-                    // check button contents
-                    if (
-                        el.nodeName.toUpperCase() === 'BUTTON' && el.type === 'submit' ||
-                        (el.getAttribute('role') || '').toUpperCase() === 'BUTTON'
-                    ) {
-                        if (el.textContent.match(this.loginRegex)) this.decreaseSignalBy(2, `submit: ${el.textContent}`)
-                        if (el.textContent.match(this.signupRegex)) this.increaseSignalBy(2, `submit: ${el.textContent}`)
-                    }
-                    // if a link points to relevant urls or contain contents outside the page…
-                    if (
-                        el.nodeName === 'A' && el.href && el.href !== '#' ||
-                        (el.getAttribute('role') || '').toUpperCase() === 'LINK'
-                    ) {
-                        // …and matches one of the regexes, we assume the match is not pertinent to the current form
-                        if (el.textContent.match(this.loginRegex)) this.increaseSignalBy(1, `external link: ${el.textContent}`)
-                        if (el.textContent.match(this.signupRegex)) this.decreaseSignalBy(1, `external link: ${el.textContent}`)
-                    } else {
-                        // any other case
-                        if (el.textContent.match(this.loginRegex)) this.decreaseSignalBy(1, `generic: ${el.textContent}`)
-                        if (el.textContent.match(this.signupRegex)) this.increaseSignalBy(1, `generic: ${el.textContent}`)
-                    }
-                }
-            })
+            this.form.querySelectorAll('*').forEach(el => this.evaluateElement(el))
+
             // If we can't decide at this point, try reading page headings
             if (this.autofillSignal === 0) {
                 this.evaluatePageHeadings()
