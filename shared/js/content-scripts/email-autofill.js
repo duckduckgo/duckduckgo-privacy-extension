@@ -23,6 +23,7 @@
             this.relevantInputs.forEach(input => {
                 input.style.backgroundColor = 'red'
                 input.style.boxShadow = '0 0 25px red'
+                input.setAttribute('data-ddg-autofill', 'true')
             })
             return this
         }
