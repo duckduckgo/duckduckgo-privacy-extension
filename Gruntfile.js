@@ -59,7 +59,8 @@ module.exports = function (grunt) {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
-        contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js']
+        contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
+        data: ['<%= dirs.data %>/*.js']
     }
 
     let karmaOps = {
@@ -163,6 +164,7 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
             // make sure that sed works on both linux and OSX (see https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux)
             devifyOnboarding: `sed -i.bak "s/\\/\\* __ \\*\\/ 'https:\\/\\/duckduckgo\\.com' \\/\\* __ \\*\\//'*'/" build/${browser}/${buildType}/public/js/content-scripts/onboarding.js && rm build/${browser}/${buildType}/public/js/content-scripts/onboarding.js.bak`,
@@ -178,8 +180,7 @@ module.exports = function (grunt) {
             },
             ui: {
                 files: watch.ui,
-                tasks: ['browserify:ui', 'watchSafari']
-
+                tasks: ['browserify:ui', 'watchSafari', 'exec:copyData']
             },
             backgroundES6JS: {
                 files: watch.background,
@@ -192,6 +193,10 @@ module.exports = function (grunt) {
             contentScripts: {
                 files: watch.contentScripts,
                 tasks: ['exec:copyContentScripts', 'exec:devifyOnboarding']
+            },
+            data: {
+                files: watch.data,
+                tasks: ['exec:copyData']
             }
         },
 
