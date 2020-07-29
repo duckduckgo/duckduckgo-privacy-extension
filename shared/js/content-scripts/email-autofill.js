@@ -7,7 +7,7 @@
             this.autofillSignal = 0
             this.signals = []
             this.loginRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
-            this.signupRegex = new RegExp(/sign(ing)?.?up|join|register|newsletter|subscri(be|ption)|contact|create|start/i)
+            this.signupRegex = new RegExp(/sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i)
             this.conservativeSignupRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
             this.evaluateElAttributes(input)
             form ? this.evaluateForm() : this.evaluatePage()
