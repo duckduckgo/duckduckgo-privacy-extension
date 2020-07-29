@@ -33,8 +33,12 @@ describe('Email autofill input detection Tests', () => {
             }
 
             if (actions) {
-                await Promise.all(actions.map(async ({action, selector}) => page[action](arg)))
-                    .catch(e => fail(`Action failed on ${name}: ${e.message}.`))
+                for (const action of actions) {
+                    await page[action.action](action.arg)
+                        .catch(e => !action.optional && fail(`Action ${action} failed on ${name}: ${e.message}.`))
+                    // Wait a bit to give it time to execute. If you need more, add an explicit waitFor action
+                    await page.waitFor(750)
+                }
             }
 
             if (autofillExpected) {
