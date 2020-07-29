@@ -30,7 +30,7 @@ describe('Email autofill input detection Tests', () => {
             }
 
             if (actions) {
-                await Promise.all(actions.map(async ({action, selector}) => page[action](selector)))
+                await Promise.all(actions.map(async ({action, selector}) => page[action](arg)))
                     .catch(e => fail(`Action failed on ${name}: ${e.message}.`))
             }
 

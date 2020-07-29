@@ -12,7 +12,7 @@ const tests = [
     {
         name: 'quora signup',
         url: 'https://www.quora.com/',
-        actions: [{action: 'click', selector: '.signup_email_link'}],
+        actions: [{action: 'click', arg: '.signup_email_link'}],
         autofillExpected: true
     },
     {
