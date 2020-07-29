@@ -4,7 +4,10 @@
 
 /* global dbg:false */
 const harness = require('../helpers/harness')
-const sites = require('./input-detection-site-list')
+const _sites = require('./input-detection-site-list')
+
+// Add sites to the focusedSites to only execute those
+const sites = _sites.focusedSites.length ? _sites.focusedSites : _sites.sites
 
 let browser
 

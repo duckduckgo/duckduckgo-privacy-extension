@@ -1,4 +1,4 @@
-const tests = [
+const sites = [
     {
         name: 'reddit signup',
         url: 'https://www.reddit.com/register/?dest=https%3A%2F%2Fwww.reddit.com%2F',
@@ -32,4 +32,6 @@ const tests = [
     }
 ]
 
-module.exports = tests
+const focusedSites = []
+
+module.exports = {sites, focusedSites}
