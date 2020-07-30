@@ -10,10 +10,17 @@ const _sites = require('./input-detection-site-list')
 const sites = _sites.focusedSites.length ? _sites.focusedSites : _sites.sites
 
 let browser
+let bgPage
 
 describe('Email autofill input detection Tests', () => {
     beforeAll(async () => {
-        ({ browser } = await harness.setup())
+        ({ browser, bgPage } = await harness.setup())
+
+        // wait for HTTPs to successfully load
+        await bgPage.waitForFunction(
+            () => window.dbg && dbg.https.isReady,
+            { polling: 100, timeout: 60000 }
+        )
     })
     afterAll(async () => {
         await harness.teardown(browser)
