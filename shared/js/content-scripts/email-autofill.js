@@ -143,15 +143,15 @@
     const findEligibleInput = context => {
         const forms = new Map()
         context.querySelectorAll(`
-                input:not([type])[name*=email i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=""][name*=email i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=text][name*=email i]:not([readonly]):not([disabled]):not([hidden]),
-                input:not([type])[id*=email i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=""][id*=email i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=text][id*=email i]:not([readonly]):not([disabled]):not([hidden]),
+                input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+                input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+                input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+                input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+                input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+                input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
                 input[type=email]:not([readonly]):not([disabled]):not([hidden]),
-                input[aria-label*=email i],
-                input[placeholder*=email i]:not([readonly])
+                input[aria-label*=mail i],
+                input[placeholder*=mail i]:not([readonly])
             `)
             .forEach(input => {
                 const parentForm = input.form
