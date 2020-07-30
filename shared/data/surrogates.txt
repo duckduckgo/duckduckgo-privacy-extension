@@ -205,7 +205,8 @@ googletagservices.com/gpt.js application/javascript
         disablePublisherConsole: noop,
         display: noop,
         enableServices: noop,
-        getVersion: noopReturnEmptyString
+        getVersion: noopReturnEmptyString,
+        setAdIframeTitle: noop
     }
     const commandQueue = (window.googletag && window.googletag.cmd.length) ? window.googletag.cmd : []
     gptObj.cmd.push = function(arg) {
