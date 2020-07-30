@@ -42,7 +42,7 @@ describe('Email autofill input detection Tests', () => {
             }
 
             if (autofillExpected) {
-                await page.waitForSelector('[data-ddg-autofill]', {visible: true})
+                await page.waitForSelector('[data-ddg-autofill]')
                     .catch(() => fail(`False negative on ${name}.`))
             } else {
                 const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 300})
