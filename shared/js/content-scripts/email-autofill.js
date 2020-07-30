@@ -86,7 +86,7 @@
             // this is important in order to give proper attribution of the text to the button
             if (el.nodeName.toUpperCase() === 'BUTTON') return el.innerText
 
-            if (el.nodeName.toUpperCase() === 'INPUT' && el.type === 'submit') return el.value
+            if (el.nodeName.toUpperCase() === 'INPUT' && ['submit', 'button'].includes(el.type)) return el.value
 
             return Array.from(el.childNodes).reduce((text, child) =>
                 child.nodeName === '#text' ? text + ' ' + child.textContent : text, '')
@@ -100,7 +100,7 @@
 
             // check button contents
             if (
-                (el.nodeName.toUpperCase() === 'INPUT' && el.type === 'submit') ||
+                (el.nodeName.toUpperCase() === 'INPUT' && ['submit', 'button'].includes(el.type)) ||
                 (el.nodeName.toUpperCase() === 'BUTTON' && el.type === 'submit') ||
                 ((el.getAttribute('role') || '').toUpperCase() === 'BUTTON')
             ) {
