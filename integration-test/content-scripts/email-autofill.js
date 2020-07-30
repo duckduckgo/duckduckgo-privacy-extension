@@ -45,6 +45,8 @@ describe('Email autofill input detection Tests', () => {
                 await page.waitForSelector('[data-ddg-autofill]')
                     .catch(() => fail(`False negative on ${name}.`))
                 if (autofillExpected > 1) {
+                    await page.waitForSelector('input')
+                        .catch(() => fail(`Couldn't find an input on ${name}. Maybe the page didn't load.`))
                     await page.$$('[data-ddg-autofill]')
                         .then(nodes => {
                             if (nodes.length < autofillExpected) {
