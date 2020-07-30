@@ -44,6 +44,14 @@ describe('Email autofill input detection Tests', () => {
             if (autofillExpected) {
                 await page.waitForSelector('[data-ddg-autofill]')
                     .catch(() => fail(`False negative on ${name}.`))
+                if (autofillExpected > 1) {
+                    await page.$$('[data-ddg-autofill]')
+                        .then(nodes => {
+                            if (nodes.length < autofillExpected) {
+                                fail(`Expected ${autofillExpected} elements, but got ${nodes.length}.`)
+                            }
+                        })
+                }
             } else {
                 const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 300})
                     .catch(() => null) // the selector is supposed to fail
