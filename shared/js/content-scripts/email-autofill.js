@@ -20,10 +20,12 @@
         }
 
         decorateInputs () {
-            this.relevantInputs.forEach(input => {
-                input.style.backgroundColor = 'red'
-                input.style.boxShadow = '0 0 25px red'
-                input.setAttribute('data-ddg-autofill', 'true')
+            window.requestAnimationFrame(() => {
+                this.relevantInputs.forEach(input => {
+                    input.style.backgroundColor = 'red'
+                    input.style.boxShadow = '0 0 25px red'
+                    input.setAttribute('data-ddg-autofill', 'true')
+                })
             })
             return this
         }
@@ -184,7 +186,9 @@
                 // We query only within the context of added/removed nodes
                 mutationRecord.addedNodes.forEach(el => {
                     if (el instanceof HTMLElement) {
-                        findEligibleInput(el)
+                        window.requestIdleCallback(() =>
+                            findEligibleInput(el)
+                        )
                     }
                 })
             }
