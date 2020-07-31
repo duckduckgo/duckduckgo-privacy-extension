@@ -9,7 +9,8 @@
             this.loginRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
             this.signupRegex = new RegExp(/sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i)
             this.conservativeSignupRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
-            this.evaluateElAttributes(input)
+            this.strictSignupRegex = new RegExp(/sign.?up|join|register/i)
+            this.evaluateElAttributes(input, 3, true)
             form ? this.evaluateForm() : this.evaluatePage()
             return this
         }
@@ -42,11 +43,17 @@
             return this
         }
 
-        evaluateElAttributes (el, signalStrength = 3) {
+        evaluateElAttributes (el, signalStrength = 3, isInput = false) {
             Array.from(el.attributes).forEach(attr => {
                 const attributeString = `${attr.nodeName}=${attr.nodeValue}`
                 if (attributeString.match(this.loginRegex)) this.decreaseSignalBy(signalStrength, `${el.nodeName} attr: ${attributeString}`)
                 if (attributeString.match(this.signupRegex)) this.increaseSignalBy(signalStrength, `${el.nodeName} attr: ${attributeString}`)
+                // Check for unified login/signup forms only on the input attributes
+                if (isInput) {
+                    if (attributeString.match(this.loginRegex) && attributeString.match(this.strictSignupRegex)) {
+                        this.decreaseSignalBy(3, `${el.nodeName} attr ratto: ${attributeString}`)
+                    }
+                }
             })
         }
 
@@ -54,14 +61,22 @@
             const pageTitle = document.title
             if (pageTitle.match(this.loginRegex)) this.decreaseSignalBy(2, `page title: ${pageTitle}`)
             if (pageTitle.match(this.signupRegex)) this.increaseSignalBy(2, `page title: ${pageTitle}`)
+            // Check for unified login/signup forms
+            if (pageTitle.match(this.loginRegex) && pageTitle.match(this.strictSignupRegex)) {
+                this.decreaseSignalBy(2, `page title: ${pageTitle}`)
+            }
         }
 
         evaluatePageHeadings () {
             const headings = document.querySelectorAll('h1, h2, h3')
             if (headings) {
                 headings.forEach(({innerText}) => {
-                    if (innerText.match(this.loginRegex)) this.decreaseSignalBy(0.5, `generic: ${innerText}`)
-                    if (innerText.match(this.conservativeSignupRegex)) this.increaseSignalBy(0.5, `generic: ${innerText}`)
+                    if (innerText.match(this.loginRegex)) this.decreaseSignalBy(0.5, `heading: ${innerText}`)
+                    if (innerText.match(this.conservativeSignupRegex)) this.increaseSignalBy(0.5, `heading: ${innerText}`)
+                    // Check for unified login/signup forms
+                    if (innerText.match(this.loginRegex) && innerText.match(this.strictSignupRegex)) {
+                        this.decreaseSignalBy(3, `heading: ${innerText}`)
+                    }
                 })
             }
         }
@@ -121,6 +136,9 @@
                 // any other case
                 if (elText.match(this.loginRegex)) this.decreaseSignalBy(1, `generic: ${elText}`)
                 if (elText.match(this.signupRegex)) this.increaseSignalBy(1, `generic: ${elText}`)
+                if (elText.match(this.loginRegex) && elText.match(this.strictSignupRegex)) {
+                    this.decreaseSignalBy(2, `generic: ${elText}`)
+                }
             }
         }
 
