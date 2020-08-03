@@ -58,10 +58,8 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
     if (isActive && rating && rating.before && rating.after) {
         if (rating.before !== rating.after) {
             // wrap this in a single root span otherwise bel complains
-            return bel`<span>Enhanced from
+            return bel`<span>Site enhanced from
     <span class="rating-letter rating-letter--${rating.cssBefore}">
-    </span> to
-    <span class="rating-letter rating-letter--${rating.cssAfter}">
     </span>
 </span>`
         }
@@ -97,6 +95,6 @@ function subtitleLabel (isCalculating, rating, isWhitelisted) {
     }
 
     if (rating.before && rating.after) {
-        return `Enhanced from ${rating.before} to ${rating.after}`
+        return `Site enhanced from ${rating.before}`
     }
 }
