@@ -148,11 +148,12 @@ const sites = [
         url: 'https://www.infowars.com/newsletter-sign-up/',
         autofillExpected: 1
     },
+    /* // Commented out because the page does not load in the headless browser
     {
         name: 'Kijiji signup',
         url: 'https://www.kijiji.ca/t-user-registration.html',
         autofillExpected: 1
-    },
+    }, */
     {
         name: 'Kijiji login',
         url: 'https://www.kijiji.ca/t-login.html',
