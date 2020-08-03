@@ -43,40 +43,61 @@
             return this
         }
 
+        updateSignal ({
+            string, // The string to check
+            strength, // Strength of the signal
+            signalType = 'generic', // For debugging purposes, we give a name to the signal
+            shouldFlip = false, // Flips the signals, i.e. when a link points outside. See below
+            shouldCheckUnifiedForm = false, // Should check for login/signup forms
+            shouldBeConservative = false // Should use the conservative signup regex
+        }) {
+            const loginMatches = string.match(this.loginRegex)
+
+            // Check explicitly for unified login/signup forms. They should always be negative, so we increase signal
+            if (shouldCheckUnifiedForm && loginMatches && string.match(this.strictSignupRegex)) {
+                return this.decreaseSignalBy(strength + 2, `Unified detected ${signalType}`)
+            }
+
+            const signupMatches = string.match(shouldBeConservative ? this.conservativeSignupRegex : this.signupRegex)
+
+            // In some cases a login match means the login is somewhere else, i.e. when a link points outside
+            if (shouldFlip) {
+                if (loginMatches) this.increaseSignalBy(strength, signalType)
+                if (signupMatches) this.decreaseSignalBy(strength, signalType)
+            } else {
+                if (loginMatches) this.decreaseSignalBy(strength, signalType)
+                if (signupMatches) this.increaseSignalBy(strength, signalType)
+            }
+        }
+
         evaluateElAttributes (el, signalStrength = 3, isInput = false) {
             Array.from(el.attributes).forEach(attr => {
                 const attributeString = `${attr.nodeName}=${attr.nodeValue}`
-                if (attributeString.match(this.loginRegex)) this.decreaseSignalBy(signalStrength, `${el.nodeName} attr: ${attributeString}`)
-                if (attributeString.match(this.signupRegex)) this.increaseSignalBy(signalStrength, `${el.nodeName} attr: ${attributeString}`)
-                // Check for unified login/signup forms only on the input attributes
-                if (isInput) {
-                    if (attributeString.match(this.loginRegex) && attributeString.match(this.strictSignupRegex)) {
-                        this.decreaseSignalBy(3, `${el.nodeName} attr ratto: ${attributeString}`)
-                    }
-                }
+                this.updateSignal({
+                    string: attributeString,
+                    strength: signalStrength,
+                    signalType: `${el.nodeName} attr: ${attributeString}`,
+                    shouldCheckUnifiedForm: isInput
+                })
             })
         }
 
         evaluatePageTitle () {
             const pageTitle = document.title
-            if (pageTitle.match(this.loginRegex)) this.decreaseSignalBy(2, `page title: ${pageTitle}`)
-            if (pageTitle.match(this.signupRegex)) this.increaseSignalBy(2, `page title: ${pageTitle}`)
-            // Check for unified login/signup forms
-            if (pageTitle.match(this.loginRegex) && pageTitle.match(this.strictSignupRegex)) {
-                this.decreaseSignalBy(2, `page title: ${pageTitle}`)
-            }
+            this.updateSignal({string: pageTitle, strength: 2, signalType: `page title: ${pageTitle}`})
         }
 
         evaluatePageHeadings () {
             const headings = document.querySelectorAll('h1, h2, h3')
             if (headings) {
                 headings.forEach(({innerText}) => {
-                    if (innerText.match(this.loginRegex)) this.decreaseSignalBy(0.5, `heading: ${innerText}`)
-                    if (innerText.match(this.conservativeSignupRegex)) this.increaseSignalBy(0.5, `heading: ${innerText}`)
-                    // Check for unified login/signup forms
-                    if (innerText.match(this.loginRegex) && innerText.match(this.strictSignupRegex)) {
-                        this.decreaseSignalBy(3, `heading: ${innerText}`)
-                    }
+                    this.updateSignal({
+                        string: innerText,
+                        strength: 0.5,
+                        signalType: `heading: ${innerText}`,
+                        shouldCheckUnifiedForm: true,
+                        shouldBeConservative: true
+                    })
                 })
             }
         }
@@ -113,7 +134,7 @@
             // Skip select and option elements because they contain too much noise
             if (['OPTION', 'SELECT'].includes(el.nodeName.toUpperCase())) return
 
-            const elText = this.getText(el)
+            const string = this.getText(el)
 
             // check button contents
             if (
@@ -121,8 +142,7 @@
                 (el.nodeName.toUpperCase() === 'BUTTON' && el.type === 'submit') ||
                 ((el.getAttribute('role') || '').toUpperCase() === 'BUTTON')
             ) {
-                if (elText.match(this.loginRegex)) this.decreaseSignalBy(2, `submit: ${elText}`)
-                if (elText.match(this.signupRegex)) this.increaseSignalBy(2, `submit: ${elText}`)
+                this.updateSignal({string, strength: 2, signalType: `submit: ${string}`})
             }
             // if a link points to relevant urls or contain contents outside the page…
             if (
@@ -130,15 +150,10 @@
                 (el.getAttribute('role') || '').toUpperCase() === 'LINK'
             ) {
                 // …and matches one of the regexes, we assume the match is not pertinent to the current form
-                if (elText.match(this.loginRegex)) this.increaseSignalBy(1, `external link: ${elText}`)
-                if (elText.match(this.signupRegex)) this.decreaseSignalBy(1, `external link: ${elText}`)
+                this.updateSignal({string, strength: 1, signalType: `external link: ${string}`, shouldFlip: true})
             } else {
                 // any other case
-                if (elText.match(this.loginRegex)) this.decreaseSignalBy(1, `generic: ${elText}`)
-                if (elText.match(this.signupRegex)) this.increaseSignalBy(1, `generic: ${elText}`)
-                if (elText.match(this.loginRegex) && elText.match(this.strictSignupRegex)) {
-                    this.decreaseSignalBy(2, `generic: ${elText}`)
-                }
+                this.updateSignal({string, strength: 1, signalType: `generic: ${string}`, shouldCheckUnifiedForm: true})
             }
         }
 
