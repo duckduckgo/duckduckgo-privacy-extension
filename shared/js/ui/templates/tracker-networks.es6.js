@@ -14,7 +14,7 @@ module.exports = function () {
     <div class="js-tracker-networks-hero">
         ${renderHero(this.model.site)}
     </div>
-    <div class="tracker-networks__explainer padded border--bottom--inner
+    <div class="tracker-networks__explainer border--bottom--inner
         text--center">
         Tracker networks aggregate your web history into a data profile about you.
         Major tracker networks are more harmful because they can track and target you across more of the internet.
@@ -57,7 +57,7 @@ function renderTrackerDetails (model) {
                 const additionalText = ' associated domains'
                 const domain = model.site ? model.site.domain : c.displayName
                 c.displayName = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
-                borderClass = companyListMap.length > 1 ? 'border--top' : ''
+                borderClass = companyListMap.length > 1 ? 'border--top padded--top' : ''
             }
             return bel`<li class="${borderClass}">
     <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
