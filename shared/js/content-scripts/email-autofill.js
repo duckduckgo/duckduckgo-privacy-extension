@@ -131,9 +131,6 @@
         }
 
         evaluateElement (el) {
-            // Skip select and option elements because they contain too much noise
-            if (['OPTION', 'SELECT'].includes(el.nodeName.toUpperCase())) return
-
             const string = this.getText(el)
 
             // check button contents
@@ -164,8 +161,8 @@
             // Check form attributes
             this.evaluateElAttributes(this.form)
 
-            // Check form contents
-            this.form.querySelectorAll('*').forEach(el => this.evaluateElement(el))
+            // Check form contents (skip select and option because they contain too much noise)
+            this.form.querySelectorAll('*:not(select):not(option)').forEach(el => this.evaluateElement(el))
 
             // If we can't decide at this point, try reading page headings
             if (this.autofillSignal === 0) {
