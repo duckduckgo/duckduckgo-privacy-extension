@@ -6,10 +6,6 @@
             this.addInput(input)
             this.autofillSignal = 0
             this.signals = []
-            this.loginRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
-            this.signupRegex = new RegExp(/sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i)
-            this.conservativeSignupRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
-            this.strictSignupRegex = new RegExp(/sign.?up|join|register/i)
             this.evaluateElAttributes(input, 3, true)
             form ? this.evaluateForm() : this.evaluatePage()
             return this
@@ -51,14 +47,21 @@
             shouldCheckUnifiedForm = false, // Should check for login/signup forms
             shouldBeConservative = false // Should use the conservative signup regex
         }) {
-            const loginMatches = string.match(this.loginRegex)
+            const loginRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
+            const signupRegex = new RegExp(
+                /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i
+            )
+            const conservativeSignupRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
+            const strictSignupRegex = new RegExp(/sign.?up|join|register/i)
+            const loginMatches = string.match(loginRegex)
 
             // Check explicitly for unified login/signup forms. They should always be negative, so we increase signal
-            if (shouldCheckUnifiedForm && loginMatches && string.match(this.strictSignupRegex)) {
-                return this.decreaseSignalBy(strength + 2, `Unified detected ${signalType}`)
+            if (shouldCheckUnifiedForm && loginMatches && string.match(strictSignupRegex)) {
+                this.decreaseSignalBy(strength + 2, `Unified detected ${signalType}`)
+                return this
             }
 
-            const signupMatches = string.match(shouldBeConservative ? this.conservativeSignupRegex : this.signupRegex)
+            const signupMatches = string.match(shouldBeConservative ? conservativeSignupRegex : signupRegex)
 
             // In some cases a login match means the login is somewhere else, i.e. when a link points outside
             if (shouldFlip) {
@@ -68,6 +71,7 @@
                 if (loginMatches) this.decreaseSignalBy(strength, signalType)
                 if (signupMatches) this.increaseSignalBy(strength, signalType)
             }
+            return this
         }
 
         evaluateElAttributes (el, signalStrength = 3, isInput = false) {
