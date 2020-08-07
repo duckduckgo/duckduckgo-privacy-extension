@@ -176,19 +176,21 @@
         }
     }
 
+    const EMAIL_SELECTOR = `
+        input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+        input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+        input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+        input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+        input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+        input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+        input[type=email]:not([readonly]):not([disabled]):not([hidden]),
+        input[aria-label*=mail i],
+        input[placeholder*=mail i]:not([readonly])
+    `
+
     const findEligibleInput = context => {
         const forms = new Map()
-        context.querySelectorAll(`
-                input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-                input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-                input[type=email]:not([readonly]):not([disabled]):not([hidden]),
-                input[aria-label*=mail i],
-                input[placeholder*=mail i]:not([readonly])
-            `)
+        context.querySelectorAll(EMAIL_SELECTOR)
             .forEach(input => {
                 const parentForm = input.form
                 if (parentForm) {
