@@ -1,4 +1,102 @@
 (() => {
+    // Here we store a map of input -> button associations
+    const inputButtonMap = new Map()
+
+    class Button {
+        constructor (input) {
+            this.input = input
+            this.inputRightMargin = parseInt(getComputedStyle(this.input).paddingRight)
+            this.animationFrame = null
+            this.topPosition = 0
+            this.leftPosition = 0
+            this.createButton()
+            return this
+        }
+
+        createButton () {
+            this.button = document.createElement('button')
+            this.button.textContent = '🦆'
+            this.button.type = 'button'
+            this.button.style.cssText = `
+                position: absolute;
+                width: 30px;
+                height: 30px;
+                padding: 0;
+                border: 1px solid green;
+                border-radius: 50%;
+                text-align: center;
+                background-color: #eee;
+                transform: translateY(-50%);
+                z-index: 2147483647;
+            `
+            this.button.onclick = async (e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                this.input.value = 'example_alias@duck.com'
+                this.createTooltip()
+            }
+            window.requestAnimationFrame(() => {
+                document.body.appendChild(this.button)
+                this.updateButtonPosition()
+            })
+        }
+
+        updateButtonPosition () {
+            if (this.animationFrame) {
+                console.log('canceling')
+                window.cancelAnimationFrame(this.animationFrame)
+            }
+
+            this.animationFrame = window.requestAnimationFrame(() => {
+                console.log('animationframecallback')
+                const {right, top, height} = this.input.getBoundingClientRect()
+                const currentTop = `${top + window.scrollY + height / 2}px`
+                const currentLeft = `${right + window.scrollX - 30 - this.inputRightMargin}px`
+
+                if (currentTop !== this.topPosition) {
+                    this.button.style.top = currentTop
+                    this.topPosition = currentTop
+                }
+                if (currentLeft !== this.leftPosition) {
+                    this.button.style.left = currentLeft
+                    this.leftPosition = currentLeft
+                }
+
+                this.animationFrame = null
+            })
+        }
+    }
+
+    const updateAllButtons = () => {
+        inputButtonMap.forEach((button) => {
+            button.updateButtonPosition()
+        })
+    }
+
+    const intObs = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            const input = entry.target
+            if (entry.isIntersecting) {
+                console.log('intersecting')
+                // If is intersecting and visible (note that `display:none` will never intersect)
+                if (window.getComputedStyle(input).visibility !== 'hidden') {
+                    // Keep track of the input->button pair
+                    const button = new Button(input)
+                    inputButtonMap.set(input, button)
+                }
+            } else {
+                // If it's not intersecting and we have the input stored…
+                if (inputButtonMap.has(input)) {
+                    // …remove the button from the DOM
+                    inputButtonMap.get(input).button.remove()
+                    console.log('input removed')
+                    // …and remove the input from the map
+                    inputButtonMap.delete(input)
+                }
+            }
+        })
+    })
+
     class Form {
         constructor (form, input) {
             this.form = form
@@ -22,6 +120,8 @@
                     input.style.backgroundColor = 'red'
                     input.style.boxShadow = '0 0 25px red'
                     input.setAttribute('data-ddg-autofill', 'true')
+
+                    intObs.observe(input)
                 })
             })
             return this
@@ -230,5 +330,10 @@
             }
         })
     })
-    observer.observe(document.body, {childList: true, subtree: true, attributes: true})
+    observer.observe(document.body, {childList: true, subtree: true, attributes: true});
+
+    // Update the position if transitions or animations are detected just in case
+    ['transitionend', 'animationend'].forEach(
+        eventType => window.addEventListener(eventType, () => updateAllButtons())
+    )
 })()
