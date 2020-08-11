@@ -97,6 +97,20 @@ module.exports = {
             "source": "external"
         }
     ],
+    "UserAgentLists": [
+        {
+            "name": "agents",
+            "url": "http://0.0.0.0:8000/random_useragent.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "excludeList",
+            "url": "http://0.0.0.0:8000/agent-breaking-sites.txt",
+            "format": "text",
+            "source": "external"
+        }
+    ],
     "httpsErrorCodes": {
         "net::ERR_CONNECTION_REFUSED": 1,
         "net::ERR_ABORTED": 2,
