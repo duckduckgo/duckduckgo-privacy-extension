@@ -1,6 +1,7 @@
 (() => {
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
+    const logo = browser.runtime.getURL('img/logo-small.svg')
 
     class DDGAutofill extends HTMLElement {
         constructor (input) {
@@ -29,10 +30,12 @@
         width: 30px;
         height: 30px;
         padding: 0;
-        border: 1px solid green;
-        border-radius: 50%;
+        border: none;
         text-align: center;
-        background-color: #eee;
+        background: transparent;
+    }
+    .trigger > img {
+        width: 100%;
     }
     .tooltip {
         position: absolute;
@@ -99,7 +102,7 @@
     }
 </style>
 <div class="wrapper">
-    <button class="trigger">🦆</button>
+    <button class="trigger"><img src="${logo}" alt="Open the DuckDuckGo autofill tooltip" /></button>
     <div class="tooltip" hidden>
         <strong>Duck.com created a private alias for you.</strong>
         <p>Emails will be sent to you as usual, and you gain an extra level of privacy.</p>
