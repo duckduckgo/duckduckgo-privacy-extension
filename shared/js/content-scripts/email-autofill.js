@@ -1,3 +1,5 @@
+require('@webcomponents/webcomponentsjs');
+
 (() => {
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
