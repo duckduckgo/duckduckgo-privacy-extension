@@ -142,9 +142,17 @@ require('@webcomponents/webcomponentsjs');
                 this.tooltip.hidden = true
                 window.removeEventListener('click', this.hideTooltip)
             }
+            this.autofillInput = () => {
+                this.input.value = 'example_alias@duck.com'
+                this.input.style.backgroundColor = '#fcfab8'
+            }
+            this.resetInput = () => {
+                this.input.value = ''
+                this.input.style.removeProperty('background-color')
+            }
 
             this.input.addEventListener('focus', () => {
-                if (!this.input.value) this.input.value = 'example_alias@duck.com'
+                if (!this.input.value) this.autofillInput()
                 this.showTooltip()
             }, {once: true})
 
@@ -154,12 +162,12 @@ require('@webcomponents/webcomponentsjs');
             })
             this.dismissButton.addEventListener('click', (e) => {
                 e.stopImmediatePropagation()
-                this.input.value = ''
+                this.resetInput()
                 this.hideTooltip()
             })
             this.confirmButton.addEventListener('click', (e) => {
                 e.stopImmediatePropagation()
-                this.input.value = 'example_alias@duck.com'
+                this.autofillInput()
                 this.hideTooltip()
             })
         }
@@ -241,8 +249,6 @@ require('@webcomponents/webcomponentsjs');
         decorateInputs () {
             window.requestAnimationFrame(() => {
                 this.relevantInputs.forEach(input => {
-                    input.style.backgroundColor = 'red'
-                    input.style.boxShadow = '0 0 25px red'
                     input.setAttribute('data-ddg-autofill', 'true')
 
                     intObs.observe(input)
