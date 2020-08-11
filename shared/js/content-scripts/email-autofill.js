@@ -2,74 +2,189 @@
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
 
-    class Button {
+    class DDGAutofill extends HTMLElement {
         constructor (input) {
+            super()
+            const shadow = this.attachShadow({mode: 'open'})
             this.input = input
             this.inputRightMargin = parseInt(getComputedStyle(this.input).paddingRight)
             this.animationFrame = null
             this.topPosition = 0
             this.leftPosition = 0
-            this.createButton()
-            return this
-        }
 
-        createButton () {
-            this.button = document.createElement('button')
-            this.button.textContent = '🦆'
-            this.button.type = 'button'
-            this.button.style.cssText = `
-                position: absolute;
-                width: 30px;
-                height: 30px;
-                padding: 0;
-                border: 1px solid green;
-                border-radius: 50%;
-                text-align: center;
-                background-color: #eee;
-                transform: translateY(-50%);
-                z-index: 2147483647;
+            shadow.innerHTML = `
+<style>
+    .wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        transform: translateY(-50%);
+        font-family: "Proxima Nova";
+        z-index: 2147483647;
+    }
+    .trigger {
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 1px solid green;
+        border-radius: 50%;
+        text-align: center;
+        background-color: #eee;
+    }
+    .tooltip {
+        position: absolute;
+        bottom: calc(100% + 15px);
+        right: calc(100% - 60px);
+        width: 300px;
+        padding: 14px;
+        border: 1px solid #D0D0D0;
+        border-radius: 12px;
+        background-color: #FFFFFF;
+        font-size: 14px;
+        line-height: 1.4;
+        z-index: 2147483647;
+    }
+    .tooltip::before {
+        content: "";
+        width: 0; 
+        height: 0; 
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        display: block;
+        border-top: 12px solid #D0D0D0;
+        position: absolute;
+        right: 34px;
+        bottom: -12px;
+    }
+    .tooltip::after {
+        content: "";
+        width: 0; 
+        height: 0; 
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        display: block;
+        border-top: 12px solid #FFFFFF;
+        position: absolute;
+        right: 34px;
+        bottom: -10px;
+    }
+    .tooltip strong {
+        margin: 0 0 8px;
+        color: #333333;
+        font-weight: bold;
+        line-height: 1.3;
+    }    
+    .tooltip p {
+        margin: 8px 0 8px;
+        color: #666666;
+    }
+    .tooltip__button {
+        height: 40px;
+        padding: 0 20px;
+        background-color: #678FFF;
+        color: #FFFFFF;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+    .tooltip__button:last-child {
+        margin-left: 10px;
+    }
+    .tooltip__button--secondary {
+        background-color: #EEEEEE;
+        color: #333333;
+    }
+</style>
+<div class="wrapper">
+    <button class="trigger">🦆</button>
+    <div class="tooltip" hidden>
+        <strong>Duck.com created a private alias for you.</strong>
+        <p>Emails will be sent to you as usual, and you gain an extra level of privacy.</p>
+        <div>
+            <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
+            <button class="tooltip__button tooltip__button--primary js-confirm">Use Private Alias</button>
+        </div>
+    </div>
+</div>
             `
-            this.button.onclick = async (e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                this.input.value = 'example_alias@duck.com'
-                this.createTooltip()
-            }
-            window.requestAnimationFrame(() => {
-                document.body.appendChild(this.button)
-                this.updateButtonPosition()
-            })
+            this.wrapper = shadow.querySelector('.wrapper')
+            this.trigger = shadow.querySelector('.trigger')
+            this.tooltip = shadow.querySelector('.tooltip')
+            this.dismissButton = shadow.querySelector('.js-dismiss')
+            this.confirmButton = shadow.querySelector('.js-confirm')
         }
 
-        updateButtonPosition () {
-            if (this.animationFrame) {
-                console.log('canceling')
-                window.cancelAnimationFrame(this.animationFrame)
+        connectedCallback () {
+            updateButtonPosition(this)
+
+            this.showTooltip = () => {
+                if (!this.tooltip.hidden) {
+                    return
+                }
+                this.tooltip.hidden = false
+                window.addEventListener('click', this.hideTooltip)
+            }
+            this.hideTooltip = () => {
+                if (this.tooltip.hidden) {
+                    return
+                }
+                this.tooltip.hidden = true
+                window.removeEventListener('click', this.hideTooltip)
             }
 
-            this.animationFrame = window.requestAnimationFrame(() => {
-                console.log('animationframecallback')
-                const {right, top, height} = this.input.getBoundingClientRect()
-                const currentTop = `${top + window.scrollY + height / 2}px`
-                const currentLeft = `${right + window.scrollX - 30 - this.inputRightMargin}px`
+            this.input.addEventListener('focus', () => {
+                if (!this.input.value) this.input.value = 'example_alias@duck.com'
+                this.showTooltip()
+            }, {once: true})
 
-                if (currentTop !== this.topPosition) {
-                    this.button.style.top = currentTop
-                    this.topPosition = currentTop
-                }
-                if (currentLeft !== this.leftPosition) {
-                    this.button.style.left = currentLeft
-                    this.leftPosition = currentLeft
-                }
-
-                this.animationFrame = null
+            this.trigger.addEventListener('click', (e) => {
+                e.stopImmediatePropagation()
+                this.showTooltip()
+            })
+            this.dismissButton.addEventListener('click', (e) => {
+                e.stopImmediatePropagation()
+                this.input.value = ''
+                this.hideTooltip()
+            })
+            this.confirmButton.addEventListener('click', (e) => {
+                e.stopImmediatePropagation()
+                this.input.value = 'example_alias@duck.com'
+                this.hideTooltip()
             })
         }
     }
 
+    function updateButtonPosition (el) {
+        if (el.animationFrame) {
+            window.cancelAnimationFrame(el.animationFrame)
+        }
+
+        el.animationFrame = window.requestAnimationFrame(() => {
+            const {right, top, height} = el.input.getBoundingClientRect()
+            const currentTop = `${top + window.scrollY + height / 2}px`
+            const currentLeft = `${right + window.scrollX - 30 - el.inputRightMargin}px`
+
+            if (currentTop !== el.topPosition) {
+                el.wrapper.style.top = currentTop
+                el.topPosition = currentTop
+            }
+            if (currentLeft !== el.leftPosition) {
+                el.wrapper.style.left = currentLeft
+                el.leftPosition = currentLeft
+            }
+
+            el.animationFrame = null
+        })
+    }
+
+    customElements.define('ddg-autofill', DDGAutofill)
+
     const updateAllButtons = () => {
         inputButtonMap.forEach((button) => {
-            button.updateButtonPosition()
+            updateButtonPosition(button)
         })
     }
 
@@ -81,15 +196,16 @@
                 // If is intersecting and visible (note that `display:none` will never intersect)
                 if (window.getComputedStyle(input).visibility !== 'hidden') {
                     // Keep track of the input->button pair
-                    const button = new Button(input)
+                    const button = new DDGAutofill(input)
+                    document.body.appendChild(button)
                     inputButtonMap.set(input, button)
                 }
             } else {
                 // If it's not intersecting and we have the input stored…
                 if (inputButtonMap.has(input)) {
                     // …remove the button from the DOM
-                    inputButtonMap.get(input).button.remove()
-                    console.log('input removed')
+                    inputButtonMap.get(input).remove()
+                    console.log('button removed')
                     // …and remove the input from the map
                     inputButtonMap.delete(input)
                 }
