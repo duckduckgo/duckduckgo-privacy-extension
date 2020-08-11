@@ -1,6 +1,7 @@
 const Parent = window.DDG.base.View
 const TopBlockedFullView = require('./top-blocked.es6.js')
 const topBlockedFullTemplate = require('./../templates/top-blocked.es6.js')
+const TOP_BLOCKED_CLASS = 'has-top-blocked--truncated'
 
 function TruncatedTopBlocked (ops) {
     this.model = ops.model
@@ -34,6 +35,9 @@ TruncatedTopBlocked.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$seeall, 'click', this._seeAllClick]
             ])
+            if (window.$('.top-blocked--truncated').length) {
+                window.$('html').addClass(TOP_BLOCKED_CLASS)
+            }
         },
 
         rerenderList: function () {
@@ -48,6 +52,7 @@ TruncatedTopBlocked.prototype = window.$.extend({},
                 this.model.reset()
                 setTimeout(() => this.rerenderList(), 750)
                 this.rerenderList()
+                window.$('html').removeClass(TOP_BLOCKED_CLASS)
             }
         }
     }
