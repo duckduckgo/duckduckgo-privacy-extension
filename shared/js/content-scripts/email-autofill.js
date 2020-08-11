@@ -132,7 +132,10 @@ require('@webcomponents/webcomponentsjs');
                 this.tooltip.hidden = false
                 window.addEventListener('click', this.hideTooltip)
             }
-            this.hideTooltip = () => {
+            this.hideTooltip = (e) => {
+                if (e && (e.target === this.input || e.target === this)) {
+                    return
+                }
                 if (this.tooltip.hidden) {
                     return
                 }
