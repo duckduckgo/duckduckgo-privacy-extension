@@ -1,7 +1,7 @@
 (() => {
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
-    const logo = browser.runtime.getURL('img/logo-small.svg')
+    const logo = chrome.runtime.getURL('img/logo-small.svg')
 
     class DDGAutofill extends HTMLElement {
         constructor (input) {
