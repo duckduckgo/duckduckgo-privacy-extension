@@ -1,6 +1,6 @@
-require('@webcomponents/webcomponentsjs');
-
 (() => {
+    require('@webcomponents/webcomponentsjs')
+
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
     const logo = chrome.runtime.getURL('img/logo-small.svg')
