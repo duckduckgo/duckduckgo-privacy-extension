@@ -249,12 +249,12 @@ const sites = [
     },
     {
         name: 'BlazeTV signup',
-        url: 'https://www.blazetv.com/signup?odrc=subscribe-one',
+        url: 'https://get.blazetv.com/clkn/https/www.blazetv.com/signup',
         autofillExpected: 1
     },
     {
         name: 'BlazeTV login',
-        url: 'https://www.blazetv.com/login',
+        url: 'https://get.blazetv.com/clkn/https/www.blazetv.com/login',
         autofillExpected: 0
     },
     {
