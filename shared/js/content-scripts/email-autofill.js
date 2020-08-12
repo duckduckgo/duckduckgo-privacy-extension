@@ -4,7 +4,7 @@
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
     const forms = new Map()
-    const logo = chrome.runtime.getURL('img/logo-small.svg')
+    const logo = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
 
     class DDGAutofill extends HTMLElement {
         constructor (input) {
@@ -34,15 +34,20 @@
         z-index: 2147483647;
     }
     .trigger {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 30px;
         height: 30px;
         padding: 0;
         border: none;
         text-align: center;
         background: transparent;
+        cursor: pointer;
     }
     .trigger > img {
-        width: 100%;
+        width: 24px;
+        height: 24px;
     }
     .tooltip {
         position: absolute;
