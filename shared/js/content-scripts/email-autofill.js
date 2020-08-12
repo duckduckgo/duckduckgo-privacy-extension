@@ -3,6 +3,7 @@
 
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()
+    const forms = new Map()
     const logo = chrome.runtime.getURL('img/logo-small.svg')
 
     class DDGAutofill extends HTMLElement {
@@ -11,6 +12,7 @@
             const shadow = this.attachShadow({mode: 'open'})
             this.input = input
             this.inputRightMargin = parseInt(getComputedStyle(this.input).paddingRight)
+            this.associatedForm = input.form || input
             this.animationFrame = null
             this.topPosition = 0
             this.leftPosition = 0
@@ -152,32 +154,49 @@
                 this.tooltip.hidden = true
                 window.removeEventListener('click', this.hideTooltip)
             }
-            this.autofillInput = () => {
-                this.input.value = 'example_alias@duck.com'
-                this.input.style.backgroundColor = '#fcfab8'
+            this.execOnInputs = (fn) => {
+                forms.get(this.associatedForm).relevantInputs.forEach(fn)
             }
-            this.resetInput = () => {
-                this.input.value = ''
-                this.input.style.removeProperty('background-color')
+            this.areAllInputsEmpty = () => {
+                let allEmpty = true
+                this.execOnInputs(input => {
+                    if (input.value) allEmpty = false
+                })
+                return allEmpty
+            }
+            this.autofillInputs = () => {
+                this.execOnInputs(input => {
+                    input.value = 'example_alias@duck.com'
+                    input.style.backgroundColor = '#fcfab8'
+                    input.style.color = '#222222'
+                })
+            }
+            this.resetInputs = () => {
+                this.execOnInputs(input => {
+                    input.value = ''
+                    input.style.removeProperty('background-color')
+                    input.style.removeProperty('color')
+                })
             }
 
             this.input.addEventListener('focus', () => {
-                if (!this.input.value) this.autofillInput()
-                this.showTooltip()
+                if (this.areAllInputsEmpty()) {
+                    this.autofillInputs()
+                    this.showTooltip()
+                }
             }, {once: true})
 
-            this.trigger.addEventListener('click', (e) => {
-                e.stopImmediatePropagation()
+            this.trigger.addEventListener('click', () => {
                 this.showTooltip()
             })
             this.dismissButton.addEventListener('click', (e) => {
                 e.stopImmediatePropagation()
-                this.resetInput()
+                this.resetInputs()
                 this.hideTooltip()
             })
             this.confirmButton.addEventListener('click', (e) => {
                 e.stopImmediatePropagation()
-                this.autofillInput()
+                this.autofillInputs()
                 this.hideTooltip()
             })
         }
@@ -429,7 +448,6 @@
     `
 
     const findEligibleInput = context => {
-        const forms = new Map()
         context.querySelectorAll(EMAIL_SELECTOR)
             .forEach(input => {
                 const parentForm = input.form
