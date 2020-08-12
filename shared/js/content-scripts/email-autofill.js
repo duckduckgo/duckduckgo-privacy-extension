@@ -17,6 +17,9 @@ require('@webcomponents/webcomponentsjs');
 
             shadow.innerHTML = `
 <style>
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
     .wrapper {
         position: absolute;
         top: 0;
@@ -43,13 +46,15 @@ require('@webcomponents/webcomponentsjs');
         position: absolute;
         bottom: calc(100% + 15px);
         right: calc(100% - 60px);
-        width: 300px;
-        padding: 14px;
+        width: 350px;
+        max-width: calc(100vw - 25px);
+        padding: 25px;
         border: 1px solid #D0D0D0;
-        border-radius: 12px;
+        border-radius: 20px;
         background-color: #FFFFFF;
         font-size: 14px;
         line-height: 1.4;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         z-index: 2147483647;
     }
     .tooltip::before {
@@ -77,30 +82,35 @@ require('@webcomponents/webcomponentsjs');
         bottom: -10px;
     }
     .tooltip strong {
-        margin: 0 0 8px;
+        margin: 0 0 4px;
         color: #333333;
+        font-size: 16px;
         font-weight: bold;
         line-height: 1.3;
     }    
     .tooltip p {
-        margin: 8px 0 8px;
+        margin: 4px 0 12px;
         color: #666666;
     }
+    .tooltip__button-container {
+        display: flex;
+    }
     .tooltip__button {
+        flex: 1;
         height: 40px;
-        padding: 0 20px;
+        padding: 0 10px;
         background-color: #678FFF;
         color: #FFFFFF;
         border: none;
-        border-radius: 6px;
+        border-radius: 10px;
         font-weight: bold;
     }
     .tooltip__button:last-child {
-        margin-left: 10px;
+        margin-left: 12px;
     }
     .tooltip__button--secondary {
         background-color: #EEEEEE;
-        color: #333333;
+        color: #3E1D83;
     }
 </style>
 <div class="wrapper">
@@ -108,7 +118,7 @@ require('@webcomponents/webcomponentsjs');
     <div class="tooltip" hidden>
         <strong>Duck.com created a private alias for you.</strong>
         <p>Emails will be sent to you as usual, and you gain an extra level of privacy.</p>
-        <div>
+        <div class="tooltip__button-container">
             <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
             <button class="tooltip__button tooltip__button--primary js-confirm">Use Private Alias</button>
         </div>
