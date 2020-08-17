@@ -10,14 +10,14 @@ html, body {
     &.has-top-blocked--truncated {
         height: $popup__height--max;
     }
+
+    &.is-browser--moz {
+        height: $popup__height--min--moz;
+    }
 }
 
 body {
     overflow: hidden;
-
-    &.is-browser--moz {
-        height: $popup__height--moz;
-    }
 }
 
 #popup-container {

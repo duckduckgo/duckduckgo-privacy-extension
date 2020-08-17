@@ -39,7 +39,12 @@
 .privacy-practices__details {
     min-height: 112px;
 
-    .has-top-blocked--truncated & {
+    .is-browser--moz & {
+        min-height: 107px;
+    }
+
+    .has-top-blocked--truncated &,
+    .has-top-blocked--truncated.is-browser--moz & {
         min-height: 162px;
     }
 }

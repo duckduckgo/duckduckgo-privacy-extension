@@ -229,19 +229,6 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
 })
 
-// Remove DNT header if set, to match other anti-fingerprinting
-// api results.
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    function filterDNTHeader (e) {
-        if (e.requestHeaders) {
-            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'dnt')
-            return {requestHeaders: requestHeaders}
-        }
-    },
-    {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders']
-)
-
 /**
  * ALARMS
  */
