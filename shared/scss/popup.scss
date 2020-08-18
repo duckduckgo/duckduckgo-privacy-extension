@@ -7,7 +7,8 @@ html, body {
     width: $popup__width;
     height: $popup__height;
 
-    &.has-top-blocked--truncated {
+    &.has-top-blocked--truncated,
+    &.has-top-blocked--truncated.is-browser--moz {
         height: $popup__height--max;
     }
 
