@@ -5,6 +5,7 @@ const load = require('./../load.es6')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
+const agentparser = require('useragent')
 
 /**
  *  Manage local userAgent data.
@@ -16,47 +17,18 @@ class AgentStorage {
     constructor () {
         this.agentDB = new Dexie('agentStorage')
         this.agentDB.version(1).stores({
-            userAgents: '++id, browser, platform', //frequency, agentString',
-            brokenSites: 'list'
+            agentStorage: 'listName,listData'
         })
-    }
-
-    /**
-     * Return UserAgent data for the given platform & browser.
-     * If no local data can be found, this will attempt to update from the
-     * remote source
-     *  format:
-     *  {
-     *      exclude: [...],
-     *      agents: [
-     *          {
-     *              agent: 'xxx'
-     *              probability: dd.dd
-     *          },
-     *          ...
-     *      ]
-     *  }
-     */
-    async getAgentData (browser, platform) {
-        if (this.agentDB.userAgents.count() === 0) {
-            this.updateAgentData()
-        }
-        const agents = await this.agentDB.userAgents.where({
-            browser: browser,
-            platform: platform
-        })
-        console.log(agents)   
-    }
-
-    getExcludeList () {
-        const excludeList = this.agentDB.brokenSites.get()
+        this.agents = []
+        this.excludedDomains = []
+        this.excludedAgents = []
     }
 
     /**
      * Retrieve the latest lists of userAgent and breakage data. Store as needed.
      */
     updateAgentData () {
-        console.log("Agents: Getting user agent data")
+        console.log(`UserAgents: Getting user agent data`)
         const lists = constants.UserAgentLists
         for (const list of lists) {
             const source = list.source || 'external'
@@ -66,55 +38,89 @@ class AgentStorage {
                 .then(response => {
                     if (response && response.status === 200) {
                         // New agent data to process.
-                        switch (listName) {
-                        case 'agents':
-                            const data = JSON.parse(response.response)
-                            this.processAgentList(data)
-                            break
-                        case 'excludeList':
-                            this.processExcludeList(response)
-                            break
-                        }
+                        const data = JSON.parse(response.response)
+                        this.storeAgentList(listName, data)
+                        this.processList(listName, data)
                     }
                 })
                 .catch(e => {
                     // Reset the etag
                     settings.updateSetting(`${listName}-etag`, '')
-                    console.log(`Error updating agent data:  ${e}. Probably because this data is not currently needed`)
-                    if (listName === 'agents') {
-                        throw new Error(`User Agents lsit ${listName}: data update failed`)
-                    }
+                    console.log(`Error updating agent data:  ${e}. Attempting to load from local storage.`)
+                    this.loadAgentList(listName)
+                        .then(queryData => {
+                            this.processList(listName, queryData.listData)
+                        })
+                        .catch(e => {
+                            console.log(`Error loading UserAgent settings from storage: ${e}`)
+                        })
                 })
         }
     }
 
-    async processAgentList (data) {
-        // delete any stale agent entries
-        await this.agentDB.userAgents.clear()
-        let k = 1
-        for (const agentCategory of Object.keys(data)) {
-            const [platform, browser] = agentCategory.split('-')
+    processList (listName, listData) {
+        switch (listName) {
+        case 'agents':
+            this.processAgentList(listData)
+            break
+        case 'excludeList':
+            this.processExcludeList(listData)
+            break
+        }
+    }
 
-            console.log(data[agentCategory])
-            console.log(agentCategory)
+    processAgentList (data) {
+        // delete any stale agent entries
+        const realAgent = agentparser.lookup(navigator.userAgent)
+        this.agents = []
+        for (const agentCategory of Object.keys(data)) {
             for (const ua of data[agentCategory]) {
-                await this.agentDB.userAgents.add({
-                    browser: browser,
-                    platform: platform,
-                    frequency: ua.percentage,
-                    agentString: ua.agent
-                })
-                k++
+                const parsedUA = agentparser.lookup(ua.agent)
+                if (parsedUA.family === realAgent.family &&
+                    parsedUA.os.family === realAgent.os.family) {
+                    let frequency = ua.percentage
+                    if (typeof frequency === 'string') {
+                        frequency = Number(frequency.replace('%', ''))
+                    }
+                    this.agents.push({
+                        browser: parsedUA.family,
+                        platform: parsedUA.os.family,
+                        frequency: frequency,
+                        agentString: ua.agent,
+                        osMajor: parsedUA.os.major,
+                        osMinor: parsedUA.os.minor,
+                        versionMajor: parsedUA.major,
+                        versionMinor: parsedUA.minor
+                    })
+                }
             }
         }
     }
 
     async processExcludeList (data) {
-        // Remove any existing broken site list
-        console.log("Agents: Processing exclude list")
-        await this.agentDB.brokenSites.clear()
-        const list = data.split('\n')
-        await this.agentDB.brokenSites.put({list: list})
+        for (const record of data.excludedDomains) {
+            this.excludedDomains.push(record.domain)
+        }
+        for (const record of data.excludeAgentPatterns) {
+            this.excludedAgents.push(new RegExp(record.agent))
+        }
+    }
+
+    /**
+     * Load an agent list from local storage
+     */
+    loadAgentList (listName) {
+        console.log(`looking for listname ${listName}`)
+        return this.agentDB.open()
+            .then(() => this.agentDB.table('agentStorage').get({listName: listName}))
+    }
+
+    async storeAgentList (listname, data) {
+        try {
+            await this.agentDB.agentStorage.put({listName: listname, listData: data})
+        } catch (e) {
+            console.log(`Error storing agent data locally: ${e}`)
+        }
     }
 }
 module.exports = new AgentStorage()

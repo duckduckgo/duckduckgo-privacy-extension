@@ -100,13 +100,13 @@ module.exports = {
     "UserAgentLists": [
         {
             "name": "agents",
-            "url": "http://0.0.0.0:8000/random_useragent.json",
+            "url": "https://staticcdn.duckduckgo.com/useragents/random_useragent.json",
             "format": "json",
             "source": "external"
         },
         {
             "name": "excludeList",
-            "url": "http://0.0.0.0:8000/agent-breaking-sites.txt",
+            "url": "https://staticcdn.duckduckgo.com/useragents/useragent_excludes.json",
             "format": "text",
             "source": "external"
         }

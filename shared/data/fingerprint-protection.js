@@ -68,6 +68,13 @@
                 'targetValue': undefined
             }
         },
+        'useragent': {
+            'userAgent': {
+                'object': 'navigator',
+                'origValue': navigator.userAgent,
+                'targetValue': `"${ua}"` // Defined in chrome-events.es6.js and injected as a variable
+            }
+        },
         'options': {
             'doNotTrack': {
                 'object': 'navigator',
