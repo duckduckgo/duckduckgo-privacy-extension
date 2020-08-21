@@ -73,6 +73,11 @@
                 'object': 'navigator',
                 'origValue': navigator.userAgent,
                 'targetValue': `"${ua}"` // Defined in chrome-events.es6.js and injected as a variable
+            },
+            'appVersion': {
+                'object': 'navigator',
+                'origValue': navigator.appVersion,
+                'targetValue': /Firefox/i.test(navigator.userAgent) ? `"${navigator.appVersion}"` : `"${ua.replace('Mozilla/', '')}"` 
             }
         },
         'options': {
