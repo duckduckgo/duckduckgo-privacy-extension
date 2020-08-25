@@ -199,6 +199,16 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(pixel.fire.apply(null, fireArgs))
         return true
     }
+
+    if (req.fetchAlias) {
+        fetch('')
+            .then(response =>
+                response.ok ? response.text().then(alias => res({alias}))
+                    : res({error: `Alias fetch returned ${response.status} ${response.statusText}`})
+            )
+            .catch(e => res({error: e}))
+        return true
+    }
 })
 
 /**
