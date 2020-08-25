@@ -22,6 +22,10 @@ class AgentStorage {
         this.agents = []
         this.excludedDomains = []
         this.excludedAgents = []
+        // Information about which agents to keep in our data set.
+        const realAgent = agentparser.lookup(navigator.userAgent)
+        this.family = realAgent.family
+        this.os = realAgent.os.family
     }
 
     /**
@@ -71,13 +75,13 @@ class AgentStorage {
 
     processAgentList (data) {
         // delete any stale agent entries
-        const realAgent = agentparser.lookup(navigator.userAgent)
+        console.log("Processing agents")
         this.agents = []
         for (const agentCategory of Object.keys(data)) {
             for (const ua of data[agentCategory]) {
                 const parsedUA = agentparser.lookup(ua.agent)
-                if (parsedUA.family === realAgent.family &&
-                    parsedUA.os.family === realAgent.os.family) {
+                if (parsedUA.family === this.family &&
+                    parsedUA.os.family === this.os) {
                     let frequency = ua.percentage
                     if (typeof frequency === 'string') {
                         frequency = Number(frequency.replace('%', ''))

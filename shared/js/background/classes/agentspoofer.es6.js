@@ -27,9 +27,7 @@ class AgentSpoofer {
     rotateAgent () {
         const oldAgent = this.spoofedAgent
         this.spoofedAgent = this.selectAgent()
-        if (!this.needsRotation) {
-            console.log(`Rotated UserAgent. Old agent was: ${oldAgent}. New UserAgent: ${this.spoofedAgent}`)
-        }
+        console.log(`Rotated UserAgent. Old agent was: ${oldAgent}. New UserAgent: ${this.spoofedAgent}`)
     }
 
     /**
@@ -72,21 +70,20 @@ class AgentSpoofer {
         const osMinorVariance = 3
         const browserMajorVariance = 3
         const browserMinorVariance = 1000
-
         // Filter for version constraints
         agents = agents.filter(agent =>
-            agent.osMajor >= this.parsedAgent.os.major - osMajorVariance &&
-            agent.osMajor <= this.parsedAgent.os.major + osMajorVariance &&
-            agent.osMinor >= this.parsedAgent.os.minor - osMinorVariance &&
-            agent.osMinor <= this.parsedAgent.os.minor + osMinorVariance &&
-            agent.versionMajor >= this.parsedAgent.major - browserMajorVariance &&
-            agent.versionMajor <= this.parsedAgent.major + browserMajorVariance &&
-            agent.versionMinor >= this.parsedAgent.minor - browserMinorVariance &&
-            agent.versionMinor <= this.parsedAgent.minor + browserMinorVariance)
-
+            agent.osMajor >= Number(this.parsedAgent.os.major) - Number(osMajorVariance) &&
+            agent.osMajor <= Number(this.parsedAgent.os.major) + Number(osMajorVariance) &&
+            agent.osMinor >= Number(this.parsedAgent.os.minor) - Number(osMinorVariance) &&
+            agent.osMinor <= Number(this.parsedAgent.os.minor) + Number(osMinorVariance) &&
+            agent.versionMajor >= Number(this.parsedAgent.major) - Number(browserMajorVariance) &&
+            agent.versionMajor <= Number(this.parsedAgent.major) + Number(browserMajorVariance) &&
+            agent.versionMinor >= Number(this.parsedAgent.minor) - Number(browserMinorVariance) &&
+            agent.versionMinor <= Number(this.parsedAgent.minor) + Number(browserMinorVariance))
         // Filter out any excluded agents
-        agents = agents.filter(agent => !agentStorage.excludedAgents.every(excludePattern => excludePattern.test(agent.agentString)))
-
+        if (agentStorage.excludedAgents.length > 0) {
+            agents = agents.filter(agent => !agentStorage.excludedAgents.every(excludePattern => excludePattern.test(agent.agentString)))
+        }
         // Don't include our current agent (so it should always rotate)
         agents = agents.filter(agent => agent.agentString !== this.spoofedAgent)
         return agents
@@ -100,13 +97,16 @@ class AgentSpoofer {
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (!!tab && tab.site.whitelisted) {
+            console.log('tab is whitelisted?')
             return false
         }
         if (this.isFirstParty(this.getRootURL(request), request.url)) {
+            console.log('tab is first party?')
             return false
         }
         const domain = tldts.parse(request.url).domain
-        if (agentStorage.excludedDomains.every(excluded => domain === excluded)) {
+        if (agentStorage.excludedDomains.length > 0 && agentStorage.excludedDomains.every(excluded => domain === excluded)) {
+            console.log('domain is exluded?')
             return false
         }
         return true
