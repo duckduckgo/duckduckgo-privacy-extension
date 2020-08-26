@@ -40,9 +40,9 @@ describe('getTosdr', () => {
             let message = result.message
 
             if (test.isMessageBad) {
-                expect(message).toEqual('Bad')
+                expect(message).toEqual('Poor')
             } else {
-                expect(message).not.toEqual('Bad')
+                expect(message).not.toEqual('Poor')
             }
         })
     })
