@@ -7,11 +7,11 @@ module.exports = {
     "tosdrMessages" : {
         "A": "Good",
         "B": "Mixed",
-        "C": "Bad",
-        "D": "Bad",
-        "E": "Bad",
+        "C": "Poor",
+        "D": "Poor",
+        "E": "Poor",
         "good": "Good",
-        "bad": "Bad",
+        "bad": "Poor",
         "unknown": "Unknown",
         "mixed": "Mixed"
     },

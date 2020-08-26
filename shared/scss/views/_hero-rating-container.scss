@@ -1,7 +1,12 @@
 .rating-hero-container {
     .hero__icon {
-        width: 81px;
-        height: 67px;
+        width: 122px;
+        height: 101px;
+
+        .grade-scorecard & {
+            width: 75px;
+            height: 62px;
+        }
     }
 
     .hero__icon--calculating {

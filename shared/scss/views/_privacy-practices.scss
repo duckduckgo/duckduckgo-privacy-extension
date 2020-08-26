@@ -1,8 +1,8 @@
 #popup-container .site-info.privacy-practices {
     box-sizing: border-box;
 
-    .padded {
-        padding: 20px;
+    .privacy-practices__explainer {
+        @include explainer-padding();
     }
 
     .hero {
@@ -14,14 +14,16 @@
     }
 
     .hero__icon {
-        width: 48px;
+        width: 68px;
         height: 65px;
+        margin-bottom: 12px;
+        margin-top: 0;
     }
 
     .hero__icon--good {
         @include cross_platform_bg_image("hero-ribbon__good.svg");
     }
-    .hero__icon--bad {
+    .hero__icon--poor {
         @include cross_platform_bg_image("hero-ribbon__bad.svg");
     }
     .hero__icon--mixed,
@@ -35,14 +37,16 @@
 }
 
 .privacy-practices__details {
-    min-height: 205px;
-}
+    min-height: 112px;
 
-.privacy-practices__details__no-detail-icon {
-    @include cross_platform_bg_image("unknown.svg");
-    width: 53px;
-    height: 53px;
-    margin: 10px auto 15px;
+    .is-browser--moz & {
+        min-height: 107px;
+    }
+
+    .has-top-blocked--truncated &,
+    .has-top-blocked--truncated.is-browser--moz & {
+        min-height: 162px;
+    }
 }
 
 .privacy-practices__details__title {

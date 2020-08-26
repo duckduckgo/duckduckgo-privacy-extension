@@ -56,7 +56,7 @@ function getReasons (site) {
     // privacy practices from tosdr
     const unknownPractices = constants.tosdrMessages.unknown
     const privacyMessage = (site.tosdr && site.tosdr.message) || unknownPractices
-    const modifier = (privacyMessage === unknownPractices) ? 'bad' : privacyMessage.toLowerCase()
+    const modifier = (privacyMessage === unknownPractices) ? 'poor' : privacyMessage.toLowerCase()
     reasons.push({
         modifier: modifier,
         msg: `${privacyMessage} Privacy Practices`

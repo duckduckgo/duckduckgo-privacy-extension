@@ -2,6 +2,11 @@
 $font__size--default: 14px;
 $font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
 
+/* Status icons */
+$status--good: "status--good.svg";
+$status--mixed: "status--mixed.svg";
+$status--bad: "status--bad.svg";
+
 /* Colors */
 @import "../../node_modules/duckduckgo-colors/colors";
 $color--green: #3fa248;
@@ -16,6 +21,10 @@ $color--light-grey: #a8a8ab;
 $color--silver: #f0f0f0;
 $color--dark-silver: #ddd;
 $color--medium-silver: #d8d8d8;
+$color--medium-dark-platinum: #e9e9eb;
+$color--dark-platinum: #eee;
+$color--extra-light-platinum: rgba(238, 238, 238, 0.5);
+$color--medium-light-platinum: rgba(0, 0, 0, 0.05);
 
 /* Neutral Colors */
 $color--neutral-bg: #f5f5f5;
@@ -32,8 +41,10 @@ $color--site-rating--f: $color--red;
 
 /* Popup */
 $popup__width: 300px;
-$popup__height: 600px;
-$popup__height--moz: 600px;
+$popup__height: 497px;
+$popup__height--max: 550px;
+$popup__height--min--moz: 493px;
+$popup__height--moz: 550px;
 
 /* Hamburger Button & Menu */
 $hamburger-button__color: #afafaf;
@@ -45,10 +56,11 @@ $ratings: ("a", "b-plus", "b", "c", "c-plus", "d", "f");
 /* Cards */
 $card__bg-color: $white;
 $card__border-radius: 0;
-$card__border: 1px solid $platinum-light;
+$card__border: 1px solid $color--medium-light-platinum;
 $card__box-shadow: 0px 1px 1px $color--default-box-shadow;
 $card__padding: 0;
-$card--padded: 15px 20px;
+$card--padded: 16px 20px;
+$card--padded--top: 16px 0 0;
 $card__margin--top: 7.5px;
 $card__margin--right: 0;
 $card__margin--bottom: 0;

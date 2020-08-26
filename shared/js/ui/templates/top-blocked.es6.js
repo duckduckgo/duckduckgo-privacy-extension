@@ -6,7 +6,7 @@ const noData = require('./shared/top-blocked-no-data.es6.js')
 module.exports = function () {
     if (!this.model) {
         return bel`<section class="sliding-subview
-    sliding-subview--has-fixed-header">
+    sliding-subview--has-fixed-header top-blocked-header">
     ${header('All Trackers')}
 </section>`
     } else {
@@ -26,7 +26,7 @@ function renderPctPagesWithTrackers (model) {
     }
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
-    Trackers were found on ${model.pctPagesWithTrackers}%
+    Trackers were found on <b>${model.pctPagesWithTrackers}%</b>
     of web sites you've visited${msg}.
 </p>`
     }
@@ -34,7 +34,7 @@ function renderPctPagesWithTrackers (model) {
 
 function renderList (model) {
     if (model.companyListMap.length > 0) {
-        return bel`<ol aria-label="List of Trackers Found" class="default-list top-blocked__list card">
+        return bel`<ol aria-label="List of Trackers Found" class="default-list top-blocked__list card border--bottom">
     ${listItems(model.companyListMap)}
 </ol>`
     } else {
