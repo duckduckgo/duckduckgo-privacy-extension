@@ -97,16 +97,13 @@ class AgentSpoofer {
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (!!tab && tab.site.whitelisted) {
-            console.log('tab is whitelisted?')
             return false
         }
         if (this.isFirstParty(this.getRootURL(request), request.url)) {
-            console.log('tab is first party?')
             return false
         }
         const domain = tldts.parse(request.url).domain
         if (agentStorage.excludedDomains.length > 0 && agentStorage.excludedDomains.every(excluded => domain === excluded)) {
-            console.log('domain is exluded?')
             return false
         }
         return true

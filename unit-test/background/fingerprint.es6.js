@@ -8,11 +8,6 @@ const agentparser = require('useragent')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const chromewrapper = require('../../shared/js/background/chrome-wrapper.es6')
 
-
-async function sleep (ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 describe('User-Agent replacement', () => {
 	let spy
 
