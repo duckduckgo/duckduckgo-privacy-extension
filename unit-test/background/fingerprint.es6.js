@@ -6,7 +6,6 @@ const agentStorage = require('../../shared/js/background/storage/agents.es6')
 const agentData = require('./../data/random_useragent.json')
 const agentparser = require('useragent')
 const Tab = require('../../shared/js/background/classes/tab.es6')
-const chromewrapper = require('../../shared/js/background/chrome-wrapper.es6')
 
 describe('User-Agent replacement', () => {
     let spy
@@ -50,7 +49,6 @@ describe('User-Agent replacement', () => {
             }
             spy.and.returnValue(tab)
             expect(agentSpoofer.shouldSpoof(request)).toEqual(true)
-
         })
 
         it('should send real headers to first parties', () => {
@@ -66,14 +64,13 @@ describe('User-Agent replacement', () => {
         it('should consider the same domain first party', () => {
             let url1 = 'http://example.com'
             let url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
-            expect(agentSpoofer.isFirstParty(url1,url2)).toEqual(true)
+            expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
         })
 
         it('should consider subdomains to be first party', () => {
             let url1 = 'http://example.com'
             let url2 = 'http://subdomain.example.com'
-            expect(agentSpoofer.isFirstParty(url1,url2)).toEqual(true)
+            expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
         })
-
     })
 })
