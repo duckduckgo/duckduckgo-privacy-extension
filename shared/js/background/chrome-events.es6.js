@@ -242,7 +242,6 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
 })
 
-<<<<<<< HEAD
 // Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
@@ -263,8 +262,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     ['blocking', 'requestHeaders']
 )
 
-=======
->>>>>>> bbf6e97c34a641f5e2b4d3d99c11a6bc3f023371
 /**
  * ALARMS
  */
