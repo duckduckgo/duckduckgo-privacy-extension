@@ -75,7 +75,7 @@ class AgentStorage {
 
     processAgentList (data) {
         // delete any stale agent entries
-        console.log("Processing agents")
+        console.log('Processing agents')
         this.agents = []
         for (const agentCategory of Object.keys(data)) {
             for (const ua of data[agentCategory]) {

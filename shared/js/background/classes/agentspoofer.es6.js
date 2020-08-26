@@ -11,7 +11,7 @@ class AgentSpoofer {
         this.spoofedAgent = this.realAgent
         this.selectAgent()
         this.needsRotation = true
-        this.tabs = {} //maintain cache of tab root URL's (chrome only)
+        this.tabs = {} // maintain cache of tab root URL's (chrome only)
     }
 
     getAgent () {

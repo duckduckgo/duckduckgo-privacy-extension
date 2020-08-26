@@ -19,7 +19,7 @@ const stub = () => {
         .and.callFake(key => Promise.resolve(tdsData[key]))
 
     spyOn(tdsStorage, 'getDataXHR')
-        .and.callFake((list, etag, source) => Promise.resolve({ response: 200, data: tdsData[list]}))
+        .and.callFake((list, etag, source) => Promise.resolve({response: 200, data: tdsData[list]}))
 }
 module.exports = {
     stub
