@@ -239,7 +239,7 @@
     }
 
     const intObs = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
+        for (const entry of entries) {
             const input = entry.target
             if (entry.isIntersecting) {
                 console.log('intersecting')
@@ -260,7 +260,7 @@
                     inputButtonMap.delete(input)
                 }
             }
-        })
+        }
     })
 
     class Form {
@@ -479,8 +479,8 @@
     findEligibleInput(document)
 
     // For all DOM mutations, search for new eligible inputs and update existing inputs positions
-    const observer = new MutationObserver((mutationList) => {
-        mutationList.forEach(mutationRecord => {
+    const mutObs = new MutationObserver((mutationList) => {
+        for (const mutationRecord of mutationList) {
             if (mutationRecord.type === 'childList') {
                 // We query only within the context of added/removed nodes
                 mutationRecord.addedNodes.forEach(el => {
@@ -491,9 +491,13 @@
                     }
                 })
             }
-        })
+
+            if (mutationRecord.type === 'attributes') {
+                updateAllButtons()
+            }
+        }
     })
-    observer.observe(document.body, {childList: true, subtree: true, attributes: true});
+    mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
 
     // Update the position if transitions or animations are detected just in case
     ['transitionend', 'animationend'].forEach(
