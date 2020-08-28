@@ -107,7 +107,7 @@ module.exports = {
         {
             "name": "excludeList",
             "url": "https://staticcdn.duckduckgo.com/useragents/useragent_excludes.json",
-            "format": "text",
+            "format": "json",
             "source": "external"
         }
     ],
