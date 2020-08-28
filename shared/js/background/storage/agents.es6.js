@@ -73,12 +73,23 @@ class AgentStorage {
         }
     }
 
+    /**
+     * In the highly unlikely event an agent is injected into data with malicious
+     * characters, flag it here.
+     **/
+    isPotentiallyMaliciousAgent (agent) {
+        return agent.search(`'`) !== -1
+    }
+
     processAgentList (data) {
         // delete any stale agent entries
         console.log('Processing agents')
         this.agents = []
         for (const agentCategory of Object.keys(data)) {
             for (const ua of data[agentCategory]) {
+                if (this.isPotentiallyMaliciousAgent(ua.agent)) {
+                    continue
+                }
                 const parsedUA = agentparser.lookup(ua.agent)
                 if (parsedUA.family === this.family &&
                     parsedUA.os.family === this.os) {
