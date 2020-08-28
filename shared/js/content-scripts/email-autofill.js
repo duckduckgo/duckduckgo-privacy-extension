@@ -499,6 +499,9 @@
     })
     mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
 
+    const resObs = new ResizeObserver(entries => entries.forEach(updateAllButtons))
+    resObs.observe(document.body);
+
     // Update the position if transitions or animations are detected just in case
     ['transitionend', 'animationend'].forEach(
         eventType => window.addEventListener(eventType, () => updateAllButtons())
