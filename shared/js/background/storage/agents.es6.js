@@ -78,7 +78,10 @@ class AgentStorage {
      * characters, flag it here.
      **/
     isPotentiallyMaliciousAgent (agent) {
-        return agent.search(`'`) !== -1
+        if (agent.search(`'`) !== -1 || agent.search(`"`) !== -1) {
+            return true
+        }
+        return false
     }
 
     processAgentList (data) {
