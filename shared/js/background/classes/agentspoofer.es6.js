@@ -1,6 +1,5 @@
 const agentStorage = require('./../storage/agents.es6')
 const agentparser = require('useragent')
-const trackers = require('../trackers.es6')
 const tldts = require('tldts')
 const tabManager = require('../tab-manager.es6')
 
@@ -11,7 +10,6 @@ class AgentSpoofer {
         this.spoofedAgent = this.realAgent
         this.selectAgent()
         this.needsRotation = true
-        this.tabs = {} // maintain cache of tab root URL's (chrome only)
     }
 
     getAgent () {
@@ -99,7 +97,7 @@ class AgentSpoofer {
         if (!!tab && tab.site.whitelisted) {
             return false
         }
-        if (this.isFirstParty(this.getRootURL(request), request.url)) {
+        if (!!tab && this.isFirstParty(tab.url, request.url)) {
             return false
         }
         const domain = tldts.parse(request.url).domain
@@ -116,30 +114,7 @@ class AgentSpoofer {
     isFirstParty (url1, url2) {
         const first = tldts.parse(url1).domain
         const second = tldts.parse(url2).domain
-        return first === second ||
-            (trackers.entityList && trackers.entityList[first] && trackers.entityList[second] &&
-                trackers.entityList[first] === trackers.entityList[second])
-    }
-
-    /**
-     *  Find the originating URL of a given request - whatever top level page is being visited.
-     *  @param headerRequest the header object passed before headers are sent.
-     **/
-    getRootURL (headerRequest) {
-        // Firefox includes root detail in one of two places
-        let rootURL = headerRequest.frameAncestors && headerRequest.frameAncestors.length > 0 ? headerRequest.frameAncestors[0].url : headerRequest.originUrl
-        if (!rootURL) {
-            // Didn't find anything, so let's try chrome.
-            // chrome uses async requests to get frame / tab detail, which won't work well here, so we cache
-            // the last seen root URL for a tab, and always return that when the requestor is a frame.
-            if (headerRequest.parentFrameId === -1) {
-                rootURL = headerRequest.initiator
-                this.tabs[headerRequest.tabId] = rootURL
-            } else {
-                rootURL = this.tabs[headerRequest.tabId]
-            }
-        }
-        return rootURL
+        return first === second
     }
 }
 module.exports = new AgentSpoofer()
