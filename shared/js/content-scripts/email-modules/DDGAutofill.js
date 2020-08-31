@@ -187,10 +187,22 @@ class DDGAutofill extends HTMLElement {
             return allEmpty
         }
         this.autofillInputs = () => {
-            this.execOnInputs(input => {
-                input.value = 'example_alias@duck.com'
-                input.style.backgroundColor = '#fcfab8'
-                input.style.color = '#222222'
+            chrome.runtime.sendMessage({getAlias: true}, (res) => {
+                if (res.alias) {
+                    this.execOnInputs(input => {
+                        input.value = res.alias
+                        input.style.backgroundColor = '#fcfab8'
+                        input.style.color = '#222222'
+
+                        // If the user changes the alias, remove the decoration
+                        input.addEventListener('input', () => {
+                            this.execOnInputs(input => {
+                                input.style.removeProperty('background-color')
+                                input.style.removeProperty('color')
+                            })
+                        }, {once: true})
+                    })
+                }
             })
         }
         this.resetInputs = () => {
