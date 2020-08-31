@@ -60,6 +60,7 @@
     },
     "dependencies": {
         "@duckduckgo/privacy-grade": "1.0.2",
+        "@webcomponents/webcomponentsjs": "^2.4.4",
         "abp-filter-parser": "git://github.com/duckduckgo/abp-filter-parser.git#0.2.0",
         "bel": "4.6.0",
         "chalk": "2.1.0",
@@ -95,6 +96,9 @@
                     "debug": "true"
                 }
             ]
+        ],
+        "ignore": [
+            "shared/js/content-scripts/email-modules/DDGAutofill.js"
         ]
     }
 }

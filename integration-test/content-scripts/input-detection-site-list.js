@@ -91,7 +91,7 @@ const sites = [
         name: 'ResearchGate signup',
         url: 'https://www.researchgate.net/signup.SignUpAccountBasics.html',
         actions: [
-            {action: 'click', arg: 'button.qc-cmp-button[onclick]', optional: true},
+            {action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true},
             {action: 'click', arg: '.js-submit.option.institution'},
             {action: 'waitFor', arg: 1000},
             {action: 'click', arg: '.js-skip-step'}
@@ -101,7 +101,7 @@ const sites = [
     {
         name: 'ResearchGate login',
         url: 'https://www.researchgate.net/login',
-        actions: [{action: 'click', arg: 'button.qc-cmp-button[onclick]', optional: true}],
+        actions: [{action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true}],
         autofillExpected: 0
     },
     {
@@ -249,12 +249,12 @@ const sites = [
     },
     {
         name: 'BlazeTV signup',
-        url: 'https://www.blazetv.com/signup?odrc=subscribe-one',
+        url: 'https://get.blazetv.com/clkn/https/www.blazetv.com/signup',
         autofillExpected: 1
     },
     {
         name: 'BlazeTV login',
-        url: 'https://www.blazetv.com/login',
+        url: 'https://get.blazetv.com/clkn/https/www.blazetv.com/login',
         autofillExpected: 0
     },
     {
