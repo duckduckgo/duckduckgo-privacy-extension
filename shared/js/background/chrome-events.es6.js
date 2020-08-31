@@ -223,7 +223,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
                 const variableScript = {
                     'code': `
                         try {
-                            var ua='${agentSpoofer.getAgent()}'
+                            var ddg_ext_ua='${agentSpoofer.getAgent()}'
                         } catch(e) {}`,
                     'runAt': 'document_start',
                     'allFrames': true,

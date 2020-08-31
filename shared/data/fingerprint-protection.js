@@ -72,7 +72,7 @@
             'userAgent': {
                 'object': 'navigator',
                 'origValue': navigator.userAgent,
-                'targetValue': `"${ua}"` // Defined in chrome-events.es6.js and injected as a variable
+                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
             },
             'appVersion': {
                 'object': 'navigator',
@@ -102,7 +102,7 @@
             return navigator.appVersion
         }
         // UserAgent is in the format of "Mozilla/<details>", appVersion only includes the details portion
-        return ua.replace('Mozilla/', '')
+        return ddg_ext_ua.replace('Mozilla/', '')
     }
 
     /*

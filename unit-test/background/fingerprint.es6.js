@@ -9,8 +9,8 @@ const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
 
 describe('User-Agent replacement', () => {
-    let tabSpy
-    let managerSpy
+    let tabObserver
+    let managerObserver
 
     beforeAll(() => {
         // Make sure we get some good agent data
@@ -20,8 +20,8 @@ describe('User-Agent replacement', () => {
         agentStorage.family = agentSpoofer.parsedAgent.family
         agentStorage.os = agentSpoofer.parsedAgent.os.family
         agentStorage.processAgentList(agentData)
-        tabSpy = spyOn(Tab, 'constructor')
-        managerSpy = spyOn(tabManager, 'get')
+        tabObserver = spyOn(Tab, 'constructor')
+        managerObserver = spyOn(tabManager, 'get')
     })
 
     describe('User-Agent', () => {
@@ -50,8 +50,8 @@ describe('User-Agent replacement', () => {
                 tabId: 123,
                 url: 'http://thirdparty.com'
             }
-            tabSpy.and.returnValue(tab)
-            managerSpy.and.returnValue(tab)
+            tabObserver.and.returnValue(tab)
+            managerObserver.and.returnValue(tab)
             expect(agentSpoofer.shouldSpoof(request)).toEqual(true)
         })
 
@@ -61,8 +61,8 @@ describe('User-Agent replacement', () => {
                 url: 'http://example.com',
                 originUrl: 'http://example.com'
             }
-            tabSpy.and.returnValue(tab)
-            managerSpy.and.returnValue(tab)
+            tabObserver.and.returnValue(tab)
+            managerObserver.and.returnValue(tab)
             expect(agentSpoofer.shouldSpoof(request)).toEqual(false)
         })
 
