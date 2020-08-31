@@ -1,7 +1,7 @@
 (() => {
     require('@webcomponents/webcomponentsjs')
-    const DDGAutofill = require('./email-autofill/DDGAutofill')
-    const Form = require('./email-autofill/Form')
+    const DDGAutofill = require('./email-modules/DDGAutofill')
+    const Form = require('./email-modules/Form')
 
     // Here we store a map of input -> button associations
     const inputButtonMap = new Map()

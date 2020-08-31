@@ -98,7 +98,7 @@
             ]
         ],
         "ignore": [
-            "shared/js/content-scripts/email-autofill/DDGAutofill.js"
+            "shared/js/content-scripts/email-modules/DDGAutofill.js"
         ]
     }
 }
