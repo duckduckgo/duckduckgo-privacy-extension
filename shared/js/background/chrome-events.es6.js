@@ -204,6 +204,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 /**
  * Fingerprint Protection
  */
+const agents = require('./storage/agents.es6')
+const agentSpoofer = require('./classes/agentspoofer.es6')
 
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
@@ -217,6 +219,17 @@ chrome.webNavigation.onCommitted.addListener(details => {
             const whitelisted = settings.getSetting('whitelisted')
             const tabURL = new URL(details.url) || {}
             if (!whitelisted || !whitelisted[tabURL.hostname]) {
+                // Set variables, which are used in the fingerprint-protection script.
+                const variableScript = {
+                    'code': `
+                        try {
+                            var ddg_ext_ua='${agentSpoofer.getAgent()}'
+                        } catch(e) {}`,
+                    'runAt': 'document_start',
+                    'allFrames': true,
+                    'matchAboutBlank': true
+                }
+                chrome.tabs.executeScript(details.tabId, variableScript)
                 const scriptDetails = {
                     'file': '/data/fingerprint-protection.js',
                     'runAt': 'document_start',
@@ -228,6 +241,26 @@ chrome.webNavigation.onCommitted.addListener(details => {
         }
     }
 })
+
+// Replace UserAgent header on third party requests.
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    function spoofUserAgentHeader (e) {
+        // Only change the user agent header if the current site is not whitelisted
+        // and the request is third party.
+        if (agentSpoofer.shouldSpoof(e)) {
+            // remove existing User-Agent header
+            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
+            // Add in spoofed value
+            requestHeaders.push({
+                name: 'User-Agent',
+                value: agentSpoofer.getAgent()
+            })
+            return {requestHeaders: requestHeaders}
+        }
+    },
+    {urls: ['<all_urls>']},
+    ['blocking', 'requestHeaders']
+)
 
 /**
  * ALARMS
@@ -246,6 +279,10 @@ chrome.alarms.create('updateLists', { periodInMinutes: 30 })
 chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
 chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
+// Update userAgent lists
+chrome.alarms.create('updateUserAgentData', { periodInMinutes: 12 * 60 })
+// Rotate the user agent spoofed
+chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
@@ -266,6 +303,14 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
+    } else if (alarmEvent.name === 'updateUserAgentData') {
+        settings.ready().then(() => {
+            agents.updateAgentData()
+                .catch(e => console.log(e))
+        })
+    } else if (alarmEvent.name === 'rotateUserAgent') {
+        agentSpoofer.needsRotation = true
+        agentSpoofer.rotateAgent()
     }
 })
 
@@ -297,6 +342,8 @@ let onStartup = () => {
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()
+
+        agents.updateAgentData()
     })
 }
 
