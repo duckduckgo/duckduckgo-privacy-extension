@@ -45,15 +45,15 @@ class AgentSpoofer {
         for (const agent of agentList) {
             maxRandValue += agent.frequency
         }
-        const pick = Math.random() * maxRandValue
-        let accum = 0
+        let pick = Math.random() * maxRandValue
+
         for (const agent of agentList) {
-            if (pick <= accum + agent.frequency) {
+            if (pick <= agent.frequency) {
                 this.needsRotation = false
                 selectedAgent = agent.agentString
                 break
             }
-            accum += agent.frequency
+            pick -= agent.frequency
         }
         return selectedAgent || this.realAgent
     }
