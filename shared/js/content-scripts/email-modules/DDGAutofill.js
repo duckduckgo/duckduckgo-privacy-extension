@@ -60,7 +60,7 @@ class DDGAutofill extends HTMLElement {
     }
     .tooltip::before {
         content: "";
-        width: 0; 
+        width: 0;
         height: 0; 
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
@@ -72,8 +72,8 @@ class DDGAutofill extends HTMLElement {
     }
     .tooltip::after {
         content: "";
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
         display: block;
@@ -88,7 +88,7 @@ class DDGAutofill extends HTMLElement {
         font-size: 16px;
         font-weight: bold;
         line-height: 1.3;
-    }    
+    }
     .tooltip p {
         margin: 4px 0 12px;
         color: #666666;
@@ -124,8 +124,7 @@ class DDGAutofill extends HTMLElement {
             <button class="tooltip__button tooltip__button--primary js-confirm">Use Private Alias</button>
         </div>
     </div>
-</div>
-            `
+</div>`
         this.wrapper = shadow.querySelector('.wrapper')
         this.trigger = shadow.querySelector('.trigger')
         this.tooltip = shadow.querySelector('.tooltip')

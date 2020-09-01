@@ -202,11 +202,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.getAlias) {
-        console.log('getAlias')
         const alias = settings.getSetting('nextAlias')
-        console.log('getAlias response', alias)
-
         res({alias})
+
+        // Fetch a new alias
         fetchAlias()
 
         return true
