@@ -7,17 +7,18 @@ html, body {
     width: $popup__width;
     height: $popup__height;
 
-    &.has-top-blocked--truncated {
+    &.has-top-blocked--truncated,
+    &.has-top-blocked--truncated.is-browser--moz {
         height: $popup__height--max;
+    }
+
+    &.is-browser--moz {
+        height: $popup__height--min--moz;
     }
 }
 
 body {
     overflow: hidden;
-
-    &.is-browser--moz {
-        height: $popup__height--moz;
-    }
 }
 
 #popup-container {
