@@ -100,7 +100,7 @@ class DDGAutofill extends HTMLElement {
         flex: 1;
         height: 40px;
         padding: 0 10px;
-        background-color: #678FFF;
+        background-color: #332FF3;
         color: #FFFFFF;
         border: none;
         border-radius: 10px;
@@ -111,7 +111,7 @@ class DDGAutofill extends HTMLElement {
     }
     .tooltip__button--secondary {
         background-color: #EEEEEE;
-        color: #3E1D83;
+        color: #332FF3;
     }
 </style>
 <div class="wrapper">
@@ -190,8 +190,8 @@ class DDGAutofill extends HTMLElement {
                 if (res.alias) {
                     this.execOnInputs(input => {
                         input.value = res.alias
-                        input.style.backgroundColor = '#fcfab8'
-                        input.style.color = '#222222'
+                        input.style.backgroundColor = '#F8F498'
+                        input.style.color = '#333333'
 
                         // If the user changes the alias, remove the decoration
                         input.addEventListener('input', () => {
