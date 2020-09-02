@@ -219,6 +219,7 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
             // Check general data validity
             if (message.userName.match(/([a-z0-9_])+/) && message.token.match(/([a-z0-9])+/)) {
                 settings.updateSetting('userData', message)
+                fetchAlias()
                 sendResponse({success: true})
             } else {
                 sendResponse({error: 'Something seems wrong with the message'})
@@ -329,7 +330,8 @@ let onStartup = () => {
         Companies.buildFromStorage()
 
         // fetch alias if needed
-        settings.getSetting('nextAlias') || fetchAlias()
+        const userData = settings.getSetting('userData')
+        if (userData.userName && !userData.nextAlias) fetchAlias()
     })
 }
 
