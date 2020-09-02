@@ -75,5 +75,8 @@
         "<all_urls>",
         "alarms"
     ],
+    "externally_connectable": {
+        "matches": ["https://*.duckduckgo.com/*"]
+    },
     "web_accessible_resources": ["img/ddg-logo-borderless.svg"]
 }
