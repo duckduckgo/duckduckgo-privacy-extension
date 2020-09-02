@@ -38,7 +38,7 @@ UserData.prototype = window.$.extend({},
             this.unbindEvents()
             this._rerender()
             this.setup()
-        },
+        }
     }
 )
 

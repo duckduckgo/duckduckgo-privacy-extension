@@ -9,20 +9,16 @@ function UserData (attrs) {
 UserData.prototype = window.$.extend({},
     Parent.prototype,
     {
-
         modelName: 'userData',
 
         logout () {
-            console.log('logout')
-            // 1. remove data from the store
+            this.fetch({updateSetting: {name: 'userData', value: {}}})
+                .then(() => this.set('loggingOut', true))
         },
 
         setUserDataFromSettings: function () {
-            let self = this
-            this.fetch({getSetting: {name: 'userData'}}).then(({userName}) => {
-                console.log('setting', userName)
-                self.set('userName', userName)
-            })
+            this.fetch({getSetting: {name: 'userData'}})
+                .then(({userName}) => this.set('userName', userName))
         }
     }
 )
