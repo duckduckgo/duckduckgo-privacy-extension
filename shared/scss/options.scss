@@ -19,3 +19,10 @@
     margin-bottom: 10px;
     color: $slate;
 }
+
+#options-content {
+    // Correct vertical centering of the toggle
+    .toggle-button {
+        top: -4px;
+    }
+}
