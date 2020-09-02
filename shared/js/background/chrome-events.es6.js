@@ -214,13 +214,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
 // Handle messages from webpages. Note that allowed origins are defined in manifest.json.
 chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
-    // Check general data validity
-    if (message.userName.match(/([a-z0-9_])+/) && message.token.match(/([a-z0-9])+/)) {
-        settings.updateSetting('userData', message)
-        return sendResponse({success: true})
+    switch (message.type) {
+        case 'addUserData':
+            // Check general data validity
+            if (message.userName.match(/([a-z0-9_])+/) && message.token.match(/([a-z0-9])+/)) {
+                settings.updateSetting('userData', message)
+                sendResponse({success: true})
+            } else {
+                sendResponse({error: 'Something seems wrong with the message'})
+            }
+            break
+        default:
+            sendResponse({error: 'Unknown message type.'})
     }
-
-    return sendResponse({error: 'Something seems wrong with the message'})
 })
 
 /**
