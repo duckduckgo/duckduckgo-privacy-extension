@@ -219,7 +219,14 @@ chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => 
             // Check general data validity
             if (message.userName.match(/([a-z0-9_])+/) && message.token.match(/([a-z0-9])+/)) {
                 settings.updateSetting('userData', message)
-                fetchAlias()
+                // Once user is set, fetch the alias and notify all tabs
+                fetchAlias().then(() => {
+                    chrome.tabs.query({}, (tabs) => {
+                        tabs.forEach((tab) => {
+                            chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                        })
+                    })
+                })
                 sendResponse({success: true})
             } else {
                 sendResponse({error: 'Something seems wrong with the message'})

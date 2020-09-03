@@ -10,7 +10,7 @@ const fetchAlias = () => {
 
     const userData = getSetting('userData')
 
-    fetch(`${userData.token}`)
+    return fetch(`${userData.token}`)
         .then(response => {
             if (response.ok) {
                 response.text().then(alias => {
