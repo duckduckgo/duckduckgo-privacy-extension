@@ -3,6 +3,7 @@
     const DDGAutofill = require('./email-modules/DDGAutofill')
     const Form = require('./email-modules/Form')
 
+    // Listen for sign in message from the ddg email page
     window.addEventListener('message', (event) => {
         if (!event.origin.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
 
@@ -11,7 +12,7 @@
 
     // Check if we already have user data
     chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
-        if (userData.nextAlias) {
+        if (userData && userData.nextAlias) {
             injectEmailAutofill()
         } else {
             // If we don't have user data yet, listen for when the user data is set

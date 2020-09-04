@@ -217,7 +217,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
         if (req.addUserData) {
             // If we already have user data, ignore the req
-            if (settings.getSetting('userData').nextAlias) return
+            const existingUser = settings.getSetting('userData')
+            if (existingUser && existingUser.nextAlias) return
 
             const {userName, token} = req.addUserData
             // Check general data validity
@@ -343,7 +344,7 @@ let onStartup = () => {
 
         // fetch alias if needed
         const userData = settings.getSetting('userData')
-        if (userData.userName && !userData.nextAlias) fetchAlias()
+        if (userData && !userData.nextAlias) fetchAlias()
     })
 }
 
