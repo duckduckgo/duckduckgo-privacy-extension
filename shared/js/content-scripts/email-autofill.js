@@ -7,6 +7,7 @@
     const inputButtonMap = new Map()
     const forms = new Map()
 
+
     customElements.define('ddg-autofill', DDGAutofill)
 
     const updateAllButtons = () => {

@@ -122,6 +122,7 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
+const {REFETCH_ALIAS_ALARM, fetchAlias} = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
@@ -199,6 +200,16 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(pixel.fire.apply(null, fireArgs))
         return true
     }
+
+    if (req.getAlias) {
+        const alias = settings.getSetting('nextAlias')
+        res({alias})
+
+        // Fetch a new alias
+        fetchAlias()
+
+        return true
+    }
 })
 
 /**
@@ -266,6 +277,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
+    } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {
+        fetchAlias()
     }
 })
 
@@ -297,6 +310,9 @@ let onStartup = () => {
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()
+
+        // fetch alias if needed
+        settings.getSetting('nextAlias') || fetchAlias()
     })
 }
 

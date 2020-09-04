@@ -60,7 +60,7 @@ class DDGAutofill extends HTMLElement {
     }
     .tooltip::before {
         content: "";
-        width: 0; 
+        width: 0;
         height: 0; 
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
@@ -72,8 +72,8 @@ class DDGAutofill extends HTMLElement {
     }
     .tooltip::after {
         content: "";
-        width: 0; 
-        height: 0; 
+        width: 0;
+        height: 0;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
         display: block;
@@ -88,7 +88,7 @@ class DDGAutofill extends HTMLElement {
         font-size: 16px;
         font-weight: bold;
         line-height: 1.3;
-    }    
+    }
     .tooltip p {
         margin: 4px 0 12px;
         color: #666666;
@@ -100,7 +100,7 @@ class DDGAutofill extends HTMLElement {
         flex: 1;
         height: 40px;
         padding: 0 10px;
-        background-color: #678FFF;
+        background-color: #332FF3;
         color: #FFFFFF;
         border: none;
         border-radius: 10px;
@@ -111,7 +111,7 @@ class DDGAutofill extends HTMLElement {
     }
     .tooltip__button--secondary {
         background-color: #EEEEEE;
-        color: #3E1D83;
+        color: #332FF3;
     }
 </style>
 <div class="wrapper">
@@ -124,8 +124,7 @@ class DDGAutofill extends HTMLElement {
             <button class="tooltip__button tooltip__button--primary js-confirm">Use Private Alias</button>
         </div>
     </div>
-</div>
-            `
+</div>`
         this.wrapper = shadow.querySelector('.wrapper')
         this.trigger = shadow.querySelector('.trigger')
         this.tooltip = shadow.querySelector('.tooltip')
@@ -187,10 +186,22 @@ class DDGAutofill extends HTMLElement {
             return allEmpty
         }
         this.autofillInputs = () => {
-            this.execOnInputs(input => {
-                input.value = 'example_alias@duck.com'
-                input.style.backgroundColor = '#fcfab8'
-                input.style.color = '#222222'
+            chrome.runtime.sendMessage({getAlias: true}, (res) => {
+                if (res.alias) {
+                    this.execOnInputs(input => {
+                        input.value = res.alias
+                        input.style.backgroundColor = '#F8F498'
+                        input.style.color = '#333333'
+
+                        // If the user changes the alias, remove the decoration
+                        input.addEventListener('input', () => {
+                            this.execOnInputs(input => {
+                                input.style.removeProperty('background-color')
+                                input.style.removeProperty('color')
+                            })
+                        }, {once: true})
+                    })
+                }
             })
         }
         this.resetInputs = () => {
