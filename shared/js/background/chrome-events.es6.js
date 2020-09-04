@@ -210,30 +210,35 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
         return true
     }
-})
 
-// Handle messages from webpages. Note that allowed origins are defined in manifest.json.
-chrome.runtime.onMessageExternal.addListener((message, sender, sendResponse) => {
-    switch (message.type) {
-        case 'addUserData':
+    if (req.addUserData) {
+        // Check the origin. Shouldn't be necessary, but better safe than sorry
+        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
+
+        if (req.addUserData) {
+            // If we already have user data, ignore the req
+            if (settings.getSetting('userData').nextAlias) return
+
+            const {userName, token} = req.addUserData
             // Check general data validity
-            if (message.userName.match(/([a-z0-9_])+/) && message.token.match(/([a-z0-9])+/)) {
-                settings.updateSetting('userData', message)
+            if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
+                settings.updateSetting('userData', req.addUserData)
                 // Once user is set, fetch the alias and notify all tabs
                 fetchAlias().then(() => {
                     chrome.tabs.query({}, (tabs) => {
                         tabs.forEach((tab) => {
-                            chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                            // Send ddgUserReady message only if tab is in memory
+                            if (!tab.discarded) {
+                                chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                            }
                         })
                     })
                 })
-                sendResponse({success: true})
+                res({success: true})
             } else {
-                sendResponse({error: 'Something seems wrong with the message'})
+                res({error: 'Something seems wrong with the user data'})
             }
-            break
-        default:
-            sendResponse({error: 'Unknown message type.'})
+        }
     }
 })
 
