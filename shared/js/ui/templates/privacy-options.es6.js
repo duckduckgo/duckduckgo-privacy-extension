@@ -11,6 +11,12 @@ module.exports = function () {
         'js-options-embedded-tweets-enabled',
         'embeddedTweetsEnabled')}
         </li>
+        <li class="options-content__priv-enabled">
+            Send Do Not Sell Request to Websites
+            ${toggleButton(this.model.PRIVEnabled,
+        'js-options-priv-enabled',
+        'PRIVEnabled')}
+        </li>
     </ul>
 </section>`
 }

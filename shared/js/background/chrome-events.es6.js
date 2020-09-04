@@ -206,11 +206,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
+const priv = require('./PRIV.es6')
 
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
     const activeExperiment = settings.getSetting('activeExperiment')
+
+    priv.injectDOMSignal(details.tabId)
 
     if (activeExperiment) {
         const experiment = settings.getSetting('experimentData')
@@ -244,23 +247,30 @@ chrome.webNavigation.onCommitted.addListener(details => {
 
 // Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
-    function spoofUserAgentHeader (e) {
+    request => {
+        let requestHeaders = request.requestHeaders
+
+        priv.setHeader(requestHeaders)
+
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
-        if (agentSpoofer.shouldSpoof(e)) {
+        if (agentSpoofer.shouldSpoof(request)) {
             // remove existing User-Agent header
-            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
+            requestHeaders = request.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
             // Add in spoofed value
             requestHeaders.push({
                 name: 'User-Agent',
                 value: agentSpoofer.getAgent()
             })
-            return {requestHeaders: requestHeaders}
         }
+
+        return {requestHeaders: requestHeaders}
     },
     {urls: ['<all_urls>']},
     ['blocking', 'requestHeaders']
 )
+
+
 
 /**
  * ALARMS

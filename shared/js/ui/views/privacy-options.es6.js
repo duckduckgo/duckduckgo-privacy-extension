@@ -24,11 +24,12 @@ PrivacyOptions.prototype = window.$.extend({},
         },
 
         setup: function () {
-            this._cacheElems('.js-options', ['blocktrackers', 'https-everywhere-enabled', 'embedded-tweets-enabled'])
+            this._cacheElems('.js-options', ['blocktrackers', 'https-everywhere-enabled', 'embedded-tweets-enabled', 'priv-enabled'])
             this.bindEvents([
                 [this.$blocktrackers, 'click', this._clickSetting],
                 [this.$httpseverywhereenabled, 'click', this._clickSetting],
-                [this.$embeddedtweetsenabled, 'click', this._clickSetting]
+                [this.$embeddedtweetsenabled, 'click', this._clickSetting],
+                [this.$privenabled, 'click', this._clickSetting]
             ])
         },
 
