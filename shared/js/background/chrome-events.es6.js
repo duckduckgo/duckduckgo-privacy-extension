@@ -215,7 +215,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
 
     priv.injectDOMSignal(details.tabId)
 
-    if (activeExperiment) {
+    if (0) {
         const experiment = settings.getSetting('experimentData')
 
         if (experiment && experiment.fingerprint_protection) {
@@ -249,14 +249,17 @@ chrome.webNavigation.onCommitted.addListener(details => {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         let requestHeaders = request.requestHeaders
+        const privHeader = priv.setHeader(requestHeaders)
 
-        priv.setHeader(requestHeaders)
+        if (privHeader) {
+            requestHeaders.push(privHeader)
+        }
 
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (agentSpoofer.shouldSpoof(request)) {
             // remove existing User-Agent header
-            requestHeaders = request.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
+            requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
             // Add in spoofed value
             requestHeaders.push({
                 name: 'User-Agent',
