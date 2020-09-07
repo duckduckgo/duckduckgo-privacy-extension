@@ -76,6 +76,7 @@ describe('experiment.getDaysSinceInstall', () => {
             spyOn(atbUtils, 'getCurrentATB').and.returnValue(test.currentATB)
 
             const result = experiment.getDaysSinceInstall()
+            jasmine.clock().uninstall()
             expect(result).toBe(test.diff)
         })
     })

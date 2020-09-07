@@ -80,6 +80,7 @@ describe('utils.getCurrentATB', () => {
 
             const result = atbUtils.getCurrentATB()
 
+            jasmine.clock().uninstall()
             expect(result.version).toEqual(test.atb)
         })
     })
