@@ -223,10 +223,13 @@ describe('Https upgrades', () => {
                 expect(httpsService.checkInCache('example.com')).toBe(true)
 
                 const newDate = Date.now() + 1000 * 60 * 61
+
                 jasmine.clock().mockDate(new Date(newDate))
                 httpsService.clearExpiredCache()
-                expect(httpsService.checkInCache('example.com')).toBe(null)
+                const inCache = httpsService.checkInCache('example.com')
+                // Ensure the jasmine clock is always removed, even if test case fails.
                 jasmine.clock().uninstall()
+                expect(inCache).toBe(null)
             })
         })
     })
