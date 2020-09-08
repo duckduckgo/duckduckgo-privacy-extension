@@ -51,7 +51,7 @@ module.exports = function () {
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </div>
         </li>
-        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded border--bottom">
+        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded">
             ${renderManageWhitelist(this.model)}
         </li>
         <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
