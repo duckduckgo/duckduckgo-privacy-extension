@@ -9,7 +9,7 @@ module.exports = function () {
     const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
         constants.tosdrMessages.unknown
 
-    return bel`<section class="site-info site-info--main">
+    return bel`<div class="site-info site-info--main">
     <ul class="default-list">
         <li class="border--bottom site-info__rating-li main-rating js-hero-open">
             ${ratingHero(this.model, {
@@ -73,7 +73,7 @@ module.exports = function () {
             </div>
         </li>
     </ul>
-</section>`
+</div>`
 
     function setTransitionText (isSiteWhitelisted) {
         isSiteWhitelisted = isSiteWhitelisted || false
