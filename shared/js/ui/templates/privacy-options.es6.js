@@ -11,11 +11,11 @@ module.exports = function () {
         'js-options-embedded-tweets-enabled',
         'embeddedTweetsEnabled')}
         </li>
-        <li class="options-content__priv-enabled">
+        <li class="options-content__gpc-enabled">
             Send Do Not Sell Request to Websites
-            ${toggleButton(this.model.PRIVEnabled,
-        'js-options-priv-enabled',
-        'PRIVEnabled')}
+            ${toggleButton(this.model.GPCEnabled,
+        'js-options-gpc-enabled',
+        'GPCEnabled')}
         </li>
     </ul>
 </section>`

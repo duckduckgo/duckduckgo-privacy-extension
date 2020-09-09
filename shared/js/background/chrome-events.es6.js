@@ -206,16 +206,16 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
-const priv = require('./PRIV.es6')
+const gpc = require('./GPC.es6')
 
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
     const activeExperiment = settings.getSetting('activeExperiment')
 
-    priv.injectDOMSignal(details.tabId)
+    gpc.injectDOMSignal(details.tabId)
 
-    if (0) {
+    if (activeExperiment) {
         const experiment = settings.getSetting('experimentData')
 
         if (experiment && experiment.fingerprint_protection) {
@@ -249,10 +249,10 @@ chrome.webNavigation.onCommitted.addListener(details => {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         let requestHeaders = request.requestHeaders
-        const privHeader = priv.setHeader(requestHeaders)
+        const gpcHeader = gpc.setHeader(requestHeaders)
 
-        if (privHeader) {
-            requestHeaders.push(privHeader)
+        if (gpcHeader) {
+            requestHeaders.push(gpcHeader)
         }
 
         // Only change the user agent header if the current site is not whitelisted

@@ -5,7 +5,7 @@ function PrivacyOptions (attrs) {
     attrs.trackerBlockingEnabled = true
     attrs.httpsEverywhereEnabled = true
     attrs.embeddedTweetsEnabled = false
-    attrs.PRIVEnabled = false
+    attrs.GPCEnabled = false
 
     Parent.call(this, attrs)
 }
@@ -31,7 +31,7 @@ PrivacyOptions.prototype = window.$.extend({},
                     self.trackerBlockingEnabled = settings['trackerBlockingEnabled']
                     self.httpsEverywhereEnabled = settings['httpsEverywhereEnabled']
                     self.embeddedTweetsEnabled = settings['embeddedTweetsEnabled']
-                    self.PRIVEnabled = settings['PRIVEnabled']
+                    self.GPCEnabled = settings['GPCEnabled']
 
                     resolve()
                 })
