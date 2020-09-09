@@ -98,7 +98,8 @@ body {
         }
     }
 
-    .site-info--placeholder {
+    .text-line-after-icon {
+        margin-left: 12px;
     }
 
     .site-info {
@@ -106,10 +107,6 @@ body {
 
         .default-list {
            padding-bottom: 0;
-        }
-
-        .text-line-after-icon {
-           margin-left: 12px;
         }
 
         .text-line-after-icon.privacy-on-off-message {
@@ -347,7 +344,10 @@ body {
     }
 
     .top-blocked {
-        padding-bottom: 15px;
+        display: flex;
+        align-items: center;
+        height: 50px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
 
         &.top-blocked--truncated {
             padding-top: 0;
@@ -425,7 +425,7 @@ body {
 
 /* Top blocked lists */
 .top-blocked__see-all {
-   padding-top: 14px;
+   width: 100%;
    padding-left: 20px;
    cursor: pointer;
 
