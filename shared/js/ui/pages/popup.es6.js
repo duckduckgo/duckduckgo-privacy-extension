@@ -37,28 +37,28 @@ Trackers.prototype = window.$.extend({},
             this.views.search = new SearchView({
                 pageView: this,
                 model: new SearchModel({searchText: ''}),
-                appendTo: this.$parent,
+                appendTo: window.$('#search-form-container'),
                 template: searchTemplate
             })
 
             this.views.hamburgerMenu = new HamburgerMenuView({
                 pageView: this,
                 model: new HamburgerMenuModel(),
-                appendTo: this.$parent,
+                appendTo: window.$('#hamburger-menu-container'),
                 template: hamburgerMenuTemplate
             })
 
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel(),
-                appendTo: this.$parent,
+                appendTo: window.$('#site-info-container'),
                 template: siteTemplate
             })
 
             this.views.topblocked = new TopBlockedView({
                 pageView: this,
                 model: new TopBlockedModel({numCompanies: 3}),
-                appendTo: this.$parent,
+                appendTo: window.$('#top-blocked-container'),
                 template: topBlockedTemplate
             })
 
