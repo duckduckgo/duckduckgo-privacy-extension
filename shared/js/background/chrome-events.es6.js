@@ -275,8 +275,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     ['blocking', 'requestHeaders']
 )
 
-
-
 /**
  * ALARMS
  */

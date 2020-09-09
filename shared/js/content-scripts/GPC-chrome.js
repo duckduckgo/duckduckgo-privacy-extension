@@ -1,7 +1,7 @@
 (function setDOMSignal () {
     const scriptString = `
-        Object.defineProperty(navigator, "globalPrivacyControl", {
-            value: "${globalPrivacyControlValue}",
+        Object.defineProperty(window, "globalPrivacyControl", {
+            value: ${globalPrivacyControlValue},
             configurable: false,
             writable: false
         });
