@@ -208,8 +208,9 @@ const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
 const gpc = require('./GPC.es6')
 
-// Inject fingerprint protection into sites when
-// they are not whitelisted.
+// 1. Set GPC property on DOM if enabled.
+// 2. Inject fingerprint protection into sites when
+//    they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
     const activeExperiment = settings.getSetting('activeExperiment')
 
@@ -245,7 +246,8 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
 })
 
-// Replace UserAgent header on third party requests.
+// 1. Attach GPC header to all requests if enabled.
+// 2. Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         let requestHeaders = request.requestHeaders
