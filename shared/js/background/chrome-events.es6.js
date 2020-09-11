@@ -252,35 +252,27 @@ const agentSpoofer = require('./classes/agentspoofer.es6')
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
-    const activeExperiment = settings.getSetting('activeExperiment')
-
-    if (activeExperiment) {
-        const experiment = settings.getSetting('experimentData')
-
-        if (experiment && experiment.fingerprint_protection) {
-            const whitelisted = settings.getSetting('whitelisted')
-            const tabURL = new URL(details.url) || {}
-            if (!whitelisted || !whitelisted[tabURL.hostname]) {
-                // Set variables, which are used in the fingerprint-protection script.
-                const variableScript = {
-                    'code': `
-                        try {
-                            var ddg_ext_ua='${agentSpoofer.getAgent()}'
-                        } catch(e) {}`,
-                    'runAt': 'document_start',
-                    'allFrames': true,
-                    'matchAboutBlank': true
-                }
-                chrome.tabs.executeScript(details.tabId, variableScript)
-                const scriptDetails = {
-                    'file': '/data/fingerprint-protection.js',
-                    'runAt': 'document_start',
-                    'allFrames': true,
-                    'matchAboutBlank': true
-                }
-                chrome.tabs.executeScript(details.tabId, scriptDetails)
-            }
+    const whitelisted = settings.getSetting('whitelisted')
+    const tabURL = new URL(details.url) || {}
+    if (!whitelisted || !whitelisted[tabURL.hostname]) {
+        // Set variables, which are used in the fingerprint-protection script.
+        const variableScript = {
+            'code': `
+                try {
+                    var ddg_ext_ua='${agentSpoofer.getAgent()}'
+                } catch(e) {}`,
+            'runAt': 'document_start',
+            'allFrames': true,
+            'matchAboutBlank': true
         }
+        chrome.tabs.executeScript(details.tabId, variableScript)
+        const scriptDetails = {
+            'file': '/data/fingerprint-protection.js',
+            'runAt': 'document_start',
+            'allFrames': true,
+            'matchAboutBlank': true
+        }
+        chrome.tabs.executeScript(details.tabId, scriptDetails)
     }
 })
 
