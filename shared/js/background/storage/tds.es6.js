@@ -3,6 +3,7 @@ const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
+const tldts = require('tldts')
 
 class TDSStorage {
     constructor () {
@@ -10,7 +11,7 @@ class TDSStorage {
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
         })
-        this.tds = {entities: {}, trackers: {}, domains: {}}
+        this.tds = {entities: {}, trackers: {}, domains: {}, cnames: {}}
         this.surrogates = ''
         this.brokenSiteList = []
     }
@@ -142,6 +143,20 @@ class TDSStorage {
         if (versionParam) settings.updateSetting('lastTdsUpdate', now)
 
         return versionParam
+    }
+
+    resolveCname (url) {
+        const parsed = tldts.parse(url)
+        let finalURL = url
+        if (parsed && this.tds.cnames) {
+            let domain = parsed.domain
+            if (parsed.subdomain) {
+                domain = parsed.subdomain + '.' + domain
+            }
+            const finalDomain = this.tds.cnames[domain] || domain
+            finalURL = finalURL.replace(domain, finalDomain)
+        }
+        return finalURL
     }
 }
 module.exports = new TDSStorage()
