@@ -11,6 +11,7 @@
                 this.entityList = this.processEntityList(list.data.entities)
                 this.trackerList = this.processTrackerList(list.data.trackers)
                 this.domains = list.data.domains
+                this.cnames = list.data.cnames
             } else if (list.name === 'surrogates') {
                 this.surrogateList = this.processSurrogateList(list.data)
             }
@@ -60,12 +61,28 @@
         return surrogateList
     }
 
+    resolveCname (url) {
+        const parsed = this.tldjs.parse(url)
+        let finalURL = url
+        if (parsed && this.cnames) {
+            let domain = parsed.domain
+            if (parsed.subdomain) {
+                domain = parsed.subdomain + '.' + domain
+            }
+            const finalDomain = this.cnames[domain] || domain
+            finalURL = finalURL.replace(domain, finalDomain)
+        }
+        return finalURL
+    }
+
     getTrackerData (urlToCheck, siteUrl, request, ops) {
         ops = ops || {}
 
         if (!this.entityList || !this.trackerList) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
+
+        urlToCheck = this.resolveCname(urlToCheck)
 
         // single object with all of our requeest and site data split and
         // processed into the correct format for the tracker set/get functions.
