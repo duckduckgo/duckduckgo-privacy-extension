@@ -3,7 +3,6 @@ const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
-const tldts = require('tldts')
 
 class TDSStorage {
     constructor () {
@@ -144,6 +143,5 @@ class TDSStorage {
 
         return versionParam
     }
-
 }
 module.exports = new TDSStorage()

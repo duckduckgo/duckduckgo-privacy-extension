@@ -6,7 +6,6 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
-const tdsStorage = require('./storage/tds.es6')
 
 var debugRequest = false
 
