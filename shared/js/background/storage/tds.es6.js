@@ -10,7 +10,7 @@ class TDSStorage {
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
         })
-        this.tds = {entities: {}, trackers: {}, domains: {}}
+        this.tds = {entities: {}, trackers: {}, domains: {}, cnames: {}}
         this.surrogates = ''
         this.brokenSiteList = []
     }
