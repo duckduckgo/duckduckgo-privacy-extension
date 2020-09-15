@@ -64,6 +64,7 @@
         resolveCname (url) {
             const parsed = this.tldjs.parse(url)
             let finalURL = url
+            let fromCname
             if (parsed && this.cnames) {
                 let domain = parsed.domain
                 if (parsed.subdomain) {
@@ -71,8 +72,14 @@
                 }
                 const finalDomain = this.cnames[domain] || domain
                 finalURL = finalURL.replace(domain, finalDomain)
+                if (finalDomain !== domain) {
+                    fromCname = domain
+                }
             }
-            return finalURL
+            return {
+                fromCname,
+                finalURL
+            }
         }
 
         getTrackerData (urlToCheck, siteUrl, request, ops) {
@@ -81,8 +88,9 @@
             if (!this.entityList || !this.trackerList) {
                 throw new Error('tried to detect trackers before rules were loaded')
             }
-
-            urlToCheck = this.resolveCname(urlToCheck)
+            const cnameResolution = this.resolveCname(urlToCheck)
+            const fromCname = cnameResolution.fromCname
+            urlToCheck = cnameResolution.finalURL
 
             // single object with all of our requeest and site data split and
             // processed into the correct format for the tracker set/get functions.
@@ -137,7 +145,8 @@
                 matchedRule,
                 matchedRuleException,
                 tracker,
-                fullTrackerDomain
+                fullTrackerDomain,
+                fromCname
             }
         }
 
