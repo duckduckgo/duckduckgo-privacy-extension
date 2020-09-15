@@ -91,10 +91,7 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
-        // First check if request is actually a CNAME cloaked tracker
-        let cnameURL = tdsStorage.resolveCname(requestData.url)
-
-        var tracker = trackers.getTrackerData(cnameURL, thisTab.site.url, requestData)
+        var tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
 
         // allow embedded twitter content if user enabled this setting
         if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {

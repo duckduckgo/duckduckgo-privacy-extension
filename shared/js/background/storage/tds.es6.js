@@ -145,18 +145,5 @@ class TDSStorage {
         return versionParam
     }
 
-    resolveCname (url) {
-        const parsed = tldts.parse(url)
-        let finalURL = url
-        if (parsed && this.tds.cnames) {
-            let domain = parsed.domain
-            if (parsed.subdomain) {
-                domain = parsed.subdomain + '.' + domain
-            }
-            const finalDomain = this.tds.cnames[domain] || domain
-            finalURL = finalURL.replace(domain, finalDomain)
-        }
-        return finalURL
-    }
 }
 module.exports = new TDSStorage()
