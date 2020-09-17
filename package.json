@@ -1,6 +1,6 @@
 {
   "name": "@duckduckgo/privacy-grade",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "DuckDuckGo's privacy grade algorithm",
   "main": "index.js",
   "scripts": {
