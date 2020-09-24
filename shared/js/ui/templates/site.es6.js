@@ -9,7 +9,7 @@ module.exports = function () {
     const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
         constants.tosdrMessages.unknown
 
-    return bel`<section class="site-info site-info--main">
+    return bel`<div class="site-info site-info--main">
     <ul class="default-list">
         <li class="border--bottom site-info__rating-li main-rating js-hero-open">
             ${ratingHero(this.model, {
@@ -51,7 +51,7 @@ module.exports = function () {
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </div>
         </li>
-        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded border--bottom">
+        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded">
             ${renderManageWhitelist(this.model)}
         </li>
         <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
@@ -73,7 +73,7 @@ module.exports = function () {
             </div>
         </li>
     </ul>
-</section>`
+</div>`
 
     function setTransitionText (isSiteWhitelisted) {
         isSiteWhitelisted = isSiteWhitelisted || false

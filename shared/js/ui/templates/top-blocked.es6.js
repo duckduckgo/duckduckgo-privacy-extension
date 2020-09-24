@@ -5,10 +5,10 @@ const noData = require('./shared/top-blocked-no-data.es6.js')
 
 module.exports = function () {
     if (!this.model) {
-        return bel`<section class="sliding-subview
+        return bel`<div class="sliding-subview
     sliding-subview--has-fixed-header top-blocked-header">
     ${header('All Trackers')}
-</section>`
+</div>`
     } else {
         return bel`<div class="js-top-blocked-content">
     ${renderPctPagesWithTrackers(this.model)}
