@@ -21,6 +21,13 @@ chrome.runtime.onInstalled.addListener(function (details) {
     } else if (details.reason.match(/update/) && browser === 'chrome') {
         experiment.setActiveExperiment()
     }
+
+    // Inject the email content script onto the web app upon installation
+    chrome.tabs.query({url: 'https://*.duckduckgo.com/*'}, (tabs) => {
+        tabs.forEach(tab => {
+            chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/email-autofill.js'})
+        })
+    })
 })
 
 /**
