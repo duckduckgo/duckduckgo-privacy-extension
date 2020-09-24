@@ -3,22 +3,45 @@
     const DDGAutofill = require('./email-modules/DDGAutofill')
     const Form = require('./email-modules/Form')
 
+    const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
+
+    // Send a message to the web app (only on DDG domains)
+    const notifyWebApp = (message) => {
+        if (window.origin.match(ddgDomainRegex)) {
+            window.postMessage(message, window.origin)
+        }
+    }
+
     // Listen for sign in message from the ddg email page
     window.addEventListener('message', (event) => {
-        if (!event.origin.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
+        if (!event.origin.match(ddgDomainRegex)) return
 
-        chrome.runtime.sendMessage(event.data)
+        // The web app notifies us that the user signed in
+        if (event.data.addUserData) {
+            chrome.runtime.sendMessage(event.data)
+        }
+
+        // The web app wants to know if the user is signed in
+        if (event.data.checkExtensionSignedIn) {
+            chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
+                notifyWebApp({extensionSignedIn: {value: userData && userData.nextAlias}})
+            })
+        }
     })
 
     // Check if we already have user data
     chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
         if (userData && userData.nextAlias) {
             injectEmailAutofill()
+            notifyWebApp({extensionSignedIn: {value: true}})
         } else {
-            // If we don't have user data yet, listen for when the user data is set
+            // If we don't have user data yet, notify the web app that we are ready to receive it…
+            notifyWebApp({extensionInstalled: true})
+            // …then listen for when the user data is set
             chrome.runtime.onMessage.addListener((message, sender) => {
                 if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
                     injectEmailAutofill()
+                    notifyWebApp({extensionSignedIn: {value: true}})
                 }
             })
         }
