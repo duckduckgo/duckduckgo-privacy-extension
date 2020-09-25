@@ -18,10 +18,6 @@ UserData.prototype = window.$.extend({},
         _logout: function (e) {
             e.preventDefault()
             this.model.logout()
-
-            // 1. show logout message
-            // 2. wait 5s
-            // 3. remove message and everything
         },
 
         setup: function () {
@@ -29,7 +25,7 @@ UserData.prototype = window.$.extend({},
 
             this.bindEvents([
                 [this.$logout, 'click', this._logout],
-                // listen to changes to the userData model
+                // listen for changes to the userData model
                 [this.store.subscribe, 'change:userData', this.rerender]
             ])
         },
