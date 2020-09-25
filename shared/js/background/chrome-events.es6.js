@@ -222,30 +222,28 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Check the origin. Shouldn't be necessary, but better safe than sorry
         if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
 
-        if (req.addUserData) {
-            // If we already have user data, ignore the req
-            const existingUser = settings.getSetting('userData')
-            if (existingUser && existingUser.nextAlias) return
+        // If we already have user data, ignore the req
+        const existingUser = settings.getSetting('userData')
+        if (existingUser && existingUser.nextAlias) return
 
-            const {userName, token} = req.addUserData
-            // Check general data validity
-            if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
-                settings.updateSetting('userData', req.addUserData)
-                // Once user is set, fetch the alias and notify all tabs
-                fetchAlias().then(() => {
-                    chrome.tabs.query({}, (tabs) => {
-                        tabs.forEach((tab) => {
-                            // Send ddgUserReady message only if tab is in memory
-                            if (!tab.discarded) {
-                                chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
-                            }
-                        })
+        const {userName, token} = req.addUserData
+        // Check general data validity
+        if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
+            settings.updateSetting('userData', req.addUserData)
+            // Once user is set, fetch the alias and notify all tabs
+            fetchAlias().then(() => {
+                chrome.tabs.query({}, (tabs) => {
+                    tabs.forEach((tab) => {
+                        // Send ddgUserReady message only if tab is in memory
+                        if (!tab.discarded) {
+                            chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                        }
                     })
                 })
-                res({success: true})
-            } else {
-                res({error: 'Something seems wrong with the user data'})
-            }
+            })
+            res({success: true})
+        } else {
+            res({error: 'Something seems wrong with the user data'})
         }
     }
 })
