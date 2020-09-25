@@ -1,4 +1,4 @@
-const {updateSetting} = require('./settings.es6')
+const {getSetting, updateSetting} = require('./settings.es6')
 const REFETCH_ALIAS_ALARM = 'refetchAlias'
 
 // Keep track of the number of attempted fetches. Stop trying after 5.
@@ -8,11 +8,13 @@ const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
     chrome.alarms.get(REFETCH_ALIAS_ALARM, () => chrome.alarms.clear(REFETCH_ALIAS_ALARM))
 
-    fetch('')
+    const userData = getSetting('userData')
+
+    return fetch(`${userData.token}`)
         .then(response => {
             if (response.ok) {
                 response.text().then(alias => {
-                    updateSetting('nextAlias', alias)
+                    updateSetting('userData', Object.assign(userData, {nextAlias: alias}))
                     // Reset attempts
                     attempts = 1
                 })

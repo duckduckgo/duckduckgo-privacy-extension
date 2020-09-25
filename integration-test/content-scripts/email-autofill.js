@@ -21,6 +21,13 @@ describe('Email autofill input detection Tests', () => {
             () => window.dbg && dbg.https.isReady,
             { polling: 100, timeout: 60000 }
         )
+        // Sign in in the extension
+        const page = await browser.newPage()
+        await page.goto('https://duckduckgo.com', { waitUntil: 'networkidle0' })
+        await page.evaluate(() =>
+            window.postMessage({addUserData: {userName: 'e', token: 'e'}}, window.origin)
+        )
+        await page.close()
     })
     afterAll(async () => {
         await harness.teardown(browser)

@@ -123,13 +123,13 @@ const sites = [
     },
     {
         name: 'Leafly signup',
-        url: 'https://sso.leafly.com/i/ds123/sign-up',
+        url: 'https://sso.leafly.com/i/',
         actions: [{action: 'click', arg: 'a[href="/sign-up"]'}],
         autofillExpected: 1
     },
     {
         name: 'Leafly login',
-        url: 'https://sso.leafly.com/i/ds123/sign-up',
+        url: 'https://sso.leafly.com/i/',
         actions: [{action: 'click', arg: 'a[href="/sign-in"]'}],
         autofillExpected: 0
     },

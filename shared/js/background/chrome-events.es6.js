@@ -21,6 +21,13 @@ chrome.runtime.onInstalled.addListener(function (details) {
     } else if (details.reason.match(/update/) && browser === 'chrome') {
         experiment.setActiveExperiment()
     }
+
+    // Inject the email content script onto the web app upon installation
+    chrome.tabs.query({url: 'https://*.duckduckgo.com/*'}, (tabs) => {
+        tabs.forEach(tab => {
+            chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/email-autofill.js'})
+        })
+    })
 })
 
 /**
@@ -202,13 +209,42 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.getAlias) {
-        const alias = settings.getSetting('nextAlias')
-        res({alias})
+        const userData = settings.getSetting('userData')
+        res({alias: userData.nextAlias})
 
         // Fetch a new alias
         fetchAlias()
 
         return true
+    }
+
+    if (req.addUserData) {
+        // Check the origin. Shouldn't be necessary, but better safe than sorry
+        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
+
+        // If we already have user data, ignore the req
+        const existingUser = settings.getSetting('userData')
+        if (existingUser && existingUser.nextAlias) return
+
+        const {userName, token} = req.addUserData
+        // Check general data validity
+        if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
+            settings.updateSetting('userData', req.addUserData)
+            // Once user is set, fetch the alias and notify all tabs
+            fetchAlias().then(() => {
+                chrome.tabs.query({}, (tabs) => {
+                    tabs.forEach((tab) => {
+                        // Send ddgUserReady message only if tab is in memory
+                        if (!tab.discarded) {
+                            chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                        }
+                    })
+                })
+            })
+            res({success: true})
+        } else {
+            res({error: 'Something seems wrong with the user data'})
+        }
     }
 })
 
@@ -351,7 +387,8 @@ let onStartup = () => {
         agents.updateAgentData()
 
         // fetch alias if needed
-        settings.getSetting('nextAlias') || fetchAlias()
+        const userData = settings.getSetting('userData')
+        if (userData && !userData.nextAlias) fetchAlias()
     })
 }
 

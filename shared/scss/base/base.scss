@@ -39,6 +39,12 @@ section, ul, ol, li {
 
     &.divider-bottom {
         border-bottom: 1px solid $platinum;
+
+        // Handle space between the last element in the container and the divider
+        > :last-child {
+            padding-bottom: 0;
+            margin-bottom: 16px;
+        }
     }
 }
 
