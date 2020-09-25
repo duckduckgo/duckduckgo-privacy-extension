@@ -10,6 +10,8 @@ const fetchAlias = () => {
 
     const userData = getSetting('userData')
 
+    if (!userData.token) return
+
     return fetch(`${userData.token}`)
         .then(response => {
             if (response.ok) {
