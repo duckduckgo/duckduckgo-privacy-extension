@@ -589,6 +589,52 @@ body {
     }
 }
 
+.email-alias-block {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+
+    .text-line-after-icon {
+        position: relative;
+        vertical-align: middle;
+    }
+
+    .alias-copied-label {
+        display: block;
+        position: absolute;
+        top: -5px;
+        left: -1px;
+        width: 160px;
+        padding: 5px 13px;
+        text-align: center;
+        background-color: $color--medium-dark-platinum;
+        border-radius: 6px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &.show-copied-label {
+        pointer-events: none;
+
+        .alias-copied-label {
+            animation: 2s linear both temporary;
+        }
+    }
+
+    @keyframes temporary {
+        5%, 90% {
+            opacity: 1;
+        }
+        0%, 100% {
+            opacity: 0;
+        }
+    }
+}
+
+.email-alias__icon {
+    @include icon_display();
+    @include cross_platform_bg_image('wand.svg');
+}
+
 @import "views/search-form";
 @import "views/hero";
 @import "views/hero-rating-container";
