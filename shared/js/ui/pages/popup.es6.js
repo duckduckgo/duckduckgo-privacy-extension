@@ -67,7 +67,7 @@ Trackers.prototype = window.$.extend({},
 
             this.views.emailAlias = new EmailAliasView({
                 pageView: this,
-                model: new EmailAliasModel({numCompanies: 3}),
+                model: new EmailAliasModel(),
                 appendTo: window.$('#email-alias-container'),
                 template: EmailAliasTemplate
             })
