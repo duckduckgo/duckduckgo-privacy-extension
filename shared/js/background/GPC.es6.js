@@ -28,12 +28,11 @@ function injectDOMSignal (tabId) {
     if (!supportedBrowsers.includes(browserName)) return
 
     const GPCEnabled = settings.getSetting('GPCEnabled')
-    const GPCValue = GPCEnabled ? true : false
     // first pass GPC value to frames
     chrome.tabs.executeScript(tabId, {
         code: `
             try {
-                var globalPrivacyControlValue = ${GPCValue}
+                var globalPrivacyControlValue = ${GPCEnabled}
             } catch(e) {}`,
         allFrames: true,
         matchAboutBlank: true,
