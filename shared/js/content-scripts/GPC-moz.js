@@ -1,6 +1,6 @@
 (function setDOMSignal () {
-    let contentWindow = window.wrappedJSObject;
-    Object.defineProperty(contentWindow, "globalPrivacyControl", {
+    let wrappedNavigator = navigator.wrappedJSObject;
+    Object.defineProperty(wrappedNavigator, "globalPrivacyControl", {
         value: globalPrivacyControlValue,
         configurable: false,
         writable: false

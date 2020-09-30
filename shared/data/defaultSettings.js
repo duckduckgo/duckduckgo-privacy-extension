@@ -5,7 +5,6 @@ module.exports = {
     "httpsEverywhereEnabled": true,
     "embeddedTweetsEnabled": false,
     "GPCEnabled": false,
-    "GPCValue": "1",
     "meanings": true,
     "advanced_options": true,
     "last_search": "",
