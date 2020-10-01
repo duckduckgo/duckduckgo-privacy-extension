@@ -8,14 +8,40 @@ module.exports = function () {
         <li>
             Show Embedded Tweets
             ${toggleButton(this.model.embeddedTweetsEnabled,
-        'js-options-embedded-tweets-enabled',
-        'embeddedTweetsEnabled')}
+            'js-options-embedded-tweets-enabled',
+            'embeddedTweetsEnabled')}
         </li>
         <li class="options-content__gpc-enabled">
-            Send Do Not Sell Request to Websites
+            <h2 class="menu-title">Global Privacy Control (GPC)</h2>
+            <p class="menu-paragraph">
+                Your data shouldn't be for sale. At DuckDuckGo, we agree.
+                Activate the "Global Privacy Control" (GPC) signal and we'll
+                tell websites to:
+            </p>
+            <ul>
+                <li>
+                    Not sell your personal data.
+                </li>
+                <li>
+                    Limit sharing of your personal data to other companies.
+                </li>
+            </ul>
+            Global Privacy Control (GPC)
             ${toggleButton(this.model.GPCEnabled,
-        'js-options-gpc-enabled',
-        'GPCEnabled')}
+            'js-options-gpc-enabled',
+            'GPCEnabled')}
+            <p class="gpc-disclaimer">
+                <b>
+                    Since this Global Privacy Control (GPC) is a new standard,
+                    most websites won't recognize it yet, but we're working hard
+                    to ensure it becomes recognized worldwide.
+                </b>
+                It is intended to convey a general request that data controllers
+                limit the sale or sharing of your personal data to other data
+                controllers (i.e., to other companies besides the website you
+                are on).
+                <a href="https://duckduckgo.com/global-privacy-control-learn-more">Learn More</a>
+            </p>
         </li>
     </ul>
 </section>`
