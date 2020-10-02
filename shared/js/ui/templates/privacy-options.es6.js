@@ -15,8 +15,8 @@ module.exports = function () {
             <h2 class="menu-title">Global Privacy Control (GPC)</h2>
             <p class="menu-paragraph">
                 Your data shouldn't be for sale. At DuckDuckGo, we agree.
-                Activate the "Global Privacy Control" (GPC) signal and we'll
-                tell websites to:
+                Activate the "Global Privacy Control" (GPC) settings and we'll
+                signal to websites your preference to:
             </p>
             <ul>
                 <li>
@@ -32,14 +32,12 @@ module.exports = function () {
             'GPCEnabled')}
             <p class="gpc-disclaimer">
                 <b>
-                    Since this Global Privacy Control (GPC) is a new standard,
+                    Since Global Privacy Control (GPC) is a new standard,
                     most websites won't recognize it yet, but we're working hard
-                    to ensure it becomes recognized worldwide.
+                    to ensure it becomes accepted worldwide.
                 </b>
-                It is intended to convey a general request that data controllers
-                limit the sale or sharing of your personal data to other data
-                controllers (i.e., to other companies besides the website you
-                are on).
+                However, websites are only required to act on the signal to the
+                extent applicable laws compel them to do so.
                 <a href="https://duckduckgo.com/global-privacy-control-learn-more">Learn More</a>
             </p>
         </li>

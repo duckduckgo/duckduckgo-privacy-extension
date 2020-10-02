@@ -206,15 +206,11 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
-const gpc = require('./GPC.es6')
 
-// 1. Set GPC property on DOM if enabled.
-// 2. Inject fingerprint protection into sites when
-//    they are not whitelisted.
+// Inject fingerprint protection into sites when
+// they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
     const activeExperiment = settings.getSetting('activeExperiment')
-
-    gpc.injectDOMSignal(details.tabId)
 
     if (activeExperiment) {
         const experiment = settings.getSetting('experimentData')
@@ -246,30 +242,46 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
 })
 
-// 1. Attach GPC header to all requests if enabled.
-// 2. Replace UserAgent header on third party requests.
+// Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
-    request => {
-        let requestHeaders = request.requestHeaders
-        const gpcHeader = gpc.setHeader(requestHeaders)
-
-        if (gpcHeader) {
-            requestHeaders.push(gpcHeader)
-        }
-
+    function spoofUserAgentHeader (e) {
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
-        if (agentSpoofer.shouldSpoof(request)) {
+        if (agentSpoofer.shouldSpoof(e)) {
             // remove existing User-Agent header
-            requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
+            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
             // Add in spoofed value
             requestHeaders.push({
                 name: 'User-Agent',
                 value: agentSpoofer.getAgent()
             })
+            return {requestHeaders: requestHeaders}
         }
+    },
+    {urls: ['<all_urls>']},
+    ['blocking', 'requestHeaders']
+)
 
-        return {requestHeaders: requestHeaders}
+/**
+ * Global Privacy Control
+ */
+const GPC = require('./GPC.es6')
+
+// Set GPC property on DOM if enabled.
+chrome.webNavigation.onCommitted.addListener(details => {
+    GPC.injectDOMSignal(details.tabId)
+})
+
+// Attach GPC header to all requests if enabled.
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    request => {
+        const GPCHeader = GPC.getHeader()
+
+        if (GPCHeader) {
+            let requestHeaders = request.requestHeaders
+            requestHeaders.push(GPCHeader)
+            return {requestHeaders: requestHeaders}
+        }
     },
     {urls: ['<all_urls>']},
     ['blocking', 'requestHeaders']

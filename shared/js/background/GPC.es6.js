@@ -6,8 +6,8 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 
-// Add Sec-GPC header to outbound HTTP requests if setting enabled
-function setHeader () {
+// Return Sec-GPC header if setting enabled
+function getHeader () {
     const GPCEnabled = settings.getSetting('GPCEnabled')
     if (GPCEnabled) {
         return {
@@ -52,7 +52,6 @@ function injectDOMSignal (tabId) {
 }
 
 module.exports = {
-    setHeader: setHeader,
+    getHeader: getHeader,
     injectDOMSignal: injectDOMSignal
 }
-
