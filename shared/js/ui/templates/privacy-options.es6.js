@@ -8,8 +8,8 @@ module.exports = function () {
         <li>
             Show Embedded Tweets
             ${toggleButton(this.model.embeddedTweetsEnabled,
-            'js-options-embedded-tweets-enabled',
-            'embeddedTweetsEnabled')}
+        'js-options-embedded-tweets-enabled',
+        'embeddedTweetsEnabled')}
         </li>
         <li class="options-content__gpc-enabled">
             <h2 class="menu-title">Global Privacy Control (GPC)</h2>
@@ -28,8 +28,8 @@ module.exports = function () {
             </ul>
             Global Privacy Control (GPC)
             ${toggleButton(this.model.GPCEnabled,
-            'js-options-gpc-enabled',
-            'GPCEnabled')}
+        'js-options-gpc-enabled',
+        'GPCEnabled')}
             <p class="gpc-disclaimer">
                 <b>
                     Since Global Privacy Control (GPC) is a new standard,
