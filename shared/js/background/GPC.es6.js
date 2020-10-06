@@ -22,12 +22,10 @@ function getHeader () {
 // based browsers due to slight differences in how the browsers interpret script-src
 // CSP directives, and the existence of Xray vision in Firefox.
 function injectDOMSignal (tabId) {
-    const supportedBrowsers = ['chrome', 'moz', 'edg']
-    let browserName = utils.getBrowserName()
-
-    if (!supportedBrowsers.includes(browserName)) return
-
     const GPCEnabled = settings.getSetting('GPCEnabled')
+    const browserName = utils.getBrowserName()
+    const contentScriptName = browserName === 'moz' ? 'GPC-moz.js' : 'GPC.js'
+
     // first pass GPC value to frames
     chrome.tabs.executeScript(tabId, {
         code: `
@@ -38,13 +36,9 @@ function injectDOMSignal (tabId) {
         matchAboutBlank: true,
         runAt: 'document_start'
     })
-    // next inject script to set value on navigator object. Chromium-based browsers
-    // are functionally the same and use the same script, so converge Chrome and Edge
-    if (browserName === 'chrome' || browserName === 'edg') {
-        browserName = 'chromium'
-    }
+    // next inject script to set value on navigator
     chrome.tabs.executeScript(tabId, {
-        file: `public/js/content-scripts/GPC-${browserName}.js`,
+        file: `public/js/content-scripts/${contentScriptName}`,
         allFrames: true,
         matchAboutBlank: true,
         runAt: 'document_start'
