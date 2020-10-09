@@ -149,7 +149,7 @@
         resObs.observe(document.body);
 
         // Update the position if transitions or animations are detected just in case
-        ['transitionend', 'animationend'].forEach(
+        ['transitionend', 'animationend', 'load'].forEach(
             eventType => window.addEventListener(eventType, () => updateAllButtons())
         )
     }
