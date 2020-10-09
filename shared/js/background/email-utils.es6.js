@@ -15,7 +15,7 @@ const fetchAlias = () => {
     return fetch(`${userData.token}`)
         .then(response => {
             if (response.ok) {
-                response.text().then(alias => {
+                return response.text().then(alias => {
                     updateSetting('userData', Object.assign(userData, {nextAlias: alias}))
                     // Reset attempts
                     attempts = 1
@@ -32,6 +32,8 @@ const fetchAlias = () => {
                 chrome.alarms.create(REFETCH_ALIAS_ALARM, {delayInMinutes: 2})
                 attempts++
             }
+            // Return the error so we can handle it
+            return {error: e}
         })
 }
 
