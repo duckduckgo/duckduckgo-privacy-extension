@@ -231,7 +231,11 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
             settings.updateSetting('userData', req.addUserData)
             // Once user is set, fetch the alias and notify all tabs
-            fetchAlias().then(() => {
+            fetchAlias().then(({error}) => {
+                if (error) {
+                    return res({error: error.message})
+                }
+
                 chrome.tabs.query({}, (tabs) => {
                     tabs.forEach((tab) => {
                         // Send ddgUserReady message only if tab is in memory
@@ -240,11 +244,13 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                         }
                     })
                 })
+                res({success: true})
             })
-            res({success: true})
         } else {
             res({error: 'Something seems wrong with the user data'})
         }
+
+        return true
     }
 })
 

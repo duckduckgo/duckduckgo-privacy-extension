@@ -18,7 +18,9 @@
 
         // The web app notifies us that the user signed in
         if (event.data.addUserData) {
-            chrome.runtime.sendMessage(event.data)
+            chrome.runtime.sendMessage(event.data, (res) => {
+                console.log('Extension login result', res)
+            })
         }
 
         // The web app wants to know if the user is signed in
@@ -40,8 +42,8 @@
             // …then listen for when the user data is set
             chrome.runtime.onMessage.addListener((message, sender) => {
                 if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
-                    injectEmailAutofill()
                     notifyWebApp({extensionSignedIn: {value: true}})
+                    injectEmailAutofill()
                 }
             })
         }
@@ -147,7 +149,7 @@
         resObs.observe(document.body);
 
         // Update the position if transitions or animations are detected just in case
-        ['transitionend', 'animationend'].forEach(
+        ['transitionend', 'animationend', 'load'].forEach(
             eventType => window.addEventListener(eventType, () => updateAllButtons())
         )
     }
