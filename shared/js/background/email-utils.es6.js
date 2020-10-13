@@ -19,6 +19,7 @@ const fetchAlias = () => {
                     updateSetting('userData', Object.assign(userData, {nextAlias: alias}))
                     // Reset attempts
                     attempts = 1
+                    return {success: true}
                 })
             } else {
                 throw new Error('An error occurred while fetching the alias')
