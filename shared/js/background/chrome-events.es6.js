@@ -255,6 +255,31 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 )
 
 /**
+ * Global Privacy Control
+ */
+const GPC = require('./GPC.es6')
+
+// Set GPC property on DOM if enabled.
+chrome.webNavigation.onCommitted.addListener(details => {
+    GPC.injectDOMSignal(details.tabId)
+})
+
+// Attach GPC header to all requests if enabled.
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    request => {
+        const GPCHeader = GPC.getHeader()
+
+        if (GPCHeader) {
+            let requestHeaders = request.requestHeaders
+            requestHeaders.push(GPCHeader)
+            return {requestHeaders: requestHeaders}
+        }
+    },
+    {urls: ['<all_urls>']},
+    ['blocking', 'requestHeaders']
+)
+
+/**
  * ALARMS
  */
 
