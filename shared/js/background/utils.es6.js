@@ -3,6 +3,7 @@ const tdsStorage = require('./storage/tds.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
+const settings = require('./settings.es6')
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -15,6 +16,30 @@ function extractHostFromURL (url, shouldKeepWWW) {
     }
 
     return hostname
+}
+
+// Removes information from a URL, such as path, user information, and optionally sub domains
+function extractLimitedDomainFromURL (url, keepSubdomains) {
+    if (!url) return ''
+    try {
+        const parsedURL = new URL(url)
+        let tld = tldts.parse(url)
+        let finalURL = tld.domain
+        if (!parsedURL || !tld) return ''
+
+        if (keepSubdomains) {
+            if (tld.subdomain) {
+                finalURL = tld.subdomain + '.' + tld.domain
+            }
+        } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
+            finalURL = 'www.' + tld.domain
+        }
+
+        return `${parsedURL.protocol}//${finalURL}`
+    } catch (TypeError) {
+        // tried to parse invalid URL, such as an extension URL
+        return ''
+    }
 }
 
 function extractTopSubdomainFromHost (host) {
@@ -114,6 +139,14 @@ function getAsyncBlockingSupport () {
     return false
 }
 
+// return true if the given url is in the safelist. For checking if the current tab is in the safelist,
+// tabManager.site.whitelisted is the preferred method.
+function isSafeListed (url) {
+    const hostname = extractHostFromURL(url)
+    const safeList = settings.getSetting('whitelisted')
+    return safeList && safeList[hostname]
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -124,5 +157,7 @@ module.exports = {
     getAsyncBlockingSupport: getAsyncBlockingSupport,
     findParent: findParent,
     getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes
+    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
+    isSafeListed: isSafeListed,
+    extractLimitedDomainFromURL: extractLimitedDomainFromURL
 }

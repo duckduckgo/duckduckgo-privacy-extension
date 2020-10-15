@@ -86,6 +86,13 @@
                 'origValue': navigator.doNotTrack,
                 'targetValue': /Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null
             }
+        },
+        'document': {
+            'referrer': {
+                'object': 'document',
+                'origValue': document.referrer,
+                'targetValue': `"${ddg_referrer || document.referrer}"` // Defined in chrome-events.es6.js and injected as a variable
+            }
         }
     }
 
