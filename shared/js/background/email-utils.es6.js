@@ -12,13 +12,17 @@ const fetchAlias = () => {
 
     if (!userData.token) return
 
-    return fetch(`${userData.token}`)
+    return fetch(`https://quackdev.duckduckgo.com/api/email/addresses`, {
+        method: 'post',
+        headers: {Authorization: `Bearer ${userData.token}`}
+    })
         .then(response => {
             if (response.ok) {
-                return response.text().then(alias => {
-                    updateSetting('userData', Object.assign(userData, {nextAlias: alias}))
+                return response.json().then(({address}) => {
+                    updateSetting('userData', Object.assign(userData, {nextAlias: `${address}@duck.com`}))
                     // Reset attempts
                     attempts = 1
+                    return {success: true}
                 })
             } else {
                 throw new Error('An error occurred while fetching the alias')

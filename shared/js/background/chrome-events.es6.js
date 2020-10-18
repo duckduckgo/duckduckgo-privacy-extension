@@ -231,9 +231,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
             settings.updateSetting('userData', req.addUserData)
             // Once user is set, fetch the alias and notify all tabs
-            fetchAlias().then(({error}) => {
-                if (error) {
-                    return res({error: error.message})
+            fetchAlias().then(response => {
+                if (response && response.error) {
+                    return res({error: response.error.message})
                 }
 
                 chrome.tabs.query({}, (tabs) => {
