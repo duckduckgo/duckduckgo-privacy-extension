@@ -212,31 +212,48 @@ const agentSpoofer = require('./classes/agentspoofer.es6')
 chrome.webNavigation.onCommitted.addListener(details => {
     const whitelisted = settings.getSetting('whitelisted')
     const tabURL = new URL(details.url) || {}
+    let tab = tabManager.get({ tabId: details.tabId })
+    if (tab && tab.site.isBroken) {
+        console.log('temporarily skip fingerprint protection for site: ' +
+          'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+        return
+    }
     if (!whitelisted || !whitelisted[tabURL.hostname]) {
         // Set variables, which are used in the fingerprint-protection script.
-        const variableScript = {
-            'code': `
-                try {
-                    var ddg_ext_ua='${agentSpoofer.getAgent()}'
-                } catch(e) {}`,
-            'runAt': 'document_start',
-            'allFrames': true,
-            'matchAboutBlank': true
+        try {
+            const variableScript = {
+                'code': `
+                    try {
+                        var ddg_ext_ua='${agentSpoofer.getAgent()}'
+                    } catch(e) {}`,
+                'runAt': 'document_start',
+                'allFrames': true,
+                'matchAboutBlank': true
+            }
+
+            chrome.tabs.executeScript(details.tabId, variableScript)
+            const scriptDetails = {
+                'file': '/data/fingerprint-protection.js',
+                'runAt': 'document_start',
+                'allFrames': true,
+                'matchAboutBlank': true
+            }
+            chrome.tabs.executeScript(details.tabId, scriptDetails)
+        } catch (e) {
+            console.log(`Failed to inject fingerprint protection into ${details.url}`)
         }
-        chrome.tabs.executeScript(details.tabId, variableScript)
-        const scriptDetails = {
-            'file': '/data/fingerprint-protection.js',
-            'runAt': 'document_start',
-            'allFrames': true,
-            'matchAboutBlank': true
-        }
-        chrome.tabs.executeScript(details.tabId, scriptDetails)
     }
 })
 
 // Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
+        let tab = tabManager.get({ tabId: e.tabId })
+        if (tab && tab.site.isBroken) {
+            console.log('temporarily skip fingerprint protection for site: ' +
+              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (agentSpoofer.shouldSpoof(e)) {
@@ -297,7 +314,7 @@ chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
 chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 // Update userAgent lists
-chrome.alarms.create('updateUserAgentData', { periodInMinutes: 12 * 60 })
+chrome.alarms.create('updateUserAgentData', { periodInMinutes: 30 })
 // Rotate the user agent spoofed
 chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
 
@@ -321,10 +338,10 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'updateUserAgentData') {
-        settings.ready().then(() => {
-            agents.updateAgentData()
-                .catch(e => console.log(e))
-        })
+        settings.ready()
+            .then(() => {
+                agents.updateAgentData()
+            }).catch(e => console.log(e))
     } else if (alarmEvent.name === 'rotateUserAgent') {
         agentSpoofer.needsRotation = true
         agentSpoofer.rotateAgent()

@@ -45,6 +45,20 @@ class AgentStorage {
                         const data = JSON.parse(response.response)
                         this.storeAgentList(listName, data)
                         this.processList(listName, data)
+                        const newEtag = response.getResponseHeader('etag') || ''
+                        settings.updateSetting(`${listName}-etag`, newEtag)
+                    } else if (response && response.status === 304) {
+                        console.log(`${list.url} returned 304, resource not changed`)
+                        if (this.agents.length === 0) {
+                            this.loadAgentList(listName)
+                                .then(queryData => {
+                                    this.processList(listName, queryData.listData)
+                                })
+                                .catch(e => {
+                                    console.log(`Error loading UserAgent settings from storage: ${e}`)
+                                    settings.updateSetting(`${listName}-etag`, '')
+                                })
+                        }
                     }
                 })
                 .catch(e => {
