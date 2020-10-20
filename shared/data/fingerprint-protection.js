@@ -229,27 +229,35 @@
         let windowScript = ''
         const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
         const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
-
         if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
             windowScript += setWindowPropertyValue('screenY', 0)
             windowScript += setWindowPropertyValue('screenTop', 0)
-            windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height', true)
         } else {
             windowScript += setWindowPropertyValue('screenY', normalizedY)
             windowScript += setWindowPropertyValue('screenTop', normalizedY)
+        }
+
+        if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
+            windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height', true)
+        } else {
             try {
                 windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight, true)
             } catch (e) {
                 // top not accessible to certain iFrames, so ignore.
             }
         }
+
         if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
             windowScript += setWindowPropertyValue('screenX', 0)
             windowScript += setWindowPropertyValue('screenLeft', 0)
-            windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
         } else {
             windowScript += setWindowPropertyValue('screenX', normalizedX)
             windowScript += setWindowPropertyValue('screenLeft', normalizedX)
+        }
+
+        if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
+            windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
+        } else {
             try {
                 windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth, true)
             } catch (e) {
