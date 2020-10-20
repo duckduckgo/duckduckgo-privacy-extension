@@ -26,7 +26,6 @@ function extractLimitedDomainFromURL (url, keepSubdomains) {
         let tld = tldts.parse(url)
         let finalURL = tld.domain
         if (!parsedURL || !tld) return ''
-
         if (keepSubdomains) {
             if (tld.subdomain) {
                 finalURL = tld.subdomain + '.' + tld.domain
@@ -36,9 +35,9 @@ function extractLimitedDomainFromURL (url, keepSubdomains) {
         }
 
         return `${parsedURL.protocol}//${finalURL}`
-    } catch (TypeError) {
-        // tried to parse invalid URL, such as an extension URL
-        return ''
+    } catch (e) {
+        // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
+        return undefined
     }
 }
 
@@ -143,8 +142,9 @@ function getAsyncBlockingSupport () {
 // tabManager.site.whitelisted is the preferred method.
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
+    const tld = tldts.parse(url).domain
     const safeList = settings.getSetting('whitelisted')
-    return safeList && safeList[hostname]
+    return safeList && (safeList[hostname] || safeList[tld])
 }
 
 module.exports = {
