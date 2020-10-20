@@ -49,7 +49,7 @@ class AgentStorage {
                         settings.updateSetting(`${listName}-etag`, newEtag)
                     } else if (response && response.status === 304) {
                         console.log(`${list.url} returned 304, resource not changed`)
-                        if (this.agents.length == 0) {
+                        if (this.agents.length === 0) {
                             this.loadAgentList(listName)
                                 .then(queryData => {
                                     this.processList(listName, queryData.listData)
