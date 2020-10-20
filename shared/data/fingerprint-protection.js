@@ -132,7 +132,10 @@
             for (const [name, prop] of Object.entries(fingerprintPropertyValues[category])) {
                 // Don't update if existing value is undefined or null
                 if (!(prop.origValue === undefined)) {
-                    script += `Object.defineProperty(${prop.object}, "${name}", { value: ${prop.targetValue} });\n`
+                    script += `try {
+                        Object.defineProperty(${prop.object}, "${name}", { value: ${prop.targetValue} });
+                    } catch (e) {}
+                    `
                 }
             }
         }
@@ -154,12 +157,14 @@
             for (const prop of battery.properties) {
                 // Prevent setting events via event handlers
                 batteryScript += `
+                try {
                     Object.defineProperty(battery, '${prop}', {
                         enumerable: true,
                         configurable: false,
                         writable: false,
                         value: undefined
                     })
+                } catch (e) {}
                 `
             }
 
@@ -207,15 +212,12 @@
         return value
     }
 
-    function setWindowPropertyValue (property, value, catchErrors=false) {
-        let script = `window.${property} = ${value}\n`
-        if (catchErrors) {
-            script = `
-                try {
-                    ${script}
-                } catch (e) {}
-            `
-        }
+    function setWindowPropertyValue (property, value) {
+        let script = `
+            try {
+                window.${property} = ${value}
+            } catch (e) { }
+        `
         return script
     }
 
@@ -238,10 +240,10 @@
         }
 
         if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
-            windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height', true)
+            windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height')
         } else {
             try {
-                windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight, true)
+                windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight)
             } catch (e) {
                 // top not accessible to certain iFrames, so ignore.
             }
@@ -256,10 +258,10 @@
         }
 
         if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
-            windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
+            windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width')
         } else {
             try {
-                windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth, true)
+                windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth)
             } catch (e) {
                 // top not accessible to certain iFrames, so ignore.
             }
@@ -273,12 +275,16 @@
      */
     function inject (scriptToInject, removeAfterExec) {
         // Inject into main page
-        let e = document.createElement('script')
-        e.textContent = scriptToInject;
-        (document.head || document.documentElement).appendChild(e)
+        try {
+            let e = document.createElement('script')
+            e.textContent = scriptToInject
+            const elem = document.head || document.documentElement
+            elem.appendChild(e)
 
-        if (removeAfterExec) {
-            e.remove()
+            if (removeAfterExec) {
+                e.remove()
+            }
+        } catch (e) {
         }
     }
 
