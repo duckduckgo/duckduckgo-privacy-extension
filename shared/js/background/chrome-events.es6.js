@@ -212,6 +212,12 @@ const agentSpoofer = require('./classes/agentspoofer.es6')
 chrome.webNavigation.onCommitted.addListener(details => {
     const whitelisted = settings.getSetting('whitelisted')
     const tabURL = new URL(details.url) || {}
+    let tab = tabManager.get({ tabId: details.tabId })
+    if (tab.site.isBroken) {
+        console.log('temporarily skip fingerprint protection for site: ' +
+          'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+        return
+    }
     if (!whitelisted || !whitelisted[tabURL.hostname]) {
         // Set variables, which are used in the fingerprint-protection script.
         const variableScript = {
@@ -237,6 +243,12 @@ chrome.webNavigation.onCommitted.addListener(details => {
 // Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
+        let tab = tabManager.get({ tabId: e.tabId })
+        if (tab.site.isBroken) {
+            console.log('temporarily skip fingerprint protection for site: ' +
+              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (agentSpoofer.shouldSpoof(e)) {

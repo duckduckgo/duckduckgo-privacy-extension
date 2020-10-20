@@ -69,11 +69,11 @@
             }
         },
         'useragent': {
-            'userAgent': {
-                'object': 'navigator',
-                'origValue': navigator.userAgent,
-                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
-            },
+//            'userAgent': {
+//                'object': 'navigator',
+//                'origValue': navigator.userAgent,
+//                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
+//            },
             'appVersion': {
                 'object': 'navigator',
                 'origValue': navigator.appVersion,
