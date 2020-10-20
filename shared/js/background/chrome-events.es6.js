@@ -297,7 +297,7 @@ chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
 chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 // Update userAgent lists
-chrome.alarms.create('updateUserAgentData', { periodInMinutes: 12 * 60 })
+chrome.alarms.create('updateUserAgentData', { periodInMinutes: 30 })
 // Rotate the user agent spoofed
 chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
 
@@ -321,10 +321,10 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'updateUserAgentData') {
-        settings.ready().then(() => {
-            agents.updateAgentData()
-                .catch(e => console.log(e))
-        })
+        settings.ready()
+            .then(() => {
+                agents.updateAgentData()
+            }).catch(e => console.log(e))
     } else if (alarmEvent.name === 'rotateUserAgent') {
         agentSpoofer.needsRotation = true
         agentSpoofer.rotateAgent()

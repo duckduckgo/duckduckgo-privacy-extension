@@ -45,6 +45,10 @@ class AgentStorage {
                         const data = JSON.parse(response.response)
                         this.storeAgentList(listName, data)
                         this.processList(listName, data)
+                        const newEtag = response.getResponseHeader('etag') || ''
+                        settings.updateSetting(`${listName}-etag`, newEtag)
+                    } else if (response && response.status === 304) {
+                        console.log(`${list.url} returned 304, resource not changed`)
                     }
                 })
                 .catch(e => {
