@@ -283,6 +283,17 @@
             let e = document.createElement('script')
             e.textContent = scriptToInject
             const elem = document.head || document.documentElement
+            try {
+                const contentType = elem.ownerDocument.contentType
+                if (contentType === 'application/xml' ||
+                    contentType === 'application/json' ||
+                    contentType === 'text/xml' ||
+                    contentType === 'text/json') {
+                    return
+                }
+            } catch (e) {
+                // if we can't find content type, go ahead with injection.
+            }
             elem.appendChild(e)
 
             if (removeAfterExec) {
