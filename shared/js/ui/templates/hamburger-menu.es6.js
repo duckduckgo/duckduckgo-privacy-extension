@@ -19,7 +19,7 @@ module.exports = function () {
             </li>
             <li>
                 <a href="javascript:void(0)" class="menu-title js-hamburger-menu-feedback-link">
-                    Send feedback
+                    Share feedback
                     <span>Got issues or suggestions? Let us know!</span>
                 </a>
             </li>

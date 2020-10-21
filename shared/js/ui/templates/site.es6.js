@@ -104,7 +104,7 @@ module.exports = function () {
     </a>
     <div class="separator"></div>
     <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
-        Report Broken Site
+        Report broken site
     </a>
 </div>`
     }
