@@ -72,7 +72,7 @@ function renderDetails (reasons) {
 function renderNoDetails () {
     return bel`<div class="text--center">
     <h1 class="privacy-practices__details__title">
-        No Privacy Practices Found
+        No privacy Practices found
     </h1>
     <div class="privacy-practices__details__msg">
         The privacy practices of this website have not been reviewed.
