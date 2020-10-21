@@ -51,7 +51,7 @@ function renderResetButton (model) {
         return bel`<div class="top-blocked__reset-stats">
     <button class="top-blocked__reset-stats__button block
         js-reset-trackers-data">
-        Reset Global Stats
+        Reset global stats
     </button>
     <p>These stats are only stored locally on your device,
     and are not sent anywhere, ever.</p>
