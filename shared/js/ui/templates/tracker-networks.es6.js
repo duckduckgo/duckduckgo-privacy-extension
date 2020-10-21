@@ -17,7 +17,7 @@ module.exports = function () {
     <div class="tracker-networks__explainer border--bottom--inner
         text--center">
         Tracker networks aggregate your web history into a data profile about you.
-        Major tracker networks are more harmful because they can track and target you across more of the internet.
+        Major tracker networks are more harmful because they can track and target you across more of the Internet.
     </div>
     <div class="tracker-networks__details padded
         js-tracker-networks-details">

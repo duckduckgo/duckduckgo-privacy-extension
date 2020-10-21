@@ -21,13 +21,13 @@ module.exports = function () {
 function renderPctPagesWithTrackers (model) {
     let msg = ''
     if (model.lastStatsResetDate) {
-        const d = new Date(model.lastStatsResetDate).toDateString()
+        const d = (new Date(model.lastStatsResetDate)).toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'})
         if (d) msg = ` since ${d}`
     }
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
     Trackers were found on <b>${model.pctPagesWithTrackers}%</b>
-    of web sites you've visited${msg}.
+    of websites you've visited${msg}.
 </p>`
     }
 }

@@ -4,7 +4,7 @@ const whitelistItems = require('./whitelist-items.es6.js')
 module.exports = function () {
     return bel`<section class="options-content__whitelist">
     <h2 class="menu-title">Unprotected Sites</h2>
-    <p class="menu-paragraph">These sites will not be enhanced by Privacy Protection</p>
+    <p class="menu-paragraph">These sites will not be enhanced by Privacy Protection.</p>
     <ul class="default-list js-whitelist-container">
         ${whitelistItems(this.model.list)}
     </ul>

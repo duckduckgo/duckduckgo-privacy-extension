@@ -33,7 +33,7 @@ module.exports = function () {
             ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
         </div>
         <div class="privacy-practices__attrib padded text--center border--top--inner">
-            Privacy Practice results from ${crossplatformLink('https://tosdr.org/', {
+            Privacy Practices from ${crossplatformLink('https://tosdr.org/', {
         className: 'bold',
         target: '_blank',
         text: 'ToS;DR',
@@ -75,7 +75,7 @@ function renderNoDetails () {
         No Privacy Practices Found
     </h1>
     <div class="privacy-practices__details__msg">
-        The Privacy practices of this website have not been reviewed.
+        The privacy practices of this website have not been reviewed.
     </div>
 </div>`
 }
