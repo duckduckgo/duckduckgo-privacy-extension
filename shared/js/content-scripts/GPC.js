@@ -7,7 +7,10 @@
         if (contentType === 'application/xml' ||
             contentType === 'application/json' ||
             contentType === 'text/xml' ||
-            contentType === 'text/json') {
+            contentType === 'text/json' ||
+            contentType === 'text/rss+xml' ||
+            contentType === 'application/rss+xml'
+        ) {
             return
         }
     } catch (e) {
