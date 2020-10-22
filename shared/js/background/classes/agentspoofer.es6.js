@@ -101,7 +101,7 @@ class AgentSpoofer {
             return false
         }
         const domain = tldts.parse(request.url).domain
-        if (agentStorage.excludedDomains.length > 0 && agentStorage.excludedDomains.every(excluded => domain === excluded)) {
+        if (agentStorage.excludedDomains.length > 0 && agentStorage.excludedDomains.includes(domain)) {
             return false
         }
         return true
