@@ -1,6 +1,21 @@
 /* global globalPrivacyControlValue */
 // Set Global Privacy Control property on DOM
 (function setDOMSignal () {
+    try {
+        const contentType = document.documentElement.ownerDocument.contentType
+        // don't inject into xml or json pages
+        if (contentType === 'application/xml' ||
+            contentType === 'application/json' ||
+            contentType === 'text/xml' ||
+            contentType === 'text/json' ||
+            contentType === 'text/rss+xml' ||
+            contentType === 'application/rss+xml'
+        ) {
+            return
+        }
+    } catch (e) {
+        // if we can't find content type, go ahead with injection
+    }
     const scriptString = `
         // Catch errors if signal is already set by user agent or other extension
         try {

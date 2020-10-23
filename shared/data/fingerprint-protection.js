@@ -5,6 +5,23 @@
  */
 
 (function protect () {
+    // Exclude some content types from injection
+    const elem = document.head || document.documentElement
+    try {
+        const contentType = elem.ownerDocument.contentType
+        if (contentType === 'application/xml' ||
+            contentType === 'application/json' ||
+            contentType === 'text/xml' ||
+            contentType === 'text/json' ||
+            contentType === 'text/rss+xml' ||
+            contentType === 'application/rss+xml'
+        ) {
+            return
+        }
+    } catch (e) {
+        // if we can't find content type, go ahead with injection.
+    }
+
     // Property values to be set and their original values.
     const fingerprintPropertyValues = {
         'screen': {
@@ -277,13 +294,12 @@
     /**
      * Inject all the overwrites into the page.
      */
-    function inject (scriptToInject, removeAfterExec) {
+    function inject (scriptToInject, removeAfterExec, elemToInject) {
         // Inject into main page
         try {
             let e = document.createElement('script')
             e.textContent = scriptToInject
-            const elem = document.head || document.documentElement
-            elem.appendChild(e)
+            elemToInject.appendChild(e)
 
             if (removeAfterExec) {
                 e.remove()
@@ -294,9 +310,9 @@
 
     window.addEventListener('resize', function () {
         const windowScript = setWindowDimensions()
-        inject(windowScript, true)
+        inject(windowScript, true, elem)
     })
 
     const injectionScript = buildInjectionScript()
-    inject(injectionScript)
+    inject(injectionScript, false, elem)
 })()
