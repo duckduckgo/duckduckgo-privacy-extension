@@ -37,7 +37,7 @@ module.exports = function (grunt) {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
         },
         emailContentScript: {
-            '<%= dirs.public.js %>/content-scripts/email-autofill.js': ['<%= dirs.src.js %>/content-scripts/email-autofill.js']
+            '<%= dirs.public.js %>/content-scripts/email-autofill.js': ['<%= dirs.src.js %>/content-scripts/email-modules/email-autofill.js']
         },
         emailInjectedCSS: {
             '<%= dirs.public.css %>/email-style.css': ['<%= dirs.src.injectedCSS %>/email-style.css']
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
-        emailContentScript: ['<%= dirs.src.js %>/content-scripts/email-autofill.js'],
+        emailContentScript: ['<%= dirs.src.js %>/content-scripts/email-modules/*.js'],
         injectedCSS: ['<%= dirs.src.injectedCSS %>/*.css'],
         data: ['<%= dirs.data %>/*.js']
     }

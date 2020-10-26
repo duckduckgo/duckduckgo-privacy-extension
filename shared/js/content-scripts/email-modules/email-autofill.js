@@ -1,7 +1,7 @@
 (() => {
     require('@webcomponents/webcomponentsjs')
-    const DDGAutofill = require('./email-modules/DDGAutofill')
-    const Form = require('./email-modules/Form')
+    const DDGAutofill = require('./DDGAutofill')
+    const Form = require('./Form')
 
     // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
     const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
