@@ -3,6 +3,20 @@
     const DDGAutofill = require('./email-modules/DDGAutofill')
     const Form = require('./email-modules/Form')
 
+    // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
+    const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
+    const styleTag = document.createElement('style')
+    document.head.appendChild(styleTag)
+    const sheet = styleTag.sheet
+    sheet.insertRule(`
+@font-face {
+    font-family: 'DDG_ProximaNova';
+    src: url(${regFontUrl}) format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+    `)
+
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
     // Send a message to the web app (only on DDG domains)
