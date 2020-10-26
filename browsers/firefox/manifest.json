@@ -77,5 +77,8 @@
         "<all_urls>",
         "alarms"
     ],
-    "web_accessible_resources": ["img/ddg-logo-borderless.svg"]
+    "web_accessible_resources": [
+        "img/ddg-logo-borderless.svg",
+        "public/css/email-style.css",
+    ]
 }
