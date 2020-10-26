@@ -89,15 +89,15 @@ class DDGAutofill extends HTMLElement {
             chrome.runtime.sendMessage({getAlias: true}, (res) => {
                 if (res.alias) {
                     this.execOnInputs(input => {
+                        if (input.classList.contains('ddg-autofilled')) return
+
                         input.value = res.alias
-                        input.style.backgroundColor = '#F8F498'
-                        input.style.color = '#333333'
+                        input.classList.add('ddg-autofilled')
 
                         // If the user changes the alias, remove the decoration
                         input.addEventListener('input', () => {
                             this.execOnInputs(input => {
-                                input.style.removeProperty('background-color')
-                                input.style.removeProperty('color')
+                                input.classList.remove('ddg-autofilled')
                             })
                         }, {once: true})
                     })
@@ -107,8 +107,7 @@ class DDGAutofill extends HTMLElement {
         this.resetInputs = () => {
             this.execOnInputs(input => {
                 input.value = ''
-                input.style.removeProperty('background-color')
-                input.style.removeProperty('color')
+                input.classList.remove('ddg-autofilled')
             })
         }
 

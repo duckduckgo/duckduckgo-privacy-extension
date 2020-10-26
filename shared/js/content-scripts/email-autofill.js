@@ -16,6 +16,12 @@
     font-style: normal;
 }
     `)
+    sheet.insertRule(`
+.ddg-autofilled {
+    background-color: #F8F498;
+    color: #333333;
+}
+    `)
 
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
