@@ -18,3 +18,51 @@
         display: none;
     }
 }
+
+.options-content__privacy {
+    padding-bottom: 8px;
+}
+
+.options-content__gpc-enabled {
+    margin: 20px 0 0;
+    border-top: 1px solid $platinum;
+
+    h2 {
+        padding: 20px 0 10px;
+    }
+
+    p {
+        font-weight: normal;
+        line-height: 1.4;
+        color: $slate-light;
+    }
+
+    ul {
+        list-style: none;
+        padding-bottom: 20px;
+    }
+
+    li {
+        font-weight: bold;
+        padding: 0 0 2px 15px;
+        color: $slate-light;
+    }
+
+    li::before {
+        content: "\2022";
+        color: $platinum-darker;
+        font-weight: bold;
+        font-size: 24px;
+        position: absolute;
+        left: 0;
+        top: -8px;
+    }
+    
+    a {
+        font-weight: bold;
+    }
+
+    .gpc-disclaimer {
+        margin: 20px 0 0;
+    }
+}

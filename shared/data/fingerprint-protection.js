@@ -5,6 +5,23 @@
  */
 
 (function protect () {
+    // Exclude some content types from injection
+    const elem = document.head || document.documentElement
+    try {
+        const contentType = elem.ownerDocument.contentType
+        if (contentType === 'application/xml' ||
+            contentType === 'application/json' ||
+            contentType === 'text/xml' ||
+            contentType === 'text/json' ||
+            contentType === 'text/rss+xml' ||
+            contentType === 'application/rss+xml'
+        ) {
+            return
+        }
+    } catch (e) {
+        // if we can't find content type, go ahead with injection.
+    }
+
     // Property values to be set and their original values.
     const fingerprintPropertyValues = {
         'screen': {
@@ -69,11 +86,11 @@
             }
         },
         'useragent': {
-            'userAgent': {
-                'object': 'navigator',
-                'origValue': navigator.userAgent,
-                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
-            },
+//            'userAgent': {
+//                'object': 'navigator',
+//                'origValue': navigator.userAgent,
+//                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
+//            },
             'appVersion': {
                 'object': 'navigator',
                 'origValue': navigator.appVersion,
@@ -132,7 +149,10 @@
             for (const [name, prop] of Object.entries(fingerprintPropertyValues[category])) {
                 // Don't update if existing value is undefined or null
                 if (!(prop.origValue === undefined)) {
-                    script += `Object.defineProperty(${prop.object}, "${name}", { value: ${prop.targetValue} });\n`
+                    script += `try {
+                        Object.defineProperty(${prop.object}, "${name}", { value: ${prop.targetValue} });
+                    } catch (e) {}
+                    `
                 }
             }
         }
@@ -154,12 +174,14 @@
             for (const prop of battery.properties) {
                 // Prevent setting events via event handlers
                 batteryScript += `
+                try {
                     Object.defineProperty(battery, '${prop}', {
                         enumerable: true,
                         configurable: false,
                         writable: false,
                         value: undefined
                     })
+                } catch (e) {}
                 `
             }
 
@@ -207,15 +229,12 @@
         return value
     }
 
-    function setWindowPropertyValue (property, value, catchErrors=false) {
-        let script = `window.${property} = ${value}\n`
-        if (catchErrors) {
-            script = `
-                try {
-                    ${script}
-                } catch (e) {}
-            `
-        }
+    function setWindowPropertyValue (property, value) {
+        let script = `
+            try {
+                window.${property} = ${value}
+            } catch (e) { }
+        `
         return script
     }
 
@@ -227,34 +246,46 @@
      */
     function setWindowDimensions () {
         let windowScript = ''
-        const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
-        const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
+        try {
+            const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
+            const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
+            if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
+                windowScript += setWindowPropertyValue('screenY', 0)
+                windowScript += setWindowPropertyValue('screenTop', 0)
+            } else {
+                windowScript += setWindowPropertyValue('screenY', normalizedY)
+                windowScript += setWindowPropertyValue('screenTop', normalizedY)
+            }
 
-        if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
-            windowScript += setWindowPropertyValue('screenY', 0)
-            windowScript += setWindowPropertyValue('screenTop', 0)
-            windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height', true)
-        } else {
-            windowScript += setWindowPropertyValue('screenY', normalizedY)
-            windowScript += setWindowPropertyValue('screenTop', normalizedY)
-            try {
-                windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight, true)
-            } catch (e) {
-                // top not accessible to certain iFrames, so ignore.
+            if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
+                windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height')
+            } else {
+                try {
+                    windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight)
+                } catch (e) {
+                    // top not accessible to certain iFrames, so ignore.
+                }
             }
-        }
-        if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
-            windowScript += setWindowPropertyValue('screenX', 0)
-            windowScript += setWindowPropertyValue('screenLeft', 0)
-            windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width', true)
-        } else {
-            windowScript += setWindowPropertyValue('screenX', normalizedX)
-            windowScript += setWindowPropertyValue('screenLeft', normalizedX)
-            try {
-                windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth, true)
-            } catch (e) {
-                // top not accessible to certain iFrames, so ignore.
+
+            if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
+                windowScript += setWindowPropertyValue('screenX', 0)
+                windowScript += setWindowPropertyValue('screenLeft', 0)
+            } else {
+                windowScript += setWindowPropertyValue('screenX', normalizedX)
+                windowScript += setWindowPropertyValue('screenLeft', normalizedX)
             }
+
+            if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
+                windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width')
+            } else {
+                try {
+                    windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth)
+                } catch (e) {
+                    // top not accessible to certain iFrames, so ignore.
+                }
+            }
+        } catch (e) {
+            // in a cross domain iFrame, top.window is not accessible.
         }
 
         return windowScript
@@ -263,22 +294,25 @@
     /**
      * Inject all the overwrites into the page.
      */
-    function inject (scriptToInject, removeAfterExec) {
+    function inject (scriptToInject, removeAfterExec, elemToInject) {
         // Inject into main page
-        let e = document.createElement('script')
-        e.textContent = scriptToInject;
-        (document.head || document.documentElement).appendChild(e)
+        try {
+            let e = document.createElement('script')
+            e.textContent = scriptToInject
+            elemToInject.appendChild(e)
 
-        if (removeAfterExec) {
-            e.remove()
+            if (removeAfterExec) {
+                e.remove()
+            }
+        } catch (e) {
         }
     }
 
     window.addEventListener('resize', function () {
         const windowScript = setWindowDimensions()
-        inject(windowScript, true)
+        inject(windowScript, true, elem)
     })
 
     const injectionScript = buildInjectionScript()
-    inject(injectionScript)
+    inject(injectionScript, false, elem)
 })()

@@ -20,9 +20,13 @@
     color: $slate;
 }
 
-#options-content {
+.options-content__privacy {
+    li {
+        font-weight: bold;
+    }
+
     // Correct vertical centering of the toggle
     .toggle-button {
-        top: -4px;
+        margin-top: -4px;
     }
 }

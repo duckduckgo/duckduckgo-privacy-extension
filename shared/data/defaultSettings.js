@@ -4,6 +4,7 @@ module.exports = {
     "trackerBlockingEnabled": true,
     "httpsEverywhereEnabled": true,
     "embeddedTweetsEnabled": false,
+    "GPCEnabled": false,
     "meanings": true,
     "advanced_options": true,
     "last_search": "",
