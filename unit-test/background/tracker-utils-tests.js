@@ -2,7 +2,6 @@ const trackerutils = require('../../shared/js/background/tracker-utils')
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
-const tabManager = require('../../shared/js/background/tab-manager.es6')
 const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
@@ -23,7 +22,8 @@ describe('Tracker Utilities', () => {
         'https://google-analytics.com/site/abc',
         'https://google-analytics.com/a/b?p=g&1=2',
         'https://google-analytics.com:443/abc',
-        'https://yahoo.com'    ]
+        'https://yahoo.com'
+    ]
     it('Should identify a tracker correctly', () => {
         for (let tracker of knownTrackers) {
             expect(trackerutils.isTracker(tracker)).toBeTruthy()
@@ -103,28 +103,28 @@ describe('Tracker Utilities', () => {
 
     const referrerSafelistTests = [
         {
-            name: 'referrer is whitelisted',
+            name: 'referrer is safelisted',
             referrer: 'http://siteA.com',
             target: 'http://siteB.com',
             safelist: {'sitea.com': true},
             expectedReferrer: undefined
         },
         {
-            name: 'target is whitelisted',
+            name: 'target is safelisted',
             referrer: 'http://siteA.com',
             target: 'http://siteB.com',
             safelist: {'siteb.com': true},
             expectedReferrer: undefined
         },
         {
-            name: 'referrer & target are whitelisted',
+            name: 'referrer & target are safelisted',
             referrer: 'http://siteA.com',
             target: 'http://siteB.com',
             safelist: {'sitea.com': true, 'siteb.com': true},
             expectedReferrer: undefined
         },
         {
-            name: 'subdomain of whitelisted target',
+            name: 'subdomain of safelisted target',
             referrer: 'http://siteA.com',
             target: 'http://subdomain.siteB.com',
             safelist: {'siteb.com': true},
