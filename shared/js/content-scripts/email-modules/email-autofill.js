@@ -4,15 +4,24 @@
     const Form = require('./Form')
 
     // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
-    const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
+    const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff2')
+    const boldFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
     const styleTag = document.createElement('style')
     document.head.appendChild(styleTag)
     const sheet = styleTag.sheet
     sheet.insertRule(`
 @font-face {
     font-family: 'DDG_ProximaNova';
-    src: url(${regFontUrl}) format('woff');
+    src: url(${regFontUrl}) format('woff2');
     font-weight: normal;
+    font-style: normal;
+}
+    `)
+    sheet.insertRule(`
+@font-face {
+    font-family: 'DDG_ProximaNova';
+    src: url(${boldFontUrl}) format('woff2');
+    font-weight: bold;
     font-style: normal;
 }
     `)

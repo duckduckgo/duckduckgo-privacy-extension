@@ -87,10 +87,11 @@
 .tooltip__button {
     flex: 1;
     height: 40px;
-    padding: 0 10px;
+    padding: 0 8px;
     background-color: #332FF3;
     color: #FFFFFF;
     font-family: inherit;
+    font-size: 14px;
     font-weight: bold;
     border: none;
     border-radius: 10px;

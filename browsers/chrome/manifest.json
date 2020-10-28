@@ -78,7 +78,7 @@
     "web_accessible_resources": [
         "img/ddg-logo-borderless.svg",
         "public/css/email-style.css",
-        "public/font/ProximaNova-Reg-webfont.woff",
-        "public/font/ProximaNova-Sbold-webfont.woff"
+        "public/font/ProximaNova-Reg-webfont.woff2",
+        "public/font/ProximaNova-Bold-webfont.woff2"
     ]
 }
