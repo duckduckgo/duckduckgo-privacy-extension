@@ -1,5 +1,9 @@
 (() => {
+    // Polyfills/shims
+    require('intersection-observer')
+    require('./requestIdleCallback')
     require('@webcomponents/webcomponentsjs')
+
     const DDGAutofill = require('./DDGAutofill')
     const Form = require('./Form')
 
