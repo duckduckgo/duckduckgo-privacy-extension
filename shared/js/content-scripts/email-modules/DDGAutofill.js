@@ -1,5 +1,5 @@
 const logo = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
-const css = chrome.runtime.getURL('public/css/email-style.css')
+const css = chrome.runtime.getURL('public/css/email-autofill.css')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {

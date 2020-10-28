@@ -40,7 +40,7 @@ module.exports = function (grunt) {
             '<%= dirs.public.js %>/content-scripts/email-autofill.js': ['<%= dirs.src.js %>/content-scripts/email-modules/email-autofill.js']
         },
         emailInjectedCSS: {
-            '<%= dirs.public.css %>/email-style.css': ['<%= dirs.src.injectedCSS %>/email-style.css']
+            '<%= dirs.public.css %>/email-style.css': ['<%= dirs.src.injectedCSS %>/email-autofill.css']
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
