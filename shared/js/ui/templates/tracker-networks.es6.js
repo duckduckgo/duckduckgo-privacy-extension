@@ -46,7 +46,7 @@ function renderHero (site) {
 function renderTrackerDetails (model) {
     const companyListMap = model.companyListMap || {}
     if (companyListMap.length === 0) {
-        return bel`<li class="is-empty">None</li>`
+        return bel`<li class="is-empty"></li>`
     }
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
