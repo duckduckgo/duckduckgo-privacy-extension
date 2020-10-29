@@ -313,7 +313,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         if (!modifiedReferrer) {
             return
         }
-        console.log(`Trimming referrer from ${referrer} to ${modifiedReferrer}`)
 
         let requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
         requestHeaders.push({
