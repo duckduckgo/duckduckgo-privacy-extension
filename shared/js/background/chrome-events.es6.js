@@ -252,7 +252,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
         let tab = tabManager.get({ tabId: e.tabId })
-        if (tab && tab.site.isBroken) {
+        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
             console.log('temporarily skip fingerprint protection for site: ' +
               'more info: https://github.com/duckduckgo/content-blocking-whitelist')
             return
@@ -302,13 +302,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         // Check if origin is safe listed
         const tab = tabManager.get({ tabId: e.tabId })
-        if (!!tab && tab.site.whitelisted) {
+        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
             return
         }
-        if (tab && tab.site.isBroken) {
-            // Don't activate if site is on broken site list
-            return
-        }
+
         let modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
         if (!modifiedReferrer) {
             return

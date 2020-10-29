@@ -23,7 +23,7 @@ function extractLimitedDomainFromURL (url, keepSubdomains) {
     if (!url) return ''
     try {
         const parsedURL = new URL(url)
-        let tld = tldts.parse(url)
+        const tld = tldts.parse(url)
         let finalURL = tld.domain
         if (!parsedURL || !tld) return ''
         if (keepSubdomains) {
