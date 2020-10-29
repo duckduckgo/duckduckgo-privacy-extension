@@ -2,6 +2,7 @@
 const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const tldts = require('tldts')
+const tdsStorage = require('./storage/tds.es6')
 
 // Determine if two URL's belong to the same entity.
 function isSameEntity (url1, url2) {
@@ -50,6 +51,13 @@ function truncateReferrer (referrer, target) {
     }
 
     if (isSameEntity(referrer, target)) {
+        return undefined
+    }
+
+    const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
+    if (excludedDomains.includes(tldts.parse(referrer).domain) ||
+        excludedDomains.includes(tldts.parse(target).domain)) {
+        // referrer or target is in the Referrer safe list
         return undefined
     }
 

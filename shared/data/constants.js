@@ -95,6 +95,12 @@ module.exports = {
             "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
             "format": "text",
             "source": "external"
+        },
+        {
+            "name": "ReferrerExcludeList",
+            "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
+            "format": "json",
+            "source": "external"
         }
     ],
     "UserAgentLists": [

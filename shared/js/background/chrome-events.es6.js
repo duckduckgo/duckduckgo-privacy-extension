@@ -215,7 +215,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
     const tabURL = new URL(details.url) || {}
     let tab = tabManager.get({ tabId: details.tabId })
     if (tab && tab.site.isBroken) {
-        console.log('temporarily skip fingerprint protection for site: ' + details.url + 
+        console.log('temporarily skip fingerprint protection for site: ' + details.url +
           'more info: https://github.com/duckduckgo/content-blocking-whitelist')
         return
     }
@@ -286,6 +286,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
+let ReferrerListenerOptions = ['blocking', 'requestHeaders']
+if (browser !== 'moz') {
+    ReferrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
+}
+
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function limitReferrerData (e) {
         let referrer = e.requestHeaders.filter(header => header.name.toLowerCase() === 'referer')[0] || ''
@@ -298,6 +303,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         // Check if origin is safe listed
         const tab = tabManager.get({ tabId: e.tabId })
         if (!!tab && tab.site.whitelisted) {
+            return
+        }
+        if (tab && tab.site.isBroken) {
+            // Don't activate if site is on broken site list
             return
         }
         let modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
@@ -314,7 +323,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         return {requestHeaders: requestHeaders}
     },
     {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders', 'extraHeaders']
+    ReferrerListenerOptions
 )
 
 /**
