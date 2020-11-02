@@ -6,7 +6,7 @@ module.exports = function () {
     <h2 class="menu-title">Options</h2>
     <ul class="default-list">
         <li>
-            Show Embedded Tweets
+            Show embedded Tweets
             ${toggleButton(this.model.embeddedTweetsEnabled,
         'js-options-embedded-tweets-enabled',
         'embeddedTweetsEnabled')}
@@ -38,7 +38,7 @@ module.exports = function () {
                 </b>
                 However, websites are only required to act on the signal to the
                 extent applicable laws compel them to do so.
-                <a href="https://duckduckgo.com/global-privacy-control-learn-more">Learn More</a>
+                <a href="https://duckduckgo.com/global-privacy-control-learn-more">Learn more</a>
             </p>
         </li>
     </ul>

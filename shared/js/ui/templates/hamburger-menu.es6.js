@@ -5,7 +5,7 @@ module.exports = function () {
     <div class="hamburger-menu__bg"></div>
     <div class="hamburger-menu__content card padded">
         <h2 class="menu-title border--bottom hamburger-menu__content__more-options">
-            More Options
+            More options
         </h2>
         <nav class="pull-right hamburger-menu__close-container">
             <a href="javascript:void(0)" class="icon icon__close js-hamburger-menu-close" role="button" aria-label="Close options"></a>
@@ -14,12 +14,12 @@ module.exports = function () {
             <li>
                 <a href="javascript:void(0)" class="menu-title js-hamburger-menu-options-link">
                     Settings
-                    <span>Manage unprotected sites and other options</span>
+                    <span>Manage Unprotected Sites and other options.</span>
                 </a>
             </li>
             <li>
                 <a href="javascript:void(0)" class="menu-title js-hamburger-menu-feedback-link">
-                    Send feedback
+                    Share feedback
                     <span>Got issues or suggestions? Let us know!</span>
                 </a>
             </li>
