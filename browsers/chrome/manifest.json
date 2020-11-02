@@ -75,5 +75,10 @@
         "<all_urls>",
         "alarms"
     ],
-    "web_accessible_resources": ["img/ddg-logo-borderless.svg"]
+    "web_accessible_resources": [
+        "img/ddg-logo-borderless.svg",
+        "public/css/email-autofill.css",
+        "public/font/ProximaNova-Reg-webfont.woff2",
+        "public/font/ProximaNova-Bold-webfont.woff2"
+    ]
 }

@@ -12,7 +12,7 @@ const fetchAlias = () => {
 
     if (!userData.token) return
 
-    return fetch(`https://quackdev.duckduckgo.com/api/email/addresses`, {
+    return fetch(`https://quack.duckduckgo.com/api/email/addresses`, {
         method: 'post',
         headers: {Authorization: `Bearer ${userData.token}`}
     })

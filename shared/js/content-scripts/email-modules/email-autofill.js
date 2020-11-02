@@ -1,7 +1,40 @@
 (() => {
+    // Polyfills/shims
+    require('intersection-observer')
+    require('./requestIdleCallback')
     require('@webcomponents/webcomponentsjs')
-    const DDGAutofill = require('./email-modules/DDGAutofill')
-    const Form = require('./email-modules/Form')
+
+    const DDGAutofill = require('./DDGAutofill')
+    const Form = require('./Form')
+
+    // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
+    const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff2')
+    const boldFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
+    const styleTag = document.createElement('style')
+    document.head.appendChild(styleTag)
+    const sheet = styleTag.sheet
+    sheet.insertRule(`
+@font-face {
+    font-family: 'DDG_ProximaNova';
+    src: url(${regFontUrl}) format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+    `)
+    sheet.insertRule(`
+@font-face {
+    font-family: 'DDG_ProximaNova';
+    src: url(${boldFontUrl}) format('woff2');
+    font-weight: bold;
+    font-style: normal;
+}
+    `)
+    sheet.insertRule(`
+.ddg-autofilled {
+    background-color: #F8F498;
+    color: #333333;
+}
+    `)
 
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
