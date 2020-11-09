@@ -54,11 +54,13 @@ function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
-    if (excludedDomains.includes(tldts.parse(referrer).domain) ||
-        excludedDomains.includes(tldts.parse(target).domain)) {
-        // referrer or target is in the Referrer safe list
-        return undefined
+    if (tdsStorage.ReferrerExcludeList && tdsStorage.ReferrerExcludeList.excludedReferrers) {
+        const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
+        if (excludedDomains.includes(tldts.parse(referrer).domain) ||
+            excludedDomains.includes(tldts.parse(target).domain)) {
+            // referrer or target is in the Referrer safe list
+            return undefined
+        }
     }
 
     let modifiedReferrer = referrer
