@@ -23,7 +23,7 @@
     }
 
     // Property values to be set and their original values.
-    const fingerprintPropertyValues = {
+    let fingerprintPropertyValues = {
         'screen': {
             'availTop': {
                 'object': 'screen',
@@ -103,12 +103,19 @@
                 'origValue': navigator.doNotTrack,
                 'targetValue': /Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null
             }
-        },
-        'document': {
+        }
+    }
+
+    // ddg_referrer is defined in chrome-events.es6.js and injected as a variable if referrer should be modified
+    if (ddg_referrer &&
+        ddg_referrer !== 'undefined' &&
+        document.referrer &&
+        document.referrer !== '') {
+        fingerprintPropertyValues['document'] = {
             'referrer': {
                 'object': 'document',
                 'origValue': document.referrer,
-                'targetValue': `"${ddg_referrer || document.referrer}"` // Defined in chrome-events.es6.js and injected as a variable
+                'targetValue': `"${ddg_referrer || document.referrer}"` 
             }
         }
     }

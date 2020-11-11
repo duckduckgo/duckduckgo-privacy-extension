@@ -19,18 +19,20 @@ function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
-function extractLimitedDomainFromURL (url, keepSubdomains) {
-    if (!url) return ''
+function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
+    if (!url) return undefined
     try {
         const parsedURL = new URL(url)
         const tld = tldts.parse(url)
         let finalURL = tld.domain
         if (!parsedURL || !tld) return ''
         if (keepSubdomains) {
-            if (tld.subdomain) {
-                finalURL = tld.subdomain + '.' + tld.domain
-            }
+            finalURL = tld.hostname
         } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
+            // This is a special case where if a domain requires 'www' to work
+            // we keep it, even if we wouldn't normally keep subdomains.
+            // note that even mutliple subdomains like www.something.domain.com has
+            // subdomain of www.something, and wouldn't trigger this case.
             finalURL = 'www.' + tld.domain
         }
 
@@ -144,6 +146,13 @@ function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
     const tld = tldts.parse(url).domain
     const safeList = settings.getSetting('whitelisted')
+    let subdomains = hostname.split('.')
+    while (subdomains.length > 1) {
+        if (safeList && safeList[subdomains.join('.')]) {
+            return true
+        }
+        subdomains.shift()
+    }
     return safeList && (safeList[hostname] || safeList[tld])
 }
 

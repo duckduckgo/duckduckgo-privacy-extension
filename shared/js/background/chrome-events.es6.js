@@ -221,8 +221,8 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
     if (!whitelisted || !whitelisted[tabURL.hostname]) {
         // Set variables, which are used in the fingerprint-protection script.
+        const referrer = trackerutils.truncateReferrer(tab.referrer, details.url)
         try {
-            const referrer = trackerutils.truncateReferrer(tab.initiator, details.url)
             const variableScript = {
                 'code': `
                     try {
@@ -293,7 +293,7 @@ if (browser !== 'moz') {
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function limitReferrerData (e) {
-        let referrer = e.requestHeaders.filter(header => header.name.toLowerCase() === 'referer')[0] || ''
+        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
         if (referrer) {
             referrer = referrer.value
         } else {
@@ -312,6 +312,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
 
         let requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
+        tab.referrer = modifiedReferrer
         requestHeaders.push({
             name: 'referer',
             value: modifiedReferrer

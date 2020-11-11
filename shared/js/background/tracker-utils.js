@@ -9,12 +9,13 @@ function isSameEntity (url1, url2) {
     try {
         const domain1 = tldts.parse(url1).domain
         const domain2 = tldts.parse(url2).domain
+        if (domain1 === domain2) return true
+
         const entity1 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url1).split('.') })
         const entity2 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url2).split('.') })
-        if (domain1 === domain2) return true
         if (entity1 === undefined && entity2 === undefined) return false
         return entity1 === entity2
-    } catch (TypeError) {
+    } catch (e) {
         // tried to parse invalid URL
         return false
     }
@@ -56,18 +57,23 @@ function truncateReferrer (referrer, target) {
 
     if (tdsStorage.ReferrerExcludeList && tdsStorage.ReferrerExcludeList.excludedReferrers) {
         const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
-        if (excludedDomains.includes(tldts.parse(referrer).domain) ||
-            excludedDomains.includes(tldts.parse(target).domain)) {
-            // referrer or target is in the Referrer safe list
-            return undefined
+        try {
+            if (excludedDomains.includes(tldts.parse(referrer).domain) ||
+                excludedDomains.includes(tldts.parse(target).domain)) {
+                // referrer or target is in the Referrer safe list
+                return undefined
+            }
+        }
+        catch (e) {
+            //if we can't parse the domains for any reason, assume it's not exluded.
         }
     }
 
     let modifiedReferrer = referrer
     if (isTracker(target)) {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, false)
+        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, {keepSubdomains: false})
     } else {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, true)
+        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, {keepSubdomains: true})
     }
     // If extractLimitedDomainFromURL fails (for instance, invalid referrer URL), it
     // returns undefined, (in practice, don't modify the referrer), so sometimes this value could be undefined.
