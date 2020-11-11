@@ -293,7 +293,7 @@ if (browser !== 'moz') {
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function limitReferrerData (e) {
-        let referrer = e.requestHeaders.filter(header => header.name.toLowerCase() === 'referer')[0] || ''
+        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
         if (referrer) {
             referrer = referrer.value
         } else {
