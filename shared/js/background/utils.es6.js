@@ -24,8 +24,8 @@ function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
     try {
         const parsedURL = new URL(url)
         const tld = tldts.parse(url)
-        let finalURL = tld.domain
         if (!parsedURL || !tld) return ''
+        let finalURL = tld.domain
         if (keepSubdomains) {
             finalURL = tld.hostname
         } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
