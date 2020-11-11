@@ -27,9 +27,7 @@ function extractLimitedDomainFromURL (url, keepSubdomains) {
         if (!parsedURL || !tld) return ''
         let finalURL = tld.domain
         if (keepSubdomains) {
-            if (tld.subdomain) {
-                finalURL = tld.subdomain + '.' + tld.domain
-            }
+            finalURL = tld.hostname
         } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
             finalURL = 'www.' + tld.domain
         }
