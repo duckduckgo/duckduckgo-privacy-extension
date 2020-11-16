@@ -111,22 +111,29 @@ class DDGAutofill extends HTMLElement {
             })
         }
 
-        this.input.addEventListener('focus', () => {
+        this.input.addEventListener('click', (e) => {
+            if (!e.isTrusted) return
+
             if (this.areAllInputsEmpty()) {
-                this.autofillInputs()
                 this.showTooltip()
             }
         }, {once: true})
 
-        this.trigger.addEventListener('click', () => {
+        this.trigger.addEventListener('click', (e) => {
+            if (!e.isTrusted) return
+
             this.showTooltip()
         })
         this.dismissButton.addEventListener('click', (e) => {
+            if (!e.isTrusted) return
+
             e.stopImmediatePropagation()
             this.resetInputs()
             this.hideTooltip()
         })
         this.confirmButton.addEventListener('click', (e) => {
+            if (!e.isTrusted) return
+
             e.stopImmediatePropagation()
             this.autofillInputs()
             this.hideTooltip()
