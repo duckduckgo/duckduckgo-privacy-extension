@@ -63,9 +63,8 @@ function truncateReferrer (referrer, target) {
                 // referrer or target is in the Referrer safe list
                 return undefined
             }
-        }
-        catch (e) {
-            //if we can't parse the domains for any reason, assume it's not exluded.
+        } catch (e) {
+            // if we can't parse the domains for any reason, assume it's not exluded.
         }
     }
 

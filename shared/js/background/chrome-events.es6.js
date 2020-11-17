@@ -219,21 +219,19 @@ chrome.webNavigation.onCommitted.addListener(details => {
           'more info: https://github.com/duckduckgo/content-blocking-whitelist')
         return
     }
-    if (!whitelisted || !whitelisted[tabURL.hostname]) {
+    if (tab && !tab.site.whitelisted) {
         // Set variables, which are used in the fingerprint-protection script.
-        const referrer = trackerutils.truncateReferrer(tab.referrer, details.url)
         try {
             const variableScript = {
                 'code': `
                     try {
                         var ddg_ext_ua='${agentSpoofer.getAgent()}'
-                        var ddg_referrer='${referrer}'
+                        var ddg_referrer=${JSON.stringify(tab.referrer)}
                     } catch(e) {}`,
                 'runAt': 'document_start',
                 'allFrames': true,
                 'matchAboutBlank': true
             }
-
             chrome.tabs.executeScript(details.tabId, variableScript)
             const scriptDetails = {
                 'file': '/data/fingerprint-protection.js',
@@ -243,7 +241,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
             }
             chrome.tabs.executeScript(details.tabId, scriptDetails)
         } catch (e) {
-            console.log(`Failed to inject fingerprint protection into ${details.url}`)
+            console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
         }
     }
 })
@@ -312,7 +310,13 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
 
         let requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
-        tab.referrer = modifiedReferrer
+        if (!tab.referrer || tab.referrer.site !== tab.site.url) {
+            tab.referrer = {
+                site: tab.site.url,
+                referrerHost: new URL(referrer).hostname,
+                referrer: modifiedReferrer
+            }
+        }
         requestHeaders.push({
             name: 'referer',
             value: modifiedReferrer
