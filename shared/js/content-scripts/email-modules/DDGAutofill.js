@@ -102,6 +102,7 @@ class DDGAutofill extends HTMLElement {
                             })
                         }, {once: true})
                     })
+            chrome.runtime.sendMessage({sendAutofillNotification: true})
                 }
             })
         }
