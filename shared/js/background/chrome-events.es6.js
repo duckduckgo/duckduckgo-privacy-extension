@@ -247,6 +247,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
 // Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
+        
         let tab = tabManager.get({ tabId: e.tabId })
         if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
             console.log('temporarily skip fingerprint protection for site: ' +
@@ -306,7 +307,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
 
         let requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
-        if (!tab.referrer || tab.referrer.site !== tab.site.url) {
+        if (!!tab && !tab.referrer || tab.referrer.site !== tab.site.url) {
             tab.referrer = {
                 site: tab.site.url,
                 referrerHost: new URL(referrer).hostname,
