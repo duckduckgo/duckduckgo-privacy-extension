@@ -5,7 +5,7 @@ const daxSVG = require('./logo-svg')
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
         super()
-        const shadow = this.attachShadow({mode: 'open'})
+        const shadow = this.attachShadow({mode: 'closed'})
         this.input = input
         this.associatedForm = associatedForm
         this.inputRightMargin = parseInt(getComputedStyle(this.input).paddingRight)
@@ -20,6 +20,7 @@ class DDGAutofill extends HTMLElement {
     <div class="tooltip" hidden>
         <h2 class="tooltip__title">For more privacy, use a Duck Address.</h2>
         <p>This address can be used to communicate with you, but won’t reveal your real email.</p>
+        <div class="tooltip__alias-container">${daxSVG}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
         <div class="tooltip__button-container">
             <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
             <button class="tooltip__button tooltip__button--primary js-confirm">Use Address</button>
@@ -31,6 +32,28 @@ class DDGAutofill extends HTMLElement {
         this.tooltip = shadow.querySelector('.tooltip')
         this.dismissButton = shadow.querySelector('.js-dismiss')
         this.confirmButton = shadow.querySelector('.js-confirm')
+        this.aliasEl = shadow.querySelector('.alias')
+    }
+
+    updateAliasInTooltip() {
+        const [alias] = this.nextAlias.split('@')
+        this.aliasEl.textContent = alias
+    }
+
+    get nextAlias() {
+        if (this._nextAlias) return this._nextAlias
+
+        chrome.runtime.sendMessage({getAlias: true}, (res) => {
+            if (res.alias) {
+                this.nextAlias = res.alias
+            }
+            return res.alias
+        })
+    }
+
+    set nextAlias(alias) {
+        this._nextAlias = alias
+        this.updateAliasInTooltip()
     }
 
     static updateButtonPosition (el) {
@@ -87,22 +110,22 @@ class DDGAutofill extends HTMLElement {
             return allEmpty
         }
         this.autofillInputs = () => {
-            chrome.runtime.sendMessage({getAlias: true}, (res) => {
-                if (res.alias) {
+            this.execOnInputs((input) => {
+
+                input.value = this.nextAlias
+                input.classList.add('ddg-autofilled')
+
+                // If the user changes the alias, remove the decoration
+                input.addEventListener('input', () => {
                     this.execOnInputs(input => {
-                        if (input.classList.contains('ddg-autofilled')) return
-
-                        input.value = res.alias
-                        input.classList.add('ddg-autofilled')
-
-                        // If the user changes the alias, remove the decoration
-                        input.addEventListener('input', () => {
-                            this.execOnInputs(input => {
-                                input.classList.remove('ddg-autofilled')
-                            })
-                        }, {once: true})
+                        input.classList.remove('ddg-autofilled')
                     })
+                }, {once: true})
+            })
             chrome.runtime.sendMessage({sendAutofillNotification: true})
+            chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
+                if (res?.alias) {
+                    this.nextAlias = res.alias
                 }
             })
         }

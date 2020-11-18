@@ -212,8 +212,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         const userData = settings.getSetting('userData')
         res({alias: userData.nextAlias})
 
-        // Fetch a new alias
-        fetchAlias()
+        return true
+    }
+
+    if (req.refreshAlias) {
+        fetchAlias().then(() => {
+            const userData = settings.getSetting('userData')
+            res({alias: userData.nextAlias})
+        })
 
         return true
     }

@@ -80,6 +80,16 @@
 .tooltip p {
     margin: 4px 0 12px;
 }
+.tooltip__alias-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto 15px;
+    font-size: 16px;
+}
+.alias {
+    padding-left: 4px;
+}
 .tooltip__button-container {
     display: flex;
 }
