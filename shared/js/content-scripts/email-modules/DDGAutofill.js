@@ -1,5 +1,6 @@
 const logo = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
+const daxSVG = require('./logo-svg')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
@@ -15,7 +16,7 @@ class DDGAutofill extends HTMLElement {
         shadow.innerHTML = `
 <link rel="stylesheet" href="${css}">
 <div class="wrapper">
-    <button class="trigger"><img src="${logo}" alt="Open the DuckDuckGo autofill tooltip" /></button>
+    <button class="trigger">${daxSVG}</button>
     <div class="tooltip" hidden>
         <h2 class="tooltip__title">For more privacy, use a Duck Address.</h2>
         <p>This address can be used to communicate with you, but won’t reveal your real email.</p>
