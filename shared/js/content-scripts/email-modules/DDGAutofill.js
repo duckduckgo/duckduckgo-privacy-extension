@@ -5,6 +5,12 @@ const daxSVG = require('./logo-svg')
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
         super()
+        // Get the alias from the extension
+        chrome.runtime.sendMessage({getAlias: true}, (res) => {
+            if (res.alias) {
+                this.nextAlias = res.alias
+            }
+        })
         const shadow = this.attachShadow({mode: 'closed'})
         this.input = input
         this.associatedForm = associatedForm
@@ -35,27 +41,6 @@ class DDGAutofill extends HTMLElement {
         this.aliasEl = shadow.querySelector('.alias')
     }
 
-    updateAliasInTooltip() {
-        const [alias] = this.nextAlias.split('@')
-        this.aliasEl.textContent = alias
-    }
-
-    get nextAlias() {
-        if (this._nextAlias) return this._nextAlias
-
-        chrome.runtime.sendMessage({getAlias: true}, (res) => {
-            if (res.alias) {
-                this.nextAlias = res.alias
-            }
-            return res.alias
-        })
-    }
-
-    set nextAlias(alias) {
-        this._nextAlias = alias
-        this.updateAliasInTooltip()
-    }
-
     static updateButtonPosition (el) {
         if (el.animationFrame) {
             window.cancelAnimationFrame(el.animationFrame)
@@ -82,10 +67,16 @@ class DDGAutofill extends HTMLElement {
     connectedCallback () {
         DDGAutofill.updateButtonPosition(this)
 
+        this.updateAliasInTooltip = () => {
+            const [alias] = this.nextAlias.split('@')
+            this.aliasEl.textContent = alias
+        }
+
         this.showTooltip = () => {
             if (!this.tooltip.hidden) {
                 return
             }
+            this.updateAliasInTooltip()
             this.tooltip.hidden = false
             window.addEventListener('click', this.hideTooltip)
         }
@@ -111,7 +102,6 @@ class DDGAutofill extends HTMLElement {
         }
         this.autofillInputs = () => {
             this.execOnInputs((input) => {
-
                 input.value = this.nextAlias
                 input.classList.add('ddg-autofilled')
 
@@ -126,6 +116,7 @@ class DDGAutofill extends HTMLElement {
             chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
                 if (res?.alias) {
                     this.nextAlias = res.alias
+                    this.updateAliasInTooltip()
                 }
             })
         }
