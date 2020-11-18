@@ -211,8 +211,6 @@ const agentSpoofer = require('./classes/agentspoofer.es6')
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
-    const whitelisted = settings.getSetting('whitelisted')
-    const tabURL = new URL(details.url) || {}
     let tab = tabManager.get({ tabId: details.tabId })
     if (tab && tab.site.isBroken) {
         console.log('temporarily skip fingerprint protection for site: ' + details.url +
@@ -284,9 +282,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
-let ReferrerListenerOptions = ['blocking', 'requestHeaders']
+let referrerListenerOptions = ['blocking', 'requestHeaders']
 if (browser !== 'moz') {
-    ReferrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
+    referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
 }
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -300,10 +298,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         // Check if origin is safe listed
         const tab = tabManager.get({ tabId: e.tabId })
-        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
-            return
-        }
 
+        // Safe list and broken site list checks are included in the referrer evaluation
         let modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
         if (!modifiedReferrer) {
             return
@@ -324,7 +320,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         return {requestHeaders: requestHeaders}
     },
     {urls: ['<all_urls>']},
-    ReferrerListenerOptions
+    referrerListenerOptions
 )
 
 /**

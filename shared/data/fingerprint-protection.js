@@ -23,7 +23,7 @@
     }
 
     // Property values to be set and their original values.
-    let fingerprintPropertyValues = {
+    const fingerprintPropertyValues = {
         'screen': {
             'availTop': {
                 'object': 'screen',

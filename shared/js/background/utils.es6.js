@@ -140,20 +140,43 @@ function getAsyncBlockingSupport () {
     return false
 }
 
+/*
+ * check to see if this is a broken site reported on github
+*/
+function isBroken (url) {
+    if (!tdsStorage || !tdsStorage.brokenSiteList) return
+
+    const parsedDomain = tldts.parse(url)
+    let hostname = parsedDomain.hostname || url
+
+    // If root domain in temp whitelist, return true
+    return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+        if (brokenSiteDomain) {
+            return hostname.match(new RegExp(brokenSiteDomain + '$'))
+        }
+    })
+}
+
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
 // tabManager.site.whitelisted is the preferred method.
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
-    const tld = tldts.parse(url).domain
     const safeList = settings.getSetting('whitelisted')
     let subdomains = hostname.split('.')
+    // Check user safe list
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {
             return true
         }
         subdomains.shift()
     }
-    return safeList && (safeList[hostname] || safeList[tld])
+
+    // Check broken sites
+    if (isBroken(hostname)) {
+        return true
+    }
+
+    return false
 }
 
 module.exports = {
@@ -168,5 +191,6 @@ module.exports = {
     getBeaconName: getBeaconName,
     getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
     isSafeListed: isSafeListed,
-    extractLimitedDomainFromURL: extractLimitedDomainFromURL
+    extractLimitedDomainFromURL: extractLimitedDomainFromURL,
+    isBroken: isBroken
 }
