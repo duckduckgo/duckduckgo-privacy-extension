@@ -6,6 +6,7 @@
  */
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
+const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
 const browser = utils.getBrowserName()
 
@@ -210,27 +211,25 @@ const agentSpoofer = require('./classes/agentspoofer.es6')
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
 chrome.webNavigation.onCommitted.addListener(details => {
-    const whitelisted = settings.getSetting('whitelisted')
-    const tabURL = new URL(details.url) || {}
     let tab = tabManager.get({ tabId: details.tabId })
     if (tab && tab.site.isBroken) {
-        console.log('temporarily skip fingerprint protection for site: ' +
+        console.log('temporarily skip fingerprint protection for site: ' + details.url +
           'more info: https://github.com/duckduckgo/content-blocking-whitelist')
         return
     }
-    if (!whitelisted || !whitelisted[tabURL.hostname]) {
+    if (tab && !tab.site.whitelisted) {
         // Set variables, which are used in the fingerprint-protection script.
         try {
             const variableScript = {
                 'code': `
                     try {
                         var ddg_ext_ua='${agentSpoofer.getAgent()}'
+                        var ddg_referrer=${JSON.stringify(tab.referrer)}
                     } catch(e) {}`,
                 'runAt': 'document_start',
                 'allFrames': true,
                 'matchAboutBlank': true
             }
-
             chrome.tabs.executeScript(details.tabId, variableScript)
             const scriptDetails = {
                 'file': '/data/fingerprint-protection.js',
@@ -240,7 +239,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
             }
             chrome.tabs.executeScript(details.tabId, scriptDetails)
         } catch (e) {
-            console.log(`Failed to inject fingerprint protection into ${details.url}`)
+            console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
         }
     }
 })
@@ -248,8 +247,9 @@ chrome.webNavigation.onCommitted.addListener(details => {
 // Replace UserAgent header on third party requests.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
+        
         let tab = tabManager.get({ tabId: e.tabId })
-        if (tab && tab.site.isBroken) {
+        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
             console.log('temporarily skip fingerprint protection for site: ' +
               'more info: https://github.com/duckduckgo/content-blocking-whitelist')
             return
@@ -269,6 +269,59 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     },
     {urls: ['<all_urls>']},
     ['blocking', 'requestHeaders']
+)
+
+/*
+ * Truncate the referrer header according to the following rules:
+ *   Don't modify the header when:
+ *   - If the header is blank, it will not be modified.
+ *   - If the referrer domain OR request domain are safe listed, the header will not be modified
+ *   - If the referrer domain and request domain are part of the same entity (as defined in our
+ *     entities file for first party sets), the header will not be modified.
+ *
+ *   Modify the header when:
+ *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
+ *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
+ */
+let referrerListenerOptions = ['blocking', 'requestHeaders']
+if (browser !== 'moz') {
+    referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
+}
+
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    function limitReferrerData (e) {
+        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
+        if (referrer) {
+            referrer = referrer.value
+        } else {
+            return
+        }
+
+        // Check if origin is safe listed
+        const tab = tabManager.get({ tabId: e.tabId })
+
+        // Safe list and broken site list checks are included in the referrer evaluation
+        let modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
+        if (!modifiedReferrer) {
+            return
+        }
+
+        let requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
+        if (!!tab && !tab.referrer || tab.referrer.site !== tab.site.url) {
+            tab.referrer = {
+                site: tab.site.url,
+                referrerHost: new URL(referrer).hostname,
+                referrer: modifiedReferrer
+            }
+        }
+        requestHeaders.push({
+            name: 'referer',
+            value: modifiedReferrer
+        })
+        return {requestHeaders: requestHeaders}
+    },
+    {urls: ['<all_urls>']},
+    referrerListenerOptions
 )
 
 /**
