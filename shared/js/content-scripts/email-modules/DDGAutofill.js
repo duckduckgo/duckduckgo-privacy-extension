@@ -17,11 +17,11 @@ class DDGAutofill extends HTMLElement {
 <div class="wrapper">
     <button class="trigger"><img src="${logo}" alt="Open the DuckDuckGo autofill tooltip" /></button>
     <div class="tooltip" hidden>
-        <strong>New Duck Address Generated</strong>
-        <p>This address can be used to communicate with you, but won’t reveal your identity.</p>
+        <h2 class="tooltip__title">For more privacy, use a Duck Address.</h2>
+        <p>This address can be used to communicate with you, but won’t reveal your real email.</p>
         <div class="tooltip__button-container">
             <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
-            <button class="tooltip__button tooltip__button--primary js-confirm">Use Duck Address</button>
+            <button class="tooltip__button tooltip__button--primary js-confirm">Use Address</button>
         </div>
     </div>
 </div>`
