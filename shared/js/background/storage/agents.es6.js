@@ -24,21 +24,8 @@ class AgentStorage {
         this.excludedAgents = []
         // Information about which agents to keep in our data set.
         const realAgent = agentparser.lookup(navigator.userAgent)
-        this.family = this.getBrowserType(realAgent)
+        this.family = realAgent.family
         this.os = realAgent.os.family
-    }
-
-    /*
-     * Return the type of browser, such as Brave or Chrome
-     * @param {useragent.Agent} parsedAgent - the parsed agent object
-     */
-    getBrowserType (parsedAgent) {
-        // The node libraries I tested do not return "brave" as expected for brave user agent strings.
-        // so this corrects for that.
-        if (parsedAgent.source.toLowerCase().includes('brave')) {
-            return 'Brave'
-        }
-        return parsedAgent.family
     }
 
     /**
@@ -121,15 +108,14 @@ class AgentStorage {
                     continue
                 }
                 const parsedUA = agentparser.lookup(ua.agent)
-                const uaFamily = this.getBrowserType(parsedUA)
-                if (uaFamily === this.family &&
+                if (parsedUA.family === this.family &&
                     parsedUA.os.family === this.os) {
                     let frequency = ua.percentage
                     if (typeof frequency === 'string') {
                         frequency = Number(frequency.replace('%', ''))
                     }
                     this.agents.push({
-                        browser: uaFamily,
+                        browser: parsedUA.family,
                         platform: parsedUA.os.family,
                         frequency: frequency,
                         agentString: ua.agent,
