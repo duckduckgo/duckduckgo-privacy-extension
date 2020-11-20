@@ -73,18 +73,6 @@
                 'targetValue': 8
             }
         },
-        'storage': {
-            'webkitTemporaryStorage': {
-                'object': 'navigator',
-                'origValue': navigator.webkitTemporaryStorage,
-                'targetValue': undefined
-            },
-            'webkitPersistentStorage': {
-                'object': 'navigator',
-                'origValue': navigator.webkitPersistentStorage,
-                'targetValue': undefined
-            }
-        },
         'useragent': {
 //            'userAgent': {
 //                'object': 'navigator',
@@ -208,6 +196,7 @@
      */
     function buildInjectionScript () {
         let script = buildScriptProperties()
+        script += modifyTemporaryStorage()
         script += buildBatteryScript()
         script += setWindowDimensions()
         return script
@@ -292,6 +281,32 @@
     }
 
     /**
+     * Temporary storage can be used to determine hard disk usage and size.
+     * This will limit the max storage to 4GB without completely disabling the
+     * feature.
+     */
+    function modifyTemporaryStorage () {
+        const randomFunctionName = 'A' + Math.random().toString(36).substring(2) // random string of alphanumeric chars
+        const script = `
+            if (navigator.webkitTemporaryStorage) {
+                try {
+                    navigator.webkitTemporaryStorage.${randomFunctionName} = navigator.webkitTemporaryStorage.queryUsageAndQuota
+                    navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
+                        const modifiedCallback = function (usedBytes, grantedBytes) {
+                            const maxBytesGranted = 4 * 1024 * 1024 * 1024
+                            grantedBytes = Math.min(grantedBytes, maxBytesGranted)
+                            callback(usedBytes, grantedBytes)
+                        }
+                        navigator.webkitTemporaryStorage.${randomFunctionName}(modifiedCallback, err)
+                    }
+                }
+                catch(e) {console.err(e)}
+            }
+        `
+        return script
+    }
+
+    /**
      * Inject all the overwrites into the page.
      */
     function inject (scriptToInject, removeAfterExec, elemToInject) {
@@ -314,5 +329,5 @@
     })
 
     const injectionScript = buildInjectionScript()
-    inject(injectionScript, false, elem)
+    inject(injectionScript, true, elem)
 })()
