@@ -43,7 +43,7 @@ function isTracker (url) {
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
 function truncateReferrer (referrer, target) {
-    if (referrer === '') {
+    if (!referrer || referrer === '') {
         return undefined
     }
 
