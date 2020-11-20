@@ -300,7 +300,7 @@
                         navigator.webkitTemporaryStorage.${randomFunctionName}(modifiedCallback, err)
                     }
                 }
-                catch(e) {console.err(e)}
+                catch(e) {}
             }
         `
         return script
