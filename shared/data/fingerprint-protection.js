@@ -290,14 +290,14 @@
         const script = `
             if (navigator.webkitTemporaryStorage) {
                 try {
-                    navigator.webkitTemporaryStorage.${randomFunctionName} = navigator.webkitTemporaryStorage.queryUsageAndQuota
+                    ${randomFunctionName} = navigator.webkitTemporaryStorage.queryUsageAndQuota
                     navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
                         const modifiedCallback = function (usedBytes, grantedBytes) {
                             const maxBytesGranted = 4 * 1024 * 1024 * 1024
-                            grantedBytes = Math.min(grantedBytes, maxBytesGranted)
+                            const grantedBytes = Math.min(grantedBytes, maxBytesGranted)
                             callback(usedBytes, grantedBytes)
                         }
-                        navigator.webkitTemporaryStorage.${randomFunctionName}(modifiedCallback, err)
+                        ${randomFunctionName}.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
                     }
                 }
                 catch(e) {}
