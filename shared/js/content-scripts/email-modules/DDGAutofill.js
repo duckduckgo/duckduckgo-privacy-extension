@@ -135,7 +135,7 @@ class DDGAutofill extends HTMLElement {
             })
             chrome.runtime.sendMessage({sendAutofillNotification: true})
             chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
-                if (res?.alias) {
+                if (res && res.alias) {
                     this.nextAlias = res.alias
                     this.updateAliasInTooltip()
                 }
