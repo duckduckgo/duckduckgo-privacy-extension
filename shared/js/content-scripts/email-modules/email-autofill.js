@@ -120,16 +120,16 @@
         })
 
         const EMAIL_SELECTOR = `
-        input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=email]:not([readonly]):not([disabled]):not([hidden]),
-        input[aria-label*=mail i],
-        input[placeholder*=mail i]:not([readonly])
-    `
+            input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=email]:not([readonly]):not([disabled]):not([hidden]),
+            input[aria-label*=mail i],
+            input[placeholder*=mail i]:not([readonly])
+        `
 
         const findEligibleInput = context => {
             context.querySelectorAll(EMAIL_SELECTOR)
