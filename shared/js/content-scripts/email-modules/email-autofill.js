@@ -166,11 +166,8 @@
                         }
                     })
                 }
-
-                if (mutationRecord.type === 'attributes') {
-                    updateAllButtons()
-                }
             }
+            updateAllButtons()
         })
         mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
 
