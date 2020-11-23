@@ -80,6 +80,9 @@
 .tooltip p {
     margin: 4px 0 12px;
 }
+.tooltip strong {
+    font-weight: bold;
+}
 .tooltip__alias-container {
     display: flex;
     justify-content: center;
