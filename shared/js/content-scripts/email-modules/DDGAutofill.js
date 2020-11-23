@@ -170,6 +170,7 @@ class DDGAutofill extends HTMLElement {
             e.stopImmediatePropagation()
             this.resetInputs()
             this.hideTooltip()
+            this.input.focus()
         })
         this.confirmButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
