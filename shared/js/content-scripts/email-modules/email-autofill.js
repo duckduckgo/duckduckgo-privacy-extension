@@ -159,6 +159,8 @@
                 if (mutationRecord.type === 'childList') {
                     // We query only within the context of added/removed nodes
                     mutationRecord.addedNodes.forEach(el => {
+                        if (el.nodeName === 'DDG-AUTOFILL') return
+
                         if (el instanceof HTMLElement) {
                             window.requestIdleCallback(() =>
                                 findEligibleInput(el)
