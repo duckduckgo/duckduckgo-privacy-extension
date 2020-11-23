@@ -148,8 +148,11 @@ class DDGAutofill extends HTMLElement {
             })
         }
 
-        this.input.addEventListener('click', (e) => {
+        this.input.addEventListener('mousedown', (e) => {
             if (!e.isTrusted) return
+
+            e.preventDefault()
+            e.stopImmediatePropagation()
 
             if (this.areAllInputsEmpty()) {
                 this.showTooltip()
