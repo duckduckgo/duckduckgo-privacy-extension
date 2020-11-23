@@ -135,16 +135,12 @@
             context.querySelectorAll(EMAIL_SELECTOR)
                 .forEach(input => {
                     const parentForm = input.form
-                    if (parentForm) {
-                        if (forms.has(parentForm)) {
-                            // If we've already met the form, add the input
-                            forms.get(parentForm).addInput(input)
-                        } else {
-                            forms.set(parentForm, new Form(parentForm, input, intObs))
-                        }
+
+                    if (forms.has(parentForm)) {
+                        // If we've already met the form, add the input
+                        forms.get(parentForm).addInput(input)
                     } else {
-                        // If input is not associated with a form, analyse the page
-                        forms.set(input, new Form(null, input, intObs))
+                        forms.set(parentForm || input, new Form(parentForm, input, intObs))
                     }
                 })
             forms.forEach((formObj, formEl) => {
