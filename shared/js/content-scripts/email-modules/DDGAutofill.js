@@ -5,12 +5,6 @@ const daxSVG = require('./logo-svg')
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
         super()
-        // Get the alias from the extension
-        chrome.runtime.sendMessage({getAlias: true}, (res) => {
-            if (res.alias) {
-                this.nextAlias = res.alias
-            }
-        })
         const shadow = this.attachShadow({mode: 'closed'})
         this.input = input
         this.associatedForm = associatedForm
@@ -39,6 +33,19 @@ class DDGAutofill extends HTMLElement {
         this.dismissButton = shadow.querySelector('.js-dismiss')
         this.confirmButton = shadow.querySelector('.js-confirm')
         this.aliasEl = shadow.querySelector('.alias')
+
+        this.updateAliasInTooltip = () => {
+            const [alias] = this.nextAlias.split('@')
+            this.aliasEl.textContent = alias
+        }
+
+        // Get the alias from the extension
+        chrome.runtime.sendMessage({getAlias: true}, (res) => {
+            if (res.alias) {
+                this.nextAlias = res.alias
+                this.updateAliasInTooltip()
+            }
+        })
 
         /**
          * Use IntersectionObserver v2 to make sure the element is visible when clicked
@@ -87,11 +94,6 @@ class DDGAutofill extends HTMLElement {
 
     connectedCallback () {
         DDGAutofill.updateButtonPosition(this)
-
-        this.updateAliasInTooltip = () => {
-            const [alias] = this.nextAlias.split('@')
-            this.aliasEl.textContent = alias
-        }
 
         this.showTooltip = () => {
             if (!this.tooltip.hidden) {
