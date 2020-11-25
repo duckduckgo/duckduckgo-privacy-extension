@@ -125,10 +125,13 @@
             input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
             input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
             input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=text][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=""][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input:not([type])[placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
             input[type=email]:not([readonly]):not([disabled]):not([hidden]),
-            input[aria-label*=mail i],
-            input[placeholder*=mail i]:not([readonly])
+            input[type=text][aria-label*=mail i],
+            input:not([type])[aria-label*=mail i],
+            input[type=text][placeholder*=mail i]:not([readonly])
         `
 
         let count = 0
