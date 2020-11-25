@@ -34,7 +34,7 @@ describe('Email autofill input detection Tests', () => {
     })
 
     sites.forEach(({name, url, autofillExpected, actions}) => {
-        it(`Test input field detection on ${name}`, async () => {
+        it(`Test input field detection on ${name} at ${url}`, async () => {
             const page = await browser.newPage()
             await page.setViewport({width: 1300, height: 800})
             const ua = await browser.userAgent()
