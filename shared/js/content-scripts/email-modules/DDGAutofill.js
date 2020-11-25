@@ -126,6 +126,8 @@ class DDGAutofill extends HTMLElement {
         this.autofillInputs = () => {
             this.execOnInputs((input) => {
                 input.value = this.nextAlias
+                const ev = new Event('input', {bubbles: true})
+                input.dispatchEvent(ev)
                 input.classList.add('ddg-autofilled')
 
                 // If the user changes the alias, remove the decoration
