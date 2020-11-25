@@ -138,7 +138,7 @@
                 inputButtonMap.forEach(button => button.remove())
 
                 // Try up to 5 times to avoid infinite loop in case someone is doing the same
-                if (count < 5) {
+                if (count < 15) {
                     document.body.append(...inputButtonMap.values())
                     count++
                 } else {
