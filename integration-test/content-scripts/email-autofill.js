@@ -38,7 +38,7 @@ describe('Email autofill input detection Tests', () => {
             const page = await browser.newPage()
             await page.setViewport({width: 1300, height: 800})
             const ua = await browser.userAgent()
-            await page.setUserAgent(ua.replace(/Headless /, ''))
+            await page.setUserAgent(ua.replace(/Headless /, '') + ' test')
 
             try {
                 await page.goto(`${url}`, { waitUntil: 'networkidle0' })
