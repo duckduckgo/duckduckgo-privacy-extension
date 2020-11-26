@@ -19,7 +19,9 @@ class Form {
     decorateInputs () {
         window.requestAnimationFrame(() => {
             this.relevantInputs.forEach(input => {
-                input.setAttribute('data-ddg-autofill', 'true')
+                if (window.navigator.userAgent.includes('test')) {
+                    input.setAttribute('data-ddg-autofill', 'true')
+                }
 
                 this.intObs.observe(input)
             })

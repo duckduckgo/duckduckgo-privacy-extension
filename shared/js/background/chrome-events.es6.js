@@ -129,7 +129,8 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
-const {REFETCH_ALIAS_ALARM, fetchAlias} = require('./email-utils.es6')
+const {REFETCH_ALIAS_ALARM, fetchAlias, sendNotification} = require('./email-utils.es6')
+const tldts = require('tldts')
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
@@ -212,8 +213,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         const userData = settings.getSetting('userData')
         res({alias: userData.nextAlias})
 
-        // Fetch a new alias
-        fetchAlias()
+        return true
+    }
+
+    if (req.refreshAlias) {
+        fetchAlias().then(() => {
+            const userData = settings.getSetting('userData')
+            res({alias: userData.nextAlias})
+        })
 
         return true
     }
@@ -251,6 +258,13 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
 
         return true
+    }
+
+    if (req.sendAutofillNotification) {
+        sendNotification({
+            title: 'Duck Address Autofilled',
+            message: `A Duck Address was autofilled on ${tldts.parse(sender.url).domain}`
+        })
     }
 })
 

@@ -120,31 +120,48 @@
         })
 
         const EMAIL_SELECTOR = `
-        input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=text][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-        input[type=email]:not([readonly]):not([disabled]):not([hidden]),
-        input[aria-label*=mail i],
-        input[placeholder*=mail i]:not([readonly])
-    `
+            input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=text][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=""][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input:not([type])[placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=email]:not([readonly]):not([disabled]):not([hidden]),
+            input[type=text][aria-label*=mail i],
+            input:not([type])[aria-label*=mail i],
+            input[type=text][placeholder*=mail i]:not([readonly])
+        `
+
+        let count = 0
+        const ensureDDGElementsAreLast = () => {
+            // If DDG els are not the last in the doc, move them there
+            if (inputButtonMap.size && document.body.lastElementChild.nodeName !== 'DDG-AUTOFILL') {
+                inputButtonMap.forEach(button => button.remove())
+
+                // Try up to 5 times to avoid infinite loop in case someone is doing the same
+                if (count < 15) {
+                    document.body.append(...inputButtonMap.values())
+                    count++
+                } else {
+                    // Reset count so we can resume normal flow
+                    count = 0
+                    console.info(`DDG autofill bailing out`)
+                }
+            }
+        }
 
         const findEligibleInput = context => {
             context.querySelectorAll(EMAIL_SELECTOR)
                 .forEach(input => {
                     const parentForm = input.form
-                    if (parentForm) {
-                        if (forms.has(parentForm)) {
-                            // If we've already met the form, add the input
-                            forms.get(parentForm).addInput(input)
-                        } else {
-                            forms.set(parentForm, new Form(parentForm, input, intObs))
-                        }
+
+                    if (forms.has(parentForm)) {
+                        // If we've already met the form, add the input
+                        forms.get(parentForm).addInput(input)
                     } else {
-                        // If input is not associated with a form, analyse the page
-                        forms.set(input, new Form(null, input, intObs))
+                        forms.set(parentForm || input, new Form(parentForm, input, intObs))
                     }
                 })
             forms.forEach((formObj, formEl) => {
@@ -163,18 +180,18 @@
                 if (mutationRecord.type === 'childList') {
                     // We query only within the context of added/removed nodes
                     mutationRecord.addedNodes.forEach(el => {
+                        if (el.nodeName === 'DDG-AUTOFILL') return
+
                         if (el instanceof HTMLElement) {
-                            window.requestIdleCallback(() =>
+                            window.requestIdleCallback(() => {
                                 findEligibleInput(el)
-                            )
+                                ensureDDGElementsAreLast()
+                            })
                         }
                     })
                 }
-
-                if (mutationRecord.type === 'attributes') {
-                    updateAllButtons()
-                }
             }
+            updateAllButtons()
         })
         mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
 

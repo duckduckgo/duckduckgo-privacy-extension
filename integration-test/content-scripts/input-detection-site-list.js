@@ -41,23 +41,17 @@ const sites = [
         url: 'https://www.ebay-kleinanzeigen.de/m-einloggen.html?targetUrl=/',
         autofillExpected: 0
     }, */
-    /* // Disabled because the signup form is inside an iframe
     {
         name: 'cnbc signup',
-        url: 'https://www.cnbc.com/world/?region=world',
-        actions: [
-            {action: 'reload', arg: { waitUntil: 'networkidle0' }},
-            {action: 'click', arg: '.account-menu-accountMenu > ul > li:first-child > a'},
-            {action: 'click', arg: '.AuthModal-tab > li:nth-child(2) > a'},
-            {action: 'waitFor', arg: 1500}
-        ],
+        url: 'https://www.cnbc.com/sign-up-for-cnbc-newsletters/',
         autofillExpected: 1
-    }, */
+    },
+    /* It stopped loading the signin/signup block in puppeteer
     {
         name: 'IGN.com signup',
         url: 'https://www.ign.com',
         actions: [
-            // {action: 'waitFor', arg: 5000},
+            {action: 'waitFor', arg: 1500},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'},
             {action: 'click', arg: '#email-label > .supplemental > button'}
         ],
@@ -67,11 +61,11 @@ const sites = [
         name: 'IGN.com login',
         url: 'https://www.ign.com',
         actions: [
-            // {action: 'waitFor', arg: 5000},
+            {action: 'waitFor', arg: 1500},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'}
         ],
         autofillExpected: 0
-    },
+    }, */
     {
         name: 'cnbc login',
         url: 'https://www.cnbc.com/world/?region=world',
@@ -133,6 +127,7 @@ const sites = [
         actions: [{action: 'click', arg: 'a[href="/sign-in"]'}],
         autofillExpected: 0
     },
+    /* Stopped loading in headless browser
     {
         name: 'Infowars signup',
         url: 'https://www.infowarsstore.com/customer/account/create/',
@@ -147,13 +142,12 @@ const sites = [
         name: 'Infowars newsletter',
         url: 'https://www.infowars.com/newsletter-sign-up/',
         autofillExpected: 1
-    },
-    /* // Commented out because the page does not load in the headless browser
+    }, */
     {
         name: 'Kijiji signup',
         url: 'https://www.kijiji.ca/t-user-registration.html',
         autofillExpected: 1
-    }, */
+    },
     {
         name: 'Kijiji login',
         url: 'https://www.kijiji.ca/t-login.html',
@@ -196,12 +190,13 @@ const sites = [
     },
     {
         name: 'Slate signup',
-        url: 'https://my.slate.com/login/?screenToRender=traditionalRegistration',
+        url: 'https://id.tinypass.com/id/?client_id=homyv5Uzpu&sender=piano-id-qlBRl&origin=https:%2F%2Fslate.com&site=https:%2F%2Fslate.com&parent_uri=https:%2F%2Fslate.com%2Fsign-in&display_mode=inline&screen=login',
+        actions: [{action: 'click', arg: '[showscreen="register"] > a'}],
         autofillExpected: 1
     },
     {
         name: 'Slate login',
-        url: 'https://my.slate.com/login/',
+        url: 'https://id.tinypass.com/id/?client_id=homyv5Uzpu&sender=piano-id-qlBRl&origin=https:%2F%2Fslate.com&site=https:%2F%2Fslate.com&parent_uri=https:%2F%2Fslate.com%2Fsign-in&display_mode=inline&screen=login',
         autofillExpected: 0
     },
     {
@@ -260,7 +255,7 @@ const sites = [
     {
         name: 'BlazeTV newsletter',
         url: 'https://www.theblaze.com/',
-        autofillExpected: 1
+        autofillExpected: 2
     },
     {
         name: 'Sur.ly signup',
@@ -366,14 +361,12 @@ const sites = [
     },
     {
         name: 'CookPad signup',
-        url: 'https://cookpad.com/us/accounts/new?via=get_started',
-        actions: [{action: 'click', arg: 'a[data-new-state="user_form"]'}],
+        url: 'https://cookpad.com/us/accounts/emails/new',
         autofillExpected: 1
     },
     {
         name: 'CookPad login',
-        url: 'https://cookpad.com/us/accounts/new?via=get_started',
-        actions: [{action: 'click', arg: 'a[href="/us/login"]'}],
+        url: 'https://cookpad.com/us/login',
         autofillExpected: 0
     },
     {
@@ -428,15 +421,16 @@ const sites = [
     },
     {
         name: 'Dropbox signup',
-        url: 'https://www.dropbox.com/',
+        url: 'https://www.dropbox.com/login',
+        actions: [{action: 'click', arg: '.login-register-switch-link'}],
         autofillExpected: 1
     },
     {
         name: 'Dropbox login',
-        url: 'https://www.dropbox.com/',
-        actions: [{action: 'click', arg: 'a#sign-in-link'}],
+        url: 'https://www.dropbox.com/login',
         autofillExpected: 0
     },
+    /* It never loads in puppeteer.
     {
         name: 'Carmax signup',
         url: 'https://www.carmax.com/mycarmax/register',
@@ -446,7 +440,7 @@ const sites = [
         name: 'Carmax login',
         url: 'https://www.carmax.com/mycarmax/sign-in',
         autofillExpected: 0
-    },
+    }, */
     {
         name: 'Vulture.com signup',
         url: 'https://subs.nymag.com/magazine/subscribe/official-subscription.html',
