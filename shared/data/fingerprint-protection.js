@@ -73,18 +73,20 @@
                 'targetValue': 8
             }
         },
+        /*
         'useragent': {
 //            'userAgent': {
 //                'object': 'navigator',
 //                'origValue': navigator.userAgent,
 //                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
 //            },
-            'appVersion': {
+              'appVersion': {
                 'object': 'navigator',
                 'origValue': navigator.appVersion,
                 'targetValue': `"${getAppVersionValue()}"`
             }
         },
+        */
         'options': {
             'doNotTrack': {
                 'object': 'navigator',
