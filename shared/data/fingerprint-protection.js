@@ -294,8 +294,8 @@
                     navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
                         const modifiedCallback = function (usedBytes, grantedBytes) {
                             const maxBytesGranted = 4 * 1024 * 1024 * 1024
-                            const grantedBytes = Math.min(grantedBytes, maxBytesGranted)
-                            callback(usedBytes, grantedBytes)
+                            const spoofedGrantedBytes = Math.min(grantedBytes, maxBytesGranted)
+                            callback(usedBytes, spoofedGrantedBytes)
                         }
                         ${randomFunctionName}.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
                     }
