@@ -292,7 +292,7 @@
         const script = `
             if (navigator.webkitTemporaryStorage) {
                 try {
-                    ${randomFunctionName} = navigator.webkitTemporaryStorage.queryUsageAndQuota
+                    const org = navigator.webkitTemporaryStorage.queryUsageAndQuota
                     navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
                         const modifiedCallback = function (usedBytes, grantedBytes) {
                             const maxBytesGranted = 4 * 1024 * 1024 * 1024
