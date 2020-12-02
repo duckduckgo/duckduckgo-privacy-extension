@@ -288,7 +288,6 @@
      * feature.
      */
     function modifyTemporaryStorage () {
-        const randomFunctionName = 'A' + Math.random().toString(36).substring(2) // random string of alphanumeric chars
         const script = `
             if (navigator.webkitTemporaryStorage) {
                 try {
@@ -299,7 +298,7 @@
                             const spoofedGrantedBytes = Math.min(grantedBytes, maxBytesGranted)
                             callback(usedBytes, spoofedGrantedBytes)
                         }
-                        ${randomFunctionName}.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
+                        org.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
                     }
                 }
                 catch(e) {}
