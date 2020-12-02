@@ -245,6 +245,10 @@ chrome.webNavigation.onCommitted.addListener(details => {
 })
 
 // Replace UserAgent header on third party requests.
+/* Disable User Agent Spoofing temporarily.
+ * Some chromium based browsers have started changing
+ * UA per site. Once this feature is re-worked to match
+ * that behaviour, it will be re-enabled.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function spoofUserAgentHeader (e) {
         let tab = tabManager.get({ tabId: e.tabId })
@@ -269,6 +273,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     {urls: ['<all_urls>']},
     ['blocking', 'requestHeaders']
 )
+*/
 
 /*
  * Truncate the referrer header according to the following rules:
