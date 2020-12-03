@@ -1,6 +1,7 @@
 const logo = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
+const { setValue } = require('./autofill-utils')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
@@ -125,11 +126,7 @@ class DDGAutofill extends HTMLElement {
         }
         this.autofillInputs = () => {
             this.execOnInputs((input) => {
-                input.focus()
-                input.value = this.nextAlias
-                const ev = new Event('input', {bubbles: true})
-                input.dispatchEvent(ev)
-                input.blur()
+                setValue(input, this.nextAlias)
                 input.classList.add('ddg-autofilled')
 
                 // If the user changes the alias, remove the decoration
