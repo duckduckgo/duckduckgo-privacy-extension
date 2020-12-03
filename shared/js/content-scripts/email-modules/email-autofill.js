@@ -88,7 +88,9 @@
         const inputButtonMap = new Map()
         const forms = new Map()
 
-        customElements.define('ddg-autofill', DDGAutofill)
+        if (!customElements.get('ddg-autofill')) {
+            customElements.define('ddg-autofill', DDGAutofill)
+        }
 
         const updateAllButtons = () => {
             inputButtonMap.forEach((button) => {
