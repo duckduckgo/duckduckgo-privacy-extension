@@ -152,6 +152,7 @@ class DDGAutofill extends HTMLElement {
 
         this.input.addEventListener('mousedown', (e) => {
             if (!e.isTrusted) return
+            if (e.button !== 1) return
 
             if (this.areAllInputsEmpty()) {
                 e.preventDefault()
