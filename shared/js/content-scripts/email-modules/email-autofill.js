@@ -70,15 +70,16 @@
             injectEmailAutofill()
             notifyWebApp({extensionSignedIn: {value: true}})
         } else {
-            // If we don't have user data yet, notify the web app that we are ready to receive it…
+            // If we don't have user data yet, notify the web app that we are ready to receive it
             notifyWebApp({extensionInstalled: true})
-            // …then listen for when the user data is set
-            chrome.runtime.onMessage.addListener((message, sender) => {
-                if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
-                    notifyWebApp({extensionSignedIn: {value: true}})
-                    injectEmailAutofill()
-                }
-            })
+        }
+    })
+
+    // When the extension is ready, notify the web app and inject the autofill script
+    chrome.runtime.onMessage.addListener((message, sender) => {
+        if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
+            notifyWebApp({extensionSignedIn: {value: true}})
+            injectEmailAutofill()
         }
     })
 
