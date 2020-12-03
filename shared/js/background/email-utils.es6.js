@@ -50,8 +50,25 @@ const sendNotification = ({title, message}) => {
     })
 }
 
+const registerContextMenuAction = () =>
+    chrome.contextMenus.create({
+        id: 'ddg-autofill-context-menu-item',
+        title: 'Autofill',
+        contexts: ['editable'],
+        onclick: (info, tab) => {
+            const userData = getSetting('userData')
+            if (userData.nextAlias) {
+                chrome.tabs.sendMessage(tab.id, {
+                    type: 'contextualAutofill',
+                    alias: userData.nextAlias
+                })
+            }
+        }
+    })
+
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
-    sendNotification
+    sendNotification,
+    registerContextMenuAction
 }

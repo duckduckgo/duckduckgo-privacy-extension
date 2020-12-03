@@ -203,4 +203,17 @@
             eventType => window.addEventListener(eventType, () => updateAllButtons())
         )
     }
+
+    // Add contextual menu listeners
+    const { setValue } = require('./autofill-utils')
+    let activeEl = null
+    document.addEventListener('contextmenu', e => {
+        activeEl = e.target
+    })
+    chrome.runtime.onMessage.addListener((message, sender) => {
+        if (sender.id === chrome.runtime.id && message.type === 'contextualAutofill') {
+            setValue(activeEl, message.alias)
+            chrome.runtime.sendMessage({sendAutofillNotification: true})
+        }
+    })
 })()
