@@ -1,4 +1,3 @@
-const logo = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
 const { setValue } = require('./autofill-utils')
