@@ -70,9 +70,12 @@ chrome.contextMenus.create({
 
 const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: true})
 
+const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: false})
+
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     sendNotification,
     showContextMenuAction,
+    hideContextMenuAction
 }

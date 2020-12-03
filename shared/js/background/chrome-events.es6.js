@@ -135,6 +135,7 @@ const {
     fetchAlias,
     sendNotification,
     showContextMenuAction,
+    hideContextMenuAction
 } = require('./email-utils.es6')
 const tldts = require('tldts')
 
@@ -282,6 +283,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 chrome.tabs.sendMessage(tab.id, {type: 'logout'})
             })
         })
+        hideContextMenuAction()
     }
 })
 
