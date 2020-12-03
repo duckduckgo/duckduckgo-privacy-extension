@@ -273,6 +273,16 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             message: `A Duck Address was autofilled on ${tldts.parse(sender.url).domain}`
         })
     }
+
+    if (req.logout) {
+        settings.updateSetting('userData', {})
+        // Broadcast the logout to all tabs
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach((tab) => {
+                chrome.tabs.sendMessage(tab.id, {type: 'logout'})
+            })
+        })
+    }
 })
 
 /**
