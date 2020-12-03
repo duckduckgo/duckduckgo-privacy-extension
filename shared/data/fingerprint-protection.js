@@ -73,30 +73,20 @@
                 'targetValue': 8
             }
         },
-        'storage': {
-            'webkitTemporaryStorage': {
-                'object': 'navigator',
-                'origValue': navigator.webkitTemporaryStorage,
-                'targetValue': undefined
-            },
-            'webkitPersistentStorage': {
-                'object': 'navigator',
-                'origValue': navigator.webkitPersistentStorage,
-                'targetValue': undefined
-            }
-        },
+        /*
         'useragent': {
 //            'userAgent': {
 //                'object': 'navigator',
 //                'origValue': navigator.userAgent,
 //                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
 //            },
-            'appVersion': {
+              'appVersion': {
                 'object': 'navigator',
                 'origValue': navigator.appVersion,
                 'targetValue': `"${getAppVersionValue()}"`
             }
         },
+        */
         'options': {
             'doNotTrack': {
                 'object': 'navigator',
@@ -233,6 +223,7 @@
      */
     function buildInjectionScript () {
         let script = buildScriptProperties()
+        script += modifyTemporaryStorage()
         script += buildBatteryScript()
         script += setWindowDimensions()
         return script
@@ -317,6 +308,31 @@
     }
 
     /**
+     * Temporary storage can be used to determine hard disk usage and size.
+     * This will limit the max storage to 4GB without completely disabling the
+     * feature.
+     */
+    function modifyTemporaryStorage () {
+        const script = `
+            if (navigator.webkitTemporaryStorage) {
+                try {
+                    const org = navigator.webkitTemporaryStorage.queryUsageAndQuota
+                    navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
+                        const modifiedCallback = function (usedBytes, grantedBytes) {
+                            const maxBytesGranted = 4 * 1024 * 1024 * 1024
+                            const spoofedGrantedBytes = Math.min(grantedBytes, maxBytesGranted)
+                            callback(usedBytes, spoofedGrantedBytes)
+                        }
+                        org.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
+                    }
+                }
+                catch(e) {}
+            }
+        `
+        return script
+    }
+
+    /**
      * Inject all the overwrites into the page.
      */
     function inject (scriptToInject, removeAfterExec, elemToInject) {
@@ -339,5 +355,5 @@
     })
 
     const injectionScript = buildInjectionScript()
-    inject(injectionScript, false, elem)
+    inject(injectionScript, true, elem)
 })()

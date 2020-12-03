@@ -80,7 +80,7 @@ class AgentSpoofer {
             agent.versionMinor <= Number(this.parsedAgent.minor) + Number(browserMinorVariance))
         // Filter out any excluded agents
         if (agentStorage.excludedAgents.length > 0) {
-            agents = agents.filter(agent => !agentStorage.excludedAgents.every(excludePattern => excludePattern.test(agent.agentString)))
+            agents = agents.filter(agent => !agentStorage.excludedAgents.some(excludePattern => excludePattern.test(agent.agentString)))
         }
         // Don't include our current agent (so it should always rotate)
         agents = agents.filter(agent => agent.agentString !== this.spoofedAgent)
