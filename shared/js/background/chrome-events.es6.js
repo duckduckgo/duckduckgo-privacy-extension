@@ -130,7 +130,12 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
-const {REFETCH_ALIAS_ALARM, fetchAlias, sendNotification, registerContextMenuAction} = require('./email-utils.es6')
+const {
+    REFETCH_ALIAS_ALARM,
+    fetchAlias,
+    sendNotification,
+    showContextMenuAction,
+} = require('./email-utils.es6')
 const tldts = require('tldts')
 
 // handle any messages that come from content/UI scripts
@@ -252,7 +257,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                         }
                     })
                 })
-                registerContextMenuAction()
+                showContextMenuAction()
                 res({success: true})
             })
         } else {
@@ -505,7 +510,7 @@ let onStartup = () => {
         const userData = settings.getSetting('userData')
         if (userData && userData.token) {
             if (!userData.nextAlias) await fetchAlias()
-            registerContextMenuAction()
+            showContextMenuAction()
         }
     })
 }
