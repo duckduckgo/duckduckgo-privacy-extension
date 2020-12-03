@@ -57,7 +57,7 @@ describe('Fingerprint Defense Tests', () => {
                 // timed out waiting for page to load, let's try running the test anyway
             }
             // give it another second just to be sure
-            await page.waitFor(1000)
+            await page.waitForTimeout(1000)
             const values = await page.evaluate(() => {
                 return {
                     availTop: screen.availTop,

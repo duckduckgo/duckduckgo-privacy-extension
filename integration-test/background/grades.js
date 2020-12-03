@@ -69,7 +69,7 @@ describe('grade sanity checks', () => {
                 // timed out waiting for page to load, let's try running the test anyway
             }
             // give it another second just to be sure
-            await page.waitFor(1000)
+            await page.waitForTimeout(1000)
 
             const grades = await bgPage.evaluate(getGradeByUrl, test.url)
 
