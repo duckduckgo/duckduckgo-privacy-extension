@@ -252,10 +252,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
                 chrome.tabs.query({}, (tabs) => {
                     tabs.forEach((tab) => {
-                        // Send ddgUserReady message only if tab is in memory
-                        if (!tab.discarded) {
-                            chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
-                        }
+                        chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
                     })
                 })
                 showContextMenuAction()
