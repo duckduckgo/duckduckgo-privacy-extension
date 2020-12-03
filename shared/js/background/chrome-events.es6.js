@@ -236,11 +236,12 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Check the origin. Shouldn't be necessary, but better safe than sorry
         if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
 
-        // If we already have user data, ignore the req
-        const existingUser = settings.getSetting('userData')
-        if (existingUser && existingUser.nextAlias) return
-
         const {userName, token} = req.addUserData
+        const {existingToken} = settings.getSetting('userData') || {}
+
+        // If the user is already registered, ignore the req
+        if (existingToken === token) return
+
         // Check general data validity
         if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
             settings.updateSetting('userData', req.addUserData)
