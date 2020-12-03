@@ -196,12 +196,34 @@
         mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
 
         const resObs = new ResizeObserver(entries => entries.forEach(updateAllButtons))
-        resObs.observe(document.body);
+        resObs.observe(document.body)
 
         // Update the position if transitions or animations are detected just in case
-        ['transitionend', 'animationend', 'load'].forEach(
-            eventType => window.addEventListener(eventType, () => updateAllButtons())
+        const pageEvents = ['transitionend', 'animationend', 'load']
+        pageEvents.forEach(
+            eventType => window.addEventListener(eventType, updateAllButtons)
         )
+
+        // Cleanup on logout events
+        chrome.runtime.onMessage.addListener((message, sender) => {
+            if (sender.id === chrome.runtime.id && message.type === 'logout') {
+                // remove buttons, listeners, and clear observers
+                intObs.disconnect()
+                mutObs.disconnect()
+                resObs.disconnect()
+                pageEvents.forEach(
+                    eventType => window.removeEventListener(eventType, updateAllButtons)
+                )
+                inputButtonMap.forEach((button, input) => {
+                    setValue(input, '')
+                    input.classList.remove('ddg-autofilled')
+                    button.remove()
+                })
+                inputButtonMap.clear()
+                forms.clear()
+                notifyWebApp({extensionSignedIn: {value: false}})
+            }
+        })
     }
 
     // Add contextual menu listeners
