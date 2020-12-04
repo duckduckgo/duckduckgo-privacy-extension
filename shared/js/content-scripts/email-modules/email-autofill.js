@@ -155,18 +155,23 @@
             }
         }
 
-        const findEligibleInput = context => {
-            context.querySelectorAll(EMAIL_SELECTOR)
-                .forEach(input => {
-                    const parentForm = input.form
+        const addInput = input => {
+            const parentForm = input.form
 
-                    if (forms.has(parentForm)) {
-                        // If we've already met the form, add the input
-                        forms.get(parentForm).addInput(input)
-                    } else {
-                        forms.set(parentForm || input, new Form(parentForm, input, intObs))
-                    }
-                })
+            if (forms.has(parentForm)) {
+                // If we've already met the form, add the input
+                forms.get(parentForm).addInput(input)
+            } else {
+                forms.set(parentForm || input, new Form(parentForm, input, intObs))
+            }
+        }
+
+        const findEligibleInput = context => {
+            if (context.nodeName === 'INPUT' && context.matches(EMAIL_SELECTOR)) {
+                addInput(context)
+            } else {
+                context.querySelectorAll(EMAIL_SELECTOR).forEach(addInput)
+            }
             forms.forEach((formObj, formEl) => {
                 console.log(formEl, formObj.autofillSignal, formObj.signals)
                 if (formObj.autofillSignal > 0) {
