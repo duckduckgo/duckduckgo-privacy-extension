@@ -143,6 +143,7 @@ const sites = [
         url: 'https://www.infowars.com/newsletter-sign-up/',
         autofillExpected: 1
     }, */
+    /* The page doesn't load for some reason
     {
         name: 'Kijiji signup',
         url: 'https://www.kijiji.ca/t-user-registration.html',
@@ -152,7 +153,7 @@ const sites = [
         name: 'Kijiji login',
         url: 'https://www.kijiji.ca/t-login.html',
         autofillExpected: 0
-    },
+    }, */
     {
         name: 'Leo.org signup',
         url: 'https://dict.leo.org/myleo/register.php?lp=ende&lang=en',
@@ -450,7 +451,10 @@ const sites = [
     {
         name: 'Vulture.com login',
         url: 'https://www.vulture.com/',
-        actions: [{action: 'click', arg: '.user-signin > button.sign-in-button'}],
+        actions: [
+            {action: 'click', arg: '.fc-button.fc-button-consent'},
+            {action: 'click', arg: '.user-signin > button.sign-in-button'}
+        ],
         autofillExpected: 0
     },
     {
