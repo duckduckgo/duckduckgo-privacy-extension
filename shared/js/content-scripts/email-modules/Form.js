@@ -125,15 +125,19 @@ class Form {
         })
     }
 
+    elIs (el, type) {
+        return el.nodeName.toLowerCase() === type.toLowerCase()
+    }
+
     getText (el) {
         // for buttons, we don't care about descendants, just get the whole text as is
         // this is important in order to give proper attribution of the text to the button
-        if (el.nodeName.toUpperCase() === 'BUTTON') return el.innerText
+        if (this.elIs(el, 'BUTTON')) return el.innerText
 
-        if (el.nodeName.toUpperCase() === 'INPUT' && ['submit', 'button'].includes(el.type)) return el.value
+        if (this.elIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) return el.value
 
         return Array.from(el.childNodes).reduce((text, child) =>
-            child.nodeName === '#text' ? text + ' ' + child.textContent : text, '')
+            this.elIs(child, '#text') ? text + ' ' + child.textContent : text, '')
     }
 
     evaluateElement (el) {
@@ -141,15 +145,15 @@ class Form {
 
         // check button contents
         if (
-            (el.nodeName.toUpperCase() === 'INPUT' && ['submit', 'button'].includes(el.type)) ||
-            (el.nodeName.toUpperCase() === 'BUTTON' && el.type === 'submit') ||
+            (this.elIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) ||
+            (this.elIs(el, 'BUTTON') && el.type === 'submit') ||
             ((el.getAttribute('role') || '').toUpperCase() === 'BUTTON')
         ) {
             this.updateSignal({string, strength: 2, signalType: `submit: ${string}`})
         }
         // if a link points to relevant urls or contain contents outside the page…
         if (
-            el.nodeName === 'A' && el.href && el.href !== '#' ||
+            this.elIs(el, 'A') && el.href && el.href !== '#' ||
             (el.getAttribute('role') || '').toUpperCase() === 'LINK'
         ) {
             // …and matches one of the regexes, we assume the match is not pertinent to the current form
