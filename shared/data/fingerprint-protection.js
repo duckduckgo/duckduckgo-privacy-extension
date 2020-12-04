@@ -98,27 +98,31 @@
 
     // ddg_referrer is defined in chrome-events.es6.js and injected as a variable if referrer should be modified
     // Unfortunately, we only have limited information about the referrer and current frame. A single
-    // page may load many requests and sub frames, all with different referrers. Since we
-    if (ddg_referrer && // make sure the referrer was set correctly
-        ddg_referrer.referrer !== undefined && // referrer value will be undefined when it should be unchanged.
-        document.referrer && // don't change the value it isn't set
-        document.referrer !== '' && // don't add referrer information
-        new URL(document.URL).hostname !== new URL(document.referrer).hostname) { // don't replace the referrer for the current host.
-        let trimmedReferer = document.referrer
-        if (new URL(document.referrer).hostname === ddg_referrer.referrerHost) {
-            // make sure the real referrer & replacement referrer match if we're going to replace it
-            trimmedReferer = ddg_referrer.referrer
-        } else {
-            // if we don't have a matching referrer, just trim it to hostname.
-            trimmedReferer = new URL(document.referrer).hostname
-        }
-        fingerprintPropertyValues['document'] = {
-            'referrer': {
-                'object': 'document',
-                'origValue': document.referrer,
-                'targetValue': `"${trimmedReferer}"`
+    // page may load many requests and sub frames, all with different referrers.
+    try {
+        if (ddg_referrer && // make sure the referrer was set correctly
+            ddg_referrer.referrer !== undefined && // referrer value will be undefined when it should be unchanged.
+            document.referrer && // don't change the value it isn't set
+            document.referrer !== '' && // don't add referrer information
+            new URL(document.URL).hostname !== new URL(document.referrer).hostname) { // don't replace the referrer for the current host.
+            let trimmedReferer = document.referrer
+            if (new URL(document.referrer).hostname === ddg_referrer.referrerHost) {
+                // make sure the real referrer & replacement referrer match if we're going to replace it
+                trimmedReferer = ddg_referrer.referrer
+            } else {
+                // if we don't have a matching referrer, just trim it to hostname.
+                trimmedReferer = new URL(document.referrer).hostname
+            }
+            fingerprintPropertyValues['document'] = {
+                'referrer': {
+                    'object': 'document',
+                    'origValue': document.referrer,
+                    'targetValue': `"${trimmedReferer}"`
+                }
             }
         }
+    } catch (e) {
+        // If for some reason ddg_referrer is not set, don't error out.
     }
 
     /**
