@@ -33,10 +33,10 @@ function testFPValues (values) {
 
 describe('Fingerprint Defense Tests', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
-
-        // wait for HTTPs to successfully load
         try {
+            ({ browser, bgPage } = await harness.setup())
+
+            // wait for HTTPs to successfully load
             await bgPage.waitForFunction(
                 () => window.dbg && dbg.https.isReady,
                 { polling: 100, timeout: 60000 }
@@ -46,16 +46,18 @@ describe('Fingerprint Defense Tests', () => {
         }
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        try {
+            await harness.teardown(browser)
+        } catch (e) {}
     })
 
     tests.forEach(test => {
         it(`${test.url} should include anti-fingerprinting code`, async () => {
             const page = await browser.newPage()
             const ua = await browser.userAgent()
-            await page.setUserAgent(ua.replace(/Headless /, ''))
 
             try {
+                await page.setUserAgent(ua.replace(/Headless /, ''))
                 await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
@@ -75,9 +77,12 @@ describe('Fingerprint Defense Tests', () => {
                     vendorSub: navigator.vendorSub
                 }
             })
+
             testFPValues(values)
 
-            await page.close()
+            try {
+                await page.close()
+            } catch (e) {}
         })
     })
 })

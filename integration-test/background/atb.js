@@ -1,7 +1,7 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
 const wait = require('../helpers/wait')
-const request = require('request-promise-native')
+const fetch = require('node-fetch');
 
 let browser
 let bgPage
@@ -12,8 +12,11 @@ describe('install workflow', () => {
         beforeEach(async () => {
             ({ browser, bgPage, requests } = await harness.setup())
         })
+
         afterEach(async () => {
-            await harness.teardown(browser)
+            try {
+                await harness.teardown(browser)
+            } catch (e) {}
         })
 
         it('should open the postinstall page correctly', async () => {
@@ -59,7 +62,9 @@ describe('install workflow', () => {
             }
         })
         afterEach(async () => {
-            await harness.teardown(browser)
+            try {
+                await harness.teardown(browser)
+            } catch (e) {}
         })
 
         it('should get its ATB param from atb.js when there\'s no install success page', async () => {
@@ -135,22 +140,28 @@ describe('search workflow', () => {
 
     beforeAll(async () => {
         ({ browser, bgPage, requests } = await harness.setup())
+        try {
+            // wait until normal exti workflow is done so we don't confuse atb.js requests
+            // when the actual tests run
+            await wait.forSetting(bgPage, 'extiSent')
 
-        // wait until normal exti workflow is done so we don't confuse atb.js requests
-        // when the actual tests run
-        await wait.forSetting(bgPage, 'extiSent')
-
-        // grab current atb data
-        const data = await request('https://duckduckgo.com/atb.js', { json: true })
-        todaysAtb = data.version
-        lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
-        twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
+            // grab current atb data
+            let data = await fetch('https://duckduckgo.com/atb.js')
+            data = await data.json()
+            todaysAtb = data.version
+            lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
+            twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
+        } catch (e) {}
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        try {
+            await harness.teardown(browser)
+        } catch (e) {}
     })
     beforeEach(async () => {
-        await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
+        try {
+            await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
+        } catch (e) {}
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version

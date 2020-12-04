@@ -55,10 +55,10 @@
         "karma-source-map-support": "1.2.0",
         "load-grunt-tasks": "3.5.2",
         "localStorage": "1.0.3",
+        "node-fetch": "^2.6.1",
         "node-sass": "^4.14.1",
         "puppeteer": "5.5.0",
         "request": "2.83.0",
-        "request-promise-native": "^1.0.5",
         "selenium-webdriver": "3.0.1",
         "standard": "10.0.3",
         "timekeeper": "^2.1.1"

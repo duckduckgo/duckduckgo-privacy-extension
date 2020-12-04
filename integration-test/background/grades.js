@@ -54,7 +54,9 @@ describe('grade sanity checks', () => {
         )
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        try {
+            await harness.teardown(browser)
+        } catch (e) {}
     })
 
     tests.forEach(test => {
@@ -65,18 +67,20 @@ describe('grade sanity checks', () => {
 
             try {
                 await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
+                // give it another second just to be sure
+                await page.waitForTimeout(1000)
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
             }
-            // give it another second just to be sure
-            await page.waitForTimeout(1000)
 
             const grades = await bgPage.evaluate(getGradeByUrl, test.url)
 
             checkGrade(grades.site.grade, test.siteGrade)
             checkGrade(grades.enhanced.grade, test.enhancedGrade)
 
-            await page.close()
+            try {
+                await page.close()
+            } catch (e) {}
         })
     })
 })
