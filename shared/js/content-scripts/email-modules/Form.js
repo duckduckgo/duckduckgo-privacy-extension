@@ -51,10 +51,10 @@ class Form {
     }) {
         const negativeRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
         const positiveRegex = new RegExp(
-            /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i
+            /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start|settings|preferences|profile|update/i
         )
-        const conservativePositiveRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
-        const strictPositiveRegex = new RegExp(/sign.?up|join|register/i)
+        const conservativePositiveRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)|settings|preferences|profile|update/i)
+        const strictPositiveRegex = new RegExp(/sign.?up|join|register|settings|preferences|profile|update/i)
         const matchesNegative = string.match(negativeRegex)
 
         // Check explicitly for unified login/signup forms. They should always be negative, so we increase signal
