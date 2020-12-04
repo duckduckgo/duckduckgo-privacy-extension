@@ -90,7 +90,7 @@
         "underscore": "1.8.3",
         "useragent": "^2.3.0",
         "web-ext": "^2.7.0",
-        "xvfb": "0.2.3",
+        "xvfb": "0.4.0",
         "yamlparser": "0.0.2"
     },
     "babel": {

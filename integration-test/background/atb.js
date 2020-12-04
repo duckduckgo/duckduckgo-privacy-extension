@@ -1,7 +1,7 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
 const wait = require('../helpers/wait')
-const fetch = require('node-fetch');
+const fetch = require('node-fetch')
 
 let browser
 let bgPage
