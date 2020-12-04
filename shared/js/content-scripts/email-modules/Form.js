@@ -49,29 +49,29 @@ class Form {
         shouldCheckUnifiedForm = false, // Should check for login/signup forms
         shouldBeConservative = false // Should use the conservative signup regex
     }) {
-        const loginRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
-        const signupRegex = new RegExp(
+        const negativeRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
+        const positiveRegex = new RegExp(
             /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i
         )
-        const conservativeSignupRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
-        const strictSignupRegex = new RegExp(/sign.?up|join|register/i)
-        const loginMatches = string.match(loginRegex)
+        const conservativePositiveRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
+        const strictPositiveRegex = new RegExp(/sign.?up|join|register/i)
+        const matchesNegative = string.match(negativeRegex)
 
         // Check explicitly for unified login/signup forms. They should always be negative, so we increase signal
-        if (shouldCheckUnifiedForm && loginMatches && string.match(strictSignupRegex)) {
+        if (shouldCheckUnifiedForm && matchesNegative && string.match(strictPositiveRegex)) {
             this.decreaseSignalBy(strength + 2, `Unified detected ${signalType}`)
             return this
         }
 
-        const signupMatches = string.match(shouldBeConservative ? conservativeSignupRegex : signupRegex)
+        const matchesPositive = string.match(shouldBeConservative ? conservativePositiveRegex : positiveRegex)
 
         // In some cases a login match means the login is somewhere else, i.e. when a link points outside
         if (shouldFlip) {
-            if (loginMatches) this.increaseSignalBy(strength, signalType)
-            if (signupMatches) this.decreaseSignalBy(strength, signalType)
+            if (matchesNegative) this.increaseSignalBy(strength, signalType)
+            if (matchesPositive) this.decreaseSignalBy(strength, signalType)
         } else {
-            if (loginMatches) this.decreaseSignalBy(strength, signalType)
-            if (signupMatches) this.increaseSignalBy(strength, signalType)
+            if (matchesNegative) this.decreaseSignalBy(strength, signalType)
+            if (matchesPositive) this.increaseSignalBy(strength, signalType)
         }
         return this
     }
