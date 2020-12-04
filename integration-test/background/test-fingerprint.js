@@ -36,10 +36,14 @@ describe('Fingerprint Defense Tests', () => {
         ({ browser, bgPage } = await harness.setup())
 
         // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 60000 }
-        )
+        try {
+            await bgPage.waitForFunction(
+                () => window.dbg && dbg.https.isReady,
+                { polling: 100, timeout: 60000 }
+            )
+        } catch (e) {
+            // it may timeout, but continue anyway
+        }
     })
     afterAll(async () => {
         await harness.teardown(browser)
