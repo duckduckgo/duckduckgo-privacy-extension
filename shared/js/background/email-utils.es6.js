@@ -54,7 +54,7 @@ const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
 // Create the contextual menu hidden by default
 chrome.contextMenus.create({
     id: MENU_ITEM_ID,
-    title: 'Autofill',
+    title: 'Use Duck Address',
     contexts: ['editable'],
     visible: false,
     onclick: (info, tab) => {
