@@ -145,7 +145,7 @@ class DDGAutofill extends HTMLElement {
         }
         this.resetInputs = () => {
             this.execOnInputs(input => {
-                input.value = ''
+                setValue(input, '')
                 input.classList.remove('ddg-autofilled')
             })
         }
