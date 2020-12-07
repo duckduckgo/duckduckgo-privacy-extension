@@ -61,6 +61,7 @@
           "public/js/content-scripts/email-autofill.js"
         ],
         "matches": ["<all_urls>"],
+        "exclude_matches": ["https://app.asana.com/*"],
         "all_frames": true,
         "run_at": "document_idle"
       }
