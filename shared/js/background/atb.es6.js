@@ -39,7 +39,7 @@ const ATB = (() => {
             }
 
             let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = `${ddgAtbURL}${randomValue}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
+            let url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
@@ -90,8 +90,7 @@ const ATB = (() => {
             if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
             let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = ddgAtbURL + randomValue
-
+            let url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
             }, () => {
@@ -246,7 +245,6 @@ const ATB = (() => {
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
             if (dev) url += `&test=1`
-
             return url
         },
 
