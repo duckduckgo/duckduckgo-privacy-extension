@@ -302,14 +302,14 @@ chrome.webNavigation.onCommitted.addListener(details => {
                         var ddg_referrer=${JSON.stringify(tab.referrer)}
                     } catch(e) {}`,
                 'runAt': 'document_start',
-                'allFrames': true,
+                'frameId': details.frameId,
                 'matchAboutBlank': true
             }
             chrome.tabs.executeScript(details.tabId, variableScript)
             const scriptDetails = {
                 'file': '/data/fingerprint-protection.js',
                 'runAt': 'document_start',
-                'allFrames': true,
+                'frameId': details.frameId,
                 'matchAboutBlank': true
             }
             chrome.tabs.executeScript(details.tabId, scriptDetails)
@@ -410,7 +410,7 @@ const GPC = require('./GPC.es6')
 
 // Set GPC property on DOM if enabled.
 chrome.webNavigation.onCommitted.addListener(details => {
-    GPC.injectDOMSignal(details.tabId)
+    GPC.injectDOMSignal(details.tabId, details.frameId)
 })
 
 // Attach GPC header to all requests if enabled.
