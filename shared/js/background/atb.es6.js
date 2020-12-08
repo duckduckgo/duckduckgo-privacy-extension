@@ -109,14 +109,15 @@ const ATB = (() => {
             let atb = settings.getSetting('atb')
 
             // build query string when atb param wasn't acquired from any URLs
-            const paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            let paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            const browserName = parseUserAgentString().browser
+            paramString += `&browser=${browserName}`
 
             // make this request only once
             if (settings.getSetting('extiSent')) return
 
             settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
-
             // just a GET request, we only care that the request was made
             load.url(`https://duckduckgo.com/exti/?${paramString}`)
         },
