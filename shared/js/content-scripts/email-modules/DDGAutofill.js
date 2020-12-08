@@ -164,6 +164,7 @@ class DDGAutofill extends HTMLElement {
         this.trigger.addEventListener('click', (e) => {
             if (!e.isTrusted) return
 
+            e.stopImmediatePropagation()
             this.safeExecute(this.trigger, () => this.showTooltip())
         })
         this.dismissButton.addEventListener('click', (e) => {
