@@ -74,8 +74,7 @@
         "tabs",
         "storage",
         "<all_urls>",
-        "alarms",
-        "notifications"
+        "alarms"
     ],
     "web_accessible_resources": [
         "public/css/email-autofill.css",

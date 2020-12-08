@@ -41,15 +41,6 @@ const fetchAlias = () => {
         })
 }
 
-const sendNotification = ({title, message}) => {
-    chrome.notifications.create({
-        type: 'basic',
-        iconUrl: '/img/ddg-logo-borderless.svg',
-        title,
-        message
-    })
-}
-
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
 // Create the contextual menu hidden by default
 chrome.contextMenus.create({
@@ -75,7 +66,6 @@ const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {vi
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
-    sendNotification,
     showContextMenuAction,
     hideContextMenuAction
 }

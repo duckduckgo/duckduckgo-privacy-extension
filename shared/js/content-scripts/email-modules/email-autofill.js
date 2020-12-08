@@ -244,7 +244,6 @@
         if (sender.id === chrome.runtime.id && message.type === 'contextualAutofill') {
             setValue(activeEl, message.alias)
             activeEl.classList.add('ddg-autofilled')
-            chrome.runtime.sendMessage({sendAutofillNotification: true})
         }
     })
 })()

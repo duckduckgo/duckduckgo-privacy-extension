@@ -133,7 +133,6 @@ const browserWrapper = require('./chrome-wrapper.es6')
 const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
-    sendNotification,
     showContextMenuAction,
     hideContextMenuAction
 } = require('./email-utils.es6')
@@ -264,13 +263,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
 
         return true
-    }
-
-    if (req.sendAutofillNotification) {
-        sendNotification({
-            title: 'Duck Address Autofilled',
-            message: `A Duck Address was autofilled on ${tldts.parse(sender.url).domain}`
-        })
     }
 
     if (req.logout) {
