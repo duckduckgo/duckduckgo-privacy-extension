@@ -138,7 +138,7 @@ function getAsyncBlockingSupport () {
 
     if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
         return true
-    } else if (browser === 'chrome') {
+    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browser)) {
         return false
     }
 
