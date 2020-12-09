@@ -1,6 +1,6 @@
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
-const { setValue } = require('./autofill-utils')
+const { setValue, safeExecute } = require('./autofill-utils')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
@@ -46,27 +46,6 @@ class DDGAutofill extends HTMLElement {
                 this.updateAliasInTooltip()
             }
         })
-
-        /**
-         * Use IntersectionObserver v2 to make sure the element is visible when clicked
-         * https://developers.google.com/web/updates/2019/02/intersectionobserver-v2
-         */
-        this.safeExecute = (el, fn) => {
-            const intObs = new IntersectionObserver((changes) => {
-                for (const change of changes) {
-                    // Feature detection
-                    if (typeof change.isVisible === 'undefined') {
-                        // The browser doesn't support Intersection Observer v2, falling back to v1 behavior.
-                        change.isVisible = true;
-                    }
-                    if (change.isIntersecting && change.isVisible) {
-                        fn()
-                    }
-                }
-                intObs.disconnect()
-            }, {trackVisibility: true, delay: 100})
-            intObs.observe(el)
-        }
     }
 
     static updateButtonPosition (el) {
@@ -164,7 +143,7 @@ class DDGAutofill extends HTMLElement {
             if (!e.isTrusted) return
 
             e.stopImmediatePropagation()
-            this.safeExecute(this.trigger, () => this.showTooltip())
+            safeExecute(this.trigger, () => this.showTooltip())
         })
         this.dismissButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
@@ -178,7 +157,7 @@ class DDGAutofill extends HTMLElement {
             if (!e.isTrusted) return
             e.stopImmediatePropagation()
 
-            this.safeExecute(this.confirmButton, () => {
+            safeExecute(this.confirmButton, () => {
                 this.autofillInputs()
                 this.hideTooltip()
             })
