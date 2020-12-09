@@ -8,6 +8,8 @@ class Form {
         this.signals = []
         this.evaluateElAttributes(input, 3, true)
         form ? this.evaluateForm() : this.evaluatePage()
+        console.log(this, this.autofillSignal, this.signals)
+        if (this.autofillSignal > 0) this.decorateInputs()
         return this
     }
 

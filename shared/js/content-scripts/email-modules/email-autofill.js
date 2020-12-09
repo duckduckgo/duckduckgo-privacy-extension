@@ -172,12 +172,6 @@
             } else {
                 context.querySelectorAll(EMAIL_SELECTOR).forEach(addInput)
             }
-            forms.forEach((formObj, formEl) => {
-                console.log(formEl, formObj.autofillSignal, formObj.signals)
-                if (formObj.autofillSignal > 0) {
-                    formObj.decorateInputs()
-                }
-            })
         }
 
         findEligibleInput(document)
