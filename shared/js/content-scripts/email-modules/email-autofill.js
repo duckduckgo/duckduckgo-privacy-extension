@@ -10,6 +10,7 @@
     // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
     const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff2')
     const boldFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
+    const daxUrl = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
     const styleTag = document.createElement('style')
     document.head.appendChild(styleTag)
     const sheet = styleTag.sheet
@@ -33,6 +34,15 @@
 .ddg-autofilled {
     background-color: #F8F498;
     color: #333333;
+}
+    `)
+    sheet.insertRule(`
+input[data-ddg-autofill] {
+    background-image: url(${daxUrl}) !important;
+    background-size: auto 24px !important;
+    background-position: center right 2px !important;
+    background-repeat: no-repeat !important;
+    background-origin: content-box !important;
 }
     `)
 
