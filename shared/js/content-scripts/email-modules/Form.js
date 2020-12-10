@@ -23,7 +23,7 @@ class Form {
             document.body.removeChild(this.tooltip)
             window.removeEventListener('mousedown', this.removeTooltip)
         }
-        this.removeAllInputsDecoration = () => {
+        this.removeAllHighlights = () => {
             this.execOnInputs((input) => input.classList.remove('ddg-autofilled'))
         }
         this.resetAllInputs = () => {
@@ -93,13 +93,13 @@ class Form {
             input.classList.add('ddg-autofilled')
 
             // If the user changes the alias, remove the decoration
-            input.addEventListener('input', this.removeAllInputsDecoration, {once: true})
+            input.addEventListener('input', this.removeAllHighlights, {once: true})
         })
         this.removeTooltip()
     }
 
     // Static methods are called by the contextual menu
-    static removeDecoration (e) {
+    static removeHighlight (e) {
         e.target.classList.remove('ddg-autofilled')
     }
     static autofillInput (input, alias) {
@@ -107,7 +107,7 @@ class Form {
         input.classList.add('ddg-autofilled')
 
         // If the user changes the alias, remove the decoration
-        input.addEventListener('input', Form.removeDecoration, {once: true})
+        input.addEventListener('input', Form.removeHighlight, {once: true})
     }
 
     increaseSignalBy (strength, signal) {
