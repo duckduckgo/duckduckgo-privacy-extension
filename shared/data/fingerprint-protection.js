@@ -28,49 +28,49 @@
             'availTop': {
                 'object': 'screen',
                 'origValue': screen.availTop,
-                'targetValue': 0
+                'targetValue': `{get: (() => 0).bind(null)}`
             },
             'availLeft': {
                 'object': 'screen',
                 'origValue': screen.availLeft,
-                'targetValue': 0
+                'targetValue': `{get: (() => 0).bind(null)}`
             },
             'availWidth': {
                 'object': 'screen',
                 'origValue': screen.availWidth,
-                'targetValue': screen.width
+                'targetValue': `{get: (() => ${screen.width}).bind(null)}`
             },
             'availHeight': {
                 'object': 'screen',
                 'origValue': screen.availHeight,
-                'targetValue': screen.height
+                'targetValue': `{get: (() => ${screen.height}).bind(null)}`
             },
             'colorDepth': {
                 'object': 'screen',
                 'origValue': screen.colorDepth,
-                'targetValue': 24
+                'targetValue': `{get: (() => 24).bind(null)}`
             },
             'pixelDepth': {
                 'object': 'screen',
                 'origValue': screen.pixelDepth,
-                'targetValue': 24
+                'targetValue': `{get: (() => 24).bind(null)}`
             }
         },
         'hardware': {
             'keyboard': {
                 'object': 'navigator',
                 'origValue': navigator.keyboard,
-                'targetValue': undefined
+                'targetValue': `{get: (() => undefined).bind(null)}`
             },
             'hardwareConcurrency': {
                 'object': 'navigator',
                 'origValue': navigator.hardwareConcurrency,
-                'targetValue': 8
+                'targetValue': `{get: (() => 8).bind(null)}`
             },
             'deviceMemory': {
                 'object': 'navigator',
                 'origValue': navigator.deviceMemory,
-                'targetValue': 8
+                'targetValue': `{get: (() => 8).bind(null)}`
             }
         },
         /*
@@ -91,7 +91,7 @@
             'doNotTrack': {
                 'object': 'navigator',
                 'origValue': navigator.doNotTrack,
-                'targetValue': /Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null
+                'targetValue': `{get: (() => ${/Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null}).bind(null)}`
             }
         }
     }
@@ -116,7 +116,7 @@
             'referrer': {
                 'object': 'document',
                 'origValue': document.referrer,
-                'targetValue': `"${trimmedReferer}"`
+                'targetValue': `{get: (() => "${trimmedReferer}").bind(null)}`
             }
         }
     }
@@ -165,7 +165,7 @@
                 // Don't update if existing value is undefined or null
                 if (!(prop.origValue === undefined)) {
                     script += `try {
-                        Object.defineProperty(${prop.object}, "${name}", { value: ${prop.targetValue} });
+                        Object.defineProperty(${prop.object}, "${name}", ${prop.targetValue});
                     } catch (e) {}
                     `
                 }
