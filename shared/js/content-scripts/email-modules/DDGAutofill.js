@@ -1,6 +1,6 @@
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
-const { setValue, safeExecute } = require('./autofill-utils')
+const { safeExecute } = require('./autofill-utils')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
@@ -16,8 +16,7 @@ class DDGAutofill extends HTMLElement {
         shadow.innerHTML = `
 <link rel="stylesheet" href="${css}">
 <div class="wrapper">
-    <button class="trigger">${daxSVG}</button>
-    <div class="tooltip" hidden>
+    <div class="tooltip">
         <h2 class="tooltip__title">For more privacy, use a Duck Address.</h2>
         <p>This address can be used to communicate with you, but won’t reveal your real email.</p>
         <div class="tooltip__alias-container">${daxSVG}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
@@ -28,7 +27,6 @@ class DDGAutofill extends HTMLElement {
     </div>
 </div>`
         this.wrapper = shadow.querySelector('.wrapper')
-        this.trigger = shadow.querySelector('.trigger')
         this.tooltip = shadow.querySelector('.tooltip')
         this.dismissButton = shadow.querySelector('.js-dismiss')
         this.confirmButton = shadow.querySelector('.js-confirm')
@@ -74,92 +72,24 @@ class DDGAutofill extends HTMLElement {
     connectedCallback () {
         DDGAutofill.updateButtonPosition(this)
 
-        this.showTooltip = () => {
-            if (!this.tooltip.hidden) {
-                return
-            }
-            this.updateAliasInTooltip()
-            this.tooltip.hidden = false
-            window.addEventListener('click', this.hideTooltip)
-        }
-        this.hideTooltip = (e) => {
-            if (e && (e.target === this.input || e.target === this)) {
-                return
-            }
-            if (this.tooltip.hidden) {
-                return
-            }
-            this.tooltip.hidden = true
-            window.removeEventListener('click', this.hideTooltip)
-        }
-        this.execOnInputs = (fn) => {
-            this.associatedForm.relevantInputs.forEach(fn)
-        }
-        this.areAllInputsEmpty = () => {
-            let allEmpty = true
-            this.execOnInputs(input => {
-                if (input.value) allEmpty = false
-            })
-            return allEmpty
-        }
-        this.autofillInputs = () => {
-            this.execOnInputs((input) => {
-                setValue(input, this.nextAlias)
-                input.classList.add('ddg-autofilled')
-
-                // If the user changes the alias, remove the decoration
-                input.addEventListener('input', () => {
-                    this.execOnInputs(input => {
-                        input.classList.remove('ddg-autofilled')
-                    })
-                }, {once: true})
-            })
-            chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
-                if (res && res.alias) {
-                    this.nextAlias = res.alias
-                    this.updateAliasInTooltip()
-                }
-            })
-        }
-        this.resetInputs = () => {
-            this.execOnInputs(input => {
-                setValue(input, '')
-                input.classList.remove('ddg-autofilled')
-            })
-        }
-
-        this.input.addEventListener('mousedown', (e) => {
-            if (!e.isTrusted) return
-            if (e.button !== 0) return
-
-            if (this.areAllInputsEmpty()) {
-                e.preventDefault()
-                e.stopImmediatePropagation()
-                this.showTooltip()
-            }
-        }, {once: true})
-
-        this.trigger.addEventListener('click', (e) => {
-            if (!e.isTrusted) return
-
-            e.stopImmediatePropagation()
-            safeExecute(this.trigger, () => this.showTooltip())
-        })
         this.dismissButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
 
             e.stopImmediatePropagation()
-            this.resetInputs()
-            this.hideTooltip()
-            this.input.focus()
+            this.associatedForm.dismissTooltip()
         })
         this.confirmButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
             e.stopImmediatePropagation()
 
             safeExecute(this.confirmButton, () => {
-                this.autofillInputs()
-                this.hideTooltip()
+                this.associatedForm.autofill(this.nextAlias)
+                chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
+                    if (res && res.alias) {
+                        this.nextAlias = res.alias
+                        this.updateAliasInTooltip()
+                    }
+                })
             })
         })
     }

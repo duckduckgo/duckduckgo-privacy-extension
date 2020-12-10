@@ -1,3 +1,6 @@
+const DDGAutofill = require('./DDGAutofill')
+const {setValue} = require('./autofill-utils')
+
 class Form {
     constructor (form, input, intObs) {
         this.form = form
@@ -10,7 +13,36 @@ class Form {
         form ? this.evaluateForm() : this.evaluatePage()
         console.log(this, this.autofillSignal, this.signals)
         if (this.autofillSignal > 0) this.decorateInputs()
+        this.tooltip = null
+        this.activeInput = null
+
+        this.removeTooltip = (e) => {
+            if (e && (e.target === this.activeInput || e.target === this.tooltip)) {
+                return
+            }
+            document.body.removeChild(this.tooltip)
+            window.removeEventListener('mousedown', this.removeTooltip)
+        }
+        this.removeAllInputsDecoration = () => {
+            this.execOnInputs((input) => input.classList.remove('ddg-autofilled'))
+        }
+        this.resetAllInputs = () => {
+            this.execOnInputs((input) => {
+                setValue(input, '')
+                input.classList.remove('ddg-autofilled')
+            })
+            this.activeInput.focus()
+        }
+        this.dismissTooltip = () => {
+            this.resetAllInputs()
+            this.removeTooltip()
+        }
+
         return this
+    }
+
+    execOnInputs (fn) {
+        this.relevantInputs.forEach(fn)
     }
 
     addInput (input) {
@@ -18,17 +50,52 @@ class Form {
         return this
     }
 
+    areAllInputsEmpty () {
+        let allEmpty = true
+        this.execOnInputs((input) => {
+            if (input.value) allEmpty = false
+        })
+        return allEmpty
+    }
+
+    attachTooltip () {
+        this.tooltip = new DDGAutofill(this.activeInput, this)
+        document.body.appendChild(this.tooltip)
+        window.addEventListener('mousedown', this.removeTooltip)
+    }
+
     decorateInputs () {
         window.requestAnimationFrame(() => {
-            this.relevantInputs.forEach(input => {
-                if (window.navigator.userAgent.includes('test')) {
-                    input.setAttribute('data-ddg-autofill', 'true')
-                }
+            this.execOnInputs((input) => {
+                input.setAttribute('data-ddg-autofill', 'true')
+                input.addEventListener('mousedown', (e) => {
+                    if (!e.isTrusted) return
+                    if (e.button !== 0) return
+
+                    if (this.areAllInputsEmpty()) {
+                        e.preventDefault()
+                        e.stopImmediatePropagation()
+                        this.activeInput = input
+
+                        this.attachTooltip()
+                    }
+                })
 
                 this.intObs.observe(input)
             })
         })
         return this
+    }
+
+    autofill (alias) {
+        this.execOnInputs((input) => {
+            setValue(input, alias)
+            input.classList.add('ddg-autofilled')
+
+            // If the user changes the alias, remove the decoration
+            input.addEventListener('input', this.removeAllInputsDecoration, {once: true})
+        })
+        this.removeTooltip()
     }
 
     increaseSignalBy (strength, signal) {
