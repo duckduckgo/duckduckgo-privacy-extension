@@ -26,49 +26,49 @@
     const fingerprintPropertyValues = {
         'screen': {
             'availTop': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availTop,
                 'targetValue': `{get: (() => 0).bind(null)}`
             },
             'availLeft': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availLeft,
                 'targetValue': `{get: (() => 0).bind(null)}`
             },
             'availWidth': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availWidth,
                 'targetValue': `{get: (() => ${screen.width}).bind(null)}`
             },
             'availHeight': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availHeight,
                 'targetValue': `{get: (() => ${screen.height}).bind(null)}`
             },
             'colorDepth': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.colorDepth,
                 'targetValue': `{get: (() => 24).bind(null)}`
             },
             'pixelDepth': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.pixelDepth,
                 'targetValue': `{get: (() => 24).bind(null)}`
             }
         },
         'hardware': {
             'keyboard': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.keyboard,
                 'targetValue': `{get: (() => undefined).bind(null)}`
             },
             'hardwareConcurrency': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.hardwareConcurrency,
                 'targetValue': `{get: (() => 8).bind(null)}`
             },
             'deviceMemory': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.deviceMemory,
                 'targetValue': `{get: (() => 8).bind(null)}`
             }
@@ -89,7 +89,7 @@
         */
         'options': {
             'doNotTrack': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.doNotTrack,
                 'targetValue': `{get: (() => ${/Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null}).bind(null)}`
             }
@@ -114,7 +114,7 @@
         }
         fingerprintPropertyValues['document'] = {
             'referrer': {
-                'object': 'document',
+                'object': 'Document.prototype',
                 'origValue': document.referrer,
                 'targetValue': `{get: (() => "${trimmedReferer}").bind(null)}`
             }
