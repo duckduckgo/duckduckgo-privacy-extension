@@ -98,6 +98,18 @@ class Form {
         this.removeTooltip()
     }
 
+    // Static methods are called by the contextual menu
+    static removeDecoration (e) {
+        e.target.classList.remove('ddg-autofilled')
+    }
+    static autofillInput (input, alias) {
+        setValue(input, alias)
+        input.classList.add('ddg-autofilled')
+
+        // If the user changes the alias, remove the decoration
+        input.addEventListener('input', Form.removeDecoration, {once: true})
+    }
+
     increaseSignalBy (strength, signal) {
         this.autofillSignal += strength
         this.signals.push(`${signal}: +${strength}`)

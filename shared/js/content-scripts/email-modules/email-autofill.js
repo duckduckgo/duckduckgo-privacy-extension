@@ -224,8 +224,7 @@ input[data-ddg-autofill] {
     })
     chrome.runtime.onMessage.addListener((message, sender) => {
         if (sender.id === chrome.runtime.id && message.type === 'contextualAutofill') {
-            setValue(activeEl, message.alias)
-            activeEl.classList.add('ddg-autofilled')
+            Form.autofillInput(activeEl, message.alias)
         }
     })
 })()
