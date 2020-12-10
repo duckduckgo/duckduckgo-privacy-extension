@@ -108,29 +108,7 @@ input[data-ddg-autofill] {
             })
         }
 
-        const intObs = new IntersectionObserver(entries => {
-            for (const entry of entries) {
-                const input = entry.target
-                if (entry.isIntersecting) {
-                    // If is intersecting and visible (note that `display:none` will never intersect)
-                    if (window.getComputedStyle(input).visibility !== 'hidden') {
-                        const associatedForm = forms.get(input.form) || forms.get(input)
-                        const button = new DDGAutofill(input, associatedForm)
-                        document.body.appendChild(button)
-                        // Keep track of the input->button pair
-                        inputButtonMap.set(input, button)
-                    }
-                } else {
-                    // If it's not intersecting and we have the input stored…
-                    if (inputButtonMap.has(input)) {
-                        // …remove the button from the DOM
-                        inputButtonMap.get(input).remove()
-                        // …and remove the input from the map
-                        inputButtonMap.delete(input)
-                    }
-                }
-            }
-        })
+        const intObs = new IntersectionObserver(entries => {})
 
         const EMAIL_SELECTOR = `
             input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
