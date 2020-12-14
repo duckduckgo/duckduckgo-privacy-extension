@@ -6,7 +6,8 @@ const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsData = {
     brokenSiteList: require('./../data/brokensites.js').brokenSites.split('\n'),
     tds: require('./../data/tds.json'),
-    surrogates: require('./../data/surrogates.js').surrogates
+    surrogates: require('./../data/surrogates.js').surrogates,
+    ReferrerExcludeList: require('./../data/fpExcludeLists.js').referrer
 }
 
 const stub = () => {

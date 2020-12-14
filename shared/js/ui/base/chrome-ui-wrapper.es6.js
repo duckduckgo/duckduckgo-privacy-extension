@@ -44,7 +44,7 @@ let openOptionsPage = (browser) => {
     if (browser === 'moz') {
         openExtensionPage('/html/options.html')
         window.close()
-    } else if (browser === 'chrome') {
+    } else {
         window.chrome.runtime.openOptionsPage()
     }
 }

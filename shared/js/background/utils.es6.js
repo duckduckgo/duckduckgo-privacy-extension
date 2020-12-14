@@ -3,6 +3,7 @@ const tdsStorage = require('./storage/tds.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
+const settings = require('./settings.es6')
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -15,6 +16,31 @@ function extractHostFromURL (url, shouldKeepWWW) {
     }
 
     return hostname
+}
+
+// Removes information from a URL, such as path, user information, and optionally sub domains
+function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
+    if (!url) return undefined
+    try {
+        const parsedURL = new URL(url)
+        const tld = tldts.parse(url)
+        if (!parsedURL || !tld) return ''
+        let finalURL = tld.domain
+        if (keepSubdomains) {
+            finalURL = tld.hostname
+        } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
+            // This is a special case where if a domain requires 'www' to work
+            // we keep it, even if we wouldn't normally keep subdomains.
+            // note that even mutliple subdomains like www.something.domain.com has
+            // subdomain of www.something, and wouldn't trigger this case.
+            finalURL = 'www.' + tld.domain
+        }
+
+        return `${parsedURL.protocol}//${finalURL}`
+    } catch (e) {
+        // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
+        return undefined
+    }
 }
 
 function extractTopSubdomainFromHost (host) {
@@ -86,10 +112,16 @@ function getUpgradeToSecureSupport () {
 function getBeaconName () {
     const beaconNamesByBrowser = {
         'chrome': 'ping',
-        'moz': 'beacon'
+        'moz': 'beacon',
+        'edg': 'ping',
+        'brave': 'ping',
+        'default': 'ping'
     }
-
-    return beaconNamesByBrowser[getBrowserName()]
+    let name = getBrowserName()
+    if (!Object.keys(beaconNamesByBrowser).includes(name)) {
+        name = 'default'
+    }
+    return beaconNamesByBrowser[name]
 }
 
 // Return requestListenerTypes + beacon or ping
@@ -106,11 +138,50 @@ function getAsyncBlockingSupport () {
 
     if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
         return true
-    } else if (browser === 'chrome') {
+    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browser)) {
         return false
     }
 
     console.warn(`Unrecognized browser "${browser}" - async response disallowed`)
+    return false
+}
+
+/*
+ * check to see if this is a broken site reported on github
+*/
+function isBroken (url) {
+    if (!tdsStorage || !tdsStorage.brokenSiteList) return
+
+    const parsedDomain = tldts.parse(url)
+    let hostname = parsedDomain.hostname || url
+
+    // If root domain in temp whitelist, return true
+    return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+        if (brokenSiteDomain) {
+            return hostname.match(new RegExp(brokenSiteDomain + '$'))
+        }
+    })
+}
+
+// return true if the given url is in the safelist. For checking if the current tab is in the safelist,
+// tabManager.site.whitelisted is the preferred method.
+function isSafeListed (url) {
+    const hostname = extractHostFromURL(url)
+    const safeList = settings.getSetting('whitelisted')
+    let subdomains = hostname.split('.')
+    // Check user safe list
+    while (subdomains.length > 1) {
+        if (safeList && safeList[subdomains.join('.')]) {
+            return true
+        }
+        subdomains.shift()
+    }
+
+    // Check broken sites
+    if (isBroken(hostname)) {
+        return true
+    }
+
     return false
 }
 
@@ -124,5 +195,8 @@ module.exports = {
     getAsyncBlockingSupport: getAsyncBlockingSupport,
     findParent: findParent,
     getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes
+    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
+    isSafeListed: isSafeListed,
+    extractLimitedDomainFromURL: extractLimitedDomainFromURL,
+    isBroken: isBroken
 }

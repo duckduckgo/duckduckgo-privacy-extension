@@ -73,35 +73,50 @@
                 'targetValue': 8
             }
         },
-        'storage': {
-            'webkitTemporaryStorage': {
-                'object': 'navigator',
-                'origValue': navigator.webkitTemporaryStorage,
-                'targetValue': undefined
-            },
-            'webkitPersistentStorage': {
-                'object': 'navigator',
-                'origValue': navigator.webkitPersistentStorage,
-                'targetValue': undefined
-            }
-        },
+        /*
         'useragent': {
 //            'userAgent': {
 //                'object': 'navigator',
 //                'origValue': navigator.userAgent,
 //                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
 //            },
-            'appVersion': {
+              'appVersion': {
                 'object': 'navigator',
                 'origValue': navigator.appVersion,
                 'targetValue': `"${getAppVersionValue()}"`
             }
         },
+        */
         'options': {
             'doNotTrack': {
                 'object': 'navigator',
                 'origValue': navigator.doNotTrack,
                 'targetValue': /Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null
+            }
+        }
+    }
+
+    // ddg_referrer is defined in chrome-events.es6.js and injected as a variable if referrer should be modified
+    // Unfortunately, we only have limited information about the referrer and current frame. A single
+    // page may load many requests and sub frames, all with different referrers. Since we
+    if (ddg_referrer && // make sure the referrer was set correctly
+        ddg_referrer.referrer !== undefined && // referrer value will be undefined when it should be unchanged.
+        document.referrer && // don't change the value it isn't set
+        document.referrer !== '' && // don't add referrer information
+        new URL(document.URL).hostname !== new URL(document.referrer).hostname) { // don't replace the referrer for the current host.
+        let trimmedReferer = document.referrer
+        if (new URL(document.referrer).hostname === ddg_referrer.referrerHost) {
+            // make sure the real referrer & replacement referrer match if we're going to replace it
+            trimmedReferer = ddg_referrer.referrer
+        } else {
+            // if we don't have a matching referrer, just trim it to hostname.
+            trimmedReferer = new URL(document.referrer).hostname
+        }
+        fingerprintPropertyValues['document'] = {
+            'referrer': {
+                'object': 'document',
+                'origValue': document.referrer,
+                'targetValue': `"${trimmedReferer}"`
             }
         }
     }
@@ -208,6 +223,7 @@
      */
     function buildInjectionScript () {
         let script = buildScriptProperties()
+        script += modifyTemporaryStorage()
         script += buildBatteryScript()
         script += setWindowDimensions()
         return script
@@ -292,6 +308,31 @@
     }
 
     /**
+     * Temporary storage can be used to determine hard disk usage and size.
+     * This will limit the max storage to 4GB without completely disabling the
+     * feature.
+     */
+    function modifyTemporaryStorage () {
+        const script = `
+            if (navigator.webkitTemporaryStorage) {
+                try {
+                    const org = navigator.webkitTemporaryStorage.queryUsageAndQuota
+                    navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
+                        const modifiedCallback = function (usedBytes, grantedBytes) {
+                            const maxBytesGranted = 4 * 1024 * 1024 * 1024
+                            const spoofedGrantedBytes = Math.min(grantedBytes, maxBytesGranted)
+                            callback(usedBytes, spoofedGrantedBytes)
+                        }
+                        org.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
+                    }
+                }
+                catch(e) {}
+            }
+        `
+        return script
+    }
+
+    /**
      * Inject all the overwrites into the page.
      */
     function inject (scriptToInject, removeAfterExec, elemToInject) {
@@ -314,5 +355,5 @@
     })
 
     const injectionScript = buildInjectionScript()
-    inject(injectionScript, false, elem)
+    inject(injectionScript, true, elem)
 })()
