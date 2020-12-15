@@ -25,6 +25,7 @@ class Form {
             document.body.removeChild(this.tooltip)
             this.tooltip = null
             this.input = null
+            this.intObs.disconnect()
             window.removeEventListener('mousedown', this.removeTooltip, {capture: true})
         }
         this.removeAllHighlights = () => {
