@@ -180,37 +180,37 @@ describe('Tracker Utilities', () => {
             name: 'Simple truncation test',
             referrer: 'http://siteA.com/article/1',
             target: 'http://siteB.com',
-            expectedReferrer: 'http://sitea.com'
+            expectedReferrer: 'http://sitea.com/'
         },
         {
             name: 'target is a tracker, and referrer has a subdomain',
             referrer: 'http://subdomain.siteA.com/article/1',
             target: 'https://google-analytics.com/some/path',
-            expectedReferrer: 'http://sitea.com'
+            expectedReferrer: 'http://sitea.com/'
         },
         {
             name: 'target is not a tracker, referrer should keep subdomain',
             referrer: 'http://subdomain.siteA.com/article/1',
             target: 'http://siteB.com',
-            expectedReferrer: 'http://subdomain.sitea.com'
+            expectedReferrer: 'http://subdomain.sitea.com/'
         },
         {
             name: 'target is not a tracker, referrer should keep multi-level subdomain',
             referrer: 'http://a.b.subdomain.siteA.com/article/1',
             target: 'http://siteB.com',
-            expectedReferrer: 'http://a.b.subdomain.sitea.com'
+            expectedReferrer: 'http://a.b.subdomain.sitea.com/'
         },
         {
             name: 'target is a tracker, and referrer has a subdomain that is www only.',
             referrer: 'http://www.siteA.com/article/1',
             target: 'https://google-analytics.com/some/path',
-            expectedReferrer: 'http://www.sitea.com'
+            expectedReferrer: 'http://www.sitea.com/'
         },
         {
             name: 'target is not a tracker, and referrer has a subdomain that is www only.',
             referrer: 'http://www.siteA.com/article/1',
             target: 'http://siteB.com',
-            expectedReferrer: 'http://www.sitea.com'
+            expectedReferrer: 'http://www.sitea.com/'
         }
     ]
     it('Should modify referrer when referrer != target', () => {

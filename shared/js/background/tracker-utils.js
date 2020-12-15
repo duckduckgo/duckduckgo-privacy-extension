@@ -74,6 +74,7 @@ function truncateReferrer (referrer, target) {
     } else {
         modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, {keepSubdomains: true})
     }
+    modifiedReferrer += '/'
     // If extractLimitedDomainFromURL fails (for instance, invalid referrer URL), it
     // returns undefined, (in practice, don't modify the referrer), so sometimes this value could be undefined.
     return modifiedReferrer
