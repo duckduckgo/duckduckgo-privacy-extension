@@ -69,32 +69,29 @@ class Form {
         this.tooltip = new DDGAutofill(input, this)
         document.body.appendChild(this.tooltip)
         window.addEventListener('mousedown', this.removeTooltip)
+        this.intObs.observe(input)
     }
 
     decorateInputs () {
-        window.requestAnimationFrame(() => {
-            this.execOnInputs((input) => {
-                input.setAttribute('data-ddg-autofill', 'true')
-                input.addEventListener('mousemove', (e) => {
-                    if (isEventWithinDax(e, input)) {
-                        input.style.cursor = 'pointer'
-                    } else {
-                        input.style.cursor = 'auto'
-                    }
-                })
-                input.addEventListener('mousedown', (e) => {
-                    if (!e.isTrusted) return
-                    if (e.button !== 0) return
+        this.execOnInputs((input) => {
+            input.setAttribute('data-ddg-autofill', 'true')
+            input.addEventListener('mousemove', (e) => {
+                if (isEventWithinDax(e, input)) {
+                    input.style.cursor = 'pointer'
+                } else {
+                    input.style.cursor = 'auto'
+                }
+            })
+            input.addEventListener('mousedown', (e) => {
+                if (!e.isTrusted) return
+                if (e.button !== 0) return
 
-                    if (isEventWithinDax(e, input) || this.areAllInputsEmpty()) {
-                        e.preventDefault()
-                        e.stopImmediatePropagation()
+                if (isEventWithinDax(e, input) || this.areAllInputsEmpty()) {
+                    e.preventDefault()
+                    e.stopImmediatePropagation()
 
-                        this.attachTooltip(input)
-                    }
-                })
-
-                this.intObs.observe(input)
+                    this.attachTooltip(input)
+                }
             })
         })
         return this
