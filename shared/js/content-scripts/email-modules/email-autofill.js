@@ -139,19 +139,21 @@ input[data-ddg-autofill] {
         // For all DOM mutations, search for new eligible inputs and update existing inputs positions
         const mutObs = new MutationObserver((mutationList) => {
             for (const mutationRecord of mutationList) {
-                // We query only within the context of added/removed nodes
-                mutationRecord.addedNodes.forEach(el => {
-                    if (el.nodeName === 'DDG-AUTOFILL') return
+                if (mutationRecord.type === 'childList') {
+                    // We query only within the context of added/removed nodes
+                    mutationRecord.addedNodes.forEach(el => {
+                        if (el.nodeName === 'DDG-AUTOFILL') return
 
-                    if (el instanceof HTMLElement) {
-                        window.requestIdleCallback(() => {
-                            findEligibleInput(el)
-                        })
-                    }
-                })
+                        if (el instanceof HTMLElement) {
+                            window.requestIdleCallback(() => {
+                                findEligibleInput(el)
+                            })
+                        }
+                    })
+                }
             }
         })
-        mutObs.observe(document.body, {childList: true})
+        mutObs.observe(document.body, {childList: true, subtree: true})
 
         // Cleanup on logout events
         chrome.runtime.onMessage.addListener((message, sender) => {
