@@ -25,7 +25,7 @@ class Form {
             document.body.removeChild(this.tooltip)
             this.tooltip = null
             this.input = null
-            window.removeEventListener('mousedown', this.removeTooltip)
+            window.removeEventListener('mousedown', this.removeTooltip, {capture: true})
         }
         this.removeAllHighlights = () => {
             this.execOnInputs((input) => input.classList.remove('ddg-autofilled'))
@@ -68,8 +68,8 @@ class Form {
         this.activeInput = input
         this.tooltip = new DDGAutofill(input, this)
         document.body.appendChild(this.tooltip)
-        window.addEventListener('mousedown', this.removeTooltip)
         this.intObs.observe(input)
+        window.addEventListener('mousedown', this.removeTooltip, {capture: true})
     }
 
     decorateInputs () {
