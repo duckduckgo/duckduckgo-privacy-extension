@@ -5,10 +5,9 @@ const {setValue, isEventWithinDax} = require('./autofill-utils')
 class Form {
     constructor (form, input) {
         this.form = form
+        this.formAnalyzer = new FormAnalyzer(form, input)
         this.relevantInputs = new Set()
         this.addInput(input)
-        const formAnalyzer = new FormAnalyzer(form, input)
-        if (formAnalyzer.autofillSignal > 0) this.decorateInputs()
         this.tooltip = null
         this.activeInput = null
 
@@ -52,6 +51,7 @@ class Form {
 
     addInput (input) {
         this.relevantInputs.add(input)
+        if (this.formAnalyzer.autofillSignal > 0) this.decorateInput(input)
         return this
     }
 
@@ -73,27 +73,25 @@ class Form {
         window.addEventListener('mousedown', this.removeTooltip, {capture: true})
     }
 
-    decorateInputs () {
-        this.execOnInputs((input) => {
-            input.setAttribute('data-ddg-autofill', 'true')
-            input.addEventListener('mousemove', (e) => {
-                if (isEventWithinDax(e, input)) {
-                    input.style.cursor = 'pointer'
-                } else {
-                    input.style.cursor = 'auto'
-                }
-            })
-            input.addEventListener('mousedown', (e) => {
-                if (!e.isTrusted) return
-                if (e.button !== 0) return
+    decorateInput (input) {
+        input.setAttribute('data-ddg-autofill', 'true')
+        input.addEventListener('mousemove', (e) => {
+            if (isEventWithinDax(e, input)) {
+                input.style.cursor = 'pointer'
+            } else {
+                input.style.cursor = 'auto'
+            }
+        })
+        input.addEventListener('mousedown', (e) => {
+            if (!e.isTrusted) return
+            if (e.button !== 0) return
 
-                if (isEventWithinDax(e, input) || this.areAllInputsEmpty()) {
-                    e.preventDefault()
-                    e.stopImmediatePropagation()
+            if (isEventWithinDax(e, input) || this.areAllInputsEmpty()) {
+                e.preventDefault()
+                e.stopImmediatePropagation()
 
-                    this.attachTooltip(input)
-                }
-            })
+                this.attachTooltip(input)
+            }
         })
         return this
     }
