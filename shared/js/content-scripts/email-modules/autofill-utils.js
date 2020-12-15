@@ -31,4 +31,25 @@ const safeExecute = (el, fn) => {
     intObs.observe(el)
 }
 
-module.exports = { setValue, safeExecute }
+const getDaxBoundingBox = (input) => {
+    const {right: inputRight, top: inputTop, height: inputHeight} = input.getBoundingClientRect()
+    const inputRightPadding = parseInt(getComputedStyle(input).paddingRight)
+    const width = 30
+    const height = 30
+    const top = inputTop + (inputHeight - height) / 2
+    const right = inputRight - inputRightPadding
+    const left = right - width
+    const bottom = top + height
+
+    return {bottom, height, left, right, top, width, x: left, y: top}
+}
+
+const isEventWithinDax = (e, input) => {
+    const {left, right, top, bottom} = getDaxBoundingBox(input)
+    const withinX = e.clientX >= left && e.clientX <= right
+    const withinY = e.clientY >= top && e.clientY <= bottom
+
+    return withinX && withinY
+}
+
+module.exports = { setValue, safeExecute, getDaxBoundingBox, isEventWithinDax }

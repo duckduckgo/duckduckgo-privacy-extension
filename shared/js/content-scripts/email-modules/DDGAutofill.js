@@ -1,5 +1,6 @@
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
+const {getDaxBoundingBox} = require('./autofill-utils')
 const { safeExecute } = require('./autofill-utils')
 
 class DDGAutofill extends HTMLElement {
@@ -8,7 +9,6 @@ class DDGAutofill extends HTMLElement {
         const shadow = this.attachShadow({mode: 'closed'})
         this.input = input
         this.associatedForm = associatedForm
-        this.inputRightMargin = parseInt(getComputedStyle(this.input).paddingRight)
         this.animationFrame = null
         this.topPosition = 0
         this.leftPosition = 0
@@ -52,25 +52,61 @@ class DDGAutofill extends HTMLElement {
         }
 
         el.animationFrame = window.requestAnimationFrame(() => {
-            const {right, top, height} = el.input.getBoundingClientRect()
-            const currentTop = `${top + window.scrollY + height / 2}px`
-            const currentLeft = `${right + window.scrollX - 30 - el.inputRightMargin}px`
+            const {left, top} = getDaxBoundingBox(el.input)
 
-            if (currentTop !== el.topPosition) {
-                el.wrapper.style.top = currentTop
-                el.topPosition = currentTop
-            }
-            if (currentLeft !== el.leftPosition) {
-                el.wrapper.style.left = currentLeft
-                el.leftPosition = currentLeft
+            if (left !== el.leftPosition || top !== el.topPosition) {
+                el.wrapper.style.transform = `translate(${left}px, ${top}px)`
+                el.leftPosition = left
+                el.topPosition = top
             }
 
             el.animationFrame = null
         })
     }
 
+    disconnectedCallback () {
+        window.removeEventListener('scroll', this.updateThisPosition, {passive: true, capture: true})
+        this.resObs.disconnect()
+        this.mutObs.disconnect()
+    }
+
     connectedCallback () {
-        DDGAutofill.updateButtonPosition(this)
+        this.updateThisPosition = () => DDGAutofill.updateButtonPosition(this)
+        this.updateThisPosition()
+        this.resObs = new ResizeObserver(entries => entries.forEach(this.updateThisPosition))
+        this.resObs.observe(document.body)
+        this.count = 0
+        this.ensureIsLastInDOM = () => {
+            // If DDG el is not the last in the doc, move them there
+            if (document.body.lastElementChild !== this) {
+                this.remove()
+
+                // Try up to 5 times to avoid infinite loop in case someone is doing the same
+                if (this.count < 15) {
+                    document.body.append(this)
+                    this.count++
+                } else {
+                    // Reset count so we can resume normal flow
+                    this.count = 0
+                    console.info(`DDG autofill bailing out`)
+                }
+            }
+        }
+        this.mutObs = new MutationObserver((mutationList) => {
+            for (const mutationRecord of mutationList) {
+                if (mutationRecord.type === 'childList') {
+                    // Only check added nodes added nodes
+                    mutationRecord.addedNodes.forEach(el => {
+                        if (el.nodeName === 'DDG-AUTOFILL') return
+
+                        this.ensureIsLastInDOM()
+                    })
+                }
+            }
+            this.updateThisPosition()
+        })
+        this.mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
+        window.addEventListener('scroll', this.updateThisPosition, {passive: true, capture: true})
 
         this.dismissButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return

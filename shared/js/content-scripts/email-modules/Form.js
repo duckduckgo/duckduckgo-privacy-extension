@@ -1,10 +1,9 @@
 const DDGAutofill = require('./DDGAutofill')
-const {setValue} = require('./autofill-utils')
+const {setValue, isEventWithinDax} = require('./autofill-utils')
 
 class Form {
-    constructor (form, input, intObs) {
+    constructor (form, input) {
         this.form = form
-        this.intObs = intObs
         this.relevantInputs = new Set()
         this.addInput(input)
         this.autofillSignal = 0
@@ -16,11 +15,19 @@ class Form {
         this.tooltip = null
         this.activeInput = null
 
+        this.intObs = new IntersectionObserver((entries) => {
+            for (const entry of entries) {
+                if (!entry.isIntersecting) this.removeTooltip()
+            }
+        })
+
         this.removeTooltip = (e) => {
             if (e && (e.target === this.activeInput || e.target === this.tooltip)) {
                 return
             }
             document.body.removeChild(this.tooltip)
+            this.tooltip = null
+            this.input = null
             window.removeEventListener('mousedown', this.removeTooltip)
         }
         this.removeAllHighlights = () => {
@@ -58,8 +65,11 @@ class Form {
         return allEmpty
     }
 
-    attachTooltip () {
-        this.tooltip = new DDGAutofill(this.activeInput, this)
+    attachTooltip (input) {
+        if (this.tooltip) return
+
+        this.activeInput = input
+        this.tooltip = new DDGAutofill(input, this)
         document.body.appendChild(this.tooltip)
         window.addEventListener('mousedown', this.removeTooltip)
     }
@@ -68,16 +78,22 @@ class Form {
         window.requestAnimationFrame(() => {
             this.execOnInputs((input) => {
                 input.setAttribute('data-ddg-autofill', 'true')
+                input.addEventListener('mousemove', (e) => {
+                    if (isEventWithinDax(e, input)) {
+                        input.style.cursor = 'pointer'
+                    } else {
+                        input.style.cursor = 'auto'
+                    }
+                })
                 input.addEventListener('mousedown', (e) => {
                     if (!e.isTrusted) return
                     if (e.button !== 0) return
 
-                    if (this.areAllInputsEmpty()) {
+                    if (isEventWithinDax(e, input) || this.areAllInputsEmpty()) {
                         e.preventDefault()
                         e.stopImmediatePropagation()
-                        this.activeInput = input
 
-                        this.attachTooltip()
+                        this.attachTooltip(input)
                     }
                 })
 
