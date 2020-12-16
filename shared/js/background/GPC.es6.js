@@ -21,7 +21,7 @@ function getHeader () {
 // The script injected in Firefox is different from the script injected in Chromium-
 // based browsers due to slight differences in how the browsers interpret script-src
 // CSP directives, and the existence of Xray vision in Firefox.
-function injectDOMSignal (tabId) {
+function injectDOMSignal (tabId, frameId) {
     const GPCEnabled = settings.getSetting('GPCEnabled')
     const browserName = utils.getBrowserName()
     const contentScriptName = browserName === 'moz' ? 'GPC-moz.js' : 'GPC.js'
@@ -32,15 +32,15 @@ function injectDOMSignal (tabId) {
             try {
                 var globalPrivacyControlValue = ${GPCEnabled}
             } catch(e) {}`,
-        allFrames: true,
         matchAboutBlank: true,
+        frameId: frameId,
         runAt: 'document_start'
     })
     // next inject script to set value on navigator
     chrome.tabs.executeScript(tabId, {
         file: `public/js/content-scripts/${contentScriptName}`,
-        allFrames: true,
         matchAboutBlank: true,
+        frameId: frameId,
         runAt: 'document_start'
     })
 }
