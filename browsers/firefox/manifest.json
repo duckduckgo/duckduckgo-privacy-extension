@@ -60,6 +60,9 @@
         "js": [
           "public/js/content-scripts/email-autofill.js"
         ],
+        "css": [
+          "public/css/email-host-styles.css"
+        ],
         "matches": ["<all_urls>"],
         "exclude_matches": ["https://app.asana.com/*"],
         "all_frames": true,

@@ -42,8 +42,7 @@ input[data-ddg-autofill] {
         sheet.replaceSync(cssRules.join(' '))
         document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
     } catch (e) {
-        const sheet = document.styleSheets[document.styleSheets.length - 1]
-        cssRules.forEach(rule => sheet.insertRule(rule, sheet.rules.length))
+        // Nothing to do. Firefox loads styles from an external resource
     }
 
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
