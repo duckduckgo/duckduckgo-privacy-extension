@@ -10,8 +10,6 @@ class DDGAutofill extends HTMLElement {
         this.input = input
         this.associatedForm = associatedForm
         this.animationFrame = null
-        this.topPosition = 0
-        this.leftPosition = 0
 
         shadow.innerHTML = `
 <link rel="stylesheet" href="${css}">
@@ -44,6 +42,28 @@ class DDGAutofill extends HTMLElement {
                 this.updateAliasInTooltip()
             }
         })
+
+        this.top = 0
+        this.left = 0
+        this.transformRuleIndex = null
+        this.updatePosition = function ({left, top}) {
+            // return if the stylesheet is not loaded
+            if (!shadow.styleSheets.length) return
+
+            this.left = left
+            this.top = top
+
+            if (this.transformRuleIndex) {
+                // If we have already set the rule, remove it…
+                shadow.styleSheets[0].deleteRule(this.transformRuleIndex)
+            } else {
+                // …otherwise, set the index as the very last rule
+                this.transformRuleIndex = shadow.styleSheets[0].rules.length
+            }
+
+            const newRule = `.wrapper {transform: translate(${left}px, ${top}px);}`
+            shadow.styleSheets[0].insertRule(newRule, this.transformRuleIndex)
+        }
     }
 
     static updateButtonPosition (el) {
@@ -54,10 +74,8 @@ class DDGAutofill extends HTMLElement {
         el.animationFrame = window.requestAnimationFrame(() => {
             const {left, top} = getDaxBoundingBox(el.input)
 
-            if (left !== el.leftPosition || top !== el.topPosition) {
-                el.wrapper.style.transform = `translate(${left}px, ${top}px)`
-                el.leftPosition = left
-                el.topPosition = top
+            if (left !== el.left || top !== el.top) {
+                el.updatePosition({left, top})
             }
 
             el.animationFrame = null
