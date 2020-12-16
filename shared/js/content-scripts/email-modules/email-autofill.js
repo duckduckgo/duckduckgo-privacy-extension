@@ -11,40 +11,40 @@
     const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff2')
     const boldFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
     const daxUrl = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
-    const styleTag = document.createElement('style')
-    document.head.appendChild(styleTag)
-    const sheet = styleTag.sheet
-    sheet.insertRule(`
+
+    const cssRules = [`
 @font-face {
     font-family: 'DDG_ProximaNova';
     src: url(${regFontUrl}) format('woff2');
     font-weight: normal;
     font-style: normal;
-}
-    `)
-    sheet.insertRule(`
+}`, `
 @font-face {
     font-family: 'DDG_ProximaNova';
     src: url(${boldFontUrl}) format('woff2');
     font-weight: bold;
     font-style: normal;
-}
-    `)
-    sheet.insertRule(`
+}`, `
 .ddg-autofilled {
     background-color: #F8F498;
     color: #333333;
-}
-    `)
-    sheet.insertRule(`
+}`, `
 input[data-ddg-autofill] {
     background-image: url(${daxUrl}) !important;
     background-size: auto 24px !important;
     background-position: center right 2px !important;
     background-repeat: no-repeat !important;
     background-origin: content-box !important;
-}
-    `)
+}`]
+
+    try {
+        const sheet = new CSSStyleSheet()
+        sheet.replaceSync(cssRules.join(' '))
+        document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
+    } catch (e) {
+        const sheet = document.styleSheets[document.styleSheets.length - 1]
+        cssRules.forEach(rule => sheet.insertRule(rule, sheet.rules.length))
+    }
 
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
