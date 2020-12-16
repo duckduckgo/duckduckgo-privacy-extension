@@ -10,6 +10,7 @@ class Form {
         this.addInput(input)
         this.tooltip = null
         this.activeInput = null
+        this.touched = new Set()
 
         this.intObs = new IntersectionObserver((entries) => {
             for (const entry of entries) {
@@ -86,14 +87,19 @@ class Form {
             if (!e.isTrusted) return
             if (e.button !== 0) return
 
-            if (isEventWithinDax(e, input) || this.areAllInputsEmpty()) {
+            if (this.shouldOpenTooltip(e, input)) {
                 e.preventDefault()
                 e.stopImmediatePropagation()
 
+                this.touched.add(input)
                 this.attachTooltip(input)
             }
         })
         return this
+    }
+
+    shouldOpenTooltip (e, input) {
+        return (!this.touched.has(input) && this.areAllInputsEmpty()) || isEventWithinDax(e, input)
     }
 
     autofill (alias) {
