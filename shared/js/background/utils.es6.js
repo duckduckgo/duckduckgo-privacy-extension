@@ -36,7 +36,7 @@ function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
             finalURL = 'www.' + tld.domain
         }
 
-        return `${parsedURL.protocol}//${finalURL}`
+        return `${parsedURL.protocol}//${finalURL}/`
     } catch (e) {
         // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
         return undefined
