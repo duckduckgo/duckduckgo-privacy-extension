@@ -70,15 +70,16 @@
             injectEmailAutofill()
             notifyWebApp({extensionSignedIn: {value: true}})
         } else {
-            // If we don't have user data yet, notify the web app that we are ready to receive it…
+            // If we don't have user data yet, notify the web app that we are ready to receive it
             notifyWebApp({extensionInstalled: true})
-            // …then listen for when the user data is set
-            chrome.runtime.onMessage.addListener((message, sender) => {
-                if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
-                    notifyWebApp({extensionSignedIn: {value: true}})
-                    injectEmailAutofill()
-                }
-            })
+        }
+    })
+
+    // When the extension is ready, notify the web app and inject the autofill script
+    chrome.runtime.onMessage.addListener((message, sender) => {
+        if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
+            notifyWebApp({extensionSignedIn: {value: true}})
+            injectEmailAutofill()
         }
     })
 
@@ -87,7 +88,9 @@
         const inputButtonMap = new Map()
         const forms = new Map()
 
-        customElements.define('ddg-autofill', DDGAutofill)
+        if (!customElements.get('ddg-autofill')) {
+            customElements.define('ddg-autofill', DDGAutofill)
+        }
 
         const updateAllButtons = () => {
             inputButtonMap.forEach((button) => {
@@ -120,15 +123,15 @@
         })
 
         const EMAIL_SELECTOR = `
-            input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=text][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=""][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input:not([type])[placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]),
-            input[type=email]:not([readonly]):not([disabled]):not([hidden]),
+            input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type=text][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type=""][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input:not([type])[placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type=email]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input[type=text][aria-label*=mail i],
             input:not([type])[aria-label*=mail i],
             input[type=text][placeholder*=mail i]:not([readonly])
@@ -152,18 +155,23 @@
             }
         }
 
-        const findEligibleInput = context => {
-            context.querySelectorAll(EMAIL_SELECTOR)
-                .forEach(input => {
-                    const parentForm = input.form
+        const addInput = input => {
+            const parentForm = input.form
 
-                    if (forms.has(parentForm)) {
-                        // If we've already met the form, add the input
-                        forms.get(parentForm).addInput(input)
-                    } else {
-                        forms.set(parentForm || input, new Form(parentForm, input, intObs))
-                    }
-                })
+            if (forms.has(parentForm)) {
+                // If we've already met the form, add the input
+                forms.get(parentForm).addInput(input)
+            } else {
+                forms.set(parentForm || input, new Form(parentForm, input, intObs))
+            }
+        }
+
+        const findEligibleInput = context => {
+            if (context.nodeName === 'INPUT' && context.matches(EMAIL_SELECTOR)) {
+                addInput(context)
+            } else {
+                context.querySelectorAll(EMAIL_SELECTOR).forEach(addInput)
+            }
             forms.forEach((formObj, formEl) => {
                 console.log(formEl, formObj.autofillSignal, formObj.signals)
                 if (formObj.autofillSignal > 0) {
@@ -196,11 +204,46 @@
         mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
 
         const resObs = new ResizeObserver(entries => entries.forEach(updateAllButtons))
-        resObs.observe(document.body);
+        resObs.observe(document.body)
 
         // Update the position if transitions or animations are detected just in case
-        ['transitionend', 'animationend', 'load'].forEach(
-            eventType => window.addEventListener(eventType, () => updateAllButtons())
+        const pageEvents = ['transitionend', 'animationend', 'load']
+        pageEvents.forEach(
+            eventType => window.addEventListener(eventType, updateAllButtons)
         )
+
+        // Cleanup on logout events
+        chrome.runtime.onMessage.addListener((message, sender) => {
+            if (sender.id === chrome.runtime.id && message.type === 'logout') {
+                // remove buttons, listeners, and clear observers
+                intObs.disconnect()
+                mutObs.disconnect()
+                resObs.disconnect()
+                pageEvents.forEach(
+                    eventType => window.removeEventListener(eventType, updateAllButtons)
+                )
+                inputButtonMap.forEach((button, input) => {
+                    setValue(input, '')
+                    input.classList.remove('ddg-autofilled')
+                    button.remove()
+                })
+                inputButtonMap.clear()
+                forms.clear()
+                notifyWebApp({extensionSignedIn: {value: false}})
+            }
+        })
     }
+
+    // Add contextual menu listeners
+    const { setValue } = require('./autofill-utils')
+    let activeEl = null
+    document.addEventListener('contextmenu', e => {
+        activeEl = e.target
+    })
+    chrome.runtime.onMessage.addListener((message, sender) => {
+        if (sender.id === chrome.runtime.id && message.type === 'contextualAutofill') {
+            setValue(activeEl, message.alias)
+            activeEl.classList.add('ddg-autofilled')
+        }
+    })
 })()

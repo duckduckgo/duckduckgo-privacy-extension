@@ -130,7 +130,12 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 
 const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
-const {REFETCH_ALIAS_ALARM, fetchAlias, sendNotification} = require('./email-utils.es6')
+const {
+    REFETCH_ALIAS_ALARM,
+    fetchAlias,
+    showContextMenuAction,
+    hideContextMenuAction
+} = require('./email-utils.es6')
 const tldts = require('tldts')
 
 // handle any messages that come from content/UI scripts
@@ -230,11 +235,12 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Check the origin. Shouldn't be necessary, but better safe than sorry
         if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
 
-        // If we already have user data, ignore the req
-        const existingUser = settings.getSetting('userData')
-        if (existingUser && existingUser.nextAlias) return
-
         const {userName, token} = req.addUserData
+        const {existingToken} = settings.getSetting('userData') || {}
+
+        // If the user is already registered, ignore the req
+        if (existingToken === token) return
+
         // Check general data validity
         if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
             settings.updateSetting('userData', req.addUserData)
@@ -246,12 +252,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
                 chrome.tabs.query({}, (tabs) => {
                     tabs.forEach((tab) => {
-                        // Send ddgUserReady message only if tab is in memory
-                        if (!tab.discarded) {
-                            chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
-                        }
+                        chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
                     })
                 })
+                showContextMenuAction()
                 res({success: true})
             })
         } else {
@@ -261,11 +265,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (req.sendAutofillNotification) {
-        sendNotification({
-            title: 'Duck Address Autofilled',
-            message: `A Duck Address was autofilled on ${tldts.parse(sender.url).domain}`
+    if (req.logout) {
+        settings.updateSetting('userData', {})
+        // Broadcast the logout to all tabs
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach((tab) => {
+                chrome.tabs.sendMessage(tab.id, {type: 'logout'})
+            })
         })
+        hideContextMenuAction()
     }
 })
 
@@ -488,7 +496,7 @@ let onStartup = () => {
         }
     })
 
-    settings.ready().then(() => {
+    settings.ready().then(async () => {
         experiment.setActiveExperiment()
 
         httpsStorage.getLists(constants.httpsLists)
@@ -507,7 +515,10 @@ let onStartup = () => {
 
         // fetch alias if needed
         const userData = settings.getSetting('userData')
-        if (userData && !userData.nextAlias) fetchAlias()
+        if (userData && userData.token) {
+            if (!userData.nextAlias) await fetchAlias()
+            showContextMenuAction()
+        }
     })
 }
 

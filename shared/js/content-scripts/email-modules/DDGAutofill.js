@@ -1,6 +1,6 @@
-const logo = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
+const { setValue } = require('./autofill-utils')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
@@ -125,11 +125,7 @@ class DDGAutofill extends HTMLElement {
         }
         this.autofillInputs = () => {
             this.execOnInputs((input) => {
-                input.focus()
-                input.value = this.nextAlias
-                const ev = new Event('input', {bubbles: true})
-                input.dispatchEvent(ev)
-                input.blur()
+                setValue(input, this.nextAlias)
                 input.classList.add('ddg-autofilled')
 
                 // If the user changes the alias, remove the decoration
@@ -139,7 +135,6 @@ class DDGAutofill extends HTMLElement {
                     })
                 }, {once: true})
             })
-            chrome.runtime.sendMessage({sendAutofillNotification: true})
             chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
                 if (res && res.alias) {
                     this.nextAlias = res.alias
@@ -149,13 +144,14 @@ class DDGAutofill extends HTMLElement {
         }
         this.resetInputs = () => {
             this.execOnInputs(input => {
-                input.value = ''
+                setValue(input, '')
                 input.classList.remove('ddg-autofilled')
             })
         }
 
         this.input.addEventListener('mousedown', (e) => {
             if (!e.isTrusted) return
+            if (e.button !== 0) return
 
             if (this.areAllInputsEmpty()) {
                 e.preventDefault()
@@ -167,6 +163,7 @@ class DDGAutofill extends HTMLElement {
         this.trigger.addEventListener('click', (e) => {
             if (!e.isTrusted) return
 
+            e.stopImmediatePropagation()
             this.safeExecute(this.trigger, () => this.showTooltip())
         })
         this.dismissButton.addEventListener('click', (e) => {

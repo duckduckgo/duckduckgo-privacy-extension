@@ -12,7 +12,7 @@ UserData.prototype = window.$.extend({},
         modelName: 'userData',
 
         logout () {
-            this.fetch({updateSetting: {name: 'userData', value: {}}})
+            this.fetch({logout: true})
                 .then(() => this.set('loggingOut', true))
         },
 

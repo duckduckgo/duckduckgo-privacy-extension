@@ -41,17 +41,31 @@ const fetchAlias = () => {
         })
 }
 
-const sendNotification = ({title, message}) => {
-    chrome.notifications.create({
-        type: 'basic',
-        iconUrl: '/img/ddg-logo-borderless.svg',
-        title,
-        message
-    })
-}
+const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
+// Create the contextual menu hidden by default
+chrome.contextMenus.create({
+    id: MENU_ITEM_ID,
+    title: 'Use Duck Address',
+    contexts: ['editable'],
+    visible: false,
+    onclick: (info, tab) => {
+        const userData = getSetting('userData')
+        if (userData.nextAlias) {
+            chrome.tabs.sendMessage(tab.id, {
+                type: 'contextualAutofill',
+                alias: userData.nextAlias
+            })
+        }
+    }
+})
+
+const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: true})
+
+const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: false})
 
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
-    sendNotification
+    showContextMenuAction,
+    hideContextMenuAction
 }

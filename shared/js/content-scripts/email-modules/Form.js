@@ -49,29 +49,29 @@ class Form {
         shouldCheckUnifiedForm = false, // Should check for login/signup forms
         shouldBeConservative = false // Should use the conservative signup regex
     }) {
-        const loginRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
-        const signupRegex = new RegExp(
-            /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start/i
+        const negativeRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
+        const positiveRegex = new RegExp(
+            /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start|settings|preferences|profile|update/i
         )
-        const conservativeSignupRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)/i)
-        const strictSignupRegex = new RegExp(/sign.?up|join|register/i)
-        const loginMatches = string.match(loginRegex)
+        const conservativePositiveRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)|settings|preferences|profile|update/i)
+        const strictPositiveRegex = new RegExp(/sign.?up|join|register|settings|preferences|profile|update/i)
+        const matchesNegative = string.match(negativeRegex)
 
         // Check explicitly for unified login/signup forms. They should always be negative, so we increase signal
-        if (shouldCheckUnifiedForm && loginMatches && string.match(strictSignupRegex)) {
+        if (shouldCheckUnifiedForm && matchesNegative && string.match(strictPositiveRegex)) {
             this.decreaseSignalBy(strength + 2, `Unified detected ${signalType}`)
             return this
         }
 
-        const signupMatches = string.match(shouldBeConservative ? conservativeSignupRegex : signupRegex)
+        const matchesPositive = string.match(shouldBeConservative ? conservativePositiveRegex : positiveRegex)
 
         // In some cases a login match means the login is somewhere else, i.e. when a link points outside
         if (shouldFlip) {
-            if (loginMatches) this.increaseSignalBy(strength, signalType)
-            if (signupMatches) this.decreaseSignalBy(strength, signalType)
+            if (matchesNegative) this.increaseSignalBy(strength, signalType)
+            if (matchesPositive) this.decreaseSignalBy(strength, signalType)
         } else {
-            if (loginMatches) this.decreaseSignalBy(strength, signalType)
-            if (signupMatches) this.increaseSignalBy(strength, signalType)
+            if (matchesNegative) this.decreaseSignalBy(strength, signalType)
+            if (matchesPositive) this.increaseSignalBy(strength, signalType)
         }
         return this
     }
@@ -94,7 +94,7 @@ class Form {
     }
 
     evaluatePageHeadings () {
-        const headings = document.querySelectorAll('h1, h2, h3')
+        const headings = document.querySelectorAll('h1, h2, h3, [class*="title"]')
         if (headings) {
             headings.forEach(({innerText}) => {
                 this.updateSignal({
@@ -125,15 +125,19 @@ class Form {
         })
     }
 
+    elIs (el, type) {
+        return el.nodeName.toLowerCase() === type.toLowerCase()
+    }
+
     getText (el) {
         // for buttons, we don't care about descendants, just get the whole text as is
         // this is important in order to give proper attribution of the text to the button
-        if (el.nodeName.toUpperCase() === 'BUTTON') return el.innerText
+        if (this.elIs(el, 'BUTTON')) return el.innerText
 
-        if (el.nodeName.toUpperCase() === 'INPUT' && ['submit', 'button'].includes(el.type)) return el.value
+        if (this.elIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) return el.value
 
         return Array.from(el.childNodes).reduce((text, child) =>
-            child.nodeName === '#text' ? text + ' ' + child.textContent : text, '')
+            this.elIs(child, '#text') ? text + ' ' + child.textContent : text, '')
     }
 
     evaluateElement (el) {
@@ -141,15 +145,15 @@ class Form {
 
         // check button contents
         if (
-            (el.nodeName.toUpperCase() === 'INPUT' && ['submit', 'button'].includes(el.type)) ||
-            (el.nodeName.toUpperCase() === 'BUTTON' && el.type === 'submit') ||
+            (this.elIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) ||
+            (this.elIs(el, 'BUTTON') && el.type === 'submit') ||
             ((el.getAttribute('role') || '').toUpperCase() === 'BUTTON')
         ) {
             this.updateSignal({string, strength: 2, signalType: `submit: ${string}`})
         }
         // if a link points to relevant urls or contain contents outside the page…
         if (
-            el.nodeName === 'A' && el.href && el.href !== '#' ||
+            this.elIs(el, 'A') && el.href && el.href !== '#' ||
             (el.getAttribute('role') || '').toUpperCase() === 'LINK'
         ) {
             // …and matches one of the regexes, we assume the match is not pertinent to the current form
