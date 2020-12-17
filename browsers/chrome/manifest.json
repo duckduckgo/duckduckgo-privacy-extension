@@ -46,6 +46,9 @@
         "js": [
           "public/js/content-scripts/element-hiding.js"
         ],
+        "css": [
+          "public/css/email-host-styles.css"
+        ],
         "matches": [
           "http://*/*",
           "https://*/*"

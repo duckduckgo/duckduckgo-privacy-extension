@@ -7,44 +7,6 @@
     const DDGAutofill = require('./DDGAutofill')
     const Form = require('./Form')
 
-    // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
-    const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff2')
-    const boldFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
-    const daxUrl = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
-
-    const cssRules = [`
-@font-face {
-    font-family: 'DDG_ProximaNova';
-    src: url(${regFontUrl}) format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}`, `
-@font-face {
-    font-family: 'DDG_ProximaNova';
-    src: url(${boldFontUrl}) format('woff2');
-    font-weight: bold;
-    font-style: normal;
-}`, `
-.ddg-autofilled {
-    background-color: #F8F498;
-    color: #333333;
-}`, `
-input[data-ddg-autofill] {
-    background-image: url(${daxUrl}) !important;
-    background-size: auto 24px !important;
-    background-position: center right 2px !important;
-    background-repeat: no-repeat !important;
-    background-origin: content-box !important;
-}`]
-
-    try {
-        const sheet = new CSSStyleSheet()
-        sheet.replaceSync(cssRules.join(' '))
-        document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet]
-    } catch (e) {
-        // Nothing to do. Firefox loads styles from an external resource
-    }
-
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
     // Send a message to the web app (only on DDG domains)
