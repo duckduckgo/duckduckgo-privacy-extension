@@ -5,7 +5,7 @@ const tests = [
     { url: 'duckduckgo.com', siteGrade: 'A', enhancedGrade: 'A' },
     { url: 'www.cnn.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
     { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' },
-    { url: 'reddit.com', siteGrade: ['D'], enhancedGrade: 'B' },
+    { url: 'reddit.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
     { url: 'facebook.com', siteGrade: ['D', 'C+'], enhancedGrade: 'C+' },
     { url: 'twitter.com', siteGrade: 'C', enhancedGrade: 'B' },
     { url: 'en.wikipedia.org', siteGrade: 'B+', enhancedGrade: 'B+' }
