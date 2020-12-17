@@ -3,7 +3,7 @@ const harness = require('../helpers/harness')
 
 const tests = [
     { url: 'duckduckgo.com', siteGrade: 'A', enhancedGrade: 'A' },
-    { url: 'cnn.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
+    { url: 'www.cnn.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
     { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' },
     { url: 'reddit.com', siteGrade: ['D'], enhancedGrade: 'B' },
     { url: 'facebook.com', siteGrade: ['D', 'C+'], enhancedGrade: 'C+' },
@@ -50,7 +50,7 @@ describe('grade sanity checks', () => {
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
             () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 60000 }
+            { polling: 100, timeout: 20000 }
         )
     })
     afterAll(async () => {
@@ -71,10 +71,10 @@ describe('grade sanity checks', () => {
                 await page.waitForTimeout(1000)
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
+                console.log(`Timed out: ${e}`)
             }
 
             const grades = await bgPage.evaluate(getGradeByUrl, test.url)
-
             checkGrade(grades.site.grade, test.siteGrade)
             checkGrade(grades.enhanced.grade, test.enhancedGrade)
 

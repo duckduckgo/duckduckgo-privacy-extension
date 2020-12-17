@@ -21,7 +21,7 @@ const expectedFingerprintValues = {
 }
 
 const tests = [
-    {url: 'wikipedia.com'},
+    {url: 'www.wikipedia.com'},
     {url: 'reddit.com'}
 ]
 
@@ -39,10 +39,11 @@ describe('Fingerprint Defense Tests', () => {
             // wait for HTTPs to successfully load
             await bgPage.waitForFunction(
                 () => window.dbg && dbg.https.isReady,
-                { polling: 100, timeout: 60000 }
+                { polling: 100, timeout: 20000 }
             )
         } catch (e) {
             // it may timeout, but continue anyway
+            console.log(`Error creating page: ${e}`)
         }
     })
     afterAll(async () => {
@@ -61,6 +62,7 @@ describe('Fingerprint Defense Tests', () => {
                 await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
+                console.log(`Timed out waiting for page load: ${e}`)
             }
             // give it another second just to be sure
             await page.waitForTimeout(1000)

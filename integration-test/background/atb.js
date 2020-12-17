@@ -140,18 +140,17 @@ describe('search workflow', () => {
 
     beforeAll(async () => {
         ({ browser, bgPage, requests } = await harness.setup())
-        try {
-            // wait until normal exti workflow is done so we don't confuse atb.js requests
-            // when the actual tests run
-            await wait.forSetting(bgPage, 'extiSent')
 
-            // grab current atb data
-            let data = await fetch('https://duckduckgo.com/atb.js')
-            data = await data.json()
-            todaysAtb = data.version
-            lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
-            twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
-        } catch (e) {}
+        // wait until normal exti workflow is done so we don't confuse atb.js requests
+        // when the actual tests run
+        await wait.forSetting(bgPage, 'extiSent')
+
+        // grab current atb data
+        let data = await fetch('https://duckduckgo.com/atb.js')
+        data = await data.json()
+        todaysAtb = data.version
+        lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
+        twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
     })
     afterAll(async () => {
         try {
@@ -170,12 +169,12 @@ describe('search workflow', () => {
         // run a search
         const searchPage = await browser.newPage()
         try {
-            searchPage.goto('https://duckduckgo.com/?q=test')
+            await searchPage.goto('https://duckduckgo.com/?q=test')
+            // Extra wait for page load
+            await wait.ms(1000)
         } catch (e) {
             // goto may time out, but continue test anyway in case of partial load.
         }
-        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
-        await wait.ms(1000)
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -185,17 +184,15 @@ describe('search workflow', () => {
     it('should update set_atb if a repeat search is made on a different day', async () => {
         // set set_atb to an older version
         await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
-
         // run a search
         const searchPage = await browser.newPage()
         try {
-            searchPage.goto('https://duckduckgo.com/?q=test')
+            await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
+            // Extra wait for page load
+            await wait.ms(1000)
         } catch (e) {
             // goto may time out, but continue test anyway in case of partial load.
         }
-
-        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
-        await wait.ms(1000)
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -210,13 +207,12 @@ describe('search workflow', () => {
         // run a search
         const searchPage = await browser.newPage()
         try {
-            searchPage.goto('https://duckduckgo.com/?q=test')
+            await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
+            // Extra wait for page load
+            await wait.ms(1000)
         } catch (e) {
             // goto may time out, but continue test anyway in case of partial load.
         }
-
-        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
-        await wait.ms(1000)
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
