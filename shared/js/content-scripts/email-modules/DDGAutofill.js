@@ -14,7 +14,7 @@ class DDGAutofill extends HTMLElement {
         shadow.innerHTML = `
 <link rel="stylesheet" href="${css}">
 <div class="wrapper">
-    <div class="tooltip">
+    <div class="tooltip" hidden>
         <h2 class="tooltip__title">Use a Private Duck Address</h2>
         <p>Protect your personal address, block trackers, and forward to your regular inbox. </p>
         <div class="tooltip__alias-container">${daxSVG}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
@@ -29,6 +29,10 @@ class DDGAutofill extends HTMLElement {
         this.dismissButton = shadow.querySelector('.js-dismiss')
         this.confirmButton = shadow.querySelector('.js-confirm')
         this.aliasEl = shadow.querySelector('.alias')
+        this.link = shadow.querySelector('link')
+        // Un-hide once the style is loaded, to avoid flashing unstyled content
+        this.link.addEventListener('load', () =>
+            this.tooltip.removeAttribute('hidden'))
 
         this.updateAliasInTooltip = () => {
             const [alias] = this.nextAlias.split('@')
