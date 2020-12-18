@@ -11,9 +11,10 @@ module.exports = function () {
 }
 
 function renderUserDataContent (model) {
-    return model.loggingOut ? bel`<p>
-                You successfully signed out. If you want to sign in again, simply do so from the web interface.
-            </p>`
+    return model.loggingOut ? bel`<div>
+                <p class="menu-paragraph">You successfully signed out.</p>
+                <p class="options-info"><a href="https://quack.duckduckgo.com/email/">Sign in</a></p>
+            </div>`
         : bel`<div>
                 <p class="menu-paragraph">Protect your personal address, block trackers, and forward to your regular inbox. DuckDuckGo will automatically detect email fields within signup forms and offer an option to use a private Duck Address.</p>
                 <p class="menu-paragraph">
