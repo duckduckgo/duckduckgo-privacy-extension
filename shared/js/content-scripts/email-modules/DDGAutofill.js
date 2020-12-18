@@ -46,10 +46,13 @@ class DDGAutofill extends HTMLElement {
         this.top = 0
         this.left = 0
         this.transformRuleIndex = null
+        let count = 0
         this.updatePosition = ({left, top}) => {
+            count++
             // If the stylesheet is not loaded try again (Chrome bug)
-            if (!shadow.styleSheets.length) return setTimeout(() => this.updateThisPosition({left, top}), 1)
+            if (!shadow.styleSheets.length && count < 10) return setTimeout(() => this.updateThisPosition({left, top}), count)
 
+            count = 0
             this.left = left
             this.top = top
 
