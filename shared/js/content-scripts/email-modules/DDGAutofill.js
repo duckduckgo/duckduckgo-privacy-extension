@@ -50,7 +50,7 @@ class DDGAutofill extends HTMLElement {
         this.updatePosition = ({left, top}) => {
             count++
             // If the stylesheet is not loaded try again (Chrome bug)
-            if (!shadow.styleSheets.length && count < 10) return setTimeout(() => this.updateThisPosition({left, top}), count)
+            if (!shadow.styleSheets.length && count < 10) return setTimeout(this.checkPosition, count)
 
             count = 0
             this.left = left
@@ -69,32 +69,29 @@ class DDGAutofill extends HTMLElement {
         }
     }
 
-    static updateButtonPosition (el) {
-        if (el.animationFrame) {
-            window.cancelAnimationFrame(el.animationFrame)
-        }
-
-        el.animationFrame = window.requestAnimationFrame(() => {
-            const {left, top} = getDaxBoundingBox(el.input)
-
-            if (left !== el.left || top !== el.top) {
-                el.updatePosition({left, top})
-            }
-
-            el.animationFrame = null
-        })
-    }
-
     disconnectedCallback () {
-        window.removeEventListener('scroll', this.updateThisPosition, {passive: true, capture: true})
+        window.removeEventListener('scroll', this.checkPosition, {passive: true, capture: true})
         this.resObs.disconnect()
         this.mutObs.disconnect()
     }
 
     connectedCallback () {
-        this.updateThisPosition = () => DDGAutofill.updateButtonPosition(this)
-        this.updateThisPosition()
-        this.resObs = new ResizeObserver(entries => entries.forEach(this.updateThisPosition))
+        this.checkPosition = () => {
+            if (this.animationFrame) {
+                window.cancelAnimationFrame(this.animationFrame)
+            }
+
+            this.animationFrame = window.requestAnimationFrame(() => {
+                const {left, top} = getDaxBoundingBox(this.input)
+
+                if (left !== this.left || top !== this.top) {
+                    this.updatePosition({left, top})
+                }
+
+                this.animationFrame = null
+            })
+        }
+        this.resObs = new ResizeObserver(entries => entries.forEach(this.checkPosition))
         this.resObs.observe(document.body)
         this.count = 0
         this.ensureIsLastInDOM = () => {
@@ -124,10 +121,10 @@ class DDGAutofill extends HTMLElement {
                     })
                 }
             }
-            this.updateThisPosition()
+            this.checkPosition()
         })
         this.mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
-        window.addEventListener('scroll', this.updateThisPosition, {passive: true, capture: true})
+        window.addEventListener('scroll', this.checkPosition, {passive: true, capture: true})
 
         this.dismissButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
