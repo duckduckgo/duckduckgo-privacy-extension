@@ -105,19 +105,19 @@ class FormAnalyzer {
         })
     }
 
-    elIs (el, type) {
+    elementIs (el, type) {
         return el.nodeName.toLowerCase() === type.toLowerCase()
     }
 
     getText (el) {
         // for buttons, we don't care about descendants, just get the whole text as is
         // this is important in order to give proper attribution of the text to the button
-        if (this.elIs(el, 'BUTTON')) return el.innerText
+        if (this.elementIs(el, 'BUTTON')) return el.innerText
 
-        if (this.elIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) return el.value
+        if (this.elementIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) return el.value
 
         return Array.from(el.childNodes).reduce((text, child) =>
-            this.elIs(child, '#text') ? text + ' ' + child.textContent : text, '')
+            this.elementIs(child, '#text') ? text + ' ' + child.textContent : text, '')
     }
 
     evaluateElement (el) {
@@ -125,15 +125,15 @@ class FormAnalyzer {
 
         // check button contents
         if (
-            (this.elIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) ||
-            (this.elIs(el, 'BUTTON') && el.type === 'submit') ||
+            (this.elementIs(el, 'INPUT') && ['submit', 'button'].includes(el.type)) ||
+            (this.elementIs(el, 'BUTTON') && el.type === 'submit') ||
             ((el.getAttribute('role') || '').toUpperCase() === 'BUTTON')
         ) {
             this.updateSignal({string, strength: 2, signalType: `submit: ${string}`})
         }
         // if a link points to relevant urls or contain contents outside the page…
         if (
-            this.elIs(el, 'A') && el.href && el.href !== '#' ||
+            this.elementIs(el, 'A') && el.href && el.href !== '#' ||
             (el.getAttribute('role') || '').toUpperCase() === 'LINK'
         ) {
             // …and matches one of the regexes, we assume the match is not pertinent to the current form
