@@ -15,8 +15,8 @@ class DDGAutofill extends HTMLElement {
 <link rel="stylesheet" href="${css}">
 <div class="wrapper">
     <div class="tooltip">
-        <h2 class="tooltip__title">For more privacy, use a Duck Address.</h2>
-        <p>This address can be used to communicate with you, but won’t reveal your real email.</p>
+        <h2 class="tooltip__title">Use a Private Duck Address</h2>
+        <p>Protect your personal address, block trackers, and forward to your regular inbox. </p>
         <div class="tooltip__alias-container">${daxSVG}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
         <div class="tooltip__button-container">
             <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
