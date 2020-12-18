@@ -633,6 +633,10 @@ body {
 .email-alias__icon {
     @include icon_display();
     @include cross_platform_bg_image('wand.svg');
+    height: 24px;
+    width: 24px;
+    // The icon is larger than usual, so we adjust its position to maintain alignment
+    margin: -6px -2px -4px 0;
 }
 
 @import "views/search-form";

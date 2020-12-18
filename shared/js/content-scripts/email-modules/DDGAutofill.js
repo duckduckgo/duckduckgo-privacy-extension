@@ -1,6 +1,7 @@
 const css = chrome.runtime.getURL('public/css/email-autofill.css')
 const daxSVG = require('./logo-svg')
-const { setValue } = require('./autofill-utils')
+const {getDaxBoundingBox} = require('./autofill-utils')
+const { safeExecute } = require('./autofill-utils')
 
 class DDGAutofill extends HTMLElement {
     constructor (input, associatedForm) {
@@ -8,18 +9,14 @@ class DDGAutofill extends HTMLElement {
         const shadow = this.attachShadow({mode: 'closed'})
         this.input = input
         this.associatedForm = associatedForm
-        this.inputRightMargin = parseInt(getComputedStyle(this.input).paddingRight)
         this.animationFrame = null
-        this.topPosition = 0
-        this.leftPosition = 0
 
         shadow.innerHTML = `
 <link rel="stylesheet" href="${css}">
 <div class="wrapper">
-    <button class="trigger">${daxSVG}</button>
     <div class="tooltip" hidden>
-        <h2 class="tooltip__title">For more privacy, use a Duck Address.</h2>
-        <p>This address can be used to communicate with you, but won’t reveal your real email.</p>
+        <h2 class="tooltip__title">Use a Private Duck Address</h2>
+        <p>Protect your personal address, block trackers, and forward to your regular inbox. </p>
         <div class="tooltip__alias-container">${daxSVG}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
         <div class="tooltip__button-container">
             <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
@@ -28,11 +25,14 @@ class DDGAutofill extends HTMLElement {
     </div>
 </div>`
         this.wrapper = shadow.querySelector('.wrapper')
-        this.trigger = shadow.querySelector('.trigger')
         this.tooltip = shadow.querySelector('.tooltip')
         this.dismissButton = shadow.querySelector('.js-dismiss')
         this.confirmButton = shadow.querySelector('.js-confirm')
         this.aliasEl = shadow.querySelector('.alias')
+        this.link = shadow.querySelector('link')
+        // Un-hide once the style is loaded, to avoid flashing unstyled content
+        this.link.addEventListener('load', () =>
+            this.tooltip.removeAttribute('hidden'))
 
         this.updateAliasInTooltip = () => {
             const [alias] = this.nextAlias.split('@')
@@ -47,140 +47,104 @@ class DDGAutofill extends HTMLElement {
             }
         })
 
-        /**
-         * Use IntersectionObserver v2 to make sure the element is visible when clicked
-         * https://developers.google.com/web/updates/2019/02/intersectionobserver-v2
-         */
-        this.safeExecute = (el, fn) => {
-            const intObs = new IntersectionObserver((changes) => {
-                for (const change of changes) {
-                    // Feature detection
-                    if (typeof change.isVisible === 'undefined') {
-                        // The browser doesn't support Intersection Observer v2, falling back to v1 behavior.
-                        change.isVisible = true;
-                    }
-                    if (change.isIntersecting && change.isVisible) {
-                        fn()
-                    }
-                }
-                intObs.disconnect()
-            }, {trackVisibility: true, delay: 100})
-            intObs.observe(el)
+        this.top = 0
+        this.left = 0
+        this.transformRuleIndex = null
+        this.updatePosition = ({left, top}) => {
+            // If the stylesheet is not loaded wait for load (Chrome bug)
+            if (!shadow.styleSheets.length) return this.link.addEventListener('load', this.checkPosition)
+
+            this.left = left
+            this.top = top
+
+            if (this.transformRuleIndex) {
+                // If we have already set the rule, remove it…
+                shadow.styleSheets[0].deleteRule(this.transformRuleIndex)
+            } else {
+                // …otherwise, set the index as the very last rule
+                this.transformRuleIndex = shadow.styleSheets[0].rules.length
+            }
+
+            const newRule = `.wrapper {transform: translate(${left}px, ${top}px);}`
+            shadow.styleSheets[0].insertRule(newRule, this.transformRuleIndex)
         }
     }
 
-    static updateButtonPosition (el) {
-        if (el.animationFrame) {
-            window.cancelAnimationFrame(el.animationFrame)
-        }
-
-        el.animationFrame = window.requestAnimationFrame(() => {
-            const {right, top, height} = el.input.getBoundingClientRect()
-            const currentTop = `${top + window.scrollY + height / 2}px`
-            const currentLeft = `${right + window.scrollX - 30 - el.inputRightMargin}px`
-
-            if (currentTop !== el.topPosition) {
-                el.wrapper.style.top = currentTop
-                el.topPosition = currentTop
-            }
-            if (currentLeft !== el.leftPosition) {
-                el.wrapper.style.left = currentLeft
-                el.leftPosition = currentLeft
-            }
-
-            el.animationFrame = null
-        })
+    disconnectedCallback () {
+        window.removeEventListener('scroll', this.checkPosition, {passive: true, capture: true})
+        this.resObs.disconnect()
+        this.mutObs.disconnect()
     }
 
     connectedCallback () {
-        DDGAutofill.updateButtonPosition(this)
+        this.checkPosition = () => {
+            if (this.animationFrame) {
+                window.cancelAnimationFrame(this.animationFrame)
+            }
 
-        this.showTooltip = () => {
-            if (!this.tooltip.hidden) {
-                return
-            }
-            this.updateAliasInTooltip()
-            this.tooltip.hidden = false
-            window.addEventListener('click', this.hideTooltip)
-        }
-        this.hideTooltip = (e) => {
-            if (e && (e.target === this.input || e.target === this)) {
-                return
-            }
-            if (this.tooltip.hidden) {
-                return
-            }
-            this.tooltip.hidden = true
-            window.removeEventListener('click', this.hideTooltip)
-        }
-        this.execOnInputs = (fn) => {
-            this.associatedForm.relevantInputs.forEach(fn)
-        }
-        this.areAllInputsEmpty = () => {
-            let allEmpty = true
-            this.execOnInputs(input => {
-                if (input.value) allEmpty = false
-            })
-            return allEmpty
-        }
-        this.autofillInputs = () => {
-            this.execOnInputs((input) => {
-                setValue(input, this.nextAlias)
-                input.classList.add('ddg-autofilled')
+            this.animationFrame = window.requestAnimationFrame(() => {
+                const {left, top} = getDaxBoundingBox(this.input)
 
-                // If the user changes the alias, remove the decoration
-                input.addEventListener('input', () => {
-                    this.execOnInputs(input => {
-                        input.classList.remove('ddg-autofilled')
-                    })
-                }, {once: true})
-            })
-            chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
-                if (res && res.alias) {
-                    this.nextAlias = res.alias
-                    this.updateAliasInTooltip()
+                if (left !== this.left || top !== this.top) {
+                    this.updatePosition({left, top})
                 }
+
+                this.animationFrame = null
             })
         }
-        this.resetInputs = () => {
-            this.execOnInputs(input => {
-                setValue(input, '')
-                input.classList.remove('ddg-autofilled')
-            })
-        }
+        this.resObs = new ResizeObserver(entries => entries.forEach(this.checkPosition))
+        this.resObs.observe(document.body)
+        this.count = 0
+        this.ensureIsLastInDOM = () => {
+            // If DDG el is not the last in the doc, move them there
+            if (document.body.lastElementChild !== this) {
+                this.remove()
 
-        this.input.addEventListener('mousedown', (e) => {
-            if (!e.isTrusted) return
-            if (e.button !== 0) return
-
-            if (this.areAllInputsEmpty()) {
-                e.preventDefault()
-                e.stopImmediatePropagation()
-                this.showTooltip()
+                // Try up to 5 times to avoid infinite loop in case someone is doing the same
+                if (this.count < 15) {
+                    document.body.append(this)
+                    this.count++
+                } else {
+                    // Reset count so we can resume normal flow
+                    this.count = 0
+                    console.info(`DDG autofill bailing out`)
+                }
             }
-        }, {once: true})
+        }
+        this.mutObs = new MutationObserver((mutationList) => {
+            for (const mutationRecord of mutationList) {
+                if (mutationRecord.type === 'childList') {
+                    // Only check added nodes added nodes
+                    mutationRecord.addedNodes.forEach(el => {
+                        if (el.nodeName === 'DDG-AUTOFILL') return
 
-        this.trigger.addEventListener('click', (e) => {
-            if (!e.isTrusted) return
-
-            e.stopImmediatePropagation()
-            this.safeExecute(this.trigger, () => this.showTooltip())
+                        this.ensureIsLastInDOM()
+                    })
+                }
+            }
+            this.checkPosition()
         })
+        this.mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
+        window.addEventListener('scroll', this.checkPosition, {passive: true, capture: true})
+
         this.dismissButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
 
             e.stopImmediatePropagation()
-            this.resetInputs()
-            this.hideTooltip()
-            this.input.focus()
+            this.associatedForm.dismissTooltip()
         })
         this.confirmButton.addEventListener('click', (e) => {
             if (!e.isTrusted) return
             e.stopImmediatePropagation()
 
-            this.safeExecute(this.confirmButton, () => {
-                this.autofillInputs()
-                this.hideTooltip()
+            safeExecute(this.confirmButton, () => {
+                this.associatedForm.autofill(this.nextAlias)
+                chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
+                    if (res && res.alias) {
+                        this.nextAlias = res.alias
+                        this.updateAliasInTooltip()
+                    }
+                })
             })
         })
     }

@@ -182,6 +182,9 @@ module.exports = function (grunt) {
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
+            // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
+            updateFirefoxRelativeUrl: `sed -i.bak "s/chrome-extension:\\/\\/__MSG_@@extension_id__\\/public/../g" build/firefox/${buildType}/public/css/email-host-styles.css &&
+                    rm build/firefox/${buildType}/public/css/email-host-styles.css.bak`,
             // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
             // make sure that sed works on both linux and OSX (see https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux)
             devifyOnboarding: `sed -i.bak "s/\\/\\* __ \\*\\/ 'https:\\/\\/duckduckgo\\.com' \\/\\* __ \\*\\//'*'/" build/${browser}/${buildType}/public/js/content-scripts/onboarding.js && rm build/${browser}/${buildType}/public/js/content-scripts/onboarding.js.bak`,
@@ -249,7 +252,14 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'browserify:emailContentScript', 'exec:copyInjectedCSS', 'execute:preProcessLists', 'safari'])
+    // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
+    grunt.registerTask('updateFirefoxRelativeUrl', 'Update Firefox relative URL in injected css', () => {
+        if (browser === 'firefox') {
+            grunt.task.run('exec:updateFirefoxRelativeUrl')
+        }
+    })
+
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'browserify:emailContentScript', 'exec:copyInjectedCSS', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build', 'exec:devifyOnboarding']
     if (grunt.option('watch')) { devTasks.push('watch') }

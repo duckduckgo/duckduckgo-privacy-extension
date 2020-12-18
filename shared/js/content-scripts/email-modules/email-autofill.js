@@ -7,35 +7,6 @@
     const DDGAutofill = require('./DDGAutofill')
     const Form = require('./Form')
 
-    // Font-face must be declared in the host page, otherwise it won't work in the shadow dom
-    const regFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff2')
-    const boldFontUrl = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
-    const styleTag = document.createElement('style')
-    document.head.appendChild(styleTag)
-    const sheet = styleTag.sheet
-    sheet.insertRule(`
-@font-face {
-    font-family: 'DDG_ProximaNova';
-    src: url(${regFontUrl}) format('woff2');
-    font-weight: normal;
-    font-style: normal;
-}
-    `)
-    sheet.insertRule(`
-@font-face {
-    font-family: 'DDG_ProximaNova';
-    src: url(${boldFontUrl}) format('woff2');
-    font-weight: bold;
-    font-style: normal;
-}
-    `)
-    sheet.insertRule(`
-.ddg-autofilled {
-    background-color: #F8F498;
-    color: #333333;
-}
-    `)
-
     const ddgDomainRegex = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
     // Send a message to the web app (only on DDG domains)
@@ -84,43 +55,11 @@
     })
 
     const injectEmailAutofill = () => {
-        // Here we store a map of input -> button associations
-        const inputButtonMap = new Map()
         const forms = new Map()
 
         if (!customElements.get('ddg-autofill')) {
             customElements.define('ddg-autofill', DDGAutofill)
         }
-
-        const updateAllButtons = () => {
-            inputButtonMap.forEach((button) => {
-                DDGAutofill.updateButtonPosition(button)
-            })
-        }
-
-        const intObs = new IntersectionObserver(entries => {
-            for (const entry of entries) {
-                const input = entry.target
-                if (entry.isIntersecting) {
-                    // If is intersecting and visible (note that `display:none` will never intersect)
-                    if (window.getComputedStyle(input).visibility !== 'hidden') {
-                        const associatedForm = forms.get(input.form) || forms.get(input)
-                        const button = new DDGAutofill(input, associatedForm)
-                        document.body.appendChild(button)
-                        // Keep track of the input->button pair
-                        inputButtonMap.set(input, button)
-                    }
-                } else {
-                    // If it's not intersecting and we have the input stored…
-                    if (inputButtonMap.has(input)) {
-                        // …remove the button from the DOM
-                        inputButtonMap.get(input).remove()
-                        // …and remove the input from the map
-                        inputButtonMap.delete(input)
-                    }
-                }
-            }
-        })
 
         const EMAIL_SELECTOR = `
             input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
@@ -137,24 +76,6 @@
             input[type=text][placeholder*=mail i]:not([readonly])
         `
 
-        let count = 0
-        const ensureDDGElementsAreLast = () => {
-            // If DDG els are not the last in the doc, move them there
-            if (inputButtonMap.size && document.body.lastElementChild.nodeName !== 'DDG-AUTOFILL') {
-                inputButtonMap.forEach(button => button.remove())
-
-                // Try up to 5 times to avoid infinite loop in case someone is doing the same
-                if (count < 15) {
-                    document.body.append(...inputButtonMap.values())
-                    count++
-                } else {
-                    // Reset count so we can resume normal flow
-                    count = 0
-                    console.info(`DDG autofill bailing out`)
-                }
-            }
-        }
-
         const addInput = input => {
             const parentForm = input.form
 
@@ -162,7 +83,7 @@
                 // If we've already met the form, add the input
                 forms.get(parentForm).addInput(input)
             } else {
-                forms.set(parentForm || input, new Form(parentForm, input, intObs))
+                forms.set(parentForm || input, new Form(parentForm, input))
             }
         }
 
@@ -172,12 +93,6 @@
             } else {
                 context.querySelectorAll(EMAIL_SELECTOR).forEach(addInput)
             }
-            forms.forEach((formObj, formEl) => {
-                console.log(formEl, formObj.autofillSignal, formObj.signals)
-                if (formObj.autofillSignal > 0) {
-                    formObj.decorateInputs()
-                }
-            })
         }
 
         findEligibleInput(document)
@@ -193,41 +108,19 @@
                         if (el instanceof HTMLElement) {
                             window.requestIdleCallback(() => {
                                 findEligibleInput(el)
-                                ensureDDGElementsAreLast()
                             })
                         }
                     })
                 }
             }
-            updateAllButtons()
         })
-        mutObs.observe(document.body, {childList: true, subtree: true, attributes: true})
-
-        const resObs = new ResizeObserver(entries => entries.forEach(updateAllButtons))
-        resObs.observe(document.body)
-
-        // Update the position if transitions or animations are detected just in case
-        const pageEvents = ['transitionend', 'animationend', 'load']
-        pageEvents.forEach(
-            eventType => window.addEventListener(eventType, updateAllButtons)
-        )
+        mutObs.observe(document.body, {childList: true, subtree: true})
 
         // Cleanup on logout events
         chrome.runtime.onMessage.addListener((message, sender) => {
             if (sender.id === chrome.runtime.id && message.type === 'logout') {
                 // remove buttons, listeners, and clear observers
-                intObs.disconnect()
                 mutObs.disconnect()
-                resObs.disconnect()
-                pageEvents.forEach(
-                    eventType => window.removeEventListener(eventType, updateAllButtons)
-                )
-                inputButtonMap.forEach((button, input) => {
-                    setValue(input, '')
-                    input.classList.remove('ddg-autofilled')
-                    button.remove()
-                })
-                inputButtonMap.clear()
                 forms.clear()
                 notifyWebApp({extensionSignedIn: {value: false}})
             }
@@ -235,15 +128,13 @@
     }
 
     // Add contextual menu listeners
-    const { setValue } = require('./autofill-utils')
     let activeEl = null
     document.addEventListener('contextmenu', e => {
         activeEl = e.target
     })
     chrome.runtime.onMessage.addListener((message, sender) => {
         if (sender.id === chrome.runtime.id && message.type === 'contextualAutofill') {
-            setValue(activeEl, message.alias)
-            activeEl.classList.add('ddg-autofilled')
+            Form.autofillInput(activeEl, message.alias)
         }
     })
 })()

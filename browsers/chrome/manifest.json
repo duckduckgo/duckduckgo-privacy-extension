@@ -46,6 +46,9 @@
         "js": [
           "public/js/content-scripts/element-hiding.js"
         ],
+        "css": [
+          "public/css/email-host-styles.css"
+        ],
         "matches": [
           "http://*/*",
           "https://*/*"
@@ -77,6 +80,7 @@
         "alarms"
     ],
     "web_accessible_resources": [
+        "img/ddg-logo-borderless.svg",
         "public/css/email-autofill.css",
         "public/font/ProximaNova-Reg-webfont.woff2",
         "public/font/ProximaNova-Bold-webfont.woff2"
