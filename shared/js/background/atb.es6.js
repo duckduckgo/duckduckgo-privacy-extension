@@ -39,7 +39,7 @@ const ATB = (() => {
             }
 
             let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = `${ddgAtbURL}${randomValue}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
+            let url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
@@ -90,8 +90,7 @@ const ATB = (() => {
             if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
             let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = ddgAtbURL + randomValue
-
+            let url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
             }, () => {
@@ -110,14 +109,15 @@ const ATB = (() => {
             let atb = settings.getSetting('atb')
 
             // build query string when atb param wasn't acquired from any URLs
-            const paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            let paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            const browserName = parseUserAgentString().browser
+            paramString += `&browser=${browserName}`
 
             // make this request only once
             if (settings.getSetting('extiSent')) return
 
             settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
-
             // just a GET request, we only care that the request was made
             load.url(`https://duckduckgo.com/exti/?${paramString}`)
         },
@@ -246,7 +246,6 @@ const ATB = (() => {
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
             if (dev) url += `&test=1`
-
             return url
         },
 

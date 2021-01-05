@@ -36,7 +36,7 @@ function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
             finalURL = 'www.' + tld.domain
         }
 
-        return `${parsedURL.protocol}//${finalURL}`
+        return `${parsedURL.protocol}//${finalURL}/`
     } catch (e) {
         // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
         return undefined
@@ -112,10 +112,16 @@ function getUpgradeToSecureSupport () {
 function getBeaconName () {
     const beaconNamesByBrowser = {
         'chrome': 'ping',
-        'moz': 'beacon'
+        'moz': 'beacon',
+        'edg': 'ping',
+        'brave': 'ping',
+        'default': 'ping'
     }
-
-    return beaconNamesByBrowser[getBrowserName()]
+    let name = getBrowserName()
+    if (!Object.keys(beaconNamesByBrowser).includes(name)) {
+        name = 'default'
+    }
+    return beaconNamesByBrowser[name]
 }
 
 // Return requestListenerTypes + beacon or ping
@@ -132,7 +138,7 @@ function getAsyncBlockingSupport () {
 
     if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
         return true
-    } else if (browser === 'chrome') {
+    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browser)) {
         return false
     }
 
