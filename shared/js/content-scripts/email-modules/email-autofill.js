@@ -28,9 +28,9 @@
         }
 
         // The web app wants to know if the user is signed in
-        if (event.data.checkExtensionSignedIn) {
+        if (event.data.checkDeviceSignedIn) {
             chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
-                notifyWebApp({extensionSignedIn: {value: userData && userData.nextAlias}})
+                notifyWebApp({deviceSignedIn: {value: userData && userData.nextAlias}})
             })
         }
     })
@@ -39,7 +39,7 @@
     chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
         if (userData && userData.nextAlias) {
             injectEmailAutofill()
-            notifyWebApp({extensionSignedIn: {value: true}})
+            notifyWebApp({deviceSignedIn: {value: true}})
         } else {
             // If we don't have user data yet, notify the web app that we are ready to receive it
             notifyWebApp({extensionInstalled: true})
@@ -49,7 +49,7 @@
     // When the extension is ready, notify the web app and inject the autofill script
     chrome.runtime.onMessage.addListener((message, sender) => {
         if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
-            notifyWebApp({extensionSignedIn: {value: true}})
+            notifyWebApp({deviceSignedIn: {value: true}})
             injectEmailAutofill()
         }
     })
@@ -122,7 +122,7 @@
                 // remove buttons, listeners, and clear observers
                 mutObs.disconnect()
                 forms.clear()
-                notifyWebApp({extensionSignedIn: {value: false}})
+                notifyWebApp({deviceSignedIn: {value: false}})
             }
         })
     }
