@@ -3,6 +3,7 @@
     require('intersection-observer')
     require('./requestIdleCallback')
     require('@webcomponents/webcomponentsjs')
+    const {sendAndWaitForAnswer} = require('./autofill-utils')
 
     const DDGAutofill = require('./DDGAutofill')
     const Form = require('./Form')
@@ -16,45 +17,8 @@
         }
     }
 
-    // Listen for sign in message from the ddg email page
-    window.addEventListener('message', (event) => {
-        if (!event.origin.match(ddgDomainRegex)) return
-
-        // The web app notifies us that the user signed in
-        if (event.data.addUserData) {
-            chrome.runtime.sendMessage(event.data, (res) => {
-                console.log('Extension login result', res)
-            })
-        }
-
-        // The web app wants to know if the user is signed in
-        if (event.data.checkDeviceSignedIn) {
-            chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
-                notifyWebApp({deviceSignedIn: {value: userData && userData.nextAlias}})
-            })
-        }
-    })
-
-    // Check if we already have user data
-    chrome.runtime.sendMessage({getSetting: {name: 'userData'}}, userData => {
-        if (userData && userData.nextAlias) {
-            injectEmailAutofill()
-            notifyWebApp({deviceSignedIn: {value: true}})
-        } else {
-            // If we don't have user data yet, notify the web app that we are ready to receive it
-            notifyWebApp({extensionInstalled: true})
-        }
-    })
-
-    // When the extension is ready, notify the web app and inject the autofill script
-    chrome.runtime.onMessage.addListener((message, sender) => {
-        if (sender.id === chrome.runtime.id && message.type === 'ddgUserReady') {
-            notifyWebApp({deviceSignedIn: {value: true}})
-            injectEmailAutofill()
-        }
-    })
-
     const injectEmailAutofill = () => {
+        notifyWebApp({deviceSignedIn: {value: true}})
         const forms = new Map()
 
         if (!customElements.get('ddg-autofill')) {
@@ -126,6 +90,35 @@
             }
         })
     }
+
+    const DeviceInterface = {
+        isDeviceSignedIn: () => new Promise(resolve => chrome.runtime.sendMessage(
+            {getSetting: {name: 'userData'}},
+            userData => resolve(!!(userData && userData.nextAlias))
+        )),
+        trySigningIn: () =>
+            // TODO: NEEDS TO CHECK FOR DOMAIN
+            sendAndWaitForAnswer({signMeIn: true}, 'addUserData')
+                .then(data => DeviceInterface.storeUserData(data)),
+        storeUserData: (data) => new Promise(resolve => {
+            chrome.runtime.sendMessage(data, (res) => {
+                console.log('Extension login result', res)
+                if (res.success) {
+                    injectEmailAutofill()
+                    resolve()
+                }
+            })
+        })
+    }
+
+    DeviceInterface.isDeviceSignedIn().then(deviceSignedIn => {
+        console.log('deviceSignedIn', deviceSignedIn)
+        if (deviceSignedIn) {
+            injectEmailAutofill()
+        } else {
+            DeviceInterface.trySigningIn()
+        }
+    })
 
     // Add contextual menu listeners
     let activeEl = null

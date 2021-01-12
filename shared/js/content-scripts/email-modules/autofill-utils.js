@@ -1,3 +1,17 @@
+const sendAndWaitForAnswer = (msg, expectedResponse) => {
+    window.postMessage(msg, window.origin)
+    return new Promise((resolve) => {
+        const handler = e => {
+            if (e.origin !== window.origin) return
+            if (!e.data || (e.data && !e.data[expectedResponse])) return
+
+            resolve(e.data)
+            window.removeEventListener('message', handler)
+        }
+        window.addEventListener('message', handler)
+    })
+}
+
 // Access the original setter (needed to bypass React's implementation on mobile)
 const originalSet = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
 
@@ -52,4 +66,10 @@ const isEventWithinDax = (e, input) => {
     return withinX && withinY
 }
 
-module.exports = { setValue, safeExecute, getDaxBoundingBox, isEventWithinDax }
+module.exports = {
+    sendAndWaitForAnswer,
+    setValue,
+    safeExecute,
+    getDaxBoundingBox,
+    isEventWithinDax
+}
