@@ -137,19 +137,9 @@ class Form {
             // If the user changes the alias, remove the decoration
             input.addEventListener('input', this.removeAllHighlights, {once: true})
         })
-        this.removeTooltip()
-    }
-
-    // Static methods are called by the contextual menu
-    static removeHighlight (e) {
-        e.target.classList.remove('ddg-autofilled')
-    }
-    static autofillInput (input, alias) {
-        setValue(input, alias)
-        input.classList.add('ddg-autofilled')
-
-        // If the user changes the alias, remove the decoration
-        input.addEventListener('input', Form.removeHighlight, {once: true})
+        if (this.tooltip) {
+            this.removeTooltip()
+        }
     }
 }
 

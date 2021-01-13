@@ -1,6 +1,6 @@
 const {DDG_DOMAIN_REGEX, sendAndWaitForAnswer} = require('./autofill-utils')
-const Form = require('./Form.js')
 const scanForInputs = require('./scanForInputs.js')
+const {setValue} = require('./autofill-utils')
 const {isDDGApp} = require('./autofill-utils')
 
 const ExtensionInterface = {
@@ -30,7 +30,15 @@ const ExtensionInterface = {
                     scanForInputs(ExtensionInterface)
                     break
                 case 'contextualAutofill':
-                    Form.autofillInput(activeEl, message.alias)
+                    setValue(activeEl, message.alias)
+                    activeEl.classList.add('ddg-autofilled')
+
+                    // If the user changes the alias, remove the decoration
+                    activeEl.addEventListener(
+                        'input',
+                        (e) => e.target.classList.remove('ddg-autofilled'),
+                        {once: true}
+                    )
                     break
                 default:
                     break
