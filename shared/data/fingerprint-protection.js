@@ -146,6 +146,14 @@
             for (const [name, prop] of Object.entries(fingerprintPropertyValues[category])) {
                 // Don't update if existing value is undefined or null
                 if (!(prop.origValue === undefined)) {
+                    /**
+                     * When re-defining properties, we bind the overwritten functions to null. This prevents
+                     * sites from using toString to see if the function has been overwritten
+                     * without this bind call, a site could run something like
+                     * `Object.getOwnPropertyDescriptor(Screen.prototype, "availTop").get.toString()` and see
+                     * the contents of the function. Appending .bind(null) to the function definition will
+                     * have the same toString call return the default [native code]
+                     */
                     script += `try {
                         Object.defineProperty(${prop.object}, "${name}", {get: (() => ${JSON.stringify(prop.targetValue)}).bind(null)});
                     } catch (e) {}
