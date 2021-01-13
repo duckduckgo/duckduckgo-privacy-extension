@@ -1,16 +1,26 @@
 const DDGAutofill = require('./DDGAutofill')
 const FormAnalyzer = require('./FormAnalyzer')
+const dax = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
 const {setValue, isEventWithinDax} = require('./autofill-utils')
+
+const INLINE_STYLES = {
+    'background-size': {jsName: 'backgroundSize', val: 'auto 24px'},
+    'background-position': {jsName: 'backgroundPosition', val: 'center right'},
+    'background-repeat': {jsName: 'backgroundRepeat', val: 'no-repeat'},
+    'background-origin': {jsName: 'backgroundOrigin', val: 'content-box'},
+    'background-image': {jsName: 'backgroundImage', val: `url(${dax})`}
+}
 
 class Form {
     constructor (form, input) {
         this.form = form
         this.formAnalyzer = new FormAnalyzer(form, input)
         this.relevantInputs = new Set()
+        this.touched = new Set()
+        this.listeners = new Set()
         this.addInput(input)
         this.tooltip = null
         this.activeInput = null
-        this.touched = new Set()
 
         this.intObs = new IntersectionObserver((entries) => {
             for (const entry of entries) {
@@ -24,19 +34,29 @@ class Form {
             }
             document.body.removeChild(this.tooltip)
             this.tooltip = null
-            this.input = null
             this.intObs.disconnect()
             window.removeEventListener('mousedown', this.removeTooltip, {capture: true})
         }
+        this.removeInputHighlight = (input) => {
+            input.classList.remove('ddg-autofilled')
+        }
         this.removeAllHighlights = () => {
-            this.execOnInputs((input) => input.classList.remove('ddg-autofilled'))
+            this.execOnInputs(this.removeInputHighlight)
+        }
+        this.removeInputDecoration = (input) => {
+            Object.keys(INLINE_STYLES).forEach(prop => input.style.removeProperty(prop))
+            input.removeAttribute('data-ddg-autofill')
+        }
+        this.removeAllDecorations = () => {
+            this.execOnInputs(this.removeInputDecoration)
+            this.listeners.forEach(({el, type, fn}) => el.removeEventListener(type, fn))
         }
         this.resetAllInputs = () => {
             this.execOnInputs((input) => {
                 setValue(input, '')
-                input.classList.remove('ddg-autofilled')
+                this.removeInputHighlight(input)
             })
-            this.activeInput.focus()
+            if (this.activeInput) this.activeInput.focus()
         }
         this.dismissTooltip = () => {
             this.resetAllInputs()
@@ -74,25 +94,32 @@ class Form {
         window.addEventListener('mousedown', this.removeTooltip, {capture: true})
     }
 
+    addListener (el, type, fn) {
+        el.addEventListener(type, fn)
+        this.listeners.add({el, type, fn})
+    }
+
     decorateInput (input) {
         input.setAttribute('data-ddg-autofill', 'true')
-        input.addEventListener('mousemove', (e) => {
-            if (isEventWithinDax(e, input)) {
-                input.style.cursor = 'pointer'
+        Object.values(INLINE_STYLES)
+            .forEach(({jsName, val}) => (input.style[jsName] = val))
+        this.addListener(input, 'mousemove', (e) => {
+            if (isEventWithinDax(e, e.target)) {
+                e.target.style.cursor = 'pointer'
             } else {
-                input.style.cursor = 'auto'
+                e.target.style.cursor = 'auto'
             }
         })
-        input.addEventListener('mousedown', (e) => {
+        this.addListener(input, 'mousedown', (e) => {
             if (!e.isTrusted) return
             if (e.button !== 0) return
 
-            if (this.shouldOpenTooltip(e, input)) {
+            if (this.shouldOpenTooltip(e, e.target)) {
                 e.preventDefault()
                 e.stopImmediatePropagation()
 
-                this.touched.add(input)
-                this.attachTooltip(input)
+                this.touched.add(e.target)
+                this.attachTooltip(e.target)
             }
         })
         return this

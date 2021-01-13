@@ -13,7 +13,6 @@
             userData => resolve(!!(userData && userData.nextAlias))
         )),
         trySigningIn: () => {
-            DeviceInterface.addDeviceListeners()
             if (window.origin.match(DDG_DOMAIN_REGEX)) {
                 sendAndWaitForAnswer({signMeIn: true}, 'addUserData')
                     .then(data => DeviceInterface.storeUserData(data))
@@ -44,6 +43,7 @@
         }
     }
 
+    DeviceInterface.addDeviceListeners()
     DeviceInterface.isDeviceSignedIn().then(deviceSignedIn => {
         if (deviceSignedIn) {
             scanForInputs()
