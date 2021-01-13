@@ -1,3 +1,12 @@
+const DDG_DOMAIN_REGEX = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
+
+// Send a message to the web app (only on DDG domains)
+const notifyWebApp = (message) => {
+    if (window.origin.match(DDG_DOMAIN_REGEX)) {
+        window.postMessage(message, window.origin)
+    }
+}
+
 const sendAndWaitForAnswer = (msg, expectedResponse) => {
     window.postMessage(msg, window.origin)
     return new Promise((resolve) => {
@@ -67,6 +76,8 @@ const isEventWithinDax = (e, input) => {
 }
 
 module.exports = {
+    DDG_DOMAIN_REGEX,
+    notifyWebApp,
     sendAndWaitForAnswer,
     setValue,
     safeExecute,
