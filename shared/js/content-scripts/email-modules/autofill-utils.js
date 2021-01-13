@@ -9,13 +9,23 @@ const notifyWebApp = (message) => {
         window.postMessage(message, window.origin)
     }
 }
+/**
+ * Sends a message and returns a Promise that resolves with the response
+ * @param {{} | Function} msgOrFn - a fn to call or an object to send via postMessage
+ * @param {String} expectedResponse - the name of the response
+ * @returns {Promise<unknown>}
+ */
+const sendAndWaitForAnswer = (msgOrFn, expectedResponse) => {
+    if (typeof msgOrFn === 'function') {
+        msgOrFn()
+    } else {
+        window.postMessage(msgOrFn, window.origin)
+    }
 
-const sendAndWaitForAnswer = (msg, expectedResponse) => {
-    window.postMessage(msg, window.origin)
     return new Promise((resolve) => {
         const handler = e => {
             if (e.origin !== window.origin) return
-            if (!e.data || (e.data && !e.data[expectedResponse])) return
+            if (!e.data || (e.data && !(e.data[expectedResponse] || e.data.type === expectedResponse))) return
 
             resolve(e.data)
             window.removeEventListener('message', handler)

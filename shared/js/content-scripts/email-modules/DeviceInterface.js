@@ -1,3 +1,4 @@
+const DDGAutofill = require('./DDGAutofill')
 const {DDG_DOMAIN_REGEX, sendAndWaitForAnswer} = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
 const {setValue} = require('./autofill-utils')
@@ -52,6 +53,14 @@ const ExtensionInterface = {
                 handler()
             }
         })
+    },
+    attachTooltip: (form, input) => {
+        if (form.tooltip) return
+
+        form.tooltip = new DDGAutofill(input, form)
+        document.body.appendChild(form.tooltip)
+        form.intObs.observe(input)
+        window.addEventListener('mousedown', form.removeTooltip, {capture: true})
     }
 }
 
@@ -67,7 +76,15 @@ const AndroidInterface = {
     storeUserData: ({addUserData: {token, userName}}) =>
         window.EmailInterface.storeCredentials(token, userName),
     addDeviceListeners: () => {},
-    addLogoutListener: () => {}
+    addLogoutListener: () => {},
+    attachTooltip: (form, input) => {
+        form.activeInput = input
+        sendAndWaitForAnswer(() => window.EmailInterface.showTooltip(), 'getAliasResponse')
+            .then(res => {
+                if (res.alias) form.autofill(res.alias)
+                else form.activeInput.focus()
+            })
+    }
 }
 
 const DeviceInterface = isDDGApp() ? AndroidInterface : ExtensionInterface

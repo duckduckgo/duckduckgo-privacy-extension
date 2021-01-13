@@ -1,4 +1,3 @@
-const DDGAutofill = require('./DDGAutofill')
 const FormAnalyzer = require('./FormAnalyzer')
 const {base64String} = require('./logo-svg')
 const {setValue, isEventWithinDax} = require('./autofill-utils')
@@ -12,9 +11,10 @@ const INLINE_STYLES = {
 }
 
 class Form {
-    constructor (form, input) {
+    constructor (form, input, attachTooltip) {
         this.form = form
         this.formAnalyzer = new FormAnalyzer(form, input)
+        this.attachTooltip = attachTooltip
         this.relevantInputs = new Set()
         this.touched = new Set()
         this.listeners = new Set()
@@ -84,16 +84,6 @@ class Form {
         return allEmpty
     }
 
-    attachTooltip (input) {
-        if (this.tooltip) return
-
-        this.activeInput = input
-        this.tooltip = new DDGAutofill(input, this)
-        document.body.appendChild(this.tooltip)
-        this.intObs.observe(input)
-        window.addEventListener('mousedown', this.removeTooltip, {capture: true})
-    }
-
     addListener (el, type, fn) {
         el.addEventListener(type, fn)
         this.listeners.add({el, type, fn})
@@ -119,7 +109,7 @@ class Form {
                 e.stopImmediatePropagation()
 
                 this.touched.add(e.target)
-                this.attachTooltip(e.target)
+                this.attachTooltip(this, e.target)
             }
         })
         return this

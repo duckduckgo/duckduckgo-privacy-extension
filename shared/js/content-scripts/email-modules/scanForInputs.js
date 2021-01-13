@@ -33,7 +33,7 @@ const scanForInputs = (DeviceInterface) => {
             // If we've already met the form, add the input
             forms.get(parentForm).addInput(input)
         } else {
-            forms.set(parentForm || input, new Form(parentForm, input))
+            forms.set(parentForm || input, new Form(parentForm, input, DeviceInterface.attachTooltip))
         }
     }
 
