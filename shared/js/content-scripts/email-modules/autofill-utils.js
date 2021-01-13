@@ -1,3 +1,6 @@
+const isDDGApp = () =>
+    /(iPhone|iPad|Android).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent)
+
 const DDG_DOMAIN_REGEX = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
 // Send a message to the web app (only on DDG domains)
@@ -76,6 +79,7 @@ const isEventWithinDax = (e, input) => {
 }
 
 module.exports = {
+    isDDGApp,
     DDG_DOMAIN_REGEX,
     notifyWebApp,
     sendAndWaitForAnswer,
