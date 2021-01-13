@@ -23,8 +23,8 @@ chrome.runtime.onInstalled.addListener(function (details) {
         experiment.setActiveExperiment()
     }
 
-    // Inject the email content script onto the web app upon installation
-    chrome.tabs.query({url: 'https://*.duckduckgo.com/*'}, (tabs) => {
+    // Inject the email content script on all tabs upon installation
+    chrome.tabs.query({}, (tabs) => {
         tabs.forEach(tab => {
             chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/email-autofill.js'})
         })
@@ -238,8 +238,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         const {userName, token} = req.addUserData
         const {existingToken} = settings.getSetting('userData') || {}
 
-        // If the user is already registered, ignore the req
-        if (existingToken === token) return
+        // If the user is already registered, just notify tabs that we're ready
+        if (existingToken === token) {
+            chrome.tabs.query({}, (tabs) => {
+                tabs.forEach((tab) => {
+                    chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                })
+            })
+            return
+        }
 
         // Check general data validity
         if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
