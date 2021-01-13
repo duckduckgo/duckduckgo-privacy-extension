@@ -26,13 +26,21 @@ const DeviceInterface = {
 
             switch (message.type) {
                 case 'ddgUserReady':
-                    scanForInputs()
+                    scanForInputs(ExtensionInterface)
                     break
                 case 'contextualAutofill':
                     Form.autofillInput(activeEl, message.alias)
                     break
                 default:
                     break
+            }
+        })
+    },
+    addLogoutListener: (handler) => {
+        // Cleanup on logout events
+        chrome.runtime.onMessage.addListener((message, sender) => {
+            if (sender.id === chrome.runtime.id && message.type === 'logout') {
+                handler()
             }
         })
     }

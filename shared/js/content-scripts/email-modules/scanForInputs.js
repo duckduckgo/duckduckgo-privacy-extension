@@ -2,7 +2,8 @@ const Form = require('./Form')
 const {notifyWebApp} = require('./autofill-utils')
 const DDGAutofill = require('./DDGAutofill')
 
-const scanForInputs = () => {
+// Accepts the DeviceInterface as an explicit dependency
+const scanForInputs = (DeviceInterface) => {
     notifyWebApp({deviceSignedIn: {value: true}})
     const forms = new Map()
 
@@ -65,19 +66,18 @@ const scanForInputs = () => {
     })
     mutObs.observe(document.body, {childList: true, subtree: true})
 
-    // Cleanup on logout events
-    chrome.runtime.onMessage.addListener((message, sender) => {
-        if (sender.id === chrome.runtime.id && message.type === 'logout') {
-            // remove Dax, listeners, and observers
-            mutObs.disconnect()
-            forms.forEach(form => {
-                form.resetAllInputs()
-                form.removeAllDecorations()
-            })
-            forms.clear()
-            notifyWebApp({deviceSignedIn: {value: false}})
-        }
-    })
+    const logoutHandler = () => {
+        // remove Dax, listeners, and observers
+        mutObs.disconnect()
+        forms.forEach(form => {
+            form.resetAllInputs()
+            form.removeAllDecorations()
+        })
+        forms.clear()
+        notifyWebApp({deviceSignedIn: {value: false}})
+    }
+
+    DeviceInterface.addLogoutListener(logoutHandler)
 }
 
 module.exports = scanForInputs

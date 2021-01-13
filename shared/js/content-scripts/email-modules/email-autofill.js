@@ -9,7 +9,7 @@
     DeviceInterface.addDeviceListeners()
     DeviceInterface.isDeviceSignedIn().then(deviceSignedIn => {
         if (deviceSignedIn) {
-            scanForInputs()
+            scanForInputs(DeviceInterface)
         } else {
             DeviceInterface.trySigningIn()
         }
