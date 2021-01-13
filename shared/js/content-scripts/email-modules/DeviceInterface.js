@@ -2,6 +2,7 @@ const DDGAutofill = require('./DDGAutofill')
 const {DDG_DOMAIN_REGEX, sendAndWaitForAnswer} = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
 const {setValue} = require('./autofill-utils')
+const {notifyWebApp} = require('./autofill-utils')
 const {isDDGApp} = require('./autofill-utils')
 
 const ExtensionInterface = {
@@ -70,7 +71,10 @@ const AndroidInterface = {
     trySigningIn: () => {
         if (window.origin.match(DDG_DOMAIN_REGEX)) {
             sendAndWaitForAnswer({signMeIn: true}, 'addUserData')
-                .then(data => DeviceInterface.storeUserData(data))
+                .then(data => {
+                    notifyWebApp({deviceSignedIn: {value: true}})
+                    DeviceInterface.storeUserData(data)
+                })
         }
     },
     storeUserData: ({addUserData: {token, userName}}) =>
