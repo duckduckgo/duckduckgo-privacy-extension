@@ -1,6 +1,6 @@
 const DDGAutofill = require('./DDGAutofill')
 const FormAnalyzer = require('./FormAnalyzer')
-const dax = chrome.runtime.getURL('img/ddg-logo-borderless.svg')
+const {base64String} = require('./logo-svg')
 const {setValue, isEventWithinDax} = require('./autofill-utils')
 
 const INLINE_STYLES = {
@@ -8,7 +8,7 @@ const INLINE_STYLES = {
     'background-position': {jsName: 'backgroundPosition', val: 'center right'},
     'background-repeat': {jsName: 'backgroundRepeat', val: 'no-repeat'},
     'background-origin': {jsName: 'backgroundOrigin', val: 'content-box'},
-    'background-image': {jsName: 'backgroundImage', val: `url(${dax})`}
+    'background-image': {jsName: 'backgroundImage', val: `url('data:image/svg+xml;base64,${base64String}')`}
 }
 
 class Form {
