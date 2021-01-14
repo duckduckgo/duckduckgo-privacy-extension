@@ -5,6 +5,11 @@ const {setValue} = require('./autofill-utils')
 const {notifyWebApp} = require('./autofill-utils')
 const {isDDGApp} = require('./autofill-utils')
 
+const SIGN_IN_MSG = {
+    signMeIn: true,
+    extensionInstalled: true // TODO: deprecated, to be removed in a future release
+}
+
 const ExtensionInterface = {
     isDeviceSignedIn: () => new Promise(resolve => chrome.runtime.sendMessage(
         {getSetting: {name: 'userData'}},
@@ -12,7 +17,7 @@ const ExtensionInterface = {
     )),
     trySigningIn: () => {
         if (window.origin.match(DDG_DOMAIN_REGEX)) {
-            sendAndWaitForAnswer({signMeIn: true}, 'addUserData')
+            sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => DeviceInterface.storeUserData(data))
         }
     },
@@ -70,7 +75,7 @@ const AndroidInterface = {
         resolve((window.EmailInterface.isSignedIn() === 'true'))),
     trySigningIn: () => {
         if (window.origin.match(DDG_DOMAIN_REGEX)) {
-            sendAndWaitForAnswer({signMeIn: true}, 'addUserData')
+            sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => {
                     notifyWebApp({deviceSignedIn: {value: true}})
                     DeviceInterface.storeUserData(data)

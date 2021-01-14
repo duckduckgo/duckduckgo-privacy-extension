@@ -4,7 +4,10 @@ const DDGAutofill = require('./DDGAutofill')
 
 // Accepts the DeviceInterface as an explicit dependency
 const scanForInputs = (DeviceInterface) => {
-    notifyWebApp({deviceSignedIn: {value: true}})
+    notifyWebApp({
+        deviceSignedIn: {value: true},
+        extensionSignedIn: {value: true} // TODO: deprecated, to be removed soon
+    })
     const forms = new Map()
 
     if (!customElements.get('ddg-autofill')) {
