@@ -56,10 +56,29 @@ chrome.webRequest.onHeadersReceived.addListener(
             // returns a promise
             return ATB.updateSetAtb(request)
         }
+
+        // Strip 3rd party response header
+        console.log(request);
+        if (!request.responseHeaders) {console.error('No headers'); return; }
+        
+        const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
+        if (index !== -1) {
+            const tab = tabManager.get({ tabId: request.tabId });
+            const reqUrl = utils.extractHostFromURL(request.url);
+            const tabUrl = utils.extractHostFromURL(tab.url);
+            if (reqUrl !== tabUrl) {
+                request.responseHeaders.splice(index, 1);
+            }
+        }
+
+        return { responseHeaders: request.responseHeaders }
     },
     {
         urls: ['<all_urls>']
-    }
+    },
+    [
+        'blocking', 'responseHeaders', 'extraHeaders'
+    ]
 )
 
 /**
@@ -361,6 +380,7 @@ const httpsStorage = require('./storage/https.es6')
 const httpsService = require('./https-service.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
+const { header } = require('change-case')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
