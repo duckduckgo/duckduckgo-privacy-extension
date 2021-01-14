@@ -77,8 +77,9 @@ const AndroidInterface = {
         if (isDDGDomain()) {
             sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => {
+                    AndroidInterface.storeUserData(data)
+                    // The previous call doesn't send a response, so we can't know if things are fine
                     notifyWebApp({deviceSignedIn: {value: true}})
-                    DeviceInterface.storeUserData(data)
                 })
         }
     },
