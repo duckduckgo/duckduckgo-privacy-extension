@@ -58,9 +58,7 @@ chrome.webRequest.onHeadersReceived.addListener(
         }
 
         // Strip 3rd party response header
-        console.log(request);
-        if (!request.responseHeaders) {console.error('No headers'); return; }
-        
+        if (!request.responseHeaders) return;
         const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
         if (index !== -1) {
             const tab = tabManager.get({ tabId: request.tabId });
