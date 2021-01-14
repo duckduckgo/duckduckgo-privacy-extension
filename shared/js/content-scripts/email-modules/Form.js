@@ -1,13 +1,19 @@
 const FormAnalyzer = require('./FormAnalyzer')
+const {addInlineStyles, removeInlineStyles} = require('./autofill-utils')
 const {base64String} = require('./logo-svg')
 const {setValue, isEventWithinDax} = require('./autofill-utils')
 
-const INLINE_STYLES = {
+const INLINE_DAX_STYLES = {
     'background-size': {jsName: 'backgroundSize', val: 'auto 24px'},
     'background-position': {jsName: 'backgroundPosition', val: 'center right'},
     'background-repeat': {jsName: 'backgroundRepeat', val: 'no-repeat'},
     'background-origin': {jsName: 'backgroundOrigin', val: 'content-box'},
     'background-image': {jsName: 'backgroundImage', val: `url('data:image/svg+xml;base64,${base64String}')`}
+}
+
+const INLINE_AUTOFILLED_STYLES = {
+    'background-color': {jsName: 'backgroundColor', val: '#F8F498'},
+    'color': {jsName: 'color', val: '#333333'}
 }
 
 class Form {
@@ -38,13 +44,14 @@ class Form {
             window.removeEventListener('mousedown', this.removeTooltip, {capture: true})
         }
         this.removeInputHighlight = (input) => {
+            removeInlineStyles(input, INLINE_AUTOFILLED_STYLES)
             input.classList.remove('ddg-autofilled')
         }
         this.removeAllHighlights = () => {
             this.execOnInputs(this.removeInputHighlight)
         }
         this.removeInputDecoration = (input) => {
-            Object.keys(INLINE_STYLES).forEach(prop => input.style.removeProperty(prop))
+            removeInlineStyles(input, INLINE_DAX_STYLES)
             input.removeAttribute('data-ddg-autofill')
         }
         this.removeAllDecorations = () => {
@@ -91,8 +98,7 @@ class Form {
 
     decorateInput (input) {
         input.setAttribute('data-ddg-autofill', 'true')
-        Object.values(INLINE_STYLES)
-            .forEach(({jsName, val}) => (input.style[jsName] = val))
+        addInlineStyles(input, INLINE_DAX_STYLES)
         this.addListener(input, 'mousemove', (e) => {
             if (isEventWithinDax(e, e.target)) {
                 e.target.style.cursor = 'pointer'
@@ -123,6 +129,7 @@ class Form {
         this.execOnInputs((input) => {
             setValue(input, alias)
             input.classList.add('ddg-autofilled')
+            addInlineStyles(input, INLINE_AUTOFILLED_STYLES)
 
             // If the user changes the alias, remove the decoration
             input.addEventListener('input', this.removeAllHighlights, {once: true})
