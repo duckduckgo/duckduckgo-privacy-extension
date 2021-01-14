@@ -1,5 +1,5 @@
 const DDGAutofill = require('./DDGAutofill')
-const {DDG_DOMAIN_REGEX, sendAndWaitForAnswer} = require('./autofill-utils')
+const {isDDGDomain, sendAndWaitForAnswer} = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
 const {setValue} = require('./autofill-utils')
 const {notifyWebApp} = require('./autofill-utils')
@@ -16,7 +16,7 @@ const ExtensionInterface = {
         userData => resolve(!!(userData && userData.nextAlias))
     )),
     trySigningIn: () => {
-        if (window.origin.match(DDG_DOMAIN_REGEX)) {
+        if (isDDGDomain()) {
             sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => DeviceInterface.storeUserData(data))
         }
@@ -74,7 +74,7 @@ const AndroidInterface = {
     isDeviceSignedIn: () => new Promise(resolve =>
         resolve((window.EmailInterface.isSignedIn() === 'true'))),
     trySigningIn: () => {
-        if (window.origin.match(DDG_DOMAIN_REGEX)) {
+        if (isDDGDomain()) {
             sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => {
                     notifyWebApp({deviceSignedIn: {value: true}})
