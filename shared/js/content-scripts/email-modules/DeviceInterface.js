@@ -97,6 +97,46 @@ const AndroidInterface = {
     }
 }
 
-const DeviceInterface = isDDGApp() ? AndroidInterface : ExtensionInterface
+const iOSInterface = {
+    isDeviceSignedIn: () => sendAndWaitForAnswer(
+        () => window.webkit.messageHandlers['emailHandlerCheckAppSignedInStatus'].postMessage({}),
+        'checkExtensionSignedInCallback'
+    ).then(data => data.isAppSignedIn),
+    trySigningIn: () => {
+        if (isDDGDomain()) {
+            sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
+                .then(data => {
+                    iOSInterface.storeUserData(data)
+                    // The previous call doesn't send a response, so we can't know if things are fine
+                    notifyWebApp({deviceSignedIn: {value: true}})
+                })
+        }
+    },
+    storeUserData: ({addUserData: {token, userName}}) =>
+        window.webkit.messageHandlers['emailHandlerStoreToken'].postMessage({ token, username: userName }),
+    addDeviceListeners: () => {
+        window.addEventListener('message', (e) => {
+            if (e.origin !== window.origin) return
+
+            if (e.data.ddgUserReady) {
+                scanForInputs(iOSInterface)
+            }
+        })
+    },
+    addLogoutListener: () => {},
+    attachTooltip: (form, input) => {
+        form.activeInput = input
+        sendAndWaitForAnswer(
+            () => window.webkit.messageHandlers['emailHandlerGetAlias'].postMessage({}),
+            'getAliasResponse'
+        ).then(res => {
+            if (res.alias) form.autofill(res.alias)
+            else form.activeInput.focus()
+        })
+    }
+}
+
+const DeviceInterface = !isDDGApp() ? ExtensionInterface
+    : window.webkit ? iOSInterface : AndroidInterface
 
 module.exports = DeviceInterface
