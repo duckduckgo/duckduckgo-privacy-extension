@@ -62,7 +62,10 @@
           "public/js/content-scripts/email-autofill.js"
         ],
         "matches": ["<all_urls>"],
-        "exclude_matches": ["https://app.asana.com/*"],
+        "exclude_matches": [
+          "https://app.asana.com/*",
+          "https://*.duckduckgo.com/email/signup"
+        ],
         "all_frames": true,
         "run_at": "document_idle"
       }
