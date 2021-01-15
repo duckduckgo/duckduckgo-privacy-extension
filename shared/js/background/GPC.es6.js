@@ -8,7 +8,7 @@ const utils = require('./utils.es6')
 
 // Return Sec-GPC header if setting enabled
 function getHeader () {
-    const GPCEnabled = settings.getSetting('GPCEnabled')
+    const GPCEnabled = settings.getSetting('GPC')
     if (GPCEnabled) {
         return {
             name: 'Sec-GPC',
@@ -22,7 +22,7 @@ function getHeader () {
 // based browsers due to slight differences in how the browsers interpret script-src
 // CSP directives, and the existence of Xray vision in Firefox.
 function injectDOMSignal (tabId, frameId) {
-    const GPCEnabled = settings.getSetting('GPCEnabled')
+    const GPCEnabled = settings.getSetting('GPC')
     const browserName = utils.getBrowserName()
     const contentScriptName = browserName === 'moz' ? 'GPC-moz.js' : 'GPC.js'
 

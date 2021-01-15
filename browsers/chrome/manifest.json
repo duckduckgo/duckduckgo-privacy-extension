@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2020.12.16",
+    "version": "2021.1.8",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -43,9 +43,6 @@
         "run_at": "document_start"
       },
       {
-        "js": [
-          "public/js/content-scripts/element-hiding.js"
-        ],
         "css": [
           "public/css/email-host-styles.css"
         ],
