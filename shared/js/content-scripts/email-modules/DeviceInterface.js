@@ -10,6 +10,11 @@ const SIGN_IN_MSG = {
     extensionInstalled: true // TODO: deprecated, to be removed in a future release
 }
 
+const DEVICE_SIGNED_IN_MSG = {
+    deviceSignedIn: {value: true},
+    extensionSignedIn: {value: true} // TODO: deprecated, to be removed in a future release
+}
+
 const ExtensionInterface = {
     isDeviceSignedIn: () => new Promise(resolve => chrome.runtime.sendMessage(
         {getSetting: {name: 'userData'}},
@@ -34,6 +39,7 @@ const ExtensionInterface = {
 
             switch (message.type) {
                 case 'ddgUserReady':
+                    notifyWebApp(DEVICE_SIGNED_IN_MSG)
                     scanForInputs(ExtensionInterface)
                     break
                 case 'contextualAutofill':
@@ -77,9 +83,9 @@ const AndroidInterface = {
         if (isDDGDomain()) {
             sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => {
+                    // This call doesn't send a response, so we can't know if it succeded
                     AndroidInterface.storeUserData(data)
-                    // The previous call doesn't send a response, so we can't know if things are fine
-                    notifyWebApp({deviceSignedIn: {value: true}})
+                    notifyWebApp(DEVICE_SIGNED_IN_MSG)
                 })
         }
     },
@@ -106,9 +112,9 @@ const iOSInterface = {
         if (isDDGDomain()) {
             sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
                 .then(data => {
+                    // This call doesn't send a response, so we can't know if it succeded
                     iOSInterface.storeUserData(data)
-                    // The previous call doesn't send a response, so we can't know if things are fine
-                    notifyWebApp({deviceSignedIn: {value: true}})
+                    notifyWebApp(DEVICE_SIGNED_IN_MSG)
                 })
         }
     },
