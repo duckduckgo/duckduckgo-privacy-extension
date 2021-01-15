@@ -139,11 +139,6 @@ function handleRequest (requestData) {
                     }
                 }
 
-                if (!window.safari) {
-                    // Initiate hiding of blocked ad DOM elements
-                    tryElementHide(requestData, thisTab)
-                }
-
                 console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                              ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
 
@@ -195,25 +190,6 @@ function handleRequest (requestData) {
         return resultUrl.then(url => buildResponse(url, requestData, thisTab, isMainFrame))
     } else {
         return buildResponse(resultUrl, requestData, thisTab, isMainFrame)
-    }
-}
-
-function tryElementHide (requestData, tab) {
-    if (tab.site.parentEntity === 'Verizon Media') {
-        let frameId, messageType
-
-        if (requestData.type === 'sub_frame') {
-            frameId = requestData.parentFrameId
-            messageType = frameId === 0 ? 'blockedFrame' : 'blockedFrameAsset'
-        } else if (requestData.frameId !== 0 && (requestData.type === 'image' || requestData.type === 'script')) {
-            frameId = requestData.frameId
-            messageType = 'blockedFrameAsset'
-        }
-
-        chrome.tabs.sendMessage(requestData.tabId, {type: messageType, request: requestData, mainFrameUrl: tab.url}, {frameId: frameId})
-    } else if (!tab.elementHidingDisabled) {
-        chrome.tabs.sendMessage(requestData.tabId, {type: 'disable'})
-        tab.elementHidingDisabled = true
     }
 }
 
