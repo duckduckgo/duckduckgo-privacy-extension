@@ -2,17 +2,11 @@ const DDGAutofill = require('./DDGAutofill')
 const {isDDGDomain, sendAndWaitForAnswer} = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
 const {setValue} = require('./autofill-utils')
-const {notifyWebApp} = require('./autofill-utils')
 const {isDDGApp} = require('./autofill-utils')
 
 const SIGN_IN_MSG = {
     signMeIn: true,
     extensionInstalled: true // TODO: deprecated, to be removed in a future release
-}
-
-const DEVICE_SIGNED_IN_MSG = {
-    deviceSignedIn: {value: true},
-    extensionSignedIn: {value: true} // TODO: deprecated, to be removed in a future release
 }
 
 const ExtensionInterface = {
@@ -39,7 +33,6 @@ const ExtensionInterface = {
 
             switch (message.type) {
                 case 'ddgUserReady':
-                    notifyWebApp(DEVICE_SIGNED_IN_MSG)
                     scanForInputs(ExtensionInterface)
                     break
                 case 'contextualAutofill':
@@ -85,7 +78,7 @@ const AndroidInterface = {
                 .then(data => {
                     // This call doesn't send a response, so we can't know if it succeded
                     AndroidInterface.storeUserData(data)
-                    notifyWebApp(DEVICE_SIGNED_IN_MSG)
+                    scanForInputs(AndroidInterface)
                 })
         }
     },
@@ -114,7 +107,7 @@ const iOSInterface = {
                 .then(data => {
                     // This call doesn't send a response, so we can't know if it succeded
                     iOSInterface.storeUserData(data)
-                    notifyWebApp(DEVICE_SIGNED_IN_MSG)
+                    scanForInputs(iOSInterface)
                 })
         }
     },
