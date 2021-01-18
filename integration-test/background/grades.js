@@ -3,7 +3,7 @@ const harness = require('../helpers/harness')
 
 const tests = [
     { url: 'duckduckgo.com', siteGrade: 'A', enhancedGrade: 'A' },
-    { url: 'www.cnn.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
+    { url: 'www.independent.co.uk', siteGrade: 'D', enhancedGrade: 'B+' },
     { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' },
     { url: 'reddit.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
     { url: 'facebook.com', siteGrade: ['D', 'C+'], enhancedGrade: 'C+' },
