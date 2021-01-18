@@ -27,9 +27,9 @@ module.exports = function () {
                 </li>
             </ul>
             Global Privacy Control (GPC)
-            ${toggleButton(this.model.GPCEnabled,
+            ${toggleButton(this.model.GPC,
         'js-options-gpc-enabled',
-        'GPCEnabled')}
+        'GPC')}
             <p class="gpc-disclaimer">
                 <b>
                     Since Global Privacy Control (GPC) is a new standard,

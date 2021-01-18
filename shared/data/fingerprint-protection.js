@@ -26,49 +26,49 @@
     const fingerprintPropertyValues = {
         'screen': {
             'availTop': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availTop,
                 'targetValue': 0
             },
             'availLeft': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availLeft,
                 'targetValue': 0
             },
             'availWidth': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availWidth,
                 'targetValue': screen.width
             },
             'availHeight': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.availHeight,
                 'targetValue': screen.height
             },
             'colorDepth': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.colorDepth,
                 'targetValue': 24
             },
             'pixelDepth': {
-                'object': 'screen',
+                'object': 'Screen.prototype',
                 'origValue': screen.pixelDepth,
                 'targetValue': 24
             }
         },
         'hardware': {
             'keyboard': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.keyboard,
                 'targetValue': undefined
             },
             'hardwareConcurrency': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.hardwareConcurrency,
                 'targetValue': 8
             },
             'deviceMemory': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.deviceMemory,
                 'targetValue': 8
             }
@@ -78,20 +78,20 @@
 //            'userAgent': {
 //                'object': 'navigator',
 //                'origValue': navigator.userAgent,
-//                'targetValue': `"${ddg_ext_ua}"` // Defined in chrome-events.es6.js and injected as a variable
+//                'targetValue': ddg_ext_ua // Defined in chrome-events.es6.js and injected as a variable
 //            },
               'appVersion': {
                 'object': 'navigator',
                 'origValue': navigator.appVersion,
-                'targetValue': `"${getAppVersionValue()}"`
+                'targetValue': getAppVersionValue()
             }
         },
         */
         'options': {
             'doNotTrack': {
-                'object': 'navigator',
+                'object': 'Navigator.prototype',
                 'origValue': navigator.doNotTrack,
-                'targetValue': /Firefox/i.test(navigator.userAgent) ? '"unspecified"' : null
+                'targetValue': /Firefox/i.test(navigator.userAgent) ? 'unspecified' : null
             }
         }
     }
@@ -101,7 +101,7 @@
     // page may load many requests and sub frames, all with different referrers. Since we
     if (ddg_referrer && // make sure the referrer was set correctly
         ddg_referrer.referrer !== undefined && // referrer value will be undefined when it should be unchanged.
-        document.referrer && // don't change the value it isn't set
+        document.referrer && // don't change the value if it isn't set
         document.referrer !== '' && // don't add referrer information
         new URL(document.URL).hostname !== new URL(document.referrer).hostname) { // don't replace the referrer for the current host.
         let trimmedReferer = document.referrer
@@ -109,14 +109,14 @@
             // make sure the real referrer & replacement referrer match if we're going to replace it
             trimmedReferer = ddg_referrer.referrer
         } else {
-            // if we don't have a matching referrer, just trim it to hostname.
-            trimmedReferer = new URL(document.referrer).hostname
+            // if we don't have a matching referrer, just trim it to origin.
+            trimmedReferer = new URL(document.referrer).origin + '/'
         }
         fingerprintPropertyValues['document'] = {
             'referrer': {
-                'object': 'document',
+                'object': 'Document.prototype',
                 'origValue': document.referrer,
-                'targetValue': `"${trimmedReferer}"`
+                'targetValue': trimmedReferer
             }
         }
     }
@@ -137,24 +137,6 @@
         return ddg_ext_ua.replace('Mozilla/', '')
     }
 
-    /*
-     * Return device specific battery value that prevents fingerprinting.
-     * On Desktop/Laptop - fully charged and plugged in.
-     * On Mobile, should not plugged in with random battery values every load.
-     * Property event functions are also defined, for setting later.
-     */
-    function getBattery () {
-        let battery = {}
-        battery.value = {
-            charging: true,
-            chargingTime: 0,
-            dischargingTime: Infinity,
-            level: 1
-        }
-        battery.properties = ['onchargingchange', 'onchargingtimechange', 'ondischargingtimechange', 'onlevelchange']
-        return battery
-    }
-
     /**
      * For each property defined on the object, update it with the target value.
      */
@@ -164,8 +146,16 @@
             for (const [name, prop] of Object.entries(fingerprintPropertyValues[category])) {
                 // Don't update if existing value is undefined or null
                 if (!(prop.origValue === undefined)) {
+                    /**
+                     * When re-defining properties, we bind the overwritten functions to null. This prevents
+                     * sites from using toString to see if the function has been overwritten
+                     * without this bind call, a site could run something like
+                     * `Object.getOwnPropertyDescriptor(Screen.prototype, "availTop").get.toString()` and see
+                     * the contents of the function. Appending .bind(null) to the function definition will
+                     * have the same toString call return the default [native code]
+                     */
                     script += `try {
-                        Object.defineProperty(${prop.object}, "${name}", { value: ${prop.targetValue} });
+                        Object.defineProperty(${prop.object}, "${name}", {get: (() => ${JSON.stringify(prop.targetValue)}).bind(null)});
                     } catch (e) {}
                     `
                 }
@@ -181,35 +171,24 @@
      */
     function buildBatteryScript () {
         if (navigator.getBattery) {
-            const battery = getBattery()
             let batteryScript = `
-                navigator.getBattery = function getBattery () {
-                let battery = ${JSON.stringify(battery.value)}
-            `
-            for (const prop of battery.properties) {
-                // Prevent setting events via event handlers
-                batteryScript += `
-                try {
-                    Object.defineProperty(battery, '${prop}', {
-                        enumerable: true,
-                        configurable: false,
-                        writable: false,
-                        value: undefined
-                    })
-                } catch (e) {}
-                `
-            }
+                let spoofedValues = {
+                    charging: true,
+                    chargingTime: 0,
+                    dischargingTime: Infinity,
+                    level: 1
+                }
+                let eventProperties = ['onchargingchange', 'onchargingtimechange', 'ondischargingtimechange', 'onlevelchange']
 
-            // Wrap event listener functions so handlers aren't added
-            for (const handler of ['addEventListener']) {
-                batteryScript += `
-                    battery.${handler} = function ${handler} () {
-                        return
-                    }
-                `
-            }
-            batteryScript += `
-                return Promise.resolve(battery)
+                for (const [prop, val] of Object.entries(spoofedValues)) {
+                    try {
+                        Object.defineProperty(BatteryManager.prototype, prop, { get: ( () => val).bind(null) })
+                    } catch(e) { }
+                }
+                for (const eventProp of eventProperties) {
+                    try {
+                        Object.defineProperty(BatteryManager.prototype, eventProp, { get: ( () => null).bind(null) })
+                    } catch(e) { }
                 }
             `
             return batteryScript
@@ -246,10 +225,15 @@
     }
 
     function setWindowPropertyValue (property, value) {
+        // Here we don't update the prototype getter because the values are updated dynamically
         let script = `
             try {
-                window.${property} = ${value}
-            } catch (e) { }
+                Object.defineProperty(window, "${property}", {
+                    get: ( () => ${value}).bind(null),
+                    set: ( () => {}).bind(null),
+                    configurable: true
+                });
+            } catch (e) {}
         `
         return script
     }
@@ -274,10 +258,10 @@
             }
 
             if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
-                windowScript += setWindowPropertyValue('top.window.outerHeight', 'window.screen.height')
+                windowScript += setWindowPropertyValue('outerHeight', top.window.screen.height)
             } else {
                 try {
-                    windowScript += setWindowPropertyValue('top.window.outerHeight', top.window.outerHeight)
+                    windowScript += setWindowPropertyValue('outerHeight', top.window.outerHeight)
                 } catch (e) {
                     // top not accessible to certain iFrames, so ignore.
                 }
@@ -292,10 +276,10 @@
             }
 
             if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
-                windowScript += setWindowPropertyValue('top.window.outerWidth', 'window.screen.width')
+                windowScript += setWindowPropertyValue('outerWidth', top.window.screen.width)
             } else {
                 try {
-                    windowScript += setWindowPropertyValue('top.window.outerWidth', top.window.outerWidth)
+                    windowScript += setWindowPropertyValue('outerWidth', top.window.outerWidth)
                 } catch (e) {
                     // top not accessible to certain iFrames, so ignore.
                 }
@@ -317,14 +301,16 @@
             if (navigator.webkitTemporaryStorage) {
                 try {
                     const org = navigator.webkitTemporaryStorage.queryUsageAndQuota
-                    navigator.webkitTemporaryStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
+                    const tStorage = navigator.webkitTemporaryStorage
+                    tStorage.queryUsageAndQuota = function queryUsageAndQuota (callback, err) {
                         const modifiedCallback = function (usedBytes, grantedBytes) {
                             const maxBytesGranted = 4 * 1024 * 1024 * 1024
                             const spoofedGrantedBytes = Math.min(grantedBytes, maxBytesGranted)
                             callback(usedBytes, spoofedGrantedBytes)
                         }
                         org.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
-                    }
+                    }.bind(null)
+                    Object.defineProperty(Navigator.prototype, 'webkitTemporaryStorage', {get: (() => tStorage).bind(null)})
                 }
                 catch(e) {}
             }
