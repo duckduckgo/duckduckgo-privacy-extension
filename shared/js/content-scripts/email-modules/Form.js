@@ -1,6 +1,6 @@
 const FormAnalyzer = require('./FormAnalyzer')
 const {addInlineStyles, removeInlineStyles} = require('./autofill-utils')
-const {base64String} = require('./logo-svg')
+const {daxBase64} = require('./logo-svg')
 const {setValue, isEventWithinDax} = require('./autofill-utils')
 
 const INLINE_DAX_STYLES = {
@@ -8,7 +8,7 @@ const INLINE_DAX_STYLES = {
     'background-position': {jsName: 'backgroundPosition', val: 'center right'},
     'background-repeat': {jsName: 'backgroundRepeat', val: 'no-repeat'},
     'background-origin': {jsName: 'backgroundOrigin', val: 'content-box'},
-    'background-image': {jsName: 'backgroundImage', val: `url('data:image/svg+xml;base64,${base64String}')`}
+    'background-image': {jsName: 'backgroundImage', val: `url('data:image/svg+xml;base64,${daxBase64}')`}
 }
 
 const INLINE_AUTOFILLED_STYLES = {
