@@ -1,3 +1,41 @@
+const isDDGApp = () =>
+    /(iPhone|iPad|Android).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent)
+
+const DDG_DOMAIN_REGEX = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
+
+const isDDGDomain = () => window.origin.match(DDG_DOMAIN_REGEX)
+
+// Send a message to the web app (only on DDG domains)
+const notifyWebApp = (message) => {
+    if (isDDGDomain()) {
+        window.postMessage(message, window.origin)
+    }
+}
+/**
+ * Sends a message and returns a Promise that resolves with the response
+ * @param {{} | Function} msgOrFn - a fn to call or an object to send via postMessage
+ * @param {String} expectedResponse - the name of the response
+ * @returns {Promise<unknown>}
+ */
+const sendAndWaitForAnswer = (msgOrFn, expectedResponse) => {
+    if (typeof msgOrFn === 'function') {
+        msgOrFn()
+    } else {
+        window.postMessage(msgOrFn, window.origin)
+    }
+
+    return new Promise((resolve) => {
+        const handler = e => {
+            if (e.origin !== window.origin) return
+            if (!e.data || (e.data && !(e.data[expectedResponse] || e.data.type === expectedResponse))) return
+
+            resolve(e.data)
+            window.removeEventListener('message', handler)
+        }
+        window.addEventListener('message', handler)
+    })
+}
+
 // Access the original setter (needed to bypass React's implementation on mobile)
 const originalSet = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
 
@@ -52,4 +90,22 @@ const isEventWithinDax = (e, input) => {
     return withinX && withinY
 }
 
-module.exports = { setValue, safeExecute, getDaxBoundingBox, isEventWithinDax }
+const addInlineStyles = (el, styles) => Object.values(styles)
+    .forEach(({jsName, val}) => (el.style[jsName] = val))
+
+const removeInlineStyles = (el, styles) => Object.keys(styles)
+    .forEach(prop => el.style.removeProperty(prop))
+
+module.exports = {
+    isDDGApp,
+    DDG_DOMAIN_REGEX,
+    isDDGDomain,
+    notifyWebApp,
+    sendAndWaitForAnswer,
+    setValue,
+    safeExecute,
+    getDaxBoundingBox,
+    isEventWithinDax,
+    addInlineStyles,
+    removeInlineStyles
+}

@@ -1,5 +1,4 @@
-const css = chrome.runtime.getURL('public/css/email-autofill.css')
-const daxSVG = require('./logo-svg')
+const {daxSvg} = require('./logo-svg')
 const {getDaxBoundingBox} = require('./autofill-utils')
 const { safeExecute } = require('./autofill-utils')
 
@@ -12,12 +11,12 @@ class DDGAutofill extends HTMLElement {
         this.animationFrame = null
 
         shadow.innerHTML = `
-<link rel="stylesheet" href="${css}">
+<link rel="stylesheet" href="${chrome.runtime.getURL('public/css/email-autofill.css')}">
 <div class="wrapper">
     <div class="tooltip" hidden>
         <h2 class="tooltip__title">Use a Private Duck Address</h2>
         <p>Protect your personal address, block trackers, and forward to your regular inbox. </p>
-        <div class="tooltip__alias-container">${daxSVG}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
+        <div class="tooltip__alias-container">${daxSvg}<strong class="alias">${this.nextAlias}</strong>@duck.com</div>
         <div class="tooltip__button-container">
             <button class="tooltip__button tooltip__button--secondary js-dismiss">Don’t use</button>
             <button class="tooltip__button tooltip__button--primary js-confirm">Use Address</button>

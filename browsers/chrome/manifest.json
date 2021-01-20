@@ -43,23 +43,17 @@
         "run_at": "document_start"
       },
       {
-        "css": [
-          "public/css/email-host-styles.css"
-        ],
-        "matches": [
-          "http://*/*",
-          "https://*/*"
-        ],
-        "match_about_blank": true,
-        "all_frames": true,
-        "run_at": "document_start"
-      },
-      {
         "js": [
           "public/js/content-scripts/email-autofill.js"
         ],
+        "css": [
+          "public/css/email-host-styles.css"
+        ],
         "matches": ["<all_urls>"],
-        "exclude_matches": ["https://app.asana.com/*"],
+        "exclude_matches": [
+          "https://app.asana.com/*",
+          "https://*.duckduckgo.com/email/signup"
+        ],
         "all_frames": true,
         "run_at": "document_idle"
       }
