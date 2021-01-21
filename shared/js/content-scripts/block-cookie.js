@@ -2,17 +2,17 @@
 (function cookieBlocker() {
     function getFrameUrl() {
         let url = document.location.href,
-        parentFrame = (document != window.top) && window.parent;
+        parentFrame = (document != window.top) && window.parent
         while (parentFrame && url && !url.startsWith("http")) {
             try {
-                url = parentFrame.document.location.href;
+                url = parentFrame.document.location.href
             } catch (ex) {
                 // ignore 'Blocked a fr[ame with origin "..."
                 // from accessing a cro]ss-origin frame.' exceptions
             }
-            parentFrame = (parentFrame != window.top) && parentFrame.parent;
+            parentFrame = (parentFrame != window.top) && parentFrame.parent
         }
-        return url;
+        return url
     }
 
     if (window.top == window) {
