@@ -40,6 +40,7 @@
         "matches": ["<all_urls>"],
         "all_frames": true,
         "css": ["public/css/noatb.css"],
+        "js": ["public/js/content-scripts/block-cookie.js"],
         "run_at": "document_start"
       }
     ],

@@ -185,6 +185,16 @@ function isSafeListed (url) {
     return false
 }
 
+/**
+ * Tests whether the two URL's belong to the same
+ * first party set.
+ */
+function isFirstParty (url1, url2) {
+    const first = tldts.parse(url1).domain
+    const second = tldts.parse(url2).domain
+    return first === second
+}
+
 module.exports = {
     extractHostFromURL: extractHostFromURL,
     extractTopSubdomainFromHost: extractTopSubdomainFromHost,
@@ -198,5 +208,6 @@ module.exports = {
     getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
     isSafeListed: isSafeListed,
     extractLimitedDomainFromURL: extractLimitedDomainFromURL,
-    isBroken: isBroken
+    isBroken: isBroken,
+    isFirstParty: isFirstParty
 }

@@ -62,9 +62,7 @@ chrome.webRequest.onHeadersReceived.addListener(
         const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
         if (index !== -1) {
             const tab = tabManager.get({ tabId: request.tabId });
-            const reqUrl = utils.extractHostFromURL(request.url);
-            const tabUrl = utils.extractHostFromURL(tab.url);
-            if (reqUrl !== tabUrl) {
+            if (!utils.isFirstParty(request.url, tab.url)) {
                 request.responseHeaders.splice(index, 1);
             }
         }
@@ -216,6 +214,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
         res(pixel.fire.apply(null, fireArgs))
         return true
+    }
+
+    if (req.checkThirdParty) {
+        return res(!utils.isFirstParty(req.frameUrl, sender.tab.url))
     }
 })
 
@@ -379,6 +381,7 @@ const httpsService = require('./https-service.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 const { header } = require('change-case')
+const { isFirstParty } = require('./utils.es6')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
