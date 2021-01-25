@@ -39,6 +39,7 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
  1. Run `npm run dev-firefox`
  2. Load the extension in Firefox from the `build/firefox/dev` directory
 [Temporary installation in Firefox - Mozilla | MDN](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Temporary_Installation_in_Firefox)
+    Alternatively running `web-ext run -s build/firefox/dev` loads the extension into a temporary profile.
 
 - Chrome
  1. Run `npm run dev-chrome`
