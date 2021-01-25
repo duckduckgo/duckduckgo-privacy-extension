@@ -10,6 +10,20 @@ const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
 const browser = utils.getBrowserName()
 
+const sha1 = require('../shared-utils/sha1')
+
+/**
+ * Produce a random float, same output as Math.random()
+ * @returns {float}
+ */
+function getFloat() {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+}
+
+function getHash() {
+    return sha1(getFloat().toString())
+}
+
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         ATB.updateATBValues()
@@ -207,6 +221,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
  */
 const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
+// TODO fix for manifest v3
+const sessionKey = getHash();
 
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
@@ -224,6 +240,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
                 'code': `
                     try {
                         var ddg_ext_ua='${JSON.stringify(agentSpoofer.getAgent())}'
+                        var ddg_session_key=${JSON.stringify(sessionKey)}
                         var ddg_referrer=${JSON.stringify(tab.referrer)}
                     } catch(e) {}`,
                 'runAt': 'document_start',
