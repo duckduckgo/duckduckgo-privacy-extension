@@ -62,6 +62,7 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
+        injectedContentScripts: ['<%= dirs.src.js %>/injected-content-scripts/**/*.js'],
         data: ['<%= dirs.data %>/*.js']
     }
 
@@ -169,6 +170,7 @@ module.exports = function (grunt) {
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
+            copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
@@ -195,6 +197,10 @@ module.exports = function (grunt) {
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs', 'watchSafari']
+            },
+            injectedContentScripts: {
+                files: watch.injectedContentScripts,
+                tasks: ['exec:copyInjectedContentScripts']
             },
             contentScripts: {
                 files: watch.contentScripts,

@@ -16,11 +16,11 @@ const sha1 = require('../shared-utils/sha1')
  * Produce a random float, same output as Math.random()
  * @returns {float}
  */
-function getFloat() {
+function getFloat () {
     return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 }
 
-function getHash() {
+function getHash () {
     return sha1(getFloat().toString())
 }
 
@@ -222,7 +222,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
 // TODO fix for manifest v3
-const sessionKey = getHash();
+const sessionKey = getHash()
 
 // Inject fingerprint protection into sites when
 // they are not whitelisted.
@@ -249,7 +249,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
             }
             chrome.tabs.executeScript(details.tabId, variableScript)
             const scriptDetails = {
-                'file': '/data/fingerprint-protection.js',
+                'file': '/public/js/injected-content-scripts/fingerprint-protection.js',
                 'runAt': 'document_start',
                 'frameId': details.frameId,
                 'matchAboutBlank': true
