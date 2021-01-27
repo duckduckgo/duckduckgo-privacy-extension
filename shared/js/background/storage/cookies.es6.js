@@ -1,6 +1,5 @@
 // Babel includes for async/await
 import 'regenerator-runtime/runtime'
-import request from 'request'
 
 const load = require('./../load.es6')
 const constants = require('../../../data/constants')
@@ -8,10 +7,10 @@ const settings = require('./../settings.es6')
 const tldts = require('tldts')
 
 /**
- *  Manage local userAgent data.
+ *  Manage local cookie exclusion data.
  *  Data is updated regularly with the latest
- *  userAgent statistics, and stored here for fast retrieval and usage
- *  when spoofing a user agent.
+ *  cookie exclusions, and stored here for fast retrieval and usage
+ *  when checking which cookies to block.
  **/
 class ExcludedCookieStorage {
     constructor () {
@@ -19,7 +18,7 @@ class ExcludedCookieStorage {
     }
 
     /**
-     * Retrieve the latest lists of userAgent and breakage data. Store as needed.
+     * Retrieve the latest lists of excluded cookie domains. Store as needed.
      */
     updateCookieData () {
         console.log(`Cookies: Getting cookie data`)

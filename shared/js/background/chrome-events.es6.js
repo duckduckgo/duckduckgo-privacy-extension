@@ -384,8 +384,6 @@ const httpsStorage = require('./storage/https.es6')
 const httpsService = require('./https-service.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
-const { header } = require('change-case')
-const { isFirstParty } = require('./utils.es6')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
