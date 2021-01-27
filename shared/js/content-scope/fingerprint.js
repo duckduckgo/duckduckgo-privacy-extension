@@ -1,4 +1,6 @@
+/* global sjcl */
 function getCanvasKeySync (sessionKey, domainKey, inputData) {
+    // eslint-disable-next-line new-cap
     let hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
     return sjcl.codec.hex.fromBits(hmac.encrypt(inputData))
 }
@@ -8,6 +10,7 @@ function nextRandom (v) {
     return Math.abs((v >> 1) | (((v << 62) ^ (v << 61)) & (~(~0 << 63) << 62)))
 }
 
+// eslint-disable-next-line no-unused-vars
 function initCanvasProtection (sessionKey) {
     const domainKey = window.top.location.origin
     const _getImageData = CanvasRenderingContext2D.prototype.getImageData

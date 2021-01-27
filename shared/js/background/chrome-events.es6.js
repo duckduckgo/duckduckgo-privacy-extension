@@ -224,42 +224,58 @@ const agentSpoofer = require('./classes/agentspoofer.es6')
 // TODO fix for manifest v3
 const sessionKey = getHash()
 
-// Inject fingerprint protection into sites when
-// they are not whitelisted.
-chrome.webNavigation.onCommitted.addListener(details => {
-    let tab = tabManager.get({ tabId: details.tabId })
-    if (tab && tab.site.isBroken) {
-        console.log('temporarily skip fingerprint protection for site: ' + details.url +
-          'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-        return
-    }
-    if (tab && !tab.site.whitelisted) {
-        // Set variables, which are used in the fingerprint-protection script.
-        try {
-            const variableScript = {
-                'code': `
-                    try {
-                        var ddg_ext_ua='${JSON.stringify(agentSpoofer.getAgent())}'
-                        var ddg_session_key=${JSON.stringify(sessionKey)}
-                        var ddg_referrer=${JSON.stringify(tab.referrer)}
-                    } catch(e) {}`,
-                'runAt': 'document_start',
-                'frameId': details.frameId,
-                'matchAboutBlank': true
-            }
-            chrome.tabs.executeScript(details.tabId, variableScript)
-            const scriptDetails = {
-                'file': '/public/js/injected-content-scripts/fingerprint-protection.js',
-                'runAt': 'document_start',
-                'frameId': details.frameId,
-                'matchAboutBlank': true
-            }
-            chrome.tabs.executeScript(details.tabId, scriptDetails)
-        } catch (e) {
-            console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
+async function getContentScope () {
+    const url = chrome.runtime.getURL('/public/js/content-scope.js')
+
+    let response = await fetch(url)
+    return response.text()
+}
+
+async function init () {
+    const contentScopeScript = await getContentScope()
+
+    // Inject fingerprint protection into sites when
+    // they are not whitelisted.
+    chrome.webNavigation.onCommitted.addListener(details => {
+        let tab = tabManager.get({ tabId: details.tabId })
+        if (tab && tab.site.isBroken) {
+            console.log('temporarily skip fingerprint protection for site: ' + details.url +
+            'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
         }
-    }
-})
+        if (tab && !tab.site.whitelisted) {
+            // Set variables, which are used in the fingerprint-protection script.
+            try {
+                const argumentsObject = {
+                    ua: agentSpoofer.getAgent(),
+                    sessionKey,
+                    contentScopeScript,
+                    referrer: tab.referrer
+                }
+                const variableScript = {
+                    'code': `
+                      try {
+                          var ddg_args = ${JSON.stringify(argumentsObject)}
+                      } catch(e) {}`,
+                    'runAt': 'document_start',
+                    'frameId': details.frameId,
+                    'matchAboutBlank': true
+                }
+                chrome.tabs.executeScript(details.tabId, variableScript)
+                const scriptDetails = {
+                    'file': '/public/js/injected-content-scripts/fingerprint-protection.js',
+                    'runAt': 'document_start',
+                    'frameId': details.frameId,
+                    'matchAboutBlank': true
+                }
+                chrome.tabs.executeScript(details.tabId, scriptDetails)
+            } catch (e) {
+                console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
+            }
+        }
+    })
+}
+init()
 
 // Replace UserAgent header on third party requests.
 /* Disable User Agent Spoofing temporarily.

@@ -6,8 +6,8 @@
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
         "abp": "cd node_modules/abp-filter-parser && npm install",
-        "postinstall": "npm run abp && export PATH='$PATH:$PWD/node_modules/chromedriver/bin' && npm run copy-sjcl",
-        "copy-sjcl": "cp node_modules/sjcl/sjcl.js shared/data/",
+        "postinstall": "npm run abp && npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+        "copy-sjcl": "cp node_modules/sjcl/sjcl.js shared/js/content-scope/",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "release": "grunt build && node scripts/httpsWhitelist.js",

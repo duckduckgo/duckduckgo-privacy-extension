@@ -3,8 +3,10 @@
  * object properties and methods to reduce entropy or modify fingerprint
  * data through obsufcation / randomness.
  */
+/* globals ddg_args */
 
-(async function protect () {
+// Function called from chrome-events.es6.js and injected as a variable
+(function protect (args) {
     // Exclude some content types from injection
     const elem = document.head || document.documentElement
     try {
@@ -78,7 +80,7 @@
 //            'userAgent': {
 //                'object': 'navigator',
 //                'origValue': navigator.userAgent,
-//                'targetValue': ddg_ext_ua // Defined in chrome-events.es6.js and injected as a variable
+//                'targetValue': args.ua
 //            },
               'appVersion': {
                 'object': 'navigator',
@@ -96,18 +98,18 @@
         }
     }
 
-    // ddg_referrer is defined in chrome-events.es6.js and injected as a variable if referrer should be modified
+    // args.referrer is defined in chrome-events.es6.js and injected as a variable if referrer should be modified
     // Unfortunately, we only have limited information about the referrer and current frame. A single
     // page may load many requests and sub frames, all with different referrers. Since we
-    if (ddg_referrer && // make sure the referrer was set correctly
-        ddg_referrer.referrer !== undefined && // referrer value will be undefined when it should be unchanged.
+    if (args.referrer && // make sure the referrer was set correctly
+        args.referrer.referrer !== undefined && // referrer value will be undefined when it should be unchanged.
         document.referrer && // don't change the value if it isn't set
         document.referrer !== '' && // don't add referrer information
         new URL(document.URL).hostname !== new URL(document.referrer).hostname) { // don't replace the referrer for the current host.
         let trimmedReferer = document.referrer
-        if (new URL(document.referrer).hostname === ddg_referrer.referrerHost) {
+        if (new URL(document.referrer).hostname === args.referrer.referrerHost) {
             // make sure the real referrer & replacement referrer match if we're going to replace it
-            trimmedReferer = ddg_referrer.referrer
+            trimmedReferer = args.referrer.referrer
         } else {
             // if we don't have a matching referrer, just trim it to origin.
             trimmedReferer = new URL(document.referrer).origin + '/'
@@ -128,14 +130,16 @@
      *
      * This function returns the spoofed user agent, unless the browser is FireFox, when it leaves it unchanged.
      */
+    /*
     function getAppVersionValue () {
         if (/Firefox/i.test(navigator.userAgent)) {
             // Running Firefox, so keep the original value.
             return navigator.appVersion
         }
         // UserAgent is in the format of "Mozilla/<details>", appVersion only includes the details portion
-        return ddg_ext_ua.replace('Mozilla/', '')
+        return args.ua.replace('Mozilla/', '')
     }
+    */
 
     /**
      * For each property defined on the object, update it with the target value.
@@ -197,39 +201,25 @@
         }
     }
 
-    async function getSjcl () {
-        const url = chrome.runtime.getURL('/data/sjcl.js')
-
-        let response = await fetch(url)
-        return response.text()
-    }
-
-    async function getCanvasProtectionScript () {
-        const url = chrome.runtime.getURL('/public/js/injected-content-scripts/content-scope/fingerprint.js')
-
-        let response = await fetch(url)
-        return response.text()
-    }
-
     /**
-     * Build a script that overloads the Canvas API to randomised data that are different per first party.
+     * Trigger the built code in args.contentScopeScript.
      */
-    async function buildCanvasScript () {
-        let code = await Promise.all([getSjcl(), getCanvasProtectionScript()])
-        return code.join('\n') + `
-        initCanvasProtection(${JSON.stringify(ddg_session_key)});
-        `
+    function buildInit () {
+        // TODO once we have a deterministic build of args.contentScopeScript
+        // the index.js should be responsible for calling all the other code
+        return `initCanvasProtection(${JSON.stringify(args.sessionKey)})`
     }
 
     /**
      * All the steps for building the injection script. Should only be done at initial page load.
      */
-    async function buildInjectionScript () {
-        let script = buildScriptProperties()
+    function buildInjectionScript () {
+        let script = args.contentScopeScript + ';'
+        script += buildScriptProperties()
         script += modifyTemporaryStorage()
         script += buildBatteryScript()
         script += setWindowDimensions()
-        script += await buildCanvasScript()
+        script += buildInit()
         return script
     }
 
@@ -367,6 +357,6 @@
         inject(windowScript, true, elem)
     })
 
-    const injectionScript = await buildInjectionScript()
+    const injectionScript = buildInjectionScript()
     inject(injectionScript, true, elem)
-})()
+})(ddg_args)
