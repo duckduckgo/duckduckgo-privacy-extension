@@ -33,6 +33,7 @@ const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
+const cookieConfig = require('./../background/storage/cookies.es6')
 let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
@@ -58,12 +59,13 @@ chrome.webRequest.onHeadersReceived.addListener(
         }
 
         // Strip 3rd party response header
-        if (!request.responseHeaders) return;
+        const tab = tabManager.get({ tabId: request.tabId })
+        if (!tab || !request.responseHeaders || tab.site.whitelisted) return
+        if (cookieConfig.isExcluded(request.url)) return
         const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
         if (index !== -1) {
-            const tab = tabManager.get({ tabId: request.tabId });
             if (!utils.isFirstParty(request.url, tab.url)) {
-                request.responseHeaders.splice(index, 1);
+                request.responseHeaders.splice(index, 1)
             }
         }
 
@@ -217,7 +219,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.checkThirdParty) {
-        return res(!utils.isFirstParty(req.frameUrl, sender.tab.url))
+        res(!tab.site.whitelisted && !cookieConfig.isExcluded(req.frameUrl) && !utils.isFirstParty(req.frameUrl, sender.tab.url))
+        return true
     }
 })
 
@@ -419,6 +422,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         settings.ready()
             .then(() => {
                 agents.updateAgentData()
+                cookieConfig.updateCookieData()
             }).catch(e => console.log(e))
     } else if (alarmEvent.name === 'rotateUserAgent') {
         agentSpoofer.needsRotation = true
@@ -456,6 +460,7 @@ let onStartup = () => {
         Companies.buildFromStorage()
 
         agents.updateAgentData()
+        cookieConfig.updateCookieData()
     })
 }
 
