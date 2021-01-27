@@ -30,7 +30,7 @@ class ExcludedCookieStorage {
             const etag = settings.getSetting(`${listName}-etag`) || ''
             load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source, timeout: 60000})
                 .then(response => {
-                    if (response && response.status === 200 || response,status === 304) {
+                    if (response && response.status === 200 || response.status === 304) {
                         // New cookie data to process.
                         const data = JSON.parse(response.response)
                         this.processList(listName, data)
@@ -41,7 +41,7 @@ class ExcludedCookieStorage {
                 .catch(e => {
                     // Reset the etag
                     settings.updateSetting(`${listName}-etag`, '')
-                    console.log(`Error updating agent data:  ${e}. Attempting to load from local storage.`)
+                    console.log(`Error updating cookie data:  ${e}. Attempting to load from local storage.`)
                 })
         }
     }

@@ -219,6 +219,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.checkThirdParty) {
+        const tab = tabManager.get({ tabId: req.getSiteGrade })
         res(!tab.site.whitelisted && !cookieConfig.isExcluded(req.frameUrl) && !utils.isFirstParty(req.frameUrl, sender.tab.url))
         return true
     }

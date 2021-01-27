@@ -120,7 +120,7 @@ module.exports = {
     "CookieLists": [
         {
             "name": "cookieExcludeList",
-            "url": "http://ddg-staticcdn.s3.amazonaws.com/useragents/cookie_configuration.json",
+            "url": "https://staticcdn.duckduckgo.com/useragents/cookie_configuration.json",
             "format": "json",
             "source": "external"
         }
