@@ -97,6 +97,12 @@ module.exports = {
             "source": "external"
         },
         {
+            "name": "brokenCanvasSiteList",
+            "url": "/data/broken-canvas-sites.txt",
+            "format": "text",
+            "source": "local"
+        },
+        {
             "name": "ReferrerExcludeList",
             "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
             "format": "json",

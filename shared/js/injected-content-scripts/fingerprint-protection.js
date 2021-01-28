@@ -205,6 +205,11 @@
      * Trigger the built code in args.contentScopeScript.
      */
     function buildInit () {
+        if (args.site.isCanvasBroken) {
+          console.log('temporarily skip fingerprint protection for site: ' + args.site.url +
+            'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+          return;
+        }
         // TODO once we have a deterministic build of args.contentScopeScript
         // the index.js should be responsible for calling all the other code
         return `initCanvasProtection(${JSON.stringify(args.sessionKey)})`

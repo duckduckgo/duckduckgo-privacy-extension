@@ -250,6 +250,7 @@ async function init () {
                     ua: agentSpoofer.getAgent(),
                     sessionKey,
                     contentScopeScript,
+                    site: tab.site,
                     referrer: tab.referrer
                 }
                 const variableScript = {

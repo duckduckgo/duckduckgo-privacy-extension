@@ -13,6 +13,7 @@ class TDSStorage {
         this.tds = {entities: {}, trackers: {}, domains: {}, cnames: {}}
         this.surrogates = ''
         this.brokenSiteList = []
+        this.brokenCanvasSiteList = []
     }
 
     getLists () {
@@ -108,6 +109,9 @@ class TDSStorage {
 
     parsedata (name, data) {
         const parsers = {
+            'brokenCanvasSiteList': data => {
+                return data.split('\n')
+            },
             'brokenSiteList': data => {
                 return data.split('\n')
             }

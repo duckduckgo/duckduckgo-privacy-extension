@@ -28,6 +28,7 @@ class Site {
         this.setWhitelistStatusFromGlobal(domain)
 
         this.isBroken = utils.isBroken(domain) // broken sites reported to github repo
+        this.isCanvasBroken = utils.isCanvasBroken(domain) // canvas issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)

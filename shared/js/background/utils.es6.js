@@ -150,13 +150,21 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage || !tdsStorage.brokenSiteList) return
+  return isBrokenList(url, 'brokenSiteList');
+}
+
+function isCanvasBroken (url) {
+  return isBrokenList(url, 'brokenCanvasSiteList');
+}
+
+function isBrokenList (url, listName) {
+    if (!tdsStorage || !tdsStorage[listName]) return
 
     const parsedDomain = tldts.parse(url)
     let hostname = parsedDomain.hostname || url
 
     // If root domain in temp whitelist, return true
-    return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+    return tdsStorage[listName].some((brokenSiteDomain) => {
         if (brokenSiteDomain) {
             return hostname.match(new RegExp(brokenSiteDomain + '$'))
         }
@@ -186,17 +194,18 @@ function isSafeListed (url) {
 }
 
 module.exports = {
-    extractHostFromURL: extractHostFromURL,
-    extractTopSubdomainFromHost: extractTopSubdomainFromHost,
-    getCurrentURL: getCurrentURL,
-    getCurrentTab: getCurrentTab,
-    getBrowserName: getBrowserName,
-    getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    getAsyncBlockingSupport: getAsyncBlockingSupport,
-    findParent: findParent,
-    getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
-    isSafeListed: isSafeListed,
-    extractLimitedDomainFromURL: extractLimitedDomainFromURL,
-    isBroken: isBroken
+    extractHostFromURL,
+    extractTopSubdomainFromHost,
+    getCurrentURL,
+    getCurrentTab,
+    getBrowserName,
+    getUpgradeToSecureSupport,
+    getAsyncBlockingSupport,
+    findParent,
+    getBeaconName,
+    getUpdatedRequestListenerTypes,
+    isSafeListed,
+    extractLimitedDomainFromURL,
+    isBroken,
+    isCanvasBroken,
 }
