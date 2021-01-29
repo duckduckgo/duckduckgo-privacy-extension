@@ -222,7 +222,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 const agents = require('./storage/agents.es6')
 const agentSpoofer = require('./classes/agentspoofer.es6')
 // TODO fix for manifest v3
-const sessionKey = getHash()
+let sessionKey = getHash()
 
 async function getContentScope () {
     const url = chrome.runtime.getURL('/public/js/content-scope.js')
@@ -409,6 +409,8 @@ chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 chrome.alarms.create('updateUserAgentData', { periodInMinutes: 30 })
 // Rotate the user agent spoofed
 chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
+// Rotate the sessionKey
+chrome.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
@@ -437,6 +439,9 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'rotateUserAgent') {
         agentSpoofer.needsRotation = true
         agentSpoofer.rotateAgent()
+    } else if (alarmEvent.name === 'rotateSessionKey') {
+        // TODO fix for manifest v3
+        sessionKey = getHash();
     }
 })
 
