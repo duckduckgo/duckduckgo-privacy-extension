@@ -150,11 +150,11 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-  return isBrokenList(url, 'brokenSiteList');
+    return isBrokenList(url, 'brokenSiteList')
 }
 
 function isCanvasBroken (url) {
-  return isBrokenList(url, 'brokenCanvasSiteList');
+    return isBrokenList(url, 'brokenCanvasSiteList')
 }
 
 function isBrokenList (url, listName) {
@@ -169,6 +169,14 @@ function isBrokenList (url, listName) {
             return hostname.match(new RegExp(brokenSiteDomain + '$'))
         }
     })
+}
+
+// We inject this into content scripts
+function getBrokenCanvasScriptList () {
+    if (!tdsStorage || !tdsStorage['brokenCanvasScriptList']) {
+        return []
+    }
+    return tdsStorage.brokenCanvasScriptList
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
@@ -208,4 +216,5 @@ module.exports = {
     extractLimitedDomainFromURL,
     isBroken,
     isCanvasBroken,
+    getBrokenCanvasScriptList
 }

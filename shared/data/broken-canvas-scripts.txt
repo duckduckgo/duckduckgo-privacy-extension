@@ -1,0 +1,1 @@
+coveryourtracks[.]eff[.]org[/]static[/]dist[/]fp2([.][a-zA-Z0-9]+)?[.]js

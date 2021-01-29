@@ -10,29 +10,65 @@ function nextRandom (v) {
     return Math.abs((v >> 1) | (((v << 62) ^ (v << 61)) & (~(~0 << 63) << 62)))
 }
 
+let exemptionList = []
+
+function shouldExemptUrl (url) {
+    for (let regex of exemptionList) {
+        if (regex.test(url)) {
+            return true
+        }
+    }
+    return false
+}
+
+function initExemptionList (stringExemptionList) {
+    for (let stringExemption of stringExemptionList) {
+        exemptionList.push(new RegExp(stringExemption))
+    }
+}
+
+// Checks the stack trace if there are known libraries that are broken.
+function shouldExemptMethod () {
+    let errorLines = new Error().stack.split('\n')
+    let errorFiles = new Set()
+    // Should cater for Chrome and Firefox stacks, we only care about https? resources.
+    let lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
+    for (let line of errorLines) {
+        // console.log("line", line, line.match(lineTest));
+        let res = line.match(lineTest)
+        if (res) {
+            let path = res[2]
+            // checked already
+            if (errorFiles.has(path)) {
+                continue
+            }
+            if (shouldExemptUrl(path)) {
+                console.log('Exempting script path:', path)
+                return true
+            }
+            errorFiles.add(res[2])
+        }
+    }
+    return false
+}
+
 // eslint-disable-next-line no-unused-vars
-function initCanvasProtection (sessionKey) {
+function initCanvasProtection (args) {
+    let {sessionKey, stringExemptionList} = args
+    initExemptionList(stringExemptionList)
     const domainKey = window.top.location.origin
     const _getImageData = CanvasRenderingContext2D.prototype.getImageData
     function getImageData () {
+        if (shouldExemptMethod()) {
+            return _getImageData.apply(this, arguments)
+        }
         let imageData = _getImageData.apply(this, arguments)
         let canvasKey = getCanvasKeySync(sessionKey, domainKey, imageData)
-
-        console.log({imageData, width: this.width, sessionKey, domainKey, canvasKey})
-
         let pixel = canvasKey[0]
         for (let i in canvasKey) {
-            console.log({i, pixel})
             let byte = canvasKey[i]
             for (let j = 8; j >= 0; j--) {
                 let pixelCanvasIndex = pixel % imageData.data.length
-
-                console.log('pixel modification', {
-                    bit: byte & 0x1,
-                    pixelCanvasIndex,
-                    id: imageData.data[pixelCanvasIndex],
-                    idm: imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
-                })
 
                 imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
                 // find next pixel to perturb
@@ -53,6 +89,9 @@ function initCanvasProtection (sessionKey) {
     for (let methodName of canvasMethods) {
         let _method = HTMLCanvasElement.prototype[methodName]
         let method = function method () {
+            if (shouldExemptMethod()) {
+                return _method.apply(this, arguments)
+            }
             let ctx = this.getContext('2d')
             let imageData = ctx.getImageData(0, 0, this.width, this.height)
 

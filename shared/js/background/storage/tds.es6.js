@@ -109,11 +109,14 @@ class TDSStorage {
 
     parsedata (name, data) {
         const parsers = {
+            'brokenCanvasScriptList': data => {
+                return data.trim().split('\n')
+            },
             'brokenCanvasSiteList': data => {
-                return data.split('\n')
+                return data.trim().split('\n')
             },
             'brokenSiteList': data => {
-                return data.split('\n')
+                return data.trim().split('\n')
             }
         }
 
