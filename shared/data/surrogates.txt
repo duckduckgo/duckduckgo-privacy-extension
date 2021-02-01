@@ -228,6 +228,7 @@ googletagmanager.com/gtm.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}
+    console.log('Hanging out in GA surrogate!')
     const datalayer = window.dataLayer
     window.ga = (window.ga === void 0) ? noop : window.ga
     if (datalayer) {
@@ -358,4 +359,31 @@ chartbeat.com/chartbeat.js application/javascript
     const noopProxy = new Proxy({}, noopHandler)
     window.pSUPERFLY = noopProxy
     window.pSUPERFLY_mab = noopProxy
+})()
+
+facebook.net/sdk.js application/javascript
+(() => {
+    'use strict'
+    const noop = () => {}
+    const noopHandler = {
+        get: () => {
+            return noop
+        }
+    }
+    const noopProxy = new Proxy({}, noopHandler)
+    window.FB = {}
+    window.FB.init = function(obj) {}
+    window.FB.ui = function(obj,cb){cb({})}
+    window.FB.login = function(cb) {
+        console.log('login called')
+        window.postMessage({
+            source: "fb-surrogate",
+            payload: {
+                'login': true
+            }
+        }, "*")
+    }
+    if window.fbAsyncInit {
+        window.fbAsyncInit()
+    }
 })()

@@ -1,5 +1,6 @@
 const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
+const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
@@ -83,6 +84,32 @@ function handleRequest (requestData) {
         // skip blocking on new tab and extension pages
         if (thisTab.site.specialDomainName) {
             return
+        }
+
+        /**
+         * Click to Load Blocking
+         * If it isn't in the tracker list, check the clickToLoad block list
+         */
+        const socialTracker = trackerutils.getSocialTracker(requestData.url)
+        if (socialTracker) {
+            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
+                !thisTab.site.whitelisted &&
+                !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
+                !trackerutils.socialTrackerIsAllowed(socialTracker.entity, thisTab.site.domain)) {
+                if (socialTracker.redirectUrl) {
+                    console.log(`redirecting ${requestData.url} to ${JSON.stringify(socialTracker.redirectUrl)}`)
+                    requestData.message = {redirectUrl: socialTracker.redirectUrl}
+                    return {redirectUrl: socialTracker.redirectUrl}
+                }
+                // TODO: Add to tracker dashboard as blocked - may require updates to that whole logic
+                //  since these sites may or may not be in the TDS list.
+                //console.info('blocked social tracker on ' + utils.extractHostFromURL(thisTab.url) +
+                //                 ' [' + socialTracker.entity + '] ' + requestData.url)
+                return {cancel: true}
+            } else {
+                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
+                return
+            }
         }
 
         /**

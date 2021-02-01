@@ -27,6 +27,8 @@ function returnResponse (xhr, returnType) {
         return res
     } else if (returnType === 'xml') {
         return xhr.responseXML
+    } else if (returnType === 'arraybuffer') {
+        return xhr.response
     } else {
         return xhr.responseText
     }
@@ -63,6 +65,10 @@ function loadExtensionFile (params) {
         // don't set a 200 status so we'll check this type
         xhr.type = 'internal'
         xhr.open('GET', browserWrapper.getExtensionURL(url))
+    }
+
+    if (params.responseType) {
+        xhr.responseType = params.responseType
     }
 
     xhr.timeout = params.timeout || 30000

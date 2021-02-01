@@ -3,6 +3,7 @@ const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
+const settings = require('./settings.es6')
 
 // Determine if two URL's belong to the same entity.
 function isSameEntity (url1, url2) {
@@ -28,6 +29,43 @@ function isTracker (url) {
     }
     const tracker = trackers.findTracker(data)
     return !!tracker
+}
+
+// Return true if URL is in our click to load tracker list
+function getSocialTracker (url) {
+    const domain = tldts.parse(url).domain
+    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (data.domains.includes(domain)) {
+            let redirect
+            if (data.surrogates) {
+                for (const surrogate of data.surrogates) {
+                    if (url.match(surrogate.rule)) {
+                        const dataURL = trackers.surrogateList[surrogate.surrogate]
+                        redirect = dataURL
+                    }
+                }
+            }
+            return {
+                entity: entity,
+                data: data,
+                redirectUrl: redirect
+            }
+        }
+    }
+}
+
+/**
+ * Return true if the user has permanently saved the domain/tracker combination
+ */
+function socialTrackerIsAllowed (trackerEntity, domain) {
+    let allowList = settings.getSetting('clickToLoad')
+    if (allowList) {
+        allowList = allowList.filter(e => e.domain === domain && e.tracker === trackerEntity)
+        if (allowList.length > 0) {
+            return true
+        }
+    }
+    return false
 }
 
 /*
@@ -82,5 +120,7 @@ function truncateReferrer (referrer, target) {
 module.exports = {
     isSameEntity: isSameEntity,
     isTracker: isTracker,
-    truncateReferrer: truncateReferrer
+    truncateReferrer: truncateReferrer,
+    getSocialTracker: getSocialTracker,
+    socialTrackerIsAllowed: socialTrackerIsAllowed
 }

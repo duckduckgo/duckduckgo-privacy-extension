@@ -137,6 +137,46 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    // Click to load interactions
+    if (req.initClickToLoad) {
+        const tab = tabManager.get({ tabId: sender.tab.id })
+        const config = {...tdsStorage.ClickToLoadConfig}
+        let allowList = settings.getSetting('clickToLoad')
+        if (allowList) {
+            allowList = allowList.filter(e => e.domain === tab.site.domain)
+            allowList.forEach(e => delete config[e.tracker])
+        }
+        res(config)
+        return true
+    }
+
+    if (req.getButtonImage) {
+        utils.imgToData('img/social/dax.png').then(img => res(img))
+        return true
+    }
+
+    if (req.enableSocialTracker) {
+        const tab = tabManager.get({ tabId: sender.tab.id })
+        if (req.alwaysAllow) {
+            settings.ready().then(() => {
+                let allowList = settings.getSetting('clickToLoad')
+                const value = {
+                    tracker: req.enableSocialTracker,
+                    domain: tab.site.domain
+                }
+                if (allowList) {
+                    if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
+                        allowList.push(value)
+                    }
+                } else {
+                    allowList = [value]
+                }
+                settings.updateSetting('clickToLoad', allowList)
+            })
+        }
+        tab.site.clickToLoad.push(req.enableSocialTracker)
+    }
+
     if (req.updateSetting) {
         let name = req.updateSetting['name']
         let value = req.updateSetting['value']
@@ -352,6 +392,28 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     {urls: ['<all_urls>']},
     ['blocking', 'requestHeaders']
 )
+
+/**
+ * Click to Load
+ */
+
+// Inject our content script to overwite FB elements
+chrome.webNavigation.onCommitted.addListener(details => {
+    let tab = tabManager.get({ tabId: details.tabId })
+    if (tab && tab.site.isBroken) {
+        console.log('temporarily skip embedded object replacements for site: ' + details.url +
+          'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+        return
+    }
+    if (tab && !tab.site.whitelisted) {
+        chrome.tabs.executeScript(details.tabId, {
+            file: `public/js/content-scripts/click-to-load.js`,
+            matchAboutBlank: true,
+            frameId: details.frameId,
+            runAt: 'document_start'
+        })
+    }
+})
 
 /**
  * ALARMS
