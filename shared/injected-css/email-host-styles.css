@@ -21,7 +21,7 @@
 
 input[data-ddg-autofill] {
     /* This url is changed for Firefox at build time */
-    background-image: url('chrome-extension://__MSG_@@extension_id__/public/../img/ddg-logo-borderless.svg') !important;
+    background-image: url('chrome-extension://__MSG_@@extension_id__/public/../img/logo-small.svg') !important;
     background-size: auto 24px !important;
     background-position: center right 2px !important;
     background-repeat: no-repeat !important;
