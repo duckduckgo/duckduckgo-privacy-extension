@@ -98,15 +98,15 @@ module.exports = {
         },
         {
             "name": "brokenCanvasSiteList",
-            "url": "https://duckduckgo.com/contentblocking/broken-canvas-sites.txt",
+            "url": "/data/broken-canvas-sites.txt",
             "format": "text",
-            "source": "external"
+            "source": "local"
         },
         {
             "name": "brokenCanvasScriptList",
-            "url": "https://duckduckgo.com/contentblocking/broken-canvas-scripts.txt",
+            "url": "/data/broken-canvas-scripts.txt",
             "format": "text",
-            "source": "external"
+            "source": "local"
         },
         {
             "name": "ReferrerExcludeList",
