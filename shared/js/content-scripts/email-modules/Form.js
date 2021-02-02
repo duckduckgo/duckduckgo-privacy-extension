@@ -1,14 +1,16 @@
 const FormAnalyzer = require('./FormAnalyzer')
 const {addInlineStyles, removeInlineStyles} = require('./autofill-utils')
 const {daxBase64} = require('./logo-svg')
-const {setValue, isEventWithinDax} = require('./autofill-utils')
+const {isDDGApp, setValue, isEventWithinDax} = require('./autofill-utils')
+
+const getDaxImg = isDDGApp ? daxBase64 : chrome.runtime.getURL('img/logo-small.svg')
 
 const INLINE_DAX_STYLES = {
     'background-size': 'auto 24px',
     'background-position': 'center right',
     'background-repeat': 'no-repeat',
     'background-origin': 'content-box',
-    'background-image': `url('data:image/svg+xml;base64,${daxBase64}')`
+    'background-image': `url(${getDaxImg})`
 }
 
 const INLINE_AUTOFILLED_STYLES = {
