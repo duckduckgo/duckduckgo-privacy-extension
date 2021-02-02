@@ -206,7 +206,7 @@
      */
     function buildInit () {
         if (args.site.isCanvasBroken) {
-            console.log('temporarily skip fingerprint protection for site: ' + args.site.url +
+            console.log('temporarily skip canvas fingerprint protection for site: ' + args.site.url +
             'more info: https://github.com/duckduckgo/content-blocking-whitelist')
             return
         }
