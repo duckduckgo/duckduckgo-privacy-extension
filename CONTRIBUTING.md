@@ -68,6 +68,7 @@ After running the build task it will continue watching for changes to any of the
 - Unit tests: `npm test`
 - Integration Tests
   - Local, requires Chrome: `npm run test-int`
+    - You can filter to one test with: `KEEP_OPEN=1 npm run test-int -- -f integration-test/background/test-fp-fingerprint.js`
   - Headless, requires xvfb: `npm run test-ci`
 
 ### Selenium Testing (ratings.js)

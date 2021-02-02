@@ -73,73 +73,7 @@ describe('First Party Fingerprint Randomization', () => {
             const iframe = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
             const fingerprint2 = await getFingerprintOfContext(iframe)
 
-            expect(fingerprint.components.plugins.value).toEqual(fingerprint2.components.plugins.value)
-            expect(fingerprint.components.canvas.value.data).toEqual(fingerprint2.components.canvas.value.data)
+            expect(fingerprint.components.canvas.value).toEqual(fingerprint2.components.canvas.value)
         })
-    })
-})
-
-describe('Plugin API', () => {
-    beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
-        server = setupServer({}, 8080)
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 6000 }
-        )
-    })
-    afterAll(async () => {
-        await server.close()
-        await harness.teardown(browser)
-    })
-
-    it('Checking API works', async () => {
-        const page = await browser.newPage()
-        // Load an page with an iframe from a different hostname
-        await page.goto(`http://127.0.0.1:8080/index.html?host=`, { waitUntil: 'networkidle0' })
-        // Get raw data from the API
-        expect(await page.evaluate(() => {
-            return navigator.plugins.toString()
-        })).toEqual('[object PluginArray]')
-
-        const plugins = await page.evaluate(() => {
-            return navigator.plugins
-        })
-        for (let i = 0; i < plugins.length; i++) {
-            let plugin = plugins[i]
-
-            expect(await page.evaluate((i) => {
-                return navigator.plugins[i].toString()
-            }, i)).toEqual('[object Plugin]')
-
-            // Check Plugin fields
-            const pluginTest = await page.evaluate((i) => {
-                let plugin = navigator.plugins[i]
-                return {
-                    name: plugin.name,
-                    description: plugin.description,
-                    filename: plugin.filename
-                }
-            }, i)
-            expect(pluginTest.description).toEqual(plugin.description)
-            expect(pluginTest.name).toEqual(plugin.name)
-            expect(pluginTest.filename).toEqual(plugin.filename)
-
-            // Check each mime type
-            for (let j = 0; j < plugin.length; j++) {
-                expect(await page.evaluate((i, j) => {
-                    const plugin = navigator.plugins[i]
-                    return plugin.item(j) === plugin[j]
-                }, i, j)).toEqual(true)
-            }
-            // Correct return for out of range item() call
-            expect(await page.evaluate((i) => {
-                const plugin = navigator.plugins[i]
-                return plugin.item(plugin.length)
-            }, i)).toEqual(null)
-        }
-        await page.close()
     })
 })

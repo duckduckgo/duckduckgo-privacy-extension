@@ -54,9 +54,9 @@ function shouldExemptMethod () {
 
 // eslint-disable-next-line no-unused-vars
 function initCanvasProtection (args) {
-    let {sessionKey, stringExemptionList} = args
+    let {sessionKey, stringExemptionList, site } = args
     initExemptionList(stringExemptionList)
-    const domainKey = window.top.location.origin
+    const domainKey = site.domain;
     const _getImageData = CanvasRenderingContext2D.prototype.getImageData
     function getImageData () {
         if (shouldExemptMethod()) {
