@@ -51,7 +51,7 @@ const sites = [
         name: 'IGN.com signup',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitFor', arg: 1500},
+            {action: 'waitForTimeout', arg: 1500},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'},
             {action: 'click', arg: '#email-label > .supplemental > button'}
         ],
@@ -61,7 +61,7 @@ const sites = [
         name: 'IGN.com login',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitFor', arg: 1500},
+            {action: 'waitForTimeout', arg: 1500},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'}
         ],
         autofillExpected: 0
@@ -87,7 +87,7 @@ const sites = [
         actions: [
             {action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true},
             {action: 'click', arg: '.js-submit.option.institution'},
-            {action: 'waitFor', arg: 1000},
+            {action: 'waitForTimeout', arg: 1000},
             {action: 'click', arg: '.js-skip-step'}
         ],
         autofillExpected: 1
