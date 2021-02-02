@@ -4,16 +4,16 @@ const {daxBase64} = require('./logo-svg')
 const {setValue, isEventWithinDax} = require('./autofill-utils')
 
 const INLINE_DAX_STYLES = {
-    'background-size': {jsName: 'backgroundSize', val: 'auto 24px'},
-    'background-position': {jsName: 'backgroundPosition', val: 'center right'},
-    'background-repeat': {jsName: 'backgroundRepeat', val: 'no-repeat'},
-    'background-origin': {jsName: 'backgroundOrigin', val: 'content-box'},
-    'background-image': {jsName: 'backgroundImage', val: `url('data:image/svg+xml;base64,${daxBase64}')`}
+    'background-size': 'auto 24px',
+    'background-position': 'center right',
+    'background-repeat': 'no-repeat',
+    'background-origin': 'content-box',
+    'background-image': `url('data:image/svg+xml;base64,${daxBase64}')`
 }
 
 const INLINE_AUTOFILLED_STYLES = {
-    'background-color': {jsName: 'backgroundColor', val: '#F8F498'},
-    'color': {jsName: 'color', val: '#333333'}
+    'background-color': '#F8F498',
+    'color': '#333333'
 }
 
 class Form {
@@ -101,9 +101,9 @@ class Form {
         addInlineStyles(input, INLINE_DAX_STYLES)
         this.addListener(input, 'mousemove', (e) => {
             if (isEventWithinDax(e, e.target)) {
-                e.target.style.cursor = 'pointer'
+                e.target.style.setProperty('cursor', 'pointer', 'important')
             } else {
-                e.target.style.cursor = 'auto'
+                e.target.style.removeProperty('cursor')
             }
         })
         this.addListener(input, 'mousedown', (e) => {

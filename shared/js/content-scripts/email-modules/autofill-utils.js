@@ -94,11 +94,11 @@ const isEventWithinDax = (e, input) => {
     return withinX && withinY
 }
 
-const addInlineStyles = (el, styles) => Object.values(styles)
-    .forEach(({jsName, val}) => (el.style[jsName] = val))
+const addInlineStyles = (el, styles) => Object.entries(styles)
+    .forEach(([property, val]) => el.style.setProperty(property, val, 'important'))
 
 const removeInlineStyles = (el, styles) => Object.keys(styles)
-    .forEach(prop => el.style.removeProperty(prop))
+    .forEach(property => el.style.removeProperty(property))
 
 module.exports = {
     isDDGApp,
