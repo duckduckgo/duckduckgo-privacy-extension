@@ -1,8 +1,6 @@
 const DDGAutofill = require('./DDGAutofill')
-const {isDDGDomain, sendAndWaitForAnswer} = require('./autofill-utils')
+const {isDDGApp, isAndroid, isDDGDomain, sendAndWaitForAnswer, setValue} = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
-const {setValue} = require('./autofill-utils')
-const {isDDGApp} = require('./autofill-utils')
 
 const SIGN_IN_MSG = {
     signMeIn: true,
@@ -135,7 +133,7 @@ const iOSInterface = {
     }
 }
 
-const DeviceInterface = !isDDGApp() ? ExtensionInterface
-    : window.webkit ? iOSInterface : AndroidInterface
+const DeviceInterface = !isDDGApp ? ExtensionInterface
+    : isAndroid ? AndroidInterface : iOSInterface
 
 module.exports = DeviceInterface
