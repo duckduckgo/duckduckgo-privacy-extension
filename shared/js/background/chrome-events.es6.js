@@ -441,7 +441,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         agentSpoofer.rotateAgent()
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
-        sessionKey = getHash();
+        sessionKey = getHash()
     }
 })
 
