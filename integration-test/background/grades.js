@@ -3,9 +3,9 @@ const harness = require('../helpers/harness')
 
 const tests = [
     { url: 'duckduckgo.com', siteGrade: 'A', enhancedGrade: 'A' },
-    { url: 'theguardian.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B+' },
+    { url: 'www.independent.co.uk', siteGrade: 'D', enhancedGrade: 'B+' },
     { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' },
-    { url: 'reddit.com', siteGrade: ['D'], enhancedGrade: 'B' },
+    { url: 'reddit.com', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
     { url: 'facebook.com', siteGrade: ['D', 'C+'], enhancedGrade: 'C+' },
     { url: 'twitter.com', siteGrade: 'C', enhancedGrade: 'B' },
     { url: 'en.wikipedia.org', siteGrade: 'B+', enhancedGrade: 'B+' }
@@ -50,11 +50,13 @@ describe('grade sanity checks', () => {
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
             () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 60000 }
+            { polling: 100, timeout: 20000 }
         )
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        try {
+            await harness.teardown(browser)
+        } catch (e) {}
     })
 
     tests.forEach(test => {
@@ -65,18 +67,20 @@ describe('grade sanity checks', () => {
 
             try {
                 await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
+                // give it another second just to be sure
+                await page.waitForTimeout(1000)
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
+                console.log(`Timed out: ${e}`)
             }
-            // give it another second just to be sure
-            await page.waitFor(1000)
 
             const grades = await bgPage.evaluate(getGradeByUrl, test.url)
-
             checkGrade(grades.site.grade, test.siteGrade)
             checkGrade(grades.enhanced.grade, test.enhancedGrade)
 
-            await page.close()
+            try {
+                await page.close()
+            } catch (e) {}
         })
     })
 })

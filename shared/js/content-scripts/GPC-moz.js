@@ -12,7 +12,7 @@
     } else {
         // If GPC off, set DOM property prototype to false so it may be overwritten
         // with a true value by user agent or other extensions
-        if (typeof wrappedNavigator.globalPrivacyControl !== "undefined") return
+        if (typeof wrappedNavigator.globalPrivacyControl !== 'undefined') return
         Object.defineProperty(Object.getPrototypeOf(wrappedNavigator), 'globalPrivacyControl', {
             value: false,
             enumerable: true
