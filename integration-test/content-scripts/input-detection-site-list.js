@@ -256,7 +256,7 @@ const sites = [
     {
         name: 'BlazeTV newsletter',
         url: 'https://www.theblaze.com/',
-        autofillExpected: 2
+        autofillExpected: 1
     },
     {
         name: 'Sur.ly signup',
