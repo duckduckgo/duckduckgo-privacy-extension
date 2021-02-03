@@ -4,7 +4,6 @@ import 'regenerator-runtime/runtime'
 const load = require('./../load.es6')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
-const tldts = require('tldts')
 
 /**
  *  Manage local cookie exclusion data.
@@ -54,13 +53,14 @@ class ExcludedCookieStorage {
     }
 
     async processExcludeList (data) {
+        this.excludedDomains = []
         for (const record of data.excludedDomains) {
             this.excludedDomains.push(record.domain)
         }
     }
 
     isExcluded (url) {
-        const domain = tldts.parse(url).domain
+        const domain = (new URL(url)).host
         return this.excludedDomains.find(elem => elem === domain)
     }
 }

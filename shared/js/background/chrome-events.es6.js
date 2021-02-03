@@ -61,10 +61,10 @@ chrome.webRequest.onHeadersReceived.addListener(
         // Strip 3rd party response header
         const tab = tabManager.get({ tabId: request.tabId })
         if (!tab || !request.responseHeaders || tab.site.whitelisted) return
-        if (cookieConfig.isExcluded(request.url)) return
+        if (utils.isFirstParty(request.url, tab.url)) return
         const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
         if (index !== -1) {
-            if (!utils.isFirstParty(request.url, tab.url)) {
+            if (!cookieConfig.isExcluded(request.url)) {
                 request.responseHeaders.splice(index, 1)
             }
         }
