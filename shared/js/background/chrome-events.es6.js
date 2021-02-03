@@ -399,7 +399,7 @@ const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
-// tracker lists / whitelists are 30 minutes
+// tracker lists / content blocking lists are 30 minutes
 chrome.alarms.create('updateLists', { periodInMinutes: 30 })
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })

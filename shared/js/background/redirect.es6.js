@@ -76,7 +76,7 @@ function handleRequest (requestData) {
         if (thisTab.site.isBroken) {
             console.log('temporarily skip tracker blocking for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+              'more info: https://github.com/duckduckgo/content-blocking-lists')
             return
         }
 
@@ -167,7 +167,7 @@ function handleRequest (requestData) {
     if (thisTab.site.isBroken) {
         console.log('temporarily skip https upgrades for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+              'more info: https://github.com/duckduckgo/content-blocking-lists')
         return
     }
 

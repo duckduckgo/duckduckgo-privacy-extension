@@ -165,7 +165,7 @@ function isBrokenList (url, lists) {
     const parsedDomain = tldts.parse(url)
     const hostname = parsedDomain.hostname || url
 
-    // If root domain in temp whitelist, return true
+    // If root domain in temp unprotected list, return true
     return lists.some((brokenSiteDomain) => {
         return hostname.match(new RegExp(brokenSiteDomain + '$'))
     })
