@@ -5,7 +5,7 @@ class FormAnalyzer {
         this.signals = []
         this.evaluateElAttributes(input, 3, true)
         form ? this.evaluateForm() : this.evaluatePage()
-        console.log(this, this.autofillSignal, this.signals)
+        console.log(this.autofillSignal, this, this.signals)
         return this
     }
 
@@ -100,6 +100,7 @@ class FormAnalyzer {
         buttons.forEach(button => {
             // if the button has a form, it's not related to our input, because our input has no form here
             if (!button.form && !button.closest('form')) {
+                this.evaluateElement(button)
                 this.evaluateElAttributes(button, 0.5)
             }
         })
