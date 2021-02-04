@@ -69,7 +69,9 @@ describe('Email autofill input detection Tests', () => {
                         })
                 }
             } else {
-                const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 300})
+                await page.waitForSelector('input')
+                    .catch(() => fail(`Couldn't find an input on ${name}. Maybe the page didn't load.`))
+                const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 600})
                     .catch(() => null) // the selector is supposed to fail
                 if (el) {
                     fail(`False positive on ${name}.`)
