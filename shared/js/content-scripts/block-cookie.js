@@ -75,6 +75,7 @@
         'checkThirdParty': true,
         frameUrl: getFrameUrl()
     }, function (action) {
+        console.log(action)
         var scriptString = ''
         if (action.shouldBlock) {
             scriptString = `(${clearInjectedCookiesAndBlock.toString()})()`

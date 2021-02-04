@@ -224,7 +224,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             isThirdParty: false,
             shouldBlock: false
         }
-        const tab = tabManager.get({ tabId: req.getSiteGrade })
+        const tab = tabManager.get({ tabId: sender.tab.id })
         if (tab && tab.site.whitelisted) {
             res(action)
         }
