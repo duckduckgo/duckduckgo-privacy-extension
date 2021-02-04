@@ -74,12 +74,12 @@
     chrome.runtime.sendMessage({
         'checkThirdParty': true,
         frameUrl: getFrameUrl()
-    }, function (isThridParty) {
+    }, function (action) {
         var scriptString = ''
-        if (isThridParty) {
-            scriptString = `(function() { ${clearInjectedCookiesAndBlock.toString()}() })()`
-        } else {
-            scriptString = `(function() { ${enforceCookieExpiry.toString()}() })()`
+        if (action.shouldBlock) {
+            scriptString = `(${clearInjectedCookiesAndBlock.toString()})()`
+        } else if (action.isThirdParty) {
+            scriptString = `(${enforceCookieExpiry.toString()})()`
         }
 
         const scriptElement = document.createElement('script')

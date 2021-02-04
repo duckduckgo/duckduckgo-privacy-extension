@@ -60,8 +60,9 @@ chrome.webRequest.onHeadersReceived.addListener(
 
         // Strip 3rd party response header
         const tab = tabManager.get({ tabId: request.tabId })
-        if (!tab || !request.responseHeaders || tab.site.whitelisted) return
-        if (utils.isFirstParty(request.url, tab.url)) return
+        if (!request.responseHeaders) return
+        if (tab && tab.site.whitelisted) return
+        if (tab && utils.isFirstParty(request.url, tab.url)) return
         const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
         if (index !== -1) {
             if (!cookieConfig.isExcluded(request.url)) {
@@ -219,11 +220,23 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.checkThirdParty) {
+        var action = {
+            isThirdParty: false,
+            shouldBlock: false
+        }
         const tab = tabManager.get({ tabId: req.getSiteGrade })
         if (tab && tab.site.whitelisted) {
-            res(false)
+            res(action)
         }
-        res(!cookieConfig.isExcluded(req.frameUrl) && !utils.isFirstParty(req.frameUrl, sender.tab.url))
+
+        if (!utils.isFirstParty(req.frameUrl, sender.tab.url)) {
+            action.isThirdParty = true
+        }
+        if (!cookieConfig.isExcluded(req.frameUrl)) {
+            action.shouldBlock = true
+        }
+
+        res(action)
         return true
     }
 })
