@@ -482,7 +482,17 @@ const sites = [
         name: '123rf.com login',
         url: 'https://www.123rf.com/login.php',
         autofillExpected: 0
-    }
+    },
+    {
+        name: 'Thermoworks guest checkout',
+        url: 'https://www.thermoworks.com/sca-dev-elbrus/checkout.ssp?is=checkout#login-register',
+        autofillExpected: 2
+    },
+    {
+        name: 'Thermoworks newsletter',
+        url: 'https://www.thermoworks.com/',
+        autofillExpected: 1
+    },
 ]
 
 const focusedSites = []
