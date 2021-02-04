@@ -2,10 +2,10 @@ const {daxSvg} = require('./logo-svg')
 const {getDaxBoundingBox} = require('./autofill-utils')
 const { safeExecute } = require('./autofill-utils')
 
-class DDGAutofill extends HTMLElement {
+class DDGAutofill {
     constructor (input, associatedForm) {
-        super()
-        const shadow = this.attachShadow({mode: 'closed'})
+        const shadow = document.createElement('ddg-autofill').attachShadow({mode: 'closed'})
+        this.host = shadow.host
         this.input = input
         this.associatedForm = associatedForm
         this.animationFrame = null
@@ -56,7 +56,7 @@ class DDGAutofill extends HTMLElement {
             this.left = left
             this.top = top
 
-            if (this.transformRuleIndex) {
+            if (this.transformRuleIndex && shadow.styleSheets[this.transformRuleIndex]) {
                 // If we have already set the rule, remove it…
                 shadow.styleSheets[0].deleteRule(this.transformRuleIndex)
             } else {
@@ -67,15 +67,22 @@ class DDGAutofill extends HTMLElement {
             const newRule = `.wrapper {transform: translate(${left}px, ${top}px);}`
             shadow.styleSheets[0].insertRule(newRule, this.transformRuleIndex)
         }
-    }
 
-    disconnectedCallback () {
-        window.removeEventListener('scroll', this.checkPosition, {passive: true, capture: true})
-        this.resObs.disconnect()
-        this.mutObs.disconnect()
-    }
+        this.append = () => document.body.appendChild(shadow.host)
+        this.append()
+        this.lift = () => {
+            this.left = null
+            this.top = null
+            document.body.removeChild(this.host)
+        }
 
-    connectedCallback () {
+        this.remove = () => {
+            window.removeEventListener('scroll', this.checkPosition, {passive: true, capture: true})
+            this.resObs.disconnect()
+            this.mutObs.disconnect()
+            this.lift()
+        }
+
         this.checkPosition = () => {
             if (this.animationFrame) {
                 window.cancelAnimationFrame(this.animationFrame)
@@ -96,12 +103,13 @@ class DDGAutofill extends HTMLElement {
         this.count = 0
         this.ensureIsLastInDOM = () => {
             // If DDG el is not the last in the doc, move them there
-            if (document.body.lastElementChild !== this) {
-                this.remove()
+            if (document.body.lastElementChild !== this.host) {
+                this.lift()
 
                 // Try up to 5 times to avoid infinite loop in case someone is doing the same
                 if (this.count < 15) {
-                    document.body.append(this)
+                    this.append()
+                    this.checkPosition()
                     this.count++
                 } else {
                     // Reset count so we can resume normal flow
@@ -113,7 +121,7 @@ class DDGAutofill extends HTMLElement {
         this.mutObs = new MutationObserver((mutationList) => {
             for (const mutationRecord of mutationList) {
                 if (mutationRecord.type === 'childList') {
-                    // Only check added nodes added nodes
+                    // Only check added nodes
                     mutationRecord.addedNodes.forEach(el => {
                         if (el.nodeName === 'DDG-AUTOFILL') return
 

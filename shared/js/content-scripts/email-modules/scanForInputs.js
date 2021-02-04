@@ -1,6 +1,5 @@
 const Form = require('./Form')
 const {notifyWebApp} = require('./autofill-utils')
-const DDGAutofill = require('./DDGAutofill')
 
 // Accepts the DeviceInterface as an explicit dependency
 const scanForInputs = (DeviceInterface) => {
@@ -9,10 +8,6 @@ const scanForInputs = (DeviceInterface) => {
         extensionSignedIn: {value: true} // TODO: deprecated, to be removed in a future release
     })
     const forms = new Map()
-
-    if (!customElements.get('ddg-autofill')) {
-        customElements.define('ddg-autofill', DDGAutofill)
-    }
 
     const EMAIL_SELECTOR = `
             input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),

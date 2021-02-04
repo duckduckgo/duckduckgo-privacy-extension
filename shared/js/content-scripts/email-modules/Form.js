@@ -37,10 +37,10 @@ class Form {
         })
 
         this.removeTooltip = (e) => {
-            if (e && (e.target === this.activeInput || e.target === this.tooltip)) {
+            if (e && (e.target === this.activeInput || e.target === this.tooltip.host)) {
                 return
             }
-            document.body.removeChild(this.tooltip)
+            this.tooltip.remove()
             this.tooltip = null
             this.intObs.disconnect()
             window.removeEventListener('mousedown', this.removeTooltip, {capture: true})
@@ -49,7 +49,10 @@ class Form {
             removeInlineStyles(input, INLINE_AUTOFILLED_STYLES)
             input.classList.remove('ddg-autofilled')
         }
-        this.removeAllHighlights = () => {
+        this.removeAllHighlights = (e) => {
+            // This ensures we are not removing the highlight ourselves when autofilling more than once
+            if (e && !e.isTrusted) return
+
             this.execOnInputs(this.removeInputHighlight)
         }
         this.removeInputDecoration = (input) => {

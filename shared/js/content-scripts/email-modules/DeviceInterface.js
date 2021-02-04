@@ -61,7 +61,6 @@ const ExtensionInterface = {
         if (form.tooltip) return
 
         form.tooltip = new DDGAutofill(input, form)
-        document.body.appendChild(form.tooltip)
         form.intObs.observe(input)
         window.addEventListener('mousedown', form.removeTooltip, {capture: true})
     }
