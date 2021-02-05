@@ -45,7 +45,7 @@ const sites = [
         name: 'IGN.com signup',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitForTimeout', arg: 1500},
+            {action: 'waitForTimeout', arg: 200},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'},
             {action: 'click', arg: '#email-label > .supplemental > button'}
         ],
@@ -55,7 +55,7 @@ const sites = [
         name: 'IGN.com login',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitForTimeout', arg: 1500},
+            {action: 'waitForTimeout', arg: 200},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'}
         ],
         autofillExpected: 0
@@ -253,6 +253,7 @@ const sites = [
     {
         name: 'BlazeTV newsletter',
         url: 'https://www.theblaze.com/',
+        actions: [{action: 'evaluate', arg: () => window.scrollBy(0, window.innerHeight)}],
         autofillExpected: 1
     },
     {
@@ -492,6 +493,16 @@ const sites = [
         name: 'Thermoworks newsletter',
         url: 'https://www.thermoworks.com/',
         autofillExpected: 1
+    },
+    {
+        name: 'Wikihow Signup',
+        url: 'https://www.wikihow.com/Special:CreateAccount',
+        autofillExpected: 1
+    },
+    {
+        name: 'Wikihow Login',
+        url: 'https://www.wikihow.com/Special:UserLogin',
+        autofillExpected: 0
     },
 ]
 
