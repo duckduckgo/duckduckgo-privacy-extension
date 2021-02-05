@@ -74,7 +74,7 @@ class FormAnalyzer {
     }
 
     evaluatePageHeadings () {
-        const headings = document.querySelectorAll('h1, h2, h3, [class*="title"]')
+        const headings = document.querySelectorAll('h1, h2, h3, [class*="title"], [id*="title"]')
         if (headings) {
             headings.forEach(({innerText}) => {
                 this.updateSignal({
