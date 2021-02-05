@@ -30,5 +30,13 @@ settings.ready().then(() => {
 
     localStorage['os'] = os
 
+    // Pass auth credentials to email frontend routes
+    chrome.webRequest.onAuthRequired.addListener(() => ({
+        authCredentials: {
+            username: 'dax',
+            password: 'qu4ckqu4ck!'
+        }
+    }), {urls: ['https://quack.duckduckgo.com/*', 'https://quackdev.duckduckgo.com/*']}, ['blocking'])
+
     events.onStartup()
 })
