@@ -5,13 +5,13 @@ const {isDDGApp, setValue, isEventWithinDax} = require('./autofill-utils')
 
 const getDaxImg = isDDGApp ? daxBase64 : chrome.runtime.getURL('img/logo-small.svg')
 
-const INLINE_DAX_STYLES = {
-    'background-size': 'auto 24px',
+const getDaxStyles = input => ({
+    'background-size': `auto ${input.offsetHeight <= 30 ? '100%' : '24px'}`,
     'background-position': 'center right',
     'background-repeat': 'no-repeat',
     'background-origin': 'content-box',
     'background-image': `url(${getDaxImg})`
-}
+})
 
 const INLINE_AUTOFILLED_STYLES = {
     'background-color': '#F8F498',
@@ -56,7 +56,7 @@ class Form {
             this.execOnInputs(this.removeInputHighlight)
         }
         this.removeInputDecoration = (input) => {
-            removeInlineStyles(input, INLINE_DAX_STYLES)
+            removeInlineStyles(input, getDaxStyles(input))
             input.removeAttribute('data-ddg-autofill')
         }
         this.removeAllDecorations = () => {
@@ -103,7 +103,7 @@ class Form {
 
     decorateInput (input) {
         input.setAttribute('data-ddg-autofill', 'true')
-        addInlineStyles(input, INLINE_DAX_STYLES)
+        addInlineStyles(input, getDaxStyles(input))
         this.addListener(input, 'mousemove', (e) => {
             if (isEventWithinDax(e, e.target)) {
                 e.target.style.setProperty('cursor', 'pointer', 'important')
