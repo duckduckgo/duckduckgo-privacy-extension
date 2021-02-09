@@ -229,10 +229,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             res(action)
         }
 
-        if (!utils.isFirstParty(req.frameUrl, sender.tab.url)) {
+        if (!utils.isFirstParty(sender.url, sender.tab.url)) {
             action.isThirdParty = true
         }
-        if (!cookieConfig.isExcluded(req.frameUrl)) {
+        if (!cookieConfig.isExcluded(sender.url)) {
             action.shouldBlock = true
         }
 
