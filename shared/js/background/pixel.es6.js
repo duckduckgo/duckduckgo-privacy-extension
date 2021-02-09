@@ -25,8 +25,14 @@ function fire () {
 
     if (typeof pixelName !== 'string') return
 
-    // Only allow broken site reports
-    if (pixelName !== 'epbf') return
+    // Only send the allowed pixels
+    const pixelAllowList = [
+        'epbf', // broken site reports
+        'emaf', // email autofill impression
+        'emafub', // email autofill confirmation
+        'emnabe' // email address copied to clipboard from popover
+    ]
+    if (!pixelAllowList.includes(pixelName)) return
 
     const url = getURL(pixelName)
 
