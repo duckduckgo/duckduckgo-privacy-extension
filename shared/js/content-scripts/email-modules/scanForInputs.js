@@ -7,6 +7,10 @@ const scanForInputs = (DeviceInterface) => {
         deviceSignedIn: {value: true},
         extensionSignedIn: {value: true} // TODO: deprecated, to be removed in a future release
     })
+
+    // Avoid autofill on our signup page
+    if (window.location.href.match(/^https://(.+)?\.duckduckgo\.com\/email\/signup/i)) return
+
     const forms = new Map()
 
     const EMAIL_SELECTOR = `
