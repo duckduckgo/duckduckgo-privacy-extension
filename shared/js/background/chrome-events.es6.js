@@ -220,7 +220,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.checkThirdParty) {
-        var action = {
+        const action = {
             isThirdParty: false,
             shouldBlock: false
         }
