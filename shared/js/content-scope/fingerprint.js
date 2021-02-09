@@ -42,7 +42,6 @@ function shouldExemptMethod () {
                 continue
             }
             if (shouldExemptUrl(path)) {
-                console.log('Exempting script path:', path)
                 return true
             }
             errorFiles.add(res[2])
