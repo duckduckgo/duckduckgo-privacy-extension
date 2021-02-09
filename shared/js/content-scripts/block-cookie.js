@@ -1,15 +1,13 @@
 // Set up 3rd party cookie blocker
 (function cookieBlocker () {
-
     // don't inject into non-HTML documents (such as XML documents)
     // but do inject into XHTML documents
     if (document instanceof HTMLDocument === false && (
         document instanceof XMLDocument === false ||
         document.createElement('div') instanceof HTMLDivElement === false
     )) {
-        return;
+        return
     }
-  
 
     function clearInjectedCookiesAndBlock () {
         // Clear previously set cookies
