@@ -70,10 +70,6 @@ class DDGAutofill {
 
         this.append = () => document.body.appendChild(shadow.host)
         this.append()
-        this.firePixel = pixel =>
-            chrome.runtime.sendMessage({firePixel: pixel})
-        // Tooltip impression pixel
-        this.firePixel('emaf')
         this.lift = () => {
             this.left = null
             this.top = null
@@ -150,8 +146,6 @@ class DDGAutofill {
 
             safeExecute(this.confirmButton, () => {
                 this.associatedForm.autofill(this.nextAlias)
-                // Autofill confirmation pixel
-                this.firePixel('emafub')
                 chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
                     if (res && res.alias) {
                         this.nextAlias = res.alias

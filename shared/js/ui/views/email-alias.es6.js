@@ -16,8 +16,6 @@ EmailAliasView.prototype = window.$.extend({},
     Parent.prototype,
     {
         _copyAliasToClipboard: function () {
-            // Send addressed copied pixel
-            this.model.fetch({firePixel: 'emnabe'})
             this.model.fetch({getAlias: true}).then(({alias}) => {
                 navigator.clipboard.writeText(alias)
                 this.$el.addClass('show-copied-label')
