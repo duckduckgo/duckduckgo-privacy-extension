@@ -34,7 +34,6 @@ function shouldExemptMethod () {
     // Should cater for Chrome and Firefox stacks, we only care about https? resources.
     let lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
     for (let line of errorLines) {
-        // console.log("line", line, line.match(lineTest));
         let res = line.match(lineTest)
         if (res) {
             let path = res[2]
@@ -57,56 +56,56 @@ function initCanvasProtection (args) {
     let { sessionKey, stringExemptionList, site } = args
     initExemptionList(stringExemptionList)
     const domainKey = site.domain
-    const _getImageData = CanvasRenderingContext2D.prototype.getImageData
-    function getImageData () {
-        if (shouldExemptMethod()) {
-            return _getImageData.apply(this, arguments)
-        }
-        let imageData = _getImageData.apply(this, arguments)
-        let canvasKey = getCanvasKeySync(sessionKey, domainKey, imageData)
-        let pixel = canvasKey[0]
-        for (let i in canvasKey) {
-            let byte = canvasKey[i]
-            for (let j = 8; j >= 0; j--) {
-                let pixelCanvasIndex = pixel % imageData.data.length
 
-                imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
-                // find next pixel to perturb
-                pixel = nextRandom(pixel)
-
-                // Right shift as we use the least significant bit of it
-                byte = byte >> 1
+    // Using proxies here to swallow calls to toString etc
+    const getImageDataProxy = new Proxy(CanvasRenderingContext2D.prototype.getImageData, {
+        apply (target, thisArg, args) {
+            // The normal return value
+            const imageData = target.apply(thisArg, args)
+            if (shouldExemptMethod()) {
+                return imageData
             }
-        }
-        return imageData
-    }
-    Object.defineProperty(CanvasRenderingContext2D.prototype, 'getImageData', {
-        value: getImageData
-    })
+            const canvasKey = getCanvasKeySync(sessionKey, domainKey, imageData)
+            let pixel = canvasKey[0]
+            for (let i in canvasKey) {
+                let byte = canvasKey[i]
+                for (let j = 8; j >= 0; j--) {
+                    let pixelCanvasIndex = pixel % imageData.data.length
 
-    // TODO hide toString
+                    imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
+                    // find next pixel to perturb
+                    pixel = nextRandom(pixel)
+
+                    // Right shift as we use the least significant bit of it
+                    byte = byte >> 1
+                }
+            }
+            return imageData
+        }
+    })
+    CanvasRenderingContext2D.prototype.getImageData = getImageDataProxy
+
     let canvasMethods = ['toDataURL', 'toBlob']
     for (let methodName of canvasMethods) {
-        let _method = HTMLCanvasElement.prototype[methodName]
-        let method = function method () {
-            if (shouldExemptMethod()) {
-                return _method.apply(this, arguments)
+        const methodProxy = new Proxy(HTMLCanvasElement.prototype[methodName], {
+            apply (target, thisArg, args) {
+                if (shouldExemptMethod()) {
+                    return target.apply(thisArg, args)
+                }
+                let ctx = thisArg.getContext('2d')
+                let imageData = ctx.getImageData(0, 0, thisArg.width, thisArg.height)
+
+                // Make a off-screen canvas and put the data there
+                let offScreenCanvas = document.createElement('canvas')
+                offScreenCanvas.width = thisArg.width
+                offScreenCanvas.height = thisArg.height
+                let offScreenCtx = offScreenCanvas.getContext('2d')
+                offScreenCtx.putImageData(imageData, 0, 0)
+
+                // Call the original method on the modified off-screen canvas
+                return target.apply(offScreenCanvas, args)
             }
-            let ctx = this.getContext('2d')
-            let imageData = ctx.getImageData(0, 0, this.width, this.height)
-
-            // Make a off-screen canvas and put the data there
-            let offScreenCanvas = document.createElement('canvas')
-            offScreenCanvas.width = this.width
-            offScreenCanvas.height = this.height
-            let offScreenCtx = offScreenCanvas.getContext('2d')
-            offScreenCtx.putImageData(imageData, 0, 0)
-
-            // Call the original method on the modified off-screen canvas
-            return _method.apply(offScreenCanvas, arguments)
-        }
-        Object.defineProperty(HTMLCanvasElement.prototype, methodName, {
-            get: method
         })
+        HTMLCanvasElement.prototype[methodName] = methodProxy
     }
 }
