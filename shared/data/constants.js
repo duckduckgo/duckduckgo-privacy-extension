@@ -97,15 +97,9 @@ module.exports = {
             "source": "external"
         },
         {
-            "name": "brokenCanvasSiteList",
-            "url": "https://duckduckgo.com/contentblocking/unprotected-canvas-sites.txt",
-            "format": "text",
-            "source": "external"
-        },
-        {
-            "name": "brokenCanvasScriptList",
-            "url": "https://duckduckgo.com/contentblocking/unprotected-canvas-scripts.txt",
-            "format": "text",
+            "name": "fingerprinting",
+            "url": "https://duckduckgo.com/contentblocking/fingerprinting.json",
+            "format": "json",
             "source": "external"
         },
         {

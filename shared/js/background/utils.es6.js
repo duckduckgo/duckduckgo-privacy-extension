@@ -150,33 +150,30 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    return isBrokenList(url, 'brokenSiteList')
+    if (!tdsStorage?.brokenSiteList) return
+    return isBrokenList(url, tdsStorage.brokenSiteList)
 }
 
 function isCanvasBroken (url) {
-    return isBrokenList(url, 'brokenCanvasSiteList')
+    if (!tdsStorage?.fingerprinting?.canvas?.sites) return
+    // If globally disabled return the site is broken
+    if (tdsStorage?.fingerprinting?.canvas?.enabled === false) return true
+    return isBrokenList(url, tdsStorage.fingerprinting.canvas.sites)
 }
 
-function isBrokenList (url, listName) {
-    if (!tdsStorage || !tdsStorage[listName]) return
-
+function isBrokenList (url, lists) {
     const parsedDomain = tldts.parse(url)
     let hostname = parsedDomain.hostname || url
 
     // If root domain in temp whitelist, return true
-    return tdsStorage[listName].some((brokenSiteDomain) => {
-        if (brokenSiteDomain) {
-            return hostname.match(new RegExp(brokenSiteDomain + '$'))
-        }
+    return lists.some((brokenSiteDomain) => {
+        return hostname.match(new RegExp(brokenSiteDomain + '$'))
     })
 }
 
 // We inject this into content scripts
 function getBrokenCanvasScriptList () {
-    if (!tdsStorage || !tdsStorage['brokenCanvasScriptList']) {
-        return []
-    }
-    return tdsStorage.brokenCanvasScriptList
+    return tdsStorage?.fingerprinting?.canvas?.scripts || []
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
