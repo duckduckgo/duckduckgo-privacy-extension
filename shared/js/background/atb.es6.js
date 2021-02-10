@@ -208,7 +208,7 @@ const ATB = (() => {
                         const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                         if (ATB.canShowPostInstall(domain)) {
                             settings.updateSetting('hasSeenPostInstall', true)
-                            let postInstallURL = 'https://quack.duckduckgo.com/email/signup/'
+                            let postInstallURL = 'https://quack.duckduckgo.com/email/signup/?'
                             const atb = settings.getSetting('atb')
                             postInstallURL += atb ? `&atb=${atb}` : ''
                             chrome.tabs.create({
