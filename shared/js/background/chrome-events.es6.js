@@ -36,6 +36,8 @@ const constants = require('../../data/constants')
 const cookieConfig = require('./../background/storage/cookies.es6')
 let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
+const activeExperiment = settings.getSetting('activeExperiment')
+
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 chrome.webRequest.onBeforeRequest.addListener(
@@ -63,15 +65,21 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
-        // Strip 3rd party response header
-        const tab = tabManager.get({ tabId: request.tabId })
-        if (!request.responseHeaders) return
-        if (tab && tab.site.whitelisted) return
-        if (tab && utils.isFirstParty(request.url, tab.url)) return
-        const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
-        if (index !== -1) {
-            if (!cookieConfig.isExcluded(request.url)) {
-                request.responseHeaders.splice(index, 1)
+        if (activeExperiment) {
+            const experiment = settings.getSetting('experimentData')
+
+            if (experiment && experiment.blockingActivated) {
+                // Strip 3rd party response header
+                const tab = tabManager.get({ tabId: request.tabId })
+                if (!request.responseHeaders) return
+                if (tab && tab.site.whitelisted) return
+                if (tab && utils.isFirstParty(request.url, tab.url)) return
+                const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
+                if (index !== -1) {
+                    if (!cookieConfig.isExcluded(request.url)) {
+                        request.responseHeaders.splice(index, 1)
+                    }
+                }
             }
         }
 
@@ -222,25 +230,34 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (req.checkThirdParty) {
-        const action = {
-            isThirdParty: false,
-            shouldBlock: false
-        }
-        const tab = tabManager.get({ tabId: sender.tab.id })
-        if (tab && tab.site.whitelisted) {
-            res(action)
-        }
+    if (activeExperiment) {
+        const experiment = settings.getSetting('experimentData')
 
-        if (!utils.isFirstParty(sender.url, sender.tab.url)) {
-            action.isThirdParty = true
-        }
-        if (!cookieConfig.isExcluded(sender.url)) {
-            action.shouldBlock = true
-        }
+        if (experiment && experiment.blockingActivated) {
+            if (req.checkThirdParty) {
+                const action = {
+                    isThirdParty: false,
+                    shouldBlock: false
+                }
+                const tab = tabManager.get({ tabId: sender.tab.id })
+                if (tab && tab.site.whitelisted) {
+                    res(action)
+                }
 
-        res(action)
-        return true
+                if (!utils.isFirstParty(sender.url, sender.tab.url)) {
+                    action.isThirdParty = true
+                }
+                if (!cookieConfig.isExcluded(sender.url)) {
+                    action.shouldBlock = true
+                }
+
+                res(action)
+                return true
+            }
+        } else {
+            res({ isThirdParty: false, shouldBlock: false })
+            return true
+        }
     }
 })
 
@@ -394,17 +411,24 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             requestHeaders.push(GPCHeader)
         }
 
-        // Strip 3rd party response header
-        const tab = tabManager.get({ tabId: request.tabId })
-        if (!requestHeaders) return
-        if (tab && tab.site.whitelisted) return
-        if (tab && utils.isFirstParty(request.url, tab.url)) return
-        const index = requestHeaders.findIndex(header => { return header.name.toLowerCase() === 'cookie' })
-        if (index !== -1) {
-            if (!cookieConfig.isExcluded(request.url)) {
-                requestHeaders.splice(index, 1)
+        if (activeExperiment) {
+            const experiment = settings.getSetting('experimentData')
+
+            if (experiment && experiment.blockingActivated) {
+                // Strip 3rd party response header
+                const tab = tabManager.get({ tabId: request.tabId })
+                if (!requestHeaders) return
+                if (tab && tab.site.whitelisted) return
+                if (tab && utils.isFirstParty(request.url, tab.url)) return
+                const index = requestHeaders.findIndex(header => { return header.name.toLowerCase() === 'cookie' })
+                if (index !== -1) {
+                    if (!cookieConfig.isExcluded(request.url)) {
+                        requestHeaders.splice(index, 1)
+                    }
+                }
             }
         }
+                    
 
         return {requestHeaders: requestHeaders}
     },

@@ -15,5 +15,20 @@ module.exports = {
                 }
             }
         }
+    },
+    o: {
+        name: '3rd party cookie blocking',
+        description: 'Testing 3rd party cookie blocking',
+        active: true,
+        atbExperiments: {
+            'c': {
+                description: '3rd party experiment group',
+                settings: {
+                    experimentData: {
+                        blockingActivated: true
+                    }
+                }
+            }
+        }
     }
 }
