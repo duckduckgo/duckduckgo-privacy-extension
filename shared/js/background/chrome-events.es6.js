@@ -47,9 +47,9 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['blocking']
 )
 
-const extraInfoSpec = ['blocking', 'responseHeaders'];
+const extraInfoSpec = ['blocking', 'responseHeaders']
 if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-   extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+    extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
 chrome.webRequest.onHeadersReceived.addListener(
     request => {
@@ -380,7 +380,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
     GPC.injectDOMSignal(details.tabId, details.frameId)
 })
 
-const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders'];
+const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
 if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
     extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
 }

@@ -36,10 +36,26 @@
             var comps = value.split(';')
             var expiryFound = false
             for (var i = 0; i < comps.length; i++) {
+                if (comps[i].toLowerCase().contains('session')) {
+                    expiryFound = true
+                    break
+                }
+
                 if (comps[i].trim().startsWith('expires')) {
                     expiryFound = true
                     const dateStr = comps[i].trim().replace('expires=', '').trim()
                     const setDate = new Date(dateStr)
+                    const nextWeekDate = new Date()
+                    nextWeekDate.setTime(nextWeekDate.getTime() + nextWeek)
+                    if (setDate > nextWeekDate) {
+                        comps[i] = 'max-age=' + nextWeek
+                    }
+
+                    break
+                } else if (comps[i].trim().startsWith('max-age')) {
+                    expiryFound = true
+                    const ageStr = comps[i].trim().replace('max-age=', '').trim()
+                    const setDate = Number(ageStr)
                     if (setDate > nextWeek) {
                         comps[i] = 'max-age=' + nextWeek
                     }
