@@ -88,8 +88,12 @@
             scriptString = `(${enforceCookieExpiry.toString()})()`
         }
 
-        const scriptElement = document.createElement('script')
+        var doc = document
+        if (window.wrappedJSObject) {
+            doc = window.wrappedJSObject.document
+        }
+        const scriptElement = doc.createElement('script')
         scriptElement.innerHTML = scriptString
-        document.documentElement.prepend(scriptElement)
+        doc.documentElement.prepend(scriptElement)
     })
 })()

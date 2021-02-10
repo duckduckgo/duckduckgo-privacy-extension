@@ -37,7 +37,6 @@ const cookieConfig = require('./../background/storage/cookies.es6')
 let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 const settings = require('./settings.es6')
-const activeExperiment = settings.getSetting('activeExperiment')
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
@@ -66,6 +65,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
+        const activeExperiment = settings.getSetting('activeExperiment')
         if (activeExperiment) {
             const experiment = settings.getSetting('experimentData')
 
@@ -230,6 +230,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    const activeExperiment = settings.getSetting('activeExperiment')
     if (activeExperiment) {
         const experiment = settings.getSetting('experimentData')
 
@@ -411,6 +412,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             requestHeaders.push(GPCHeader)
         }
 
+        const activeExperiment = settings.getSetting('activeExperiment')
         if (activeExperiment) {
             const experiment = settings.getSetting('experimentData')
 
