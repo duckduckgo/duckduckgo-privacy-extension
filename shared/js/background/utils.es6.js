@@ -190,9 +190,13 @@ function isSafeListed (url) {
  * first party set.
  */
 function isFirstParty (url1, url2) {
-    const first = tldts.parse(url1).domain
-    const second = tldts.parse(url2).domain
-    return first === second
+    const first = tldts.parse(url1)
+    const second = tldts.parse(url2)
+
+    const firstDomain = first.isIp ? first.hostname : first.domain
+    const secondDomain = second.isIp ? second.hostname : second.domain
+
+    return firstDomain === secondDomain
 }
 
 module.exports = {

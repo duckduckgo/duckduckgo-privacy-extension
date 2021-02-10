@@ -21,11 +21,11 @@
                 document.cookie = cookieBase + p.join('/')
                 p.pop()
             };
-            d.shift()
         }
 
         // disable setting cookies
         document.__defineSetter__('cookie', function (value) { })
+        document.__defineGetter__('cookie', () => '')
     }
 
     function enforceCookieExpiry () {
@@ -65,7 +65,6 @@
     chrome.runtime.sendMessage({
         'checkThirdParty': true
     }, function (action) {
-        console.log(action)
         var scriptString = ''
         if (action.shouldBlock) {
             scriptString = `(${clearInjectedCookiesAndBlock.toString()})()`

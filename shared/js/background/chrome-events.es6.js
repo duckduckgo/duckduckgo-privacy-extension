@@ -47,8 +47,13 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['blocking']
 )
 
+const extraInfoSpec = ['blocking', 'responseHeaders'];
+if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+   extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+}
 chrome.webRequest.onHeadersReceived.addListener(
     request => {
+        utils.isFirstParty('1.2.3.4', '5.6.7.8')
         if (request.type === 'main_frame') {
             tabManager.updateTabUrl(request)
         }
@@ -75,9 +80,7 @@ chrome.webRequest.onHeadersReceived.addListener(
     {
         urls: ['<all_urls>']
     },
-    [
-        'blocking', 'responseHeaders', 'extraHeaders'
-    ]
+    extraInfoSpec
 )
 
 /**
@@ -377,19 +380,36 @@ chrome.webNavigation.onCommitted.addListener(details => {
     GPC.injectDOMSignal(details.tabId, details.frameId)
 })
 
+const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders'];
+if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+    extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+}
 // Attach GPC header to all requests if enabled.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
 
+        let requestHeaders = request.requestHeaders
         if (GPCHeader) {
-            let requestHeaders = request.requestHeaders
             requestHeaders.push(GPCHeader)
-            return {requestHeaders: requestHeaders}
         }
+
+        // Strip 3rd party response header
+        const tab = tabManager.get({ tabId: request.tabId })
+        if (!requestHeaders) return
+        if (tab && tab.site.whitelisted) return
+        if (tab && utils.isFirstParty(request.url, tab.url)) return
+        const index = requestHeaders.findIndex(header => { return header.name.toLowerCase() === 'cookie' })
+        if (index !== -1) {
+            if (!cookieConfig.isExcluded(request.url)) {
+                requestHeaders.splice(index, 1)
+            }
+        }
+
+        return {requestHeaders: requestHeaders}
     },
     {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders']
+    extraInfoSpecSendHeaders
 )
 
 /**

@@ -61,7 +61,21 @@ class ExcludedCookieStorage {
 
     isExcluded (url) {
         const domain = (new URL(url)).host
-        return this.excludedDomains.find(elem => elem === domain)
+        return this.isDomainExcluded(domain)
+    }
+
+    isDomainExcluded (domain) {
+        if (this.excludedDomains.find(elem => elem === domain)) {
+            return true
+        }
+
+        const comps = domain.split('.')
+        if (comps.length > 2) {
+            comps.shift()
+            return this.isDomainExcluded(comps.join('.'))
+        }
+
+        return false
     }
 }
 module.exports = new ExcludedCookieStorage()
