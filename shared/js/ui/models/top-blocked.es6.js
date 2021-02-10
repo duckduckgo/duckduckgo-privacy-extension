@@ -3,6 +3,7 @@ const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
 function TopBlocked (attrs) {
     attrs = attrs || {}
+    // eslint-disable-next-line no-self-assign
     attrs.numCompanies = attrs.numCompanies
     attrs.companyList = []
     attrs.companyListMap = []

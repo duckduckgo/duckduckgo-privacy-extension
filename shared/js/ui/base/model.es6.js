@@ -23,21 +23,21 @@ BaseModel.prototype = $.extend({},
     mixins.events,
     {
 
-    /**
-     * Setter method for modifying attributes
-     * on the model. Since the attributes
-     * are directly accessible + mutable on the object
-     * itself, you don't *have* to use the set method.
-     *
-     * However, the benefit of using the set method
-     * is that changes are broadcast out via store
-     * to any UI components that might want to observe
-     * changes and update their state.
-     *
-     * @param {string or object} attr
-     * @param {*} val
-     * @api public
-     */
+        /**
+         * Setter method for modifying attributes
+         * on the model. Since the attributes
+         * are directly accessible + mutable on the object
+         * itself, you don't *have* to use the set method.
+         *
+         * However, the benefit of using the set method
+         * is that changes are broadcast out via store
+         * to any UI components that might want to observe
+         * changes and update their state.
+         *
+         * @param {string or object} attr
+         * @param {*} val
+         * @api public
+         */
         set: function (attr, val) {
             /*
              * support passing a hash of values to set instead of

@@ -179,14 +179,13 @@ describe('Verify injected script is not visible to the page', () => {
 
             const sjclVal = await page.evaluate(() => {
                 if ('sjcl' in window) {
-                    return 'visible';
+                    return 'visible'
                 } else {
-                    return 'invisible';
+                    return 'invisible'
                 }
             })
 
             await page.close()
-
 
             expect(sjclVal).toEqual('invisible')
         })

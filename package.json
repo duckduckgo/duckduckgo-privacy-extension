@@ -38,7 +38,7 @@
         "chromedriver": "2.32.3",
         "concurrently": "3.1.0",
         "duckduckgo-colors": "0.0.1",
-        "eslint": "4.19.1",
+        "eslint": "^7.19.0",
         "eslint-config-standard": "11.0.0",
         "fibers": "^5.0.0",
         "grunt": "1.2.1",

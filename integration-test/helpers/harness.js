@@ -60,7 +60,7 @@ const setup = async (ops) => {
     return { browser, bgPage, requests }
 }
 
-async function teardownInternal(browser) {
+async function teardownInternal (browser) {
     browser && await browser.close()
 
     // necessary so e.g. local storage
@@ -78,10 +78,10 @@ const teardown = async (browser) => {
             browser.on('disconnected', async () => {
                 await teardownInternal(browser)
                 resolve()
-            });
-        });
+            })
+        })
     } else {
-        teardownInternal(browser);
+        teardownInternal(browser)
     }
 }
 
