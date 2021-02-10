@@ -51,8 +51,7 @@
         ],
         "matches": ["<all_urls>"],
         "exclude_matches": [
-          "https://app.asana.com/*",
-          "https://*.duckduckgo.com/email/signup"
+          "https://app.asana.com/*"
         ],
         "all_frames": true,
         "run_at": "document_idle"
@@ -71,7 +70,7 @@
         "alarms"
     ],
     "web_accessible_resources": [
-        "img/ddg-logo-borderless.svg",
+        "img/logo-small.svg",
         "public/css/email-autofill.css",
         "public/font/ProximaNova-Reg-webfont.woff2",
         "public/font/ProximaNova-Bold-webfont.woff2"

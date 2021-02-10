@@ -5,7 +5,7 @@ class FormAnalyzer {
         this.signals = []
         this.evaluateElAttributes(input, 3, true)
         form ? this.evaluateForm() : this.evaluatePage()
-        console.log(this, this.autofillSignal, this.signals)
+        console.log(this.autofillSignal, this, this.signals)
         return this
     }
 
@@ -31,7 +31,7 @@ class FormAnalyzer {
     }) {
         const negativeRegex = new RegExp(/sign(ing)?.?in(?!g)|log.?in/i)
         const positiveRegex = new RegExp(
-            /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start|settings|preferences|profile|update/i
+            /sign(ing)?.?up|join|regist(er|ration)|newsletter|subscri(be|ption)|contact|create|start|settings|preferences|profile|update|checkout|guest|purchase|buy|order/i
         )
         const conservativePositiveRegex = new RegExp(/sign.?up|join|register|newsletter|subscri(be|ption)|settings|preferences|profile|update/i)
         const strictPositiveRegex = new RegExp(/sign.?up|join|register|settings|preferences|profile|update/i)
@@ -74,7 +74,7 @@ class FormAnalyzer {
     }
 
     evaluatePageHeadings () {
-        const headings = document.querySelectorAll('h1, h2, h3, [class*="title"]')
+        const headings = document.querySelectorAll('h1, h2, h3, [class*="title"], [id*="title"]')
         if (headings) {
             headings.forEach(({innerText}) => {
                 this.updateSignal({
@@ -100,6 +100,7 @@ class FormAnalyzer {
         buttons.forEach(button => {
             // if the button has a form, it's not related to our input, because our input has no form here
             if (!button.form && !button.closest('form')) {
+                this.evaluateElement(button)
                 this.evaluateElAttributes(button, 0.5)
             }
         })

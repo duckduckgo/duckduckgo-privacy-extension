@@ -42,16 +42,10 @@ const sites = [
         autofillExpected: 0
     }, */
     {
-        name: 'cnbc signup',
-        url: 'https://www.cnbc.com/sign-up-for-cnbc-newsletters/',
-        autofillExpected: 1
-    },
-    /* It stopped loading the signin/signup block in puppeteer
-    {
         name: 'IGN.com signup',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitFor', arg: 1500},
+            {action: 'waitForTimeout', arg: 200},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'},
             {action: 'click', arg: '#email-label > .supplemental > button'}
         ],
@@ -61,11 +55,11 @@ const sites = [
         name: 'IGN.com login',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitFor', arg: 1500},
+            {action: 'waitForTimeout', arg: 200},
             {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'}
         ],
         autofillExpected: 0
-    }, */
+    },
     {
         name: 'cnbc login',
         url: 'https://www.cnbc.com/world/?region=world',
@@ -78,7 +72,10 @@ const sites = [
     {
         name: 'cnbc newsletter',
         url: 'https://www.cnbc.com/sign-up-for-cnbc-newsletters/',
-        actions: [{action: 'reload', arg: { waitUntil: 'networkidle0' }}],
+        actions: [
+            {action: 'reload', arg: { waitUntil: 'networkidle0' }},
+            {action: 'click', arg: '#onetrust-accept-btn-handler', optional: true}
+        ],
         autofillExpected: 1
     },
     {
@@ -87,7 +84,7 @@ const sites = [
         actions: [
             {action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true},
             {action: 'click', arg: '.js-submit.option.institution'},
-            {action: 'waitFor', arg: 1000},
+            {action: 'waitForTimeout', arg: 1000},
             {action: 'click', arg: '.js-skip-step'}
         ],
         autofillExpected: 1
@@ -256,7 +253,8 @@ const sites = [
     {
         name: 'BlazeTV newsletter',
         url: 'https://www.theblaze.com/',
-        autofillExpected: 2
+        actions: [{action: 'evaluate', arg: () => window.scrollBy(0, window.innerHeight)}],
+        autofillExpected: 1
     },
     {
         name: 'Sur.ly signup',
@@ -397,13 +395,23 @@ const sites = [
     },
     {
         name: 'Guns.com signup',
-        url: 'https://www.fanfiction.net/signup.php',
-        autofillExpected: 1
+        url: 'https://www.guns.com/register',
+        autofillExpected: 2
     },
     {
         name: 'Guns.com login',
-        url: 'https://www.fanfiction.net/login.php',
-        autofillExpected: 0
+        url: 'https://www.guns.com',
+        autofillExpected: 1
+    },
+    {
+        name: 'Guns.com newsletter',
+        url: 'https://www.guns.com/email-sign-up',
+        autofillExpected: 2
+    },
+    {
+        name: 'Guns.com contacts',
+        url: 'https://www.guns.com/contact',
+        autofillExpected: 2
     },
     {
         name: 'Garten Journal signup',
@@ -431,7 +439,6 @@ const sites = [
         url: 'https://www.dropbox.com/login',
         autofillExpected: 0
     },
-    /* It never loads in puppeteer.
     {
         name: 'Carmax signup',
         url: 'https://www.carmax.com/mycarmax/register',
@@ -441,7 +448,7 @@ const sites = [
         name: 'Carmax login',
         url: 'https://www.carmax.com/mycarmax/sign-in',
         autofillExpected: 0
-    }, */
+    },
     {
         name: 'Vulture.com signup',
         url: 'https://subs.nymag.com/magazine/subscribe/official-subscription.html',
@@ -452,11 +459,11 @@ const sites = [
         name: 'Vulture.com login',
         url: 'https://www.vulture.com/',
         actions: [
-            {action: 'click', arg: '.fc-button.fc-button-consent'},
             {action: 'click', arg: '.user-signin > button.sign-in-button'}
         ],
         autofillExpected: 0
     },
+    /* Stopped loading signin/signup forms in puppeteer
     {
         name: 'Sydney Morning Herald signup',
         url: 'https://smh.myfairfax.com.au/channel/zHE9EWDHf1XPuz3Phk0YIg/members/signups/new?callback_uri=https%3A%2F%2Fwww.smh.com.au%2F',
@@ -466,7 +473,7 @@ const sites = [
         name: 'Sydney Morning Herald login',
         url: 'https://smh.myfairfax.com.au/members/lite_session/new?a_loginRegistrationTrigger=lightRego_enterEmail&callback_uri=https%3A%2F%2Fwww.smh.com.au%2F&channel_key=zHE9EWDHf1XPuz3Phk0YIg',
         autofillExpected: 0
-    },
+    }, */
     {
         name: '123rf.com signup',
         url: 'https://www.123rf.com/register.php',
@@ -476,7 +483,27 @@ const sites = [
         name: '123rf.com login',
         url: 'https://www.123rf.com/login.php',
         autofillExpected: 0
-    }
+    },
+    {
+        name: 'Thermoworks guest checkout',
+        url: 'https://www.thermoworks.com/sca-dev-elbrus/checkout.ssp?is=checkout#login-register',
+        autofillExpected: 2
+    },
+    {
+        name: 'Thermoworks newsletter',
+        url: 'https://www.thermoworks.com/',
+        autofillExpected: 1
+    },
+    {
+        name: 'Wikihow Signup',
+        url: 'https://www.wikihow.com/Special:CreateAccount',
+        autofillExpected: 1
+    },
+    {
+        name: 'Wikihow Login',
+        url: 'https://www.wikihow.com/Special:UserLogin',
+        autofillExpected: 0
+    },
 ]
 
 const focusedSites = []

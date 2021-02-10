@@ -6,11 +6,9 @@ function EmailAliasView (ops) {
     this.template = ops.template
 
     this.model.getUserData().then(userData => {
-        // If we don't have a user+alias, don't show anything
-        if (userData.nextAlias) {
-            Parent.call(this, ops)
-            this._setup()
-        }
+        this.model.userData = userData
+        Parent.call(this, ops)
+        this._setup()
     })
 }
 

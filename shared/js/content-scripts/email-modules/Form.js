@@ -1,19 +1,22 @@
 const FormAnalyzer = require('./FormAnalyzer')
 const {addInlineStyles, removeInlineStyles} = require('./autofill-utils')
 const {daxBase64} = require('./logo-svg')
-const {setValue, isEventWithinDax} = require('./autofill-utils')
+const {isDDGApp, setValue, isEventWithinDax} = require('./autofill-utils')
 
-const INLINE_DAX_STYLES = {
-    'background-size': {jsName: 'backgroundSize', val: 'auto 24px'},
-    'background-position': {jsName: 'backgroundPosition', val: 'center right'},
-    'background-repeat': {jsName: 'backgroundRepeat', val: 'no-repeat'},
-    'background-origin': {jsName: 'backgroundOrigin', val: 'content-box'},
-    'background-image': {jsName: 'backgroundImage', val: `url('data:image/svg+xml;base64,${daxBase64}')`}
-}
+const getDaxImg = isDDGApp ? daxBase64 : chrome.runtime.getURL('img/logo-small.svg')
+
+const getDaxStyles = input => ({
+    // Height must be > 0 to account for fields initially hidden
+    'background-size': `auto ${input.offsetHeight <= 30 && input.offsetHeight > 0 ? '100%' : '24px'}`,
+    'background-position': 'center right',
+    'background-repeat': 'no-repeat',
+    'background-origin': 'content-box',
+    'background-image': `url(${getDaxImg})`
+})
 
 const INLINE_AUTOFILLED_STYLES = {
-    'background-color': {jsName: 'backgroundColor', val: '#F8F498'},
-    'color': {jsName: 'color', val: '#333333'}
+    'background-color': '#F8F498',
+    'color': '#333333'
 }
 
 class Form {
@@ -35,10 +38,10 @@ class Form {
         })
 
         this.removeTooltip = (e) => {
-            if (e && (e.target === this.activeInput || e.target === this.tooltip)) {
+            if (e && (e.target === this.activeInput || e.target === this.tooltip.host)) {
                 return
             }
-            document.body.removeChild(this.tooltip)
+            this.tooltip.remove()
             this.tooltip = null
             this.intObs.disconnect()
             window.removeEventListener('mousedown', this.removeTooltip, {capture: true})
@@ -47,11 +50,14 @@ class Form {
             removeInlineStyles(input, INLINE_AUTOFILLED_STYLES)
             input.classList.remove('ddg-autofilled')
         }
-        this.removeAllHighlights = () => {
+        this.removeAllHighlights = (e) => {
+            // This ensures we are not removing the highlight ourselves when autofilling more than once
+            if (e && !e.isTrusted) return
+
             this.execOnInputs(this.removeInputHighlight)
         }
         this.removeInputDecoration = (input) => {
-            removeInlineStyles(input, INLINE_DAX_STYLES)
+            removeInlineStyles(input, getDaxStyles(input))
             input.removeAttribute('data-ddg-autofill')
         }
         this.removeAllDecorations = () => {
@@ -98,12 +104,12 @@ class Form {
 
     decorateInput (input) {
         input.setAttribute('data-ddg-autofill', 'true')
-        addInlineStyles(input, INLINE_DAX_STYLES)
+        addInlineStyles(input, getDaxStyles(input))
         this.addListener(input, 'mousemove', (e) => {
             if (isEventWithinDax(e, e.target)) {
-                e.target.style.cursor = 'pointer'
+                e.target.style.setProperty('cursor', 'pointer', 'important')
             } else {
-                e.target.style.cursor = 'auto'
+                e.target.style.removeProperty('cursor')
             }
         })
         this.addListener(input, 'mousedown', (e) => {

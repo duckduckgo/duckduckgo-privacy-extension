@@ -1,5 +1,6 @@
-const isDDGApp = () =>
-    /(iPhone|iPad|Android).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent)
+const isDDGApp = /(iPhone|iPad|Android).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent)
+
+const isAndroid = isDDGApp && /Android/i.test(window.navigator.userAgent)
 
 const DDG_DOMAIN_REGEX = new RegExp(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)
 
@@ -41,7 +42,10 @@ const originalSet = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prot
 
 // This ensures that the value is set properly and dispatches events to simulate a real user action
 const setValue = (el, val) => {
-    el.focus()
+    // Avoid keyboard flashing on Android
+    if (!isAndroid) {
+        el.focus()
+    }
     originalSet.call(el, val)
     const ev = new Event('input', {bubbles: true})
     el.dispatchEvent(ev)
@@ -90,14 +94,15 @@ const isEventWithinDax = (e, input) => {
     return withinX && withinY
 }
 
-const addInlineStyles = (el, styles) => Object.values(styles)
-    .forEach(({jsName, val}) => (el.style[jsName] = val))
+const addInlineStyles = (el, styles) => Object.entries(styles)
+    .forEach(([property, val]) => el.style.setProperty(property, val, 'important'))
 
 const removeInlineStyles = (el, styles) => Object.keys(styles)
-    .forEach(prop => el.style.removeProperty(prop))
+    .forEach(property => el.style.removeProperty(property))
 
 module.exports = {
     isDDGApp,
+    isAndroid,
     DDG_DOMAIN_REGEX,
     isDDGDomain,
     notifyWebApp,

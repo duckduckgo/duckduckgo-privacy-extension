@@ -590,6 +590,9 @@ body {
 }
 
 .email-alias-block {
+    display: block;
+    padding-left: 24px;
+    color: inherit;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
     cursor: pointer;
 
@@ -636,7 +639,7 @@ body {
     height: 24px;
     width: 24px;
     // The icon is larger than usual, so we adjust its position to maintain alignment
-    margin: -6px -2px -4px 0;
+    margin: -6px -2px -4px -4px;
 }
 
 @import "views/search-form";

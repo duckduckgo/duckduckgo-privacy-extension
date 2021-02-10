@@ -2,7 +2,6 @@
     // Polyfills/shims
     require('intersection-observer')
     require('./requestIdleCallback')
-    require('@webcomponents/webcomponentsjs')
     const DeviceInterface = require('./DeviceInterface')
     const scanForInputs = require('./scanForInputs.js')
 

@@ -49,9 +49,9 @@ describe('Email autofill input detection Tests', () => {
             if (actions) {
                 for (const action of actions) {
                     await page[action.action](action.arg)
-                        .catch(e => !action.optional && fail(`Action ${action} failed on ${name}: ${e.message}.`))
+                        .catch(e => !action.optional && fail(`Action ${action.action} failed on ${name}: ${e.message}.`))
                     // Wait a bit to give it time to execute. If you need more, add an explicit waitFor action
-                    await page.waitFor(750)
+                    await page.waitForTimeout(750)
                 }
             }
 
@@ -69,7 +69,9 @@ describe('Email autofill input detection Tests', () => {
                         })
                 }
             } else {
-                const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 300})
+                await page.waitForSelector('input')
+                    .catch(() => fail(`Couldn't find an input on ${name}. Maybe the page didn't load.`))
+                const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 600})
                     .catch(() => null) // the selector is supposed to fail
                 if (el) {
                     fail(`False positive on ${name}.`)

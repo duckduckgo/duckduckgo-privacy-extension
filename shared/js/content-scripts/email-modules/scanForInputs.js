@@ -1,6 +1,5 @@
 const Form = require('./Form')
 const {notifyWebApp} = require('./autofill-utils')
-const DDGAutofill = require('./DDGAutofill')
 
 // Accepts the DeviceInterface as an explicit dependency
 const scanForInputs = (DeviceInterface) => {
@@ -8,17 +7,19 @@ const scanForInputs = (DeviceInterface) => {
         deviceSignedIn: {value: true},
         extensionSignedIn: {value: true} // TODO: deprecated, to be removed in a future release
     })
-    const forms = new Map()
 
-    if (!customElements.get('ddg-autofill')) {
-        customElements.define('ddg-autofill', DDGAutofill)
-    }
+    // Avoid autofill on our signup page
+    if (window.location.href.match(/^https:\/\/.+\.duckduckgo\.com\/email\/signup/i)) return
+
+    const forms = new Map()
 
     const EMAIL_SELECTOR = `
             input:not([type])[name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input[type=""][name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input[type=text][name*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input:not([type])[id*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input:not([type])[placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
+            input[type="text"][id*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input[type=""][id*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input[type=text][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
             input[type=""][placeholder*=mail i]:not([readonly]):not([disabled]):not([hidden]):not([aria-hidden=true]),
