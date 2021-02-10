@@ -9,7 +9,7 @@ const scanForInputs = (DeviceInterface) => {
     })
 
     // Avoid autofill on our signup page
-    if (window.location.href.match(/^https:\/\/.+\.duckduckgo\.com\/email\/signup/i)) return
+    if (window.location.href.match(/^https:\/\/.+\.duckduckgo\.com\/email-protection/i)) return
 
     const forms = new Map()
 
