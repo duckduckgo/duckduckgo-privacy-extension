@@ -12,6 +12,7 @@ class TDSStorage {
         })
         this.tds = {entities: {}, trackers: {}, domains: {}, cnames: {}}
         this.surrogates = ''
+        this.brokenSiteList = []
         this.fingerprinting = {}
     }
 
