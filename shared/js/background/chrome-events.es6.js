@@ -36,6 +36,7 @@ const constants = require('../../data/constants')
 const cookieConfig = require('./../background/storage/cookies.es6')
 let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
+const settings = require('./settings.es6')
 const activeExperiment = settings.getSetting('activeExperiment')
 
 // Shallow copy of request types
@@ -150,7 +151,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
  * MESSAGES
  */
 
-const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
 
 // handle any messages that come from content/UI scripts
@@ -428,7 +428,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                 }
             }
         }
-                    
 
         return {requestHeaders: requestHeaders}
     },
