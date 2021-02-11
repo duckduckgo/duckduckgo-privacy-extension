@@ -1,0 +1,303 @@
+{
+    "Facebook": {
+        "domains": [
+            "facebook.com",
+            "facebook.net"
+        ],
+        "excludedDomains": [
+            {
+                "domain": "",
+                "reason": ""
+            }
+        ],
+        "surrogates": [
+            {
+                "rule": "facebook\\.net\\/[a-z_A-Z]+\\/sdk.js",
+                "surrogate": "sdk.js"
+            }
+        ],
+        "elementData": {
+            "FB Like Button": {
+                "selectors": [
+                    ".fb-like"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/plugins/like.php?href=data-href&action=data-action",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-action": {
+                            "default": "like"
+                        }
+                    },
+                    "style": "height: 2em; border: none"
+                }
+            },
+            "FB Button iFrames": {
+                "selectors": [
+                    "iframe[src*='://www.facebook.com/plugins/like.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/like.php']",
+                    "iframe[src*='://www.facebook.com/plugins/share_button.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/share_button.php']"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "originalElement"
+                }
+            },
+            "FB Save Button": {
+                "selectors": [
+                    ".fb-save"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "null",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "",
+                    "urlDataAttributesToPreserve": {},
+                    "style": ""
+                }
+            },
+            "FB Share Button": {
+                "selectors": [
+                    ".fb-share-button"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/plugins/share_button.php?href=data-href&layout=button_count&size=small",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        }
+                    },
+                    "style": "height: 2em; border: none"
+                }
+            },
+            "FB Page Div": {
+                "selectors": [
+                    ".fb-page"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/plugins/page.php?href=data-href&tabs=data-tabs&width=data-width&height=data-height",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-tabs": {
+                            "default": "timeline"
+                        },
+                        "data-height": {
+                            "default": "500"
+                        },
+                        "data-width": {
+                            "default": "500"
+                        }
+                    },
+                    "style": "border: none",
+                    "styleDataAttributes": {
+                        "width": {
+                            "name": "data-width",
+                            "unit": "px"
+                        },
+                        "height": {
+                            "name": "data-height",
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "FB Content iFrames": {
+                "selectors": [
+                    "iframe[src*='://www.facebook.com/plugins/page.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/page.php']",
+                    "iframe[src*='://www.facebook.com/plugins/comment_embed.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/comment_embed.php']",
+                    "iframe[src*='://www.facebook.com/plugins/post.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/post.php']",
+                    "iframe[src*='://www.facebook.com/plugins/video.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/video.php']",
+                    "iframe[src*='://www.facebook.com/plugins/group.php']",
+                    "iframe[src*='://www.facebook.com/v2.0/plugins/group.php']"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "originalElement"
+                }
+            },
+            "FB Comments": {
+                "selectors": [
+                    ".fb-comments"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/v9.0/plugins/comments.php?href=data-href&numposts=data-numposts&sdk=joey&version=v9.0&width=data-width",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-numposts": {
+                            "default": 10
+                        },
+                        "data-width": {
+                            "default": "500"
+                        }
+                    },
+                    "style": "border: none; width: 100%; height: 725px;"
+                }
+            },
+            "FB Embedded Comment Div": {
+                "selectors": [
+                    ".fb-comment-embed"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/v9.0/plugins/comment_embed.php?href=data-href&sdk=joey&width=data-width&include_parent=data-include-parent",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-width": {
+                            "default": "500"
+                        },
+                        "data-include-parent": {
+                            "default": "false"
+                        }
+                    },
+                    "style": "border: none; width: 100%;",
+                    "styleDataAttributes": {
+                        "width": {
+                            "name": "data-width",
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "FB Posts Div": {
+                "selectors": [
+                    ".fb-post"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/v9.0/plugins/post.php?href=data-href&sdk=joey&show_text=true&width=data-width",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-width": {
+                            "default": "500"
+                        }
+                    },
+                    "style": "border: none;",
+                    "styleDataAttributes": {
+                        "width": {
+                            "name": "data-width",
+                            "unit": "px"
+                        },
+                        "height": {
+                            "name": "data-height",
+                            "unit": "px",
+                            "fallbackAttribute": "data-width"
+                        }
+                    }
+                }
+            },
+            "FB Video": {
+                "selectors": [
+                    ".fb-video"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/plugins/video.php?href=data-href&show_text=true&width=data-width",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-width": {
+                            "default": "500"
+                        }
+                    },
+                    "style": "border: none;",
+                    "styleDataAttributes": {
+                        "width": {
+                            "name": "data-width",
+                            "unit": "px"
+                        },
+                        "height": {
+                            "name": "data-height",
+                            "unit": "px",
+                            "fallbackAttribute": "data-width"
+                        }
+                    }
+                }
+            },
+            "FB Group": {
+                "selectors": [
+                    ".fb-group"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "iFrame",
+                    "targetURL": "https://www.facebook.com/plugins/group.php?href=data-href&width=data-width",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-width": {
+                            "default": "500"
+                        }
+                    },
+                    "style": "border: none",
+                    "styleDataAttributes": {
+                        "width": {
+                            "name": "data-width",
+                            "unit": "px"
+                        }
+                    }
+                }
+            },
+            "FB Login Button": {
+                "selectors": [
+                    ".fb-login-button"
+                ],
+                "imgFile": "img/social/dax.png",
+                "replaceType": "button",
+                "clickAction": {
+                    "type": "allowFull",
+                    "targetURL": "https://www.facebook.com/v9.0/plugins/login_button.php?app_id=app_id_replace&auto_logout_link=false&button_type=continue_with&sdk=joey&size=large&use_continue_as=false&width=",
+                    "urlDataAttributesToPreserve": {
+                        "data-href": {
+                            "default": ""
+                        },
+                        "data-width": {
+                            "default": "500"
+                        },
+                        "app_id_replace": {
+                            "default": "null"
+                        }
+                    },
+                    "style": "border: none"
+                }
+            }
+        }
+    }
+}
