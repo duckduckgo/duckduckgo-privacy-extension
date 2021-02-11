@@ -1,7 +1,7 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
 const wait = require('../helpers/wait')
-const request = require('request-promise-native')
+const fetch = require('node-fetch')
 
 let browser
 let bgPage
@@ -12,8 +12,11 @@ describe('install workflow', () => {
         beforeEach(async () => {
             ({ browser, bgPage, requests } = await harness.setup())
         })
+
         afterEach(async () => {
-            await harness.teardown(browser)
+            try {
+                await harness.teardown(browser)
+            } catch (e) {}
         })
 
         it('should open the postinstall page correctly', async () => {
@@ -59,7 +62,9 @@ describe('install workflow', () => {
             }
         })
         afterEach(async () => {
-            await harness.teardown(browser)
+            try {
+                await harness.teardown(browser)
+            } catch (e) {}
         })
 
         it('should get its ATB param from atb.js when there\'s no install success page', async () => {
@@ -94,7 +99,11 @@ describe('install workflow', () => {
         it('should get its ATB param from the success page when one is present', async () => {
             // open a success page and wait for it to have finished loading
             const successPage = await browser.newPage()
-            await successPage.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
+            try {
+                await successPage.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
+            } catch (e) {
+                // goto may time out, but continue test anyway in case of partial load.
+            }
 
             // try get ATB params again
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
@@ -137,16 +146,21 @@ describe('search workflow', () => {
         await wait.forSetting(bgPage, 'extiSent')
 
         // grab current atb data
-        const data = await request('https://duckduckgo.com/atb.js', { json: true })
+        let data = await fetch('https://duckduckgo.com/atb.js')
+        data = await data.json()
         todaysAtb = data.version
         lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
         twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        try {
+            await harness.teardown(browser)
+        } catch (e) {}
     })
     beforeEach(async () => {
-        await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
+        try {
+            await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
+        } catch (e) {}
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version
@@ -154,10 +168,13 @@ describe('search workflow', () => {
 
         // run a search
         const searchPage = await browser.newPage()
-        searchPage.goto('https://duckduckgo.com/?q=test')
-
-        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
-        await wait.ms(1000)
+        try {
+            await searchPage.goto('https://duckduckgo.com/?q=test')
+            // Extra wait for page load
+            await wait.ms(1000)
+        } catch (e) {
+            // goto may time out, but continue test anyway in case of partial load.
+        }
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -167,13 +184,15 @@ describe('search workflow', () => {
     it('should update set_atb if a repeat search is made on a different day', async () => {
         // set set_atb to an older version
         await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
-
         // run a search
         const searchPage = await browser.newPage()
-        searchPage.goto('https://duckduckgo.com/?q=test')
-
-        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
-        await wait.ms(1000)
+        try {
+            await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
+            // Extra wait for page load
+            await wait.ms(1000)
+        } catch (e) {
+            // goto may time out, but continue test anyway in case of partial load.
+        }
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -187,10 +206,13 @@ describe('search workflow', () => {
 
         // run a search
         const searchPage = await browser.newPage()
-        searchPage.goto('https://duckduckgo.com/?q=test')
-
-        await bgPage.waitForResponse(res => res.url().match(/atb\.js/))
-        await wait.ms(1000)
+        try {
+            await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
+            // Extra wait for page load
+            await wait.ms(1000)
+        } catch (e) {
+            // goto may time out, but continue test anyway in case of partial load.
+        }
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))

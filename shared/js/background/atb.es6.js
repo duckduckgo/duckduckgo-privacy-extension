@@ -126,6 +126,7 @@ const ATB = (() => {
         // builds a new query string containing only accepted params
         getAcceptedParamsFromURL: (url) => {
             const validParams = new URLSearchParams()
+            if (url === '') return validParams
             const parsedParams = (new URL(url)).searchParams
 
             ACCEPTED_URL_PARAMS.forEach(param => {
@@ -153,7 +154,6 @@ const ATB = (() => {
                 .then((urls) => {
                     let atb
                     let params
-
                     urls.some(url => {
                         params = ATB.getAcceptedParamsFromURL(url)
                         atb = params.has('atb') && params.get('atb')
