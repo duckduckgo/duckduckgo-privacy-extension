@@ -504,6 +504,26 @@ const sites = [
         url: 'https://www.wikihow.com/Special:UserLogin',
         autofillExpected: 0
     },
+    {
+        name: 'Airbnb Signup',
+        url: 'https://www.airbnb.com/',
+        actions: [
+            {action: 'click', arg: '[data-testid="cypress-headernav-profile"]'},
+            {action: 'click', arg: '[data-testid="cypress-headernav-signup"]'},
+            {action: 'click', arg: '[data-testid="social-auth-button-email"]'},
+        ],
+        autofillExpected: 1
+    },
+    {
+        name: 'Airbnb Login',
+        url: 'https://www.airbnb.com/',
+        actions: [
+            {action: 'click', arg: '[data-testid="cypress-headernav-profile"]'},
+            {action: 'click', arg: '[data-testid="cypress-headernav-login"]'},
+            {action: 'click', arg: '[data-testid="social-auth-button-email"]'},
+        ],
+        autofillExpected: 0
+    },
 ]
 
 const focusedSites = []
