@@ -6,6 +6,23 @@
             this.imgURI = this.createImgURI(widgetData.imgFile)
             this.clickAction = {...widgetData.clickAction} // shallow copy
             this.originalElement = originalElement
+            this.dataElements = {}
+            this.gatherDataElements()
+        }
+
+        // Collect and store data elements from original widget. Store default values
+        // from config if not present.
+        gatherDataElements () {
+            if (!this.clickAction.urlDataAttributesToPreserve) {
+                return
+            }
+            for (const [attrName, attrSettings] of Object.entries(this.clickAction.urlDataAttributesToPreserve)) {
+                let value = this.originalElement.getAttribute(attrName)
+                if (!value) {
+                    value = attrSettings.default
+                }
+                this.dataElements[attrName] = value
+            }
         }
 
         createImgURI (imgFile) {
@@ -19,18 +36,43 @@
             return this.clickAction.targetURL
         }
 
+        getStyle () {
+            let styleString = this.clickAction.style
+            if (styleString[styleString.length - 1] !== ';') {
+                styleString += ';'
+            }
+
+            if (this.clickAction.styleDataAttributes) {
+                // Copy elements from the original div into style attributes as directed by config
+                for (const [attr, valAttr] of Object.entries(this.clickAction.styleDataAttributes)) {
+                    let valueFound = this.dataElements[valAttr.name]
+                    if (!valueFound) {
+                        valueFound = this.originalElement.getAttribute(valAttr.fallbackAttribute)
+                    }
+                    if (valueFound) {
+                        styleString += `${attr}: ${valueFound}${valAttr.unit};`
+                    }
+                }
+            }
+
+            return styleString
+        }
+
         copySocialDataFields () {
             if (!this.clickAction.urlDataAttributesToPreserve) {
                 return
             }
 
             // App ID may be set by client scripts, and is required for some elements.
-            if (this.clickAction.urlDataAttributesToPreserve.includes('app_id_replace') && appID != null) {
+            if (this.dataElements['app_id_replace'] && appID != null) {
                 this.clickAction.targetURL = this.clickAction.targetURL.replace('app_id_replace', appID)
             }
 
-            for (const dataString of this.clickAction.urlDataAttributesToPreserve) {
-                this.clickAction.targetURL = this.clickAction.targetURL.replace(dataString, this.originalElement.getAttribute(dataString))
+            for (const key of Object.keys(this.dataElements)) {
+                const attrValue = encodeURIComponent(this.dataElements[key])
+                if (attrValue) {
+                    this.clickAction.targetURL = this.clickAction.targetURL.replace(key, attrValue)
+                }
             }
         }
     }
@@ -98,9 +140,11 @@
 
     function replaceDDGWidgetWithIFrame (widgetElement, widgetData) {
         const frame = document.createElement('iframe')
+
         frame.setAttribute('src', widgetData.getTargetURL())
-        frame.setAttribute('style', widgetData.clickAction.style)
+        frame.setAttribute('style', widgetData.getStyle())
         const parent = widgetElement.parentNode
+
         parent.replaceChild(frame, widgetElement)
     }
 
@@ -153,15 +197,17 @@
             position: relative;
             display: block;
         `
-        let element = document.createElement('div')
+        const element = document.createElement('div')
         element.style.cssText = elementCSS
         element.id = 'duckduckgoctlmodal'
-        let overlay = document.createElement('div')
+        const overlay = document.createElement('div')
         overlay.style.cssText = overlayCSS
-        let modal = document.createElement('div')
+        const modal = document.createElement('div')
         modal.style.cssText = modalCSS
         const allowButton = document.createElement('button')
         allowButton.innerHTML = 'Allow'
+        const denyButton = document.createElement('button')
+        denyButton.innerHTML = 'Deny'
         const msg = document.createElement('p')
         allowButton.addEventListener('click', function handleClick (e) {
             if (e.isTrusted) {
@@ -171,8 +217,15 @@
                 modalParent.removeChild(element)
             }
         })
+        denyButton.addEventListener('click', function handleClick (e) {
+            if (e.isTrusted) {
+                const modalParent = element.parentNode
+                modalParent.removeChild(element)
+            }
+        })
         msg.innerHTML = message
         modal.appendChild(msg)
+        modal.appendChild(denyButton)
         modal.appendChild(allowButton)
         element.appendChild(overlay)
         element.appendChild(modal)
@@ -202,9 +255,8 @@
             const body = document.body
             let e = createModal('Facebook', 'This site is trying to use login', 'RunFBLogin')
             body.insertBefore(e, body.childNodes[0])
-            // body.appendChild(e)
         }
-        
+
         if (message.payload.fbui) {
             const body = document.body
             let e = createModal('Facebook', 'This page is trying to use facebook social buttons, would you like to allow it?', 'LoadFBSDK')

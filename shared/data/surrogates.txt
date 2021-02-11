@@ -398,7 +398,6 @@ facebook.net/sdk.js application/javascript
         enableFacebookSDK()
         replaceWindowOpen()
         loginPopup()
-        needsLogin = true
         window.fbAsyncInit = function() {
             siteInit()
             window.FB.login(fbLogin.callback, fbLogin.params)

@@ -103,7 +103,7 @@ function handleRequest (requestData) {
                 }
                 // TODO: Add to tracker dashboard as blocked - may require updates to that whole logic
                 //  since these sites may or may not be in the TDS list.
-                //console.info('blocked social tracker on ' + utils.extractHostFromURL(thisTab.url) +
+                // console.info('blocked social tracker on ' + utils.extractHostFromURL(thisTab.url) +
                 //                 ' [' + socialTracker.entity + '] ' + requestData.url)
                 return {cancel: true}
             } else {
