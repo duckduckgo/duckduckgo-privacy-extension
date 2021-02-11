@@ -4,6 +4,7 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
+const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
@@ -72,6 +73,28 @@ chrome.webRequest.onBeforeRequest.addListener(
         types: requestListenerTypes
     },
     ['blocking']
+)
+
+/**
+ * Listen for script loads from trackers and relay the hosts to the frame's content-script.
+ * This will be used for tracker-dependant decicions in that context.
+ */
+chrome.webRequest.onBeforeRequest.addListener(
+    (details) => {
+        if (trackerutils.isTracker(details.url)) {
+            console.log('tracker script', details.url)
+            chrome.tabs.sendMessage(details.tabId, {
+                type: 'tracker',
+                hostname: tldts.parse(details.url).hostname
+            }, {
+                frameId: details.frameId
+            })
+        }
+    },
+    {
+        urls: ['<all_urls>'],
+        types: ['script']
+    }
 )
 
 const extraInfoSpec = ['blocking', 'responseHeaders']
@@ -247,27 +270,42 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (blockingExperimentActive()) {
-        if (req.checkThirdParty) {
-            const action = {
-                isThirdParty: false,
-                shouldBlock: false
+    if (req.checkThirdParty) {
+        const action = {
+            isThirdParty: false,
+            shouldBlock: false,
+            tabRegisteredDomain: null,
+            isTrackerFrame: false,
+            policy: {
+                threshold: 604800, // 7 days
+                maxAge: 604800 // 7 days
             }
-
-            if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
-                return true
-            }
-
+        }
+        if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
+            return true
+        }
+        if (blockingExperimentActive()) {
             const tab = tabManager.get({ tabId: sender.tab.id })
+            // determine the register domain of the sending tab
+            const tabUrl = tab ? tab.url : sender.tab.url
+            const parsed = tldts.parse(tabUrl)
+            action.tabRegisteredDomain = parsed.isIp ? parsed.hostname : parsed.domain || parsed.hostname
+
+            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
+                action.isTrackerFrame = true
+            }
+
             if (tab && tab.site.whitelisted) {
                 res(action)
+                return true
             }
 
             action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
             action.shouldBlock = !cookieConfig.isExcluded(sender.url) && trackerutils.isTracker(sender.url)
             res(action)
         } else {
-            res({ isThirdParty: false, shouldBlock: false })
+            res(action)
+            return true
         }
 
         return true

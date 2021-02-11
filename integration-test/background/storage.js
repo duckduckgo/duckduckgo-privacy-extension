@@ -18,9 +18,7 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
                     iframeFullyLoaded = true
                 }
             })
-            await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/`, { waitUntil: 'networkidle0' })
-            await page.evaluate('storeData()')
-            await page.waitForNavigation({ waitUntil: 'networkidle0' })
+            await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
             // eslint-disable-next-line no-unmodified-loop-condition
             while (!iframeFullyLoaded) {
                 await wait.ms(100)
@@ -34,7 +32,7 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         await harness.teardown(browser)
     })
 
-    it('does not block 1st party HTTP cookies', async () => {
+    it('does not block 1st party HTTP cookies', () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === testPageDomain)
         expect(headerCookie).toBeTruthy()
         expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
@@ -45,10 +43,10 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         expect(headerCookie).toBeUndefined()
     })
 
-    it('does not block 1st party JS cookies', async () => {
-        const headerCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === testPageDomain)
-        expect(headerCookie).toBeTruthy()
-        expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
+    it('does not block 1st party JS cookies', () => {
+        const jsCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === testPageDomain)
+        expect(jsCookie).toBeTruthy()
+        expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
     })
 
     it('does not block 3rd party JS cookies not on block list', async () => {
