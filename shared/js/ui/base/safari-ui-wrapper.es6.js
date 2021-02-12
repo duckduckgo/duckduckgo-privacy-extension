@@ -16,6 +16,7 @@ if (safari &&
 
 let reloadTab = () => {
     var activeTab = window.safari.application.activeBrowserWindow.activeTab
+    // eslint-disable-next-line no-self-assign
     activeTab.url = activeTab.url
 }
 

@@ -97,6 +97,12 @@ module.exports = {
             "source": "external"
         },
         {
+            "name": "fingerprinting",
+            "url": "https://duckduckgo.com/contentblocking/fingerprinting.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
             "name": "ReferrerExcludeList",
             "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
             "format": "json",

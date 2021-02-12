@@ -5,6 +5,7 @@
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsData = {
     brokenSiteList: require('./../data/brokensites.js').brokenSites.split('\n'),
+    fingerprinting: require('./../data/fingerprinting.json'),
     tds: require('./../data/tds.json'),
     surrogates: require('./../data/surrogates.js').surrogates,
     ReferrerExcludeList: require('./../data/fpExcludeLists.js').referrer

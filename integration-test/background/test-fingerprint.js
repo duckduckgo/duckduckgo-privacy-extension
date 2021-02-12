@@ -21,8 +21,8 @@ const expectedFingerprintValues = {
 }
 
 const tests = [
-    {url: 'www.wikipedia.com'},
-    {url: 'reddit.com'}
+    {url: 'wikipedia.com'},
+    {url: 'example.com'}
 ]
 
 function testFPValues (values) {
@@ -33,39 +33,31 @@ function testFPValues (values) {
 
 describe('Fingerprint Defense Tests', () => {
     beforeAll(async () => {
-        try {
-            ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage } = await harness.setup())
 
-            // wait for HTTPs to successfully load
-            await bgPage.waitForFunction(
-                () => window.dbg && dbg.https.isReady,
-                { polling: 100, timeout: 20000 }
-            )
-        } catch (e) {
-            // it may timeout, but continue anyway
-            console.log(`Error creating page: ${e}`)
-        }
+        // wait for HTTPs to successfully load
+        await bgPage.waitForFunction(
+            () => window.dbg && dbg.https.isReady,
+            { polling: 100, timeout: 60000 }
+        )
     })
     afterAll(async () => {
-        try {
-            await harness.teardown(browser)
-        } catch (e) {}
+        await harness.teardown(browser)
     })
 
     tests.forEach(test => {
         it(`${test.url} should include anti-fingerprinting code`, async () => {
             const page = await browser.newPage()
             const ua = await browser.userAgent()
+            await page.setUserAgent(ua.replace(/Headless /, ''))
 
             try {
-                await page.setUserAgent(ua.replace(/Headless /, ''))
                 await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
             } catch (e) {
                 // timed out waiting for page to load, let's try running the test anyway
-                console.log(`Timed out waiting for page load: ${e}`)
             }
             // give it another second just to be sure
-            await page.waitForTimeout(1000)
+            await page.waitFor(1000)
             const values = await page.evaluate(() => {
                 return {
                     availTop: screen.availTop,
@@ -79,12 +71,123 @@ describe('Fingerprint Defense Tests', () => {
                     vendorSub: navigator.vendorSub
                 }
             })
-
             testFPValues(values)
 
+            await page.close()
+        })
+    })
+})
+
+describe('First Party Fingerprint Randomization', () => {
+    beforeAll(async () => {
+        ({ browser, bgPage } = await harness.setup())
+
+        // wait for HTTPs to successfully load
+        await bgPage.waitForFunction(
+            () => window.dbg && dbg.https.isReady,
+            { polling: 100, timeout: 6000 }
+        )
+    })
+    afterAll(async () => {
+        await harness.teardown(browser)
+    })
+
+    async function runTest (test) {
+        const page = await browser.newPage()
+
+        try {
+            await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
+        } catch (e) {
+            // timed out waiting for page to load, let's try running the test anyway
+        }
+
+        // give it another second just to be sure
+        await page.waitFor(1000)
+
+        await page.addScriptTag({path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js'})
+
+        const fingerprint = await page.evaluate(() => {
+            /* global FingerprintJS */
+            return (async () => {
+                let fp = await FingerprintJS.load()
+                return fp.get()
+            })()
+        })
+
+        await page.close()
+
+        return {
+            canvas: fingerprint.components.canvas.value,
+            plugin: fingerprint.components.plugins.value
+        }
+    }
+
+    for (let testCase of tests) {
+        it('Fingerprints should not change amongst page loads', async () => {
+            let result = await runTest(testCase)
+
+            let result2 = await runTest(testCase)
+            expect(result.canvas).toEqual(result2.canvas)
+            expect(result.plugin).toEqual(result2.plugin)
+        })
+    }
+
+    it('Fingerprints should not match across first parties', async () => {
+        let canvas = new Set()
+        let plugin = new Set()
+
+        for (let testCase of tests) {
+            let result = await runTest(testCase)
+
+            // Add the fingerprints to a set, if the result doesn't match it won't be added
+            canvas.add(result.canvas)
+            plugin.add(result.plugin)
+        }
+
+        // Ensure that the number of test pages match the number in the set
+        expect(canvas.size).toEqual(tests.length)
+        expect(plugin.size).toEqual(tests.length)
+    })
+})
+
+describe('Verify injected script is not visible to the page', () => {
+    beforeAll(async () => {
+        ({ browser, bgPage } = await harness.setup())
+
+        // wait for HTTPs to successfully load
+        await bgPage.waitForFunction(
+            () => window.dbg && dbg.https.isReady,
+            { polling: 100, timeout: 6000 }
+        )
+    })
+    afterAll(async () => {
+        await harness.teardown(browser)
+    })
+
+    tests.forEach(test => {
+        it('Fingerprints should not match across first parties', async () => {
+            const page = await browser.newPage()
+
             try {
-                await page.close()
-            } catch (e) {}
+                await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
+            } catch (e) {
+                // timed out waiting for page to load, let's try running the test anyway
+            }
+
+            // give it another second just to be sure
+            await page.waitFor(1000)
+
+            const sjclVal = await page.evaluate(() => {
+                if ('sjcl' in window) {
+                    return 'visible'
+                } else {
+                    return 'invisible'
+                }
+            })
+
+            await page.close()
+
+            expect(sjclVal).toEqual('invisible')
         })
     })
 })
