@@ -5,11 +5,11 @@ const fakeBrokenSites = require('./../../data/brokensites')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../../helpers/tds.es6')
 
-const EXT_ID = `ogigmfedpbpnnbcpgjloacccaibkaoip`
+const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 
 describe('Site', () => {
     beforeAll(() => {
-        load.loadStub({brokenSites: fakeBrokenSites})
+        load.loadStub({ brokenSites: fakeBrokenSites })
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
         tdsStorageStub.stub()
         return tdsStorage.getLists()
@@ -35,9 +35,9 @@ describe('Site', () => {
             { url: `moz-extension://${EXT_ID}/html/options.html`, expected: 'options' },
             { url: `moz-extension://${EXT_ID}/html/feedback.html`, expected: 'feedback' },
             { url: `moz-extension://${EXT_ID}/feedback.html`, expected: 'extension page' },
-            { url: `chrome-extension://asdfasdfasdfasdf/page.html`, expected: 'extension page' },
+            { url: 'chrome-extension://asdfasdfasdfasdf/page.html', expected: 'extension page' },
             // vivaldi's start page - not trying to handle that specifically because it may change its ID
-            { url: `chrome-extension://mpognobbkildjkofajifpdfhcoklimli/components/startpage/startpage.html?section=Speed-dials&activeSpeedDialIndex=0`, expected: 'extension page' }
+            { url: 'chrome-extension://mpognobbkildjkofajifpdfhcoklimli/components/startpage/startpage.html?section=Speed-dials&activeSpeedDialIndex=0', expected: 'extension page' }
         ]
 
         tests.forEach((test) => {

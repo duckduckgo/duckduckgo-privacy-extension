@@ -2,7 +2,7 @@
 const atbUtils = require('../../shared/js/background/atb-utils.es6')
 
 describe('utils.getCurrentATB', () => {
-    var result = atbUtils.getCurrentATB()
+    const result = atbUtils.getCurrentATB()
 
     it('should return a majorVersion that is an integer', function () {
         expect(result.majorVersion % 1).toEqual(0)
@@ -20,7 +20,7 @@ describe('utils.getCurrentATB', () => {
         expect([1, 2, 3, 4, 5, 6, 7].indexOf(result.minorVersion)).toBeGreaterThan(-1)
     })
 
-    var tests = [
+    const tests = [
         // eastern
         { date: 'Wed Mar 02 2016 00:01:00 GMT-0500 (EST)', atb: 'v2-1' },
         { date: 'Wed Sep 07 2016 00:01:00 GMT-0400 (EDT)', atb: 'v29-1' },

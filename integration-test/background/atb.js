@@ -124,7 +124,7 @@ describe('install workflow', () => {
                 if (url.match(/exti/)) {
                     numExtiCalled += 1
                     expect(url).toContain(`atb=${atb}`)
-                    expect(url).toContain(`cp=atbhc`)
+                    expect(url).toContain('cp=atbhc')
                 }
             })
 

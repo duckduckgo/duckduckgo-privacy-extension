@@ -1,21 +1,21 @@
-var requestTypes = {
-    'iframe': 'sub_frame',
-    'frame': 'sub_frame',
-    'script': 'script',
-    'img': 'image',
-    'input': 'image',
-    'object': 'object',
-    'embed': 'object',
-    'link': 'stylesheet'
+const requestTypes = {
+    iframe: 'sub_frame',
+    frame: 'sub_frame',
+    script: 'script',
+    img: 'image',
+    input: 'image',
+    object: 'object',
+    embed: 'object',
+    link: 'stylesheet'
 }
 
-var onBeforeLoad = (e) => {
-    let frame = (window === window.top) ? 'main_frame' : 'sub_frame'
+const onBeforeLoad = (e) => {
+    const frame = (window === window.top) ? 'main_frame' : 'sub_frame'
 
     if (e.url) {
         if (!e.url.match(/^https?:\/\/|^\/\//)) return
 
-        let requestDetails = {
+        const requestDetails = {
             currentURL: e.target.baseURI,
             potentialTracker: e.url,
             frame: frame,
@@ -25,7 +25,7 @@ var onBeforeLoad = (e) => {
         }
 
         // console.log(`MAYBE BLOCK ${e.url}`)
-        let block = window.safari.self.tab.canLoad(e, requestDetails)
+        const block = window.safari.self.tab.canLoad(e, requestDetails)
         if (block.cancel) {
             // console.log(`DDG BLOCKING ${e.url}`)
             e.preventDefault()
@@ -37,14 +37,14 @@ var onBeforeLoad = (e) => {
     }
 }
 
-var onBeforeUnload = (e) => {
+const onBeforeUnload = (e) => {
     window.safari.self.tab.dispatchMessage('unloadTab', {
         unload: getLocation()
     })
 }
 
 // return location without params
-var mainFrameURL
+let mainFrameURL
 function getLocation () {
     // content script only works from window.top and will throw
     // errors if it runs in iframes. Try to access hostname and
@@ -52,7 +52,7 @@ function getLocation () {
     if (mainFrameURL) { return mainFrameURL }
 
     try {
-        var loc = window.top.location
+        const loc = window.top.location
         mainFrameURL = loc.protocol + '//' + loc.hostname + loc.pathname
     } catch (e) {
         return
@@ -62,12 +62,12 @@ function getLocation () {
 }
 
 // serve surrogate content
-var loadSurrogate = function (url) {
-    var s = document.createElement('script')
+const loadSurrogate = function (url) {
+    const s = document.createElement('script')
     s.type = 'text/javascript'
     s.async = true
     s.src = url
-    var sp = document.getElementsByTagName('script')[0]
+    const sp = document.getElementsByTagName('script')[0]
     sp.parentNode.insertBefore(s, sp)
 }
 

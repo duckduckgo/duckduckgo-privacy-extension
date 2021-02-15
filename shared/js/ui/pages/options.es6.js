@@ -21,7 +21,7 @@ Options.prototype = window.$.extend({},
         pageName: 'options',
 
         ready: function () {
-            var $parent = window.$('#options-content')
+            const $parent = window.$('#options-content')
             Parent.prototype.ready.call(this)
 
             this.setBrowserClassOnBodyTag()
@@ -51,13 +51,13 @@ Options.prototype = window.$.extend({},
         _onFeedbackClick: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.openExtensionPage(`/html/feedback.html`)
+            browserUIWrapper.openExtensionPage('/html/feedback.html')
         },
 
         _onReportSiteClick: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1`)
+            browserUIWrapper.openExtensionPage('/html/feedback.html?broken=1')
         }
     }
 )

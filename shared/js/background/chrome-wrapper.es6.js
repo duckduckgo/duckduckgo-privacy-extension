@@ -1,44 +1,44 @@
-let getExtensionURL = (path) => {
+const getExtensionURL = (path) => {
     return chrome.extension.getURL(path)
 }
 
-let getExtensionVersion = () => {
+const getExtensionVersion = () => {
     const manifest = window.chrome && chrome.runtime.getManifest()
     return manifest.version
 }
 
-let setBadgeIcon = (badgeData) => {
+const setBadgeIcon = (badgeData) => {
     chrome.browserAction.setIcon(badgeData)
 }
 
-let syncToStorage = (data) => {
+const syncToStorage = (data) => {
     chrome.storage.local.set(data, function () { })
 }
 
-let getFromStorage = (key, cb) => {
+const getFromStorage = (key, cb) => {
     chrome.storage.local.get(key, (result) => {
         cb(result[key])
     })
 }
 
-let getExtensionId = () => {
+const getExtensionId = () => {
     return chrome.runtime.id
 }
 
-let notifyPopup = (message) => {
+const notifyPopup = (message) => {
     // this can send an error message when the popup is not open. check lastError to hide it
     chrome.runtime.sendMessage(message, () => chrome.runtime.lastError)
 }
 
-let normalizeTabData = (tabData) => {
+const normalizeTabData = (tabData) => {
     return tabData
 }
 
-let mergeSavedSettings = (settings, results) => {
+const mergeSavedSettings = (settings, results) => {
     return Object.assign(settings, results)
 }
 
-let getDDGTabUrls = () => {
+const getDDGTabUrls = () => {
     return new Promise((resolve) => {
         chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, (tabs) => {
             tabs = tabs || []
@@ -54,13 +54,13 @@ let getDDGTabUrls = () => {
     })
 }
 
-let setUninstallURL = (url) => {
+const setUninstallURL = (url) => {
     chrome.runtime.setUninstallURL(url)
 }
 
 const changeTabURL = (tabId, url) => {
     return new Promise((resolve) => {
-        chrome.tabs.update(tabId, {url}, resolve)
+        chrome.tabs.update(tabId, { url }, resolve)
     })
 }
 

@@ -47,13 +47,13 @@ class PrivacyPractices {
     }
 
     getTosdr (url) {
-        let domain = tldts.getDomain(url)
+        const domain = tldts.getDomain(url)
         let tosdrData
 
         tosdrRegexList.some(tosdrSite => {
-            let match = tosdrSite.exec(domain)
+            const match = tosdrSite.exec(domain)
 
-            if (!match) return
+            if (!match) return false
 
             tosdrData = tosdr[match[0]]
 
@@ -108,6 +108,7 @@ class PrivacyPractices {
                     parentMatch = match
                     return true
                 }
+                return false
             })
         }
 

@@ -26,53 +26,53 @@
 
     // Property values to be set and their original values.
     const fingerprintPropertyValues = {
-        'screen': {
-            'availTop': {
-                'object': 'Screen.prototype',
-                'origValue': screen.availTop,
-                'targetValue': 0
+        screen: {
+            availTop: {
+                object: 'Screen.prototype',
+                origValue: screen.availTop,
+                targetValue: 0
             },
-            'availLeft': {
-                'object': 'Screen.prototype',
-                'origValue': screen.availLeft,
-                'targetValue': 0
+            availLeft: {
+                object: 'Screen.prototype',
+                origValue: screen.availLeft,
+                targetValue: 0
             },
-            'availWidth': {
-                'object': 'Screen.prototype',
-                'origValue': screen.availWidth,
-                'targetValue': screen.width
+            availWidth: {
+                object: 'Screen.prototype',
+                origValue: screen.availWidth,
+                targetValue: screen.width
             },
-            'availHeight': {
-                'object': 'Screen.prototype',
-                'origValue': screen.availHeight,
-                'targetValue': screen.height
+            availHeight: {
+                object: 'Screen.prototype',
+                origValue: screen.availHeight,
+                targetValue: screen.height
             },
-            'colorDepth': {
-                'object': 'Screen.prototype',
-                'origValue': screen.colorDepth,
-                'targetValue': 24
+            colorDepth: {
+                object: 'Screen.prototype',
+                origValue: screen.colorDepth,
+                targetValue: 24
             },
-            'pixelDepth': {
-                'object': 'Screen.prototype',
-                'origValue': screen.pixelDepth,
-                'targetValue': 24
+            pixelDepth: {
+                object: 'Screen.prototype',
+                origValue: screen.pixelDepth,
+                targetValue: 24
             }
         },
-        'hardware': {
-            'keyboard': {
-                'object': 'Navigator.prototype',
-                'origValue': navigator.keyboard,
-                'targetValue': undefined
+        hardware: {
+            keyboard: {
+                object: 'Navigator.prototype',
+                origValue: navigator.keyboard,
+                targetValue: undefined
             },
-            'hardwareConcurrency': {
-                'object': 'Navigator.prototype',
-                'origValue': navigator.hardwareConcurrency,
-                'targetValue': 8
+            hardwareConcurrency: {
+                object: 'Navigator.prototype',
+                origValue: navigator.hardwareConcurrency,
+                targetValue: 8
             },
-            'deviceMemory': {
-                'object': 'Navigator.prototype',
-                'origValue': navigator.deviceMemory,
-                'targetValue': 8
+            deviceMemory: {
+                object: 'Navigator.prototype',
+                origValue: navigator.deviceMemory,
+                targetValue: 8
             }
         },
         /*
@@ -89,11 +89,11 @@
             }
         },
         */
-        'options': {
-            'doNotTrack': {
-                'object': 'Navigator.prototype',
-                'origValue': navigator.doNotTrack,
-                'targetValue': /Firefox/i.test(navigator.userAgent) ? 'unspecified' : null
+        options: {
+            doNotTrack: {
+                object: 'Navigator.prototype',
+                origValue: navigator.doNotTrack,
+                targetValue: /Firefox/i.test(navigator.userAgent) ? 'unspecified' : null
             }
         }
     }
@@ -114,11 +114,11 @@
             // if we don't have a matching referrer, just trim it to origin.
             trimmedReferer = new URL(document.referrer).origin + '/'
         }
-        fingerprintPropertyValues['document'] = {
-            'referrer': {
-                'object': 'Document.prototype',
-                'origValue': document.referrer,
-                'targetValue': trimmedReferer
+        fingerprintPropertyValues.document = {
+            referrer: {
+                object: 'Document.prototype',
+                origValue: document.referrer,
+                targetValue: trimmedReferer
             }
         }
     }
@@ -175,7 +175,7 @@
      */
     function buildBatteryScript () {
         if (navigator.getBattery) {
-            let batteryScript = `
+            const batteryScript = `
                 let spoofedValues = {
                     charging: true,
                     chargingTime: 0,
@@ -244,7 +244,7 @@
 
     function setWindowPropertyValue (property, value) {
         // Here we don't update the prototype getter because the values are updated dynamically
-        let script = `
+        const script = `
             try {
                 Object.defineProperty(window, "${property}", {
                     get: ( () => ${value}).bind(null),
@@ -342,7 +342,7 @@
     function inject (scriptToInject, removeAfterExec, elemToInject) {
         // Inject into main page
         try {
-            let e = document.createElement('script')
+            const e = document.createElement('script')
             e.textContent = `(() => {
                 ${scriptToInject}
             })();`

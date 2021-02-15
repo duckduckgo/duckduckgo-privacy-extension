@@ -1,8 +1,4 @@
 {
-    "parserOptions": {
-          "ecmaVersion": 2021,
-          "sourceType": "module"
-    },
     "extends": "standard",
     "rules": {
         "indent": ["error", 4]

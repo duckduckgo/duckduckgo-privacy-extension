@@ -48,7 +48,7 @@ TrackerNetworks.prototype = window.$.extend({},
                     modelName: this.currentSiteModelName
                 })
                 this.model.site.getBackgroundTabData().then(() => {
-                    let content = this.template()
+                    const content = this.template()
                     this.$el.append(content)
                     this.setup()
                     this.setupClose()
