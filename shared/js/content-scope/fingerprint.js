@@ -1,5 +1,5 @@
 /* global sjcl */
-function getCanvasKeySync (sessionKey, domainKey, inputData) {
+function getDataKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
     const hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
     return sjcl.codec.hex.fromBits(hmac.encrypt(inputData))
@@ -70,7 +70,7 @@ function modifyPixelData (imageData, domainKey, sessionKey) {
         }
     }
 
-    const canvasKey = getCanvasKeySync(sessionKey, domainKey, checkSum)
+    const canvasKey = getDataKeySync(sessionKey, domainKey, checkSum)
     let pixel = canvasKey.charCodeAt(0)
     const length = arr.length
     for (const i in canvasKey) {
@@ -155,5 +155,95 @@ function initCanvasProtection (args) {
             }
         })
         HTMLCanvasElement.prototype[methodName] = methodProxy
+    }
+}
+
+// eslint-disable-next-line no-unused-vars
+function initAudioProtection (args) {
+    const { sessionKey, stringExemptionList, site } = args
+    initExemptionList(stringExemptionList)
+    const domainKey = site.domain
+
+    // In place modify array data to remove fingerprinting
+    function transformArrayData (channelData) {
+        const cdSum = channelData.reduce((sum, v) => {
+            return sum + v
+        }, 0)
+        const audioKey = getDataKeySync(sessionKey, domainKey, cdSum)
+        let pixel = audioKey.charCodeAt(0)
+        for (const i in audioKey) {
+            let byte = audioKey.charCodeAt(i)
+            for (let j = 8; j >= 0; j--) {
+                const pixelCanvasIndex = pixel % channelData.length
+
+                let factor = byte * 0.0000001
+                if (byte ^ 0x1) {
+                    factor = 0 - factor
+                }
+                channelData[pixelCanvasIndex] = channelData[pixelCanvasIndex] + factor
+                // find next pixel to perturb
+                pixel = nextRandom(pixel)
+
+                // Right shift as we use the least significant bit of it
+                byte = byte >> 1
+            }
+        }
+        return channelData
+    }
+
+    AudioBuffer.prototype.copyFromChannel = new Proxy(AudioBuffer.prototype.copyFromChannel, {
+        apply (target, thisArg, args) {
+            const [source, channelNumber, startInChannel] = args
+            // This is implemented in a different way to canvas purely because calling the function copied the original value, which is not ideal
+            if (shouldExemptMethod() ||
+                // If channelNumber is longer than arrayBuffer number of channels then call the default method to throw
+                channelNumber > thisArg.numberOfChannels ||
+                // If startInChannel is longer than the arrayBuffer length then call the default method to throw
+                startInChannel > thisArg.length) {
+                // The normal return value
+                return target.apply(thisArg, args)
+            }
+            try {
+                // Call the protected getChannelData we implement, slice from the startInChannel value and assign to the source array
+                thisArg.getChannelData(channelNumber).slice(startInChannel).forEach((val, index) => {
+                    source[index] = val
+                })
+            } catch {
+                return target.apply(thisArg, args)
+            }
+        }
+    })
+
+    AudioBuffer.prototype.getChannelData = new Proxy(AudioBuffer.prototype.getChannelData, {
+        apply (target, thisArg, args) {
+            // The normal return value
+            const channelData = target.apply(thisArg, args)
+            if (shouldExemptMethod()) {
+                return channelData
+            }
+            // Anything we do here should be caught and ignored silently
+            try {
+                transformArrayData(channelData)
+            } catch {
+            }
+            return channelData
+        }
+    })
+
+    const canvasMethods = ['getByteTimeDomainData', 'getFloatTimeDomainData', 'getByteFrequencyData', 'getFloatFrequencyData']
+    for (const methodName of canvasMethods) {
+        AnalyserNode.prototype[methodName] = new Proxy(AnalyserNode.prototype[methodName], {
+            apply (target, thisArg, args) {
+                target.apply(thisArg, args)
+                if (shouldExemptMethod()) {
+                    return
+                }
+                // Anything we do here should be caught and ignored silently
+                try {
+                    transformArrayData(args[0])
+                } catch {
+                }
+            }
+        })
     }
 }

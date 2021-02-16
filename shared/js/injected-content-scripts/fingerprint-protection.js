@@ -201,16 +201,24 @@
         }
     }
 
+    function isFeatureBroken (feature) {
+        return args.site.brokenFeatures.includes(feature)
+    }
+
     /**
      * Trigger the built code in args.contentScopeScript.
      */
     function buildInit () {
-        if (args.site.isCanvasBroken) {
-            return
+        let codeOutput = ''
+        if (!isFeatureBroken('canvas')) {
+            codeOutput += `initCanvasProtection(${JSON.stringify(args)});`
+        }
+        if (!isFeatureBroken('audio')) {
+            codeOutput += `initAudioProtection(${JSON.stringify(args)});`
         }
         // TODO once we have a deterministic build of args.contentScopeScript
         // the index.js should be responsible for calling all the other code
-        return `initCanvasProtection(${JSON.stringify(args)})`
+        return codeOutput
     }
 
     /**
