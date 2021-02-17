@@ -92,7 +92,7 @@ module.exports = {
         },
         {
             "name": "brokenSiteList",
-            "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
+            "url": "https://duckduckgo.com/contentblocking/trackers-unprotected-temporary.txt",
             "format": "text",
             "source": "external"
         },
