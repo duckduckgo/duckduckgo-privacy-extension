@@ -77,7 +77,7 @@ chrome.webRequest.onHeadersReceived.addListener(
                 if (tab && utils.isFirstParty(request.url, tab.url)) return
                 const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
                 if (index !== -1) {
-                    if (!cookieConfig.isExcluded(request.url)) {
+                    if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                         request.responseHeaders.splice(index, 1)
                     }
                 }
@@ -248,7 +248,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 if (!utils.isFirstParty(sender.url, sender.tab.url)) {
                     action.isThirdParty = true
                 }
-                if (!cookieConfig.isExcluded(sender.url)) {
+                if (!cookieConfig.isExcluded(sender.url) && trackerutils.isTracker(sender.url)) {
                     action.shouldBlock = true
                 }
 
@@ -424,7 +424,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                 if (tab && utils.isFirstParty(request.url, tab.url)) return
                 const index = requestHeaders.findIndex(header => { return header.name.toLowerCase() === 'cookie' })
                 if (index !== -1) {
-                    if (!cookieConfig.isExcluded(request.url)) {
+                    if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                         requestHeaders.splice(index, 1)
                     }
                 }
