@@ -1,5 +1,5 @@
-const bel = require('bel')
-const listItems = require('./top-blocked-truncated-list-items.es6.js')
+const bel = require('bel');
+const listItems = require('./top-blocked-truncated-list-items.es6.js');
 
 module.exports = function () {
     if (this.model.companyListMap && this.model.companyListMap.length > 0) {
@@ -13,6 +13,6 @@ module.exports = function () {
             </span>
         </a>
     </div>
-</div>`
+</div>`;
     }
-}
+};

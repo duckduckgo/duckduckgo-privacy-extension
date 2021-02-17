@@ -1,14 +1,14 @@
-const bel = require('bel')
-const hero = require('./shared/hero.es6.js')
-const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
-const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
-const displayCategories = require('./../../../data/constants.js').displayCategories
+const bel = require('bel');
+const hero = require('./shared/hero.es6.js');
+const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js');
+const trackerNetworksText = require('./shared/tracker-networks-text.es6.js');
+const displayCategories = require('./../../../data/constants.js').displayCategories;
 
 module.exports = function () {
     if (!this.model) {
         return bel`<section class="sliding-subview
     sliding-subview--has-fixed-header">
-</section>`
+</section>`;
     } else {
         return bel`<div class="tracker-networks site-info site-info--full-height card">
     <div class="js-tracker-networks-hero">
@@ -28,36 +28,36 @@ module.exports = function () {
     )}
         </ol>
     </div>
-</div>`
+</div>`;
     }
-}
+};
 
 function renderHero (site) {
-    site = site || {}
+    site = site || {};
 
     return bel`${hero({
         status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
         title: site.domain,
         subtitle: `${trackerNetworksText(site, false)}`,
         showClose: true
-    })}`
+    })}`;
 }
 
 function renderTrackerDetails (model) {
-    const companyListMap = model.companyListMap || {}
+    const companyListMap = model.companyListMap || {};
     if (companyListMap.length === 0) {
-        return bel`<li class="is-empty"></li>`
+        return bel`<li class="is-empty"></li>`;
     }
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
-            let borderClass = ''
+            let borderClass = '';
             if (c.name && c.name === 'unknown') {
-                c.name = '(Tracker network unknown)'
+                c.name = '(Tracker network unknown)';
             } else if (c.name && model.hasUnblockedTrackers(c, c.urlsList)) {
-                const additionalText = ' associated domains'
-                const domain = model.site ? model.site.domain : c.displayName
-                c.displayName = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
-                borderClass = companyListMap.length > 1 ? 'border--top padded--top' : ''
+                const additionalText = ' associated domains';
+                const domain = model.site ? model.site.domain : c.displayName;
+                c.displayName = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)';
+                borderClass = companyListMap.length > 1 ? 'border--top padded--top' : '';
             }
             return bel`<li class="${borderClass}">
     <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
@@ -68,24 +68,24 @@ function renderTrackerDetails (model) {
     <ol class="default-list site-info__trackers__company-list__url-list" aria-label="Tracker domains for ${c.name}">
         ${c.urlsList.map((url) => {
         // find first matchign category from our list of allowed display categories
-        let category = ''
+        let category = '';
         if (c.urls[url] && c.urls[url].categories) {
             displayCategories.some(displayCat => {
-                const match = c.urls[url].categories.find(cat => cat === displayCat)
+                const match = c.urls[url].categories.find(cat => cat === displayCat);
                 if (match) {
-                    category = match
-                    return true
+                    category = match;
+                    return true;
                 }
-                return false
-            })
+                return false;
+            });
         }
         return bel`<li>
                 <div class="url">${url}</div>
                 <div class="category">${category}</div>
-            </li>`
+            </li>`;
     })}
     </ol>
-</li>`
-        })
+</li>`;
+        });
     }
 }

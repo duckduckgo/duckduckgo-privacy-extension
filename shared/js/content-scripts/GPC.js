@@ -2,7 +2,7 @@
 // Set Global Privacy Control property on DOM
 (function setDOMSignal () {
     try {
-        const contentType = document.documentElement.ownerDocument.contentType
+        const contentType = document.documentElement.ownerDocument.contentType;
         // don't inject into xml or json pages
         if (contentType === 'application/xml' ||
             contentType === 'application/json' ||
@@ -11,7 +11,7 @@
             contentType === 'text/rss+xml' ||
             contentType === 'application/rss+xml'
         ) {
-            return
+            return;
         }
     } catch (e) {
         // if we can't find content type, go ahead with injection
@@ -37,8 +37,8 @@
             // Remove script tag after execution
             document.currentScript.parentElement.removeChild(document.currentScript)
         })()
-        `
-    const scriptElement = document.createElement('script')
-    scriptElement.innerHTML = scriptString
-    document.documentElement.prepend(scriptElement)
-})()
+        `;
+    const scriptElement = document.createElement('script');
+    scriptElement.innerHTML = scriptString;
+    document.documentElement.prepend(scriptElement);
+})();

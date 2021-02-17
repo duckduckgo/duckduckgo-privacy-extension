@@ -13,8 +13,8 @@ const ReferrerTestList = {
             reason: 'testing'
         }
     ]
-}
+};
 
 module.exports = {
     referrer: ReferrerTestList
-}
+};

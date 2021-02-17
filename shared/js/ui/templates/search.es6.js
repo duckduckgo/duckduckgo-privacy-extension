@@ -1,5 +1,5 @@
-const bel = require('bel')
-const hamburgerButton = require('./shared/hamburger-button.es6.js')
+const bel = require('bel');
+const hamburgerButton = require('./shared/hamburger-button.es6.js');
 
 module.exports = function () {
     return bel`
@@ -9,5 +9,5 @@ module.exports = function () {
             value="${this.model.searchText}" />
         <input class="search-form__go js-search-go" value="" type="submit" aria-label="Search" />
         ${hamburgerButton('js-search-hamburger-button')}
-    </form>`
-}
+    </form>`;
+};

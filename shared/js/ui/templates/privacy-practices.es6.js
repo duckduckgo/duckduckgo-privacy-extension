@@ -1,17 +1,17 @@
-const bel = require('bel')
-const changeCase = require('change-case')
-const hero = require('./shared/hero.es6.js')
-const statusList = require('./shared/status-list.es6.js')
-const constants = require('../../../data/constants')
-const crossplatformLink = require('./shared/crossplatform-link.es6.js')
+const bel = require('bel');
+const changeCase = require('change-case');
+const hero = require('./shared/hero.es6.js');
+const statusList = require('./shared/status-list.es6.js');
+const constants = require('../../../data/constants');
+const crossplatformLink = require('./shared/crossplatform-link.es6.js');
 
 module.exports = function () {
-    const domain = this.model && this.model.domain
-    const tosdr = this.model && this.model.tosdr
+    const domain = this.model && this.model.domain;
+    const tosdr = this.model && this.model.tosdr;
 
     const tosdrMsg = (tosdr && tosdr.message) ||
-    constants.tosdrMessages.unknown
-    const tosdrStatus = tosdrMsg.toLowerCase()
+    constants.tosdrMessages.unknown;
+    const tosdrStatus = tosdrMsg.toLowerCase();
 
     return bel`<section class="sliding-subview sliding-subview--has-fixed-header">
     <div class="privacy-practices site-info site-info--full-height card">
@@ -43,14 +43,14 @@ module.exports = function () {
     })}.
         </div>
     </div>
-</section>`
-}
+</section>`;
+};
 
 function renderDetails (reasons) {
-    let good = reasons.good || []
-    let bad = reasons.bad || []
+    let good = reasons.good || [];
+    let bad = reasons.bad || [];
 
-    if (!good.length && !bad.length) return renderNoDetails()
+    if (!good.length && !bad.length) return renderNoDetails();
 
     // convert arrays to work for the statusList template,
     // which use objects
@@ -58,15 +58,15 @@ function renderDetails (reasons) {
     good = good.map(item => ({
         msg: changeCase.upperCaseFirst(item),
         modifier: 'good'
-    }))
+    }));
 
     bad = bad.map(item => ({
         msg: changeCase.upperCaseFirst(item),
         modifier: 'bad'
-    }))
+    }));
 
     // list good first, then bad
-    return statusList(good.concat(bad))
+    return statusList(good.concat(bad));
 }
 
 function renderNoDetails () {
@@ -77,5 +77,5 @@ function renderNoDetails () {
     <div class="privacy-practices__details__msg">
         The privacy practices of this website have not been reviewed.
     </div>
-</div>`
+</div>`;
 }

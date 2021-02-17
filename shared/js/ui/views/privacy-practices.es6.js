@@ -1,18 +1,18 @@
-const ParentSlidingSubview = require('./sliding-subview.es6.js')
+const ParentSlidingSubview = require('./sliding-subview.es6.js');
 
 function PrivacyPractices (ops) {
-    this.model = ops.model
-    this.template = ops.template
+    this.model = ops.model;
+    this.template = ops.template;
 
-    ParentSlidingSubview.call(this, ops)
+    ParentSlidingSubview.call(this, ops);
 
-    this.setupClose()
+    this.setupClose();
 }
 
 PrivacyPractices.prototype = window.$.extend({},
     ParentSlidingSubview.prototype,
     {
     }
-)
+);
 
-module.exports = PrivacyPractices
+module.exports = PrivacyPractices;

@@ -3,33 +3,33 @@
  * options: any a tag attribute
  */
 module.exports = function (url, options) {
-    const a = document.createElement('a')
-    a.href = url
+    const a = document.createElement('a');
+    a.href = url;
 
     // attributes for the <a> tag, e.g. "aria-label"
     if (options.attributes) {
         for (const attr in options.attributes) {
-            a.setAttribute(attr, options.attributes[attr])
+            a.setAttribute(attr, options.attributes[attr]);
         }
 
-        delete options.attributes
+        delete options.attributes;
     }
 
     for (const key in options) {
-        a[key] = options[key]
+        a[key] = options[key];
     }
 
     if (window.safari) {
         // safari can't use _blank target so we'll add a click handler
         if (a.target === '_blank') {
-            a.removeAttribute('target')
-            a.href = 'javascript:void(0)'
+            a.removeAttribute('target');
+            a.href = 'javascript:void(0)';
             a.onclick = () => {
-                window.safari.application.activeBrowserWindow.openTab().url = url
-                window.safari.self.hide()
-            }
+                window.safari.application.activeBrowserWindow.openTab().url = url;
+                window.safari.self.hide();
+            };
         }
     }
 
-    return a
-}
+    return a;
+};

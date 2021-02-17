@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function () {
     return bel`<div class="top-blocked__no-data">
@@ -10,5 +10,5 @@ module.exports = function () {
     </div>
     <p class="top-blocked__no-data__lead text-center">Tracker Networks Top Offenders</p>
     <p>No data available yet</p>
-</div>`
-}
+</div>`;
+};

@@ -1,13 +1,13 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function (siteRating, isWhitelisted, totalTrackerNetworksCount) {
-    let iconNameModifier = 'blocked'
+    let iconNameModifier = 'blocked';
 
     if (isWhitelisted && (siteRating.before === 'D') && (totalTrackerNetworksCount !== 0)) {
-        iconNameModifier = 'warning'
+        iconNameModifier = 'warning';
     }
 
-    const iconName = 'major-networks-' + iconNameModifier
+    const iconName = 'major-networks-' + iconNameModifier;
 
-    return bel`${iconName}`
-}
+    return bel`${iconName}`;
+};

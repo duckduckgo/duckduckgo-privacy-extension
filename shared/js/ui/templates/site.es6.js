@@ -1,13 +1,13 @@
-const bel = require('bel')
-const toggleButton = require('./shared/toggle-button.es6.js')
-const ratingHero = require('./shared/rating-hero.es6.js')
-const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
-const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
-const constants = require('../../../data/constants')
+const bel = require('bel');
+const toggleButton = require('./shared/toggle-button.es6.js');
+const ratingHero = require('./shared/rating-hero.es6.js');
+const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js');
+const trackerNetworksText = require('./shared/tracker-networks-text.es6.js');
+const constants = require('../../../data/constants');
 
 module.exports = function () {
     const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
-        constants.tosdrMessages.unknown
+        constants.tosdrMessages.unknown;
 
     return bel`<div class="site-info site-info--main">
     <ul class="default-list">
@@ -73,28 +73,28 @@ module.exports = function () {
             </div>
         </li>
     </ul>
-</div>`
+</div>`;
 
     function setTransitionText (isSiteWhitelisted) {
-        isSiteWhitelisted = isSiteWhitelisted || false
-        let text = 'Added to Unprotected Sites'
+        isSiteWhitelisted = isSiteWhitelisted || false;
+        let text = 'Added to Unprotected Sites';
 
         if (isSiteWhitelisted) {
-            text = 'Removed from Unprotected Sites'
+            text = 'Removed from Unprotected Sites';
         }
 
-        return text
+        return text;
     }
 
     function renderTrackerNetworks (model) {
-        const isActive = !model.isWhitelisted ? 'is-active' : ''
+        const isActive = !model.isWhitelisted ? 'is-active' : '';
 
         return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
     <span class="site-info__trackers-status__icon
         icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
     <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
     <span class="icon icon__arrow pull-right"></span>
-</a>`
+</a>`;
     }
 
     function renderManageWhitelist (model) {
@@ -106,6 +106,6 @@ module.exports = function () {
     <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
         Report broken site
     </a>
-</div>`
+</div>`;
     }
-}
+};

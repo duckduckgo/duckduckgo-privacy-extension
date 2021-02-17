@@ -1,11 +1,11 @@
-const Parent = window.DDG.base.Model
-const tldts = require('tldts')
+const Parent = window.DDG.base.Model;
+const tldts = require('tldts');
 
 function Whitelist (attrs) {
-    attrs.list = {}
-    Parent.call(this, attrs)
+    attrs.list = {};
+    Parent.call(this, attrs);
 
-    this.setWhitelistFromSettings()
+    this.setWhitelistFromSettings();
 }
 
 Whitelist.prototype = window.$.extend({},
@@ -15,8 +15,8 @@ Whitelist.prototype = window.$.extend({},
         modelName: 'whitelist',
 
         removeDomain (itemIndex) {
-            const domain = this.list[itemIndex]
-            console.log(`whitelist: remove ${domain}`)
+            const domain = this.list[itemIndex];
+            console.log(`whitelist: remove ${domain}`);
 
             this.fetch({
                 whitelisted: {
@@ -24,7 +24,7 @@ Whitelist.prototype = window.$.extend({},
                     domain: domain,
                     value: false
                 }
-            })
+            });
             // Remove domain whitelist opt-in status, if present
             this.fetch({
                 whitelistOptIn: {
@@ -32,11 +32,11 @@ Whitelist.prototype = window.$.extend({},
                     domain: domain,
                     value: false
                 }
-            })
+            });
 
             // Update list
             // use splice() so it reindexes the array
-            this.list.splice(itemIndex, 1)
+            this.list.splice(itemIndex, 1);
         },
 
         addDomain: function (url) {
@@ -45,13 +45,13 @@ Whitelist.prototype = window.$.extend({},
             // - prefix with getSubDomain, which returns an empty string if none is found
             // But first, strip the 'www.' part, otherwise getSubDomain will include it
             // and whitelisting won't work for that site
-            url = url ? url.replace('www.', '') : ''
-            const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null
-            const subDomain = tldts.getSubdomain(url)
-            const domain = tldts.getDomain(url) || localDomain
+            url = url ? url.replace('www.', '') : '';
+            const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null;
+            const subDomain = tldts.getSubdomain(url);
+            const domain = tldts.getDomain(url) || localDomain;
             if (domain) {
-                const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
-                console.log(`whitelist: add ${domainToWhitelist}`)
+                const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain;
+                console.log(`whitelist: add ${domainToWhitelist}`);
 
                 this.fetch({
                     whitelisted: {
@@ -59,27 +59,27 @@ Whitelist.prototype = window.$.extend({},
                         domain: domainToWhitelist,
                         value: true
                     }
-                })
+                });
 
-                this.setWhitelistFromSettings()
+                this.setWhitelistFromSettings();
             }
 
-            return domain
+            return domain;
         },
 
         setWhitelistFromSettings: function () {
-            const self = this
+            const self = this;
             this.fetch({ getSetting: { name: 'whitelisted' } }).then((whitelist) => {
-                whitelist = whitelist || {}
-                const wlist = Object.keys(whitelist)
-                wlist.sort()
+                whitelist = whitelist || {};
+                const wlist = Object.keys(whitelist);
+                wlist.sort();
 
                 // Publish whitelist change notification via the store
                 // used to know when to rerender the view
-                self.set('list', wlist)
-            })
+                self.set('list', wlist);
+            });
         }
     }
-)
+);
 
-module.exports = Whitelist
+module.exports = Whitelist;

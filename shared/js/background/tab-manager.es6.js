@@ -1,11 +1,11 @@
-const Companies = require('./companies.es6')
-const settings = require('./settings.es6')
-const Tab = require('./classes/tab.es6')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const Companies = require('./companies.es6');
+const settings = require('./settings.es6');
+const Tab = require('./classes/tab.es6');
+const browserWrapper = require('./$BROWSER-wrapper.es6');
 
 class TabManager {
     constructor () {
-        this.tabContainer = {}
+        this.tabContainer = {};
     };
 
     /* This overwrites the current tab data for a given
@@ -15,21 +15,21 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create (tabData) {
-        const normalizedData = browserWrapper.normalizeTabData(tabData)
-        const newTab = new Tab(normalizedData)
-        this.tabContainer[newTab.id] = newTab
-        return newTab
+        const normalizedData = browserWrapper.normalizeTabData(tabData);
+        const newTab = new Tab(normalizedData);
+        this.tabContainer[newTab.id] = newTab;
+        return newTab;
     };
 
     delete (id) {
-        delete this.tabContainer[id]
+        delete this.tabContainer[id];
     };
 
     /* Called using either a chrome tab object or by id
      * get({tabId: ###});
      */
     get (tabData) {
-        return this.tabContainer[tabData.tabId]
+        return this.tabContainer[tabData.tabId];
     };
 
     /* This will whitelist any open tabs with the same domain
@@ -38,30 +38,30 @@ class TabManager {
      * value: whitelist value, true or false
      */
     whitelistDomain (data) {
-        this.setGlobalWhitelist(data.list, data.domain, data.value)
+        this.setGlobalWhitelist(data.list, data.domain, data.value);
 
         for (const tabId in this.tabContainer) {
-            const tab = this.tabContainer[tabId]
+            const tab = this.tabContainer[tabId];
             if (tab.site && tab.site.domain === data.domain) {
-                tab.site.setWhitelisted(data.list, data.value)
+                tab.site.setWhitelisted(data.list, data.value);
             }
         }
 
-        browserWrapper.notifyPopup({ whitelistChanged: true })
+        browserWrapper.notifyPopup({ whitelistChanged: true });
     }
 
     /* Update the whitelists kept in settings
      */
     setGlobalWhitelist (list, domain, value) {
-        const globalwhitelist = settings.getSetting(list) || {}
+        const globalwhitelist = settings.getSetting(list) || {};
 
         if (value) {
-            globalwhitelist[domain] = true
+            globalwhitelist[domain] = true;
         } else {
-            delete globalwhitelist[domain]
+            delete globalwhitelist[domain];
         }
 
-        settings.updateSetting(list, globalwhitelist)
+        settings.updateSetting(list, globalwhitelist);
     }
 
     /* This handles the new tab case. You have clicked to
@@ -72,12 +72,12 @@ class TabManager {
      */
     createOrUpdateTab (id, info) {
         if (!tabManager.get({ tabId: id })) {
-            info.id = id
-            tabManager.create(info)
+            info.id = id;
+            tabManager.create(info);
         } else {
-            const tab = tabManager.get({ tabId: id })
+            const tab = tabManager.get({ tabId: id });
             if (tab && info.status) {
-                tab.status = info.status
+                tab.status = info.status;
 
                 /**
                  * Re: HTTPS. When the tab finishes loading:
@@ -88,23 +88,23 @@ class TabManager {
                  * content when https content is mixed after a forced upgrade
                  */
                 if (tab.status === 'complete') {
-                    const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//))
-                    tab.site.grade.setHttps(hasHttps, hasHttps)
+                    const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//));
+                    tab.site.grade.setHttps(hasHttps, hasHttps);
 
-                    console.info(tab.site.grade)
-                    tab.updateBadgeIcon()
+                    console.info(tab.site.grade);
+                    tab.updateBadgeIcon();
 
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {
-                            Companies.incrementTotalPagesWithTrackers()
+                            Companies.incrementTotalPagesWithTrackers();
                         }
 
-                        Companies.incrementTotalPages()
-                        tab.site.didIncrementCompaniesData = true
+                        Companies.incrementTotalPages();
+                        tab.site.didIncrementCompaniesData = true;
                     }
 
-                    if (tab.statusCode === 200) tab.endStopwatch()
+                    if (tab.statusCode === 200) tab.endStopwatch();
                 }
             }
         }
@@ -113,17 +113,17 @@ class TabManager {
     updateTabUrl (request) {
         // Update tab data. This makes
         // sure we have the correct url after any https rewrites
-        const tab = tabManager.get({ tabId: request.tabId })
+        const tab = tabManager.get({ tabId: request.tabId });
 
         if (tab) {
-            tab.statusCode = request.statusCode
+            tab.statusCode = request.statusCode;
             if (tab.statusCode === 200) {
-                tab.updateSite(request.url)
+                tab.updateSite(request.url);
             }
         }
     }
 }
 
-const tabManager = new TabManager()
+const tabManager = new TabManager();
 
-module.exports = tabManager
+module.exports = tabManager;

@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('bel');
 const categories = [
     { category: 'Video didn\'t play', value: 'videos' },
     { category: 'Images didn\'t load', value: 'images' },
@@ -7,20 +7,20 @@ const categories = [
     { category: 'Links or buttons don\'t work', value: 'links' },
     { category: 'I can\'t sign in', value: 'login' },
     { category: 'The site asked me to disable', value: 'paywall' }
-]
+];
 
 function shuffle (arr) {
-    let len = arr.length
-    let temp
-    let index
+    let len = arr.length;
+    let temp;
+    let index;
     while (len > 0) {
-        index = Math.floor(Math.random() * len)
-        len--
-        temp = arr[len]
-        arr[len] = arr[index]
-        arr[index] = temp
+        index = Math.floor(Math.random() * len);
+        len--;
+        temp = arr[len];
+        arr[len] = arr[index];
+        arr[index] = temp;
     }
-    return arr
+    return arr;
 }
 
 module.exports = function () {
@@ -39,7 +39,7 @@ module.exports = function () {
             <div class="form__select breakage-form__input--dropdown">
                 <select class="js-breakage-form-dropdown">
                     <option value=''>Pick your issue from the list...</option>
-                    ${shuffle(categories).map(function (item) { return bel`<option value=${item.value}>${item.category}</option>` })}
+                    ${shuffle(categories).map(function (item) { return bel`<option value=${item.value}>${item.category}</option>`; })}
                     <option value='Other'>Something else</option>
                 </select>
             </div>
@@ -51,5 +51,5 @@ module.exports = function () {
             <div class="breakage-form__success--message">Your report will help improve the extension and make the experience better for other people.</div>
         </div>
     </div>
-</div>`
-}
+</div>`;
+};

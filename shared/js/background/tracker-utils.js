@@ -1,23 +1,23 @@
 // Utility functions for dealing with tracker information
-const utils = require('./utils.es6')
-const trackers = require('./trackers.es6')
-const tldts = require('tldts')
-const tdsStorage = require('./storage/tds.es6')
+const utils = require('./utils.es6');
+const trackers = require('./trackers.es6');
+const tldts = require('tldts');
+const tdsStorage = require('./storage/tds.es6');
 
 // Determine if two URL's belong to the same entity.
 function isSameEntity (url1, url2) {
     try {
-        const domain1 = tldts.parse(url1).domain
-        const domain2 = tldts.parse(url2).domain
-        if (domain1 === domain2) return true
+        const domain1 = tldts.parse(url1).domain;
+        const domain2 = tldts.parse(url2).domain;
+        if (domain1 === domain2) return true;
 
-        const entity1 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url1).split('.') })
-        const entity2 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url2).split('.') })
-        if (entity1 === undefined && entity2 === undefined) return false
-        return entity1 === entity2
+        const entity1 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url1).split('.') });
+        const entity2 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url2).split('.') });
+        if (entity1 === undefined && entity2 === undefined) return false;
+        return entity1 === entity2;
     } catch (e) {
         // tried to parse invalid URL
-        return false
+        return false;
     }
 }
 
@@ -25,9 +25,9 @@ function isSameEntity (url1, url2) {
 function isTracker (url) {
     const data = {
         urlToCheckSplit: utils.extractHostFromURL(url).split('.')
-    }
-    const tracker = trackers.findTracker(data)
-    return !!tracker
+    };
+    const tracker = trackers.findTracker(data);
+    return !!tracker;
 }
 
 /*
@@ -44,43 +44,43 @@ function isTracker (url) {
  */
 function truncateReferrer (referrer, target) {
     if (!referrer || referrer === '') {
-        return undefined
+        return undefined;
     }
 
     if (utils.isSafeListed(referrer) || utils.isSafeListed(target)) {
-        return undefined
+        return undefined;
     }
 
     if (isSameEntity(referrer, target)) {
-        return undefined
+        return undefined;
     }
 
     if (tdsStorage.ReferrerExcludeList && tdsStorage.ReferrerExcludeList.excludedReferrers) {
-        const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
+        const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain);
         try {
             if (excludedDomains.includes(tldts.parse(referrer).domain) ||
                 excludedDomains.includes(tldts.parse(target).domain)) {
                 // referrer or target is in the Referrer safe list
-                return undefined
+                return undefined;
             }
         } catch (e) {
             // if we can't parse the domains for any reason, assume it's not exluded.
         }
     }
 
-    let modifiedReferrer = referrer
+    let modifiedReferrer = referrer;
     if (isTracker(target)) {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: false })
+        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: false });
     } else {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: true })
+        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: true });
     }
     // If extractLimitedDomainFromURL fails (for instance, invalid referrer URL), it
     // returns undefined, (in practice, don't modify the referrer), so sometimes this value could be undefined.
-    return modifiedReferrer
+    return modifiedReferrer;
 }
 
 module.exports = {
     isSameEntity: isSameEntity,
     isTracker: isTracker,
     truncateReferrer: truncateReferrer
-}
+};

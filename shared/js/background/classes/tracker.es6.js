@@ -1,23 +1,23 @@
-const Companies = require('../companies.es6')
-const tdsStorage = require('../storage/tds.es6')
+const Companies = require('../companies.es6');
+const tdsStorage = require('../storage/tds.es6');
 
 class Tracker {
     constructor (t) {
-        this.parentCompany = Companies.get(t.tracker.owner.name)
-        this.displayName = t.tracker.owner.displayName
-        this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
-        this.urls = {}
+        this.parentCompany = Companies.get(t.tracker.owner.name);
+        this.displayName = t.tracker.owner.displayName;
+        this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence;
+        this.urls = {};
         this.urls[t.fullTrackerDomain] = {
             isBlocked: this.isBlocked(t.action),
             reason: t.reason,
             categories: t.tracker.categories
-        }
-        this.count = 1 // request count
-        this.type = t.type || ''
+        };
+        this.count = 1; // request count
+        this.type = t.type || '';
     }
 
     increment () {
-        this.count += 1
+        this.count += 1;
     }
 
     /* A parent company may try
@@ -30,13 +30,13 @@ class Tracker {
                 isBlocked: this.isBlocked(t.action),
                 reason: t.reason,
                 categories: t.tracker.categories
-            }
+            };
         }
     }
 
     isBlocked (action) {
-        return !!action.match(/block|redirect/)
+        return !!action.match(/block|redirect/);
     }
 }
 
-module.exports = Tracker
+module.exports = Tracker;

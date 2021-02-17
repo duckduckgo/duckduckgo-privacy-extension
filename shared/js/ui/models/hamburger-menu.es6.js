@@ -1,9 +1,9 @@
-const Parent = window.DDG.base.Model
+const Parent = window.DDG.base.Model;
 
 function HamburgerMenu (attrs) {
-    attrs = attrs || {}
-    attrs.tabUrl = ''
-    Parent.call(this, attrs)
+    attrs = attrs || {};
+    attrs.tabUrl = '';
+    Parent.call(this, attrs);
 }
 
 HamburgerMenu.prototype = window.$.extend({},
@@ -11,6 +11,6 @@ HamburgerMenu.prototype = window.$.extend({},
     {
         modelName: 'hamburgerMenu'
     }
-)
+);
 
-module.exports = HamburgerMenu
+module.exports = HamburgerMenu;

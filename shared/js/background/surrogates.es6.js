@@ -2,7 +2,7 @@
  *
  */
 
-let surrogateList = {}
+let surrogateList = {};
 
 class Surrogates {
     /****
@@ -13,33 +13,33 @@ class Surrogates {
      * and the base64 encoded surrogate content as the value.
      */
     parse (text, res) {
-        const b64dataheader = 'data:application/javascript;base64,'
-        res = res || {}
+        const b64dataheader = 'data:application/javascript;base64,';
+        res = res || {};
 
-        this.trackersSurrogateList = text.trim().split('\n\n')
+        this.trackersSurrogateList = text.trim().split('\n\n');
 
         for (const sur of this.trackersSurrogateList) {
             // remove comment lines that begin with #
             const lines = sur.split('\n').filter((line) => {
-                return !(/^#.*/).test(line)
-            })
+                return !(/^#.*/).test(line);
+            });
             // remove first line, store it
-            const firstLine = lines.shift()
+            const firstLine = lines.shift();
             // take identifier from first line
-            const pattern = firstLine.split(' ')[0]
-            const b64surrogate = btoa(lines.join('\n'))
-            res[pattern] = b64dataheader + b64surrogate
+            const pattern = firstLine.split(' ')[0];
+            const b64surrogate = btoa(lines.join('\n'));
+            res[pattern] = b64dataheader + b64surrogate;
         }
-        surrogateList = res
-        return res
+        surrogateList = res;
+        return res;
     }
 
     hasList () {
-        return Object.keys(surrogateList).length
+        return Object.keys(surrogateList).length;
     }
 
     getContentForRule (rule) {
-        return surrogateList[rule]
+        return surrogateList[rule];
     }
 
     /****
@@ -59,15 +59,15 @@ class Surrogates {
         // http://en.www.googletagservices.com/some/other/random/path/gpt.js?v=123
         //
         // All our rules have domain + filename, so for now we're safe making that assumption.
-        const splitUrl = url.split('/')
+        const splitUrl = url.split('/');
         // pull everything after the last slash as the filename:
-        let filename = splitUrl[splitUrl.length - 1]
+        let filename = splitUrl[splitUrl.length - 1];
         // strip off any querystring params:
-        filename = filename.split('?')[0]
+        filename = filename.split('?')[0];
         // concat with domain to match the original rule:
-        const ruleToMatch = parsedUrl.domain + '/' + filename
-        return surrogateList[ruleToMatch]
+        const ruleToMatch = parsedUrl.domain + '/' + filename;
+        return surrogateList[ruleToMatch];
     }
 }
 
-module.exports = new Surrogates()
+module.exports = new Surrogates();

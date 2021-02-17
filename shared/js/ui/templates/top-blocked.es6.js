@@ -1,34 +1,34 @@
-const bel = require('bel')
-const header = require('./shared/sliding-subview-header.es6.js')
-const listItems = require('./top-blocked-list-items.es6.js')
-const noData = require('./shared/top-blocked-no-data.es6.js')
+const bel = require('bel');
+const header = require('./shared/sliding-subview-header.es6.js');
+const listItems = require('./top-blocked-list-items.es6.js');
+const noData = require('./shared/top-blocked-no-data.es6.js');
 
 module.exports = function () {
     if (!this.model) {
         return bel`<div class="sliding-subview
     sliding-subview--has-fixed-header top-blocked-header">
     ${header('All Trackers')}
-</div>`
+</div>`;
     } else {
         return bel`<div class="js-top-blocked-content">
     ${renderPctPagesWithTrackers(this.model)}
     ${renderList(this.model)}
     ${renderResetButton(this.model)}
-</div>`
+</div>`;
     }
-}
+};
 
 function renderPctPagesWithTrackers (model) {
-    let msg = ''
+    let msg = '';
     if (model.lastStatsResetDate) {
-        const d = (new Date(model.lastStatsResetDate)).toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' })
-        if (d) msg = ` since ${d}`
+        const d = (new Date(model.lastStatsResetDate)).toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' });
+        if (d) msg = ` since ${d}`;
     }
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
     Trackers were found on <b>${model.pctPagesWithTrackers}%</b>
     of websites you've visited${msg}.
-</p>`
+</p>`;
     }
 }
 
@@ -36,13 +36,13 @@ function renderList (model) {
     if (model.companyListMap.length > 0) {
         return bel`<ol aria-label="List of Trackers Found" class="default-list top-blocked__list card border--bottom">
     ${listItems(model.companyListMap)}
-</ol>`
+</ol>`;
     } else {
         return bel`<ol class="default-list top-blocked__list">
     <li class="top-blocked__li top-blocked__li--no-data">
         ${noData()}
     </li>
-</ol>`
+</ol>`;
     }
 }
 
@@ -55,6 +55,6 @@ function renderResetButton (model) {
     </button>
     <p>These stats are only stored locally on your device,
     and are not sent anywhere, ever.</p>
-</div>`
+</div>`;
     }
 }

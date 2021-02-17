@@ -1,6 +1,6 @@
-const Whitelist = require('../../../shared/js/ui/models/whitelist.es6')
+const Whitelist = require('../../../shared/js/ui/models/whitelist.es6');
 
-let whitelist
+let whitelist;
 
 const domainTestCases = [
     {
@@ -48,18 +48,18 @@ const domainTestCases = [
         whitelistedDomain: '',
         valid: false
     }
-]
+];
 
 describe('whitelist.addDomain()', () => {
-    whitelist = new Whitelist({})
+    whitelist = new Whitelist({});
     domainTestCases.forEach((test) => {
         it(`should return ${test.valid} for ${test.url}`, () => {
-            const result = whitelist.addDomain(test.url)
+            const result = whitelist.addDomain(test.url);
             if (test.valid) {
-                expect(result).toBe(test.whitelistedDomain)
+                expect(result).toBe(test.whitelistedDomain);
             } else {
-                expect(result).toBe(null)
+                expect(result).toBe(null);
             }
-        })
-    })
-})
+        });
+    });
+});

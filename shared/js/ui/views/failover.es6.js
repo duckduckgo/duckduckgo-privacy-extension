@@ -1,9 +1,9 @@
-const Parent = window.DDG.base.View
+const Parent = window.DDG.base.View;
 
 function Failover (ops) {
-    this.template = ops.template
-    this.message = ops.message
-    Parent.call(this, ops)
+    this.template = ops.template;
+    this.message = ops.message;
+    Parent.call(this, ops);
 }
 
 Failover.prototype = window.$.extend({},
@@ -11,6 +11,6 @@ Failover.prototype = window.$.extend({},
     {
 
     }
-)
+);
 
-module.exports = Failover
+module.exports = Failover;

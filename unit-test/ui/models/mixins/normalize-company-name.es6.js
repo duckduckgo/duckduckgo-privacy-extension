@@ -1,5 +1,5 @@
-let normalizeCompanyName = require('../../../../shared/js/ui/models/mixins/normalize-company-name.es6')
-normalizeCompanyName = normalizeCompanyName.normalizeCompanyName
+let normalizeCompanyName = require('../../../../shared/js/ui/models/mixins/normalize-company-name.es6');
+normalizeCompanyName = normalizeCompanyName.normalizeCompanyName;
 const companyNamesTestCases = [
     {
         name: 'Amazon.com',
@@ -21,19 +21,19 @@ const companyNamesTestCases = [
         name: 'AOL',
         result: 'aol'
     }
-]
+];
 
 describe('normalizeCompanyName', () => {
     companyNamesTestCases.forEach((test) => {
         it(`should return ${test.result} for company ${test.name}`, () => {
-            let result
+            let result;
             if (test.name === 'undefined') {
-                result = normalizeCompanyName()
+                result = normalizeCompanyName();
             } else {
-                result = normalizeCompanyName(test.name)
+                result = normalizeCompanyName(test.name);
             }
 
-            expect(result).toEqual(test.result)
-        })
-    })
-})
+            expect(result).toEqual(test.result);
+        });
+    });
+});

@@ -1,14 +1,14 @@
-const Parent = window.DDG.base.View
-const openOptionsPage = require('./mixins/open-options-page.es6.js')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const Parent = window.DDG.base.View;
+const openOptionsPage = require('./mixins/open-options-page.es6.js');
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js');
 
 function HamburgerMenu (ops) {
-    this.model = ops.model
-    this.template = ops.template
-    this.pageView = ops.pageView
-    Parent.call(this, ops)
+    this.model = ops.model;
+    this.template = ops.template;
+    this.pageView = ops.pageView;
+    Parent.call(this, ops);
 
-    this._setup()
+    this._setup();
 }
 
 HamburgerMenu.prototype = window.$.extend({},
@@ -22,7 +22,7 @@ HamburgerMenu.prototype = window.$.extend({},
                 'options-link',
                 'feedback-link',
                 'broken-site-link'
-            ])
+            ]);
             this.bindEvents([
                 [this.$close, 'click', this._closeMenu],
                 [this.$optionslink, 'click', this.openOptionsPage],
@@ -30,42 +30,42 @@ HamburgerMenu.prototype = window.$.extend({},
                 [this.$brokensitelink, 'click', this._handleBrokenSiteClick],
                 [this.model.store.subscribe, 'action:search', this._handleAction],
                 [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
-            ])
+            ]);
         },
 
         _handleAction: function (notification) {
-            if (notification.action === 'burgerClick') this._openMenu()
+            if (notification.action === 'burgerClick') this._openMenu();
         },
 
         _openMenu: function (e) {
-            this.$el.removeClass('is-hidden')
+            this.$el.removeClass('is-hidden');
         },
 
         _closeMenu: function (e) {
-            if (e) e.preventDefault()
-            this.$el.addClass('is-hidden')
+            if (e) e.preventDefault();
+            this.$el.addClass('is-hidden');
         },
 
         _handleFeedbackClick: function (e) {
-            e.preventDefault()
+            e.preventDefault();
 
-            browserUIWrapper.openExtensionPage('/html/feedback.html')
+            browserUIWrapper.openExtensionPage('/html/feedback.html');
         },
 
         _handleBrokenSiteClick: function (e) {
-            e.preventDefault()
-            this.$el.addClass('is-hidden')
-            this.pageView.views.site.showBreakageForm('reportBrokenSite')
+            e.preventDefault();
+            this.$el.addClass('is-hidden');
+            this.pageView.views.site.showBreakageForm('reportBrokenSite');
         },
 
         _handleSiteUpdate: function (notification) {
             if (notification && notification.change.attribute === 'tab') {
-                this.model.tabUrl = notification.change.value.url
-                this._rerender()
-                this._setup()
+                this.model.tabUrl = notification.change.value.url;
+                this._rerender();
+                this._setup();
             }
         }
     }
-)
+);
 
-module.exports = HamburgerMenu
+module.exports = HamburgerMenu;

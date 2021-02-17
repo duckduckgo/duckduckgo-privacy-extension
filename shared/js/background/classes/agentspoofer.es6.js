@@ -1,31 +1,31 @@
-const agentStorage = require('./../storage/agents.es6')
-const agentparser = require('useragent')
-const tldts = require('tldts')
-const tabManager = require('../tab-manager.es6')
+const agentStorage = require('./../storage/agents.es6');
+const agentparser = require('useragent');
+const tldts = require('tldts');
+const tabManager = require('../tab-manager.es6');
 
 class AgentSpoofer {
     constructor () {
-        this.realAgent = navigator.userAgent
-        this.parsedAgent = agentparser.lookup(this.realAgent)
-        this.spoofedAgent = this.realAgent
-        this.selectAgent()
-        this.needsRotation = true
+        this.realAgent = navigator.userAgent;
+        this.parsedAgent = agentparser.lookup(this.realAgent);
+        this.spoofedAgent = this.realAgent;
+        this.selectAgent();
+        this.needsRotation = true;
     }
 
     getAgent () {
         if (this.needsRotation) {
-            this.rotateAgent()
+            this.rotateAgent();
         }
-        return this.spoofedAgent
+        return this.spoofedAgent;
     }
 
     /**
      * Select a new spoofed user agent to return.
      */
     rotateAgent () {
-        const oldAgent = this.spoofedAgent
-        this.spoofedAgent = this.selectAgent()
-        console.log(`Rotated UserAgent. Old agent was: ${oldAgent}. New UserAgent: ${this.spoofedAgent}`)
+        const oldAgent = this.spoofedAgent;
+        this.spoofedAgent = this.selectAgent();
+        console.log(`Rotated UserAgent. Old agent was: ${oldAgent}. New UserAgent: ${this.spoofedAgent}`);
     }
 
     /**
@@ -35,27 +35,27 @@ class AgentSpoofer {
      *      OS major version should remain the same
     **/
     selectAgent () {
-        const agentList = this.filterAgents(agentStorage.agents)
+        const agentList = this.filterAgents(agentStorage.agents);
         if (agentList.length === 0) {
-            return this.realAgent
+            return this.realAgent;
         }
 
-        let selectedAgent = null
-        let maxRandValue = 0
+        let selectedAgent = null;
+        let maxRandValue = 0;
         for (const agent of agentList) {
-            maxRandValue += agent.frequency
+            maxRandValue += agent.frequency;
         }
-        let pick = Math.random() * maxRandValue
+        let pick = Math.random() * maxRandValue;
 
         for (const agent of agentList) {
             if (pick <= agent.frequency) {
-                this.needsRotation = false
-                selectedAgent = agent.agentString
-                break
+                this.needsRotation = false;
+                selectedAgent = agent.agentString;
+                break;
             }
-            pick -= agent.frequency
+            pick -= agent.frequency;
         }
-        return selectedAgent || this.realAgent
+        return selectedAgent || this.realAgent;
     }
 
     /**
@@ -64,10 +64,10 @@ class AgentSpoofer {
      * relatively close.
      */
     filterAgents (agents) {
-        const osMajorVariance = 0
-        const osMinorVariance = 3
-        const browserMajorVariance = 3
-        const browserMinorVariance = 1000
+        const osMajorVariance = 0;
+        const osMinorVariance = 3;
+        const browserMajorVariance = 3;
+        const browserMinorVariance = 1000;
         // Filter for version constraints
         agents = agents.filter(agent =>
             agent.osMajor >= Number(this.parsedAgent.os.major) - Number(osMajorVariance) &&
@@ -77,34 +77,34 @@ class AgentSpoofer {
             agent.versionMajor >= Number(this.parsedAgent.major) - Number(browserMajorVariance) &&
             agent.versionMajor <= Number(this.parsedAgent.major) + Number(browserMajorVariance) &&
             agent.versionMinor >= Number(this.parsedAgent.minor) - Number(browserMinorVariance) &&
-            agent.versionMinor <= Number(this.parsedAgent.minor) + Number(browserMinorVariance))
+            agent.versionMinor <= Number(this.parsedAgent.minor) + Number(browserMinorVariance));
         // Filter out any excluded agents
         if (agentStorage.excludedAgents.length > 0) {
-            agents = agents.filter(agent => !agentStorage.excludedAgents.some(excludePattern => excludePattern.test(agent.agentString)))
+            agents = agents.filter(agent => !agentStorage.excludedAgents.some(excludePattern => excludePattern.test(agent.agentString)));
         }
         // Don't include our current agent (so it should always rotate)
-        agents = agents.filter(agent => agent.agentString !== this.spoofedAgent)
-        return agents
+        agents = agents.filter(agent => agent.agentString !== this.spoofedAgent);
+        return agents;
     }
 
     /**
      * Return true if we should spoof UA for this request
      */
     shouldSpoof (request) {
-        const tab = tabManager.get({ tabId: request.tabId })
+        const tab = tabManager.get({ tabId: request.tabId });
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (!!tab && tab.site.whitelisted) {
-            return false
+            return false;
         }
         if (!!tab && this.isFirstParty(tab.url, request.url)) {
-            return false
+            return false;
         }
-        const domain = tldts.parse(request.url).domain
+        const domain = tldts.parse(request.url).domain;
         if (agentStorage.excludedDomains.length > 0 && agentStorage.excludedDomains.includes(domain)) {
-            return false
+            return false;
         }
-        return true
+        return true;
     }
 
     /**
@@ -112,9 +112,9 @@ class AgentSpoofer {
      * first party set.
      */
     isFirstParty (url1, url2) {
-        const first = tldts.parse(url1).domain
-        const second = tldts.parse(url2).domain
-        return first === second
+        const first = tldts.parse(url1).domain;
+        const second = tldts.parse(url2).domain;
+        return first === second;
     }
 }
-module.exports = new AgentSpoofer()
+module.exports = new AgentSpoofer();

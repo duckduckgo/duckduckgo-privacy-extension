@@ -1,9 +1,9 @@
 (function () {
     // Note: this is only used on duckduckgo.com to assist with user onboarding
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        start()
+        start();
     } else {
-        document.addEventListener('DOMContentLoaded', start)
+        document.addEventListener('DOMContentLoaded', start);
     }
 
     function start () {
@@ -13,6 +13,6 @@
             // can be easily tested in local dev.
             // Do not edit the /* __ */ and  /* __ */
             /* __ */ 'https://duckduckgo.com' /* __ */
-        )
+        );
     }
-})()
+})();

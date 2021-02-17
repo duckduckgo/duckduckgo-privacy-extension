@@ -4,10 +4,10 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-const load = require('./load.es6')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
-const settings = require('./settings.es6')
-const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const load = require('./load.es6');
+const browserWrapper = require('./$BROWSER-wrapper.es6');
+const settings = require('./settings.es6');
+const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6');
 
 /**
  *
@@ -18,26 +18,26 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  *
  */
 function fire () {
-    if (!arguments.length) return
+    if (!arguments.length) return;
 
-    let args = Array.prototype.slice.call(arguments)
-    const pixelName = args[0]
+    let args = Array.prototype.slice.call(arguments);
+    const pixelName = args[0];
 
-    if (typeof pixelName !== 'string') return
+    if (typeof pixelName !== 'string') return;
 
     // Only allow broken site reports
-    if (pixelName !== 'epbf') return
+    if (pixelName !== 'epbf') return;
 
-    const url = getURL(pixelName)
+    const url = getURL(pixelName);
 
-    if (!url) return
+    if (!url) return;
 
-    args = args.slice(1)
-    args = args.concat(getAdditionalParams())
-    const paramString = concatParams(args)
+    args = args.slice(1);
+    args = args.concat(getAdditionalParams());
+    const paramString = concatParams(args);
 
     // Send the request
-    load.url(url + paramString)
+    load.url(url + paramString);
 }
 
 /**
@@ -46,10 +46,10 @@ function fire () {
  *
  */
 function getURL (pixelName) {
-    if (!pixelName) return
+    if (!pixelName) return;
 
-    const url = 'https://improving.duckduckgo.com/t/'
-    return url + pixelName
+    const url = 'https://improving.duckduckgo.com/t/';
+    return url + pixelName;
 }
 
 /**
@@ -58,20 +58,20 @@ function getURL (pixelName) {
  *
  */
 function getAdditionalParams () {
-    const browserInfo = parseUserAgentString()
-    const browser = browserInfo.browser
-    const extensionVersion = browserWrapper.getExtensionVersion()
-    const atb = settings.getSetting('atb')
-    const queryStringParams = {}
-    const result = []
+    const browserInfo = parseUserAgentString();
+    const browser = browserInfo.browser;
+    const extensionVersion = browserWrapper.getExtensionVersion();
+    const atb = settings.getSetting('atb');
+    const queryStringParams = {};
+    const result = [];
 
-    if (browser) result.push(browser.toLowerCase())
-    if (extensionVersion) queryStringParams.extensionVersion = extensionVersion
-    if (atb) queryStringParams.atb = atb
+    if (browser) result.push(browser.toLowerCase());
+    if (extensionVersion) queryStringParams.extensionVersion = extensionVersion;
+    if (atb) queryStringParams.atb = atb;
 
-    result.push(queryStringParams)
+    result.push(queryStringParams);
 
-    return result
+    return result;
 }
 
 /**
@@ -80,34 +80,34 @@ function getAdditionalParams () {
  *
  */
 function concatParams (args) {
-    args = args || []
+    args = args || [];
 
-    let paramString = ''
-    let objParamString = ''
-    let resultString = ''
-    const randomNum = Math.ceil(Math.random() * 1e7)
+    let paramString = '';
+    let objParamString = '';
+    let resultString = '';
+    const randomNum = Math.ceil(Math.random() * 1e7);
 
     args.forEach((arg) => {
         // append keys if object
         if (typeof arg === 'object') {
             objParamString += Object.keys(arg).reduce((params, key) => {
-                const val = arg[key]
-                if (val || val === 0) return `${params}&${key}=${val}`
-                return params
-            }, '')
+                const val = arg[key];
+                if (val || val === 0) return `${params}&${key}=${val}`;
+                return params;
+            }, '');
         } else if (arg) {
             // otherwise just add args separated by _
-            paramString += `_${arg}`
+            paramString += `_${arg}`;
         }
-    })
+    });
 
-    resultString = `${paramString}?${randomNum}${objParamString}`
+    resultString = `${paramString}?${randomNum}${objParamString}`;
 
-    return resultString
+    return resultString;
 }
 
 module.exports = {
     fire: fire,
     getURL: getURL,
     concatParams: concatParams
-}
+};

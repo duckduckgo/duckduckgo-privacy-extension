@@ -1,12 +1,12 @@
 
-const utils = require('../../shared/js/background/utils.es6')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
-const tds = require('./../data/tds')
-const load = require('./../helpers/utils.es6.js')
-const brokenSites = require('./../data/brokensites').brokenSites
-const surrogates = require('./../data/surrogates').surrogates
+const utils = require('../../shared/js/background/utils.es6');
+const tdsStorage = require('../../shared/js/background/storage/tds.es6');
+const tds = require('./../data/tds');
+const load = require('./../helpers/utils.es6.js');
+const brokenSites = require('./../data/brokensites').brokenSites;
+const surrogates = require('./../data/surrogates').surrogates;
 
-const tdsStorageStub = require('../helpers/tds.es6')
+const tdsStorageStub = require('../helpers/tds.es6');
 
 const findParentTestCases = [
     {
@@ -25,7 +25,7 @@ const findParentTestCases = [
         url: 'duckduckgo.com',
         parent: 'undefined'
     }
-]
+];
 const extractHostFromURLTestCases = [
     {
         url: 'http://google.com',
@@ -62,61 +62,61 @@ const extractHostFromURLTestCases = [
         result: '::1',
         resultWithWWW: '::1'
     }
-]
+];
 
 describe('utils find owner and parent function', () => {
     beforeAll(() => {
-        load.loadStub({ tds, surrogates, brokenSites })
-        tdsStorageStub.stub()
-        return tdsStorage.getLists()
-    })
+        load.loadStub({ tds, surrogates, brokenSites });
+        tdsStorageStub.stub();
+        return tdsStorage.getLists();
+    });
 
     describe('utils.findParent()', () => {
         findParentTestCases.forEach((test) => {
             it(`should return ${test.parent} as a parent for: ${test.url}`, () => {
-                const result = utils.findParent(test.url)
+                const result = utils.findParent(test.url);
                 if (test.parent === 'undefined') {
-                    expect(result).toBe(undefined)
+                    expect(result).toBe(undefined);
                 } else {
-                    expect(result).toEqual(test.parent)
+                    expect(result).toEqual(test.parent);
                 }
-            })
-        })
-    })
-})
+            });
+        });
+    });
+});
 
 describe('utils.getBrowserName()', () => {
     it('should return chrome in headless chrome', () => {
-        const result = utils.getBrowserName()
-        expect(result).toEqual('chrome')
-    })
-})
+        const result = utils.getBrowserName();
+        expect(result).toEqual('chrome');
+    });
+});
 
 describe('utils.getUpgradeToSecureSupport()', () => {
     it('should return false in headless chrome', () => {
-        const result = utils.getUpgradeToSecureSupport()
-        expect(result).toEqual(false)
-    })
-})
+        const result = utils.getUpgradeToSecureSupport();
+        expect(result).toEqual(false);
+    });
+});
 
 describe('utils.extractHostFromURL()', () => {
     extractHostFromURLTestCases.forEach((test) => {
         it(`should return ${test.result} as host for the url: ${test.url}`, () => {
-            const result = utils.extractHostFromURL(test.url)
-            expect(result).toEqual(test.result)
-        })
+            const result = utils.extractHostFromURL(test.url);
+            expect(result).toEqual(test.result);
+        });
 
         it(`should return ${test.resultWithWWW} as host for the url: ${test.url}`, () => {
-            const result = utils.extractHostFromURL(test.url, true)
-            expect(result).toEqual(test.resultWithWWW)
-        })
-    })
-})
+            const result = utils.extractHostFromURL(test.url, true);
+            expect(result).toEqual(test.resultWithWWW);
+        });
+    });
+});
 
 describe('utils.getUpgradeToSecureSupport()', () => {
     it('should return ping in headless chrome', () => {
-        const result = utils.getBeaconName()
-        const chromeBeaconName = 'ping'
-        expect(result).toEqual(chromeBeaconName)
-    })
-})
+        const result = utils.getBeaconName();
+        const chromeBeaconName = 'ping';
+        expect(result).toEqual(chromeBeaconName);
+    });
+});

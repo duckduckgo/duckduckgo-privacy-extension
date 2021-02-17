@@ -36,10 +36,10 @@
  */
 
 // Dependencies
-const isPlainObject = require('is-plain-object')
-const deepFreeze = require('deep-freeze')
-const EventEmitter2 = require('eventemitter2')
-const notifiers = require('./notifiers.es6.js')
+const isPlainObject = require('is-plain-object');
+const deepFreeze = require('deep-freeze');
+const EventEmitter2 = require('eventemitter2');
+const notifiers = require('./notifiers.es6.js');
 
 /**
  * .register() creates a notifier function for each caller.
@@ -48,21 +48,21 @@ const notifiers = require('./notifiers.es6.js')
  * @api public
  */
 function register (notifierName) {
-    if (typeof notifierName !== 'string') { throw new Error('notifierName argument must be a string') }
-    if (notifiers.registered[notifierName]) { throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`) }
+    if (typeof notifierName !== 'string') { throw new Error('notifierName argument must be a string'); }
+    if (notifiers.registered[notifierName]) { throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`); }
 
-    notifiers.add(notifierName)
-    const combinedNotifiers = notifiers.combine()
+    notifiers.add(notifierName);
+    const combinedNotifiers = notifiers.combine();
 
     if (!_store) {
-        _store = _createStore(combinedNotifiers)
+        _store = _createStore(combinedNotifiers);
         _store.subscribe((notification) => {
-            notification = deepFreeze(notification) // make immutable before publishing
-            _publish(notification) // publish notif. about state changes to subscribers
-        })
+            notification = deepFreeze(notification); // make immutable before publishing
+            _publish(notification); // publish notif. about state changes to subscribers
+        });
     } else {
     // update reducers to include the newest registered here
-        _store.replaceNotifier(combinedNotifiers)
+        _store.replaceNotifier(combinedNotifiers);
     }
 }
 
@@ -73,15 +73,15 @@ function register (notifierName) {
  * @api public
  */
 function publish (notification) {
-    _store.dispatch(notification)
+    _store.dispatch(notification);
 }
 
 /**
  * Broadcasts state change events out to subscribers
  * @api private, but exposed as `store.subscribe()` for clarity
  */
-const _publisher = new EventEmitter2()
-_publisher.setMaxListeners(100) // EventEmitter2 default of 10 is too low
+const _publisher = new EventEmitter2();
+_publisher.setMaxListeners(100); // EventEmitter2 default of 10 is too low
 
 /**
  * Emits notifications via _publisher
@@ -89,12 +89,12 @@ _publisher.setMaxListeners(100) // EventEmitter2 default of 10 is too low
  */
 function _publish (notification) {
     if (notification && notification.change) {
-        console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification)
-        _publisher.emit(`change:${notification.notifierName}`, notification)
+        console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification);
+        _publisher.emit(`change:${notification.notifierName}`, notification);
     }
     if (notification && notification.action) {
-        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification)
-        _publisher.emit(`action:${notification.notifierName}`, notification)
+        console.info(`STORE NOTIFICATION action:${notification.notifierName}`, notification);
+        _publisher.emit(`action:${notification.notifierName}`, notification);
     }
 }
 
@@ -105,8 +105,8 @@ function _publish (notification) {
  */
 function remove (notifierName) {
     if (notifiers.remove(notifierName)) {
-        const combinedNotifiers = notifiers.combine()
-        _store.replaceNotifier(combinedNotifiers)
+        const combinedNotifiers = notifiers.combine();
+        _store.replaceNotifier(combinedNotifiers);
     }
 }
 
@@ -115,7 +115,7 @@ function remove (notifierName) {
  * Its api is not publicly exposed. Developers must use public api.
  * @api private
  */
-let _store = null
+let _store = null;
 
 /**
  * Create the store of notifiers and their notification dispatch functions.
@@ -126,41 +126,41 @@ let _store = null
  * @api private
  */
 function _createStore (notifier) {
-    if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
+    if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function');
 
-    let state = {}
-    let listener = null
-    let isEmitting = false
+    let state = {};
+    let listener = null;
+    let isEmitting = false;
 
     function dispatch (notification) {
-        if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object')
-        if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string')
-        if (isEmitting) throw new Error('subscribers may not generate notifications')
+        if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object');
+        if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string');
+        if (isEmitting) throw new Error('subscribers may not generate notifications');
 
-        isEmitting = true
-        state = notifier(state, notification)
-        if (listener) listener(notification)
-        isEmitting = false
-        return notification
+        isEmitting = true;
+        state = notifier(state, notification);
+        if (listener) listener(notification);
+        isEmitting = false;
+        return notification;
     }
 
     function subscribe (cb) {
-        if (!cb || typeof cb !== 'function') throw new Error('listener must be a function')
-        listener = cb
+        if (!cb || typeof cb !== 'function') throw new Error('listener must be a function');
+        listener = cb;
     }
 
     function replaceNotifier (next) {
-        if (typeof next !== 'function') throw new Error('new notifier must be a function')
-        notifier = next
+        if (typeof next !== 'function') throw new Error('new notifier must be a function');
+        notifier = next;
     }
 
-    dispatch({ notifierName: '@@createStore/INIT' })
+    dispatch({ notifierName: '@@createStore/INIT' });
 
     return {
         dispatch: dispatch,
         subscribe: subscribe,
         replaceNotifier: replaceNotifier
-    }
+    };
 }
 
 // Public api
@@ -169,4 +169,4 @@ module.exports = {
     publish: publish, // publish a notification from notifier to subscribers
     subscribe: _publisher, // subscribe to notifiers' notifications
     remove: remove // remove a notifier from the store
-}
+};

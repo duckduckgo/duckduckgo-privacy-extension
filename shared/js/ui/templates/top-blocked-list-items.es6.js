@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function (companyListMap) {
     return companyListMap.map((data) => {
@@ -13,6 +13,6 @@ module.exports = function (companyListMap) {
     <div class="top-blocked__li__blocker-pct js-top-blocked-pct">
         ${data.percent}%
     </div>
-</li>`
-    })
-}
+</li>`;
+    });
+};

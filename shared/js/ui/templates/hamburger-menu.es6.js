@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function () {
     return bel`<nav class="hamburger-menu js-hamburger-menu is-hidden">
@@ -31,5 +31,5 @@ module.exports = function () {
             </li>
         </ul>
     </div>
-</nav>`
-}
+</nav>`;
+};

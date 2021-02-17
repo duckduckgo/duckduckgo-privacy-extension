@@ -8,9 +8,9 @@
 // Function called from chrome-events.es6.js and injected as a variable
 (function protect (args) {
     // Exclude some content types from injection
-    const elem = document.head || document.documentElement
+    const elem = document.head || document.documentElement;
     try {
-        const contentType = elem.ownerDocument.contentType
+        const contentType = elem.ownerDocument.contentType;
         if (contentType === 'application/xml' ||
             contentType === 'application/json' ||
             contentType === 'text/xml' ||
@@ -18,7 +18,7 @@
             contentType === 'text/rss+xml' ||
             contentType === 'application/rss+xml'
         ) {
-            return
+            return;
         }
     } catch (e) {
         // if we can't find content type, go ahead with injection.
@@ -96,7 +96,7 @@
                 targetValue: /Firefox/i.test(navigator.userAgent) ? 'unspecified' : null
             }
         }
-    }
+    };
 
     // args.referrer is defined in chrome-events.es6.js and injected as a variable if referrer should be modified
     // Unfortunately, we only have limited information about the referrer and current frame. A single
@@ -106,13 +106,13 @@
         document.referrer && // don't change the value if it isn't set
         document.referrer !== '' && // don't add referrer information
         new URL(document.URL).hostname !== new URL(document.referrer).hostname) { // don't replace the referrer for the current host.
-        let trimmedReferer = document.referrer
+        let trimmedReferer = document.referrer;
         if (new URL(document.referrer).hostname === args.referrer.referrerHost) {
             // make sure the real referrer & replacement referrer match if we're going to replace it
-            trimmedReferer = args.referrer.referrer
+            trimmedReferer = args.referrer.referrer;
         } else {
             // if we don't have a matching referrer, just trim it to origin.
-            trimmedReferer = new URL(document.referrer).origin + '/'
+            trimmedReferer = new URL(document.referrer).origin + '/';
         }
         fingerprintPropertyValues.document = {
             referrer: {
@@ -120,7 +120,7 @@
                 origValue: document.referrer,
                 targetValue: trimmedReferer
             }
-        }
+        };
     }
 
     /**
@@ -145,7 +145,7 @@
      * For each property defined on the object, update it with the target value.
      */
     function buildScriptProperties () {
-        let script = ''
+        let script = '';
         for (const category in fingerprintPropertyValues) {
             for (const [name, prop] of Object.entries(fingerprintPropertyValues[category])) {
                 // Don't update if existing value is undefined or null
@@ -161,11 +161,11 @@
                     script += `try {
                         Object.defineProperty(${prop.object}, "${name}", {get: (() => ${JSON.stringify(prop.targetValue)}).bind(null)});
                     } catch (e) {}
-                    `
+                    `;
                 }
             }
         }
-        return script
+        return script;
     }
 
     /**
@@ -194,10 +194,10 @@
                         Object.defineProperty(BatteryManager.prototype, eventProp, { get: ( () => null).bind(null) })
                     } catch(e) { }
                 }
-            `
-            return batteryScript
+            `;
+            return batteryScript;
         } else {
-            return ''
+            return '';
         }
     }
 
@@ -206,24 +206,24 @@
      */
     function buildInit () {
         if (args.site.isCanvasBroken) {
-            return
+            return;
         }
         // TODO once we have a deterministic build of args.contentScopeScript
         // the index.js should be responsible for calling all the other code
-        return `initCanvasProtection(${JSON.stringify(args)})`
+        return `initCanvasProtection(${JSON.stringify(args)})`;
     }
 
     /**
      * All the steps for building the injection script. Should only be done at initial page load.
      */
     function buildInjectionScript () {
-        let script = args.contentScopeScript + ';'
-        script += buildScriptProperties()
-        script += modifyTemporaryStorage()
-        script += buildBatteryScript()
-        script += setWindowDimensions()
-        script += buildInit()
-        return script
+        let script = args.contentScopeScript + ';';
+        script += buildScriptProperties();
+        script += modifyTemporaryStorage();
+        script += buildBatteryScript();
+        script += setWindowDimensions();
+        script += buildInit();
+        return script;
     }
 
     /**
@@ -234,12 +234,12 @@
      */
     function normalizeWindowDimension (value, targetDimension) {
         if (value > targetDimension) {
-            return value % targetDimension
+            return value % targetDimension;
         }
         if (value < 0) {
-            return targetDimension + value
+            return targetDimension + value;
         }
-        return value
+        return value;
     }
 
     function setWindowPropertyValue (property, value) {
@@ -252,8 +252,8 @@
                     configurable: true
                 });
             } catch (e) {}
-        `
-        return script
+        `;
+        return script;
     }
 
     /**
@@ -263,41 +263,41 @@
      * values change correctly for valid use cases.
      */
     function setWindowDimensions () {
-        let windowScript = ''
+        let windowScript = '';
         try {
-            const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
-            const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
+            const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height);
+            const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width);
             if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
-                windowScript += setWindowPropertyValue('screenY', 0)
-                windowScript += setWindowPropertyValue('screenTop', 0)
+                windowScript += setWindowPropertyValue('screenY', 0);
+                windowScript += setWindowPropertyValue('screenTop', 0);
             } else {
-                windowScript += setWindowPropertyValue('screenY', normalizedY)
-                windowScript += setWindowPropertyValue('screenTop', normalizedY)
+                windowScript += setWindowPropertyValue('screenY', normalizedY);
+                windowScript += setWindowPropertyValue('screenTop', normalizedY);
             }
 
             if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
-                windowScript += setWindowPropertyValue('outerHeight', top.window.screen.height)
+                windowScript += setWindowPropertyValue('outerHeight', top.window.screen.height);
             } else {
                 try {
-                    windowScript += setWindowPropertyValue('outerHeight', top.window.outerHeight)
+                    windowScript += setWindowPropertyValue('outerHeight', top.window.outerHeight);
                 } catch (e) {
                     // top not accessible to certain iFrames, so ignore.
                 }
             }
 
             if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
-                windowScript += setWindowPropertyValue('screenX', 0)
-                windowScript += setWindowPropertyValue('screenLeft', 0)
+                windowScript += setWindowPropertyValue('screenX', 0);
+                windowScript += setWindowPropertyValue('screenLeft', 0);
             } else {
-                windowScript += setWindowPropertyValue('screenX', normalizedX)
-                windowScript += setWindowPropertyValue('screenLeft', normalizedX)
+                windowScript += setWindowPropertyValue('screenX', normalizedX);
+                windowScript += setWindowPropertyValue('screenLeft', normalizedX);
             }
 
             if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
-                windowScript += setWindowPropertyValue('outerWidth', top.window.screen.width)
+                windowScript += setWindowPropertyValue('outerWidth', top.window.screen.width);
             } else {
                 try {
-                    windowScript += setWindowPropertyValue('outerWidth', top.window.outerWidth)
+                    windowScript += setWindowPropertyValue('outerWidth', top.window.outerWidth);
                 } catch (e) {
                     // top not accessible to certain iFrames, so ignore.
                 }
@@ -306,7 +306,7 @@
             // in a cross domain iFrame, top.window is not accessible.
         }
 
-        return windowScript
+        return windowScript;
     }
 
     /**
@@ -332,8 +332,8 @@
                 }
                 catch(e) {}
             }
-        `
-        return script
+        `;
+        return script;
     }
 
     /**
@@ -342,24 +342,24 @@
     function inject (scriptToInject, removeAfterExec, elemToInject) {
         // Inject into main page
         try {
-            const e = document.createElement('script')
+            const e = document.createElement('script');
             e.textContent = `(() => {
                 ${scriptToInject}
-            })();`
-            elemToInject.appendChild(e)
+            })();`;
+            elemToInject.appendChild(e);
 
             if (removeAfterExec) {
-                e.remove()
+                e.remove();
             }
         } catch (e) {
         }
     }
 
     window.addEventListener('resize', function () {
-        const windowScript = setWindowDimensions()
-        inject(windowScript, true, elem)
-    })
+        const windowScript = setWindowDimensions();
+        inject(windowScript, true, elem);
+    });
 
-    const injectionScript = buildInjectionScript()
-    inject(injectionScript, true, elem)
-})(ddg_args)
+    const injectionScript = buildInjectionScript();
+    inject(injectionScript, true, elem);
+})(ddg_args);

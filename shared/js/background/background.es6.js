@@ -16,19 +16,19 @@
 
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
-const events = require('./$BROWSER-events.es6')
-const settings = require('./settings.es6')
+const events = require('./$BROWSER-events.es6');
+const settings = require('./settings.es6');
 
 settings.ready().then(() => {
     // clearing last search on browser startup
-    settings.updateSetting('last_search', '')
+    settings.updateSetting('last_search', '');
 
-    let os = 'o'
-    if (window.navigator.userAgent.indexOf('Windows') !== -1) os = 'w'
-    if (window.navigator.userAgent.indexOf('Mac') !== -1) os = 'm'
-    if (window.navigator.userAgent.indexOf('Linux') !== -1) os = 'l'
+    let os = 'o';
+    if (window.navigator.userAgent.indexOf('Windows') !== -1) os = 'w';
+    if (window.navigator.userAgent.indexOf('Mac') !== -1) os = 'm';
+    if (window.navigator.userAgent.indexOf('Linux') !== -1) os = 'l';
 
-    localStorage.os = os
+    localStorage.os = os;
 
-    events.onStartup()
-})
+    events.onStartup();
+});

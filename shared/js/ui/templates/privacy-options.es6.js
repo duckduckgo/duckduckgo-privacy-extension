@@ -1,5 +1,5 @@
-const bel = require('bel')
-const toggleButton = require('./shared/toggle-button.es6.js')
+const bel = require('bel');
+const toggleButton = require('./shared/toggle-button.es6.js');
 
 module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
@@ -42,5 +42,5 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-</section>`
-}
+</section>`;
+};

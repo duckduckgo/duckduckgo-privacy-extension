@@ -1,27 +1,27 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function (site, isMajorNetworksCount) {
     // Show all trackers found if site is whitelisted
     // but only show the blocked ones otherwise
-    let trackersCount = site.isWhitelisted ? site.trackersCount : site.trackersBlockedCount || 0
-    let uniqueTrackersText = trackersCount === 1 ? ' Tracker ' : ' Trackers '
+    let trackersCount = site.isWhitelisted ? site.trackersCount : site.trackersBlockedCount || 0;
+    let uniqueTrackersText = trackersCount === 1 ? ' Tracker ' : ' Trackers ';
 
     if (isMajorNetworksCount) {
-        trackersCount = site.majorTrackerNetworksCount
-        uniqueTrackersText = trackersCount === 1 ? ' Major Tracker Network ' : ' Major Tracker Networks '
+        trackersCount = site.majorTrackerNetworksCount;
+        uniqueTrackersText = trackersCount === 1 ? ' Major Tracker Network ' : ' Major Tracker Networks ';
     }
-    const finalText = trackersCount + uniqueTrackersText + trackersBlockedOrFound(site, trackersCount)
+    const finalText = trackersCount + uniqueTrackersText + trackersBlockedOrFound(site, trackersCount);
 
-    return bel`${finalText}`
-}
+    return bel`${finalText}`;
+};
 
 function trackersBlockedOrFound (site, trackersCount) {
-    let msg = ''
+    let msg = '';
     if (site && (site.isWhitelisted || trackersCount === 0)) {
-        msg = 'Found'
+        msg = 'Found';
     } else {
-        msg = 'Blocked'
+        msg = 'Blocked';
     }
 
-    return bel`${msg}`
+    return bel`${msg}`;
 }

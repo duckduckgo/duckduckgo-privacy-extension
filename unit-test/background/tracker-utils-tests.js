@@ -1,20 +1,20 @@
-const trackerutils = require('../../shared/js/background/tracker-utils')
-const tds = require('../../shared/js/background/trackers.es6')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
-const tdsStorageStub = require('./../helpers/tds.es6')
-const settings = require('../../shared/js/background/settings.es6')
+const trackerutils = require('../../shared/js/background/tracker-utils');
+const tds = require('../../shared/js/background/trackers.es6');
+const tdsStorage = require('../../shared/js/background/storage/tds.es6');
+const tdsStorageStub = require('./../helpers/tds.es6');
+const settings = require('../../shared/js/background/settings.es6');
 
 describe('Tracker Utilities', () => {
-    let settingsObserver
+    let settingsObserver;
 
     beforeAll(() => {
-        settingsObserver = spyOn(settings, 'getSetting')
-        tdsStorageStub.stub()
+        settingsObserver = spyOn(settings, 'getSetting');
+        tdsStorageStub.stub();
         return tdsStorage.getLists()
             .then(lists => {
-                return tds.setLists(lists)
-            })
-    })
+                return tds.setLists(lists);
+            });
+    });
 
     const knownTrackers = [
         'http://google-analytics.com',
@@ -23,24 +23,24 @@ describe('Tracker Utilities', () => {
         'https://google-analytics.com/a/b?p=g&1=2',
         'https://google-analytics.com:443/abc',
         'https://yahoo.com'
-    ]
+    ];
     it('Should identify a tracker correctly', () => {
         for (const tracker of knownTrackers) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.isTracker(tracker)).toBeTruthy()
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.isTracker(tracker)).toBeTruthy();
         }
-    })
+    });
 
     const notTrackers = [
         'http://not-google-analytics.com',
         'http://www.justarandompersonalsite.com'
-    ]
+    ];
     it('Should identify a non-tracker correctly', () => {
         for (const tracker of notTrackers) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.isTracker(tracker)).toBeFalsy()
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.isTracker(tracker)).toBeFalsy();
         }
-    })
+    });
 
     const entityTests = [
         {
@@ -68,13 +68,13 @@ describe('Tracker Utilities', () => {
             entity2: 'google.com',
             sameEntity: false
         }
-    ]
+    ];
     it('Should correctly match entities', () => {
         for (const test of entityTests) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.isSameEntity(test.entity1, test.entity2)).toEqual(test.sameEntity)
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.isSameEntity(test.entity1, test.entity2)).toEqual(test.sameEntity);
         }
-    })
+    });
 
     const referrerSameEntityTests = [
         {
@@ -97,13 +97,13 @@ describe('Tracker Utilities', () => {
             target: 'analytics.google.com',
             expectedReferrer: undefined
         }
-    ]
+    ];
     it('Should not modify referrer on blank referrers and first party', () => {
         for (const test of referrerSameEntityTests) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.truncateReferrer(test.referrer, test.target)).toEqual(test.expectedReferrer)
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.truncateReferrer(test.referrer, test.target)).toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerUserSafelistTests = [
         {
@@ -134,13 +134,13 @@ describe('Tracker Utilities', () => {
             safelist: { 'siteb.com': true },
             expectedReferrer: undefined
         }
-    ]
+    ];
     it('Should not modify referrer when either site is safe listed by the user', () => {
         for (const test of referrerUserSafelistTests) {
-            settingsObserver.and.returnValue(test.safelist)
-            expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`safelist: ${test.name}`).toEqual(test.expectedReferrer)
+            settingsObserver.and.returnValue(test.safelist);
+            expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`safelist: ${test.name}`).toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerSafelistTests = [
         {
@@ -167,13 +167,13 @@ describe('Tracker Utilities', () => {
             target: 'http://subdomain.testing.com/some/path?option=yes&option2=no',
             expectedReferrer: undefined
         }
-    ]
+    ];
     it('Should not modify referrer when either site is safe listed by the global referrer safe list', () => {
         for (const test of referrerSafelistTests) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`test: ${test.name}`).toEqual(test.expectedReferrer)
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`test: ${test.name}`).toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerTruncationTests = [
         {
@@ -212,13 +212,13 @@ describe('Tracker Utilities', () => {
             target: 'http://siteB.com',
             expectedReferrer: 'http://www.sitea.com/'
         }
-    ]
+    ];
     it('Should modify referrer when referrer != target', () => {
         for (const test of referrerTruncationTests) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`test: ${test.name}`).toEqual(test.expectedReferrer)
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`test: ${test.name}`).toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerOddURLTests = [
         {
@@ -281,13 +281,13 @@ describe('Tracker Utilities', () => {
             referrer: 'http://siteB.com',
             target: 'moz-extension://31261636-83bc-0f4a-b9fc-b2edc39ea32cdf/dashboard.html#settings.html'
         }
-    ]
+    ];
     it('Should not throw errors when unusual URLs are encountered', () => {
         for (const test of referrerOddURLTests) {
             expect(function () {
-                settingsObserver.and.returnValue(undefined)
-                trackerutils.truncateReferrer(test.referrer, test.target)
-            }).withContext(`test: ${test.name}`).not.toThrow()
+                settingsObserver.and.returnValue(undefined);
+                trackerutils.truncateReferrer(test.referrer, test.target);
+            }).withContext(`test: ${test.name}`).not.toThrow();
         }
-    })
-})
+    });
+});

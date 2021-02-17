@@ -1,5 +1,5 @@
-const Parent = window.DDG.base.Model
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const Parent = window.DDG.base.Model;
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js');
 
 /**
  * Background messaging is done via two methods:
@@ -20,9 +20,9 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
  *  The common fetch method is defined in base/model.es6.js
  */
 function BackgroundMessage (attrs) {
-    Parent.call(this, attrs)
-    const thisModel = this
-    browserUIWrapper.backgroundMessage(thisModel)
+    Parent.call(this, attrs);
+    const thisModel = this;
+    browserUIWrapper.backgroundMessage(thisModel);
 }
 
 BackgroundMessage.prototype = window.$.extend({},
@@ -30,6 +30,6 @@ BackgroundMessage.prototype = window.$.extend({},
     {
         modelName: 'backgroundMessage'
     }
-)
+);
 
-module.exports = BackgroundMessage
+module.exports = BackgroundMessage;

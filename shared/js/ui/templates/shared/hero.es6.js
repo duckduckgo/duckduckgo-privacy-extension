@@ -1,7 +1,7 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function (ops) {
-    const slidingSubviewClass = ops.showClose ? 'js-sliding-subview-close' : ''
+    const slidingSubviewClass = ops.showClose ? 'js-sliding-subview-close' : '';
     return bel`<div class="hero text--center ${slidingSubviewClass}">
     <div class="hero__icon hero__icon--${ops.status}">
     </div>
@@ -12,12 +12,12 @@ module.exports = function (ops) {
         ${ops.subtitle}
     </h2>
     ${renderOpenOrCloseButton(ops.showClose)}
-</div>`
-}
+</div>`;
+};
 
 function renderOpenOrCloseButton (isCloseButton) {
-    const openOrClose = isCloseButton ? 'close' : 'open'
-    const arrowIconClass = isCloseButton ? 'icon__arrow--left' : ''
+    const openOrClose = isCloseButton ? 'close' : 'open';
+    const arrowIconClass = isCloseButton ? 'icon__arrow--left' : '';
     return bel`<a href="javascript:void(0)"
         class="hero__${openOrClose}"
         role="button"
@@ -25,5 +25,5 @@ function renderOpenOrCloseButton (isCloseButton) {
         >
     <span class="icon icon__arrow icon__arrow--large ${arrowIconClass}">
     </span>
-</a>`
+</a>`;
 }

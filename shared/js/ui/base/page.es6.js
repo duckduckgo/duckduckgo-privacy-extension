@@ -1,10 +1,10 @@
-const mixins = require('./mixins/index.es6.js')
-const store = require('./store.es6.js')
+const mixins = require('./mixins/index.es6.js');
+const store = require('./store.es6.js');
 
 function BasePage (ops) {
-    this.views = {}
-    this.store = store
-    this.ready()
+    this.views = {};
+    this.store = store;
+    this.ready();
 }
 
 BasePage.prototype = window.$.extend({},
@@ -16,6 +16,6 @@ BasePage.prototype = window.$.extend({},
         ready: function () {}
 
     }
-)
+);
 
-module.exports = BasePage
+module.exports = BasePage;

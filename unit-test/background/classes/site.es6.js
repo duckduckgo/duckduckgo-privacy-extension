@@ -1,19 +1,19 @@
-const Site = require('../../../shared/js/background/classes/site.es6')
-const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6')
-const load = require('./../../helpers/utils.es6')
-const fakeBrokenSites = require('./../../data/brokensites')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
-const tdsStorageStub = require('./../../helpers/tds.es6')
+const Site = require('../../../shared/js/background/classes/site.es6');
+const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6');
+const load = require('./../../helpers/utils.es6');
+const fakeBrokenSites = require('./../../data/brokensites');
+const tdsStorage = require('../../../shared/js/background/storage/tds.es6');
+const tdsStorageStub = require('./../../helpers/tds.es6');
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
+const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip';
 
 describe('Site', () => {
     beforeAll(() => {
-        load.loadStub({ brokenSites: fakeBrokenSites })
-        spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
-        tdsStorageStub.stub()
-        return tdsStorage.getLists()
-    })
+        load.loadStub({ brokenSites: fakeBrokenSites });
+        spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID);
+        tdsStorageStub.stub();
+        return tdsStorage.getLists();
+    });
 
     describe('getSpecialDomain()', () => {
         const tests = [
@@ -38,16 +38,16 @@ describe('Site', () => {
             { url: 'chrome-extension://asdfasdfasdfasdf/page.html', expected: 'extension page' },
             // vivaldi's start page - not trying to handle that specifically because it may change its ID
             { url: 'chrome-extension://mpognobbkildjkofajifpdfhcoklimli/components/startpage/startpage.html?section=Speed-dials&activeSpeedDialIndex=0', expected: 'extension page' }
-        ]
+        ];
 
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
-                const site = new Site(test.url)
+                const site = new Site(test.url);
 
-                expect(site.specialDomainName).toEqual(test.expected)
-            })
-        })
-    })
+                expect(site.specialDomainName).toEqual(test.expected);
+            });
+        });
+    });
 
     describe('checkBrokenSites()', () => {
         const tests = [
@@ -55,13 +55,13 @@ describe('Site', () => {
             { url: 'https://www1.onlinebanking.suntrust.com', expected: true },
             { url: 'https://nationwide.co.uk', expected: false },
             { url: 'https://accounts.google.com', expected: true }
-        ]
+        ];
 
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
-                const site = new Site(test.url)
-                expect(site.isBroken).toEqual(test.expected)
-            })
-        })
-    })
-})
+                const site = new Site(test.url);
+                expect(site.isBroken).toEqual(test.expected);
+            });
+        });
+    });
+});

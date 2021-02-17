@@ -1,21 +1,21 @@
-const Parent = window.DDG.base.View
-const TopBlockedFullView = require('./top-blocked.es6.js')
-const topBlockedFullTemplate = require('./../templates/top-blocked.es6.js')
-const TOP_BLOCKED_CLASS = 'has-top-blocked--truncated'
+const Parent = window.DDG.base.View;
+const TopBlockedFullView = require('./top-blocked.es6.js');
+const topBlockedFullTemplate = require('./../templates/top-blocked.es6.js');
+const TOP_BLOCKED_CLASS = 'has-top-blocked--truncated';
 
 function TruncatedTopBlocked (ops) {
-    this.model = ops.model
-    this.pageView = ops.pageView
-    this.template = ops.template
+    this.model = ops.model;
+    this.pageView = ops.pageView;
+    this.template = ops.template;
 
     this.model.getTopBlocked().then(() => {
-        Parent.call(this, ops)
-        this._setup()
-    })
+        Parent.call(this, ops);
+        this._setup();
+    });
 
     this.bindEvents([
         [this.model.store.subscribe, 'action:backgroundMessage', this.handleBackgroundMsg]
-    ])
+    ]);
 }
 
 TruncatedTopBlocked.prototype = window.$.extend({},
@@ -23,39 +23,39 @@ TruncatedTopBlocked.prototype = window.$.extend({},
     {
 
         _seeAllClick: function () {
-            this.model.fetch({ firePixel: 'eps' })
+            this.model.fetch({ firePixel: 'eps' });
             this.views.slidingSubview = new TopBlockedFullView({
                 template: topBlockedFullTemplate,
                 numItems: 10
-            })
+            });
         },
 
         _setup: function () {
-            this._cacheElems('.js-top-blocked', ['graph-bar-fg', 'pct', 'see-all'])
+            this._cacheElems('.js-top-blocked', ['graph-bar-fg', 'pct', 'see-all']);
             this.bindEvents([
                 [this.$seeall, 'click', this._seeAllClick]
-            ])
+            ]);
             if (window.$('.top-blocked--truncated').length) {
-                window.$('html').addClass(TOP_BLOCKED_CLASS)
+                window.$('html').addClass(TOP_BLOCKED_CLASS);
             }
         },
 
         rerenderList: function () {
-            this._rerender()
-            this._setup()
+            this._rerender();
+            this._setup();
         },
 
         handleBackgroundMsg: function (message) {
-            if (!message || !message.action) return
+            if (!message || !message.action) return;
 
             if (message.action === 'didResetTrackersData') {
-                this.model.reset()
-                setTimeout(() => this.rerenderList(), 750)
-                this.rerenderList()
-                window.$('html').removeClass(TOP_BLOCKED_CLASS)
+                this.model.reset();
+                setTimeout(() => this.rerenderList(), 750);
+                this.rerenderList();
+                window.$('html').removeClass(TOP_BLOCKED_CLASS);
             }
         }
     }
-)
+);
 
-module.exports = TruncatedTopBlocked
+module.exports = TruncatedTopBlocked;

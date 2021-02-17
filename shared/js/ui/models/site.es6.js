@@ -1,34 +1,34 @@
-const Parent = window.DDG.base.Model
-const constants = require('../../../data/constants')
-const httpsMessages = constants.httpsMessages
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const Parent = window.DDG.base.Model;
+const constants = require('../../../data/constants');
+const httpsMessages = constants.httpsMessages;
+const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js');
 
 // for now we consider tracker networks found on more than 7% of sites
 // as "major"
-const MAJOR_TRACKER_THRESHOLD_PCT = 7
+const MAJOR_TRACKER_THRESHOLD_PCT = 7;
 
 function Site (attrs) {
-    attrs = attrs || {}
-    attrs.disabled = true // disabled by default
-    attrs.tab = null
-    attrs.domain = '-'
-    attrs.isWhitelisted = false
-    attrs.whitelistOptIn = false
-    attrs.isCalculatingSiteRating = true
-    attrs.siteRating = {}
-    attrs.httpsState = 'none'
-    attrs.httpsStatusText = ''
-    attrs.trackersCount = 0 // unique trackers count
-    attrs.majorTrackerNetworksCount = 0
-    attrs.totalTrackerNetworksCount = 0
-    attrs.trackerNetworks = []
-    attrs.tosdr = {}
-    attrs.isaMajorTrackingNetwork = false
-    Parent.call(this, attrs)
+    attrs = attrs || {};
+    attrs.disabled = true; // disabled by default
+    attrs.tab = null;
+    attrs.domain = '-';
+    attrs.isWhitelisted = false;
+    attrs.whitelistOptIn = false;
+    attrs.isCalculatingSiteRating = true;
+    attrs.siteRating = {};
+    attrs.httpsState = 'none';
+    attrs.httpsStatusText = '';
+    attrs.trackersCount = 0; // unique trackers count
+    attrs.majorTrackerNetworksCount = 0;
+    attrs.totalTrackerNetworksCount = 0;
+    attrs.trackerNetworks = [];
+    attrs.tosdr = {};
+    attrs.isaMajorTrackingNetwork = false;
+    Parent.call(this, attrs);
 
     this.bindEvents([
         [this.store.subscribe, 'action:backgroundMessage', this.handleBackgroundMsg]
-    ])
+    ]);
 }
 
 Site.prototype = window.$.extend({},
@@ -41,76 +41,76 @@ Site.prototype = window.$.extend({},
             return new Promise((resolve) => {
                 browserUIWrapper.getBackgroundTabData().then((tab) => {
                     if (tab) {
-                        this.set('tab', tab)
-                        this.domain = tab.site.domain
-                        this.fetchSiteRating()
-                        this.set('tosdr', tab.site.tosdr)
-                        this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
+                        this.set('tab', tab);
+                        this.domain = tab.site.domain;
+                        this.fetchSiteRating();
+                        this.set('tosdr', tab.site.tosdr);
+                        this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT);
 
-                        this.fetch({ getSetting: { name: 'tds-etag' } }).then(etag => this.set('tds', etag))
+                        this.fetch({ getSetting: { name: 'tds-etag' } }).then(etag => this.set('tds', etag));
                     } else {
-                        console.debug('Site model: no tab')
+                        console.debug('Site model: no tab');
                     }
 
-                    this.setSiteProperties()
-                    this.setHttpsMessage()
-                    this.update()
-                    resolve()
-                })
-            })
+                    this.setSiteProperties();
+                    this.setHttpsMessage();
+                    this.update();
+                    resolve();
+                });
+            });
         },
 
         fetchSiteRating: function () {
             // console.log('[model] fetchSiteRating()')
             if (this.tab) {
                 this.fetch({ getSiteGrade: this.tab.id }).then((rating) => {
-                    console.log('fetchSiteRating: ', rating)
-                    if (rating) this.update({ siteRating: rating })
-                })
+                    console.log('fetchSiteRating: ', rating);
+                    if (rating) this.update({ siteRating: rating });
+                });
             }
         },
 
         setSiteProperties: function () {
             if (!this.tab) {
-                this.domain = 'new tab' // tab can be null for firefox new tabs
-                this.set({ isCalculatingSiteRating: false })
+                this.domain = 'new tab'; // tab can be null for firefox new tabs
+                this.set({ isCalculatingSiteRating: false });
             } else {
-                this.isWhitelisted = this.tab.site.whitelisted
-                this.whitelistOptIn = this.tab.site.whitelistOptIn
+                this.isWhitelisted = this.tab.site.whitelisted;
+                this.whitelistOptIn = this.tab.site.whitelistOptIn;
                 if (this.tab.site.specialDomainName) {
-                    this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
-                    this.set({ isCalculatingSiteRating: false })
+                    this.domain = this.tab.site.specialDomainName; // eg "extensions", "options", "new tab"
+                    this.set({ isCalculatingSiteRating: false });
                 } else {
-                    this.set({ disabled: false })
+                    this.set({ disabled: false });
                 }
             }
 
-            if (this.domain && this.domain === '-') this.set('disabled', true)
+            if (this.domain && this.domain === '-') this.set('disabled', true);
         },
 
         setHttpsMessage: function () {
-            if (!this.tab) return
+            if (!this.tab) return;
 
             if (this.tab.upgradedHttps) {
-                this.httpsState = 'upgraded'
+                this.httpsState = 'upgraded';
             } else if (/^https/.exec(this.tab.url)) {
-                this.httpsState = 'secure'
+                this.httpsState = 'secure';
             } else {
-                this.httpsState = 'none'
+                this.httpsState = 'none';
             }
 
-            this.httpsStatusText = httpsMessages[this.httpsState]
+            this.httpsStatusText = httpsMessages[this.httpsState];
         },
 
         handleBackgroundMsg: function (message) {
             // console.log('[model] handleBackgroundMsg()')
-            if (!this.tab) return
+            if (!this.tab) return;
             if (message.action && message.action === 'updateTabData') {
                 this.fetch({ getTab: this.tab.id }).then((backgroundTabObj) => {
-                    this.tab = backgroundTabObj
-                    this.update()
-                    this.fetchSiteRating()
-                })
+                    this.tab = backgroundTabObj;
+                    this.update();
+                    this.fetchSiteRating();
+                });
             }
         },
 
@@ -123,12 +123,12 @@ Site.prototype = window.$.extend({},
                         ops.siteRating &&
                         ops.siteRating.site &&
                         ops.siteRating.enhanced) {
-                    let before = ops.siteRating.site.grade
-                    let after = ops.siteRating.enhanced.grade
+                    let before = ops.siteRating.site.grade;
+                    let after = ops.siteRating.enhanced.grade;
 
                     // we don't currently show D- grades
-                    if (before === 'D-') before = 'D'
-                    if (after === 'D-') after = 'D'
+                    if (before === 'D-') before = 'D';
+                    if (after === 'D-') after = 'D';
 
                     if (before !== this.siteRating.before ||
                         after !== this.siteRating.after) {
@@ -137,43 +137,43 @@ Site.prototype = window.$.extend({},
                             cssAfter: after.replace('+', '-plus').toLowerCase(),
                             before,
                             after
-                        }
+                        };
 
                         this.set({
                             siteRating: newSiteRating,
                             isCalculatingSiteRating: false
-                        })
+                        });
                     } else if (this.isCalculatingSiteRating) {
                         // got site rating from background process
-                        this.set('isCalculatingSiteRating', false)
+                        this.set('isCalculatingSiteRating', false);
                     }
                 }
 
-                const newTrackersCount = this.getUniqueTrackersCount()
+                const newTrackersCount = this.getUniqueTrackersCount();
                 if (newTrackersCount !== this.trackersCount) {
-                    this.set('trackersCount', newTrackersCount)
+                    this.set('trackersCount', newTrackersCount);
                 }
 
-                const newTrackersBlockedCount = this.getUniqueTrackersBlockedCount()
+                const newTrackersBlockedCount = this.getUniqueTrackersBlockedCount();
                 if (newTrackersBlockedCount !== this.trackersBlockedCount) {
-                    this.set('trackersBlockedCount', newTrackersBlockedCount)
+                    this.set('trackersBlockedCount', newTrackersBlockedCount);
                 }
 
-                const newTrackerNetworks = this.getTrackerNetworksOnPage()
+                const newTrackerNetworks = this.getTrackerNetworksOnPage();
                 if (this.trackerNetworks.length === 0 ||
                         (newTrackerNetworks.length !== this.trackerNetworks.length)) {
-                    this.set('trackerNetworks', newTrackerNetworks)
+                    this.set('trackerNetworks', newTrackerNetworks);
                 }
 
-                const newUnknownTrackersCount = this.getUnknownTrackersCount()
-                const newTotalTrackerNetworksCount = newUnknownTrackersCount + newTrackerNetworks.length
+                const newUnknownTrackersCount = this.getUnknownTrackersCount();
+                const newTotalTrackerNetworksCount = newUnknownTrackersCount + newTrackerNetworks.length;
                 if (newTotalTrackerNetworksCount !== this.totalTrackerNetworksCount) {
-                    this.set('totalTrackerNetworksCount', newTotalTrackerNetworksCount)
+                    this.set('totalTrackerNetworksCount', newTotalTrackerNetworksCount);
                 }
 
-                const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
+                const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount();
                 if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
-                    this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
+                    this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount);
                 }
             }
         },
@@ -181,53 +181,53 @@ Site.prototype = window.$.extend({},
         getUniqueTrackersCount: function () {
             // console.log('[model] getUniqueTrackersCount()')
             const count = Object.keys(this.tab.trackers).reduce((total, name) => {
-                return this.tab.trackers[name].count + total
-            }, 0)
+                return this.tab.trackers[name].count + total;
+            }, 0);
 
-            return count
+            return count;
         },
 
         getUniqueTrackersBlockedCount: function () {
             // console.log('[model] getUniqueTrackersBlockedCount()')
             const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
-                const companyBlocked = this.tab.trackersBlocked[name]
+                const companyBlocked = this.tab.trackersBlocked[name];
 
                 // Don't throw a TypeError if urls are not there
-                const trackersBlocked = companyBlocked.urls ? Object.keys(companyBlocked.urls) : null
+                const trackersBlocked = companyBlocked.urls ? Object.keys(companyBlocked.urls) : null;
 
                 // Counting unique URLs instead of using the count
                 // because the count refers to all requests rather than unique number of trackers
-                const trackersBlockedCount = trackersBlocked ? trackersBlocked.length : 0
-                return trackersBlockedCount + total
-            }, 0)
+                const trackersBlockedCount = trackersBlocked ? trackersBlocked.length : 0;
+                return trackersBlockedCount + total;
+            }, 0);
 
-            return count
+            return count;
         },
 
         getUnknownTrackersCount: function () {
             // console.log('[model] getUnknownTrackersCount()')
-            const unknownTrackers = this.tab.trackers ? this.tab.trackers.unknown : {}
+            const unknownTrackers = this.tab.trackers ? this.tab.trackers.unknown : {};
 
-            let count = 0
+            let count = 0;
             if (unknownTrackers && unknownTrackers.urls) {
-                const unknownTrackersUrls = Object.keys(unknownTrackers.urls)
-                count = unknownTrackersUrls ? unknownTrackersUrls.length : 0
+                const unknownTrackersUrls = Object.keys(unknownTrackers.urls);
+                count = unknownTrackersUrls ? unknownTrackersUrls.length : 0;
             }
 
-            return count
+            return count;
         },
 
         getMajorTrackerNetworksCount: function () {
             // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is whitelisted
-            const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
+            const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked;
             const count = Object.values(trackers).reduce((total, t) => {
-                const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
-                total += isMajor ? 1 : 0
-                return total
-            }, 0)
+                const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT;
+                total += isMajor ? 1 : 0;
+                return total;
+            }, 0);
 
-            return count
+            return count;
         },
 
         getTrackerNetworksOnPage: function () {
@@ -235,24 +235,24 @@ Site.prototype = window.$.extend({},
             // all tracker networks found on this page/tab
             const networks = Object.keys(this.tab.trackers)
                 .map((t) => t.toLowerCase())
-                .filter((t) => t !== 'unknown')
-            return networks
+                .filter((t) => t !== 'unknown');
+            return networks;
         },
 
         toggleWhitelist: function () {
             if (this.tab && this.tab.site) {
-                this.isWhitelisted = !this.isWhitelisted
-                this.set('whitelisted', this.isWhitelisted)
-                const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
+                this.isWhitelisted = !this.isWhitelisted;
+                this.set('whitelisted', this.isWhitelisted);
+                const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on';
 
                 // fire ept.on pixel if just turned privacy protection on,
                 // fire ept.off pixel if just turned privacy protection off.
                 if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
                     // If user reported broken site and opted to share data on site,
                     // attach domain and path to ept.on pixel if they turn privacy protection back on.
-                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
-                    this.set('whitelistOptIn', false)
-                    this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
+                    const siteUrl = this.tab.url.split('?')[0].split('#')[0];
+                    this.set('whitelistOptIn', false);
+                    this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] });
                     this.fetch({
                         whitelistOptIn:
                         {
@@ -260,9 +260,9 @@ Site.prototype = window.$.extend({},
                             domain: this.tab.site.domain,
                             value: false
                         }
-                    })
+                    });
                 } else {
-                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
+                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] });
                 }
 
                 this.fetch({
@@ -272,44 +272,44 @@ Site.prototype = window.$.extend({},
                         domain: this.tab.site.domain,
                         value: this.isWhitelisted
                     }
-                })
+                });
             }
         },
 
         submitBreakageForm: function (category) {
-            if (!this.tab) return
+            if (!this.tab) return;
 
-            const blockedTrackers = []
-            const surrogates = []
-            const upgradedHttps = this.tab.upgradedHttps
+            const blockedTrackers = [];
+            const surrogates = [];
+            const upgradedHttps = this.tab.upgradedHttps;
             // remove params and fragments from url to avoid including sensitive data
-            const siteUrl = this.tab.url.split('?')[0].split('#')[0]
-            const trackerObjects = this.tab.trackersBlocked
+            const siteUrl = this.tab.url.split('?')[0].split('#')[0];
+            const trackerObjects = this.tab.trackersBlocked;
             const pixelParams = ['epbf',
                 { category: category },
                 { siteUrl: encodeURIComponent(siteUrl) },
                 { upgradedHttps: upgradedHttps.toString() },
                 { tds: this.tds }
-            ]
+            ];
 
             for (const tracker in trackerObjects) {
-                const trackerDomains = trackerObjects[tracker].urls
+                const trackerDomains = trackerObjects[tracker].urls;
                 Object.keys(trackerDomains).forEach((domain) => {
                     if (trackerDomains[domain].isBlocked) {
-                        blockedTrackers.push(domain)
+                        blockedTrackers.push(domain);
                         if (trackerDomains[domain].reason === 'matched rule - surrogate') {
-                            surrogates.push(domain)
+                            surrogates.push(domain);
                         }
                     }
-                })
+                });
             }
-            pixelParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates })
-            this.fetch({ firePixel: pixelParams })
+            pixelParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates });
+            this.fetch({ firePixel: pixelParams });
 
             // remember that user opted into sharing site breakage data
             // for this domain, so that we can attach domain when they
             // remove site from whitelist
-            this.set('whitelistOptIn', true)
+            this.set('whitelistOptIn', true);
             this.fetch({
                 whitelistOptIn:
                 {
@@ -317,9 +317,9 @@ Site.prototype = window.$.extend({},
                     domain: this.tab.site.domain,
                     value: true
                 }
-            })
+            });
         }
     }
-)
+);
 
-module.exports = Site
+module.exports = Site;

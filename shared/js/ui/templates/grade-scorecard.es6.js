@@ -1,7 +1,7 @@
-const bel = require('bel')
-const reasons = require('./shared/grade-scorecard-reasons.es6.js')
-const grades = require('./shared/grade-scorecard-grades.es6.js')
-const ratingHero = require('./shared/rating-hero.es6.js')
+const bel = require('bel');
+const reasons = require('./shared/grade-scorecard-reasons.es6.js');
+const grades = require('./shared/grade-scorecard-grades.es6.js');
+const ratingHero = require('./shared/rating-hero.es6.js');
 
 module.exports = function () {
     return bel`<section class="sliding-subview grade-scorecard sliding-subview--has-fixed-header">
@@ -10,5 +10,5 @@ module.exports = function () {
         ${reasons(this.model)}
         ${grades(this.model)}
     </div>
-</section>`
-}
+</section>`;
+};

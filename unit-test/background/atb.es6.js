@@ -1,9 +1,9 @@
-const atb = require('../../shared/js/background/atb.es6')
-const settings = require('../../shared/js/background/settings.es6')
-const load = require('../../shared/js/background/load.es6')
-const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
+const atb = require('../../shared/js/background/atb.es6');
+const settings = require('../../shared/js/background/settings.es6');
+const load = require('../../shared/js/background/load.es6');
+const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6');
 
-const settingHelper = require('../helpers/settings.es6')
+const settingHelper = require('../helpers/settings.es6');
 
 // HELPERS
 
@@ -11,15 +11,15 @@ const stubLoadJSON = (ops) => {
     return spyOn(load, 'JSONfromExternalFile').and.callFake((url) => {
         return url.match(/duckduckgo\.com\/atb\.js/)
             ? Promise.resolve({ data: { version: ops.returnedAtb } })
-            : Promise.resolve({ data: undefined })
-    })
-}
+            : Promise.resolve({ data: undefined });
+    });
+};
 
 const stubLoadURL = () => {
     return spyOn(load, 'url').and.callFake((url) => {
-        return Promise.resolve({ data: undefined })
-    })
-}
+        return Promise.resolve({ data: undefined });
+    });
+};
 
 // ACTUAL TESTS
 
@@ -41,17 +41,17 @@ describe('atb.canShowPostInstall()', () => {
             domain: 'duckduckgo.com',
             result: true
         }
-    ]
+    ];
 
     canShowAtbCases.forEach((test) => {
         it(`should return ${test.result} when the domain is: '${test.domain}'`, () => {
-            settingHelper.stub({ hasSeenPostInstall: false })
+            settingHelper.stub({ hasSeenPostInstall: false });
 
-            const result = atb.canShowPostInstall(test.domain)
-            expect(result).toBe(test.result)
-        })
-    })
-})
+            const result = atb.canShowPostInstall(test.domain);
+            expect(result).toBe(test.result);
+        });
+    });
+});
 
 describe('atb.redirectURL()', () => {
     const tests = [
@@ -73,120 +73,120 @@ describe('atb.redirectURL()', () => {
         { url: 'http://beta.duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://beta.duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false }
-    ]
+    ];
 
     beforeEach(() => {
-        settingHelper.stub({ atb: 'v123-4ab' })
-    })
+        settingHelper.stub({ atb: 'v123-4ab' });
+    });
 
     tests.forEach((test) => {
         it(`should${test.rewrite ? '' : ' not'} rewrite url: ${test.url}`, () => {
-            const result = atb.redirectURL({ url: test.url })
+            const result = atb.redirectURL({ url: test.url });
 
             if (test.rewrite) {
-                expect(result.redirectUrl).toBeTruthy()
+                expect(result.redirectUrl).toBeTruthy();
             } else {
-                expect(result).toBeFalsy()
+                expect(result).toBeFalsy();
             }
-        })
-    })
+        });
+    });
 
     const correctUrlTests = [
         { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
         { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' }
-    ]
+    ];
 
     correctUrlTests.forEach((test) => {
         it(`should rewrite ${test.url} correctly`, () => {
-            expect(atb.redirectURL({ url: test.url }).redirectUrl).toEqual(test.expected)
-        })
-    })
-})
+            expect(atb.redirectURL({ url: test.url }).redirectUrl).toEqual(test.expected);
+        });
+    });
+});
 
 describe('atb.setInitialVersions()', () => {
     it('should grab the version from the ATB service and save it to settings', (done) => {
-        settingHelper.stub({ atb: null })
-        stubLoadJSON({ returnedAtb: 'v111-4' })
+        settingHelper.stub({ atb: null });
+        stubLoadJSON({ returnedAtb: 'v111-4' });
 
         atb.setInitialVersions().then(() => {
-            expect(settings.getSetting('atb')).toEqual('v111-4')
+            expect(settings.getSetting('atb')).toEqual('v111-4');
 
-            done()
-        })
-    })
+            done();
+        });
+    });
 
     it('should bail if the version has already been set', (done) => {
-        settingHelper.stub({ atb: 'v111-5' })
-        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v111-6' })
+        settingHelper.stub({ atb: 'v111-5' });
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v111-6' });
 
         atb.setInitialVersions().then(() => {
-            expect(loadJSONSpy).not.toHaveBeenCalled()
-            expect(settings.getSetting('atb')).toEqual('v111-5')
+            expect(loadJSONSpy).not.toHaveBeenCalled();
+            expect(settings.getSetting('atb')).toEqual('v111-5');
 
-            done()
-        })
-    })
+            done();
+        });
+    });
 
     it('should try hitting atb.js a few times if it\'s down', (done) => {
-        settingHelper.stub({ atb: null })
+        settingHelper.stub({ atb: null });
         const loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.returnValues(
             Promise.reject(new Error()),
             Promise.reject(new Error()),
             Promise.resolve({ data: { version: 'v111-5' } })
-        )
+        );
 
         atb.setInitialVersions().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledTimes(3)
-            expect(settings.getSetting('atb')).toEqual('v111-5')
+            expect(loadJSONSpy).toHaveBeenCalledTimes(3);
+            expect(settings.getSetting('atb')).toEqual('v111-5');
 
-            done()
-        })
-    })
-})
+            done();
+        });
+    });
+});
 
 describe('atb.updateSetAtb()', () => {
     it('should hit atb service with atb and set_atb when both are set', (done) => {
-        settingHelper.stub({ atb: 'v111-2', set_atb: 'v111-6' })
-        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        settingHelper.stub({ atb: 'v111-2', set_atb: 'v111-6' });
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' });
 
         atb.updateSetAtb().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/))
-            expect(settings.getSetting('atb')).toEqual('v111-2')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/));
+            expect(settings.getSetting('atb')).toEqual('v111-2');
+            expect(settings.getSetting('set_atb')).toEqual('v112-2');
 
-            done()
-        })
-    })
+            done();
+        });
+    });
 
     it('should be able to handle cases where set_atb is null', (done) => {
-        settingHelper.stub({ atb: 'v111-2' })
-        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        settingHelper.stub({ atb: 'v111-2' });
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' });
 
         atb.updateSetAtb().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2/))
-            expect(settings.getSetting('atb')).toEqual('v111-2')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2/));
+            expect(settings.getSetting('atb')).toEqual('v111-2');
+            expect(settings.getSetting('set_atb')).toEqual('v112-2');
 
-            done()
-        })
-    })
+            done();
+        });
+    });
 
     it('should be able to handle cases where atb is null', (done) => {
-        settingHelper.stub({ set_atb: 'v112-1' })
-        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        settingHelper.stub({ set_atb: 'v112-1' });
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' });
 
         atb.updateSetAtb().then(() => {
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v1-1/))
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/set_atb=v112-1/))
-            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/e=1/))
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v1-1/));
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/set_atb=v112-1/));
+            expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/e=1/));
 
-            expect(settings.getSetting('atb')).toEqual('v1-1')
-            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+            expect(settings.getSetting('atb')).toEqual('v1-1');
+            expect(settings.getSetting('set_atb')).toEqual('v112-2');
 
-            done()
-        })
-    })
-})
+            done();
+        });
+    });
+});
 
 describe('getAcceptedParamsFromURL()', () => {
     const tests = [
@@ -206,76 +206,76 @@ describe('getAcceptedParamsFromURL()', () => {
         { url: 'https://duckduckgo.com/?natb=v11111111', output: '' },
         { url: 'https://duckduckgo.com/?natb=v111-4444', output: '' },
         { url: 'https://duckduckgo.com/?natb=v123-4abcd&foo=bar', output: '' }
-    ]
+    ];
 
     tests.forEach((test) => {
         it(`should get atb ${test.output} from ${test.url}`, () => {
-            expect((atb.getAcceptedParamsFromURL(test.url)).toString()).toEqual(test.output)
-        })
-    })
-})
+            expect((atb.getAcceptedParamsFromURL(test.url)).toString()).toEqual(test.output);
+        });
+    });
+});
 
 describe('complex install workflow cases', () => {
-    let loadURLSpy
+    let loadURLSpy;
 
     // make sure /exti was hit, and hit just once
     const validateExtiWasHit = (expectedAtb) => {
-        let numExtiCalls = 0
+        let numExtiCalls = 0;
 
         loadURLSpy.calls.allArgs().forEach((args) => {
-            const url = args[0]
+            const url = args[0];
 
             if (url.match(/\/exti/)) {
-                numExtiCalls += 1
-                expect(url).toContain('atb=' + expectedAtb)
+                numExtiCalls += 1;
+                expect(url).toContain('atb=' + expectedAtb);
             }
-        })
+        });
 
-        expect(numExtiCalls).toEqual(1, 'exti service should\'ve been called exactly once')
-    }
+        expect(numExtiCalls).toEqual(1, 'exti service should\'ve been called exactly once');
+    };
 
     beforeEach(() => {
-        stubLoadJSON({ returnedAtb: 'v112-2' })
-        loadURLSpy = stubLoadURL()
-        settingHelper.stub()
-    })
+        stubLoadJSON({ returnedAtb: 'v112-2' });
+        loadURLSpy = stubLoadURL();
+        settingHelper.stub();
+    });
 
     it('should handle the install process correctly if there\'s no DDG pages open', () => {
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([]))
+        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([]));
 
         return atb.updateATBValues()
             .then(() => {
-                validateExtiWasHit('v112-2')
-                expect(settings.getSetting('atb')).toEqual('v112-2')
-                expect(settings.getSetting('set_atb')).toEqual('v112-2')
-            })
-    })
+                validateExtiWasHit('v112-2');
+                expect(settings.getSetting('atb')).toEqual('v112-2');
+                expect(settings.getSetting('set_atb')).toEqual('v112-2');
+            });
+    });
     it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
         // pretend one of the pages has an ATB to pass
         spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
             'https://duckduckgo.com/about',
             'https://duckduckgo.com/?natb=v112-2ab'
-        ]))
+        ]));
 
         return atb.updateATBValues()
             .then(() => {
-                validateExtiWasHit('v112-2ab')
-                expect(settings.getSetting('atb')).toEqual('v112-2ab')
-                expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
-            })
-    })
+                validateExtiWasHit('v112-2ab');
+                expect(settings.getSetting('atb')).toEqual('v112-2ab');
+                expect(settings.getSetting('set_atb')).toEqual('v112-2ab');
+            });
+    });
     it('should handle the install process correctly if there\'s DDG pages open that do not pass an ATB param', () => {
         // pretend no pages have ATB to pass
         spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
             'https://duckduckgo.com/about',
             'https://duckduckgo.com/?q=test'
-        ]))
+        ]));
 
         return atb.updateATBValues()
             .then(() => {
-                validateExtiWasHit('v112-2')
-                expect(settings.getSetting('atb')).toEqual('v112-2')
-                expect(settings.getSetting('set_atb')).toEqual('v112-2')
-            })
-    })
-})
+                validateExtiWasHit('v112-2');
+                expect(settings.getSetting('atb')).toEqual('v112-2');
+                expect(settings.getSetting('set_atb')).toEqual('v112-2');
+            });
+    });
+});

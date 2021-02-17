@@ -1,6 +1,6 @@
-const experiment = require('../../shared/js/background/experiments.es6')
-const settings = require('../../shared/js/background/settings.es6')
-const atbUtils = require('../../shared/js/background/atb-utils.es6')
+const experiment = require('../../shared/js/background/experiments.es6');
+const settings = require('../../shared/js/background/settings.es6');
+const atbUtils = require('../../shared/js/background/atb-utils.es6');
 
 describe('experiment.getVariant', () => {
     const tests = [{
@@ -15,16 +15,16 @@ describe('experiment.getVariant', () => {
     }, {
         atb: '',
         variant: '_'
-    }]
+    }];
 
     tests.forEach((test) => {
         it('gets correct variant from settings', () => {
-            spyOn(settings, 'getSetting').and.returnValue(test.atb)
-            const result = experiment.getVariant()
-            expect(result).toBe(test.variant)
-        })
-    })
-})
+            spyOn(settings, 'getSetting').and.returnValue(test.atb);
+            const result = experiment.getVariant();
+            expect(result).toBe(test.variant);
+        });
+    });
+});
 
 describe('experiment.getATBVariant', () => {
     const tests = [{
@@ -39,16 +39,16 @@ describe('experiment.getATBVariant', () => {
     }, {
         atb: '',
         atbVariant: '_'
-    }]
+    }];
 
     tests.forEach((test) => {
         it('gets correct variant from settings', () => {
-            spyOn(settings, 'getSetting').and.returnValue(test.atb)
-            const result = experiment.getATBVariant()
-            expect(result).toBe(test.atbVariant)
-        })
-    })
-})
+            spyOn(settings, 'getSetting').and.returnValue(test.atb);
+            const result = experiment.getATBVariant();
+            expect(result).toBe(test.atbVariant);
+        });
+    });
+});
 
 describe('experiment.getDaysSinceInstall', () => {
     const tests = [{
@@ -65,22 +65,22 @@ describe('experiment.getDaysSinceInstall', () => {
         atb: 'v215-1',
         currentATB: { majorVersion: 214, minorVersion: 1 },
         diff: -7
-    }]
+    }];
 
     tests.forEach((test) => {
         it('calculates correct days since install', () => {
-            const baseTime = new Date(test.date)
-            jasmine.clock().mockDate(baseTime)
+            const baseTime = new Date(test.date);
+            jasmine.clock().mockDate(baseTime);
 
-            spyOn(settings, 'getSetting').and.returnValue(test.atb)
-            spyOn(atbUtils, 'getCurrentATB').and.returnValue(test.currentATB)
+            spyOn(settings, 'getSetting').and.returnValue(test.atb);
+            spyOn(atbUtils, 'getCurrentATB').and.returnValue(test.currentATB);
 
-            const result = experiment.getDaysSinceInstall()
-            jasmine.clock().uninstall()
-            expect(result).toBe(test.diff)
-        })
-    })
-})
+            const result = experiment.getDaysSinceInstall();
+            jasmine.clock().uninstall();
+            expect(result).toBe(test.diff);
+        });
+    });
+});
 
 // describe('experiment.setActiveExperiment', () => {
 //     global.retentionExperiments = {

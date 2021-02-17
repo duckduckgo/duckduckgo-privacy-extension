@@ -1,4 +1,4 @@
-const parseUserAgentString = require('../../shared/js/shared-utils/parse-user-agent-string.es6')
+const parseUserAgentString = require('../../shared/js/shared-utils/parse-user-agent-string.es6');
 
 const tests = [
     {
@@ -31,15 +31,15 @@ const tests = [
         expectedBrowser: 'Firefox',
         expectedVersion: '58'
     }
-]
+];
 
 describe('parseUserAgentString', () => {
     tests.forEach((test) => {
         it(`should be able to parse ${test.ua}`, () => {
-            const result = parseUserAgentString(test.ua)
+            const result = parseUserAgentString(test.ua);
 
-            expect(result.browser).toEqual(test.expectedBrowser)
-            expect(result.version).toEqual(test.expectedVersion)
-        })
-    })
-})
+            expect(result.browser).toEqual(test.expectedBrowser);
+            expect(result.version).toEqual(test.expectedVersion);
+        });
+    });
+});

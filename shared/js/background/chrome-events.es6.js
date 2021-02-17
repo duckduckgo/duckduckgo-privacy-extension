@@ -4,24 +4,24 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
-const ATB = require('./atb.es6')
-const utils = require('./utils.es6')
-const trackerutils = require('./tracker-utils')
-const experiment = require('./experiments.es6')
-const browser = utils.getBrowserName()
+const ATB = require('./atb.es6');
+const utils = require('./utils.es6');
+const trackerutils = require('./tracker-utils');
+const experiment = require('./experiments.es6');
+const browser = utils.getBrowserName();
 
-const sha1 = require('../shared-utils/sha1')
+const sha1 = require('../shared-utils/sha1');
 
 /**
  * Produce a random float, same output as Math.random()
  * @returns {float}
  */
 function getFloat () {
-    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
 }
 
 function getHash () {
-    return sha1(getFloat().toString())
+    return sha1(getFloat().toString());
 }
 
 chrome.runtime.onInstalled.addListener(function (details) {
@@ -30,24 +30,24 @@ chrome.runtime.onInstalled.addListener(function (details) {
             .then(ATB.openPostInstallPage)
             .then(function () {
                 if (browser === 'chrome') {
-                    experiment.setActiveExperiment()
+                    experiment.setActiveExperiment();
                 }
-            })
+            });
     } else if (details.reason.match(/update/) && browser === 'chrome') {
-        experiment.setActiveExperiment()
+        experiment.setActiveExperiment();
     }
-})
+});
 
 /**
  * REQUESTS
  */
 
-const redirect = require('./redirect.es6')
-const tabManager = require('./tab-manager.es6')
-const pixel = require('./pixel.es6')
-const https = require('./https.es6')
-const constants = require('../../data/constants')
-const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
+const redirect = require('./redirect.es6');
+const tabManager = require('./tab-manager.es6');
+const pixel = require('./pixel.es6');
+const https = require('./https.es6');
+const constants = require('../../data/constants');
+const requestListenerTypes = utils.getUpdatedRequestListenerTypes();
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
@@ -58,23 +58,23 @@ chrome.webRequest.onBeforeRequest.addListener(
         types: requestListenerTypes
     },
     ['blocking']
-)
+);
 
 chrome.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
-            tabManager.updateTabUrl(request)
+            tabManager.updateTabUrl(request);
         }
 
         if (/^https?:\/\/(.*?\.)?duckduckgo.com\/\?/.test(request.url)) {
             // returns a promise
-            return ATB.updateSetAtb(request)
+            return ATB.updateSetAtb(request);
         }
     },
     {
         urls: ['<all_urls>']
     }
-)
+);
 
 /**
  * Web Navigation
@@ -87,37 +87,37 @@ chrome.webRequest.onHeadersReceived.addListener(
 // and Gmail's weird redirect which returns a 200 via a service worker
 chrome.webNavigation.onCommitted.addListener(details => {
     // ignore navigation on iframes
-    if (details.frameId !== 0) return
+    if (details.frameId !== 0) return;
 
-    const tab = tabManager.get({ tabId: details.tabId })
+    const tab = tabManager.get({ tabId: details.tabId });
 
-    if (!tab) return
+    if (!tab) return;
 
-    tab.updateSite(details.url)
-})
+    tab.updateSite(details.url);
+});
 
 /**
  * TABS
  */
 
-const Companies = require('./companies.es6')
+const Companies = require('./companies.es6');
 
 chrome.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
     if (info.status === 'complete') {
-        Companies.syncToStorage()
+        Companies.syncToStorage();
     }
 
-    tabManager.createOrUpdateTab(id, info)
-})
+    tabManager.createOrUpdateTab(id, info);
+});
 
 chrome.tabs.onRemoved.addListener((id, info) => {
     // remove the tab object
-    tabManager.delete(id)
-})
+    tabManager.delete(id);
+});
 
 // message popup to close when the active tab changes. this can send an error message when the popup is not open. check lastError to hide it
-chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError))
+chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError));
 
 // search via omnibox
 chrome.omnibox.onInputEntered.addListener(function (text) {
@@ -127,121 +127,121 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
     }, function (tabs) {
         chrome.tabs.update(tabs[0].id, {
             url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage.os + 'cl'
-        })
-    })
-})
+        });
+    });
+});
 
 /**
  * MESSAGES
  */
 
-const settings = require('./settings.es6')
-const browserWrapper = require('./chrome-wrapper.es6')
+const settings = require('./settings.es6');
+const browserWrapper = require('./chrome-wrapper.es6');
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
-    if (sender.id !== chrome.runtime.id) return
+    if (sender.id !== chrome.runtime.id) return;
 
     if (req.getCurrentTab) {
         utils.getCurrentTab().then(tab => {
-            res(tab)
-        })
+            res(tab);
+        });
 
-        return true
+        return true;
     }
 
     if (req.updateSetting) {
-        const name = req.updateSetting.name
-        const value = req.updateSetting.value
+        const name = req.updateSetting.name;
+        const value = req.updateSetting.value;
         settings.ready().then(() => {
-            settings.updateSetting(name, value)
-        })
+            settings.updateSetting(name, value);
+        });
     } else if (req.getSetting) {
-        const name = req.getSetting.name
+        const name = req.getSetting.name;
         settings.ready().then(() => {
-            res(settings.getSetting(name))
-        })
+            res(settings.getSetting(name));
+        });
 
-        return true
+        return true;
     }
 
     // popup will ask for the browser type then it is created
     if (req.getBrowser) {
-        res(utils.getBrowserName())
-        return true
+        res(utils.getBrowserName());
+        return true;
     }
 
     if (req.getExtensionVersion) {
-        res(browserWrapper.getExtensionVersion())
-        return true
+        res(browserWrapper.getExtensionVersion());
+        return true;
     }
 
     if (req.getTopBlocked) {
-        res(Companies.getTopBlocked(req.getTopBlocked))
-        return true
+        res(Companies.getTopBlocked(req.getTopBlocked));
+        return true;
     } else if (req.getTopBlockedByPages) {
-        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
-        return true
+        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages));
+        return true;
     } else if (req.resetTrackersData) {
-        Companies.resetData()
+        Companies.resetData();
     }
 
     if (req.whitelisted) {
-        tabManager.whitelistDomain(req.whitelisted)
+        tabManager.whitelistDomain(req.whitelisted);
     } else if (req.whitelistOptIn) {
-        tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value)
+        tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value);
     } else if (req.getTab) {
-        res(tabManager.get({ tabId: req.getTab }))
-        return true
+        res(tabManager.get({ tabId: req.getTab }));
+        return true;
     } else if (req.getSiteGrade) {
-        const tab = tabManager.get({ tabId: req.getSiteGrade })
-        let grade = {}
+        const tab = tabManager.get({ tabId: req.getSiteGrade });
+        let grade = {};
 
         if (!tab.site.specialDomainName) {
-            grade = tab.site.grade.get()
+            grade = tab.site.grade.get();
         }
 
-        res(grade)
-        return true
+        res(grade);
+        return true;
     }
 
     if (req.firePixel) {
-        let fireArgs = req.firePixel
+        let fireArgs = req.firePixel;
         if (fireArgs.constructor !== Array) {
-            fireArgs = [req.firePixel]
+            fireArgs = [req.firePixel];
         }
-        res(pixel.fire.apply(null, fireArgs))
-        return true
+        res(pixel.fire.apply(null, fireArgs));
+        return true;
     }
-})
+});
 
 /**
  * Fingerprint Protection
  */
-const agents = require('./storage/agents.es6')
-const agentSpoofer = require('./classes/agentspoofer.es6')
+const agents = require('./storage/agents.es6');
+const agentSpoofer = require('./classes/agentspoofer.es6');
 // TODO fix for manifest v3
-let sessionKey = getHash()
+let sessionKey = getHash();
 
 async function getContentScope () {
-    const url = chrome.runtime.getURL('/public/js/content-scope.js')
+    const url = chrome.runtime.getURL('/public/js/content-scope.js');
 
-    const response = await fetch(url)
-    return response.text()
+    const response = await fetch(url);
+    return response.text();
 }
 
 async function init () {
-    const contentScopeScript = await getContentScope()
+    const contentScopeScript = await getContentScope();
 
     // Inject fingerprint protection into sites when
     // they are not whitelisted.
     chrome.webNavigation.onCommitted.addListener(details => {
-        const tab = tabManager.get({ tabId: details.tabId })
+        const tab = tabManager.get({ tabId: details.tabId });
         if (tab && tab.site.isBroken) {
             console.log('temporarily skip fingerprint protection for site: ' + details.url +
-            'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-            return
+            'more info: https://github.com/duckduckgo/content-blocking-whitelist');
+            return;
         }
         if (tab && !tab.site.whitelisted) {
             // Set variables, which are used in the fingerprint-protection script.
@@ -253,7 +253,7 @@ async function init () {
                     contentScopeScript,
                     site: tab.site,
                     referrer: tab.referrer
-                }
+                };
                 const variableScript = {
                     code: `
                       try {
@@ -262,22 +262,22 @@ async function init () {
                     runAt: 'document_start',
                     frameId: details.frameId,
                     matchAboutBlank: true
-                }
-                chrome.tabs.executeScript(details.tabId, variableScript)
+                };
+                chrome.tabs.executeScript(details.tabId, variableScript);
                 const scriptDetails = {
                     file: '/public/js/injected-content-scripts/fingerprint-protection.js',
                     runAt: 'document_start',
                     frameId: details.frameId,
                     matchAboutBlank: true
-                }
-                chrome.tabs.executeScript(details.tabId, scriptDetails)
+                };
+                chrome.tabs.executeScript(details.tabId, scriptDetails);
             } catch (e) {
-                console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
+                console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`);
             }
         }
-    })
+    });
 }
-init()
+init();
 
 // Replace UserAgent header on third party requests.
 /* Disable User Agent Spoofing temporarily.
@@ -322,128 +322,128 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
-const referrerListenerOptions = ['blocking', 'requestHeaders']
+const referrerListenerOptions = ['blocking', 'requestHeaders'];
 if (browser !== 'moz') {
-    referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
+    referrerListenerOptions.push('extraHeaders'); // Required in chrome type browsers to receive referrer information
 }
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function limitReferrerData (e) {
-        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
+        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer');
         if (referrer) {
-            referrer = referrer.value
+            referrer = referrer.value;
         } else {
-            return
+            return;
         }
 
         // Check if origin is safe listed
-        const tab = tabManager.get({ tabId: e.tabId })
+        const tab = tabManager.get({ tabId: e.tabId });
 
         // Safe list and broken site list checks are included in the referrer evaluation
-        const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
+        const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url);
         if (!modifiedReferrer) {
-            return
+            return;
         }
 
-        const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
+        const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer');
         if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
             tab.referrer = {
                 site: tab.site.url,
                 referrerHost: new URL(referrer).hostname,
                 referrer: modifiedReferrer
-            }
+            };
         }
         requestHeaders.push({
             name: 'referer',
             value: modifiedReferrer
-        })
-        return { requestHeaders: requestHeaders }
+        });
+        return { requestHeaders: requestHeaders };
     },
     { urls: ['<all_urls>'] },
     referrerListenerOptions
-)
+);
 
 /**
  * Global Privacy Control
  */
-const GPC = require('./GPC.es6')
+const GPC = require('./GPC.es6');
 
 // Set GPC property on DOM if enabled.
 chrome.webNavigation.onCommitted.addListener(details => {
-    GPC.injectDOMSignal(details.tabId, details.frameId)
-})
+    GPC.injectDOMSignal(details.tabId, details.frameId);
+});
 
 // Attach GPC header to all requests if enabled.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
-        const GPCHeader = GPC.getHeader()
+        const GPCHeader = GPC.getHeader();
 
         if (GPCHeader) {
-            const requestHeaders = request.requestHeaders
-            requestHeaders.push(GPCHeader)
-            return { requestHeaders: requestHeaders }
+            const requestHeaders = request.requestHeaders;
+            requestHeaders.push(GPCHeader);
+            return { requestHeaders: requestHeaders };
         }
     },
     { urls: ['<all_urls>'] },
     ['blocking', 'requestHeaders']
-)
+);
 
 /**
  * ALARMS
  */
 
-const httpsStorage = require('./storage/https.es6')
-const httpsService = require('./https-service.es6')
-const tdsStorage = require('./storage/tds.es6')
-const trackers = require('./trackers.es6')
+const httpsStorage = require('./storage/https.es6');
+const httpsService = require('./https-service.es6');
+const tdsStorage = require('./storage/tds.es6');
+const trackers = require('./trackers.es6');
 
 // recheck tracker and https lists every 12 hrs
-chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
+chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 });
 // tracker lists / whitelists are 30 minutes
-chrome.alarms.create('updateLists', { periodInMinutes: 30 })
+chrome.alarms.create('updateLists', { periodInMinutes: 30 });
 // update uninstall URL every 10 minutes
-chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
+chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 });
 // remove expired HTTPS service entries
-chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
+chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 });
 // Update userAgent lists
-chrome.alarms.create('updateUserAgentData', { periodInMinutes: 30 })
+chrome.alarms.create('updateUserAgentData', { periodInMinutes: 30 });
 // Rotate the user agent spoofed
-chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
+chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 });
 // Rotate the sessionKey
-chrome.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
+chrome.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 });
 
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
         settings.ready().then(() => {
             httpsStorage.getLists(constants.httpsLists)
                 .then(lists => https.setLists(lists))
-                .catch(e => console.log(e))
-        })
+                .catch(e => console.log(e));
+        });
     } else if (alarmEvent.name === 'updateUninstallURL') {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+        chrome.runtime.setUninstallURL(ATB.getSurveyURL());
     } else if (alarmEvent.name === 'updateLists') {
         settings.ready().then(() => {
-            https.sendHttpsUpgradeTotals()
-        })
+            https.sendHttpsUpgradeTotals();
+        });
 
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
-            .catch(e => console.log(e))
+            .catch(e => console.log(e));
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
-        httpsService.clearExpiredCache()
+        httpsService.clearExpiredCache();
     } else if (alarmEvent.name === 'updateUserAgentData') {
         settings.ready()
             .then(() => {
-                agents.updateAgentData()
-            }).catch(e => console.log(e))
+                agents.updateAgentData();
+            }).catch(e => console.log(e));
     } else if (alarmEvent.name === 'rotateUserAgent') {
-        agentSpoofer.needsRotation = true
-        agentSpoofer.rotateAgent()
+        agentSpoofer.needsRotation = true;
+        agentSpoofer.rotateAgent();
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
-        sessionKey = getHash()
+        sessionKey = getHash();
     }
-})
+});
 
 /**
  * on start up
@@ -451,60 +451,60 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
 const onStartup = () => {
     chrome.tabs.query({ currentWindow: true, status: 'complete' }, function (savedTabs) {
         for (let i = 0; i < savedTabs.length; i++) {
-            const tab = savedTabs[i]
+            const tab = savedTabs[i];
 
             if (tab.url) {
-                tabManager.create(tab)
+                tabManager.create(tab);
             }
         }
-    })
+    });
 
     settings.ready().then(() => {
-        experiment.setActiveExperiment()
+        experiment.setActiveExperiment();
 
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
-            .catch(e => console.log(e))
+            .catch(e => console.log(e));
 
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
-            .catch(e => console.log(e))
+            .catch(e => console.log(e));
 
-        https.sendHttpsUpgradeTotals()
+        https.sendHttpsUpgradeTotals();
 
-        Companies.buildFromStorage()
+        Companies.buildFromStorage();
 
-        agents.updateAgentData()
-    })
-}
+        agents.updateAgentData();
+    });
+};
 
 // Fire pixel on https upgrade failures to allow bad data to be removed from lists
 chrome.webRequest.onErrorOccurred.addListener(e => {
-    if (!(e.type === 'main_frame')) return
+    if (!(e.type === 'main_frame')) return;
 
-    const tab = tabManager.get({ tabId: e.tabId })
+    const tab = tabManager.get({ tabId: e.tabId });
 
     // We're only looking at failed main_frame upgrades. A tab can send multiple
     // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
     if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
-        return
+        return;
     }
 
     if (e.error && e.url.match(/^https/)) {
-        const errCode = constants.httpsErrorCodes[e.error]
-        tab.hasHttpsError = true
+        const errCode = constants.httpsErrorCodes[e.error];
+        tab.hasHttpsError = true;
 
         if (errCode) {
-            https.incrementUpgradeCount('failedUpgrades')
-            const url = new URL(e.url)
+            https.incrementUpgradeCount('failedUpgrades');
+            const url = new URL(e.url);
             pixel.fire('ehd', {
                 url: `${encodeURIComponent(url.hostname)}`,
                 error: errCode
-            })
+            });
         }
     }
-}, { urls: ['<all_urls>'] })
+}, { urls: ['<all_urls>'] });
 
 module.exports = {
     onStartup: onStartup
-}
+};

@@ -1,5 +1,5 @@
-const bel = require('bel')
-const whitelistItems = require('./whitelist-items.es6.js')
+const bel = require('bel');
+const whitelistItems = require('./whitelist-items.es6.js');
 
 module.exports = function () {
     return bel`<section class="options-content__whitelist">
@@ -9,7 +9,7 @@ module.exports = function () {
         ${whitelistItems(this.model.list)}
     </ul>
     ${addToWhitelist()}
-</section>`
+</section>`;
 
     function addToWhitelist () {
         return bel`<div>
@@ -32,6 +32,6 @@ module.exports = function () {
             </span>
         </div>
     </div>
-</div>`
+</div>`;
     }
-}
+};

@@ -1,16 +1,16 @@
-const Parent = window.DDG.base.View
+const Parent = window.DDG.base.View;
 
 function Linkable (ops) {
-    this.model = ops.model
-    this.pageView = ops.pageView
-    this.template = ops.template
-    Parent.call(this, ops)
+    this.model = ops.model;
+    this.pageView = ops.pageView;
+    this.template = ops.template;
+    Parent.call(this, ops);
 
-    this.$linkableItem = window.$('#js-linkable-' + this.model.id)
+    this.$linkableItem = window.$('#js-linkable-' + this.model.id);
 
     this.bindEvents([
         [this.$linkableItem, 'click', this._handleClick]
-    ])
+    ]);
 }
 
 Linkable.prototype = window.$.extend({},
@@ -18,9 +18,9 @@ Linkable.prototype = window.$.extend({},
     {
 
         _handleClick: function (e) {
-            this.model.link()
+            this.model.link();
         }
     }
-)
+);
 
-module.exports = Linkable
+module.exports = Linkable;

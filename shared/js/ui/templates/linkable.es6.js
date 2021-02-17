@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('bel');
 
 module.exports = function () {
     return bel`<a class="linkable ${this.model.klass}"
@@ -6,5 +6,5 @@ module.exports = function () {
     href="javascript:void(0)">
         ${this.model.text}
     <span class="${this.model.spanClass}"></div>
-</a>`
-}
+</a>`;
+};
