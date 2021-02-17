@@ -21,8 +21,8 @@ const expectedFingerprintValues = {
 }
 
 const tests = [
-    {url: 'wikipedia.com'},
-    {url: 'example.com'}
+    { url: 'wikipedia.com' },
+    { url: 'example.com' }
 ]
 
 function testFPValues (values) {
@@ -104,12 +104,12 @@ describe('First Party Fingerprint Randomization', () => {
         // give it another second just to be sure
         await page.waitFor(1000)
 
-        await page.addScriptTag({path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js'})
+        await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
 
         const fingerprint = await page.evaluate(() => {
             /* global FingerprintJS */
             return (async () => {
-                let fp = await FingerprintJS.load()
+                const fp = await FingerprintJS.load()
                 return fp.get()
             })()
         })
@@ -122,22 +122,22 @@ describe('First Party Fingerprint Randomization', () => {
         }
     }
 
-    for (let testCase of tests) {
+    for (const testCase of tests) {
         it('Fingerprints should not change amongst page loads', async () => {
-            let result = await runTest(testCase)
+            const result = await runTest(testCase)
 
-            let result2 = await runTest(testCase)
+            const result2 = await runTest(testCase)
             expect(result.canvas).toEqual(result2.canvas)
             expect(result.plugin).toEqual(result2.plugin)
         })
     }
 
     it('Fingerprints should not match across first parties', async () => {
-        let canvas = new Set()
-        let plugin = new Set()
+        const canvas = new Set()
+        const plugin = new Set()
 
-        for (let testCase of tests) {
-            let result = await runTest(testCase)
+        for (const testCase of tests) {
+            const result = await runTest(testCase)
 
             // Add the fingerprints to a set, if the result doesn't match it won't be added
             canvas.add(result.canvas)

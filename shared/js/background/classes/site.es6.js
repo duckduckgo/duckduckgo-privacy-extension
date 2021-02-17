@@ -56,9 +56,9 @@ class Site {
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal () {
-        let globalwhitelists = ['whitelisted', 'whitelistOptIn']
-        globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {}
+        const globalwhitelists = ['whitelisted', 'whitelistOptIn']
+        globalwhitelists.forEach((name) => {
+            const list = settings.getSetting(name) || {}
             this.setWhitelisted(name, list[this.domain])
         })
     }
@@ -72,7 +72,7 @@ class Site {
      */
     notifyWhitelistChanged () {
         // this can send an error message when the popup is not open check lastError to hide it
-        chrome.runtime.sendMessage({'whitelistChanged': true}, () => chrome.runtime.lastError)
+        chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
     }
 
     isWhiteListed () { return this.whitelisted }
@@ -150,7 +150,7 @@ class Site {
         if (url.match(/^(chrome|moz)-extension:\/\//)) {
             // this is our own extension, let's try and get a meaningful description
             if (domain === extensionId) {
-                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
+                const matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
 
                 if (matches && matches[1]) {
                     return matches[1]

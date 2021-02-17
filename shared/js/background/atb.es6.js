@@ -25,7 +25,7 @@ const ATB = (() => {
     return {
         updateSetAtb: () => {
             let atbSetting = settings.getSetting('atb')
-            let setAtbSetting = settings.getSetting('set_atb')
+            const setAtbSetting = settings.getSetting('set_atb')
 
             let errorParam = ''
 
@@ -38,8 +38,8 @@ const ATB = (() => {
                 errorParam = '&e=1'
             }
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
+            const randomValue = Math.ceil(Math.random() * 1e7)
+            const url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
@@ -56,14 +56,14 @@ const ATB = (() => {
                     return
                 }
 
-                let atbSetting = settings.getSetting('atb')
+                const atbSetting = settings.getSetting('atb')
 
                 if (!atbSetting) {
                     return
                 }
 
                 // handle anchor tags for pages like about#newsletter
-                let urlParts = request.url.split('#')
+                const urlParts = request.url.split('#')
                 let newURL = request.url
                 let anchor = ''
 
@@ -81,7 +81,7 @@ const ATB = (() => {
 
                 newURL += 'atb=' + atbSetting + anchor
 
-                return {redirectUrl: newURL}
+                return { redirectUrl: newURL }
             }
         },
 
@@ -89,8 +89,8 @@ const ATB = (() => {
             numTries = numTries || 0
             if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
+            const randomValue = Math.ceil(Math.random() * 1e7)
+            const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
             }, () => {
@@ -106,7 +106,7 @@ const ATB = (() => {
         },
 
         finalizeATB: (params) => {
-            let atb = settings.getSetting('atb')
+            const atb = settings.getSetting('atb')
 
             // build query string when atb param wasn't acquired from any URLs
             let paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
@@ -204,7 +204,7 @@ const ATB = (() => {
                         }
                     })
                 } else {
-                    chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+                    chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
                         const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                         if (ATB.canShowPostInstall(domain)) {
                             settings.updateSetting('hasSeenPostInstall', true)
@@ -233,19 +233,19 @@ const ATB = (() => {
 
         getSurveyURL: () => {
             let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
-            let atb = settings.getSetting('atb')
-            let setAtb = settings.getSetting('set_atb')
+            const atb = settings.getSetting('atb')
+            const setAtb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
             if (setAtb) url += `&set_atb=${setAtb}`
 
-            let browserInfo = parseUserAgentString()
-            let browserName = browserInfo.browser
-            let browserVersion = browserInfo.version
-            let extensionVersion = browserWrapper.getExtensionVersion()
+            const browserInfo = parseUserAgentString()
+            const browserName = browserInfo.browser
+            const browserVersion = browserInfo.version
+            const extensionVersion = browserWrapper.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
-            if (dev) url += `&test=1`
+            if (dev) url += '&test=1'
             return url
         },
 

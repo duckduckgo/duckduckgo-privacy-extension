@@ -17,7 +17,7 @@ PrivacyOptions.prototype = window.$.extend({},
     {
 
         _clickSetting: function (e) {
-            var key = window.$(e.target).data('key') || window.$(e.target).parent().data('key')
+            const key = window.$(e.target).data('key') || window.$(e.target).parent().data('key')
             console.log(`privacyOptions view click for setting "${key}"`)
             this.model.toggle(key)
             this.rerender()

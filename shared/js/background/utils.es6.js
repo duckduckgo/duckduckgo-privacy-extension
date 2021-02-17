@@ -19,7 +19,7 @@ function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
-function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
+function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
@@ -67,7 +67,7 @@ function findParent (url) {
 }
 
 function getCurrentURL (callback) {
-    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
         if (tabData.length) {
             callback(tabData[0].url)
         }
@@ -76,7 +76,7 @@ function getCurrentURL (callback) {
 
 function getCurrentTab (callback) {
     return new Promise((resolve, reject) => {
-        chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+        chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
             if (tabData.length) {
                 resolve(tabData[0])
             }
@@ -111,11 +111,11 @@ function getUpgradeToSecureSupport () {
 // Firefox only blocks 'beacon' (even though it should support 'ping')
 function getBeaconName () {
     const beaconNamesByBrowser = {
-        'chrome': 'ping',
-        'moz': 'beacon',
-        'edg': 'ping',
-        'brave': 'ping',
-        'default': 'ping'
+        chrome: 'ping',
+        moz: 'beacon',
+        edg: 'ping',
+        brave: 'ping',
+        default: 'ping'
     }
     let name = getBrowserName()
     if (!Object.keys(beaconNamesByBrowser).includes(name)) {
@@ -126,7 +126,7 @@ function getBeaconName () {
 
 // Return requestListenerTypes + beacon or ping
 function getUpdatedRequestListenerTypes () {
-    let requestListenerTypes = constants.requestListenerTypes.slice()
+    const requestListenerTypes = constants.requestListenerTypes.slice()
     requestListenerTypes.push(getBeaconName())
 
     return requestListenerTypes
@@ -163,7 +163,7 @@ function isCanvasBroken (url) {
 
 function isBrokenList (url, lists) {
     const parsedDomain = tldts.parse(url)
-    let hostname = parsedDomain.hostname || url
+    const hostname = parsedDomain.hostname || url
 
     // If root domain in temp whitelist, return true
     return lists.some((brokenSiteDomain) => {
@@ -181,7 +181,7 @@ function getBrokenCanvasScriptList () {
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
     const safeList = settings.getSetting('whitelisted')
-    let subdomains = hostname.split('.')
+    const subdomains = hostname.split('.')
     // Check user safe list
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {

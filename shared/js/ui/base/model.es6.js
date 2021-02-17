@@ -49,7 +49,7 @@ BaseModel.prototype = $.extend({},
              * })
              */
             if (typeof attr === 'object') {
-                for (var key in attr) {
+                for (const key in attr) {
                     this.set(key, attr[key], val)
                 }
                 return
@@ -65,7 +65,7 @@ BaseModel.prototype = $.extend({},
 
             this.store.publish({
                 notifierName: this.modelName,
-                change: {attribute: attr, value: val, lastValue: lastValue},
+                change: { attribute: attr, value: val, lastValue: lastValue },
                 attributes: this._toJSON()
             })
         },
@@ -132,7 +132,7 @@ BaseModel.prototype = $.extend({},
           * are functions.
           */
         _toJSON: function () {
-            let attributes = Object.assign({}, Object.getPrototypeOf(this), this)
+            const attributes = Object.assign({}, Object.getPrototypeOf(this), this)
             if (attributes.store) delete attributes.store
             return JSON.parse(JSON.stringify(attributes))
         }

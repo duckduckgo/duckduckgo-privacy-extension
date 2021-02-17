@@ -1,7 +1,7 @@
 /* global sjcl */
 function getCanvasKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
-    let hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
+    const hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
     return sjcl.codec.hex.fromBits(hmac.encrypt(inputData))
 }
 
@@ -10,10 +10,10 @@ function nextRandom (v) {
     return Math.abs((v >> 1) | (((v << 62) ^ (v << 61)) & (~(~0 << 63) << 62)))
 }
 
-let exemptionList = []
+const exemptionList = []
 
 function shouldExemptUrl (url) {
-    for (let regex of exemptionList) {
+    for (const regex of exemptionList) {
         if (regex.test(url)) {
             return true
         }
@@ -22,7 +22,7 @@ function shouldExemptUrl (url) {
 }
 
 function initExemptionList (stringExemptionList) {
-    for (let stringExemption of stringExemptionList) {
+    for (const stringExemption of stringExemptionList) {
         exemptionList.push(new RegExp(stringExemption))
     }
 }
@@ -30,14 +30,14 @@ function initExemptionList (stringExemptionList) {
 // Checks the stack trace if there are known libraries that are broken.
 function shouldExemptMethod () {
     try {
-        let errorLines = new Error().stack.split('\n')
-        let errorFiles = new Set()
+        const errorLines = new Error().stack.split('\n')
+        const errorFiles = new Set()
         // Should cater for Chrome and Firefox stacks, we only care about https? resources.
-        let lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
-        for (let line of errorLines) {
-            let res = line.match(lineTest)
+        const lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
+        for (const line of errorLines) {
+            const res = line.match(lineTest)
             if (res) {
-                let path = res[2]
+                const path = res[2]
                 // checked already
                 if (errorFiles.has(path)) {
                     continue
@@ -56,7 +56,7 @@ function shouldExemptMethod () {
 
 // eslint-disable-next-line no-unused-vars
 function initCanvasProtection (args) {
-    let { sessionKey, stringExemptionList, site } = args
+    const { sessionKey, stringExemptionList, site } = args
     initExemptionList(stringExemptionList)
     const domainKey = site.domain
 
@@ -72,10 +72,10 @@ function initCanvasProtection (args) {
             try {
                 const canvasKey = getCanvasKeySync(sessionKey, domainKey, imageData)
                 let pixel = canvasKey[0]
-                for (let i in canvasKey) {
+                for (const i in canvasKey) {
                     let byte = canvasKey[i]
                     for (let j = 8; j >= 0; j--) {
-                        let pixelCanvasIndex = pixel % imageData.data.length
+                        const pixelCanvasIndex = pixel % imageData.data.length
 
                         imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
                         // find next pixel to perturb
@@ -92,22 +92,22 @@ function initCanvasProtection (args) {
     })
     CanvasRenderingContext2D.prototype.getImageData = getImageDataProxy
 
-    let canvasMethods = ['toDataURL', 'toBlob']
-    for (let methodName of canvasMethods) {
+    const canvasMethods = ['toDataURL', 'toBlob']
+    for (const methodName of canvasMethods) {
         const methodProxy = new Proxy(HTMLCanvasElement.prototype[methodName], {
             apply (target, thisArg, args) {
                 if (shouldExemptMethod()) {
                     return target.apply(thisArg, args)
                 }
                 try {
-                    let ctx = thisArg.getContext('2d')
-                    let imageData = ctx.getImageData(0, 0, thisArg.width, thisArg.height)
+                    const ctx = thisArg.getContext('2d')
+                    const imageData = ctx.getImageData(0, 0, thisArg.width, thisArg.height)
 
                     // Make a off-screen canvas and put the data there
-                    let offScreenCanvas = document.createElement('canvas')
+                    const offScreenCanvas = document.createElement('canvas')
                     offScreenCanvas.width = thisArg.width
                     offScreenCanvas.height = thisArg.height
-                    let offScreenCtx = offScreenCanvas.getContext('2d')
+                    const offScreenCtx = offScreenCanvas.getContext('2d')
                     offScreenCtx.putImageData(imageData, 0, 0)
 
                     // Call the original method on the modified off-screen canvas

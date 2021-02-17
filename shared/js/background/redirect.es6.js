@@ -7,7 +7,7 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
 
-var debugRequest = false
+const debugRequest = false
 
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -18,9 +18,9 @@ function buildResponse (url, requestData, tab, isMainFrame) {
             tab.upgradedHttps = true
         }
         if (utils.getUpgradeToSecureSupport()) {
-            return {upgradeToSecure: true}
+            return { upgradeToSecure: true }
         } else {
-            return {redirectUrl: url}
+            return { redirectUrl: url }
         }
     } else if (isMainFrame) {
         tab.upgradedHttps = false
@@ -37,7 +37,7 @@ function buildResponse (url, requestData, tab, isMainFrame) {
  */
 
 function handleRequest (requestData) {
-    let tabId = requestData.tabId
+    const tabId = requestData.tabId
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
@@ -49,7 +49,7 @@ function handleRequest (requestData) {
     // Safari doesn't have specific requests for main frames
     if (requestData.type === 'main_frame' && window.chrome) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
-            let newTab = tabManager.create(requestData)
+            const newTab = tabManager.create(requestData)
 
             // andrey: temporary disable this. it was letting redirect loops through on Tumblr
             // persist the last URL the tab was trying to upgrade to HTTPS
@@ -60,7 +60,7 @@ function handleRequest (requestData) {
         }
 
         // add atb params only to main_frame
-        let ddgAtbRewrite = ATB.redirectURL(requestData)
+        const ddgAtbRewrite = ATB.redirectURL(requestData)
         if (ddgAtbRewrite) return ddgAtbRewrite
     } else {
         /**
@@ -90,7 +90,7 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
-        var tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+        let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
 
         // allow embedded twitter content if user enabled this setting
         if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
@@ -117,7 +117,7 @@ function handleRequest (requestData) {
                 thisTab.addToTrackers(tracker)
             }
 
-            browserWrapper.notifyPopup({'updateTabData': true})
+            browserWrapper.notifyPopup({ updateTabData: true })
 
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
@@ -146,11 +146,11 @@ function handleRequest (requestData) {
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
                     // safari gets return data in message
-                    requestData.message = {redirectUrl: tracker.redirectUrl}
-                    return {redirectUrl: tracker.redirectUrl}
+                    requestData.message = { redirectUrl: tracker.redirectUrl }
+                    return { redirectUrl: tracker.redirectUrl }
                 } else {
-                    requestData.message = {cancel: true}
-                    return {cancel: true}
+                    requestData.message = { cancel: true }
+                    return { cancel: true }
                 }
             }
         }

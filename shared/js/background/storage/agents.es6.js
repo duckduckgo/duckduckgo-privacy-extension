@@ -32,13 +32,13 @@ class AgentStorage {
      * Retrieve the latest lists of userAgent and breakage data. Store as needed.
      */
     updateAgentData () {
-        console.log(`UserAgents: Getting user agent data`)
+        console.log('UserAgents: Getting user agent data')
         const lists = constants.UserAgentLists
         for (const list of lists) {
             const source = list.source || 'external'
             const listName = list.name
             const etag = settings.getSetting(`${listName}-etag`) || ''
-            load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source, timeout: 60000})
+            load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
                 .then(response => {
                     if (response && response.status === 200) {
                         // New agent data to process.
@@ -92,7 +92,7 @@ class AgentStorage {
      * characters, flag it here.
      **/
     isPotentiallyMaliciousAgent (agent) {
-        if (agent.search(`'`) !== -1 || agent.search(`"`) !== -1) {
+        if (agent.search('\'') !== -1 || agent.search('"') !== -1) {
             return true
         }
         return false
@@ -144,12 +144,12 @@ class AgentStorage {
     loadAgentList (listName) {
         console.log(`looking for listname ${listName}`)
         return this.agentDB.open()
-            .then(() => this.agentDB.table('agentStorage').get({listName: listName}))
+            .then(() => this.agentDB.table('agentStorage').get({ listName: listName }))
     }
 
     async storeAgentList (listname, data) {
         try {
-            await this.agentDB.agentStorage.put({listName: listname, listData: data})
+            await this.agentDB.agentStorage.put({ listName: listname, listData: data })
         } catch (e) {
             console.log(`Error storing agent data locally: ${e}`)
         }

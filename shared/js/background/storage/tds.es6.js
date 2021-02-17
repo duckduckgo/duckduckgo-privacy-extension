@@ -10,7 +10,7 @@ class TDSStorage {
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
         })
-        this.tds = {entities: {}, trackers: {}, domains: {}, cnames: {}}
+        this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
         this.brokenSiteList = []
         this.fingerprinting = {}
@@ -52,9 +52,9 @@ class TDSStorage {
                     if (resultData) {
                         // store tds in memory so we can access it later if needed
                         this[listCopy.name] = resultData
-                        return {name: listCopy.name, data: resultData}
+                        return { name: listCopy.name, data: resultData }
                     } else {
-                        throw new Error(`TDS: process list xhr failed`)
+                        throw new Error('TDS: process list xhr failed')
                     }
                 })
             }).catch(e => {
@@ -62,11 +62,11 @@ class TDSStorage {
                     if (backupFromDB) {
                         // store tds in memory so we can access it later if needed
                         this[listCopy.name] = backupFromDB
-                        return {name: listCopy.name, data: backupFromDB}
+                        return { name: listCopy.name, data: backupFromDB }
                     } else {
                         // reset etag to force us to get fresh server data in case of an error
                         settings.updateSetting(`${listCopy.name}-etag`, '')
-                        throw new Error(`TDS: data update failed`)
+                        throw new Error('TDS: data update failed')
                     }
                 })
             })
@@ -94,22 +94,22 @@ class TDSStorage {
     }
 
     getDataXHR (list, etag, source) {
-        return load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source, timeout: 60000})
+        return load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
     }
 
     getDataFromLocalDB (name) {
         console.log('TDS: getting from db')
         return this.dbc.open()
-            .then(() => this.dbc.table('tdsStorage').get({name: name}))
+            .then(() => this.dbc.table('tdsStorage').get({ name: name }))
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({name: name, data: data})
+        return this.dbc.tdsStorage.put({ name: name, data: data })
     }
 
     parsedata (name, data) {
         const parsers = {
-            'brokenSiteList': data => {
+            brokenSiteList: data => {
                 return data.trim().split('\n')
             }
         }
