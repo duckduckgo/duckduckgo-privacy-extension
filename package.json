@@ -81,7 +81,7 @@
         "eventemitter2": "4.1.0",
         "file-url": "2.0.2",
         "is-plain-object": "2.0.1",
-        "jquery": "3.4.1",
+        "jquery": "3.5.0",
         "jsbloom": "https://github.com/duckduckgo/jsbloom.git#1.0.2",
         "node-gyp": "^7.0.0",
         "normalize.scss": "0.1.0",
