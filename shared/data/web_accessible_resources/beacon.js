@@ -1,4 +1,4 @@
-scorecardresearch.com/beacon.js application/javascript
+//scorecardresearch.com/beacon.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}

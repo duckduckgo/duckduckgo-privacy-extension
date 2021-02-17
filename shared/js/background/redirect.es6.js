@@ -6,6 +6,7 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
+const webResourceURL = browserWrapper.getExtensionURL('/') + 'web_accessible_resources'
 
 var debugRequest = false
 
@@ -42,6 +43,12 @@ function handleRequest (requestData) {
     if (tabId === -1) { return }
 
     let thisTab = tabManager.get(requestData)
+
+    if (requestData.url.startsWith(webResourceURL)) {
+        if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
+            return {cancel: true}
+        }
+    }
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
@@ -144,16 +151,16 @@ function handleRequest (requestData) {
 
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
-                if (tracker.redirectUrl) {
-                    // safari gets return data in message
-                    requestData.message = {redirectUrl: tracker.redirectUrl}
-                    return {redirectUrl: tracker.redirectUrl}
+                if (tracker.redirectUrl && requestData.type === 'script') {
+                    const key = thisTab.addWebResourceAccess(tracker.matchedRule.surrogate)
+                    return {redirectUrl: chrome.extension.getURL(`web_accessible_resources/${tracker.matchedRule.surrogate}?key=${key}`)}
                 } else {
                     requestData.message = {cancel: true}
                     return {cancel: true}
                 }
             }
         }
+
     }
 
     /**

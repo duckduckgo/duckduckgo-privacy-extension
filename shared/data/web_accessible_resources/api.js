@@ -1,4 +1,4 @@
-google-analytics.com/api.js application/javascript
+//google-analytics.com/api.js application/javascript
 (() => {
     const noop = () => {}
     const cxApiHandler = {

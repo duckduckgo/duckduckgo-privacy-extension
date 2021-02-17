@@ -1,4 +1,4 @@
-google-analytics.com/inpage_linkid.js application/javascript
+//google-analytics.com/inpage_linkid.js application/javascript
 (() => {
     const gaqObj = {
         push: () => {}
