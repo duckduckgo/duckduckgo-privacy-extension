@@ -366,6 +366,7 @@ facebook.net/sdk.js application/javascript
     const originalFBURL = document.currentScript.src
     let siteInit = function () {}
     let fbIsEnabled = false
+    const parseCalls = []
     const popupName = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12)
     const noop = () => {}
     const noopHandler = {
@@ -390,6 +391,11 @@ facebook.net/sdk.js application/javascript
             window.FB = undefined
             const fbScript = document.createElement("script")
             fbScript.src = originalFBURL
+            fbScript.onload = function() {
+                for (const node of parseCalls) {
+                    window.FB.XFBML.parse.apply(window.FB.XFBML, node);
+                }
+            }
             document.head.appendChild(fbScript)
             fbIsEnabled = true
         }
@@ -458,6 +464,12 @@ facebook.net/sdk.js application/javascript
             },
             Event: {
                 subscribe: function() {},
+                unsubscribe: function() {},
+            },
+            XFBML: {
+                parse: function(n) {
+                    parseCalls.push(n)
+                },
             }
         }
         console.log('in FB surrogate')
