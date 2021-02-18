@@ -37,6 +37,11 @@
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
+    "browser_specific_settings": {
+      "gecko": {
+        "update_url": "https://quack.duckduckgo.com/email/extensions/firefox-update-manifest.json"
+      }
+    },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
