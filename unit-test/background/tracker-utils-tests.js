@@ -290,4 +290,80 @@ describe('Tracker Utilities', () => {
             }).withContext(`test: ${test.name}`).not.toThrow()
         }
     })
+
+    const socialTrackerTests = [
+        {
+            name: 'Facebook.net',
+            url: 'Facebook.net',
+            expectedResult: {
+                entity: 'Facebook',
+                redirectUrl: undefined
+            }
+        },
+        {
+            name: 'Facebook.com',
+            url: 'https://facebook.com',
+            expectedResult: {
+                entity: 'Facebook',
+                redirectUrl: undefined
+            }
+        },
+        {
+            name: 'Facebook.com with params',
+            url: 'https://developers.facebook.com/docs/plugins',
+            expectedResult: {
+                entity: 'Facebook',
+                redirectUrl: undefined
+            }
+        }
+    ]
+    it('Should correctly handle social trackers', () => {
+        for (const test of socialTrackerTests) {
+            const result = trackerutils.getSocialTracker(test.url)
+            expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
+            expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).toEqual(test.expectedResult.redirectUrl)
+        }
+    })
+
+    const socialTrackerSurrogateTests = [
+        {
+            name: 'Facebook US SDK',
+            url: 'https://connect.facebook.net/en_US/sdk.js',
+            expectedResult: {
+                entity: 'Facebook'
+            }
+        },
+        {
+            name: 'Facebook GB SDK',
+            url: 'https://connect.facebook.net/en_GB/sdk.js',
+            expectedResult: {
+                entity: 'Facebook'
+            }
+        }
+    ]
+    it('Should return a surrogate redirect', () => {
+        for (const test of socialTrackerSurrogateTests) {
+            const result = trackerutils.getSocialTracker(test.url)
+            expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
+            expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).not.toEqual(undefined)
+        }
+    })
+
+    const unsocialTrackerTests = [
+        {
+            name: 'Blank url',
+            url: '',
+            expectedResult: undefined
+        },
+        {
+            name: 'Google Analytics',
+            url: 'https://analytics.google.com',
+            expectedResult: undefined
+        }
+    ]
+    it('Should not label non-social trackers as social trackers', () => {
+        for (const test of unsocialTrackerTests) {
+            expect(trackerutils.getSocialTracker(test.url)).withContext(`test: ${test.name}`).toEqual(test.expectedResult)
+        }
+    })
 })

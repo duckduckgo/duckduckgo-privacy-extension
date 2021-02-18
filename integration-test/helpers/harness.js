@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const execSync = require('child_process').execSync
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 40000
 
 const setup = async (ops) => {
     ops = ops || {}
