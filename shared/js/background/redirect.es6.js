@@ -44,6 +44,7 @@ function handleRequest (requestData) {
 
     let thisTab = tabManager.get(requestData)
 
+    // control access to web accessible resources
     if (requestData.url.startsWith(webResourceURL)) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
             return {cancel: true}
@@ -153,7 +154,7 @@ function handleRequest (requestData) {
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl && requestData.type === 'script') {
                     const key = thisTab.addWebResourceAccess(tracker.matchedRule.surrogate)
-                    return {redirectUrl: chrome.extension.getURL(`web_accessible_resources/${tracker.matchedRule.surrogate}?key=${key}`)}
+                    return {redirectUrl: browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}?key=${key}`)}
                 } else {
                     requestData.message = {cancel: true}
                     return {cancel: true}

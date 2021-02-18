@@ -128,12 +128,24 @@ class Tab {
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
     };
 
+    /**
+     * Adds an entry to the tab webResourceAccess list. 
+     * @param {string} URL to the web accessible resource
+     * @returns {string} generated access key
+     **/
     addWebResourceAccess (resourceName) {
         const key = Math.floor(Math.random() * 10000000000).toString(16)
         this.webResourceAccess.push({key, resourceName, time: Date.now(), wasAccessed: false})
         return key
     };
 
+    /**
+     * Access to web accessible resources needs to have the correct key passed in the URL
+     * and the requests needs to happen within 1 second since the generation of the key
+     * in addWebResourceAccess
+     * @param {string} web accessible resource URL
+     * @returns {bool} is access to the resource allowed
+     **/
     hasWebResourceAccess (resourceURL) {
         // no record of web resource access for this tab
         if (!this.webResourceAccess.length) {
@@ -146,8 +158,7 @@ class Tab {
         }
 
         const key = keyMatches[1]
-
-        const hasAccess = this.webResourceAccess.filter(resource => {
+        const hasAccess = this.webResourceAccess.some(resource => {
             if (resource.key === key && !resource.wasAccessed) {
                 resource.wasAccessed = true
                 if( (Date.now() - resource.time) < 1000) {
@@ -156,7 +167,7 @@ class Tab {
             }
         })
 
-        return !!hasAccess.length
+        return hasAccess
     }
 }
 
