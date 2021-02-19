@@ -22,6 +22,7 @@ EmailAliasView.prototype = window.$.extend({},
                 this.$el.one('animationend', () => {
                     this.$el.removeClass('show-copied-label')
                 })
+                this.model.fetch({ refreshAlias: true })
             })
         },
 
