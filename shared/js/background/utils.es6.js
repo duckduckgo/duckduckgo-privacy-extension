@@ -167,7 +167,9 @@ function isBrokenList (url, lists) {
 
     // If root domain in temp unprotected list, return true
     return lists.some((brokenSiteDomain) => {
-        return hostname.match(new RegExp(brokenSiteDomain + '$'))
+        if (brokenSiteDomain) {
+            return hostname.match(new RegExp(brokenSiteDomain + '$'))
+        }
     })
 }
 
