@@ -170,6 +170,7 @@ function isBrokenList (url, lists) {
         if (brokenSiteDomain) {
             return hostname.match(new RegExp(brokenSiteDomain + '$'))
         }
+        return false
     })
 }
 

@@ -54,11 +54,42 @@ function shouldExemptMethod () {
     return false
 }
 
-function sumData(input) {
-  return input.data.reduce((prev,l) => {
-    // TODO consider use of nextRandom here
-    return prev + l;
-  });
+function modifyPixelData (imageData, domainKey, sessionKey) {
+    const arr = []
+    // We calculate a checksum as passing imageData as a key is too slow.
+    // We might want to do something more pseudo random that is less observable through timing attacks and collisions (but this will come at a performance cost)
+    let checkSum = 0
+    // Create an array of only pixels that have data in them
+    for (let i = 0; i < imageData.data.length; i++) {
+        const d = imageData.data.subarray(i, i + 4)
+        // Ignore non blank pixels there is high chance compression ignores them
+        const sum = d[0] + d[1] + d[2] + d[3]
+        if (sum !== 0) {
+            checkSum += sum
+            arr.push(i)
+        }
+    }
+
+    const canvasKey = getCanvasKeySync(sessionKey, domainKey, checkSum)
+    let pixel = canvasKey.charCodeAt(0)
+    const length = arr.length
+    for (const i in canvasKey) {
+        let byte = canvasKey.charCodeAt(i)
+        for (let j = 8; j >= 0; j--) {
+            const channel = byte % 3
+            const lookupId = pixel % length
+            const pixelCanvasIndex = arr[lookupId] + channel
+
+            imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
+
+            // find next pixel to perturb
+            pixel = nextRandom(pixel)
+
+            // Right shift as we use the least significant bit of it
+            byte = byte >> 1
+        }
+    }
+    return imageData
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -77,22 +108,7 @@ function initCanvasProtection (args) {
             }
             // Anything we do here should be caught and ignored silently
             try {
-                const canvasKey = getCanvasKeySync(sessionKey, domainKey, sumData(imageData))
-                let pixel = canvasKey[0].charCodeAt(0)
-                for (const i in canvasKey) {
-                    let byte = canvasKey[i]
-                    for (let j = 8; j >= 0; j--) {
-                        const channel = pixel % 4;
-                        const pixelCanvasIndex = 4 * ((pixel % (imageData.data.length/4)) + channel);
-
-                        imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
-                        // find next pixel to perturb
-                        pixel = nextRandom(pixel)
-
-                        // Right shift as we use the least significant bit of it
-                        byte = byte >> 1
-                    }
-                }
+                return modifyPixelData(imageData, sessionKey, domainKey)
             } catch {
             }
             return imageData
