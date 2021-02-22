@@ -425,11 +425,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                 if (!requestHeaders) return
                 if (tab && tab.site.whitelisted) return
                 if (tab && utils.isFirstParty(request.url, tab.url)) return
-                const index = requestHeaders.findIndex(header => { return header.name.toLowerCase() === 'cookie' })
-                if (index !== -1) {
-                    if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
-                        requestHeaders.splice(index, 1)
-                    }
+                if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                    requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
                 }
             }
         }
