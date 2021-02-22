@@ -339,6 +339,21 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         // Check if origin is safe listed
         const tab = tabManager.get({ tabId: e.tabId })
 
+        if (tab && tab.surrogates && tab.surrogates[e.url]) {
+            // Check or origin header to avoid CORS issues with surrogates
+            const hasOrigin = e.requestHeaders.filter(h => h.name === 'Origin')
+            if (!hasOrigin.length) {
+                const redirectUrl = tab.surrogates[e.url]
+                // remove redirect entry for the tab
+                delete tab.surrogates[e.url]
+                
+                // add access token for web resources
+                const key = tab.addWebResourceAccess(redirectUrl)
+
+                return {redirectUrl: `${redirectUrl}?key=${key}`}
+            }
+        }
+
         // Safe list and broken site list checks are included in the referrer evaluation
         let modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
         if (!modifiedReferrer) {

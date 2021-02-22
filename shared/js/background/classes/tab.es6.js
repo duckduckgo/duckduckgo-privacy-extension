@@ -54,6 +54,7 @@ class Tab {
         }
         this.resetBadgeIcon()
         this.webResourceAccess = []
+        this.surrogates = {}
     };
 
     resetBadgeIcon () {

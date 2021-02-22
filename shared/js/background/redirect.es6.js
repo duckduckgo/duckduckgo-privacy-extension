@@ -153,8 +153,16 @@ function handleRequest (requestData) {
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl && requestData.type === 'script') {
-                    const key = thisTab.addWebResourceAccess(tracker.matchedRule.surrogate)
-                    return {redirectUrl: browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}?key=${key}`)}
+                    const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
+
+                    // check these for Origin headers in onBeforeSendHeaders before redirecting or not
+                    if (tracker.matchedRule.noCors) {
+                        thisTab.surrogates[requestData.url] = webResource
+                    } else {
+                        const key = thisTab.addWebResourceAccess(webResource)
+                        return {redirectUrl: `${webResource}?key=${key}`}
+                    }
+
                 } else {
                     requestData.message = {cancel: true}
                     return {cancel: true}
