@@ -65,6 +65,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
+        let responseHeaders = request.responseHeaders
         const activeExperiment = settings.getSetting('activeExperiment')
         if (activeExperiment) {
             const experiment = settings.getSetting('experimentData')
@@ -75,16 +76,13 @@ chrome.webRequest.onHeadersReceived.addListener(
                 if (!request.responseHeaders) return
                 if (tab && tab.site.whitelisted) return
                 if (tab && utils.isFirstParty(request.url, tab.url)) return
-                const index = request.responseHeaders.findIndex(header => { return header.name.toLowerCase() === 'set-cookie' })
-                if (index !== -1) {
-                    if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
-                        request.responseHeaders.splice(index, 1)
-                    }
+                if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                    responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
                 }
             }
         }
 
-        return { responseHeaders: request.responseHeaders }
+        return { responseHeaders: responseHeaders }
     },
     {
         urls: ['<all_urls>']
