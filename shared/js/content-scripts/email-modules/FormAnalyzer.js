@@ -3,6 +3,10 @@ class FormAnalyzer {
         this.form = form
         this.autofillSignal = 0
         this.signals = []
+
+        // Avoid autofill on our signup page
+        if (window.location.href.match(/^https:\/\/.+\.duckduckgo\.com\/email\/signup/i)) return this
+
         this.evaluateElAttributes(input, 3, true)
         form ? this.evaluateForm() : this.evaluatePage()
         console.log(this.autofillSignal, this, this.signals)
