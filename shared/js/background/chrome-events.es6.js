@@ -240,6 +240,11 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                     isThirdParty: false,
                     shouldBlock: false
                 }
+
+                if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
+                    return true
+                }
+
                 const tab = tabManager.get({ tabId: sender.tab.id })
                 if (tab && tab.site.whitelisted) {
                     res(action)
