@@ -2,6 +2,9 @@ const puppeteer = require('puppeteer')
 const execSync = require('child_process').execSync
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
+if (process.env.KEEP_OPEN) {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000 * 1000
+}
 
 const setup = async (ops) => {
     ops = ops || {}
@@ -57,7 +60,7 @@ const setup = async (ops) => {
     return { browser, bgPage, requests }
 }
 
-const teardown = async (browser) => {
+async function teardownInternal (browser) {
     browser && await browser.close()
 
     // necessary so e.g. local storage
@@ -66,6 +69,19 @@ const teardown = async (browser) => {
     // irrelevant on travis, where everything is clear with each new run
     if (!process.env.TRAVIS) {
         execSync('rm -rf temp-profile-*')
+    }
+}
+
+const teardown = async (browser) => {
+    if (process.env.KEEP_OPEN) {
+        return new Promise((resolve) => {
+            browser.on('disconnected', async () => {
+                await teardownInternal(browser)
+                resolve()
+            })
+        })
+    } else {
+        teardownInternal(browser)
     }
 }
 

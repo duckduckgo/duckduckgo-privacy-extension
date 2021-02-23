@@ -39,6 +39,7 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
  1. Run `npm run dev-firefox`
  2. Load the extension in Firefox from the `build/firefox/dev` directory
 [Temporary installation in Firefox - Mozilla | MDN](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Temporary_Installation_in_Firefox)
+    Alternatively running `web-ext run -s build/firefox/dev` loads the extension into a temporary profile.
 
 - Chrome
  1. Run `npm run dev-chrome`
@@ -67,6 +68,7 @@ After running the build task it will continue watching for changes to any of the
 - Unit tests: `npm test`
 - Integration Tests
   - Local, requires Chrome: `npm run test-int`
+    - You can filter to one test with: `KEEP_OPEN=1 npm run test-int -- -f integration-test/background/test-fp-fingerprint.js`
   - Headless, requires xvfb: `npm run test-ci`
 
 ### Selenium Testing (ratings.js)

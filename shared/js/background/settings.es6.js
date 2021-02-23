@@ -7,9 +7,9 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
-var settings = {}
+let settings = {}
 let isReady = false
-let _ready = init().then(() => {
+const _ready = init().then(() => {
     isReady = true
     console.log('Settings are loaded')
 })
@@ -44,7 +44,7 @@ function buildSettingsFromDefaults () {
 }
 
 function syncSettingTolocalStorage () {
-    browserWrapper.syncToStorage({'settings': settings})
+    browserWrapper.syncToStorage({ settings: settings })
 }
 
 function getSetting (name) {

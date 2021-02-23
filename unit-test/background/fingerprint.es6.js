@@ -47,7 +47,7 @@ describe('User-Agent replacement', () => {
         })
 
         it('should send fake headers to third parties', () => {
-            let request = {
+            const request = {
                 tabId: 123,
                 url: 'http://thirdparty.com'
             }
@@ -57,7 +57,7 @@ describe('User-Agent replacement', () => {
         })
 
         it('should send real headers to first parties', () => {
-            let request = {
+            const request = {
                 tabId: 123,
                 url: 'http://example.com',
                 originUrl: 'http://example.com'

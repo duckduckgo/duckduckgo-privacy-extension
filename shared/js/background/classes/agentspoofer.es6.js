@@ -36,7 +36,7 @@ class AgentSpoofer {
      *      OS major version should remain the same
     **/
     selectAgent () {
-        let agentList = this.filterAgents(agentStorage.agents)
+        const agentList = this.filterAgents(agentStorage.agents)
         if (agentList.length === 0) {
             return this.realAgent
         }
@@ -92,7 +92,7 @@ class AgentSpoofer {
      * Return true if we should spoof UA for this request
      */
     shouldSpoof (request) {
-        let tab = tabManager.get({ tabId: request.tabId })
+        const tab = tabManager.get({ tabId: request.tabId })
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (!!tab && tab.site.whitelisted) {

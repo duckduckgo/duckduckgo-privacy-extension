@@ -49,7 +49,7 @@ HamburgerMenu.prototype = window.$.extend({},
         _handleFeedbackClick: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.openExtensionPage(`/html/feedback.html`)
+            browserUIWrapper.openExtensionPage('/html/feedback.html')
         },
 
         _handleBrokenSiteClick: function (e) {

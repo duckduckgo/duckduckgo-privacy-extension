@@ -1,6 +1,7 @@
 module.exports = function (grunt) {
     const through = require('through2')
-    const sass = require('node-sass')
+    const Fiber = require('fibers');
+    const sass = require('sass')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
@@ -29,6 +30,9 @@ module.exports = function (grunt) {
             '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
             '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
             '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js']
+        },
+        contentScope: {
+            '<%= dirs.public.js %>/content-scope/fingerprint.js': ['<%= dirs.src.js %>/content-scope/fingerprint.es6.js']
         },
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
@@ -61,6 +65,8 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
+        injectedContentScripts: ['<%= dirs.src.js %>/injected-content-scripts/*.js'],
+        contentScope: ['<%= dirs.src.js %>/content-scope/*.js'],
         data: ['<%= dirs.data %>/*.js']
     }
 
@@ -148,7 +154,8 @@ module.exports = function (grunt) {
 
         sass: {
             options: {
-                implementation: sass
+                implementation: sass,
+                fiber: Fiber,
             },
             dist: {
                 files: baseFileMap.sass
@@ -167,6 +174,9 @@ module.exports = function (grunt) {
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
+            // TODO make this deterministic with an index.js that includes the other files. Browserify output is bloated which might break things.
+            copyContentScope: `cat shared/js/content-scope/*.js > build/${browser}/${buildType}/public/js/content-scope.js`,
+            copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
@@ -186,6 +196,10 @@ module.exports = function (grunt) {
                 files: watch.ui,
                 tasks: ['browserify:ui', 'watchSafari', 'exec:copyData']
             },
+            contentScope: {
+                files: watch.contentScope,
+                tasks: ['exec:copyContentScope']
+            },
             backgroundES6JS: {
                 files: watch.background,
                 tasks: ['browserify:background', 'watchSafari']
@@ -193,6 +207,10 @@ module.exports = function (grunt) {
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs', 'watchSafari']
+            },
+            injectedContentScripts: {
+                files: watch.injectedContentScripts,
+                tasks: ['exec:copyInjectedContentScripts']
             },
             contentScripts: {
                 files: watch.contentScripts,
@@ -228,7 +246,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyInjectedContentScripts', 'exec:copyContentScope', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build', 'exec:devifyOnboarding']
     if (grunt.option('watch')) { devTasks.push('watch') }

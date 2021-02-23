@@ -4,16 +4,16 @@ module.exports = {
             throw new Error('tried to parse a non-string query string')
         }
 
-        let parsed = {}
+        const parsed = {}
 
         if (qs[0] === '?') {
             qs = qs.substr(1)
         }
 
-        let parts = qs.split('&')
+        const parts = qs.split('&')
 
         parts.forEach((part) => {
-            let [key, val] = part.split('=')
+            const [key, val] = part.split('=')
 
             if (key && val) {
                 parsed[key] = val
