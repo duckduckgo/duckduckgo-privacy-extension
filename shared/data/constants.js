@@ -103,8 +103,14 @@ module.exports = {
             "source": "external"
         },
         {
-            "name": "ClickToLoadConfig",
+            "name": "ClickToLoadConfigRemote",
             "url": "https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "ClickToLoadConfig",
+            "url": "http://localhost:8001/clickToLoadConfig.json",
             "format": "json",
             "source": "external"
         }

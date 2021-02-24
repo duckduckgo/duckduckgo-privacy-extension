@@ -31,6 +31,35 @@ function isTracker (url) {
     return !!tracker
 }
 
+/**
+ * Determine if the social entity should be blockedon this URL. returns True if so.
+ */
+function shouldBlockSocialNetwork (entity, url) {
+    const domain = tldts.parse(url).domain
+    const excludeData = getDomainsToExludeByNetwork()
+    return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
+}
+
+/*
+ * Parse the social config to find excluded domains by social tracker. This then returns a list of objects
+ * that include the exlcuded domain and network, for use in other exception list handling.
+ */
+function getDomainsToExludeByNetwork () {
+    const excludes = []
+    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (data.excludedDomains) {
+            const excludedDomains = data.excludedDomains.map(e => e.domain)
+            for (const domain of excludedDomains) {
+                excludes.push({
+                    entity: entity,
+                    domain: domain
+                })
+            }
+        }
+    }
+    return excludes
+}
+
 // Return true if URL is in our click to load tracker list
 function getSocialTracker (url) {
     const domain = tldts.parse(url).domain
@@ -57,7 +86,7 @@ function getSocialTracker (url) {
 /**
  * Return true if the user has permanently saved the domain/tracker combination
  */
-function socialTrackerIsAllowed (trackerEntity, domain) {
+function socialTrackerIsAllowedByUser (trackerEntity, domain) {
     let allowList = settings.getSetting('clickToLoad')
     if (allowList) {
         allowList = allowList.filter(e => e.domain === domain && e.tracker === trackerEntity)
@@ -122,5 +151,7 @@ module.exports = {
     isTracker: isTracker,
     truncateReferrer: truncateReferrer,
     getSocialTracker: getSocialTracker,
-    socialTrackerIsAllowed: socialTrackerIsAllowed
+    socialTrackerIsAllowedByUser: socialTrackerIsAllowedByUser,
+    shouldBlockSocialNetwork: shouldBlockSocialNetwork,
+    getDomainsToExludeByNetwork: getDomainsToExludeByNetwork
 }

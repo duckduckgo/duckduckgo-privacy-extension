@@ -91,11 +91,11 @@ function handleRequest (requestData) {
          * If it isn't in the tracker list, check the clickToLoad block list
          */
         const socialTracker = trackerutils.getSocialTracker(requestData.url)
-        if (socialTracker) {
+        if (socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
             if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
                 !thisTab.site.whitelisted &&
                 !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
-                !trackerutils.socialTrackerIsAllowed(socialTracker.entity, thisTab.site.domain)) {
+                !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
                 if (socialTracker.redirectUrl) {
                     console.log(`redirecting ${requestData.url} to ${JSON.stringify(socialTracker.redirectUrl)}`)
                     requestData.message = {redirectUrl: socialTracker.redirectUrl}

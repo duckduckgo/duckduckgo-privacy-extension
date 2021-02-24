@@ -141,10 +141,17 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.initClickToLoad) {
         const tab = tabManager.get({ tabId: sender.tab.id })
         const config = {...tdsStorage.ClickToLoadConfig}
+        // remove any social networks saved by the user
         let allowList = settings.getSetting('clickToLoad')
         if (allowList) {
             allowList = allowList.filter(e => e.domain === tab.site.domain)
             allowList.forEach(e => delete config[e.tracker])
+        }
+        // if the current site is on the social exception list, remove it from the config.
+        let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
+        if (excludedNetworks) {
+            excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
+            excludedNetworks.forEach(e => delete config[e.entity])
         }
         res(config)
         return true
