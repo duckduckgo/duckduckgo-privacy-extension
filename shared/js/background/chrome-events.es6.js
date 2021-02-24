@@ -52,6 +52,17 @@ let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 const settings = require('./settings.es6')
 
+function blockingExperimentActive () {
+    const activeExperiment = settings.getSetting('activeExperiment')
+    if (activeExperiment) {
+        const experiment = settings.getSetting('experimentData')
+
+        return experiment && experiment.blockingActivated
+    }
+
+    return false
+}
+
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 chrome.webRequest.onBeforeRequest.addListener(
@@ -69,7 +80,6 @@ if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
 }
 chrome.webRequest.onHeadersReceived.addListener(
     request => {
-        utils.isFirstParty('1.2.3.4', '5.6.7.8')
         if (request.type === 'main_frame') {
             tabManager.updateTabUrl(request)
         }
@@ -79,24 +89,19 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
-        let responseHeaders = request.responseHeaders
-        const activeExperiment = settings.getSetting('activeExperiment')
-        if (activeExperiment) {
-            const experiment = settings.getSetting('experimentData')
-
-            if (experiment && experiment.blockingActivated) {
-                // Strip 3rd party response header
-                const tab = tabManager.get({ tabId: request.tabId })
-                if (!request.responseHeaders) return
-                if (tab && tab.site.whitelisted) return
-                if (tab && utils.isFirstParty(request.url, tab.url)) return
-                if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
-                    responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
-                }
+        if (blockingExperimentActive()) {
+            let responseHeaders = request.responseHeaders
+            // Strip 3rd party response header
+            const tab = tabManager.get({ tabId: request.tabId })
+            if (!request.responseHeaders) return
+            if (tab && tab.site.whitelisted) return
+            if (tab && utils.isFirstParty(request.url, tab.url)) return
+            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
-        }
 
-        return { responseHeaders: responseHeaders }
+            return { responseHeaders: responseHeaders }
+        }
     },
     {
         urls: ['<all_urls>']
@@ -242,40 +247,31 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    const activeExperiment = settings.getSetting('activeExperiment')
-    if (activeExperiment) {
-        const experiment = settings.getSetting('experimentData')
+    if (blockingExperimentActive()) {
+        if (req.checkThirdParty) {
+            const action = {
+                isThirdParty: false,
+                shouldBlock: false
+            }
 
-        if (experiment && experiment.blockingActivated) {
-            if (req.checkThirdParty) {
-                const action = {
-                    isThirdParty: false,
-                    shouldBlock: false
-                }
-
-                if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
-                    return true
-                }
-
-                const tab = tabManager.get({ tabId: sender.tab.id })
-                if (tab && tab.site.whitelisted) {
-                    res(action)
-                }
-
-                if (!utils.isFirstParty(sender.url, sender.tab.url)) {
-                    action.isThirdParty = true
-                }
-                if (!cookieConfig.isExcluded(sender.url) && trackerutils.isTracker(sender.url)) {
-                    action.shouldBlock = true
-                }
-
-                res(action)
+            if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
                 return true
             }
+
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            if (tab && tab.site.whitelisted) {
+                res(action)
+            }
+
+            action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
+            action.shouldBlock = !cookieConfig.isExcluded(sender.url) && trackerutils.isTracker(sender.url)
+
+            res(action)
         } else {
             res({ isThirdParty: false, shouldBlock: false })
-            return true
         }
+
+        return true
     }
 })
 
@@ -450,19 +446,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             requestHeaders.push(GPCHeader)
         }
 
-        const activeExperiment = settings.getSetting('activeExperiment')
-        if (activeExperiment) {
-            const experiment = settings.getSetting('experimentData')
-
-            if (experiment && experiment.blockingActivated) {
-                // Strip 3rd party response header
-                const tab = tabManager.get({ tabId: request.tabId })
-                if (!requestHeaders) return
-                if (tab && tab.site.whitelisted) return
-                if (tab && utils.isFirstParty(request.url, tab.url)) return
-                if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
-                    requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
-                }
+        if (blockingExperimentActive()) {
+            // Strip 3rd party response header
+            const tab = tabManager.get({ tabId: request.tabId })
+            if (!requestHeaders) return
+            if (tab && tab.site.whitelisted) return
+            if (tab && utils.isFirstParty(request.url, tab.url)) return
+            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             }
         }
 
