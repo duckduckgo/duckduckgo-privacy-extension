@@ -1,4 +1,7 @@
-const isDDGApp = /(iPhone|iPad|Android).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent)
+let isMacOSApp = false
+// INJECT isMacOSApp HERE
+
+const isDDGApp = /(iPhone|iPad|Android|Mac).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent) || isMacOSApp
 
 const isAndroid = isDDGApp && /Android/i.test(window.navigator.userAgent)
 
@@ -101,6 +104,7 @@ const removeInlineStyles = (el, styles) => Object.keys(styles)
     .forEach(property => el.style.removeProperty(property))
 
 module.exports = {
+    isMacOSApp,
     isDDGApp,
     isAndroid,
     DDG_DOMAIN_REGEX,

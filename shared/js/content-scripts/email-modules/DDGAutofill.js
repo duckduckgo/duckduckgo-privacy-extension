@@ -1,17 +1,20 @@
 const {daxSvg} = require('./logo-svg')
-const {getDaxBoundingBox} = require('./autofill-utils')
-const { safeExecute } = require('./autofill-utils')
+const { isMacOSApp, getDaxBoundingBox, safeExecute } = require('./autofill-utils')
 
 class DDGAutofill {
-    constructor (input, associatedForm) {
+    constructor (input, associatedForm, getAlias, refreshAlias) {
         const shadow = document.createElement('ddg-autofill').attachShadow({mode: 'closed'})
         this.host = shadow.host
         this.input = input
         this.associatedForm = associatedForm
         this.animationFrame = null
 
+        const includeStyles = isMacOSApp
+            ? `<style>${require('./DDGAutofill-styles.js')}</style>`
+            : `<link rel="stylesheet" href="${chrome.runtime.getURL('public/css/email-autofill.css')}">`
+
         shadow.innerHTML = `
-<link rel="stylesheet" href="${chrome.runtime.getURL('public/css/email-autofill.css')}">
+${includeStyles}
 <div class="wrapper">
     <div class="tooltip" hidden>
         <h2 class="tooltip__title">Use a Private Duck Address</h2>
@@ -28,9 +31,9 @@ class DDGAutofill {
         this.dismissButton = shadow.querySelector('.js-dismiss')
         this.confirmButton = shadow.querySelector('.js-confirm')
         this.aliasEl = shadow.querySelector('.alias')
-        this.link = shadow.querySelector('link')
+        this.stylesheet = shadow.querySelector('link, style')
         // Un-hide once the style is loaded, to avoid flashing unstyled content
-        this.link.addEventListener('load', () =>
+        this.stylesheet.addEventListener('load', () =>
             this.tooltip.removeAttribute('hidden'))
 
         this.updateAliasInTooltip = () => {
@@ -39,9 +42,9 @@ class DDGAutofill {
         }
 
         // Get the alias from the extension
-        chrome.runtime.sendMessage({getAlias: true}, (res) => {
-            if (res.alias) {
-                this.nextAlias = res.alias
+        getAlias().then((alias) => {
+            if (alias) {
+                this.nextAlias = alias
                 this.updateAliasInTooltip()
             }
         })
@@ -51,7 +54,7 @@ class DDGAutofill {
         this.transformRuleIndex = null
         this.updatePosition = ({left, top}) => {
             // If the stylesheet is not loaded wait for load (Chrome bug)
-            if (!shadow.styleSheets.length) return this.link.addEventListener('load', this.checkPosition)
+            if (!shadow.styleSheets.length) return this.stylesheet.addEventListener('load', this.checkPosition)
 
             this.left = left
             this.top = top
@@ -146,12 +149,7 @@ class DDGAutofill {
 
             safeExecute(this.confirmButton, () => {
                 this.associatedForm.autofill(this.nextAlias)
-                chrome.runtime.sendMessage({refreshAlias: true}, (res) => {
-                    if (res && res.alias) {
-                        this.nextAlias = res.alias
-                        this.updateAliasInTooltip()
-                    }
-                })
+                refreshAlias()
             })
         })
     }
