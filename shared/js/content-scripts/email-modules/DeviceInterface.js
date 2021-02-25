@@ -134,10 +134,11 @@ class AppleDeviceInterface {
         }
         this.getAlias = () => sendAndWaitForAnswer(() =>
             window.webkit.messageHandlers['emailHandlerGetAlias'].postMessage({
-                requiresUserPermission: !isMacOSApp
+                requiresUserPermission: !isMacOSApp,
+                shouldConsumeAliasIfProvided: !isMacOSApp
             }), 'getAliasResponse').then(({alias}) => alias)
 
-        this.refreshAlias = () => {}
+        this.refreshAlias = () => window.webkit.messageHandlers['emailHandlerRefreshAlias'].postMessage({})
 
         this.isDeviceSignedIn = () => sendAndWaitForAnswer(() =>
             window.webkit.messageHandlers['emailHandlerCheckAppSignedInStatus'].postMessage({}),
