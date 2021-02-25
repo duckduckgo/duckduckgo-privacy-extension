@@ -162,6 +162,11 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    if (req.getLoadingImage) {
+        utils.imgToData('img/loading.svg').then(img => res(img))
+        return true
+    }
+
     if (req.enableSocialTracker) {
         const tab = tabManager.get({ tabId: sender.tab.id })
         if (req.alwaysAllow) {
