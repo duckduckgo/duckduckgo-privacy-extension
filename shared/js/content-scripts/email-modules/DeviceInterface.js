@@ -10,10 +10,7 @@ const {
 } = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
 
-const SIGN_IN_MSG = {
-    signMeIn: true,
-    extensionInstalled: true // TODO: deprecated, to be removed in a future release
-}
+const SIGN_IN_MSG = { signMeIn: true }
 
 const getAttachWebTooltip = (getAlias, refreshAlias) => (form, input) => {
     if (form.tooltip) return
