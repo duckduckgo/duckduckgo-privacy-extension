@@ -1,5 +1,4 @@
 const harness = require('../helpers/harness')
-/* global dbg:false */
 
 const testSite = 'http://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 let browser
