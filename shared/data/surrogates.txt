@@ -408,7 +408,6 @@ facebook.net/sdk.js application/javascript
             siteInit()
             window.FB.login(fbLogin.callback, fbLogin.params)
         }
-        fbIsEnabled = true
     }
     function replaceWindowOpen () {
         const oldOpen = window.open
@@ -453,7 +452,7 @@ facebook.net/sdk.js application/javascript
                 fbLogin.callback = cb
                 fbLogin.params = params
                 messageAddon({
-                    'login': true
+                    'fblogin': true
                 })
             },
             logout: function() {},

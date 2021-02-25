@@ -244,10 +244,12 @@
                     const fadeIn = document.createElement('div')
                     fadeIn.style.cssText = 'display: none; opacity: 0;'
                     const loading = document.createElement('div')
+                    const loadingHeight = replacementElement.offsetHeight
+                    loading.style.cssText = `height: ${loadingHeight}px; display: grid;`
                     const loadingImg = document.createElement('img')
                     loadingImg.setAttribute('src', loadingImage)
                     loadingImg.style.cssText = 'display: block; margin: auto;' // Center the loading image.
-                    fbContainer.appendChild(loadingImg)
+                    loading.appendChild(loadingImg)
                     fbContainer.appendChild(loading)
                     fbContainer.appendChild(fadeIn)
                     if (this.clickAction.type === 'allowFull') {
@@ -261,7 +263,7 @@
                             .then(v => {
                                 parent.replaceChild(fbContainer, replacementElement)
                                 iFrame.addEventListener('load', () => {
-                                    fbContainer.removeChild(loadingImg)
+                                    fbContainer.removeChild(loading)
                                     fadeIn.style.cssText = 'opacity: 0;'
                                     this.fadeInElement(fadeIn)
                                 })
@@ -273,7 +275,7 @@
                             .then(v => {
                                 parent.replaceChild(fbContainer, replacementElement)
                                 originalElement.addEventListener('load', () => {
-                                    fbContainer.removeChild(loadingImg)
+                                    fbContainer.removeChild(loading)
                                     fadeIn.style.cssText = 'opacity: 0;'
                                     this.fadeInElement(fadeIn)
                                 })
@@ -565,10 +567,12 @@
         }
 
         // Handle login call
-        if (message.payload.login || message.payload.fbui) {
-            const body = document.body
-            let e = createModal('Facebook', 'This site is trying to use login', 'RunFBLogin')
-            body.insertBefore(e, body.childNodes[0])
+        if (message.payload.fblogin) {
+            enableSocialTracker('Facebook')
+            window.dispatchEvent(new CustomEvent('RunFBLogin'))
+            //const body = document.body
+            //let e = createModal('Facebook', 'This site is trying to use login', 'RunFBLogin')
+            //body.insertBefore(e, body.childNodes[0])
         }
 
         if (message.payload.fbui) {
