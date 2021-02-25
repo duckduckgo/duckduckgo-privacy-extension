@@ -1,5 +1,6 @@
 (function clickToLoad () {
     let appID
+    let loadingImage
 
     const styles = {
         button: `
@@ -192,21 +193,91 @@
             }
         }
 
+        /*
+         * Creates an iFrame for this facebook content.
+         */
+        createFBIFrame () {
+            const frame = document.createElement('iframe')
+
+            frame.setAttribute('src', this.getTargetURL())
+            frame.setAttribute('style', this.getStyle())
+
+            return frame
+        }
+
+        /*
+         * Fades out the given element. Returns a promise that resolves when the fade is complete.
+         */
+        fadeOutElement (element) {
+            return new Promise((resolve, reject) => {
+                let opacity = 1
+                const originStyle = element.style.cssText
+                const fadeOut = setInterval(function () {
+                    opacity -= 0.03
+                    element.style.cssText = originStyle + `opacity: ${opacity};`
+                    if (opacity <= 0) {
+                        clearInterval(fadeOut)
+                        resolve()
+                    }
+                }, 10)
+            })
+        }
+
+        fadeInElement (element) {
+            let opacity = 0
+            const originStyle = element.style.cssText
+            const fadeIn = setInterval(function () {
+                opacity += 0.03
+                element.style.cssText = originStyle + `opacity: ${opacity};`
+                if (opacity >= 1) {
+                    clearInterval(fadeIn)
+                }
+            }, 10)
+        }
+
         clickFunction (originalElement, replacementElement) {
             return function handleClick (e) {
                 if (e.isTrusted) {
                     enableSocialTracker(this.entity)
+                    const parent = replacementElement.parentNode
+                    const fbContainer = document.createElement('div')
+                    const fadeIn = document.createElement('div')
+                    fadeIn.style.cssText = 'display: none; opacity: 0;'
+                    const loading = document.createElement('div')
+                    const loadingImg = document.createElement('img')
+                    loadingImg.setAttribute('src', loadingImage)
+                    loadingImg.style.cssText = 'display: block; margin: auto;' // Center the loading image.
+                    fbContainer.appendChild(loadingImg)
+                    fbContainer.appendChild(loading)
+                    fbContainer.appendChild(fadeIn)
                     if (this.clickAction.type === 'allowFull') {
-                        const parent = replacementElement.parentNode
                         parent.replaceChild(originalElement, replacementElement)
                         window.dispatchEvent(new CustomEvent('LoadFBSDK'))
                     }
                     if (this.clickAction.type === 'iFrame') {
-                        replaceDDGWidgetWithIFrame(replacementElement, this)
+                        const iFrame = this.createFBIFrame()
+                        fadeIn.appendChild(iFrame)
+                        this.fadeOutElement(replacementElement)
+                            .then(v => {
+                                parent.replaceChild(fbContainer, replacementElement)
+                                iFrame.addEventListener('load', () => {
+                                    fbContainer.removeChild(loadingImg)
+                                    fadeIn.style.cssText = 'opacity: 0;'
+                                    this.fadeInElement(fadeIn)
+                                })
+                            })
                     }
                     if (this.clickAction.type === 'originalElement') {
-                        const parent = replacementElement.parentNode
-                        parent.replaceChild(originalElement, replacementElement)
+                        fadeIn.appendChild(originalElement)
+                        this.fadeOutElement(replacementElement)
+                            .then(v => {
+                                parent.replaceChild(fbContainer, replacementElement)
+                                originalElement.addEventListener('load', () => {
+                                    fbContainer.removeChild(loadingImg)
+                                    fadeIn.style.cssText = 'opacity: 0;'
+                                    this.fadeInElement(fadeIn)
+                                })
+                            })
                     }
                 }
             }.bind(this)
@@ -310,27 +381,6 @@
         }
     }
 
-    function createClickAction (widget, entity, originalElement, replacementElement) {
-        const handleClick = function handleClick (e) {
-            if (e.isTrusted) {
-                enableSocialTracker(entity)
-                if (widget.clickAction.type === 'allowFull') {
-                    const parent = replacementElement.parentNode
-                    parent.replaceChild(originalElement, replacementElement)
-                    window.dispatchEvent(new CustomEvent('LoadFBSDK'))
-                }
-                if (widget.clickAction.type === 'iFrame') {
-                    replaceDDGWidgetWithIFrame(replacementElement, widget)
-                }
-                if (widget.clickAction.type === 'originalElement') {
-                    const parent = replacementElement.parentNode
-                    parent.replaceChild(originalElement, replacementElement)
-                }
-            }
-        }
-        return handleClick
-    }
-
     function replaceClickToLoadElements (config) {
         for (const entity of Object.keys(config)) {
             for (const widget of Object.values(config[entity].elementData)) {
@@ -340,16 +390,6 @@
                 }
             }
         }
-    }
-
-    function replaceDDGWidgetWithIFrame (widgetElement, widgetData) {
-        const frame = document.createElement('iframe')
-
-        frame.setAttribute('src', widgetData.getTargetURL())
-        frame.setAttribute('style', widgetData.getStyle())
-        const parent = widgetElement.parentNode
-
-        parent.replaceChild(frame, widgetElement)
     }
 
     function enableSocialTracker (entity) {
@@ -373,6 +413,12 @@
                 init(response)
             })
         }
+    })
+
+    chrome.runtime.sendMessage({
+        'getLoadingImage': true
+    }, function (response) {
+        loadingImage = response
     })
 
     function makeButton (buttonText) {
