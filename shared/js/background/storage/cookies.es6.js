@@ -20,13 +20,13 @@ class ExcludedCookieStorage {
      * Retrieve the latest lists of excluded cookie domains. Store as needed.
      */
     updateCookieData () {
-        console.log(`Cookies: Getting cookie data`)
+        console.log('Cookies: Getting cookie data')
         const lists = constants.CookieLists
         for (const list of lists) {
             const source = list.source || 'external'
             const listName = list.name
             const etag = settings.getSetting(`${listName}-etag`) || ''
-            load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source, timeout: 60000})
+            load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
                 .then(response => {
                     if (response && (response.status === 200 || response.status === 304)) {
                         // New cookie data to process.

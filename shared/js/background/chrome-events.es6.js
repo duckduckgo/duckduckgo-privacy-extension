@@ -48,7 +48,7 @@ const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
 const cookieConfig = require('./../background/storage/cookies.es6')
-let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
+const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 const settings = require('./settings.es6')
 
@@ -457,9 +457,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             }
         }
 
-        return {requestHeaders: requestHeaders}
+        return { requestHeaders: requestHeaders }
     },
-    {urls: ['<all_urls>']},
+    { urls: ['<all_urls>'] },
     extraInfoSpecSendHeaders
 )
 

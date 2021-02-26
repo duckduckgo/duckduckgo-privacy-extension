@@ -20,14 +20,14 @@
     }
 
     chrome.runtime.sendMessage({
-        'checkThirdParty': true
+        checkThirdParty: true
     }, function (action) {
-        var scriptString = ''
+        let scriptString = ''
         if (action.shouldBlock) {
             scriptString = `(${clearInjectedCookiesAndBlock.toString()})()`
         }
 
-        var doc = document
+        let doc = document
         if (window.wrappedJSObject) {
             doc = window.wrappedJSObject.document
         }
