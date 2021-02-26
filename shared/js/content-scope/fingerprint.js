@@ -48,7 +48,7 @@ function shouldExemptMethod () {
                 errorFiles.add(res[2])
             }
         }
-    } catch {
+    } catch (e) {
         // Fall through
     }
     return false
@@ -109,7 +109,7 @@ function initCanvasProtection (args) {
             // Anything we do here should be caught and ignored silently
             try {
                 return modifyPixelData(imageData, sessionKey, domainKey)
-            } catch {
+            } catch (e) {
             }
             return imageData
         }
@@ -136,7 +136,7 @@ function initCanvasProtection (args) {
 
                     // Call the original method on the modified off-screen canvas
                     return target.apply(offScreenCanvas, args)
-                } catch {
+                } catch (e) {
                     // Something we did caused an exception, fall back to the native
                     return target.apply(thisArg, args)
                 }

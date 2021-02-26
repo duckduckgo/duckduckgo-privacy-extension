@@ -4,7 +4,7 @@ const wait = require('../helpers/wait')
 const testPageDomain = 'privacy-test-pages.glitch.me'
 
 describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
-    const thirdPartyDomain = 'good.third-party.site'
+    const thirdPartyDomain = 'bad.third-party.site'
     let cookies
 
     beforeAll(async () => {
@@ -14,7 +14,9 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         try {
             page.on('requestfinished', (req) => {
                 // once we see this url, we can consider the test completed
-                iframeFullyLoaded |= req.url() === `https://${thirdPartyDomain}/privacy-protections/storage-blocking/iframe.js`
+                if (req.url() === `https://${thirdPartyDomain}/privacy-protections/storage-blocking/iframe.js`) {
+                    iframeFullyLoaded = true
+                }
             })
             await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/`, { waitUntil: 'networkidle0' })
             await page.evaluate('storeData()')

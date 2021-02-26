@@ -68,14 +68,14 @@ describe('User-Agent replacement', () => {
         })
 
         it('should consider the same domain first party', () => {
-            let url1 = 'http://example.com'
-            let url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
+            const url1 = 'http://example.com'
+            const url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
             expect(utils.isFirstParty(url1, url2)).toEqual(true)
         })
 
         it('should consider subdomains to be first party', () => {
-            let url1 = 'http://example.com'
-            let url2 = 'http://subdomain.example.com'
+            const url1 = 'http://example.com'
+            const url2 = 'http://subdomain.example.com'
             expect(utils.isFirstParty(url1, url2)).toEqual(true)
         })
     })
