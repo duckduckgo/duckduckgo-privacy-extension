@@ -4,7 +4,7 @@ const wait = require('../helpers/wait')
 const testPageDomain = 'privacy-test-pages.glitch.me'
 
 describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
-    const thirdPartyDomain = 'bad.third-party.site'
+    const thirdPartyDomain = 'broken.third-party.site'
     let cookies
 
     beforeAll(async () => {
@@ -38,9 +38,10 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
     })
 
-    it('blocks 3rd party HTTP cookies', async () => {
+    it('does not block 3rd party HTTP cookies not on block list', async () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === thirdPartyDomain)
-        expect(headerCookie).toBeUndefined()
+        expect(headerCookie).toBeTruthy()
+        expect(headerCookie).toBeGreaterThan(Date.now() / 1000)
     })
 
     it('does not block 1st party JS cookies', async () => {
@@ -49,8 +50,9 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
     })
 
-    it('blocks 3rd party JS cookies', async () => {
+    it('does not block 3rd party JS cookies not on block list', async () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyDomain)
-        expect(headerCookie).toBeUndefined()
+        expect(headerCookie).toBeTruthy()
+        expect(headerCookie).toBeGreaterThan(Date.now() / 1000)
     })
 })
