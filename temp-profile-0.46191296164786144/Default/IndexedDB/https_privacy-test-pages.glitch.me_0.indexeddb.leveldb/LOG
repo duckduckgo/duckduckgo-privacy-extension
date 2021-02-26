@@ -1,5 +1,0 @@
-2021/02/26-11:00:49.552 6703 Reusing MANIFEST /Users/slayter/duckduckgo/duckduckgo-privacy-extension/temp-profile-0.46191296164786144/Default/IndexedDB/https_privacy-test-pages.glitch.me_0.indexeddb.leveldb/MANIFEST-000001
-2021/02/26-11:01:03.368 e803 Level-0 table #5: started
-2021/02/26-11:01:03.392 e803 Level-0 table #5: 1005 bytes OK
-2021/02/26-11:01:03.435 e803 Delete type=0 #3
-2021/02/26-11:01:03.436 e803 Manual compaction at level-0 from (begin) .. (end); will stop at (end)
