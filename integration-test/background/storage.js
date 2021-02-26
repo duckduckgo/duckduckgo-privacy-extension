@@ -3,7 +3,7 @@ const wait = require('../helpers/wait')
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 
-fdescribe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
+describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
     const thirdPartyDomain = 'broken.third-party.site'
     let cookies
 
