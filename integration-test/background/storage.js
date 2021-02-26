@@ -3,7 +3,7 @@ const wait = require('../helpers/wait')
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 
-describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
+fdescribe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
     const thirdPartyDomain = 'broken.third-party.site'
     let cookies
 
@@ -14,16 +14,18 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         try {
             page.on('requestfinished', (req) => {
                 // once we see this url, we can consider the test completed
-                if (req.url() === `https://${thirdPartyDomain}/privacy-protections/storage-blocking/iframe.js`) {
+                if (req.url().startsWith(`https://${thirdPartyDomain}/privacy-protections/storage-blocking/3rdparty.js`)) {
                     iframeFullyLoaded = true
                 }
             })
             await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/`, { waitUntil: 'networkidle0' })
             await page.evaluate('storeData()')
+            await page.waitForNavigation({ waitUntil: 'networkidle0' })
             // eslint-disable-next-line no-unmodified-loop-condition
             while (!iframeFullyLoaded) {
                 await wait.ms(100)
             }
+            await wait.ms(400) // allow cookies to be set
             // collect all browser cookies
             cookies = (await page._client.send('Network.getAllCookies')).cookies
         } finally {
@@ -41,7 +43,7 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
     it('does not block 3rd party HTTP cookies not on block list', async () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === thirdPartyDomain)
         expect(headerCookie).toBeTruthy()
-        expect(headerCookie).toBeGreaterThan(Date.now() / 1000)
+        expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
     })
 
     it('does not block 1st party JS cookies', async () => {
@@ -53,6 +55,6 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
     it('does not block 3rd party JS cookies not on block list', async () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyDomain)
         expect(headerCookie).toBeTruthy()
-        expect(headerCookie).toBeGreaterThan(Date.now() / 1000)
+        expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
     })
 })
