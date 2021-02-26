@@ -1,4 +1,5 @@
 {
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiBT87n10DJThnyCP1tDHZV9PB9o6oXu5yhP9G1M+6Jg7aZTCUfE6nx6i3Fpr3UU7IEHFZNJBGmVTtluXE/zgHKbE8/+RWp/NWIa29xDtdiT9QNbamzINAwrw4qRflxz+XrvTrFnBmo9RrzzQp748sX86QeOdEIwfPC0jygEKSLkatUx0lTkQRaOa9Iv4ryE7ze0CbogvE2vWiIOjlBNNz7i2TBV4L0OfUYLAqHMmiZi0Ekv7OJzoJNvSJpGet9+RBUptVzWkKCE9iJPB9kiWV39Sm9LvXJ2/tUKMOuCEY7bcy+KttrrbY8y/rj/SdUJnnQVYVesLrV3WxWhq/EmTCwIDAQAB",
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
@@ -31,8 +32,8 @@
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
         "prepopulated_id": 92,
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
-        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
+        "search_url": "https://sebastien.duckduckgo.com/?q={searchTerms}",
+        "suggest_url": "https://sebastien.duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
     "content_scripts": [
@@ -54,5 +55,8 @@
         "storage",
         "<all_urls>",
         "alarms"
-    ]
+    ],
+    "externally_connectable": {
+      "matches": ["*://*.duckduckgo.com/*"]
+    }
 }

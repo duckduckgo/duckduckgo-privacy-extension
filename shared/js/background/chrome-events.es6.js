@@ -217,6 +217,26 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 })
 
 /**
+ * Onboarding
+ */
+let isUrlBarQuery = false
+
+chrome.webNavigation.onCommitted.addListener(details => {
+    if (details.url.includes('duckduckgo.com/?q=')) {
+        isUrlBarQuery = details.transitionQualifiers.includes('from_address_bar')
+    }
+})
+
+/**
+ * External messages (messages coming from web pages)
+ */
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+    if (request === 'isUrlBarQuery') {
+        sendResponse({ isUrlBarQuery })
+    }
+})
+
+/**
  * Fingerprint Protection
  */
 const agents = require('./storage/agents.es6')
