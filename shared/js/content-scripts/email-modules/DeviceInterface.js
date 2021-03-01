@@ -175,10 +175,11 @@ class AppleDeviceInterface {
     }
 }
 
-const DeviceInterface = !isDDGApp
-    ? new ExtensionInterface()
-    : isAndroid
-        ? new AndroidInterface()
-        : new AppleDeviceInterface()
+const DeviceInterface = (() => {
+    if (isDDGApp) {
+        return isAndroid ? new AndroidInterface() : new AppleDeviceInterface()
+    }
+    return new ExtensionInterface()
+})()
 
 module.exports = DeviceInterface
