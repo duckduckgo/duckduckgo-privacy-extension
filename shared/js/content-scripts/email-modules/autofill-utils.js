@@ -1,4 +1,5 @@
 let isMacOSApp = false
+// Do not modify or remove the next line -- the macOS app code will replace it with `isMacOSApp = true;`
 // INJECT isMacOSApp HERE
 
 const isDDGApp = /(iPhone|iPad|Android|Mac).*DuckDuckGo\/[0-9]/i.test(window.navigator.userAgent) || isMacOSApp
