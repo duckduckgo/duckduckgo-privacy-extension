@@ -12,12 +12,20 @@ const scanForInputs = require('./scanForInputs.js')
 
 const SIGN_IN_MSG = { signMeIn: true }
 
-const createAttachWebTooltip = (getAlias, refreshAlias) => (form, input) => {
-    if (form.tooltip) return
+const createAttachTooltip = (getAlias, refreshAlias) => (form, input) => {
+    if (isDDGApp && !isMacOSApp) {
+        form.activeInput = input
+        getAlias().then((alias) => {
+            if (alias) form.autofill(alias)
+            else form.activeInput.focus()
+        })
+    } else {
+        if (form.tooltip) return
 
-    form.tooltip = new DDGAutofill(input, form, getAlias, refreshAlias)
-    form.intObs.observe(input)
-    window.addEventListener('mousedown', form.removeTooltip, {capture: true})
+        form.tooltip = new DDGAutofill(input, form, getAlias, refreshAlias)
+        form.intObs.observe(input)
+        window.addEventListener('mousedown', form.removeTooltip, {capture: true})
+    }
 }
 
 class ExtensionInterface {
@@ -81,13 +89,15 @@ class ExtensionInterface {
             })
         }
 
-        this.attachTooltip = createAttachWebTooltip(this.getAlias, this.refreshAlias)
+        this.attachTooltip = createAttachTooltip(this.getAlias, this.refreshAlias)
     }
 }
 
 class AndroidInterface {
     constructor () {
-        this.getAlias = () => {}
+        this.getAlias = () => sendAndWaitForAnswer(() =>
+            window.EmailInterface.showTooltip(), 'getAliasResponse')
+            .then(({alias}) => alias)
 
         this.refreshAlias = () => {}
 
@@ -112,14 +122,7 @@ class AndroidInterface {
 
         this.addLogoutListener = () => {}
 
-        this.attachTooltip = (form, input) => {
-            form.activeInput = input
-            sendAndWaitForAnswer(() => window.EmailInterface.showTooltip(), 'getAliasResponse')
-                .then(res => {
-                    if (res.alias) form.autofill(res.alias)
-                    else form.activeInput.focus()
-                })
-        }
+        this.attachTooltip = createAttachTooltip(this.getAlias)
     }
 }
 
@@ -168,19 +171,7 @@ class AppleDeviceInterface {
 
         this.addLogoutListener = () => {}
 
-        this.attachTooltip = isMacOSApp
-            ? createAttachWebTooltip(this.getAlias, this.refreshAlias)
-            : (form, input) => {
-                form.activeInput = input
-                sendAndWaitForAnswer(
-                    () => window.webkit.messageHandlers['emailHandlerGetAlias']
-                        .postMessage({ requiresUserPermission: true }),
-                    'getAliasResponse'
-                ).then(res => {
-                    if (res.alias) form.autofill(res.alias)
-                    else form.activeInput.focus()
-                })
-            }
+        this.attachTooltip = createAttachTooltip(this.getAlias, this.refreshAlias)
     }
 }
 
