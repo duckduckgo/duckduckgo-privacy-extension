@@ -12,7 +12,7 @@ const scanForInputs = require('./scanForInputs.js')
 
 const SIGN_IN_MSG = { signMeIn: true }
 
-const getAttachWebTooltip = (getAlias, refreshAlias) => (form, input) => {
+const createAttachWebTooltip = (getAlias, refreshAlias) => (form, input) => {
     if (form.tooltip) return
 
     form.tooltip = new DDGAutofill(input, form, getAlias, refreshAlias)
@@ -81,7 +81,7 @@ class ExtensionInterface {
             })
         }
 
-        this.attachTooltip = getAttachWebTooltip(this.getAlias, this.refreshAlias)
+        this.attachTooltip = createAttachWebTooltip(this.getAlias, this.refreshAlias)
     }
 }
 
@@ -169,7 +169,7 @@ class AppleDeviceInterface {
         this.addLogoutListener = () => {}
 
         this.attachTooltip = isMacOSApp
-            ? getAttachWebTooltip(this.getAlias, this.refreshAlias)
+            ? createAttachWebTooltip(this.getAlias, this.refreshAlias)
             : (form, input) => {
                 form.activeInput = input
                 sendAndWaitForAnswer(
