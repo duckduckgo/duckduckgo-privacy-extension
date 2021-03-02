@@ -42,8 +42,7 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
 
     it('does not block 3rd party HTTP cookies not on block list', async () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === thirdPartyDomain)
-        expect(headerCookie).toBeTruthy()
-        expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
+        expect(headerCookie).toBeUndefined()
     })
 
     it('does not block 1st party JS cookies', async () => {
@@ -54,7 +53,6 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
 
     it('does not block 3rd party JS cookies not on block list', async () => {
         const headerCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyDomain)
-        expect(headerCookie).toBeTruthy()
-        expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
+        expect(headerCookie).toBeUndefined()
     })
 })
