@@ -3,10 +3,7 @@ const {notifyWebApp} = require('./autofill-utils')
 
 // Accepts the DeviceInterface as an explicit dependency
 const scanForInputs = (DeviceInterface) => {
-    notifyWebApp({
-        deviceSignedIn: {value: true},
-        extensionSignedIn: {value: true} // TODO: deprecated, to be removed in a future release
-    })
+    notifyWebApp({ deviceSignedIn: {value: true} })
 
     const forms = new Map()
 
@@ -74,10 +71,7 @@ const scanForInputs = (DeviceInterface) => {
             form.removeAllDecorations()
         })
         forms.clear()
-        notifyWebApp({
-            deviceSignedIn: {value: false},
-            extensionSignedIn: {value: false} // TODO: deprecated, to be removed in a future release
-        })
+        notifyWebApp({ deviceSignedIn: {value: false} })
     }
 
     DeviceInterface.addLogoutListener(logoutHandler)

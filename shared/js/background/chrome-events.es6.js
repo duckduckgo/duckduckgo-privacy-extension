@@ -217,7 +217,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.getAlias) {
         const userData = settings.getSetting('userData')
-        res({alias: userData.nextAlias})
+        res({alias: userData?.nextAlias})
 
         return true
     }
@@ -225,7 +225,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.refreshAlias) {
         fetchAlias().then(() => {
             const userData = settings.getSetting('userData')
-            res({alias: userData.nextAlias})
+            res({alias: userData?.nextAlias})
         })
 
         return true

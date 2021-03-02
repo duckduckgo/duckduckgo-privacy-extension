@@ -1,41 +1,71 @@
 const DDGAutofill = require('./DDGAutofill')
-const {isDDGApp, isAndroid, isDDGDomain, sendAndWaitForAnswer, setValue} = require('./autofill-utils')
+const {
+    isMacOSApp,
+    notifyWebApp,
+    isDDGApp,
+    isAndroid,
+    isDDGDomain,
+    sendAndWaitForAnswer,
+    setValue
+} = require('./autofill-utils')
 const scanForInputs = require('./scanForInputs.js')
 
-const SIGN_IN_MSG = {
-    signMeIn: true,
-    extensionInstalled: true // TODO: deprecated, to be removed in a future release
+const SIGN_IN_MSG = { signMeIn: true }
+
+const createAttachTooltip = (getAlias, refreshAlias) => (form, input) => {
+    if (isDDGApp && !isMacOSApp) {
+        form.activeInput = input
+        getAlias().then((alias) => {
+            if (alias) form.autofill(alias)
+            else form.activeInput.focus()
+        })
+    } else {
+        if (form.tooltip) return
+
+        form.tooltip = new DDGAutofill(input, form, getAlias, refreshAlias)
+        form.intObs.observe(input)
+        window.addEventListener('mousedown', form.removeTooltip, {capture: true})
+    }
 }
 
-const ExtensionInterface = {
-    isDeviceSignedIn: () => new Promise(resolve => chrome.runtime.sendMessage(
-        {getSetting: {name: 'userData'}},
-        userData => resolve(!!(userData && userData.nextAlias))
-    )),
-    trySigningIn: () => {
-        if (isDDGDomain()) {
-            sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
-                .then(data => DeviceInterface.storeUserData(data))
+class ExtensionInterface {
+    constructor () {
+        this.getAlias = () => new Promise(resolve => chrome.runtime.sendMessage(
+            {getAlias: true},
+            ({alias}) => resolve(alias)
+        ))
+
+        this.refreshAlias = () => chrome.runtime.sendMessage({refreshAlias: true})
+
+        this.isDeviceSignedIn = () => this.getAlias()
+
+        this.trySigningIn = () => {
+            if (isDDGDomain()) {
+                sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
+                    .then(data => this.storeUserData(data))
+            }
         }
-    },
-    storeUserData: (data) => chrome.runtime.sendMessage(data),
-    addDeviceListeners: () => {
-        // Add contextual menu listeners
-        let activeEl = null
-        document.addEventListener('contextmenu', e => {
-            activeEl = e.target
-        })
 
-        chrome.runtime.onMessage.addListener((message, sender) => {
-            if (sender.id !== chrome.runtime.id) return
+        this.storeUserData = (data) => chrome.runtime.sendMessage(data)
 
-            switch (message.type) {
+        this.addDeviceListeners = () => {
+            // Add contextual menu listeners
+            let activeEl = null
+            document.addEventListener('contextmenu', e => {
+                activeEl = e.target
+            })
+
+            chrome.runtime.onMessage.addListener((message, sender) => {
+                if (sender.id !== chrome.runtime.id) return
+
+                switch (message.type) {
                 case 'ddgUserReady':
-                    scanForInputs(ExtensionInterface)
+                    scanForInputs(this)
                     break
                 case 'contextualAutofill':
                     setValue(activeEl, message.alias)
                     activeEl.classList.add('ddg-autofilled')
+                    this.refreshAlias()
 
                     // If the user changes the alias, remove the decoration
                     activeEl.addEventListener(
@@ -46,93 +76,110 @@ const ExtensionInterface = {
                     break
                 default:
                     break
-            }
-        })
-    },
-    addLogoutListener: (handler) => {
-        // Cleanup on logout events
-        chrome.runtime.onMessage.addListener((message, sender) => {
-            if (sender.id === chrome.runtime.id && message.type === 'logout') {
-                handler()
-            }
-        })
-    },
-    attachTooltip: (form, input) => {
-        if (form.tooltip) return
-
-        form.tooltip = new DDGAutofill(input, form)
-        form.intObs.observe(input)
-        window.addEventListener('mousedown', form.removeTooltip, {capture: true})
-    }
-}
-
-const AndroidInterface = {
-    isDeviceSignedIn: () => new Promise(resolve =>
-        resolve((window.EmailInterface.isSignedIn() === 'true'))),
-    trySigningIn: () => {
-        if (isDDGDomain()) {
-            sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
-                .then(data => {
-                    // This call doesn't send a response, so we can't know if it succeded
-                    AndroidInterface.storeUserData(data)
-                    scanForInputs(AndroidInterface)
-                })
-        }
-    },
-    storeUserData: ({addUserData: {token, userName}}) =>
-        window.EmailInterface.storeCredentials(token, userName),
-    addDeviceListeners: () => {},
-    addLogoutListener: () => {},
-    attachTooltip: (form, input) => {
-        form.activeInput = input
-        sendAndWaitForAnswer(() => window.EmailInterface.showTooltip(), 'getAliasResponse')
-            .then(res => {
-                if (res.alias) form.autofill(res.alias)
-                else form.activeInput.focus()
+                }
             })
-    }
-}
-
-const iOSInterface = {
-    isDeviceSignedIn: () => sendAndWaitForAnswer(
-        () => window.webkit.messageHandlers['emailHandlerCheckAppSignedInStatus'].postMessage({}),
-        'checkExtensionSignedInCallback'
-    ).then(data => data.isAppSignedIn),
-    trySigningIn: () => {
-        if (isDDGDomain()) {
-            sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
-                .then(data => {
-                    // This call doesn't send a response, so we can't know if it succeded
-                    iOSInterface.storeUserData(data)
-                    scanForInputs(iOSInterface)
-                })
         }
-    },
-    storeUserData: ({addUserData: {token, userName}}) =>
-        window.webkit.messageHandlers['emailHandlerStoreToken'].postMessage({ token, username: userName }),
-    addDeviceListeners: () => {
-        window.addEventListener('message', (e) => {
-            if (e.origin !== window.origin) return
 
-            if (e.data.ddgUserReady) {
-                scanForInputs(iOSInterface)
-            }
-        })
-    },
-    addLogoutListener: () => {},
-    attachTooltip: (form, input) => {
-        form.activeInput = input
-        sendAndWaitForAnswer(
-            () => window.webkit.messageHandlers['emailHandlerGetAlias'].postMessage({}),
-            'getAliasResponse'
-        ).then(res => {
-            if (res.alias) form.autofill(res.alias)
-            else form.activeInput.focus()
-        })
+        this.addLogoutListener = (handler) => {
+            // Cleanup on logout events
+            chrome.runtime.onMessage.addListener((message, sender) => {
+                if (sender.id === chrome.runtime.id && message.type === 'logout') {
+                    handler()
+                }
+            })
+        }
+
+        this.attachTooltip = createAttachTooltip(this.getAlias, this.refreshAlias)
     }
 }
 
-const DeviceInterface = !isDDGApp ? ExtensionInterface
-    : isAndroid ? AndroidInterface : iOSInterface
+class AndroidInterface {
+    constructor () {
+        this.getAlias = () => sendAndWaitForAnswer(() =>
+            window.EmailInterface.showTooltip(), 'getAliasResponse')
+            .then(({alias}) => alias)
+
+        this.refreshAlias = () => {}
+
+        this.isDeviceSignedIn = () => new Promise(resolve =>
+            resolve((window.EmailInterface.isSignedIn() === 'true')))
+
+        this.trySigningIn = () => {
+            if (isDDGDomain()) {
+                sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
+                    .then(data => {
+                        // This call doesn't send a response, so we can't know if it succeded
+                        this.storeUserData(data)
+                        scanForInputs(this)
+                    })
+            }
+        }
+
+        this.storeUserData = ({addUserData: {token, userName}}) =>
+            window.EmailInterface.storeCredentials(token, userName)
+
+        this.addDeviceListeners = () => {}
+
+        this.addLogoutListener = () => {}
+
+        this.attachTooltip = createAttachTooltip(this.getAlias)
+    }
+}
+
+class AppleDeviceInterface {
+    constructor () {
+        if (isDDGDomain()) {
+            // Tell the web app whether we're in the macOS app
+            notifyWebApp({isMacOSApp})
+        }
+        this.getAlias = () => sendAndWaitForAnswer(() =>
+            window.webkit.messageHandlers['emailHandlerGetAlias'].postMessage({
+                requiresUserPermission: !isMacOSApp,
+                shouldConsumeAliasIfProvided: !isMacOSApp
+            }), 'getAliasResponse').then(({alias}) => alias)
+
+        this.refreshAlias = () => window.webkit.messageHandlers['emailHandlerRefreshAlias'].postMessage({})
+
+        this.isDeviceSignedIn = () => sendAndWaitForAnswer(() =>
+            window.webkit.messageHandlers['emailHandlerCheckAppSignedInStatus'].postMessage({}),
+        'checkExtensionSignedInCallback'
+        ).then(data => data.isAppSignedIn)
+
+        this.trySigningIn = () => {
+            if (isDDGDomain()) {
+                sendAndWaitForAnswer(SIGN_IN_MSG, 'addUserData')
+                    .then(data => {
+                        // This call doesn't send a response, so we can't know if it succeded
+                        this.storeUserData(data)
+                        scanForInputs(this)
+                    })
+            }
+        }
+
+        this.storeUserData = ({addUserData: {token, userName}}) =>
+            window.webkit.messageHandlers['emailHandlerStoreToken'].postMessage({ token, username: userName })
+
+        this.addDeviceListeners = () => {
+            window.addEventListener('message', (e) => {
+                if (e.origin !== window.origin) return
+
+                if (e.data.ddgUserReady) {
+                    scanForInputs(this)
+                }
+            })
+        }
+
+        this.addLogoutListener = () => {}
+
+        this.attachTooltip = createAttachTooltip(this.getAlias, this.refreshAlias)
+    }
+}
+
+const DeviceInterface = (() => {
+    if (isDDGApp) {
+        return isAndroid ? new AndroidInterface() : new AppleDeviceInterface()
+    }
+    return new ExtensionInterface()
+})()
 
 module.exports = DeviceInterface
