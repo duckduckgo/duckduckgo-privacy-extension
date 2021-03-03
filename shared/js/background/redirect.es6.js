@@ -7,6 +7,7 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
 const webResourceURL = browserWrapper.getExtensionURL('/') + 'web_accessible_resources'
+const browser = utils.getBrowserName()
 
 var debugRequest = false
 
@@ -152,11 +153,14 @@ function handleRequest (requestData) {
 
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
-                if (tracker.redirectUrl && requestData.type === 'script') {
+                if (tracker.redirectUrl) {
                     const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
 
-                    // check these for Origin headers in onBeforeSendHeaders before redirecting or not
-                    if (tracker.matchedRule.noCors) {
+                    // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for 
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
+                    // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
+                    // in onBeforeSendHeaders
+                    if (tracker.matchedRule.strictRedirect && browser === 'moz') {
                         thisTab.surrogates[requestData.url] = webResource
                     } else {
                         const key = thisTab.addWebResourceAccess(webResource)
