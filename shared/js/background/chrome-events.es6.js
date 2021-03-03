@@ -217,7 +217,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 })
 
 /**
- * Onboarding
+ * Chrome "Change back to Google Search" dialogue detection
+ * Detecting this dialogue relies on knowing if a DDG query was
+ * issued from the address bar
  */
 let isUrlBarQuery = false
 
@@ -228,10 +230,11 @@ chrome.webNavigation.onCommitted.addListener(details => {
 })
 
 /**
- * External messages (messages coming from web pages)
+ * External messages (messages coming from authorized web pages)
+ * See `externally_connectable` in manifest.json for authorized pages
  */
 chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-    if (request === 'isUrlBarQuery') {
+    if (request === 'queryData') {
         sendResponse({ isUrlBarQuery })
     }
 })
