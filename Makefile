@@ -45,8 +45,8 @@ moveout: $(ITEMS)
 
 beta-firefox: release beta-firefox-zip
 
-remove-firefox-id:
-	sed '/jid1-ZAdIEUB7XOzOJw@jetpack/d' ./browsers/firefox/manifest.json > build/firefox/release/manifest.json
+prepare-firefox-beta:
+	cat ./browsers/firefox/manifest.json | node scripts/nightly-manifest.js > build/firefox/release/manifest.json
 
-beta-firefox-zip: remove-firefox-id
+beta-firefox-zip: prepare-firefox-beta
 	cd build/firefox/release/ && web-ext build

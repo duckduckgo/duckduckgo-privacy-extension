@@ -5,8 +5,7 @@ on:
     branches: [ hackday ]
 
 jobs:
-  build:
-
+  firefox:
     runs-on: ubuntu-20.04
 
     steps:
@@ -16,4 +15,28 @@ jobs:
       with:
         node-version: 12.x
     - run: npm ci
-    - run: npm run release-firefox
+    - run: npm run beta-firefox
+    - run: |
+        export VERSION=$(jq -r .version ./build/firefox/release/manifest.json)
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ env.VERSION }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        release_name: Nightly ${{ env.VERSION }}
+        draft: false
+        prerelease: true
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ env.VERSION }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./build/firefox/release/web-ext-artifacts/duckduckgo_privacy_essentials-${{ env.VERSION }}.zip
+        asset_name: duckduckgo_privacy_essentials_beta-${{ env.VERSION }}.zip
+        asset_content_type: application/zip
