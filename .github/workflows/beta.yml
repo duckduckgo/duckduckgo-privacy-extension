@@ -54,8 +54,9 @@ jobs:
     - name: Prepare updates.json
       if: env.EXISTING_TAG == ''
       run: |
-        VERSION=$(jq -r .version ./build/firefox/release/manifest.json)
-        node scripts/updater.js _site/updates.json $VERSION https://github.com/sammacbeth/duckduckgo-privacy-extension/releases/download/$VERSION/duckduckgo_privacy_essentials-$VERSION-an+fx.xpi > _site/updates.json
+        cat _site/updates.json
+        echo $VERSION
+        node scripts/updater.js _site/updates.json $VERSION https://github.com/sammacbeth/duckduckgo-privacy-extension/releases/download/$VERSION/duckduckgo_privacy_essentials-$VERSION-an+fx.xpi
     - name: Deploy update.json
       uses: peaceiris/actions-gh-pages@v3
       with:
