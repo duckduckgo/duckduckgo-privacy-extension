@@ -16,13 +16,24 @@ jobs:
         echo "_$EXISTING_TAG+"
         echo "EXISTING_TAG=$(git tag --points-at HEAD)" >> $GITHUB_ENV
     - name: Use Node.js 12
+      if: env.EXISTING_TAG == ''
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - run: npm ci
-    - run: npm run beta-firefox
-    - run: |
+    - name: Install dependencies
+      if: env.EXISTING_TAG == ''
+      run: npm ci
+    - name: Build extension
+      if: env.EXISTING_TAG == ''
+      run: npm run beta-firefox
+    - name: Get Version
+      if: env.EXISTING_TAG == ''
+      run: |
         echo "VERSION=$(jq -r .version ./build/firefox/release/manifest.json)" >> $GITHUB_ENV
+    - name: Sign extension
+      if: env.EXISTING_TAG == ''
+      run: |
+        ./node_modules/.bin/web-ext sign -s ./build/firefox/release/ -a ./build/firefox/release/web-ext-artifacts -v --api-key ${{ secrets.AMO_JWT_ISSUER }} --api-secret ${{ secrets.AMO_JWT_SECRET }}
     - name: Release
       if: env.EXISTING_TAG == ''
       uses: softprops/action-gh-release@v1
@@ -33,4 +44,4 @@ jobs:
         tag_name: ${{ env.VERSION }}
         name: Nightly ${{ env.VERSION }}
         files: |
-          ./build/firefox/release/web-ext-artifacts/*.zip
+          ./build/firefox/release/web-ext-artifacts/*.xpi
