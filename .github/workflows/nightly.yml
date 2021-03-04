@@ -1,0 +1,25 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 12 * * MON-FRI'
+
+jobs:
+  release:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          git fetch --tags origin
+          echo "EXISTING_TAG=$(git tag --points-at HEAD)" >> $GITHUB_ENV
+          echo "VERSION=$(date +%Y.%-m.%-d)" >> $GITHUB_ENV
+      - name: Create Release
+        if: env.EXISTING_TAG == ''
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          prerelease: true
+          tag_name: ${{ env.VERSION }}
+          name: Nightly ${{ env.VERSION}}

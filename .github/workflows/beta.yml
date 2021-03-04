@@ -1,8 +1,8 @@
-name: Beta
+name: Publish Beta
 
 on:
-  push:
-    branches: [ hackday ]
+  release:
+    types: [ prereleased ]
 
 jobs:
   firefox:
@@ -10,34 +10,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - run: |
-        git fetch --tags origin
-        EXISTING_TAG=$(git tag --points-at HEAD)
-        echo "_$EXISTING_TAG+"
-        echo "EXISTING_TAG=$(git tag --points-at HEAD)" >> $GITHUB_ENV
     - name: Use Node.js 14
       if: env.EXISTING_TAG == ''
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
     - name: Install dependencies
-      if: env.EXISTING_TAG == ''
       run: |
         npm ci
         npm i -g web-ext
     - name: Build extension
-      if: env.EXISTING_TAG == ''
       run: npm run beta-firefox
-    - name: Get Version
-      if: env.EXISTING_TAG == ''
+    - name: Check Version
       run: |
-        echo "VERSION=$(jq -r .version ./build/firefox/release/manifest.json)" >> $GITHUB_ENV
+        echo "$(jq -r .version ./build/firefox/release/manifest.json)"
     - name: Sign extension
-      if: env.EXISTING_TAG == 'never'
       run: |
         web-ext sign -s ./build/firefox/release/ -a ./build/firefox/release/web-ext-artifacts --api-key ${{ secrets.AMO_JWT_ISSUER }} --api-secret ${{ secrets.AMO_JWT_SECRET }}
     - name: Release
-      if: env.EXISTING_TAG == 'never'
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,12 +42,11 @@ jobs:
         ref: 'gh-pages'
         path: '_site'
     - name: Prepare updates.json
-      if: env.EXISTING_TAG == ''
       run: |
         cat _site/updates.json
         echo $VERSION
         node scripts/updater.js _site/updates.json $VERSION https://github.com/sammacbeth/duckduckgo-privacy-extension/releases/download/$VERSION/duckduckgo_privacy_essentials-$VERSION-an+fx.xpi
-    - name: Deploy update.json
+    - name: Deploy updates.json
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
