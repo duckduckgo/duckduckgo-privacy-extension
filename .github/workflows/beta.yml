@@ -21,9 +21,6 @@ jobs:
         npm i -g web-ext
     - name: Build extension
       run: npm run beta-firefox
-    - name: Check Version
-      run: |
-        echo "$(jq -r .version ./build/firefox/release/manifest.json)"
     - name: Sign extension
       run: |
         web-ext sign -s ./build/firefox/release/ -a ./build/firefox/release/web-ext-artifacts --api-key ${{ secrets.AMO_JWT_ISSUER }} --api-secret ${{ secrets.AMO_JWT_SECRET }}
@@ -43,7 +40,7 @@ jobs:
         path: '_site'
     - name: Prepare updates.json
       run: |
-        cat _site/updates.json
+        VERSION=$(jq -r .version ./build/firefox/release/manifest.json)
         echo $VERSION
         node scripts/updater.js _site/updates.json $VERSION https://github.com/sammacbeth/duckduckgo-privacy-extension/releases/download/$VERSION/duckduckgo_privacy_essentials-$VERSION-an+fx.xpi
     - name: Deploy updates.json
