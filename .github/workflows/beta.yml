@@ -46,11 +46,15 @@ jobs:
         tag_name: ${{ env.VERSION }}
         files: |
           ./build/firefox/release/web-ext-artifacts/*.xpi
+    - name: Checkout gh-pages
+      uses: actions/checkout@v2
+      with:
+        ref: 'gh-pages'
+        path: '_site'
     - name: Prepare updates.json
       if: env.EXISTING_TAG == ''
       run: |
-        mkdir -p _site
-        curl -o _site/updates.json https://sammacbeth.github.io/duckduckgo-privacy-extension/updates.json
+        VERSION=$(jq -r .version ./build/firefox/release/manifest.json)
         node scripts/updater.js _site/updates.json $VERSION https://github.com/sammacbeth/duckduckgo-privacy-extension/releases/download/$VERSION/duckduckgo_privacy_essentials-$VERSION-an+fx.xpi > _site/updates.json
     - name: Deploy update.json
       uses: peaceiris/actions-gh-pages@v3
