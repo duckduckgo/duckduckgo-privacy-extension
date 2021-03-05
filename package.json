@@ -7,7 +7,7 @@
     "scripts": {
         "abp": "cd node_modules/abp-filter-parser && npm install",
         "postinstall": "npm run abp && npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
-        "copy-sjcl": "cp node_modules/sjcl/sjcl.js shared/js/content-scope/",
+        "copy-sjcl": "cd node_modules/sjcl/ && ./configure --no-export --compress=none && make && cp sjcl.js ../../shared/js/content-scope/",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "release": "grunt build && node scripts/httpsWhitelist.js",
