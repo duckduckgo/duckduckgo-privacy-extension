@@ -44,7 +44,7 @@ Site.prototype = window.$.extend({},
 
             this.model.toggleWhitelist()
             const whitelisted = this.model.isWhitelisted
-            this._showWhitelistedStatusMessage(!whitelisted)
+            this._showWhitelistedStatusMessage(whitelisted)
 
             if (whitelisted) {
                 this._showBreakageConfirmation()
