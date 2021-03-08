@@ -87,37 +87,31 @@ function handleRequest (requestData) {
         }
 
         /**
-         * Click to Load Blocking
-         * If it isn't in the tracker list, check the clickToLoad block list
-         */
-        const socialTracker = trackerutils.getSocialTracker(requestData.url)
-        if (socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
-            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
-                !thisTab.site.whitelisted &&
-                !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
-                !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
-                if (socialTracker.redirectUrl) {
-                    console.log(`redirecting ${requestData.url} to ${JSON.stringify(socialTracker.redirectUrl)}`)
-                    requestData.message = {redirectUrl: socialTracker.redirectUrl}
-                    return {redirectUrl: socialTracker.redirectUrl}
-                }
-                // TODO: Add to tracker dashboard as blocked - may require updates to that whole logic
-                //  since these sites may or may not be in the TDS list.
-                // console.info('blocked social tracker on ' + utils.extractHostFromURL(thisTab.url) +
-                //                 ' [' + socialTracker.entity + '] ' + requestData.url)
-                return {cancel: true}
-            } else {
-                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
-                return
-            }
-        }
-
-        /**
          * Tracker blocking
          * If request is a tracker, cancel the request
          */
 
         var tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+        /**
+         * Click to Load Blocking
+         * If it isn't in the tracker list, check the clickToLoad block list
+         */
+        const socialTracker = trackerutils.getSocialTracker(requestData.url)
+        if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
+            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
+                !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
+                !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
+                // TDS doesn't block social sites by default, so update the action & redirect for click to load.
+                tracker.action = 'block'
+                if (socialTracker.redirectUrl) {
+                    tracker.action = 'redirect'
+                    tracker.redirectUrl = socialTracker.redirectUrl
+                }
+            } else {
+                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
+                return
+            }
+        }
 
         // allow embedded twitter content if user enabled this setting
         if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {

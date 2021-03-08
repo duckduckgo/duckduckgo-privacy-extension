@@ -1,0 +1,29 @@
+@import "vars";
+@import "mixins";
+
+@import "views/extension-page";
+
+h1 {
+    font-size: 2.65rem;
+    color: #888;
+}
+
+h2 {
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 47px;
+  margin: 20px 0px;
+}
+
+p {
+  font-size: 1.4em;
+  line-height: 1.75em;
+  font-weight: 400;
+  letter-spacing: 0.01rem;
+  margin: 1.75em 0;
+}
+
+.page-container {
+    width: 60%;
+    color: #222;
+}
