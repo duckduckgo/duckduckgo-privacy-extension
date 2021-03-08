@@ -20,7 +20,7 @@ function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
-function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
+function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
@@ -68,7 +68,7 @@ function findParent (url) {
 }
 
 function getCurrentURL (callback) {
-    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
         if (tabData.length) {
             callback(tabData[0].url)
         }
@@ -77,7 +77,7 @@ function getCurrentURL (callback) {
 
 function getCurrentTab (callback) {
     return new Promise((resolve, reject) => {
-        chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+        chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
             if (tabData.length) {
                 resolve(tabData[0])
             }
@@ -112,11 +112,11 @@ function getUpgradeToSecureSupport () {
 // Firefox only blocks 'beacon' (even though it should support 'ping')
 function getBeaconName () {
     const beaconNamesByBrowser = {
-        'chrome': 'ping',
-        'moz': 'beacon',
-        'edg': 'ping',
-        'brave': 'ping',
-        'default': 'ping'
+        chrome: 'ping',
+        moz: 'beacon',
+        edg: 'ping',
+        brave: 'ping',
+        default: 'ping'
     }
     let name = getBrowserName()
     if (!Object.keys(beaconNamesByBrowser).includes(name)) {
@@ -127,7 +127,7 @@ function getBeaconName () {
 
 // Return requestListenerTypes + beacon or ping
 function getUpdatedRequestListenerTypes () {
-    let requestListenerTypes = constants.requestListenerTypes.slice()
+    const requestListenerTypes = constants.requestListenerTypes.slice()
     requestListenerTypes.push(getBeaconName())
 
     return requestListenerTypes
@@ -151,17 +151,33 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage || !tdsStorage.brokenSiteList) return
+    if (!tdsStorage?.brokenSiteList) return
+    return isBrokenList(url, tdsStorage.brokenSiteList)
+}
 
+function isCanvasBroken (url) {
+    if (!tdsStorage?.fingerprinting?.canvas?.sites) return
+    // If globally disabled return the site is broken
+    if (tdsStorage?.fingerprinting?.canvas?.enabled === false) return true
+    return isBrokenList(url, tdsStorage.fingerprinting.canvas.sites)
+}
+
+function isBrokenList (url, lists) {
     const parsedDomain = tldts.parse(url)
-    let hostname = parsedDomain.hostname || url
+    const hostname = parsedDomain.hostname || url
 
-    // If root domain in temp whitelist, return true
-    return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+    // If root domain in temp unprotected list, return true
+    return lists.some((brokenSiteDomain) => {
         if (brokenSiteDomain) {
             return hostname.match(new RegExp(brokenSiteDomain + '$'))
         }
+        return false
     })
+}
+
+// We inject this into content scripts
+function getBrokenCanvasScriptList () {
+    return tdsStorage?.fingerprinting?.canvas?.scripts || []
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
@@ -169,7 +185,7 @@ function isBroken (url) {
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
     const safeList = settings.getSetting('whitelisted')
-    let subdomains = hostname.split('.')
+    const subdomains = hostname.split('.')
     // Check user safe list
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {
@@ -220,18 +236,20 @@ async function imgToData (imagePath) {
 }
 
 module.exports = {
-    extractHostFromURL: extractHostFromURL,
-    extractTopSubdomainFromHost: extractTopSubdomainFromHost,
-    getCurrentURL: getCurrentURL,
-    getCurrentTab: getCurrentTab,
-    getBrowserName: getBrowserName,
-    getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    getAsyncBlockingSupport: getAsyncBlockingSupport,
-    findParent: findParent,
-    getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
-    isSafeListed: isSafeListed,
-    extractLimitedDomainFromURL: extractLimitedDomainFromURL,
-    isBroken: isBroken,
+    extractHostFromURL,
+    extractTopSubdomainFromHost,
+    getCurrentURL,
+    getCurrentTab,
+    getBrowserName,
+    getUpgradeToSecureSupport,
+    getAsyncBlockingSupport,
+    findParent,
+    getBeaconName,
+    getUpdatedRequestListenerTypes,
+    isSafeListed,
+    extractLimitedDomainFromURL,
+    isBroken,
+    isCanvasBroken,
+    getBrokenCanvasScriptList,
     imgToData: imgToData
 }

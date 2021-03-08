@@ -7,18 +7,18 @@
 const origSettings = require('../../shared/js/background/settings.es6')
 
 const stub = (startingVals) => {
-    let settingObj = startingVals || {}
+    const settingObj = startingVals || {}
 
-    let get = spyOn(origSettings, 'getSetting')
+    const get = spyOn(origSettings, 'getSetting')
         .and.callFake(key => settingObj[key])
 
-    let update = spyOn(origSettings, 'updateSetting')
+    const update = spyOn(origSettings, 'updateSetting')
         .and.callFake((key, val) => { settingObj[key] = val })
 
-    let remove = spyOn(origSettings, 'removeSetting')
+    const remove = spyOn(origSettings, 'removeSetting')
         .and.callFake(key => { delete settingObj[key] })
 
-    let ready = spyOn(origSettings, 'ready')
+    const ready = spyOn(origSettings, 'ready')
         .and.callFake(() => Promise.resolve())
 
     return { get, update, remove, ready }

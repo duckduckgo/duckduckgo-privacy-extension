@@ -92,8 +92,14 @@ module.exports = {
         },
         {
             "name": "brokenSiteList",
-            "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
+            "url": "https://duckduckgo.com/contentblocking/trackers-unprotected-temporary.txt",
             "format": "text",
+            "source": "external"
+        },
+        {
+            "name": "fingerprinting",
+            "url": "https://duckduckgo.com/contentblocking/fingerprinting.json",
+            "format": "json",
             "source": "external"
         },
         {

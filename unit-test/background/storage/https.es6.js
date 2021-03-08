@@ -27,7 +27,7 @@ describe('Https storage bad xhr update', () => {
     let dbStub = {}
 
     beforeEach(() => {
-        let badBloom = JSON.parse(JSON.stringify(httpsBloom))
+        const badBloom = JSON.parse(JSON.stringify(httpsBloom))
         badBloom.checksum.sha256 = 'badchecksum'
         load.loadStub({
             httpsBloom: badBloom,
@@ -41,9 +41,9 @@ describe('Https storage bad xhr update', () => {
             dbStub[name] = JSON.parse(JSON.stringify(data))
         })
         spyOn(httpsStorage, 'getDataFromLocalDB').and.callFake((name) => {
-            let val = dbStub[name]
+            const val = dbStub[name]
             if (val) {
-                return Promise.resolve({data: val})
+                return Promise.resolve({ data: val })
             } else {
                 return Promise.resolve(false)
             }

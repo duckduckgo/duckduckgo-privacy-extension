@@ -22,12 +22,13 @@ const getGradeByUrl = (url) => {
     let tab
 
     Object.keys(tabsById).some((id) => {
-        let t = tabsById[id]
+        const t = tabsById[id]
 
         if (t.url.indexOf(url) > -1) {
             tab = tabsById[id]
             return true
         }
+        return false
     })
 
     return tab.site.grade.get()
