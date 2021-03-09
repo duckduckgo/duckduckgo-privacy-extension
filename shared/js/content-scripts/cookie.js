@@ -15,7 +15,7 @@ class Cookie {
                 this.name = attribute
                 this.value = value
             } else if (EXTRACT_ATTRIBUTES.has(attribute.toLowerCase())) {
-                this[attribute] = value
+                this[attribute.toLowerCase()] = value
                 this.attrIdx[attribute.toLowerCase()] = index
             }
         })
