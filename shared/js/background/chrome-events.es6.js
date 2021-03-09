@@ -13,6 +13,8 @@ const browser = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
 
+const IS_BETA = chrome.runtime.id !== 'bkdgflcldnnnapblkhphbgpggdiikppg' && chrome.runtime.id !== 'jid1-ZAdIEUB7XOzOJw@jetpack'
+
 /**
  * Produce a random float, same output as Math.random()
  * @returns {float}
@@ -54,6 +56,9 @@ const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 const settings = require('./settings.es6')
 
 function blockingExperimentActive () {
+    if (IS_BETA) {
+        return true
+    }
     const activeExperiment = settings.getSetting('activeExperiment')
     if (activeExperiment) {
         const experiment = settings.getSetting('experimentData')
