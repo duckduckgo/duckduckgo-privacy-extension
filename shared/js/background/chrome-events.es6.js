@@ -277,8 +277,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             tabRegisteredDomain: null,
             isTrackerFrame: false,
             policy: {
-                threshold: 604800, // 7 days
-                maxAge: 604800 // 7 days
+                threshold: 691200, // 8 days
+                maxAge: 691200 // 8 days
             }
         }
         if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
