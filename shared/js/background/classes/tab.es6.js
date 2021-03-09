@@ -31,6 +31,7 @@ const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
+const webResourceKeyRegex = new RegExp(/.*\?key=(.*)/)
 
 class Tab {
     constructor (tabData) {
@@ -52,6 +53,8 @@ class Tab {
             completeMs: null
         }
         this.resetBadgeIcon()
+        this.webResourceAccess = []
+        this.surrogates = {}
     };
 
     resetBadgeIcon () {
@@ -124,6 +127,48 @@ class Tab {
         this.stopwatch.end = Date.now()
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
+    };
+
+    /**
+     * Adds an entry to the tab webResourceAccess list. 
+     * @param {string} URL to the web accessible resource
+     * @returns {string} generated access key
+     **/
+    addWebResourceAccess (resourceName) {
+        const key = Math.floor(Math.random() * 10000000000).toString(16)
+        this.webResourceAccess.push({key, resourceName, time: Date.now(), wasAccessed: false})
+        return key
+    };
+
+    /**
+     * Access to web accessible resources needs to have the correct key passed in the URL
+     * and the requests needs to happen within 1 second since the generation of the key
+     * in addWebResourceAccess
+     * @param {string} web accessible resource URL
+     * @returns {bool} is access to the resource allowed
+     **/
+    hasWebResourceAccess (resourceURL) {
+        // no record of web resource access for this tab
+        if (!this.webResourceAccess.length) {
+            return false
+        }
+
+        const keyMatches = webResourceKeyRegex.exec(resourceURL)
+        if (!keyMatches) {
+            return false
+        }
+
+        const key = keyMatches[1]
+        const hasAccess = this.webResourceAccess.some(resource => {
+            if (resource.key === key && !resource.wasAccessed) {
+                resource.wasAccessed = true
+                if( (Date.now() - resource.time) < 1000) {
+                    return true
+                }
+            }
+        })
+
+        return hasAccess
     }
 }
 

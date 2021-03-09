@@ -7,6 +7,8 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
+const webResourceURL = browserWrapper.getExtensionURL('/') + 'web_accessible_resources'
+const browser = utils.getBrowserName()
 
 const debugRequest = false
 
@@ -43,6 +45,13 @@ function handleRequest (requestData) {
     if (tabId === -1) { return }
 
     let thisTab = tabManager.get(requestData)
+
+    // control access to web accessible resources
+    if (requestData.url.startsWith(webResourceURL)) {
+        if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
+            return {cancel: true}
+        }
+    }
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
@@ -106,6 +115,7 @@ function handleRequest (requestData) {
                 if (socialTracker.redirectUrl) {
                     tracker.action = 'redirect'
                     tracker.redirectUrl = socialTracker.redirectUrl
+                    tracker.matchedRule.strictRedirect = true
                 }
             } else {
                 // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
@@ -166,9 +176,18 @@ function handleRequest (requestData) {
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
-                    // safari gets return data in message
-                    requestData.message = { redirectUrl: tracker.redirectUrl }
-                    return { redirectUrl: tracker.redirectUrl }
+                    const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
+
+                    // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
+                    // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
+                    // in onBeforeSendHeaders
+                    if (tracker.matchedRule.strictRedirect && browser === 'moz') {
+                        thisTab.surrogates[requestData.url] = webResource
+                    } else {
+                        const key = thisTab.addWebResourceAccess(webResource)
+                        return {redirectUrl: `${webResource}?key=${key}`}
+                    }
                 } else {
                     requestData.message = { cancel: true }
                     return { cancel: true }
