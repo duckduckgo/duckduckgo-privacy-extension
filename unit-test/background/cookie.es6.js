@@ -1,14 +1,13 @@
 const Cookie = require('../../shared/js/content-scripts/cookie')
 
 describe('Cookie', () => {
-
     describe('constructor', () => {
         it('should parse a weird but valid cookie', () => {
-            const cki = new Cookie("foo=bar=bar&foo=foo&John=Doe&Doe=John; Max-Age=1000; Domain=.example.com; Path=/; HttpOnly; Secure")
+            const cki = new Cookie('foo=bar=bar&foo=foo&John=Doe&Doe=John; Max-Age=1000; Domain=.example.com; Path=/; HttpOnly; Secure')
             expect(cki.name).toEqual('foo')
-            expect(cki.value).toEqual("bar=bar&foo=foo&John=Doe&Doe=John")
-            expect(cki.maxAge).toEqual("1000")
-            expect(cki.domain).toEqual(".example.com")
+            expect(cki.value).toEqual('bar=bar&foo=foo&John=Doe&Doe=John')
+            expect(cki.maxAge).toEqual('1000')
+            expect(cki.domain).toEqual('.example.com')
         })
     })
 

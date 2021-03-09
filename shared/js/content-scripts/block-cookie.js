@@ -1,3 +1,4 @@
+/* global Cookie */
 // Set up 3rd party cookie blocker
 (function cookieBlocker () {
     // don't inject into non-HTML documents (such as XML documents)
