@@ -306,7 +306,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             }
 
             action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
-            action.shouldBlock = !cookieConfig.isExcluded(sender.url) && trackerutils.isTracker(sender.url)
+            action.shouldBlock = !cookieConfig.isExcluded(sender.url)
             res(action)
         } else {
             res(action)

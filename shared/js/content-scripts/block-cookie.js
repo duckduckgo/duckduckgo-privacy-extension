@@ -123,7 +123,7 @@
         checkThirdParty: true,
         documentUrl: window.location.href
     }, function (action) {
-        if (window.top !== window && action.shouldBlock) {
+        if (window.top !== window && action.isTrackerFrame) {
             // overrides expiry policy with blocking - only in subframes
             inject(clearInjectedCookiesAndBlock)
         }
