@@ -178,7 +178,7 @@ module.exports = function (grunt) {
             copyContentScope: `cat shared/js/content-scope/*.js > build/${browser}/${buildType}/public/js/content-scope.js`,
             copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            buildContentScript: `cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
+            buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
             // make sure that sed works on both linux and OSX (see https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux)
