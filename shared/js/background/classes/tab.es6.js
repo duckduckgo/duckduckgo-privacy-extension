@@ -135,6 +135,7 @@ class Tab {
      * @returns {string} generated access key
      **/
     addWebResourceAccess (resourceName) {
+        // random 8-9 character key for web resource access
         const key = Math.floor(Math.random() * 10000000000).toString(16)
         this.webResourceAccess.push({key, resourceName, time: Date.now(), wasAccessed: false})
         return key
