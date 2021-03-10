@@ -111,7 +111,6 @@ class Site {
         // Both 'localhost' and the loopback ip have to be specified
         // since they're treated as different domains
         if (domain === localhostName || domain.match(/^127\.0\.0\.1/)) {
-
             return localhostName
         }
 
