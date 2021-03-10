@@ -458,6 +458,39 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  * Click to Load
  */
 
+/*
+ * On FireFox, redirecting to a JS surrogate in some cases causes a CORS error. Determine if that is the case here.
+ * If so, and we have an alternate XRAY surrogate implementation, inject it.
+ */
+chrome.webRequest.onBeforeRedirect.addListener(
+    details => {
+        let tab = tabManager.get({ tabId: details.tabId })
+        if (tab && !tab.site.isBroken && !tab.site.whitelisted) {
+            // Detect cors error
+            const headers = details.responseHeaders
+            const corsHeaders = [
+                'Access-Control-Allow-Origin'
+            ]
+            const corsFound = headers.filter(v => corsHeaders.includes(v.name)).length
+
+            if (corsFound && details.redirectUrl) {
+                const xray = trackerutils.getXraySurrogate(details.redirectUrl)
+                if (xray && utils.getBrowserName() === 'moz') {
+                    console.log('Normal surrogate load failed, loading XRAY version')
+                    chrome.tabs.executeScript(details.tabId, {
+                        file: `public/js/content-scripts/${xray}`,
+                        matchAboutBlank: true,
+                        frameId: details.frameId,
+                        runAt: 'document_start'
+                    })
+                }
+            }
+        }
+    },
+    {urls: ['<all_urls>']},
+    ['responseHeaders']
+)
+
 // Inject our content script to overwite FB elements
 chrome.webNavigation.onCommitted.addListener(details => {
     let tab = tabManager.get({ tabId: details.tabId })
@@ -467,6 +500,15 @@ chrome.webNavigation.onCommitted.addListener(details => {
         return
     }
     if (tab && !tab.site.whitelisted) {
+        /*
+        if (utils.getBrowserName() === 'moz') {
+            chrome.tabs.executeScript(details.tabId, {
+                file: `public/js/content-scripts/fb-surrogate-xray.js`,
+                matchAboutBlank: true,
+                frameId: details.frameId,
+                runAt: 'document_start'
+            })
+        }*/
         chrome.tabs.executeScript(details.tabId, {
             file: `public/js/content-scripts/click-to-load.js`,
             matchAboutBlank: true,

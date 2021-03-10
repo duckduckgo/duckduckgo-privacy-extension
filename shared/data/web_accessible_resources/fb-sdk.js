@@ -1,0 +1,129 @@
+//facebook.net/sdk.js application/javascript
+(() => {
+    'use strict'
+    const originalFBURL = document.currentScript.src
+    let siteInit = function () {}
+    let fbIsEnabled = false
+    const parseCalls = []
+    const popupName = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12)
+    const noop = () => {}
+    const noopHandler = {
+        get: () => {
+            return noop
+        }
+    }
+    let fbLogin = {
+        callback: function () {},
+        params: undefined
+    }
+    const noopProxy = new Proxy({}, noopHandler)
+    function messageAddon (msgObject) {
+        const source = 'fb-surrogate'
+        window.postMessage({
+            source: source,
+            payload: msgObject
+        }, '*')
+    }
+    function enableFacebookSDK () {
+        if (!fbIsEnabled) {
+            window.FB = undefined
+            const fbScript = document.createElement('script')
+            fbScript.src = originalFBURL
+            fbScript.onload = function () {
+                for (const node of parseCalls) {
+                    window.FB.XFBML.parse.apply(window.FB.XFBML, node);
+                }
+            }
+            document.head.appendChild(fbScript)
+            fbIsEnabled = true
+        }
+    }
+    function runFacebookLogin () {
+        enableFacebookSDK()
+        replaceWindowOpen()
+        loginPopup()
+        window.fbAsyncInit = function () {
+            siteInit()
+            window.FB.login(fbLogin.callback, fbLogin.params)
+        }
+    }
+    function replaceWindowOpen () {
+        const oldOpen = window.open
+        window.open = function (url, name, windowParams) {
+            const u = new URL(url)
+            if (u.origin === 'https://www.facebook.com') {
+                name = popupName
+            }
+            return oldOpen.call(window, url, name, windowParams)
+        }
+    }
+    function loginPopup () {
+        const width = Math.min(window.screen.width, 350)
+        const height = Math.min(window.screen.height, 350)
+        const popupParams = `width=${width},height=${height},scrollbars=1,location=1`
+        window.open('about:blank', popupName, popupParams)
+    }
+    window.addEventListener('LoadFBSDK', enableFacebookSDK)
+    window.addEventListener('RunFBLogin', runFacebookLogin)
+    if (!window.FB) {
+        window.FB = {
+            init: function (obj) {
+                messageAddon({
+                    'appID': obj.appId
+                })
+            },
+            ui: function (obj, cb) {
+                console.log('Facebook UI called')
+                messageAddon({
+                    'fbui': true
+                })
+                cb({})
+            },
+            getAccessToken: function () {},
+            getAuthResponse: function () {
+                return {status: ''}
+            },
+            getLoginStatus: function (callback) {callback({status: ''})},
+            getUserID: function () {},
+            login: function (cb, params) {
+                console.log('login called')
+                fbLogin.callback = cb
+                fbLogin.params = params
+                messageAddon({
+                    'fblogin': true
+                })
+            },
+            logout: function () {},
+            AppEvents: {
+                EventNames: {},
+                logEvent: function (a, b, c) {},
+                logPageView: function () {}
+            },
+            Event: {
+                subscribe: function () {},
+                unsubscribe: function () {}
+            },
+            XFBML: {
+                parse: function (n) {
+                    parseCalls.push(n)
+                }
+            }
+        }
+        console.log('in FB surrogate')
+        function init () {
+            if (window.fbAsyncInit) {
+                console.log('Calling fbAsyncInit')
+                siteInit = window.fbAsyncInit
+                window.fbAsyncInit()
+            }
+        }
+        if (document.readyState === 'complete') {
+            init()
+        } else {
+            // sdk script loaded before page content, so wait for load.
+            window.addEventListener('load', (event) => {
+                init()
+            })
+        }
+    }
+})()

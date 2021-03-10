@@ -112,10 +112,15 @@ function handleRequest (requestData) {
                 !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
                 // TDS doesn't block social sites by default, so update the action & redirect for click to load.
                 tracker.action = 'block'
+                
                 if (socialTracker.redirectUrl) {
                     tracker.action = 'redirect'
                     tracker.redirectUrl = socialTracker.redirectUrl
-                    tracker.matchedRule.strictRedirect = true
+                    if (!tracker.matchedRule) {
+                        tracker.matchedRule = {}
+                    }
+                    //tracker.matchedRule.strictRedirect = true
+                    tracker.matchedRule.surrogate = socialTracker.redirectUrl
                 }
             } else {
                 // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.

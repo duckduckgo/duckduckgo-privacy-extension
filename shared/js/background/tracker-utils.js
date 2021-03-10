@@ -70,7 +70,7 @@ function getSocialTracker (url) {
                 for (const surrogate of data.surrogates) {
                     if (url.match(surrogate.rule)) {
                         const dataURL = trackers.surrogateList[surrogate.surrogate]
-                        redirect = dataURL
+                        redirect = surrogate.surrogate //dataURL
                     }
                 }
             }
@@ -81,6 +81,21 @@ function getSocialTracker (url) {
             }
         }
     }
+}
+
+// Determine if a given URL is surrogate redirect.
+function getXraySurrogate (url) {
+    const u = new URL(url)
+    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (data.surrogates) {
+            for (const surrogate of data.surrogates) {
+                if (u.pathname === `/web_accessible_resources/${surrogate.surrogate}`) {
+                    return surrogate.xray
+                }
+            }
+        }
+    }
+    return undefined
 }
 
 /**
@@ -153,5 +168,6 @@ module.exports = {
     getSocialTracker: getSocialTracker,
     socialTrackerIsAllowedByUser: socialTrackerIsAllowedByUser,
     shouldBlockSocialNetwork: shouldBlockSocialNetwork,
-    getDomainsToExludeByNetwork: getDomainsToExludeByNetwork
+    getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
+    getXraySurrogate: getXraySurrogate
 }
