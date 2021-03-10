@@ -14,7 +14,7 @@ const path = require('path')
 
 function setupServer (redirects, port) {
     return http.createServer(function (req, res) {
-        let url = new URL(req.url, `http://${req.headers.host}`)
+        const url = new URL(req.url, `http://${req.headers.host}`)
         fs.readFile(path.join(__dirname, 'pages', url.pathname), (err, data) => {
             if (err) {
                 res.writeHead(404)
@@ -28,11 +28,11 @@ function setupServer (redirects, port) {
 }
 
 async function getFingerprintOfContext (ctx) {
-    await ctx.addScriptTag({path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js'})
+    await ctx.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
     return ctx.evaluate(() => {
         /* global FingerprintJS */
         return (async () => {
-            let fp = await FingerprintJS.load()
+            const fp = await FingerprintJS.load()
             return fp.get()
         })()
     })

@@ -47,7 +47,7 @@ const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
-let requestListenerTypes = utils.getUpdatedRequestListenerTypes()
+const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
@@ -126,7 +126,7 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
         active: true
     }, function (tabs) {
         chrome.tabs.update(tabs[0].id, {
-            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage['os'] + 'cl'
+            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage.os + 'cl'
         })
     })
 })
@@ -152,13 +152,13 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.updateSetting) {
-        let name = req.updateSetting['name']
-        let value = req.updateSetting['value']
+        const name = req.updateSetting.name
+        const value = req.updateSetting.value
         settings.ready().then(() => {
             settings.updateSetting(name, value)
         })
     } else if (req.getSetting) {
-        let name = req.getSetting['name']
+        const name = req.getSetting.name
         settings.ready().then(() => {
             res(settings.getSetting(name))
         })
@@ -227,7 +227,7 @@ let sessionKey = getHash()
 async function getContentScope () {
     const url = chrome.runtime.getURL('/public/js/content-scope.js')
 
-    let response = await fetch(url)
+    const response = await fetch(url)
     return response.text()
 }
 
@@ -237,7 +237,7 @@ async function init () {
     // Inject fingerprint protection into sites when
     // they are not whitelisted.
     chrome.webNavigation.onCommitted.addListener(details => {
-        let tab = tabManager.get({ tabId: details.tabId })
+        const tab = tabManager.get({ tabId: details.tabId })
         if (tab && tab.site.isBroken) {
             console.log('temporarily skip fingerprint protection for site: ' + details.url +
             'more info: https://github.com/duckduckgo/content-blocking-whitelist')
@@ -255,20 +255,20 @@ async function init () {
                     referrer: tab.referrer
                 }
                 const variableScript = {
-                    'code': `
+                    code: `
                       try {
                           var ddg_args = ${JSON.stringify(argumentsObject)}
                       } catch(e) {}`,
-                    'runAt': 'document_start',
-                    'frameId': details.frameId,
-                    'matchAboutBlank': true
+                    runAt: 'document_start',
+                    frameId: details.frameId,
+                    matchAboutBlank: true
                 }
                 chrome.tabs.executeScript(details.tabId, variableScript)
                 const scriptDetails = {
-                    'file': '/public/js/injected-content-scripts/fingerprint-protection.js',
-                    'runAt': 'document_start',
-                    'frameId': details.frameId,
-                    'matchAboutBlank': true
+                    file: '/public/js/injected-content-scripts/fingerprint-protection.js',
+                    runAt: 'document_start',
+                    frameId: details.frameId,
+                    matchAboutBlank: true
                 }
                 chrome.tabs.executeScript(details.tabId, scriptDetails)
             } catch (e) {
@@ -322,7 +322,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
-let referrerListenerOptions = ['blocking', 'requestHeaders']
+const referrerListenerOptions = ['blocking', 'requestHeaders']
 if (browser !== 'moz') {
     referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
 }
@@ -354,12 +354,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
 
         // Safe list and broken site list checks are included in the referrer evaluation
-        let modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
+        const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
         if (!modifiedReferrer) {
             return
         }
 
-        let requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
+        const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
         if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
             tab.referrer = {
                 site: tab.site.url,
@@ -371,9 +371,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             name: 'referer',
             value: modifiedReferrer
         })
-        return {requestHeaders: requestHeaders}
+        return { requestHeaders: requestHeaders }
     },
-    {urls: ['<all_urls>']},
+    { urls: ['<all_urls>'] },
     referrerListenerOptions
 )
 
@@ -393,12 +393,12 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         const GPCHeader = GPC.getHeader()
 
         if (GPCHeader) {
-            let requestHeaders = request.requestHeaders
+            const requestHeaders = request.requestHeaders
             requestHeaders.push(GPCHeader)
-            return {requestHeaders: requestHeaders}
+            return { requestHeaders: requestHeaders }
         }
     },
-    {urls: ['<all_urls>']},
+    { urls: ['<all_urls>'] },
     ['blocking', 'requestHeaders']
 )
 
@@ -413,7 +413,7 @@ const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
-// tracker lists / whitelists are 30 minutes
+// tracker lists / content blocking lists are 30 minutes
 chrome.alarms.create('updateLists', { periodInMinutes: 30 })
 // update uninstall URL every 10 minutes
 chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
@@ -462,10 +462,10 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
 /**
  * on start up
  */
-let onStartup = () => {
+const onStartup = () => {
     chrome.tabs.query({ currentWindow: true, status: 'complete' }, function (savedTabs) {
-        for (var i = 0; i < savedTabs.length; i++) {
-            var tab = savedTabs[i]
+        for (let i = 0; i < savedTabs.length; i++) {
+            const tab = savedTabs[i]
 
             if (tab.url) {
                 tabManager.create(tab)
@@ -496,7 +496,7 @@ let onStartup = () => {
 chrome.webRequest.onErrorOccurred.addListener(e => {
     if (!(e.type === 'main_frame')) return
 
-    let tab = tabManager.get({ tabId: e.tabId })
+    const tab = tabManager.get({ tabId: e.tabId })
 
     // We're only looking at failed main_frame upgrades. A tab can send multiple
     // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.

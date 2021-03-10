@@ -46,7 +46,7 @@ describe('User-Agent replacement', () => {
         })
 
         it('should send fake headers to third parties', () => {
-            let request = {
+            const request = {
                 tabId: 123,
                 url: 'http://thirdparty.com'
             }
@@ -56,7 +56,7 @@ describe('User-Agent replacement', () => {
         })
 
         it('should send real headers to first parties', () => {
-            let request = {
+            const request = {
                 tabId: 123,
                 url: 'http://example.com',
                 originUrl: 'http://example.com'
@@ -67,14 +67,14 @@ describe('User-Agent replacement', () => {
         })
 
         it('should consider the same domain first party', () => {
-            let url1 = 'http://example.com'
-            let url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
+            const url1 = 'http://example.com'
+            const url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
             expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
         })
 
         it('should consider subdomains to be first party', () => {
-            let url1 = 'http://example.com'
-            let url2 = 'http://subdomain.example.com'
+            const url1 = 'http://example.com'
+            const url2 = 'http://subdomain.example.com'
             expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
         })
     })

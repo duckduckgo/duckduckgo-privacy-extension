@@ -14,13 +14,13 @@ if (safari &&
     throw new Error('safari-ui-wrapper couldn\'t figure out the context it\'s in')
 }
 
-let reloadTab = () => {
-    var activeTab = window.safari.application.activeBrowserWindow.activeTab
+const reloadTab = () => {
+    const activeTab = window.safari.application.activeBrowserWindow.activeTab
     // eslint-disable-next-line no-self-assign
     activeTab.url = activeTab.url
 }
 
-let closePopup = () => {
+const closePopup = () => {
     window.safari.self.hide()
 }
 
@@ -34,18 +34,18 @@ let closePopup = () => {
  * keep track of them via an ID
  */
 
-let pendingMessages = {}
+const pendingMessages = {}
 
-let sendExtensionPageMessage = (message, resolve, reject) => {
+const sendExtensionPageMessage = (message, resolve, reject) => {
     if (message.whitelisted) {
         resolve(safari.self.tab.dispatchMessage('whitelisted', message))
     } else if (message.getSetting) {
-        let id = Math.random()
+        const id = Math.random()
         message.id = id
         pendingMessages[id] = resolve
         safari.self.tab.dispatchMessage('getSetting', message)
     } else if (message.getExtensionVersion) {
-        let id = Math.random()
+        const id = Math.random()
         message.id = id
         pendingMessages[id] = resolve
         safari.self.tab.dispatchMessage('getExtensionVersion', message)
@@ -60,7 +60,7 @@ if (context === 'extensionPage') {
             return
         }
 
-        let pendingResolve = pendingMessages[e.message.id]
+        const pendingResolve = pendingMessages[e.message.id]
 
         if (!pendingResolve) { return }
 
@@ -69,7 +69,7 @@ if (context === 'extensionPage') {
     }, true)
 }
 
-let fetch = (message) => {
+const fetch = (message) => {
     return new Promise((resolve, reject) => {
         console.log(`Safari Fetch: ${JSON.stringify(message)}`)
         if (context === 'popup') {
@@ -80,7 +80,7 @@ let fetch = (message) => {
     })
 }
 
-let backgroundMessage = (thisModel) => {
+const backgroundMessage = (thisModel) => {
     // listen for messages from background
     safari.self.addEventListener('message', (req) => {
         if (req.whitelistChanged) {
@@ -92,11 +92,11 @@ let backgroundMessage = (thisModel) => {
     })
 }
 
-let getBackgroundTabData = () => {
+const getBackgroundTabData = () => {
     return new Promise((resolve) => {
-        fetch({getCurrentTab: true}).then((tab) => {
+        fetch({ getCurrentTab: true }).then((tab) => {
             if (tab) {
-                let tabCopy = JSON.parse(JSON.stringify(tab))
+                const tabCopy = JSON.parse(JSON.stringify(tab))
                 resolve(tabCopy)
             } else {
                 resolve()
@@ -105,7 +105,7 @@ let getBackgroundTabData = () => {
     })
 }
 
-let search = (url) => {
+const search = (url) => {
     // in Chrome, adding the ATB param is handled by ATB.redirectURL()
     // which doesn't happen on Safari
     fetch({ getSetting: { name: 'atb' } }).then((atb) => {
@@ -114,20 +114,20 @@ let search = (url) => {
     })
 }
 
-let getExtensionURL = (path) => {
+const getExtensionURL = (path) => {
     return safari.extension.baseURI + path
 }
 
-let openExtensionPage = (path) => {
+const openExtensionPage = (path) => {
     // Chrome needs an opening slash, Safari breaks if you add it
     if (path.indexOf('/') === 0) {
         path = path.substr(1)
     }
 
-    let url = getExtensionURL(path)
+    const url = getExtensionURL(path)
 
     if (context === 'popup') {
-        let tab = safari.application.activeBrowserWindow.openTab()
+        const tab = safari.application.activeBrowserWindow.openTab()
         tab.url = url
         safari.self.hide()
     } else {
@@ -137,7 +137,7 @@ let openExtensionPage = (path) => {
     }
 }
 
-let openOptionsPage = () => {
+const openOptionsPage = () => {
     openExtensionPage('/html/options.html')
 }
 

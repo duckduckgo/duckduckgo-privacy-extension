@@ -15,15 +15,15 @@
  *      }
  */
 const gradeIconLocations = {
-    'A': 'img/toolbar-rating-a.svg',
+    A: 'img/toolbar-rating-a.svg',
     'B+': 'img/toolbar-rating-b-plus.svg',
-    'B': 'img/toolbar-rating-b.svg',
+    B: 'img/toolbar-rating-b.svg',
     'C+': 'img/toolbar-rating-c-plus.svg',
-    'C': 'img/toolbar-rating-c.svg',
-    'D': 'img/toolbar-rating-d.svg',
+    C: 'img/toolbar-rating-c.svg',
+    D: 'img/toolbar-rating-d.svg',
     // we don't currently show the D- grade
     'D-': 'img/toolbar-rating-d.svg',
-    'F': 'img/toolbar-rating-f.svg'
+    F: 'img/toolbar-rating-f.svg'
 }
 
 const Site = require('./site.es6')
@@ -59,7 +59,7 @@ class Tab {
 
     resetBadgeIcon () {
         // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
+        browserWrapper.setBadgeIcon({ path: 'img/icon_48.png', tabId: this.id })
     }
 
     updateBadgeIcon (target) {
@@ -69,7 +69,7 @@ class Tab {
             this.resetBadgeIcon()
         } else {
             let gradeIcon
-            let grade = this.site.grade.get()
+            const grade = this.site.grade.get()
 
             if (this.site.whitelisted) {
                 gradeIcon = gradeIconLocations[grade.site.grade]
@@ -77,7 +77,7 @@ class Tab {
                 gradeIcon = gradeIconLocations[grade.enhanced.grade]
             }
 
-            let badgeData = {path: gradeIcon, tabId: this.id}
+            const badgeData = { path: gradeIcon, tabId: this.id }
             if (target) badgeData.target = target
 
             browserWrapper.setBadgeIcon(badgeData)
@@ -96,12 +96,12 @@ class Tab {
 
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
-        let tracker = this.trackers[t.tracker.owner.name]
+        const tracker = this.trackers[t.tracker.owner.name]
         if (tracker) {
             tracker.increment()
             tracker.update(t)
         } else {
-            let newTracker = new Tracker(t)
+            const newTracker = new Tracker(t)
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
@@ -112,12 +112,12 @@ class Tab {
     };
 
     addOrUpdateTrackersBlocked (t) {
-        let tracker = this.trackersBlocked[t.tracker.owner.name]
+        const tracker = this.trackersBlocked[t.tracker.owner.name]
         if (tracker) {
             tracker.increment()
             tracker.update(t)
         } else {
-            let newTracker = new Tracker(t)
+            const newTracker = new Tracker(t)
             this.trackersBlocked[newTracker.parentCompany.name] = newTracker
             return newTracker
         }

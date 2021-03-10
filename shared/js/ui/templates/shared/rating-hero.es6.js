@@ -69,13 +69,13 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
     let msg = 'Privacy Grade'
     // site is whitelisted
     if (!isActive) {
-        msg = `Privacy Protection Disabled`
+        msg = 'Privacy Protection Disabled'
         // "null" state (empty tab, browser's "about:" pages)
     } else if (!isCalculating && !rating.before && !rating.after) {
-        msg = `We only grade regular websites`
+        msg = 'We only grade regular websites'
         // rating is still calculating
     } else if (isCalculating) {
-        msg = `Calculating...`
+        msg = 'Calculating...'
     }
 
     return bel`${msg}`

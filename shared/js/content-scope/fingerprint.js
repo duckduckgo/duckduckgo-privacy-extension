@@ -1,7 +1,7 @@
 /* global sjcl */
 function getCanvasKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
-    let hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
+    const hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
     return sjcl.codec.hex.fromBits(hmac.encrypt(inputData))
 }
 
@@ -10,10 +10,10 @@ function nextRandom (v) {
     return Math.abs((v >> 1) | (((v << 62) ^ (v << 61)) & (~(~0 << 63) << 62)))
 }
 
-let exemptionList = []
+const exemptionList = []
 
 function shouldExemptUrl (url) {
-    for (let regex of exemptionList) {
+    for (const regex of exemptionList) {
         if (regex.test(url)) {
             return true
         }
@@ -22,7 +22,7 @@ function shouldExemptUrl (url) {
 }
 
 function initExemptionList (stringExemptionList) {
-    for (let stringExemption of stringExemptionList) {
+    for (const stringExemption of stringExemptionList) {
         exemptionList.push(new RegExp(stringExemption))
     }
 }
@@ -30,14 +30,14 @@ function initExemptionList (stringExemptionList) {
 // Checks the stack trace if there are known libraries that are broken.
 function shouldExemptMethod () {
     try {
-        let errorLines = new Error().stack.split('\n')
-        let errorFiles = new Set()
+        const errorLines = new Error().stack.split('\n')
+        const errorFiles = new Set()
         // Should cater for Chrome and Firefox stacks, we only care about https? resources.
-        let lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
-        for (let line of errorLines) {
-            let res = line.match(lineTest)
+        const lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
+        for (const line of errorLines) {
+            const res = line.match(lineTest)
             if (res) {
-                let path = res[2]
+                const path = res[2]
                 // checked already
                 if (errorFiles.has(path)) {
                     continue
@@ -54,62 +54,98 @@ function shouldExemptMethod () {
     return false
 }
 
+function modifyPixelData (imageData, domainKey, sessionKey) {
+    const arr = []
+    // We calculate a checksum as passing imageData as a key is too slow.
+    // We might want to do something more pseudo random that is less observable through timing attacks and collisions (but this will come at a performance cost)
+    let checkSum = 0
+    // Create an array of only pixels that have data in them
+    for (let i = 0; i < imageData.data.length; i++) {
+        const d = imageData.data.subarray(i, i + 4)
+        // Ignore non blank pixels there is high chance compression ignores them
+        const sum = d[0] + d[1] + d[2] + d[3]
+        if (sum !== 0) {
+            checkSum += sum
+            arr.push(i)
+        }
+    }
+
+    const canvasKey = getCanvasKeySync(sessionKey, domainKey, checkSum)
+    let pixel = canvasKey.charCodeAt(0)
+    const length = arr.length
+    for (const i in canvasKey) {
+        let byte = canvasKey.charCodeAt(i)
+        for (let j = 8; j >= 0; j--) {
+            const channel = byte % 3
+            const lookupId = pixel % length
+            const pixelCanvasIndex = arr[lookupId] + channel
+
+            imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
+
+            // find next pixel to perturb
+            pixel = nextRandom(pixel)
+
+            // Right shift as we use the least significant bit of it
+            byte = byte >> 1
+        }
+    }
+    return imageData
+}
+
 // eslint-disable-next-line no-unused-vars
 function initCanvasProtection (args) {
-    let { sessionKey, stringExemptionList, site } = args
+    const { sessionKey, stringExemptionList, site } = args
     initExemptionList(stringExemptionList)
     const domainKey = site.domain
 
+    const _getImageData = CanvasRenderingContext2D.prototype.getImageData
+    function computeOffScreenCanvas (canvas) {
+        const ctx = canvas.getContext('2d')
+        // We *always* compute the random pixels on the complete pixel set, then pass back the subset later
+        let imageData = _getImageData.apply(ctx, [0, 0, canvas.width, canvas.height])
+        imageData = modifyPixelData(imageData, sessionKey, domainKey)
+
+        // Make a off-screen canvas and put the data there
+        const offScreenCanvas = document.createElement('canvas')
+        offScreenCanvas.width = canvas.width
+        offScreenCanvas.height = canvas.height
+        const offScreenCtx = offScreenCanvas.getContext('2d')
+        offScreenCtx.putImageData(imageData, 0, 0)
+
+        return { offScreenCanvas, offScreenCtx }
+    }
+
     // Using proxies here to swallow calls to toString etc
-    const getImageDataProxy = new Proxy(CanvasRenderingContext2D.prototype.getImageData, {
+    const getImageDataProxy = new Proxy(_getImageData, {
         apply (target, thisArg, args) {
             // The normal return value
-            const imageData = target.apply(thisArg, args)
             if (shouldExemptMethod()) {
+                const imageData = target.apply(thisArg, args)
                 return imageData
             }
             // Anything we do here should be caught and ignored silently
             try {
-                const canvasKey = getCanvasKeySync(sessionKey, domainKey, imageData)
-                let pixel = canvasKey[0]
-                for (let i in canvasKey) {
-                    let byte = canvasKey[i]
-                    for (let j = 8; j >= 0; j--) {
-                        let pixelCanvasIndex = pixel % imageData.data.length
-
-                        imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
-                        // find next pixel to perturb
-                        pixel = nextRandom(pixel)
-
-                        // Right shift as we use the least significant bit of it
-                        byte = byte >> 1
-                    }
-                }
+                const { offScreenCtx } = computeOffScreenCanvas(thisArg.canvas)
+                // Call the original method on the modified off-screen canvas
+                return target.apply(offScreenCtx, args)
             } catch {
             }
+
+            const imageData = target.apply(thisArg, args)
             return imageData
         }
     })
     CanvasRenderingContext2D.prototype.getImageData = getImageDataProxy
 
-    let canvasMethods = ['toDataURL', 'toBlob']
-    for (let methodName of canvasMethods) {
+    const canvasMethods = ['toDataURL', 'toBlob']
+    for (const methodName of canvasMethods) {
         const methodProxy = new Proxy(HTMLCanvasElement.prototype[methodName], {
             apply (target, thisArg, args) {
                 if (shouldExemptMethod()) {
                     return target.apply(thisArg, args)
                 }
                 try {
-                    let ctx = thisArg.getContext('2d')
-                    let imageData = ctx.getImageData(0, 0, thisArg.width, thisArg.height)
-
-                    // Make a off-screen canvas and put the data there
-                    let offScreenCanvas = document.createElement('canvas')
-                    offScreenCanvas.width = thisArg.width
-                    offScreenCanvas.height = thisArg.height
-                    let offScreenCtx = offScreenCanvas.getContext('2d')
-                    offScreenCtx.putImageData(imageData, 0, 0)
-
+                    const { offScreenCanvas } = computeOffScreenCanvas(thisArg.canvas)
                     // Call the original method on the modified off-screen canvas
                     return target.apply(offScreenCanvas, args)
                 } catch {
