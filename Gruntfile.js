@@ -179,9 +179,6 @@ module.exports = function (grunt) {
             copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
-            // replace `/* __ */ 'https://duckduckgo.com' /* __ */` in content-scripts/onboarding.js for local dev
-            // make sure that sed works on both linux and OSX (see https://stackoverflow.com/questions/5694228/sed-in-place-flag-that-works-both-on-mac-bsd-and-linux)
-            devifyOnboarding: `sed -i.bak "s/\\/\\* __ \\*\\/ 'https:\\/\\/duckduckgo\\.com' \\/\\* __ \\*\\//'*'/" build/${browser}/${buildType}/public/js/content-scripts/onboarding.js && rm build/${browser}/${buildType}/public/js/content-scripts/onboarding.js.bak`,
             tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
             mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
             mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
@@ -214,7 +211,7 @@ module.exports = function (grunt) {
             },
             contentScripts: {
                 files: watch.contentScripts,
-                tasks: ['exec:copyContentScripts', 'exec:devifyOnboarding']
+                tasks: ['exec:copyContentScripts']
             },
             data: {
                 files: watch.data,
@@ -248,7 +245,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyInjectedContentScripts', 'exec:copyContentScope', 'execute:preProcessLists', 'safari'])
 
-    const devTasks = ['build', 'exec:devifyOnboarding']
+    const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)
