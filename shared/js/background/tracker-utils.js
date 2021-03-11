@@ -62,15 +62,14 @@ function getDomainsToExludeByNetwork () {
 
 // Return true if URL is in our click to load tracker list
 function getSocialTracker (url) {
-    const domain = tldts.parse(url).domain
+    const parsedDomain = tldts.parse(url)
     for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-        if (data.domains.includes(domain)) {
+        if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
             let redirect
             if (data.surrogates) {
                 for (const surrogate of data.surrogates) {
                     if (url.match(surrogate.rule)) {
-                        const dataURL = trackers.surrogateList[surrogate.surrogate]
-                        redirect = surrogate.surrogate //dataURL
+                        redirect = surrogate.surrogate
                     }
                 }
             }
@@ -86,7 +85,7 @@ function getSocialTracker (url) {
 // Determine if a given URL is surrogate redirect.
 function getXraySurrogate (url) {
     const u = new URL(url)
-    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+    for (const [, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.surrogates) {
             for (const surrogate of data.surrogates) {
                 if (u.pathname === `/web_accessible_resources/${surrogate.surrogate}`) {
@@ -98,10 +97,22 @@ function getXraySurrogate (url) {
     return undefined
 }
 
+// Ensure we allow logged in sites to access facebook
+const logins = []
+function allowSocialLogin (url) {
+    const domain = utils.extractHostFromURL(url)
+    if (!logins.includes(domain)) {
+        logins.push(domain)
+    }
+}
+
 /**
  * Return true if the user has permanently saved the domain/tracker combination
  */
 function socialTrackerIsAllowedByUser (trackerEntity, domain) {
+    if (logins.includes(domain)) {
+        return true
+    }
     let allowList = settings.getSetting('clickToLoad')
     if (allowList) {
         allowList = allowList.filter(e => e.domain === domain && e.tracker === trackerEntity)
@@ -169,5 +180,6 @@ module.exports = {
     socialTrackerIsAllowedByUser: socialTrackerIsAllowedByUser,
     shouldBlockSocialNetwork: shouldBlockSocialNetwork,
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
-    getXraySurrogate: getXraySurrogate
+    getXraySurrogate: getXraySurrogate,
+    allowSocialLogin: allowSocialLogin
 }

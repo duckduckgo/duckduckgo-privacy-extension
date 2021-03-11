@@ -238,7 +238,7 @@
         clickFunction (originalElement, replacementElement) {
             return function handleClick (e) {
                 if (e.isTrusted) {
-                    enableSocialTracker(this.entity)
+                    enableSocialTracker(this.entity, false, false)
                     const parent = replacementElement.parentNode
                     const fbContainer = document.createElement('div')
                     const fadeIn = document.createElement('div')
@@ -394,11 +394,13 @@
         }
     }
 
-    function enableSocialTracker (entity) {
-        chrome.runtime.sendMessage({
+    function enableSocialTracker (entity, alwaysAllow, isLogin) {
+        const message = {
             'enableSocialTracker': entity,
-            'alwaysAllow': false
-        })
+            'alwaysAllow': alwaysAllow,
+            'isLogin': isLogin
+        }
+        chrome.runtime.sendMessage(message)
     }
 
     chrome.runtime.sendMessage({
@@ -527,7 +529,7 @@
         const msg = document.createElement('p')
         allowButton.addEventListener('click', function handleClick (e) {
             if (e.isTrusted) {
-                enableSocialTracker(entity)
+                enableSocialTracker(entity, false, false)
                 window.dispatchEvent(new CustomEvent(eventName))
                 const modalParent = element.parentNode
                 modalParent.removeChild(element)
@@ -568,17 +570,17 @@
 
         // Handle login call
         if (message.payload.fblogin) {
-            enableSocialTracker('Facebook')
+            enableSocialTracker('Facebook', false, true)
             window.dispatchEvent(new CustomEvent('RunFBLogin'))
-            //const body = document.body
-            //let e = createModal('Facebook', 'This site is trying to use login', 'RunFBLogin')
-            //body.insertBefore(e, body.childNodes[0])
         }
 
         if (message.payload.fbui) {
+            // Currently no action on custom UI buttons such as 'like'
+            /*
             const body = document.body
             let e = createModal('Facebook', 'This page is trying to use facebook social buttons, would you like to allow it?', 'LoadFBSDK')
             body.insertBefore(e, body.childNodes[0])
+            */
         }
     })
 })()

@@ -155,12 +155,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.initClickToLoad) {
         const tab = tabManager.get({ tabId: sender.tab.id })
         const config = {...tdsStorage.ClickToLoadConfig}
+
         // remove any social networks saved by the user
-        let allowList = settings.getSetting('clickToLoad')
-        if (allowList) {
-            allowList = allowList.filter(e => e.domain === tab.site.domain)
-            allowList.forEach(e => delete config[e.tracker])
+        for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+            if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
+                delete config[entity]
+            }
         }
+
         // if the current site is on the social exception list, remove it from the config.
         let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
         if (excludedNetworks) {
@@ -183,6 +185,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.enableSocialTracker) {
         const tab = tabManager.get({ tabId: sender.tab.id })
+        if (req.isLogin) {
+            trackerutils.allowSocialLogin(tab.site.domain)
+        }
         if (req.alwaysAllow) {
             settings.ready().then(() => {
                 let allowList = settings.getSetting('clickToLoad')
@@ -465,7 +470,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 chrome.webRequest.onBeforeRedirect.addListener(
     details => {
         let tab = tabManager.get({ tabId: details.tabId })
-        if (tab && !tab.site.isBroken && !tab.site.whitelisted) {
+        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders) {
             // Detect cors error
             const headers = details.responseHeaders
             const corsHeaders = [
@@ -500,15 +505,6 @@ chrome.webNavigation.onCommitted.addListener(details => {
         return
     }
     if (tab && !tab.site.whitelisted) {
-        /*
-        if (utils.getBrowserName() === 'moz') {
-            chrome.tabs.executeScript(details.tabId, {
-                file: `public/js/content-scripts/fb-surrogate-xray.js`,
-                matchAboutBlank: true,
-                frameId: details.frameId,
-                runAt: 'document_start'
-            })
-        }*/
         chrome.tabs.executeScript(details.tabId, {
             file: `public/js/content-scripts/click-to-load.js`,
             matchAboutBlank: true,

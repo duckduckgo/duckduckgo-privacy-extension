@@ -73,7 +73,6 @@
                 })
             },
             ui: function (obj, cb) {
-                console.log('Facebook UI called')
                 messageAddon({
                     'fbui': true
                 })
@@ -86,7 +85,6 @@
             getLoginStatus: function (callback) {callback({status: ''})},
             getUserID: function () {},
             login: function (cb, params) {
-                console.log('login called')
                 fbLogin.callback = cb
                 fbLogin.params = params
                 messageAddon({
@@ -112,7 +110,6 @@
         console.log('in FB surrogate')
         function init () {
             if (window.fbAsyncInit) {
-                console.log('Calling fbAsyncInit')
                 siteInit = window.fbAsyncInit
                 window.fbAsyncInit()
             }

@@ -99,10 +99,8 @@
                 FB.messageAddon({
                     'appID': obj.appId
                 })
-                console.log('in init')
             },
             ui: function (obj, cb) {
-                console.log('Facebook UI called')
                 FB.messageAddon({
                     'fbui': true
                 })
@@ -115,7 +113,6 @@
             getLoginStatus: function (callback) {callback({status: ''})},
             getUserID: function () {},
             login: function (cb, params) {
-                console.log('login called')
                 fbLogin.callback = cb
                 fbLogin.params = params
                 FB.messageAddon({
