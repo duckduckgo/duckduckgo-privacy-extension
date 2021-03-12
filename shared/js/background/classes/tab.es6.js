@@ -130,7 +130,7 @@ class Tab {
     };
 
     /**
-     * Adds an entry to the tab webResourceAccess list. 
+     * Adds an entry to the tab webResourceAccess list.
      * @param {string} URL to the web accessible resource
      * @returns {string} generated access key
      **/
@@ -163,7 +163,7 @@ class Tab {
         const hasAccess = this.webResourceAccess.some(resource => {
             if (resource.key === key && !resource.wasAccessed) {
                 resource.wasAccessed = true
-                if( (Date.now() - resource.time) < 1000) {
+                if ((Date.now() - resource.time) < 1000) {
                     return true
                 }
             }

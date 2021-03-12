@@ -347,7 +347,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                 const redirectUrl = tab.surrogates[e.url]
                 // remove redirect entry for the tab
                 delete tab.surrogates[e.url]
-                
+
                 return {redirectUrl}
             }
         }

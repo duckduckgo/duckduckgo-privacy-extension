@@ -155,7 +155,7 @@ function handleRequest (requestData) {
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
                     const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
-                    // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for 
+                    // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
                     // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
                     // in onBeforeSendHeaders
