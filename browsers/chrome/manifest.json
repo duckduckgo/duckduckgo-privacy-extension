@@ -41,7 +41,12 @@
         "all_frames": true,
         "css": ["public/css/noatb.css"],
         "run_at": "document_start"
-      }
+      },
+      {
+        "matches": ["*://*.duckduckgo.com/*"],
+        "js": ["public/js/content-scripts/chrome-dialogue.js"],
+        "run_at": "document_start"
+      }      
     ],
     "permissions": [
         "contextMenus",

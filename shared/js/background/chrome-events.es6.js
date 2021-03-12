@@ -8,6 +8,8 @@ const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
+const settings = require('./settings.es6')
+const createOnboardingCode = require('./onboarding.es6')
 const browser = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
@@ -26,7 +28,12 @@ function getHash () {
 
 chrome.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
-        ATB.updateATBValues()
+        settings.ready()
+            .then(() => {
+                settings.updateSetting('showWelcomeBanner', true)
+                settings.updateSetting('showCounterMessaging', true)
+            })
+            .then(ATB.updateATBValues)
             .then(ATB.openPostInstallPage)
             .then(function () {
                 if (browser === 'chrome') {
@@ -37,6 +44,108 @@ chrome.runtime.onInstalled.addListener(function (details) {
         experiment.setActiveExperiment()
     }
 })
+
+/**
+ * ONBOARDING
+ * Logic to allow the SERP to display onboarding UI
+ */
+
+/**
+  * !! This function _can_ be sync (`cb` is called in the same tick) if the settings are alrady loaded
+  */
+function getOnboardingParams (cb) {
+    function onReady () {
+        cb(null, {
+            showWelcomeBanner: settings.getSetting('showWelcomeBanner'),
+            showCounterMessaging: settings.getSetting('showCounterMessaging')
+        })
+    }
+
+    if (settings.isReady()) {
+        onReady()
+    } else {
+        settings.ready().then(onReady)
+    }
+}
+
+let onBeforeNavigateTimeStamp = null
+chrome.webNavigation.onBeforeNavigate.addListener(details => {
+    onBeforeNavigateTimeStamp = details.timeStamp
+})
+
+chrome.webNavigation.onCommitted.addListener(details => {
+    if (details.url.includes('duckduckgo.com/?') && new URL(details.url).searchParams.has('q')) {
+        const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
+        getOnboardingParams((err, { showWelcomeBanner, showCounterMessaging }) => {
+            if (err) {
+                console.error(chrome.runtime.lastError)
+            }
+
+            // We show the welcome banner and counter messaging only once
+            if (showWelcomeBanner || showCounterMessaging) {
+                if (showWelcomeBanner) {
+                    settings.removeSetting('showWelcomeBanner')
+                }
+                if (isAddressBarQuery && showCounterMessaging) {
+                    settings.removeSetting('showCounterMessaging')
+                }
+
+                if (onBeforeNavigateTimeStamp < details.timeStamp) {
+                    chrome.tabs.executeScript({
+                        code: createOnboardingCode({
+                            isAddressBarQuery,
+                            showWelcomeBanner,
+                            showCounterMessaging,
+                            browser,
+                            extensionId: chrome.runtime.id
+                        }),
+                        runAt: 'document_end'
+                    }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            console.error(chrome.runtime.lastError)
+                        }
+                    })
+                }
+            }
+        })
+    }
+})
+
+/**
+ * Health checks + `showCounterMessaging` mutation
+ * (Chrome only)
+ */
+if (browser === 'chrome') {
+    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+        if (request === 'healthCheckRequest') {
+            sendResponse(true)
+        } else if (request === 'rescheduleCounterMessagingRequest') {
+            const update = () => {
+                settings.updateSetting('rescheduleCounterMessagingOnStart', true)
+                sendResponse(true)
+            }
+            if (settings.isReady()) {
+                update()
+            } else {
+                settings.ready().then(update)
+            }
+        }
+    })
+
+    chrome.runtime.onStartup.addListener(() => {
+        const init = () => {
+            if (settings.getSetting('rescheduleCounterMessagingOnStart')) {
+                settings.removeSetting('rescheduleCounterMessagingOnStart')
+                settings.updateSetting('showCounterMessaging', true)
+            }
+        }
+        if (settings.isReady()) {
+            init()
+        } else {
+            settings.ready().then(init)
+        }
+    })
+}
 
 /**
  * REQUESTS
@@ -134,8 +243,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 /**
  * MESSAGES
  */
-
-const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
 
 // handle any messages that come from content/UI scripts

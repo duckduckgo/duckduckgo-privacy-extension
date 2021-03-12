@@ -95,5 +95,8 @@ module.exports = {
     updateSetting: updateSetting,
     removeSetting: removeSetting,
     logSettings: logSettings,
-    ready: ready
+    ready: ready,
+    isReady () {
+        return isReady
+    }
 }
