@@ -6,7 +6,7 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
-const webResourceURL = browserWrapper.getExtensionURL('/') + 'web_accessible_resources'
+const webResourceURL = browserWrapper.getExtensionURL('/web_accessible_resources')
 const browser = utils.getBrowserName()
 
 const debugRequest = false
