@@ -84,12 +84,10 @@ function onboarding () {
                                     )
                                 })
                             } catch (err) {
-                                if (err.message.includes('Extension context invalidated')) {
-                                    e.source.postMessage(
-                                        { type: 'healthCheckResponse', isAlive: false },
-                                        e.origin
-                                    )
-                                }
+                                e.source.postMessage(
+                                    { type: 'healthCheckResponse', isAlive: false },
+                                    e.origin
+                                )
                             }
                             break
                         }
