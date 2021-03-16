@@ -27,9 +27,12 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
             while (!iframeFullyLoaded) {
                 await wait.ms(100)
             }
-            await wait.ms(1000) // allow cookies to be set
             // collect all browser cookies
-            cookies = (await page._client.send('Network.getAllCookies')).cookies
+            do {
+                await wait.ms(1000) // allow cookies to be set
+                cookies = (await page._client.send('Network.getAllCookies')).cookies
+            } while (cookies.length === 0)
+            console.log('cookies', cookies)
         } finally {
             await page.close()
         }
