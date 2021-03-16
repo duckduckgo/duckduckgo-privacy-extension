@@ -74,40 +74,43 @@ chrome.webNavigation.onBeforeNavigate.addListener(details => {
 })
 
 chrome.webNavigation.onCommitted.addListener(details => {
-    if (details.url.includes('duckduckgo.com/?') && new URL(details.url).searchParams.has('q')) {
-        const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
-        getOnboardingParams((err, { showWelcomeBanner, showCounterMessaging }) => {
-            if (err) {
-                console.error(chrome.runtime.lastError)
-            }
-
-            // We show the welcome banner and counter messaging only once
-            if (showWelcomeBanner || showCounterMessaging) {
-                if (showWelcomeBanner) {
-                    settings.removeSetting('showWelcomeBanner')
-                }
-                if (isAddressBarQuery && showCounterMessaging) {
-                    settings.removeSetting('showCounterMessaging')
+    if (details.url.includes('duckduckgo.com/?')) {
+        const { hostname, searchParams } = new URL(details.url)
+        if (hostname.split('.').slice(-2).join('.') === 'duckduckgo.com' && searchParams.has('q')) {
+            const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
+            getOnboardingParams((err, { showWelcomeBanner, showCounterMessaging }) => {
+                if (err) {
+                    console.error(chrome.runtime.lastError)
                 }
 
-                if (onBeforeNavigateTimeStamp < details.timeStamp) {
-                    chrome.tabs.executeScript(details.tabId, {
-                        code: createOnboardingCode({
-                            isAddressBarQuery,
-                            showWelcomeBanner,
-                            showCounterMessaging,
-                            browser,
-                            extensionId: chrome.runtime.id
-                        }),
-                        runAt: 'document_end'
-                    }, (response) => {
-                        if (chrome.runtime.lastError) {
-                            console.error(chrome.runtime.lastError)
-                        }
-                    })
+                // We show the welcome banner and counter messaging only once
+                if (showWelcomeBanner || showCounterMessaging) {
+                    if (showWelcomeBanner) {
+                        settings.removeSetting('showWelcomeBanner')
+                    }
+                    if (isAddressBarQuery && showCounterMessaging) {
+                        settings.removeSetting('showCounterMessaging')
+                    }
+
+                    if (onBeforeNavigateTimeStamp < details.timeStamp) {
+                        chrome.tabs.executeScript(details.tabId, {
+                            code: createOnboardingCode({
+                                isAddressBarQuery,
+                                showWelcomeBanner,
+                                showCounterMessaging,
+                                browser,
+                                extensionId: chrome.runtime.id
+                            }),
+                            runAt: 'document_end'
+                        }, (response) => {
+                            if (chrome.runtime.lastError) {
+                                console.error(chrome.runtime.lastError)
+                            }
+                        })
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 })
 
