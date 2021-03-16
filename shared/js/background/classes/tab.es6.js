@@ -31,7 +31,7 @@ const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
-const webResourceKeyRegex = new RegExp(/.*\?key=(.*)/)
+const webResourceKeyRegex = /.*\?key=(.*)/
 
 class Tab {
     constructor (tabData) {
@@ -137,7 +137,7 @@ class Tab {
     addWebResourceAccess (resourceName) {
         // random 8-9 character key for web resource access
         const key = Math.floor(Math.random() * 10000000000).toString(16)
-        this.webResourceAccess.push({key, resourceName, time: Date.now(), wasAccessed: false})
+        this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false })
         return key
     };
 
@@ -167,6 +167,7 @@ class Tab {
                     return true
                 }
             }
+            return false
         })
 
         return hasAccess

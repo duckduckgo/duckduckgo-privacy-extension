@@ -48,7 +48,7 @@ function handleRequest (requestData) {
     // control access to web accessible resources
     if (requestData.url.startsWith(webResourceURL)) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
-            return {cancel: true}
+            return { cancel: true }
         }
     }
 
@@ -163,7 +163,7 @@ function handleRequest (requestData) {
                         thisTab.surrogates[requestData.url] = webResource
                     } else {
                         const key = thisTab.addWebResourceAccess(webResource)
-                        return {redirectUrl: `${webResource}?key=${key}`}
+                        return { redirectUrl: `${webResource}?key=${key}` }
                     }
                 } else {
                     requestData.message = { cancel: true }
