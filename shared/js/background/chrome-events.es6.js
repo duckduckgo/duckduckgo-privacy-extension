@@ -281,7 +281,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             shouldBlock: false,
             tabRegisteredDomain: null,
             isTrackerFrame: false,
-            policy: cookieConfig.firstPartyCookiePolicy,
+            policy: cookieConfig.firstPartyCookiePolicy
         }
         if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
             return true
