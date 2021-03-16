@@ -13,6 +13,8 @@ class AgentSpoofer {
     }
 
     getAgent () {
+        // TODO: Remove this when UA fixes occur
+        return this.realAgent
         if (this.needsRotation) {
             this.rotateAgent()
         }
@@ -23,6 +25,8 @@ class AgentSpoofer {
      * Select a new spoofed user agent to return.
      */
     rotateAgent () {
+        // TODO: remove this return when UA fixes occur
+        return
         const oldAgent = this.spoofedAgent
         this.spoofedAgent = this.selectAgent()
         console.log(`Rotated UserAgent. Old agent was: ${oldAgent}. New UserAgent: ${this.spoofedAgent}`)
@@ -33,6 +37,7 @@ class AgentSpoofer {
      *      browser & OS faimly should be the same
      *      Browser major version should be +/- 3 versions
      *      OS major version should remain the same
+     * TODO: The list to pick from is no longer updated correctly.
     **/
     selectAgent () {
         const agentList = this.filterAgents(agentStorage.agents)
