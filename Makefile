@@ -41,7 +41,8 @@ web-resources:
 	cp shared/data/web_accessible_resources/* build/$(browser)/$(type)/web_accessible_resources/
 	for f in build/$(browser)/$(type)/web_accessible_resources/*; do echo '' >> $$f; done
 	cat build/$(browser)/$(type)/web_accessible_resources/* >> build/$(browser)/$(type)/data/surrogates.txt
-	sed -i '' 's/^\/\///g' build/$(browser)/$(type)/data/surrogates.txt
+	sed -i.bak 's/^\/\///g' build/$(browser)/$(type)/data/surrogates.txt
+	rm build/$(browser)/$(type)/data/surrogates.txt.bak
 	for f in build/$(browser)/$(type)/web_accessible_resources/*; do echo "$$(sed '1d' $$f)" > $$f; done
 
 moveout: $(ITEMS)
