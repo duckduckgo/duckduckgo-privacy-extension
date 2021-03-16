@@ -15,7 +15,7 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
         try {
             page.on('requestfinished', (req) => {
                 // once we see this url, we can consider the test completed
-                if (req.url().startsWith(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/iframe.js`)) {
+                if (req.url().startsWith(`https://${thirdPartyTracker}/set-cookie`)) {
                     iframeFullyLoaded = true
                 }
             })
@@ -32,7 +32,6 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
                 await wait.ms(1000) // allow cookies to be set
                 cookies = (await page._client.send('Network.getAllCookies')).cookies
             } while (cookies.length === 0)
-            console.log('cookies', cookies)
         } finally {
             await page.close()
         }
@@ -71,13 +70,13 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
     it('does not block 1st party JS cookies set by non-trackers', () => {
         const jsCookie = cookies.find(({ name, domain }) => name === 'tpsdata' && domain === testPageDomain)
         expect(jsCookie).toBeTruthy()
-        expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000 + 864000) // 10 days in the future
+        expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000 + 950400) // 11 days in the future
     })
 
     it('reduces the expiry of 1st party JS cookies set by trackers to 8 days', () => {
         const jsCookie = cookies.find(({ name, domain }) => name === 'tptdata' && domain === testPageDomain)
         expect(jsCookie).toBeTruthy()
         expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
-        expect(jsCookie.expires).toBeLessThan(Date.now() / 1000 + 691200) // 8 days in the future
+        expect(jsCookie.expires).toBeLessThan(Date.now() / 1000 + 864000) // 10 days in the future
     })
 })
