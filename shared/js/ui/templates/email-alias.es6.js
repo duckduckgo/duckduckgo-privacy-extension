@@ -2,7 +2,7 @@ const bel = require('bel')
 const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 
 module.exports = function () {
-    if (this.model.userData.nextAlias) {
+    if (this.model.userData && this.model.userData.nextAlias) {
         return bel`
             <div class="js-email-alias email-alias-block padded">
                 <span class="email-alias__icon"></span>

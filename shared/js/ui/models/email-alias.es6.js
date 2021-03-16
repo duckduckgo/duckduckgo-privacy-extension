@@ -12,6 +12,10 @@ EmailAliasModel.prototype = window.$.extend({},
 
         getUserData: function () {
             return this.fetch({getSetting: {name: 'userData'}}).then(userData => userData)
+        },
+
+        logout: function () {
+            return this.fetch({logout: true}).then(() => this.set('userData', undefined))
         }
     }
 )

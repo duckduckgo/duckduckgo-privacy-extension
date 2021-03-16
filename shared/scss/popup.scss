@@ -131,7 +131,7 @@ body {
        }
 
        .site-info__whitelist-status.is-transparent, .site-info__confirm-thanks.is-transparent {
-           margin-top: -18px; 
+           margin-top: -18px;
 
            .icon.icon__check,
            .icon.icon__shield,
@@ -282,7 +282,7 @@ body {
         .site-info__privacy-practices__icon {
             @include icon_display();
             @include site_status_icons();
-            
+
             &.is-good {
                 @include cross_platform_bg_image($status--good);
             }
@@ -300,7 +300,7 @@ body {
         .site-info__li--manage-whitelist {
             background-color: $white;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
-            text-align: center; 
+            text-align: center;
 
             .is-disabled & {
                 @include is_disabled();
@@ -649,6 +649,7 @@ body {
 @import "views/privacy-practices";
 @import "views/tracker-networks";
 @import "views/breakage-form";
+@import "views/email-autofill-menu";
 
 /* Generic menu list styling */
 @include default_list();

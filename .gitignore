@@ -12,5 +12,6 @@ public/css/*.*
 build/firefox
 build/chrome
 build/safari
+build/safari14-email-autofill
 build/test
 test/background.js

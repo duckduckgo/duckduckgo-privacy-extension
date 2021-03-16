@@ -138,7 +138,7 @@ class FormAnalyzer {
         }
         // if a link points to relevant urls or contain contents outside the page…
         if (
-            this.elementIs(el, 'A') && el.href && el.href !== '#' ||
+            (this.elementIs(el, 'A') && el.href && el.href !== '#') ||
             (el.getAttribute('role') || '').toUpperCase() === 'LINK'
         ) {
             // …and matches one of the regexes, we assume the match is not pertinent to the current form

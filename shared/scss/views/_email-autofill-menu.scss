@@ -1,0 +1,69 @@
+#email-autofill-menu {
+  .email-header  {
+    @include cross_platform_bg_image("logo-small.svg");
+    background-position: 16px;
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+    color: $color--grey;
+    font-weight: 800;
+    margin-top: -60px;
+    letter-spacing: 0.1px;
+    line-height: 1;
+    padding: 22px 48px 20px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .text-line-after-icon {
+    margin-left: 16px;
+  }
+
+  .email-menu-items {
+    align-items: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+  }
+
+  .email-dashboard__icon {
+    @include icon_display();
+    @include cross_platform_bg_image("dashboard-icon.svg");
+  }
+
+  .email-feedback__icon {
+    @include icon_display();
+    @include cross_platform_bg_image("feedback-icon.svg");
+  }
+
+  .email-turn-off__icon {
+    @include icon_display();
+    @include cross_platform_bg_image("turn-off-email-icon.svg");
+  }
+
+  &.email-autofill-menu--enabled + #email-alias-container {
+    background-color: #fbfbfb;
+
+    .text-line-after-icon {
+      margin-left: 16px;
+    }
+
+    .email-alias__icon {
+      @include icon_display();
+      @include cross_platform_bg_image("wand-glyph.svg");
+      margin: 0;
+    }
+
+    .email-alias-block {
+      padding-left: 20px;
+    }
+
+    .email-site-access {
+      color: $color--grey;
+      font-size: 11px;
+      padding-left: 20px;
+      position: relative;
+      top: -14px;
+    }
+  }
+}
+
+

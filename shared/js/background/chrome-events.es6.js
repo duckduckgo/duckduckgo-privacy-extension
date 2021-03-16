@@ -136,7 +136,6 @@ const {
     showContextMenuAction,
     hideContextMenuAction
 } = require('./email-utils.es6')
-const tldts = require('tldts')
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response

@@ -1,0 +1,530 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		335B546325FBEC83006306E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335B546225FBEC83006306E1 /* AppDelegate.swift */; };
+		335B546625FBEC83006306E1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 335B546425FBEC83006306E1 /* Main.storyboard */; };
+		335B546825FBEC83006306E1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335B546725FBEC83006306E1 /* ViewController.swift */; };
+		335B546A25FBEC84006306E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 335B546925FBEC84006306E1 /* Assets.xcassets */; };
+		335B547125FBEC84006306E1 /* DuckDuckGo Email Protection Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 335B547025FBEC84006306E1 /* DuckDuckGo Email Protection Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		335B547625FBEC84006306E1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 335B547525FBEC84006306E1 /* Cocoa.framework */; };
+		335B547925FBEC84006306E1 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335B547825FBEC84006306E1 /* SafariWebExtensionHandler.swift */; };
+		335B548C25FBEC85006306E1 /* test in Resources */ = {isa = PBXBuildFile; fileRef = 335B548625FBEC85006306E1 /* test */; };
+		335B548D25FBEC85006306E1 /* html in Resources */ = {isa = PBXBuildFile; fileRef = 335B548725FBEC85006306E1 /* html */; };
+		335B548E25FBEC85006306E1 /* img in Resources */ = {isa = PBXBuildFile; fileRef = 335B548825FBEC85006306E1 /* img */; };
+		335B548F25FBEC85006306E1 /* public in Resources */ = {isa = PBXBuildFile; fileRef = 335B548925FBEC85006306E1 /* public */; };
+		335B549025FBEC85006306E1 /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 335B548A25FBEC85006306E1 /* manifest.json */; };
+		335B549125FBEC85006306E1 /* data in Resources */ = {isa = PBXBuildFile; fileRef = 335B548B25FBEC85006306E1 /* data */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		335B547225FBEC84006306E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 335B545625FBEC83006306E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 335B546F25FBEC84006306E1;
+			remoteInfo = "DuckDuckGo Email Protection Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		335B548125FBEC84006306E1 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				335B547125FBEC84006306E1 /* DuckDuckGo Email Protection Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		335B545E25FBEC83006306E1 /* DuckDuckGo Email Protection.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DuckDuckGo Email Protection.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		335B546125FBEC83006306E1 /* DuckDuckGo_Email_Protection.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DuckDuckGo_Email_Protection.entitlements; sourceTree = "<group>"; };
+		335B546225FBEC83006306E1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		335B546525FBEC83006306E1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		335B546725FBEC83006306E1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		335B546925FBEC84006306E1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		335B546B25FBEC84006306E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		335B547025FBEC84006306E1 /* DuckDuckGo Email Protection Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "DuckDuckGo Email Protection Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		335B547525FBEC84006306E1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		335B547825FBEC84006306E1 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		335B547A25FBEC84006306E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		335B547B25FBEC84006306E1 /* DuckDuckGo_Email_Protection_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DuckDuckGo_Email_Protection_Extension.entitlements; sourceTree = "<group>"; };
+		335B548625FBEC85006306E1 /* test */ = {isa = PBXFileReference; lastKnownFileType = folder; name = test; path = "../../../../build/safari14-email-autofill/dev/test"; sourceTree = "<group>"; };
+		335B548725FBEC85006306E1 /* html */ = {isa = PBXFileReference; lastKnownFileType = folder; name = html; path = "../../../../build/safari14-email-autofill/dev/html"; sourceTree = "<group>"; };
+		335B548825FBEC85006306E1 /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; name = img; path = "../../../../build/safari14-email-autofill/dev/img"; sourceTree = "<group>"; };
+		335B548925FBEC85006306E1 /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; name = public; path = "../../../../build/safari14-email-autofill/dev/public"; sourceTree = "<group>"; };
+		335B548A25FBEC85006306E1 /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = "../../../../build/safari14-email-autofill/dev/manifest.json"; sourceTree = "<group>"; };
+		335B548B25FBEC85006306E1 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = "../../../../build/safari14-email-autofill/dev/data"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		335B545B25FBEC83006306E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		335B546D25FBEC84006306E1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				335B547625FBEC84006306E1 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		335B545525FBEC83006306E1 = {
+			isa = PBXGroup;
+			children = (
+				335B546025FBEC83006306E1 /* DuckDuckGo Email Protection */,
+				335B547725FBEC84006306E1 /* DuckDuckGo Email Protection Extension */,
+				335B547425FBEC84006306E1 /* Frameworks */,
+				335B545F25FBEC83006306E1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		335B545F25FBEC83006306E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				335B545E25FBEC83006306E1 /* DuckDuckGo Email Protection.app */,
+				335B547025FBEC84006306E1 /* DuckDuckGo Email Protection Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		335B546025FBEC83006306E1 /* DuckDuckGo Email Protection */ = {
+			isa = PBXGroup;
+			children = (
+				335B546125FBEC83006306E1 /* DuckDuckGo_Email_Protection.entitlements */,
+				335B546225FBEC83006306E1 /* AppDelegate.swift */,
+				335B546425FBEC83006306E1 /* Main.storyboard */,
+				335B546725FBEC83006306E1 /* ViewController.swift */,
+				335B546925FBEC84006306E1 /* Assets.xcassets */,
+				335B546B25FBEC84006306E1 /* Info.plist */,
+			);
+			path = "DuckDuckGo Email Protection";
+			sourceTree = "<group>";
+		};
+		335B547425FBEC84006306E1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				335B547525FBEC84006306E1 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		335B547725FBEC84006306E1 /* DuckDuckGo Email Protection Extension */ = {
+			isa = PBXGroup;
+			children = (
+				335B548525FBEC85006306E1 /* Resources */,
+				335B547825FBEC84006306E1 /* SafariWebExtensionHandler.swift */,
+				335B547A25FBEC84006306E1 /* Info.plist */,
+				335B547B25FBEC84006306E1 /* DuckDuckGo_Email_Protection_Extension.entitlements */,
+			);
+			path = "DuckDuckGo Email Protection Extension";
+			sourceTree = "<group>";
+		};
+		335B548525FBEC85006306E1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				335B548625FBEC85006306E1 /* test */,
+				335B548725FBEC85006306E1 /* html */,
+				335B548825FBEC85006306E1 /* img */,
+				335B548925FBEC85006306E1 /* public */,
+				335B548A25FBEC85006306E1 /* manifest.json */,
+				335B548B25FBEC85006306E1 /* data */,
+			);
+			name = Resources;
+			path = "DuckDuckGo Email Protection Extension";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		335B545D25FBEC83006306E1 /* DuckDuckGo Email Protection */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 335B548225FBEC84006306E1 /* Build configuration list for PBXNativeTarget "DuckDuckGo Email Protection" */;
+			buildPhases = (
+				335B545A25FBEC83006306E1 /* Sources */,
+				335B545B25FBEC83006306E1 /* Frameworks */,
+				335B545C25FBEC83006306E1 /* Resources */,
+				335B548125FBEC84006306E1 /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				335B547325FBEC84006306E1 /* PBXTargetDependency */,
+			);
+			name = "DuckDuckGo Email Protection";
+			productName = "DuckDuckGo Email Protection";
+			productReference = 335B545E25FBEC83006306E1 /* DuckDuckGo Email Protection.app */;
+			productType = "com.apple.product-type.application";
+		};
+		335B546F25FBEC84006306E1 /* DuckDuckGo Email Protection Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 335B547E25FBEC84006306E1 /* Build configuration list for PBXNativeTarget "DuckDuckGo Email Protection Extension" */;
+			buildPhases = (
+				335B546C25FBEC84006306E1 /* Sources */,
+				335B546D25FBEC84006306E1 /* Frameworks */,
+				335B546E25FBEC84006306E1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DuckDuckGo Email Protection Extension";
+			productName = "DuckDuckGo Email Protection Extension";
+			productReference = 335B547025FBEC84006306E1 /* DuckDuckGo Email Protection Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		335B545625FBEC83006306E1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					335B545D25FBEC83006306E1 = {
+						CreatedOnToolsVersion = 12.4;
+					};
+					335B546F25FBEC84006306E1 = {
+						CreatedOnToolsVersion = 12.4;
+					};
+				};
+			};
+			buildConfigurationList = 335B545925FBEC83006306E1 /* Build configuration list for PBXProject "DuckDuckGo Email Protection" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 335B545525FBEC83006306E1;
+			productRefGroup = 335B545F25FBEC83006306E1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				335B545D25FBEC83006306E1 /* DuckDuckGo Email Protection */,
+				335B546F25FBEC84006306E1 /* DuckDuckGo Email Protection Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		335B545C25FBEC83006306E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				335B546A25FBEC84006306E1 /* Assets.xcassets in Resources */,
+				335B546625FBEC83006306E1 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		335B546E25FBEC84006306E1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				335B548E25FBEC85006306E1 /* img in Resources */,
+				335B548F25FBEC85006306E1 /* public in Resources */,
+				335B549025FBEC85006306E1 /* manifest.json in Resources */,
+				335B548C25FBEC85006306E1 /* test in Resources */,
+				335B549125FBEC85006306E1 /* data in Resources */,
+				335B548D25FBEC85006306E1 /* html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		335B545A25FBEC83006306E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				335B546825FBEC83006306E1 /* ViewController.swift in Sources */,
+				335B546325FBEC83006306E1 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		335B546C25FBEC84006306E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				335B547925FBEC84006306E1 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		335B547325FBEC84006306E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 335B546F25FBEC84006306E1 /* DuckDuckGo Email Protection Extension */;
+			targetProxy = 335B547225FBEC84006306E1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		335B546425FBEC83006306E1 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				335B546525FBEC83006306E1 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		335B547C25FBEC84006306E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		335B547D25FBEC84006306E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		335B547F25FBEC84006306E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "DuckDuckGo Email Protection Extension/DuckDuckGo_Email_Protection_Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "DuckDuckGo Email Protection Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.duckduckgo.DuckDuckGo-Email-Protection.Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		335B548025FBEC84006306E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "DuckDuckGo Email Protection Extension/DuckDuckGo_Email_Protection_Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "DuckDuckGo Email Protection Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.duckduckgo.DuckDuckGo-Email-Protection.Extension";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		335B548325FBEC84006306E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DuckDuckGo Email Protection/DuckDuckGo_Email_Protection.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "DuckDuckGo Email Protection/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.duckduckgo.DuckDuckGo-Email-Protection";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		335B548425FBEC84006306E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "DuckDuckGo Email Protection/DuckDuckGo_Email_Protection.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "DuckDuckGo Email Protection/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.duckduckgo.DuckDuckGo-Email-Protection";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		335B545925FBEC83006306E1 /* Build configuration list for PBXProject "DuckDuckGo Email Protection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				335B547C25FBEC84006306E1 /* Debug */,
+				335B547D25FBEC84006306E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		335B547E25FBEC84006306E1 /* Build configuration list for PBXNativeTarget "DuckDuckGo Email Protection Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				335B547F25FBEC84006306E1 /* Debug */,
+				335B548025FBEC84006306E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		335B548225FBEC84006306E1 /* Build configuration list for PBXNativeTarget "DuckDuckGo Email Protection" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				335B548325FBEC84006306E1 /* Debug */,
+				335B548425FBEC84006306E1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 335B545625FBEC83006306E1 /* Project object */;
+}

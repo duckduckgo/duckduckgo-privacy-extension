@@ -6,7 +6,7 @@ function EmailAliasView (ops) {
     this.template = ops.template
 
     this.model.getUserData().then(userData => {
-        this.model.userData = userData
+        this.model.set('userData', userData)
         Parent.call(this, ops)
         this._setup()
     })
@@ -16,14 +16,16 @@ EmailAliasView.prototype = window.$.extend({},
     Parent.prototype,
     {
         _copyAliasToClipboard: function () {
-            this.model.fetch({getAlias: true}).then(({alias}) => {
-                navigator.clipboard.writeText(alias)
-                this.$el.addClass('show-copied-label')
-                this.$el.one('animationend', () => {
-                    this.$el.removeClass('show-copied-label')
-                })
-                this.model.fetch({ refreshAlias: true })
+            const alias = this.model.userData.nextAlias
+            navigator.clipboard.writeText(alias)
+            this.$el.addClass('show-copied-label')
+            this.$el.one('animationend', () => {
+                this.$el.removeClass('show-copied-label')
             })
+            this.model.fetch({ refreshAlias: true }).then(({ alias }) => {
+                this.model.userData.nextAlias = alias
+            })
+
         },
 
         _setup: function () {

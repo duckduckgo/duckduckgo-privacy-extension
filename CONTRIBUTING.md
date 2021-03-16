@@ -49,6 +49,50 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
   The Safari extension is no longer supported.
 
+- Safari 14 Email Autofill
+
+This is a cut-down version of the extension specifically to support email autofill in Safari 14.
+
+Follow these instructions to make sure that your Safari has development settings enabled: https://developer.apple.com/documentation/safariservices/safari_app_extensions/building_a_safari_app_extension#2957926
+
+ℹ️ **Remember:** The "Allow Unsigned Extensions" setting is reset when you quit Safari; you must set it again the next time Safari is launched!
+
+ 1. Run `npm run dev-safari14-email-autofill`
+ 2. Open the extension project in Xcode, which can be found at `browsers/safari14-email-autofill-xcode-project/DuckDuckGo Email Protection`
+ 3. Build the extension through Xcode (the "play" button in the toolbar), which will build and run the wrapping macOS app
+ 4. Make sure the extension is enabled by clicking the "Open Safari Extensions Preferences" button in the DuckDuckGo Email Protection app
+ 5. The extension icon should now be visible to the left of the URL bar in Safari
+
+In the event that the Xcode project needs to be recreated, this can be done using the conversion tool.
+```
+# Remove the existing project
+cd ./browsers/safari14-email-autofill-xcode-project
+rm -rf DuckDuckGo\ Email\ Protection
+
+# Run the build and ctrl+c when "Waiting..."
+npm run dev-safari14-email-autofill
+
+# In the `safari14-email-autofill-xcode-project` directory, run the Safari web extension convertor
+/Applications/Xcode.app/Contents/Developer/usr/bin/safari-web-extension-converter ../../build/safari14-email-autofill/dev/
+
+# Non-default changes
+# App Bundle Identifier: com.duckduckgo.DuckDuckGo-Email-Protection
+```
+Please note, that there are manual changes which will need to be applied after conversion:
+ - Open `Main.storyboard` and rename button to "Open Safari Extensions Preferences…"
+ - Enable "Hardened Runtime" by selecting the project (the top item in the list in the left menu). For each of the "Targets" in the project editor (**both** the app and the extension)
+    - Select "Signing & Capabilities", and then "+ Capability"
+    - Search and add "Hardened Runtime"
+    - Check the "Apple Events" from the "Resource Access" list
+ - Set team and signing certificate for each of the "Targets" in the project editor (**both** the app and the extension)
+    - Team should be "Duck Duck Go, Inc."
+    - Signing Certificate should be "Development"
+
+When you want to distribute your `.app` file, you can wrap it as a `.dmg`, which will make sure that the end user copies the `.app` file into the Application directory. Using [the `create-dmg` tool](https://github.com/create-dmg/create-dmg), from within the same directory as the `.app` file, run:
+```
+create-dmg --volname "DuckDuckGo Email Protection" --icon "DuckDuckGo Email Protection.app" 200 190 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 "DuckDuckGo Email Protection.dmg"
+```
+
 ### Development flow
 
 The `shared` directory contains JS, CSS, and images that are shared by all browsers.
