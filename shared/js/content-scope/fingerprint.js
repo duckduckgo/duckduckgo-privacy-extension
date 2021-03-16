@@ -98,19 +98,40 @@ function initCanvasProtection (args) {
     initExemptionList(stringExemptionList)
     const domainKey = site.domain
 
+    const _getImageData = CanvasRenderingContext2D.prototype.getImageData
+    function computeOffScreenCanvas (canvas) {
+        const ctx = canvas.getContext('2d')
+        // We *always* compute the random pixels on the complete pixel set, then pass back the subset later
+        let imageData = _getImageData.apply(ctx, [0, 0, canvas.width, canvas.height])
+        imageData = modifyPixelData(imageData, sessionKey, domainKey)
+
+        // Make a off-screen canvas and put the data there
+        const offScreenCanvas = document.createElement('canvas')
+        offScreenCanvas.width = canvas.width
+        offScreenCanvas.height = canvas.height
+        const offScreenCtx = offScreenCanvas.getContext('2d')
+        offScreenCtx.putImageData(imageData, 0, 0)
+
+        return { offScreenCanvas, offScreenCtx }
+    }
+
     // Using proxies here to swallow calls to toString etc
-    const getImageDataProxy = new Proxy(CanvasRenderingContext2D.prototype.getImageData, {
+    const getImageDataProxy = new Proxy(_getImageData, {
         apply (target, thisArg, args) {
             // The normal return value
-            const imageData = target.apply(thisArg, args)
             if (shouldExemptMethod()) {
+                const imageData = target.apply(thisArg, args)
                 return imageData
             }
             // Anything we do here should be caught and ignored silently
             try {
-                return modifyPixelData(imageData, sessionKey, domainKey)
-            } catch (e) {
+                const { offScreenCtx } = computeOffScreenCanvas(thisArg.canvas)
+                // Call the original method on the modified off-screen canvas
+                return target.apply(offScreenCtx, args)
+            } catch {
             }
+
+            const imageData = target.apply(thisArg, args)
             return imageData
         }
     })
@@ -124,16 +145,7 @@ function initCanvasProtection (args) {
                     return target.apply(thisArg, args)
                 }
                 try {
-                    const ctx = thisArg.getContext('2d')
-                    const imageData = ctx.getImageData(0, 0, thisArg.width, thisArg.height)
-
-                    // Make a off-screen canvas and put the data there
-                    const offScreenCanvas = document.createElement('canvas')
-                    offScreenCanvas.width = thisArg.width
-                    offScreenCanvas.height = thisArg.height
-                    const offScreenCtx = offScreenCanvas.getContext('2d')
-                    offScreenCtx.putImageData(imageData, 0, 0)
-
+                    const { offScreenCanvas } = computeOffScreenCanvas(thisArg.canvas)
                     // Call the original method on the modified off-screen canvas
                     return target.apply(offScreenCanvas, args)
                 } catch (e) {

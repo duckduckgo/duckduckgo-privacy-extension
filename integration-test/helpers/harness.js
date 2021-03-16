@@ -9,13 +9,19 @@ if (process.env.KEEP_OPEN) {
 const setup = async (ops) => {
     ops = ops || {}
 
+    const dataDir = process.env.CI ? `/tmp/profile${Math.random()}` : `temp-profile-${Math.random()}`
     const puppeteerOps = {
         args: [
             '--disable-extensions-except=build/chrome/dev',
             '--load-extension=build/chrome/dev',
-            `--user-data-dir=temp-profile-${Math.random()}`
+            `--user-data-dir=${dataDir}`
         ],
         headless: false
+    }
+
+    // github actions
+    if (process.env.CI) {
+        puppeteerOps.args.push('--no-sandbox')
     }
 
     if (process.env.TRAVIS) {
