@@ -14,6 +14,10 @@ const settings = require('./../settings.es6')
 class ExcludedCookieStorage {
     constructor () {
         this.excludedDomains = []
+        this.firstPartyCookiePolicy = {
+            threshold: 864000, // 10 days
+            maxAge: 864000 // 10 days
+        }
     }
 
     /**
@@ -56,6 +60,9 @@ class ExcludedCookieStorage {
         this.excludedDomains = []
         for (const record of data.excludedDomains) {
             this.excludedDomains.push(record.domain)
+        }
+        if (data.firstPartyTrackerCookiePolicy) {
+            this.firstPartyCookiePolicy = data.firstPartyTrackerCookiePolicy
         }
     }
 

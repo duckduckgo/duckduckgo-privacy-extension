@@ -281,10 +281,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             shouldBlock: false,
             tabRegisteredDomain: null,
             isTrackerFrame: false,
-            policy: {
-                threshold: 691200, // 8 days
-                maxAge: 691200 // 8 days
-            }
+            policy: cookieConfig.firstPartyCookiePolicy,
         }
         if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
             return true
