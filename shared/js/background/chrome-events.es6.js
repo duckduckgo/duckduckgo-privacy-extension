@@ -91,7 +91,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
                 }
 
                 if (onBeforeNavigateTimeStamp < details.timeStamp) {
-                    chrome.tabs.executeScript({
+                    chrome.tabs.executeScript(details.tabId, {
                         code: createOnboardingCode({
                             isAddressBarQuery,
                             showWelcomeBanner,

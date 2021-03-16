@@ -53,22 +53,6 @@ function onboarding () {
                 console.error(err)
             }
 
-            const args = Object.assign({
-                isAddressBarQuery,
-                showWelcomeBanner,
-                showCounterMessaging
-            }, documentStartData)
-
-            // the content script do not share the same `window` as the page
-            // so we inject a `<script>` to be able to access the page `window`
-            const script = document.createElement('script')
-            script.textContent = `
-                    if (window.onFirstSearchPostExtensionInstall) {
-                        window.onFirstSearchPostExtensionInstall(${JSON.stringify(args)})
-                    }
-                `
-            document.head.appendChild(script)
-
             // DDG privacy policy prevents us to use `chrome.runtime` on the SERP so we
             // setup a relay here so that the SERP can assess the background process
             if (browser === 'chrome') {
@@ -104,6 +88,22 @@ function onboarding () {
                     }
                 })
             }
+
+            const args = Object.assign({
+                isAddressBarQuery,
+                showWelcomeBanner,
+                showCounterMessaging
+            }, documentStartData)
+
+            // the content script do not share the same `window` as the page
+            // so we inject a `<script>` to be able to access the page `window`
+            const script = document.createElement('script')
+            script.textContent = `
+                    if (window.onFirstSearchPostExtensionInstall) {
+                        window.onFirstSearchPostExtensionInstall(${JSON.stringify(args)})
+                    }
+                `
+            document.head.appendChild(script)
         })
     }
 
