@@ -1,4 +1,4 @@
-googletagmanager.com/gtm.js application/javascript
+//googletagmanager.com/gtm.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}

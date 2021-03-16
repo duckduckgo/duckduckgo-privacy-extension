@@ -1,4 +1,4 @@
-outbrain.com/outbrain.js application/javascript
+//outbrain.com/outbrain.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}

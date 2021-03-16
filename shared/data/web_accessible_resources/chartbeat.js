@@ -1,4 +1,4 @@
-chartbeat.com/chartbeat.js application/javascript
+//chartbeat.com/chartbeat.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}

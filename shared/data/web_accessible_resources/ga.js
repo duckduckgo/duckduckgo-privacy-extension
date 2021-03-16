@@ -1,4 +1,4 @@
-google-analytics.com/ga.js application/javascript
+//google-analytics.com/ga.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}

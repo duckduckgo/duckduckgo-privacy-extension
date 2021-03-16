@@ -1,4 +1,4 @@
-googlesyndication.com/adsbygoogle.js application/javascript
+//googlesyndication.com/adsbygoogle.js application/javascript
 (() => {
     'use strict'
 })()

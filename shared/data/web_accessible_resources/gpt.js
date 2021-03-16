@@ -1,4 +1,4 @@
-googletagservices.com/gpt.js application/javascript
+//googletagservices.com/gpt.js application/javascript
 (() => {
     'use strict'
     const noop = () => {}

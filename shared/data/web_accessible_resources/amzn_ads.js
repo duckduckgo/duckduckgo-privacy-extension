@@ -1,4 +1,4 @@
-amazon-adsystem.com/amzn_ads.js application/javascript
+//amazon-adsystem.com/amzn_ads.js application/javascript
 (() => {
     'use strict'
     if (window.amznads) { return }
