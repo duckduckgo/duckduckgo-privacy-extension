@@ -4,11 +4,13 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
+import 'regenerator-runtime/runtime' // needed for async/await untill we config @babel/preset-env more precisely
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
 const settings = require('./settings.es6')
+const constants = require('../../data/constants')
 const createOnboardingCode = require('./onboarding.es6')
 const browser = utils.getBrowserName()
 
@@ -50,72 +52,58 @@ chrome.runtime.onInstalled.addListener(function (details) {
  * Logic to allow the SERP to display onboarding UI
  */
 
-/**
-  * !! This function _can_ be sync (`cb` is called in the same tick) if the settings are alrady loaded
-  */
-function getOnboardingParams (cb) {
-    function onReady () {
-        cb(null, {
-            showWelcomeBanner: settings.getSetting('showWelcomeBanner'),
-            showCounterMessaging: settings.getSetting('showCounterMessaging')
-        })
-    }
-
-    if (settings.isReady()) {
-        onReady()
-    } else {
-        settings.ready().then(onReady)
-    }
-}
-
 let onBeforeNavigateTimeStamp = null
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
     onBeforeNavigateTimeStamp = details.timeStamp
 })
 
-chrome.webNavigation.onCommitted.addListener(details => {
-    getOnboardingParams((err, { showWelcomeBanner, showCounterMessaging }) => {
-        if (err) {
-            console.error(chrome.runtime.lastError)
+chrome.webNavigation.onCommitted.addListener(async details => {
+    await settings.ready()
+    const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
+    const showCounterMessaging = settings.getSetting('showCounterMessaging')
+
+    // We show the welcome banner and counter messaging only once
+    if (showWelcomeBanner || showCounterMessaging) {
+        const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
+
+        if (showWelcomeBanner) {
+            settings.removeSetting('showWelcomeBanner')
+        }
+        if (isAddressBarQuery && showCounterMessaging) {
+            settings.removeSetting('showCounterMessaging')
         }
 
-        // We show the welcome banner and counter messaging only once
-        if (showWelcomeBanner || showCounterMessaging) {
-            const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
-
-            if (showWelcomeBanner) {
-                settings.removeSetting('showWelcomeBanner')
-            }
-            if (isAddressBarQuery && showCounterMessaging) {
-                settings.removeSetting('showCounterMessaging')
-            }
-
-            if (onBeforeNavigateTimeStamp < details.timeStamp) {
-                chrome.tabs.executeScript(details.tabId, {
-                    code: createOnboardingCode({
-                        isAddressBarQuery,
-                        showWelcomeBanner,
-                        showCounterMessaging,
-                        browser,
-                        extensionId: chrome.runtime.id
-                    }),
-                    runAt: 'document_end'
-                }, (response) => {
-                    if (chrome.runtime.lastError) {
-                        console.error(chrome.runtime.lastError)
-                    }
-                })
-            }
+        if (onBeforeNavigateTimeStamp < details.timeStamp) {
+            chrome.tabs.executeScript(details.tabId, {
+                code: createOnboardingCode({
+                    isAddressBarQuery,
+                    showWelcomeBanner,
+                    showCounterMessaging,
+                    browser,
+                    duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
+                    extensionId: chrome.runtime.id
+                }),
+                runAt: 'document_end'
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error(chrome.runtime.lastError)
+                }
+            })
         }
-    })
+    }
 }, {
+    // we only target the SERP (it has a `q` querystring param but not necessarily as the first querstring param)
     url: [
         {
-            originAndPathMatches: '^https:\\/\\/(?:[^/]*\\.)?duckduckgo\\.com/$',
+            schemes: ['https'],
+            hostEquals: constants.duckDuckGoSerpHostname,
+            pathEquals: '/',
             queryContains: '?q='
         },
         {
-            originAndPathMatches: '^https:\\/\\/(?:[^/]*\\.)?duckduckgo\\.com/$',
+            schemes: ['https'],
+            hostEquals: constants.duckDuckGoSerpHostname,
+            pathEquals: '/',
             queryContains: '&q='
         }
     ]
@@ -126,33 +114,22 @@ chrome.webNavigation.onCommitted.addListener(details => {
  * (Chrome only)
  */
 if (browser === 'chrome') {
-    chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         if (request === 'healthCheckRequest') {
             sendResponse(true)
         } else if (request === 'rescheduleCounterMessagingRequest') {
-            const update = () => {
-                settings.updateSetting('rescheduleCounterMessagingOnStart', true)
-                sendResponse(true)
-            }
-            if (settings.isReady()) {
-                update()
-            } else {
-                settings.ready().then(update)
-            }
+            await settings.ready()
+            settings.updateSetting('rescheduleCounterMessagingOnStart', true)
+            sendResponse(true)
         }
     })
 
-    chrome.runtime.onStartup.addListener(() => {
-        const init = () => {
-            if (settings.getSetting('rescheduleCounterMessagingOnStart')) {
-                settings.removeSetting('rescheduleCounterMessagingOnStart')
-                settings.updateSetting('showCounterMessaging', true)
-            }
-        }
-        if (settings.isReady()) {
-            init()
-        } else {
-            settings.ready().then(init)
+    chrome.runtime.onStartup.addListener(async () => {
+        await settings.ready()
+
+        if (settings.getSetting('rescheduleCounterMessagingOnStart')) {
+            settings.removeSetting('rescheduleCounterMessagingOnStart')
+            settings.updateSetting('showCounterMessaging', true)
         }
     })
 }
@@ -165,7 +142,6 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
-const constants = require('../../data/constants')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types

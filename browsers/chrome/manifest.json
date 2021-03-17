@@ -43,8 +43,8 @@
         "run_at": "document_start"
       },
       {
-        "matches": ["*://*.duckduckgo.com/*"],
-        "js": ["public/js/content-scripts/chrome-dialogue.js"],
+        "matches": ["https://duckduckgo.com/*"],
+        "js": ["public/js/content-scripts/serp-document-start-handler.js"],
         "run_at": "document_start"
       }      
     ],
