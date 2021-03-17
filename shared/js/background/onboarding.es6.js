@@ -19,18 +19,16 @@ function createOnboardingCode ({
 
     // TODO: upgrade to `chrome.scripting.executeScript` when we upgrade to manifest v3
     // as it allows to inject a function with _arguments_. Here we simulate that in a hacky way
-    return `(${onboarding.toString().replace('__injectedJSON__', `'${params}'`)})()`
+    return `(${onboarding.toString()})(${params})`
 }
 
-function onboarding () {
-    const {
-        isAddressBarQuery,
-        showWelcomeBanner,
-        showCounterMessaging,
-        browser,
-        extensionId
-    } = JSON.parse(__injectedJSON__) // eslint-disable-line
-
+function onboarding ({
+    isAddressBarQuery,
+    showWelcomeBanner,
+    showCounterMessaging,
+    browser,
+    extensionId
+}) {
     function getDocumentStartData (cb) {
         if (browser !== 'chrome') {
             return cb(null)
