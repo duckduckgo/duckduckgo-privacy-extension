@@ -150,16 +150,14 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage || !tdsStorage.brokenSiteList) return
+    if (!tdsStorage?.brokenSiteList) return
     return isBrokenList(url, tdsStorage.brokenSiteList)
 }
 
 function isCanvasBroken (url) {
-    if (!tdsStorage || !tdsStorage.fingerprinting || !tdsStorage.fingerprinting.canvas) return
-    const canvas = tdsStorage.fingerprinting.canvas
-    if (!canvas.sites) return
+    if (!tdsStorage?.fingerprinting?.canvas?.sites) return
     // If globally disabled return the site is broken
-    if (canvas.enabled === false) return true
+    if (tdsStorage?.fingerprinting?.canvas?.enabled === false) return true
     return isBrokenList(url, tdsStorage.fingerprinting.canvas.sites)
 }
 
@@ -178,8 +176,7 @@ function isBrokenList (url, lists) {
 
 // We inject this into content scripts
 function getBrokenCanvasScriptList () {
-    if (!tdsStorage || !tdsStorage.fingerprinting || !tdsStorage.fingerprinting.canvas) return []
-    return tdsStorage.fingerprinting.canvas.scripts || []
+    return tdsStorage?.fingerprinting?.canvas?.scripts || []
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
