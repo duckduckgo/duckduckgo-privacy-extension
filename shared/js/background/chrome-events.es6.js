@@ -456,6 +456,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         // Check if origin is safe listed
         const tab = tabManager.get({ tabId: e.tabId })
 
+        // Firefox only - Check if this tab had a surrogate redirect request and if it will
+        // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.
+        if (browser === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
+            const hasOrigin = e.requestHeaders.filter(h => h.name.match(/^origin$/i))
+            if (!hasOrigin.length) {
+                const redirectUrl = tab.surrogates[e.url]
+                // remove redirect entry for the tab
+                delete tab.surrogates[e.url]
+
+                return { redirectUrl }
+            }
+        }
+
         // Safe list and broken site list checks are included in the referrer evaluation
         const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
         if (!modifiedReferrer) {
