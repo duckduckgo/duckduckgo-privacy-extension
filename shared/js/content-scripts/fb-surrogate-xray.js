@@ -54,8 +54,6 @@
         const resourceLoads = list.getEntriesByType('resource')
         for (const resource of resourceLoads) {
             if (resource.name.match(/connect.facebook.net\/[a-zA-Z_]+\/(sdk|all).js/)) {
-                console.log('Loaded FB SDK')
-                console.log(resource)
                 capturedFBURL = resource.name
             }
         }
@@ -83,17 +81,20 @@
         }
     }
 
-    window.addEventListener('LoadFBSDK', enableFacebookSDK)
-    window.addEventListener('RunFBLogin', runFacebookLogin)
+    window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
+    window.addEventListener('RunFacebookLogin', runFacebookLogin)
 
     if (!wrappedWindow.FB) {
         const FB = {
-            messageAddon: function (msgObject) {
-                const source = 'fb-surrogate'
-                window.postMessage({
-                    source: source,
-                    payload: msgObject
-                }, '*')
+            messageAddon: function (detailObject) {
+                detailObject.entity = 'Facebook'
+                const event = new CustomEvent('ddgClickToLoad', {
+                    detail: detailObject,
+                    bubbles: true,
+                    cancelable: false,
+                    composed: false
+                })
+                dispatchEvent(event)
             },
             init: function (obj) {
                 FB.messageAddon({
@@ -101,9 +102,6 @@
                 })
             },
             ui: function (obj, cb) {
-                FB.messageAddon({
-                    'fbui': true
-                })
                 cb({})
             },
             getAccessToken: function () {},
@@ -116,7 +114,7 @@
                 fbLogin.callback = cb
                 fbLogin.params = params
                 FB.messageAddon({
-                    'fblogin': true
+                    'action': 'login'
                 })
             },
             logout: function () {},

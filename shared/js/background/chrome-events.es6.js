@@ -173,13 +173,18 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (req.getButtonImage) {
-        utils.imgToData('img/social/dax.png').then(img => res(img))
+    if (req.getImage) {
+        utils.imgToData(`img/social/${req.getImage}`).then(img => res(img))
         return true
     }
 
     if (req.getLoadingImage) {
-        utils.imgToData('img/loading.svg').then(img => res(img))
+        utils.imgToData('img/social/loading_dark.svg').then(img => res(img))
+        return true
+    }
+
+    if (req.getLogo) {
+        utils.imgToData('img/social/dax.png').then(img => res(img))
         return true
     }
 

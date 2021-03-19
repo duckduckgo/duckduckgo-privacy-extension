@@ -1,16 +1,32 @@
 (function clickToLoad () {
     let appID
     let loadingImage
+    let logoImg
+    const entities = []
+    const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
 
     const styles = {
+        fontStyle: `
+            @font-face{
+                font-family: DuckDuckGo;
+                src: url(${ddgFont});
+            }
+        `,
         button: `
-            /* Grayscale/Gray90 - #333 */
-            background: #333333;
-            border-radius: 28px;
+            background: #3969EF;
+            border-radius: 8px;
 
             padding: 11px 22px;
             color: #FFFFFF;
             margin: auto;
+            border-color: #3969EF;
+            border: none;
+
+            font-family: DuckDuckGo;
+            font-size: 14px;
+
+            display: flex; 
+            flex-direction: row;
         `,
         circle: `
             border-radius: 50%;
@@ -43,6 +59,9 @@
             display: grid;
             flex-direction: column;
             margin-left: 8px;
+        `,
+        headerRow: `
+
         `,
         commentPortrait: `
             width: 30px;
@@ -80,25 +99,66 @@
             border: 1px solid #C3C3C3;
             box-sizing: border-box;
             border-radius: 10px;
-            max-width: 500px;
+            max-width: 600px;
             min-height: 300px;
             margin: auto;
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            grid-auto-rows: 1fr;
             flex-direction: column;
+
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
+            
+            font-family: DuckDuckGo;
+            line-height: 1;
         `,
         content: `
-            margin: auto;
+            display: flex;
+            flex-direction: column;
+            margin: 20px 0px;
         `,
-        topBox: `
-
+        titleBox: `
+            display: flex;
+            padding: 13px 13px 0px 13px;
+            max-height: 44px;
+            border-bottom: 1px solid;
+            border-color: rgba(196, 196, 196, 0.3);
         `,
-        msgContainer: `
+        title: `
+            line-height: 1.4;
+            font-size: 15px;
+            margin: 0 10px;
+            flex-basis: 100%;
+        `,
+        headerLinkContainer: `
+            flex-basis: 60%;
+            display: grid;
+            justify-content: flex-end;
+        `,
+        headerLink: `
+            line-height: 1.4;
+            font-size: 15px;
+            font-weight: bold;
+            text-decoration: none;
+            color: #3969EF;
+            cursor: pointer;
+        `,
+        buttonRow: `
             display: flex;
             height: 100%
             flex-direction: row;
+            margin: 0px auto 36px;
+        `,
+        contentTitle: `
+            font-family: DuckDuckGo;
+            font-size: 17px;
+            font-weight: bold;
+            margin: 40px auto 10px;
+        `,
+        contentText: `
+            font-family: DuckDuckGo;
+            font-size: 14px;
+            line-height: 21px;
             margin: auto;
+            padding: 0px 40px;
+            text-align: center;
         `,
         msg: ` 
             padding: 6.8059px 13.6118px;
@@ -109,18 +169,24 @@
             width: 70%;
             margin: 11px 0px;
         `,
-        msgImage: `
+        icon: `
             height: 70px;
-            margin: auto 0px;
+            margin: auto;
+        `,
+        logo: `
+            flex-basis: 0%;
+            min-width: 20px;
+            height: 25px;
+        `,
+        logoImg: `
+            height: 20px;
         `
     }
 
     class DuckWidget {
         constructor (widgetData, originalElement, entity) {
-            if (widgetData.replaceSettings.imgFile) {
-                this.imgURI = this.createImgURI(widgetData.replaceSettings.imgFile)
-            }
             this.clickAction = {...widgetData.clickAction} // shallow copy
+            this.replaceSettings = widgetData.replaceSettings
             this.originalElement = originalElement
             this.dataElements = {}
             this.gatherDataElements()
@@ -140,10 +206,6 @@
                 }
                 this.dataElements[attrName] = value
             }
-        }
-
-        createImgURI (imgFile) {
-            return chrome.runtime.getURL(imgFile)
         }
 
         getTargetURL () {
@@ -237,56 +299,73 @@
 
         clickFunction (originalElement, replacementElement) {
             return function handleClick (e) {
+                // Ensure that the click is created by a user event
                 if (e.isTrusted) {
                     enableSocialTracker(this.entity, false, false)
                     const parent = replacementElement.parentNode
+
+                    // Create a container for the new FB element
                     const fbContainer = document.createElement('div')
                     const fadeIn = document.createElement('div')
                     fadeIn.style.cssText = 'display: none; opacity: 0;'
-                    const loading = document.createElement('div')
-                    const loadingHeight = replacementElement.offsetHeight
-                    loading.style.cssText = `height: ${loadingHeight}px; display: grid;`
+
+                    // Loading animation (FB can take some time to load)
                     const loadingImg = document.createElement('img')
                     loadingImg.setAttribute('src', loadingImage)
-                    loadingImg.style.cssText = 'display: block; margin: auto;' // Center the loading image.
-                    loading.appendChild(loadingImg)
-                    fbContainer.appendChild(loading)
+                    loadingImg.style.cssText = 'display: block; margin-right: 8px;'
+
+                    // Always add the animation to the button, regardless of click source
+                    if (e.srcElement.nodeName === 'BUTTON') {
+                        e.srcElement.innerHTML = loadingImg.outerHTML + e.srcElement.innerHTML
+                    } else {
+                        // try to find the button
+                        let el = e.srcElement
+                        let button = null
+                        while (button === null && el !== null) {
+                            button = el.querySelector('button')
+                            el = el.parentElement
+                        }
+                        if (button) {
+                            button.innerHTML = loadingImg.outerHTML + e.srcElement.innerHTML
+                        }
+                    }
+
                     fbContainer.appendChild(fadeIn)
+                    // default case is this.clickAction.type === 'originalElement'
+                    let fbElement = originalElement
+
                     if (this.clickAction.type === 'allowFull') {
-                        parent.replaceChild(originalElement, replacementElement)
-                        window.dispatchEvent(new CustomEvent('LoadFBSDK'))
+                        window.dispatchEvent(new CustomEvent(`Load${this.entity}SDK`))
                     }
                     if (this.clickAction.type === 'iFrame') {
-                        const iFrame = this.createFBIFrame()
-                        fadeIn.appendChild(iFrame)
+                        fbElement = this.createFBIFrame()
+                    }
+
+                    /*
+                     * Modify the overlay to include a Facebook iFrame, which
+                     * starts invisible. Once loaded, fade out and remove the overlay
+                     * then fade in the Facebook content
+                     */
+                    parent.replaceChild(fbContainer, replacementElement)
+                    fbContainer.appendChild(replacementElement)
+                    fadeIn.appendChild(fbElement)
+                    fbElement.addEventListener('load', () => {
                         this.fadeOutElement(replacementElement)
                             .then(v => {
-                                parent.replaceChild(fbContainer, replacementElement)
-                                iFrame.addEventListener('load', () => {
-                                    fbContainer.removeChild(loading)
-                                    fadeIn.style.cssText = 'opacity: 0;'
-                                    this.fadeInElement(fadeIn)
-                                })
+                                fbContainer.removeChild(replacementElement)
+                                fadeIn.style.cssText = 'opacity: 0;'
+                                this.fadeInElement(fadeIn)
                             })
-                    }
-                    if (this.clickAction.type === 'originalElement') {
-                        fadeIn.appendChild(originalElement)
-                        this.fadeOutElement(replacementElement)
-                            .then(v => {
-                                parent.replaceChild(fbContainer, replacementElement)
-                                originalElement.addEventListener('load', () => {
-                                    fbContainer.removeChild(loading)
-                                    fadeIn.style.cssText = 'opacity: 0;'
-                                    this.fadeInElement(fadeIn)
-                                })
-                            })
-                    }
+                    })
                 }
             }.bind(this)
         }
     }
 
     function init (extensionResponseData) {
+        for (const entity of Object.keys(extensionResponseData)) {
+            entities.push(entity)
+        }
         replaceClickToLoadElements(extensionResponseData)
     }
 
@@ -313,71 +392,19 @@
             button.addEventListener('click', widget.clickFunction(originalElement, button))
             parent.replaceChild(button, originalElement)
         }
-        if (widgetData.replaceSettings.type === 'videoElement') {
+        if (widgetData.replaceSettings.type === 'dialog') {
             chrome.runtime.sendMessage({
-                'getButtonImage': true
-            }, function putButton (response) {
-                button = makeVideoButton(widgetData.replaceSettings.buttonText)
-                const el = createContentBlock(
-                    widgetData.replaceSettings.infoText,
-                    button,
-                    response)
-                button.addEventListener('click', widget.clickFunction(originalElement, el))
-                parent.replaceChild(el, originalElement)
-            })
-        }
-        if (widgetData.replaceSettings.type === 'pageElement') {
-            // Create a button to replace old element
-            chrome.runtime.sendMessage({
-                'getButtonImage': true
-            }, function putButton (response) {
+                'getImage': widgetData.replaceSettings.icon
+            }, function putButton (icon) {
                 button = makeButton(widgetData.replaceSettings.buttonText)
+                const textButton = makeTextButton(widgetData.replaceSettings.buttonText, '')
                 const el = createContentBlock(
-                    widgetData.replaceSettings.infoText,
+                    widget,
                     button,
-                    response)
+                    textButton,
+                    icon)
                 button.addEventListener('click', widget.clickFunction(originalElement, el))
-
-                /*
-                button.addEventListener('click', function handleClick (e) {
-                    if (e.isTrusted) {
-                        enableSocialTracker(entity)
-                        if (widget.clickAction.type === 'allowFull') {
-                            const parent = el.parentNode
-                            parent.replaceChild(originalElement, el)
-                            window.dispatchEvent(new CustomEvent('LoadFBSDK'))
-                        }
-                        if (widget.clickAction.type === 'iFrame') {
-                            replaceDDGWidgetWithIFrame(el, widget)
-                        }
-                        if (widget.clickAction.type === 'originalElement') {
-                            const parent = el.parentNode
-                            parent.replaceChild(originalElement, el)
-                        }
-                    }
-                })
-                /*
-                const button = document.createElement('img')
-                button.setAttribute('src', response)
-                button.setAttribute('height', '75px')
-                button.addEventListener('click', function handleClick (e) {
-                    if (e.isTrusted) {
-                        enableSocialTracker(entity)
-                        if (widget.clickAction.type === 'allowFull') {
-                            const parent = button.parentNode
-                            parent.replaceChild(originalElement, button)
-                            window.dispatchEvent(new CustomEvent('LoadFBSDK'))
-                        }
-                        if (widget.clickAction.type === 'iFrame') {
-                            replaceDDGWidgetWithIFrame(button, widget)
-                        }
-                        if (widget.clickAction.type === 'originalElement') {
-                            const parent = button.parentNode
-                            parent.replaceChild(originalElement, button)
-                        }
-                    }
-                })
-                */
+                textButton.addEventListener('click', widget.clickFunction(originalElement, el))
                 parent.replaceChild(el, originalElement)
             })
         }
@@ -419,10 +446,17 @@
         }
     })
 
+    // Fetch reusable assets
     chrome.runtime.sendMessage({
         'getLoadingImage': true
     }, function (response) {
         loadingImage = response
+    })
+
+    chrome.runtime.sendMessage({
+        'getLogo': true
+    }, function (response) {
+        logoImg = response
     })
 
     function makeButton (buttonText) {
@@ -432,155 +466,99 @@
         return button
     }
 
-    function makeVideoButton () {
-        const circleButton = document.createElement('button')
-        circleButton.style.cssText = styles.circle
-        const play = document.createElement('div')
-        play.style.cssText = styles.playIcon
-        play.innerHTML = '&#9654;' // right triangle html symbol.
-        circleButton.appendChild(play)
-        return circleButton
+    /* Make a text link */
+    function makeTextButton (linkText) {
+        const linkElement = document.createElement('a')
+        linkElement.style.cssText = styles.headerLink
+        linkElement.innerHTML = linkText
+        return linkElement
     }
 
-    function createCommentGhost () {
-        const commentWrapper = document.createElement('div')
-        commentWrapper.style.cssText = styles.commentWrapper
-        const commentBox = document.createElement('div')
-        commentBox.style.cssText = styles.commentPortrait
-        commentWrapper.appendChild(commentBox)
-        const commentLines = document.createElement('div')
-        commentLines.style.cssText = styles.commentLines
-        commentWrapper.appendChild(commentLines)
-        const commentBoxLong = document.createElement('div')
-        commentBoxLong.style.cssText = styles.longComment
-        commentLines.appendChild(commentBoxLong)
-        const commentBoxShort = document.createElement('div')
-        commentBoxShort.style.cssText = styles.shortComment
-        commentLines.appendChild(commentBoxShort)
-        return commentWrapper
+    function createTitleRow (message, textButton) {
+        // Create row container
+        const row = document.createElement('div')
+        row.style.cssText = styles.titleBox
+
+        // Logo
+        const logoContainer = document.createElement('div')
+        logoContainer.style.cssText = styles.logo
+        const logoElement = document.createElement('img')
+        logoElement.setAttribute('src', logoImg)
+        logoElement.setAttribute('height', '20px')
+        logoElement.style.cssText = styles.logoImg
+        logoContainer.appendChild(logoElement)
+        row.appendChild(logoContainer)
+
+        // Content box title
+        const msgElement = document.createElement('div')
+        msgElement.innerHTML = message
+        msgElement.style.cssText = styles.title
+        row.appendChild(msgElement)
+
+        // Text link
+        const linkContainer = document.createElement('div')
+        linkContainer.style.cssText = styles.headerLinkContainer
+        linkContainer.appendChild(textButton)
+        row.appendChild(linkContainer)
+        return row
     }
 
-    function createContentBlock (message, button, img) {
+    // Create the content block to replace other divs/iframes with
+    function createContentBlock (widget, button, textButton, img) {
+        // Create overall grid structure
         const element = document.createElement('div')
         element.style.cssText = styles.block
-        const topBox = document.createElement('div')
-        topBox.style.cssText = styles.topBox
-        element.appendChild(topBox)
-        topBox.appendChild(createCommentGhost())
-        topBox.appendChild(createCommentGhost())
-        const content = document.createElement('div')
-        content.style.cssText = styles.content
-        element.appendChild(content)
-        content.appendChild(button)
-        const msgContainer = document.createElement('div')
-        msgContainer.style.cssText = styles.msgContainer
-        element.appendChild(msgContainer)
+        // Style element includes our font
+        const styleElement = document.createElement('style')
+        styleElement.innerHTML = styles.fontStyle
+        element.appendChild(styleElement)
+        // grid of three rows
+        const titleRow = document.createElement('div')
+        titleRow.style.cssText = styles.headerRow
+        element.appendChild(titleRow)
+        titleRow.appendChild(createTitleRow('DuckDuckGo Privacy Essentials', textButton))
+
+        const contentRow = document.createElement('div')
+        contentRow.style.cssText = styles.content
         if (img) {
             const imgElement = document.createElement('img')
-            imgElement.style.cssText = styles.msgImage
+            imgElement.style.cssText = styles.icon
             imgElement.setAttribute('src', img)
             imgElement.setAttribute('height', '70px')
-            msgContainer.appendChild(imgElement)
+            contentRow.appendChild(imgElement)
         }
-        const msg = document.createElement('div')
-        msg.style.cssText = styles.msg
-        msg.innerHTML = `<span>${message}</span>`
-        msgContainer.appendChild(msg)
+        const contentTitle = document.createElement('div')
+        contentTitle.style.cssText = styles.contentTitle
+        contentTitle.innerHTML = widget.replaceSettings.infoTitle
+        contentRow.appendChild(contentTitle)
+        const contentText = document.createElement('div')
+        contentText.style.cssText = styles.contentText
+        contentText.innerHTML = widget.replaceSettings.infoText
+        contentRow.appendChild(contentText)
+        element.appendChild(contentRow)
+
+        const buttonRow = document.createElement('div')
+        buttonRow.style.cssText = styles.buttonRow
+        buttonRow.appendChild(button)
+        element.appendChild(buttonRow)
+
         return element
     }
 
-    function createModal (entity, message, eventName) {
-        const elementCSS = `
-            height: 100%;
-            width: 100%;
-            z-index: 2147483647;
-            display: block;
-            position: fixed;
-        `
-        const overlayCSS = `
-            height: 100%;
-            width: 100%;
-            background-color: black;
-            opacity: .5;
-            display: block;
-            position: fixed;
-            top: 0;
-            right: 0;
-        `
-        const modalCSS = `
-            height: 20%;
-            width: 50%;
-            margin: 20% 25%;
-            background-color: orange;
-            position: relative;
-            display: block;
-        `
-        const element = document.createElement('div')
-        element.style.cssText = elementCSS
-        element.id = 'duckduckgoctlmodal'
-        const overlay = document.createElement('div')
-        overlay.style.cssText = overlayCSS
-        const modal = document.createElement('div')
-        modal.style.cssText = modalCSS
-        const allowButton = document.createElement('button')
-        allowButton.innerHTML = 'Allow'
-        const denyButton = document.createElement('button')
-        denyButton.innerHTML = 'Deny'
-        const msg = document.createElement('p')
-        allowButton.addEventListener('click', function handleClick (e) {
-            if (e.isTrusted) {
-                enableSocialTracker(entity, false, false)
-                window.dispatchEvent(new CustomEvent(eventName))
-                const modalParent = element.parentNode
-                modalParent.removeChild(element)
-            }
-        })
-        denyButton.addEventListener('click', function handleClick (e) {
-            if (e.isTrusted) {
-                const modalParent = element.parentNode
-                modalParent.removeChild(element)
-            }
-        })
-        msg.innerHTML = message
-        modal.appendChild(msg)
-        modal.appendChild(denyButton)
-        modal.appendChild(allowButton)
-        element.appendChild(overlay)
-        element.appendChild(modal)
-        return element
-    }
-
-    window.addEventListener('message', (event) => {
-        // Only accept messages from the same frame
-        if (event.source !== window) {
+    addEventListener('ddgClickToLoad', (event) => {
+        if (!event.detail) return
+        const entity = event.detail.entity
+        if (!entities.includes(entity)) {
+            // Unknown entity, reject
             return
         }
-
-        var message = event.data
-
-        // Only accept messages that we know are ours
-        if (typeof message !== 'object' || message === null || (!!message.source && message.source !== 'fb-surrogate')) {
-            return
+        if (event.detail.appID) {
+            appID = JSON.stringify(event.detail.appID).replace(/"/g, '')
         }
-
-        // Save appID
-        if (message.payload.appID) {
-            appID = JSON.stringify(message.payload.appID).replace(/"/g, '')
-        }
-
         // Handle login call
-        if (message.payload.fblogin) {
-            enableSocialTracker('Facebook', false, true)
-            window.dispatchEvent(new CustomEvent('RunFBLogin'))
-        }
-
-        if (message.payload.fbui) {
-            // Currently no action on custom UI buttons such as 'like'
-            /*
-            const body = document.body
-            let e = createModal('Facebook', 'This page is trying to use facebook social buttons, would you like to allow it?', 'LoadFBSDK')
-            body.insertBefore(e, body.childNodes[0])
-            */
+        if (event.detail.action === 'login') {
+            enableSocialTracker(entity, false, true)
+            window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
         }
     })
 })()

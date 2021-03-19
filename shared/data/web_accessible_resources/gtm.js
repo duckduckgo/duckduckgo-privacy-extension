@@ -1,7 +1,6 @@
 //googletagmanager.com/gtm.js application/javascript
 (() => {
     'use strict'
-    console.log('hanging out in google!')
     const noop = () => {}
     const datalayer = window.dataLayer
     window.ga = (window.ga === void 0) ? noop : window.ga

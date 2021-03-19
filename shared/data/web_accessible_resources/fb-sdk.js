@@ -17,12 +17,15 @@
         params: undefined
     }
     const noopProxy = new Proxy({}, noopHandler)
-    function messageAddon (msgObject) {
-        const source = 'fb-surrogate'
-        window.postMessage({
-            source: source,
-            payload: msgObject
-        }, '*')
+    function messageAddon (detailObject) {
+        detailObject.entity = 'Facebook'
+        const event = new Event('ddgClickToLoad', {
+            detail: detailObject,
+            bubbles: false,
+            cancelable: false,
+            composed: false
+        })
+        dispatchEvent(event)
     }
     function enableFacebookSDK () {
         if (!fbIsEnabled) {
@@ -31,7 +34,7 @@
             fbScript.src = originalFBURL
             fbScript.onload = function () {
                 for (const node of parseCalls) {
-                    window.FB.XFBML.parse.apply(window.FB.XFBML, node);
+                    window.FB.XFBML.parse.apply(window.FB.XFBML, node)
                 }
             }
             document.head.appendChild(fbScript)
@@ -58,13 +61,21 @@
         }
     }
     function loginPopup () {
-        const width = Math.min(window.screen.width, 350)
-        const height = Math.min(window.screen.height, 350)
+        const width = Math.min(window.screen.width, 450)
+        const height = Math.min(window.screen.height, 450)
         const popupParams = `width=${width},height=${height},scrollbars=1,location=1`
         window.open('about:blank', popupName, popupParams)
     }
-    window.addEventListener('LoadFBSDK', enableFacebookSDK)
-    window.addEventListener('RunFBLogin', runFacebookLogin)
+    window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
+    window.addEventListener('RunFacebookLogin', runFacebookLogin)
+
+    function init () {
+        if (window.fbAsyncInit) {
+            siteInit = window.fbAsyncInit
+            window.fbAsyncInit()
+        }
+    }
+
     if (!window.FB) {
         window.FB = {
             init: function (obj) {
@@ -73,22 +84,19 @@
                 })
             },
             ui: function (obj, cb) {
-                messageAddon({
-                    'fbui': true
-                })
                 cb({})
             },
             getAccessToken: function () {},
             getAuthResponse: function () {
                 return {status: ''}
             },
-            getLoginStatus: function (callback) {callback({status: ''})},
+            getLoginStatus: function (callback) { callback({status: ''}) },
             getUserID: function () {},
             login: function (cb, params) {
                 fbLogin.callback = cb
                 fbLogin.params = params
                 messageAddon({
-                    'fblogin': true
+                    'action': 'login'
                 })
             },
             logout: function () {},
@@ -108,12 +116,6 @@
             }
         }
         console.log('in FB surrogate')
-        function init () {
-            if (window.fbAsyncInit) {
-                siteInit = window.fbAsyncInit
-                window.fbAsyncInit()
-            }
-        }
         if (document.readyState === 'complete') {
             init()
         } else {
