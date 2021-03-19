@@ -51,7 +51,7 @@ function onboarding ({
             }
 
             // DDG privacy policy prevents us to use `chrome.runtime` on the SERP so we
-            // setup a relay here so that the SERP can access the background process
+            // setup a relay here so that the SERP can communicate with the background process
             if (browser === 'chrome') {
                 window.addEventListener('message', (e) => {
                     if (e.origin === origin) {
