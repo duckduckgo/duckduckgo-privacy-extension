@@ -26,7 +26,7 @@
   "content_scripts": [
     {
       "js": [
-        "public/js/content-scripts/email-autofill.js"
+        "public/js/content-scripts/autofill.js"
       ],
       "css": [
         "public/css/email-host-styles.css"
