@@ -31,7 +31,7 @@ const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
-const webResourceKeyRegex = new RegExp(/.*\?key=(.*)/)
+const webResourceKeyRegex = /.*\?key=(.*)/
 
 class Tab {
     constructor (tabData) {
@@ -130,13 +130,14 @@ class Tab {
     };
 
     /**
-     * Adds an entry to the tab webResourceAccess list. 
+     * Adds an entry to the tab webResourceAccess list.
      * @param {string} URL to the web accessible resource
      * @returns {string} generated access key
      **/
     addWebResourceAccess (resourceName) {
+        // random 8-9 character key for web resource access
         const key = Math.floor(Math.random() * 10000000000).toString(16)
-        this.webResourceAccess.push({key, resourceName, time: Date.now(), wasAccessed: false})
+        this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false })
         return key
     };
 
@@ -162,10 +163,11 @@ class Tab {
         const hasAccess = this.webResourceAccess.some(resource => {
             if (resource.key === key && !resource.wasAccessed) {
                 resource.wasAccessed = true
-                if( (Date.now() - resource.time) < 1000) {
+                if ((Date.now() - resource.time) < 1000) {
                     return true
                 }
             }
+            return false
         })
 
         return hasAccess

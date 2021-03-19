@@ -7,7 +7,7 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
-const webResourceURL = browserWrapper.getExtensionURL('/') + 'web_accessible_resources'
+const webResourceURL = browserWrapper.getExtensionURL('/web_accessible_resources')
 const browser = utils.getBrowserName()
 
 const debugRequest = false
@@ -49,7 +49,7 @@ function handleRequest (requestData) {
     // control access to web accessible resources
     if (requestData.url.startsWith(webResourceURL)) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
-            return {cancel: true}
+            return { cancel: true }
         }
     }
 
@@ -190,7 +190,7 @@ function handleRequest (requestData) {
                         thisTab.surrogates[requestData.url] = webResource
                     } else {
                         const key = thisTab.addWebResourceAccess(webResource)
-                        return {redirectUrl: `${webResource}?key=${key}`}
+                        return { redirectUrl: `${webResource}?key=${key}` }
                     }
                 } else {
                     requestData.message = { cancel: true }
