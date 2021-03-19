@@ -24,74 +24,15 @@
 
             font-family: DuckDuckGo;
             font-size: 14px;
-
+        `,
+        buttonTextContainer: `
             display: flex; 
             flex-direction: row;
-        `,
-        circle: `
-            border-radius: 50%;
-
-            /* Grayscale/Gray30 - #e0e0e0 */
-            background: #E0E0E0;
-            opacity: 0.9;
-
-            /* Grayscale/Gray90 - #333 */
-            border: 3.26829px solid #333333;
-            box-sizing: border-box;
-            padding: 0px 3px 0px 9px;
-        `,
-        playIcon: `
-            color: #333333;
-            opacity: 0.9;
-            border-radius: 2px;
-            font-size: 3em;
-            margin: 8px;
-            font-family: Arial;
-            font-weight: 400;
-            line-height: normal;
-        `,
-        commentWrapper: `
-            margin: 5px 15px;
-            display: flex;
-            flex-direction: row;
-        `,
-        commentLines: `
-            display: grid;
-            flex-direction: column;
-            margin-left: 8px;
         `,
         headerRow: `
 
         `,
-        commentPortrait: `
-            width: 30px;
-            height: 30px;
-            left: 15px;
-            top: 16px;
-
-            background: #E5E5E5;
-            border-radius: 3px;
-        `,
-        longComment: `
-            width: 143px;
-            height: 11px;
-            left: 53px;
-            top: 18px;
-
-            background: linear-gradient(90deg, #E0E0E0 0%, #E0E0E0 100%);
-            border-radius: 2px;
-        `,
-        shortComment: `
-            width: 100px;
-            height: 11px;
-            left: 53px;
-            top: 34px;
-
-            background: #EEEEEE;
-            border-radius: 2px;
-        `,
         block: `
-
             /* General / White */
             background: #FFFFFF;
 
@@ -150,7 +91,7 @@
             font-family: DuckDuckGo;
             font-size: 17px;
             font-weight: bold;
-            margin: 40px auto 10px;
+            margin: 20px auto 10px;
         `,
         contentText: `
             font-family: DuckDuckGo;
@@ -286,23 +227,37 @@
         }
 
         fadeInElement (element) {
-            let opacity = 0
-            const originStyle = element.style.cssText
-            const fadeIn = setInterval(function () {
-                opacity += 0.03
-                element.style.cssText = originStyle + `opacity: ${opacity};`
-                if (opacity >= 1) {
-                    clearInterval(fadeIn)
-                }
-            }, 10)
+            return new Promise((resolve, reject) => {
+                let opacity = 0
+                const originStyle = element.style.cssText
+                const fadeIn = setInterval(function () {
+                    opacity += 0.03
+                    element.style.cssText = originStyle + `opacity: ${opacity};`
+                    if (opacity >= 1) {
+                        clearInterval(fadeIn)
+                        resolve()
+                    }
+                }, 10)
+            })
         }
 
-        clickFunction (originalElement, replacementElement) {
+        clickFunction (originalElement, replacementElement, shouldFade = true) {
+            let clicked = false
             return function handleClick (e) {
                 // Ensure that the click is created by a user event
-                if (e.isTrusted) {
+                if (e.isTrusted && !clicked) {
+                    // prevent double clicks from adding more animations
+                    clicked = true
                     enableSocialTracker(this.entity, false, false)
                     const parent = replacementElement.parentNode
+
+                    // If we allow everything when this element is clicked,
+                    // notify surrogate to enable SDK and replace original element.
+                    if (this.clickAction.type === 'allowFull') {
+                        window.dispatchEvent(new CustomEvent(`Load${this.entity}SDK`))
+                        parent.replaceChild(originalElement, replacementElement)
+                        return
+                    }
 
                     // Create a container for the new FB element
                     const fbContainer = document.createElement('div')
@@ -316,7 +271,7 @@
 
                     // Always add the animation to the button, regardless of click source
                     if (e.srcElement.nodeName === 'BUTTON') {
-                        e.srcElement.innerHTML = loadingImg.outerHTML + e.srcElement.innerHTML
+                        e.srcElement.firstElementChild.innerHTML = loadingImg.outerHTML + e.srcElement.firstElementChild.innerHTML
                     } else {
                         // try to find the button
                         let el = e.srcElement
@@ -326,7 +281,7 @@
                             el = el.parentElement
                         }
                         if (button) {
-                            button.innerHTML = loadingImg.outerHTML + e.srcElement.innerHTML
+                            button.firstElementChild.innerHTML = loadingImg.outerHTML + button.firstElementChild.innerHTML
                         }
                     }
 
@@ -334,9 +289,6 @@
                     // default case is this.clickAction.type === 'originalElement'
                     let fbElement = originalElement
 
-                    if (this.clickAction.type === 'allowFull') {
-                        window.dispatchEvent(new CustomEvent(`Load${this.entity}SDK`))
-                    }
                     if (this.clickAction.type === 'iFrame') {
                         fbElement = this.createFBIFrame()
                     }
@@ -354,7 +306,9 @@
                             .then(v => {
                                 fbContainer.removeChild(replacementElement)
                                 fadeIn.style.cssText = 'opacity: 0;'
-                                this.fadeInElement(fadeIn)
+                                this.fadeInElement(fadeIn).then(v => {
+                                    fbElement.focus() // focus on new element for screen readers
+                                })
                             })
                     })
                 }
@@ -462,7 +416,10 @@
     function makeButton (buttonText) {
         const button = document.createElement('button')
         button.style.cssText = styles.button
-        button.innerHTML = buttonText
+        const textContainer = document.createElement('div')
+        textContainer.style.cssText = styles.buttonTextContainer
+        textContainer.innerHTML = buttonText
+        button.appendChild(textContainer)
         return button
     }
 

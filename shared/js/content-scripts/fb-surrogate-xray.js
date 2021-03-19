@@ -139,8 +139,6 @@
             window,
             {cloneFunctions: true})
 
-        console.log('in FB surrogate - special')
-
         if (document.readyState === 'complete') {
             initSurrogate()
         } else {

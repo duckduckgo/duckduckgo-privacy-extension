@@ -19,7 +19,7 @@
     const noopProxy = new Proxy({}, noopHandler)
     function messageAddon (detailObject) {
         detailObject.entity = 'Facebook'
-        const event = new Event('ddgClickToLoad', {
+        const event = new CustomEvent('ddgClickToLoad', {
             detail: detailObject,
             bubbles: false,
             cancelable: false,
@@ -115,7 +115,6 @@
                 }
             }
         }
-        console.log('in FB surrogate')
         if (document.readyState === 'complete') {
             init()
         } else {
