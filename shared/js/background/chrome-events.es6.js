@@ -11,7 +11,7 @@ const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
 const settings = require('./settings.es6')
 const constants = require('../../data/constants')
-const createOnboardingCode = require('./onboarding.es6')
+const onboarding = require('./onboarding.es6')
 const browser = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
@@ -33,7 +33,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
         settings.ready()
             .then(() => {
                 settings.updateSetting('showWelcomeBanner', true)
-                settings.updateSetting('showCounterMessaging', true)
+                if (browser === 'chrome') {
+                    settings.updateSetting('showCounterMessaging', true)
+                }
             })
             .then(ATB.updateATBValues)
             .then(ATB.openPostInstallPage)
@@ -74,8 +76,17 @@ chrome.webNavigation.onCommitted.addListener(async details => {
         }
 
         if (onBeforeNavigateTimeStamp < details.timeStamp) {
+            if (browser === 'chrome') {
+                chrome.tabs.executeScript(details.tabId, {
+                    code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
+                        duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
+                    }),
+                    runAt: 'document_start'
+                })
+            }
+
             chrome.tabs.executeScript(details.tabId, {
-                code: createOnboardingCode({
+                code: onboarding.createOnboardingCodeInjectedAtDocumentEnd({
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
@@ -84,10 +95,6 @@ chrome.webNavigation.onCommitted.addListener(async details => {
                     extensionId: chrome.runtime.id
                 }),
                 runAt: 'document_end'
-            }, (response) => {
-                if (chrome.runtime.lastError) {
-                    console.error(chrome.runtime.lastError)
-                }
             })
         }
     }

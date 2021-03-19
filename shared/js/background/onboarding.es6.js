@@ -9,13 +9,13 @@
 *    - Assess if the extension has been deactivated by Chrome
 *    - Reschedule the onboarding for the next restart
 */
-function createOnboardingCode (params) {
+function createOnboardingCodeInjectedAtDocumentEnd (params) {
     // TODO: upgrade to `chrome.scripting.executeScript` when we upgrade to manifest v3
     // as it allows to inject a function with _arguments_. Here we simulate that in a hacky way
-    return `(${onboarding.toString()})(${JSON.stringify(params)})`
+    return `(${onDocumentEnd.toString()})(${JSON.stringify(params)})`
 }
 
-function onboarding ({
+function onDocumentEnd ({
     isAddressBarQuery,
     showWelcomeBanner,
     showCounterMessaging,
@@ -26,8 +26,8 @@ function onboarding ({
     const origin = `https://${duckDuckGoSerpHostname}`
 
     /**
-     * Helper function that grabs value of the `serp-document-start-handler` content-script
-     * Note that the `serp-document-start-handler`script was injected earlier to capture
+     * Helper function that grabs value of the content-script created by
+     * `createOnboardingCodeInjectedAtDocumentStart` that was injected earlier to capture
      * variables at an earlier stage of the page lifecycle
      */
     function getDocumentStartData (cb) {
@@ -109,4 +109,24 @@ function onboarding ({
     }
 }
 
-module.exports = createOnboardingCode
+function createOnboardingCodeInjectedAtDocumentStart (params) {
+    // TODO: upgrade to `chrome.scripting.executeScript` when we upgrade to manifest v3
+    // as it allows to inject a function with _arguments_. Here we simulate that in a hacky way
+    return `(${onDocumentStart.toString()})(${JSON.stringify(params)})`
+}
+
+function onDocumentStart ({ duckDuckGoSerpHostname }) {
+    const hadFocusOnStart = document.hasFocus()
+
+    window.addEventListener('message', function handleMessage (e) {
+        if (e.origin === `https://${duckDuckGoSerpHostname}` && e.data.type === 'documentStartDataRequest') {
+            window.removeEventListener('message', handleMessage)
+            e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } }, e.origin)
+        }
+    })
+}
+
+module.exports = {
+    createOnboardingCodeInjectedAtDocumentEnd,
+    createOnboardingCodeInjectedAtDocumentStart
+}
