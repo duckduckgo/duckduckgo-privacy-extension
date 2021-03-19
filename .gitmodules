@@ -1,0 +1,3 @@
+[submodule "duckduckgo-autofill"]
+	path = duckduckgo-autofill
+	url = git@github.com:more-duckduckgo-org/duckduckgo-autofill.git
