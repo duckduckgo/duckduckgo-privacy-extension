@@ -37,7 +37,7 @@ module.exports = function (grunt) {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
         },
         emailContentScript: {
-            '<%= dirs.public.js %>/content-scripts/email-autofill.js': ['<%= dirs.src.js %>/content-scripts/email-modules/email-autofill.js']
+            '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/dist/autofill.js']
         },
         emailInjectedCSS: {
             '<%= dirs.public.css %>/email-style.css': ['<%= dirs.src.injectedCSS %>/email-autofill.css']
@@ -80,7 +80,7 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
-        emailContentScript: ['<%= dirs.src.js %>/content-scripts/email-modules/*.js'],
+        emailContentScript: ['<%= ddgAutofill %>/dist/*.js'],
         injectedCSS: ['<%= dirs.src.injectedCSS %>/*.css'],
         data: ['<%= dirs.data %>/*.js']
     }
@@ -106,6 +106,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        ddgAutofill: 'ddg-autofill',
         dirs: {
             cache: '.cache',
             src: {
@@ -193,6 +194,7 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillJs: `cp ddg-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
             // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
@@ -229,7 +231,7 @@ module.exports = function (grunt) {
             },
             emailContentScript: {
                 files: watch.emailContentScript,
-                tasks: ['browserify:emailContentScript']
+                tasks: ['exec:copyAutofillJs']
             },
             injectedCSS: {
                 files: watch.injectedCSS,
@@ -272,7 +274,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'browserify:emailContentScript', 'exec:copyInjectedCSS', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyAutofillJs', 'exec:copyInjectedCSS', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build', 'exec:devifyOnboarding']
     if (grunt.option('watch')) { devTasks.push('watch') }
