@@ -78,9 +78,14 @@
                     const cookie = new Cookie(value)
                     // apply cookie policy
                     if (cookie.getExpiry() > policy.threshold) {
-                        cookie.maxAge = policy.maxAge
-                        debug && console.log('[ddg-cookie-policy] update', cookie.toString(), scriptOrigins)
-                        cookieSetter.apply(document, [cookie.toString()])
+                        // check if the cookie still exists
+                        if (document.cookie.split(';').findIndex(kv => kv.trim().startsWith(cookie.parts[0].trim())) !== -1) {
+                            cookie.maxAge = policy.maxAge
+                            debug && console.log('[ddg-cookie-policy] update', cookie.toString(), scriptOrigins)
+                            cookieSetter.apply(document, [cookie.toString()])
+                        } else {
+                            debug && console.log('[ddg-cookie-policy] dissappeared', cookie.toString(), cookie.parts[0], scriptOrigins)
+                        }
                     } else {
                         debug && console.log('[ddg-cookie-policy] ignored (expiry)', value, scriptOrigins)
                     }
