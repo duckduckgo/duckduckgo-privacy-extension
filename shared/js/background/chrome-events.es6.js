@@ -292,18 +292,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
         if (blockingExperimentActive()) {
             const tab = tabManager.get({ tabId: sender.tab.id })
-            // determine the register domain of the sending tab
-            const tabUrl = tab ? tab.url : sender.tab.url
-            const parsed = tldts.parse(tabUrl)
-            action.tabRegisteredDomain = parsed.isIp ? parsed.hostname : parsed.domain || parsed.hostname
-
-            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
-                action.isTrackerFrame = true
-            }
-
+            // abort if site is whitelisted
             if (tab && tab.site.whitelisted) {
                 res(action)
                 return true
+            }
+
+            // determine the register domain of the sending tab
+            const tabUrl = tab ? tab.url : sender.tab.url
+            const parsed = tldts.parse(tabUrl)
+            action.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
+
+            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
+                action.isTrackerFrame = true
             }
 
             action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
@@ -311,7 +312,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             res(action)
         } else {
             res(action)
-            return true
         }
 
         return true
