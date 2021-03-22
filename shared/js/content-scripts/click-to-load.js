@@ -5,13 +5,14 @@
         lightMode: ''
     }
     let logoImg
+    const titleID = 'DuckDuckGoPrivacyEssentialsCTLElementTitle'
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
 
     const styles = {
         fontStyle: `
             @font-face{
-                font-family: DuckDuckGo;
+                font-family: DuckDuckGoPrivacyEssentials;
                 src: url(${ddgFont});
             }
         `,
@@ -58,7 +59,7 @@
             border-color: #3969EF;
             border: none;
 
-            font-family: DuckDuckGo;
+            font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
         `,
         buttonTextContainer: `
@@ -79,7 +80,7 @@
 
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             
-            font-family: DuckDuckGo;
+            font-family: DuckDuckGoPrivacyEssentials;
             line-height: 1;
         `,
         content: `
@@ -99,9 +100,12 @@
             font-size: 15px;
             margin: 0 10px;
             flex-basis: 100%;
+            height: 1.4em;
+            flex-wrap: wrap;
+            overflow: hidden;
         `,
         headerLinkContainer: `
-            flex-basis: 60%;
+            flex-basis: 100%;
             display: grid;
             justify-content: flex-end;
         `,
@@ -111,6 +115,8 @@
             font-weight: bold;
             text-decoration: none;
             cursor: pointer;
+            min-width: 100px;
+            text-align: end;
         `,
         buttonRow: `
             display: flex;
@@ -119,13 +125,14 @@
             margin: 0px auto 36px;
         `,
         contentTitle: `
-            font-family: DuckDuckGo;
+            font-family: DuckDuckGoPrivacyEssentials;
             font-size: 17px;
             font-weight: bold;
             margin: 20px auto 10px;
+            padding: 0px 30px;
         `,
         contentText: `
-            font-family: DuckDuckGo;
+            font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
             line-height: 21px;
             margin: auto;
@@ -391,6 +398,11 @@
                 button.addEventListener('click', widget.clickFunction(originalElement, el))
                 textButton.addEventListener('click', widget.clickFunction(originalElement, el))
                 parent.replaceChild(el, originalElement)
+                // Hide the title element if the box is too narrow.
+                if (!!el.offsetWidth && el.offsetWidth <= 400) {
+                    const title = document.querySelector(`#${titleID}`)
+                    title.style.cssText += 'display: none;'
+                }
             })
         }
     }
@@ -485,6 +497,7 @@
 
         // Content box title
         const msgElement = document.createElement('div')
+        msgElement.id = titleID // Ensure we can find this to potentially hide it later.
         msgElement.innerHTML = message
         msgElement.style.cssText = styles.title
         row.appendChild(msgElement)
