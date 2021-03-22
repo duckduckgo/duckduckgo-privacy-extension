@@ -14,6 +14,7 @@ class AgentSpoofer {
 
     getAgent () {
         // TODO: Remove this when UA fixes occur
+        /* eslint-disable no-unreachable */
         return this.realAgent
         if (this.needsRotation) {
             this.rotateAgent()
@@ -26,6 +27,7 @@ class AgentSpoofer {
      */
     rotateAgent () {
         // TODO: remove this return when UA fixes occur
+        /* eslint-disable no-unreachable */
         return
         const oldAgent = this.spoofedAgent
         this.spoofedAgent = this.selectAgent()
