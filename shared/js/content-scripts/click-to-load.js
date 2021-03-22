@@ -1,6 +1,9 @@
 (function clickToLoad () {
     let appID
-    let loadingImage
+    const loadingImages = {
+        darkMode: '',
+        lightMode: ''
+    }
     let logoImg
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
@@ -12,12 +15,45 @@
                 src: url(${ddgFont});
             }
         `,
+        darkMode: {
+            background: `
+                background: #111111;
+            `,
+            textFont: `
+                color: rgba(255, 255, 255, 0.9);
+            `,
+            buttonFont: `
+                color: #111111;
+            `,
+            linkFont: `
+                color: #5784FF;
+            `,
+            buttonBackground: `
+                background: #5784FF;
+            `
+        },
+        lightMode: {
+            background: `
+                background: #FFFFFF;
+            `,
+            textFont: `
+                color: #222222;
+            `,
+            buttonFont: `
+                color: #FFFFFF;
+            `,
+            linkFont: `
+                color: #3969EF;
+            `,
+            buttonBackground: `
+                background: #3969EF;
+            `
+        },
         button: `
-            background: #3969EF;
             border-radius: 8px;
 
             padding: 11px 22px;
-            color: #FFFFFF;
+            font-weight: bold;
             margin: auto;
             border-color: #3969EF;
             border: none;
@@ -33,10 +69,6 @@
 
         `,
         block: `
-            /* General / White */
-            background: #FFFFFF;
-
-            /* Grayscale/Gray50 - #c3c3c3 */
             border: 1px solid #C3C3C3;
             box-sizing: border-box;
             border-radius: 10px;
@@ -78,7 +110,6 @@
             font-size: 15px;
             font-weight: bold;
             text-decoration: none;
-            color: #3969EF;
             cursor: pointer;
         `,
         buttonRow: `
@@ -100,15 +131,6 @@
             margin: auto;
             padding: 0px 40px;
             text-align: center;
-        `,
-        msg: ` 
-            padding: 6.8059px 13.6118px;
-
-            /* Grayscale/Gray15 - #f2f2f2 */
-            background: #F2F2F2;
-            border-radius: 13.6118px;
-            width: 70%;
-            margin: 11px 0px;
         `,
         icon: `
             height: 70px;
@@ -154,6 +176,15 @@
             // captured until after page scripts run.
             this.copySocialDataFields()
             return this.clickAction.targetURL
+        }
+
+        // Determine if element should render in dark mode
+        getMode () {
+            const mode = this.originalElement.getAttribute('data-colorscheme')
+            if (mode === 'dark') {
+                return 'darkMode'
+            }
+            return 'lightMode'
         }
 
         getStyle () {
@@ -266,7 +297,7 @@
 
                     // Loading animation (FB can take some time to load)
                     const loadingImg = document.createElement('img')
-                    loadingImg.setAttribute('src', loadingImage)
+                    loadingImg.setAttribute('src', loadingImages[this.getMode()])
                     loadingImg.style.cssText = 'display: block; margin-right: 8px;'
 
                     // Always add the animation to the button, regardless of click source
@@ -342,16 +373,16 @@
         let button
         if (widgetData.replaceSettings.type === 'button') {
             // Create a button to replace old element
-            button = makeButton(widgetData.replaceSettings.buttonText)
+            button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
             button.addEventListener('click', widget.clickFunction(originalElement, button))
             parent.replaceChild(button, originalElement)
         }
         if (widgetData.replaceSettings.type === 'dialog') {
             chrome.runtime.sendMessage({
-                'getImage': widgetData.replaceSettings.icon
+                getImage: widgetData.replaceSettings.icon
             }, function putButton (icon) {
-                button = makeButton(widgetData.replaceSettings.buttonText)
-                const textButton = makeTextButton(widgetData.replaceSettings.buttonText, '')
+                button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
+                const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const el = createContentBlock(
                     widget,
                     button,
@@ -367,8 +398,8 @@
     function replaceClickToLoadElements (config) {
         for (const entity of Object.keys(config)) {
             for (const widget of Object.values(config[entity].elementData)) {
-                let els = document.querySelectorAll(widget.selectors.join())
-                for (let el of els) {
+                const els = document.querySelectorAll(widget.selectors.join())
+                for (const el of els) {
                     createReplacementWidget(entity, widget, el)
                 }
             }
@@ -377,15 +408,15 @@
 
     function enableSocialTracker (entity, alwaysAllow, isLogin) {
         const message = {
-            'enableSocialTracker': entity,
-            'alwaysAllow': alwaysAllow,
-            'isLogin': isLogin
+            enableSocialTracker: entity,
+            alwaysAllow: alwaysAllow,
+            isLogin: isLogin
         }
         chrome.runtime.sendMessage(message)
     }
 
     chrome.runtime.sendMessage({
-        'initClickToLoad': true
+        initClickToLoad: true
     }, function (response) {
         if (!response) {
             return
@@ -402,31 +433,37 @@
 
     // Fetch reusable assets
     chrome.runtime.sendMessage({
-        'getLoadingImage': true
+        getLoadingImage: 'light'
     }, function (response) {
-        loadingImage = response
+        loadingImages.lightMode = response
     })
 
     chrome.runtime.sendMessage({
-        'getLogo': true
+        getLoadingImage: 'dark'
+    }, function (response) {
+        loadingImages.darkMode = response
+    })
+
+    chrome.runtime.sendMessage({
+        getLogo: true
     }, function (response) {
         logoImg = response
     })
 
-    function makeButton (buttonText) {
+    function makeButton (buttonText, mode) {
         const button = document.createElement('button')
-        button.style.cssText = styles.button
+        button.style.cssText = styles.button + styles[mode].buttonBackground
         const textContainer = document.createElement('div')
-        textContainer.style.cssText = styles.buttonTextContainer
+        textContainer.style.cssText = styles.buttonTextContainer + styles[mode].buttonFont
         textContainer.innerHTML = buttonText
         button.appendChild(textContainer)
         return button
     }
 
     /* Make a text link */
-    function makeTextButton (linkText) {
+    function makeTextButton (linkText, mode) {
         const linkElement = document.createElement('a')
-        linkElement.style.cssText = styles.headerLink
+        linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
         linkElement.innerHTML = linkText
         return linkElement
     }
@@ -464,10 +501,10 @@
     function createContentBlock (widget, button, textButton, img) {
         // Create overall grid structure
         const element = document.createElement('div')
-        element.style.cssText = styles.block
+        element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
         // Style element includes our font
         const styleElement = document.createElement('style')
-        styleElement.innerHTML = styles.fontStyle
+        styleElement.innerHTML = styles.fontStyle + `a { ${styles[widget.getMode()].linkFont} }`
         element.appendChild(styleElement)
         // grid of three rows
         const titleRow = document.createElement('div')

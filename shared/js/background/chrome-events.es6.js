@@ -179,7 +179,11 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.getLoadingImage) {
-        utils.imgToData('img/social/loading_dark.svg').then(img => res(img))
+        if (req.getLoadingImage === 'dark') {
+            utils.imgToData('img/social/loading_dark.svg').then(img => res(img))
+        } else if (req.getLoadingImage === 'light') {
+            utils.imgToData('img/social/loading_light.svg').then(img => res(img))
+        }
         return true
     }
 
