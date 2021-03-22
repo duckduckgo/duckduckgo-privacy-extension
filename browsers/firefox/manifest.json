@@ -57,5 +57,6 @@
         "storage",
         "<all_urls>",
         "alarms"
-    ]
+    ],
+    "web_accessible_resources": ["web_accessible_resources/*"]
 }

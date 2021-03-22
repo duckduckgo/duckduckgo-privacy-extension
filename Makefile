@@ -1,8 +1,8 @@
 ITEMS   := shared/html shared/data shared/img
 
-release: npm setup-build-dir grunt tosdr moveout fonts
+release: npm setup-build-dir grunt tosdr moveout fonts web-resources
 
-dev: setup-build-dir grunt-process-lists moveout fonts grunt-dev
+dev: setup-build-dir grunt-process-lists moveout fonts web-resources grunt-dev
 
 npm:
 	npm install
@@ -35,6 +35,15 @@ chrome-release-zip:
 fonts:
 	mkdir -p build/$(browser)/$(type)/public
 	cp -r shared/font build/$(browser)/$(type)/public/
+
+web-resources:
+	mkdir -p build/$(browser)/$(type)/web_accessible_resources
+	cp shared/data/web_accessible_resources/* build/$(browser)/$(type)/web_accessible_resources/
+	for f in build/$(browser)/$(type)/web_accessible_resources/*; do echo '' >> $$f; done
+	cat build/$(browser)/$(type)/web_accessible_resources/* >> build/$(browser)/$(type)/data/surrogates.txt
+	sed -i.bak 's/^\/\///g' build/$(browser)/$(type)/data/surrogates.txt
+	rm build/$(browser)/$(type)/data/surrogates.txt.bak
+	for f in build/$(browser)/$(type)/web_accessible_resources/*; do echo "$$(sed '1d' $$f)" > $$f; done
 
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'

@@ -154,11 +154,18 @@ function isBroken (url) {
     return isBrokenList(url, tdsStorage.brokenSiteList)
 }
 
-function isCanvasBroken (url) {
-    if (!tdsStorage?.fingerprinting?.canvas?.sites) return
-    // If globally disabled return the site is broken
-    if (tdsStorage?.fingerprinting?.canvas?.enabled === false) return true
-    return isBrokenList(url, tdsStorage.fingerprinting.canvas.sites)
+function getBrokenFeatures (url) {
+    if (!tdsStorage?.fingerprinting) return
+    const brokenFeatures = []
+    for (const feature in tdsStorage.fingerprinting) {
+        if (!tdsStorage.fingerprinting[feature]?.enabled) {
+            brokenFeatures.push(feature)
+        }
+        if (isBrokenList(url, tdsStorage.fingerprinting[feature].sites || [])) {
+            brokenFeatures.push(feature)
+        }
+    }
+    return brokenFeatures
 }
 
 function isBrokenList (url, lists) {
@@ -216,20 +223,20 @@ function isFirstParty (url1, url2) {
 }
 
 module.exports = {
-    extractHostFromURL: extractHostFromURL,
-    extractTopSubdomainFromHost: extractTopSubdomainFromHost,
-    getCurrentURL: getCurrentURL,
-    getCurrentTab: getCurrentTab,
-    getBrowserName: getBrowserName,
-    getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    getAsyncBlockingSupport: getAsyncBlockingSupport,
-    findParent: findParent,
-    getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
-    isSafeListed: isSafeListed,
-    extractLimitedDomainFromURL: extractLimitedDomainFromURL,
-    isBroken: isBroken,
-    isFirstParty: isFirstParty,
-    isCanvasBroken: isCanvasBroken,
-    getBrokenCanvasScriptList: getBrokenCanvasScriptList
+    extractHostFromURL,
+    extractTopSubdomainFromHost,
+    getCurrentURL,
+    getCurrentTab,
+    getBrowserName,
+    getUpgradeToSecureSupport,
+    getAsyncBlockingSupport,
+    findParent,
+    getBeaconName,
+    getUpdatedRequestListenerTypes,
+    isSafeListed,
+    extractLimitedDomainFromURL,
+    isBroken,
+    getBrokenFeatures,
+    getBrokenCanvasScriptList,
+    isFirstParty
 }
