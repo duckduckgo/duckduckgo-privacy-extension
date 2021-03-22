@@ -10,7 +10,7 @@
         return
     }
 
-    function clearInjectedCookiesAndBlock () {
+    function blockCookies () {
         // disable setting cookies
         document.__defineSetter__('cookie', function (value) { })
         document.__defineGetter__('cookie', () => '')
@@ -131,7 +131,7 @@
     }, function (action) {
         if (window.top !== window && action.isTrackerFrame) {
             // overrides expiry policy with blocking - only in subframes
-            inject(clearInjectedCookiesAndBlock)
+            inject(blockCookies)
         }
         // inform the injected script of the policy for this frame
         window.postMessage({
