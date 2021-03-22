@@ -85,27 +85,6 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['blocking']
 )
 
-/**
- * Listen for script loads from trackers and relay the hosts to the frame's content-script.
- * This will be used for tracker-dependant decicions in that context.
- */
-chrome.webRequest.onBeforeRequest.addListener(
-    (details) => {
-        if (trackerutils.isTracker(details.url)) {
-            chrome.tabs.sendMessage(details.tabId, {
-                type: 'tracker',
-                hostname: tldts.parse(details.url).hostname
-            }, {
-                frameId: details.frameId
-            })
-        }
-    },
-    {
-        urls: ['<all_urls>'],
-        types: ['script']
-    }
-)
-
 const extraInfoSpec = ['blocking', 'responseHeaders']
 if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
     extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
