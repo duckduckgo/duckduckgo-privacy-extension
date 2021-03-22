@@ -17,8 +17,8 @@ module.exports = {
         }
     },
     o: {
-        name: '3rd party cookie blocking',
-        description: 'Testing 3rd party cookie blocking',
+        name: '1st and 3rd party cookie experiment',
+        description: 'Testing 3rd party cookie blocking and 1st party cookie expiry',
         active: true,
         atbExperiments: {
             'c': {
