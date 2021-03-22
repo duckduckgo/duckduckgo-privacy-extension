@@ -71,7 +71,7 @@ function blockingExperimentActive () {
         return experiment && experiment.blockingActivated
     }
 
-    return false
+    // return false
 }
 
 // Shallow copy of request types
@@ -92,7 +92,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 chrome.webRequest.onBeforeRequest.addListener(
     (details) => {
         if (trackerutils.isTracker(details.url)) {
-            console.log('tracker script', details.url)
             chrome.tabs.sendMessage(details.tabId, {
                 type: 'tracker',
                 hostname: tldts.parse(details.url).hostname
