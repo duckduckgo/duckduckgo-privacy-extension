@@ -4,6 +4,9 @@
             "facebook.com",
             "facebook.net"
         ],
+        "excludedSubdomains": [
+            "graph.facebook.com"
+        ],
         "excludedDomains": [
             {
                 "domain": "",
@@ -13,7 +16,13 @@
         "surrogates": [
             {
                 "rule": "facebook\\.net\\/[a-z_A-Z]+\\/sdk.js",
-                "surrogate": "sdk.js"
+                "surrogate": "fb-sdk.js",
+                "xray": "fb-surrogate-xray.js"
+            },
+            {
+                "rule": "facebook\\.net\\/[a-z_A-Z]+\\/all.js",
+                "surrogate": "fb-sdk.js",
+                "xray": "fb-surrogate-xray.js"
             }
         ],
         "elementData": {

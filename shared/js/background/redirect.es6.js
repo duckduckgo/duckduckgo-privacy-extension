@@ -9,7 +9,6 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
-const webResourceURL = browserWrapper.getExtensionURL('/web_accessible_resources')
 const browser = utils.getBrowserName()
 
 const debugRequest = false
@@ -49,7 +48,7 @@ function handleRequest (requestData) {
     let thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
-    if (requestData.url.startsWith(webResourceURL)) {
+    if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
             return { cancel: true }
         }
@@ -114,7 +113,6 @@ function handleRequest (requestData) {
                 !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
                 // TDS doesn't block social sites by default, so update the action & redirect for click to load.
                 tracker.action = 'block'
-
                 if (socialTracker.redirectUrl) {
                     tracker.action = 'redirect'
                     tracker.redirectUrl = socialTracker.redirectUrl

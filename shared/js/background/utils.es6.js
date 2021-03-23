@@ -254,7 +254,6 @@ function isFirstParty (url1, url2) {
     const secondDomain = first.domain === null ? second.hostname : second.domain
 
     return firstDomain === secondDomain
-
 }
 
 module.exports = {

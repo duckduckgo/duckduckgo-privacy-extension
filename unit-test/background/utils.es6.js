@@ -1,4 +1,3 @@
-
 const utils = require('../../shared/js/background/utils.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tds = require('./../data/tds')
