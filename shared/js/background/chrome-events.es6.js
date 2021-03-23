@@ -436,7 +436,7 @@ async function init () {
             try {
                 const argumentsObject = {
                     ua: agentSpoofer.getAgent(),
-                    stringExemptionList: utils.getBrokenCanvasScriptList(),
+                    stringExemptionLists: utils.getBrokenScriptLists(),
                     sessionKey,
                     contentScopeScript,
                     site: tab.site,

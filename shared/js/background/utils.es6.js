@@ -182,8 +182,12 @@ function isBrokenList (url, lists) {
 }
 
 // We inject this into content scripts
-function getBrokenCanvasScriptList () {
-    return tdsStorage?.fingerprinting?.canvas?.scripts || []
+function getBrokenScriptLists () {
+    const brokenScripts = {}
+    for (const key in tdsStorage?.fingerprinting) {
+        brokenScripts[key] = tdsStorage.fingerprinting[key]?.scripts || []
+    }
+    return brokenScripts
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
@@ -237,6 +241,6 @@ module.exports = {
     extractLimitedDomainFromURL,
     isBroken,
     getBrokenFeatures,
-    getBrokenCanvasScriptList,
+    getBrokenScriptLists,
     isFirstParty
 }

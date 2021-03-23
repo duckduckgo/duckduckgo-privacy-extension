@@ -209,7 +209,7 @@
      * Trigger the built code in args.contentScopeScript.
      */
     function buildInit () {
-        let codeOutput = ''
+        let codeOutput = `initStringExemptionLists(${JSON.stringify(args)});`
         if (!isFeatureBroken('canvas')) {
             codeOutput += `initCanvasProtection(${JSON.stringify(args)});`
         }
