@@ -15,5 +15,20 @@ module.exports = {
                 }
             }
         }
+    },
+    o: {
+        name: '1st and 3rd party cookie experiment',
+        description: 'Testing 3rd party cookie blocking and 1st party cookie expiry',
+        active: true,
+        atbExperiments: {
+            'c': {
+                description: '3rd party experiment group',
+                settings: {
+                    experimentData: {
+                        blockingActivated: true
+                    }
+                }
+            }
+        }
     }
 }

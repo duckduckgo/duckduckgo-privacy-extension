@@ -4,6 +4,7 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
+const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
@@ -11,6 +12,13 @@ const experiment = require('./experiments.es6')
 const browser = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
+
+const RELEASE_EXTENSION_IDS = [
+    'caoacbimdbbljakfhgikoodekdnlcgpk', // edge store
+    'bkdgflcldnnnapblkhphbgpggdiikppg', // chrome store
+    'jid1-ZAdIEUB7XOzOJw@jetpack' // firefox
+]
+const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1
 
 /**
  * Produce a random float, same output as Math.random()
@@ -47,7 +55,24 @@ const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const constants = require('../../data/constants')
+const cookieConfig = require('./../background/storage/cookies.es6')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
+
+const settings = require('./settings.es6')
+
+function blockingExperimentActive () {
+    if (IS_BETA) {
+        return true
+    }
+    const activeExperiment = settings.getSetting('activeExperiment')
+    if (activeExperiment) {
+        const experiment = settings.getSetting('experimentData')
+
+        return experiment && experiment.blockingActivated
+    }
+
+    // return false
+}
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
@@ -60,6 +85,10 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['blocking']
 )
 
+const extraInfoSpec = ['blocking', 'responseHeaders']
+if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+    extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+}
 chrome.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
@@ -70,10 +99,25 @@ chrome.webRequest.onHeadersReceived.addListener(
             // returns a promise
             return ATB.updateSetAtb(request)
         }
+
+        if (blockingExperimentActive()) {
+            let responseHeaders = request.responseHeaders
+            // Strip 3rd party response header
+            const tab = tabManager.get({ tabId: request.tabId })
+            if (!request.responseHeaders) return
+            if (tab && tab.site.whitelisted) return
+            if (tab && utils.isFirstParty(request.url, tab.url)) return
+            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
+            }
+
+            return { responseHeaders: responseHeaders }
+        }
     },
     {
         urls: ['<all_urls>']
-    }
+    },
+    extraInfoSpec
 )
 
 /**
@@ -135,7 +179,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
  * MESSAGES
  */
 
-const settings = require('./settings.es6')
 const browserWrapper = require('./chrome-wrapper.es6')
 
 // handle any messages that come from content/UI scripts
@@ -278,6 +321,44 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             fireArgs = [req.firePixel]
         }
         res(pixel.fire.apply(null, fireArgs))
+        return true
+    }
+
+    if (req.checkThirdParty) {
+        const action = {
+            isThirdParty: false,
+            shouldBlock: false,
+            tabRegisteredDomain: null,
+            isTrackerFrame: false,
+            policy: cookieConfig.firstPartyCookiePolicy
+        }
+        if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
+            return true
+        }
+        if (blockingExperimentActive()) {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            // abort if site is whitelisted
+            if (tab && tab.site.whitelisted) {
+                res(action)
+                return true
+            }
+
+            // determine the register domain of the sending tab
+            const tabUrl = tab ? tab.url : sender.tab.url
+            const parsed = tldts.parse(tabUrl)
+            action.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
+
+            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
+                action.isTrackerFrame = true
+            }
+
+            action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
+            action.shouldBlock = !cookieConfig.isExcluded(sender.url)
+            res(action)
+        } else {
+            res(action)
+        }
+
         return true
     }
 })
@@ -452,19 +533,35 @@ chrome.webNavigation.onCommitted.addListener(details => {
     GPC.injectDOMSignal(details.tabId, details.frameId)
 })
 
+const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
+if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+    extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+}
 // Attach GPC header to all requests if enabled.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
 
+        let requestHeaders = request.requestHeaders
         if (GPCHeader) {
-            const requestHeaders = request.requestHeaders
             requestHeaders.push(GPCHeader)
-            return { requestHeaders: requestHeaders }
         }
+
+        if (blockingExperimentActive()) {
+            // Strip 3rd party response header
+            const tab = tabManager.get({ tabId: request.tabId })
+            if (!requestHeaders) return
+            if (tab && tab.site.whitelisted) return
+            if (tab && utils.isFirstParty(request.url, tab.url)) return
+            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
+            }
+        }
+
+        return { requestHeaders: requestHeaders }
     },
     { urls: ['<all_urls>'] },
-    ['blocking', 'requestHeaders']
+    extraInfoSpecSendHeaders
 )
 
 /**
@@ -569,6 +666,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         settings.ready()
             .then(() => {
                 agents.updateAgentData()
+                cookieConfig.updateCookieData()
             }).catch(e => console.log(e))
     } else if (alarmEvent.name === 'rotateUserAgent') {
         agentSpoofer.needsRotation = true
@@ -609,6 +707,7 @@ const onStartup = () => {
         Companies.buildFromStorage()
 
         agents.updateAgentData()
+        cookieConfig.updateCookieData()
     })
 }
 

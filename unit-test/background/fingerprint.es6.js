@@ -7,6 +7,7 @@ const agentData = require('./../data/random_useragent.json')
 const agentparser = require('useragent')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
+const utils = require('../../shared/js/background/utils.es6')
 
 describe('User-Agent replacement', () => {
     let tabObserver
@@ -69,13 +70,13 @@ describe('User-Agent replacement', () => {
         it('should consider the same domain first party', () => {
             const url1 = 'http://example.com'
             const url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
-            expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
+            expect(utils.isFirstParty(url1, url2)).toEqual(true)
         })
 
         it('should consider subdomains to be first party', () => {
             const url1 = 'http://example.com'
             const url2 = 'http://subdomain.example.com'
-            expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
+            expect(utils.isFirstParty(url1, url2)).toEqual(true)
         })
     })
 })

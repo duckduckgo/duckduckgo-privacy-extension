@@ -240,6 +240,20 @@ async function imgToData (imagePath) {
     } catch (e) {
         console.error('Could not load image file to process: ' + e)
     }
+
+/**
+ * Tests whether the two URL's belong to the same
+ * first party set.
+ */
+function isFirstParty (url1, url2) {
+    const first = tldts.parse(url1, { allowPrivateDomains: true })
+    const second = tldts.parse(url2, { allowPrivateDomains: true })
+
+    const firstDomain = first.domain === null ? first.hostname : first.domain
+    const secondDomain = first.domain === null ? second.hostname : second.domain
+
+    return firstDomain === secondDomain
+
 }
 
 module.exports = {
@@ -258,5 +272,6 @@ module.exports = {
     isBroken,
     getBrokenFeatures,
     getBrokenCanvasScriptList,
-    imgToData: imgToData
+    imgToData: imgToData,
+    isFirstParty
 }

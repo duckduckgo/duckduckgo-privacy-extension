@@ -1,3 +1,5 @@
+const tldts = require('tldts')
+
 const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const trackerutils = require('./tracker-utils')
@@ -197,6 +199,16 @@ function handleRequest (requestData) {
                     return { cancel: true }
                 }
             }
+        }
+
+        // If we didn't block this script and it's a tracker, notify the content script.
+        if (requestData.type === 'script' && tracker) {
+            chrome.tabs.sendMessage(requestData.tabId, {
+                type: 'tracker',
+                hostname: tldts.parse(requestData.url).hostname
+            }, {
+                frameId: requestData.frameId
+            })
         }
     }
 
