@@ -100,10 +100,10 @@ function initCanvasProtection (args) {
         // We might want to do something more pseudo random that is less observable through timing attacks and collisions (but this will come at a performance cost)
         let checkSum = 0
         // Create an array of only pixels that have data in them
-        for (let i = 0; i < imageData.data.length; i++) {
-            const d = imageData.data.subarray(i, i + 4)
+        const d = imageData.data
+        for (let i = 0; i < d.length; i += 4) {
             // Ignore non blank pixels there is high chance compression ignores them
-            const sum = d[0] + d[1] + d[2] + d[3]
+            const sum = d[i] + d[i + 1] + d[i + 2] + d[i + 3]
             if (sum !== 0) {
                 checkSum += sum
                 arr.push(i)
@@ -153,7 +153,7 @@ function initCanvasProtection (args) {
                     return target.apply(thisArg, args)
                 }
                 try {
-                    const { offScreenCanvas } = computeOffScreenCanvas(thisArg.canvas)
+                    const { offScreenCanvas } = computeOffScreenCanvas(thisArg)
                     // Call the original method on the modified off-screen canvas
                     return target.apply(offScreenCanvas, args)
                 } catch (e) {
