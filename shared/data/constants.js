@@ -123,6 +123,14 @@ module.exports = {
             "source": "external"
         }
     ],
+    "CookieLists": [
+        {
+            "name": "cookieExcludeList",
+            "url": "https://staticcdn.duckduckgo.com/useragents/cookie_configuration.json",
+            "format": "json",
+            "source": "external"
+        }
+    ],
     "httpsErrorCodes": {
         "net::ERR_CONNECTION_REFUSED": 1,
         "net::ERR_ABORTED": 2,

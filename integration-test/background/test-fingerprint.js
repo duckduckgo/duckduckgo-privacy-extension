@@ -57,7 +57,7 @@ describe('Fingerprint Defense Tests', () => {
                 // timed out waiting for page to load, let's try running the test anyway
             }
             // give it another second just to be sure
-            await page.waitFor(1000)
+            await page.waitForTimeout(1000)
             const values = await page.evaluate(() => {
                 return {
                     availTop: screen.availTop,
@@ -102,7 +102,7 @@ describe('First Party Fingerprint Randomization', () => {
         }
 
         // give it another second just to be sure
-        await page.waitFor(1000)
+        await page.waitForTimeout(1000)
 
         await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
 
@@ -175,7 +175,7 @@ describe('Verify injected script is not visible to the page', () => {
             }
 
             // give it another second just to be sure
-            await page.waitFor(1000)
+            await page.waitForTimeout(1000)
 
             const sjclVal = await page.evaluate(() => {
                 if ('sjcl' in window) {

@@ -120,3 +120,28 @@ describe('utils.getUpgradeToSecureSupport()', () => {
         expect(result).toEqual(chromeBeaconName)
     })
 })
+
+describe('utils.isFirstParty()', () => {
+    [
+        ['example.com', 'example.com', true],
+        ['example.com', 'www.example.com', true],
+        ['localhost', 'localhost', true],
+        ['ddg.local', 'sub.ddg.local', true],
+        ['ddg.localhost', 'localhost', false],
+        ['example.com', 'example.net', false],
+        ['a.blogspot.com', 'b.blogspot.com', false],
+        ['localhost', 'ddg', false],
+        ['1.2.3.4', '1.2.3.4', true],
+        ['127.0.0.1', 'localhost', false]
+    ].forEach(([a, b, expected]) => {
+        it(`returns ${expected} for ${a} and ${b}`, () => {
+            if (expected) {
+                expect(utils.isFirstParty(a, b)).toBeTrue()
+                expect(utils.isFirstParty(b, a)).toBeTrue()
+            } else {
+                expect(utils.isFirstParty(a, b)).toBeFalse()
+                expect(utils.isFirstParty(b, a)).toBeFalse()
+            }
+        })
+    })
+})
