@@ -240,6 +240,7 @@ async function imgToData (imagePath) {
     } catch (e) {
         console.error('Could not load image file to process: ' + e)
     }
+}
 
 /**
  * Tests whether the two URL's belong to the same
@@ -272,6 +273,6 @@ module.exports = {
     isBroken,
     getBrokenFeatures,
     getBrokenCanvasScriptList,
-    imgToData: imgToData,
+    imgToData,
     isFirstParty
 }
