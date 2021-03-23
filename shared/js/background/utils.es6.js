@@ -154,11 +154,18 @@ function isBroken (url) {
     return isBrokenList(url, tdsStorage.brokenSiteList)
 }
 
-function isCanvasBroken (url) {
-    if (!tdsStorage?.fingerprinting?.canvas?.sites) return
-    // If globally disabled return the site is broken
-    if (tdsStorage?.fingerprinting?.canvas?.enabled === false) return true
-    return isBrokenList(url, tdsStorage.fingerprinting.canvas.sites)
+function getBrokenFeatures (url) {
+    if (!tdsStorage?.fingerprinting) return
+    const brokenFeatures = []
+    for (const feature in tdsStorage.fingerprinting) {
+        if (!tdsStorage.fingerprinting[feature]?.enabled) {
+            brokenFeatures.push(feature)
+        }
+        if (isBrokenList(url, tdsStorage.fingerprinting[feature].sites || [])) {
+            brokenFeatures.push(feature)
+        }
+    }
+    return brokenFeatures
 }
 
 function isBrokenList (url, lists) {
@@ -201,6 +208,20 @@ function isSafeListed (url) {
     return false
 }
 
+/**
+ * Tests whether the two URL's belong to the same
+ * first party set.
+ */
+function isFirstParty (url1, url2) {
+    const first = tldts.parse(url1, { allowPrivateDomains: true })
+    const second = tldts.parse(url2, { allowPrivateDomains: true })
+
+    const firstDomain = first.domain === null ? first.hostname : first.domain
+    const secondDomain = first.domain === null ? second.hostname : second.domain
+
+    return firstDomain === secondDomain
+}
+
 module.exports = {
     extractHostFromURL,
     extractTopSubdomainFromHost,
@@ -215,6 +236,7 @@ module.exports = {
     isSafeListed,
     extractLimitedDomainFromURL,
     isBroken,
-    isCanvasBroken,
-    getBrokenCanvasScriptList
+    getBrokenFeatures,
+    getBrokenCanvasScriptList,
+    isFirstParty
 }
