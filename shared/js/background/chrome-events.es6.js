@@ -106,11 +106,8 @@ chrome.webRequest.onHeadersReceived.addListener(
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return
             if (tab && tab.site.whitelisted) return
-
-            if (!tab && request.tabId === -1) {
-                if (utils.isFirstParty(request.initiator, request.url)) {
-                    return
-                }
+            if (!tab && request.tabId === -1 && utils.isFirstParty(request.initiator, request.url)) {
+                return
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
                 return
             }
@@ -493,10 +490,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return
             if (tab && tab.site.whitelisted) return
-            if (!tab && request.tabId === -1) {
-                if (utils.isFirstParty(request.initiator, request.url)) {
-                    return
-                }
+            if (!tab && request.tabId === -1 && utils.isFirstParty(request.initiator, request.url)) {
+                return
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
                 return
             }
