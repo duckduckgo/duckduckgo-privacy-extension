@@ -4,11 +4,8 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
-<<<<<<< HEAD
 import 'regenerator-runtime/runtime' // needed for async/await until we config @babel/preset-env more precisely
-=======
 const tldts = require('tldts')
->>>>>>> origin/develop
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
@@ -160,11 +157,8 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
-<<<<<<< HEAD
-=======
-const constants = require('../../data/constants')
 const cookieConfig = require('./../background/storage/cookies.es6')
->>>>>>> origin/develop
+
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 const settings = require('./settings.es6')
@@ -287,10 +281,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 /**
  * MESSAGES
  */
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/develop
 const browserWrapper = require('./chrome-wrapper.es6')
 
 // handle any messages that come from content/UI scripts
