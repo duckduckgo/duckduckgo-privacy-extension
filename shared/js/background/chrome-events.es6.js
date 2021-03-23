@@ -161,8 +161,6 @@ const cookieConfig = require('./../background/storage/cookies.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
-const settings = require('./settings.es6')
-
 function blockingExperimentActive () {
     if (IS_BETA) {
         return true
