@@ -217,7 +217,7 @@ function isSafeListed (url) {
 async function imgToData (imagePath) {
     const imgType = imagePath.substring(imagePath.lastIndexOf('.') + 1)
     try {
-        let options = {
+        const options = {
             url: imagePath,
             type: 'internal'
         }

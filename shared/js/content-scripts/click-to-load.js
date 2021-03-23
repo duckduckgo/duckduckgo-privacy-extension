@@ -155,7 +155,7 @@
 
     class DuckWidget {
         constructor (widgetData, originalElement, entity) {
-            this.clickAction = {...widgetData.clickAction} // shallow copy
+            this.clickAction = { ...widgetData.clickAction } // shallow copy
             this.replaceSettings = widgetData.replaceSettings
             this.originalElement = originalElement
             this.dataElements = {}
@@ -222,7 +222,7 @@
             }
 
             // App ID may be set by client scripts, and is required for some elements.
-            if (this.dataElements['app_id_replace'] && appID != null) {
+            if (this.dataElements.app_id_replace && appID != null) {
                 this.clickAction.targetURL = this.clickAction.targetURL.replace('app_id_replace', appID)
             }
 

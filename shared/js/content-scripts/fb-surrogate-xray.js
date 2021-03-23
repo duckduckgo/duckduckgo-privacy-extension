@@ -4,13 +4,14 @@
     let siteInit = function () {}
     let fbIsEnabled = false
     const parseCalls = []
-    let fbLogin = {
+    const fbLogin = {
         callback: function () {},
         params: undefined
     }
 
     function enableFacebookSDK () {
         if (!fbIsEnabled) {
+            /* eslint-disable no-undef */
             wrappedWindow.FB = cloneInto(
                 undefined,
                 window)
@@ -67,10 +68,11 @@
             wrappedWindow.FB.login(fbLogin.callback, fbLogin.params)
         }
 
+        /* eslint-disable no-undef */
         wrappedWindow.fbAsyncInit = cloneInto(
             wrappedInit,
             window,
-            {cloneFunctions: true})
+            { cloneFunctions: true })
         enableFacebookSDK()
     }
 
@@ -98,23 +100,23 @@
             },
             init: function (obj) {
                 FB.messageAddon({
-                    'appID': obj.appId
+                    appID: obj.appId
                 })
             },
-            ui: function (obj, cb) {
-                cb({})
+            ui: function (obj, sitecallback) {
+                sitecallback({})
             },
             getAccessToken: function () {},
             getAuthResponse: function () {
-                return {status: ''}
+                return { status: '' }
             },
-            getLoginStatus: function (callback) {callback({status: ''})},
+            getLoginStatus: function (sitecallback) { sitecallback({ status: '' }) },
             getUserID: function () {},
             login: function (cb, params) {
                 fbLogin.callback = cb
                 fbLogin.params = params
                 FB.messageAddon({
-                    'action': 'login'
+                    action: 'login'
                 })
             },
             logout: function () {},
@@ -133,11 +135,11 @@
                 }
             }
         }
-
+        /* eslint-disable no-undef */
         wrappedWindow.FB = cloneInto(
             FB,
             window,
-            {cloneFunctions: true})
+            { cloneFunctions: true })
 
         if (document.readyState === 'complete') {
             initSurrogate()

@@ -154,7 +154,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     // Click to load interactions
     if (req.initClickToLoad) {
         const tab = tabManager.get({ tabId: sender.tab.id })
-        const config = {...tdsStorage.ClickToLoadConfig}
+        const config = { ...tdsStorage.ClickToLoadConfig }
 
         // remove any social networks saved by the user
         for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
@@ -477,7 +477,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  */
 chrome.webRequest.onBeforeRedirect.addListener(
     details => {
-        let tab = tabManager.get({ tabId: details.tabId })
+        const tab = tabManager.get({ tabId: details.tabId })
         if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders) {
             // Detect cors error
             const headers = details.responseHeaders
@@ -500,13 +500,13 @@ chrome.webRequest.onBeforeRedirect.addListener(
             }
         }
     },
-    {urls: ['<all_urls>']},
+    { urls: ['<all_urls>'] },
     ['responseHeaders']
 )
 
 // Inject our content script to overwite FB elements
 chrome.webNavigation.onCommitted.addListener(details => {
-    let tab = tabManager.get({ tabId: details.tabId })
+    const tab = tabManager.get({ tabId: details.tabId })
     if (tab && tab.site.isBroken) {
         console.log('temporarily skip embedded object replacements for site: ' + details.url +
           'more info: https://github.com/duckduckgo/content-blocking-whitelist')
@@ -514,7 +514,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
     if (tab && !tab.site.whitelisted) {
         chrome.tabs.executeScript(details.tabId, {
-            file: `public/js/content-scripts/click-to-load.js`,
+            file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,
             frameId: details.frameId,
             runAt: 'document_start'

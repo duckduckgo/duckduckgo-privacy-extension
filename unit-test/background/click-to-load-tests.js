@@ -40,7 +40,7 @@ describe('Tracker Utilities', () => {
         const requestData = {}
         tabObserver.and.returnValue(tab)
         managerObserver.and.returnValue(tab)
-        for (let tracker of socialTrackers) {
+        for (const tracker of socialTrackers) {
             requestData.url = tracker
             expect(redirect.handleRequest(requestData)).withContext(`URL: ${tracker}`).toEqual({ cancel: true })
         }
@@ -54,7 +54,7 @@ describe('Tracker Utilities', () => {
         tabObserver.and.returnValue(tab)
         managerObserver.and.returnValue(tab)
         const requestData = {}
-        for (let url of sdkURLs) {
+        for (const url of sdkURLs) {
             requestData.url = url
             expect(redirect.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
         }
@@ -65,7 +65,7 @@ describe('Tracker Utilities', () => {
         tabObserver.and.returnValue(tab)
         managerObserver.and.returnValue(tab)
         const requestData = {}
-        for (let url of socialTrackers) {
+        for (const url of socialTrackers) {
             requestData.url = url
             expect(redirect.handleRequest(requestData)).toEqual(undefined)
         }
