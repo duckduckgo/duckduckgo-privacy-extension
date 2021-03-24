@@ -106,7 +106,14 @@ chrome.webRequest.onHeadersReceived.addListener(
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return
             if (tab && tab.site.whitelisted) return
-            if (tab && utils.isFirstParty(request.url, tab.url)) return
+            if (!tab) {
+                const initiator = request.initiator || request.documentUrl
+                if (utils.isFirstParty(initiator, request.url)) {
+                    return
+                }
+            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+                return
+            }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
@@ -486,7 +493,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return
             if (tab && tab.site.whitelisted) return
-            if (tab && utils.isFirstParty(request.url, tab.url)) return
+            if (!tab) {
+                const initiator = request.initiator || request.documentUrl
+                if (utils.isFirstParty(initiator, request.url)) {
+                    return
+                }
+            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+                return
+            }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             }
