@@ -76,16 +76,50 @@ function iterateDataKey (key, callback) {
     }
 }
 
+function isFeatureBroken (args, feature) {
+    return args.site.brokenFeatures.includes(feature)
+}
+
+// eslint-disable-next-line no-unused-vars
+function initProtection (args) {
+    initStringExemptionLists(args)
+    // JKTODO remove
+    if (true || !isFeatureBroken(args, 'canvas')) {
+        initCanvasProtection(args)
+    }
+    if (!isFeatureBroken(args, 'audio')) {
+        initAudioProtection(args)
+    }
+}
+
 // eslint-disable-next-line no-unused-vars
 function initCanvasProtection (args) {
     const { sessionKey, site } = args
     const domainKey = site.domain
 
-    const _getImageData = CanvasRenderingContext2D.prototype.getImageData
+    // Using proxies here to swallow calls to toString etc
+    const getImageDataProxy = new DDGProxy(CanvasRenderingContext2D.prototype, 'getImageData', {
+        apply (target, thisArg, args) {
+            // The normal return value
+            if (shouldExemptMethod('canvas')) {
+                return DDGReflect.apply(target, thisArg, args)
+            }
+            // Anything we do here should be caught and ignored silently
+            try {
+                const { offScreenCtx } = computeOffScreenCanvas(thisArg.canvas)
+                // Call the original method on the modified off-screen canvas
+                return DDGReflect.apply(target, offScreenCtx, args)
+            } catch (e) {
+            }
+
+            return DDGReflect.apply(target, thisArg, args)
+        }
+    })
+
     function computeOffScreenCanvas (canvas) {
         const ctx = canvas.getContext('2d')
         // We *always* compute the random pixels on the complete pixel set, then pass back the subset later
-        let imageData = _getImageData.apply(ctx, [0, 0, canvas.width, canvas.height])
+        let imageData = getImageDataProxy._native2.apply(ctx, [0, 0, canvas.width, canvas.height])
         imageData = modifyPixelData(imageData, sessionKey, domainKey)
 
         // Make a off-screen canvas and put the data there
@@ -127,46 +161,23 @@ function initCanvasProtection (args) {
         return imageData
     }
 
-    // Using proxies here to swallow calls to toString etc
-    const getImageDataProxy = new Proxy(_getImageData, {
-        apply (target, thisArg, args) {
-            // The normal return value
-            if (shouldExemptMethod('canvas')) {
-                const imageData = target.apply(thisArg, args)
-                return imageData
-            }
-            // Anything we do here should be caught and ignored silently
-            try {
-                const { offScreenCtx } = computeOffScreenCanvas(thisArg.canvas)
-                // Call the original method on the modified off-screen canvas
-                return target.apply(offScreenCtx, args)
-            } catch {
-            }
-
-            const imageData = target.apply(thisArg, args)
-            return imageData
-        }
-    })
-    CanvasRenderingContext2D.prototype.getImageData = getImageDataProxy
-
     const canvasMethods = ['toDataURL', 'toBlob']
     for (const methodName of canvasMethods) {
-        const methodProxy = new Proxy(HTMLCanvasElement.prototype[methodName], {
+        new DDGProxy(HTMLCanvasElement.prototype, methodName, {
             apply (target, thisArg, args) {
                 if (shouldExemptMethod('canvas')) {
-                    return target.apply(thisArg, args)
+                    return DDGReflect.apply(target, thisArg, args)
                 }
                 try {
                     const { offScreenCanvas } = computeOffScreenCanvas(thisArg)
                     // Call the original method on the modified off-screen canvas
-                    return target.apply(offScreenCanvas, args)
+                    return DDGReflect.apply(target, offScreenCanvas, args)
                 } catch {
                     // Something we did caused an exception, fall back to the native
-                    return target.apply(thisArg, args)
+                    return DDGReflect.apply(target, thisArg, args)
                 }
             }
         })
-        HTMLCanvasElement.prototype[methodName] = methodProxy
     }
 }
 
