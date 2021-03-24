@@ -25,7 +25,9 @@ function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
         const parsedURL = new URL(url)
         const tld = tldts.parse(url)
         if (!parsedURL || !tld) return ''
-        let finalURL = tld.domain
+        // tld.domain is null if this is an IP or the domain does not use a known TLD (e.g. localhost)
+        // in that case use the hostname (no truncation)
+        let finalURL = tld.domain || tld.hostname
         if (keepSubdomains) {
             finalURL = tld.hostname
         } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
@@ -35,8 +37,9 @@ function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
             // subdomain of www.something, and wouldn't trigger this case.
             finalURL = 'www.' + tld.domain
         }
+        const port = parsedURL.port ? `:${parsedURL.port}` : ''
 
-        return `${parsedURL.protocol}//${finalURL}/`
+        return `${parsedURL.protocol}//${finalURL}${port}/`
     } catch (e) {
         // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
         return undefined
