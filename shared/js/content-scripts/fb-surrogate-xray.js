@@ -1,6 +1,7 @@
 (function injectFBSurrogateWithXRay () {
     const wrappedWindow = window.wrappedJSObject
     let capturedFBURL
+    const entity = 'Facebook'
     let siteInit = function () {}
     let fbIsEnabled = false
     const parseCalls = []
@@ -8,6 +9,15 @@
         callback: function () {},
         params: undefined
     }
+
+    // use default patterns for the SDK
+    let sdkPatterns = [/connect.facebook.net\/[a-zA-Z_]+\/(sdk|all).js/]
+    // Request list of rules to capture from the extension
+    chrome.runtime.sendMessage({
+        getSocialSurrogateRules: entity
+    }, function (response) {
+        sdkPatterns = response
+    })
 
     function enableFacebookSDK () {
         if (!fbIsEnabled) {
@@ -27,8 +37,9 @@
         }
     }
 
-    /* Attempt to find the SDK url being used by the site.
-     * This will fail when the script is dynamically loaded (via another script)
+    /*
+     * Attempt to find the SDK url being used by the site. Falls back to standard if it can't find
+     * one the site uses.
      */
     function getSDKUrl () {
         // See if a call has been captured
@@ -41,9 +52,11 @@
         const scripts = document.querySelectorAll('script')
         for (const script of scripts) {
             const url = script.getAttribute('src')
-            if (url && url.match(/connect.facebook.net\/[a-zA-Z_]+\/(sdk|all).js/)) {
-                source = url
-            }
+            sdkPatterns.forEach(pattern => {
+                if (url && url.match(pattern)) {
+                    source = url
+                }
+            })
         }
         return source
     }
@@ -54,9 +67,11 @@
     function facebookObserver (list, observer) {
         const resourceLoads = list.getEntriesByType('resource')
         for (const resource of resourceLoads) {
-            if (resource.name.match(/connect.facebook.net\/[a-zA-Z_]+\/(sdk|all).js/)) {
-                capturedFBURL = resource.name
-            }
+            sdkPatterns.forEach(pattern => {
+                if (resource.name.match(pattern)) {
+                    capturedFBURL = resource.name
+                }
+            })
         }
     }
     const observer = new PerformanceObserver(facebookObserver)

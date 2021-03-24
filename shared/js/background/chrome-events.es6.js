@@ -235,6 +235,18 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    if (req.getSocialSurrogateRules) {
+        const entityData = tdsStorage.ClickToLoadConfig[req.getSocialSurrogateRules]
+        if (entityData && entityData.surrogates) {
+            const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
+                accumulator.push(value.rule)
+                return accumulator
+            }, [])
+            res(rules)
+        }
+        return true
+    }
+
     if (req.enableSocialTracker) {
         const tab = tabManager.get({ tabId: sender.tab.id })
         if (req.isLogin) {

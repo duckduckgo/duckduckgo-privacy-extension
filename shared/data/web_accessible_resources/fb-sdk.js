@@ -6,17 +6,12 @@
     let fbIsEnabled = false
     const parseCalls = []
     const popupName = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12)
-    const noop = () => {}
-    const noopHandler = {
-        get: () => {
-            return noop
-        }
-    }
-    let fbLogin = {
+
+    const fbLogin = {
         callback: function () {},
         params: undefined
     }
-    const noopProxy = new Proxy({}, noopHandler)
+
     function messageAddon (detailObject) {
         detailObject.entity = 'Facebook'
         const event = new CustomEvent('ddgClickToLoad', {
@@ -27,6 +22,7 @@
         })
         dispatchEvent(event)
     }
+
     function enableFacebookSDK () {
         if (!fbIsEnabled) {
             window.FB = undefined
@@ -41,6 +37,7 @@
             fbIsEnabled = true
         }
     }
+
     function runFacebookLogin () {
         enableFacebookSDK()
         replaceWindowOpen()
@@ -50,6 +47,7 @@
             window.FB.login(fbLogin.callback, fbLogin.params)
         }
     }
+
     function replaceWindowOpen () {
         const oldOpen = window.open
         window.open = function (url, name, windowParams) {
@@ -60,12 +58,14 @@
             return oldOpen.call(window, url, name, windowParams)
         }
     }
+
     function loginPopup () {
         const width = Math.min(window.screen.width, 450)
         const height = Math.min(window.screen.height, 450)
         const popupParams = `width=${width},height=${height},scrollbars=1,location=1`
         window.open('about:blank', popupName, popupParams)
     }
+
     window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
     window.addEventListener('RunFacebookLogin', runFacebookLogin)
 

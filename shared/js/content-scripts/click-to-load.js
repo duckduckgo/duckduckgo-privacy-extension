@@ -9,6 +9,9 @@
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
 
+    /*********************************************************
+     *  Style Definitions
+     *********************************************************/
     const styles = {
         fontStyle: `
             @font-face{
@@ -153,6 +156,9 @@
         `
     }
 
+    /*********************************************************
+     *  Widget Replacement logic
+     *********************************************************/
     class DuckWidget {
         constructor (widgetData, originalElement, entity) {
             this.clickAction = { ...widgetData.clickAction } // shallow copy
@@ -178,8 +184,9 @@
             }
         }
 
+        // Return the facebook content URL to use when a user has clicked.
         getTargetURL () {
-            // This has to be done lazy, since some required data may not be
+            // Copying over data fields should be done lazily, since some required data may not be
             // captured until after page scripts run.
             this.copySocialDataFields()
             return this.clickAction.targetURL
@@ -194,6 +201,9 @@
             return 'lightMode'
         }
 
+        // The config file offers the ability to style the replaced facebook widget. This
+        // collects the style from the original element & any specified in config for the element
+        // type and returns a CSS string.
         getStyle () {
             let styleString = this.clickAction.style
             if (styleString[styleString.length - 1] !== ';') {
@@ -216,6 +226,8 @@
             return styleString
         }
 
+        // Some data fields are 'kept' from the original element. These are used both in
+        // replacement styling (darkmode, width, height), and when returning to a FB element.
         copySocialDataFields () {
             if (!this.clickAction.urlDataAttributesToPreserve) {
                 return
@@ -248,35 +260,31 @@
 
         /*
          * Fades out the given element. Returns a promise that resolves when the fade is complete.
+         * @param {Element} element - the element to fade in or out
+         * @param {int} interval - frequency of opacity updates (ms)
+         * @param {bool} fadeIn - true if the element should fade in instead of out
          */
-        fadeOutElement (element) {
+        fadeElement (element, interval, fadeIn) {
             return new Promise((resolve, reject) => {
-                let opacity = 1
+                let opacity = fadeIn ? 0 : 1
                 const originStyle = element.style.cssText
                 const fadeOut = setInterval(function () {
-                    opacity -= 0.03
+                    opacity += fadeIn ? 0.03 : -0.03
                     element.style.cssText = originStyle + `opacity: ${opacity};`
-                    if (opacity <= 0) {
+                    if (opacity <= 0 || opacity >= 1) {
                         clearInterval(fadeOut)
                         resolve()
                     }
-                }, 10)
+                }, interval)
             })
         }
 
+        fadeOutElement (element) {
+            return this.fadeElement(element, 10, false)
+        }
+
         fadeInElement (element) {
-            return new Promise((resolve, reject) => {
-                let opacity = 0
-                const originStyle = element.style.cssText
-                const fadeIn = setInterval(function () {
-                    opacity += 0.03
-                    element.style.cssText = originStyle + `opacity: ${opacity};`
-                    if (opacity >= 1) {
-                        clearInterval(fadeIn)
-                        resolve()
-                    }
-                }, 10)
-            })
+            return this.fadeElement(element, 10, true)
         }
 
         clickFunction (originalElement, replacementElement, shouldFade = true) {
@@ -377,10 +385,9 @@
             const el = document.createElement('div')
             parent.replaceChild(el, originalElement)
         }
-        let button
         if (widgetData.replaceSettings.type === 'button') {
             // Create a button to replace old element
-            button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
+            const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
             button.addEventListener('click', widget.clickFunction(originalElement, button))
             parent.replaceChild(button, originalElement)
         }
@@ -388,7 +395,7 @@
             chrome.runtime.sendMessage({
                 getImage: widgetData.replaceSettings.icon
             }, function putButton (icon) {
-                button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
+                const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const el = createContentBlock(
                     widget,
@@ -418,6 +425,9 @@
         }
     }
 
+    /*********************************************************
+     *  Messaging to surrogates & extension
+     *********************************************************/
     function enableSocialTracker (entity, alwaysAllow, isLogin) {
         const message = {
             enableSocialTracker: entity,
@@ -462,6 +472,27 @@
         logoImg = response
     })
 
+    // Listen for events from surrogates
+    addEventListener('ddgClickToLoad', (event) => {
+        if (!event.detail) return
+        const entity = event.detail.entity
+        if (!entities.includes(entity)) {
+            // Unknown entity, reject
+            return
+        }
+        if (event.detail.appID) {
+            appID = JSON.stringify(event.detail.appID).replace(/"/g, '')
+        }
+        // Handle login call
+        if (event.detail.action === 'login') {
+            enableSocialTracker(entity, false, true)
+            window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
+        }
+    })
+
+    /*********************************************************
+     *  Widget building blocks
+     *********************************************************/
     function makeButton (buttonText, mode) {
         const button = document.createElement('button')
         button.style.cssText = styles.button + styles[mode].buttonBackground
@@ -551,21 +582,4 @@
 
         return element
     }
-
-    addEventListener('ddgClickToLoad', (event) => {
-        if (!event.detail) return
-        const entity = event.detail.entity
-        if (!entities.includes(entity)) {
-            // Unknown entity, reject
-            return
-        }
-        if (event.detail.appID) {
-            appID = JSON.stringify(event.detail.appID).replace(/"/g, '')
-        }
-        // Handle login call
-        if (event.detail.action === 'login') {
-            enableSocialTracker(entity, false, true)
-            window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
-        }
-    })
 })()

@@ -69,7 +69,6 @@ describe('Tracker Utilities', () => {
             const requestData = {}
             for (const url of sdkURLs) {
                 requestData.url = url
-                console.log(redirect.handleRequest(requestData))
                 expect(redirect.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
             }
         })
