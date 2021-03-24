@@ -4,10 +4,12 @@
     const entity = 'Facebook'
     let siteInit = function () {}
     let fbIsEnabled = false
+    let initData = {}
     const parseCalls = []
     const fbLogin = {
         callback: function () {},
-        params: undefined
+        params: undefined,
+        shouldRun: false
     }
 
     // use default patterns for the SDK
@@ -25,6 +27,22 @@
             wrappedWindow.FB = cloneInto(
                 undefined,
                 window)
+            const wrappedInit = function () {
+                if (initData) {
+                    wrappedWindow.FB.init(initData)
+                }
+                siteInit()
+                if (fbLogin.shouldRun) {
+                    wrappedWindow.FB.login(fbLogin.callback, fbLogin.params)
+                }
+            }
+
+            /* eslint-disable no-undef */
+            wrappedWindow.fbAsyncInit = cloneInto(
+                wrappedInit,
+                window,
+                { cloneFunctions: true })
+
             const fbScript = document.createElement('script')
             fbScript.src = getSDKUrl()
             fbScript.onload = function () {
@@ -78,16 +96,7 @@
     observer.observe({ entryTypes: ['resource'] })
 
     function runFacebookLogin () {
-        const wrappedInit = function () {
-            siteInit()
-            wrappedWindow.FB.login(fbLogin.callback, fbLogin.params)
-        }
-
-        /* eslint-disable no-undef */
-        wrappedWindow.fbAsyncInit = cloneInto(
-            wrappedInit,
-            window,
-            { cloneFunctions: true })
+        fbLogin.shouldRun = true
         enableFacebookSDK()
     }
 
@@ -114,9 +123,12 @@
                 dispatchEvent(event)
             },
             init: function (obj) {
-                FB.messageAddon({
-                    appID: obj.appId
-                })
+                if (obj) {
+                    initData = obj
+                    FB.messageAddon({
+                        appID: obj.appId
+                    })
+                }
             },
             ui: function (obj, sitecallback) {
                 sitecallback({})

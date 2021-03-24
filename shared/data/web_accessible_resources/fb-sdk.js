@@ -4,12 +4,14 @@
     const originalFBURL = document.currentScript.src
     let siteInit = function () {}
     let fbIsEnabled = false
+    let initData = {}
     const parseCalls = []
     const popupName = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12)
 
     const fbLogin = {
         callback: function () {},
-        params: undefined
+        params: undefined,
+        shouldRun: false
     }
 
     function messageAddon (detailObject) {
@@ -26,6 +28,19 @@
     function enableFacebookSDK () {
         if (!fbIsEnabled) {
             window.FB = undefined
+
+            window.fbAsyncInit = function () {
+                if (initData) {
+                    console.log('calling init data')
+                    console.log(initData)
+                    window.FB.init(initData)
+                }
+                siteInit()
+                if (fbLogin.shouldRun) {
+                    window.FB.login(fbLogin.callback, fbLogin.params)
+                }
+            }
+
             const fbScript = document.createElement('script')
             fbScript.src = originalFBURL
             fbScript.onload = function () {
@@ -39,13 +54,10 @@
     }
 
     function runFacebookLogin () {
-        enableFacebookSDK()
+        fbLogin.shouldRun = true
         replaceWindowOpen()
         loginPopup()
-        window.fbAsyncInit = function () {
-            siteInit()
-            window.FB.login(fbLogin.callback, fbLogin.params)
-        }
+        enableFacebookSDK()
     }
 
     function replaceWindowOpen () {
@@ -79,9 +91,12 @@
     if (!window.FB) {
         window.FB = {
             init: function (obj) {
-                messageAddon({
-                    'appID': obj.appId
-                })
+                if (obj) {
+                    initData = obj
+                    messageAddon({
+                        'appID': obj.appId
+                    })
+                }
             },
             ui: function (obj, cb) {
                 cb({})

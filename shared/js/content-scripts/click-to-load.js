@@ -64,6 +64,8 @@
 
             font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
+
+            position: relative;
         `,
         buttonTextContainer: `
             display: flex; 
@@ -304,7 +306,6 @@
                         parent.replaceChild(originalElement, replacementElement)
                         return
                     }
-
                     // Create a container for the new FB element
                     const fbContainer = document.createElement('div')
                     const fadeIn = document.createElement('div')
