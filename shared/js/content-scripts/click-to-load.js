@@ -75,7 +75,6 @@
 
         `,
         block: `
-            border: 1px solid #C3C3C3;
             box-sizing: border-box;
             border-radius: 10px;
             max-width: 600px;
@@ -95,14 +94,14 @@
         `,
         titleBox: `
             display: flex;
-            padding: 13px 13px 0px 13px;
+            padding: 12px;
             max-height: 44px;
             border-bottom: 1px solid;
             border-color: rgba(196, 196, 196, 0.3);
         `,
         title: `
             line-height: 1.4;
-            font-size: 15px;
+            font-size: 14px;
             margin: 0 10px;
             flex-basis: 100%;
             height: 1.4em;
@@ -116,7 +115,7 @@
         `,
         headerLink: `
             line-height: 1.4;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             text-decoration: none;
             cursor: pointer;
@@ -127,7 +126,8 @@
             display: flex;
             height: 100%
             flex-direction: row;
-            margin: 0px auto 36px;
+            margin: auto;
+            padding-bottom: 36px;
         `,
         contentTitle: `
             font-family: DuckDuckGoPrivacyEssentials;
@@ -145,7 +145,7 @@
             text-align: center;
         `,
         icon: `
-            height: 70px;
+            height: 80px;
             margin: auto;
         `,
         logo: `
@@ -549,7 +549,7 @@
         element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
         // Style element includes our font
         const styleElement = document.createElement('style')
-        styleElement.innerHTML = styles.fontStyle + `a { ${styles[widget.getMode()].linkFont} }`
+        styleElement.innerHTML = styles.fontStyle + `a { ${styles[widget.getMode()].linkFont}; font-weight: bold; }`
         element.appendChild(styleElement)
         // grid of three rows
         const titleRow = document.createElement('div')
