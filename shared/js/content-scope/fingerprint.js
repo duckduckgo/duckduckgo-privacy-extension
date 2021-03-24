@@ -10,10 +10,10 @@ function nextRandom (v) {
     return Math.abs((v >> 1) | (((v << 62) ^ (v << 61)) & (~(~0 << 63) << 62)))
 }
 
-const exemptionList = []
+const exemptionLists = {}
 
-function shouldExemptUrl (url) {
-    for (const regex of exemptionList) {
+function shouldExemptUrl (type, url) {
+    for (const regex of exemptionLists[type]) {
         if (regex.test(url)) {
             return true
         }
@@ -21,14 +21,19 @@ function shouldExemptUrl (url) {
     return false
 }
 
-function initExemptionList (stringExemptionList) {
-    for (const stringExemption of stringExemptionList) {
-        exemptionList.push(new RegExp(stringExemption))
+// eslint-disable-next-line no-unused-vars
+function initStringExemptionLists (args) {
+    const { stringExemptionLists } = args
+    for (const type in stringExemptionLists) {
+        exemptionLists[type] = []
+        for (const stringExemption of stringExemptionLists[type]) {
+            exemptionLists[type].push(new RegExp(stringExemption))
+        }
     }
 }
 
 // Checks the stack trace if there are known libraries that are broken.
-function shouldExemptMethod () {
+function shouldExemptMethod (type) {
     try {
         const errorLines = new Error().stack.split('\n')
         const errorFiles = new Set()
@@ -42,7 +47,7 @@ function shouldExemptMethod () {
                 if (errorFiles.has(path)) {
                     continue
                 }
-                if (shouldExemptUrl(path)) {
+                if (shouldExemptUrl(type, path)) {
                     return true
                 }
                 errorFiles.add(res[2])
@@ -73,8 +78,7 @@ function iterateDataKey (key, callback) {
 
 // eslint-disable-next-line no-unused-vars
 function initCanvasProtection (args) {
-    const { sessionKey, stringExemptionList, site } = args
-    initExemptionList(stringExemptionList)
+    const { sessionKey, site } = args
     const domainKey = site.domain
 
     const _getImageData = CanvasRenderingContext2D.prototype.getImageData
@@ -127,7 +131,7 @@ function initCanvasProtection (args) {
     const getImageDataProxy = new Proxy(_getImageData, {
         apply (target, thisArg, args) {
             // The normal return value
-            if (shouldExemptMethod()) {
+            if (shouldExemptMethod('canvas')) {
                 const imageData = target.apply(thisArg, args)
                 return imageData
             }
@@ -149,7 +153,7 @@ function initCanvasProtection (args) {
     for (const methodName of canvasMethods) {
         const methodProxy = new Proxy(HTMLCanvasElement.prototype[methodName], {
             apply (target, thisArg, args) {
-                if (shouldExemptMethod()) {
+                if (shouldExemptMethod('canvas')) {
                     return target.apply(thisArg, args)
                 }
                 try {
@@ -168,8 +172,7 @@ function initCanvasProtection (args) {
 
 // eslint-disable-next-line no-unused-vars
 function initAudioProtection (args) {
-    const { sessionKey, stringExemptionList, site } = args
-    initExemptionList(stringExemptionList)
+    const { sessionKey, site } = args
     const domainKey = site.domain
 
     // In place modify array data to remove fingerprinting
@@ -194,7 +197,7 @@ function initAudioProtection (args) {
         apply (target, thisArg, args) {
             const [source, channelNumber, startInChannel] = args
             // This is implemented in a different way to canvas purely because calling the function copied the original value, which is not ideal
-            if (shouldExemptMethod() ||
+            if (shouldExemptMethod('audio') ||
                 // If channelNumber is longer than arrayBuffer number of channels then call the default method to throw
                 channelNumber > thisArg.numberOfChannels ||
                 // If startInChannel is longer than the arrayBuffer length then call the default method to throw
@@ -217,7 +220,7 @@ function initAudioProtection (args) {
         apply (target, thisArg, args) {
             // The normal return value
             const channelData = target.apply(thisArg, args)
-            if (shouldExemptMethod()) {
+            if (shouldExemptMethod('audio')) {
                 return channelData
             }
             // Anything we do here should be caught and ignored silently
@@ -234,7 +237,7 @@ function initAudioProtection (args) {
         AnalyserNode.prototype[methodName] = new Proxy(AnalyserNode.prototype[methodName], {
             apply (target, thisArg, args) {
                 target.apply(thisArg, args)
-                if (shouldExemptMethod()) {
+                if (shouldExemptMethod('audio')) {
                     return
                 }
                 // Anything we do here should be caught and ignored silently
