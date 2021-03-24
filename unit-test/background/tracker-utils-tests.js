@@ -211,6 +211,42 @@ describe('Tracker Utilities', () => {
             referrer: 'http://www.siteA.com/article/1',
             target: 'http://siteB.com',
             expectedReferrer: 'http://www.sitea.com/'
+        },
+        {
+            name: 'target is not a tracker, referrer contains port',
+            referrer: 'http://www.siteA.com:4000/article/1',
+            target: 'http://siteB.com',
+            expectedReferrer: 'http://www.sitea.com:4000/'
+        },
+        {
+            name: 'target is not a tracker, referrer is localhost',
+            referrer: 'http://localhost/article/1',
+            target: 'http://siteB.com',
+            expectedReferrer: 'http://localhost/'
+        },
+        {
+            name: 'target is not a tracker, referrer is IP',
+            referrer: 'http://1.2.3.4/article/1',
+            target: 'http://siteB.com',
+            expectedReferrer: 'http://1.2.3.4/'
+        },
+        {
+            name: 'target is a tracker, referrer contains port',
+            referrer: 'http://subdomain.siteA.com:4000/article/1',
+            target: 'https://google-analytics.com/some/path',
+            expectedReferrer: 'http://sitea.com:4000/'
+        },
+        {
+            name: 'target is a tracker, referrer is localhost',
+            referrer: 'http://localhost/article/1',
+            target: 'https://google-analytics.com/some/path',
+            expectedReferrer: 'http://localhost/'
+        },
+        {
+            name: 'target is a tracker, referrer is IP',
+            referrer: 'http://1.2.3.4/article/1',
+            target: 'https://google-analytics.com/some/path',
+            expectedReferrer: 'http://1.2.3.4/'
         }
     ]
     it('Should modify referrer when referrer != target', () => {
