@@ -8,6 +8,7 @@
     const titleID = 'DuckDuckGoPrivacyEssentialsCTLElementTitle'
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
+    const ddgFontBold = chrome.runtime.getURL('public/font/ProximaNova-Sbold-webfont.woff')
 
     /*********************************************************
      *  Style Definitions
@@ -17,6 +18,11 @@
             @font-face{
                 font-family: DuckDuckGoPrivacyEssentials;
                 src: url(${ddgFont});
+            }
+            @font-face{
+                font-family: DuckDuckGoPrivacyEssentialsBold;
+                font-weight: bold;
+                src: url(${ddgFontBold});
             }
         `,
         darkMode: {
@@ -62,7 +68,7 @@
             border-color: #3969EF;
             border: none;
 
-            font-family: DuckDuckGoPrivacyEssentials;
+            font-family: DuckDuckGoPrivacyEssentialsBold;
             font-size: 14px;
 
             position: relative;
@@ -117,6 +123,7 @@
             line-height: 1.4;
             font-size: 14px;
             font-weight: bold;
+            font-family: DuckDuckGoPrivacyEssentialsBold;
             text-decoration: none;
             cursor: pointer;
             min-width: 100px;
@@ -130,7 +137,7 @@
             padding-bottom: 36px;
         `,
         contentTitle: `
-            font-family: DuckDuckGoPrivacyEssentials;
+            font-family: DuckDuckGoPrivacyEssentialsBold;
             font-size: 17px;
             font-weight: bold;
             margin: 20px auto 10px;
