@@ -60,13 +60,13 @@ class ExcludedCookieStorage {
                     settings.updateSetting(`${listName}-etag`, '')
                     console.log(`Error updating cookie data:  ${e}. Attempting to load from local storage.`)
                     this.loadExclusionList(listName)
-                            .then(queryData => {
-                                this.processList(listName, queryData.listData)
-                            })
-                            .catch(e => {
-                                console.log(`Error loading Exclusion settings from storage: ${e}`)
-                                settings.updateSetting(`${listName}-etag`, '')
-                            })
+                        .then(queryData => {
+                            this.processList(listName, queryData.listData)
+                        })
+                        .catch(e => {
+                            console.log(`Error loading Exclusion settings from storage: ${e}`)
+                            settings.updateSetting(`${listName}-etag`, '')
+                        })
                 })
         }
     }
@@ -92,7 +92,7 @@ class ExcludedCookieStorage {
     loadExclusionList (listName) {
         console.log(`looking for listname ${listName}`)
         return this.exclusionDB.open()
-            .then(() => this.exclusionDB.table('exclusionStorage').get({ listName: listName}))
+            .then(() => this.exclusionDB.table('exclusionStorage').get({ listName: listName }))
     }
 
     async storeExclusionList (listname, data) {
