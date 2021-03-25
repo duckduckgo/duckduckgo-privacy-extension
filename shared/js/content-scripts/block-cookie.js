@@ -130,10 +130,10 @@
         documentUrl: window.location.href
     }, function (action) {
         if (!action) {
-            // response is undefined if the background has not yet registered the message listener
+            // action is undefined if the background has not yet registered the message listener
             return
         }
-        if (window.top !== window && action.isTrackerFrame) {
+        if (window.top !== window && action.isTrackerFrame && action.shouldBlock && action.isThirdParty) {
             // overrides expiry policy with blocking - only in subframes
             inject(blockCookies)
         }
