@@ -87,7 +87,7 @@ class ExcludedCookieStorage {
         chrome.storage.local.get(listName, callback)
     }
 
-    async storeExclusionList (listname, data) {
+    storeExclusionList (listname, data) {
         chrome.storage.local.set({ [listname]: data }, () => {})
     }
 
