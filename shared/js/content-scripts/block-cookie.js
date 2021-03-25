@@ -129,6 +129,10 @@
         checkThirdParty: true,
         documentUrl: window.location.href
     }, function (action) {
+        if (!action) {
+            // response is undefined if the background has not yet registered the message listener
+            return
+        }
         if (window.top !== window && action.isTrackerFrame) {
             // overrides expiry policy with blocking - only in subframes
             inject(blockCookies)
@@ -140,9 +144,12 @@
         }, document.location.origin)
     })
     chrome.runtime.onMessage.addListener((message) => {
-        window.postMessage({
-            source: MSG_SECRET,
-            ...message
-        })
+        // forward tracker messages to the embedded script
+        if (message && message.type === 'tracker') {
+            window.postMessage({
+                source: MSG_SECRET,
+                ...message
+            })
+        }
     })
 })()
