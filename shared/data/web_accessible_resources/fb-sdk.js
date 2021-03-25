@@ -31,8 +31,6 @@
 
             window.fbAsyncInit = function () {
                 if (initData) {
-                    console.log('calling init data')
-                    console.log(initData)
                     window.FB.init(initData)
                 }
                 siteInit()
@@ -99,6 +97,10 @@
                 }
             },
             ui: function (obj, cb) {
+                if (obj.method && obj.method === 'share') {
+                    const shareLink = 'https://www.facebook.com/sharer/sharer.php?u=' + obj.href
+                    window.open(shareLink, 'share-facebook', 'width=550,height=235')
+                }
                 cb({})
             },
             getAccessToken: function () {},

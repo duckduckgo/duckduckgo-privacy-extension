@@ -8,7 +8,7 @@
     const titleID = 'DuckDuckGoPrivacyEssentialsCTLElementTitle'
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
-    const ddgFontBold = chrome.runtime.getURL('public/font/ProximaNova-Sbold-webfont.woff')
+    const ddgFontBold = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
 
     /*********************************************************
      *  Style Definitions
@@ -72,6 +72,8 @@
             font-size: 14px;
 
             position: relative;
+            cursor: pointer;
+            box-shadow: none;
         `,
         buttonTextContainer: `
             display: flex; 
@@ -142,6 +144,7 @@
             font-weight: bold;
             margin: 20px auto 10px;
             padding: 0px 30px;
+            text-align: center;
         `,
         contentText: `
             font-family: DuckDuckGoPrivacyEssentials;
@@ -153,15 +156,23 @@
         `,
         icon: `
             height: 80px;
+            width: 80px;
             margin: auto;
         `,
         logo: `
             flex-basis: 0%;
             min-width: 20px;
-            height: 25px;
+            height: 21px;
         `,
         logoImg: `
-            height: 20px;
+            height: 21px;
+            width: 21px;
+        `,
+        loadingImg: `
+            display: block;
+            margin: 0px 8px 0px 0px;
+            height: 14px;
+            width: 14px;
         `
     }
 
@@ -224,7 +235,7 @@
                 for (const [attr, valAttr] of Object.entries(this.clickAction.styleDataAttributes)) {
                     let valueFound = this.dataElements[valAttr.name]
                     if (!valueFound) {
-                        valueFound = this.originalElement.getAttribute(valAttr.fallbackAttribute)
+                        valueFound = this.dataElements[valAttr.fallbackAttribute]
                     }
                     if (valueFound) {
                         styleString += `${attr}: ${valueFound}${valAttr.unit};`
@@ -321,7 +332,8 @@
                     // Loading animation (FB can take some time to load)
                     const loadingImg = document.createElement('img')
                     loadingImg.setAttribute('src', loadingImages[this.getMode()])
-                    loadingImg.style.cssText = 'display: block; margin-right: 8px;'
+                    loadingImg.setAttribute('height', '14px')
+                    loadingImg.style.cssText = styles.loadingImg
 
                     // Always add the animation to the button, regardless of click source
                     if (e.srcElement.nodeName === 'BUTTON') {
@@ -529,7 +541,7 @@
         logoContainer.style.cssText = styles.logo
         const logoElement = document.createElement('img')
         logoElement.setAttribute('src', logoImg)
-        logoElement.setAttribute('height', '20px')
+        logoElement.setAttribute('height', '21px')
         logoElement.style.cssText = styles.logoImg
         logoContainer.appendChild(logoElement)
         row.appendChild(logoContainer)
