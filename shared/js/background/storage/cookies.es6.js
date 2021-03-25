@@ -39,7 +39,6 @@ class ExcludedCookieStorage {
                 .then(response => {
                     if (response && response.status === 200) {
                         // New cookie data to process.
-                        console.log(response)
                         const data = JSON.parse(response.response)
                         this.storeExclusionList(listName, data)
                         this.processList(listName, data)
