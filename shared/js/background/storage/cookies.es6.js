@@ -2,6 +2,7 @@
 import 'regenerator-runtime/runtime'
 
 const load = require('./../load.es6')
+const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 
@@ -13,6 +14,10 @@ const settings = require('./../settings.es6')
  **/
 class ExcludedCookieStorage {
     constructor () {
+        this.exclusionDB = new Dexie('exclusionStorage')
+        this.exclusionDB.version(1).stores({
+            exclusionStorage: 'listName,listData'
+        })
         this.excludedDomains = []
         this.firstPartyCookiePolicy = {
             threshold: 864000, // 10 days
@@ -32,18 +37,37 @@ class ExcludedCookieStorage {
             const etag = settings.getSetting(`${listName}-etag`) || ''
             load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
                 .then(response => {
-                    if (response && (response.status === 200 || response.status === 304)) {
+                    if (response && response.status === 200) {
                         // New cookie data to process.
+                        console.log(response)
                         const data = JSON.parse(response.response)
+                        this.storeExclusionList(listName, data)
                         this.processList(listName, data)
                         const newEtag = response.getResponseHeader('etag') || ''
                         settings.updateSetting(`${listName}-etag`, newEtag)
+                    } else if (response && response.status === 304) {
+                        this.loadExclusionList(listName)
+                            .then(queryData => {
+                                this.processList(listName, queryData.listData)
+                            })
+                            .catch(e => {
+                                console.log(`Error loading Exclusion settings from storage: ${e}`)
+                                settings.updateSetting(`${listName}-etag`, '')
+                            })
                     }
                 })
                 .catch(e => {
                     // Reset the etag
                     settings.updateSetting(`${listName}-etag`, '')
                     console.log(`Error updating cookie data:  ${e}. Attempting to load from local storage.`)
+                    this.loadExclusionList(listName)
+                            .then(queryData => {
+                                this.processList(listName, queryData.listData)
+                            })
+                            .catch(e => {
+                                console.log(`Error loading Exclusion settings from storage: ${e}`)
+                                settings.updateSetting(`${listName}-etag`, '')
+                            })
                 })
         }
     }
@@ -63,6 +87,20 @@ class ExcludedCookieStorage {
         }
         if (data.firstPartyTrackerCookiePolicy) {
             this.firstPartyCookiePolicy = data.firstPartyTrackerCookiePolicy
+        }
+    }
+
+    loadExclusionList (listName) {
+        console.log(`looking for listname ${listName}`)
+        return this.exclusionDB.open()
+            .then(() => this.exclusionDB.table('exclusionStorage').get({ listName: listName}))
+    }
+
+    async storeExclusionList (listname, data) {
+        try {
+            await this.exclusionDB.exclusionStorage.put({ listName: listname, listData: data })
+        } catch (e) {
+            console.log(`Error storing exclusion data locally: ${e}`)
         }
     }
 
