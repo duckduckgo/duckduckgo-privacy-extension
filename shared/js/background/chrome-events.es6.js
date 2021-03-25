@@ -389,12 +389,12 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             const parsed = tldts.parse(tabUrl)
             action.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
 
+            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
+                action.isTrackerFrame = true
+            }
+
             action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
             action.shouldBlock = !cookieConfig.isExcluded(sender.url)
-
-            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
-                action.isTrackerFrame = true && action.shouldBlock
-            }
 
             res(action)
         } else {
