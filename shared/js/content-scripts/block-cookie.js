@@ -129,8 +129,8 @@
         checkThirdParty: true,
         documentUrl: window.location.href
     }, function (action) {
-        if (!action) {
-            // response is undefined if the background has not yet registered the message listener
+        if (!action || !action.shouldBlock || !action.isThirdParty) {
+            // action is undefined if the background has not yet registered the message listener
             return
         }
         if (window.top !== window && action.isTrackerFrame) {
