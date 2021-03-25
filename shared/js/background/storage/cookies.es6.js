@@ -2,7 +2,6 @@
 import 'regenerator-runtime/runtime'
 
 const load = require('./../load.es6')
-const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 
@@ -14,10 +13,6 @@ const settings = require('./../settings.es6')
  **/
 class ExcludedCookieStorage {
     constructor () {
-        this.exclusionDB = new Dexie('exclusionStorage')
-        this.exclusionDB.version(1).stores({
-            exclusionStorage: 'listName,listData'
-        })
         this.excludedDomains = []
         this.firstPartyCookiePolicy = {
             threshold: 864000, // 10 days
@@ -45,28 +40,26 @@ class ExcludedCookieStorage {
                         const newEtag = response.getResponseHeader('etag') || ''
                         settings.updateSetting(`${listName}-etag`, newEtag)
                     } else if (response && response.status === 304) {
-                        this.loadExclusionList(listName)
-                            .then(queryData => {
-                                this.processList(listName, queryData.listData)
-                            })
-                            .catch(e => {
-                                console.log(`Error loading Exclusion settings from storage: ${e}`)
+                        this.loadExclusionList(listName, (results) => {
+                            if (chrome.runtime.lastError) {
+                                console.log(`Error loading Exclusion settings from storage: ${chrome.runtime.lastError}`)
                                 settings.updateSetting(`${listName}-etag`, '')
-                            })
+                            }
+                            this.processList(listName, results[listName])
+                        })
                     }
                 })
                 .catch(e => {
                     // Reset the etag
                     settings.updateSetting(`${listName}-etag`, '')
                     console.log(`Error updating cookie data:  ${e}. Attempting to load from local storage.`)
-                    this.loadExclusionList(listName)
-                        .then(queryData => {
-                            this.processList(listName, queryData.listData)
-                        })
-                        .catch(e => {
-                            console.log(`Error loading Exclusion settings from storage: ${e}`)
+                    this.loadExclusionList(listName, (results) => {
+                        if (chrome.runtime.lastError) {
+                            console.log(`Error loading Exclusion settings from storage: ${chrome.runtime.lastError}`)
                             settings.updateSetting(`${listName}-etag`, '')
-                        })
+                        }
+                        this.processList(listName, results[listName])
+                    })
                 })
         }
     }
@@ -89,18 +82,13 @@ class ExcludedCookieStorage {
         }
     }
 
-    loadExclusionList (listName) {
+    loadExclusionList (listName, callback) {
         console.log(`looking for listname ${listName}`)
-        return this.exclusionDB.open()
-            .then(() => this.exclusionDB.table('exclusionStorage').get({ listName: listName }))
+        chrome.storage.local.get(listName, callback)
     }
 
     async storeExclusionList (listname, data) {
-        try {
-            await this.exclusionDB.exclusionStorage.put({ listName: listname, listData: data })
-        } catch (e) {
-            console.log(`Error storing exclusion data locally: ${e}`)
-        }
+        chrome.storage.local.set({ [listname]: data }, () => {})
     }
 
     isExcluded (url) {
