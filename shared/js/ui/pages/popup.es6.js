@@ -39,7 +39,7 @@ Trackers.prototype = window.$.extend({},
 
             this.views.search = new SearchView({
                 pageView: this,
-                model: new SearchModel({searchText: ''}),
+                model: new SearchModel({ searchText: '' }),
                 appendTo: window.$('#search-form-container'),
                 template: searchTemplate
             })
@@ -60,7 +60,7 @@ Trackers.prototype = window.$.extend({},
 
             this.views.topblocked = new TopBlockedView({
                 pageView: this,
-                model: new TopBlockedModel({numCompanies: 3}),
+                model: new TopBlockedModel({ numCompanies: 3 }),
                 appendTo: window.$('#top-blocked-container'),
                 template: topBlockedTemplate
             })
@@ -78,7 +78,7 @@ Trackers.prototype = window.$.extend({},
             // store.subscribe()
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
-                model: new AutocompleteModel({suggestions: []}),
+                model: new AutocompleteModel({ suggestions: [] }),
                 // appendTo: this.views.search.$el,
                 appendTo: null,
                 template: autocompleteTemplate

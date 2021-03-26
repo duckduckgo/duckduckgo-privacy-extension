@@ -89,9 +89,9 @@ class HttpsRedirects {
         if (!canRedirect) {
             if (request.type === 'main_frame') {
                 const encodedHostname = encodeURIComponent(hostname)
-                const errCode = constants.httpsErrorCodes['downgrade_redirect_loop']
+                const errCode = constants.httpsErrorCodes.downgrade_redirect_loop
                 // Fire pixel on https upgrade failures to allow bad data to be removed from lists
-                pixel.fire('ehd', {'url': encodedHostname, error: errCode})
+                pixel.fire('ehd', { url: encodedHostname, error: errCode })
             }
 
             this.failedUpgradeHosts[hostname] = true

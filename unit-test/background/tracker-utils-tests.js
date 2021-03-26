@@ -25,7 +25,7 @@ describe('Tracker Utilities', () => {
         'https://yahoo.com'
     ]
     it('Should identify a tracker correctly', () => {
-        for (let tracker of knownTrackers) {
+        for (const tracker of knownTrackers) {
             settingsObserver.and.returnValue(undefined)
             expect(trackerutils.isTracker(tracker)).toBeTruthy()
         }
@@ -36,7 +36,7 @@ describe('Tracker Utilities', () => {
         'http://www.justarandompersonalsite.com'
     ]
     it('Should identify a non-tracker correctly', () => {
-        for (let tracker of notTrackers) {
+        for (const tracker of notTrackers) {
             settingsObserver.and.returnValue(undefined)
             expect(trackerutils.isTracker(tracker)).toBeFalsy()
         }
@@ -70,7 +70,7 @@ describe('Tracker Utilities', () => {
         }
     ]
     it('Should correctly match entities', () => {
-        for (let test of entityTests) {
+        for (const test of entityTests) {
             settingsObserver.and.returnValue(undefined)
             expect(trackerutils.isSameEntity(test.entity1, test.entity2)).toEqual(test.sameEntity)
         }
@@ -99,7 +99,7 @@ describe('Tracker Utilities', () => {
         }
     ]
     it('Should not modify referrer on blank referrers and first party', () => {
-        for (let test of referrerSameEntityTests) {
+        for (const test of referrerSameEntityTests) {
             settingsObserver.and.returnValue(undefined)
             expect(trackerutils.truncateReferrer(test.referrer, test.target)).toEqual(test.expectedReferrer)
         }
@@ -110,33 +110,33 @@ describe('Tracker Utilities', () => {
             name: 'referrer is safelisted',
             referrer: 'http://siteA.com',
             target: 'http://siteB.com',
-            safelist: {'sitea.com': true},
+            safelist: { 'sitea.com': true },
             expectedReferrer: undefined
         },
         {
             name: 'target is safelisted',
             referrer: 'http://siteA.com',
             target: 'http://siteB.com',
-            safelist: {'siteb.com': true},
+            safelist: { 'siteb.com': true },
             expectedReferrer: undefined
         },
         {
             name: 'referrer & target are safelisted',
             referrer: 'http://siteA.com',
             target: 'http://siteB.com',
-            safelist: {'sitea.com': true, 'siteb.com': true},
+            safelist: { 'sitea.com': true, 'siteb.com': true },
             expectedReferrer: undefined
         },
         {
             name: 'subdomain of safelisted target',
             referrer: 'http://siteA.com',
             target: 'http://subdomain.siteB.com',
-            safelist: {'siteb.com': true},
+            safelist: { 'siteb.com': true },
             expectedReferrer: undefined
         }
     ]
     it('Should not modify referrer when either site is safe listed by the user', () => {
-        for (let test of referrerUserSafelistTests) {
+        for (const test of referrerUserSafelistTests) {
             settingsObserver.and.returnValue(test.safelist)
             expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`safelist: ${test.name}`).toEqual(test.expectedReferrer)
         }
@@ -169,7 +169,7 @@ describe('Tracker Utilities', () => {
         }
     ]
     it('Should not modify referrer when either site is safe listed by the global referrer safe list', () => {
-        for (let test of referrerSafelistTests) {
+        for (const test of referrerSafelistTests) {
             settingsObserver.and.returnValue(undefined)
             expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`test: ${test.name}`).toEqual(test.expectedReferrer)
         }
@@ -211,10 +211,46 @@ describe('Tracker Utilities', () => {
             referrer: 'http://www.siteA.com/article/1',
             target: 'http://siteB.com',
             expectedReferrer: 'http://www.sitea.com/'
+        },
+        {
+            name: 'target is not a tracker, referrer contains port',
+            referrer: 'http://www.siteA.com:4000/article/1',
+            target: 'http://siteB.com',
+            expectedReferrer: 'http://www.sitea.com:4000/'
+        },
+        {
+            name: 'target is not a tracker, referrer is localhost',
+            referrer: 'http://localhost/article/1',
+            target: 'http://siteB.com',
+            expectedReferrer: 'http://localhost/'
+        },
+        {
+            name: 'target is not a tracker, referrer is IP',
+            referrer: 'http://1.2.3.4/article/1',
+            target: 'http://siteB.com',
+            expectedReferrer: 'http://1.2.3.4/'
+        },
+        {
+            name: 'target is a tracker, referrer contains port',
+            referrer: 'http://subdomain.siteA.com:4000/article/1',
+            target: 'https://google-analytics.com/some/path',
+            expectedReferrer: 'http://sitea.com:4000/'
+        },
+        {
+            name: 'target is a tracker, referrer is localhost',
+            referrer: 'http://localhost/article/1',
+            target: 'https://google-analytics.com/some/path',
+            expectedReferrer: 'http://localhost/'
+        },
+        {
+            name: 'target is a tracker, referrer is IP',
+            referrer: 'http://1.2.3.4/article/1',
+            target: 'https://google-analytics.com/some/path',
+            expectedReferrer: 'http://1.2.3.4/'
         }
     ]
     it('Should modify referrer when referrer != target', () => {
-        for (let test of referrerTruncationTests) {
+        for (const test of referrerTruncationTests) {
             settingsObserver.and.returnValue(undefined)
             expect(trackerutils.truncateReferrer(test.referrer, test.target)).withContext(`test: ${test.name}`).toEqual(test.expectedReferrer)
         }
@@ -283,7 +319,7 @@ describe('Tracker Utilities', () => {
         }
     ]
     it('Should not throw errors when unusual URLs are encountered', () => {
-        for (let test of referrerOddURLTests) {
+        for (const test of referrerOddURLTests) {
             expect(function () {
                 settingsObserver.and.returnValue(undefined)
                 trackerutils.truncateReferrer(test.referrer, test.target)

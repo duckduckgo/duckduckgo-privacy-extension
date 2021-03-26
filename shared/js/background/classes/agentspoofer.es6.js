@@ -1,5 +1,6 @@
 const agentStorage = require('./../storage/agents.es6')
 const agentparser = require('useragent')
+const utils = require('./../utils.es6')
 const tldts = require('tldts')
 const tabManager = require('../tab-manager.es6')
 
@@ -35,7 +36,7 @@ class AgentSpoofer {
      *      OS major version should remain the same
     **/
     selectAgent () {
-        let agentList = this.filterAgents(agentStorage.agents)
+        const agentList = this.filterAgents(agentStorage.agents)
         if (agentList.length === 0) {
             return this.realAgent
         }
@@ -91,13 +92,13 @@ class AgentSpoofer {
      * Return true if we should spoof UA for this request
      */
     shouldSpoof (request) {
-        let tab = tabManager.get({ tabId: request.tabId })
+        const tab = tabManager.get({ tabId: request.tabId })
         // Only change the user agent header if the current site is not whitelisted
         // and the request is third party.
         if (!!tab && tab.site.whitelisted) {
             return false
         }
-        if (!!tab && this.isFirstParty(tab.url, request.url)) {
+        if (!!tab && utils.isFirstParty(tab.url, request.url)) {
             return false
         }
         const domain = tldts.parse(request.url).domain
@@ -105,16 +106,6 @@ class AgentSpoofer {
             return false
         }
         return true
-    }
-
-    /**
-     * Tests whether the two URL's belong to the same
-     * first party set.
-     */
-    isFirstParty (url1, url2) {
-        const first = tldts.parse(url1).domain
-        const second = tldts.parse(url2).domain
-        return first === second
     }
 }
 module.exports = new AgentSpoofer()

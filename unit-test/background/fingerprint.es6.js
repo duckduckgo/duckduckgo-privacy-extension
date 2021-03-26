@@ -7,6 +7,7 @@ const agentData = require('./../data/random_useragent.json')
 const agentparser = require('useragent')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
+const utils = require('../../shared/js/background/utils.es6')
 
 describe('User-Agent replacement', () => {
     let tabObserver
@@ -46,7 +47,7 @@ describe('User-Agent replacement', () => {
         })
 
         it('should send fake headers to third parties', () => {
-            let request = {
+            const request = {
                 tabId: 123,
                 url: 'http://thirdparty.com'
             }
@@ -56,7 +57,7 @@ describe('User-Agent replacement', () => {
         })
 
         it('should send real headers to first parties', () => {
-            let request = {
+            const request = {
                 tabId: 123,
                 url: 'http://example.com',
                 originUrl: 'http://example.com'
@@ -67,15 +68,15 @@ describe('User-Agent replacement', () => {
         })
 
         it('should consider the same domain first party', () => {
-            let url1 = 'http://example.com'
-            let url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
-            expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
+            const url1 = 'http://example.com'
+            const url2 = 'http://example.com/some/path/to/an/asset.js?someparam=somevalue&another=another'
+            expect(utils.isFirstParty(url1, url2)).toEqual(true)
         })
 
         it('should consider subdomains to be first party', () => {
-            let url1 = 'http://example.com'
-            let url2 = 'http://subdomain.example.com'
-            expect(agentSpoofer.isFirstParty(url1, url2)).toEqual(true)
+            const url1 = 'http://example.com'
+            const url2 = 'http://subdomain.example.com'
+            expect(utils.isFirstParty(url1, url2)).toEqual(true)
         })
     })
 })

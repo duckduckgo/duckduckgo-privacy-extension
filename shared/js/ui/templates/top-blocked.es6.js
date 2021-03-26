@@ -21,7 +21,7 @@ module.exports = function () {
 function renderPctPagesWithTrackers (model) {
     let msg = ''
     if (model.lastStatsResetDate) {
-        const d = (new Date(model.lastStatsResetDate)).toLocaleDateString('default', {month: 'long', day: 'numeric', year: 'numeric'})
+        const d = (new Date(model.lastStatsResetDate)).toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' })
         if (d) msg = ` since ${d}`
     }
     if (model.pctPagesWithTrackers) {

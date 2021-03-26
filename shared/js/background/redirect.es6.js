@@ -1,3 +1,5 @@
+const tldts = require('tldts')
+
 const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const https = require('./https.es6')
@@ -6,8 +8,10 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
+const webResourceURL = browserWrapper.getExtensionURL('/web_accessible_resources')
+const browser = utils.getBrowserName()
 
-var debugRequest = false
+const debugRequest = false
 
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -18,9 +22,9 @@ function buildResponse (url, requestData, tab, isMainFrame) {
             tab.upgradedHttps = true
         }
         if (utils.getUpgradeToSecureSupport()) {
-            return {upgradeToSecure: true}
+            return { upgradeToSecure: true }
         } else {
-            return {redirectUrl: url}
+            return { redirectUrl: url }
         }
     } else if (isMainFrame) {
         tab.upgradedHttps = false
@@ -37,11 +41,18 @@ function buildResponse (url, requestData, tab, isMainFrame) {
  */
 
 function handleRequest (requestData) {
-    let tabId = requestData.tabId
+    const tabId = requestData.tabId
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
     let thisTab = tabManager.get(requestData)
+
+    // control access to web accessible resources
+    if (requestData.url.startsWith(webResourceURL)) {
+        if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
+            return { cancel: true }
+        }
+    }
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
@@ -49,7 +60,7 @@ function handleRequest (requestData) {
     // Safari doesn't have specific requests for main frames
     if (requestData.type === 'main_frame' && window.chrome) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
-            let newTab = tabManager.create(requestData)
+            const newTab = tabManager.create(requestData)
 
             // andrey: temporary disable this. it was letting redirect loops through on Tumblr
             // persist the last URL the tab was trying to upgrade to HTTPS
@@ -60,7 +71,7 @@ function handleRequest (requestData) {
         }
 
         // add atb params only to main_frame
-        let ddgAtbRewrite = ATB.redirectURL(requestData)
+        const ddgAtbRewrite = ATB.redirectURL(requestData)
         if (ddgAtbRewrite) return ddgAtbRewrite
     } else {
         /**
@@ -76,7 +87,7 @@ function handleRequest (requestData) {
         if (thisTab.site.isBroken) {
             console.log('temporarily skip tracker blocking for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+              'more info: https://github.com/duckduckgo/content-blocking-lists')
             return
         }
 
@@ -90,7 +101,7 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
-        var tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+        let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
 
         // allow embedded twitter content if user enabled this setting
         if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
@@ -117,7 +128,7 @@ function handleRequest (requestData) {
                 thisTab.addToTrackers(tracker)
             }
 
-            browserWrapper.notifyPopup({'updateTabData': true})
+            browserWrapper.notifyPopup({ updateTabData: true })
 
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
@@ -145,14 +156,32 @@ function handleRequest (requestData) {
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
-                    // safari gets return data in message
-                    requestData.message = {redirectUrl: tracker.redirectUrl}
-                    return {redirectUrl: tracker.redirectUrl}
+                    const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
+                    // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
+                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
+                    // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
+                    // in onBeforeSendHeaders
+                    if (tracker.matchedRule.strictRedirect && browser === 'moz') {
+                        thisTab.surrogates[requestData.url] = webResource
+                    } else {
+                        const key = thisTab.addWebResourceAccess(webResource)
+                        return { redirectUrl: `${webResource}?key=${key}` }
+                    }
                 } else {
-                    requestData.message = {cancel: true}
-                    return {cancel: true}
+                    requestData.message = { cancel: true }
+                    return { cancel: true }
                 }
             }
+        }
+
+        // If we didn't block this script and it's a tracker, notify the content script.
+        if (requestData.type === 'script' && tracker) {
+            chrome.tabs.sendMessage(requestData.tabId, {
+                type: 'tracker',
+                hostname: tldts.parse(requestData.url).hostname
+            }, {
+                frameId: requestData.frameId
+            })
         }
     }
 
@@ -167,7 +196,7 @@ function handleRequest (requestData) {
     if (thisTab.site.isBroken) {
         console.log('temporarily skip https upgrades for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+              'more info: https://github.com/duckduckgo/content-blocking-lists')
         return
     }
 
