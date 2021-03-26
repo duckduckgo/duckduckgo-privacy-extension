@@ -115,6 +115,7 @@ function handleRequest (requestData) {
                 tracker.action = 'block'
                 if (socialTracker.redirectUrl) {
                     tracker.action = 'redirect'
+                    tracker.reason = 'matched rule - surrogate'
                     tracker.redirectUrl = socialTracker.redirectUrl
                     if (!tracker.matchedRule) {
                         tracker.matchedRule = {}
