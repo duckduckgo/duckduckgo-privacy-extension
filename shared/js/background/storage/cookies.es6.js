@@ -41,7 +41,7 @@ class ExcludedCookieStorage {
                         settings.updateSetting(`${listName}-etag`, newEtag)
                     } else if (response && response.status === 304) {
                         this.loadExclusionList(listName, (results) => {
-                            if (chrome.runtime.lastError) {
+                            if (chrome.runtime.lastError || !results[listName]) {
                                 console.log(`Error loading Exclusion settings from storage: ${chrome.runtime.lastError}`)
                                 settings.updateSetting(`${listName}-etag`, '')
                             }
@@ -54,7 +54,7 @@ class ExcludedCookieStorage {
                     settings.updateSetting(`${listName}-etag`, '')
                     console.log(`Error updating cookie data:  ${e}. Attempting to load from local storage.`)
                     this.loadExclusionList(listName, (results) => {
-                        if (chrome.runtime.lastError) {
+                        if (chrome.runtime.lastError || !results[listName]) {
                             console.log(`Error loading Exclusion settings from storage: ${chrome.runtime.lastError}`)
                             settings.updateSetting(`${listName}-etag`, '')
                         }
