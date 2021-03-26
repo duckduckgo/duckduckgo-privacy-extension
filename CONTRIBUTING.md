@@ -34,6 +34,50 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 - [Grunt](https://www.npmjs.com/package/grunt)
 - Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html).
 
+### Working with the autofill submodule
+
+This repo uses a dependency that's included via a subrepo. To initialise the subrepo run:
+
+```shell
+git submodule update --init --recursive
+```
+
+See [Git submodule helpers](#-git-submodule-helpers) to simplify this command into `git supdate`.
+
+#### Changes to `git pull`
+
+When running `git pull` in the parent project git will also fetch submodule changes, but it will not commit them. To make sure your local code reflects the intended upstream state, you can run:
+
+```shell
+git pull --recurse-submodules
+```
+
+This makes sure the submodule version committed upstream is included in the local submodule.
+
+See [Git submodule helpers](#-git-submodule-helpers) to automate this when you run `git pull`.
+
+#### Work with a different submodule branch
+
+You can simply `cd` to the subrepo and checkout a different branch.
+
+If you want this branch to become the new stable channel for this project, you can run:
+
+```shell
+git config -f .gitmodules submodule.duckduckgo-autofill.branch your-new-branch
+```
+
+This will save the branch reference to the `.gitmodules` file. You can then commit this change and push it upstream so that it's available to all contributors.
+
+#### Git submodule helpers
+
+We've created a `.gitconfig` to help you automate some of these git commands. To take advantage of these commands and helpers, just run this from the root of this project.
+
+```shell
+git config --local include.path ../.gitconfig
+```
+
+Using git from a gui also simplifies working with submodules 😉.
+
 ### Building the extension
 - Firefox
  1. Run `npm run dev-firefox`
