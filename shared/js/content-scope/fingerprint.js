@@ -176,13 +176,14 @@ function initAudioProtection (args) {
     const domainKey = site.domain
 
     // In place modify array data to remove fingerprinting
-    function transformArrayData (channelData, domainKey, sessionKey, cachedKey) {
-        let audioKey = cachedKey
+    function transformArrayData (channelData, domainKey, sessionKey, thisArg) {
+        let { audioKey } = getCachedResponse(thisArg, args)
         if (!audioKey) {
             const cdSum = channelData.reduce((sum, v) => {
                 return sum + v
             }, 0)
             audioKey = getDataKeySync(sessionKey, domainKey, cdSum)
+            setCache(thisArg, args, audioKey)
         }
         iterateDataKey(audioKey, (item, byte) => {
             const itemAudioIndex = item % channelData.length
@@ -193,7 +194,6 @@ function initAudioProtection (args) {
             }
             channelData[itemAudioIndex] = channelData[itemAudioIndex] + factor
         })
-        return { audioKey }
     }
 
     AudioBuffer.prototype.copyFromChannel = new Proxy(AudioBuffer.prototype.copyFromChannel, {
@@ -245,11 +245,9 @@ function initAudioProtection (args) {
             if (shouldExemptMethod('audio')) {
                 return channelData
             }
-            const { audioKey } = getCachedResponse(thisArg, args)
             // Anything we do here should be caught and ignored silently
             try {
-                const res = transformArrayData(channelData, domainKey, sessionKey, audioKey)
-                setCache(thisArg, args, res.audioKey)
+                transformArrayData(channelData, domainKey, sessionKey, thisArg, args)
             } catch {
             }
             return channelData
@@ -264,11 +262,9 @@ function initAudioProtection (args) {
                 if (shouldExemptMethod('audio')) {
                     return
                 }
-                const { audioKey } = getCachedResponse(thisArg, args)
                 // Anything we do here should be caught and ignored silently
                 try {
-                    const res = transformArrayData(args[0], domainKey, sessionKey, audioKey)
-                    setCache(thisArg, args, res.audioKey)
+                    transformArrayData(args[0], domainKey, sessionKey, thisArg, args)
                 } catch {
                 }
             }
