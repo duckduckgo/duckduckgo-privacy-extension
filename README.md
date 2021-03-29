@@ -4,7 +4,7 @@
 
 DuckDuckGo Firefox, Chrome, and Edge extensions
 
-DuckDuckGo Privacy Extensions is distributed under the Apache 2.0 [License](LICENSE).
+DuckDuckGo Privacy Extensions is distributed under the Apache 2.0 [License](LICENSE.md).
 
 ## Latest Versions
 
