@@ -44,6 +44,12 @@ git submodule update --init --recursive
 
 See [Git submodule helpers](#-git-submodule-helpers) to simplify this command into `git supdate`.
 
+#### Work on the subrepo code locally
+
+You can develop the subrepo within the context of this project. Just `cd` in the subrepo folder, checkout a new branch. Remember to `npm install` and use the subrepo as usual with `npm start` (note that the subrepo requires node `^10`). The parent grunt task will pick up changes to the autofill build and recompile the whole package.
+
+You can then commit and push as usual, but don't forget to also commit the updated pointer on the parent task once the PR is merged.
+
 #### Changes to `git pull`
 
 When running `git pull` in the parent project git will also fetch submodule changes, but it will not commit them. To make sure your local code reflects the intended upstream state, you can run:
