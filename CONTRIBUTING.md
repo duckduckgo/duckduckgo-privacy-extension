@@ -76,8 +76,6 @@ We've created a `.gitconfig` to help you automate some of these git commands. To
 git config --local include.path ../.gitconfig
 ```
 
-Using git from a gui also simplifies working with submodules 😉.
-
 ### Building the extension
 - Firefox
  1. Run `npm run dev-firefox`
