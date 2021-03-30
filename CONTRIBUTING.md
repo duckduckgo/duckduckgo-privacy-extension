@@ -36,7 +36,7 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
 ### Working with the autofill submodule
 
-This repo uses a dependency that's included via a subrepo. To initialise the subrepo run:
+This repo uses [duckduckgo-autofill](https://github.com/more-duckduckgo-org/duckduckgo-autofill) as a subrepo. To initialise the subrepo run:
 
 ```shell
 git submodule update --init --recursive
