@@ -1,0 +1,22 @@
+# These are useful configs to help working seamlessly with submodules
+# To add them to your local git config run this from the repo's root
+# git config --local include.path ../.gitconfig
+
+# Shows submodule changes when running git diff from the parent
+# https://git-scm.com/docs/git-config#Documentation/git-config.txt-diffsubmodule
+[diff]
+    submodule = log
+
+# Shows a summary of submodule changes when running git status from the parent
+# https://git-scm.com/docs/git-config#Documentation/git-config.txt-statussubmoduleSummary
+[status]
+    submodulesummary = 1
+
+# Ensures that your push, pull, etc. commands also update submodules when needed
+# https://git-scm.com/docs/git-config#Documentation/git-config.txt-submodulerecurse
+[submodule]
+    recurse = true
+
+# Just a handy alias for updating the submodule when there's a new version on the remote
+[alias]
+    supdate = submodule update --remote --merge
