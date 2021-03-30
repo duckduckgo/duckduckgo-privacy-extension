@@ -39,7 +39,7 @@ class Experiment {
 
                 // special case for existing users that were in an experiment before
                 // we added the active property
-                if (currentExp && !currentExp.hasOwnProperty('active')) {
+                if (currentExp && !Object.hasOwnProperty.call(currentExp, 'active')) {
                     currentExp.active = this.activeExperiment.active
                     settings.updateSetting('activeExperiment', currentExp)
                 }
@@ -71,7 +71,7 @@ class Experiment {
     }
 
     applySettingsChanges () {
-        for (let setting in this.activeExperiment.settings) {
+        for (const setting in this.activeExperiment.settings) {
             settings.updateSetting(setting, this.activeExperiment.settings[setting])
         }
     }

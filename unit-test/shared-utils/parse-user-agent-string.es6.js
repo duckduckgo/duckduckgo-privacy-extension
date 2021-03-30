@@ -36,7 +36,7 @@ const tests = [
 describe('parseUserAgentString', () => {
     tests.forEach((test) => {
         it(`should be able to parse ${test.ua}`, () => {
-            let result = parseUserAgentString(test.ua)
+            const result = parseUserAgentString(test.ua)
 
             expect(result.browser).toEqual(test.expectedBrowser)
             expect(result.version).toEqual(test.expectedVersion)

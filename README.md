@@ -4,7 +4,7 @@
 
 DuckDuckGo Firefox, Chrome, and Edge extensions
 
-This software is licensed under the terms of the Apache License, Version 2.0 (see [LICENSE](LICENSE)). Copyright (c) 2012 - 2019 [duckduckgo.com](https://duckduckgo.com)
+DuckDuckGo Privacy Extensions is distributed under the Apache 2.0 [License](LICENSE.md).
 
 ## Latest Versions
 

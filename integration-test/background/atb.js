@@ -25,12 +25,9 @@ describe('install workflow', () => {
             // wait for post install page to open
             // if it never does, jasmine timeout will kick in
             while (!postInstallOpened) {
+                const urls = await Promise.all(browser.targets().map(target => target.url()))
+                postInstallOpened = urls.some(url => url.includes('duckduckgo.com/app?post=1'))
                 await wait.ms(100)
-                postInstallOpened = await browser.targets().some(async (target) => {
-                    const url = await target.url()
-
-                    return url.match(/duckduckgo\.com\/install\?post=1/)
-                })
             }
 
             expect(postInstallOpened).toBeTruthy()
@@ -124,7 +121,7 @@ describe('install workflow', () => {
                 if (url.match(/exti/)) {
                     numExtiCalled += 1
                     expect(url).toContain(`atb=${atb}`)
-                    expect(url).toContain(`cp=atbhc`)
+                    expect(url).toContain('cp=atbhc')
                 }
             })
 

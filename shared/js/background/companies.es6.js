@@ -3,13 +3,13 @@ const Company = require('./classes/company.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const migrate = require('./migrate.es6')
 
-var Companies = (() => {
-    var companyContainer = {}
-    var topBlocked = new TopBlocked()
-    var storageName = 'companyData'
-    var totalPages = 0
-    var totalPagesWithTrackers = 0
-    var lastStatsResetDate = null
+const Companies = (() => {
+    let companyContainer = {}
+    const topBlocked = new TopBlocked()
+    const storageName = 'companyData'
+    let totalPages = 0
+    let totalPagesWithTrackers = 0
+    let lastStatsResetDate = null
 
     function sortByCount (a, b) {
         return companyContainer[b].count - companyContainer[a].count
@@ -45,19 +45,19 @@ var Companies = (() => {
         all: () => { return Object.keys(companyContainer) },
 
         getTopBlocked: (n) => {
-            var topBlockedData = []
+            const topBlockedData = []
             topBlocked.getTop(n, sortByCount).forEach((name) => {
-                let c = Companies.get(name)
-                topBlockedData.push({name: c.name, count: c.count, displayName: c.displayName})
+                const c = Companies.get(name)
+                topBlockedData.push({ name: c.name, count: c.count, displayName: c.displayName })
             })
 
             return topBlockedData
         },
 
         getTopBlockedByPages: (n) => {
-            var topBlockedData = []
+            const topBlockedData = []
             topBlocked.getTop(n, sortByPages).forEach((name) => {
-                let c = Companies.get(name)
+                const c = Companies.get(name)
                 topBlockedData.push({
                     name: c.name,
                     displayName: c.displayName,
@@ -88,8 +88,8 @@ var Companies = (() => {
             totalPagesWithTrackers = 0
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
-            let resetDate = Companies.getLastResetDate()
-            browserWrapper.notifyPopup({'didResetTrackersData': resetDate})
+            const resetDate = Companies.getLastResetDate()
+            browserWrapper.notifyPopup({ didResetTrackersData: resetDate })
         },
 
         getLastResetDate: () => lastStatsResetDate,
@@ -105,16 +105,16 @@ var Companies = (() => {
         },
 
         syncToStorage: () => {
-            var toSync = {}
+            const toSync = {}
             toSync[storageName] = companyContainer
             browserWrapper.syncToStorage(toSync)
-            browserWrapper.syncToStorage({'totalPages': totalPages})
-            browserWrapper.syncToStorage({'totalPagesWithTrackers': totalPagesWithTrackers})
-            browserWrapper.syncToStorage({'lastStatsResetDate': lastStatsResetDate})
+            browserWrapper.syncToStorage({ totalPages: totalPages })
+            browserWrapper.syncToStorage({ totalPagesWithTrackers: totalPagesWithTrackers })
+            browserWrapper.syncToStorage({ lastStatsResetDate: lastStatsResetDate })
         },
 
         sanitizeData: (storageData) => {
-            if (storageData && storageData.hasOwnProperty('twitter')) {
+            if (storageData && Object.hasOwnProperty.call(storageData, 'twitter')) {
                 delete storageData.twitter
             }
             return storageData
@@ -128,7 +128,7 @@ var Companies = (() => {
 
                 for (let company in storageData) {
                     [company, storageData] = migrate.migrateCompanyData(company, storageData)
-                    let newCompany = Companies.add(storageData[company])
+                    const newCompany = Companies.add(storageData[company])
                     newCompany.set('count', storageData[company].count || 0)
                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
                 }

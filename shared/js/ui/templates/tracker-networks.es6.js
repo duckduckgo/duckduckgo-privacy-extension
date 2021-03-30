@@ -71,11 +71,12 @@ function renderTrackerDetails (model) {
         let category = ''
         if (c.urls[url] && c.urls[url].categories) {
             displayCategories.some(displayCat => {
-                let match = c.urls[url].categories.find(cat => cat === displayCat)
+                const match = c.urls[url].categories.find(cat => cat === displayCat)
                 if (match) {
                     category = match
                     return true
                 }
+                return false
             })
         }
         return bel`<li>

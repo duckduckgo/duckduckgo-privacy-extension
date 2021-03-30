@@ -15,3 +15,4 @@ build/safari
 build/safari14-email-autofill
 build/test
 test/background.js
+shared/js/content-scope/sjcl.js

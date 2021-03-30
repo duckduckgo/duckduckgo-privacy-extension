@@ -3,14 +3,14 @@
  */
 
 const ReferrerTestList = {
-    'excludedReferrers': [
+    excludedReferrers: [
         {
-            'domain': 'test.com',
-            'reason': 'testing'
+            domain: 'test.com',
+            reason: 'testing'
         },
         {
-            'domain': 'testing.com',
-            'reason': 'testing'
+            domain: 'testing.com',
+            reason: 'testing'
         }
     ]
 }

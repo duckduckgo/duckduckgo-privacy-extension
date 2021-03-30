@@ -23,21 +23,21 @@ BaseModel.prototype = $.extend({},
     mixins.events,
     {
 
-    /**
-     * Setter method for modifying attributes
-     * on the model. Since the attributes
-     * are directly accessible + mutable on the object
-     * itself, you don't *have* to use the set method.
-     *
-     * However, the benefit of using the set method
-     * is that changes are broadcast out via store
-     * to any UI components that might want to observe
-     * changes and update their state.
-     *
-     * @param {string or object} attr
-     * @param {*} val
-     * @api public
-     */
+        /**
+         * Setter method for modifying attributes
+         * on the model. Since the attributes
+         * are directly accessible + mutable on the object
+         * itself, you don't *have* to use the set method.
+         *
+         * However, the benefit of using the set method
+         * is that changes are broadcast out via store
+         * to any UI components that might want to observe
+         * changes and update their state.
+         *
+         * @param {string or object} attr
+         * @param {*} val
+         * @api public
+         */
         set: function (attr, val) {
             /*
              * support passing a hash of values to set instead of
@@ -49,7 +49,7 @@ BaseModel.prototype = $.extend({},
              * })
              */
             if (typeof attr === 'object') {
-                for (var key in attr) {
+                for (const key in attr) {
                     this.set(key, attr[key], val)
                 }
                 return
@@ -65,7 +65,7 @@ BaseModel.prototype = $.extend({},
 
             this.store.publish({
                 notifierName: this.modelName,
-                change: {attribute: attr, value: val, lastValue: lastValue},
+                change: { attribute: attr, value: val, lastValue: lastValue },
                 attributes: this._toJSON()
             })
         },
@@ -132,7 +132,7 @@ BaseModel.prototype = $.extend({},
           * are functions.
           */
         _toJSON: function () {
-            let attributes = Object.assign({}, Object.getPrototypeOf(this), this)
+            const attributes = Object.assign({}, Object.getPrototypeOf(this), this)
             if (attributes.store) delete attributes.store
             return JSON.parse(JSON.stringify(attributes))
         }
