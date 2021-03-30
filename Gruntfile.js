@@ -194,7 +194,7 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            copyAutofillJs: `cp duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
             // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
