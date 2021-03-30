@@ -204,10 +204,10 @@ module.exports = function (grunt) {
             copyContentScope: `cat shared/js/content-scope/*.js > build/${browser}/${buildType}/public/js/content-scope.js`,
             copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            copyAutofillJs: `cp duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
-copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
+            copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
             // TODO: gsv can we remove this? it's removed upstream.
             // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
             updateFirefoxRelativeUrl: `sed -i.bak "s/chrome-extension:\\/\\/__MSG_@@extension_id__\\/public/../g" build/firefox/${buildType}/public/css/email-host-styles.css &&

@@ -36,7 +36,7 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
 ### Working with the autofill submodule
 
-This repo uses a dependency that's included via a subrepo. To initialise the subrepo run:
+This repo uses [duckduckgo-autofill](https://github.com/more-duckduckgo-org/duckduckgo-autofill) as a subrepo. To initialise the subrepo run:
 
 ```shell
 git submodule update --init --recursive
@@ -81,8 +81,6 @@ We've created a `.gitconfig` to help you automate some of these git commands. To
 ```shell
 git config --local include.path ../.gitconfig
 ```
-
-Using git from a gui also simplifies working with submodules 😉.
 
 ### Building the extension
 - Firefox
