@@ -137,10 +137,12 @@ Please note, that there are manual changes which will need to be applied after c
     - Team should be "Duck Duck Go, Inc."
     - Signing Certificate should be "Development"
 
-When you want to distribute your `.app` file, you can wrap it as a `.dmg`, which will make sure that the end user copies the `.app` file into the Application directory. Using [the `create-dmg` tool](https://github.com/create-dmg/create-dmg), from within the same directory as the `.app` file, run:
+When you want to distribute your `.app` file, you can wrap it as a `.dmg`, which is a common way to distribute macOS apps. You can find the `.app` bundle by locating the _Products_ folder in the left-hand pane in Xcode, then right click on the `.app` file and select _Show in Finder_. Using [the `create-dmg` tool](https://github.com/create-dmg/create-dmg), from within the same directory as the `.app` file, run:
 ```
-create-dmg --volname "DuckDuckGo Email Protection" --icon "DuckDuckGo Email Protection.app" 200 190 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 "DuckDuckGo Email Protection.dmg"
+mkdir -p temp && cp -r *.app temp && create-dmg --volname "DuckDuckGo Email Protection" --icon "DuckDuckGo Email Protection.app" 200 190 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 "DuckDuckGo Email Protection.dmg" temp && rm -rf temp
 ```
+
+This will copy the app bundle in a subfolder, create the `.dmg`, and then remove the temporary subfolder.
 
 ### Development flow
 
