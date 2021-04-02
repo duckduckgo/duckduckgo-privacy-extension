@@ -9,6 +9,7 @@
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
     const ddgFontBold = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
+    const entityModalData = {}
 
     /*********************************************************
      *  Style Definitions
@@ -59,6 +60,22 @@
                 background: #3969EF;
             `
         },
+        loginMode: {
+            buttonBackground: `
+                background: #666666;
+            `,
+            buttonFont: `
+                color: #FFFFFF;
+            `
+        },
+        cancelMode: {
+            buttonBackground: `
+                background: rgba(34, 34, 34, 0.1);
+            `,
+            buttonFont: `
+                color: #222222;
+            `
+        },
         button: `
             border-radius: 8px;
 
@@ -74,6 +91,64 @@
             position: relative;
             cursor: pointer;
             box-shadow: none;
+        `,
+        circle: `
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            background: #E0E0E0;
+            border: 1px solid #E0E0E0;
+            position: absolute;
+            top: -8px;
+            right: -8px;
+        `,
+        rectangle: `
+            width: 12px;
+            height: 3px;
+            background: #666666;
+            position: relative;
+            top: 42.5%;
+            margin: auto;
+        `,
+        textBubble: `
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12), 0px 8px 16px rgba(0, 0, 0, 0.08);
+            width: 360px;
+            padding: 0 0 25px 0;
+            margin-top: 20px;
+            z-index: 5;
+            position: absolute;
+            left: -100px
+        `,
+        textArrow: `
+            display: inline-block;
+            background: #FFFFFF;
+            border: solid rgba(0, 0, 0, 0.1);
+            border-width: 0 1px 1px 0;
+            padding: 5px;
+            transform: rotate(-135deg);
+            -webkit-transform: rotate(-135deg);
+            position: relative;
+            top: -9px;
+            left: 50%;
+        `,
+        hoverTextTitle: `
+            font-family: DuckDuckGoPrivacyEssentialsBold;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 0px 20px;
+            text-align: center;
+            margin-bottom: 8px;
+        `,
+        hoverTextBody: `
+            font-family: DuckDuckGoPrivacyEssentials;
+            font-size: 14px;
+            line-height: 21px;
+            margin: auto;
+            padding: 0px 30px;
+            text-align: left;
         `,
         buttonTextContainer: `
             display: flex; 
@@ -138,6 +213,25 @@
             margin: auto;
             padding-bottom: 36px;
         `,
+        modalContentTitle: `
+            font-family: DuckDuckGoPrivacyEssentialsBold;
+            font-size: 17px;
+            font-weight: bold;
+            margin: 27px auto 10px;
+            text-align: center;
+        `,
+        modalContentText: `
+            font-family: DuckDuckGoPrivacyEssentials;
+            font-size: 14px;
+            line-height: 21px;
+            margin: 0px auto 24px;
+            text-align: center;
+        `,
+        modalButton: `
+        `,
+        modalIcon: `
+            display: block;
+        `,
         contentTitle: `
             font-family: DuckDuckGoPrivacyEssentialsBold;
             font-size: 17px;
@@ -173,6 +267,35 @@
             margin: 0px 8px 0px 0px;
             height: 14px;
             width: 14px;
+        `,
+        modal: `
+            width: 284px;
+            margin: auto;
+            background-color: #FFFFFF;
+            position: absolute;
+            left: calc(50% - 312px/2);
+            top: calc(50% - 356px/2 + 0.5px);
+            display: block;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 32px 24px 24px;
+        `,
+        overlay: `
+            height: 100%;
+            width: 100%;
+            background-color: #666666;
+            opacity: .5;
+            display: block;
+            position: fixed;
+            top: 0;
+            right: 0;
+        `,
+        modalContainer: `
+            height: 100%;
+            width: 100%;
+            z-index: 2147483647;
+            display: block;
+            position: fixed;
         `
     }
 
@@ -214,6 +337,10 @@
 
         // Determine if element should render in dark mode
         getMode () {
+            // Login buttons are always the login style types
+            if (this.replaceSettings.type === 'loginButton') {
+                return 'loginMode'
+            }
             const mode = this.originalElement.getAttribute('data-colorscheme')
             if (mode === 'dark') {
                 return 'darkMode'
@@ -309,12 +436,15 @@
 
         clickFunction (originalElement, replacementElement, shouldFade = true) {
             let clicked = false
-            return function handleClick (e) {
-                // Ensure that the click is created by a user event
+            const handleClick = function handleClick (e) {
+                // Ensure that the click is created by a user event & prevent double clicks from adding more animations
                 if (e.isTrusted && !clicked) {
-                    // prevent double clicks from adding more animations
                     clicked = true
-                    enableSocialTracker(this.entity, false, false)
+                    let isLogin = false
+                    if (this.replaceSettings.type === 'loginButton') {
+                        isLogin = true
+                    }
+                    enableSocialTracker(this.entity, false, isLogin)
                     const parent = replacementElement.parentNode
 
                     // If we allow everything when this element is clicked,
@@ -379,12 +509,27 @@
                     })
                 }
             }.bind(this)
+            // If this is a login button, show modal if needed
+            if (this.replaceSettings.type === 'loginButton' && entityModalData[this.entity].shouldShowLoginModal) {
+                return function handleLoginClick (e) {
+                    makeModal(this.entity, handleClick, e)
+                }.bind(this)
+            }
+            return handleClick
         }
     }
 
     function init (extensionResponseData) {
         for (const entity of Object.keys(extensionResponseData)) {
             entities.push(entity)
+            entityModalData[entity] = {
+                shouldShowLoginModal: true,
+                modalIcon: extensionResponseData[entity].informationalModal.icon,
+                modalTitle: extensionResponseData[entity].informationalModal.messageTitle,
+                modalText: extensionResponseData[entity].informationalModal.messageBody,
+                modalAcceptText: extensionResponseData[entity].informationalModal.confirmButtonText,
+                modalRejectText: extensionResponseData[entity].informationalModal.rejectButtonText
+            }
         }
         replaceClickToLoadElements(extensionResponseData)
     }
@@ -405,11 +550,11 @@
             const el = document.createElement('div')
             parent.replaceChild(el, originalElement)
         }
-        if (widgetData.replaceSettings.type === 'button') {
+        if (widgetData.replaceSettings.type === 'loginButton') {
             // Create a button to replace old element
-            const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
-            button.addEventListener('click', widget.clickFunction(originalElement, button))
-            parent.replaceChild(button, originalElement)
+            const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText)
+            button.addEventListener('click', widget.clickFunction(originalElement, container))
+            parent.replaceChild(container, originalElement)
         }
         if (widgetData.replaceSettings.type === 'dialog') {
             chrome.runtime.sendMessage({
@@ -505,10 +650,18 @@
         }
         // Handle login call
         if (event.detail.action === 'login') {
-            enableSocialTracker(entity, false, true)
-            window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
+            if (entityModalData[entity].shouldShowLoginModal) {
+                makeModal(entity, runLogin, entity)
+            } else {
+                runLogin(entity)
+            }
         }
     })
+
+    function runLogin (entity) {
+        enableSocialTracker(entity, false, true)
+        window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
+    }
 
     /*********************************************************
      *  Widget building blocks
@@ -529,6 +682,112 @@
         linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
         linkElement.innerHTML = linkText
         return linkElement
+    }
+
+    /* FB login replacement button, with hover text */
+    function makeLoginButton (buttonText, mode, hoverTextTitle, hoverTextBody) {
+        const container = document.createElement('div')
+        container.style.cssText = 'position: relative;'
+        const styleElement = document.createElement('style')
+        styleElement.innerHTML = `
+            #DuckDuckGoPrivacyEssentialsHoverableText {
+                display: none;
+            }
+            #DuckDuckGoPrivacyEssentialsHoverable:hover #DuckDuckGoPrivacyEssentialsHoverableText {
+                display: block;
+            }
+        `
+        container.appendChild(styleElement)
+
+        const hoverContainer = document.createElement('div')
+        hoverContainer.id = 'DuckDuckGoPrivacyEssentialsHoverable'
+        hoverContainer.style.cssText = 'padding-bottom: 20px;'
+        container.appendChild(hoverContainer)
+
+        // Make the button
+        const button = makeButton(buttonText, mode)
+        // Add blocked icon
+        const blockedIcon = document.createElement('div')
+        const dash = document.createElement('div')
+        blockedIcon.appendChild(dash)
+        blockedIcon.style.cssText = styles.circle
+        dash.style.cssText = styles.rectangle
+        button.appendChild(blockedIcon)
+        hoverContainer.appendChild(button)
+
+        // hover action
+        const hoverBox = document.createElement('div')
+        hoverBox.id = 'DuckDuckGoPrivacyEssentialsHoverableText'
+        hoverBox.style.cssText = styles.textBubble
+        const arrow = document.createElement('div')
+        arrow.style.cssText = styles.textArrow
+        hoverBox.appendChild(arrow)
+        const hoverTitle = document.createElement('div')
+        hoverTitle.style.cssText = styles.hoverTextTitle
+        hoverTitle.innerHTML = hoverTextTitle
+        hoverBox.appendChild(hoverTitle)
+        const hoverText = document.createElement('div')
+        hoverText.style.cssText = styles.hoverTextBody
+        hoverText.innerHTML = hoverTextBody
+        hoverBox.appendChild(hoverText)
+
+        hoverContainer.appendChild(hoverBox)
+
+        return {
+            button: button,
+            container: container
+        }
+    }
+
+    function makeModal (entity, acceptFunction, ...acceptFunctionParams) {
+        chrome.runtime.sendMessage({
+            getImage: entityModalData[entity].modalIcon
+        }, function putModal (icon) {
+            const modalContainer = document.createElement('div')
+            modalContainer.style.cssText = styles.modalContainer
+            const pageOverlay = document.createElement('div')
+            pageOverlay.style.cssText = styles.overlay
+            const modal = document.createElement('div')
+            modal.style.cssText = styles.modal
+
+            // Content
+            const iconElement = document.createElement('img')
+            iconElement.style.cssText = styles.icon + styles.modalIcon
+            iconElement.setAttribute('src', icon)
+            iconElement.setAttribute('height', '70px')
+
+            const title = document.createElement('div')
+            title.style.cssText = styles.modalContentTitle
+            title.innerHTML = entityModalData[entity].modalTitle
+
+            const message = document.createElement('div')
+            message.style.cssText = styles.modalContentText
+            message.innerHTML = entityModalData[entity].modalText
+
+            modal.appendChild(iconElement)
+            modal.appendChild(title)
+            modal.appendChild(message)
+
+            // Buttons
+            const allowButton = makeButton(entityModalData[entity].modalAcceptText, 'lightMode')
+            allowButton.style.cssText += styles.modalButton
+            allowButton.addEventListener('click', function doLogin () {
+                acceptFunction(...acceptFunctionParams)
+                document.body.removeChild(modalContainer)
+            })
+            const rejectButton = makeButton(entityModalData[entity].modalRejectText, 'cancelMode')
+            rejectButton.style.cssText += styles.modalButton + 'float: right;'
+            rejectButton.addEventListener('click', function cancelLogin () {
+                document.body.removeChild(modalContainer)
+            })
+
+            modal.appendChild(allowButton)
+            modal.appendChild(rejectButton)
+
+            modalContainer.appendChild(pageOverlay)
+            modalContainer.appendChild(modal)
+            document.body.insertBefore(modalContainer, document.body.childNodes[0])
+        })
     }
 
     function createTitleRow (message, textButton) {
