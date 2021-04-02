@@ -74,7 +74,6 @@
         "abp-filter-parser": "https://github.com/duckduckgo/abp-filter-parser.git#0.2.0",
         "bel": "4.6.0",
         "chalk": "2.1.0",
-        "change-case": "3.0.1",
         "commander": "2.11.0",
         "deep-freeze": "0.0.1",
         "dexie": "2.0.4",
