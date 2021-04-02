@@ -702,7 +702,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 chrome.webRequest.onBeforeRedirect.addListener(
     details => {
         const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders) {
+        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders && trackerutils.facebookExperimentIsActive()) {
             // Detect cors error
             const headers = details.responseHeaders
             const corsHeaders = [
@@ -736,7 +736,8 @@ chrome.webNavigation.onCommitted.addListener(details => {
           'more info: https://github.com/duckduckgo/content-blocking-whitelist')
         return
     }
-    if (tab && !tab.site.whitelisted) {
+
+    if (tab && !tab.site.whitelisted && trackerutils.facebookExperimentIsActive()) {
         chrome.tabs.executeScript(details.tabId, {
             file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,

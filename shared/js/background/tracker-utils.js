@@ -62,6 +62,9 @@ function getDomainsToExludeByNetwork () {
 
 // Return true if URL is in our click to load tracker list
 function getSocialTracker (url) {
+    if (!facebookExperimentIsActive()) {
+        return
+    }
     const parsedDomain = tldts.parse(url)
     for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
@@ -80,6 +83,22 @@ function getSocialTracker (url) {
             }
         }
     }
+}
+
+// Return true when click to load should be enabled
+function facebookExperimentIsActive () {
+    // TODO: Remove before roll out
+    return true
+    // Check for experiment
+    const activeExperiment = settings.getSetting('activeExperiment')
+    if (activeExperiment) {
+        const experiment = settings.getSetting('experimentData')
+        console.log(experiment)
+        if (experiment && experiment.blockFacebook) {
+            return true
+        }
+    }
+    return false
 }
 
 // Determine if a given URL is surrogate redirect.
@@ -181,5 +200,6 @@ module.exports = {
     shouldBlockSocialNetwork: shouldBlockSocialNetwork,
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
     getXraySurrogate: getXraySurrogate,
-    allowSocialLogin: allowSocialLogin
+    allowSocialLogin: allowSocialLogin,
+    facebookExperimentIsActive: facebookExperimentIsActive
 }
