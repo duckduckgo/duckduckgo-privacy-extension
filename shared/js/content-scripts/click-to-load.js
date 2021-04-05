@@ -9,7 +9,7 @@
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
     const ddgFontBold = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
-    const entityModalData = {}
+    const entityData = {}
 
     /*********************************************************
      *  Style Definitions
@@ -159,21 +159,26 @@
         `,
         block: `
             box-sizing: border-box;
-            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
             max-width: 600px;
             min-height: 300px;
             margin: auto;
+            display: flex;
             flex-direction: column;
-
-            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             
             font-family: DuckDuckGoPrivacyEssentials;
             line-height: 1;
         `,
-        content: `
+        imgRow: `
             display: flex;
             flex-direction: column;
             margin: 20px 0px;
+        `,
+        content: `
+            display: flex;
+            flex-direction: column;
+            margin: auto;
         `,
         titleBox: `
             display: flex;
@@ -185,32 +190,17 @@
         title: `
             line-height: 1.4;
             font-size: 14px;
-            margin: 0 10px;
+            margin: auto 10px;
             flex-basis: 100%;
             height: 1.4em;
             flex-wrap: wrap;
             overflow: hidden;
         `,
-        headerLinkContainer: `
-            flex-basis: 100%;
-            display: grid;
-            justify-content: flex-end;
-        `,
-        headerLink: `
-            line-height: 1.4;
-            font-size: 14px;
-            font-weight: bold;
-            font-family: DuckDuckGoPrivacyEssentialsBold;
-            text-decoration: none;
-            cursor: pointer;
-            min-width: 100px;
-            text-align: end;
-        `,
         buttonRow: `
             display: flex;
             height: 100%
             flex-direction: row;
-            margin: auto;
+            margin: 20px auto 0px;
             padding-bottom: 36px;
         `,
         modalContentTitle: `
@@ -510,7 +500,7 @@
                 }
             }.bind(this)
             // If this is a login button, show modal if needed
-            if (this.replaceSettings.type === 'loginButton' && entityModalData[this.entity].shouldShowLoginModal) {
+            if (this.replaceSettings.type === 'loginButton' && entityData[this.entity].shouldShowLoginModal) {
                 return function handleLoginClick (e) {
                     makeModal(this.entity, handleClick, e)
                 }.bind(this)
@@ -522,13 +512,14 @@
     function init (extensionResponseData) {
         for (const entity of Object.keys(extensionResponseData)) {
             entities.push(entity)
-            entityModalData[entity] = {
-                shouldShowLoginModal: true,
+            entityData[entity] = {
+                shouldShowLoginModal: extensionResponseData[entity].showLoginModal,
                 modalIcon: extensionResponseData[entity].informationalModal.icon,
                 modalTitle: extensionResponseData[entity].informationalModal.messageTitle,
                 modalText: extensionResponseData[entity].informationalModal.messageBody,
                 modalAcceptText: extensionResponseData[entity].informationalModal.confirmButtonText,
-                modalRejectText: extensionResponseData[entity].informationalModal.rejectButtonText
+                modalRejectText: extensionResponseData[entity].informationalModal.rejectButtonText,
+                simpleVersion: extensionResponseData[entity].simpleVersion
             }
         }
         replaceClickToLoadElements(extensionResponseData)
@@ -561,14 +552,11 @@
                 getImage: widgetData.replaceSettings.icon
             }, function putButton (icon) {
                 const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
-                const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const el = createContentBlock(
                     widget,
                     button,
-                    textButton,
                     icon)
                 button.addEventListener('click', widget.clickFunction(originalElement, el))
-                textButton.addEventListener('click', widget.clickFunction(originalElement, el))
                 parent.replaceChild(el, originalElement)
                 // Hide the title element if the box is too narrow.
                 if (!!el.offsetWidth && el.offsetWidth <= 400) {
@@ -650,7 +638,7 @@
         }
         // Handle login call
         if (event.detail.action === 'login') {
-            if (entityModalData[entity].shouldShowLoginModal) {
+            if (entityData[entity].shouldShowLoginModal) {
                 makeModal(entity, runLogin, entity)
             } else {
                 runLogin(entity)
@@ -674,14 +662,6 @@
         textContainer.innerHTML = buttonText
         button.appendChild(textContainer)
         return button
-    }
-
-    /* Make a text link */
-    function makeTextButton (linkText, mode) {
-        const linkElement = document.createElement('a')
-        linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
-        linkElement.innerHTML = linkText
-        return linkElement
     }
 
     /* FB login replacement button, with hover text */
@@ -741,7 +721,7 @@
 
     function makeModal (entity, acceptFunction, ...acceptFunctionParams) {
         chrome.runtime.sendMessage({
-            getImage: entityModalData[entity].modalIcon
+            getImage: entityData[entity].modalIcon
         }, function putModal (icon) {
             const modalContainer = document.createElement('div')
             modalContainer.style.cssText = styles.modalContainer
@@ -758,24 +738,24 @@
 
             const title = document.createElement('div')
             title.style.cssText = styles.modalContentTitle
-            title.innerHTML = entityModalData[entity].modalTitle
+            title.innerHTML = entityData[entity].modalTitle
 
             const message = document.createElement('div')
             message.style.cssText = styles.modalContentText
-            message.innerHTML = entityModalData[entity].modalText
+            message.innerHTML = entityData[entity].modalText
 
             modal.appendChild(iconElement)
             modal.appendChild(title)
             modal.appendChild(message)
 
             // Buttons
-            const allowButton = makeButton(entityModalData[entity].modalAcceptText, 'lightMode')
+            const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
             allowButton.style.cssText += styles.modalButton
             allowButton.addEventListener('click', function doLogin () {
                 acceptFunction(...acceptFunctionParams)
                 document.body.removeChild(modalContainer)
             })
-            const rejectButton = makeButton(entityModalData[entity].modalRejectText, 'cancelMode')
+            const rejectButton = makeButton(entityData[entity].modalRejectText, 'cancelMode')
             rejectButton.style.cssText += styles.modalButton + 'float: right;'
             rejectButton.addEventListener('click', function cancelLogin () {
                 document.body.removeChild(modalContainer)
@@ -790,7 +770,7 @@
         })
     }
 
-    function createTitleRow (message, textButton) {
+    function createTitleRow (message) {
         // Create row container
         const row = document.createElement('div')
         row.style.cssText = styles.titleBox
@@ -812,16 +792,11 @@
         msgElement.style.cssText = styles.title
         row.appendChild(msgElement)
 
-        // Text link
-        const linkContainer = document.createElement('div')
-        linkContainer.style.cssText = styles.headerLinkContainer
-        linkContainer.appendChild(textButton)
-        row.appendChild(linkContainer)
         return row
     }
 
     // Create the content block to replace other divs/iframes with
-    function createContentBlock (widget, button, textButton, img) {
+    function createContentBlock (widget, button, img) {
         // Create overall grid structure
         const element = document.createElement('div')
         element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
@@ -833,31 +808,44 @@
         const titleRow = document.createElement('div')
         titleRow.style.cssText = styles.headerRow
         element.appendChild(titleRow)
-        titleRow.appendChild(createTitleRow('DuckDuckGo Privacy Essentials', textButton))
+        titleRow.appendChild(createTitleRow('DuckDuckGo'))
 
         const contentRow = document.createElement('div')
         contentRow.style.cssText = styles.content
+
         if (img) {
+            const imageRow = document.createElement('div')
+            imageRow.style.cssText = styles.imgRow
             const imgElement = document.createElement('img')
             imgElement.style.cssText = styles.icon
             imgElement.setAttribute('src', img)
             imgElement.setAttribute('height', '70px')
-            contentRow.appendChild(imgElement)
+            imageRow.appendChild(imgElement)
+            element.appendChild(imageRow)
         }
+
         const contentTitle = document.createElement('div')
         contentTitle.style.cssText = styles.contentTitle
-        contentTitle.innerHTML = widget.replaceSettings.infoTitle
+        if (entityData[widget.entity].simpleVersion && widget.replaceSettings.simpleInfoTitle) {
+            contentTitle.innerHTML = widget.replaceSettings.simpleInfoTitle
+        } else {
+            contentTitle.innerHTML = widget.replaceSettings.infoTitle
+        }
         contentRow.appendChild(contentTitle)
         const contentText = document.createElement('div')
         contentText.style.cssText = styles.contentText
-        contentText.innerHTML = widget.replaceSettings.infoText
+        if (entityData[widget.entity].simpleVersion && widget.replaceSettings.simpleInfoText) {
+            contentText.innerHTML = widget.replaceSettings.simpleInfoText
+        } else {
+            contentText.innerHTML = widget.replaceSettings.infoText
+        }
         contentRow.appendChild(contentText)
         element.appendChild(contentRow)
 
         const buttonRow = document.createElement('div')
         buttonRow.style.cssText = styles.buttonRow
         buttonRow.appendChild(button)
-        element.appendChild(buttonRow)
+        contentRow.appendChild(buttonRow)
 
         return element
     }

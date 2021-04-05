@@ -303,28 +303,50 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     // Click to load interactions
     if (req.initClickToLoad) {
-        const tab = tabManager.get({ tabId: sender.tab.id })
-        const config = { ...tdsStorage.ClickToLoadConfig }
+        settings.ready().then(() => {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            const config = { ...tdsStorage.ClickToLoadConfig }
 
-        // remove any social networks saved by the user
-        for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-            if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
-                delete config[entity]
+            // remove any social networks saved by the user
+            for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+                if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
+                    delete config[entity]
+                }
             }
-        }
 
-        // if the current site is on the social exception list, remove it from the config.
-        let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
-        if (excludedNetworks) {
-            excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
-            excludedNetworks.forEach(e => delete config[e.entity])
-        }
-        res(config)
+            // Determine whether to show one time messages or simplified messages
+            for (const [entity] of Object.entries(config)) {
+                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+                if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
+                    config[entity].simpleVersion = true
+                }
+                // If this user has used the login with X feature, don't show one time message
+                const clickToLoadLogins = settings.getSetting('clickToLoadLogins') || {}
+                if (clickToLoadLogins[entity]) {
+                    config[entity].showLoginModal = false
+                } else {
+                    config[entity].showLoginModal = true
+                }
+            }
+
+            // if the current site is on the social exception list, remove it from the config.
+            let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
+            if (excludedNetworks) {
+                excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
+                excludedNetworks.forEach(e => delete config[e.entity])
+            }
+            res(config)
+        })
         return true
     }
 
     if (req.getImage) {
-        utils.imgToData(`img/social/${req.getImage}`).then(img => res(img))
+        if (req.getImage === 'None' || req.getImage === 'none' || req.getImage === undefined) {
+            res(undefined)
+        } else {
+            utils.imgToData(`img/social/${req.getImage}`).then(img => res(img))
+        }
         return true
     }
 
@@ -355,15 +377,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     }
 
     if (req.enableSocialTracker) {
-        const tab = tabManager.get({ tabId: sender.tab.id })
-        if (req.isLogin) {
-            trackerutils.allowSocialLogin(tab.site.domain)
-        }
-        if (req.alwaysAllow) {
-            settings.ready().then(() => {
+        settings.ready().then(() => {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            const entity = req.enableSocialTracker
+            if (req.isLogin) {
+                const clickToLoadLogins = settings.getSetting('clickToLoadLogins') || {}
+                clickToLoadLogins[entity] = true
+                settings.updateSetting('clickToLoadLogins', clickToLoadLogins)
+                trackerutils.allowSocialLogin(tab.site.domain)
+            }
+            if (req.alwaysAllow) {
                 let allowList = settings.getSetting('clickToLoad')
                 const value = {
-                    tracker: req.enableSocialTracker,
+                    tracker: entity,
                     domain: tab.site.domain
                 }
                 if (allowList) {
@@ -374,8 +400,20 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                     allowList = [value]
                 }
                 settings.updateSetting('clickToLoad', allowList)
-            })
-        }
+            }
+            // Update number of times this social network has been 'clicked'
+            if (tdsStorage.ClickToLoadConfig[entity]) {
+                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+                if (!clickToLoadClicks[entity]) {
+                    clickToLoadClicks[entity] = 1
+                } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
+                    clickToLoadClicks[entity] += 1
+                }
+                settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
+            }
+        })
+
         tab.site.clickToLoad.push(req.enableSocialTracker)
     }
 
