@@ -592,15 +592,15 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         if (blockingExperimentActive()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
-            if (!requestHeaders) return
-            if (tab && tab.site.whitelisted) return
+            if (!requestHeaders) return { requestHeaders }
+            if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (utils.isFirstParty(initiator, request.url)) {
-                    return
+                    return { requestHeaders }
                 }
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return
+                return { requestHeaders }
             }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
