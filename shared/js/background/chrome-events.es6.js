@@ -379,6 +379,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (req.enableSocialTracker) {
         settings.ready().then(() => {
             const tab = tabManager.get({ tabId: sender.tab.id })
+            tab.site.clickToLoad.push(req.enableSocialTracker)
+
             const entity = req.enableSocialTracker
             if (req.isLogin) {
                 const clickToLoadLogins = settings.getSetting('clickToLoadLogins') || {}
@@ -413,8 +415,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
             }
         })
-
-        tab.site.clickToLoad.push(req.enableSocialTracker)
     }
 
     if (req.updateSetting) {

@@ -117,7 +117,7 @@
             box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12), 0px 8px 16px rgba(0, 0, 0, 0.08);
             width: 360px;
             padding: 0 0 25px 0;
-            margin-top: 20px;
+            margin-top: 10px;
             z-index: 5;
             position: absolute;
             left: -100px
@@ -135,19 +135,14 @@
             left: 50%;
         `,
         hoverTextTitle: `
-            font-family: DuckDuckGoPrivacyEssentialsBold;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 0px 20px;
-            text-align: center;
-            margin-bottom: 8px;
+            padding: 0px 12px 12px;
         `,
         hoverTextBody: `
             font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
             line-height: 21px;
             margin: auto;
-            padding: 0px 30px;
+            padding: 0px 12px;
             text-align: left;
         `,
         buttonTextContainer: `
@@ -259,7 +254,7 @@
             width: 14px;
         `,
         modal: `
-            width: 284px;
+            width: 312px;
             margin: auto;
             background-color: #FFFFFF;
             position: absolute;
@@ -268,7 +263,9 @@
             display: block;
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
-            padding: 32px 24px 24px;
+        `,
+        modalContent: `
+            padding: 24px;
         `,
         overlay: `
             height: 100%;
@@ -681,7 +678,6 @@
 
         const hoverContainer = document.createElement('div')
         hoverContainer.id = 'DuckDuckGoPrivacyEssentialsHoverable'
-        hoverContainer.style.cssText = 'padding-bottom: 20px;'
         container.appendChild(hoverContainer)
 
         // Make the button
@@ -702,10 +698,9 @@
         const arrow = document.createElement('div')
         arrow.style.cssText = styles.textArrow
         hoverBox.appendChild(arrow)
-        const hoverTitle = document.createElement('div')
-        hoverTitle.style.cssText = styles.hoverTextTitle
-        hoverTitle.innerHTML = hoverTextTitle
-        hoverBox.appendChild(hoverTitle)
+        const branding = createTitleRow('DuckDuckGo')
+        branding.style.cssText += styles.hoverTextTitle
+        hoverBox.appendChild(branding)
         const hoverText = document.createElement('div')
         hoverText.style.cssText = styles.hoverTextBody
         hoverText.innerHTML = hoverTextBody
@@ -730,7 +725,14 @@
             const modal = document.createElement('div')
             modal.style.cssText = styles.modal
 
+            // Title
+            const modalTitle = createTitleRow('DuckDuckGo')
+            modal.appendChild(modalTitle)
+
             // Content
+            const modalContent = document.createElement('div')
+            modalContent.style.cssText = styles.modalContent
+
             const iconElement = document.createElement('img')
             iconElement.style.cssText = styles.icon + styles.modalIcon
             iconElement.setAttribute('src', icon)
@@ -744,9 +746,9 @@
             message.style.cssText = styles.modalContentText
             message.innerHTML = entityData[entity].modalText
 
-            modal.appendChild(iconElement)
-            modal.appendChild(title)
-            modal.appendChild(message)
+            modalContent.appendChild(iconElement)
+            modalContent.appendChild(title)
+            modalContent.appendChild(message)
 
             // Buttons
             const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
@@ -761,8 +763,10 @@
                 document.body.removeChild(modalContainer)
             })
 
-            modal.appendChild(allowButton)
-            modal.appendChild(rejectButton)
+            modalContent.appendChild(allowButton)
+            modalContent.appendChild(rejectButton)
+
+            modal.appendChild(modalContent)
 
             modalContainer.appendChild(pageOverlay)
             modalContainer.appendChild(modal)
