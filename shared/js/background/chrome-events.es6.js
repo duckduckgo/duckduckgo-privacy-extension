@@ -195,8 +195,23 @@ function stripSetCookieHeadersIfNeeded (request, responseHeaders) {
     return responseHeaders
 }
 
-// we determine if FLoC is available by testing for availability of its JS API
+// we determine if FLoC is enabled by testing for availability of its JS API
 const isFlocEnabled = ('interestCohort' in document)
+
+// Overwrite FLoC JS API
+if (isFlocEnabled) {
+    chrome.webNavigation.onCommitted.addListener(details => {
+        const tab = tabManager.get({ tabId: details.tabId })
+        if (tab && tab.site.whitelisted) return
+
+        chrome.tabs.executeScript(details.tabId, {
+            file: 'public/js/content-scripts/floc.js',
+            allFrames: true,
+            matchAboutBlank: true,
+            runAt: 'document_start'
+        })
+    })
+}
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
