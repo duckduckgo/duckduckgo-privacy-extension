@@ -175,26 +175,6 @@ function blockingExperimentActive () {
     // return false
 }
 
-function stripSetCookieHeadersIfNeeded (request, responseHeaders) {
-    // Strip 3rd party response header
-    const tab = tabManager.get({ tabId: request.tabId })
-    if (!request.responseHeaders) return responseHeaders
-    if (tab && tab.site.whitelisted) return responseHeaders
-    if (!tab) {
-        const initiator = request.initiator || request.documentUrl
-        if (utils.isFirstParty(initiator, request.url)) {
-            return responseHeaders
-        }
-    } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-        return responseHeaders
-    }
-    if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
-        return responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
-    }
-
-    return responseHeaders
-}
-
 // we determine if FLoC is enabled by testing for availability of its JS API
 const isFlocEnabled = ('interestCohort' in document)
 
@@ -247,7 +227,21 @@ chrome.webRequest.onHeadersReceived.addListener(
         }
 
         if (blockingExperimentActive()) {
-            responseHeaders = stripSetCookieHeadersIfNeeded(request, responseHeaders)
+            // Strip 3rd party response header
+            const tab = tabManager.get({ tabId: request.tabId })
+            if (!request.responseHeaders) return { responseHeaders: responseHeaders }
+            if (tab && tab.site.whitelisted) return { responseHeaders: responseHeaders }
+            if (!tab) {
+                const initiator = request.initiator || request.documentUrl
+                if (utils.isFirstParty(initiator, request.url)) {
+                    return { responseHeaders: responseHeaders }
+                }
+            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+                return { responseHeaders: responseHeaders }
+            }
+            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+                responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
+            }
         }
 
         return { responseHeaders: responseHeaders }
