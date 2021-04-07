@@ -186,7 +186,7 @@ if (isFlocEnabled) {
 
         chrome.tabs.executeScript(details.tabId, {
             file: 'public/js/content-scripts/floc.js',
-            allFrames: true,
+            frameId: details.frameId,
             matchAboutBlank: true,
             runAt: 'document_start'
         })
