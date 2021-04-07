@@ -5,8 +5,7 @@
     },
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
-        "abp": "cd node_modules/abp-filter-parser && npm install",
-        "postinstall": "npm run abp && npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+        "postinstall": "npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
         "copy-sjcl": "cd node_modules/sjcl/ && ./configure --no-export --compress=none --without-all --with-hmac && make && cp sjcl.js ../../shared/js/content-scope/",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
@@ -71,7 +70,6 @@
     },
     "dependencies": {
         "@duckduckgo/privacy-grade": "1.0.3",
-        "abp-filter-parser": "https://github.com/duckduckgo/abp-filter-parser.git#0.2.0",
         "bel": "4.6.0",
         "chalk": "2.1.0",
         "commander": "2.11.0",

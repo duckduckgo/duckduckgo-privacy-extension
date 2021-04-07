@@ -8,6 +8,5 @@ window.bkg = {
     utils: require('../shared/js/background/utils.es6'),
     surrogates: require('../shared/js/background/surrogates.es6'),
     Site: require('../shared/js/background/classes/site.es6'),
-    abp: require('abp-filter-parser'),
     tosdr: require('../shared/data/tosdr')
 }
