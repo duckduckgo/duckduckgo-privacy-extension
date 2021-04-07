@@ -221,7 +221,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 
         let responseHeaders = request.responseHeaders
 
-        if (isFlocEnabled && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+        if (isFlocEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
             // there can be multiple permissions-policy headers, so we are good always appending one
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
@@ -229,22 +229,22 @@ chrome.webRequest.onHeadersReceived.addListener(
         if (blockingExperimentActive()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
-            if (!request.responseHeaders) return { responseHeaders: responseHeaders }
-            if (tab && tab.site.whitelisted) return { responseHeaders: responseHeaders }
+            if (!request.responseHeaders) return { responseHeaders }
+            if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (utils.isFirstParty(initiator, request.url)) {
-                    return { responseHeaders: responseHeaders }
+                    return { responseHeaders }
                 }
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return { responseHeaders: responseHeaders }
+                return { responseHeaders }
             }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
         }
 
-        return { responseHeaders: responseHeaders }
+        return { responseHeaders }
     },
     {
         urls: ['<all_urls>']
