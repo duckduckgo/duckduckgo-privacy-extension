@@ -175,6 +175,29 @@ function blockingExperimentActive () {
     // return false
 }
 
+function stripSetCookieHeadersIfNeeded (request, responseHeaders) {
+    // Strip 3rd party response header
+    const tab = tabManager.get({ tabId: request.tabId })
+    if (!request.responseHeaders) return responseHeaders
+    if (tab && tab.site.whitelisted) return responseHeaders
+    if (!tab) {
+        const initiator = request.initiator || request.documentUrl
+        if (utils.isFirstParty(initiator, request.url)) {
+            return responseHeaders
+        }
+    } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+        return responseHeaders
+    }
+    if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+        return responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
+    }
+
+    return responseHeaders
+}
+
+// we determine if FLoC is available by testing for availability of its JS API
+const isFlocEnabled = ('interestCohort' in document)
+
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 chrome.webRequest.onBeforeRequest.addListener(
@@ -201,26 +224,18 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
-        if (blockingExperimentActive()) {
-            let responseHeaders = request.responseHeaders
-            // Strip 3rd party response header
-            const tab = tabManager.get({ tabId: request.tabId })
-            if (!request.responseHeaders) return
-            if (tab && tab.site.whitelisted) return
-            if (!tab) {
-                const initiator = request.initiator || request.documentUrl
-                if (utils.isFirstParty(initiator, request.url)) {
-                    return
-                }
-            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return
-            }
-            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
-                responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
-            }
+        let responseHeaders = request.responseHeaders
 
-            return { responseHeaders: responseHeaders }
+        if (isFlocEnabled && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+            // there can be multiple permissions-policy headers, so we are good always appending one
+            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
+
+        if (blockingExperimentActive()) {
+            responseHeaders = stripSetCookieHeadersIfNeeded(request, responseHeaders)
+        }
+
+        return { responseHeaders: responseHeaders }
     },
     {
         urls: ['<all_urls>']
