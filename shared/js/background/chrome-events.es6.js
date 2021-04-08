@@ -432,8 +432,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 /**
  * Fingerprint Protection
  */
-const agents = require('./storage/agents.es6')
-const agentSpoofer = require('./classes/agentspoofer.es6')
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
@@ -460,7 +458,6 @@ async function init () {
             // Set variables, which are used in the fingerprint-protection script.
             try {
                 const argumentsObject = {
-                    ua: agentSpoofer.getAgent(),
                     stringExemptionLists: utils.getBrokenScriptLists(),
                     sessionKey,
                     contentScopeScript,
@@ -491,37 +488,6 @@ async function init () {
     })
 }
 init()
-
-// Replace UserAgent header on third party requests.
-/* Disable User Agent Spoofing temporarily.
- * Some chromium based browsers have started changing
- * UA per site. Once this feature is re-worked to match
- * that behaviour, it will be re-enabled.
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    function spoofUserAgentHeader (e) {
-        let tab = tabManager.get({ tabId: e.tabId })
-        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
-            console.log('temporarily skip fingerprint protection for site: ' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-            return
-        }
-        // Only change the user agent header if the current site is not whitelisted
-        // and the request is third party.
-        if (agentSpoofer.shouldSpoof(e)) {
-            // remove existing User-Agent header
-            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
-            // Add in spoofed value
-            requestHeaders.push({
-                name: 'User-Agent',
-                value: agentSpoofer.getAgent()
-            })
-            return {requestHeaders: requestHeaders}
-        }
-    },
-    {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders']
-)
-*/
 
 /*
  * Truncate the referrer header according to the following rules:
@@ -683,12 +649,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'updateUserAgentData') {
         settings.ready()
             .then(() => {
-                agents.updateAgentData()
                 cookieConfig.updateCookieData()
             }).catch(e => console.log(e))
-    } else if (alarmEvent.name === 'rotateUserAgent') {
-        agentSpoofer.needsRotation = true
-        agentSpoofer.rotateAgent()
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()
@@ -724,7 +686,6 @@ const onStartup = () => {
 
         Companies.buildFromStorage()
 
-        agents.updateAgentData()
         cookieConfig.updateCookieData()
     })
 }
