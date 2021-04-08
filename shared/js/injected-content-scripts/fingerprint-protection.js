@@ -75,20 +75,6 @@
                 targetValue: 8
             }
         },
-        /*
-        'useragent': {
-//            'userAgent': {
-//                'object': 'navigator',
-//                'origValue': navigator.userAgent,
-//                'targetValue': args.ua
-//            },
-              'appVersion': {
-                'object': 'navigator',
-                'origValue': navigator.appVersion,
-                'targetValue': getAppVersionValue()
-            }
-        },
-        */
         options: {
             doNotTrack: {
                 object: 'Navigator.prototype',
@@ -122,24 +108,6 @@
             }
         }
     }
-
-    /**
-     * the navigator.appVersion is sometimes used to 'validate' the user agent. In Firefox, this
-     * returns a truncated version of the user Agent with just the OS type (X11, Macintosh, etc). Chrome
-     * returns the full user Agent.
-     *
-     * This function returns the spoofed user agent, unless the browser is FireFox, when it leaves it unchanged.
-     */
-    /*
-    function getAppVersionValue () {
-        if (/Firefox/i.test(navigator.userAgent)) {
-            // Running Firefox, so keep the original value.
-            return navigator.appVersion
-        }
-        // UserAgent is in the format of "Mozilla/<details>", appVersion only includes the details portion
-        return args.ua.replace('Mozilla/', '')
-    }
-    */
 
     /**
      * For each property defined on the object, update it with the target value.
