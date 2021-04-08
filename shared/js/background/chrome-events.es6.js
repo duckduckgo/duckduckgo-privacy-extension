@@ -573,7 +573,7 @@ browser.runtime.onMessage.addListener(
 console.log("message", data);
   }
 );
-          initProtection(args);
+          protections.initProtection(args);
     `
 
         /*
@@ -617,7 +617,6 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
       }
       const DDGReflect = window.Reflect;
             `;
-            contentScopeScript = chromeScript + contentScopeScript; 
 
             const tab = tabManager.get({ tabId: details.tabId })
             if (tab && tab.site.isBroken) {
@@ -631,7 +630,7 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
                     const argumentsObject = {
                         stringExemptionLists: utils.getBrokenScriptLists(),
                         sessionKey,
-                        contentScopeScript,
+                        contentScopeScript: chromeScript + contentScopeScript,
                         site: tab.site,
                         referrer: tab.referrer
                     }

@@ -1,4 +1,5 @@
-/* global sjcl */
+import sjcl from "./sjcl";
+
 function getDataKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
     const hmac = new sjcl.misc.hmac(sjcl.codec.utf8String.toBits(sessionKey + domainKey), sjcl.hash.sha256)
@@ -21,7 +22,6 @@ function shouldExemptUrl (type, url) {
     return false
 }
 
-// eslint-disable-next-line no-unused-vars
 function initStringExemptionLists (args) {
     const { stringExemptionLists } = args
     for (const type in stringExemptionLists) {
@@ -80,8 +80,7 @@ function isFeatureBroken (args, feature) {
     return args.site.brokenFeatures.includes(feature)
 }
 
-// eslint-disable-next-line no-unused-vars
-function initProtection (args) {
+export function initProtection (args) {
     initStringExemptionLists(args)
     // JKTODO remove
     if (true || !isFeatureBroken(args, 'canvas')) {
@@ -92,7 +91,6 @@ function initProtection (args) {
     }
 }
 
-// eslint-disable-next-line no-unused-vars
 function initCanvasProtection (args) {
     const { sessionKey, site } = args
     const domainKey = site.domain
@@ -181,7 +179,6 @@ function initCanvasProtection (args) {
     }
 }
 
-// eslint-disable-next-line no-unused-vars
 function initAudioProtection (args) {
     const { sessionKey, site } = args
     const domainKey = site.domain

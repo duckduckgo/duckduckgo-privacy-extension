@@ -175,7 +175,7 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             // TODO make this deterministic with an index.js that includes the other files. Browserify output is bloated which might break things.
-            copyContentScope: `cat shared/js/content-scope/*.js > build/${browser}/${buildType}/public/js/content-scope.js`,
+            copyContentScope: `npx rollup -c rollup.config.js && cp build/fingerprint.js build/${browser}/${buildType}/public/js/content-scope.js`,
             copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
