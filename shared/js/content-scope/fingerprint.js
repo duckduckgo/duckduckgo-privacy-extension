@@ -53,7 +53,7 @@ function shouldExemptMethod (type) {
                 errorFiles.add(res[2])
             }
         }
-    } catch (e) {
+    } catch {
         // Fall through
     }
     return false
@@ -160,7 +160,7 @@ function initCanvasProtection (args) {
                     const { offScreenCanvas } = computeOffScreenCanvas(thisArg)
                     // Call the original method on the modified off-screen canvas
                     return target.apply(offScreenCanvas, args)
-                } catch (e) {
+                } catch {
                     // Something we did caused an exception, fall back to the native
                     return target.apply(thisArg, args)
                 }
