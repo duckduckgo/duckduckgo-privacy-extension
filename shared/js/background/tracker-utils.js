@@ -87,13 +87,10 @@ function getSocialTracker (url) {
 
 // Return true when click to load should be enabled
 function facebookExperimentIsActive () {
-    // TODO: Remove before roll out
-    return true
     // Check for experiment
     const activeExperiment = settings.getSetting('activeExperiment')
     if (activeExperiment) {
         const experiment = settings.getSetting('experimentData')
-        console.log(experiment)
         if (experiment && experiment.blockFacebook) {
             return true
         }

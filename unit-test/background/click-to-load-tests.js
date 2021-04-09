@@ -5,16 +5,22 @@ const tdsStorageStub = require('./../helpers/tds.es6')
 const redirect = require('../../shared/js/background/redirect.es6')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
+const trackerutils = require('../../shared/js/background/tracker-utils')
+const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let tabObserver
     let managerObserver
     let chromeObserver
     let popupObserver
+    let experimentObserver
 
     beforeAll(() => {
         tdsStorageStub.stub()
+        settings.updateSetting('activeExperiment', true)
+        settings.updateSetting('experimentData', { blockFacebook: true })
         /* eslint-disable no-unused-vars */
+        experimentObserver = spyOn(trackerutils, 'facebookExperimentIsActive').and.returnValue(true)
         chromeObserver = spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
         popupObserver = spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
         tabObserver = spyOn(Tab, 'constructor')
@@ -25,7 +31,7 @@ describe('Tracker Utilities', () => {
             })
     })
 
-    describe('User-Agent', () => {
+    describe('Click-to-Load', () => {
         let tab
 
         beforeAll(() => {
@@ -55,7 +61,9 @@ describe('Tracker Utilities', () => {
             managerObserver.and.returnValue(tab)
             for (const tracker of socialTrackers) {
                 requestData.url = tracker
-                expect(redirect.handleRequest(requestData)).withContext(`URL: ${tracker}`).toEqual({ cancel: true })
+                settings.ready().then(() => {
+                    expect(redirect.handleRequest(requestData)).withContext(`URL: ${tracker}`).toEqual({ cancel: true })
+                })
             }
         })
 
@@ -69,7 +77,9 @@ describe('Tracker Utilities', () => {
             const requestData = {}
             for (const url of sdkURLs) {
                 requestData.url = url
-                expect(redirect.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
+                settings.ready().then(() => {
+                    expect(redirect.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
+                })
             }
         })
 
@@ -80,7 +90,9 @@ describe('Tracker Utilities', () => {
             const requestData = {}
             for (const url of socialTrackers) {
                 requestData.url = url
-                expect(redirect.handleRequest(requestData)).toEqual(undefined)
+                settings.ready().then(() => {
+                    expect(redirect.handleRequest(requestData)).toEqual(undefined)
+                })
             }
             // Reset to empty for other tests
             tab.site.clickToLoad = []

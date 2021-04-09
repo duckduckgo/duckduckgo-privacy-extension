@@ -6,6 +6,7 @@ const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let settingsObserver
+    let experimentObserver
 
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
@@ -37,7 +38,7 @@ describe('Tracker Utilities', () => {
     ]
     it('Should identify a non-tracker correctly', () => {
         for (const tracker of notTrackers) {
-            settingsObserver.and.returnValue(undefined)
+            settingsObserver.and.returnValue(true)
             expect(trackerutils.isTracker(tracker)).toBeFalsy()
         }
     })
@@ -354,11 +355,16 @@ describe('Tracker Utilities', () => {
         }
     ]
     it('Should correctly handle social trackers', () => {
-        for (const test of socialTrackerTests) {
-            const result = trackerutils.getSocialTracker(test.url)
-            expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
-            expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).toEqual(test.expectedResult.redirectUrl)
-        }
+        settings.ready().then(() => {
+            settings.updateSetting('activeExperiment', true)
+            settings.updateSetting('experimentData', { blockFacebook: true })
+            spyOn(trackerutils, 'facebookExperimentIsActive').and.returnValue(true)
+            for (const test of socialTrackerTests) {
+                const result = trackerutils.getSocialTracker(test.url)
+                expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
+                expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).toEqual(test.expectedResult.redirectUrl)
+            }
+        })
     })
 
     const socialTrackerSurrogateTests = [
@@ -378,11 +384,15 @@ describe('Tracker Utilities', () => {
         }
     ]
     it('Should return a surrogate redirect', () => {
-        for (const test of socialTrackerSurrogateTests) {
-            const result = trackerutils.getSocialTracker(test.url)
-            expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
-            expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).not.toEqual(undefined)
-        }
+        settings.ready().then(() => {
+            settings.updateSetting('activeExperiment', true)
+            settings.updateSetting('experimentData', { blockFacebook: true })
+            for (const test of socialTrackerSurrogateTests) {
+                const result = trackerutils.getSocialTracker(test.url)
+                expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
+                expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).not.toEqual(undefined)
+            }
+        })
     })
 
     const unsocialTrackerTests = [

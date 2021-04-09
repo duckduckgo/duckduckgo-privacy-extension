@@ -1,3 +1,4 @@
+/* global dbg:false */
 const harness = require('../helpers/harness')
 
 const testSite = 'http://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
@@ -7,6 +8,7 @@ let bgPage
 describe('Test Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage } = await harness.setup())
+
         await bgPage.waitForFunction(
             () => {
                 console.log('waiting for tds...')
@@ -26,6 +28,14 @@ describe('Test Click To Load', () => {
 
     it('CTL: Should block FB requests by default', async () => {
         const page = await browser.newPage()
+        // Set ATB to the FB experimental group
+        await bgPage.evaluate(() => dbg.settings.updateSetting('activeExperiment', 'true'))
+        await bgPage.evaluate(() => dbg.settings.updateSetting('experimentData', { blockFacebook: true }))
+
+        // Set ATB to the FB experimental group
+        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+        await bgPage.evaluate(() => dbg.settings.updateSetting('set_atb', 'v-oc'))
+        const exp = await bgPage.evaluate(() => dbg.settings.getSetting('activeExperiment'))
 
         try {
             await page.goto(testSite, { waitUntil: 'networkidle2', timeout: 10000 })
@@ -61,7 +71,7 @@ describe('Test Click To Load', () => {
         await page.waitForTimeout(4000)
 
         // click image element to trigger click to load
-        page.click('div > button')
+        page.click('div > div > div > button')
 
         await page.waitForTimeout(5000) // FB elements can take a while to load...
 
