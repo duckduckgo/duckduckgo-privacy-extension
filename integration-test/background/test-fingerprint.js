@@ -140,13 +140,13 @@ describe('First Party Fingerprint Randomization', () => {
             const result = await runTest(testCase)
 
             // Add the fingerprints to a set, if the result doesn't match it won't be added
-            canvas.add(result.canvas)
-            plugin.add(result.plugin)
+            canvas.add(JSON.stringify(result.canvas))
+            plugin.add(JSON.stringify(result.plugin))
         }
 
         // Ensure that the number of test pages match the number in the set
         expect(canvas.size).toEqual(tests.length)
-        expect(plugin.size).toEqual(tests.length)
+        expect(plugin.size).toEqual(1)
     })
 })
 
