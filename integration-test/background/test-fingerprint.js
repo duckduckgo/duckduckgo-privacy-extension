@@ -146,7 +146,7 @@ describe('First Party Fingerprint Randomization', () => {
 
         // Ensure that the number of test pages match the number in the set
         expect(canvas.size).toEqual(tests.length)
-        expect(plugin.size).toEqual(tests.length)
+        expect(plugin.size).toEqual(1)
     })
 })
 
