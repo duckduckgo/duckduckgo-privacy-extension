@@ -321,13 +321,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
                     config[entity].simpleVersion = true
                 }
-                // If this user has used the login with X feature, don't show one time message
-                const clickToLoadLogins = settings.getSetting('clickToLoadLogins') || {}
-                if (clickToLoadLogins[entity]) {
-                    config[entity].showLoginModal = false
-                } else {
-                    config[entity].showLoginModal = true
-                }
             }
 
             // if the current site is on the social exception list, remove it from the config.
@@ -383,9 +376,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
             const entity = req.enableSocialTracker
             if (req.isLogin) {
-                const clickToLoadLogins = settings.getSetting('clickToLoadLogins') || {}
-                clickToLoadLogins[entity] = true
-                settings.updateSetting('clickToLoadLogins', clickToLoadLogins)
                 trackerutils.allowSocialLogin(tab.site.domain)
             }
             if (req.alwaysAllow) {

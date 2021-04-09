@@ -102,6 +102,13 @@
             top: -8px;
             right: -8px;
         `,
+        loginIcon: `
+            position: absolute;
+            top: -13px;
+            right: -10px;
+            height: 28px;
+            width: 28px;
+        `,
         rectangle: `
             width: 12px;
             height: 3px;
@@ -510,7 +517,7 @@
         for (const entity of Object.keys(extensionResponseData)) {
             entities.push(entity)
             entityData[entity] = {
-                shouldShowLoginModal: extensionResponseData[entity].showLoginModal,
+                shouldShowLoginModal: true,
                 modalIcon: extensionResponseData[entity].informationalModal.icon,
                 modalTitle: extensionResponseData[entity].informationalModal.messageTitle,
                 modalText: extensionResponseData[entity].informationalModal.messageBody,
@@ -539,10 +546,14 @@
             parent.replaceChild(el, originalElement)
         }
         if (widgetData.replaceSettings.type === 'loginButton') {
-            // Create a button to replace old element
-            const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText)
-            button.addEventListener('click', widget.clickFunction(originalElement, container))
-            parent.replaceChild(container, originalElement)
+            chrome.runtime.sendMessage({
+                getImage: widgetData.replaceSettings.icon
+            }, function putLoginButton (icon) {
+                // Create a button to replace old element
+                const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon)
+                button.addEventListener('click', widget.clickFunction(originalElement, container))
+                parent.replaceChild(container, originalElement)
+            })
         }
         if (widgetData.replaceSettings.type === 'dialog') {
             chrome.runtime.sendMessage({
@@ -661,8 +672,18 @@
         return button
     }
 
+    /* If there isn't an image available, just make a default block symbol */
+    function makeDefaultBlockIcon () {
+        const blockedIcon = document.createElement('div')
+        const dash = document.createElement('div')
+        blockedIcon.appendChild(dash)
+        blockedIcon.style.cssText = styles.circle
+        dash.style.cssText = styles.rectangle
+        return blockedIcon
+    }
+
     /* FB login replacement button, with hover text */
-    function makeLoginButton (buttonText, mode, hoverTextTitle, hoverTextBody) {
+    function makeLoginButton (buttonText, mode, hoverTextTitle, hoverTextBody, icon) {
         const container = document.createElement('div')
         container.style.cssText = 'position: relative;'
         const styleElement = document.createElement('style')
@@ -683,12 +704,15 @@
         // Make the button
         const button = makeButton(buttonText, mode)
         // Add blocked icon
-        const blockedIcon = document.createElement('div')
-        const dash = document.createElement('div')
-        blockedIcon.appendChild(dash)
-        blockedIcon.style.cssText = styles.circle
-        dash.style.cssText = styles.rectangle
-        button.appendChild(blockedIcon)
+        if (!icon) {
+            button.appendChild(makeDefaultBlockIcon())
+        } else {
+            const imgElement = document.createElement('img')
+            imgElement.style.cssText = styles.loginIcon
+            imgElement.setAttribute('src', icon)
+            imgElement.setAttribute('height', '28px')
+            button.appendChild(imgElement)
+        }
         hoverContainer.appendChild(button)
 
         // hover action
