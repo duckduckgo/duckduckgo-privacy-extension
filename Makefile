@@ -5,7 +5,7 @@ release: npm setup-build-dir grunt tosdr moveout fonts web-resources
 dev: setup-build-dir grunt-process-lists moveout fonts web-resources grunt-dev
 
 npm:
-	npm install
+	npm ci
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)

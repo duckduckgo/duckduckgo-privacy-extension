@@ -53,7 +53,7 @@ function shouldExemptMethod (type) {
                 errorFiles.add(res[2])
             }
         }
-    } catch (e) {
+    } catch {
         // Fall through
     }
     return false
@@ -160,7 +160,7 @@ function initCanvasProtection (args) {
                     const { offScreenCanvas } = computeOffScreenCanvas(thisArg)
                     // Call the original method on the modified off-screen canvas
                     return target.apply(offScreenCanvas, args)
-                } catch (e) {
+                } catch {
                     // Something we did caused an exception, fall back to the native
                     return target.apply(thisArg, args)
                 }
@@ -176,11 +176,15 @@ function initAudioProtection (args) {
     const domainKey = site.domain
 
     // In place modify array data to remove fingerprinting
-    function transformArrayData (channelData, domainKey, sessionKey) {
-        const cdSum = channelData.reduce((sum, v) => {
-            return sum + v
-        }, 0)
-        const audioKey = getDataKeySync(sessionKey, domainKey, cdSum)
+    function transformArrayData (channelData, domainKey, sessionKey, thisArg) {
+        let { audioKey } = getCachedResponse(thisArg, args)
+        if (!audioKey) {
+            const cdSum = channelData.reduce((sum, v) => {
+                return sum + v
+            }, 0)
+            audioKey = getDataKeySync(sessionKey, domainKey, cdSum)
+            setCache(thisArg, args, audioKey)
+        }
         iterateDataKey(audioKey, (item, byte) => {
             const itemAudioIndex = item % channelData.length
 
@@ -190,7 +194,6 @@ function initAudioProtection (args) {
             }
             channelData[itemAudioIndex] = channelData[itemAudioIndex] + factor
         })
-        return channelData
     }
 
     AudioBuffer.prototype.copyFromChannel = new Proxy(AudioBuffer.prototype.copyFromChannel, {
@@ -216,6 +219,25 @@ function initAudioProtection (args) {
         }
     })
 
+    const cacheExpiry = 60
+    const cacheData = new WeakMap()
+    function getCachedResponse (thisArg, args) {
+        const data = cacheData.get(thisArg)
+        const timeNow = Date.now()
+        if (data &&
+            data.args === JSON.stringify(args) &&
+            data.expires > timeNow) {
+            data.expires = timeNow + cacheExpiry
+            cacheData.set(thisArg, data)
+            return data
+        }
+        return { audioKey: null }
+    }
+
+    function setCache (thisArg, args, audioKey) {
+        cacheData.set(thisArg, { args: JSON.stringify(args), expires: Date.now() + cacheExpiry, audioKey })
+    }
+
     AudioBuffer.prototype.getChannelData = new Proxy(AudioBuffer.prototype.getChannelData, {
         apply (target, thisArg, args) {
             // The normal return value
@@ -225,7 +247,7 @@ function initAudioProtection (args) {
             }
             // Anything we do here should be caught and ignored silently
             try {
-                transformArrayData(channelData, domainKey, sessionKey)
+                transformArrayData(channelData, domainKey, sessionKey, thisArg, args)
             } catch {
             }
             return channelData
@@ -242,7 +264,7 @@ function initAudioProtection (args) {
                 }
                 // Anything we do here should be caught and ignored silently
                 try {
-                    transformArrayData(args[0], domainKey, sessionKey)
+                    transformArrayData(args[0], domainKey, sessionKey, thisArg, args)
                 } catch {
                 }
             }

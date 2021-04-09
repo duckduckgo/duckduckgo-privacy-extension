@@ -175,6 +175,24 @@ function blockingExperimentActive () {
     // return false
 }
 
+// we determine if FLoC is enabled by testing for availability of its JS API
+const isFlocEnabled = ('interestCohort' in document)
+
+// Overwrite FLoC JS API
+if (isFlocEnabled) {
+    chrome.webNavigation.onCommitted.addListener(details => {
+        const tab = tabManager.get({ tabId: details.tabId })
+        if (tab && tab.site.whitelisted) return
+
+        chrome.tabs.executeScript(details.tabId, {
+            file: 'public/js/content-scripts/floc.js',
+            frameId: details.frameId,
+            matchAboutBlank: true,
+            runAt: 'document_start'
+        })
+    })
+}
+
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 chrome.webRequest.onBeforeRequest.addListener(
@@ -201,26 +219,32 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
+        let responseHeaders = request.responseHeaders
+
+        if (isFlocEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+            // there can be multiple permissions-policy headers, so we are good always appending one
+            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
+        }
+
         if (blockingExperimentActive()) {
-            let responseHeaders = request.responseHeaders
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
-            if (!request.responseHeaders) return
-            if (tab && tab.site.whitelisted) return
+            if (!request.responseHeaders) return { responseHeaders }
+            if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (utils.isFirstParty(initiator, request.url)) {
-                    return
+                    return { responseHeaders }
                 }
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return
+                return { responseHeaders }
             }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
-
-            return { responseHeaders: responseHeaders }
         }
+
+        return { responseHeaders }
     },
     {
         urls: ['<all_urls>']
@@ -514,8 +538,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 /**
  * Fingerprint Protection
  */
-const agents = require('./storage/agents.es6')
-const agentSpoofer = require('./classes/agentspoofer.es6')
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
@@ -542,7 +564,6 @@ async function init () {
             // Set variables, which are used in the fingerprint-protection script.
             try {
                 const argumentsObject = {
-                    ua: agentSpoofer.getAgent(),
                     stringExemptionLists: utils.getBrokenScriptLists(),
                     sessionKey,
                     contentScopeScript,
@@ -573,37 +594,6 @@ async function init () {
     })
 }
 init()
-
-// Replace UserAgent header on third party requests.
-/* Disable User Agent Spoofing temporarily.
- * Some chromium based browsers have started changing
- * UA per site. Once this feature is re-worked to match
- * that behaviour, it will be re-enabled.
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    function spoofUserAgentHeader (e) {
-        let tab = tabManager.get({ tabId: e.tabId })
-        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
-            console.log('temporarily skip fingerprint protection for site: ' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-            return
-        }
-        // Only change the user agent header if the current site is not whitelisted
-        // and the request is third party.
-        if (agentSpoofer.shouldSpoof(e)) {
-            // remove existing User-Agent header
-            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
-            // Add in spoofed value
-            requestHeaders.push({
-                name: 'User-Agent',
-                value: agentSpoofer.getAgent()
-            })
-            return {requestHeaders: requestHeaders}
-        }
-    },
-    {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders']
-)
-*/
 
 /*
  * Truncate the referrer header according to the following rules:
@@ -698,15 +688,15 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         if (blockingExperimentActive()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
-            if (!requestHeaders) return
-            if (tab && tab.site.whitelisted) return
+            if (!requestHeaders) return { requestHeaders }
+            if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (utils.isFirstParty(initiator, request.url)) {
-                    return
+                    return { requestHeaders }
                 }
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return
+                return { requestHeaders }
             }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
@@ -821,12 +811,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'updateUserAgentData') {
         settings.ready()
             .then(() => {
-                agents.updateAgentData()
                 cookieConfig.updateCookieData()
             }).catch(e => console.log(e))
-    } else if (alarmEvent.name === 'rotateUserAgent') {
-        agentSpoofer.needsRotation = true
-        agentSpoofer.rotateAgent()
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()
@@ -862,7 +848,6 @@ const onStartup = () => {
 
         Companies.buildFromStorage()
 
-        agents.updateAgentData()
         cookieConfig.updateCookieData()
     })
 }
