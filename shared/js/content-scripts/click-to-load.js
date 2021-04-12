@@ -127,8 +127,8 @@
             margin-top: 10px;
             z-index: 5;
             position: absolute;
-            left: -100px
         `,
+        textBubbleLeftShift: 100, // Should match the CSS left: rule in textBubble
         textArrow: `
             display: inline-block;
             background: #FFFFFF;
@@ -139,8 +139,8 @@
             -webkit-transform: rotate(-135deg);
             position: relative;
             top: -9px;
-            left: 50%;
         `,
+        arrowDefaultLocationPercent: 50,
         hoverTextTitle: `
             padding: 0px 12px 12px;
         `,
@@ -155,6 +155,7 @@
         buttonTextContainer: `
             display: flex; 
             flex-direction: row;
+            align-items: center;
         `,
         headerRow: `
 
@@ -550,7 +551,7 @@
                 getImage: widgetData.replaceSettings.icon
             }, function putLoginButton (icon) {
                 // Create a button to replace old element
-                const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon)
+                const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon, originalElement)
                 button.addEventListener('click', widget.clickFunction(originalElement, container))
                 parent.replaceChild(container, originalElement)
             })
@@ -683,7 +684,7 @@
     }
 
     /* FB login replacement button, with hover text */
-    function makeLoginButton (buttonText, mode, hoverTextTitle, hoverTextBody, icon) {
+    function makeLoginButton (buttonText, mode, hoverTextTitle, hoverTextBody, icon, originalElement) {
         const container = document.createElement('div')
         container.style.cssText = 'position: relative;'
         const styleElement = document.createElement('style')
@@ -731,6 +732,21 @@
         hoverBox.appendChild(hoverText)
 
         hoverContainer.appendChild(hoverBox)
+        const rect = originalElement.getBoundingClientRect()
+        /*
+        * The left side of the hover popup may go offscreen if the
+        * login button is all the way on the left side of the page. This
+        * If that is the case, dynamically shift the box right so it shows
+        * properly.
+        */
+        if (rect.left < styles.textBubbleLeftShift) {
+            hoverBox.style.cssText += `left: -${rect.left}px;`
+            const change = (1 - (rect.left / styles.textBubbleLeftShift)) * (100 - styles.arrowDefaultLocationPercent)
+            arrow.style.cssText += `left: ${Math.max(10, styles.arrowDefaultLocationPercent - change)}%;`
+        } else {
+            hoverBox.style.cssText += `left: -${styles.textBubbleLeftShift}px;`
+            arrow.style.cssText += `left: ${styles.arrowDefaultLocationPercent}%;`
+        }
 
         return {
             button: button,
