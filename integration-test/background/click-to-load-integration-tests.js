@@ -58,6 +58,12 @@ describe('Test Click To Load', () => {
 
     it('CTL: Should load facebook elements on click', async () => {
         const page = await browser.newPage()
+        // Set ATB to the FB experimental group
+        await bgPage.evaluate(() => dbg.settings.updateSetting('activeExperiment', 'true'))
+        await bgPage.evaluate(() => dbg.settings.updateSetting('experimentData', { blockFacebook: true }))
+
+        // Set ATB to the FB experimental group
+        await bgPage.evaluate(() => dbg.settings.updateSetting('set_atb', 'v-oc'))
 
         try {
             await page.goto(testSite, { waitUntil: 'networkidle2', timeout: 10000 })
