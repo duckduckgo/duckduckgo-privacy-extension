@@ -6,7 +6,6 @@ const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let settingsObserver
-    let experimentObserver
 
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')

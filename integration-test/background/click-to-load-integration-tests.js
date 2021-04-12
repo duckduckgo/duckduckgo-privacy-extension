@@ -33,9 +33,7 @@ describe('Test Click To Load', () => {
         await bgPage.evaluate(() => dbg.settings.updateSetting('experimentData', { blockFacebook: true }))
 
         // Set ATB to the FB experimental group
-        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
         await bgPage.evaluate(() => dbg.settings.updateSetting('set_atb', 'v-oc'))
-        const exp = await bgPage.evaluate(() => dbg.settings.getSetting('activeExperiment'))
 
         try {
             await page.goto(testSite, { waitUntil: 'networkidle2', timeout: 10000 })
