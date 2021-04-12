@@ -1,4 +1,3 @@
-import sjcl from "./sjcl";
 import {initStringExemptionLists, isFeatureBroken} from "./utils";
 import {initCanvasProtection} from "./canvas";
 

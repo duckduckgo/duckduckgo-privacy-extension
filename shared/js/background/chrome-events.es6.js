@@ -553,19 +553,6 @@ async function init () {
             //        site: tab.site,
             //        referrer: tab.referrer
         }
-        const mozProxy = `
-      class DDGProxy {
-          constructor(objectScope, property, proxyObject) {
-              this._native = objectScope.wrappedJSObject[property];
-              this._native2 = objectScope[property];
-              const handler = new window.wrappedJSObject.Object();
-              handler.apply = exportFunction(proxyObject.apply, window);
-              this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler);
-              exportFunction(this.internal, objectScope, { defineAs: property });
-          }
-      }
-      const DDGReflect = window.wrappedJSObject.Reflect;
-    `
         const mozScript = `
           const args = ${JSON.stringify(argumentsObject)};
 browser.runtime.onMessage.addListener(
@@ -589,7 +576,6 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
 */
         const scriptObj = await browser.contentScripts.register({
             js: [
-                { code: mozProxy },
                 { file: '/public/js/content-scope.js' },
                 { code: mozScript }
             ],
@@ -604,20 +590,6 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
     // they are not whitelisted.
         chrome.webNavigation.onCommitted.addListener(details => {
         // Inject message passing to disable this in chrome.
-            const chromeScript = `
-      class DDGProxy {
-          constructor(objectScope, property, proxyObject) {
-              this._native = objectScope[property];
-              this._native2 = objectScope[property];
-              const handler = {};
-              handler.apply = proxyObject.apply;
-              this.internal = new window.Proxy(objectScope[property], handler);
-              objectScope[property] = this.internal;
-          }
-      }
-      const DDGReflect = window.Reflect;
-            `;
-
             const tab = tabManager.get({ tabId: details.tabId })
             if (tab && tab.site.isBroken) {
                 console.log('temporarily skip fingerprint protection for site: ' + details.url +
@@ -630,7 +602,7 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
                     const argumentsObject = {
                         stringExemptionLists: utils.getBrokenScriptLists(),
                         sessionKey,
-                        contentScopeScript: chromeScript + contentScopeScript,
+                        contentScopeScript: contentScopeScript,
                         site: tab.site,
                         referrer: tab.referrer
                     }
