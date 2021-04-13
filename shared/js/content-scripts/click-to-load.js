@@ -128,6 +128,7 @@
             z-index: 5;
             position: absolute;
         `,
+        textBubbleWidth: 360, // Should match the width rule in textBubble
         textBubbleLeftShift: 100, // Should match the CSS left: rule in textBubble
         textArrow: `
             display: inline-block;
@@ -191,6 +192,7 @@
             border-color: rgba(196, 196, 196, 0.3);
         `,
         title: `
+            font-family: DuckDuckGoPrivacyEssentials;
             line-height: 1.4;
             font-size: 14px;
             margin: auto 10px;
@@ -210,6 +212,7 @@
             font-family: DuckDuckGoPrivacyEssentialsBold;
             font-size: 17px;
             font-weight: bold;
+            line-height: 21px;
             margin: 27px auto 10px;
             text-align: center;
         `,
@@ -274,6 +277,8 @@
         `,
         modalContent: `
             padding: 24px;
+            display: flex;
+            flex-direction: column;
         `,
         overlay: `
             height: 100%;
@@ -743,6 +748,13 @@
             hoverBox.style.cssText += `left: -${rect.left}px;`
             const change = (1 - (rect.left / styles.textBubbleLeftShift)) * (100 - styles.arrowDefaultLocationPercent)
             arrow.style.cssText += `left: ${Math.max(10, styles.arrowDefaultLocationPercent - change)}%;`
+        } else if (rect.left + styles.textBubbleWidth - styles.textBubbleLeftShift > window.innerWidth) {
+            const rightShift = rect.left + styles.textBubbleWidth - styles.textBubbleLeftShift
+            const diff = Math.min(rightShift - window.innerWidth, styles.textBubbleLeftShift)
+            const rightMargin = 20 // Add some margin to the page, so scrollbar doesn't overlap.
+            hoverBox.style.cssText += `left: -${styles.textBubbleLeftShift + diff + rightMargin}px;`
+            const change = ((diff / styles.textBubbleLeftShift)) * (100 - styles.arrowDefaultLocationPercent)
+            arrow.style.cssText += `left: ${Math.max(10, styles.arrowDefaultLocationPercent + change)}%;`
         } else {
             hoverBox.style.cssText += `left: -${styles.textBubbleLeftShift}px;`
             arrow.style.cssText += `left: ${styles.arrowDefaultLocationPercent}%;`
@@ -791,8 +803,10 @@
             modalContent.appendChild(message)
 
             // Buttons
+            const buttonRow = document.createElement('div')
+            buttonRow.style.cssText = 'margin:auto;'
             const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
-            allowButton.style.cssText += styles.modalButton
+            allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
             allowButton.addEventListener('click', function doLogin () {
                 acceptFunction(...acceptFunctionParams)
                 document.body.removeChild(modalContainer)
@@ -803,8 +817,9 @@
                 document.body.removeChild(modalContainer)
             })
 
-            modalContent.appendChild(allowButton)
-            modalContent.appendChild(rejectButton)
+            buttonRow.appendChild(allowButton)
+            buttonRow.appendChild(rejectButton)
+            modalContent.appendChild(buttonRow)
 
             modal.appendChild(modalContent)
 
