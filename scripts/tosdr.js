@@ -69,7 +69,7 @@ async function getSites() {
         }
 
         if (res.statusCode == 429) {
-            console.log("Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/UIAF");
+            console.log(FgRed, "Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/UIAF", ResetColor);
             return;
         }
         try {
@@ -78,10 +78,10 @@ async function getSites() {
             // recurse through sites list. Get and process the detailed points data for each
             await getSitePoints(sites).then(result => {
                 fs.writeFile(__dirname + '/../shared/data/tosdr.json', JSON.stringify(processed, null, 4), err => { if (err) console.log(err) });
-                console.log("File written!");
+                console.log(FgGreen, "File written!", ResetColor);
             })
         } catch (e) {
-            console.log(`http error getting all service data`, e);
+            console.log(FgRed, `http error getting all service data`, ResetColor, e);
         }
     })
 }
@@ -118,17 +118,17 @@ async function getSitePoints(sites) {
         await request.get(restServiceRequest, async (err, res, body) => {
 
             if (res.statusCode == 429) {
-                console.log("Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/AYA1");
+                console.log(FgRed, "Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/AYA1", ResetColor);
                 throw new Error("Too many requests");
             }
 
             if (res.statusCode !== 200) {
-                console.log(`http error getting privacy data for: ${site}`, res.statusCode);
+                console.log(FgRed, `http error getting privacy data for: ${site}`, res.statusCode, ResetColor);
                 return resolve(getSitePoints(sites))
             }
 
             if (err) {
-                console.log(`request error getting privacy data for: ${site}`, err);
+                console.log(FgRed, `request error getting privacy data for: ${site}`, err, ResetColor);
                 return resolve(getSitePoints(sites))
             }
 
