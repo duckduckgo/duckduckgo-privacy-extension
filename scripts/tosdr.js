@@ -33,11 +33,20 @@ let allServiceRequest = {
 /* https://stackoverflow.com/a/13448477 */
 const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+let FgBlack = "\x1b[30m";
+let FgRed = "\x1b[31m";
+let FgGreen = "\x1b[32m";
+let FgYellow = "\x1b[33m";
+let FgBlue = "\x1b[34m";
+let FgMagenta = "\x1b[35m";
+let FgCyan = "\x1b[36m";
+let FgWhite = "\x1b[37m";
+let ResetColor = "\x1b[0m";
 
 async function getSites() {
 
     if (!process.env.TOSDR_APIKEY) {
-        console.log("WARNING! API KEY IS NOT SET, RATE LIMITS MAY OCCURR!");
+        console.log(FgRed, "WARNING! API KEY IS NOT SET, RATE LIMITS MAY OCCURR!", ResetColor);
         await snooze(5000);
     }
 
@@ -45,6 +54,20 @@ async function getSites() {
 
 
     await request.get(allServiceRequest, async (err, res, body) => {
+
+        console.log(FgGreen, "Ratelimit Benefit:", res.headers["x-ratelimit-benefit"], ResetColor);
+        console.log(FgCyan, "Ratelimit per Hour:", res.headers["x-ratelimit-h"], ResetColor);
+        console.log(FgCyan, "Ratelimit per Day:", res.headers["x-ratelimit-d"], ResetColor);
+
+        if (res.headers["x-ratelimit-h"] < 25 || res.headers["x-ratelimit-d"] < 25) {
+            console.log(FgRed, "Your current ratelimit is not enough to make requests to compile a list of points and services.", ResetColor);
+            return;
+        }
+
+        if (res.headers["x-ratelimit-h"] < 2500) {
+            console.log(FgYellow, "Your current ratelimit per hour is set at", res.headers["x-ratelimit-h"], "which is under the recommended amount (2500) some requests may fail.", ResetColor);
+        }
+
         if (res.statusCode == 429) {
             console.log("Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/UIAF");
             return;
