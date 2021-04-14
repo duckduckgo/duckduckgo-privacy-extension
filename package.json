@@ -85,7 +85,6 @@
         "object.values": "1.0.4",
         "opn": "5.1.0",
         "parse-link-header": "1.0.0",
-        "promise-request": "^0.1.2",
         "psl": "1.1.18",
         "punycode": "1.4.1",
         "regenerator-runtime": "^0.13.7",
