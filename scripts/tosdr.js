@@ -46,7 +46,7 @@ let ResetColor = "\x1b[0m";
 async function getSites() {
 
     if (!process.env.TOSDR_APIKEY) {
-        console.log(FgRed, "WARNING! API KEY IS NOT SET, RATE LIMITS MAY OCCURR!", ResetColor);
+        console.log(FgYellow, "WARNING! API KEY IS NOT SET, RATE LIMITS MAY OCCURR!", ResetColor);
         await snooze(5000);
     }
 
@@ -55,7 +55,18 @@ async function getSites() {
 
     await request.get(allServiceRequest, async (err, res, body) => {
 
+        if (res.headers["x-apikey"] === "revoked") {
+            console.log(FgRed, "Your API Key has been revoked!", ResetColor);
+            throw new Error("Invalid API Key");
+        }
+
+        if (res.statusCode == 401) {
+            console.log(FgRed, "Invalid API Key", ResetColor);
+            throw new Error("Invalid API Key");
+        }
+
         console.log(FgGreen, "Ratelimit Benefit:", res.headers["x-ratelimit-benefit"], ResetColor);
+        console.log(FgGreen, "API Key:", res.headers["x-apikey"], ResetColor);
         console.log(FgCyan, "Ratelimit per Hour:", res.headers["x-ratelimit-h"], ResetColor);
         console.log(FgCyan, "Ratelimit per Day:", res.headers["x-ratelimit-d"], ResetColor);
 
