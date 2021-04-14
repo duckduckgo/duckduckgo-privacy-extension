@@ -60,7 +60,7 @@ async function getSites() {
             throw new Error("Invalid API Key");
         }
 
-        if (res.statusCode == 401) {
+        if (res.statusCode === 401) {
             console.log(FgRed, "Invalid API Key", ResetColor);
             throw new Error("Invalid API Key");
         }
@@ -79,7 +79,7 @@ async function getSites() {
             console.log(FgYellow, "Your current ratelimit per hour is set at", res.headers["x-ratelimit-h"], "which is under the recommended amount (2500) some requests may fail.", ResetColor);
         }
 
-        if (res.statusCode == 429) {
+        if (res.statusCode === 429) {
             console.log(FgRed, "Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/UIAF", ResetColor);
             return;
         }
@@ -101,6 +101,7 @@ async function getSitePoints(sites) {
 
 
 
+    await snooze(200);
 
     return new Promise(async (resolve, reject) => {
 
@@ -128,9 +129,9 @@ async function getSitePoints(sites) {
         // get the detailed points data for this site
         await request.get(restServiceRequest, async (err, res, body) => {
 
-            if (res.statusCode == 429) {
+            if (res.statusCode === 429) {
                 console.log(FgRed, "Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/AYA1", ResetColor);
-                throw new Error("Too many requests");
+                return resolve(getSitePoints(sites));
             }
 
             if (res.statusCode !== 200) {
@@ -254,8 +255,6 @@ async function getSitePoints(sites) {
                     processed[url] = points
                 })
             }
-            console.log("Sleeping...", 200);
-            await snooze(200);
             return resolve(getSitePoints(sites));
         })
     });
