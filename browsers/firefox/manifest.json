@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2020.10.21",
+    "version": "2021.4.9",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -42,18 +42,7 @@
         "matches": ["<all_urls>"],
         "all_frames": true,
         "css": ["public/css/noatb.css"],
-        "run_at": "document_start"
-      },
-      {
-        "js": [
-          "public/js/content-scripts/element-hiding.js"
-        ],
-        "matches": [
-          "http://*/*",
-          "https://*/*"
-        ],
-        "match_about_blank": true,
-        "all_frames": true,
+        "js": ["public/js/content-scripts/content-script-bundle.js"],
         "run_at": "document_start"
       }
     ],
@@ -68,5 +57,6 @@
         "storage",
         "<all_urls>",
         "alarms"
-    ]
+    ],
+    "web_accessible_resources": ["web_accessible_resources/*"]
 }

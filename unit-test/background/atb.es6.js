@@ -54,7 +54,7 @@ describe('atb.canShowPostInstall()', () => {
 })
 
 describe('atb.redirectURL()', () => {
-    let tests = [
+    const tests = [
         { url: 'http://duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
@@ -81,7 +81,7 @@ describe('atb.redirectURL()', () => {
 
     tests.forEach((test) => {
         it(`should${test.rewrite ? '' : ' not'} rewrite url: ${test.url}`, () => {
-            let result = atb.redirectURL({ url: test.url })
+            const result = atb.redirectURL({ url: test.url })
 
             if (test.rewrite) {
                 expect(result.redirectUrl).toBeTruthy()
@@ -91,9 +91,9 @@ describe('atb.redirectURL()', () => {
         })
     })
 
-    let correctUrlTests = [
-        {url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab'},
-        {url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter'}
+    const correctUrlTests = [
+        { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
+        { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' }
     ]
 
     correctUrlTests.forEach((test) => {
@@ -117,7 +117,7 @@ describe('atb.setInitialVersions()', () => {
 
     it('should bail if the version has already been set', (done) => {
         settingHelper.stub({ atb: 'v111-5' })
-        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v111-6' })
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v111-6' })
 
         atb.setInitialVersions().then(() => {
             expect(loadJSONSpy).not.toHaveBeenCalled()
@@ -129,7 +129,7 @@ describe('atb.setInitialVersions()', () => {
 
     it('should try hitting atb.js a few times if it\'s down', (done) => {
         settingHelper.stub({ atb: null })
-        let loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.returnValues(
+        const loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.returnValues(
             Promise.reject(new Error()),
             Promise.reject(new Error()),
             Promise.resolve({ data: { version: 'v111-5' } })
@@ -147,7 +147,7 @@ describe('atb.setInitialVersions()', () => {
 describe('atb.updateSetAtb()', () => {
     it('should hit atb service with atb and set_atb when both are set', (done) => {
         settingHelper.stub({ atb: 'v111-2', set_atb: 'v111-6' })
-        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2&set_atb=v111-6/))
@@ -160,7 +160,7 @@ describe('atb.updateSetAtb()', () => {
 
     it('should be able to handle cases where set_atb is null', (done) => {
         settingHelper.stub({ atb: 'v111-2' })
-        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v111-2/))
@@ -173,7 +173,7 @@ describe('atb.updateSetAtb()', () => {
 
     it('should be able to handle cases where atb is null', (done) => {
         settingHelper.stub({ set_atb: 'v112-1' })
-        let loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
+        const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
         atb.updateSetAtb().then(() => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/atb=v1-1/))
@@ -223,7 +223,7 @@ describe('complex install workflow cases', () => {
         let numExtiCalls = 0
 
         loadURLSpy.calls.allArgs().forEach((args) => {
-            let url = args[0]
+            const url = args[0]
 
             if (url.match(/\/exti/)) {
                 numExtiCalls += 1
@@ -240,7 +240,7 @@ describe('complex install workflow cases', () => {
         settingHelper.stub()
     })
 
-    it(`should handle the install process correctly if there's no DDG pages open`, () => {
+    it('should handle the install process correctly if there\'s no DDG pages open', () => {
         spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([]))
 
         return atb.updateATBValues()
@@ -250,7 +250,7 @@ describe('complex install workflow cases', () => {
                 expect(settings.getSetting('set_atb')).toEqual('v112-2')
             })
     })
-    it(`should handle the install process correctly if there's DDG pages open that pass an ATB param`, () => {
+    it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
         // pretend one of the pages has an ATB to pass
         spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
             'https://duckduckgo.com/about',
@@ -264,7 +264,7 @@ describe('complex install workflow cases', () => {
                 expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
             })
     })
-    it(`should handle the install process correctly if there's DDG pages open that do not pass an ATB param`, () => {
+    it('should handle the install process correctly if there\'s DDG pages open that do not pass an ATB param', () => {
         // pretend no pages have ATB to pass
         spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
             'https://duckduckgo.com/about',

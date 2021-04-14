@@ -19,13 +19,15 @@ function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
-function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
+function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
         const tld = tldts.parse(url)
         if (!parsedURL || !tld) return ''
-        let finalURL = tld.domain
+        // tld.domain is null if this is an IP or the domain does not use a known TLD (e.g. localhost)
+        // in that case use the hostname (no truncation)
+        let finalURL = tld.domain || tld.hostname
         if (keepSubdomains) {
             finalURL = tld.hostname
         } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
@@ -35,8 +37,9 @@ function extractLimitedDomainFromURL (url, {keepSubdomains} = {}) {
             // subdomain of www.something, and wouldn't trigger this case.
             finalURL = 'www.' + tld.domain
         }
+        const port = parsedURL.port ? `:${parsedURL.port}` : ''
 
-        return `${parsedURL.protocol}//${finalURL}`
+        return `${parsedURL.protocol}//${finalURL}${port}/`
     } catch (e) {
         // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
         return undefined
@@ -67,7 +70,7 @@ function findParent (url) {
 }
 
 function getCurrentURL (callback) {
-    chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
         if (tabData.length) {
             callback(tabData[0].url)
         }
@@ -76,7 +79,7 @@ function getCurrentURL (callback) {
 
 function getCurrentTab (callback) {
     return new Promise((resolve, reject) => {
-        chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabData) {
+        chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
             if (tabData.length) {
                 resolve(tabData[0])
             }
@@ -111,16 +114,22 @@ function getUpgradeToSecureSupport () {
 // Firefox only blocks 'beacon' (even though it should support 'ping')
 function getBeaconName () {
     const beaconNamesByBrowser = {
-        'chrome': 'ping',
-        'moz': 'beacon'
+        chrome: 'ping',
+        moz: 'beacon',
+        edg: 'ping',
+        brave: 'ping',
+        default: 'ping'
     }
-
-    return beaconNamesByBrowser[getBrowserName()]
+    let name = getBrowserName()
+    if (!Object.keys(beaconNamesByBrowser).includes(name)) {
+        name = 'default'
+    }
+    return beaconNamesByBrowser[name]
 }
 
 // Return requestListenerTypes + beacon or ping
 function getUpdatedRequestListenerTypes () {
-    let requestListenerTypes = constants.requestListenerTypes.slice()
+    const requestListenerTypes = constants.requestListenerTypes.slice()
     requestListenerTypes.push(getBeaconName())
 
     return requestListenerTypes
@@ -132,7 +141,7 @@ function getAsyncBlockingSupport () {
 
     if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
         return true
-    } else if (browser === 'chrome') {
+    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browser)) {
         return false
     }
 
@@ -144,17 +153,44 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage || !tdsStorage.brokenSiteList) return
+    if (!tdsStorage?.brokenSiteList) return
+    return isBrokenList(url, tdsStorage.brokenSiteList)
+}
 
+function getBrokenFeatures (url) {
+    if (!tdsStorage?.fingerprinting) return
+    const brokenFeatures = []
+    for (const feature in tdsStorage.fingerprinting) {
+        if (!tdsStorage.fingerprinting[feature]?.enabled) {
+            brokenFeatures.push(feature)
+        }
+        if (isBrokenList(url, tdsStorage.fingerprinting[feature].sites || [])) {
+            brokenFeatures.push(feature)
+        }
+    }
+    return brokenFeatures
+}
+
+function isBrokenList (url, lists) {
     const parsedDomain = tldts.parse(url)
-    let hostname = parsedDomain.hostname || url
+    const hostname = parsedDomain.hostname || url
 
-    // If root domain in temp whitelist, return true
-    return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
+    // If root domain in temp unprotected list, return true
+    return lists.some((brokenSiteDomain) => {
         if (brokenSiteDomain) {
             return hostname.match(new RegExp(brokenSiteDomain + '$'))
         }
+        return false
     })
+}
+
+// We inject this into content scripts
+function getBrokenScriptLists () {
+    const brokenScripts = {}
+    for (const key in tdsStorage?.fingerprinting) {
+        brokenScripts[key] = tdsStorage.fingerprinting[key]?.scripts || []
+    }
+    return brokenScripts
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
@@ -162,7 +198,7 @@ function isBroken (url) {
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
     const safeList = settings.getSetting('whitelisted')
-    let subdomains = hostname.split('.')
+    const subdomains = hostname.split('.')
     // Check user safe list
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {
@@ -179,18 +215,35 @@ function isSafeListed (url) {
     return false
 }
 
+/**
+ * Tests whether the two URL's belong to the same
+ * first party set.
+ */
+function isFirstParty (url1, url2) {
+    const first = tldts.parse(url1, { allowPrivateDomains: true })
+    const second = tldts.parse(url2, { allowPrivateDomains: true })
+
+    const firstDomain = first.domain === null ? first.hostname : first.domain
+    const secondDomain = first.domain === null ? second.hostname : second.domain
+
+    return firstDomain === secondDomain
+}
+
 module.exports = {
-    extractHostFromURL: extractHostFromURL,
-    extractTopSubdomainFromHost: extractTopSubdomainFromHost,
-    getCurrentURL: getCurrentURL,
-    getCurrentTab: getCurrentTab,
-    getBrowserName: getBrowserName,
-    getUpgradeToSecureSupport: getUpgradeToSecureSupport,
-    getAsyncBlockingSupport: getAsyncBlockingSupport,
-    findParent: findParent,
-    getBeaconName: getBeaconName,
-    getUpdatedRequestListenerTypes: getUpdatedRequestListenerTypes,
-    isSafeListed: isSafeListed,
-    extractLimitedDomainFromURL: extractLimitedDomainFromURL,
-    isBroken: isBroken
+    extractHostFromURL,
+    extractTopSubdomainFromHost,
+    getCurrentURL,
+    getCurrentTab,
+    getBrowserName,
+    getUpgradeToSecureSupport,
+    getAsyncBlockingSupport,
+    findParent,
+    getBeaconName,
+    getUpdatedRequestListenerTypes,
+    isSafeListed,
+    extractLimitedDomainFromURL,
+    isBroken,
+    getBrokenFeatures,
+    getBrokenScriptLists,
+    isFirstParty
 }

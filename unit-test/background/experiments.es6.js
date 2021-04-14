@@ -18,7 +18,7 @@ describe('experiment.getVariant', () => {
     }]
 
     tests.forEach((test) => {
-        it(`gets correct variant from settings`, () => {
+        it('gets correct variant from settings', () => {
             spyOn(settings, 'getSetting').and.returnValue(test.atb)
             const result = experiment.getVariant()
             expect(result).toBe(test.variant)
@@ -42,7 +42,7 @@ describe('experiment.getATBVariant', () => {
     }]
 
     tests.forEach((test) => {
-        it(`gets correct variant from settings`, () => {
+        it('gets correct variant from settings', () => {
             spyOn(settings, 'getSetting').and.returnValue(test.atb)
             const result = experiment.getATBVariant()
             expect(result).toBe(test.atbVariant)
@@ -53,22 +53,22 @@ describe('experiment.getATBVariant', () => {
 describe('experiment.getDaysSinceInstall', () => {
     const tests = [{
         atb: 'v214-1',
-        currentATB: {majorVersion: 214, minorVersion: 1},
+        currentATB: { majorVersion: 214, minorVersion: 1 },
         diff: 0
 
     }, {
         atb: 'v214-1',
-        currentATB: {majorVersion: 215, minorVersion: 1},
+        currentATB: { majorVersion: 215, minorVersion: 1 },
         diff: 7
     },
     {
         atb: 'v215-1',
-        currentATB: {majorVersion: 214, minorVersion: 1},
+        currentATB: { majorVersion: 214, minorVersion: 1 },
         diff: -7
     }]
 
     tests.forEach((test) => {
-        it(`calculates correct days since install`, () => {
+        it('calculates correct days since install', () => {
             const baseTime = new Date(test.date)
             jasmine.clock().mockDate(baseTime)
 

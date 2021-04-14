@@ -2,24 +2,24 @@ let normalizeCompanyName = require('../../../../shared/js/ui/models/mixins/norma
 normalizeCompanyName = normalizeCompanyName.normalizeCompanyName
 const companyNamesTestCases = [
     {
-        'name': 'Amazon.com',
-        'result': 'amazon'
+        name: 'Amazon.com',
+        result: 'amazon'
     },
     {
-        'name': 'comScore',
-        'result': 'comscore'
+        name: 'comScore',
+        result: 'comscore'
     },
     {
-        'name': '',
-        'result': ''
+        name: '',
+        result: ''
     },
     {
-        'name': 'undefined',
-        'result': ''
+        name: 'undefined',
+        result: ''
     },
     {
-        'name': 'AOL',
-        'result': 'aol'
+        name: 'AOL',
+        result: 'aol'
     }
 ]
 

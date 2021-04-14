@@ -1,12 +1,12 @@
 const bel = require('bel')
 const categories = [
-    {category: 'Video didn\'t play', value: 'videos'},
-    {category: 'Images didn\'t load', value: 'images'},
-    {category: 'Comments didn\'t load', value: 'comments'},
-    {category: 'Content is missing', value: 'content'},
-    {category: 'Links or buttons don\'t work', value: 'links'},
-    {category: 'I can\'t sign in', value: 'login'},
-    {category: 'The site asked me to disable', value: 'paywall'}
+    { category: 'Video didn\'t play', value: 'videos' },
+    { category: 'Images didn\'t load', value: 'images' },
+    { category: 'Comments didn\'t load', value: 'comments' },
+    { category: 'Content is missing', value: 'content' },
+    { category: 'Links or buttons don\'t work', value: 'links' },
+    { category: 'I can\'t sign in', value: 'login' },
+    { category: 'The site asked me to disable', value: 'paywall' }
 ]
 
 function shuffle (arr) {

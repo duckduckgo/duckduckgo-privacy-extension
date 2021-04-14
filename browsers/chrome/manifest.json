@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2020.10.21",
+    "version": "2021.4.8",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -40,23 +40,11 @@
         "matches": ["<all_urls>"],
         "all_frames": true,
         "css": ["public/css/noatb.css"],
-        "run_at": "document_start"
-      },
-      {
-        "js": [
-          "public/js/content-scripts/element-hiding.js"
-        ],
-        "matches": [
-          "http://*/*",
-          "https://*/*"
-        ],
-        "match_about_blank": true,
-        "all_frames": true,
+        "js": ["public/js/content-scripts/content-script-bundle.js"],
         "run_at": "document_start"
       }
     ],
     "permissions": [
-        "contextMenus",
         "webRequest",
         "webRequestBlocking",
         "*://*/*",
@@ -66,5 +54,6 @@
         "storage",
         "<all_urls>",
         "alarms"
-    ]
+    ],
+    "web_accessible_resources": ["/web_accessible_resources/*"]
 }

@@ -6,7 +6,7 @@ const settings = require('./settings.es6')
 const abpLists = require('./abp-lists.es6')
 const browserWrapper = require('./safari-wrapper.es6')
 
-let _getSafariTabIndex = (target) => {
+const _getSafariTabIndex = (target) => {
     for (let i = 0; i < safari.application.activeBrowserWindow.tabs.length; i++) {
         if (target === safari.application.activeBrowserWindow.tabs[i]) {
             return i
@@ -20,7 +20,7 @@ let _getSafariTabIndex = (target) => {
  * 2. go through all current tabs and recreate our own internal tab objects
  * 3. open post install page only if we're on a DDG page or Safari gallery page
  */
-let onStartup = () => {
+const onStartup = () => {
     if (!safari.extension.settings.installed) {
         safari.extension.settings.installed = true
         ATB.updateATBValues()
@@ -28,7 +28,7 @@ let onStartup = () => {
 
     // show post install page
     let showPostInstallPage = false
-    let postInstallRegex = /duckduckgo.com\/\?t=|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/
+    const postInstallRegex = /duckduckgo.com\/\?t=|safari-extensions.apple.com\/details\/\?id=com.duckduckgo.safari/
 
     safari.application.browserWindows.forEach((safariWindow) => {
         safariWindow.tabs.forEach((safariTab) => {
@@ -41,10 +41,10 @@ let onStartup = () => {
 
             // recreate our internal tab objects for any existing tabs
             // first create a fake request so we can let tab-manager handle this for us
-            let req = {
+            const req = {
                 url: safariTab.url,
                 target: safariTab,
-                message: {currentURL: safariTab.url}
+                message: { currentURL: safariTab.url }
             }
             tabManager.create(req)
         })
@@ -55,7 +55,7 @@ let onStartup = () => {
         setTimeout(() => {
             // we'll open the post install page in a new tab but keep the current tab active. To do this
             // we need to open a tab then reset the active tab
-            let activeTabIdx = _getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
+            const activeTabIdx = _getSafariTabIndex(safari.application.activeBrowserWindow.activeTab)
             let postInstallURL = 'https://duckduckgo.com/app?post=1'
             // show atb in postinstall page
             const atb = settings.getSetting('atb')
@@ -77,7 +77,7 @@ const redirect = require('./redirect.es6')
 // canLoad => request data from content script. Runs onBeforeRequest
 // atb => set atb values from inject content script
 //
-let handleMessage = (e) => {
+const handleMessage = (e) => {
     if (e.name === 'canLoad') {
         onBeforeRequest(e)
     } else if (e.name === 'unloadTab') {
@@ -93,17 +93,17 @@ let handleMessage = (e) => {
     }
 }
 
-let getActiveTab = () => {
-    let activeTab = safari.application.activeBrowserWindow.activeTab
+const getActiveTab = () => {
+    const activeTab = safari.application.activeBrowserWindow.activeTab
     if (activeTab.ddgTabId) {
-        return tabManager.get({tabId: activeTab.ddgTabId})
+        return tabManager.get({ tabId: activeTab.ddgTabId })
     } else {
-        let id = browserWrapper.getTabId({target: activeTab})
-        return tabManager.get({tabId: id})
+        const id = browserWrapper.getTabId({ target: activeTab })
+        return tabManager.get({ tabId: id })
     }
 }
 
-let handleUIMessage = (req, res) => {
+const handleUIMessage = (req, res) => {
     if (req.getCurrentTab || req.getTab) {
         res(getActiveTab())
     } else if (req.getTopBlocked) {
@@ -117,7 +117,7 @@ let handleUIMessage = (req, res) => {
             res(settings.getSetting(req.getSetting.name))
         })
     } else if (req.getSiteGrade) {
-        let tab = tabManager.get({tabId: req.getSiteGrade})
+        const tab = tabManager.get({ tabId: req.getSiteGrade })
         if (tab) res(tab.site.grade.get())
     } else if (req.getTopBlockedByPages) {
         res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
@@ -129,15 +129,15 @@ let handleUIMessage = (req, res) => {
 
 safari.extension.globalPage.contentWindow.message = handleUIMessage
 
-let updateSetting = (e) => {
-    let name = e.message.updateSetting.name
-    let val = e.message.updateSetting.value
+const updateSetting = (e) => {
+    const name = e.message.updateSetting.name
+    const val = e.message.updateSetting.value
     if (name) {
         settings.updateSetting(name, val)
     }
 }
 
-let getSetting = (e) => {
+const getSetting = (e) => {
     let name
     if (e.message.getSetting && e.message.getSetting.name) {
         name = e.message.getSetting.name
@@ -145,11 +145,11 @@ let getSetting = (e) => {
         name = e.message.getSetting
     }
 
-    let setting = JSON.parse(JSON.stringify(settings.getSetting(name)))
+    const setting = JSON.parse(JSON.stringify(settings.getSetting(name)))
 
     // Safari extension pages can't pass a callback
     // so they have to include an id to help identify the correct response
-    let message = {
+    const message = {
         data: setting,
         id: e.message.id
     }
@@ -159,8 +159,8 @@ let getSetting = (e) => {
     e.target.page.dispatchMessage('backgroundResponse', message)
 }
 
-let getExtensionVersion = (e) => {
-    let message = {
+const getExtensionVersion = (e) => {
+    const message = {
         data: browserWrapper.getExtensionVersion(),
         id: e.message.id
     }
@@ -168,17 +168,17 @@ let getExtensionVersion = (e) => {
     e.target.page.dispatchMessage('backgroundResponse', message)
 }
 
-let onBeforeRequest = (requestData) => {
-    let potentialTracker = requestData.message.potentialTracker
-    let currentURL = requestData.message.mainFrameURL
+const onBeforeRequest = (requestData) => {
+    const potentialTracker = requestData.message.potentialTracker
+    const currentURL = requestData.message.mainFrameURL
 
     if (!(currentURL && potentialTracker)) return
 
-    let tabId = requestData.target.ddgTabId || browserWrapper.getTabId(requestData)
-    let thisTab = tabManager.get({tabId: tabId})
+    const tabId = requestData.target.ddgTabId || browserWrapper.getTabId(requestData)
+    let thisTab = tabManager.get({ tabId: tabId })
     requestData.tabId = tabId
 
-    let isMainFrame = requestData.message.frame === 'main_frame'
+    const isMainFrame = requestData.message.frame === 'main_frame'
 
     // if it's preloading a site in the background and the url changes, delete and recreate the tab
     if (thisTab && thisTab.url !== requestData.message.mainFrameURL) {
@@ -199,7 +199,7 @@ let onBeforeRequest = (requestData) => {
 
     requestData.url = potentialTracker
 
-    let redirectRequest = redirect.handleRequest(requestData)
+    const redirectRequest = redirect.handleRequest(requestData)
     if (redirectRequest) {
         return redirectRequest
     } else {
@@ -208,8 +208,8 @@ let onBeforeRequest = (requestData) => {
 }
 
 // update the popup when switching browser windows
-let onActivate = (e) => {
-    let activeTab = getActiveTab()
+const onActivate = (e) => {
+    const activeTab = getActiveTab()
     if (activeTab) {
         activeTab.updateBadgeIcon(e.target)
         safari.extension.popovers[0].contentWindow.location.reload()
@@ -218,15 +218,15 @@ let onActivate = (e) => {
         // this can happen when you open a new tab, click to activate another existing tab,
         // and then go back to the new tab. new tab -> existing tab -> back to new tab.
         // reset the badge to default and reload the popup to get the correct new tab data
-        browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
+        browserWrapper.setBadgeIcon({ path: 'img/ddg-icon@2x.png', target: e.target })
         safari.extension.popovers[0].contentWindow.location.reload()
     }
 }
 
 // called when a page has successfully loaded:
-let onNavigate = (e) => {
-    let tabId = e.target.ddgTabId
-    let tab = tabManager.get({tabId: tabId})
+const onNavigate = (e) => {
+    const tabId = e.target.ddgTabId
+    const tab = tabManager.get({ tabId: tabId })
 
     if (tab) {
         tab.updateBadgeIcon(e.target)
@@ -251,7 +251,7 @@ let onNavigate = (e) => {
         // use the target url to find the correct cached tab obj
         console.log('REBUILDING CACHED TAB')
         if (e.target.ddgCache) {
-            let cachedTab = e.target.ddgCache[e.target.url]
+            const cachedTab = e.target.ddgCache[e.target.url]
             if (cachedTab) {
                 tabManager.tabContainer[tabId] = cachedTab
                 safari.extension.popovers[0].contentWindow.location.reload()
@@ -260,7 +260,7 @@ let onNavigate = (e) => {
         }
     }
 
-    var urlMatch = e.target.url.match(/https?:\/\/duckduckgo.com\/\?*/)
+    const urlMatch = e.target.url.match(/https?:\/\/duckduckgo.com\/\?*/)
 
     if (urlMatch && urlMatch[0]) {
         ATB.updateSetAtb()
@@ -271,7 +271,7 @@ let onNavigate = (e) => {
  * Before navigating to a new page,
  * check whether we should upgrade to https
  */
-var onBeforeNavigation = function (e) {
+const onBeforeNavigation = function (e) {
     // console.log(`onBeforeNavigation ${e.url} ${e.target.url}`)
 
     if (!e.url || !e.target || e.target.url === 'about:blank' || e.url.match(/com.duckduckgo.safari/)) return
@@ -279,7 +279,7 @@ var onBeforeNavigation = function (e) {
     const url = e.url
     const tabId = browserWrapper.getTabId(e)
 
-    let thisTab = tabId && tabManager.get({tabId: tabId})
+    let thisTab = tabId && tabManager.get({ tabId: tabId })
 
     // if a tab already exists, but the url is different,
     // delete it and recreate for the new url
@@ -289,28 +289,27 @@ var onBeforeNavigation = function (e) {
         console.log('onBeforeNavigation DELETED TAB because url did not match')
     }
 
-    browserWrapper.setBadgeIcon({path: 'img/ddg-icon@2x.png', target: e.target})
+    browserWrapper.setBadgeIcon({ path: 'img/ddg-icon@2x.png', target: e.target })
 }
 
-var onBeforeSearch = function (evt) {
+const onBeforeSearch = function (evt) {
     if (!safari.extension.settings.default_search_engine) return
 
-    let query = evt.query
-    let DDG_URL = 'https://duckduckgo.com/?q='
+    const query = evt.query
+    const DDG_URL = 'https://duckduckgo.com/?q='
 
     function checkURL (url) {
-        var expr = /^(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/i
-        var regex = RegExp(expr)
-        var localhost = RegExp(/^(https?:\/\/)?localhost(:\d+)?/i)
-        var about = RegExp(/(about|safari-extension):.*/)
-        var nums = RegExp(/^(\d+\.\d+).*/i)
+        const regex = /^(^|\s)((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)/i
+        const localhost = /^(https?:\/\/)?localhost(:\d+)?/i
+        const about = /(about|safari-extension):.*/
+        const nums = /^(\d+\.\d+).*/i
         return (url.match(regex) || url.match(about) || url.match(localhost)) && !url.match(nums)
     }
 
     if (!checkURL(query)) {
         evt.preventDefault()
         let url = DDG_URL + encodeURIComponent(query) + '&bext=msl'
-        let atb = settings.getSetting('atb')
+        const atb = settings.getSetting('atb')
         if (atb) {
             url = url + '&atb=' + atb
         }
@@ -318,8 +317,8 @@ var onBeforeSearch = function (evt) {
     }
 }
 
-let onClose = (e) => {
-    let tabId = e.target.ddgTabId
+const onClose = (e) => {
+    const tabId = e.target.ddgTabId
     console.log(`Delete tab: ${tabId}`)
     if (tabId) tabManager.delete(tabId)
 }

@@ -20,8 +20,8 @@ Feedback.prototype = window.$.extend({},
             Parent.prototype.ready.call(this)
             this.setBrowserClassOnBodyTag()
 
-            let params = this.parseQueryString(window.location.search)
-            let browserInfo = parseUserAgentString()
+            const params = this.parseQueryString(window.location.search)
+            const browserInfo = parseUserAgentString()
 
             this.form = new FeedbackFormView({
                 appendTo: window.$('.js-feedback-form'),

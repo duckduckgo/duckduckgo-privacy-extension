@@ -25,7 +25,7 @@ const ATB = (() => {
     return {
         updateSetAtb: () => {
             let atbSetting = settings.getSetting('atb')
-            let setAtbSetting = settings.getSetting('set_atb')
+            const setAtbSetting = settings.getSetting('set_atb')
 
             let errorParam = ''
 
@@ -38,8 +38,8 @@ const ATB = (() => {
                 errorParam = '&e=1'
             }
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = `${ddgAtbURL}${randomValue}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
+            const randomValue = Math.ceil(Math.random() * 1e7)
+            const url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
@@ -56,14 +56,14 @@ const ATB = (() => {
                     return
                 }
 
-                let atbSetting = settings.getSetting('atb')
+                const atbSetting = settings.getSetting('atb')
 
                 if (!atbSetting) {
                     return
                 }
 
                 // handle anchor tags for pages like about#newsletter
-                let urlParts = request.url.split('#')
+                const urlParts = request.url.split('#')
                 let newURL = request.url
                 let anchor = ''
 
@@ -81,7 +81,7 @@ const ATB = (() => {
 
                 newURL += 'atb=' + atbSetting + anchor
 
-                return {redirectUrl: newURL}
+                return { redirectUrl: newURL }
             }
         },
 
@@ -89,9 +89,8 @@ const ATB = (() => {
             numTries = numTries || 0
             if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = ddgAtbURL + randomValue
-
+            const randomValue = Math.ceil(Math.random() * 1e7)
+            const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
             }, () => {
@@ -107,17 +106,18 @@ const ATB = (() => {
         },
 
         finalizeATB: (params) => {
-            let atb = settings.getSetting('atb')
+            const atb = settings.getSetting('atb')
 
             // build query string when atb param wasn't acquired from any URLs
-            const paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            let paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            const browserName = parseUserAgentString().browser
+            paramString += `&browser=${browserName}`
 
             // make this request only once
             if (settings.getSetting('extiSent')) return
 
             settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
-
             // just a GET request, we only care that the request was made
             load.url(`https://duckduckgo.com/exti/?${paramString}`)
         },
@@ -126,6 +126,7 @@ const ATB = (() => {
         // builds a new query string containing only accepted params
         getAcceptedParamsFromURL: (url) => {
             const validParams = new URLSearchParams()
+            if (url === '') return validParams
             const parsedParams = (new URL(url)).searchParams
 
             ACCEPTED_URL_PARAMS.forEach(param => {
@@ -153,7 +154,6 @@ const ATB = (() => {
                 .then((urls) => {
                     let atb
                     let params
-
                     urls.some(url => {
                         params = ATB.getAcceptedParamsFromURL(url)
                         atb = params.has('atb') && params.get('atb')
@@ -162,9 +162,6 @@ const ATB = (() => {
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
-                        if (params && params.has('npi')) {
-                            settings.updateSetting('isMultiStepOnboarding', true)
-                        }
                     }
 
                     ATB.finalizeATB(params)
@@ -176,47 +173,18 @@ const ATB = (() => {
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
             settings.ready().then(() => {
-                // Special case for the cross product promotion on desktop (cppd) experiment
-                if (settings.getSetting('isMultiStepOnboarding')) {
-                    // We find the tab containing the cross product promotion modal
-                    // and inject a content script that will notify the page that the
-                    // extension was successfully installed
-                    // Note: that we don't know on which window that tab is
-                    chrome.tabs.query({}, (tabs) => {
-                        const tab = tabs.find((tab) => {
-                            const { hostname, searchParams } = new URL(tab.url)
-
-                            return (
-                                hostname.split('.').slice(-2).join('.') === 'duckduckgo.com' &&
-                                searchParams.has('natb') &&
-                                searchParams.has('npi')
-                            )
+                chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+                    const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+                    if (ATB.canShowPostInstall(domain)) {
+                        settings.updateSetting('hasSeenPostInstall', true)
+                        let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                        const atb = settings.getSetting('atb')
+                        postInstallURL += atb ? `&atb=${atb}` : ''
+                        chrome.tabs.create({
+                            url: postInstallURL
                         })
-
-                        const file = 'public/js/content-scripts/onboarding.js'
-                        if (tab) {
-                            chrome.tabs.highlight({
-                                tabs: [tab.index],
-                                windowId: tab.windowId
-                            }, () => {
-                                chrome.tabs.executeScript(tab.id, { file })
-                            })
-                        }
-                    })
-                } else {
-                    chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
-                        const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                        if (ATB.canShowPostInstall(domain)) {
-                            settings.updateSetting('hasSeenPostInstall', true)
-                            let postInstallURL = 'https://duckduckgo.com/app?post=1'
-                            const atb = settings.getSetting('atb')
-                            postInstallURL += atb ? `&atb=${atb}` : ''
-                            chrome.tabs.create({
-                                url: postInstallURL
-                            })
-                        }
-                    })
-                }
+                    }
+                })
             })
         },
 
@@ -233,20 +201,19 @@ const ATB = (() => {
 
         getSurveyURL: () => {
             let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
-            let atb = settings.getSetting('atb')
-            let setAtb = settings.getSetting('set_atb')
+            const atb = settings.getSetting('atb')
+            const setAtb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
             if (setAtb) url += `&set_atb=${setAtb}`
 
-            let browserInfo = parseUserAgentString()
-            let browserName = browserInfo.browser
-            let browserVersion = browserInfo.version
-            let extensionVersion = browserWrapper.getExtensionVersion()
+            const browserInfo = parseUserAgentString()
+            const browserName = browserInfo.browser
+            const browserVersion = browserInfo.version
+            const extensionVersion = browserWrapper.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
-            if (dev) url += `&test=1`
-
+            if (dev) url += '&test=1'
             return url
         },
 

@@ -2,11 +2,20 @@
 // Set Global Privacy Control property on DOM
 (function setDOMSignal () {
     const wrappedNavigator = navigator.wrappedJSObject
-    // Catch errors if signal is already set by user agent or other extension
-    try {
+    // If GPC on, set DOM property to true if not already true
+    if (globalPrivacyControlValue) {
+        if (wrappedNavigator.globalPrivacyControl) return
         Object.defineProperty(wrappedNavigator, 'globalPrivacyControl', {
-            value: globalPrivacyControlValue,
+            value: true,
             enumerable: true
         })
-    } catch (e) {}
+    } else {
+        // If GPC off, set DOM property prototype to false so it may be overwritten
+        // with a true value by user agent or other extensions
+        if (typeof wrappedNavigator.globalPrivacyControl !== 'undefined') return
+        Object.defineProperty(Object.getPrototypeOf(wrappedNavigator), 'globalPrivacyControl', {
+            value: false,
+            enumerable: true
+        })
+    }
 })()

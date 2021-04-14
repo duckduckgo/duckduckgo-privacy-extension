@@ -16,6 +16,7 @@ module.exports = {
         "mixed": "Mixed"
     },
     "httpsService": "https://duckduckgo.com/smarter_encryption.js",
+    "duckDuckGoSerpHostname": "duckduckgo.com",
     "httpsMessages": {
         "secure": "Encrypted Connection",
         "upgraded": "Forced Encryption",
@@ -92,8 +93,14 @@ module.exports = {
         },
         {
             "name": "brokenSiteList",
-            "url": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
+            "url": "https://duckduckgo.com/contentblocking/trackers-unprotected-temporary.txt",
             "format": "text",
+            "source": "external"
+        },
+        {
+            "name": "fingerprinting",
+            "url": "https://duckduckgo.com/contentblocking/fingerprinting.json",
+            "format": "json",
             "source": "external"
         },
         {
@@ -113,6 +120,14 @@ module.exports = {
         {
             "name": "excludeList",
             "url": "https://staticcdn.duckduckgo.com/useragents/useragent_excludes.json",
+            "format": "json",
+            "source": "external"
+        }
+    ],
+    "CookieLists": [
+        {
+            "name": "cookieExcludeList",
+            "url": "https://staticcdn.duckduckgo.com/useragents/cookie_configuration.json",
             "format": "json",
             "source": "external"
         }
