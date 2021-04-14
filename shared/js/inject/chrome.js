@@ -15,17 +15,16 @@ function inject (code) {
     }
 }
 
-inject();
+inject()
 
-
-function randomString() {
-   let num = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
-   return num.toString().replace('0.', '')
+function randomString () {
+    const num = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+    return num.toString().replace('0.', '')
 }
 
-function init() {
-    const randomMethodName = '_d' + randomString();
-    const randomPassword = '_p' + randomString();
+function init () {
+    const randomMethodName = '_d' + randomString()
+    const randomPassword = '_p' + randomString()
     const randomFunction = `
       // Use define property so isn't enumerable
       Object.defineProperty(window, '${randomMethodName}', {
@@ -46,19 +45,19 @@ function init() {
               }
           })
       });
-    `;
-    const initialScript = SCRIPT_TO_REPLACE + randomFunction;
-    inject(initialScript);
+    `
+    const initialScript = SCRIPT_TO_REPLACE + randomFunction
+    inject(initialScript)
 
     chrome.runtime.sendMessage({ registeredContentScript: true },
-      (message) => {
-          const stringifiedArgs = JSON.stringify(message);
-          const callRandomFunction = `
+        (message) => {
+            const stringifiedArgs = JSON.stringify(message)
+            const callRandomFunction = `
             window.${randomMethodName}('${randomPassword}', ${stringifiedArgs});
-          `;
-          inject(callRandomFunction);
-      }
-    );
+          `
+            inject(callRandomFunction)
+        }
+    )
 }
 
-init();
+init()

@@ -1,4 +1,4 @@
-import sjcl from "./sjcl";
+import sjcl from './sjcl'
 
 export function getDataKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
@@ -80,32 +80,32 @@ export function isFeatureBroken (args, feature) {
 }
 
 // TODO make rollup aware of this so it can tree shake
-const mozProxies = "wrappedJSObject" in window;
+const mozProxies = 'wrappedJSObject' in window
 
 export class DDGProxy {
-    constructor(objectScope, property, proxyObject) {
+    constructor (objectScope, property, proxyObject) {
         if (mozProxies) {
-            this._native = objectScope.wrappedJSObject[property];
-            this._native2 = objectScope[property];
-            const handler = new window.wrappedJSObject.Object();
-            handler.apply = exportFunction(proxyObject.apply, window);
-            this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler);
-            exportFunction(this.internal, objectScope, { defineAs: property });
+            this._native = objectScope.wrappedJSObject[property]
+            this._native2 = objectScope[property]
+            const handler = new window.wrappedJSObject.Object()
+            handler.apply = exportFunction(proxyObject.apply, window)
+            this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler)
+            exportFunction(this.internal, objectScope, { defineAs: property })
         } else {
-            this._native = objectScope[property];
-            this._native2 = objectScope[property];
-            const handler = {};
-            handler.apply = proxyObject.apply;
-            this.internal = new window.Proxy(objectScope[property], handler);
-            objectScope[property] = this.internal;
+            this._native = objectScope[property]
+            this._native2 = objectScope[property]
+            const handler = {}
+            handler.apply = proxyObject.apply
+            this.internal = new window.Proxy(objectScope[property], handler)
+            objectScope[property] = this.internal
         }
     }
 }
 
-export let DDGReflect;
+export let DDGReflect
 
 if (mozProxies) {
-    DDGReflect = window.wrappedJSObject.Reflect;
+    DDGReflect = window.wrappedJSObject.Reflect
 } else {
-    DDGReflect = window.Reflect;
+    DDGReflect = window.Reflect
 }

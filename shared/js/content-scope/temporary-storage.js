@@ -1,4 +1,4 @@
-export function initTemporaryStorage() {
+export function initTemporaryStorage () {
     /**
      * Temporary storage can be used to determine hard disk usage and size.
      * This will limit the max storage to 4GB without completely disabling the
@@ -15,9 +15,8 @@ export function initTemporaryStorage() {
                     callback(usedBytes, spoofedGrantedBytes)
                 }
                 org.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
-            }.bind(null)
-            Object.defineProperty(Navigator.prototype, 'webkitTemporaryStorage', {get: (() => tStorage).bind(null)})
-        }
-        catch(e) {}
+            }
+            Object.defineProperty(Navigator.prototype, 'webkitTemporaryStorage', { get: () => tStorage })
+        } catch (e) {}
     }
 }

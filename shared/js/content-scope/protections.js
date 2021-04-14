@@ -1,6 +1,7 @@
-import {initStringExemptionLists, isFeatureBroken} from "./utils";
-import {initCanvasProtection} from "./canvas";
-import {initTemporaryStorage} from "./temporary-storage";
+import { initStringExemptionLists, isFeatureBroken } from './utils'
+import { initCanvasProtection } from './canvas'
+import { initAudioProtection } from './audio'
+import { initTemporaryStorage } from './temporary-storage'
 
 export function initProtection (args) {
     initStringExemptionLists(args)
@@ -11,6 +12,6 @@ export function initProtection (args) {
         initAudioProtection(args)
     }
     if (!isFeatureBroken(args, 'temporary-storage')) {
-        initTemporaryStorage(args);
+        initTemporaryStorage(args)
     }
 }

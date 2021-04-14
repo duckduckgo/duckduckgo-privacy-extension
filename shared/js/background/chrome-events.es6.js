@@ -309,14 +309,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
     if (req.registeredContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id);
+        const argumentsObject = getArgumentsObject(sender.tab.id)
         if (argumentsObject.site?.isBroken) {
-            console.log('temporarily skip fingerprint protection for site: ' + details.url +
+            console.log('temporarily skip fingerprint protection for site: ' + sender.tab.url +
         'more info: https://github.com/duckduckgo/content-blocking-whitelist')
             return
         }
         if (!argumentsObject.site.whitelisted) {
-            res(argumentsObject);
+            res(argumentsObject)
             return true
         }
     }
@@ -559,7 +559,7 @@ This is because the protections need to be injected as a content scope <script> 
 Alternatively we could call a method defined on window: window.___superSecretMethod('SuperSecretKey', {config}) where both the method and the key would rotate.
 TODO: verify chrome method / message handler can't be overloaded to spy on the messages.
 */
-/*
+        /*
         const scriptObj = await browser.contentScripts.register({
             js: [
                 { file: '/public/js/content-scope.js' },
@@ -576,7 +576,7 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
     // they are not whitelisted.
         chrome.webNavigation.onCommitted.addListener(details => {
         // Inject message passing to disable this in chrome.
-            const argumentsObject = getArgumentsObject(details.tabId);
+            const argumentsObject = getArgumentsObject(details.tabId)
             if (argumentsObject.site?.isBroken) {
                 console.log('temporarily skip fingerprint protection for site: ' + details.url +
             'more info: https://github.com/duckduckgo/content-blocking-whitelist')
@@ -611,11 +611,10 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
 }
 init()
 
-
-function getArgumentsObject(tabId) {
+function getArgumentsObject (tabId) {
     const tab = tabManager.get({ tabId })
-    const site = tab?.site || {};
-    const referrer = tab?.referrer || '';
+    const site = tab?.site || {}
+    const referrer = tab?.referrer || ''
     return {
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,

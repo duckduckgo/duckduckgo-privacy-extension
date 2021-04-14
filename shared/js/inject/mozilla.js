@@ -1,11 +1,11 @@
 SCRIPT_TO_REPLACE
 
-function init() {
+function init () {
     chrome.runtime.sendMessage({ registeredContentScript: true },
-      (message) => {
-          protections.initProtection(message)
-      }
-    );
+        (message) => {
+            protections.initProtection(message)
+        }
+    )
 }
 
-init();
+init()

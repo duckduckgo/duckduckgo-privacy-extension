@@ -1,4 +1,4 @@
-import { shouldExemptMethod, iterateDataKey, DDGProxy, DDGReflect } from "./utils";
+import { shouldExemptMethod, iterateDataKey, DDGProxy, DDGReflect } from './utils'
 
 export function initAudioProtection (args) {
     const { sessionKey, site } = args
@@ -100,4 +100,3 @@ export function initAudioProtection (args) {
         })
     }
 }
-
