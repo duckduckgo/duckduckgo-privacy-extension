@@ -13,6 +13,7 @@ const experiment = require('./experiments.es6')
 const settings = require('./settings.es6')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
+const cspProtection = require('./csp-blocking.es6')
 const browser = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
@@ -716,6 +717,10 @@ chrome.webRequest.onErrorOccurred.addListener(e => {
         }
     }
 }, { urls: ['<all_urls>'] })
+
+if (browser === 'moz') {
+    cspProtection.init()
+}
 
 module.exports = {
     onStartup: onStartup
