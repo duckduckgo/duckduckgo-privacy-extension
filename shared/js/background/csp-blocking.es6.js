@@ -1,4 +1,3 @@
-
 function init () {
     chrome.webRequest.onBeforeRequest.addListener((details) => {
         try {
