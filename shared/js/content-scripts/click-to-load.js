@@ -745,7 +745,7 @@
         * properly.
         */
         if (rect.left < styles.textBubbleLeftShift) {
-            const leftShift = -rect.left + 10 //10px away from edge of the screen
+            const leftShift = -rect.left + 10 // 10px away from edge of the screen
             hoverBox.style.cssText += `left: ${leftShift}px;`
             const change = (1 - (rect.left / styles.textBubbleLeftShift)) * (100 - styles.arrowDefaultLocationPercent)
             arrow.style.cssText += `left: ${Math.max(10, styles.arrowDefaultLocationPercent - change)}%;`
