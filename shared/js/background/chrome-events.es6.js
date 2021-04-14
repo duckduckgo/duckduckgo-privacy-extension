@@ -548,17 +548,6 @@ let sessionKey = getHash()
 async function init () {
     // inject content-scope always
     if (browserName === 'moz') {
-        const argumentsObject = getArgumentsObject();
-        const mozScript = `
-          const args = ${JSON.stringify(argumentsObject)};
-browser.runtime.onMessage.addListener(
-  (data, sender) => {
-console.log("message", data);
-  }
-);
-          protections.initProtection(args);
-    `
-
         /*
 inject content script always
 content script listens to messages, holding a reference to the objects changed
@@ -570,6 +559,7 @@ This is because the protections need to be injected as a content scope <script> 
 Alternatively we could call a method defined on window: window.___superSecretMethod('SuperSecretKey', {config}) where both the method and the key would rotate.
 TODO: verify chrome method / message handler can't be overloaded to spy on the messages.
 */
+/*
         const scriptObj = await browser.contentScripts.register({
             js: [
                 { file: '/public/js/content-scope.js' },
@@ -580,6 +570,7 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
             runAt: 'document_start',
             matchAboutBlank: true
         })
+*/
     } else {
     // Inject fingerprint protection into sites when
     // they are not whitelisted.
