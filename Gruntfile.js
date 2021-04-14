@@ -50,8 +50,7 @@ module.exports = function (grunt) {
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
             '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
             '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
-            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss'],
-            '<%= dirs.public.css %>/socialmedia.css': ['<%= dirs.src.scss %>/socialmedia.scss']
+            '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss']
         }
     }
 
