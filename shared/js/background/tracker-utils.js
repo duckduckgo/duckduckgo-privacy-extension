@@ -44,20 +44,29 @@ function shouldBlockSocialNetwork (entity, url) {
  * Parse the social config to find excluded domains by social tracker. This then returns a list of objects
  * that include the exlcuded domain and network, for use in other exception list handling.
  */
+const socialExcludeCache = {
+    excludes: [],
+    expireTime: 0,
+    refreshTimeMS: 1000 * 60 * 30 // 30 minutes
+}
 function getDomainsToExludeByNetwork () {
-    const excludes = []
+    if (Date.now() < socialExcludeCache.expireTime) {
+        return socialExcludeCache.excludes
+    }
+    socialExcludeCache.excludes = []
     for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.excludedDomains) {
             const excludedDomains = data.excludedDomains.map(e => e.domain)
             for (const domain of excludedDomains) {
-                excludes.push({
+                socialExcludeCache.excludes.push({
                     entity: entity,
                     domain: domain
                 })
             }
         }
     }
-    return excludes
+    socialExcludeCache.expireTime = Date.now() + socialExcludeCache.refreshTimeMS
+    return socialExcludeCache.excludes
 }
 
 // Return true if URL is in our click to load tracker list
@@ -73,6 +82,7 @@ function getSocialTracker (url) {
                 for (const surrogate of data.surrogates) {
                     if (url.match(surrogate.rule)) {
                         redirect = surrogate.surrogate
+                        break
                     }
                 }
             }

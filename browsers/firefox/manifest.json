@@ -58,5 +58,5 @@
         "<all_urls>",
         "alarms"
     ],
-    "web_accessible_resources": ["web_accessible_resources/fb-sdk.js", "web_accessible_resources/*", "public/font/*"]
+    "web_accessible_resources": ["/web_accessible_resources/*", "/public/font/*"]
 }

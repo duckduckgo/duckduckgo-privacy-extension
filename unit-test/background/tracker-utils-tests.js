@@ -6,10 +6,20 @@ const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let settingsObserver
+    let timer = Date.now()
+    const jump = 1000 * 60 * 31 // slightly more than cache timeout
 
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
         tdsStorageStub.stub()
+
+        // Make sure we don't use any list caches for these tests
+        spyOn(Date, 'now').and.callFake(function () {
+            // Cache may be updated on each run, so keep jumping the time forward for each call
+            timer += jump
+            return timer
+        })
+
         return tdsStorage.getLists()
             .then(lists => {
                 return tds.setLists(lists)

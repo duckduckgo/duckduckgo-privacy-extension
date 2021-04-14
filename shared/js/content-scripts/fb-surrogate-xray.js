@@ -4,7 +4,7 @@
     const entity = 'Facebook'
     let siteInit = function () {}
     let fbIsEnabled = false
-    let initData = {}
+    let initData
     const parseCalls = []
     const fbLogin = {
         callback: function () {},
@@ -105,10 +105,9 @@
             siteInit = wrappedWindow.fbAsyncInit
             wrappedWindow.fbAsyncInit()
         }
+        window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
+        window.addEventListener('RunFacebookLogin', runFacebookLogin)
     }
-
-    window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
-    window.addEventListener('RunFacebookLogin', runFacebookLogin)
 
     if (!wrappedWindow.FB) {
         const FB = {
