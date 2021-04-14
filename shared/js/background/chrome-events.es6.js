@@ -308,6 +308,19 @@ const browserWrapper = require('./chrome-wrapper.es6')
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
+    if (req.registeredContentScript) {
+        const argumentsObject = getArgumentsObject(sender.tab.id);
+        if (argumentsObject.site?.isBroken) {
+            console.log('temporarily skip fingerprint protection for site: ' + details.url +
+        'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
+        if (!argumentsObject.site.whitelisted) {
+            res(argumentsObject);
+            return true
+        }
+    }
+
     if (req.getCurrentTab) {
         utils.getCurrentTab().then(tab => {
             res(tab)
@@ -532,27 +545,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
-async function getContentScope () {
-    const url = chrome.runtime.getURL('/public/js/content-scope.js')
-
-    const response = await fetch(url)
-    return response.text()
-}
-
 async function init () {
-    let contentScopeScript = await getContentScope()
-
     // inject content-scope always
     if (browserName === 'moz') {
-        const argumentsObject = {
-            stringExemptionLists: utils.getBrokenScriptLists(),
-            sessionKey,
-            contentScopeScript,
-            // TODO generate this and override it on message
-            site: { domain: 'domain-temp.com' }
-            //        site: tab.site,
-            //        referrer: tab.referrer
-        }
+        const argumentsObject = getArgumentsObject();
         const mozScript = `
           const args = ${JSON.stringify(argumentsObject)};
 browser.runtime.onMessage.addListener(
@@ -584,28 +580,20 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
             runAt: 'document_start',
             matchAboutBlank: true
         })
-        console.log('meep', scriptObj)
     } else {
     // Inject fingerprint protection into sites when
     // they are not whitelisted.
         chrome.webNavigation.onCommitted.addListener(details => {
         // Inject message passing to disable this in chrome.
-            const tab = tabManager.get({ tabId: details.tabId })
-            if (tab && tab.site.isBroken) {
+            const argumentsObject = getArgumentsObject(details.tabId);
+            if (argumentsObject.site?.isBroken) {
                 console.log('temporarily skip fingerprint protection for site: ' + details.url +
             'more info: https://github.com/duckduckgo/content-blocking-whitelist')
                 return
             }
-            if (tab && !tab.site.whitelisted) {
+            if (!argumentsObject.site.whitelisted) {
             // Set variables, which are used in the fingerprint-protection script.
                 try {
-                    const argumentsObject = {
-                        stringExemptionLists: utils.getBrokenScriptLists(),
-                        sessionKey,
-                        contentScopeScript: contentScopeScript,
-                        site: tab.site,
-                        referrer: tab.referrer
-                    }
                     const variableScript = {
                         code: `
                       try {
@@ -631,6 +619,19 @@ TODO: verify chrome method / message handler can't be overloaded to spy on the m
     }
 }
 init()
+
+
+function getArgumentsObject(tabId) {
+    const tab = tabManager.get({ tabId })
+    const site = tab?.site || {};
+    const referrer = tab?.referrer || '';
+    return {
+        stringExemptionLists: utils.getBrokenScriptLists(),
+        sessionKey,
+        site,
+        referrer
+    }
+}
 
 /*
  * Truncate the referrer header according to the following rules:

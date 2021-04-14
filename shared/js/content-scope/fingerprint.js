@@ -3,8 +3,7 @@ import {initCanvasProtection} from "./canvas";
 
 export function initProtection (args) {
     initStringExemptionLists(args)
-    // JKTODO remove
-    if (true || !isFeatureBroken(args, 'canvas')) {
+    if (!isFeatureBroken(args, 'canvas')) {
         initCanvasProtection(args)
     }
     if (!isFeatureBroken(args, 'audio')) {

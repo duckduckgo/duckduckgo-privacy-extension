@@ -1,4 +1,4 @@
-import { shouldExemptMethod, iterateDataKey, DDGProxy, DDGReflect } from "./utils";
+import { shouldExemptMethod, iterateDataKey, DDGProxy, DDGReflect, getDataKeySync } from "./utils";
 
 export function initCanvasProtection (args) {
     const { sessionKey, site } = args

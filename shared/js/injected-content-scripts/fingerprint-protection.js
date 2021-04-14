@@ -174,22 +174,13 @@
     }
 
     /**
-     * Trigger the built code in args.contentScopeScript.
-     */
-    function buildInit () {
-        return `protections.initProtection(${JSON.stringify(args)});`
-    }
-
-    /**
      * All the steps for building the injection script. Should only be done at initial page load.
      */
     function buildInjectionScript () {
-        let script = args.contentScopeScript + ';'
-        script += buildScriptProperties()
+        let script = buildScriptProperties()
         script += modifyTemporaryStorage()
         script += buildBatteryScript()
         script += setWindowDimensions()
-        script += buildInit()
         return script
     }
 
