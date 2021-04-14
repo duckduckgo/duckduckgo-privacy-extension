@@ -3,44 +3,96 @@
  *
  * The list is updated when you run `make` or `make release`
  */
-const request = require('request')
+const request = require('request-promise')
 const topics = require('./tosdr-topics.json')
 const fs = require('fs')
 const tldts = require('tldts')
 let processed = {}
-let nProcessed = 0
+let nProcessed = 0;
+let cachedCases = [];
 
-function getSites() {
-    // get the full list of tosdr sites. This does not include points data. We will
-    // have to make a separate request for that.
-    request.get('https://tosdr.org/index/services.json', (err, res, body) => {
-        let sites = Object.keys(JSON.parse(body))
+const ratings = {
+    0x1: "A",
+    0x2: "B",
+    0x4: "C",
+    0x8: "D",
+    0x10: "E",
+    0x20: "N/A"
+}
 
-        // recurse through sites list. Get and process the detailed points data for each
-        getSitePoints(sites).then(result => {
-            fs.writeFile('shared/data/tosdr.json', JSON.stringify(processed, null, 4), err => { if (err) console.log(err) })
-        })
+
+
+
+let allServiceRequest = {
+    url: `https://api.tosdr.org/all-services/v1/`,
+    headers: {
+        'User-Agent': 'DuckDuckGo Privacy Extension(+https://github.com/duckduckgo/duckduckgo-privacy-extension)'
+    }
+};
+
+/* https://stackoverflow.com/a/13448477 */
+const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+
+async function getSites() {
+    // get the full list of tosdr sites.
+
+
+    await request.get(allServiceRequest, async (err, res, body) => {
+        try {
+            let sites = JSON.parse(body).parameters.services;
+
+            // recurse through sites list. Get and process the detailed points data for each
+            await getSitePoints(sites).then(result => {
+                fs.writeFile(__dirname + '/../shared/data/tosdr.json', JSON.stringify(processed, null, 4), err => { if (err) console.log(err) });
+                console.log("File written!");
+            })
+        } catch (e) {
+            console.log(`http error getting all service data`, e);
+
+        }
     })
 }
 
-function getSitePoints(sites) {
-    return new Promise((resolve, reject) => {
+async function getSitePoints(sites) {
+
+
+
+
+    return new Promise(async (resolve, reject) => {
 
         if (sites.length === 0) {
             return resolve()
         }
 
-        let site = encodeURIComponent(sites.pop())
+        let site = encodeURIComponent(sites.pop().id);
+
+        let restServiceRequest = {
+            url: `https://api.tosdr.org/rest-service/v3/${site}.json`,
+            headers: {
+                'User-Agent': 'DuckDuckGo Privacy Extension(+https://github.com/duckduckgo/duckduckgo-privacy-extension)',
+            }
+        };
+
 
         nProcessed += 1
 
-        let githubRepo = 'https://raw.githubusercontent.com/tosdr/tosdr.org/master'
-        let url = `${githubRepo}/api/1/service/${site}.json`
 
         if (nProcessed % 5 === 0) process.stdout.write('.')
 
+        console.log("Requesting service details", site);
         // get the detailed points data for this site
-        request.get(url, (err, res, body) => {
+        await request.get(restServiceRequest, async (err, res, body) => {
+
+            if (res.statusCode !== 200) {
+                console.log(`http error getting privacy data for: ${site}`, res.statusCode);
+                return resolve(getSitePoints(sites))
+            }
+
+            if (err) {
+                console.log(`request error getting privacy data for: ${site}`, err);
+                return resolve(getSitePoints(sites))
+            }
 
             let points = { score: 0, all: { bad: [], good: [] }, match: { bad: [], good: [] } }
             let allData
@@ -48,30 +100,86 @@ function getSitePoints(sites) {
             try {
                 allData = JSON.parse(body)
             } catch (e) {
-                console.log(`error getting privacy data for: ${site}`)
+                console.log(`json error getting privacy data for: ${site}`, e);
                 return resolve(getSitePoints(sites))
             }
 
-            let pointsData = allData.pointsData
-            let relatedUrls = allData.urls || []
+            let pointsData = allData.parameters.points
+            let relatedUrls = allData.parameters.urls || []
 
-            points.class = allData.class
+            points.class = ratings[allData.parameters.rating]
 
+            console.log("Iterating points", pointsData.length);
             for (pointName in pointsData) {
-                let point = pointsData[pointName]
-                let pointCase = point.tosdr.case
-                let score = point.tosdr.score || 0
-                if (!pointCase) continue
 
-                // standardize case (some of them start with caps)
-                pointCase = pointCase.toLowerCase()
-                // standardize score (some of them come as strings)
-                score = parseInt(score, 10)
 
-                let type = point.tosdr.point
 
-                if (type === 'good' || type === 'bad')
-                    addPoint(points, type, pointCase, score)
+                let score = 0;
+                let point = pointsData[pointName];
+
+
+
+                if (point.status !== 'approved') {
+                    continue;
+                }
+
+                let pointCase = point.case_id;
+                console.log("Found case", pointCase);
+                if (!pointCase) continue;
+
+                let restCaseRequest = {
+                    url: `https://api.tosdr.org/case/v1/${pointCase}.json`,
+                    headers: {
+                        'User-Agent': 'DuckDuckGo Privacy Extension(+https://github.com/duckduckgo/duckduckgo-privacy-extension)'
+                    }
+                };
+
+                if (!cachedCases.some(function (el) { return el.id === pointCase; })) {
+                    console.log("Requesting case details and adding to cache", pointCase);
+                    await snooze(200);
+                    await request.get(restCaseRequest, async (err, res, body) => {
+                        try {
+                            let caseData = JSON.parse(body).parameters;
+
+                            cachedCases.push(caseData);
+
+                            // standardize case (some of them start with caps)
+                            pointCase = caseData.title.toLowerCase()
+                            score = parseInt(caseData.score, 10);
+
+                            let type = caseData.classification
+
+                            if (type === 'good' || type === 'bad') {
+                                addPoint(points, type, pointCase, score);
+                            }
+                        } catch (e) {
+                            console.log(`error getting case data for: ${pointCase}`, e);
+                        }
+                    });
+                } else {
+
+
+
+                    let caseData = cachedCases[cachedCases.findIndex(function (caseobj) {
+                        return caseobj.id == pointCase;
+                    })];
+
+                    if(!caseData){
+                        console.log("Failed to find cached case!", pointCase);
+                        continue;
+                    }
+
+                    console.log("Found cached case", caseData.id);
+
+                    pointCase = caseData.title.toLowerCase()
+                    score = parseInt(caseData.score, 10);
+
+                    let type = caseData.classification
+
+                    if (type === 'good' || type === 'bad') {
+                        addPoint(points, type, pointCase, score);
+                    }
+                }
             }
 
             // we use class in our score but we may not have privacy-related reasons for it
@@ -83,32 +191,24 @@ function getSitePoints(sites) {
                 points.match.bad = points.all.bad
             }
 
-            // get site url
-            let servicesUrl = `${githubRepo}/dist/services/${site}.json`
-            request.get(servicesUrl, (err, res, body) => {
-                if(body == "404: Not Found"){
-                    return resolve(getSitePoints(sites));
-                }
-                let data = JSON.parse(body)
-                // some sites lack the 'url' field, but have
-                // multiple items in the 'urls' field.
-                if (!data.url && relatedUrls) {
-                    data.url = relatedUrls.shift()
-                }
+            if (!allData.url && relatedUrls) {
+                allData.url = relatedUrls.shift()
+            }
 
-                if (data.url) {
-                    const parsedUrl = tldts.parse(data.url)
-                    processed[parsedUrl.domain] = points
+            if (allData.url) {
+                const parsedUrl = tldts.parse(allData.url)
+                processed[parsedUrl.domain] = points
 
-                    // link related sites with the same points
-                    relatedUrls.forEach((url) => {
-                        processed[url] = points
-                    })
-                }
-                resolve(getSitePoints(sites))
-            })
+                // link related sites with the same points
+                relatedUrls.forEach((url) => {
+                    processed[url] = points
+                })
+            }
+            console.log("Sleeping...", 200);
+            await snooze(200);
+            return resolve(getSitePoints(sites));
         })
-    })
+    });
 }
 
 function addPoint(points, type, pointCase, score) {
