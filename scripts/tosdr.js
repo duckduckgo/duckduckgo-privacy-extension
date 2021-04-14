@@ -22,11 +22,11 @@ const ratings = {
 
 
 
-
 let allServiceRequest = {
     url: `https://api.tosdr.org/all-services/v1/`,
     headers: {
-        'User-Agent': 'DuckDuckGo Privacy Extension(+https://github.com/duckduckgo/duckduckgo-privacy-extension)'
+        'User-Agent': 'DuckDuckGo Privacy Extension (+https://github.com/duckduckgo/duckduckgo-privacy-extension)',
+        'Authorization': process.env.TOSDR_APIKEY
     }
 };
 
@@ -35,10 +35,20 @@ const snooze = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 
 async function getSites() {
+
+    if (!process.env.TOSDR_APIKEY) {
+        console.log("WARNING! API KEY IS NOT SET, RATE LIMITS MAY OCCURR!");
+        await snooze(5000);
+    }
+
     // get the full list of tosdr sites.
 
 
     await request.get(allServiceRequest, async (err, res, body) => {
+        if (res.statusCode == 429) {
+            console.log("Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/UIAF");
+            return;
+        }
         try {
             let sites = JSON.parse(body).parameters.services;
 
@@ -49,7 +59,6 @@ async function getSites() {
             })
         } catch (e) {
             console.log(`http error getting all service data`, e);
-
         }
     })
 }
@@ -70,7 +79,8 @@ async function getSitePoints(sites) {
         let restServiceRequest = {
             url: `https://api.tosdr.org/rest-service/v3/${site}.json`,
             headers: {
-                'User-Agent': 'DuckDuckGo Privacy Extension(+https://github.com/duckduckgo/duckduckgo-privacy-extension)',
+                'User-Agent': 'DuckDuckGo Privacy Extension (+https://github.com/duckduckgo/duckduckgo-privacy-extension)',
+                'Authorization': process.env.TOSDR_APIKEY
             }
         };
 
@@ -83,6 +93,11 @@ async function getSitePoints(sites) {
         console.log("Requesting service details", site);
         // get the detailed points data for this site
         await request.get(restServiceRequest, async (err, res, body) => {
+
+            if (res.statusCode == 429) {
+                console.log("Too many requests, please wait until the rate limit is over! You may consult https://docs.tosdr.org/x/AYA1");
+                throw new Error("Too many requests");
+            }
 
             if (res.statusCode !== 200) {
                 console.log(`http error getting privacy data for: ${site}`, res.statusCode);
@@ -130,7 +145,8 @@ async function getSitePoints(sites) {
                 let restCaseRequest = {
                     url: `https://api.tosdr.org/case/v1/${pointCase}.json`,
                     headers: {
-                        'User-Agent': 'DuckDuckGo Privacy Extension(+https://github.com/duckduckgo/duckduckgo-privacy-extension)'
+                        'User-Agent': 'DuckDuckGo Privacy Extension (+https://github.com/duckduckgo/duckduckgo-privacy-extension)',
+                        'Authorization': process.env.TOSDR_APIKEY
                     }
                 };
 
@@ -164,7 +180,7 @@ async function getSitePoints(sites) {
                         return caseobj.id == pointCase;
                     })];
 
-                    if(!caseData){
+                    if (!caseData) {
                         console.log("Failed to find cached case!", pointCase);
                         continue;
                     }
