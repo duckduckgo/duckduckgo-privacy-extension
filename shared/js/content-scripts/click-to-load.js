@@ -123,7 +123,6 @@
             border-radius: 16px;
             box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12), 0px 8px 16px rgba(0, 0, 0, 0.08);
             width: 360px;
-            padding: 0 0 25px 0;
             margin-top: 10px;
             z-index: 5;
             position: absolute;
@@ -144,13 +143,14 @@
         arrowDefaultLocationPercent: 50,
         hoverTextTitle: `
             padding: 0px 12px 12px;
+            margin-top: -5px;
         `,
         hoverTextBody: `
             font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
             line-height: 21px;
             margin: auto;
-            padding: 0px 12px;
+            padding: 17px;
             text-align: left;
         `,
         buttonTextContainer: `
@@ -745,7 +745,8 @@
         * properly.
         */
         if (rect.left < styles.textBubbleLeftShift) {
-            hoverBox.style.cssText += `left: -${rect.left}px;`
+            const leftShift = -rect.left + 10 //10px away from edge of the screen
+            hoverBox.style.cssText += `left: ${leftShift}px;`
             const change = (1 - (rect.left / styles.textBubbleLeftShift)) * (100 - styles.arrowDefaultLocationPercent)
             arrow.style.cssText += `left: ${Math.max(10, styles.arrowDefaultLocationPercent - change)}%;`
         } else if (rect.left + styles.textBubbleWidth - styles.textBubbleLeftShift > window.innerWidth) {
