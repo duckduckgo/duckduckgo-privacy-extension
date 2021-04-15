@@ -79,6 +79,28 @@ export function isFeatureBroken (args, feature) {
     return args.site.brokenFeatures.includes(feature)
 }
 
+/**
+ * For each property defined on the object, update it with the target value.
+ */
+export function overrideProperty (name, prop) {
+    // Don't update if existing value is undefined or null
+    if (!(prop.origValue === undefined)) {
+        /**
+         * When re-defining properties, we bind the overwritten functions to null. This prevents
+         * sites from using toString to see if the function has been overwritten
+         * without this bind call, a site could run something like
+         * `Object.getOwnPropertyDescriptor(Screen.prototype, "availTop").get.toString()` and see
+         * the contents of the function. Appending .bind(null) to the function definition will
+         * have the same toString call return the default [native code]
+         */
+        try {
+            Object.defineProperty(prop.object, name, {
+                get: (() => JSON.stringify(prop.targetValue)).bind(null)
+            })
+        } catch (e) {}
+    }
+}
+
 // TODO make rollup aware of this so it can tree shake
 const mozProxies = 'wrappedJSObject' in window
 

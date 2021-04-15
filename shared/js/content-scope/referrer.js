@@ -1,3 +1,5 @@
+import { overrideProperty } from './utils'
+
 export function initReferrer (args) {
     // Unfortunately, we only have limited information about the referrer and current frame. A single
     // page may load many requests and sub frames, all with different referrers. Since we
@@ -14,12 +16,10 @@ export function initReferrer (args) {
             // if we don't have a matching referrer, just trim it to origin.
             trimmedReferer = new URL(document.referrer).origin + '/'
         }
-        fingerprintPropertyValues.document = {
-            referrer: {
-                object: 'Document.prototype',
-                origValue: document.referrer,
-                targetValue: trimmedReferer
-            }
-        }
+        overrideProperty('referrer', {
+            object: 'Document.prototype',
+            origValue: document.referrer,
+            targetValue: trimmedReferer
+        })
     }
 }
