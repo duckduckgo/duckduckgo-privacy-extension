@@ -4,6 +4,7 @@ import { initAudioProtection } from './audio'
 import { initTemporaryStorage } from './temporary-storage'
 import { initReferrer } from './referrer'
 import { initBattery } from './battery'
+import { initScreenSize } from './screen-size'
 
 export function initProtection (args) {
     initStringExemptionLists(args)
@@ -21,5 +22,8 @@ export function initProtection (args) {
     }
     if (!isFeatureBroken(args, 'battery')) {
         initBattery(args)
+    }
+    if (!isFeatureBroken(args, 'screen-size')) {
+        initScreenSize(args)
     }
 }

@@ -26,38 +26,6 @@
 
     // Property values to be set and their original values.
     const fingerprintPropertyValues = {
-        screen: {
-            availTop: {
-                object: 'Screen.prototype',
-                origValue: screen.availTop,
-                targetValue: 0
-            },
-            availLeft: {
-                object: 'Screen.prototype',
-                origValue: screen.availLeft,
-                targetValue: 0
-            },
-            availWidth: {
-                object: 'Screen.prototype',
-                origValue: screen.availWidth,
-                targetValue: screen.width
-            },
-            availHeight: {
-                object: 'Screen.prototype',
-                origValue: screen.availHeight,
-                targetValue: screen.height
-            },
-            colorDepth: {
-                object: 'Screen.prototype',
-                origValue: screen.colorDepth,
-                targetValue: 24
-            },
-            pixelDepth: {
-                object: 'Screen.prototype',
-                origValue: screen.pixelDepth,
-                targetValue: 24
-            }
-        },
         hardware: {
             keyboard: {
                 object: 'Navigator.prototype',
@@ -117,93 +85,8 @@
      */
     function buildInjectionScript () {
         let script = buildScriptProperties()
-        script += setWindowDimensions()
         return script
     }
-
-    /**
-     * normalize window dimensions, if more than one monitor is in play.
-     *  X/Y values are set in the browser based on distance to the main monitor top or left, which
-     * can mean second or more monitors have very large or negative values. This function maps a given
-     * given coordinate value to the proper place on the main screen.
-     */
-    function normalizeWindowDimension (value, targetDimension) {
-        if (value > targetDimension) {
-            return value % targetDimension
-        }
-        if (value < 0) {
-            return targetDimension + value
-        }
-        return value
-    }
-
-    function setWindowPropertyValue (property, value) {
-        // Here we don't update the prototype getter because the values are updated dynamically
-        const script = `
-            try {
-                Object.defineProperty(window, "${property}", {
-                    get: ( () => ${value}).bind(null),
-                    set: ( () => {}).bind(null),
-                    configurable: true
-                });
-            } catch (e) {}
-        `
-        return script
-    }
-
-    /**
-     * Fix window dimensions. The extension runs in a different JS context than the
-     * page, so we can inject the correct screen values as the window is resized,
-     * ensuring that no information is leaked as the dimensions change, but also that the
-     * values change correctly for valid use cases.
-     */
-    function setWindowDimensions () {
-        let windowScript = ''
-        try {
-            const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
-            const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
-            if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
-                windowScript += setWindowPropertyValue('screenY', 0)
-                windowScript += setWindowPropertyValue('screenTop', 0)
-            } else {
-                windowScript += setWindowPropertyValue('screenY', normalizedY)
-                windowScript += setWindowPropertyValue('screenTop', normalizedY)
-            }
-
-            if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
-                windowScript += setWindowPropertyValue('outerHeight', top.window.screen.height)
-            } else {
-                try {
-                    windowScript += setWindowPropertyValue('outerHeight', top.window.outerHeight)
-                } catch (e) {
-                    // top not accessible to certain iFrames, so ignore.
-                }
-            }
-
-            if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
-                windowScript += setWindowPropertyValue('screenX', 0)
-                windowScript += setWindowPropertyValue('screenLeft', 0)
-            } else {
-                windowScript += setWindowPropertyValue('screenX', normalizedX)
-                windowScript += setWindowPropertyValue('screenLeft', normalizedX)
-            }
-
-            if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
-                windowScript += setWindowPropertyValue('outerWidth', top.window.screen.width)
-            } else {
-                try {
-                    windowScript += setWindowPropertyValue('outerWidth', top.window.outerWidth)
-                } catch (e) {
-                    // top not accessible to certain iFrames, so ignore.
-                }
-            }
-        } catch (e) {
-            // in a cross domain iFrame, top.window is not accessible.
-        }
-
-        return windowScript
-    }
-
     /**
      * Inject all the overwrites into the page.
      */
@@ -222,11 +105,6 @@
         } catch (e) {
         }
     }
-
-    window.addEventListener('resize', function () {
-        const windowScript = setWindowDimensions()
-        inject(windowScript, true, elem)
-    })
 
     const injectionScript = buildInjectionScript()
     inject(injectionScript, true, elem)
