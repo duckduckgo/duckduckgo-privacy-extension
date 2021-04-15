@@ -69,6 +69,7 @@
         "timekeeper": "^2.1.1"
     },
     "dependencies": {
+        "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.0.3",
         "bel": "4.6.0",
         "chalk": "2.1.0",
@@ -79,7 +80,6 @@
         "file-url": "2.0.2",
         "is-plain-object": "2.0.1",
         "jquery": "3.5.0",
-        "jsbloom": "https://github.com/duckduckgo/jsbloom.git#1.0.2",
         "node-gyp": "^7.0.0",
         "normalize.scss": "0.1.0",
         "object.values": "1.0.4",
