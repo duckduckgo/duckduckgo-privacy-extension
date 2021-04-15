@@ -3,6 +3,7 @@ import { initCanvasProtection } from './canvas'
 import { initAudioProtection } from './audio'
 import { initTemporaryStorage } from './temporary-storage'
 import { initReferrer } from './referrer'
+import { initBattery } from './battery'
 
 export function initProtection (args) {
     initStringExemptionLists(args)
@@ -17,5 +18,8 @@ export function initProtection (args) {
     }
     if (!isFeatureBroken(args, 'referrer')) {
         initReferrer(args)
+    }
+    if (!isFeatureBroken(args, 'battery')) {
+        initBattery(args)
     }
 }

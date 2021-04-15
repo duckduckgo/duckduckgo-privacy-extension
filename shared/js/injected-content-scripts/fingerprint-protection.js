@@ -113,44 +113,10 @@
     }
 
     /**
-     *  Build a script that overwrites the Battery API if present in the browser.
-     *  It will return the values defined in the getBattery function to the client,
-     *  as well as prevent any script from listening to events.
-     */
-    function buildBatteryScript () {
-        if (navigator.getBattery) {
-            const batteryScript = `
-                let spoofedValues = {
-                    charging: true,
-                    chargingTime: 0,
-                    dischargingTime: Infinity,
-                    level: 1
-                }
-                let eventProperties = ['onchargingchange', 'onchargingtimechange', 'ondischargingtimechange', 'onlevelchange']
-
-                for (const [prop, val] of Object.entries(spoofedValues)) {
-                    try {
-                        Object.defineProperty(BatteryManager.prototype, prop, { get: ( () => val).bind(null) })
-                    } catch(e) { }
-                }
-                for (const eventProp of eventProperties) {
-                    try {
-                        Object.defineProperty(BatteryManager.prototype, eventProp, { get: ( () => null).bind(null) })
-                    } catch(e) { }
-                }
-            `
-            return batteryScript
-        } else {
-            return ''
-        }
-    }
-
-    /**
      * All the steps for building the injection script. Should only be done at initial page load.
      */
     function buildInjectionScript () {
         let script = buildScriptProperties()
-        script += buildBatteryScript()
         script += setWindowDimensions()
         return script
     }
