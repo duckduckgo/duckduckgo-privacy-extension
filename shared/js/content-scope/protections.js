@@ -2,6 +2,7 @@ import { initStringExemptionLists, isFeatureBroken } from './utils'
 import { initCanvasProtection } from './canvas'
 import { initAudioProtection } from './audio'
 import { initTemporaryStorage } from './temporary-storage'
+import { initReferrer } from './referrer'
 
 export function initProtection (args) {
     initStringExemptionLists(args)
@@ -13,5 +14,8 @@ export function initProtection (args) {
     }
     if (!isFeatureBroken(args, 'temporary-storage')) {
         initTemporaryStorage(args)
+    }
+    if (!isFeatureBroken(args, 'referrer')) {
+        initReferrer(args)
     }
 }
