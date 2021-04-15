@@ -26,23 +26,6 @@
 
     // Property values to be set and their original values.
     const fingerprintPropertyValues = {
-        hardware: {
-            keyboard: {
-                object: 'Navigator.prototype',
-                origValue: navigator.keyboard,
-                targetValue: undefined
-            },
-            hardwareConcurrency: {
-                object: 'Navigator.prototype',
-                origValue: navigator.hardwareConcurrency,
-                targetValue: 8
-            },
-            deviceMemory: {
-                object: 'Navigator.prototype',
-                origValue: navigator.deviceMemory,
-                targetValue: 8
-            }
-        },
         options: {
             doNotTrack: {
                 object: 'Navigator.prototype',
