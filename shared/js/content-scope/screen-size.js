@@ -80,7 +80,7 @@ function setWindowDimensions () {
 }
 
 
-export function initWindowSize(args) {
+export function initScreenSize(args) {
     overrideProperty('availTop', {
         object: 'Screen.prototype',
         origValue: screen.availTop,

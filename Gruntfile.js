@@ -65,7 +65,6 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
-        injectedContentScripts: ['<%= dirs.src.js %>/injected-content-scripts/*.js'],
         contentScope: ['<%= dirs.src.js %>/content-scope/*.js', '<%= dirs.public.js %>/inject/*.js'],
         data: ['<%= dirs.data %>/*.js']
     }
@@ -175,8 +174,6 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
-            // TODO make this deterministic with an index.js that includes the other files. Browserify output is bloated which might break things.
-            copyInjectedContentScripts: `cp -r shared/js/injected-content-scripts build/${browser}/${buildType}/public/js/`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
@@ -205,10 +202,6 @@ module.exports = function (grunt) {
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs', 'watchSafari']
-            },
-            injectedContentScripts: {
-                files: watch.injectedContentScripts,
-                tasks: ['exec:copyInjectedContentScripts']
             },
             contentScripts: {
                 files: watch.contentScripts,
@@ -244,7 +237,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyInjectedContentScripts', 'exec:copyContentScope', 'exec:buildContentScript', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:buildContentScript', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }
