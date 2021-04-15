@@ -6,6 +6,7 @@ import { initReferrer } from './referrer'
 import { initBattery } from './battery'
 import { initScreenSize } from './screen-size'
 import { initHardware } from './hardware'
+import { initDoNotTrack } from './do-not-track'
 
 export function initProtection (args) {
     initStringExemptionLists(args)
@@ -29,5 +30,8 @@ export function initProtection (args) {
     }
     if (!isFeatureBroken(args, 'hardware')) {
         initHardware(args)
+    }
+    if (!isFeatureBroken(args, 'do-not-track')) {
+        initDoNotTrack(args)
     }
 }
