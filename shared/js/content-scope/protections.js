@@ -7,8 +7,18 @@ import { initBattery } from './battery'
 import { initScreenSize } from './screen-size'
 import { initHardware } from './hardware'
 import { initDoNotTrack } from './do-not-track'
+import { initFloc } from './floc'
 
 export function initProtection (args) {
+    // don't inject into non-HTML documents (such as XML documents)
+    // but do inject into XHTML documents
+    if (document instanceof HTMLDocument === false && (
+        document instanceof XMLDocument === false ||
+        document.createElement('div') instanceof HTMLDivElement === false
+    )) {
+        return
+    }
+
     initStringExemptionLists(args)
     if (!isFeatureBroken(args, 'canvas')) {
         initCanvasProtection(args)
@@ -33,5 +43,8 @@ export function initProtection (args) {
     }
     if (!isFeatureBroken(args, 'do-not-track')) {
         initDoNotTrack(args)
+    }
+    if (!isFeatureBroken(args, 'floc')) {
+        initFloc(args)
     }
 }
