@@ -91,6 +91,7 @@
             position: relative;
             cursor: pointer;
             box-shadow: none;
+            z-index: 2147483646;
         `,
         circle: `
             border-radius: 50%;
@@ -124,7 +125,7 @@
             box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.12), 0px 8px 16px rgba(0, 0, 0, 0.08);
             width: 360px;
             margin-top: 10px;
-            z-index: 5;
+            z-index: 2147483647;
             position: absolute;
         `,
         textBubbleWidth: 360, // Should match the width rule in textBubble
@@ -152,6 +153,9 @@
             margin: auto;
             padding: 17px;
             text-align: left;
+        `,
+        hoverContainer: `
+            padding-bottom: 10px;
         `,
         buttonTextContainer: `
             display: flex; 
@@ -200,6 +204,7 @@
             height: 1.4em;
             flex-wrap: wrap;
             overflow: hidden;
+            text-align: left;
         `,
         buttonRow: `
             display: flex;
@@ -296,6 +301,26 @@
             z-index: 2147483647;
             display: block;
             position: fixed;
+        `,
+        headerLinkContainer: `
+            flex-basis: 100%;
+            display: grid;
+            justify-content: flex-end;
+        `,
+        headerLink: `
+            line-height: 1.4;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: DuckDuckGoPrivacyEssentialsBold;
+            text-decoration: none;
+            cursor: pointer;
+            min-width: 100px;
+            text-align: end;
+            float: right;
+            display: none;
+        `,
+        fbContainer: `
+            display: inline-block;
         `
     }
 
@@ -321,6 +346,11 @@
             for (const [attrName, attrSettings] of Object.entries(this.clickAction.urlDataAttributesToPreserve)) {
                 let value = this.originalElement.getAttribute(attrName)
                 if (!value) {
+                    if (attrSettings.required) {
+                        // missing a required attribute means we won't be able to replace it
+                        // with a light version, replace with full version.
+                        this.clickAction.type = 'allowFull'
+                    }
                     value = attrSettings.default
                 }
                 this.dataElements[attrName] = value
@@ -364,9 +394,15 @@
                     if (!valueFound) {
                         valueFound = this.dataElements[valAttr.fallbackAttribute]
                     }
+                    let partialStyleString = ''
                     if (valueFound) {
-                        styleString += `${attr}: ${valueFound}${valAttr.unit};`
+                        partialStyleString += `${attr}: ${valueFound}`
                     }
+                    if (!partialStyleString.includes(valAttr.unit)) {
+                        partialStyleString += valAttr.unit
+                    }
+                    partialStyleString += ';'
+                    styleString += partialStyleString
                 }
             }
 
@@ -456,6 +492,7 @@
                     }
                     // Create a container for the new FB element
                     const fbContainer = document.createElement('div')
+                    fbContainer.style.cssText = styles.fbContainer
                     const fadeIn = document.createElement('div')
                     fadeIn.style.cssText = 'display: none; opacity: 0;'
 
@@ -566,16 +603,20 @@
                 getImage: widgetData.replaceSettings.icon
             }, function putButton (icon) {
                 const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
+                const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const el = createContentBlock(
                     widget,
                     button,
+                    textButton,
                     icon)
                 button.addEventListener('click', widget.clickFunction(originalElement, el))
+                textButton.addEventListener('click', widget.clickFunction(originalElement, el))
                 parent.replaceChild(el, originalElement)
-                // Hide the title element if the box is too narrow.
-                if (!!el.offsetWidth && el.offsetWidth <= 400) {
-                    const title = document.querySelector(`#${titleID}`)
-                    title.style.cssText += 'display: none;'
+                // Show an unblock link if parent element forces small height
+                // which may hide video.
+                if ((!!el.offsetHeight && el.offsetHeight <= 200) || (!!el.parentNode && el.parentNode.offsetHeight <= 200)) {
+                    const textButton = el.querySelector(`#${titleID + 'TextButton'}`)
+                    textButton.style.cssText += 'display: block'
                 }
             })
         }
@@ -668,6 +709,13 @@
     /*********************************************************
      *  Widget building blocks
      *********************************************************/
+    function makeTextButton (linkText, mode) {
+        const linkElement = document.createElement('a')
+        linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
+        linkElement.innerHTML = linkText
+        return linkElement
+    }
+
     function makeButton (buttonText, mode) {
         const button = document.createElement('button')
         button.style.cssText = styles.button + styles[mode].buttonBackground
@@ -692,6 +740,8 @@
     function makeLoginButton (buttonText, mode, hoverTextTitle, hoverTextBody, icon, originalElement) {
         const container = document.createElement('div')
         container.style.cssText = 'position: relative;'
+        // inherit any class styles on the button
+        container.className = 'fb-login-button FacebookLogin__button'
         const styleElement = document.createElement('style')
         styleElement.innerHTML = `
             #DuckDuckGoPrivacyEssentialsHoverableText {
@@ -705,6 +755,7 @@
 
         const hoverContainer = document.createElement('div')
         hoverContainer.id = 'DuckDuckGoPrivacyEssentialsHoverable'
+        hoverContainer.style.cssText = styles.hoverContainer
         container.appendChild(hoverContainer)
 
         // Make the button
@@ -830,7 +881,7 @@
         })
     }
 
-    function createTitleRow (message) {
+    function createTitleRow (message, textButton) {
         // Create row container
         const row = document.createElement('div')
         row.style.cssText = styles.titleBox
@@ -852,14 +903,23 @@
         msgElement.style.cssText = styles.title
         row.appendChild(msgElement)
 
+        // Text button for very small boxes
+        if (textButton) {
+            textButton.id = titleID + 'TextButton'
+            row.appendChild(textButton)
+        }
+
         return row
     }
 
     // Create the content block to replace other divs/iframes with
-    function createContentBlock (widget, button, img) {
+    function createContentBlock (widget, button, textButton, img) {
+        const wrapper = document.createElement('div')
+        wrapper.style.cssText = 'display: inline-block;'
         // Create overall grid structure
         const element = document.createElement('div')
         element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
+        wrapper.appendChild(element)
         // Style element includes our font
         const styleElement = document.createElement('style')
         styleElement.innerHTML = styles.fontStyle + `a { ${styles[widget.getMode()].linkFont}; font-weight: bold; }`
@@ -868,7 +928,7 @@
         const titleRow = document.createElement('div')
         titleRow.style.cssText = styles.headerRow
         element.appendChild(titleRow)
-        titleRow.appendChild(createTitleRow('DuckDuckGo'))
+        titleRow.appendChild(createTitleRow('DuckDuckGo', textButton))
 
         const contentRow = document.createElement('div')
         contentRow.style.cssText = styles.content
@@ -907,6 +967,6 @@
         buttonRow.appendChild(button)
         contentRow.appendChild(buttonRow)
 
-        return element
+        return wrapper
     }
 })()

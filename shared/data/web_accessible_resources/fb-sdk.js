@@ -88,6 +88,7 @@
 
     if (!window.FB) {
         window.FB = {
+            api: function () {},
             init: function (obj) {
                 if (obj) {
                     initData = obj
@@ -123,7 +124,11 @@
                 logPageView: function () {}
             },
             Event: {
-                subscribe: function () {},
+                subscribe: function (event, callback) {
+                    if (event === 'xfbml.render') {
+                        callback()
+                    }
+                },
                 unsubscribe: function () {}
             },
             XFBML: {
