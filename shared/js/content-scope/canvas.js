@@ -26,7 +26,7 @@ export function initCanvasProtection (args) {
     function computeOffScreenCanvas (canvas) {
         const ctx = canvas.getContext('2d')
         // We *always* compute the random pixels on the complete pixel set, then pass back the subset later
-        let imageData = getImageDataProxy._native2.apply(ctx, [0, 0, canvas.width, canvas.height])
+        let imageData = getImageDataProxy._native.apply(ctx, [0, 0, canvas.width, canvas.height])
         imageData = modifyPixelData(imageData, sessionKey, domainKey)
 
         // Make a off-screen canvas and put the data there

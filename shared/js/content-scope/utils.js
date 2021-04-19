@@ -125,15 +125,13 @@ export function defineProperty (object, propertyName, descriptor) {
 export class DDGProxy {
     constructor (objectScope, property, proxyObject) {
         if (mozProxies) {
-            this._native = objectScope.wrappedJSObject[property]
-            this._native2 = objectScope[property]
+            this._native = objectScope[property]
             const handler = new window.wrappedJSObject.Object()
             handler.apply = exportFunction(proxyObject.apply, window)
             this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler)
             exportFunction(this.internal, objectScope, { defineAs: property })
         } else {
             this._native = objectScope[property]
-            this._native2 = objectScope[property]
             const handler = {}
             handler.apply = proxyObject.apply
             this.internal = new window.Proxy(objectScope[property], handler)
