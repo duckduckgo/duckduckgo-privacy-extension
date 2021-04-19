@@ -17,7 +17,7 @@ export function initReferrer (args) {
             trimmedReferer = new URL(document.referrer).origin + '/'
         }
         overrideProperty('referrer', {
-            object: 'Document.prototype',
+            object: Document.prototype,
             origValue: document.referrer,
             targetValue: trimmedReferer
         })

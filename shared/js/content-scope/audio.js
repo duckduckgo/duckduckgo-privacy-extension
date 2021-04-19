@@ -1,4 +1,4 @@
-import { shouldExemptMethod, iterateDataKey, DDGProxy, DDGReflect } from './utils'
+import { shouldExemptMethod, iterateDataKey, DDGProxy, DDGReflect, getDataKeySync } from './utils'
 
 export function initAudioProtection (args) {
     const { sessionKey, site } = args
@@ -25,7 +25,7 @@ export function initAudioProtection (args) {
         })
     }
 
-    AudioBuffer.prototype.copyFromChannel = new Proxy(AudioBuffer.prototype.copyFromChannel, {
+    new DDGProxy(AudioBuffer.prototype, 'copyFromChannel', {
         apply (target, thisArg, args) {
             const [source, channelNumber, startInChannel] = args
             // This is implemented in a different way to canvas purely because calling the function copied the original value, which is not ideal
@@ -35,7 +35,7 @@ export function initAudioProtection (args) {
                 // If startInChannel is longer than the arrayBuffer length then call the default method to throw
                 startInChannel > thisArg.length) {
                 // The normal return value
-                return target.apply(thisArg, args)
+                return DDGReflect.apply(target, thisArg, args)
             }
             try {
                 // Call the protected getChannelData we implement, slice from the startInChannel value and assign to the source array
@@ -43,7 +43,7 @@ export function initAudioProtection (args) {
                     source[index] = val
                 })
             } catch {
-                return target.apply(thisArg, args)
+                return DDGReflect.apply(target, thisArg, args)
             }
         }
     })
@@ -67,10 +67,10 @@ export function initAudioProtection (args) {
         cacheData.set(thisArg, { args: JSON.stringify(args), expires: Date.now() + cacheExpiry, audioKey })
     }
 
-    AudioBuffer.prototype.getChannelData = new Proxy(AudioBuffer.prototype.getChannelData, {
+    new DDGProxy(AudioBuffer.prototype, 'getChannelData', {
         apply (target, thisArg, args) {
             // The normal return value
-            const channelData = target.apply(thisArg, args)
+            const channelData = DDGReflect.apply(target, thisArg, args)
             if (shouldExemptMethod('audio')) {
                 return channelData
             }
@@ -85,9 +85,9 @@ export function initAudioProtection (args) {
 
     const audioMethods = ['getByteTimeDomainData', 'getFloatTimeDomainData', 'getByteFrequencyData', 'getFloatFrequencyData']
     for (const methodName of audioMethods) {
-        AnalyserNode.prototype[methodName] = new Proxy(AnalyserNode.prototype[methodName], {
+        new DDGProxy(AnalyserNode.prototype, methodName, {
             apply (target, thisArg, args) {
-                target.apply(thisArg, args)
+                DDGReflect.apply(target, thisArg, args)
                 if (shouldExemptMethod('audio')) {
                     return
                 }

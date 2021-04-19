@@ -94,8 +94,8 @@ export function overrideProperty (name, prop) {
          * have the same toString call return the default [native code]
          */
         try {
-            Object.defineProperty(prop.object, name, {
-                get: (() => JSON.stringify(prop.targetValue)).bind(null)
+            defineProperty(prop.object, name, {
+                get: () => JSON.stringify(prop.targetValue)
             })
         } catch (e) {}
     }
@@ -103,6 +103,24 @@ export function overrideProperty (name, prop) {
 
 // TODO make rollup aware of this so it can tree shake
 const mozProxies = 'wrappedJSObject' in window
+
+export function defineProperty (object, propertyName, descriptor) {
+    if (mozProxies) {
+        const usedObj = object.wrappedJSObject
+        const UsedObjectInterface = window.wrappedJSObject.Object
+        const definedDescriptor = new UsedObjectInterface();
+        ['configurable', 'enumerable', 'value', 'writable'].forEach((propertyName) => {
+            // TODO check if value is complex and export it if so.
+            definedDescriptor[propertyName] = descriptor[propertyName]
+        });
+        ['get', 'set'].forEach((methodName) => {
+            definedDescriptor[methodName] = exportFunction(descriptor[methodName], window)
+        })
+        UsedObjectInterface.defineProperty(usedObj, propertyName, descriptor)
+    } else {
+        Object.defineProperty(object, propertyName, descriptor)
+    }
+}
 
 export class DDGProxy {
     constructor (objectScope, property, proxyObject) {

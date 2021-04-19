@@ -1,3 +1,5 @@
+import { defineProperty } from './utils'
+
 export function initTemporaryStorage () {
     /**
      * Temporary storage can be used to determine hard disk usage and size.
@@ -16,7 +18,7 @@ export function initTemporaryStorage () {
                 }
                 org.call(navigator.webkitTemporaryStorage, modifiedCallback, err)
             }
-            Object.defineProperty(Navigator.prototype, 'webkitTemporaryStorage', { get: () => tStorage })
+            defineProperty(Navigator.prototype, 'webkitTemporaryStorage', { get: () => tStorage })
         } catch (e) {}
     }
 }

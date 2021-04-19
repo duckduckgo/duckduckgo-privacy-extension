@@ -1,4 +1,4 @@
-import { overrideProperty } from './utils'; 
+import { overrideProperty, defineProperty } from './utils'
 
 /**
  * normalize window dimensions, if more than one monitor is in play.
@@ -16,18 +16,18 @@ function normalizeWindowDimension (value, targetDimension) {
     return value
 }
 
-
 function setWindowPropertyValue (property, value) {
     // Here we don't update the prototype getter because the values are updated dynamically
     try {
-        Object.defineProperty(window, property, {
-            get: ( () => value).bind(null),
-            set: ( () => {}).bind(null),
+        defineProperty(window, property, {
+            get: () => value,
+            set: () => {},
             configurable: true
-        });
+        })
     } catch (e) {}
-    return script
 }
+
+const fingerprintPropertyValues = {}
 
 /**
  * Fix window dimensions. The extension runs in a different JS context than the
@@ -79,35 +79,34 @@ function setWindowDimensions () {
     }
 }
 
-
-export function initScreenSize(args) {
+export function initScreenSize (args) {
     overrideProperty('availTop', {
-        object: 'Screen.prototype',
+        object: Screen.prototype,
         origValue: screen.availTop,
         targetValue: 0
-    });
+    })
     overrideProperty('availLeft', {
-        object: 'Screen.prototype',
+        object: Screen.prototype,
         origValue: screen.availLeft,
         targetValue: 0
-    });
+    })
     overrideProperty('availWidth', {
-        object: 'Screen.prototype',
+        object: Screen.prototype,
         origValue: screen.availWidth,
         targetValue: screen.width
-    });
+    })
     overrideProperty('availHeight', {
-        object: 'Screen.prototype',
+        object: Screen.prototype,
         origValue: screen.availHeight,
         targetValue: screen.height
-    });
+    })
     overrideProperty('colorDepth', {
-        object: 'Screen.prototype',
+        object: Screen.prototype,
         origValue: screen.colorDepth,
         targetValue: 24
     })
     overrideProperty('pixelDepth', {
-        object: 'Screen.prototype',
+        object: Screen.prototype,
         origValue: screen.pixelDepth,
         targetValue: 24
     })

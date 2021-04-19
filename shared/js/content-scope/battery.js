@@ -1,3 +1,5 @@
+import { defineProperty } from './utils'
+
 /**
  * Overwrites the Battery API if present in the browser.
  * It will return the values defined in the getBattery function to the client,
@@ -15,12 +17,12 @@ export function initBattery (args) {
 
         for (const [prop, val] of Object.entries(spoofedValues)) {
             try {
-                Object.defineProperty(BatteryManager.prototype, prop, { get: () => val })
+                defineProperty(BatteryManager.prototype, prop, { get: () => val })
             } catch (e) { }
         }
         for (const eventProp of eventProperties) {
             try {
-                Object.defineProperty(BatteryManager.prototype, eventProp, { get: () => null })
+                defineProperty(BatteryManager.prototype, eventProp, { get: () => null })
             } catch (e) { }
         }
     }
