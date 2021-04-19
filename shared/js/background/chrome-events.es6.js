@@ -550,6 +550,7 @@ function getArgumentsObject (tabId) {
     const site = tab?.site || {}
     const referrer = tab?.referrer || ''
     return {
+        globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,
@@ -627,11 +628,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  * Global Privacy Control
  */
 const GPC = require('./GPC.es6')
-
-// Set GPC property on DOM if enabled.
-chrome.webNavigation.onCommitted.addListener(details => {
-    GPC.injectDOMSignal(details.tabId, details.frameId)
-})
 
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
 if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {

@@ -8,6 +8,7 @@ import { initScreenSize } from './screen-size'
 import { initHardware } from './hardware'
 import { initDoNotTrack } from './do-not-track'
 import { initFloc } from './floc'
+import { initGpc } from './gpc'
 
 export function initProtection (args) {
     // don't inject into non-HTML documents (such as XML documents)
@@ -46,5 +47,8 @@ export function initProtection (args) {
     }
     if (!isFeatureBroken(args, 'floc')) {
         initFloc(args)
+    }
+    if (!isFeatureBroken(args, 'gpc')) {
+        initGpc(args)
     }
 }
