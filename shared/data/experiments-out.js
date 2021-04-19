@@ -31,7 +31,7 @@ module.exports = {
             }
         }
     },
-    s: {
+    u: {
         name: 'Facebook click to load experiment',
         description: 'Test blocking all Facebook and replacing it with clickable elements.',
         active: true,
