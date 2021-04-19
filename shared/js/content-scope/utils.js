@@ -97,7 +97,8 @@ export function overrideProperty (name, prop) {
             defineProperty(prop.object, name, {
                 get: () => JSON.stringify(prop.targetValue)
             })
-        } catch (e) {}
+        } catch (e) {
+        }
     }
 }
 
@@ -111,12 +112,16 @@ export function defineProperty (object, propertyName, descriptor) {
         const definedDescriptor = new UsedObjectInterface();
         ['configurable', 'enumerable', 'value', 'writable'].forEach((propertyName) => {
             // TODO check if value is complex and export it if so.
-            definedDescriptor[propertyName] = descriptor[propertyName]
+            if (propertyName in descriptor) {
+                definedDescriptor[propertyName] = descriptor[propertyName];
+            }
         });
         ['get', 'set'].forEach((methodName) => {
-            definedDescriptor[methodName] = exportFunction(descriptor[methodName], window)
+            if (methodName in descriptor) {
+                exportFunction(descriptor[methodName], definedDescriptor, { defineAs: methodName })
+            }
         })
-        UsedObjectInterface.defineProperty(usedObj, propertyName, descriptor)
+        UsedObjectInterface.defineProperty(usedObj, propertyName, definedDescriptor)
     } else {
         Object.defineProperty(object, propertyName, descriptor)
     }
