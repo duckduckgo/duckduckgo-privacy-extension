@@ -916,14 +916,27 @@
     function createContentBlock (widget, button, textButton, img) {
         const wrapper = document.createElement('div')
         wrapper.style.cssText = 'display: inline-block;'
+        // Style element includes our font & overwrites page styles
+        const styleElement = document.createElement('style')
+        const wrapperClass = 'DuckDuckGoSocialContainer'
+        styleElement.innerHTML = styles.fontStyle + `
+            .${wrapperClass} a {
+                ${styles[widget.getMode()].linkFont};
+                font-weight: bold;
+            }
+            .${wrapperClass} a:hover {
+                ${styles[widget.getMode()].linkFont};
+                font-weight: bold;
+            }
+        `
+        wrapper.appendChild(styleElement)
+
         // Create overall grid structure
         const element = document.createElement('div')
         element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
+        element.className = wrapperClass
         wrapper.appendChild(element)
-        // Style element includes our font
-        const styleElement = document.createElement('style')
-        styleElement.innerHTML = styles.fontStyle + `a { ${styles[widget.getMode()].linkFont}; font-weight: bold; }`
-        element.appendChild(styleElement)
+
         // grid of three rows
         const titleRow = document.createElement('div')
         titleRow.style.cssText = styles.headerRow
