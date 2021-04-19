@@ -1,4 +1,4 @@
-SCRIPT_TO_REPLACE
+/* global protections */
 
 function init () {
     chrome.runtime.sendMessage({ registeredContentScript: true },

@@ -31,7 +31,7 @@ async function init() {
 }
 
 async function initFirefox() {
-    const replaceString = "SCRIPT_TO_REPLACE";
+    const replaceString = "/* global protections */";
     const injectScriptPath = "shared/js/inject/mozilla.js";
     const injectScript = await readFile(injectScriptPath);
     const contentScope = await generateContentScope();
@@ -40,7 +40,7 @@ async function initFirefox() {
 }
 
 async function initChrome() {
-    const replaceString = "SCRIPT_TO_REPLACE";
+    const replaceString = "/* global protections */";
     const injectScriptPath = "shared/js/inject/chrome.js";
     const injectScript = await readFile(injectScriptPath);
     const contentScope = await generateContentScope();

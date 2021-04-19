@@ -25,7 +25,9 @@ function randomString () {
 function init () {
     const randomMethodName = '_d' + randomString()
     const randomPassword = '_p' + randomString()
-    const randomFunction = `
+    const initialScript = `
+      /* global protections */
+      // Define a random function we call later.
       // Use define property so isn't enumerable
       Object.defineProperty(window, '${randomMethodName}', {
           enumerable: false,
@@ -46,7 +48,6 @@ function init () {
           })
       });
     `
-    const initialScript = SCRIPT_TO_REPLACE + randomFunction
     inject(initialScript)
 
     chrome.runtime.sendMessage({ registeredContentScript: true },

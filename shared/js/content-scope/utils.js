@@ -1,3 +1,4 @@
+/* global exportFunction */
 import sjcl from './sjcl'
 
 export function getDataKeySync (sessionKey, domainKey, inputData) {
@@ -113,7 +114,7 @@ export function defineProperty (object, propertyName, descriptor) {
         ['configurable', 'enumerable', 'value', 'writable'].forEach((propertyName) => {
             // TODO check if value is complex and export it if so.
             if (propertyName in descriptor) {
-                definedDescriptor[propertyName] = descriptor[propertyName];
+                definedDescriptor[propertyName] = descriptor[propertyName]
             }
         });
         ['get', 'set'].forEach((methodName) => {
