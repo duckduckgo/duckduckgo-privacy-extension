@@ -101,6 +101,7 @@ export function overrideProperty (name, prop) {
         } catch (e) {
         }
     }
+    return prop.origValue;
 }
 
 // TODO make rollup aware of this so it can tree shake

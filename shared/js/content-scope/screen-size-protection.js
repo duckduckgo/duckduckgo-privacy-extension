@@ -27,7 +27,7 @@ function setWindowPropertyValue (property, value) {
     } catch (e) {}
 }
 
-const fingerprintPropertyValues = {}
+const origPropertyValues = {}
 
 /**
  * Fix window dimensions. The extension runs in a different JS context than the
@@ -39,7 +39,7 @@ function setWindowDimensions () {
     try {
         const normalizedY = normalizeWindowDimension(window.screenY, window.screen.height)
         const normalizedX = normalizeWindowDimension(window.screenX, window.screen.width)
-        if (normalizedY <= fingerprintPropertyValues.screen.availTop.origValue) {
+        if (normalizedY <= origPropertyValues.availTop) {
             setWindowPropertyValue('screenY', 0)
             setWindowPropertyValue('screenTop', 0)
         } else {
@@ -47,7 +47,7 @@ function setWindowDimensions () {
             setWindowPropertyValue('screenTop', normalizedY)
         }
 
-        if (top.window.outerHeight >= fingerprintPropertyValues.screen.availHeight.origValue - 1) {
+        if (top.window.outerHeight >= origPropertyValues.availHeight - 1) {
             setWindowPropertyValue('outerHeight', top.window.screen.height)
         } else {
             try {
@@ -57,7 +57,7 @@ function setWindowDimensions () {
             }
         }
 
-        if (normalizedX <= fingerprintPropertyValues.screen.availLeft.origValue) {
+        if (normalizedX <= origPropertyValues.availLeft) {
             setWindowPropertyValue('screenX', 0)
             setWindowPropertyValue('screenLeft', 0)
         } else {
@@ -65,7 +65,7 @@ function setWindowDimensions () {
             setWindowPropertyValue('screenLeft', normalizedX)
         }
 
-        if (top.window.outerWidth >= fingerprintPropertyValues.screen.availWidth.origValue - 1) {
+        if (top.window.outerWidth >= origPropertyValues.availWidth - 1) {
             setWindowPropertyValue('outerWidth', top.window.screen.width)
         } else {
             try {
@@ -80,22 +80,22 @@ function setWindowDimensions () {
 }
 
 export function init (args) {
-    overrideProperty('availTop', {
+    origPropertyValues.availTop = overrideProperty('availTop', {
         object: Screen.prototype,
         origValue: screen.availTop,
         targetValue: 0
     })
-    overrideProperty('availLeft', {
+    origPropertyValues.availLeft = overrideProperty('availLeft', {
         object: Screen.prototype,
         origValue: screen.availLeft,
         targetValue: 0
     })
-    overrideProperty('availWidth', {
+    origPropertyValues.availWidth = overrideProperty('availWidth', {
         object: Screen.prototype,
         origValue: screen.availWidth,
         targetValue: screen.width
     })
-    overrideProperty('availHeight', {
+    origPropertyValues.availHeight = overrideProperty('availHeight', {
         object: Screen.prototype,
         origValue: screen.availHeight,
         targetValue: screen.height
