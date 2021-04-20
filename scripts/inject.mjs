@@ -48,7 +48,7 @@ async function initChrome() {
     const contentScope = await generateContentScope();
     // Encode in URI format to prevent breakage (we could choose to just escape ` instead)
     const encodedString = encodeURI(contentScope.toString());
-    const outputScript = injectScript.toString().replace(replaceString, "decodeURI(`" + encodedString + "`)");
+    const outputScript = injectScript.toString().replace(replaceString, '${decodeURI("' + encodedString + '")}');
     console.log(outputScript);
 }
 
