@@ -1,9 +1,9 @@
-name: Test
+name: Build
 
 on: [push, pull_request]
 
 jobs:
-  lint:
+  chrome:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -17,9 +17,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: npm ci
-      - run: npm run lint
-  unit:
+      - run: npm run release-chrome
+  firefox:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -33,25 +32,4 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: npm ci
-      - run: npm test
-  integration:
-    runs-on: ubuntu-20.04
-    timeout-minutes: 10
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 14
-      uses: actions/setup-node@v1
-      with:
-        node-version: 14.x
-    - uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Install dependencies
-      run: |
-        sudo apt-get install xvfb
-        npm ci
-    - run: npm run test-int-x
+      - run: npm run release-firefox
