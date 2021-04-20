@@ -23,7 +23,7 @@ const RELEASE_EXTENSION_IDS = [
     'bkdgflcldnnnapblkhphbgpggdiikppg', // chrome store
     'jid1-ZAdIEUB7XOzOJw@jetpack' // firefox
 ]
-const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1
+const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1 // eslint-disable-line no-unused-vars
 
 /**
  * Produce a random float, same output as Math.random()
@@ -162,18 +162,8 @@ const cookieConfig = require('./../background/storage/cookies.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
-function blockingExperimentActive () {
-    if (IS_BETA) {
-        return true
-    }
-    const activeExperiment = settings.getSetting('activeExperiment')
-    if (activeExperiment) {
-        const experiment = settings.getSetting('experimentData')
-
-        return experiment && experiment.blockingActivated
-    }
-
-    // return false
+function blockTrackingCookies () {
+    return true
 }
 
 // we determine if FLoC is enabled by testing for availability of its JS API
@@ -227,7 +217,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
 
-        if (blockingExperimentActive()) {
+        if (blockTrackingCookies()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
@@ -401,7 +391,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
             return true
         }
-        if (blockingExperimentActive()) {
+        if (blockTrackingCookies()) {
             const tab = tabManager.get({ tabId: sender.tab.id })
             // abort if site is whitelisted
             if (tab && tab.site.whitelisted) {
@@ -580,7 +570,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             requestHeaders.push(GPCHeader)
         }
 
-        if (blockingExperimentActive()) {
+        if (blockTrackingCookies()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
