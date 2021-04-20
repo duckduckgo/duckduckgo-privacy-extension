@@ -1,6 +1,6 @@
 import { overrideProperty } from './utils'
 
-export function initDoNotTrack (args) {
+export function init (args) {
     overrideProperty('doNotTrack', {
         object: Navigator.prototype,
         origValue: navigator.doNotTrack,

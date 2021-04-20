@@ -1,16 +1,18 @@
 import { readFile } from 'fs/promises';
 import * as rollup from 'rollup';
 import commonjs from '@rollup/plugin-commonjs';
+import dynamicImportVariables from 'rollup-plugin-dynamic-import-variables';
 
 
 async function generateContentScope() {
     const inputOptions = {
         input: 'shared/js/content-scope/protections.js',
-        plugins: [commonjs()]
+        plugins: [dynamicImportVariables({}), commonjs()]
     };
     const outputOptions = {
         dir: 'build',
         format: 'iife',
+        inlineDynamicImports: true,
         name: 'protections'
     };
 

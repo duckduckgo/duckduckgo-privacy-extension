@@ -1,6 +1,6 @@
 import { overrideProperty } from './utils'
 
-export function initHardware (args) {
+export function init (args) {
     overrideProperty('keyboard', {
         object: Navigator.prototype,
         origValue: navigator.keyboard,

@@ -1,6 +1,6 @@
 import { defineProperty } from './utils'
 
-export function initTemporaryStorage () {
+export function init () {
     /**
      * Temporary storage can be used to determine hard disk usage and size.
      * This will limit the max storage to 4GB without completely disabling the

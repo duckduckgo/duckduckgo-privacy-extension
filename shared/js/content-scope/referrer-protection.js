@@ -1,6 +1,6 @@
 import { overrideProperty } from './utils'
 
-export function initReferrer (args) {
+export function init (args) {
     // Unfortunately, we only have limited information about the referrer and current frame. A single
     // page may load many requests and sub frames, all with different referrers. Since we
     if (args.referrer && // make sure the referrer was set correctly

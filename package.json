@@ -91,6 +91,7 @@
         "psl": "1.1.18",
         "punycode": "1.4.1",
         "regenerator-runtime": "^0.13.7",
+        "rollup-plugin-dynamic-import-variables": "^1.1.0",
         "runtimer": "1.0.3",
         "sjcl": "^1.0.8",
         "tabular-json": "0.1.3",

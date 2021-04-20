@@ -1,7 +1,7 @@
 import { defineProperty } from './utils'
 
 // Set Global Privacy Control property on DOM
-export function initGpc (args) {
+export function init (args) {
     // If GPC on, set DOM property to true if not already true
     if (args.globalPrivacyControlValue) {
         if (navigator.globalPrivacyControl) return
