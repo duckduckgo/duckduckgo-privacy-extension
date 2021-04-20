@@ -11,21 +11,21 @@ export async function initProtection (args) {
     }
 
     const protections = [
-      'canvas',
-      'audio',
-      'temporary-storage',
-      'referrer',
-      'battery',
-      'screen-size',
-      'hardware',
-      'do-not-track',
-      'floc',
-      'gpc',
+        'canvas',
+        'audio',
+        'temporary-storage',
+        'referrer',
+        'battery',
+        'screen-size',
+        'hardware',
+        'do-not-track',
+        'floc',
+        'gpc'
     ]
 
     initStringExemptionLists(args)
-    for (let protection of protections) {
-        const { init } = await import(`./${protection}-protection.js`);
+    for (const protection of protections) {
+        const { init } = await import(`./${protection}-protection.js`)
         if (!isFeatureBroken(args, protection)) {
             init(args)
         }
