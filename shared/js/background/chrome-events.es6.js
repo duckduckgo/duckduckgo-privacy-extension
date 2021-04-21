@@ -751,7 +751,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
     const tab = tabManager.get({ tabId: details.tabId })
     if (tab && tab.site.isBroken) {
         console.log('temporarily skip embedded object replacements for site: ' + details.url +
-          'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+          'more info: https://github.com/duckduckgo/content-blocking-lists')
         return
     }
 
