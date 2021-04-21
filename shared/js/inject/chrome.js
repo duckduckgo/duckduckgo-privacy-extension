@@ -15,8 +15,6 @@ function inject (code) {
     }
 }
 
-inject()
-
 function randomString () {
     const num = crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
     return num.toString().replace('0.', '')
@@ -52,10 +50,15 @@ function init () {
 
     chrome.runtime.sendMessage({ registeredContentScript: true },
         (message) => {
+            if (!message) {
+                // Remove injected function only as background has disabled protections
+                inject(`delete window.${randomMethodName}`);
+                return
+            }
             const stringifiedArgs = JSON.stringify(message)
             const callRandomFunction = `
-            window.${randomMethodName}('${randomPassword}', ${stringifiedArgs});
-          `
+                window.${randomMethodName}('${randomPassword}', ${stringifiedArgs});
+            `
             inject(callRandomFunction)
         }
     )
