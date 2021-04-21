@@ -25,7 +25,7 @@ export function init (args) {
         })
     }
 
-    new DDGProxy(AudioBuffer.prototype, 'copyFromChannel', {
+    const copyFromChannelProxy = new DDGProxy(AudioBuffer.prototype, 'copyFromChannel', {
         apply (target, thisArg, args) {
             const [source, channelNumber, startInChannel] = args
             // This is implemented in a different way to canvas purely because calling the function copied the original value, which is not ideal
@@ -47,6 +47,7 @@ export function init (args) {
             }
         }
     })
+    copyFromChannelProxy.overload()
 
     const cacheExpiry = 60
     const cacheData = new WeakMap()
@@ -67,7 +68,7 @@ export function init (args) {
         cacheData.set(thisArg, { args: JSON.stringify(args), expires: Date.now() + cacheExpiry, audioKey })
     }
 
-    new DDGProxy(AudioBuffer.prototype, 'getChannelData', {
+    const getChannelDataProxy = new DDGProxy(AudioBuffer.prototype, 'getChannelData', {
         apply (target, thisArg, args) {
             // The normal return value
             const channelData = DDGReflect.apply(target, thisArg, args)
@@ -82,10 +83,11 @@ export function init (args) {
             return channelData
         }
     })
+    getChannelDataProxy.overload()
 
     const audioMethods = ['getByteTimeDomainData', 'getFloatTimeDomainData', 'getByteFrequencyData', 'getFloatFrequencyData']
     for (const methodName of audioMethods) {
-        new DDGProxy(AnalyserNode.prototype, methodName, {
+        const proxy = new DDGProxy(AnalyserNode.prototype, methodName, {
             apply (target, thisArg, args) {
                 DDGReflect.apply(target, thisArg, args)
                 if (shouldExemptMethod('audio')) {
@@ -98,5 +100,6 @@ export function init (args) {
                 }
             }
         })
+        proxy.overload()
     }
 }

@@ -96,7 +96,8 @@ export function overrideProperty (name, prop) {
          */
         try {
             defineProperty(prop.object, name, {
-                get: () => JSON.stringify(prop.targetValue)
+                // eslint-disable-next-line no-extra-bind
+                get: (() => prop.targetValue).bind(null)
             })
         } catch (e) {
         }
@@ -131,18 +132,27 @@ export function defineProperty (object, propertyName, descriptor) {
 
 export class DDGProxy {
     constructor (objectScope, property, proxyObject) {
+        this.objectScope = objectScope
+        this.property = property
         if (mozProxies) {
             this._native = objectScope[property]
             const handler = new window.wrappedJSObject.Object()
             handler.apply = exportFunction(proxyObject.apply, window)
             this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler)
-            exportFunction(this.internal, objectScope, { defineAs: property })
         } else {
             this._native = objectScope[property]
             const handler = {}
             handler.apply = proxyObject.apply
             this.internal = new window.Proxy(objectScope[property], handler)
-            objectScope[property] = this.internal
+        }
+    }
+
+    // Actually apply the proxy to the native property
+    overload () {
+        if (mozProxies) {
+            exportFunction(this.internal, this.objectScope, { defineAs: this.property })
+        } else {
+            this.objectScope[this.property] = this.internal
         }
     }
 }

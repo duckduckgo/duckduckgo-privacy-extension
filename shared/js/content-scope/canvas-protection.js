@@ -22,6 +22,7 @@ export function init (args) {
             return DDGReflect.apply(target, thisArg, args)
         }
     })
+    getImageDataProxy.overload()
 
     function computeOffScreenCanvas (canvas) {
         const ctx = canvas.getContext('2d')
@@ -70,7 +71,7 @@ export function init (args) {
 
     const canvasMethods = ['toDataURL', 'toBlob']
     for (const methodName of canvasMethods) {
-        new DDGProxy(HTMLCanvasElement.prototype, methodName, {
+        const proxy = new DDGProxy(HTMLCanvasElement.prototype, methodName, {
             apply (target, thisArg, args) {
                 if (shouldExemptMethod('canvas')) {
                     return DDGReflect.apply(target, thisArg, args)
@@ -85,5 +86,6 @@ export function init (args) {
                 }
             }
         })
+        proxy.overload()
     }
 }
