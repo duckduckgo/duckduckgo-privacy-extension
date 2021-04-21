@@ -5,7 +5,7 @@ function init () {
         (message) => {
             // Background has disabled protections
             if (!message) {
-                return;
+                return
             }
             protections.initProtection(message)
         }

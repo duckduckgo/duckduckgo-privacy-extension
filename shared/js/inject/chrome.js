@@ -52,7 +52,7 @@ function init () {
         (message) => {
             if (!message) {
                 // Remove injected function only as background has disabled protections
-                inject(`delete window.${randomMethodName}`);
+                inject(`delete window.${randomMethodName}`)
                 return
             }
             const stringifiedArgs = JSON.stringify(message)

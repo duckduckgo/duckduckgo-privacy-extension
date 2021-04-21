@@ -310,8 +310,13 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.registeredContentScript) {
         const argumentsObject = getArgumentsObject(sender.tab.id)
-        if (argumentsObject.site?.isBroken) {
-            console.log('temporarily skip fingerprint protection for site: ' + sender.tab.url +
+        if (!argumentsObject) {
+            // No info for the tab available, do nothing.
+            return
+        }
+
+        if (argumentsObject.site.isBroken) {
+            console.log('temporarily skip protections for site: ' + sender.tab.url +
         'more info: https://github.com/duckduckgo/content-blocking-whitelist')
             return
         }
@@ -547,6 +552,9 @@ let sessionKey = getHash()
 
 function getArgumentsObject (tabId) {
     const tab = tabManager.get({ tabId })
+    if (!tab) {
+        return null
+    }
     const site = tab?.site || {}
     const referrer = tab?.referrer || ''
     return {
