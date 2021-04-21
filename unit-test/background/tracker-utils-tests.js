@@ -6,10 +6,20 @@ const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let settingsObserver
+    let timer = Date.now()
+    const jump = 1000 * 60 * 31 // slightly more than cache timeout
 
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
         tdsStorageStub.stub()
+
+        // Make sure we don't use any list caches for these tests
+        spyOn(Date, 'now').and.callFake(function () {
+            // Cache may be updated on each run, so keep jumping the time forward for each call
+            timer += jump
+            return timer
+        })
+
         return tdsStorage.getLists()
             .then(lists => {
                 return tds.setLists(lists)
@@ -37,7 +47,7 @@ describe('Tracker Utilities', () => {
     ]
     it('Should identify a non-tracker correctly', () => {
         for (const tracker of notTrackers) {
-            settingsObserver.and.returnValue(undefined)
+            settingsObserver.and.returnValue(true)
             expect(trackerutils.isTracker(tracker)).toBeFalsy()
         }
     })
@@ -325,5 +335,295 @@ describe('Tracker Utilities', () => {
                 trackerutils.truncateReferrer(test.referrer, test.target)
             }).withContext(`test: ${test.name}`).not.toThrow()
         }
+    })
+
+    const socialTrackerTests = [
+        {
+            name: 'Facebook.net',
+            url: 'Facebook.net',
+            expectedResult: {
+                entity: 'Facebook',
+                redirectUrl: undefined
+            }
+        },
+        {
+            name: 'Facebook.com',
+            url: 'https://facebook.com',
+            expectedResult: {
+                entity: 'Facebook',
+                redirectUrl: undefined
+            }
+        },
+        {
+            name: 'Facebook.com with params',
+            url: 'https://developers.facebook.com/docs/plugins',
+            expectedResult: {
+                entity: 'Facebook',
+                redirectUrl: undefined
+            }
+        }
+    ]
+    it('Should correctly handle social trackers', () => {
+        settings.ready().then(() => {
+            settings.updateSetting('activeExperiment', true)
+            settings.updateSetting('experimentData', { blockFacebook: true })
+            spyOn(trackerutils, 'facebookExperimentIsActive').and.returnValue(true)
+            for (const test of socialTrackerTests) {
+                const result = trackerutils.getSocialTracker(test.url)
+                expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
+                expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).toEqual(test.expectedResult.redirectUrl)
+            }
+        })
+    })
+
+    const socialTrackerSurrogateTests = [
+        {
+            name: 'Facebook US SDK',
+            url: 'https://connect.facebook.net/en_US/sdk.js',
+            expectedResult: {
+                entity: 'Facebook'
+            }
+        },
+        {
+            name: 'Facebook GB SDK',
+            url: 'https://connect.facebook.net/en_GB/sdk.js',
+            expectedResult: {
+                entity: 'Facebook'
+            }
+        }
+    ]
+    it('Should return a surrogate redirect', () => {
+        settings.ready().then(() => {
+            settings.updateSetting('activeExperiment', true)
+            settings.updateSetting('experimentData', { blockFacebook: true })
+            for (const test of socialTrackerSurrogateTests) {
+                const result = trackerutils.getSocialTracker(test.url)
+                expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
+                expect(result.redirectUrl).withContext(`test (redirect): ${test.name}`).not.toEqual(undefined)
+            }
+        })
+    })
+
+    const unsocialTrackerTests = [
+        {
+            name: 'Blank url',
+            url: '',
+            expectedResult: undefined
+        },
+        {
+            name: 'Google Analytics',
+            url: 'https://analytics.google.com',
+            expectedResult: undefined
+        }
+    ]
+    it('Should not label non-social trackers as social trackers', () => {
+        for (const test of unsocialTrackerTests) {
+            expect(trackerutils.getSocialTracker(test.url)).withContext(`test: ${test.name}`).toEqual(test.expectedResult)
+        }
+    })
+
+    const socialExcludeTests = [
+        {
+            name: 'Empty exlude list',
+            url: 'https://sitea.com',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: []
+                }
+            },
+            expectedResult: true
+        },
+        {
+            name: 'Different domain excluded',
+            url: 'https://sitea.com',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'NotSiteA.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: true
+        },
+        {
+            name: 'Domain excluded',
+            url: 'https://sitea.com',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitea.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: false
+        },
+        {
+            name: 'Domain excluded with other sites',
+            url: 'https://sitea.com',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitea.com',
+                            reason: 'some reason'
+                        },
+                        {
+                            domain: 'siteb.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: false
+        },
+        {
+            name: 'Domain not excluded, but others are',
+            url: 'https://sitea.com',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitec.com',
+                            reason: 'some reason'
+                        },
+                        {
+                            domain: 'siteb.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: true
+        }
+    ]
+    it('Should handle social exclude list correctly (block or not)', () => {
+        const originalConfig = tdsStorage.ClickToLoadConfig
+        for (const test of socialExcludeTests) {
+            tdsStorage.ClickToLoadConfig = test.ClickToLoadConfig
+            expect(trackerutils.shouldBlockSocialNetwork(test.network, test.url)).withContext(`test: ${test.name}`).toEqual(test.expectedResult)
+        }
+        tdsStorage.ClickToLoadConfig = originalConfig
+    })
+
+    const socialDomainExcludeTests = [
+        {
+            name: 'Empty exlude list',
+            url: 'https://sitea.com',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: []
+                }
+            },
+            expectedResult: []
+        },
+        {
+            name: 'single Entity, single Entry',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitea.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: [
+                {
+                    entity: 'Social1',
+                    domain: 'sitea.com'
+                }
+            ]
+        },
+        {
+            name: 'single Entity, double Entry',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitea.com',
+                            reason: 'some reason'
+                        },
+                        {
+                            domain: 'siteb.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: [
+                {
+                    entity: 'Social1',
+                    domain: 'sitea.com'
+                },
+                {
+                    entity: 'Social1',
+                    domain: 'siteb.com'
+                }
+            ]
+        },
+        {
+            name: 'Two Entities',
+            network: 'Social1',
+            ClickToLoadConfig: {
+                Social1: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitea.com',
+                            reason: 'some reason'
+                        },
+                        {
+                            domain: 'siteb.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                },
+                Social2: {
+                    excludedDomains: [
+                        {
+                            domain: 'sitea.com',
+                            reason: 'some reason'
+                        }
+                    ]
+                }
+            },
+            expectedResult: [
+                {
+                    entity: 'Social1',
+                    domain: 'sitea.com'
+                },
+                {
+                    entity: 'Social1',
+                    domain: 'siteb.com'
+                },
+                {
+                    entity: 'Social2',
+                    domain: 'sitea.com'
+                }
+            ]
+        }
+    ]
+    it('Should return the correct list of domains and networks to exlude', () => {
+        const originalConfig = tdsStorage.ClickToLoadConfig
+
+        for (const test of socialDomainExcludeTests) {
+            tdsStorage.ClickToLoadConfig = test.ClickToLoadConfig
+            expect(trackerutils.getDomainsToExludeByNetwork()).withContext(`test: ${test.name}`).toEqual(test.expectedResult)
+        }
+        tdsStorage.ClickToLoadConfig = originalConfig
     })
 })

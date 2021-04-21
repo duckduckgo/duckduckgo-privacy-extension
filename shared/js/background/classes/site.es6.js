@@ -49,6 +49,8 @@ class Site {
 
         // set specialDomainName when the site is created
         this.specialDomainName = this.getSpecialDomain()
+        // domains which have been clicked to load
+        this.clickToLoad = []
     }
 
     /*

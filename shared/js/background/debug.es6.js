@@ -7,12 +7,14 @@ const tabManager = require('./tab-manager.es6')
 const load = require('./load.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
+const tds = require('./storage/tds.es6')
 
 window.dbg = {
     settings,
     tabManager,
     atb,
-    https
+    https,
+    tds
 }
 
 // mark this as a dev build

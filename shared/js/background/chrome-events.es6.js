@@ -316,6 +316,112 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    // Click to load interactions
+    if (req.initClickToLoad) {
+        settings.ready().then(() => {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            const config = { ...tdsStorage.ClickToLoadConfig }
+
+            // remove any social networks saved by the user
+            for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+                if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
+                    delete config[entity]
+                }
+            }
+
+            // Determine whether to show one time messages or simplified messages
+            for (const [entity] of Object.entries(config)) {
+                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+                if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
+                    config[entity].simpleVersion = true
+                }
+            }
+
+            // if the current site is on the social exception list, remove it from the config.
+            let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
+            if (excludedNetworks) {
+                excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
+                excludedNetworks.forEach(e => delete config[e.entity])
+            }
+            res(config)
+        })
+        return true
+    }
+
+    if (req.getImage) {
+        if (req.getImage === 'None' || req.getImage === 'none' || req.getImage === undefined) {
+            res(undefined)
+        } else {
+            utils.imgToData(`img/social/${req.getImage}`).then(img => res(img))
+        }
+        return true
+    }
+
+    if (req.getLoadingImage) {
+        if (req.getLoadingImage === 'dark') {
+            utils.imgToData('img/social/loading_dark.svg').then(img => res(img))
+        } else if (req.getLoadingImage === 'light') {
+            utils.imgToData('img/social/loading_light.svg').then(img => res(img))
+        }
+        return true
+    }
+
+    if (req.getLogo) {
+        utils.imgToData('img/social/dax.png').then(img => res(img))
+        return true
+    }
+
+    if (req.getSocialSurrogateRules) {
+        const entityData = tdsStorage.ClickToLoadConfig[req.getSocialSurrogateRules]
+        if (entityData && entityData.surrogates) {
+            const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
+                accumulator.push(value.rule)
+                return accumulator
+            }, [])
+            res(rules)
+        }
+        return true
+    }
+
+    if (req.enableSocialTracker) {
+        settings.ready().then(() => {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            tab.site.clickToLoad.push(req.enableSocialTracker)
+
+            const entity = req.enableSocialTracker
+            if (req.isLogin) {
+                trackerutils.allowSocialLogin(tab.site.domain)
+            }
+            if (req.alwaysAllow) {
+                let allowList = settings.getSetting('clickToLoad')
+                const value = {
+                    tracker: entity,
+                    domain: tab.site.domain
+                }
+                if (allowList) {
+                    if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
+                        allowList.push(value)
+                    }
+                } else {
+                    allowList = [value]
+                }
+                settings.updateSetting('clickToLoad', allowList)
+            }
+            // Update number of times this social network has been 'clicked'
+            if (tdsStorage.ClickToLoadConfig[entity]) {
+                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+                if (!clickToLoadClicks[entity]) {
+                    clickToLoadClicks[entity] = 1
+                } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
+                    clickToLoadClicks[entity] += 1
+                }
+                settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
+            }
+        })
+    }
+
     if (req.updateSetting) {
         const name = req.updateSetting.name
         const value = req.updateSetting.value
@@ -593,6 +699,62 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     { urls: ['<all_urls>'] },
     extraInfoSpecSendHeaders
 )
+
+/**
+ * Click to Load
+ */
+
+/*
+ * On FireFox, redirecting to a JS surrogate in some cases causes a CORS error. Determine if that is the case here.
+ * If so, and we have an alternate XRAY surrogate implementation, inject it.
+ */
+chrome.webRequest.onBeforeRedirect.addListener(
+    details => {
+        const tab = tabManager.get({ tabId: details.tabId })
+        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders && trackerutils.facebookExperimentIsActive()) {
+            // Detect cors error
+            const headers = details.responseHeaders
+            const corsHeaders = [
+                'Access-Control-Allow-Origin'
+            ]
+            const corsFound = headers.filter(v => corsHeaders.includes(v.name)).length
+
+            if (corsFound && details.redirectUrl) {
+                const xray = trackerutils.getXraySurrogate(details.redirectUrl)
+                if (xray && utils.getBrowserName() === 'moz') {
+                    console.log('Normal surrogate load failed, loading XRAY version')
+                    chrome.tabs.executeScript(details.tabId, {
+                        file: `public/js/content-scripts/${xray}`,
+                        matchAboutBlank: true,
+                        frameId: details.frameId,
+                        runAt: 'document_start'
+                    })
+                }
+            }
+        }
+    },
+    { urls: ['<all_urls>'] },
+    ['responseHeaders']
+)
+
+// Inject our content script to overwite FB elements
+chrome.webNavigation.onCommitted.addListener(details => {
+    const tab = tabManager.get({ tabId: details.tabId })
+    if (tab && tab.site.isBroken) {
+        console.log('temporarily skip embedded object replacements for site: ' + details.url +
+          'more info: https://github.com/duckduckgo/content-blocking-lists')
+        return
+    }
+
+    if (tab && !tab.site.whitelisted && trackerutils.facebookExperimentIsActive()) {
+        chrome.tabs.executeScript(details.tabId, {
+            file: 'public/js/content-scripts/click-to-load.js',
+            matchAboutBlank: true,
+            frameId: details.frameId,
+            runAt: 'document_start'
+        })
+    }
+})
 
 /**
  * ALARMS

@@ -108,6 +108,12 @@ module.exports = {
             "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
             "format": "json",
             "source": "external"
+        },
+        {
+            "name": "ClickToLoadConfig",
+            "url": "https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json",
+            "format": "json",
+            "source": "external"
         }
     ],
     "UserAgentLists": [

@@ -8,7 +8,8 @@ const tdsData = {
     fingerprinting: require('./../data/fingerprinting.json'),
     tds: require('./../data/tds.json'),
     surrogates: require('./../data/surrogates.js').surrogates,
-    ReferrerExcludeList: require('./../data/fpExcludeLists.js').referrer
+    ReferrerExcludeList: require('./../data/fpExcludeLists.js').referrer,
+    ClickToLoadConfig: require('./../data/clickToLoadConfig.json')
 }
 
 const stub = () => {
