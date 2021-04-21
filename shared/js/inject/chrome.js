@@ -25,6 +25,7 @@ function init () {
     const randomPassword = '_p' + randomString()
     const initialScript = `
       /* global protections */
+      protections.loadProtections()
       // Define a random function we call later.
       // Use define property so isn't enumerable
       Object.defineProperty(window, '${randomMethodName}', {
@@ -36,7 +37,7 @@ function init () {
           value: new Proxy(function () {}, {
               apply(target, thisArg, args) {
                   if ('${randomPassword}' === args[0]) {
-                      protections.initProtection(args[1])
+                      protections.initProtections(args[1])
                   } else {
                       // TODO force enable all protections if password is wrong
                       console.error("Password for hidden function wasn't correct! The page is likely attempting to attack the protections by DuckDuckGo");

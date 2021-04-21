@@ -1,16 +1,24 @@
 import { initStringExemptionLists, isFeatureBroken } from './utils'
 
-export async function initProtection (args) {
+function shouldRun () {
     // don't inject into non-HTML documents (such as XML documents)
     // but do inject into XHTML documents
     if (document instanceof HTMLDocument === false && (
         document instanceof XMLDocument === false ||
         document.createElement('div') instanceof HTMLDivElement === false
     )) {
+        return false
+    }
+    return true
+}
+
+const protections = []
+
+export async function loadProtections () {
+    if (!shouldRun()) {
         return
     }
-
-    const protections = [
+    const protectionNames = [
         'canvas',
         'audio',
         'temporary-storage',
@@ -23,11 +31,23 @@ export async function initProtection (args) {
         'gpc'
     ]
 
+    for (const protectionName of protectionNames) {
+        const protection = import(`./${protectionName}-protection.js`).then(({ init }) => {
+            return { protectionName, init }
+        })
+        protections.push(protection)
+    }
+}
+
+export async function initProtections (args) {
+    if (!shouldRun()) {
+        return
+    }
     initStringExemptionLists(args)
-    for (const protection of protections) {
-        const { init } = await import(`./${protection}-protection.js`)
-        if (!isFeatureBroken(args, protection)) {
+    const resolvedProtections = await Promise.all(protections)
+    resolvedProtections.forEach(({ init, protectionName }) => {
+        if (!isFeatureBroken(args, protectionName)) {
             init(args)
         }
-    }
+    })
 }
