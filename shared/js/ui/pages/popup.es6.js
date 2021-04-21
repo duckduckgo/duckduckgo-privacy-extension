@@ -36,29 +36,29 @@ Trackers.prototype = window.$.extend({},
 
             this.views.search = new SearchView({
                 pageView: this,
-                model: new SearchModel({searchText: ''}),
-                appendTo: this.$parent,
+                model: new SearchModel({ searchText: '' }),
+                appendTo: window.$('#search-form-container'),
                 template: searchTemplate
             })
 
             this.views.hamburgerMenu = new HamburgerMenuView({
                 pageView: this,
                 model: new HamburgerMenuModel(),
-                appendTo: this.$parent,
+                appendTo: window.$('#hamburger-menu-container'),
                 template: hamburgerMenuTemplate
             })
 
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel(),
-                appendTo: this.$parent,
+                appendTo: window.$('#site-info-container'),
                 template: siteTemplate
             })
 
             this.views.topblocked = new TopBlockedView({
                 pageView: this,
-                model: new TopBlockedModel({numCompanies: 3}),
-                appendTo: this.$parent,
+                model: new TopBlockedModel({ numCompanies: 3 }),
+                appendTo: window.$('#top-blocked-container'),
                 template: topBlockedTemplate
             })
 
@@ -68,7 +68,7 @@ Trackers.prototype = window.$.extend({},
             // store.subscribe()
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
-                model: new AutocompleteModel({suggestions: []}),
+                model: new AutocompleteModel({ suggestions: [] }),
                 // appendTo: this.views.search.$el,
                 appendTo: null,
                 template: autocompleteTemplate

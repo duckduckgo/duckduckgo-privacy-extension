@@ -26,7 +26,7 @@ function BaseView (ops) {
     this.$after = (typeof ops.after === 'string') ? $(ops.after) : ops.after
 
     if (ops.events) {
-        for (var id in ops.events) {
+        for (const id in ops.events) {
             this.on(id, ops.events[id])
         }
     }
@@ -70,9 +70,9 @@ BaseView.prototype = $.extend(
         destroyChildViews: function () {
             !function destroyViews (views) { // eslint-disable-line
                 if (!views) { return }
-                var v
+                let v
                 if ($.isArray(views)) {
-                    for (var i = 0; i < views.length; i++) {
+                    for (let i = 0; i < views.length; i++) {
                         v = views[i]
                         if (v && $.isArray(v)) {
                             destroyViews(v)
@@ -82,7 +82,7 @@ BaseView.prototype = $.extend(
                     }
                     views = null
                 } else {
-                    for (var c in views) {
+                    for (const c in views) {
                         v = views[c]
                         if (v && $.isArray(v)) {
                             destroyViews(v)
@@ -110,7 +110,7 @@ BaseView.prototype = $.extend(
                 if (ops && ops.$el) {
                     this.$el = ops.$el
                 } else {
-                    var el = this.template()
+                    const el = this.template()
                     this.$el = $(el)
                 }
             }
@@ -121,12 +121,12 @@ BaseView.prototype = $.extend(
         },
 
         _rerender: function () {
-            var $prev = this.$el.prev()
+            const $prev = this.$el.prev()
             if ($prev.length) {
                 delete this.$parent
                 this.$after = $prev
             } else {
-                var $next = this.$el.next()
+                const $next = this.$el.next()
                 if ($next.length) {
                     delete this.$parent
                     this.$before = $next
@@ -165,11 +165,11 @@ BaseView.prototype = $.extend(
          * @param {Array} elems
          */
         _cacheElems: function (prefix, elems) {
-            for (var i = 0; i < elems.length; i++) {
-                var selector = prefix + '-' + elems[i]
+            for (let i = 0; i < elems.length; i++) {
+                const selector = prefix + '-' + elems[i]
                 // the replace removes '-' from class names, so:
                 // 'class-name' becomes this.$classname:
-                var id = '$' + elems[i].replace(/-/g, '')
+                const id = '$' + elems[i].replace(/-/g, '')
                 this[id] = this.$(selector)
             }
         }

@@ -4,24 +4,24 @@ let whitelist
 
 const domainTestCases = [
     {
-        'url': 'duckduckgo.com',
-        'whitelistedDomain': 'duckduckgo.com',
-        'valid': true
+        url: 'duckduckgo.com',
+        whitelistedDomain: 'duckduckgo.com',
+        valid: true
     },
     {
-        'url': 'bttf.duckduckgo.com',
-        'whitelistedDomain': 'duckduckgo.com',
-        'valid': true
+        url: 'bttf.duckduckgo.com',
+        whitelistedDomain: 'duckduckgo.com',
+        valid: true
     },
     {
-        'url': 'duckduckgo.com/?q=test&ia=web',
-        'whitelistedDomain': 'duckduckgo.com',
-        'valid': true
+        url: 'duckduckgo.com/?q=test&ia=web',
+        whitelistedDomain: 'duckduckgo.com',
+        valid: true
     },
     {
-        'url': 'www.duckduckgo.com',
-        'whitelistedDomain': 'duckduckgo.com',
-        'valid': true
+        url: 'www.duckduckgo.com',
+        whitelistedDomain: 'duckduckgo.com',
+        valid: true
     },
     {
         'url': 'testwww.com',
@@ -39,24 +39,29 @@ const domainTestCases = [
         'valid': false
     },
     {
-        'url': 'localhost',
-        'whitelistedDomain': 'localhost',
-        'valid': true
+        url: '127.0.0.1',
+        whitelistedDomain: '127.0.0.1',
+        valid: true
     },
     {
-        'url': 'localhost:5000',
-        'whitelistedDomain': 'localhost',
-        'valid': true
+        url: 'localhost',
+        whitelistedDomain: 'localhost',
+        valid: true
     },
     {
-        'url': 'localhost:asdasdasd',
-        'whitelistedDomain': '',
-        'valid': false
+        url: 'localhost:5000',
+        whitelistedDomain: 'localhost',
+        valid: true
     },
     {
-        'url': '',
-        'whitelistedDomain': '',
-        'valid': false
+        url: 'localhost:asdasdasd',
+        whitelistedDomain: '',
+        valid: false
+    },
+    {
+        url: '',
+        whitelistedDomain: '',
+        valid: false
     }
 ]
 
@@ -64,7 +69,7 @@ describe('whitelist.addDomain()', () => {
     whitelist = new Whitelist({})
     domainTestCases.forEach((test) => {
         it(`should return ${test.valid} for ${test.url}`, () => {
-            let result = whitelist.addDomain(test.url)
+            const result = whitelist.addDomain(test.url)
             if (test.valid) {
                 expect(result).toBe(test.whitelistedDomain)
             } else {

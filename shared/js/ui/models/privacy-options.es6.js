@@ -5,6 +5,7 @@ function PrivacyOptions (attrs) {
     attrs.trackerBlockingEnabled = true
     attrs.httpsEverywhereEnabled = true
     attrs.embeddedTweetsEnabled = false
+    attrs.GPC = false
 
     Parent.call(this, attrs)
 }
@@ -16,20 +17,21 @@ PrivacyOptions.prototype = window.$.extend({},
         modelName: 'privacyOptions',
 
         toggle: function (k) {
-            if (this.hasOwnProperty(k)) {
+            if (Object.hasOwnProperty.call(this, k)) {
                 this[k] = !this[k]
                 console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`)
-                this.fetch({updateSetting: {name: k, value: this[k]}})
+                this.fetch({ updateSetting: { name: k, value: this[k] } })
             }
         },
 
         getSettings: function () {
-            let self = this
+            const self = this
             return new Promise((resolve, reject) => {
-                self.fetch({getSetting: 'all'}).then((settings) => {
-                    self.trackerBlockingEnabled = settings['trackerBlockingEnabled']
-                    self.httpsEverywhereEnabled = settings['httpsEverywhereEnabled']
-                    self.embeddedTweetsEnabled = settings['embeddedTweetsEnabled']
+                self.fetch({ getSetting: 'all' }).then((settings) => {
+                    self.trackerBlockingEnabled = settings.trackerBlockingEnabled
+                    self.httpsEverywhereEnabled = settings.httpsEverywhereEnabled
+                    self.embeddedTweetsEnabled = settings.embeddedTweetsEnabled
+                    self.GPC = settings.GPC
 
                     resolve()
                 })

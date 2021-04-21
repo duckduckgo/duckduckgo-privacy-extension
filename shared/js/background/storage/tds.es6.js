@@ -10,9 +10,10 @@ class TDSStorage {
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
         })
-        this.tds = {entities: {}, trackers: {}, domains: {}}
+        this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
         this.brokenSiteList = []
+        this.fingerprinting = {}
     }
 
     getLists () {
@@ -20,12 +21,24 @@ class TDSStorage {
             const listCopy = JSON.parse(JSON.stringify(list))
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
             const version = this.getVersionParam()
+            const activeExperiment = settings.getSetting('activeExperiment')
 
-            if (version) {
+            let experiment = ''
+            if (activeExperiment) {
+                experiment = settings.getSetting('experimentData')
+            }
+
+            if (experiment && experiment.listName === listCopy.name) {
+                listCopy.url = experiment.url
+            }
+
+            if (version && listCopy.source === 'external') {
                 listCopy.url += version
             }
 
-            return this.getDataXHR(listCopy, etag).then(response => {
+            const source = listCopy.source ? listCopy.source : 'external'
+
+            return this.getDataXHR(listCopy, etag, source).then(response => {
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.getResponseHeader('etag') || ''
@@ -39,9 +52,9 @@ class TDSStorage {
                     if (resultData) {
                         // store tds in memory so we can access it later if needed
                         this[listCopy.name] = resultData
-                        return {name: listCopy.name, data: resultData}
+                        return { name: listCopy.name, data: resultData }
                     } else {
-                        throw new Error(`TDS: process list xhr failed`)
+                        throw new Error('TDS: process list xhr failed')
                     }
                 })
             }).catch(e => {
@@ -49,11 +62,11 @@ class TDSStorage {
                     if (backupFromDB) {
                         // store tds in memory so we can access it later if needed
                         this[listCopy.name] = backupFromDB
-                        return {name: listCopy.name, data: backupFromDB}
+                        return { name: listCopy.name, data: backupFromDB }
                     } else {
                         // reset etag to force us to get fresh server data in case of an error
                         settings.updateSetting(`${listCopy.name}-etag`, '')
-                        throw new Error(`TDS: data update failed`)
+                        throw new Error('TDS: data update failed')
                     }
                 })
             })
@@ -80,24 +93,24 @@ class TDSStorage {
         })
     }
 
-    getDataXHR (list, etag) {
-        return load.loadExtensionFile({url: list.url, etag: etag, returnType: list.format, source: 'external', timeout: 60000})
+    getDataXHR (list, etag, source) {
+        return load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
     }
 
     getDataFromLocalDB (name) {
         console.log('TDS: getting from db')
         return this.dbc.open()
-            .then(() => this.dbc.table('tdsStorage').get({name: name}))
+            .then(() => this.dbc.table('tdsStorage').get({ name: name }))
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({name: name, data: data})
+        return this.dbc.tdsStorage.put({ name: name, data: data })
     }
 
     parsedata (name, data) {
         const parsers = {
-            'brokenSiteList': data => {
-                return data.split('\n')
+            brokenSiteList: data => {
+                return data.trim().split('\n')
             }
         }
 

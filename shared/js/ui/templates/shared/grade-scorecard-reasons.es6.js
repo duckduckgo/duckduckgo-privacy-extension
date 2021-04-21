@@ -11,7 +11,7 @@ module.exports = function (site) {
 }
 
 function getReasons (site) {
-    let reasons = []
+    const reasons = []
 
     // grab all the data from the site to create
     // a list of reasons behind the grade
@@ -19,7 +19,7 @@ function getReasons (site) {
     // encryption status
     const httpsState = site.httpsState
     if (httpsState) {
-        let modifier = httpsState === 'none' ? 'bad' : 'good'
+        const modifier = httpsState === 'none' ? 'bad' : 'good'
 
         reasons.push({
             modifier,
@@ -49,14 +49,14 @@ function getReasons (site) {
     if (site.isaMajorTrackingNetwork) {
         reasons.push({
             modifier: 'bad',
-            msg: `Site is a Major Tracker Network`
+            msg: 'Site Is a Major Tracker Network'
         })
     }
 
     // privacy practices from tosdr
     const unknownPractices = constants.tosdrMessages.unknown
     const privacyMessage = (site.tosdr && site.tosdr.message) || unknownPractices
-    const modifier = (privacyMessage === unknownPractices) ? 'bad' : privacyMessage.toLowerCase()
+    const modifier = (privacyMessage === unknownPractices) ? 'poor' : privacyMessage.toLowerCase()
     reasons.push({
         modifier: modifier,
         msg: `${privacyMessage} Privacy Practices`

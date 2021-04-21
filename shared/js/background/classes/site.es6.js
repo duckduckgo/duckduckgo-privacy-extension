@@ -12,7 +12,6 @@ const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../$BROWSER-wrapper.es6')
-const tldts = require('tldts')
 
 class Site {
     constructor (url) {
@@ -28,7 +27,8 @@ class Site {
         this.whitelistOptIn = false
         this.setWhitelistStatusFromGlobal(domain)
 
-        this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
+        this.isBroken = utils.isBroken(domain) // broken sites reported to github repo
+        this.brokenFeatures = utils.getBrokenFeatures(domain) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)
@@ -52,30 +52,13 @@ class Site {
     }
 
     /*
-     * check to see if this is a broken site reported on github
-    */
-    checkBrokenSites (domain) {
-        if (!tdsStorage || !tdsStorage.brokenSiteList) return
-
-        const parsedDomain = tldts.parse(domain)
-        let hostname = parsedDomain.hostname || domain
-
-        // If root domain in temp whitelist, return true
-        return tdsStorage.brokenSiteList.some((brokenSiteDomain) => {
-            if (brokenSiteDomain) {
-                return hostname.match(new RegExp(brokenSiteDomain + '$'))
-            }
-        })
-    }
-
-    /*
      * When site objects are created we check the stored whitelists
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal () {
-        let globalwhitelists = ['whitelisted', 'whitelistOptIn']
-        globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {}
+        const globalwhitelists = ['whitelisted', 'whitelistOptIn']
+        globalwhitelists.forEach((name) => {
+            const list = settings.getSetting(name) || {}
             this.setWhitelisted(name, list[this.domain])
         })
     }
@@ -89,7 +72,7 @@ class Site {
      */
     notifyWhitelistChanged () {
         // this can send an error message when the popup is not open check lastError to hide it
-        chrome.runtime.sendMessage({'whitelistChanged': true}, () => chrome.runtime.lastError)
+        chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
     }
 
     isWhiteListed () { return this.whitelisted }
@@ -167,7 +150,7 @@ class Site {
         if (url.match(/^(chrome|moz)-extension:\/\//)) {
             // this is our own extension, let's try and get a meaningful description
             if (domain === extensionId) {
-                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
+                const matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
 
                 if (matches && matches[1]) {
                     return matches[1]

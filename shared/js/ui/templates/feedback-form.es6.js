@@ -26,7 +26,7 @@ module.exports = function () {
     }
 
     return bel`<form class='frm'>
-        <p>Anonymously share some feedback to help us improve DuckDuckGo Privacy Essentials.</p>
+        <p>Submitting anonymous feedback helps us improve DuckDuckGo Privacy Essentials.</p>
         <label class='frm__label'>
             <input type='checkbox' class='js-feedback-broken-site frm__label__chk'
                 ${this.model.isBrokenSite ? 'checked' : ''}/>
@@ -43,7 +43,6 @@ function showThankYou (isBrokenSite) {
         return bel`<div>
             <p>Thank you for your feedback!</p>
             <p>Your broken site reports help our development team fix these breakages.</p>
-            <p>To fix the issue for the time being, you can turn off "Privacy Protection" to add the site to the extension whitelist.</p>
         </div>`
     } else {
         return bel`<p>Thank you for your feedback!</p>`

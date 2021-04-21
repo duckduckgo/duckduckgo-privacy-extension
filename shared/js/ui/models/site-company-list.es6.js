@@ -17,9 +17,9 @@ SiteCompanyList.prototype = window.$.extend({},
 
         fetchAsyncData: function () {
             return new Promise((resolve, reject) => {
-                this.fetch({getCurrentTab: true}).then((tab) => {
+                this.fetch({ getCurrentTab: true }).then((tab) => {
                     if (tab) {
-                        this.fetch({getTab: tab.id}).then((bkgTab) => {
+                        this.fetch({ getTab: tab.id }).then((bkgTab) => {
                             this.tab = bkgTab
                             this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
                             this._updateCompaniesList()
@@ -42,8 +42,8 @@ SiteCompanyList.prototype = window.$.extend({},
             // set trackerlist metadata for list display by company:
             this.companyListMap = companyNames
                 .map((companyName) => {
-                    let company = this.trackers[companyName]
-                    let urlsList = company.urls ? Object.keys(company.urls) : []
+                    const company = this.trackers[companyName]
+                    const urlsList = company.urls ? Object.keys(company.urls) : []
                     // Unknown same domain trackers need to be individually fetched and put
                     // in the unblocked list
                     if (companyName === 'unknown' && this.hasUnblockedTrackers(company, urlsList)) {

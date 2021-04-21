@@ -1,6 +1,6 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
-const BloomFilter = require('jsbloom').filter
+const BloomFilter = require('@duckduckgo/jsbloom').filter
 const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
@@ -27,7 +27,7 @@ class HTTPS {
     // 'upgrade safelist' and 'don't upgrade safelist' should be arrays
     setLists (lists) {
         try {
-            lists.map(list => {
+            lists.forEach(list => {
                 if (!list.data) {
                     throw new Error(`HTTPS: ${list.name} missing data`)
                 }
@@ -56,8 +56,8 @@ class HTTPS {
     // create a new BloomFilter
     // filterData is assumed to be base64 encoded 8 bit typed array
     createBloomFilter (filterData) {
-        let bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
-        let buffer = Buffer.from(filterData.data, 'base64')
+        const bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
+        const buffer = Buffer.from(filterData.data, 'base64')
         bloom.importData(buffer)
         return bloom
     }
@@ -124,9 +124,9 @@ class HTTPS {
         return httpsService.checkInService(host)
     }
 
-    downgradeTab ({tabId, expectedUrl, targetUrl}) {
+    downgradeTab ({ tabId, expectedUrl, targetUrl }) {
         // make sure that tab still has expected url (user could have navigated away or been redirected)
-        const tab = tabManager.get({tabId})
+        const tab = tabManager.get({ tabId })
 
         if (tab.url !== expectedUrl && tab.url !== targetUrl) {
             console.warn(`HTTPS: Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`)
@@ -259,7 +259,7 @@ class HTTPS {
             // clear the counts
             settings.updateSetting('totalUpgrades', 0)
             settings.updateSetting('failedUpgrades', 0)
-            pixel.fire('ehs', {'total': upgrades, 'failures': failed})
+            pixel.fire('ehs', { total: upgrades, failures: failed })
         }
     }
 

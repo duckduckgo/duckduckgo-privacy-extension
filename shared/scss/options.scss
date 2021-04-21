@@ -19,3 +19,13 @@
     margin-bottom: 10px;
     color: $slate;
 }
+
+.options-content__privacy {
+    li {
+        font-weight: bold;
+    }
+
+    .toggle-button {
+        margin-top: -4px;
+    }
+}

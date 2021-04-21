@@ -4,7 +4,6 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-
 const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
@@ -25,6 +24,9 @@ function fire () {
     const pixelName = args[0]
 
     if (typeof pixelName !== 'string') return
+
+    // Only allow broken site reports
+    if (pixelName !== 'epbf') return
 
     const url = getURL(pixelName)
 
@@ -83,7 +85,7 @@ function concatParams (args) {
     let paramString = ''
     let objParamString = ''
     let resultString = ''
-    let randomNum = Math.ceil(Math.random() * 1e7)
+    const randomNum = Math.ceil(Math.random() * 1e7)
 
     args.forEach((arg) => {
         // append keys if object
@@ -91,6 +93,7 @@ function concatParams (args) {
             objParamString += Object.keys(arg).reduce((params, key) => {
                 const val = arg[key]
                 if (val || val === 0) return `${params}&${key}=${val}`
+                return params
             }, '')
         } else if (arg) {
             // otherwise just add args separated by _

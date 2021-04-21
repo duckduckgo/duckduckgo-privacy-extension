@@ -14,10 +14,10 @@ module.exports = function () {
     <div class="js-tracker-networks-hero">
         ${renderHero(this.model.site)}
     </div>
-    <div class="tracker-networks__explainer padded border--bottom--inner
+    <div class="tracker-networks__explainer border--bottom--inner
         text--center">
         Tracker networks aggregate your web history into a data profile about you.
-        Major tracker networks are more harmful because they can track and target you across more of the internet.
+        Major tracker networks are more harmful because they can track and target you across more of the Internet.
     </div>
     <div class="tracker-networks__details padded
         js-tracker-networks-details">
@@ -46,7 +46,7 @@ function renderHero (site) {
 function renderTrackerDetails (model) {
     const companyListMap = model.companyListMap || {}
     if (companyListMap.length === 0) {
-        return bel`<li class="is-empty">None</li>`
+        return bel`<li class="is-empty"></li>`
     }
     if (companyListMap && companyListMap.length > 0) {
         return companyListMap.map((c, i) => {
@@ -57,7 +57,7 @@ function renderTrackerDetails (model) {
                 const additionalText = ' associated domains'
                 const domain = model.site ? model.site.domain : c.displayName
                 c.displayName = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
-                borderClass = companyListMap.length > 1 ? 'border--top' : ''
+                borderClass = companyListMap.length > 1 ? 'border--top padded--top' : ''
             }
             return bel`<li class="${borderClass}">
     <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
@@ -71,11 +71,12 @@ function renderTrackerDetails (model) {
         let category = ''
         if (c.urls[url] && c.urls[url].categories) {
             displayCategories.some(displayCat => {
-                let match = c.urls[url].categories.find(cat => cat === displayCat)
+                const match = c.urls[url].categories.find(cat => cat === displayCat)
                 if (match) {
                     category = match
                     return true
                 }
+                return false
             })
         }
         return bel`<li>

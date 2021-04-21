@@ -1,13 +1,13 @@
 .hero {
-    padding: 0 20px 15px 20px;
+    padding: 15px;
     text-align: center;
     position: relative;
     cursor: pointer;
+    border-bottom: 0;
 }
 
 .hero__icon {
     @include icon_display();
-    margin-top: 15px;
 }
 
 .hero__title {

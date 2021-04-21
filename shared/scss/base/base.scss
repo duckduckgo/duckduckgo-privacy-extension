@@ -15,11 +15,9 @@
  */
 
 html, body {
-    height: 100%;
-    min-height: 100%;
 
     &.body--neutral {
-        background: $color--silver;
+        background: $color--white;
     }
 }
 
@@ -167,10 +165,27 @@ a {
     }
 }
 
+.border--top--inner {
+    position: relative;
+
+    &:before {
+        content: "";
+        border-top: $card__border;
+        position: absolute;
+        top: 0;
+        left: 20px;
+        right: 20px;
+    }
+}
+
 
 /* Padding */
 .padded {
     padding: $card--padded;
+}
+
+.padded--top {
+    padding: $card--padded--top;
 }
 
 .padded--no-bottom-padding {
@@ -190,27 +205,11 @@ a {
 /* Hamburger Button */
 .hamburger-button {
     position: absolute;
-    top: 3px;
-    right: 10px;
-    font-size: 20px;
-    width: 20px;
-    height: 30px;
-    background-color: inherit;
-
-    span {
-        display: block;
-        margin: 3px auto 0 auto;
-        width: 15px;
-        height: 2px;
-        background-color: $hamburger-button__color;
-        border-radius: 5px;
-    }
-
-    &:hover {
-        span {
-            background-color: $color--silver;
-        }
-    }
+    top: 8px;
+    right: 16px;
+    width: 22px;
+    height: 22px;
+    @include cross_platform_bg_image("settings.svg");
 }
 
 
@@ -218,7 +217,6 @@ a {
 .card {
     background-color: $card__bg-color;
     border-radius: $card__border-radius;
-    box-shadow: $card__box-shadow;
     padding: $card__padding;
     margin: $card__margin;
 
@@ -264,8 +262,8 @@ a {
     }
 
     &.icon__arrow {
-        width: 16px;
-        height: 16px;
+        width: 12px;
+        height: 12px;
 
         @include cross_platform_bg_image("arrow@2x.png");
 
@@ -274,7 +272,8 @@ a {
         }
 
         &.icon__arrow--large {
-            width: 9.5px;
+            width: 7px;
+            margin-top: -20px;
             @include cross_platform_bg_image("arrow--large.svg");
         }
     }
@@ -432,8 +431,8 @@ a {
 .separator {
     width: 1px;
     height: 18px;
-    background-color: $color--medium-silver;
+    background-color: $color--medium-light-platinum;
     display: inline-block;
     vertical-align: bottom;
-    margin: 0 12px;
+    margin: 0 7px;
 }

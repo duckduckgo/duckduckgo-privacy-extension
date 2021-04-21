@@ -5,15 +5,10 @@
 /* Popup */
 html, body {
     width: $popup__width;
-    height: $popup__height;
 }
 
 body {
     overflow: hidden;
-
-    &.is-browser--moz {
-        height: $popup__height--moz;
-    }
 }
 
 #popup-container {
@@ -31,9 +26,6 @@ body {
             font-size: 15px;
             color: $platinum-darker;
         }
-    }
-
-    .hamburger-button {
     }
 
     .hamburger-menu {
@@ -73,7 +65,10 @@ body {
             }
 
             .hamburger-menu__links {
-                padding-top: 0;
+                li:not(:first-child) {
+                    margin-top: 10px;
+                }
+
                 /* hide report broken site option on special urls */
                 li:last-child {
                     .is-disabled & {
@@ -103,23 +98,19 @@ body {
         }
     }
 
-    .site-info--placeholder {
-        height: 388px;
+    .text-line-after-icon {
+        margin-left: 12px;
     }
 
     .site-info {
-        position: absolute;
-        top: 50px;
-        left: 0;
-        right: 0;
         margin-top: 0;
 
         .default-list {
            padding-bottom: 0;
         }
 
-        .text-line-after-icon {
-           margin-left: 12px;
+        .text-line-after-icon.privacy-on-off-message {
+           margin-left: 2px;
         }
 
         .site-info__confirm-thanks {
@@ -154,6 +145,7 @@ body {
             opacity: 1;
             margin-top: 0;
             max-height: 20px;
+            margin-left: 3px;
         }
 
         .site-info--confirm-breakage {
@@ -170,14 +162,10 @@ body {
         }
 
         .site-info__li--toggle {
-            background-color: $color--medium-slate;
-            color: $color--white;
+            background-color: $color--extra-light-platinum;
+            color: $slate;
             max-height: 19px;
             overflow: hidden;
-
-            &.is-active {
-                background-color: $color--green;
-            }
 
             .is-disabled & {
                 @include is_disabled();
@@ -187,27 +175,31 @@ body {
         .site-info__toggle-container {
             position: absolute;
             right: 20px;
-            top: 16px;
+            top: 12px;
 
             .toggle-button {
                 position: absolute;
-                right: 0;
+                right: -4px;
             }
 
             .toggle-button--is-active-true {
                 .toggle-button__bg {
-                    background-color: $color--dark-green;
+                    background-color: $color--green;
                 }
             }
             .toggle-button--is-active-false {
                 .toggle-button__bg {
-                    background-color: #4B4D50;
+                    background-color: $color--medium-dark-platinum;
                 }
             }
         }
 
         .site-info__rating-li {
             padding-top: 8px;
+
+            &.main-rating {
+                padding-top: 0;
+            }
         }
 
         .site-info__li--https-status {
@@ -221,25 +213,22 @@ body {
 
         @mixin site_status_icons () {
             position: absolute;
-            width: 17px;
-            height: 22px;
-            top: 10px;
+            top: 14px;
+            left: 18px;
         }
 
         .site-info__https-status__icon {
             @include icon_display();
             @include site_status_icons();
-            width: 15px;
-            left: 24px;
 
             &.is-secure, // default = secure, https
             &.is-upgraded {
-                @include cross_platform_bg_image("https--on.svg");
+                @include cross_platform_bg_image($status--good);
             }
 
             &.is-none,
             &.is-insecure { // none = insecure, http
-                @include cross_platform_bg_image("https--off.svg");
+                @include cross_platform_bg_image($status--bad);
             }
         }
 
@@ -257,9 +246,6 @@ body {
                 .site-info__trackers-status__icon {
                     @include icon_display();
                     @include site_status_icons();
-                    height: 30px;
-                    width: 27px;
-                    left: 20px;
 
                     &.is-blocking--true {
                         @include cross_platform_bg_image("blocking--on.svg");
@@ -296,25 +282,25 @@ body {
         .site-info__privacy-practices__icon {
             @include icon_display();
             @include site_status_icons();
-            left: 23px;
-            top: 12px;
             
             &.is-good {
-                @include cross_platform_bg_image("privacy--good.svg");
+                @include cross_platform_bg_image($status--good);
             }
 
-            &.is-bad {
-                @include cross_platform_bg_image("privacy--bad.svg");
+            &.is-poor {
+                @include cross_platform_bg_image($status--bad);
             }
 
             &.is-mixed,
             &.is-unknown {
-                @include cross_platform_bg_image("privacy--mixed.svg");
+                @include cross_platform_bg_image($status--mixed);
             }
         }
 
         .site-info__li--manage-whitelist {
-            background-color: $white; 
+            background-color: $white;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center; 
 
             .is-disabled & {
                 @include is_disabled();
@@ -347,7 +333,6 @@ body {
     .site-info--full-height {
         position: relative;
         margin-top: 0;
-        top: 0;
         height: 100%;
         overflow-y: auto;
     }
@@ -359,17 +344,13 @@ body {
     }
 
     .top-blocked {
-        position: absolute;
-        top: 440px;
-        left: 0;
-        right: 0;
-        margin-top: 0;
-        padding-bottom: 15px;
+        display: flex;
+        align-items: center;
+        height: 50px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
 
         &.top-blocked--truncated {
-            padding-top: 12px;
-            top: 438px;
-            bottom: 0px;
+            padding-top: 0;
         }
 
         .top-blocked__list {
@@ -393,27 +374,35 @@ body {
             display: none;
         }
 
+        &.top-blocked-header .icon.icon__arrow {
+            width: 16px;
+            height: 16px;
+        }
+
         .top-blocked__list {
             z-index: 0;
             overflow-y: auto;
-            padding-top: 0;
+            padding-top: 15px;
             padding-bottom: 30px;
             margin-top: 0;
-            max-height: 315px;
+            padding-bottom: 5px;
+            max-height: 290px;
+            height: 290px;
         }
 
         .top-blocked__pct {
             margin: 0;
             padding: 15px 20px 7.5px 20px;
+            text-align: center;
         }
 
         .top-blocked__reset-stats {
             position: absolute;
             height: 50px;
-            top: 470px;
+            top: 427px;
             left: 0;
             right: 0;
-            padding: 15px 20px;
+            padding: 20px;
             text-align: center;
 
             button {
@@ -421,12 +410,12 @@ body {
                 border: 1px solid $slate-light;
                 padding: 7.5px 15px;
                 border-radius: 3px;
-                background-color: $color--neutral-bg;
+                background-color: $white;
             }
 
             p {
-                margin-top: 15px;
-                color: $color--grey;
+                margin-top: 21px;
+                color: $slate;
             }
         }
     }
@@ -436,9 +425,8 @@ body {
 
 /* Top blocked lists */
 .top-blocked__see-all {
-   padding-top: 14px;
+   width: 100%;
    padding-left: 20px;
-   margin: 48px 0 0 0;
    cursor: pointer;
 
    .link-secondary {
@@ -447,10 +435,26 @@ body {
        padding-top: 3.5px;
        padding-bottom: 3.5px;
        display: block;
+       margin-left: 4px;
 
        .icon__arrow {
            padding-top: 1px;
+           right: 15px;
+           top: 8px;
        }
+   }
+
+   .top-blocked__list--icons {
+       margin-left: 36px;
+   }
+
+   .top-blocked__pill-site__icon {
+        @include icon_display();
+        @include tracker_network_icons_subview();
+
+        border: 1px solid $white;
+        border-radius: 50%;
+        margin-left: -3px;
    }
 }
 
@@ -469,6 +473,8 @@ body {
         margin-left: 20px;
         margin-right: 20px;
         clear: both;
+        margin-bottom: 12px;
+        height: 15px;
 
        &.top-blocked__li--truncated {
            float: left;
@@ -479,52 +485,6 @@ body {
 
            &:first-child {
                margin-left: 24px;
-           }
-       }
-
-       .top-blocked__pill {
-           border-radius: 100px;
-           background-color: $color--medium-slate;
-           height: 27px;
-
-           .top-blocked__pill__blocker-pct {
-               float: left;
-               color: $white;
-               font-size: 16px;
-               letter-spacing: 1.2px;
-               font-weight: bold;
-               text-align: right;
-               width: 34px;
-               height: 19px;
-               margin: 4px 9px 3px 0;
-           }
-
-           .top-blocked__pill__divider {
-               width: 1px;
-               height: 17px;
-               opacity: 0.4;
-               border-radius: 0.5px;
-               background-color: $white;
-               margin: 5px 5px 6px 5px;
-               float: left;
-           }
-
-           .top-blocked__pill-site__icon-container {
-                margin: 7px 0 7px 9px;
-                float: left;
-                box-sizing: border-box;
-           }
-
-           .top-blocked__pill-site__icon {
-                @include icon_display();
-                @include tracker_network_icons();
-
-                background-size: contain;
-                margin: auto;
-                background-position-x: center;
-                vertical-align: unset;
-                height: 13px;
-                width: 13.5px;
            }
        }
 
@@ -623,6 +583,8 @@ body {
             transition: all 0.5s ease-in-out;
             padding-left: 5px;
             vertical-align: middle;
+            position: absolute;
+            right: 0;
         }
     }
 }

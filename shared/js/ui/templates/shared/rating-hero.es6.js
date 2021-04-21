@@ -58,10 +58,8 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
     if (isActive && rating && rating.before && rating.after) {
         if (rating.before !== rating.after) {
             // wrap this in a single root span otherwise bel complains
-            return bel`<span>Enhanced from
+            return bel`<span>Site enhanced from
     <span class="rating-letter rating-letter--${rating.cssBefore}">
-    </span> to
-    <span class="rating-letter rating-letter--${rating.cssAfter}">
     </span>
 </span>`
         }
@@ -71,13 +69,13 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
     let msg = 'Privacy Grade'
     // site is whitelisted
     if (!isActive) {
-        msg = `Privacy Protection Disabled`
+        msg = 'Privacy Protection Disabled'
         // "null" state (empty tab, browser's "about:" pages)
     } else if (!isCalculating && !rating.before && !rating.after) {
-        msg = `We only grade regular websites`
+        msg = 'We only grade regular websites'
         // rating is still calculating
     } else if (isCalculating) {
-        msg = `Calculating...`
+        msg = 'Calculating...'
     }
 
     return bel`${msg}`
@@ -97,6 +95,6 @@ function subtitleLabel (isCalculating, rating, isWhitelisted) {
     }
 
     if (rating.before && rating.after) {
-        return `Enhanced from ${rating.before} to ${rating.after}`
+        return `Site enhanced from ${rating.before}`
     }
 }
