@@ -29,6 +29,11 @@ const domainTestCases = [
         valid: false
     },
     {
+        url: '127.0.0.1',
+        whitelistedDomain: '127.0.0.1',
+        valid: true
+    },
+    {
         url: 'localhost',
         whitelistedDomain: 'localhost',
         valid: true
