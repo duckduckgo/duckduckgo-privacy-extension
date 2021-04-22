@@ -251,7 +251,7 @@ module.exports = function (grunt) {
             },
             injectedCSS: {
                 files: watch.injectedCSS,
-                tasks: ['exec:copyInjectedCSS']
+                tasks: ['exec:copyInjectedCSS', 'updateFirefoxRelativeUrl']
             },
             data: {
                 files: watch.data,
