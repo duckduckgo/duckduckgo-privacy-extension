@@ -14,32 +14,21 @@
 }
 .tooltip {
     position: absolute;
-    bottom: calc(100% + 15px);
-    right: calc(100% - 60px);
-    width: 350px;
+    top: calc(100% + 6px);
+    right: calc(100% - 46px);
+    width: 300px;
     max-width: calc(100vw - 25px);
-    padding: 25px;
+    padding: 8px;
     border: 1px solid #D0D0D0;
-    border-radius: 20px;
+    border-radius: 10px;
     background-color: #FFFFFF;
     font-size: 14px;
     color: #333333;
-    line-height: 1.4;
+    line-height: 1.3;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     z-index: 2147483647;
 }
-.tooltip::before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    display: block;
-    border-top: 12px solid #D0D0D0;
-    position: absolute;
-    right: 34px;
-    bottom: -12px;
-}
+.tooltip::before,
 .tooltip::after {
     content: "";
     width: 0;
@@ -47,52 +36,38 @@
     border-left: 10px solid transparent;
     border-right: 10px solid transparent;
     display: block;
-    border-top: 12px solid #FFFFFF;
+    border-bottom: 8px solid #D0D0D0;
     position: absolute;
-    right: 34px;
-    bottom: -10px;
+    right: 20px;
 }
-.tooltip__title {
-    margin: -4px 0 4px;
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 1.3;
+.tooltip::before {
+    border-bottom-color: #D0D0D0;
+    top: -9px;
 }
-.tooltip p {
-    margin: 4px 0 12px;
-}
-.tooltip strong {
-    font-weight: bold;
-}
-.tooltip__alias-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px auto 15px;
-    font-size: 16px;
-}
-.alias {
-    padding-left: 4px;
-}
-.tooltip__button-container {
-    display: flex;
+.tooltip::after {
+    border-bottom-color: #FFFFFF;
+    top: -8px;
 }
 .tooltip__button {
-    flex: 1;
-    height: 40px;
-    padding: 0 8px;
-    background-color: #332FF3;
-    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding: 4px 8px 7px;
     font-family: inherit;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
+    background: transparent;
     border: none;
-    border-radius: 10px;
+    border-radius: 6px;
 }
-.tooltip__button:last-child {
-    margin-left: 12px;
+.tooltip__button:hover {
+    background-color: #3969EF;
+    color: #FFFFFF;
 }
-.tooltip__button--secondary {
-    background-color: #EEEEEE;
-    color: #332FF3;
+.tooltip__button__primary-text {
+    font-weight: bold;
+}
+.tooltip__button__secondary-text {
+    font-size: 12px;
 }
