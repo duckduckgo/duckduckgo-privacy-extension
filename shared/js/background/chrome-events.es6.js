@@ -322,8 +322,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
         if (!argumentsObject.site.whitelisted) {
             res(argumentsObject)
-            return true
+            return
         }
+        return
     }
 
     if (req.getCurrentTab) {
