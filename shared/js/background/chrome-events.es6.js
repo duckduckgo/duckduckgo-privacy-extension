@@ -845,7 +845,7 @@ chrome.webRequest.onErrorOccurred.addListener(e => {
     }
 }, { urls: ['<all_urls>'] })
 
-if (browser === 'moz') {
+if (browserName === 'moz') {
     cspProtection.init()
 }
 
