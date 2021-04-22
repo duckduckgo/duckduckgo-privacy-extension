@@ -208,7 +208,6 @@ module.exports = function (grunt) {
             buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
-            // TODO: gsv can we remove this? it's removed upstream.
             // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
             updateFirefoxRelativeUrl: `sed -i.bak "s/chrome-extension:\\/\\/__MSG_@@extension_id__\\/public/../g" build/firefox/${buildType}/public/css/email-host-styles.css &&
                     rm build/firefox/${buildType}/public/css/email-host-styles.css.bak`,
@@ -285,7 +284,6 @@ module.exports = function (grunt) {
     })
 
     // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
-    // TODO: gsv can we remove this? it's removed upstream.
     grunt.registerTask('updateFirefoxRelativeUrl', 'Update Firefox relative URL in injected css', () => {
         if (browser === 'firefox') {
             grunt.task.run('exec:updateFirefoxRelativeUrl')
