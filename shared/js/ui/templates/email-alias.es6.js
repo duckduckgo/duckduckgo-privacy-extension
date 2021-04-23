@@ -1,5 +1,4 @@
 const bel = require('bel')
-const crossplatformLink = require('./shared/crossplatform-link.es6.js')
 
 module.exports = function () {
     if (this.model.userData && this.model.userData.nextAlias) {
@@ -8,7 +7,7 @@ module.exports = function () {
                 <span class="email-alias__icon"></span>
                 <a href="#" class="link-secondary bold">
                     <span class="text-line-after-icon">
-                        Create a Duck Address
+                        Create new Duck Address
                         <span class="js-alias-copied alias-copied-label">Copied to clipboard</span>
                     </span>
                 </a>
