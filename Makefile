@@ -48,7 +48,6 @@ web-resources:
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
 	cp -r $(ITEMS) build/$(browser)/$(type)
-	cp -r shared/js/injected-content-scripts build/$(browser)/$(type)/public/js/
 	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
 	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
 

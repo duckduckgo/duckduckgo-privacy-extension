@@ -21,7 +21,7 @@ function onDocumentEnd ({
     showCounterMessaging,
     extensionId,
     duckDuckGoSerpHostname,
-    browser
+    browserName
 }) {
     const origin = `https://${duckDuckGoSerpHostname}`
 
@@ -31,7 +31,7 @@ function onDocumentEnd ({
      * variables at an earlier stage of the page lifecycle
      */
     function getDocumentStartData (cb) {
-        if (browser !== 'chrome') {
+        if (browserName !== 'chrome') {
             return cb(null)
         }
 
@@ -52,7 +52,7 @@ function onDocumentEnd ({
 
             // DDG privacy policy prevents us to use `chrome.runtime` on the SERP so we
             // setup a relay here so that the SERP can communicate with the background process
-            if (browser === 'chrome') {
+            if (browserName === 'chrome') {
                 window.addEventListener('message', (e) => {
                     if (e.origin === origin) {
                         switch (e.data.type) {

@@ -159,13 +159,13 @@ function isBroken (url) {
 }
 
 function getBrokenFeatures (url) {
-    if (!tdsStorage?.fingerprinting) return
+    if (!tdsStorage?.protections) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.fingerprinting) {
-        if (!tdsStorage.fingerprinting[feature]?.enabled) {
+    for (const feature in tdsStorage.protections) {
+        if (!tdsStorage.protections[feature]?.enabled) {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.fingerprinting[feature].sites || [])) {
+        if (isBrokenList(url, tdsStorage.protections[feature].sites || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -188,8 +188,8 @@ function isBrokenList (url, lists) {
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in tdsStorage?.fingerprinting) {
-        brokenScripts[key] = tdsStorage.fingerprinting[key]?.scripts || []
+    for (const key in tdsStorage?.protections) {
+        brokenScripts[key] = tdsStorage.protections[key]?.scripts || []
     }
     return brokenScripts
 }

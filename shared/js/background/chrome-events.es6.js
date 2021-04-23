@@ -14,7 +14,7 @@ const settings = require('./settings.es6')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
-const browser = utils.getBrowserName()
+const browserName = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -42,18 +42,18 @@ chrome.runtime.onInstalled.addListener(function (details) {
         settings.ready()
             .then(() => {
                 settings.updateSetting('showWelcomeBanner', true)
-                if (browser === 'chrome') {
+                if (browserName === 'chrome') {
                     settings.updateSetting('showCounterMessaging', true)
                 }
             })
             .then(ATB.updateATBValues)
             .then(ATB.openPostInstallPage)
             .then(function () {
-                if (browser === 'chrome') {
+                if (browserName === 'chrome') {
                     experiment.setActiveExperiment()
                 }
             })
-    } else if (details.reason.match(/update/) && browser === 'chrome') {
+    } else if (details.reason.match(/update/) && browserName === 'chrome') {
         experiment.setActiveExperiment()
     }
 })
@@ -85,7 +85,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
         }
 
         if (onBeforeNavigateTimeStamp < details.timeStamp) {
-            if (browser === 'chrome') {
+            if (browserName === 'chrome') {
                 chrome.tabs.executeScript(details.tabId, {
                     code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
                         duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
@@ -99,7 +99,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
-                    browser,
+                    browserName,
                     duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
                     extensionId: chrome.runtime.id
                 }),
@@ -129,7 +129,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
  * Health checks + `showCounterMessaging` mutation
  * (Chrome only)
  */
-if (browser === 'chrome') {
+if (browserName === 'chrome') {
     chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         if (request === 'healthCheckRequest') {
             sendResponse(true)
@@ -307,6 +307,25 @@ const browserWrapper = require('./chrome-wrapper.es6')
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
+
+    if (req.registeredContentScript) {
+        const argumentsObject = getArgumentsObject(sender.tab.id)
+        if (!argumentsObject) {
+            // No info for the tab available, do nothing.
+            return
+        }
+
+        if (argumentsObject.site.isBroken) {
+            console.log('temporarily skip protections for site: ' + sender.tab.url +
+        'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
+        if (!argumentsObject.site.whitelisted) {
+            res(argumentsObject)
+            return
+        }
+        return
+    }
 
     if (req.getCurrentTab) {
         utils.getCurrentTab().then(tab => {
@@ -532,59 +551,21 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
-async function getContentScope () {
-    const url = chrome.runtime.getURL('/public/js/content-scope.js')
-
-    const response = await fetch(url)
-    return response.text()
+function getArgumentsObject (tabId) {
+    const tab = tabManager.get({ tabId })
+    if (!tab) {
+        return null
+    }
+    const site = tab?.site || {}
+    const referrer = tab?.referrer || ''
+    return {
+        globalPrivacyControlValue: settings.getSetting('GPC'),
+        stringExemptionLists: utils.getBrokenScriptLists(),
+        sessionKey,
+        site,
+        referrer
+    }
 }
-
-async function init () {
-    const contentScopeScript = await getContentScope()
-
-    // Inject fingerprint protection into sites when
-    // they are not whitelisted.
-    chrome.webNavigation.onCommitted.addListener(details => {
-        const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && tab.site.isBroken) {
-            console.log('temporarily skip fingerprint protection for site: ' + details.url +
-            'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-            return
-        }
-        if (tab && !tab.site.whitelisted) {
-            // Set variables, which are used in the fingerprint-protection script.
-            try {
-                const argumentsObject = {
-                    stringExemptionLists: utils.getBrokenScriptLists(),
-                    sessionKey,
-                    contentScopeScript,
-                    site: tab.site,
-                    referrer: tab.referrer
-                }
-                const variableScript = {
-                    code: `
-                      try {
-                          var ddg_args = ${JSON.stringify(argumentsObject)}
-                      } catch(e) {}`,
-                    runAt: 'document_start',
-                    frameId: details.frameId,
-                    matchAboutBlank: true
-                }
-                chrome.tabs.executeScript(details.tabId, variableScript)
-                const scriptDetails = {
-                    file: '/public/js/injected-content-scripts/fingerprint-protection.js',
-                    runAt: 'document_start',
-                    frameId: details.frameId,
-                    matchAboutBlank: true
-                }
-                chrome.tabs.executeScript(details.tabId, scriptDetails)
-            } catch (e) {
-                console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
-            }
-        }
-    })
-}
-init()
 
 /*
  * Truncate the referrer header according to the following rules:
@@ -599,7 +580,7 @@ init()
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
 const referrerListenerOptions = ['blocking', 'requestHeaders']
-if (browser !== 'moz') {
+if (browserName !== 'moz') {
     referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
 }
 
@@ -617,7 +598,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         // Firefox only - Check if this tab had a surrogate redirect request and if it will
         // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.
-        if (browser === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
+        if (browserName === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
             const hasOrigin = e.requestHeaders.filter(h => h.name.match(/^origin$/i))
             if (!hasOrigin.length) {
                 const redirectUrl = tab.surrogates[e.url]
@@ -656,11 +637,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  * Global Privacy Control
  */
 const GPC = require('./GPC.es6')
-
-// Set GPC property on DOM if enabled.
-chrome.webNavigation.onCommitted.addListener(details => {
-    GPC.injectDOMSignal(details.tabId, details.frameId)
-})
 
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
 if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
@@ -870,7 +846,7 @@ chrome.webRequest.onErrorOccurred.addListener(e => {
     }
 }, { urls: ['<all_urls>'] })
 
-if (browser === 'moz') {
+if (browserName === 'moz') {
     cspProtection.init()
 }
 

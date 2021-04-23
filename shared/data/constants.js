@@ -98,8 +98,8 @@ module.exports = {
             "source": "external"
         },
         {
-            "name": "fingerprinting",
-            "url": "https://duckduckgo.com/contentblocking/fingerprinting.json",
+            "name": "protections",
+            "url": "https://duckduckgo.com/contentblocking/protections.json",
             "format": "json",
             "source": "external"
         },
