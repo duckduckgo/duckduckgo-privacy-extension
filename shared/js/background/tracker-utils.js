@@ -3,6 +3,7 @@ const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
+const settings = require('./settings.es6')
 
 // Determine if two URL's belong to the same entity.
 function isSameEntity (url1, url2) {
@@ -28,6 +29,124 @@ function isTracker (url) {
     }
     const tracker = trackers.findTracker(data)
     return !!tracker
+}
+
+/**
+ * Determine if the social entity should be blockedon this URL. returns True if so.
+ */
+function shouldBlockSocialNetwork (entity, url) {
+    const domain = tldts.parse(url).domain
+    const excludeData = getDomainsToExludeByNetwork()
+    return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
+}
+
+/*
+ * Parse the social config to find excluded domains by social tracker. This then returns a list of objects
+ * that include the exlcuded domain and network, for use in other exception list handling.
+ */
+const socialExcludeCache = {
+    excludes: [],
+    expireTime: 0,
+    refreshTimeMS: 1000 * 60 * 30 // 30 minutes
+}
+function getDomainsToExludeByNetwork () {
+    if (Date.now() < socialExcludeCache.expireTime) {
+        return socialExcludeCache.excludes
+    }
+    socialExcludeCache.excludes = []
+    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (data.excludedDomains) {
+            const excludedDomains = data.excludedDomains.map(e => e.domain)
+            for (const domain of excludedDomains) {
+                socialExcludeCache.excludes.push({
+                    entity: entity,
+                    domain: domain
+                })
+            }
+        }
+    }
+    socialExcludeCache.expireTime = Date.now() + socialExcludeCache.refreshTimeMS
+    return socialExcludeCache.excludes
+}
+
+// Return true if URL is in our click to load tracker list
+function getSocialTracker (url) {
+    if (!facebookExperimentIsActive()) {
+        return
+    }
+    const parsedDomain = tldts.parse(url)
+    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
+            let redirect
+            if (data.surrogates) {
+                for (const surrogate of data.surrogates) {
+                    if (url.match(surrogate.rule)) {
+                        redirect = surrogate.surrogate
+                        break
+                    }
+                }
+            }
+            return {
+                entity: entity,
+                data: data,
+                redirectUrl: redirect
+            }
+        }
+    }
+}
+
+// Return true when click to load should be enabled
+function facebookExperimentIsActive () {
+    // Check for experiment
+    const activeExperiment = settings.getSetting('activeExperiment')
+    if (activeExperiment) {
+        const experiment = settings.getSetting('experimentData')
+        if (experiment && experiment.blockFacebook) {
+            return true
+        }
+    }
+    return false
+}
+
+// Determine if a given URL is surrogate redirect.
+function getXraySurrogate (url) {
+    const u = new URL(url)
+    for (const [, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (data.surrogates) {
+            for (const surrogate of data.surrogates) {
+                if (u.pathname === `/web_accessible_resources/${surrogate.surrogate}`) {
+                    return surrogate.xray
+                }
+            }
+        }
+    }
+    return undefined
+}
+
+// Ensure we allow logged in sites to access facebook
+const logins = []
+function allowSocialLogin (url) {
+    const domain = utils.extractHostFromURL(url)
+    if (!logins.includes(domain)) {
+        logins.push(domain)
+    }
+}
+
+/**
+ * Return true if the user has permanently saved the domain/tracker combination
+ */
+function socialTrackerIsAllowedByUser (trackerEntity, domain) {
+    if (logins.includes(domain)) {
+        return true
+    }
+    let allowList = settings.getSetting('clickToLoad')
+    if (allowList) {
+        allowList = allowList.filter(e => e.domain === domain && e.tracker === trackerEntity)
+        if (allowList.length > 0) {
+            return true
+        }
+    }
+    return false
 }
 
 /*
@@ -82,5 +201,12 @@ function truncateReferrer (referrer, target) {
 module.exports = {
     isSameEntity: isSameEntity,
     isTracker: isTracker,
-    truncateReferrer: truncateReferrer
+    truncateReferrer: truncateReferrer,
+    getSocialTracker: getSocialTracker,
+    socialTrackerIsAllowedByUser: socialTrackerIsAllowedByUser,
+    shouldBlockSocialNetwork: shouldBlockSocialNetwork,
+    getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
+    getXraySurrogate: getXraySurrogate,
+    allowSocialLogin: allowSocialLogin,
+    facebookExperimentIsActive: facebookExperimentIsActive
 }

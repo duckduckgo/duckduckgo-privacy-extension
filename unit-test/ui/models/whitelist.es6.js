@@ -24,9 +24,24 @@ const domainTestCases = [
         valid: true
     },
     {
+        url: 'testwww.com',
+        whitelistedDomain: 'testwww.com',
+        valid: true
+    },
+    {
+        url: 'www.testwww.com',
+        whitelistedDomain: 'testwww.com',
+        valid: true
+    },
+    {
         url: 'duckduck',
         whitelistedDomain: '',
         valid: false
+    },
+    {
+        url: '127.0.0.1',
+        whitelistedDomain: '127.0.0.1',
+        valid: true
     },
     {
         url: 'localhost',

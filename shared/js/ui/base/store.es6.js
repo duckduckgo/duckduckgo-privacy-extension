@@ -36,7 +36,7 @@
  */
 
 // Dependencies
-const isPlainObject = require('is-plain-object')
+const { isPlainObject } = require('is-plain-object')
 const deepFreeze = require('deep-freeze')
 const EventEmitter2 = require('eventemitter2')
 const notifiers = require('./notifiers.es6.js')

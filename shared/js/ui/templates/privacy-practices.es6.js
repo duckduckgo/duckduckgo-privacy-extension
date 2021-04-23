@@ -1,9 +1,12 @@
 const bel = require('bel')
-const changeCase = require('change-case')
 const hero = require('./shared/hero.es6.js')
 const statusList = require('./shared/status-list.es6.js')
 const constants = require('../../../data/constants')
 const crossplatformLink = require('./shared/crossplatform-link.es6.js')
+
+function upperCaseFirst (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
 
 module.exports = function () {
     const domain = this.model && this.model.domain
@@ -56,12 +59,12 @@ function renderDetails (reasons) {
     // which use objects
 
     good = good.map(item => ({
-        msg: changeCase.upperCaseFirst(item),
+        msg: upperCaseFirst(item),
         modifier: 'good'
     }))
 
     bad = bad.map(item => ({
-        msg: changeCase.upperCaseFirst(item),
+        msg: upperCaseFirst(item),
         modifier: 'bad'
     }))
 
