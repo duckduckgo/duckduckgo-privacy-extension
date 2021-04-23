@@ -56,12 +56,14 @@ chrome.runtime.onInstalled.addListener(function (details) {
         experiment.setActiveExperiment()
     }
 
-    // Inject the email content script on all tabs upon installation
-    chrome.tabs.query({}, (tabs) => {
-        tabs.forEach(tab => {
-            chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/autofill.js'})
+    // Inject the email content script on all tabs upon installation (needed on Chrome only)
+    if (browser !== 'firefox') {
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach(tab => {
+                chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/autofill.js'})
+            })
         })
-    })
+    }
 })
 
 /**
