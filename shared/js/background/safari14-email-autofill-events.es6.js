@@ -18,7 +18,8 @@ const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     showContextMenuAction,
-    hideContextMenuAction
+    hideContextMenuAction,
+    getAddresses
 } = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
@@ -48,10 +49,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    if (req.getAddresses) {
+        res(getAddresses())
+
+        return true
+    }
+
     if (req.refreshAlias) {
         fetchAlias().then(() => {
-            const userData = settings.getSetting('userData')
-            res({alias: userData?.nextAlias})
+            res(getAddresses())
         })
 
         return true

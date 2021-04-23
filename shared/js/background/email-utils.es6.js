@@ -19,7 +19,7 @@ const fetchAlias = () => {
         .then(response => {
             if (response.ok) {
                 return response.json().then(({address}) => {
-                    updateSetting('userData', Object.assign(userData, {nextAlias: `${address}@duck.com`}))
+                    updateSetting('userData', Object.assign(userData, {nextAlias: `${address}`}))
                     // Reset attempts
                     attempts = 1
                     return {success: true}
@@ -63,9 +63,18 @@ const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {vi
 
 const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: false})
 
+const getAddresses = () => {
+    const userData = getSetting('userData')
+    return {
+        personalAddress: userData.userName,
+        privateAddress: userData.nextAlias
+    }
+}
+
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     showContextMenuAction,
-    hideContextMenuAction
+    hideContextMenuAction,
+    getAddresses
 }
