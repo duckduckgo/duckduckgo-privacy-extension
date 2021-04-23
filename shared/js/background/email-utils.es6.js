@@ -19,6 +19,8 @@ const fetchAlias = () => {
         .then(response => {
             if (response.ok) {
                 return response.json().then(({address}) => {
+                    if (!/^[a-z0-9]+$/.test(address)) throw new Error('Invalid address')
+
                     updateSetting('userData', Object.assign(userData, {nextAlias: `${address}`}))
                     // Reset attempts
                     attempts = 1
