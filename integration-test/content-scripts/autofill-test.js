@@ -1,5 +1,5 @@
 /**
- *  Test email autofill
+ *  Test autofill
  */
 
 /* global dbg:false */
@@ -12,7 +12,7 @@ const sites = _sites.focusedSites.length ? _sites.focusedSites : _sites.sites
 let browser
 let bgPage
 
-describe('Email autofill input detection Tests', () => {
+describe('Autofill input detection Tests', () => {
     beforeAll(async () => {
         ({ browser, bgPage } = await harness.setup())
 
@@ -25,7 +25,7 @@ describe('Email autofill input detection Tests', () => {
         const page = await browser.newPage()
         await page.goto('https://duckduckgo.com', { waitUntil: 'networkidle0' })
         await page.evaluate(() =>
-            window.postMessage({addUserData: {userName: 'e', token: 'e'}}, window.origin)
+            window.postMessage({addUserData: {userName: '', token: ''}}, window.origin)
         )
         await page.close()
     })
