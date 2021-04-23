@@ -15,9 +15,5 @@ module.exports = function () {
             </div>`
     }
 
-    return bel`${crossplatformLink('https://quack.duckduckgo.com/email/signup/', {
-        className: 'email-alias-block padded bold',
-        target: '_blank',
-        text: 'Turn on Email Protection'
-    })}`
+    return null
 }
