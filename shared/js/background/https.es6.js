@@ -1,6 +1,6 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
-const BloomFilter = require('jsbloom').filter
+const BloomFilter = require('@duckduckgo/jsbloom').filter
 const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')

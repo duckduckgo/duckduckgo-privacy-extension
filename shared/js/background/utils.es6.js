@@ -4,6 +4,7 @@ const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
 const settings = require('./settings.es6')
+const load = require('./load.es6')
 
 function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -158,13 +159,13 @@ function isBroken (url) {
 }
 
 function getBrokenFeatures (url) {
-    if (!tdsStorage?.fingerprinting) return
+    if (!tdsStorage?.protections) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.fingerprinting) {
-        if (!tdsStorage.fingerprinting[feature]?.enabled) {
+    for (const feature in tdsStorage.protections) {
+        if (!tdsStorage.protections[feature]?.enabled) {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.fingerprinting[feature].sites || [])) {
+        if (isBrokenList(url, tdsStorage.protections[feature].sites || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -187,8 +188,8 @@ function isBrokenList (url, lists) {
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in tdsStorage?.fingerprinting) {
-        brokenScripts[key] = tdsStorage.fingerprinting[key]?.scripts || []
+    for (const key in tdsStorage?.protections) {
+        brokenScripts[key] = tdsStorage.protections[key]?.scripts || []
     }
     return brokenScripts
 }
@@ -213,6 +214,39 @@ function isSafeListed (url) {
     }
 
     return false
+}
+
+/**
+ * Convert an image file to a base64 data:image file,
+ * for use in injections where the extension URL may not be
+ * accessible
+ */
+async function imgToData (imagePath) {
+    const imgType = imagePath.substring(imagePath.lastIndexOf('.') + 1)
+    try {
+        const options = {
+            url: imagePath,
+            type: 'internal'
+        }
+        if (imgType !== 'svg') {
+            options.responseType = 'arraybuffer'
+            options.returnType = 'arraybuffer'
+        }
+        const xhrRes = await load.loadExtensionFile(options)
+        const imgData = xhrRes.data
+        if (imgType === 'svg') {
+            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(imgData)}`
+        }
+        // Based on https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/9458996#9458996
+        let binary = ''
+        const bytes = new Uint8Array(imgData)
+        for (const i of bytes) {
+            binary += String.fromCharCode(i)
+        }
+        return `data:image/${imgType};base64,${btoa(binary)}`
+    } catch (e) {
+        console.error('Could not load image file to process: ' + e)
+    }
 }
 
 /**
@@ -244,6 +278,7 @@ module.exports = {
     extractLimitedDomainFromURL,
     isBroken,
     getBrokenFeatures,
+    imgToData,
     getBrokenScriptLists,
     isFirstParty
 }

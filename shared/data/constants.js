@@ -98,14 +98,20 @@ module.exports = {
             "source": "external"
         },
         {
-            "name": "fingerprinting",
-            "url": "https://duckduckgo.com/contentblocking/fingerprinting.json",
+            "name": "protections",
+            "url": "https://duckduckgo.com/contentblocking/protections.json",
             "format": "json",
             "source": "external"
         },
         {
             "name": "ReferrerExcludeList",
             "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "ClickToLoadConfig",
+            "url": "https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json",
             "format": "json",
             "source": "external"
         }

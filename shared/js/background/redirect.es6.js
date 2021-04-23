@@ -2,13 +2,13 @@ const tldts = require('tldts')
 
 const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
+const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
-const webResourceURL = browserWrapper.getExtensionURL('/web_accessible_resources')
 const browser = utils.getBrowserName()
 
 const debugRequest = false
@@ -48,7 +48,7 @@ function handleRequest (requestData) {
     let thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
-    if (requestData.url.startsWith(webResourceURL)) {
+    if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
             return { cancel: true }
         }
@@ -102,6 +102,31 @@ function handleRequest (requestData) {
          */
 
         let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+        /**
+         * Click to Load Blocking
+         * If it isn't in the tracker list, check the clickToLoad block list
+         */
+        const socialTracker = trackerutils.getSocialTracker(requestData.url)
+        if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
+            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
+                !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
+                !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
+                // TDS doesn't block social sites by default, so update the action & redirect for click to load.
+                tracker.action = 'block'
+                if (socialTracker.redirectUrl) {
+                    tracker.action = 'redirect'
+                    tracker.reason = 'matched rule - surrogate'
+                    tracker.redirectUrl = socialTracker.redirectUrl
+                    if (!tracker.matchedRule) {
+                        tracker.matchedRule = {}
+                    }
+                    tracker.matchedRule.surrogate = socialTracker.redirectUrl
+                }
+            } else {
+                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
+                return
+            }
+        }
 
         // allow embedded twitter content if user enabled this setting
         if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
@@ -157,6 +182,7 @@ function handleRequest (requestData) {
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
                     const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
+
                     // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
                     // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked

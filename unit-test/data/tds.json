@@ -1,5 +1,17 @@
 {
     "trackers": {
+        "facebook.com": {
+            "owner": {
+                "name": "Facebook",
+                "displayName": "Facebook",
+            }
+        },
+        "facebook.net": {
+            "owner": {
+                "name": "Facebook",
+                "displayName": "Facebook",
+            }
+        },
         "google-analytics.com": {
             "domain": "google-analytics.com",
             "default": "block",

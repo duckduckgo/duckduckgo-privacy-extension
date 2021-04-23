@@ -13,7 +13,8 @@ const experiment = require('./experiments.es6')
 const settings = require('./settings.es6')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
-const browser = utils.getBrowserName()
+const cspProtection = require('./csp-blocking.es6')
+const browserName = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -22,7 +23,7 @@ const RELEASE_EXTENSION_IDS = [
     'bkdgflcldnnnapblkhphbgpggdiikppg', // chrome store
     'jid1-ZAdIEUB7XOzOJw@jetpack' // firefox
 ]
-const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1
+const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1 // eslint-disable-line no-unused-vars
 
 /**
  * Produce a random float, same output as Math.random()
@@ -41,18 +42,18 @@ chrome.runtime.onInstalled.addListener(function (details) {
         settings.ready()
             .then(() => {
                 settings.updateSetting('showWelcomeBanner', true)
-                if (browser === 'chrome') {
+                if (browserName === 'chrome') {
                     settings.updateSetting('showCounterMessaging', true)
                 }
             })
             .then(ATB.updateATBValues)
             .then(ATB.openPostInstallPage)
             .then(function () {
-                if (browser === 'chrome') {
+                if (browserName === 'chrome') {
                     experiment.setActiveExperiment()
                 }
             })
-    } else if (details.reason.match(/update/) && browser === 'chrome') {
+    } else if (details.reason.match(/update/) && browserName === 'chrome') {
         experiment.setActiveExperiment()
     }
 
@@ -91,7 +92,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
         }
 
         if (onBeforeNavigateTimeStamp < details.timeStamp) {
-            if (browser === 'chrome') {
+            if (browserName === 'chrome') {
                 chrome.tabs.executeScript(details.tabId, {
                     code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
                         duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
@@ -105,7 +106,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
-                    browser,
+                    browserName,
                     duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
                     extensionId: chrome.runtime.id
                 }),
@@ -135,7 +136,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
  * Health checks + `showCounterMessaging` mutation
  * (Chrome only)
  */
-if (browser === 'chrome') {
+if (browserName === 'chrome') {
     chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         if (request === 'healthCheckRequest') {
             sendResponse(true)
@@ -168,18 +169,26 @@ const cookieConfig = require('./../background/storage/cookies.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
-function blockingExperimentActive () {
-    if (IS_BETA) {
-        return true
-    }
-    const activeExperiment = settings.getSetting('activeExperiment')
-    if (activeExperiment) {
-        const experiment = settings.getSetting('experimentData')
+function blockTrackingCookies () {
+    return true
+}
 
-        return experiment && experiment.blockingActivated
-    }
+// we determine if FLoC is enabled by testing for availability of its JS API
+const isFlocEnabled = ('interestCohort' in document)
 
-    // return false
+// Overwrite FLoC JS API
+if (isFlocEnabled) {
+    chrome.webNavigation.onCommitted.addListener(details => {
+        const tab = tabManager.get({ tabId: details.tabId })
+        if (tab && tab.site.whitelisted) return
+
+        chrome.tabs.executeScript(details.tabId, {
+            file: 'public/js/content-scripts/floc.js',
+            frameId: details.frameId,
+            matchAboutBlank: true,
+            runAt: 'document_start'
+        })
+    })
 }
 
 // Shallow copy of request types
@@ -208,26 +217,32 @@ chrome.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb(request)
         }
 
-        if (blockingExperimentActive()) {
-            let responseHeaders = request.responseHeaders
+        let responseHeaders = request.responseHeaders
+
+        if (isFlocEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+            // there can be multiple permissions-policy headers, so we are good always appending one
+            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
+        }
+
+        if (blockTrackingCookies()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
-            if (!request.responseHeaders) return
-            if (tab && tab.site.whitelisted) return
+            if (!request.responseHeaders) return { responseHeaders }
+            if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (utils.isFirstParty(initiator, request.url)) {
-                    return
+                    return { responseHeaders }
                 }
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return
+                return { responseHeaders }
             }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
-
-            return { responseHeaders: responseHeaders }
         }
+
+        return { responseHeaders }
     },
     {
         urls: ['<all_urls>']
@@ -306,12 +321,137 @@ const {
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
+    if (req.registeredContentScript) {
+        const argumentsObject = getArgumentsObject(sender.tab.id)
+        if (!argumentsObject) {
+            // No info for the tab available, do nothing.
+            return
+        }
+
+        if (argumentsObject.site.isBroken) {
+            console.log('temporarily skip protections for site: ' + sender.tab.url +
+        'more info: https://github.com/duckduckgo/content-blocking-whitelist')
+            return
+        }
+        if (!argumentsObject.site.whitelisted) {
+            res(argumentsObject)
+            return
+        }
+        return
+    }
+
     if (req.getCurrentTab) {
         utils.getCurrentTab().then(tab => {
             res(tab)
         })
 
         return true
+    }
+
+    // Click to load interactions
+    if (req.initClickToLoad) {
+        settings.ready().then(() => {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            const config = { ...tdsStorage.ClickToLoadConfig }
+
+            // remove any social networks saved by the user
+            for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+                if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
+                    delete config[entity]
+                }
+            }
+
+            // Determine whether to show one time messages or simplified messages
+            for (const [entity] of Object.entries(config)) {
+                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+                if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
+                    config[entity].simpleVersion = true
+                }
+            }
+
+            // if the current site is on the social exception list, remove it from the config.
+            let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
+            if (excludedNetworks) {
+                excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
+                excludedNetworks.forEach(e => delete config[e.entity])
+            }
+            res(config)
+        })
+        return true
+    }
+
+    if (req.getImage) {
+        if (req.getImage === 'None' || req.getImage === 'none' || req.getImage === undefined) {
+            res(undefined)
+        } else {
+            utils.imgToData(`img/social/${req.getImage}`).then(img => res(img))
+        }
+        return true
+    }
+
+    if (req.getLoadingImage) {
+        if (req.getLoadingImage === 'dark') {
+            utils.imgToData('img/social/loading_dark.svg').then(img => res(img))
+        } else if (req.getLoadingImage === 'light') {
+            utils.imgToData('img/social/loading_light.svg').then(img => res(img))
+        }
+        return true
+    }
+
+    if (req.getLogo) {
+        utils.imgToData('img/social/dax.png').then(img => res(img))
+        return true
+    }
+
+    if (req.getSocialSurrogateRules) {
+        const entityData = tdsStorage.ClickToLoadConfig[req.getSocialSurrogateRules]
+        if (entityData && entityData.surrogates) {
+            const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
+                accumulator.push(value.rule)
+                return accumulator
+            }, [])
+            res(rules)
+        }
+        return true
+    }
+
+    if (req.enableSocialTracker) {
+        settings.ready().then(() => {
+            const tab = tabManager.get({ tabId: sender.tab.id })
+            tab.site.clickToLoad.push(req.enableSocialTracker)
+
+            const entity = req.enableSocialTracker
+            if (req.isLogin) {
+                trackerutils.allowSocialLogin(tab.site.domain)
+            }
+            if (req.alwaysAllow) {
+                let allowList = settings.getSetting('clickToLoad')
+                const value = {
+                    tracker: entity,
+                    domain: tab.site.domain
+                }
+                if (allowList) {
+                    if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
+                        allowList.push(value)
+                    }
+                } else {
+                    allowList = [value]
+                }
+                settings.updateSetting('clickToLoad', allowList)
+            }
+            // Update number of times this social network has been 'clicked'
+            if (tdsStorage.ClickToLoadConfig[entity]) {
+                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+                if (!clickToLoadClicks[entity]) {
+                    clickToLoadClicks[entity] = 1
+                } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
+                    clickToLoadClicks[entity] += 1
+                }
+                settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
+            }
+        })
     }
 
     if (req.updateSetting) {
@@ -389,7 +529,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
             return true
         }
-        if (blockingExperimentActive()) {
+        if (blockTrackingCookies()) {
             const tab = tabManager.get({ tabId: sender.tab.id })
             // abort if site is whitelisted
             if (tab && tab.site.whitelisted) {
@@ -489,96 +629,24 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 /**
  * Fingerprint Protection
  */
-const agents = require('./storage/agents.es6')
-const agentSpoofer = require('./classes/agentspoofer.es6')
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
-async function getContentScope () {
-    const url = chrome.runtime.getURL('/public/js/content-scope.js')
-
-    const response = await fetch(url)
-    return response.text()
+function getArgumentsObject (tabId) {
+    const tab = tabManager.get({ tabId })
+    if (!tab) {
+        return null
+    }
+    const site = tab?.site || {}
+    const referrer = tab?.referrer || ''
+    return {
+        globalPrivacyControlValue: settings.getSetting('GPC'),
+        stringExemptionLists: utils.getBrokenScriptLists(),
+        sessionKey,
+        site,
+        referrer
+    }
 }
-
-async function init () {
-    const contentScopeScript = await getContentScope()
-
-    // Inject fingerprint protection into sites when
-    // they are not whitelisted.
-    chrome.webNavigation.onCommitted.addListener(details => {
-        const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && tab.site.isBroken) {
-            console.log('temporarily skip fingerprint protection for site: ' + details.url +
-            'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-            return
-        }
-        if (tab && !tab.site.whitelisted) {
-            // Set variables, which are used in the fingerprint-protection script.
-            try {
-                const argumentsObject = {
-                    ua: agentSpoofer.getAgent(),
-                    stringExemptionLists: utils.getBrokenScriptLists(),
-                    sessionKey,
-                    contentScopeScript,
-                    site: tab.site,
-                    referrer: tab.referrer
-                }
-                const variableScript = {
-                    code: `
-                      try {
-                          var ddg_args = ${JSON.stringify(argumentsObject)}
-                      } catch(e) {}`,
-                    runAt: 'document_start',
-                    frameId: details.frameId,
-                    matchAboutBlank: true
-                }
-                chrome.tabs.executeScript(details.tabId, variableScript)
-                const scriptDetails = {
-                    file: '/public/js/injected-content-scripts/fingerprint-protection.js',
-                    runAt: 'document_start',
-                    frameId: details.frameId,
-                    matchAboutBlank: true
-                }
-                chrome.tabs.executeScript(details.tabId, scriptDetails)
-            } catch (e) {
-                console.log(`Failed to inject fingerprint protection into ${details.url}: ${e}`)
-            }
-        }
-    })
-}
-init()
-
-// Replace UserAgent header on third party requests.
-/* Disable User Agent Spoofing temporarily.
- * Some chromium based browsers have started changing
- * UA per site. Once this feature is re-worked to match
- * that behaviour, it will be re-enabled.
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    function spoofUserAgentHeader (e) {
-        let tab = tabManager.get({ tabId: e.tabId })
-        if (!!tab && (tab.site.whitelisted || tab.site.isBroken)) {
-            console.log('temporarily skip fingerprint protection for site: ' +
-              'more info: https://github.com/duckduckgo/content-blocking-whitelist')
-            return
-        }
-        // Only change the user agent header if the current site is not whitelisted
-        // and the request is third party.
-        if (agentSpoofer.shouldSpoof(e)) {
-            // remove existing User-Agent header
-            const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'user-agent')
-            // Add in spoofed value
-            requestHeaders.push({
-                name: 'User-Agent',
-                value: agentSpoofer.getAgent()
-            })
-            return {requestHeaders: requestHeaders}
-        }
-    },
-    {urls: ['<all_urls>']},
-    ['blocking', 'requestHeaders']
-)
-*/
 
 /*
  * Truncate the referrer header according to the following rules:
@@ -593,7 +661,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
 const referrerListenerOptions = ['blocking', 'requestHeaders']
-if (browser !== 'moz') {
+if (browserName !== 'moz') {
     referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
 }
 
@@ -611,7 +679,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
         // Firefox only - Check if this tab had a surrogate redirect request and if it will
         // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.
-        if (browser === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
+        if (browserName === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
             const hasOrigin = e.requestHeaders.filter(h => h.name.match(/^origin$/i))
             if (!hasOrigin.length) {
                 const redirectUrl = tab.surrogates[e.url]
@@ -651,11 +719,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  */
 const GPC = require('./GPC.es6')
 
-// Set GPC property on DOM if enabled.
-chrome.webNavigation.onCommitted.addListener(details => {
-    GPC.injectDOMSignal(details.tabId, details.frameId)
-})
-
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
 if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
     extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
@@ -670,18 +733,18 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             requestHeaders.push(GPCHeader)
         }
 
-        if (blockingExperimentActive()) {
+        if (blockTrackingCookies()) {
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
-            if (!requestHeaders) return
-            if (tab && tab.site.whitelisted) return
+            if (!requestHeaders) return { requestHeaders }
+            if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (utils.isFirstParty(initiator, request.url)) {
-                    return
+                    return { requestHeaders }
                 }
             } else if (tab && utils.isFirstParty(request.url, tab.url)) {
-                return
+                return { requestHeaders }
             }
             if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
@@ -693,6 +756,62 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     { urls: ['<all_urls>'] },
     extraInfoSpecSendHeaders
 )
+
+/**
+ * Click to Load
+ */
+
+/*
+ * On FireFox, redirecting to a JS surrogate in some cases causes a CORS error. Determine if that is the case here.
+ * If so, and we have an alternate XRAY surrogate implementation, inject it.
+ */
+chrome.webRequest.onBeforeRedirect.addListener(
+    details => {
+        const tab = tabManager.get({ tabId: details.tabId })
+        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders && trackerutils.facebookExperimentIsActive()) {
+            // Detect cors error
+            const headers = details.responseHeaders
+            const corsHeaders = [
+                'Access-Control-Allow-Origin'
+            ]
+            const corsFound = headers.filter(v => corsHeaders.includes(v.name)).length
+
+            if (corsFound && details.redirectUrl) {
+                const xray = trackerutils.getXraySurrogate(details.redirectUrl)
+                if (xray && utils.getBrowserName() === 'moz') {
+                    console.log('Normal surrogate load failed, loading XRAY version')
+                    chrome.tabs.executeScript(details.tabId, {
+                        file: `public/js/content-scripts/${xray}`,
+                        matchAboutBlank: true,
+                        frameId: details.frameId,
+                        runAt: 'document_start'
+                    })
+                }
+            }
+        }
+    },
+    { urls: ['<all_urls>'] },
+    ['responseHeaders']
+)
+
+// Inject our content script to overwite FB elements
+chrome.webNavigation.onCommitted.addListener(details => {
+    const tab = tabManager.get({ tabId: details.tabId })
+    if (tab && tab.site.isBroken) {
+        console.log('temporarily skip embedded object replacements for site: ' + details.url +
+          'more info: https://github.com/duckduckgo/content-blocking-lists')
+        return
+    }
+
+    if (tab && !tab.site.whitelisted && trackerutils.facebookExperimentIsActive()) {
+        chrome.tabs.executeScript(details.tabId, {
+            file: 'public/js/content-scripts/click-to-load.js',
+            matchAboutBlank: true,
+            frameId: details.frameId,
+            runAt: 'document_start'
+        })
+    }
+})
 
 /**
  * ALARMS
@@ -740,12 +859,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'updateUserAgentData') {
         settings.ready()
             .then(() => {
-                agents.updateAgentData()
                 cookieConfig.updateCookieData()
             }).catch(e => console.log(e))
-    } else if (alarmEvent.name === 'rotateUserAgent') {
-        agentSpoofer.needsRotation = true
-        agentSpoofer.rotateAgent()
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()
@@ -783,7 +898,6 @@ const onStartup = () => {
 
         Companies.buildFromStorage()
 
-        agents.updateAgentData()
         cookieConfig.updateCookieData()
 
         // fetch alias if needed
@@ -821,6 +935,10 @@ chrome.webRequest.onErrorOccurred.addListener(e => {
         }
     }
 }, { urls: ['<all_urls>'] })
+
+if (browserName === 'moz') {
+    cspProtection.init()
+}
 
 module.exports = {
     onStartup: onStartup
