@@ -40,7 +40,7 @@ module.exports = function (grunt) {
         backgroundTest: {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
         },
-        emailContentScript: {
+        autofillContentScript: {
             '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/dist/autofill.js']
         },
         emailInjectedCSS: {
@@ -84,7 +84,7 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
-        emailContentScript: ['<%= ddgAutofill %>/dist/*.js'],
+        autofillContentScript: ['<%= ddgAutofill %>/dist/*.js'],
         injectedCSS: ['<%= dirs.src.injectedCSS %>/*.css'],
         contentScope: ['<%= dirs.src.js %>/content-scope/*.js', '<%= dirs.public.js %>/inject/*.js'],
         data: ['<%= dirs.data %>/*.js']
@@ -164,8 +164,8 @@ module.exports = function (grunt) {
             backgroundTest: {
                 files: baseFileMap.backgroundTest
             },
-            emailContentScript: {
-                files: baseFileMap.emailContentScript
+            autofillContentScript: {
+                files: baseFileMap.autofillContentScript
             },
             unitTest: {
                 options: {
@@ -238,8 +238,8 @@ module.exports = function (grunt) {
                 files: watch.contentScripts,
                 tasks: ['exec:copyContentScripts', 'exec:buildContentScript']
             },
-            emailContentScript: {
-                files: watch.emailContentScript,
+            autofillContentScript: {
+                files: watch.autofillContentScript,
                 tasks: ['exec:copyAutofillJs']
             },
             injectedCSS: {
