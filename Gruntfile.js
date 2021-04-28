@@ -111,7 +111,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        ddgAutofill: 'duckduckgo-autofill',
+        ddgAutofill: 'node_modules/duckduckgo-autofill',
         dirs: {
             cache: '.cache',
             src: {
@@ -201,7 +201,7 @@ module.exports = function (grunt) {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp node_modules/duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
