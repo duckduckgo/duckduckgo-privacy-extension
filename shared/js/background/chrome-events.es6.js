@@ -166,6 +166,17 @@ function blockTrackingCookies () {
     return true
 }
 
+/**
+ * Checks if a tracker is a first party by checking entity data
+ * @param {string} trackerUrl
+ * @param {string} siteUrl
+ * @returns {boolean}
+ */
+function isFirstPartyByEntity (trackerUrl, siteUrl, request) {
+    const trackerData = trackers.getTrackerData(trackerUrl, siteUrl, request)
+    return trackerData ? trackerData.firstParty : utils.isFirstParty(trackerUrl, siteUrl) // fall back on hostname check if trackers is null
+}
+
 // we determine if FLoC is enabled by testing for availability of its JS API
 const isFlocEnabled = ('interestCohort' in document)
 
@@ -218,6 +229,10 @@ chrome.webRequest.onHeadersReceived.addListener(
         }
 
         if (blockTrackingCookies()) {
+            if (!trackerutils.isTracker(request.url)) {
+                return { responseHeaders }
+            }
+
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
@@ -227,10 +242,10 @@ chrome.webRequest.onHeadersReceived.addListener(
                 if (utils.isFirstParty(initiator, request.url)) {
                     return { responseHeaders }
                 }
-            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+            } else if (tab && isFirstPartyByEntity(request.url, tab.url, request)) {
                 return { responseHeaders }
             }
-            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+            if (!cookieConfig.isExcluded(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
         }
@@ -533,7 +548,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 action.isTrackerFrame = true
             }
 
-            action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
+            action.isThirdParty = !isFirstPartyByEntity(sender.url, sender.tab.url)
             action.shouldBlock = !cookieConfig.isExcluded(sender.url)
 
             res(action)
@@ -653,6 +668,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
 
         if (blockTrackingCookies()) {
+            if (!trackerutils.isTracker(request.url)) {
+                return { requestHeaders }
+            }
+
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
@@ -662,10 +681,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                 if (utils.isFirstParty(initiator, request.url)) {
                     return { requestHeaders }
                 }
-            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+            } else if (tab && isFirstPartyByEntity(request.url, tab.url, request)) {
                 return { requestHeaders }
             }
-            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+            if (!cookieConfig.isExcluded(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             }
         }
