@@ -73,6 +73,7 @@
         "timekeeper": "^2.1.1"
     },
     "dependencies": {
+        "@duckduckgo/autofill": "git@github.com:more-duckduckgo-org/duckduckgo-autofill.git#ema/implement-simpler-ui",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.0.3",
         "bel": "4.6.0",
@@ -80,7 +81,6 @@
         "commander": "2.11.0",
         "deep-freeze": "0.0.1",
         "dexie": "2.0.4",
-        "duckduckgo-autofill": "git@github.com:more-duckduckgo-org/duckduckgo-autofill.git#ema/implement-simpler-ui",
         "eventemitter2": "4.1.0",
         "file-url": "2.0.2",
         "is-plain-object": "5.0.0",
