@@ -60,19 +60,6 @@ module.exports = function (grunt) {
         }
     }
 
-    if (browser === "safari14-email-autofill") {
-        baseFileMap.ui = {
-            '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
-            '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/safari14-email-autofill/popup.es6.js'],
-        }
-        baseFileMap.sass = {
-            '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
-            '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
-        }
-        delete baseFileMap.backgroundTest
-        delete baseFileMap.unitTest
-    }
-
     // for the dev version of the extension only, add some extra debug code
     if (buildType === 'dev') {
         baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.es6.js')
