@@ -77,7 +77,7 @@
         "@duckduckgo/privacy-grade": "1.0.3",
         "bel": "4.6.0",
         "chalk": "2.1.0",
-        "commander": "2.11.0",
+        "commander": "7.2.0",
         "deep-freeze": "0.0.1",
         "dexie": "2.0.4",
         "eventemitter2": "4.1.0",
