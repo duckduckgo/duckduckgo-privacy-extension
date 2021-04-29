@@ -725,14 +725,14 @@
         linkElement.style.cssText = styles.generalLink + styles[mode].linkFont
         linkElement.ariaLabel = 'Read about this privacy protection'
         linkElement.href = 'https://help.duckduckgo.com/duckduckgo-help-pages/privacy/embedded-content-protection/'
-        linkElement.appendChild(document.createTextNode('Learn More'))
+        linkElement.textContent = 'Learn More'
         return linkElement
     }
 
     function makeTextButton (linkText, mode) {
         const linkElement = document.createElement('a')
         linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
-        linkElement.appendChild(document.createTextNode(linkText))
+        linkElement.textContent = linkText
         return linkElement
     }
 
@@ -741,7 +741,7 @@
         button.style.cssText = styles.button + styles[mode].buttonBackground
         const textContainer = document.createElement('div')
         textContainer.style.cssText = styles.buttonTextContainer + styles[mode].buttonFont
-        textContainer.appendChild(document.createTextNode(buttonText))
+        textContainer.textContent = buttonText
         button.appendChild(textContainer)
         return button
     }
@@ -763,14 +763,14 @@
         // inherit any class styles on the button
         container.className = 'fb-login-button FacebookLogin__button'
         const styleElement = document.createElement('style')
-        styleElement.appendChild(document.createTextNode(`
+        styleElement.textContent = `
             #DuckDuckGoPrivacyEssentialsHoverableText {
                 display: none;
             }
             #DuckDuckGoPrivacyEssentialsHoverable:hover #DuckDuckGoPrivacyEssentialsHoverableText {
                 display: block;
             }
-        `))
+        `
         container.appendChild(styleElement)
 
         const hoverContainer = document.createElement('div')
@@ -804,7 +804,7 @@
         hoverBox.appendChild(branding)
         const hoverText = document.createElement('div')
         hoverText.style.cssText = styles.hoverTextBody
-        hoverText.appendChild(document.createTextNode(hoverTextBody + ' '))
+        hoverText.textContent = hoverTextBody + ' '
         hoverText.appendChild(getLearnMoreLink())
         hoverBox.appendChild(hoverText)
 
@@ -865,11 +865,11 @@
 
             const title = document.createElement('div')
             title.style.cssText = styles.modalContentTitle
-            title.appendChild(document.createTextNode(entityData[entity].modalTitle))
+            title.textContent = entityData[entity].modalTitle
 
             const message = document.createElement('div')
             message.style.cssText = styles.modalContentText
-            message.appendChild(document.createTextNode(entityData[entity].modalText + ' '))
+            message.textContent = entityData[entity].modalText + ' '
             message.appendChild(getLearnMoreLink())
 
             modalContent.appendChild(iconElement)
@@ -921,7 +921,7 @@
         // Content box title
         const msgElement = document.createElement('div')
         msgElement.id = titleID // Ensure we can find this to potentially hide it later.
-        msgElement.appendChild(document.createTextNode(message))
+        msgElement.textContent = message
         msgElement.style.cssText = styles.title
         row.appendChild(msgElement)
 
@@ -941,7 +941,7 @@
         // Style element includes our font & overwrites page styles
         const styleElement = document.createElement('style')
         const wrapperClass = 'DuckDuckGoSocialContainer'
-        styleElement.appendChild(document.createTextNode(styles.fontStyle + `
+        styleElement.textContent = styles.fontStyle + `
             .${wrapperClass} a {
                 ${styles[widget.getMode()].linkFont}
                 font-weight: bold;
@@ -950,7 +950,7 @@
                 ${styles[widget.getMode()].linkFont}
                 font-weight: bold;
             }
-        `))
+        `
         wrapper.appendChild(styleElement)
 
         // Create overall grid structure
@@ -982,17 +982,17 @@
         const contentTitle = document.createElement('div')
         contentTitle.style.cssText = styles.contentTitle
         if (entityData[widget.entity].simpleVersion && widget.replaceSettings.simpleInfoTitle) {
-            contentTitle.appendChild(document.createTextNode(widget.replaceSettings.simpleInfoTitle))
+            contentTitle.textContent = widget.replaceSettings.simpleInfoTitle
         } else {
-            contentTitle.appendChild(document.createTextNode(widget.replaceSettings.infoTitle))
+            contentTitle.textContent = widget.replaceSettings.infoTitle
         }
         contentRow.appendChild(contentTitle)
         const contentText = document.createElement('div')
         contentText.style.cssText = styles.contentText
         if (entityData[widget.entity].simpleVersion && widget.replaceSettings.simpleInfoText) {
-            contentText.appendChild(document.createTextNode(widget.replaceSettings.simpleInfoText + ' '))
+            contentText.textContent = widget.replaceSettings.simpleInfoText + ' '
         } else {
-            contentText.appendChild(document.createTextNode(widget.replaceSettings.infoText + ' '))
+            contentText.textContent = widget.replaceSettings.infoText + ' '
         }
         contentText.appendChild(getLearnMoreLink())
         contentRow.appendChild(contentText)
