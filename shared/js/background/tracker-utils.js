@@ -202,6 +202,7 @@ function truncateReferrer (referrer, target) {
  * Checks if a tracker is a first party by checking entity data
  * @param {string} trackerUrl
  * @param {string} siteUrl
+ * @param {object} request
  * @returns {boolean}
  */
 function isFirstPartyByEntity (trackerUrl, siteUrl, request) {

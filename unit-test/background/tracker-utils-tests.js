@@ -651,7 +651,7 @@ describe('trackerutils.isFirstPartyByEntity()', () => {
 
     const firstPartyTests = [
         { a: 'http://google-analytics.com', b: 'http://google.com', expected: true },
-        { a: 'disqus.com', b: 'google.com', expected: false }
+        { a: 'http://disqus.com', b: 'http://google.com', expected: false }
     ]
     it('Should detect first partiness', () => {
         for (const test of firstPartyTests) {
