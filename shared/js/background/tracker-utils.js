@@ -206,6 +206,7 @@ function truncateReferrer (referrer, target) {
  * @returns {boolean}
  */
 function isFirstPartyByEntity (trackerUrl, siteUrl, request) {
+    if (!trackerUrl) return false
     const trackerData = trackers.getTrackerData(trackerUrl, siteUrl, request)
     return trackerData ? trackerData.firstParty : utils.isFirstParty(trackerUrl, siteUrl) // fall back on hostname check if trackers is null
 }

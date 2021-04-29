@@ -228,7 +228,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (trackerutils.isFirstPartyByEntity(initiator, request.url, request)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url, request)) {
                     return { responseHeaders }
                 }
             } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url, request)) {
@@ -667,7 +667,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (trackerutils.isFirstPartyByEntity(initiator, request.url, request)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url, request)) {
                     return { requestHeaders }
                 }
             } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url, request)) {
