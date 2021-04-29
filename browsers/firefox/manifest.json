@@ -80,7 +80,6 @@
     ],
     "web_accessible_resources": [
         "/web_accessible_resources/*",
-        "/img/logo-small.svg",
         "/public/css/email-autofill.css",
         "/public/font/*"
     ]
