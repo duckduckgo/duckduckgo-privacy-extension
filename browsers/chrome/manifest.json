@@ -51,10 +51,6 @@
           "public/css/email-host-styles.css"
         ],
         "matches": ["<all_urls>"],
-        "exclude_matches": [
-          "https://app.asana.com/*",
-          "*://*.fastmail.com/*"
-        ],
         "all_frames": true,
         "run_at": "document_idle"
       }
