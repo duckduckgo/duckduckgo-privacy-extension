@@ -68,8 +68,8 @@ const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {vi
 const getAddresses = () => {
     const userData = getSetting('userData')
     return {
-        personalAddress: userData.userName,
-        privateAddress: userData.nextAlias
+        personalAddress: userData?.userName,
+        privateAddress: userData?.nextAlias
     }
 }
 
