@@ -198,6 +198,17 @@ function truncateReferrer (referrer, target) {
     return modifiedReferrer
 }
 
+/**
+ * Checks if a tracker is a first party by checking entity data
+ * @param {string} trackerUrl
+ * @param {string} siteUrl
+ * @returns {boolean}
+ */
+function isFirstPartyByEntity (trackerUrl, siteUrl, request) {
+    const trackerData = trackers.getTrackerData(trackerUrl, siteUrl, request)
+    return trackerData ? trackerData.firstParty : utils.isFirstParty(trackerUrl, siteUrl) // fall back on hostname check if trackers is null
+}
+
 module.exports = {
     isSameEntity: isSameEntity,
     isTracker: isTracker,
@@ -208,5 +219,6 @@ module.exports = {
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
     getXraySurrogate: getXraySurrogate,
     allowSocialLogin: allowSocialLogin,
-    facebookExperimentIsActive: facebookExperimentIsActive
+    facebookExperimentIsActive: facebookExperimentIsActive,
+    isFirstPartyByEntity: isFirstPartyByEntity
 }
