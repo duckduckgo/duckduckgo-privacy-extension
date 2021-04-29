@@ -324,7 +324,7 @@ const {
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
-    if (req.registeredContentScript) {
+    if (req.registeredContentScript || req.registeredTempAutofillContentScript) {
         const argumentsObject = getArgumentsObject(sender.tab.id)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
