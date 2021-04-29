@@ -58,7 +58,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     }
 
     // Inject the email content script on all tabs upon installation (needed on Chrome only)
-    if (browser !== 'firefox') {
+    if (browserName !== 'moz') {
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach(tab => {
                 chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/autofill.js'})
