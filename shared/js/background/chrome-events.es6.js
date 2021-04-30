@@ -166,17 +166,6 @@ function blockTrackingCookies () {
     return true
 }
 
-/**
- * Checks if a tracker is a first party by checking entity data
- * @param {string} trackerUrl
- * @param {string} siteUrl
- * @returns {boolean}
- */
-function isFirstPartyByEntity (trackerUrl, siteUrl, request) {
-    const trackerData = trackers.getTrackerData(trackerUrl, siteUrl, request)
-    return trackerData ? trackerData.firstParty : utils.isFirstParty(trackerUrl, siteUrl) // fall back on hostname check if trackers is null
-}
-
 // we determine if FLoC is enabled by testing for availability of its JS API
 const isFlocEnabled = ('interestCohort' in document)
 
@@ -239,10 +228,10 @@ chrome.webRequest.onHeadersReceived.addListener(
             if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (utils.isFirstParty(initiator, request.url)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
                     return { responseHeaders }
                 }
-            } else if (tab && isFirstPartyByEntity(request.url, tab.url, request)) {
+            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { responseHeaders }
             }
             if (!cookieConfig.isExcluded(request.url)) {
@@ -548,7 +537,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 action.isTrackerFrame = true
             }
 
-            action.isThirdParty = !isFirstPartyByEntity(sender.url, sender.tab.url)
+            action.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
             action.shouldBlock = !cookieConfig.isExcluded(sender.url)
 
             res(action)
@@ -678,10 +667,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (utils.isFirstParty(initiator, request.url)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
                     return { requestHeaders }
                 }
-            } else if (tab && isFirstPartyByEntity(request.url, tab.url, request)) {
+            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { requestHeaders }
             }
             if (!cookieConfig.isExcluded(request.url)) {

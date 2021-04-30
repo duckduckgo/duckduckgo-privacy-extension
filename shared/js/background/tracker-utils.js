@@ -198,6 +198,28 @@ function truncateReferrer (referrer, target) {
     return modifiedReferrer
 }
 
+/**
+ * Checks if a tracker is a first party by checking entity data
+ * @param {string} trackerUrl
+ * @param {string} siteUrl
+ * @returns {boolean}
+ */
+function isFirstPartyByEntity (trackerUrl, siteUrl) {
+    const cnameResolution = trackers.resolveCname(trackerUrl)
+    trackerUrl = cnameResolution.finalURL
+
+    const tracker = trackers.findTracker({ urlToCheckSplit: utils.extractHostFromURL(trackerUrl).split('.') })
+    if (!tracker) {
+        // Fallback to domain check if no tracker is found
+        return utils.isSameTopLevelDomain(trackerUrl, siteUrl)
+    }
+
+    const trackerOwner = trackers.findTrackerOwner(tldts.parse(trackerUrl).domain)
+    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(siteUrl).split('.') })
+
+    return (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
+}
+
 module.exports = {
     isSameEntity: isSameEntity,
     isTracker: isTracker,
@@ -208,5 +230,6 @@ module.exports = {
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
     getXraySurrogate: getXraySurrogate,
     allowSocialLogin: allowSocialLogin,
-    facebookExperimentIsActive: facebookExperimentIsActive
+    facebookExperimentIsActive: facebookExperimentIsActive,
+    isFirstPartyByEntity: isFirstPartyByEntity
 }
