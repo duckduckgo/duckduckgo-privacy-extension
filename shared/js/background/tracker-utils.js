@@ -202,13 +202,22 @@ function truncateReferrer (referrer, target) {
  * Checks if a tracker is a first party by checking entity data
  * @param {string} trackerUrl
  * @param {string} siteUrl
- * @param {object} request
  * @returns {boolean}
  */
-function isFirstPartyByEntity (trackerUrl, siteUrl, request) {
-    if (!trackerUrl) return false
-    const trackerData = trackers.getTrackerData(trackerUrl, siteUrl, request)
-    return trackerData ? trackerData.firstParty : utils.isFirstParty(trackerUrl, siteUrl) // fall back on hostname check if trackers is null
+function isFirstPartyByEntity (trackerUrl, siteUrl) {
+    const cnameResolution = trackers.resolveCname(trackerUrl)
+    trackerUrl = cnameResolution.finalURL
+
+    const tracker = trackers.findTracker({ urlToCheckSplit: utils.extractHostFromURL(trackerUrl).split('.') })
+    if (!tracker) {
+        // Fallback to domain check if no tracker is found
+        return utils.isSameTopLevelDomain(trackerUrl, siteUrl)
+    }
+
+    const trackerOwner = trackers.findTrackerOwner(tldts.parse(trackerUrl).domain)
+    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(siteUrl).split('.') })
+
+    return (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
 }
 
 module.exports = {

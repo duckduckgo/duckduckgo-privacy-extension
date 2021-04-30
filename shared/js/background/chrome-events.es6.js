@@ -228,10 +228,10 @@ chrome.webRequest.onHeadersReceived.addListener(
             if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url, request)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
                     return { responseHeaders }
                 }
-            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url, request)) {
+            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { responseHeaders }
             }
             if (!cookieConfig.isExcluded(request.url)) {
@@ -667,10 +667,10 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url, request)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
                     return { requestHeaders }
                 }
-            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url, request)) {
+            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { requestHeaders }
             }
             if (!cookieConfig.isExcluded(request.url)) {
