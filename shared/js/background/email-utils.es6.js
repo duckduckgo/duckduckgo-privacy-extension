@@ -73,10 +73,26 @@ const getAddresses = () => {
     }
 }
 
+/**
+ * Checks formal username validity
+ * @param {string} userName
+ * @returns {boolean}
+ */
+const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
+
+/**
+ * Checks formal token validity
+ * @param {string} token
+ * @returns {boolean}
+ */
+const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
+
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     showContextMenuAction,
     hideContextMenuAction,
-    getAddresses
+    getAddresses,
+    isValidUsername,
+    isValidToken
 }
