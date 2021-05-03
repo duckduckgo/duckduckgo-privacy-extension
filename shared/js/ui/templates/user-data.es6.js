@@ -1,4 +1,5 @@
 const bel = require('bel')
+const { formatAddress } = require('../../background/email-utils.es6')
 
 module.exports = function () {
     // We don't render anything if the user is not set
@@ -16,7 +17,7 @@ function renderUserDataContent (model) {
             </div>`
         : bel`<div>
                 <p class="menu-paragraph">
-                    Enabled for <strong class="js-userdata-container">${model.userName}@duck.com</strong>
+                    Enabled for <strong class="js-userdata-container">${formatAddress(model.userName)}</strong>
                 </p>
                 <p class="options-info js-userdata-logout">
                     <a href="#">Disable</a>

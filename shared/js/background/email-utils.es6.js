@@ -74,6 +74,13 @@ const getAddresses = () => {
 }
 
 /**
+ * Given a username, returns a valid email address with the duck domain
+ * @param {string} address
+ * @returns {string}
+ */
+const formatAddress = (address) => address + '@duck.com'
+
+/**
  * Checks formal username validity
  * @param {string} userName
  * @returns {boolean}
@@ -93,6 +100,7 @@ module.exports = {
     showContextMenuAction,
     hideContextMenuAction,
     getAddresses,
+    formatAddress,
     isValidUsername,
     isValidToken
 }
