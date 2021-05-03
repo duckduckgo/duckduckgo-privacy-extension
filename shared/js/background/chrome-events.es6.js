@@ -57,7 +57,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         experiment.setActiveExperiment()
     }
 
-    // Inject the email content script on all tabs upon installation (needed on Chrome only)
+    // Inject the email content script on all tabs upon installation (not needed on Firefox)
     if (browserName !== 'moz') {
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach(tab => {
