@@ -22,8 +22,8 @@ EmailAliasView.prototype = window.$.extend({},
             this.$el.one('animationend', () => {
                 this.$el.removeClass('show-copied-label')
             })
-            this.model.fetch({ refreshAlias: true }).then(({ alias }) => {
-                this.model.userData.nextAlias = alias
+            this.model.fetch({ refreshAlias: true }).then(({ privateAddress }) => {
+                this.model.userData.nextAlias = privateAddress
             })
 
         },
