@@ -7,13 +7,13 @@ function init () {
         registeredContentScript: true,
         documentUrl: window.location.href
     },
-        (message) => {
-            // Background has disabled protections
-            if (!message) {
-                return
-            }
-            protections.initProtections(message)
+    (message) => {
+        // Background has disabled protections
+        if (!message) {
+            return
         }
+        protections.initProtections(message)
+    }
     )
 
     chrome.runtime.onMessage.addListener((message) => {

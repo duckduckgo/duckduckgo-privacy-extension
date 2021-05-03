@@ -508,45 +508,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(pixel.fire.apply(null, fireArgs))
         return true
     }
-
-    if (req.checkThirdParty) {
-        const action = {
-            isThirdParty: false,
-            shouldBlock: false,
-            tabRegisteredDomain: null,
-            isTrackerFrame: false,
-            policy: cookieConfig.firstPartyCookiePolicy
-        }
-        if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
-            return true
-        }
-        if (blockTrackingCookies()) {
-            const tab = tabManager.get({ tabId: sender.tab.id })
-            // abort if site is whitelisted
-            if (tab && tab.site.whitelisted) {
-                res(action)
-                return true
-            }
-
-            // determine the register domain of the sending tab
-            const tabUrl = tab ? tab.url : sender.tab.url
-            const parsed = tldts.parse(tabUrl)
-            action.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
-
-            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
-                action.isTrackerFrame = true
-            }
-
-            action.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
-            action.shouldBlock = !cookieConfig.isExcluded(sender.url)
-
-            res(action)
-        } else {
-            res(action)
-        }
-
-        return true
-    }
 })
 
 /**
@@ -583,7 +544,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
             cookie.isTrackerFrame = true
         }
 
-        cookie.isThirdParty = !isFirstPartyByEntity(sender.url, sender.tab.url)
+        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
         cookie.shouldBlock = !cookieConfig.isExcluded(sender.url)
     }
     return {

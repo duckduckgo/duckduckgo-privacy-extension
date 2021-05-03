@@ -44,7 +44,7 @@ function init () {
                       // TODO force enable all protections if password is wrong
                       console.error("Password for hidden function wasn't correct! The page is likely attempting to attack the protections by DuckDuckGo");
                   }
-                  // This menthod is single use, clean up
+                  // This method is single use, clean up
                   delete window.${randomMethodName};
               }
           })
@@ -73,18 +73,18 @@ function init () {
         registeredContentScript: true,
         documentUrl: window.location.href
     },
-        (message) => {
-            if (!message) {
-                // Remove injected function only as background has disabled protections
-                inject(`delete window.${randomMethodName}`)
-                return
-            }
-            const stringifiedArgs = JSON.stringify(message)
-            const callRandomFunction = `
+    (message) => {
+        if (!message) {
+            // Remove injected function only as background has disabled protections
+            inject(`delete window.${randomMethodName}`)
+            return
+        }
+        const stringifiedArgs = JSON.stringify(message)
+        const callRandomFunction = `
                 window.${randomMethodName}('${randomPassword}', ${stringifiedArgs});
             `
-            inject(callRandomFunction)
-        }
+        inject(callRandomFunction)
+    }
     )
 
     chrome.runtime.onMessage.addListener((message) => {

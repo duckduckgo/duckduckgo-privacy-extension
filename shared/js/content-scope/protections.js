@@ -12,7 +12,7 @@ function shouldRun () {
     return true
 }
 
-let initArgs = null;
+let initArgs = null
 const protections = []
 
 export async function loadProtections () {
@@ -45,7 +45,7 @@ export async function loadProtections () {
 }
 
 export async function initProtections (args) {
-    initArgs = args;
+    initArgs = args
     if (!shouldRun()) {
         return
     }
