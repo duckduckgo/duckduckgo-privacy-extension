@@ -251,9 +251,9 @@ async function imgToData (imagePath) {
 
 /**
  * Tests whether the two URL's belong to the same
- * first party set.
+ * top level domain.
  */
-function isFirstParty (url1, url2) {
+function isSameTopLevelDomain (url1, url2) {
     const first = tldts.parse(url1, { allowPrivateDomains: true })
     const second = tldts.parse(url2, { allowPrivateDomains: true })
 
@@ -280,5 +280,5 @@ module.exports = {
     getBrokenFeatures,
     imgToData,
     getBrokenScriptLists,
-    isFirstParty
+    isSameTopLevelDomain
 }

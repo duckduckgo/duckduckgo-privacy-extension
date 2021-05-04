@@ -1,7 +1,7 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
 
-const testSite = 'http://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
+const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 let browser
 let bgPage
 

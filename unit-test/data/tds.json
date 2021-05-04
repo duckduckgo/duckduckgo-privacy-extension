@@ -46,6 +46,14 @@
                 {
                     "rule": "google-analytics\\.com\\/cx/api.js",
                     "surrogate": "api.js"
+                },
+                {
+                    "rule": "google-analytics\\.com\\/script-exception",
+                    "exceptions": {
+                        "types": [
+                            "script"
+                        ]
+                    }
                 }
             ]
         },

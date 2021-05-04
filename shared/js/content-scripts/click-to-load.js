@@ -319,6 +319,14 @@
             float: right;
             display: none;
         `,
+        generalLink: `
+            line-height: 1.4;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: DuckDuckGoPrivacyEssentialsBold;
+            cursor: pointer;
+            text-decoration: none;
+        `,
         fbContainer: `
             display: inline-block;
         `
@@ -504,7 +512,7 @@
 
                     // Always add the animation to the button, regardless of click source
                     if (e.srcElement.nodeName === 'BUTTON') {
-                        e.srcElement.firstElementChild.innerHTML = loadingImg.outerHTML + e.srcElement.firstElementChild.innerHTML
+                        e.srcElement.firstElementChild.insertBefore(loadingImg, e.srcElement.firstElementChild.firstChild)
                     } else {
                         // try to find the button
                         let el = e.srcElement
@@ -514,7 +522,7 @@
                             el = el.parentElement
                         }
                         if (button) {
-                            button.firstElementChild.innerHTML = loadingImg.outerHTML + button.firstElementChild.innerHTML
+                            button.firstElementChild.insertBefore(loadingImg, button.firstElementChild.firstChild)
                         }
                     }
 
@@ -709,10 +717,22 @@
     /*********************************************************
      *  Widget building blocks
      *********************************************************/
+    function getLearnMoreLink (mode) {
+        if (!mode) {
+            mode = 'lightMode'
+        }
+        const linkElement = document.createElement('a')
+        linkElement.style.cssText = styles.generalLink + styles[mode].linkFont
+        linkElement.ariaLabel = 'Read about this privacy protection'
+        linkElement.href = 'https://help.duckduckgo.com/duckduckgo-help-pages/privacy/embedded-content-protection/'
+        linkElement.textContent = 'Learn More'
+        return linkElement
+    }
+
     function makeTextButton (linkText, mode) {
         const linkElement = document.createElement('a')
         linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
-        linkElement.innerHTML = linkText
+        linkElement.textContent = linkText
         return linkElement
     }
 
@@ -721,7 +741,7 @@
         button.style.cssText = styles.button + styles[mode].buttonBackground
         const textContainer = document.createElement('div')
         textContainer.style.cssText = styles.buttonTextContainer + styles[mode].buttonFont
-        textContainer.innerHTML = buttonText
+        textContainer.textContent = buttonText
         button.appendChild(textContainer)
         return button
     }
@@ -743,7 +763,7 @@
         // inherit any class styles on the button
         container.className = 'fb-login-button FacebookLogin__button'
         const styleElement = document.createElement('style')
-        styleElement.innerHTML = `
+        styleElement.textContent = `
             #DuckDuckGoPrivacyEssentialsHoverableText {
                 display: none;
             }
@@ -784,7 +804,8 @@
         hoverBox.appendChild(branding)
         const hoverText = document.createElement('div')
         hoverText.style.cssText = styles.hoverTextBody
-        hoverText.innerHTML = hoverTextBody
+        hoverText.textContent = hoverTextBody + ' '
+        hoverText.appendChild(getLearnMoreLink())
         hoverBox.appendChild(hoverText)
 
         hoverContainer.appendChild(hoverBox)
@@ -844,11 +865,12 @@
 
             const title = document.createElement('div')
             title.style.cssText = styles.modalContentTitle
-            title.innerHTML = entityData[entity].modalTitle
+            title.textContent = entityData[entity].modalTitle
 
             const message = document.createElement('div')
             message.style.cssText = styles.modalContentText
-            message.innerHTML = entityData[entity].modalText
+            message.textContent = entityData[entity].modalText + ' '
+            message.appendChild(getLearnMoreLink())
 
             modalContent.appendChild(iconElement)
             modalContent.appendChild(title)
@@ -899,7 +921,7 @@
         // Content box title
         const msgElement = document.createElement('div')
         msgElement.id = titleID // Ensure we can find this to potentially hide it later.
-        msgElement.innerHTML = message
+        msgElement.textContent = message
         msgElement.style.cssText = styles.title
         row.appendChild(msgElement)
 
@@ -919,13 +941,13 @@
         // Style element includes our font & overwrites page styles
         const styleElement = document.createElement('style')
         const wrapperClass = 'DuckDuckGoSocialContainer'
-        styleElement.innerHTML = styles.fontStyle + `
+        styleElement.textContent = styles.fontStyle + `
             .${wrapperClass} a {
-                ${styles[widget.getMode()].linkFont};
+                ${styles[widget.getMode()].linkFont}
                 font-weight: bold;
             }
             .${wrapperClass} a:hover {
-                ${styles[widget.getMode()].linkFont};
+                ${styles[widget.getMode()].linkFont}
                 font-weight: bold;
             }
         `
@@ -960,18 +982,19 @@
         const contentTitle = document.createElement('div')
         contentTitle.style.cssText = styles.contentTitle
         if (entityData[widget.entity].simpleVersion && widget.replaceSettings.simpleInfoTitle) {
-            contentTitle.innerHTML = widget.replaceSettings.simpleInfoTitle
+            contentTitle.textContent = widget.replaceSettings.simpleInfoTitle
         } else {
-            contentTitle.innerHTML = widget.replaceSettings.infoTitle
+            contentTitle.textContent = widget.replaceSettings.infoTitle
         }
         contentRow.appendChild(contentTitle)
         const contentText = document.createElement('div')
         contentText.style.cssText = styles.contentText
         if (entityData[widget.entity].simpleVersion && widget.replaceSettings.simpleInfoText) {
-            contentText.innerHTML = widget.replaceSettings.simpleInfoText
+            contentText.textContent = widget.replaceSettings.simpleInfoText + ' '
         } else {
-            contentText.innerHTML = widget.replaceSettings.infoText
+            contentText.textContent = widget.replaceSettings.infoText + ' '
         }
+        contentText.appendChild(getLearnMoreLink())
         contentRow.appendChild(contentText)
         element.appendChild(contentRow)
 
