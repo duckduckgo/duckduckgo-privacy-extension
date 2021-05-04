@@ -1,3 +1,5 @@
+const { formatAddress } = require('../../background/email-utils.es6')
+
 const Parent = window.DDG.base.View
 
 function EmailAliasView (ops) {
@@ -17,15 +19,15 @@ EmailAliasView.prototype = window.$.extend({},
     {
         _copyAliasToClipboard: function () {
             const alias = this.model.userData.nextAlias
-            navigator.clipboard.writeText(alias)
+            navigator.clipboard.writeText(formatAddress(alias))
             this.$el.addClass('show-copied-label')
             this.$el.one('animationend', () => {
                 this.$el.removeClass('show-copied-label')
             })
-            this.model.fetch({ refreshAlias: true }).then(({ alias }) => {
-                this.model.userData.nextAlias = alias
-            })
 
+            this.model.fetch({ refreshAlias: true }).then(({ privateAddress }) => {
+                this.model.userData.nextAlias = privateAddress
+            })
         },
 
         _setup: function () {

@@ -2,7 +2,6 @@
     "spec_dir": "integration-test",
     "spec_files": [
         "background/*.js",
-        "content-scripts/*.js",
         "ui/*.js"
     ]
 }

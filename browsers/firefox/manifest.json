@@ -37,11 +37,6 @@
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
-    "browser_specific_settings": {
-      "gecko": {
-        "update_url": "https://quack.duckduckgo.com/email/extensions/firefox-update-manifest.json"
-      }
-    },
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
@@ -58,10 +53,6 @@
           "public/css/email-host-styles.css"
         ],
         "matches": ["<all_urls>"],
-        "exclude_matches": [
-          "https://app.asana.com/*",
-          "*://*.fastmail.com/*"
-        ],
         "all_frames": true,
         "run_at": "document_idle"
       }
@@ -80,7 +71,6 @@
     ],
     "web_accessible_resources": [
         "/web_accessible_resources/*",
-        "/img/logo-small.svg",
         "/public/css/email-autofill.css",
         "/public/font/*"
     ]

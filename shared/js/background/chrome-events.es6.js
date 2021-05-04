@@ -57,12 +57,14 @@ chrome.runtime.onInstalled.addListener(function (details) {
         experiment.setActiveExperiment()
     }
 
-    // Inject the email content script on all tabs upon installation
-    chrome.tabs.query({}, (tabs) => {
-        tabs.forEach(tab => {
-            chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/autofill.js'})
+    // Inject the email content script on all tabs upon installation (not needed on Firefox)
+    if (browserName !== 'moz') {
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach(tab => {
+                chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/autofill.js'})
+            })
         })
-    })
+    }
 })
 
 /**
@@ -317,7 +319,10 @@ const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     showContextMenuAction,
-    hideContextMenuAction
+    hideContextMenuAction,
+    getAddresses,
+    isValidUsername,
+    isValidToken
 } = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
@@ -325,7 +330,7 @@ const {
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
-    if (req.registeredContentScript) {
+    if (req.registeredContentScript || req.registeredTempAutofillContentScript) {
         const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.documentUrl)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
@@ -529,10 +534,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
+    if (req.getAddresses) {
+        res(getAddresses())
+
+        return true
+    }
+
     if (req.refreshAlias) {
         fetchAlias().then(() => {
-            const userData = settings.getSetting('userData')
-            res({alias: userData?.nextAlias})
+            res(getAddresses())
         })
 
         return true
@@ -556,7 +566,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
 
         // Check general data validity
-        if (userName.match(/([a-z0-9_])+/) && token.match(/([a-z0-9])+/)) {
+        if (isValidUsername(userName) && isValidToken(token)) {
             settings.updateSetting('userData', req.addUserData)
             // Once user is set, fetch the alias and notify all tabs
             fetchAlias().then(response => {

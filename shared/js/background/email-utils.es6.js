@@ -19,7 +19,9 @@ const fetchAlias = () => {
         .then(response => {
             if (response.ok) {
                 return response.json().then(({address}) => {
-                    updateSetting('userData', Object.assign(userData, {nextAlias: `${address}@duck.com`}))
+                    if (!/^[a-z0-9]+$/.test(address)) throw new Error('Invalid address')
+
+                    updateSetting('userData', Object.assign(userData, {nextAlias: `${address}`}))
                     // Reset attempts
                     attempts = 1
                     return {success: true}
@@ -63,9 +65,42 @@ const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {vi
 
 const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: false})
 
+const getAddresses = () => {
+    const userData = getSetting('userData')
+    return {
+        personalAddress: userData?.userName,
+        privateAddress: userData?.nextAlias
+    }
+}
+
+/**
+ * Given a username, returns a valid email address with the duck domain
+ * @param {string} address
+ * @returns {string}
+ */
+const formatAddress = (address) => address + '@duck.com'
+
+/**
+ * Checks formal username validity
+ * @param {string} userName
+ * @returns {boolean}
+ */
+const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
+
+/**
+ * Checks formal token validity
+ * @param {string} token
+ * @returns {boolean}
+ */
+const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
+
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     showContextMenuAction,
-    hideContextMenuAction
+    hideContextMenuAction,
+    getAddresses,
+    formatAddress,
+    isValidUsername,
+    isValidToken
 }

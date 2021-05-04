@@ -40,7 +40,7 @@ module.exports = function (grunt) {
         backgroundTest: {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
         },
-        emailContentScript: {
+        autofillContentScript: {
             '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/dist/autofill.js']
         },
         emailInjectedCSS: {
@@ -60,19 +60,6 @@ module.exports = function (grunt) {
         }
     }
 
-    if (browser === "safari14-email-autofill") {
-        baseFileMap.ui = {
-            '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
-            '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/safari14-email-autofill/popup.es6.js'],
-        }
-        baseFileMap.sass = {
-            '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
-            '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
-        }
-        delete baseFileMap.backgroundTest
-        delete baseFileMap.unitTest
-    }
-
     // for the dev version of the extension only, add some extra debug code
     if (buildType === 'dev') {
         baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.es6.js')
@@ -84,7 +71,7 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
-        emailContentScript: ['<%= ddgAutofill %>/dist/*.js'],
+        autofillContentScript: ['<%= ddgAutofill %>/dist/*.js'],
         injectedCSS: ['<%= dirs.src.injectedCSS %>/*.css'],
         contentScope: ['<%= dirs.src.js %>/content-scope/*.js', '<%= dirs.public.js %>/inject/*.js'],
         data: ['<%= dirs.data %>/*.js']
@@ -111,7 +98,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        ddgAutofill: 'duckduckgo-autofill',
+        ddgAutofill: 'node_modules/@duckduckgo/autofill',
         dirs: {
             cache: '.cache',
             src: {
@@ -164,8 +151,8 @@ module.exports = function (grunt) {
             backgroundTest: {
                 files: baseFileMap.backgroundTest
             },
-            emailContentScript: {
-                files: baseFileMap.emailContentScript
+            autofillContentScript: {
+                files: baseFileMap.autofillContentScript
             },
             unitTest: {
                 options: {
@@ -201,10 +188,9 @@ module.exports = function (grunt) {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp duckduckgo-autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp node_modules/@duckduckgo/autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
-            // TODO: gsv can we remove this? it's removed upstream.
             // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
             updateFirefoxRelativeUrl: `sed -i.bak "s/chrome-extension:\\/\\/__MSG_@@extension_id__\\/public/../g" build/firefox/${buildType}/public/css/email-host-styles.css &&
                     rm build/firefox/${buildType}/public/css/email-host-styles.css.bak`,
@@ -238,13 +224,13 @@ module.exports = function (grunt) {
                 files: watch.contentScripts,
                 tasks: ['exec:copyContentScripts']
             },
-            emailContentScript: {
-                files: watch.emailContentScript,
+            autofillContentScript: {
+                files: watch.autofillContentScript,
                 tasks: ['exec:copyAutofillJs']
             },
             injectedCSS: {
                 files: watch.injectedCSS,
-                tasks: ['exec:copyInjectedCSS']
+                tasks: ['exec:copyInjectedCSS', 'updateFirefoxRelativeUrl']
             },
             data: {
                 files: watch.data,
@@ -277,7 +263,6 @@ module.exports = function (grunt) {
     })
 
     // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
-    // TODO: gsv can we remove this? it's removed upstream.
     grunt.registerTask('updateFirefoxRelativeUrl', 'Update Firefox relative URL in injected css', () => {
         if (browser === 'firefox') {
             grunt.task.run('exec:updateFirefoxRelativeUrl')
