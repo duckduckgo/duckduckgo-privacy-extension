@@ -11,11 +11,11 @@ EmailAliasModel.prototype = window.$.extend({},
         modelName: 'emailAlias',
 
         getUserData: function () {
-            return this.fetch({getSetting: {name: 'userData'}}).then(userData => userData)
+            return this.fetch({ getSetting: { name: 'userData' } }).then(userData => userData)
         },
 
         logout: function () {
-            return this.fetch({logout: true}).then(() => this.set('userData', undefined))
+            return this.fetch({ logout: true }).then(() => this.set('userData', undefined))
         }
     }
 )

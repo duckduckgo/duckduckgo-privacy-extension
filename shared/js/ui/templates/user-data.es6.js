@@ -12,7 +12,8 @@ module.exports = function () {
 }
 
 function renderUserDataContent (model) {
-    return model.loggingOut ? bel`<div>
+    return model.loggingOut
+        ? bel`<div>
                 <p class="menu-paragraph">Disabled successfully.</p>
             </div>`
         : bel`<div>

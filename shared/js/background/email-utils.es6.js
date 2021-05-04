@@ -1,4 +1,4 @@
-const {getSetting, updateSetting} = require('./settings.es6')
+const { getSetting, updateSetting } = require('./settings.es6')
 const REFETCH_ALIAS_ALARM = 'refetchAlias'
 
 // Keep track of the number of attempted fetches. Stop trying after 5.
@@ -12,19 +12,19 @@ const fetchAlias = () => {
 
     if (!userData.token) return
 
-    return fetch(`https://quack.duckduckgo.com/api/email/addresses`, {
+    return fetch('https://quack.duckduckgo.com/api/email/addresses', {
         method: 'post',
-        headers: {Authorization: `Bearer ${userData.token}`}
+        headers: { Authorization: `Bearer ${userData.token}` }
     })
         .then(response => {
             if (response.ok) {
-                return response.json().then(({address}) => {
+                return response.json().then(({ address }) => {
                     if (!/^[a-z0-9]+$/.test(address)) throw new Error('Invalid address')
 
-                    updateSetting('userData', Object.assign(userData, {nextAlias: `${address}`}))
+                    updateSetting('userData', Object.assign(userData, { nextAlias: `${address}` }))
                     // Reset attempts
                     attempts = 1
-                    return {success: true}
+                    return { success: true }
                 })
             } else {
                 throw new Error('An error occurred while fetching the alias')
@@ -35,11 +35,11 @@ const fetchAlias = () => {
             console.log('Error fetching new alias', e)
             // Don't try fetching more than 5 times in a row
             if (attempts < 5) {
-                chrome.alarms.create(REFETCH_ALIAS_ALARM, {delayInMinutes: 2})
+                chrome.alarms.create(REFETCH_ALIAS_ALARM, { delayInMinutes: 2 })
                 attempts++
             }
             // Return the error so we can handle it
-            return {error: e}
+            return { error: e }
         })
 }
 
@@ -61,9 +61,9 @@ chrome.contextMenus.create({
     }
 })
 
-const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: true})
+const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, { visible: true })
 
-const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, {visible: false})
+const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, { visible: false })
 
 const getAddresses = () => {
     const userData = getSetting('userData')

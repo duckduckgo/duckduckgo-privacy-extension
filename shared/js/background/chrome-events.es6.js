@@ -61,7 +61,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
     if (browserName !== 'moz') {
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach(tab => {
-                chrome.tabs.executeScript(tab.id, {file: 'public/js/content-scripts/autofill.js'})
+                chrome.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
             })
         })
     }
@@ -529,7 +529,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.getAlias) {
         const userData = settings.getSetting('userData')
-        res({alias: userData?.nextAlias})
+        res({ alias: userData?.nextAlias })
 
         return true
     }
@@ -552,14 +552,14 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Check the origin. Shouldn't be necessary, but better safe than sorry
         if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
 
-        const {userName, token} = req.addUserData
-        const {existingToken} = settings.getSetting('userData') || {}
+        const { userName, token } = req.addUserData
+        const { existingToken } = settings.getSetting('userData') || {}
 
         // If the user is already registered, just notify tabs that we're ready
         if (existingToken === token) {
             chrome.tabs.query({}, (tabs) => {
                 tabs.forEach((tab) => {
-                    chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                    chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
                 })
             })
             return
@@ -571,19 +571,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             // Once user is set, fetch the alias and notify all tabs
             fetchAlias().then(response => {
                 if (response && response.error) {
-                    return res({error: response.error.message})
+                    return res({ error: response.error.message })
                 }
 
                 chrome.tabs.query({}, (tabs) => {
                     tabs.forEach((tab) => {
-                        chrome.tabs.sendMessage(tab.id, {type: 'ddgUserReady'})
+                        chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
                     })
                 })
                 showContextMenuAction()
-                res({success: true})
+                res({ success: true })
             })
         } else {
-            res({error: 'Something seems wrong with the user data'})
+            res({ error: 'Something seems wrong with the user data' })
         }
 
         return true
@@ -594,7 +594,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Broadcast the logout to all tabs
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach((tab) => {
-                chrome.tabs.sendMessage(tab.id, {type: 'logout'})
+                chrome.tabs.sendMessage(tab.id, { type: 'logout' })
             })
         })
         hideContextMenuAction()

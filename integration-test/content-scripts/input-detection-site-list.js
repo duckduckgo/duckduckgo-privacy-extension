@@ -12,7 +12,7 @@ const sites = [
     {
         name: 'quora signup',
         url: 'https://www.quora.com/',
-        actions: [{action: 'click', arg: '.signup_email_link'}],
+        actions: [{ action: 'click', arg: '.signup_email_link' }],
         autofillExpected: 1
     },
     {
@@ -45,9 +45,9 @@ const sites = [
         name: 'IGN.com signup',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitForTimeout', arg: 200},
-            {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'},
-            {action: 'click', arg: '#email-label > .supplemental > button'}
+            { action: 'waitForTimeout', arg: 200 },
+            { action: 'click', arg: '.user-tools-wrapper .sign-in-button > button' },
+            { action: 'click', arg: '#email-label > .supplemental > button' }
         ],
         autofillExpected: 1
     },
@@ -55,8 +55,8 @@ const sites = [
         name: 'IGN.com login',
         url: 'https://www.ign.com',
         actions: [
-            {action: 'waitForTimeout', arg: 200},
-            {action: 'click', arg: '.user-tools-wrapper .sign-in-button > button'}
+            { action: 'waitForTimeout', arg: 200 },
+            { action: 'click', arg: '.user-tools-wrapper .sign-in-button > button' }
         ],
         autofillExpected: 0
     },
@@ -64,8 +64,8 @@ const sites = [
         name: 'cnbc login',
         url: 'https://www.cnbc.com/world/?region=world',
         actions: [
-            {action: 'reload', arg: { waitUntil: 'networkidle0' }},
-            {action: 'click', arg: '.account-menu-accountMenu > ul > li:first-child > a'}
+            { action: 'reload', arg: { waitUntil: 'networkidle0' } },
+            { action: 'click', arg: '.account-menu-accountMenu > ul > li:first-child > a' }
         ],
         autofillExpected: 0
     },
@@ -73,8 +73,8 @@ const sites = [
         name: 'cnbc newsletter',
         url: 'https://www.cnbc.com/sign-up-for-cnbc-newsletters/',
         actions: [
-            {action: 'reload', arg: { waitUntil: 'networkidle0' }},
-            {action: 'click', arg: '#onetrust-accept-btn-handler', optional: true}
+            { action: 'reload', arg: { waitUntil: 'networkidle0' } },
+            { action: 'click', arg: '#onetrust-accept-btn-handler', optional: true }
         ],
         autofillExpected: 1
     },
@@ -82,17 +82,17 @@ const sites = [
         name: 'ResearchGate signup',
         url: 'https://www.researchgate.net/signup.SignUpAccountBasics.html',
         actions: [
-            {action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true},
-            {action: 'click', arg: '.js-submit.option.institution'},
-            {action: 'waitForTimeout', arg: 1000},
-            {action: 'click', arg: '.js-skip-step'}
+            { action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true },
+            { action: 'click', arg: '.js-submit.option.institution' },
+            { action: 'waitForTimeout', arg: 1000 },
+            { action: 'click', arg: '.js-skip-step' }
         ],
         autofillExpected: 1
     },
     {
         name: 'ResearchGate login',
         url: 'https://www.researchgate.net/login',
-        actions: [{action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true}],
+        actions: [{ action: 'click', arg: '.qc-cmp2-summary-buttons button[mode=primary]', optional: true }],
         autofillExpected: 0
     },
     {
@@ -104,7 +104,7 @@ const sites = [
         name: 'RightMove signup',
         // We explicitly go to login and then click on register to test for a possible regression
         url: 'https://www.rightmove.co.uk/login.html',
-        actions: [{action: 'click', arg: 'a[href="/register.html"]'}],
+        actions: [{ action: 'click', arg: 'a[href="/register.html"]' }],
         autofillExpected: 1
     },
     {
@@ -115,13 +115,13 @@ const sites = [
     {
         name: 'Leafly signup',
         url: 'https://sso.leafly.com/i/',
-        actions: [{action: 'click', arg: 'a[href="/sign-up"]'}],
+        actions: [{ action: 'click', arg: 'a[href="/sign-up"]' }],
         autofillExpected: 1
     },
     {
         name: 'Leafly login',
         url: 'https://sso.leafly.com/i/',
-        actions: [{action: 'click', arg: 'a[href="/sign-in"]'}],
+        actions: [{ action: 'click', arg: 'a[href="/sign-in"]' }],
         autofillExpected: 0
     },
     /* Stopped loading in headless browser
@@ -189,7 +189,7 @@ const sites = [
     {
         name: 'Slate signup',
         url: 'https://id.tinypass.com/id/?client_id=homyv5Uzpu&sender=piano-id-qlBRl&origin=https:%2F%2Fslate.com&site=https:%2F%2Fslate.com&parent_uri=https:%2F%2Fslate.com%2Fsign-in&display_mode=inline&screen=login',
-        actions: [{action: 'click', arg: '[showscreen="register"] > a'}],
+        actions: [{ action: 'click', arg: '[showscreen="register"] > a' }],
         autofillExpected: 1
     },
     {
@@ -210,7 +210,7 @@ const sites = [
     {
         name: 'Apartments.com signup',
         url: 'https://www.apartments.com/',
-        actions: [{action: 'click', arg: '.js-headerSignUp.headerSignUp'}],
+        actions: [{ action: 'click', arg: '.js-headerSignUp.headerSignUp' }],
         autofillExpected: 1
     },
     {
@@ -231,13 +231,13 @@ const sites = [
     {
         name: 'iFixIt signup',
         url: 'https://www.ifixit.com/#',
-        actions: [{action: 'click', arg: '#navSignup'}],
+        actions: [{ action: 'click', arg: '#navSignup' }],
         autofillExpected: 3
     },
     {
         name: 'iFixIt login',
         url: 'https://www.ifixit.com/#',
-        actions: [{action: 'click', arg: '#navLogin'}],
+        actions: [{ action: 'click', arg: '#navLogin' }],
         autofillExpected: 2
     },
     {
@@ -253,19 +253,19 @@ const sites = [
     {
         name: 'BlazeTV newsletter',
         url: 'https://www.theblaze.com/',
-        actions: [{action: 'evaluate', arg: () => window.scrollBy(0, window.innerHeight)}],
+        actions: [{ action: 'evaluate', arg: () => window.scrollBy(0, window.innerHeight) }],
         autofillExpected: 1
     },
     {
         name: 'Sur.ly signup',
         url: 'https://sur.ly/',
-        actions: [{action: 'click', arg: 'a[data-popup="sign-up"]'}],
+        actions: [{ action: 'click', arg: 'a[data-popup="sign-up"]' }],
         autofillExpected: 1
     },
     {
         name: 'Sur.ly login',
         url: 'https://sur.ly/',
-        actions: [{action: 'click', arg: 'a[data-popup="log-in"]'}],
+        actions: [{ action: 'click', arg: 'a[data-popup="log-in"]' }],
         autofillExpected: 0
     },
     {
@@ -431,7 +431,7 @@ const sites = [
     {
         name: 'Dropbox signup',
         url: 'https://www.dropbox.com/login',
-        actions: [{action: 'click', arg: '.login-register-switch-link'}],
+        actions: [{ action: 'click', arg: '.login-register-switch-link' }],
         autofillExpected: 1
     },
     {
@@ -452,14 +452,14 @@ const sites = [
     {
         name: 'Vulture.com signup',
         url: 'https://subs.nymag.com/magazine/subscribe/official-subscription.html',
-        actions: [{action: 'click', arg: '.subscription-stripe-plan.all .plan-button'}],
+        actions: [{ action: 'click', arg: '.subscription-stripe-plan.all .plan-button' }],
         autofillExpected: 1
     },
     {
         name: 'Vulture.com login',
         url: 'https://www.vulture.com/',
         actions: [
-            {action: 'click', arg: '.user-signin > button.sign-in-button'}
+            { action: 'click', arg: '.user-signin > button.sign-in-button' }
         ],
         autofillExpected: 0
     },
@@ -508,9 +508,9 @@ const sites = [
         name: 'Airbnb Signup',
         url: 'https://www.airbnb.com/',
         actions: [
-            {action: 'click', arg: '[data-testid="cypress-headernav-profile"]'},
-            {action: 'click', arg: '[data-testid="cypress-headernav-signup"]'},
-            {action: 'click', arg: '[data-testid="social-auth-button-email"]'},
+            { action: 'click', arg: '[data-testid="cypress-headernav-profile"]' },
+            { action: 'click', arg: '[data-testid="cypress-headernav-signup"]' },
+            { action: 'click', arg: '[data-testid="social-auth-button-email"]' }
         ],
         autofillExpected: 1
     },
@@ -518,14 +518,14 @@ const sites = [
         name: 'Airbnb Login',
         url: 'https://www.airbnb.com/',
         actions: [
-            {action: 'click', arg: '[data-testid="cypress-headernav-profile"]'},
-            {action: 'click', arg: '[data-testid="cypress-headernav-login"]'},
-            {action: 'click', arg: '[data-testid="social-auth-button-email"]'},
+            { action: 'click', arg: '[data-testid="cypress-headernav-profile"]' },
+            { action: 'click', arg: '[data-testid="cypress-headernav-login"]' },
+            { action: 'click', arg: '[data-testid="social-auth-button-email"]' }
         ],
         autofillExpected: 0
-    },
+    }
 ]
 
 const focusedSites = []
 
-module.exports = {sites, focusedSites}
+module.exports = { sites, focusedSites }

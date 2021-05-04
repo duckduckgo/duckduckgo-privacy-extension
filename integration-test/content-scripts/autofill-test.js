@@ -25,7 +25,7 @@ describe('Autofill input detection Tests', () => {
         const page = await browser.newPage()
         await page.goto('https://duckduckgo.com', { waitUntil: 'networkidle0' })
         await page.evaluate(() =>
-            window.postMessage({addUserData: {userName: '', token: ''}}, window.origin)
+            window.postMessage({ addUserData: { userName: '', token: '' } }, window.origin)
         )
         await page.close()
     })
@@ -33,10 +33,10 @@ describe('Autofill input detection Tests', () => {
         await harness.teardown(browser)
     })
 
-    sites.forEach(({name, url, autofillExpected, actions}) => {
+    sites.forEach(({ name, url, autofillExpected, actions }) => {
         it(`Test input field detection on ${name} at ${url}`, async () => {
             const page = await browser.newPage()
-            await page.setViewport({width: 1300, height: 800})
+            await page.setViewport({ width: 1300, height: 800 })
             const ua = await browser.userAgent()
             await page.setUserAgent(ua.replace(/Headless /, '') + ' test')
 
@@ -71,7 +71,7 @@ describe('Autofill input detection Tests', () => {
             } else {
                 await page.waitForSelector('input')
                     .catch(() => fail(`Couldn't find an input on ${name}. Maybe the page didn't load.`))
-                const el = await page.waitForSelector('[data-ddg-autofill]', {visible: true, timeout: 600})
+                const el = await page.waitForSelector('[data-ddg-autofill]', { visible: true, timeout: 600 })
                     .catch(() => null) // the selector is supposed to fail
                 if (el) {
                     fail(`False positive on ${name}.`)
