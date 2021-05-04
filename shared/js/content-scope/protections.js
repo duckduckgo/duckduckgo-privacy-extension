@@ -12,6 +12,7 @@ function shouldRun () {
     return true
 }
 
+let initArgs = null
 const protections = []
 
 export async function loadProtections () {
@@ -19,27 +20,32 @@ export async function loadProtections () {
         return
     }
     const protectionNames = [
-        'canvas',
         'audio',
-        'temporary-storage',
-        'referrer',
         'battery',
-        'screen-size',
-        'hardware',
+        'canvas',
+        'cookie',
         'do-not-track',
         'floc',
-        'gpc'
+        'gpc',
+        'hardware',
+        'referrer',
+        'screen-size',
+        'temporary-storage'
     ]
 
     for (const protectionName of protectionNames) {
-        const protection = import(`./${protectionName}-protection.js`).then(({ init }) => {
-            return { protectionName, init }
+        const protection = import(`./${protectionName}-protection.js`).then(({ init, load, update }) => {
+            if (load) {
+                load()
+            }
+            return { protectionName, init, update }
         })
         protections.push(protection)
     }
 }
 
 export async function initProtections (args) {
+    initArgs = args
     if (!shouldRun()) {
         return
     }
@@ -48,6 +54,18 @@ export async function initProtections (args) {
     resolvedProtections.forEach(({ init, protectionName }) => {
         if (!isFeatureBroken(args, protectionName)) {
             init(args)
+        }
+    })
+}
+
+export async function updateProtections (args) {
+    if (!shouldRun()) {
+        return
+    }
+    const resolvedProtections = await Promise.all(protections)
+    resolvedProtections.forEach(({ update, protectionName }) => {
+        if (!isFeatureBroken(initArgs, protectionName) && update) {
+            update(args)
         }
     })
 }
