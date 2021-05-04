@@ -326,7 +326,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
     if (req.registeredContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id)
+        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.documentUrl)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
             return
@@ -522,45 +522,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     }
 
-    if (req.checkThirdParty) {
-        const action = {
-            isThirdParty: false,
-            shouldBlock: false,
-            tabRegisteredDomain: null,
-            isTrackerFrame: false,
-            policy: cookieConfig.firstPartyCookiePolicy
-        }
-        if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
-            return true
-        }
-        if (blockTrackingCookies()) {
-            const tab = tabManager.get({ tabId: sender.tab.id })
-            // abort if site is whitelisted
-            if (tab && tab.site.whitelisted) {
-                res(action)
-                return true
-            }
-
-            // determine the register domain of the sending tab
-            const tabUrl = tab ? tab.url : sender.tab.url
-            const parsed = tldts.parse(tabUrl)
-            action.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
-
-            if (req.documentUrl && trackerutils.isTracker(req.documentUrl) && sender.frameId !== 0) {
-                action.isTrackerFrame = true
-            }
-
-            action.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
-            action.shouldBlock = !cookieConfig.isExcluded(sender.url)
-
-            res(action)
-        } else {
-            res(action)
-        }
-
-        return true
-    }
-
     if (req.getAlias) {
         const userData = settings.getSetting('userData')
         res({alias: userData?.nextAlias})
@@ -636,14 +597,39 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
-function getArgumentsObject (tabId) {
+function getArgumentsObject (tabId, sender, documentUrl) {
     const tab = tabManager.get({ tabId })
     if (!tab) {
         return null
     }
+    if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
+        return null
+    }
     const site = tab?.site || {}
     const referrer = tab?.referrer || ''
+
+    const cookie = {
+        isThirdParty: false,
+        shouldBlock: false,
+        tabRegisteredDomain: null,
+        isTrackerFrame: false,
+        policy: cookieConfig.firstPartyCookiePolicy
+    }
+    if (!site.whitelisted && blockTrackingCookies()) {
+        // determine the register domain of the sending tab
+        const tabUrl = tab ? tab.url : sender.tab.url
+        const parsed = tldts.parse(tabUrl)
+        cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
+
+        if (documentUrl && trackerutils.isTracker(documentUrl) && sender.frameId !== 0) {
+            cookie.isTrackerFrame = true
+        }
+
+        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
+        cookie.shouldBlock = !cookieConfig.isExcluded(sender.url)
+    }
     return {
+        cookie,
         globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,

@@ -23,6 +23,8 @@ function randomString () {
 function init () {
     const randomMethodName = '_d' + randomString()
     const randomPassword = '_p' + randomString()
+    const reusableMethodName = '_rm' + randomString()
+    const reusableSecret = '_r' + randomString()
     const initialScript = `
       /* global protections */
       protections.loadProtections()
@@ -42,27 +44,59 @@ function init () {
                       // TODO force enable all protections if password is wrong
                       console.error("Password for hidden function wasn't correct! The page is likely attempting to attack the protections by DuckDuckGo");
                   }
+                  // This method is single use, clean up
                   delete window.${randomMethodName};
+              }
+          })
+      });
+
+      // Define a random update function we call later.
+      // Use define property so isn't enumerable
+      Object.defineProperty(window, '${reusableMethodName}', {
+          enumerable: false,
+          // configurable, To allow for deletion later
+          configurable: true,
+          writable: false,
+          // Use proxy to ensure stringification isn't possible
+          value: new Proxy(function () {}, {
+              apply(target, thisArg, args) {
+                  if ('${reusableSecret}' === args[0]) {
+                      protections.updateProtections(args[1])
+                  }
               }
           })
       });
     `
     inject(initialScript)
 
-    chrome.runtime.sendMessage({ registeredContentScript: true },
-        (message) => {
-            if (!message) {
-                // Remove injected function only as background has disabled protections
-                inject(`delete window.${randomMethodName}`)
-                return
-            }
-            const stringifiedArgs = JSON.stringify(message)
-            const callRandomFunction = `
+    chrome.runtime.sendMessage({
+        registeredContentScript: true,
+        documentUrl: window.location.href
+    },
+    (message) => {
+        if (!message) {
+            // Remove injected function only as background has disabled protections
+            inject(`delete window.${randomMethodName}`)
+            return
+        }
+        const stringifiedArgs = JSON.stringify(message)
+        const callRandomFunction = `
                 window.${randomMethodName}('${randomPassword}', ${stringifiedArgs});
             `
-            inject(callRandomFunction)
-        }
+        inject(callRandomFunction)
+    }
     )
+
+    chrome.runtime.onMessage.addListener((message) => {
+        // forward update messages to the embedded script
+        if (message && message.type === 'update') {
+            const stringifiedArgs = JSON.stringify(message)
+            const callRandomUpdateFunction = `
+                window.${reusableMethodName}('${reusableSecret}', ${stringifiedArgs});
+            `
+            inject(callRandomUpdateFunction)
+        }
+    })
 }
 
 init()

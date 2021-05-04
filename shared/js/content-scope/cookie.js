@@ -1,4 +1,4 @@
-class Cookie {
+export class Cookie {
     constructor (cookieString) {
         this.parts = cookieString.split(';')
         this.parse()
