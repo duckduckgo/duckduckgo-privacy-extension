@@ -189,7 +189,6 @@ module.exports = function (grunt) {
             copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp node_modules/@duckduckgo/autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            buildContentScript: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts && cat shared/js/content-scripts/cookie.js shared/js/content-scripts/block-cookie.js > build/${browser}/${buildType}/public/js/content-scripts/content-script-bundle.js`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
             // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
@@ -223,7 +222,7 @@ module.exports = function (grunt) {
             },
             contentScripts: {
                 files: watch.contentScripts,
-                tasks: ['exec:copyContentScripts', 'exec:buildContentScript']
+                tasks: ['exec:copyContentScripts']
             },
             autofillContentScript: {
                 files: watch.autofillContentScript,
@@ -270,7 +269,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyInjectedCSS', 'exec:buildContentScript', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyInjectedCSS', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }

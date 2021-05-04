@@ -203,7 +203,8 @@ function handleRequest (requestData) {
         // If we didn't block this script and it's a tracker, notify the content script.
         if (requestData.type === 'script' && tracker) {
             chrome.tabs.sendMessage(requestData.tabId, {
-                type: 'tracker',
+                type: 'update',
+                trackerDefinition: true,
                 hostname: tldts.parse(requestData.url).hostname
             }, {
                 frameId: requestData.frameId
