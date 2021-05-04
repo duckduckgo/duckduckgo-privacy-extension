@@ -627,3 +627,40 @@ describe('Tracker Utilities', () => {
         tdsStorage.ClickToLoadConfig = originalConfig
     })
 })
+
+describe('trackerutils.isFirstPartyByEntity()', () => {
+    let timer = Date.now()
+    const jump = 1000 * 60 * 31 // slightly more than cache timeout
+
+    beforeAll(() => {
+        spyOn(settings, 'getSetting')
+        tdsStorageStub.stub()
+
+        // Make sure we don't use any list caches for these tests
+        spyOn(Date, 'now').and.callFake(function () {
+            // Cache may be updated on each run, so keep jumping the time forward for each call
+            timer += jump
+            return timer
+        })
+
+        return tdsStorage.getLists()
+            .then(lists => {
+                return tds.setLists(lists)
+            })
+    })
+
+    const firstPartyTests = [
+        { a: 'http://google-analytics.com', b: 'http://google.com', expected: true },
+        { a: 'http://disqus.com', b: 'http://google.com', expected: false },
+        { a: 'https://google-analytics.com/script-exception', b: 'https://example.com', expected: false }
+    ]
+    it('Should detect first partiness', () => {
+        for (const test of firstPartyTests) {
+            if (test.expected) {
+                expect(trackerutils.isFirstPartyByEntity(test.a, test.b)).withContext(`test: a: ${test.a} b: ${test.b} expected: ${test.expected}`).toBeTrue()
+            } else {
+                expect(trackerutils.isFirstPartyByEntity(test.a, test.b)).toBeFalse()
+            }
+        }
+    })
+})

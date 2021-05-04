@@ -120,7 +120,7 @@ describe('utils.getUpgradeToSecureSupport()', () => {
     })
 })
 
-describe('utils.isFirstParty()', () => {
+describe('utils.isSameTopLevelDomain()', () => {
     [
         ['example.com', 'example.com', true],
         ['example.com', 'www.example.com', true],
@@ -135,11 +135,11 @@ describe('utils.isFirstParty()', () => {
     ].forEach(([a, b, expected]) => {
         it(`returns ${expected} for ${a} and ${b}`, () => {
             if (expected) {
-                expect(utils.isFirstParty(a, b)).toBeTrue()
-                expect(utils.isFirstParty(b, a)).toBeTrue()
+                expect(utils.isSameTopLevelDomain(a, b)).toBeTrue()
+                expect(utils.isSameTopLevelDomain(b, a)).toBeTrue()
             } else {
-                expect(utils.isFirstParty(a, b)).toBeFalse()
-                expect(utils.isFirstParty(b, a)).toBeFalse()
+                expect(utils.isSameTopLevelDomain(a, b)).toBeFalse()
+                expect(utils.isSameTopLevelDomain(b, a)).toBeFalse()
             }
         })
     })

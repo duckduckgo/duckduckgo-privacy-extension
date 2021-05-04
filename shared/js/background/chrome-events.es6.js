@@ -227,19 +227,23 @@ chrome.webRequest.onHeadersReceived.addListener(
         }
 
         if (blockTrackingCookies()) {
+            if (!trackerutils.isTracker(request.url)) {
+                return { responseHeaders }
+            }
+
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
             if (tab && tab.site.whitelisted) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (utils.isFirstParty(initiator, request.url)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
                     return { responseHeaders }
                 }
-            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { responseHeaders }
             }
-            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+            if (!cookieConfig.isExcluded(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
         }
@@ -551,7 +555,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 action.isTrackerFrame = true
             }
 
-            action.isThirdParty = !utils.isFirstParty(sender.url, sender.tab.url)
+            action.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
             action.shouldBlock = !cookieConfig.isExcluded(sender.url)
 
             res(action)
@@ -744,19 +748,23 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
 
         if (blockTrackingCookies()) {
+            if (!trackerutils.isTracker(request.url)) {
+                return { requestHeaders }
+            }
+
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
             if (tab && tab.site.whitelisted) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
-                if (utils.isFirstParty(initiator, request.url)) {
+                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
                     return { requestHeaders }
                 }
-            } else if (tab && utils.isFirstParty(request.url, tab.url)) {
+            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { requestHeaders }
             }
-            if (!cookieConfig.isExcluded(request.url) && trackerutils.isTracker(request.url)) {
+            if (!cookieConfig.isExcluded(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             }
         }
