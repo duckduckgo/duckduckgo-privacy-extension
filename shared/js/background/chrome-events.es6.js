@@ -56,6 +56,15 @@ chrome.runtime.onInstalled.addListener(function (details) {
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
         experiment.setActiveExperiment()
     }
+
+    // Inject the email content script on all tabs upon installation (not needed on Firefox)
+    if (browserName !== 'moz') {
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach(tab => {
+                chrome.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
+            })
+        })
+    }
 })
 
 /**
@@ -306,13 +315,22 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
  * MESSAGES
  */
 const browserWrapper = require('./chrome-wrapper.es6')
+const {
+    REFETCH_ALIAS_ALARM,
+    fetchAlias,
+    showContextMenuAction,
+    hideContextMenuAction,
+    getAddresses,
+    isValidUsername,
+    isValidToken
+} = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
     if (sender.id !== chrome.runtime.id) return
 
-    if (req.registeredContentScript) {
+    if (req.registeredContentScript || req.registeredTempAutofillContentScript) {
         const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.documentUrl)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
@@ -507,6 +525,79 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         }
         res(pixel.fire.apply(null, fireArgs))
         return true
+    }
+
+    if (req.getAlias) {
+        const userData = settings.getSetting('userData')
+        res({ alias: userData?.nextAlias })
+
+        return true
+    }
+
+    if (req.getAddresses) {
+        res(getAddresses())
+
+        return true
+    }
+
+    if (req.refreshAlias) {
+        fetchAlias().then(() => {
+            res(getAddresses())
+        })
+
+        return true
+    }
+
+    if (req.addUserData) {
+        // Check the origin. Shouldn't be necessary, but better safe than sorry
+        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
+
+        const { userName, token } = req.addUserData
+        const { existingToken } = settings.getSetting('userData') || {}
+
+        // If the user is already registered, just notify tabs that we're ready
+        if (existingToken === token) {
+            chrome.tabs.query({}, (tabs) => {
+                tabs.forEach((tab) => {
+                    chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
+                })
+            })
+            return
+        }
+
+        // Check general data validity
+        if (isValidUsername(userName) && isValidToken(token)) {
+            settings.updateSetting('userData', req.addUserData)
+            // Once user is set, fetch the alias and notify all tabs
+            fetchAlias().then(response => {
+                if (response && response.error) {
+                    return res({ error: response.error.message })
+                }
+
+                chrome.tabs.query({}, (tabs) => {
+                    tabs.forEach((tab) => {
+                        chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
+                    })
+                })
+                showContextMenuAction()
+                res({ success: true })
+            })
+        } else {
+            res({ error: 'Something seems wrong with the user data' })
+        }
+
+        return true
+    }
+
+    if (req.logout) {
+        settings.updateSetting('userData', {})
+        // Broadcast the logout to all tabs
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach((tab) => {
+                chrome.tabs.sendMessage(tab.id, { type: 'logout' })
+            })
+        })
+        hideContextMenuAction()
     }
 })
 
@@ -777,6 +868,8 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()
+    } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {
+        fetchAlias()
     }
 })
 
@@ -794,7 +887,7 @@ const onStartup = () => {
         }
     })
 
-    settings.ready().then(() => {
+    settings.ready().then(async () => {
         experiment.setActiveExperiment()
 
         httpsStorage.getLists(constants.httpsLists)
@@ -810,6 +903,13 @@ const onStartup = () => {
         Companies.buildFromStorage()
 
         cookieConfig.updateCookieData()
+
+        // fetch alias if needed
+        const userData = settings.getSetting('userData')
+        if (userData && userData.token) {
+            if (!userData.nextAlias) await fetchAlias()
+            showContextMenuAction()
+        }
     })
 }
 

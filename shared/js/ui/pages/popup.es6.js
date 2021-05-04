@@ -16,6 +16,9 @@ const AutocompleteView = require('./../views/autocomplete.es6.js')
 const AutocompleteModel = require('./../models/autocomplete.es6.js')
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
+const EmailAliasView = require('../views/email-alias.es6.js')
+const EmailAliasModel = require('../models/email-alias.es6.js')
+const EmailAliasTemplate = require('../templates/email-alias.es6.js')
 
 function Trackers (ops) {
     this.$parent = window.$('#popup-container')
@@ -60,6 +63,13 @@ Trackers.prototype = window.$.extend({},
                 model: new TopBlockedModel({ numCompanies: 3 }),
                 appendTo: window.$('#top-blocked-container'),
                 template: topBlockedTemplate
+            })
+
+            this.views.emailAlias = new EmailAliasView({
+                pageView: this,
+                model: new EmailAliasModel(),
+                appendTo: window.$('#email-alias-container'),
+                template: EmailAliasTemplate
             })
 
             // TODO: hook up model query to actual ddg ac endpoint.
