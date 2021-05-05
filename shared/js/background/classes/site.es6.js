@@ -148,9 +148,8 @@ class Site {
             return domain
         }
 
-        if (url.match(/^file:/)){
-            domain = url.match(/^file:([a-z-]+)/)[1]
-            return domain
+        if (url.match(/^file:/)) {
+            return 'local file'
         }
 
         // extension pages
