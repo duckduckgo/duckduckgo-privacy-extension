@@ -42,7 +42,7 @@ module.exports = function () {
         </li>
         <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
             <p class="is-transparent site-info__whitelist-status js-site-whitelist-status">
-                <span class="text-line-after-icon privacy-on-off-message">
+                <span class="text-line-after-icon privacy-on-off-message bold">
                     ${setTransitionText(!this.model.isWhitelisted)}
                 </span>
             </p>
