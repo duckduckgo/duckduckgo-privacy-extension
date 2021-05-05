@@ -31,10 +31,12 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
 ### Pre-Requisites
 - [Node.js](https://nodejs.org) installation
-- [Grunt](https://www.npmjs.com/package/grunt)
+- [grunt-cli](https://gruntjs.com/getting-started)
+- grunt-cli can be installed by running `npm install -g grunt-cli`
 - Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html).
 
 ### Building the extension
+- `npm install` has to be run before building the extension for the first time 
 - Firefox
  1. Run `npm run dev-firefox`
  2. Load the extension in Firefox from the `build/firefox/dev` directory
