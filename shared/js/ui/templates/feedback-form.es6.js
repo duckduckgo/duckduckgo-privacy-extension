@@ -44,7 +44,3 @@ function showThankYou (isBrokenSite) {
         return bel`<p>Thank you for your feedback!</p>`
     }
 }
-
-function showError () {
-    return bel`<p>Something went wrong when submitting feedback. Please try again later!</p>`
-}
