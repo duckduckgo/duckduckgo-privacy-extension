@@ -1,8 +1,9 @@
 class Company {
-    constructor (name) {
-        this.name = name
+    constructor (c) {
+        this.name = c.name
         this.count = 0
         this.pagesSeenOn = 0
+        this.displayName = c.displayName || c.name
     };
 
     incrementCount () {

@@ -13,7 +13,7 @@ function GradeScorecard (ops) {
 
     this.bindEvents([[
         this.store.subscribe,
-        `change:site`,
+        'change:site',
         this._onSiteChange
     ]])
 

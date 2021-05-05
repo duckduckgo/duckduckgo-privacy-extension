@@ -16,7 +16,7 @@ function getGrades (rating, isWhitelisted) {
     const before = rating.cssBefore
     const after = rating.cssAfter
 
-    let grades = []
+    const grades = []
 
     grades.push({
         msg: 'Privacy Grade',

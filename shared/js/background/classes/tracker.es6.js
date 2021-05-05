@@ -1,10 +1,17 @@
 const Companies = require('../companies.es6')
+const tdsStorage = require('../storage/tds.es6')
 
 class Tracker {
     constructor (t) {
-        this.parentCompany = Companies.get(t.parentCompany)
+        this.parentCompany = Companies.get(t.tracker.owner.name)
+        this.displayName = t.tracker.owner.displayName
+        this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
         this.urls = {}
-        this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
+        this.urls[t.fullTrackerDomain] = {
+            isBlocked: this.isBlocked(t.action),
+            reason: t.reason,
+            categories: t.tracker.categories
+        }
         this.count = 1 // request count
         this.type = t.type || ''
     }
@@ -18,9 +25,17 @@ class Tracker {
      * We store a list of all unique urls here.
      */
     update (t) {
-        if (!this.urls[t.url]) {
-            this.urls[t.url] = {isBlocked: t.block, reason: t.reason}
+        if (!this.urls[t.fullTrackerDomain]) {
+            this.urls[t.fullTrackerDomain] = {
+                isBlocked: this.isBlocked(t.action),
+                reason: t.reason,
+                categories: t.tracker.categories
+            }
         }
+    }
+
+    isBlocked (action) {
+        return !!action.match(/block|redirect/)
     }
 }
 

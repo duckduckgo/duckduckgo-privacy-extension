@@ -16,6 +16,9 @@ const AutocompleteView = require('./../views/autocomplete.es6.js')
 const AutocompleteModel = require('./../models/autocomplete.es6.js')
 const autocompleteTemplate = require('./../templates/autocomplete.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
+const EmailAliasView = require('../views/email-alias.es6.js')
+const EmailAliasModel = require('../models/email-alias.es6.js')
+const EmailAliasTemplate = require('../templates/email-alias.es6.js')
 
 function Trackers (ops) {
     this.$parent = window.$('#popup-container')
@@ -36,30 +39,37 @@ Trackers.prototype = window.$.extend({},
 
             this.views.search = new SearchView({
                 pageView: this,
-                model: new SearchModel({searchText: ''}),
-                appendTo: this.$parent,
+                model: new SearchModel({ searchText: '' }),
+                appendTo: window.$('#search-form-container'),
                 template: searchTemplate
             })
 
             this.views.hamburgerMenu = new HamburgerMenuView({
                 pageView: this,
                 model: new HamburgerMenuModel(),
-                appendTo: this.$parent,
+                appendTo: window.$('#hamburger-menu-container'),
                 template: hamburgerMenuTemplate
             })
 
             this.views.site = new SiteView({
                 pageView: this,
                 model: new SiteModel(),
-                appendTo: this.$parent,
+                appendTo: window.$('#site-info-container'),
                 template: siteTemplate
             })
 
             this.views.topblocked = new TopBlockedView({
                 pageView: this,
-                model: new TopBlockedModel({numCompanies: 3}),
-                appendTo: this.$parent,
+                model: new TopBlockedModel({ numCompanies: 3 }),
+                appendTo: window.$('#top-blocked-container'),
                 template: topBlockedTemplate
+            })
+
+            this.views.emailAlias = new EmailAliasView({
+                pageView: this,
+                model: new EmailAliasModel(),
+                appendTo: window.$('#email-alias-container'),
+                template: EmailAliasTemplate
             })
 
             // TODO: hook up model query to actual ddg ac endpoint.
@@ -68,7 +78,7 @@ Trackers.prototype = window.$.extend({},
             // store.subscribe()
             this.views.autocomplete = new AutocompleteView({
                 pageView: this,
-                model: new AutocompleteModel({suggestions: []}),
+                model: new AutocompleteModel({ suggestions: [] }),
                 // appendTo: this.views.search.$el,
                 appendTo: null,
                 template: autocompleteTemplate

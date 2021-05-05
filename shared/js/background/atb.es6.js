@@ -9,6 +9,10 @@ const load = require('./load.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
+const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
+
+// list of accepted params in ATB url
+const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'npi']
 
 let dev = false
 
@@ -21,7 +25,7 @@ const ATB = (() => {
     return {
         updateSetAtb: () => {
             let atbSetting = settings.getSetting('atb')
-            let setAtbSetting = settings.getSetting('set_atb')
+            const setAtbSetting = settings.getSetting('set_atb')
 
             let errorParam = ''
 
@@ -34,11 +38,15 @@ const ATB = (() => {
                 errorParam = '&e=1'
             }
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = `${ddgAtbURL}${randomValue}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
+            const randomValue = Math.ceil(Math.random() * 1e7)
+            const url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
+
+                if (res.data.updateVersion) {
+                    settings.updateSetting('atb', res.data.updateVersion)
+                }
             })
         },
 
@@ -48,14 +56,14 @@ const ATB = (() => {
                     return
                 }
 
-                let atbSetting = settings.getSetting('atb')
+                const atbSetting = settings.getSetting('atb')
 
                 if (!atbSetting) {
                     return
                 }
 
                 // handle anchor tags for pages like about#newsletter
-                let urlParts = request.url.split('#')
+                const urlParts = request.url.split('#')
                 let newURL = request.url
                 let anchor = ''
 
@@ -73,7 +81,7 @@ const ATB = (() => {
 
                 newURL += 'atb=' + atbSetting + anchor
 
-                return {redirectUrl: newURL}
+                return { redirectUrl: newURL }
             }
         },
 
@@ -81,9 +89,8 @@ const ATB = (() => {
             numTries = numTries || 0
             if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
-            let randomValue = Math.ceil(Math.random() * 1e7)
-            let url = ddgAtbURL + randomValue
-
+            const randomValue = Math.ceil(Math.random() * 1e7)
+            const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
             }, () => {
@@ -98,28 +105,45 @@ const ATB = (() => {
             })
         },
 
-        finalizeATB: () => {
-            let atb = settings.getSetting('atb')
+        finalizeATB: (params) => {
+            const atb = settings.getSetting('atb')
+
+            // build query string when atb param wasn't acquired from any URLs
+            let paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            const browserName = parseUserAgentString().browser
+            paramString += `&browser=${browserName}`
 
             // make this request only once
             if (settings.getSetting('extiSent')) return
 
             settings.updateSetting('extiSent', true)
             settings.updateSetting('set_atb', atb)
-
             // just a GET request, we only care that the request was made
-            load.url(`https://duckduckgo.com/exti/?atb=${atb}`)
+            load.url(`https://duckduckgo.com/exti/?${paramString}`)
         },
 
-        getNewATBFromURL: (url) => {
-            let atb = ''
-            const matches = url.match(/\Wnatb=(v\d+-\d([a-z_]{2})?)(&|$)/)
+        // iterate over a list of accepted params, and retrieve them from a URL
+        // builds a new query string containing only accepted params
+        getAcceptedParamsFromURL: (url) => {
+            const validParams = new URLSearchParams()
+            if (url === '') return validParams
+            const parsedParams = (new URL(url)).searchParams
 
-            if (matches && matches[1]) {
-                atb = matches[1]
+            ACCEPTED_URL_PARAMS.forEach(param => {
+                if (parsedParams.has(param)) {
+                    validParams.append(
+                        param === 'natb' ? 'atb' : param,
+                        parsedParams.get(param)
+                    )
+                }
+            })
+
+            // Only return params if URL contains valid atb value
+            if (validParams.has('atb') && ATB_FORMAT_RE.test(validParams.get('atb'))) {
+                return validParams
             }
 
-            return atb
+            return new URLSearchParams()
         },
 
         updateATBValues: () => {
@@ -129,9 +153,10 @@ const ATB = (() => {
                 .then(browserWrapper.getDDGTabUrls)
                 .then((urls) => {
                     let atb
-
+                    let params
                     urls.some(url => {
-                        atb = ATB.getNewATBFromURL(url)
+                        params = ATB.getAcceptedParamsFromURL(url)
+                        atb = params.has('atb') && params.get('atb')
                         return !!atb
                     })
 
@@ -139,7 +164,7 @@ const ATB = (() => {
                         settings.updateSetting('atb', atb)
                     }
 
-                    ATB.finalizeATB()
+                    ATB.finalizeATB(params)
                 })
         },
 
@@ -148,7 +173,7 @@ const ATB = (() => {
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
             settings.ready().then(() => {
-                chrome.tabs.query({currentWindow: true, active: true}, function (tabs) {
+                chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
                     const domain = (tabs && tabs[0]) ? tabs[0].url : ''
                     if (ATB.canShowPostInstall(domain)) {
                         settings.updateSetting('hasSeenPostInstall', true)
@@ -176,20 +201,19 @@ const ATB = (() => {
 
         getSurveyURL: () => {
             let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
-            let atb = settings.getSetting('atb')
-            let setAtb = settings.getSetting('set_atb')
+            const atb = settings.getSetting('atb')
+            const setAtb = settings.getSetting('set_atb')
             if (atb) url += `&atb=${atb}`
             if (setAtb) url += `&set_atb=${setAtb}`
 
-            let browserInfo = parseUserAgentString()
-            let browserName = browserInfo.browser
-            let browserVersion = browserInfo.version
-            let extensionVersion = browserWrapper.getExtensionVersion()
+            const browserInfo = parseUserAgentString()
+            const browserName = browserInfo.browser
+            const browserVersion = browserInfo.version
+            const extensionVersion = browserWrapper.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
-            if (dev) url += `&test=1`
-
+            if (dev) url += '&test=1'
             return url
         },
 

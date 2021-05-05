@@ -4,6 +4,7 @@ module.exports = {
     "trackerBlockingEnabled": true,
     "httpsEverywhereEnabled": true,
     "embeddedTweetsEnabled": false,
+    "GPC": true,
     "meanings": true,
     "advanced_options": true,
     "last_search": "",
@@ -19,10 +20,16 @@ module.exports = {
     "trackersWhitelistTemporary-etag": null,
     "trackersWhitelist-etag": null,
     "surrogateList-etag": null,
-    "httpsWhitelist-etag": null,
+    "httpsUpgradeBloomFilter-etag": null,
+    "httpsDontUpgradeBloomFilters-etag": null,
     "httpsUpgradeList-etag": null,
+    "httpsDontUpgradeList-etag": null,
     "hasSeenPostInstall": false,
     "extiSent": false,
     "failedUpgrades": 0,
-    "totalUpgrades": 0
+    "totalUpgrades": 0,
+    "tds-etag": null,
+    "surrogates-etag": null,
+    "brokenSiteList-etag": null,
+    "lastTdsUpdate": 0
 }

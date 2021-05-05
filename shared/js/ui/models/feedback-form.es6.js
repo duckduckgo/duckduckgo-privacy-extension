@@ -21,6 +21,8 @@ function FeedbackForm (attrs) {
         .then((atb) => { this.atb = atb })
     this.fetch({ getExtensionVersion: true })
         .then((extensionVersion) => { this.extensionVersion = extensionVersion })
+    this.fetch({ getSetting: { name: 'tds-etag' } })
+        .then((etag) => { this.tds = etag })
 }
 
 FeedbackForm.prototype = window.$.extend({},
@@ -42,7 +44,8 @@ FeedbackForm.prototype = window.$.extend({},
                     browser: this.browser || '',
                     browser_version: this.browserVersion || '',
                     v: this.extensionVersion || '',
-                    atb: this.atb || ''
+                    atb: this.atb || '',
+                    tds: this.tsd || ''
                 },
                 success: (data) => {
                     if (data && data.status === 'success') {

@@ -5,6 +5,7 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 function HamburgerMenu (ops) {
     this.model = ops.model
     this.template = ops.template
+    this.pageView = ops.pageView
     Parent.call(this, ops)
 
     this._setup()
@@ -48,14 +49,13 @@ HamburgerMenu.prototype = window.$.extend({},
         _handleFeedbackClick: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.openExtensionPage(`/html/feedback.html`)
+            browserUIWrapper.openExtensionPage('/html/feedback.html')
         },
 
         _handleBrokenSiteClick: function (e) {
             e.preventDefault()
-
-            let url = encodeURIComponent(this.model.tabUrl)
-            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1&url=${url}`)
+            this.$el.addClass('is-hidden')
+            this.pageView.views.site.showBreakageForm('reportBrokenSite')
         },
 
         _handleSiteUpdate: function (notification) {

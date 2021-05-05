@@ -1,5 +1,5 @@
 const Parent = window.DDG.base.Model
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 
 function Whitelist (attrs) {
     attrs.list = {}
@@ -15,12 +15,20 @@ Whitelist.prototype = window.$.extend({},
         modelName: 'whitelist',
 
         removeDomain (itemIndex) {
-            let domain = this.list[itemIndex]
+            const domain = this.list[itemIndex]
             console.log(`whitelist: remove ${domain}`)
 
             this.fetch({
-                'whitelisted': {
+                whitelisted: {
                     list: 'whitelisted',
+                    domain: domain,
+                    value: false
+                }
+            })
+            // Remove domain whitelist opt-in status, if present
+            this.fetch({
+                whitelistOptIn: {
+                    list: 'whitelistOptIn',
                     domain: domain,
                     value: false
                 }
@@ -37,16 +45,17 @@ Whitelist.prototype = window.$.extend({},
             // - prefix with getSubDomain, which returns an empty string if none is found
             // But first, strip the 'www.' part, otherwise getSubDomain will include it
             // and whitelisting won't work for that site
-            url = url ? url.replace('www.', '') : ''
+            url = url ? url.replace(/^www\./, '') : ''
+            const parsedDomain = tldts.parse(url)
             const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null
-            const subDomain = tldjs.getSubdomain(url)
-            const domain = tldjs.getDomain(url) || localDomain
+            const subDomain = parsedDomain.subdomain
+            const domain = localDomain || (parsedDomain.isIp ? parsedDomain.hostname : parsedDomain.domain)
             if (domain) {
                 const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
                 console.log(`whitelist: add ${domainToWhitelist}`)
 
                 this.fetch({
-                    'whitelisted': {
+                    whitelisted: {
                         list: 'whitelisted',
                         domain: domainToWhitelist,
                         value: true
@@ -60,10 +69,10 @@ Whitelist.prototype = window.$.extend({},
         },
 
         setWhitelistFromSettings: function () {
-            let self = this
-            this.fetch({getSetting: {name: 'whitelisted'}}).then((whitelist) => {
+            const self = this
+            this.fetch({ getSetting: { name: 'whitelisted' } }).then((whitelist) => {
                 whitelist = whitelist || {}
-                let wlist = Object.keys(whitelist)
+                const wlist = Object.keys(whitelist)
                 wlist.sort()
 
                 // Publish whitelist change notification via the store

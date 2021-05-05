@@ -36,7 +36,7 @@
  */
 
 // Dependencies
-const isPlainObject = require('is-plain-object')
+const { isPlainObject } = require('is-plain-object')
 const deepFreeze = require('deep-freeze')
 const EventEmitter2 = require('eventemitter2')
 const notifiers = require('./notifiers.es6.js')
@@ -48,7 +48,7 @@ const notifiers = require('./notifiers.es6.js')
  * @api public
  */
 function register (notifierName) {
-    if (typeof notifierName !== 'string') { throw new Error(`notifierName argument must be a string`) }
+    if (typeof notifierName !== 'string') { throw new Error('notifierName argument must be a string') }
     if (notifiers.registered[notifierName]) { throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`) }
 
     notifiers.add(notifierName)
@@ -115,7 +115,7 @@ function remove (notifierName) {
  * Its api is not publicly exposed. Developers must use public api.
  * @api private
  */
-var _store = null
+let _store = null
 
 /**
  * Create the store of notifiers and their notification dispatch functions.
@@ -128,9 +128,9 @@ var _store = null
 function _createStore (notifier) {
     if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
 
-    var state = {}
-    var listener = null
-    var isEmitting = false
+    let state = {}
+    let listener = null
+    let isEmitting = false
 
     function dispatch (notification) {
         if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object')

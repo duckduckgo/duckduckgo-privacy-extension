@@ -9,9 +9,9 @@ module.exports = function () {
     const tosdrMsg = (this.model.tosdr && this.model.tosdr.message) ||
         constants.tosdrMessages.unknown
 
-    return bel`<section class="site-info site-info--main">
+    return bel`<div class="site-info site-info--main">
     <ul class="default-list">
-        <li class="site-info__rating-li js-hero-open">
+        <li class="border--bottom site-info__rating-li main-rating js-hero-open">
             ${ratingHero(this.model, {
         showOpen: !this.model.disabled
     })}
@@ -43,7 +43,6 @@ module.exports = function () {
         <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
             <p class="is-transparent site-info__whitelist-status js-site-whitelist-status">
                 <span class="icon ${setTransitionIcon(!this.model.isWhitelisted)}"></span>
-                <span class="text-line-after-icon">
                     ${setTransitionText(!this.model.isWhitelisted)}
                 </span>
             </p>
@@ -52,32 +51,38 @@ module.exports = function () {
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </div>
         </li>
-        <li class="site-info__li--manage-whitelist padded border--bottom">
+        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded">
             ${renderManageWhitelist(this.model)}
         </li>
+        <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
+           <div class="js-site-confirm-breakage-message site-info__confirm-thanks is-transparent">
+                <span class="site-info__message">
+                    Thanks for the feedback!
+                </span>
+            </div>
+            <div class="js-site-confirm-breakage site-info--confirm-breakage">
+                <span class="site-info--is-site-broken bold">
+                    Is this website broken?
+                </span>
+                <btn class="js-site-confirm-breakage-yes site-info__confirm-breakage-yes btn-pill">
+                    Yes
+                </btn>
+                <btn class="js-site-confirm-breakage-no site-info__confirm-breakage-no btn-pill">
+                    No
+                </btn>
+            </div>
+        </li>
     </ul>
-</section>`
-
-    function setTransitionIcon (isSiteWhitelisted) {
-        isSiteWhitelisted = isSiteWhitelisted || false
-        let icon = 'icon__check'
-
-        if (isSiteWhitelisted) {
-            icon = 'icon__shield'
-        }
-
-        return icon
-    }
+</div>`
 
     function setTransitionText (isSiteWhitelisted) {
         isSiteWhitelisted = isSiteWhitelisted || false
-        let text = 'Added to '
+        let text = 'Added to Unprotected Sites'
 
         if (isSiteWhitelisted) {
-            text = 'Removed From '
+            text = 'Removed from Unprotected Sites'
         }
 
-        text += 'Whitelist'
         return text
     }
 
@@ -95,11 +100,11 @@ module.exports = function () {
     function renderManageWhitelist (model) {
         return bel`<div>
     <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
-        Manage Whitelist
+        Unprotected Sites
     </a>
     <div class="separator"></div>
     <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
-        Report Broken Site
+        Report broken site
     </a>
 </div>`
     }

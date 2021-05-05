@@ -22,11 +22,11 @@ FeedbackForm.prototype = window.$.extend({},
             ])
 
             this.bindEvents([
-                [this.store.subscribe, `change:feedbackForm`, this._onModelChange],
-                [this.$url, `input`, this._onUrlChange],
-                [this.$message, `input`, this._onMessageChange],
-                [this.$brokensite, `change`, this._onBrokenSiteChange],
-                [this.$submit, `click`, this._onSubmitClick]
+                [this.store.subscribe, 'change:feedbackForm', this._onModelChange],
+                [this.$url, 'input', this._onUrlChange],
+                [this.$message, 'input', this._onMessageChange],
+                [this.$brokensite, 'change', this._onBrokenSiteChange],
+                [this.$submit, 'click', this._onSubmitClick]
             ])
         },
 

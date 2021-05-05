@@ -1,27 +1,22 @@
 module.exports = {
-    "trackerListLoc": "data/tracker_lists",
-    "blockLists": [
-        "trackersWithParentCompany.json"
-    ],
     "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
     "entityMap": "data/tracker_lists/entityMap.json",
-    "blocking": ["Advertising", "Analytics", "Social"],
+    "displayCategories": ["Analytics", "Advertising", "Social Network"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
-    "trackersWhitelistTemporary": "https://duckduckgo.com/contentblocking/trackers-whitelist-temporary.txt",
-    "trackersWhitelist": "https://duckduckgo.com/contentblocking/trackers-whitelist.txt",
-    "surrogateList": "https://duckduckgo.com/contentblocking.js?l=surrogates",
     "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
     "tosdrMessages" : {
         "A": "Good",
         "B": "Mixed",
-        "C": "Bad",
-        "D": "Bad",
-        "E": "Bad",
+        "C": "Poor",
+        "D": "Poor",
+        "E": "Poor",
         "good": "Good",
-        "bad": "Bad",
+        "bad": "Poor",
         "unknown": "Unknown",
         "mixed": "Mixed"
     },
+    "httpsService": "https://duckduckgo.com/smarter_encryption.js",
+    "duckDuckGoSerpHostname": "duckduckgo.com",
     "httpsMessages": {
         "secure": "Encrypted Connection",
         "upgraded": "Forced Encryption",
@@ -44,17 +39,103 @@ module.exports = {
         "maxcdn": 7,
         "automattic": 7
     },
+    /*
+     * Mapping entity names to CSS class name for popup icons
+     */
+    "entityIconMapping": {
+        "Google LLC": "google",
+        "Facebook, Inc.": "facebook",
+        "Twitter, Inc.": "twitter",
+        "Amazon Technologies, Inc.": "amazon",
+        "AppNexus, Inc.": "appnexus",
+        "MediaMath, Inc.": "mediamath",
+        "StackPath, LLC": "maxcdn",
+        "Automattic, Inc.": "automattic",
+        "Adobe Inc.": "adobe",
+        "Quantcast Corporation": "quantcast",
+        "The Nielsen Company": "nielsen"
+    },
     "httpsDBName": "https",
     "httpsLists": [
         {
-            "type": "upgrade list",
-            "name": "httpsUpgradeList",
+            "type": "upgrade bloom filter",
+            "name": "httpsUpgradeBloomFilter",
             "url": "https://staticcdn.duckduckgo.com/https/https-bloom.json"
         },
         {
-            "type": "whitelist",
-            "name": "httpsWhitelist",
+            "type": "don\'t upgrade bloom filter",
+            "name": "httpsDontUpgradeBloomFilters",
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-bloom.json"
+        },
+        {
+            "type": "upgrade safelist",
+            "name": "httpsUpgradeList",
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-whitelist.json"
+        },
+        {
+            "type": "don\'t upgrade safelist",
+            "name": "httpsDontUpgradeList",
             "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
+        },
+    ],
+    "tdsLists": [
+        {
+            "name": "surrogates",
+            "url": "/data/surrogates.txt",
+            "format": "text",
+            "source": "local"
+        },
+        {
+            "name": "tds",
+            "url": "https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "brokenSiteList",
+            "url": "https://duckduckgo.com/contentblocking/trackers-unprotected-temporary.txt",
+            "format": "text",
+            "source": "external"
+        },
+        {
+            "name": "protections",
+            "url": "https://duckduckgo.com/contentblocking/protections.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "ReferrerExcludeList",
+            "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "ClickToLoadConfig",
+            "url": "https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json",
+            "format": "json",
+            "source": "external"
+        }
+    ],
+    "UserAgentLists": [
+        {
+            "name": "agents",
+            "url": "https://staticcdn.duckduckgo.com/useragents/random_useragent.json",
+            "format": "json",
+            "source": "external"
+        },
+        {
+            "name": "excludeList",
+            "url": "https://staticcdn.duckduckgo.com/useragents/useragent_excludes.json",
+            "format": "json",
+            "source": "external"
+        }
+    ],
+    "CookieLists": [
+        {
+            "name": "cookieExcludeList",
+            "url": "https://staticcdn.duckduckgo.com/useragents/cookie_configuration.json",
+            "format": "json",
+            "source": "external"
         }
     ],
     "httpsErrorCodes": {

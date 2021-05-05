@@ -3,11 +3,11 @@ const browserWrapper = require('./$BROWSER-wrapper.es6')
 let dev = false
 
 function JSONfromLocalFile (path) {
-    return loadExtensionFile({url: path, returnType: 'json'})
+    return loadExtensionFile({ url: path, returnType: 'json' })
 }
 
 function JSONfromExternalFile (url) {
-    return loadExtensionFile({url: url, returnType: 'json', source: 'external'})
+    return loadExtensionFile({ url: url, returnType: 'json', source: 'external' })
 }
 
 function url (url) {
@@ -27,6 +27,8 @@ function returnResponse (xhr, returnType) {
         return res
     } else if (returnType === 'xml') {
         return xhr.responseXML
+    } else if (returnType === 'arraybuffer') {
+        return xhr.response
     } else {
         return xhr.responseText
     }
@@ -39,7 +41,7 @@ function returnResponse (xhr, returnType) {
  *  - etag: set an if-none-match header
  */
 function loadExtensionFile (params) {
-    let xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest()
     let url = params.url
 
     if (params.source === 'external') {
@@ -65,6 +67,10 @@ function loadExtensionFile (params) {
         xhr.open('GET', browserWrapper.getExtensionURL(url))
     }
 
+    if (params.responseType) {
+        xhr.responseType = params.responseType
+    }
+
     xhr.timeout = params.timeout || 30000
 
     xhr.send(null)
@@ -74,7 +80,7 @@ function loadExtensionFile (params) {
             reject(new Error(`${url} timed out`))
         }
         xhr.onreadystatechange = () => {
-            let done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
+            const done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
             if (xhr.readyState === done) {
                 if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
                     xhr.data = returnResponse(xhr, params.returnType)

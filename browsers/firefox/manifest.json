@@ -6,7 +6,7 @@
               "strict_min_version": "57.0"
         }
     },
-    "version": "2018.9.25",
+    "version": "2021.5.4",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -21,7 +21,7 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
+    "omnibox": {"keyword": "ddg"},
     "background": {
             "scripts": [
                 "public/js/background.js"
@@ -33,7 +33,7 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}",
+        "search_url": "https://duckduckgo.com/?q={searchTerms}&t=newext",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
     },
@@ -42,19 +42,19 @@
         "matches": ["<all_urls>"],
         "all_frames": true,
         "css": ["public/css/noatb.css"],
+        "js": ["public/js/inject.js"],
         "run_at": "document_start"
       },
       {
         "js": [
-          "public/js/content-scripts/element-hiding.js"
+          "public/js/content-scripts/autofill.js"
         ],
-        "matches": [
-          "http://*/*",
-          "https://*/*"
+        "css": [
+          "public/css/email-host-styles.css"
         ],
-        "match_about_blank": true,
+        "matches": ["<all_urls>"],
         "all_frames": true,
-        "run_at": "document_start"
+        "run_at": "document_idle"
       }
     ],
     "permissions": [
@@ -65,12 +65,13 @@
         "webNavigation",
         "activeTab",
         "tabs",
-        "cookies",
         "storage",
         "<all_urls>",
         "alarms"
     ],
     "web_accessible_resources": [
-        "img/*"
+        "/web_accessible_resources/*",
+        "/public/css/email-autofill.css",
+        "/public/font/*"
     ]
 }

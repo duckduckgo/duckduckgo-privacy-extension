@@ -8,7 +8,10 @@ npm-debug.log
 public/js/*.*
 public/css/*.*
 *.swp
+*.swo
 build/firefox
 build/chrome
 build/safari
+build/test
 test/background.js
+shared/js/content-scope/sjcl.js

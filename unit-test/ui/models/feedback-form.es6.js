@@ -5,10 +5,13 @@ let feedbackForm
 
 function setup () {
     // make sure we always have an atb and extension version handy
-    let spy = spyOn(browserUIWrapper, 'fetch')
+    const spy = spyOn(browserUIWrapper, 'fetch')
 
     spy.withArgs({ getSetting: { name: 'atb' } })
         .and.returnValue(Promise.resolve('v110-1'))
+
+    spy.withArgs({ getSetting: { name: 'tds-etag' } })
+        .and.returnValue(Promise.resolve('1234asdf'))
 
     spy.withArgs({ getExtensionVersion: true })
         .and.returnValue(Promise.resolve('2018.5.1'))
@@ -91,7 +94,7 @@ describe('submit', () => {
     it('should pass the correct arguments to the AJAX call', () => {
         feedbackForm.submit()
 
-        let args = spy.calls.argsFor(0)
+        const args = spy.calls.argsFor(0)
 
         expect(args[1].method).toEqual('POST')
         expect(typeof args[1].data).toEqual('object')

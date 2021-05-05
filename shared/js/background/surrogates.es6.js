@@ -18,16 +18,16 @@ class Surrogates {
 
         this.trackersSurrogateList = text.trim().split('\n\n')
 
-        for (let sur of this.trackersSurrogateList) {
+        for (const sur of this.trackersSurrogateList) {
             // remove comment lines that begin with #
-            let lines = sur.split('\n').filter((line) => {
+            const lines = sur.split('\n').filter((line) => {
                 return !(/^#.*/).test(line)
             })
             // remove first line, store it
-            let firstLine = lines.shift()
+            const firstLine = lines.shift()
             // take identifier from first line
-            let pattern = firstLine.split(' ')[0]
-            let b64surrogate = btoa(lines.join('\n'))
+            const pattern = firstLine.split(' ')[0]
+            const b64surrogate = btoa(lines.join('\n'))
             res[pattern] = b64dataheader + b64surrogate
         }
         surrogateList = res
@@ -43,7 +43,7 @@ class Surrogates {
     }
 
     /****
-     * Takes a full url, along with a tldjs parsed url object, and the full
+     * Takes a full url, along with a tldts parsed url object, and the full
      * parsed list of rules, returning surrogate content if there is some available
      * for the given url.
      */
@@ -59,13 +59,13 @@ class Surrogates {
         // http://en.www.googletagservices.com/some/other/random/path/gpt.js?v=123
         //
         // All our rules have domain + filename, so for now we're safe making that assumption.
-        let splitUrl = url.split('/')
+        const splitUrl = url.split('/')
         // pull everything after the last slash as the filename:
         let filename = splitUrl[splitUrl.length - 1]
         // strip off any querystring params:
         filename = filename.split('?')[0]
         // concat with domain to match the original rule:
-        let ruleToMatch = parsedUrl.domain + '/' + filename
+        const ruleToMatch = parsedUrl.domain + '/' + filename
         return surrogateList[ruleToMatch]
     }
 }

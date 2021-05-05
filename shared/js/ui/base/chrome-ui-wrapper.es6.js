@@ -1,10 +1,10 @@
-let fetch = (message) => {
+const fetch = (message) => {
     return new Promise((resolve, reject) => {
         window.chrome.runtime.sendMessage(message, (result) => resolve(result))
     })
 }
 
-let backgroundMessage = (thisModel) => {
+const backgroundMessage = (thisModel) => {
     // listen for messages from background and
     // // notify subscribers
     window.chrome.runtime.onMessage.addListener((req, sender) => {
@@ -16,11 +16,11 @@ let backgroundMessage = (thisModel) => {
     })
 }
 
-let getBackgroundTabData = () => {
+const getBackgroundTabData = () => {
     return new Promise((resolve, reject) => {
-        fetch({getCurrentTab: true}).then((tab) => {
+        fetch({ getCurrentTab: true }).then((tab) => {
             if (tab) {
-                fetch({getTab: tab.id}).then((backgroundTabObj) => {
+                fetch({ getTab: tab.id }).then((backgroundTabObj) => {
                     resolve(backgroundTabObj)
                 })
             }
@@ -28,33 +28,33 @@ let getBackgroundTabData = () => {
     })
 }
 
-let search = (url) => {
-    window.chrome.tabs.create({url: `https://duckduckgo.com/?q=${url}&bext=${window.localStorage['os']}cr`})
+const search = (url) => {
+    window.chrome.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${window.localStorage.os}cr` })
 }
 
-let getExtensionURL = (path) => {
+const getExtensionURL = (path) => {
     return chrome.extension.getURL(path)
 }
 
-let openExtensionPage = (path) => {
+const openExtensionPage = (path) => {
     window.chrome.tabs.create({ url: getExtensionURL(path) })
 }
 
-let openOptionsPage = (browser) => {
+const openOptionsPage = (browser) => {
     if (browser === 'moz') {
         openExtensionPage('/html/options.html')
         window.close()
-    } else if (browser === 'chrome') {
+    } else {
         window.chrome.runtime.openOptionsPage()
     }
 }
 
-let reloadTab = (id) => {
+const reloadTab = (id) => {
     window.chrome.tabs.reload(id)
 }
 
-let closePopup = () => {
-    const w = window.chrome.extension.getViews({type: 'popup'})[0]
+const closePopup = () => {
+    const w = window.chrome.extension.getViews({ type: 'popup' })[0]
     w.close()
 }
 

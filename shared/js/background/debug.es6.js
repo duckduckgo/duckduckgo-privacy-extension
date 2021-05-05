@@ -3,18 +3,18 @@
  * NOTE this is not added to the release version of the extension
  */
 const settings = require('./settings.es6')
-const abp = require('abp-filter-parser')
 const tabManager = require('./tab-manager.es6')
 const load = require('./load.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
+const tds = require('./storage/tds.es6')
 
 window.dbg = {
     settings,
-    abp,
     tabManager,
     atb,
-    https
+    https,
+    tds
 }
 
 // mark this as a dev build

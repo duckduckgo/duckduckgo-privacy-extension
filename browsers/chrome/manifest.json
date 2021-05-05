@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2018.9.25",
+    "version": "2021.5.4",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -16,7 +16,7 @@
         },
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "d"},
+    "omnibox": {"keyword": "ddg"},
     "options_page": "html/options.html",
     "background": {
             "scripts": [
@@ -30,6 +30,7 @@
         "is_default": true,
         "keyword": "duckduckgo.com",
         "name": "DuckDuckGo",
+        "prepopulated_id": 92,
         "search_url": "https://duckduckgo.com/?q={searchTerms}",
         "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
       }
@@ -39,19 +40,19 @@
         "matches": ["<all_urls>"],
         "all_frames": true,
         "css": ["public/css/noatb.css"],
+        "js": ["public/js/inject.js"],
         "run_at": "document_start"
       },
       {
         "js": [
-          "public/js/content-scripts/element-hiding.js"
+          "public/js/content-scripts/autofill.js"
         ],
-        "matches": [
-          "http://*/*",
-          "https://*/*"
+        "css": [
+          "public/css/email-host-styles.css"
         ],
-        "match_about_blank": true,
+        "matches": ["<all_urls>"],
         "all_frames": true,
-        "run_at": "document_start"
+        "run_at": "document_idle"
       }
     ],
     "permissions": [
@@ -62,12 +63,14 @@
         "webNavigation",
         "activeTab",
         "tabs",
-        "cookies",
         "storage",
         "<all_urls>",
         "alarms"
     ],
     "web_accessible_resources": [
-        "img/*"
+        "/web_accessible_resources/*",
+        "/img/logo-small.svg",
+        "/public/css/email-autofill.css",
+        "/public/font/*"
     ]
 }

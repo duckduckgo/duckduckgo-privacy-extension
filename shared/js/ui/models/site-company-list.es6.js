@@ -1,4 +1,3 @@
-const DOMAIN_MAPPINGS = require('./../../../data/tracker_lists/trackersWithParentCompany.json').TopTrackerDomains
 const Parent = window.DDG.base.Model
 const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
@@ -6,7 +5,6 @@ function SiteCompanyList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
     attrs.companyListMap = []
-    attrs.DOMAIN_MAPPINGS = DOMAIN_MAPPINGS
     Parent.call(this, attrs)
 }
 
@@ -19,9 +17,9 @@ SiteCompanyList.prototype = window.$.extend({},
 
         fetchAsyncData: function () {
             return new Promise((resolve, reject) => {
-                this.fetch({getCurrentTab: true}).then((tab) => {
+                this.fetch({ getCurrentTab: true }).then((tab) => {
                     if (tab) {
-                        this.fetch({getTab: tab.id}).then((bkgTab) => {
+                        this.fetch({ getTab: tab.id }).then((bkgTab) => {
                             this.tab = bkgTab
                             this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
                             this._updateCompaniesList()
@@ -44,8 +42,8 @@ SiteCompanyList.prototype = window.$.extend({},
             // set trackerlist metadata for list display by company:
             this.companyListMap = companyNames
                 .map((companyName) => {
-                    let company = this.trackers[companyName]
-                    let urlsList = company.urls ? Object.keys(company.urls) : []
+                    const company = this.trackers[companyName]
+                    const urlsList = company.urls ? Object.keys(company.urls) : []
                     // Unknown same domain trackers need to be individually fetched and put
                     // in the unblocked list
                     if (companyName === 'unknown' && this.hasUnblockedTrackers(company, urlsList)) {
@@ -56,6 +54,7 @@ SiteCompanyList.prototype = window.$.extend({},
                     // max width: 300 - (horizontal padding in css) = 260
                     return {
                         name: companyName,
+                        displayName: company.displayName || companyName,
                         normalizedName: this.normalizeCompanyName(companyName),
                         count: this._setCount(company, companyName, urlsList),
                         urls: company.urls,

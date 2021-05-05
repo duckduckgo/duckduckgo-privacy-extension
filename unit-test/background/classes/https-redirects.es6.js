@@ -76,7 +76,7 @@ describe('HttpsRedirects', () => {
                 httpsRedirects.registerRedirect(getMainFrameRequest())
             }
 
-            let canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
+            const canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
 
             expect(canRedirect).toEqual(false)
         })
@@ -91,7 +91,7 @@ describe('HttpsRedirects', () => {
                 httpsRedirects.registerRedirect(getMainFrameRequest())
             }
 
-            let canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
+            const canRedirect = httpsRedirects.canRedirect(getMainFrameRequest())
 
             expect(canRedirect).toEqual(true)
         })
@@ -136,7 +136,7 @@ describe('HttpsRedirects', () => {
             expect(canRedirect).toEqual(false)
 
             // different subdomains should still be fine
-            let anotherRequest = getImageRequest()
+            const anotherRequest = getImageRequest()
             anotherRequest.url = 'http://www.example.com/cat.gif'
 
             canRedirect = httpsRedirects.canRedirect(anotherRequest)
@@ -167,7 +167,7 @@ describe('HttpsRedirects', () => {
                 httpsRedirects.canRedirect(request)
             }
 
-            let canRedirect = httpsRedirects.canRedirect({
+            const canRedirect = httpsRedirects.canRedirect({
                 requestId: 105,
                 url: 'http://example.com/something/another.js',
                 type: 'xhr'
@@ -186,7 +186,7 @@ describe('HttpsRedirects', () => {
                 url: 'http://example.com',
                 type: 'main_frame'
             })
-            let redirect = httpsRedirects.getMainFrameRedirect()
+            const redirect = httpsRedirects.getMainFrameRedirect()
 
             expect(redirect.url).toEqual('http://example.com')
             expect(typeof redirect.time).toEqual('number')
@@ -199,7 +199,7 @@ describe('HttpsRedirects', () => {
             })
             httpsRedirects.persistMainFrameRedirect({ url: 'http://example.com', time: Date.now() - 500 })
 
-            let redirect = httpsRedirects.getMainFrameRedirect()
+            const redirect = httpsRedirects.getMainFrameRedirect()
             expect(redirect).toBeTruthy()
             expect(typeof redirect).toEqual('object')
         })

@@ -1,9 +1,12 @@
 const bel = require('bel')
-const changeCase = require('change-case')
 const hero = require('./shared/hero.es6.js')
 const statusList = require('./shared/status-list.es6.js')
 const constants = require('../../../data/constants')
 const crossplatformLink = require('./shared/crossplatform-link.es6.js')
+
+function upperCaseFirst (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1)
+}
 
 module.exports = function () {
     const domain = this.model && this.model.domain
@@ -28,19 +31,19 @@ module.exports = function () {
             Privacy practices indicate how much the personal information
             that you share with a website is protected.
         </div>
-        <div class="privacy-practices__details padded border--bottom--inner
+        <div class="privacy-practices__details padded
             js-privacy-practices-details">
             ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
         </div>
-        <div class="privacy-practices__attrib padded text--center">
-            Privacy Practice results from ${crossplatformLink('https://tosdr.org/', {
+        <div class="privacy-practices__attrib padded text--center border--top--inner">
+            Privacy Practices from ${crossplatformLink('https://tosdr.org/', {
         className: 'bold',
         target: '_blank',
         text: 'ToS;DR',
         attributes: {
             'aria-label': 'Terms of Service; Didn\'t Read'
         }
-    })}
+    })}.
         </div>
     </div>
 </section>`
@@ -56,12 +59,12 @@ function renderDetails (reasons) {
     // which use objects
 
     good = good.map(item => ({
-        msg: changeCase.upperCaseFirst(item),
+        msg: upperCaseFirst(item),
         modifier: 'good'
     }))
 
     bad = bad.map(item => ({
-        msg: changeCase.upperCaseFirst(item),
+        msg: upperCaseFirst(item),
         modifier: 'bad'
     }))
 
@@ -71,12 +74,11 @@ function renderDetails (reasons) {
 
 function renderNoDetails () {
     return bel`<div class="text--center">
-    <div class="privacy-practices__details__no-detail-icon"></div>
     <h1 class="privacy-practices__details__title">
-        No Privacy Practices Found
+        No privacy practices found
     </h1>
     <div class="privacy-practices__details__msg">
-        The Privacy practices of this website have not been reviewed.
+        The privacy practices of this website have not been reviewed.
     </div>
 </div>`
 }

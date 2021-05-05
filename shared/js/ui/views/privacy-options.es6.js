@@ -17,18 +17,19 @@ PrivacyOptions.prototype = window.$.extend({},
     {
 
         _clickSetting: function (e) {
-            var key = window.$(e.target).data('key') || window.$(e.target).parent().data('key')
+            const key = window.$(e.target).data('key') || window.$(e.target).parent().data('key')
             console.log(`privacyOptions view click for setting "${key}"`)
             this.model.toggle(key)
             this.rerender()
         },
 
         setup: function () {
-            this._cacheElems('.js-options', ['blocktrackers', 'https-everywhere-enabled', 'embedded-tweets-enabled'])
+            this._cacheElems('.js-options', ['blocktrackers', 'https-everywhere-enabled', 'embedded-tweets-enabled', 'gpc-enabled'])
             this.bindEvents([
                 [this.$blocktrackers, 'click', this._clickSetting],
                 [this.$httpseverywhereenabled, 'click', this._clickSetting],
-                [this.$embeddedtweetsenabled, 'click', this._clickSetting]
+                [this.$embeddedtweetsenabled, 'click', this._clickSetting],
+                [this.$gpcenabled, 'click', this._clickSetting]
             ])
         },
 

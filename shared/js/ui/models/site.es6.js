@@ -1,6 +1,5 @@
 const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
-const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const httpsMessages = constants.httpsMessages
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
@@ -8,17 +7,13 @@ const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 // as "major"
 const MAJOR_TRACKER_THRESHOLD_PCT = 7
 
-const majorTrackingNetworks = Object.keys(trackerPrevalence)
-    .filter(t => trackerPrevalence[t] >= MAJOR_TRACKER_THRESHOLD_PCT)
-    // lowercase them cause we only use them for comparing
-    .map(t => t.toLowerCase())
-
 function Site (attrs) {
     attrs = attrs || {}
     attrs.disabled = true // disabled by default
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
+    attrs.whitelistOptIn = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
@@ -51,6 +46,8 @@ Site.prototype = window.$.extend({},
                         this.fetchSiteRating()
                         this.set('tosdr', tab.site.tosdr)
                         this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
+
+                        this.fetch({ getSetting: { name: 'tds-etag' } }).then(etag => this.set('tds', etag))
                     } else {
                         console.debug('Site model: no tab')
                     }
@@ -66,9 +63,9 @@ Site.prototype = window.$.extend({},
         fetchSiteRating: function () {
             // console.log('[model] fetchSiteRating()')
             if (this.tab) {
-                this.fetch({getSiteGrade: this.tab.id}).then((rating) => {
+                this.fetch({ getSiteGrade: this.tab.id }).then((rating) => {
                     console.log('fetchSiteRating: ', rating)
-                    if (rating) this.update({siteRating: rating})
+                    if (rating) this.update({ siteRating: rating })
                 })
             }
         },
@@ -76,14 +73,15 @@ Site.prototype = window.$.extend({},
         setSiteProperties: function () {
             if (!this.tab) {
                 this.domain = 'new tab' // tab can be null for firefox new tabs
-                this.set({isCalculatingSiteRating: false})
+                this.set({ isCalculatingSiteRating: false })
             } else {
                 this.isWhitelisted = this.tab.site.whitelisted
+                this.whitelistOptIn = this.tab.site.whitelistOptIn
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
-                    this.set({isCalculatingSiteRating: false})
+                    this.set({ isCalculatingSiteRating: false })
                 } else {
-                    this.set({'disabled': false})
+                    this.set({ disabled: false })
                 }
             }
 
@@ -108,7 +106,7 @@ Site.prototype = window.$.extend({},
             // console.log('[model] handleBackgroundMsg()')
             if (!this.tab) return
             if (message.action && message.action === 'updateTabData') {
-                this.fetch({getTab: this.tab.id}).then((backgroundTabObj) => {
+                this.fetch({ getTab: this.tab.id }).then((backgroundTabObj) => {
                     this.tab = backgroundTabObj
                     this.update()
                     this.fetchSiteRating()
@@ -142,8 +140,8 @@ Site.prototype = window.$.extend({},
                         }
 
                         this.set({
-                            'siteRating': newSiteRating,
-                            'isCalculatingSiteRating': false
+                            siteRating: newSiteRating,
+                            isCalculatingSiteRating: false
                         })
                     } else if (this.isCalculatingSiteRating) {
                         // got site rating from background process
@@ -223,11 +221,9 @@ Site.prototype = window.$.extend({},
             // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is whitelisted
             const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
-            const count = Object.keys(trackers).reduce((total, name) => {
-                const tempTracker = name.toLowerCase()
-                const idx = majorTrackingNetworks.indexOf(tempTracker)
-
-                total += idx > -1 ? 1 : 0
+            const count = Object.values(trackers).reduce((total, t) => {
+                const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
+                total += isMajor ? 1 : 0
                 return total
             }, 0)
 
@@ -248,9 +244,29 @@ Site.prototype = window.$.extend({},
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
-                this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
 
-                this.fetch({'whitelisted':
+                // fire ept.on pixel if just turned privacy protection on,
+                // fire ept.off pixel if just turned privacy protection off.
+                if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
+                    // If user reported broken site and opted to share data on site,
+                    // attach domain and path to ept.on pixel if they turn privacy protection back on.
+                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                    this.set('whitelistOptIn', false)
+                    this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
+                    this.fetch({
+                        whitelistOptIn:
+                        {
+                            list: 'whitelistOptIn',
+                            domain: this.tab.site.domain,
+                            value: false
+                        }
+                    })
+                } else {
+                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
+                }
+
+                this.fetch({
+                    whitelisted:
                     {
                         list: 'whitelisted',
                         domain: this.tab.site.domain,
@@ -258,6 +274,50 @@ Site.prototype = window.$.extend({},
                     }
                 })
             }
+        },
+
+        submitBreakageForm: function (category) {
+            if (!this.tab) return
+
+            const blockedTrackers = []
+            const surrogates = []
+            const upgradedHttps = this.tab.upgradedHttps
+            // remove params and fragments from url to avoid including sensitive data
+            const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+            const trackerObjects = this.tab.trackersBlocked
+            const pixelParams = ['epbf',
+                { category: category },
+                { siteUrl: encodeURIComponent(siteUrl) },
+                { upgradedHttps: upgradedHttps.toString() },
+                { tds: this.tds }
+            ]
+
+            for (const tracker in trackerObjects) {
+                const trackerDomains = trackerObjects[tracker].urls
+                Object.keys(trackerDomains).forEach((domain) => {
+                    if (trackerDomains[domain].isBlocked) {
+                        blockedTrackers.push(domain)
+                        if (trackerDomains[domain].reason === 'matched rule - surrogate') {
+                            surrogates.push(domain)
+                        }
+                    }
+                })
+            }
+            pixelParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates })
+            this.fetch({ firePixel: pixelParams })
+
+            // remember that user opted into sharing site breakage data
+            // for this domain, so that we can attach domain when they
+            // remove site from whitelist
+            this.set('whitelistOptIn', true)
+            this.fetch({
+                whitelistOptIn:
+                {
+                    list: 'whitelistOptIn',
+                    domain: this.tab.site.domain,
+                    value: true
+                }
+            })
         }
     }
 )

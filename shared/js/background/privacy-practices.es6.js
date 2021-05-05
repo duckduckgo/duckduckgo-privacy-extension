@@ -1,4 +1,4 @@
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
@@ -10,7 +10,7 @@ class PrivacyPractices {
     constructor () {
         Object.keys(tosdr).forEach((site) => {
             // only match domains, and from the start of the URL
-            tosdrRegexList.push(new RegExp(`(^)${tldjs.getDomain(site)}`))
+            tosdrRegexList.push(new RegExp(`(^)${tldts.getDomain(site)}`))
 
             // generate scores for the privacy grade
             const tosdrClass = tosdr[site].class
@@ -47,13 +47,13 @@ class PrivacyPractices {
     }
 
     getTosdr (url) {
-        let domain = tldjs.getDomain(url)
+        const domain = tldts.getDomain(url)
         let tosdrData
 
         tosdrRegexList.some(tosdrSite => {
-            let match = tosdrSite.exec(domain)
+            const match = tosdrSite.exec(domain)
 
-            if (!match) return
+            if (!match) return false
 
             tosdrData = tosdr[match[0]]
 
@@ -96,9 +96,21 @@ class PrivacyPractices {
         }
     }
 
-    getTosdrScore (hostname) {
-        const domain = tldjs.getDomain(hostname)
-        const parent = utils.findParent(hostname)
+    getTosdrScore (hostname, parent) {
+        const domain = tldts.getDomain(hostname)
+
+        // look for tosdr match in list of parent properties
+        let parentMatch = ''
+        if (parent && parent.domains) {
+            Object.keys(tosdrScores).some((tosdrName) => {
+                const match = parent.domains.find(d => d === tosdrName)
+                if (match) {
+                    parentMatch = match
+                    return true
+                }
+                return false
+            })
+        }
 
         // grab the first available val
         // starting with most general first
@@ -108,7 +120,7 @@ class PrivacyPractices {
         // and different scores - should they propagate
         // the same way parent entity ones do?
         const score = [
-            tosdrScores[parent],
+            tosdrScores[parentMatch],
             tosdrScores[domain],
             tosdrScores[hostname]
         ].find(s => typeof s === 'number')

@@ -1,25 +1,26 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     const through = require('through2')
+    const Fiber = require('fibers');
+    const sass = require('sass')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
 
-    var values = require('object.values');
+    var values = require('object.values')
 
-    if(!Object.values) {
+    if (!Object.values) {
         values.shim()
     }
 
     let browser = grunt.option('browser')
     let buildType = grunt.option('type')
 
-    if(!(browser && buildType)) {
-        console.error("Missing browser or  build type: --browser=<browser-name> --type=<dev,release>")
+    if (!(browser && buildType)) {
+        console.error('Missing browser or  build type: --browser=<browser-name> --type=<dev,release>')
         process.exit(1)
     }
 
     let buildPath = `build/${browser}/${buildType}`
-
 
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
@@ -30,11 +31,20 @@ module.exports = function(grunt) {
             '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
             '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js']
         },
+        contentScope: {
+            '<%= dirs.public.js %>/content-scope/*.js': ['<%= dirs.src.js %>/content-scope/*.js'],
+        },
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
         },
         backgroundTest: {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
+        },
+        autofillContentScript: {
+            '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/dist/autofill.js']
+        },
+        emailInjectedCSS: {
+            '<%= dirs.public.css %>/email-style.css': ['<%= dirs.src.injectedCSS %>/email-autofill.css']
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
@@ -58,14 +68,19 @@ module.exports = function(grunt) {
     /* watch any base files and browser specific files */
     let watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
-        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js','<%= dirs.data %>/*.js'],
-        background: ['<%= dirs.src.js %>/background/**/*.js','<%= dirs.data %>/*.js']
+        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
+        background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
+        contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
+        autofillContentScript: ['<%= ddgAutofill %>/dist/*.js'],
+        injectedCSS: ['<%= dirs.src.injectedCSS %>/*.css'],
+        contentScope: ['<%= dirs.src.js %>/content-scope/*.js', '<%= dirs.public.js %>/inject/*.js'],
+        data: ['<%= dirs.data %>/*.js']
     }
 
     let karmaOps = {
         configFile: 'karma.conf.js',
         basePath: 'build/test/',
-        files: ['background.js','ui.js','shared-utils.js']
+        files: ['background.js', 'ui.js', 'shared-utils.js']
     }
 
     // override some options to allow the devs
@@ -83,11 +98,13 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        ddgAutofill: 'node_modules/@duckduckgo/autofill',
         dirs: {
             cache: '.cache',
             src: {
                 js: 'shared/js',
                 scss: 'shared/scss',
+                injectedCSS: 'shared/injected-css',
                 templates: 'shared/templates'
             },
             data: 'shared/data',
@@ -112,12 +129,11 @@ module.exports = function(grunt) {
                 transform: [
                     ['babelify'],
                     [(file) => {
-                        return through( function(buf, enc, next) {
+                        return through(function (buf, enc, next) {
                             let requireName = browser
-                            if(browser === 'duckduckgo.safariextension') {
+                            if (browser === 'duckduckgo.safariextension') {
                                 requireName = 'safari'
-                            }
-                            else if (browser === 'firefox') {
+                            } else if (browser === 'firefox') {
                                 requireName = 'chrome'
                             }
                             this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
@@ -135,6 +151,9 @@ module.exports = function(grunt) {
             backgroundTest: {
                 files: baseFileMap.backgroundTest
             },
+            autofillContentScript: {
+                files: baseFileMap.autofillContentScript
+            },
             unitTest: {
                 options: {
                     browserifyOptions: {
@@ -146,6 +165,10 @@ module.exports = function(grunt) {
         },
 
         sass: {
+            options: {
+                implementation: sass,
+                fiber: Fiber,
+            },
             dist: {
                 files: baseFileMap.sass
             }
@@ -156,15 +179,23 @@ module.exports = function(grunt) {
                 src: ['scripts/buildEntityMap.js']
             },
             tosdr: {
-                src: []//'scripts/tosdr.js']
+                src: []// 'scripts/tosdr.js']
             }
         },
 
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`, 
-            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`, 
+            copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
+            copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp node_modules/@duckduckgo/autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyData: `cp -r shared/data build/${browser}/${buildType}/`,
+            copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
+            // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
+            updateFirefoxRelativeUrl: `sed -i.bak "s/chrome-extension:\\/\\/__MSG_@@extension_id__\\/public/../g" build/firefox/${buildType}/public/css/email-host-styles.css &&
+                    rm build/firefox/${buildType}/public/css/email-host-styles.css.bak`,
+            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
+            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
             mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
         },
 
@@ -174,9 +205,12 @@ module.exports = function(grunt) {
                 tasks: ['sass']
             },
             ui: {
-                files: watch.ui, 
-                tasks: ['browserify:ui', 'watchSafari']
-
+                files: watch.ui,
+                tasks: ['browserify:ui', 'watchSafari', 'exec:copyData']
+            },
+            contentScope: {
+                files: watch.contentScope,
+                tasks: ['exec:copyContentScope']
             },
             backgroundES6JS: {
                 files: watch.background,
@@ -185,6 +219,22 @@ module.exports = function(grunt) {
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs', 'watchSafari']
+            },
+            contentScripts: {
+                files: watch.contentScripts,
+                tasks: ['exec:copyContentScripts']
+            },
+            autofillContentScript: {
+                files: watch.autofillContentScript,
+                tasks: ['exec:copyAutofillJs']
+            },
+            injectedCSS: {
+                files: watch.injectedCSS,
+                tasks: ['exec:copyInjectedCSS', 'updateFirefoxRelativeUrl']
+            },
+            data: {
+                files: watch.data,
+                tasks: ['exec:copyData']
             }
         },
 
@@ -197,27 +247,34 @@ module.exports = function(grunt) {
 
     // sets up safari directory structure so that it can be loaded in extension builder
     // duckduckgo.safariextension -> build type -> duckduckgo.safariextension -> build files
-    grunt.registerTask('safari', 'Move Safari build', (() => {
+    grunt.registerTask('safari', 'Move Safari build', () => {
         if (browser === 'duckduckgo.safariextension') {
-            console.log("Moving Safari build")
+            console.log('Moving Safari build')
             grunt.task.run('exec:tmpSafari')
             grunt.task.run('exec:mvSafari')
         }
-    }))
+    })
 
     // moves generated files from watch into the correct build directory
-    grunt.registerTask('watchSafari', 'Moves Safari files after watch', (() => {
+    grunt.registerTask('watchSafari', 'Moves Safari files after watch', () => {
         if (browser === 'duckduckgo.safariextension') {
             grunt.task.run('exec:mvWatchSafari')
         }
-    }))
+    })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'execute:preProcessLists', 'safari'])
+    // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
+    grunt.registerTask('updateFirefoxRelativeUrl', 'Update Firefox relative URL in injected css', () => {
+        if (browser === 'firefox') {
+            grunt.task.run('exec:updateFirefoxRelativeUrl')
+        }
+    })
+
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyInjectedCSS', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)
-    grunt.registerTask('test','Build and run tests', ['browserify:unitTest','karma'])
+    grunt.registerTask('test', 'Build and run tests', ['browserify:unitTest', 'karma'])
     grunt.registerTask('default', 'build')
 }

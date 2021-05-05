@@ -4,18 +4,28 @@
         height: 65px;
     }
     .hero__subtitle {
-        height: 32px;
         line-height: 18px;
+    }
+
+    .tracker-networks__explainer {
+        @include explainer-padding();
     }
 }
 
-.hero__icon--major-networks-blocked,
-.icon-major-networks-blocked {
+.hero__icon--major-networks-blocked {
     @include cross_platform_bg_image("hero-on-major-networks.svg");
 }
-.hero__icon--major-networks-warning,
-.icon-major-networks-warning {
+
+.icon-major-networks-blocked {
+    @include cross_platform_bg_image($status--good);
+}
+
+.hero__icon--major-networks-warning {
     @include cross_platform_bg_image("hero-warning-major-networks.svg");
+}
+
+.icon-major-networks-warning {
+    @include cross_platform_bg_image($status--bad);
 }
 
 #popup-container .tracker-networks .default-list.site-info__trackers__company-list__url-list {
@@ -33,8 +43,8 @@
     .site-info__tracker__icon {
         @include icon_display();
         @include tracker_network_icons_subview();
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
         overflow: hidden;
         background-size: contain;
     }
@@ -44,6 +54,9 @@
     font-weight: bold;
     line-height: 1.38;
     letter-spacing: -0.2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 12px;
 }
 
 .site-info__trackers__company-list__url-list {

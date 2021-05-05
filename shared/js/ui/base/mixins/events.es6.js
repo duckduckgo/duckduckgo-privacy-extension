@@ -10,7 +10,7 @@ module.exports = {
                 continue
             }
 
-            var eventObject = {
+            const eventObject = {
                 bound: evt[2].bind(this),
                 evt: evt
             }
@@ -27,8 +27,8 @@ module.exports = {
 
     unbindEvents: function () {
         while (this._bEvents && this._bEvents.length) {
-            var eventObject = this._bEvents[this._bEvents.length - 1]
-            var evt = eventObject.evt
+            const eventObject = this._bEvents[this._bEvents.length - 1]
+            const evt = eventObject.evt
 
             if (evt) {
                 if (typeof evt[0] === 'string') {
