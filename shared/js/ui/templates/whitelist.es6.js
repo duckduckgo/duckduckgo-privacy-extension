@@ -14,7 +14,7 @@ module.exports = function () {
     function addToWhitelist () {
         return bel`<div>
     <p class="whitelist-show-add js-whitelist-show-add">
-        <a href="javascript:void(0)">Add unprotected site</a>
+        <a href="javascript:void(0)" role="button">Add unprotected site</a>
     </p>
     <input class="is-hidden whitelist-url float-left js-whitelist-url" type="text" placeholder="Enter URL">
     <div class="is-hidden whitelist-add is-disabled float-right js-whitelist-add">Add</div>

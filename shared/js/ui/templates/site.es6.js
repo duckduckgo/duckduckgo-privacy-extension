@@ -27,7 +27,7 @@ module.exports = function () {
             </h2>
         </li>
         <li class="js-site-tracker-networks js-site-show-page-trackers site-info__li--trackers padded border--bottom">
-            <a href="javascript:void(0)" class="link-secondary bold">
+            <a href="javascript:void(0)" class="link-secondary bold" role="button">
                 ${renderTrackerNetworks(this.model)}
             </a>
         </li>
@@ -35,7 +35,7 @@ module.exports = function () {
             <span class="site-info__privacy-practices__icon
                 is-${tosdrMsg.toLowerCase()}">
             </span>
-            <a href="javascript:void(0)" class="link-secondary bold">
+            <a href="javascript:void(0)" class="link-secondary bold" role="button">
                 <span class="text-line-after-icon"> ${tosdrMsg} Privacy Practices </span>
                 <span class="icon icon__arrow pull-right"></span>
             </a>
