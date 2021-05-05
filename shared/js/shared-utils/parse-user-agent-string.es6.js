@@ -5,7 +5,11 @@ module.exports = (uaString) => {
     let version
 
     try {
-        const parsedUaParts = uaString.match(/(Firefox|Chrome|Safari)\/([0-9]+)/)
+        let parsedUaParts = uaString.match(/(Firefox|Chrome|Safari|Edg)\/([0-9]+)/)
+        if (uaString.match(/(Edge?)\/([0-9]+)/)) {
+            // Above regex matches on Chrome first, so check if this is really Edge
+            parsedUaParts = uaString.match(/(Edge?)\/([0-9]+)/)
+        }
         browser = parsedUaParts[1]
         version = parsedUaParts[2]
 
@@ -13,6 +17,10 @@ module.exports = (uaString) => {
         // the *actual* version number is elsewhere
         if (browser === 'Safari') {
             version = uaString.match(/Version\/(\d+)/)[1]
+        }
+        // Brave doesn't include any information in the UserAgent
+        if (window.navigator.brave) {
+            browser = 'Brave'
         }
     } catch (e) {
         // unlikely, prevent extension from exploding if we don't recognize the UA

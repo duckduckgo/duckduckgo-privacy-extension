@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.View
+const FOCUS_CLASS = 'go--focused'
 
 function Search (ops) {
     this.model = ops.model
@@ -14,7 +15,8 @@ function Search (ops) {
     ])
 
     this.bindEvents([
-        [this.$input, 'keyup', this._handleKeyup],
+        [this.$input, 'input', this._handleInput],
+        [this.$input, 'blur', this._handleBlur],
         [this.$go, 'click', this._handleSubmit],
         [this.$form, 'submit', this._handleSubmit],
         [this.$hamburgerbutton, 'click', this._handleBurgerClick]
@@ -27,8 +29,32 @@ Search.prototype = window.$.extend({},
     Parent.prototype,
     {
 
-        _handleKeyup: function (e) {
-            this.model.set('searchText', this.$input.val())
+        // Hover effect on search button while typing
+        _addHoverEffect: function () {
+            if (!this.$go.hasClass(FOCUS_CLASS)) {
+                this.$go.addClass(FOCUS_CLASS)
+            }
+        },
+
+        _removeHoverEffect: function () {
+            if (this.$go.hasClass(FOCUS_CLASS)) {
+                this.$go.removeClass(FOCUS_CLASS)
+            }
+        },
+
+        _handleBlur: function (e) {
+            this._removeHoverEffect()
+        },
+
+        _handleInput: function (e) {
+            const searchText = this.$input.val()
+            this.model.set('searchText', searchText)
+
+            if (searchText.length) {
+                this._addHoverEffect()
+            } else {
+                this._removeHoverEffect()
+            }
         },
 
         _handleSubmit: function (e) {

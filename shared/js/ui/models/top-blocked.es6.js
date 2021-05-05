@@ -3,6 +3,7 @@ const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
 function TopBlocked (attrs) {
     attrs = attrs || {}
+    // eslint-disable-next-line no-self-assign
     attrs.numCompanies = attrs.numCompanies
     attrs.companyList = []
     attrs.companyListMap = []
@@ -20,7 +21,7 @@ TopBlocked.prototype = window.$.extend({},
 
         getTopBlocked: function () {
             return new Promise((resolve, reject) => {
-                this.fetch({getTopBlockedByPages: this.numCompanies})
+                this.fetch({ getTopBlockedByPages: this.numCompanies })
                     .then((data) => {
                         if (!data.totalPages || data.totalPages < 30) return resolve()
                         if (!data.topBlocked || data.topBlocked.length < 1) return resolve()
@@ -28,6 +29,7 @@ TopBlocked.prototype = window.$.extend({},
                         this.companyListMap = this.companyList.map((company) => {
                             return {
                                 name: company.name,
+                                displayName: company.displayName,
                                 normalizedName: this.normalizeCompanyName(company.name),
                                 percent: company.percent,
                                 // calc graph bars using pixels instead of % to

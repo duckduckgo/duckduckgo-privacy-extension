@@ -6,6 +6,9 @@ const privacyOptionsTemplate = require('./../templates/privacy-options.es6.js')
 const WhitelistView = require('./../views/whitelist.es6.js')
 const WhitelistModel = require('./../models/whitelist.es6.js')
 const whitelistTemplate = require('./../templates/whitelist.es6.js')
+const UserDataView = require('./../views/user-data.es6.js')
+const UserDataModel = require('./../models/user-data.es6.js')
+const userDataTemplate = require('./../templates/user-data.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
 const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
 
@@ -21,7 +24,7 @@ Options.prototype = window.$.extend({},
         pageName: 'options',
 
         ready: function () {
-            var $parent = window.$('#options-content')
+            const $parent = window.$('#options-content')
             Parent.prototype.ready.call(this)
 
             this.setBrowserClassOnBodyTag()
@@ -38,6 +41,13 @@ Options.prototype = window.$.extend({},
                 template: privacyOptionsTemplate
             })
 
+            this.views.userData = new UserDataView({
+                pageView: this,
+                model: new UserDataModel({}),
+                appendTo: $parent,
+                template: userDataTemplate
+            })
+
             this.views.whitelist = new WhitelistView({
                 pageView: this,
                 model: new WhitelistModel({}),
@@ -51,13 +61,13 @@ Options.prototype = window.$.extend({},
         _onFeedbackClick: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.openExtensionPage(`/html/feedback.html`)
+            browserUIWrapper.openExtensionPage('/html/feedback.html')
         },
 
         _onReportSiteClick: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.openExtensionPage(`/html/feedback.html?broken=1`)
+            browserUIWrapper.openExtensionPage('/html/feedback.html?broken=1')
         }
     }
 )

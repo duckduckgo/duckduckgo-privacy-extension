@@ -8,12 +8,10 @@
  */
 const settings = require('../settings.es6')
 const utils = require('../utils.es6')
-const abpLists = require('../abp-lists.es6')
+const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
-const trackerPrevalence = require('../../../data/tracker_lists/prevalence')
 const browserWrapper = require('../$BROWSER-wrapper.es6')
-const tldjs = require('tldjs')
 
 class Site {
     constructor (url) {
@@ -26,20 +24,24 @@ class Site {
         this.trackerUrls = []
         this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
+        this.whitelistOptIn = false
         this.setWhitelistStatusFromGlobal(domain)
-        this.isBroken = this.checkBrokenSites(domain) // broken sites reported to github repo
+
+        this.isBroken = utils.isBroken(domain) // broken sites reported to github repo
+        this.brokenFeatures = utils.getBrokenFeatures(domain) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)
 
         this.parentEntity = utils.findParent(domain) || ''
-        this.parentPrevalence = trackerPrevalence[this.parentEntity] || 0
+        const parent = tdsStorage.tds.entities[this.parentEntity]
+        this.parentPrevalence = parent ? parent.prevalence : 0
 
         if (this.parentEntity && this.parentPrevalence) {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain))
+        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain, parent))
 
         if (this.url.match(/^https:\/\//)) {
             this.grade.setHttps(true, true)
@@ -47,22 +49,8 @@ class Site {
 
         // set specialDomainName when the site is created
         this.specialDomainName = this.getSpecialDomain()
-    }
-
-    /*
-     * check to see if this is a broken site reported on github
-    */
-    checkBrokenSites (domain) {
-        let trackersWhitelistTemporary = abpLists.getTemporaryWhitelist()
-
-        if (!trackersWhitelistTemporary) return
-
-        // Match independently of subdomain
-        domain = tldjs.getDomain(domain) || domain
-
-        // Make sure we match at the end of the URL
-        // so we're extra sure it's the legit main domain
-        return trackersWhitelistTemporary.some(brokenSiteDomain => brokenSiteDomain.match(new RegExp(domain + '$')))
+        // domains which have been clicked to load
+        this.clickToLoad = []
     }
 
     /*
@@ -70,9 +58,9 @@ class Site {
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal () {
-        let globalwhitelists = ['whitelisted']
-        globalwhitelists.map((name) => {
-            let list = settings.getSetting(name) || {}
+        const globalwhitelists = ['whitelisted', 'whitelistOptIn']
+        globalwhitelists.forEach((name) => {
+            const list = settings.getSetting(name) || {}
             this.setWhitelisted(name, list[this.domain])
         })
     }
@@ -85,19 +73,21 @@ class Site {
      * Send message to the popup to rerender the whitelist
      */
     notifyWhitelistChanged () {
-        chrome.runtime.sendMessage({'whitelistChanged': true})
+        // this can send an error message when the popup is not open check lastError to hide it
+        chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
     }
 
     isWhiteListed () { return this.whitelisted }
 
-    addTracker (tracker) {
-        if (this.trackerUrls.indexOf(tracker.url) === -1) {
-            this.trackerUrls.push(tracker.url)
+    addTracker (t) {
+        if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
+            this.trackerUrls.push(t.tracker.domain)
+            const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
 
-            if (tracker.block) {
-                this.grade.addEntityBlocked(tracker.parentCompany, tracker.prevalence)
+            if (t.action.match(/block|redirect/)) {
+                this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
             } else {
-                this.grade.addEntityNotBlocked(tracker.parentCompany, tracker.prevalence)
+                this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
             }
         }
     }
@@ -131,6 +121,14 @@ class Site {
             return domain
         }
 
+        // for some reason chrome passes this back from webNavigation events
+        // for new tabs instead of chrome://newtab
+        //
+        // "local-ntp" -> "local new tab page"
+        if (url.match(/^chrome-search:\/\/local-ntp/)) {
+            return 'new tab'
+        }
+
         // for special pages with a protocol, just return whatever
         // word comes after the protocol
         // e.g. 'chrome://extensions' -> 'extensions'
@@ -154,7 +152,7 @@ class Site {
         if (url.match(/^(chrome|moz)-extension:\/\//)) {
             // this is our own extension, let's try and get a meaningful description
             if (domain === extensionId) {
-                let matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
+                const matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
 
                 if (matches && matches[1]) {
                     return matches[1]

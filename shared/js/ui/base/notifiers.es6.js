@@ -63,12 +63,12 @@ function combine () {
      * store event subscribers. This function is a slimmer version of:
      * https://www.npmjs.com/package/minidux#combinereducersreducers
      */
-    var keys = Object.keys(registered)
+    const keys = Object.keys(registered)
     return function combination (state, notification) {
-        var nextState = {}
+        const nextState = {}
 
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i]
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i]
             if (typeof registered[key] !== 'function') {
                 throw new Error('notifier ' + key + 'must be a function')
             }

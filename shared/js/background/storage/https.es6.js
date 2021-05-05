@@ -18,8 +18,8 @@ class HTTPSStorage {
     // reject the whole update.
     getLists () {
         return Promise.all(constants.httpsLists.map(list => {
-            let listCopy = JSON.parse(JSON.stringify(list))
-            let etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+            const listCopy = JSON.parse(JSON.stringify(list))
+            const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
 
             return this.getDataXHR(listCopy.url, etag).then(response => {
                 // for 200 response we update etags
@@ -82,18 +82,18 @@ class HTTPSStorage {
     }
 
     getDataXHR (url, etag) {
-        return load.loadExtensionFile({url: url, etag: etag, returnType: 'json', source: 'external', timeout: 60000})
+        return load.loadExtensionFile({ url: url, etag: etag, returnType: 'json', source: 'external', timeout: 60000 })
     }
 
     getDataFromLocalDB (name) {
         console.log(`HTTPS: getting ${name} from db`)
         return this.dbc.open()
-            .then(() => this.dbc.table('httpsStorage').get({name: name}))
+            .then(() => this.dbc.table('httpsStorage').get({ name: name }))
     }
 
     storeInLocalDB (name, type, data) {
         console.log(`HTTPS: storing ${name} in db`)
-        return this.dbc.httpsStorage.put({name: name, type: type, data: data})
+        return this.dbc.httpsStorage.put({ name: name, type: type, data: data })
     }
 
     hasCorrectChecksum (data) {
@@ -101,10 +101,10 @@ class HTTPSStorage {
         if (!data.checksum) return Promise.resolve(true)
 
         // need a buffer to send to crypto.subtle
-        let buffer = Buffer.from(data.data, 'base64')
+        const buffer = Buffer.from(data.data, 'base64')
 
         return crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
-            let sha256 = Buffer.from(arrayBuffer).toString('base64')
+            const sha256 = Buffer.from(arrayBuffer).toString('base64')
             if (data.checksum.sha256 && data.checksum.sha256 === sha256) {
                 return true
             } else {

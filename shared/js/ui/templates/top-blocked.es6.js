@@ -5,10 +5,10 @@ const noData = require('./shared/top-blocked-no-data.es6.js')
 
 module.exports = function () {
     if (!this.model) {
-        return bel`<section class="sliding-subview
-    sliding-subview--has-fixed-header">
+        return bel`<div class="sliding-subview
+    sliding-subview--has-fixed-header top-blocked-header">
     ${header('All Trackers')}
-</section>`
+</div>`
     } else {
         return bel`<div class="js-top-blocked-content">
     ${renderPctPagesWithTrackers(this.model)}
@@ -21,20 +21,20 @@ module.exports = function () {
 function renderPctPagesWithTrackers (model) {
     let msg = ''
     if (model.lastStatsResetDate) {
-        const d = new Date(model.lastStatsResetDate).toDateString()
+        const d = (new Date(model.lastStatsResetDate)).toLocaleDateString('default', { month: 'long', day: 'numeric', year: 'numeric' })
         if (d) msg = ` since ${d}`
     }
     if (model.pctPagesWithTrackers) {
         return bel`<p class="top-blocked__pct card">
-    Trackers were found on ${model.pctPagesWithTrackers}%
-    of web sites you've visited${msg}.
+    Trackers were found on <b>${model.pctPagesWithTrackers}%</b>
+    of websites you've visited${msg}.
 </p>`
     }
 }
 
 function renderList (model) {
     if (model.companyListMap.length > 0) {
-        return bel`<ol aria-label="List of Trackers Found" class="default-list top-blocked__list card">
+        return bel`<ol aria-label="List of Trackers Found" class="default-list top-blocked__list card border--bottom">
     ${listItems(model.companyListMap)}
 </ol>`
     } else {
@@ -51,7 +51,7 @@ function renderResetButton (model) {
         return bel`<div class="top-blocked__reset-stats">
     <button class="top-blocked__reset-stats__button block
         js-reset-trackers-data">
-        Reset Global Stats
+        Reset global stats
     </button>
     <p>These stats are only stored locally on your device,
     and are not sent anywhere, ever.</p>

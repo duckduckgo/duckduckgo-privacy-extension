@@ -1,11 +1,18 @@
 const httpsStorage = require('../../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../../data/httpsBloom.json')
 const httpsWhitelist = require('./../../data/httpsWhitelist.json')
+const httpsNegativeBloom = require('./../../data/httpsNegativeBloom.json')
+const httpsNegativeWhitelist = require('./../../data/httpsNegativeWhitelist.json')
 const load = require('./../../helpers/https.es6.js')
 
 describe('Https storage normal update', () => {
     beforeAll(() => {
-        load.loadStub({httpsBloom: httpsBloom, httpsWhitelist: httpsWhitelist})
+        load.loadStub({
+            httpsBloom: httpsBloom,
+            httpsWhitelist: httpsWhitelist,
+            httpsNegativeBloom: httpsNegativeBloom,
+            httpsNegativeWhitelist: httpsNegativeWhitelist
+        })
     })
 
     it('should have list data', () => {
@@ -20,18 +27,23 @@ describe('Https storage bad xhr update', () => {
     let dbStub = {}
 
     beforeEach(() => {
-        let badBloom = JSON.parse(JSON.stringify(httpsBloom))
+        const badBloom = JSON.parse(JSON.stringify(httpsBloom))
         badBloom.checksum.sha256 = 'badchecksum'
-        load.loadStub({httpsBloom: badBloom, httpsWhitelist: httpsWhitelist})
+        load.loadStub({
+            httpsBloom: badBloom,
+            httpsWhitelist: httpsWhitelist,
+            httpsNegativeBloom: httpsNegativeBloom,
+            httpsNegativeWhitelist: httpsNegativeWhitelist
+        })
 
         // stub for db storage
         spyOn(httpsStorage, 'storeInLocalDB').and.callFake((name, type, data) => {
             dbStub[name] = JSON.parse(JSON.stringify(data))
         })
         spyOn(httpsStorage, 'getDataFromLocalDB').and.callFake((name) => {
-            let val = dbStub[name]
+            const val = dbStub[name]
             if (val) {
-                return Promise.resolve({data: val})
+                return Promise.resolve({ data: val })
             } else {
                 return Promise.resolve(false)
             }
@@ -61,7 +73,7 @@ describe('Https storage bad xhr update', () => {
 
         it('should have list data', () => {
             // set some good data in local db
-            httpsStorage.storeInLocalDB('httpsUpgradeList', 'upgrade list', httpsBloom)
+            httpsStorage.storeInLocalDB('httpsUpgradeBloomFilter', 'upgrade list', httpsBloom)
 
             return httpsStorage.getLists().then(lists => {
                 expect(!!lists.length).toEqual(true)

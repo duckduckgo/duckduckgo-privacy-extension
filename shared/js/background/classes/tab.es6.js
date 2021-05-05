@@ -15,15 +15,15 @@
  *      }
  */
 const gradeIconLocations = {
-    'A': 'img/toolbar-rating-a@2x.png',
-    'B+': 'img/toolbar-rating-b-plus@2x.png',
-    'B': 'img/toolbar-rating-b@2x.png',
-    'C+': 'img/toolbar-rating-c-plus@2x.png',
-    'C': 'img/toolbar-rating-c@2x.png',
-    'D': 'img/toolbar-rating-d@2x.png',
+    A: 'img/toolbar-rating-a.svg',
+    'B+': 'img/toolbar-rating-b-plus.svg',
+    B: 'img/toolbar-rating-b.svg',
+    'C+': 'img/toolbar-rating-c-plus.svg',
+    C: 'img/toolbar-rating-c.svg',
+    D: 'img/toolbar-rating-d.svg',
     // we don't currently show the D- grade
-    'D-': 'img/toolbar-rating-d@2x.png',
-    'F': 'img/toolbar-rating-f@2x.png'
+    'D-': 'img/toolbar-rating-d.svg',
+    F: 'img/toolbar-rating-f.svg'
 }
 
 const Site = require('./site.es6')
@@ -31,6 +31,7 @@ const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../$BROWSER-wrapper.es6')
+const webResourceKeyRegex = /.*\?key=(.*)/
 
 class Tab {
     constructor (tabData) {
@@ -52,11 +53,13 @@ class Tab {
             completeMs: null
         }
         this.resetBadgeIcon()
+        this.webResourceAccess = []
+        this.surrogates = {}
     };
 
     resetBadgeIcon () {
         // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({path: 'img/icon_48.png', tabId: this.id})
+        browserWrapper.setBadgeIcon({ path: 'img/icon_48.png', tabId: this.id })
     }
 
     updateBadgeIcon (target) {
@@ -66,7 +69,7 @@ class Tab {
             this.resetBadgeIcon()
         } else {
             let gradeIcon
-            let grade = this.site.grade.get()
+            const grade = this.site.grade.get()
 
             if (this.site.whitelisted) {
                 gradeIcon = gradeIconLocations[grade.site.grade]
@@ -74,15 +77,18 @@ class Tab {
                 gradeIcon = gradeIconLocations[grade.enhanced.grade]
             }
 
-            let badgeData = {path: gradeIcon, tabId: this.id}
+            const badgeData = { path: gradeIcon, tabId: this.id }
             if (target) badgeData.target = target
 
             browserWrapper.setBadgeIcon(badgeData)
         }
     }
 
-    updateSite () {
-        this.site = new Site(this.url)
+    updateSite (url) {
+        if (this.site.url === url) return
+
+        this.url = url
+        this.site = new Site(url)
 
         // reset badge to dax whenever we go to a new site
         this.resetBadgeIcon()
@@ -90,29 +96,29 @@ class Tab {
 
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
-        let tracker = this.trackers[t.parentCompany]
+        const tracker = this.trackers[t.tracker.owner.name]
         if (tracker) {
             tracker.increment()
             tracker.update(t)
         } else {
-            let newTracker = new Tracker(t)
-            this.trackers[t.parentCompany] = newTracker
+            const newTracker = new Tracker(t)
+            this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
-            if (t.parentCompany !== 'unknown') Companies.countCompanyOnPage(t.parentCompany)
+            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
 
             return newTracker
         }
     };
 
     addOrUpdateTrackersBlocked (t) {
-        let tracker = this.trackersBlocked[t.parentCompany]
+        const tracker = this.trackersBlocked[t.tracker.owner.name]
         if (tracker) {
             tracker.increment()
             tracker.update(t)
         } else {
-            let newTracker = new Tracker(t)
-            this.trackersBlocked[t.parentCompany] = newTracker
+            const newTracker = new Tracker(t)
+            this.trackersBlocked[newTracker.parentCompany.name] = newTracker
             return newTracker
         }
     };
@@ -121,6 +127,50 @@ class Tab {
         this.stopwatch.end = Date.now()
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
+    };
+
+    /**
+     * Adds an entry to the tab webResourceAccess list.
+     * @param {string} URL to the web accessible resource
+     * @returns {string} generated access key
+     **/
+    addWebResourceAccess (resourceName) {
+        // random 8-9 character key for web resource access
+        const key = Math.floor(Math.random() * 10000000000).toString(16)
+        this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false })
+        return key
+    };
+
+    /**
+     * Access to web accessible resources needs to have the correct key passed in the URL
+     * and the requests needs to happen within 1 second since the generation of the key
+     * in addWebResourceAccess
+     * @param {string} web accessible resource URL
+     * @returns {bool} is access to the resource allowed
+     **/
+    hasWebResourceAccess (resourceURL) {
+        // no record of web resource access for this tab
+        if (!this.webResourceAccess.length) {
+            return false
+        }
+
+        const keyMatches = webResourceKeyRegex.exec(resourceURL)
+        if (!keyMatches) {
+            return false
+        }
+
+        const key = keyMatches[1]
+        const hasAccess = this.webResourceAccess.some(resource => {
+            if (resource.key === key && !resource.wasAccessed) {
+                resource.wasAccessed = true
+                if ((Date.now() - resource.time) < 1000) {
+                    return true
+                }
+            }
+            return false
+        })
+
+        return hasAccess
     }
 }
 

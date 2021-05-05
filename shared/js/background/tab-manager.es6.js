@@ -15,8 +15,8 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create (tabData) {
-        let normalizedData = browserWrapper.normalizeTabData(tabData)
-        let newTab = new Tab(normalizedData)
+        const normalizedData = browserWrapper.normalizeTabData(tabData)
+        const newTab = new Tab(normalizedData)
         this.tabContainer[newTab.id] = newTab
         return newTab
     };
@@ -40,20 +40,20 @@ class TabManager {
     whitelistDomain (data) {
         this.setGlobalWhitelist(data.list, data.domain, data.value)
 
-        for (let tabId in this.tabContainer) {
-            let tab = this.tabContainer[tabId]
+        for (const tabId in this.tabContainer) {
+            const tab = this.tabContainer[tabId]
             if (tab.site && tab.site.domain === data.domain) {
                 tab.site.setWhitelisted(data.list, data.value)
             }
         }
 
-        browserWrapper.notifyPopup({whitelistChanged: true})
+        browserWrapper.notifyPopup({ whitelistChanged: true })
     }
 
     /* Update the whitelists kept in settings
      */
     setGlobalWhitelist (list, domain, value) {
-        let globalwhitelist = settings.getSetting(list) || {}
+        const globalwhitelist = settings.getSetting(list) || {}
 
         if (value) {
             globalwhitelist[domain] = true
@@ -71,11 +71,11 @@ class TabManager {
      * later on when webrequests start coming in.
      */
     createOrUpdateTab (id, info) {
-        if (!tabManager.get({'tabId': id})) {
+        if (!tabManager.get({ tabId: id })) {
             info.id = id
             tabManager.create(info)
         } else {
-            let tab = tabManager.get({tabId: id})
+            const tab = tabManager.get({ tabId: id })
             if (tab && info.status) {
                 tab.status = info.status
 
@@ -113,18 +113,17 @@ class TabManager {
     updateTabUrl (request) {
         // Update tab data. This makes
         // sure we have the correct url after any https rewrites
-        let tab = tabManager.get({tabId: request.tabId})
+        const tab = tabManager.get({ tabId: request.tabId })
 
         if (tab) {
             tab.statusCode = request.statusCode
             if (tab.statusCode === 200) {
-                tab.url = request.url
-                tab.updateSite()
+                tab.updateSite(request.url)
             }
         }
     }
 }
 
-var tabManager = new TabManager()
+const tabManager = new TabManager()
 
 module.exports = tabManager
