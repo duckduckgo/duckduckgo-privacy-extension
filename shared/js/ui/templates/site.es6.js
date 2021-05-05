@@ -46,7 +46,7 @@ module.exports = function () {
                     ${setTransitionText(!this.model.isWhitelisted)}
                 </span>
             </p>
-            <p class="site-info__protection js-site-protection">Site Privacy Protection</p>
+            <p class="site-info__protection js-site-protection bold">Site Privacy Protection</p>
             <div class="site-info__toggle-container">
                 ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
             </div>
