@@ -92,7 +92,7 @@
         "opn": "5.1.0",
         "parse-link-header": "1.0.0",
         "psl": "1.1.18",
-        "punycode": "1.4.1",
+        "punycode": "2.1.1",
         "regenerator-runtime": "^0.13.7",
         "runtimer": "1.0.3",
         "sjcl": "^1.0.8",
