@@ -62,6 +62,7 @@ export async function updateProtections (args) {
     if (!shouldRun()) {
         return
     }
+    if(initArgs === null) return;
     const resolvedProtections = await Promise.all(protections)
     resolvedProtections.forEach(({ update, protectionName }) => {
         if (!isFeatureBroken(initArgs, protectionName) && update) {
