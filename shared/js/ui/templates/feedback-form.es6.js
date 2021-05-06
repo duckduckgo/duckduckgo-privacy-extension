@@ -3,11 +3,7 @@ const bel = require('bel')
 module.exports = function () {
     let fields
 
-    if (this.model.errored) {
-        return showError()
-    }
-
-    if (this.model.submitted) {
+    if (this.model.submitted || this.model.errored) {
         return showThankYou(this.model.isBrokenSite)
     }
 
@@ -16,7 +12,7 @@ module.exports = function () {
             <label class='frm__label'>Which website is broken?</label>
             <input class='js-feedback-url frm__input' type='text' placeholder='Copy and paste your URL' value='${this.model.url}'/>
             <label class='frm__label'>Describe the issue you encountered:</label>
-            <textarea class='frm__text js-feedback-message' placeholder='Which website content or functionality is broken? Please be as specific as possible.'></textarea>
+            <textarea class='frm__text js-feedback-message' required placeholder='Which website content or functionality is broken? Please be as specific as possible.'></textarea>
         </div>`
     } else {
         fields = bel`<div>
@@ -47,8 +43,4 @@ function showThankYou (isBrokenSite) {
     } else {
         return bel`<p>Thank you for your feedback!</p>`
     }
-}
-
-function showError () {
-    return bel`<p>Something went wrong when submitting feedback. Please try again later!</p>`
 }
