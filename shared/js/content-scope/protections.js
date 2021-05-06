@@ -13,6 +13,7 @@ function shouldRun () {
 }
 
 let initArgs = null
+const updates = []
 const protections = []
 
 export async function loadProtections () {
@@ -56,12 +57,25 @@ export async function initProtections (args) {
             init(args)
         }
     })
+    // Fire off updates that came in faster than the init
+    while (updates.length) {
+        const update = updates.pop()
+        await updateProtectionsInner(update)
+    }
 }
 
 export async function updateProtections (args) {
     if (!shouldRun()) {
         return
     }
+    if (initArgs === null) {
+        updates.push(args)
+        return
+    }
+    updateProtectionsInner(args)
+}
+
+async function updateProtectionsInner (args) {
     const resolvedProtections = await Promise.all(protections)
     resolvedProtections.forEach(({ update, protectionName }) => {
         if (!isFeatureBroken(initArgs, protectionName) && update) {
