@@ -2,6 +2,10 @@ const defaultSettings = require('../../data/defaultSettings')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 
 /**
+ * Settings whose defaults can by managed by the system administrator
+ */
+const MANAGED_SETTINGS = ['hasSeenPostInstall']
+/**
  * Public api
  * Usage:
  * You can use promise callbacks to check readyness before getting and updating
@@ -15,11 +19,11 @@ const _ready = init().then(() => {
 })
 
 function init () {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         buildSettingsFromDefaults()
-        buildSettingsFromLocalStorage().then(() => {
-            resolve()
-        })
+        buildSettingsFromManagedStorage()
+            .then(buildSettingsFromLocalStorage)
+            .then(() => resolve())
     })
 }
 
@@ -32,6 +36,15 @@ function buildSettingsFromLocalStorage () {
         browserWrapper.getFromStorage(['settings'], function (results) {
             // copy over saved settings from storage
             if (!results) resolve()
+            settings = browserWrapper.mergeSavedSettings(settings, results)
+            resolve()
+        })
+    })
+}
+
+function buildSettingsFromManagedStorage () {
+    return new Promise((resolve) => {
+        browserWrapper.getFromManagedStorage(MANAGED_SETTINGS, (results) => {
             settings = browserWrapper.mergeSavedSettings(settings, results)
             resolve()
         })

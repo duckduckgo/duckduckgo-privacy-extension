@@ -20,6 +20,11 @@ const getFromStorage = (key, cb) => {
         cb(result[key])
     })
 }
+const getFromManagedStorage = (keys, cb) => {
+    chrome.storage.managed.get(keys, (result) => {
+        cb(result)
+    })
+}
 
 const getExtensionId = () => {
     return chrome.runtime.id
@@ -76,5 +81,6 @@ module.exports = {
     getDDGTabUrls: getDDGTabUrls,
     setUninstallURL: setUninstallURL,
     getExtensionId: getExtensionId,
-    changeTabURL
+    changeTabURL,
+    getFromManagedStorage
 }
