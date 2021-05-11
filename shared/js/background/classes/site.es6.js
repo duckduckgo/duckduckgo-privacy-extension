@@ -17,7 +17,7 @@ class Site {
     constructor (url) {
         this.url = url || ''
 
-        let domain = utils.extractHostFromURL(this.url) || ''
+        let domain = utils.extractHostFromURL(this.url, true) || ''
         domain = domain.toLowerCase()
 
         this.domain = domain
