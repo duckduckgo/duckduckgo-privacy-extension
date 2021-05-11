@@ -33,7 +33,7 @@ const search = (url) => {
 }
 
 const getExtensionURL = (path) => {
-    return chrome.extension.getURL(path)
+    return chrome.runtime.getURL(path)
 }
 
 const openExtensionPage = (path) => {
