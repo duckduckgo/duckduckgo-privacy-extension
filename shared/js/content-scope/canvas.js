@@ -24,12 +24,20 @@ export function modifyPixelData (imageData, domainKey, sessionKey) {
     // Create an array of only pixels that have data in them
     const d = imageData.data
     for (let i = 0; i < d.length; i += 4) {
-        // Ignore non blank pixels there is high chance compression ignores them
-        const sum = d[i] + d[i + 1] + d[i + 2] + d[i + 3]
-        if (sum !== 0) {
-            checkSum += sum
-            arr.push(i)
+        // Blank Blue and Green color
+        if (d[i + 1] === 0 && d[i + 2] === 0) {
+            // Ignore non blank pixels there is high chance compression ignores them
+            if (d[i] === 0 && d[i + 3] === 0) {
+                continue
+            }
+            // Ignore phaser background
+            if (d[i] === 255 && d[i + 3] === 255) {
+                continue
+            }
         }
+        // Add to the checksum the R,G,B,A values
+        checkSum += d[i] + d[i + 1] + d[i + 2] + d[i + 3]
+        arr.push(i)
     }
 
     const canvasKey = getDataKeySync(sessionKey, domainKey, checkSum)
