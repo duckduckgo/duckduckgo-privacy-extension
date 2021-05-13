@@ -89,6 +89,17 @@
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
         `,
+        disableProtectionsModal: `
+            width: 525px;
+            margin: auto;
+            background-color: #FFFFFF;
+            position: absolute;
+            left: calc(100% - 525px - 24px);
+            top: 6px;
+            display: block;
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+        `,
         modalContainer: `
             height: 100%;
             width: 100%;
@@ -107,14 +118,16 @@
             font-weight: bold;
             line-height: 21px;
             margin: auto;
-            text-align: center;
         `,
         modalContentText: `
             font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
             line-height: 21px;
-            margin: 0px auto 24px;
-            text-align: center;
+        `,
+        modalTextContainer: `
+            display: flex;
+            flex-direction: column;
+            align-content: center;
         `,
         modalIcon: `
             display: block;
@@ -135,25 +148,6 @@
         `,
     }
 
-    function getLearnMoreLink (mode) {
-        if (!mode) {
-            mode = 'lightMode'
-        }
-        const linkElement = document.createElement('a')
-        linkElement.style.cssText = styles.generalLink + styles[mode].linkFont
-        linkElement.ariaLabel = 'Read about this privacy protection'
-        linkElement.href = 'https://help.duckduckgo.com/duckduckgo-help-pages/privacy/embedded-content-protection/'
-        linkElement.textContent = 'Learn More'
-        return linkElement
-    }
-
-    function makeTextButton (linkText, mode) {
-        const linkElement = document.createElement('a')
-        linkElement.style.cssText = styles.headerLink + styles[mode].linkFont
-        linkElement.textContent = linkText
-        return linkElement
-    }
-
     function makeButton (buttonText, mode) {
         const button = document.createElement('button')
         button.style.cssText = styles.button + styles[mode].buttonBackground
@@ -164,50 +158,92 @@
         return button
     }
 
-    const modalContainer = document.createElement('div')
-    modalContainer.style.cssText = styles.modalContainer
-    const styleElement = document.createElement('style')
-    styleElement.textContent = styles.fontStyle
-    modalContainer.appendChild(styleElement)
+    function makeModal () {
+        const modalContainer = document.createElement('div')
+        modalContainer.style.cssText = styles.modalContainer
+        const styleElement = document.createElement('style')
+        styleElement.textContent = styles.fontStyle
+        modalContainer.appendChild(styleElement)
 
-    const modal = document.createElement('div')
-    modal.style.cssText = styles.modal
+        const modal = document.createElement('div')
+        modal.style.cssText = styles.modal
 
-    const modalContent = document.createElement('div')
-    modalContent.style.cssText = styles.modalContent
+        const modalContent = document.createElement('div')
+        modalContent.style.cssText = styles.modalContent
 
-    // const iconElement = document.createElement('img')
-    // iconElement.style.cssText = styles.icon + styles.modalIcon
-    // iconElement.setAttribute('src', icon)
-    // iconElement.setAttribute('height', '70px')
+        const title = document.createElement('div')
+        title.style.cssText = styles.modalContentTitle
+        title.textContent = 'Is this site broken?'
 
-    const title = document.createElement('div')
-    title.style.cssText = styles.modalContentTitle
-    title.textContent = 'Is this site broken?'
+        modalContent.appendChild(title)
 
-    modalContent.appendChild(title)
+        // Buttons
+        const buttonRow = document.createElement('div')
+        buttonRow.style.cssText = 'margin:auto;'
+        const allowButton = makeButton('Yes', 'lightMode')
+        allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
+        allowButton.addEventListener('click', function isBroken () {
+            confirmSiteBroken(modalContainer, modalContent)
+        })
+        const rejectButton = makeButton('No', 'cancelMode')
+        rejectButton.style.cssText += styles.modalButton + 'float: right;'
+        rejectButton.addEventListener('click', function notBroken () {
+            document.body.removeChild(modalContainer)
+        })
 
-    // Buttons
-    const buttonRow = document.createElement('div')
-    buttonRow.style.cssText = 'margin:auto;'
-    const allowButton = makeButton('Yes', 'lightMode')
-    allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
-    allowButton.addEventListener('click', function doLogin () {
-        acceptFunction(...acceptFunctionParams)
-        document.body.removeChild(modalContainer)
-    })
-    const rejectButton = makeButton('No', 'cancelMode')
-    rejectButton.style.cssText += styles.modalButton + 'float: right;'
-    rejectButton.addEventListener('click', function cancelLogin () {
-        document.body.removeChild(modalContainer)
-    })
+        buttonRow.appendChild(allowButton)
+        buttonRow.appendChild(rejectButton)
+        modalContent.appendChild(buttonRow)
 
-    buttonRow.appendChild(allowButton)
-    buttonRow.appendChild(rejectButton)
-    modalContent.appendChild(buttonRow)
+        modal.appendChild(modalContent)
+        modalContainer.appendChild(modal)
 
-    modal.appendChild(modalContent)
-    modalContainer.appendChild(modal)
+        return modalContainer
+    }
 
+    function confirmSiteBroken (modalContainer, modalContent) {
+        window.chrome.runtime.sendMessage({ toggleSiteProtections: true }, () => window.chrome.runtime.lastError)
+
+        while (modalContent.lastChild) {
+            modalContent.removeChild(modalContent.lastChild)
+        }
+
+        const textContainer = document.createElement('div')
+        textContainer.style.cssText = styles.modalTextContainer
+
+        const title = document.createElement('div')
+        title.style.cssText = styles.modalContentTitle
+        title.textContent = "Let's disable site protections for this site."
+
+        textContainer.appendChild(title)
+
+        const message = document.createElement('div')
+        message.style.cssText = styles.modalContentText
+        message.textContent = 'Did this fix the issue? (Try reloading the page)'
+
+        textContainer.appendChild(message)
+        modalContent.appendChild(textContainer)
+
+        // Buttons
+        const buttonRow = document.createElement('div')
+        buttonRow.style.cssText = 'margin:auto;'
+        const allowButton = makeButton('Yes', 'lightMode')
+        allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
+        allowButton.addEventListener('click', function problemFixed () {
+            document.body.removeChild(modalContainer)
+        })
+        const rejectButton = makeButton('No', 'cancelMode')
+        rejectButton.style.cssText += styles.modalButton + 'float: right;'
+        rejectButton.addEventListener('click', function notFixed () {
+            document.body.removeChild(modalContainer)
+        })
+
+        buttonRow.appendChild(allowButton)
+        buttonRow.appendChild(rejectButton)
+        modalContent.appendChild(buttonRow)
+        modalContainer.childNodes[1].style.cssText = styles.disableProtectionsModal
+    }
+    
+    const modalContainer = makeModal()
     document.body.insertBefore(modalContainer, document.body.childNodes[0])
 })()

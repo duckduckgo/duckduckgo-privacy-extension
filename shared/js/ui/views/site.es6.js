@@ -165,13 +165,15 @@ Site.prototype = window.$.extend({},
         // pass clickSource to specify whether page should reload
         // after submitting breakage form.
         showBreakageForm: function (clickSource) {
-            this.views.breakageForm = new BreakageFormView({
-                siteView: this,
-                template: breakageFormTemplate,
-                model: this.model,
-                appendTo: this.$body,
-                clickSource: clickSource
-            })
+            // this.views.breakageForm = new BreakageFormView({
+            //     siteView: this,
+            //     template: breakageFormTemplate,
+            //     model: this.model,
+            //     appendTo: this.$body,
+            //     clickSource: clickSource
+            // })
+            browserUIWrapper.startBreakageFlow(this.model.tab.id)
+            browserUIWrapper.closePopup()
         },
 
         _showPageTrackers: function (e) {

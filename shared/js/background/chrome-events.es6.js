@@ -516,6 +516,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
         res(grade)
         return true
+    } else if (req.toggleSiteProtections) {
+        utils.getCurrentTab().then(tab => {
+            console.log(tab)
+            tabManager.whitelistDomain({
+                list: 'whitelisted',
+                domain: utils.extractHostFromURL(tab.url),
+                value: true
+            })
+            
+            res(tab)
+        })
+
+        return true
     }
 
     if (req.firePixel) {

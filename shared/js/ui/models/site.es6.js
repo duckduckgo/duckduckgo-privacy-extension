@@ -105,12 +105,16 @@ Site.prototype = window.$.extend({},
         handleBackgroundMsg: function (message) {
             // console.log('[model] handleBackgroundMsg()')
             if (!this.tab) return
-            if (message.action && message.action === 'updateTabData') {
-                this.fetch({ getTab: this.tab.id }).then((backgroundTabObj) => {
-                    this.tab = backgroundTabObj
-                    this.update()
-                    this.fetchSiteRating()
-                })
+            if (message.action) {
+                if (message.action === 'updateTabData') {
+                    this.fetch({ getTab: this.tab.id }).then((backgroundTabObj) => {
+                        this.tab = backgroundTabObj
+                        this.update()
+                        this.fetchSiteRating()
+                    })
+                } else if (message.action === 'toggleSiteProtections') {
+                    this.toggleWhitelist()
+                }
             }
         },
 
@@ -244,7 +248,6 @@ Site.prototype = window.$.extend({},
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
-                browserUIWrapper.startBreakageFlow(this.tab.id)
 
                 // fire ept.on pixel if just turned privacy protection on,
                 // fire ept.off pixel if just turned privacy protection off.
