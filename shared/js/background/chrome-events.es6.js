@@ -523,7 +523,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 domain: utils.extractHostFromURL(tab.url),
                 value: true
             })
-            
+
             res(tab)
         })
 

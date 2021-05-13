@@ -1,4 +1,4 @@
-(function breakageFlow() {
+(function breakageFlow () {
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
     const ddgFontBold = chrome.runtime.getURL('public/font/ProximaNova-Bold-webfont.woff2')
 
@@ -145,7 +145,7 @@
         logoImg: `
             height: 21px;
             width: 21px;
-        `,
+        `
     }
 
     function makeButton (buttonText, mode) {
@@ -243,7 +243,7 @@
         modalContent.appendChild(buttonRow)
         modalContainer.childNodes[1].style.cssText = styles.disableProtectionsModal
     }
-    
+
     const modalContainer = makeModal()
     document.body.insertBefore(modalContainer, document.body.childNodes[0])
 })()
