@@ -157,14 +157,13 @@ function handleRequest (requestData) {
 
             // Block the request if the site is not whitelisted
             if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
-                if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
-
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
 
                 if (thisTab.statusCode === 200) {
                     Companies.add(tracker.tracker.owner)
+                    if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
                 }
 
                 // for debugging specific requests. see test/tests/debugSite.js
