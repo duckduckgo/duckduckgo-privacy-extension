@@ -518,7 +518,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         return true
     } else if (req.toggleSiteProtections) {
         utils.getCurrentTab().then(tab => {
-            console.log(tab)
             tabManager.whitelistDomain({
                 list: 'whitelisted',
                 domain: utils.extractHostFromURL(tab.url),
