@@ -58,6 +58,13 @@ const closePopup = () => {
     w.close()
 }
 
+const startBreakageFlow = (tabId) => {
+    console.log('Injecting')
+    window.chrome.tabs.executeScript(tabId, {
+        file: 'public/js/content-scripts/breakage-flow.js'
+    })
+}
+
 module.exports = {
     fetch: fetch,
     reloadTab: reloadTab,
@@ -67,5 +74,6 @@ module.exports = {
     search: search,
     openOptionsPage: openOptionsPage,
     openExtensionPage: openExtensionPage,
-    getExtensionURL: getExtensionURL
+    getExtensionURL: getExtensionURL,
+    startBreakageFlow: startBreakageFlow
 }

@@ -244,6 +244,7 @@ Site.prototype = window.$.extend({},
                 this.isWhitelisted = !this.isWhitelisted
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
+                browserUIWrapper.startBreakageFlow(this.tab.id)
 
                 // fire ept.on pixel if just turned privacy protection on,
                 // fire ept.off pixel if just turned privacy protection off.
