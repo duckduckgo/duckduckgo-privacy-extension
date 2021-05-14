@@ -521,11 +521,17 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             tabManager.whitelistDomain({
                 list: 'whitelisted',
                 domain: utils.extractHostFromURL(tab.url),
-                value: true
+                value: req.status
             })
 
             res(tab)
         })
+
+        return true
+    } else if (req.openFeedbackPage) {
+        const feedbackPath = '/html/feedback.html'
+        const url = chrome.runtime.getURL(feedbackPath)
+        chrome.tabs.create({ url: url })
 
         return true
     }

@@ -148,6 +148,10 @@
         `
     }
 
+    function toggleWhitelisted (status) {
+        window.chrome.runtime.sendMessage({ toggleSiteProtections: true, status: status }, () => window.chrome.runtime.lastError)
+    }
+
     function makeButton (buttonText, mode) {
         const button = document.createElement('button')
         button.style.cssText = styles.button + styles[mode].buttonBackground
@@ -202,7 +206,7 @@
     }
 
     function confirmSiteBroken (modalContainer, modalContent) {
-        window.chrome.runtime.sendMessage({ toggleSiteProtections: true }, () => window.chrome.runtime.lastError)
+        toggleWhitelisted(true)
 
         while (modalContent.lastChild) {
             modalContent.removeChild(modalContent.lastChild)
@@ -230,12 +234,14 @@
         const allowButton = makeButton('Yes', 'lightMode')
         allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
         allowButton.addEventListener('click', function problemFixed () {
+            window.chrome.runtime.sendMessage({ openFeedbackPage: true }, () => window.chrome.runtime.lastError)
             document.body.removeChild(modalContainer)
         })
         const rejectButton = makeButton('No', 'cancelMode')
         rejectButton.style.cssText += styles.modalButton + 'float: right;'
         rejectButton.addEventListener('click', function notFixed () {
-            document.body.removeChild(modalContainer)
+            toggleWhitelisted(false)
+            window.location.reload(true)
         })
 
         buttonRow.appendChild(allowButton)
