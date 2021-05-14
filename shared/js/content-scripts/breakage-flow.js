@@ -184,19 +184,19 @@
         // Buttons
         const buttonRow = document.createElement('div')
         buttonRow.style.cssText = 'margin:auto;'
-        const allowButton = makeButton('Yes', 'lightMode')
-        allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
-        allowButton.addEventListener('click', function isBroken () {
+        const isBrokenButton = makeButton('Yes', 'lightMode')
+        isBrokenButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
+        isBrokenButton.addEventListener('click', function isBroken () {
             confirmSiteBroken(modalContainer, modalContent)
         })
-        const rejectButton = makeButton('No', 'cancelMode')
-        rejectButton.style.cssText += styles.modalButton + 'float: right;'
-        rejectButton.addEventListener('click', function notBroken () {
+        const notBrokenButton = makeButton('No', 'cancelMode')
+        notBrokenButton.style.cssText += styles.modalButton + 'float: right;'
+        notBrokenButton.addEventListener('click', function notBroken () {
             document.body.removeChild(modalContainer)
         })
 
-        buttonRow.appendChild(allowButton)
-        buttonRow.appendChild(rejectButton)
+        buttonRow.appendChild(isBrokenButton)
+        buttonRow.appendChild(notBrokenButton)
         modalContent.appendChild(buttonRow)
 
         modal.appendChild(modalContent)
@@ -231,21 +231,22 @@
         // Buttons
         const buttonRow = document.createElement('div')
         buttonRow.style.cssText = 'margin:auto;'
-        const allowButton = makeButton('Yes', 'lightMode')
-        allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
-        allowButton.addEventListener('click', function problemFixed () {
+        const problemFixedButton = makeButton('Yes', 'lightMode')
+        problemFixedButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
+        problemFixedButton.addEventListener('click', function problemFixed () {
             window.chrome.runtime.sendMessage({ openFeedbackPage: true }, () => window.chrome.runtime.lastError)
             document.body.removeChild(modalContainer)
         })
-        const rejectButton = makeButton('No', 'cancelMode')
-        rejectButton.style.cssText += styles.modalButton + 'float: right;'
-        rejectButton.addEventListener('click', function notFixed () {
+        const notFixedButton = makeButton('No', 'cancelMode')
+        notFixedButton.style.cssText += styles.modalButton + 'float: right;'
+        notFixedButton.addEventListener('click', function notFixed () {
             toggleWhitelisted(false)
-            window.location.reload(true)
+            document.body.removeChild(modalContainer)
+            window.location.reload()
         })
 
-        buttonRow.appendChild(allowButton)
-        buttonRow.appendChild(rejectButton)
+        buttonRow.appendChild(problemFixedButton)
+        buttonRow.appendChild(notFixedButton)
         modalContent.appendChild(buttonRow)
         modalContainer.childNodes[1].style.cssText = styles.disableProtectionsModal
     }
