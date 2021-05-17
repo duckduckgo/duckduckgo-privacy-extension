@@ -4,6 +4,7 @@
         "node": ">=14.0.0",
         "npm": "~6.14.12"
     },
+    "license": "Apache-2.0",
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
         "postinstall": "npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
@@ -71,7 +72,7 @@
         "timekeeper": "^2.1.1"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#1.0.0",
+        "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#1.0.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.0.3",
         "bel": "4.6.0",

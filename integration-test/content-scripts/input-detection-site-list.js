@@ -349,13 +349,13 @@ const sites = [
         autofillExpected: 0
     },
     {
-        name: 'LiveLeak signup',
-        url: 'https://www.liveleak.com/user?a=register',
+        name: 'ItemFix signup',
+        url: 'https://www.itemfix.com/user?a=register',
         autofillExpected: 2
     },
     {
-        name: 'LiveLeak login',
-        url: 'https://www.liveleak.com/user?a=login',
+        name: 'ItemFix login',
+        url: 'https://www.itemfix.com/user?a=login',
         autofillExpected: 0
     },
     {
