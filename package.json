@@ -38,7 +38,6 @@
         "@rollup/plugin-commonjs": "^18.0.0",
         "@rollup/plugin-node-resolve": "^13.0.0",
         "babelify": "10.0.0",
-        "concurrently": "6.1.0",
         "duckduckgo-colors": "0.0.1",
         "eslint": "^7.19.0",
         "eslint-config-standard": "^16.0.2",
