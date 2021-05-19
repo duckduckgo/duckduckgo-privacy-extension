@@ -158,11 +158,25 @@ function isBroken (url) {
     return isBrokenList(url, tdsStorage.brokenSiteList)
 }
 
+function getBrokenFeaturesAboutBlank (url) {
+    if (!tdsStorage?.protections) return
+    const brokenFeatures = []
+    for (const feature in tdsStorage.protections) {
+        if (tdsStorage.protections[feature]?.aboutBlankEnabled === false) {
+            brokenFeatures.push(feature)
+        }
+        if (isBrokenList(url, tdsStorage.protections[feature].aboutBlankSites || [])) {
+            brokenFeatures.push(feature)
+        }
+    }
+    return brokenFeatures
+}
+
 function getBrokenFeatures (url) {
     if (!tdsStorage?.protections) return
     const brokenFeatures = []
     for (const feature in tdsStorage.protections) {
-        if (!tdsStorage.protections[feature]?.enabled) {
+        if (tdsStorage.protections[feature]?.enabled === false) {
             brokenFeatures.push(feature)
         }
         if (isBrokenList(url, tdsStorage.protections[feature].sites || [])) {
@@ -278,6 +292,7 @@ module.exports = {
     extractLimitedDomainFromURL,
     isBroken,
     getBrokenFeatures,
+    getBrokenFeaturesAboutBlank,
     imgToData,
     getBrokenScriptLists,
     isSameTopLevelDomain

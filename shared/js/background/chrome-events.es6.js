@@ -615,7 +615,8 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
         return null
     }
-    const site = tab?.site || {}
+    // Clone site so we don't retain any site changes
+    const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
     const cookie = {
@@ -624,6 +625,10 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         tabRegisteredDomain: null,
         isTrackerFrame: false,
         policy: cookieConfig.firstPartyCookiePolicy
+    }
+    // Special case for iframes that are blank we check if it's also enabled
+    if (sender.url === 'about:blank') {
+        site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
     }
     if (!site.whitelisted && blockTrackingCookies()) {
         // determine the register domain of the sending tab
