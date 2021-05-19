@@ -18,6 +18,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm run release-chrome
+      - name: Check bundle size
+        run: du -h build/chrome/release/chrome-release-*.zip
   firefox:
     runs-on: ubuntu-20.04
     steps:
@@ -33,3 +35,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - run: npm run release-firefox
+      - name: Check bundle size
+        run: du -sh build/firefox/release
