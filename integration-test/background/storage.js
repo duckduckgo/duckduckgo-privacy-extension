@@ -9,8 +9,17 @@ describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, (
     let cookies = []
 
     beforeAll(async () => {
-        const { browser } = await harness.setup()
+        const { browser, bgPage } = await harness.setup()
         const page = await browser.newPage()
+
+        await bgPage.waitForFunction(
+            () => {
+                console.log('waiting for tds...')
+                return window.dbg && window.dbg.tds && window.dbg.tds.tds
+            },
+            { polling: 100, timeout: 10000 }
+        )
+
         let iframeFullyLoaded = false
         try {
             page.on('requestfinished', (req) => {
