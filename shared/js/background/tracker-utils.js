@@ -71,7 +71,7 @@ function getDomainsToExludeByNetwork () {
 
 // Return true if URL is in our click to load tracker list
 function getSocialTracker (url) {
-    if (!facebookExperimentIsActive()) {
+    if (!clickToLoadIsActive()) {
         return
     }
     const parsedDomain = tldts.parse(url)
@@ -95,17 +95,10 @@ function getSocialTracker (url) {
     }
 }
 
-// Return true when click to load should be enabled
-function facebookExperimentIsActive () {
-    // Check for experiment
-    const activeExperiment = settings.getSetting('activeExperiment')
-    if (activeExperiment) {
-        const experiment = settings.getSetting('experimentData')
-        if (experiment && experiment.blockFacebook) {
-            return true
-        }
-    }
-    return false
+// Return true when click to load should be enabled. Can be used to dynamically disable
+// functionality, or check for experiments
+function clickToLoadIsActive () {
+    return true
 }
 
 // Determine if a given URL is surrogate redirect.
@@ -230,6 +223,6 @@ module.exports = {
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
     getXraySurrogate: getXraySurrogate,
     allowSocialLogin: allowSocialLogin,
-    facebookExperimentIsActive: facebookExperimentIsActive,
+    clickToLoadIsActive: clickToLoadIsActive,
     isFirstPartyByEntity: isFirstPartyByEntity
 }

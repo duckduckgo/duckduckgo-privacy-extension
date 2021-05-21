@@ -1,4 +1,3 @@
-/* global dbg:false */
 const harness = require('../helpers/harness')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
@@ -28,12 +27,6 @@ describe('Test Click To Load', () => {
 
     it('CTL: Should block FB requests by default', async () => {
         const page = await browser.newPage()
-        // Set ATB to the FB experimental group
-        await bgPage.evaluate(() => dbg.settings.updateSetting('activeExperiment', 'true'))
-        await bgPage.evaluate(() => dbg.settings.updateSetting('experimentData', { blockFacebook: true }))
-
-        // Set ATB to the FB experimental group
-        await bgPage.evaluate(() => dbg.settings.updateSetting('set_atb', 'v-oc'))
 
         try {
             await page.goto(testSite, { waitUntil: 'networkidle2', timeout: 10000 })
@@ -41,6 +34,7 @@ describe('Test Click To Load', () => {
             // timed out waiting for page to load, let's try running the test anyway
             console.log(`Timed out: ${e}`)
         }
+
         // give it little time just to be sure (facebook widgets can take time to load)
         await page.waitForTimeout(4000)
         const fbRequestData = await page.evaluate(() => {
@@ -58,12 +52,6 @@ describe('Test Click To Load', () => {
 
     it('CTL: Should load facebook elements on click', async () => {
         const page = await browser.newPage()
-        // Set ATB to the FB experimental group
-        await bgPage.evaluate(() => dbg.settings.updateSetting('activeExperiment', 'true'))
-        await bgPage.evaluate(() => dbg.settings.updateSetting('experimentData', { blockFacebook: true }))
-
-        // Set ATB to the FB experimental group
-        await bgPage.evaluate(() => dbg.settings.updateSetting('set_atb', 'v-oc'))
 
         try {
             await page.goto(testSite, { waitUntil: 'networkidle2', timeout: 10000 })

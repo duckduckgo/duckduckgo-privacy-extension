@@ -777,7 +777,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 chrome.webRequest.onBeforeRedirect.addListener(
     details => {
         const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders && trackerutils.facebookExperimentIsActive()) {
+        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders && trackerutils.clickToLoadIsActive()) {
             // Detect cors error
             const headers = details.responseHeaders
             const corsHeaders = [
@@ -812,7 +812,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
         return
     }
 
-    if (tab && !tab.site.whitelisted && trackerutils.facebookExperimentIsActive()) {
+    if (tab && !tab.site.whitelisted && trackerutils.clickToLoadIsActive()) {
         chrome.tabs.executeScript(details.tabId, {
             file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,
