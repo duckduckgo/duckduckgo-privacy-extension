@@ -79,7 +79,7 @@
         "dexie": "3.0.3",
         "eventemitter2": "4.1.0",
         "is-plain-object": "5.0.0",
-        "jquery": "3.5.0",
+        "jquery": "3.6.0",
         "node-gyp": "^7.0.0",
         "normalize.scss": "0.1.0",
         "object.values": "1.1.3",
