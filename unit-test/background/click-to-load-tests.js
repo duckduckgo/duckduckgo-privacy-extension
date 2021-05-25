@@ -20,7 +20,7 @@ describe('Tracker Utilities', () => {
         settings.updateSetting('activeExperiment', true)
         settings.updateSetting('experimentData', { blockFacebook: true })
         /* eslint-disable no-unused-vars */
-        experimentObserver = spyOn(trackerutils, 'facebookExperimentIsActive').and.returnValue(true)
+        experimentObserver = spyOn(trackerutils, 'clickToLoadIsActive').and.returnValue(true)
         chromeObserver = spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
         popupObserver = spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
         tabObserver = spyOn(Tab, 'constructor')
