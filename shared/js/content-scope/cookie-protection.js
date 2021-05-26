@@ -26,6 +26,9 @@ function applyCookieExpiryPolicy () {
     const loadPolicy = new Promise((resolve) => {
         loadedPolicyResolve = resolve
     })
+    // Create the then callback now - this ensures that Promise.prototype.then changes won't break
+    // this call.
+    const loadPolicyThen = loadPolicy.then.bind(loadPolicy)
     defineProperty(document, 'cookie', {
         configurable: true,
         set: (value) => {
@@ -45,7 +48,7 @@ function applyCookieExpiryPolicy () {
                 }, new Set())
 
                 // wait for config before doing same-site tests
-                loadPolicy.then(({ shouldBlock, tabRegisteredDomain, policy, isTrackerFrame }) => {
+                loadPolicyThen(({ shouldBlock, tabRegisteredDomain, policy, isTrackerFrame }) => {
                     if (!tabRegisteredDomain || !shouldBlock) {
                         // no site domain for this site to test against, abort
                         debug && console.log('[ddg-cookie-policy] policy disabled on this page')
