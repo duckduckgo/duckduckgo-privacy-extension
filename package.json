@@ -37,6 +37,7 @@
         "@fingerprintjs/fingerprintjs": "^3.1.0",
         "@rollup/plugin-commonjs": "^18.0.0",
         "@rollup/plugin-node-resolve": "^13.0.0",
+        "@rollup/plugin-replace": "^2.4.2",
         "babelify": "10.0.0",
         "duckduckgo-colors": "0.0.1",
         "eslint": "^7.19.0",

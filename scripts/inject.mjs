@@ -1,13 +1,28 @@
 import { readFile } from 'fs/promises';
 import * as rollup from 'rollup';
 import commonjs from '@rollup/plugin-commonjs';
+import replace from '@rollup/plugin-replace';
 import dynamicImportVariables from 'rollup-plugin-dynamic-import-variables';
 
 
 async function generateContentScope() {
+    let mozProxies = false;
+    // The code is using a global, that we define here which means once tree shaken we get a browser specific output.
+    if (process.argv[2] == "firefox") {
+        mozProxies = true;
+    }
     const inputOptions = {
         input: 'shared/js/content-scope/protections.js',
-        plugins: [dynamicImportVariables({}), commonjs()]
+        plugins: [
+            dynamicImportVariables({}),
+            commonjs(),
+            replace({
+                preventAssignment: true,
+                values: {
+                    mozProxies
+                }
+            })
+        ]
     };
     const outputOptions = {
         dir: 'build',

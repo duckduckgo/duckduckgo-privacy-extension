@@ -1,4 +1,4 @@
-/* global exportFunction */
+/* global exportFunction, mozProxies */
 import sjcl from './sjcl'
 
 export function getDataKeySync (sessionKey, domainKey, inputData) {
@@ -104,9 +104,6 @@ export function overrideProperty (name, prop) {
     }
     return prop.origValue
 }
-
-// TODO make rollup aware of this so it can tree shake
-const mozProxies = 'wrappedJSObject' in window
 
 export function defineProperty (object, propertyName, descriptor) {
     if (mozProxies) {
