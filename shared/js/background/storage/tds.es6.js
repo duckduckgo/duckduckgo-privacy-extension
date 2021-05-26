@@ -90,60 +90,68 @@ class TDSStorage {
     }
 
     getLists () {
-        return Promise.all(constants.tdsLists.map(list => {
-            const listCopy = JSON.parse(JSON.stringify(list))
-            const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
-            const version = this.getVersionParam()
-            const activeExperiment = settings.getSetting('activeExperiment')
+        return Promise.all(constants.tdsLists.map(list => this.getList(list)))
+    }
 
-            let experiment = ''
-            if (activeExperiment) {
-                experiment = settings.getSetting('experimentData')
+    getList (list) {
+        const listCopy = JSON.parse(JSON.stringify(list))
+        const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+        const version = this.getVersionParam()
+        const activeExperiment = settings.getSetting('activeExperiment')
+        const channel = settings.getSetting(`${listCopy.name}-channel`) || ''
+
+        let experiment = ''
+        if (activeExperiment) {
+            experiment = settings.getSetting('experimentData')
+        }
+
+        // select custom version of the list from the config
+        if (channel && listCopy.channels && listCopy.channels[channel]) {
+            listCopy.url = listCopy.channels[channel]
+        }
+
+        if (experiment && experiment.listName === listCopy.name) {
+            listCopy.url = experiment.url
+        }
+
+        if (version && listCopy.source === 'external') {
+            listCopy.url += version
+        }
+
+        const source = listCopy.source ? listCopy.source : 'external'
+
+        return this.getDataXHR(listCopy, etag, source).then(response => {
+            // for 200 response we update etags
+            if (response && response.status === 200) {
+                const newEtag = response.getResponseHeader('etag') || ''
+                settings.updateSetting(`${listCopy.name}-etag`, newEtag)
             }
 
-            if (experiment && experiment.listName === listCopy.name) {
-                listCopy.url = experiment.url
-            }
-
-            if (version && listCopy.source === 'external') {
-                listCopy.url += version
-            }
-
-            const source = listCopy.source ? listCopy.source : 'external'
-
-            return this.getDataXHR(listCopy, etag, source).then(response => {
-                // for 200 response we update etags
-                if (response && response.status === 200) {
-                    const newEtag = response.getResponseHeader('etag') || ''
-                    settings.updateSetting(`${listCopy.name}-etag`, newEtag)
+            // We try to process both 200 and 304 responses. 200s will validate
+            // and update the db. 304s will try to grab the previous data from db
+            // or throw an error if none exists.
+            return this.processData(listCopy.name, response.data).then(resultData => {
+                if (resultData) {
+                    // store tds in memory so we can access it later if needed
+                    this[listCopy.name] = resultData
+                    return { name: listCopy.name, data: resultData }
+                } else {
+                    throw new Error('TDS: process list xhr failed')
                 }
-
-                // We try to process both 200 and 304 responses. 200s will validate
-                // and update the db. 304s will try to grab the previous data from db
-                // or throw an error if none exists.
-                return this.processData(listCopy.name, response.data).then(resultData => {
-                    if (resultData) {
-                        // store tds in memory so we can access it later if needed
-                        this[listCopy.name] = resultData
-                        return { name: listCopy.name, data: resultData }
-                    } else {
-                        throw new Error('TDS: process list xhr failed')
-                    }
-                })
-            }).catch(e => {
-                return this.fallbackToDB(listCopy.name).then(backupFromDB => {
-                    if (backupFromDB) {
-                        // store tds in memory so we can access it later if needed
-                        this[listCopy.name] = backupFromDB
-                        return { name: listCopy.name, data: backupFromDB }
-                    } else {
-                        // reset etag to force us to get fresh server data in case of an error
-                        settings.updateSetting(`${listCopy.name}-etag`, '')
-                        throw new Error('TDS: data update failed')
-                    }
-                })
             })
-        }))
+        }).catch(e => {
+            return this.fallbackToDB(listCopy.name).then(backupFromDB => {
+                if (backupFromDB) {
+                    // store tds in memory so we can access it later if needed
+                    this[listCopy.name] = backupFromDB
+                    return { name: listCopy.name, data: backupFromDB }
+                } else {
+                    // reset etag to force us to get fresh server data in case of an error
+                    settings.updateSetting(`${listCopy.name}-etag`, '')
+                    throw new Error('TDS: data update failed')
+                }
+            })
+        })
     }
 
     processData (name, xhrData) {
@@ -216,6 +224,28 @@ class TDSStorage {
         if (versionParam) settings.updateSetting('lastTdsUpdate', now)
 
         return versionParam
+    }
+
+    /**
+     * Convert the given list into stringified form.
+     * @param {*} name
+     * @returns list in a fully serialisable format
+     */
+    getSerialisableList (name) {
+        if (name === 'tds') {
+            // copy and convert regexes to string
+            const listCopy = JSON.parse(JSON.stringify(this.tds))
+            Object.values(listCopy.trackers).forEach((tracker) => {
+                tracker.rules?.forEach((rule, i) => {
+                    // convert Regex to string and cut slashes and flags
+                    const ruleRegexStr = this.tds.trackers[tracker.domain].rules[i].rule.toString()
+                    rule.rule = ruleRegexStr.slice(1, ruleRegexStr.length - 3)
+                })
+            })
+            return listCopy
+        } else {
+            return this[name]
+        }
     }
 }
 module.exports = new TDSStorage()

@@ -89,7 +89,12 @@ module.exports = {
             "name": "tds",
             "url": "https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json",
             "format": "json",
-            "source": "external"
+            "source": "external",
+            "channels": {
+                "live": "https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json",
+                "next": "https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds-next.json",
+                "beta": "https://staticcdn.duckduckgo.com/trackerblocking/beta/tds.json"
+            }
         },
         {
             "name": "ClickToLoadConfig",

@@ -1,5 +1,5 @@
 import { Cookie } from './cookie.js'
-import { defineProperty } from './utils'
+import { defineProperty, postDebugMessage } from './utils'
 
 function blockCookies () {
     // disable setting cookies
@@ -18,7 +18,6 @@ const trackerHosts = new Set()
  * Apply an expiry policy to cookies set via document.cookie.
  */
 function applyCookieExpiryPolicy () {
-    const debug = false
     const cookieSetter = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie').set
     const cookieGetter = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie').get
     const lineTest = /(\()?(http[^)]+):[0-9]+:[0-9]+(\))?/
@@ -48,21 +47,39 @@ function applyCookieExpiryPolicy () {
                 }, new Set())
 
                 // wait for config before doing same-site tests
-                loadPolicyThen(({ shouldBlock, tabRegisteredDomain, policy, isTrackerFrame }) => {
+                loadPolicyThen(({ shouldBlock, tabRegisteredDomain, policy, isTrackerFrame, debug }) => {
                     if (!tabRegisteredDomain || !shouldBlock) {
                         // no site domain for this site to test against, abort
-                        debug && console.log('[ddg-cookie-policy] policy disabled on this page')
+                        debug && postDebugMessage('jscookie', {
+                            action: 'ignore',
+                            reason: 'disabled',
+                            documentUrl: document.location.href,
+                            scriptOrigins: [...scriptOrigins],
+                            value
+                        })
                         return
                     }
                     const sameSiteScript = [...scriptOrigins].every((host) => host === tabRegisteredDomain || host.endsWith(`.${tabRegisteredDomain}`))
                     if (sameSiteScript) {
                         // cookies set by scripts loaded on the same site as the site are not modified
-                        debug && console.log('[ddg-cookie-policy] ignored (sameSite)', value, [...scriptOrigins])
+                        debug && postDebugMessage('jscookie', {
+                            action: 'ignore',
+                            reason: 'sameSite',
+                            documentUrl: document.location.href,
+                            scriptOrigins: [...scriptOrigins],
+                            value
+                        })
                         return
                     }
                     const trackerScript = [...scriptOrigins].some((host) => trackerHosts.has(host))
                     if (!trackerScript && !isTrackerFrame) {
-                        debug && console.log('[ddg-cookie-policy] ignored (non-tracker)', value, [...scriptOrigins])
+                        debug && postDebugMessage('jscookie', {
+                            action: 'ignore',
+                            reason: 'non-tracker',
+                            documentUrl: document.location.href,
+                            scriptOrigins: [...scriptOrigins],
+                            value
+                        })
                         return
                     }
                     // extract cookie expiry from cookie string
@@ -72,18 +89,34 @@ function applyCookieExpiryPolicy () {
                         // check if the cookie still exists
                         if (document.cookie.split(';').findIndex(kv => kv.trim().startsWith(cookie.parts[0].trim())) !== -1) {
                             cookie.maxAge = policy.maxAge
-                            debug && console.log('[ddg-cookie-policy] update', cookie.toString(), scriptOrigins)
+                            debug && postDebugMessage('jscookie', {
+                                action: 'restrict',
+                                reason: 'tracker',
+                                documentUrl: document.location.href,
+                                scriptOrigins: [...scriptOrigins],
+                                value
+                            })
                             cookieSetter.apply(document, [cookie.toString()])
                         } else {
-                            debug && console.log('[ddg-cookie-policy] dissappeared', cookie.toString(), cookie.parts[0], scriptOrigins)
+                            debug && postDebugMessage('jscookie', {
+                                action: 'ignored',
+                                reason: 'dissappeared',
+                                scriptOrigins: [...scriptOrigins],
+                                value
+                            })
                         }
                     } else {
-                        debug && console.log('[ddg-cookie-policy] ignored (expiry)', value, scriptOrigins)
+                        debug && postDebugMessage('jscookie', {
+                            action: 'ignored',
+                            reason: 'expiry',
+                            scriptOrigins: [...scriptOrigins],
+                            value
+                        })
                     }
                 })
             } catch (e) {
                 // suppress error in cookie override to avoid breakage
-                debug && console.warn('Error in cookie override', e)
+                console.warn('Error in cookie override', e)
             }
         },
         get: cookieGetter
@@ -98,6 +131,7 @@ export function load (args) {
 }
 
 export function init (args) {
+    args.cookie.debug = args.debug
     loadedPolicyResolve(args.cookie)
     if (window.top !== window && args.cookie.isTrackerFrame && args.cookie.shouldBlock && args.cookie.isThirdParty) {
         // overrides expiry policy with blocking - only in subframes

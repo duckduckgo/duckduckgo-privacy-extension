@@ -1,13 +1,20 @@
-import { shouldExemptMethod, DDGProxy, DDGReflect } from './utils'
+import { shouldExemptMethod, DDGProxy, DDGReflect, postDebugMessage } from './utils'
 import { computeOffScreenCanvas } from './canvas'
 
 export function init (args) {
-    const { sessionKey, site } = args
+    const { sessionKey, site, debug } = args
     const domainKey = site.domain
 
     // Using proxies here to swallow calls to toString etc
     const getImageDataProxy = new DDGProxy(CanvasRenderingContext2D.prototype, 'getImageData', {
         apply (target, thisArg, args) {
+            if (debug) {
+                postDebugMessage('canvas', {
+                    action: shouldExemptMethod('canvas') ? 'ignore' : 'restrict',
+                    kind: 'getImageData',
+                    documentUrl: document.location.href
+                })
+            }
             // The normal return value
             if (shouldExemptMethod('canvas')) {
                 return DDGReflect.apply(target, thisArg, args)
@@ -29,6 +36,13 @@ export function init (args) {
     for (const methodName of canvasMethods) {
         const proxy = new DDGProxy(HTMLCanvasElement.prototype, methodName, {
             apply (target, thisArg, args) {
+                if (debug) {
+                    postDebugMessage('canvas', {
+                        action: shouldExemptMethod('canvas') ? 'ignore' : 'restrict',
+                        kind: methodName,
+                        documentUrl: document.location.href
+                    })
+                }
                 if (shouldExemptMethod('canvas')) {
                     return DDGReflect.apply(target, thisArg, args)
                 }

@@ -157,6 +157,13 @@ export class DDGProxy {
     }
 }
 
+export function postDebugMessage (feature, message) {
+    window.postMessage({
+        action: feature,
+        message
+    })
+}
+
 export let DDGReflect
 
 if (mozProxies) {

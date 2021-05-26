@@ -79,6 +79,15 @@ function init () {
             inject(`delete window.${randomMethodName}`)
             return
         }
+        if (message.debug) {
+            window.addEventListener('message', (m) => {
+                if (m.data.action && m.data.message) {
+                    chrome.runtime.sendMessage({
+                        debuggerMessage: m.data
+                    })
+                }
+            })
+        }
         const stringifiedArgs = JSON.stringify(message)
         const callRandomFunction = `
                 window.${randomMethodName}('${randomPassword}', ${stringifiedArgs});

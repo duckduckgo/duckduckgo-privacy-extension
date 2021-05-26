@@ -155,7 +155,14 @@ function getAsyncBlockingSupport () {
 */
 function isBroken (url) {
     if (!tdsStorage?.config.unprotectedTemporary) return
-    return isBrokenList(url, tdsStorage?.config.unprotectedTemporary)
+    return isBrokenList(url, tdsStorage?.config.unprotectedTemporary) !== -1
+}
+
+function removeBroken (domain) {
+    const index = isBrokenList(domain, tdsStorage.brokenSiteList)
+    if (index !== -1) {
+        console.log('remove', tdsStorage.brokenSiteList.splice(index, 1))
+    }
 }
 
 function getBrokenFeaturesAboutBlank (url) {
@@ -179,7 +186,7 @@ function getBrokenFeatures (url) {
         if (tdsStorage.config.features[feature]?.state === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || [])) {
+        if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
@@ -191,7 +198,7 @@ function isBrokenList (url, lists) {
     const hostname = parsedDomain.hostname || url
 
     // If root domain in temp unprotected list, return true
-    return lists.some((brokenSiteDomain) => {
+    return lists.findIndex((brokenSiteDomain) => {
         if (brokenSiteDomain) {
             // TODO: Remove string check after config migration
             if (brokenSiteDomain instanceof String) {
@@ -325,5 +332,6 @@ module.exports = {
     getBrokenFeaturesAboutBlank,
     imgToData,
     getBrokenScriptLists,
-    isSameTopLevelDomain
+    isSameTopLevelDomain,
+    removeBroken
 }
