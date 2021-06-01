@@ -31,16 +31,22 @@ describe('Tracker Utilities', () => {
 
     const domainTests = refTests.tests.domainTests.tests
     var fakeRequest = { type: 'script' };
-    
+
     it('Should identify a tracker correctly', () => {
         settings.updateSetting('trackerBlockingEnabled', true);
         settingsObserver.and.returnValue(undefined)
         for (const test of domainTests) {
             const targetURL = test.rel
             const rootURL = test.base
-            console.log('ZZZ Test Case', test.name, rootURL, targetURL, test.expect_action)
-            let result = tds.getTrackerData(rootURL, targetURL, fakeRequest)
-            console.log('ZZZ Result', result && result.action, result && result.reason)
+            let result = tds.getTrackerData(targetURL, rootURL, fakeRequest)
+            let action = (result && result.action) || 'ignore'
+            let reason = result && result.reason
+            if (action === test.expect_action) {
+                console.log(`PASS ${test.name}`)
+            } else {
+                console.log('ZZZ Test Case', test.name, targetURL, rootURL, test.expect_action)
+                console.log('FAIL', action, reason)
+            }
             expect(true).toBeTruthy()
         }
     })

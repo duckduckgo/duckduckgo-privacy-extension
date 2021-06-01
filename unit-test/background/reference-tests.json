@@ -4,12 +4,38 @@
         "desc": "Input metadata for tests",
         "data": {
             "trackers": {
+                "third-party.site": {
+                    "owner": {
+                        "name": "Test Site for Tracker Blocking",
+                        "displayName": "Bad Third Party Site",
+                        "privacyPolicy": "",
+                        "url": "http://third-party.site"
+                    },
+                    "prevalence": 0.1,
+                    "fingerprinting": 3,
+                    "cookies": 0.1,
+                    "categories": [],
+                    "default": "block"
+                },
                 "bad.third-party.site": {
                     "owner": {
                         "name": "Test Site for Tracker Blocking",
                         "displayName": "Bad Third Party Site",
                         "privacyPolicy": "",
                         "url": "http://bad.third-party.site"
+                    },
+                    "prevalence": 0.1,
+                    "fingerprinting": 3,
+                    "cookies": 0.1,
+                    "categories": [],
+                    "default": "block"
+                },
+                "tracker.test": {
+                    "owner": {
+                        "name": "Test Site for Tracker Blocking",
+                        "displayName": "Bad Third Party Site",
+                        "privacyPolicy": "",
+                        "url": "http://tracker.test"
                     },
                     "prevalence": 0.1,
                     "fingerprinting": 3,
@@ -46,7 +72,26 @@
                     "default": "ignore"
                 }
             },
-            "entities" : {},
+            "entities" : {
+                "Test Site for Tracker Blocking": {
+                    "domains": [
+                        "bad.third-party.site",
+                        "broken.third-party.site",
+                        "third-party.site",
+                        "tracker.test"
+                    ],
+                    "prevalence": 0.1,
+                    "displayName": "Test Site for Tracker Blocking"
+                },
+                "Safe Site for Tracker Blocking": {
+                    "domains": [
+                        "safe.test",
+                        "sub.safe.test"
+                    ],
+                    "prevalence": 0.1,
+                    "displayName": "Safe Site for Tracker Blocking"
+                }
+            },
             "cnames": {}
         }
     },
@@ -81,7 +126,7 @@
                 },
                 {
                     "name": "notsafe blocks tracker",
-                    "base": "https://notsafe.test/",
+                    "base": "https://randomsite123.com/",
                     "rel": "https://bad.third-party.site/",
                     "expect_action": "block"
                 },
@@ -110,34 +155,34 @@
                     "expect_action": "block"
                 },
                 {
+                    "name": "random loads itself",
+                    "base": "https://random.test/",
+                    "rel": "https://random.test/",
+                    "expect_action": "ignore"
+                },
+                {
                     "name": "random loads safe path on tracker",
                     "base": "https://random.test/",
                     "rel": "https://bad.third-party.site/safe",
                     "expect_action": "ignore"
                 },
                 {
-                    "name": "random loads safe.tracker",
+                    "name": "random loads broken.tracker",
                     "base": "https://random.test/",
-                    "rel": "https://safe.bad.third-party.site/",
+                    "rel": "https://broken.third-party.site/",
                     "expect_action": "ignore"
                 },
                 {
-                    "name": "random loads sub.tracker??",
+                    "name": "random loads randomsub.tracker??",
                     "base": "https://random.test/",
-                    "rel": "https://sub.bad.third-party.site/",
-                    "expect_action": "ignore"
+                    "rel": "https://randomsub.third-party.site/",
+                    "expect_action": "block"
                 },
                 {
                     "name": "tracker loads permitted for same entity",
-                    "base": "https://tracker.site/",
-                    "rel": "https://alsotracker.test/",
+                    "base": "https://third-party.site/",
+                    "rel": "https://tracker.test/",
                     "expect_action": "ignore"
-                },      
-                {
-                    "name": "??block?? tracker on path in safe domain",
-                    "base": "https://random.test/",
-                    "rel": "https://safe.test/tracker?abc=2",
-                    "expect_action": "block"
                 }
             ]
         }
