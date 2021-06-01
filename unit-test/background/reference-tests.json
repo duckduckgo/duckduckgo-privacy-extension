@@ -1,0 +1,145 @@
+{
+    "lists": {
+        "name": "tds",
+        "desc": "Input metadata for tests",
+        "data": {
+            "trackers": {
+                "bad.third-party.site": {
+                    "owner": {
+                        "name": "Test Site for Tracker Blocking",
+                        "displayName": "Bad Third Party Site",
+                        "privacyPolicy": "",
+                        "url": "http://bad.third-party.site"
+                    },
+                    "prevalence": 0.1,
+                    "fingerprinting": 3,
+                    "cookies": 0.1,
+                    "categories": [],
+                    "default": "block"
+                },
+                "broken.third-party.site": {
+                    "owner": {
+                        "name": "Test Site for Tracker Blocking",
+                        "displayName": "Broken Third Party Site",
+                        "privacyPolicy": "",
+                        "url": "http://broken.third-party.site"
+                    },
+                    "prevalence": 0.1,
+                    "fingerprinting": 3,
+                    "cookies": 0.1,
+                    "categories": [],
+                    "rules": [],
+                    "default": "ignore"
+                },
+                "safe.test": {
+                    "owner": {
+                        "name": "Test Site for Tracker Blocking",
+                        "displayName": "Safe Site",
+                        "privacyPolicy": "",
+                        "url": "http://safe.test"
+                    },
+                    "prevalence": 0.1,
+                    "fingerprinting": 3,
+                    "cookies": 0.1,
+                    "categories": [],
+                    "rules": [],
+                    "default": "ignore"
+                }
+            },
+            "entities" : {},
+            "cnames": {}
+        }
+    },
+    "tests": {
+        "domainTests": {
+            "name": "URL-matching",
+            "desc": "interactions between URLs from safe and tracker lists",
+            "tests": [
+                {
+                    "name": "same party tracker",
+                    "base": "https://bad.third-party.site/",
+                    "rel": "https://bad.third-party.site/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "same party safe",
+                    "base": "https://safe.test/",
+                    "rel": "https://safe.test/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "tracker loads safe",
+                    "base": "https://bad.third-party.site/",
+                    "rel": "https://safe.test/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "safe loads tracker",
+                    "base": "https://safe.test/",
+                    "rel": "https://bad.third-party.site/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "notsafe blocks tracker",
+                    "base": "https://notsafe.test/",
+                    "rel": "https://bad.third-party.site/",
+                    "expect_action": "block"
+                },
+                {
+                    "name": "sub.safe loads tracker",
+                    "base": "https://sub.safe.test/",
+                    "rel": "https://bad.third-party.site/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "tracker loads safe",
+                    "base": "https://bad.third-party.site/",
+                    "rel": "https://safe.test/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "tracker loads random",
+                    "base": "https://bad.third-party.site/",
+                    "rel": "https://random.test/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "random does not load tracker",
+                    "base": "https://random.test/",
+                    "rel": "https://bad.third-party.site/",
+                    "expect_action": "block"
+                },
+                {
+                    "name": "random loads safe path on tracker",
+                    "base": "https://random.test/",
+                    "rel": "https://bad.third-party.site/safe",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "random loads safe.tracker",
+                    "base": "https://random.test/",
+                    "rel": "https://safe.bad.third-party.site/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "random loads sub.tracker??",
+                    "base": "https://random.test/",
+                    "rel": "https://sub.bad.third-party.site/",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "tracker loads permitted for same entity",
+                    "base": "https://tracker.site/",
+                    "rel": "https://alsotracker.test/",
+                    "expect_action": "ignore"
+                },      
+                {
+                    "name": "??block?? tracker on path in safe domain",
+                    "base": "https://random.test/",
+                    "rel": "https://safe.test/tracker?abc=2",
+                    "expect_action": "block"
+                }
+            ]
+        }
+    }
+}
