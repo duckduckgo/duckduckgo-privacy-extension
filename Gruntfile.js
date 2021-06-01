@@ -41,10 +41,10 @@ module.exports = function (grunt) {
             '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
         },
         autofillContentScript: {
-            '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/dist/autofill.js']
+            '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/autofill.js']
         },
-        emailInjectedCSS: {
-            '<%= dirs.public.css %>/email-style.css': ['<%= dirs.src.injectedCSS %>/email-autofill.css']
+        autofillCSS: {
+            '<%= dirs.public.css %>/autofill.css': ['<%= ddgAutofill %>/autofill.css']
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
@@ -71,8 +71,8 @@ module.exports = function (grunt) {
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
-        autofillContentScript: ['<%= ddgAutofill %>/dist/*.js'],
-        injectedCSS: ['<%= dirs.src.injectedCSS %>/*.css'],
+        autofillContentScript: ['<%= ddgAutofill %>/*.js'],
+        autofillCSS: ['<%= ddgAutofill %>/*.css'],
         contentScope: ['<%= dirs.src.js %>/content-scope/*.js', '<%= dirs.public.js %>/inject/*.js'],
         data: ['<%= dirs.data %>/*.js']
     }
@@ -96,15 +96,15 @@ module.exports = function (grunt) {
         })
     }
 
+    const ddgAutofill = 'node_modules/@duckduckgo/autofill/dist'
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        ddgAutofill: 'node_modules/@duckduckgo/autofill',
+        ddgAutofill,
         dirs: {
             cache: '.cache',
             src: {
                 js: 'shared/js',
                 scss: 'shared/scss',
-                injectedCSS: 'shared/injected-css',
                 templates: 'shared/templates'
             },
             data: 'shared/data',
@@ -188,12 +188,10 @@ module.exports = function (grunt) {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
-            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp node_modules/@duckduckgo/autofill/dist/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
-            copyInjectedCSS: `cp -r shared/injected-css/* build/${browser}/${buildType}/public/css/`,
-            // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
-            updateFirefoxRelativeUrl: `sed -i.bak "s/chrome-extension:\\/\\/__MSG_@@extension_id__\\/public/../g" build/firefox/${buildType}/public/css/email-host-styles.css &&
-                    rm build/firefox/${buildType}/public/css/email-host-styles.css.bak`,
+            copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
+            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browser}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`,
             tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
             mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
             mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
@@ -228,9 +226,9 @@ module.exports = function (grunt) {
                 files: watch.autofillContentScript,
                 tasks: ['exec:copyAutofillJs']
             },
-            injectedCSS: {
-                files: watch.injectedCSS,
-                tasks: ['exec:copyInjectedCSS', 'updateFirefoxRelativeUrl']
+            autofillCSS: {
+                files: watch.autofillCSS,
+                tasks: ['exec:copyAutofillCSS', 'exec:copyAutofillHostCSS']
             },
             data: {
                 files: watch.data,
@@ -269,7 +267,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyInjectedCSS', 'updateFirefoxRelativeUrl', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS', 'execute:preProcessLists', 'safari'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }
