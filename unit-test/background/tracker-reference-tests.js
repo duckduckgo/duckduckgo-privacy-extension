@@ -1,6 +1,4 @@
-const trackerutils = require('../../shared/js/background/tracker-utils')
 const tds = require('../../shared/js/background/trackers.es6')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 const settings = require('../../shared/js/background/settings.es6')
 
@@ -30,17 +28,17 @@ describe('Tracker Utilities', () => {
     })
 
     const domainTests = refTests.tests.domainTests.tests
-    var fakeRequest = { type: 'script' };
+    let fakeRequest = { type: 'script' }
 
     it('Should identify a tracker correctly', () => {
-        settings.updateSetting('trackerBlockingEnabled', true);
+        settings.updateSetting('trackerBlockingEnabled', true)
         settingsObserver.and.returnValue(undefined)
         for (const test of domainTests) {
             const targetURL = test.rel
             const rootURL = test.base
-            let result = tds.getTrackerData(targetURL, rootURL, fakeRequest)
-            let action = (result && result.action) || 'ignore'
-            let reason = result && result.reason
+            const result = tds.getTrackerData(targetURL, rootURL, fakeRequest)
+            const action = (result && result.action)
+            const reason = result && result.reason
             if (action === test.expect_action) {
                 console.log(`PASS ${test.name}`)
             } else {

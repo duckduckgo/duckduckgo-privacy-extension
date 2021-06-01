@@ -168,7 +168,7 @@
                     "name": "tracker loads random",
                     "base": "https://bad.third-party.site/",
                     "rel": "https://random.test/",
-                    "expect_action": "ignore"
+                    "expect_action": null
                 },
                 {
                     "name": "random does not load tracker",
@@ -180,7 +180,7 @@
                     "name": "random loads itself",
                     "base": "https://random.test/",
                     "rel": "https://random.test/",
-                    "expect_action": "ignore"
+                    "expect_action": null
                 },
                 {
                     "name": "random loads ignore path on tracker",
