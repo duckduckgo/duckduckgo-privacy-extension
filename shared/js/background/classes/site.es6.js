@@ -17,7 +17,11 @@ class Site {
     constructor (url) {
         this.url = url || ''
 
-        let domain = utils.extractHostFromURL(this.url, true) || ''
+        // Retain any www. prefix for our broken site lists
+        let domainWWW = utils.extractHostFromURL(this.url, true) || ''
+        domainWWW = domainWWW.toLowerCase()
+
+        let domain = utils.extractHostFromURL(this.url) || ''
         domain = domain.toLowerCase()
 
         this.domain = domain
@@ -27,8 +31,13 @@ class Site {
         this.whitelistOptIn = false
         this.setWhitelistStatusFromGlobal(domain)
 
-        this.isBroken = utils.isBroken(domain) // broken sites reported to github repo
-        this.brokenFeatures = utils.getBrokenFeatures(domain) // site issues reported to github repo
+        /**
+         * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
+         * This would make the list apply to a much larger audience than is required.
+         * The other allowlisting code is different and probably should be changed to match.
+         */
+        this.isBroken = utils.isBroken(domainWWW) // broken sites reported to github repo
+        this.brokenFeatures = utils.getBrokenFeatures(domainWWW) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)
