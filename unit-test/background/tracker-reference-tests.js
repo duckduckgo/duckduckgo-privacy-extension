@@ -45,7 +45,7 @@ describe('Tracker Utilities', () => {
                 console.log('ZZZ Test Case', test.name, targetURL, rootURL, test.expect_action)
                 console.log('FAIL', action, reason)
             }
-            expect(true).toBeTruthy()
+            expect(test.expect_action).toEqual(action)
         }
     })
 })
