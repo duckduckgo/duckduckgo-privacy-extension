@@ -28,7 +28,7 @@ describe('Tracker Utilities', () => {
     })
 
     const domainTests = refTests.tests.domainTests.tests
-    let fakeRequest = { type: 'script' }
+    const fakeRequest = { type: 'script' }
 
     it('Should identify a tracker correctly', () => {
         settings.updateSetting('trackerBlockingEnabled', true)
