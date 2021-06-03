@@ -5,6 +5,7 @@
     let siteInit = function () {}
     let fbIsEnabled = false
     let initData = {}
+    let runInit = false
     const parseCalls = []
     const popupName = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 12)
 
@@ -30,7 +31,7 @@
             window.FB = undefined
 
             window.fbAsyncInit = function () {
-                if (initData) {
+                if (runInit && initData) {
                     window.FB.init(initData)
                 }
                 siteInit()
@@ -40,6 +41,9 @@
             }
 
             const fbScript = document.createElement('script')
+            fbScript.setAttribute('crossorigin', 'anonymous')
+            fbScript.setAttribute('async', '')
+            fbScript.setAttribute('defer', '')
             fbScript.src = originalFBURL
             fbScript.onload = function () {
                 for (const node of parseCalls) {
@@ -48,6 +52,10 @@
             }
             document.head.appendChild(fbScript)
             fbIsEnabled = true
+        } else {
+            if (initData) {
+                window.FB.init(initData)
+            }
         }
     }
 
@@ -92,6 +100,7 @@
             init: function (obj) {
                 if (obj) {
                     initData = obj
+                    runInit = true
                     messageAddon({
                         'appID': obj.appId
                     })

@@ -390,10 +390,7 @@
         // collects the style from the original element & any specified in config for the element
         // type and returns a CSS string.
         getStyle () {
-            let styleString = this.clickAction.style
-            if (styleString[styleString.length - 1] !== ';') {
-                styleString += ';'
-            }
+            let styleString = 'border: none;'
 
             if (this.clickAction.styleDataAttributes) {
                 // Copy elements from the original div into style attributes as directed by config
@@ -494,8 +491,8 @@
                     // If we allow everything when this element is clicked,
                     // notify surrogate to enable SDK and replace original element.
                     if (this.clickAction.type === 'allowFull') {
-                        window.dispatchEvent(new CustomEvent(`Load${this.entity}SDK`))
                         parent.replaceChild(originalElement, replacementElement)
+                        window.dispatchEvent(new CustomEvent(`Load${this.entity}SDK`))
                         return
                     }
                     // Create a container for the new FB element
