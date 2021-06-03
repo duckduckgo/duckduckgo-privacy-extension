@@ -26,6 +26,19 @@
         dispatchEvent(event)
     }
 
+    /**
+     * When setting up the Facebook SDK, the site may define a function called window.fbAsyncInit.
+     * Once the SDK loads, it searches for and calls window.fbAsyncInit. However, some sites may
+     * not use this, and just call FB.init directly at some point (after ensuring that the script has loaded).
+     *
+     * Our surrogate (defined below in window.FB) captures calls made to init by page scripts. If at a
+     * later point we load the real sdk here, we then re-call init with whatever arguments the page passed in
+     * originally. The runInit param should be true when a page has called init directly.
+     * Because we put it in asyncInit, the flow will be something like:
+     *
+     * FB SDK loads -> SDK calls window.fbAsyncInit -> Our function calls window.FB.init (maybe) ->
+     * our function calls original fbAsyncInit (if it existed)
+     */
     function enableFacebookSDK () {
         if (!fbIsEnabled) {
             window.FB = undefined
