@@ -72,7 +72,7 @@ describe('Test Click To Load', () => {
         // click image element to trigger click to load
         page.click('div > div > div > button')
 
-        await page.waitForTimeout(5000) // FB elements can take a while to load...
+        await page.waitForTimeout(6000) // FB elements can take a while to load...
 
         const fbRequestDataAfterClick = await page.evaluate(() => {
             return {
