@@ -39,11 +39,12 @@ describe('Test Click To Load', () => {
         await page.waitForTimeout(4000)
         const fbRequestData = await page.evaluate(() => {
             return {
-                requests: document.getElementById('facebook_call_count').innerHTML
+                requests: document.getElementById('facebook_call_count').innerHTML,
+                expectedCalls: document.getElementById('facebook_iFrames').innerHTML
             }
         })
 
-        expect(Number(fbRequestData.requests)).toEqual(0)
+        expect(Number(fbRequestData.requests)).toBeLessThanOrEqual(Number(fbRequestData.expectedCalls))
 
         try {
             await page.close()
@@ -62,17 +63,23 @@ describe('Test Click To Load', () => {
         // give it little time just to be sure (facebook widgets can take time to load)
         await page.waitForTimeout(4000)
 
-        // click image element to trigger click to load
-        page.click('div > div > div > button')
-
-        await page.waitForTimeout(5000) // FB elements can take a while to load...
-
-        const fbRequestData = await page.evaluate(() => {
+        const fbRequestDataBeforeClick = await page.evaluate(() => {
             return {
                 requests: document.getElementById('facebook_call_count').innerHTML
             }
         })
 
-        expect(Number(fbRequestData.requests)).toBeGreaterThanOrEqual(1)
+        // click image element to trigger click to load
+        page.click('div > div > div > button')
+
+        await page.waitForTimeout(5000) // FB elements can take a while to load...
+
+        const fbRequestDataAfterClick = await page.evaluate(() => {
+            return {
+                requests: document.getElementById('facebook_call_count').innerHTML
+            }
+        })
+
+        expect(Number(fbRequestDataAfterClick.requests)).toBeGreaterThan(Number(fbRequestDataBeforeClick.requests))
     })
 })
