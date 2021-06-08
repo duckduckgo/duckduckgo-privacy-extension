@@ -20,29 +20,24 @@ describe('Tracker Utilities', () => {
             timer += jump
             return timer
         })
-
-        // return tdsStorage.getLists()
-        //     .then(lists => {
-        //         return tds.setLists(lists)
-        //     })
     })
 
     const domainTests = refTests.tests.domainTests.tests
-    const fakeRequest = { type: 'script' }
 
     it('Should identify a tracker correctly', () => {
         settings.updateSetting('trackerBlockingEnabled', true)
         settingsObserver.and.returnValue(undefined)
         for (const test of domainTests) {
-            const targetURL = test.rel
-            const rootURL = test.base
-            const result = tds.getTrackerData(targetURL, rootURL, fakeRequest)
+            const rootURL = test.site_url
+            const requestURL = test.request_url
+            const requestType = test.request_type
+            const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
             const action = (result && result.action)
             const reason = result && result.reason
             if (action === test.expect_action) {
                 console.log(`PASS ${test.name}`)
             } else {
-                console.log('ZZZ Test Case', test.name, targetURL, rootURL, test.expect_action)
+                console.log('ZZZ Test Case', test.name, requestURL, rootURL, test.expect_action)
                 console.log('FAIL', action, reason)
             }
             expect(test.expect_action).toEqual(action)

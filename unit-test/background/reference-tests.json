@@ -4,19 +4,6 @@
         "desc": "Input metadata for tests",
         "data": {
             "trackers": {
-                "third-party.site": {
-                    "owner": {
-                        "name": "Test Site for Tracker Blocking",
-                        "displayName": "Bad Third Party Site",
-                        "privacyPolicy": "",
-                        "url": "http://third-party.site"
-                    },
-                    "prevalence": 0.1,
-                    "fingerprinting": 3,
-                    "cookies": 0.1,
-                    "categories": [],
-                    "default": "block"
-                },
                 "bad.third-party.site": {
                     "owner": {
                         "name": "Test Site for Tracker Blocking",
@@ -41,24 +28,11 @@
                                     "ignore.test"
                                 ],
                                 "types": [
-                                    "script"
+                                    "image"
                                 ]
                             }
                         }
                     ]
-                },
-                "tracker.test": {
-                    "owner": {
-                        "name": "Test Site for Tracker Blocking",
-                        "displayName": "Bad Third Party Site",
-                        "privacyPolicy": "",
-                        "url": "http://tracker.test"
-                    },
-                    "prevalence": 0.1,
-                    "fingerprinting": 3,
-                    "cookies": 0.1,
-                    "categories": [],
-                    "default": "block"
                 },
                 "broken.third-party.site": {
                     "owner": {
@@ -73,6 +47,19 @@
                     "categories": [],
                     "rules": [],
                     "default": "ignore"
+                },
+                "tracker.test": {
+                    "owner": {
+                        "name": "Test Site for Tracker Blocking",
+                        "displayName": "Bad Third Party Site",
+                        "privacyPolicy": "",
+                        "url": "http://tracker.test"
+                    },
+                    "prevalence": 0.1,
+                    "fingerprinting": 3,
+                    "cookies": 0.1,
+                    "categories": [],
+                    "default": "block"
                 },
                 "ignore.test": {
                     "owner": {
@@ -120,99 +107,149 @@
     "tests": {
         "domainTests": {
             "name": "URL-matching",
-            "desc": "interactions between URLs from ignore and tracker lists",
+            "desc": "interactions between root domain and resource URLs from tracker lists",
             "tests": [
                 {
                     "name": "same party tracker",
-                    "base": "https://bad.third-party.site/",
-                    "rel": "https://bad.third-party.site/",
-                    "expect_action": "ignore"
+                    "site_url": "https://bad.third-party.site/",
+                    "request_url": "https://bad.third-party.site/",
+                    "request_type": "script",
+                    "expect_action": "ignore",
+                    "except_platforms": []
+                },
+                {
+                    "name": "bad loads same root domain resources",
+                    "site_url": "https://bad.third-party.site/",
+                    "request_url": "https://third-party.site/",
+                    "request_type": "script",
+                    "expect_action": null,
+                    "except_platforms": []
                 },
                 {
                     "name": "same party ignore",
-                    "base": "https://ignore.test/",
-                    "rel": "https://ignore.test/",
+                    "site_url": "https://ignore.test/",
+                    "request_url": "https://ignore.test/",
+                    "request_type": "script",
                     "expect_action": "ignore"
                 },
                 {
                     "name": "tracker loads ignore",
-                    "base": "https://bad.third-party.site/",
-                    "rel": "https://ignore.test/",
+                    "site_url": "https://bad.third-party.site/",
+                    "request_url": "https://ignore.test/",
+                    "request_type": "script",
                     "expect_action": "ignore"
                 },
                 {
                     "name": "ignore loads tracker",
-                    "base": "https://ignore.test/",
-                    "rel": "https://bad.third-party.site/",
+                    "site_url": "https://ignore.test/",
+                    "request_url": "https://bad.third-party.site/",
+                    "request_type": "image",
                     "expect_action": "ignore"
                 },
                 {
+                    "name": "notignore doesn't load tracker",
+                    "site_url": "https://notignore.test/",
+                    "request_url": "https://bad.third-party.site/",
+                    "request_type": "script",
+                    "expect_action": "block"
+                },
+                {
                     "name": "notignore blocks tracker",
-                    "base": "https://randomsite123.com/",
-                    "rel": "https://bad.third-party.site/",
+                    "site_url": "https://randomsite123.com/",
+                    "request_url": "https://bad.third-party.site/",
+                    "request_type": "script",
                     "expect_action": "block"
                 },
                 {
                     "name": "sub.ignore loads tracker",
-                    "base": "https://sub.ignore.test/",
-                    "rel": "https://bad.third-party.site/",
+                    "site_url": "https://sub.ignore.test/",
+                    "request_url": "https://bad.third-party.site/",
+                    "request_type": "image",
                     "expect_action": "ignore"
                 },
                 {
-                    "name": "tracker loads ignore",
-                    "base": "https://bad.third-party.site/",
-                    "rel": "https://ignore.test/",
+                    "name": "tracker loads ignore resource type",
+                    "site_url": "https://bad.third-party.site/",
+                    "request_url": "https://ignore.test/",
+                    "request_type": "image",
+                    "expect_action": "ignore"
+                },
+                {
+                    "name": "tracker blocks non-ignore resource type",
+                    "site_url": "https://bad.third-party.site/",
+                    "request_url": "https://ignore.test/",
+                    "request_type": "script",
                     "expect_action": "ignore"
                 },
                 {
                     "name": "tracker loads random",
-                    "base": "https://bad.third-party.site/",
-                    "rel": "https://random.test/",
+                    "site_url": "https://bad.third-party.site/",
+                    "request_url": "https://random.test/",
+                    "request_type": "script",
                     "expect_action": null
                 },
                 {
                     "name": "random does not load tracker",
-                    "base": "https://random.test/",
-                    "rel": "https://bad.third-party.site/",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://bad.third-party.site/",
+                    "request_type": "script",
                     "expect_action": "block"
                 },
                 {
                     "name": "random loads itself",
-                    "base": "https://random.test/",
-                    "rel": "https://random.test/",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://random.test/",
+                    "request_type": "script",
                     "expect_action": null
                 },
                 {
                     "name": "random loads ignore path on tracker",
-                    "base": "https://random.test/",
-                    "rel": "https://bad.third-party.site/ignore",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://bad.third-party.site/ignore",
+                    "request_type": "script",
                     "expect_action": "ignore"
                 },
                 {
                     "name": "random loads broken.tracker",
-                    "base": "https://random.test/",
-                    "rel": "https://broken.third-party.site/",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://broken.third-party.site/",
+                    "request_type": "script",
                     "expect_action": "ignore"
                 },
                 {
-                    "name": "random loads randomsub.tracker??",
-                    "base": "https://random.test/",
-                    "rel": "https://randomsub.third-party.site/",
-                    "expect_action": "block"
+                    "name": "random loads randomsub.tracker",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://randomsub.third-party.site/",
+                    "request_type": "script",
+                    "expect_action": null
+                },
+                {
+                    "name": "random loads randomsub.tracker",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://randomsub.third-party.site/",
+                    "request_type": "script",
+                    "expect_action": null
                 },
                 {
                     "name": "tracker loads permitted for same entity",
-                    "base": "https://third-party.site/",
-                    "rel": "https://tracker.test/",
+                    "site_url": "https://third-party.site/",
+                    "request_url": "https://tracker.test/",
+                    "request_type": "script",
                     "expect_action": "ignore"
                 },      
                 {
                     "name": "block tracker path in ignore domain",
-                    "base": "https://random.test/",
-                    "rel": "https://ignore.test/tracker?abc=2",
+                    "site_url": "https://random.test/",
+                    "request_url": "https://ignore.test/tracker?abc=2",
+                    "request_type": "script",
                     "expect_action": "block"
                 }
             ]
+        },
+        "safeTests": {
+            "name": "safe-matching",
+            "desc": "tests for safelist interactions",
+            "tests": []
         }
     }
 }
