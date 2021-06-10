@@ -4,7 +4,8 @@ import { defineProperty } from './utils'
 function blockCookies () {
     // disable setting cookies
     defineProperty(document, 'cookie', {
-        configurable: false,
+        enumerable: true,
+        writable: true,
         set: function (value) { },
         get: () => ''
     })
@@ -30,7 +31,9 @@ function applyCookieExpiryPolicy () {
     // this call.
     const loadPolicyThen = loadPolicy.then.bind(loadPolicy)
     defineProperty(document, 'cookie', {
+        enumerable: true,
         configurable: true,
+        writable: true,
         set: (value) => {
             // call the native document.cookie implementation. This will set the cookie immediately
             // if the value is valid. We will override this set later if the policy dictates that
