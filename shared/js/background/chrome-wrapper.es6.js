@@ -22,7 +22,11 @@ const getFromStorage = (key, cb) => {
 }
 const getFromManagedStorage = (keys, cb) => {
     chrome.storage.managed.get(keys, (result) => {
-        cb(result)
+        if (!browser.runtime.lastError) {
+            cb(result)
+        } else {
+            console.warn('Managed storage not available.', browser.runtime.lastError)
+        }
     })
 }
 
