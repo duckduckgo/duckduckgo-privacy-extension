@@ -70,5 +70,8 @@
         "/img/logo-small.svg",
         "/public/css/autofill.css",
         "/public/font/*"
-    ]
+    ],
+    "storage": {
+        "managed_schema": "managed-schema.json"
+    }
 }
