@@ -89,7 +89,7 @@
         "regenerator-runtime": "^0.13.7",
         "runtimer": "1.0.3",
         "sjcl": "^1.0.8",
-        "tldts": "^5.6.2",
+        "tldts": "^5.7.38",
         "underscore": "1.13.1",
         "web-ext": "^6.0.0"
     },
