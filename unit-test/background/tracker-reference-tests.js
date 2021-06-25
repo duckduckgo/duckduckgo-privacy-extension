@@ -2,7 +2,8 @@ const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 const settings = require('../../shared/js/background/settings.es6')
 
-const refTests = require('./reference-tests.json')
+const trackers = require('./reference-tests/TR-domain-matching/tracker_radar_reference.json')
+const refTests = require('./reference-tests/TR-domain-matching/domain_matching_tests.json')
 
 describe('Tracker Utilities', () => {
     let settingsObserver
@@ -12,7 +13,7 @@ describe('Tracker Utilities', () => {
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
         tdsStorageStub.stub()
-        tds.setLists([refTests.lists])
+        tds.setLists([trackers])
 
         // Make sure we don't use any list caches for these tests
         spyOn(Date, 'now').and.callFake(function () {
@@ -22,25 +23,25 @@ describe('Tracker Utilities', () => {
         })
     })
 
-    const domainTests = refTests.tests.domainTests.tests
+    const domainTests = refTests.domainTests.tests
 
     it('Should identify a tracker correctly', () => {
         settings.updateSetting('trackerBlockingEnabled', true)
         settingsObserver.and.returnValue(undefined)
         for (const test of domainTests) {
-            const rootURL = test.site_url
-            const requestURL = test.request_url
-            const requestType = test.request_type
+            const rootURL = test.siteURL
+            const requestURL = test.requestURL
+            const requestType = test.requestType
             const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
             const action = (result && result.action)
             const reason = result && result.reason
-            if (action === test.expect_action) {
+            if (action === test.expectAction) {
                 console.log(`PASS ${test.name}`)
             } else {
-                console.log('ZZZ Test Case', test.name, requestURL, rootURL, test.expect_action)
-                console.log('FAIL', action, reason)
+                console.log('FAIL Test Case', test.name, requestURL, rootURL)
+                console.log(`-- expected ${test.expectAction}, got ${action}, reason ${reason}`)
             }
-            expect(test.expect_action).toEqual(action)
+            expect(test.expectAction).toEqual(action)
         }
     })
 })
