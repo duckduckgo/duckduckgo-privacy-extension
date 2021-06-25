@@ -13,9 +13,9 @@ describe('Tracker reference tests:', () => {
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
         tdsStorageStub.stub()
-        let testLists = [{
-            "name": "tds",
-            "data": trackers
+        const testLists = [{
+            name: 'tds',
+            data: trackers
         }]
         tds.setLists(testLists)
 
