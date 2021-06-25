@@ -5,7 +5,7 @@ const settings = require('../../shared/js/background/settings.es6')
 const trackers = require('./reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
 const refTests = require('./reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')
 
-describe('Tracker reference tests: ', () => {
+describe('Tracker reference tests:', () => {
     let settingsObserver
     let timer = Date.now()
     const jump = 1000 * 60 * 31 // slightly more than cache timeout
@@ -13,7 +13,11 @@ describe('Tracker reference tests: ', () => {
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
         tdsStorageStub.stub()
-        tds.setLists([trackers])
+        let testLists = [{
+            "name": "tds",
+            "data": trackers
+        }]
+        tds.setLists(testLists)
 
         // Make sure we don't use any list caches for these tests
         spyOn(Date, 'now').and.callFake(function () {
