@@ -21,7 +21,7 @@ describe('Tracker reference tests: ', () => {
             timer += jump
             return timer
         })
-        
+
         settings.updateSetting('trackerBlockingEnabled', true)
         settingsObserver.and.returnValue(undefined)
     })
@@ -35,7 +35,6 @@ describe('Tracker reference tests: ', () => {
             const requestType = test.requestType
             const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
             const action = (result && result.action)
-            const reason = result && result.reason
             expect(test.expectAction).toEqual(action)
         })
     }
