@@ -2,8 +2,8 @@ const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 const settings = require('../../shared/js/background/settings.es6')
 
-const trackers = require('./reference-tests/TR-domain-matching/tracker_radar_reference.json')
-const refTests = require('./reference-tests/TR-domain-matching/domain_matching_tests.json')
+const trackers = require('./reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
+const refTests = require('./reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')
 
 describe('Tracker Utilities', () => {
     let settingsObserver
