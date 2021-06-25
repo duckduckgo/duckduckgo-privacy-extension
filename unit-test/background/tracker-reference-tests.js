@@ -5,7 +5,7 @@ const settings = require('../../shared/js/background/settings.es6')
 const trackers = require('./reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
 const refTests = require('./reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')
 
-describe('Tracker Utilities', () => {
+describe('Tracker reference tests: ', () => {
     let settingsObserver
     let timer = Date.now()
     const jump = 1000 * 60 * 31 // slightly more than cache timeout
@@ -21,27 +21,22 @@ describe('Tracker Utilities', () => {
             timer += jump
             return timer
         })
+        
+        settings.updateSetting('trackerBlockingEnabled', true)
+        settingsObserver.and.returnValue(undefined)
     })
 
     const domainTests = refTests.domainTests.tests
 
-    it('Should identify a tracker correctly', () => {
-        settings.updateSetting('trackerBlockingEnabled', true)
-        settingsObserver.and.returnValue(undefined)
-        for (const test of domainTests) {
+    for (const test of domainTests) {
+        it(`${test.name}`, () => {
             const rootURL = test.siteURL
             const requestURL = test.requestURL
             const requestType = test.requestType
             const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
             const action = (result && result.action)
             const reason = result && result.reason
-            if (action === test.expectAction) {
-                console.log(`PASS ${test.name}`)
-            } else {
-                console.log('FAIL Test Case', test.name, requestURL, rootURL)
-                console.log(`-- expected ${test.expectAction}, got ${action}, reason ${reason}`)
-            }
             expect(test.expectAction).toEqual(action)
-        }
-    })
+        })
+    }
 })
