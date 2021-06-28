@@ -88,6 +88,8 @@ class Site {
 
     isWhiteListed () { return this.whitelisted }
 
+    isAllowlisted () { return this.whitelisted || this.isBroken }
+
     addTracker (t) {
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
             this.trackerUrls.push(t.tracker.domain)

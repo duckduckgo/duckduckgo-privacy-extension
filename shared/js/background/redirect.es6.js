@@ -81,16 +81,6 @@ function handleRequest (requestData) {
          */
         if (!(thisTab && thisTab.url && thisTab.id)) return
 
-        /**
-         * skip any broken sites
-         */
-        if (thisTab.site.isBroken) {
-            console.log('temporarily skip tracker blocking for site: ' +
-              utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
-            return
-        }
-
         // skip blocking on new tab and extension pages
         if (thisTab.site.specialDomainName) {
             return
@@ -154,9 +144,8 @@ function handleRequest (requestData) {
             }
 
             browserWrapper.notifyPopup({ updateTabData: true })
-
-            // Block the request if the site is not whitelisted
-            if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
+            // Block the request if the site is not allowlisted
+            if (!thisTab.site.isAllowlisted() && tracker.action.match(/block|redirect/)) {
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
@@ -197,6 +186,15 @@ function handleRequest (requestData) {
                     return { cancel: true }
                 }
             }
+        }
+
+        /**
+         * Notify skipping for broken sites
+         */
+        if (thisTab.site.isBroken) {
+            console.log('temporarily skip tracker blocking for site: ' +
+              utils.extractHostFromURL(thisTab.url) + '\n' +
+              'more info: https://github.com/duckduckgo/content-blocking-lists')
         }
 
         // If we didn't block this script and it's a tracker, notify the content script.
