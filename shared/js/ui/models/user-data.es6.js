@@ -18,7 +18,7 @@ UserData.prototype = window.$.extend({},
 
         setUserDataFromSettings: function () {
             this.fetch({ getSetting: { name: 'userData' } })
-                .then(({ userName }) => this.set('userName', userName))
+                .then((data) => this.set('userName', data?.userName))
         }
     }
 )
