@@ -67,6 +67,7 @@ Run the dev build task for your browser from the 'Build' section above. The gene
 After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
 
 ### Testing
+- Install the required test submodules: `git submodule update --init --recursive`
 - Unit tests: `npm test`
 - Integration Tests
   - Local, requires Chrome: `npm run test-int`
