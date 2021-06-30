@@ -1,5 +1,86 @@
 const sites = [
     {
+        name: 'Facebook signup',
+        url: 'https://www.facebook.com/signup',
+        autofillExpected: 1
+    },
+    {
+        name: 'Facebook login',
+        url: 'https://www.facebook.com/',
+        autofillExpected: 0
+    },
+    {
+        name: 'Twitter signup',
+        url: 'https://twitter.com/i/flow/signup',
+        actions: [{ action: 'evaluate', arg: '[...document.querySelectorAll("span")].find(element => element.textContent === "Use email instead").click()' }],
+        autofillExpected: 1
+    },
+    {
+        name: 'Twitter login',
+        url: 'https://twitter.com/login',
+        autofillExpected: 0
+    },
+    {
+        name: 'Stackoverflow signup',
+        url: 'https://stackoverflow.com/users/signup',
+        autofillExpected: 1
+    },
+    {
+        name: 'Stackoverflow login',
+        url: 'https://stackoverflow.com/users/login',
+        autofillExpected: 0
+    },
+    {
+        name: 'Stackoverflow Talent login',
+        url: 'https://talent.stackoverflow.com/users/login',
+        autofillExpected: 0
+    },
+    {
+        name: 'Stackoverflow contact',
+        url: 'https://stackoverflow.com/talent/en/contact',
+        autofillExpected: 1
+    },
+    {
+        name: 'Amazon signup',
+        url: 'https://www.amazon.com/ap/register?showRememberMe=true&openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2F%3Fref_%3Dnav_ya_signin&prevRID=Y3ZFG70R9FDTWMRCB3NR&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=usflex&openid.mode=checkid_setup&prepopulatedLoginId=&failedSignInCount=0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&pageId=usflex&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0',
+        autofillExpected: 1
+    },
+    {
+        name: 'Amazon login',
+        url: 'https://www.amazon.com/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.com%2F%3Fref_%3Dnav_ya_signin&prevRID=2EJ249M895CK292NQ7RV&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=usflex&openid.mode=checkid_setup&failedSignInCount=0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&pageId=usflex&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0',
+        autofillExpected: 0
+    },
+    {
+        name: 'Amazon Business signup',
+        url: 'https://www.amazon.com/business/register/org/landing?ref_=ap_altreg_ab',
+        autofillExpected: 1
+    },
+    {
+        name: 'Techradar newsletter',
+        url: 'https://www.mymagazine.co.uk/AccessSubscription',
+        autofillExpected: 1
+    },
+    {
+        name: 'Github signup',
+        url: 'https://github.com/signup',
+        autofillExpected: 1
+    },
+    {
+        name: 'Github login',
+        url: 'https://github.com/login',
+        autofillExpected: 0
+    },
+    {
+        name: 'Ebay signup',
+        url: 'https://signup.ebay.com/pa/crte',
+        autofillExpected: 1
+    },
+    {
+        name: 'Ebay login',
+        url: 'https://signin.ebay.com/ws/eBayISAPI.dll?SignIn',
+        autofillExpected: 0
+    },
+    {
         name: 'reddit signup',
         url: 'https://www.reddit.com/register/?dest=https%3A%2F%2Fwww.reddit.com%2F',
         autofillExpected: 1
@@ -12,7 +93,7 @@ const sites = [
     {
         name: 'quora signup',
         url: 'https://www.quora.com/',
-        actions: [{ action: 'click', arg: '.signup_email_link' }],
+        actions: [{ action: 'evaluate', arg: '[...document.querySelectorAll("button")].find(element => element.textContent === "Sign up with email").click()' }],
         autofillExpected: 1
     },
     {
@@ -28,6 +109,16 @@ const sites = [
     {
         name: 'imdb login',
         url: 'https://www.imdb.com/ap/signin?openid.return_to=https%3A%2F%2Fwww.imdb.com%2Fregistration%2Fap-signin-handler%2Fimdb_us&prevRID=67HJB7XMRSFB2KXR6NFN&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=imdb_us&openid.mode=checkid_setup&siteState=eyJvcGVuaWQuYXNzb2NfaGFuZGxlIjoiaW1kYl91cyIsInJlZGlyZWN0VG8iOiJodHRwczovL3d3dy5pbWRiLmNvbS8_cmVmXz1sb2dpbiJ9&failedSignInCount=0&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&pageId=imdb_us&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0',
+        autofillExpected: 0
+    },
+    {
+        name: 'Walmart signup',
+        url: 'https://www.walmart.com/account/signup',
+        autofillExpected: 1
+    },
+    {
+        name: 'Walmart login',
+        url: 'https://www.walmart.com/account/login',
         autofillExpected: 0
     },
     /* // Commented because headless Chrome does not load the page at all for some reason
@@ -452,14 +543,14 @@ const sites = [
     {
         name: 'Vulture.com signup',
         url: 'https://subs.nymag.com/magazine/subscribe/official-subscription.html',
-        actions: [{ action: 'click', arg: '.subscription-stripe-plan.all .plan-button' }],
+        actions: [{ action: 'click', arg: '.subscription-stripe-plan .plan-button' }],
         autofillExpected: 1
     },
     {
         name: 'Vulture.com login',
         url: 'https://www.vulture.com/',
         actions: [
-            { action: 'click', arg: '.user-signin > button.sign-in-button' }
+            { action: 'click', arg: 'button.user-button.sign-in-button' }
         ],
         autofillExpected: 0
     },
