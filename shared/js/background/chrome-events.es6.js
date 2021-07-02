@@ -234,7 +234,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
-            if (tab && tab.site.whitelisted) return { responseHeaders }
+            if (tab && (tab.site.whitelisted || tab.site.isBroken)) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
@@ -630,7 +630,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     if (sender.url === 'about:blank') {
         site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
     }
-    if (!site.whitelisted && blockTrackingCookies()) {
+    if ((!site.whitelisted && !site.isBroken) && blockTrackingCookies()) {
         // determine the register domain of the sending tab
         const tabUrl = tab ? tab.url : sender.tab.url
         const parsed = tldts.parse(tabUrl)
@@ -746,7 +746,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
-            if (tab && tab.site.whitelisted) return { requestHeaders }
+            if (tab && (tab.site.whitelisted || tab.site.isBroken)) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
