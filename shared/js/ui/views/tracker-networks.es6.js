@@ -60,7 +60,7 @@ TrackerNetworks.prototype = window.$.extend({},
             if (this.model.site) {
                 const trackerNetworksIconName = trackerNetworksIconTemplate(
                     this.model.site.siteRating,
-                    this.model.site.isWhitelisted,
+                    this.model.site.isAllowlisted,
                     this.model.site.totalTrackerNetworksCount
                 )
 

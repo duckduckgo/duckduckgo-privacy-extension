@@ -13,6 +13,8 @@ function Site (attrs) {
     attrs.tab = null
     attrs.domain = '-'
     attrs.isWhitelisted = false
+    attrs.isAllowlisted = false
+    attrs.isBroken = false
     attrs.whitelistOptIn = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
@@ -75,7 +77,7 @@ Site.prototype = window.$.extend({},
                 this.domain = 'new tab' // tab can be null for firefox new tabs
                 this.set({ isCalculatingSiteRating: false })
             } else {
-                this.isWhitelisted = this.tab.site.whitelisted
+                this.initAllowlisted(this.tab.site.whitelisted)
                 this.whitelistOptIn = this.tab.site.whitelistOptIn
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
@@ -220,7 +222,7 @@ Site.prototype = window.$.extend({},
         getMajorTrackerNetworksCount: function () {
             // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is whitelisted
-            const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
+            const trackers = this.isAllowlisted ? this.tab.trackers : this.tab.trackersBlocked
             const count = Object.values(trackers).reduce((total, t) => {
                 const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
                 total += isMajor ? 1 : 0
@@ -239,9 +241,15 @@ Site.prototype = window.$.extend({},
             return networks
         },
 
+        initAllowlisted: function (value) {
+            this.isWhitelisted = value
+            this.isBroken = this.tab.site.isBroken
+            this.isAllowlisted = this.isBroken || this.isWhitelisted
+        },
+
         toggleWhitelist: function () {
             if (this.tab && this.tab.site) {
-                this.isWhitelisted = !this.isWhitelisted
+                this.initAllowlisted(!this.isWhitelisted)
                 this.set('whitelisted', this.isWhitelisted)
                 const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
 

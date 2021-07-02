@@ -36,7 +36,7 @@ function renderHero (site) {
     site = site || {}
 
     return bel`${hero({
-        status: trackerNetworksIcon(site.siteRating, site.isWhitelisted, site.totalTrackerNetworksCount),
+        status: trackerNetworksIcon(site.siteRating, site.isAllowlisted, site.totalTrackerNetworksCount),
         title: site.domain,
         subtitle: `${trackerNetworksText(site, false)}`,
         showClose: true
@@ -56,7 +56,7 @@ function renderTrackerDetails (model) {
             } else if (c.name && model.hasUnblockedTrackers(c, c.urlsList)) {
                 const additionalText = ' associated domains'
                 const domain = model.site ? model.site.domain : c.displayName
-                c.displayName = model.site.isWhitelisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
+                c.displayName = model.site.isAllowlisted ? domain + additionalText : domain + additionalText + ' (not blocked)'
                 borderClass = companyListMap.length > 1 ? 'border--top padded--top' : ''
             }
             return bel`<li class="${borderClass}">

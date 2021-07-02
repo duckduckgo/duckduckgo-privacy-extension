@@ -41,6 +41,7 @@ Site.prototype = window.$.extend({},
     {
         _onWhitelistClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
+            if (this.$protectionrow.hasClass('is-disabled')) return
 
             this.model.toggleWhitelist()
             const whitelisted = this.model.isWhitelisted
@@ -73,6 +74,7 @@ Site.prototype = window.$.extend({},
             this._cacheElems('.js-site', [
                 'toggle',
                 'protection',
+                'protection-row',
                 'whitelist-status',
                 'show-all-trackers',
                 'show-page-trackers',
