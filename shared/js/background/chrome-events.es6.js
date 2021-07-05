@@ -167,13 +167,12 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
-const cookieConfig = require('./../background/storage/cookies.es6')
 const configStorage = require('./../background/storage/config.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
-    return true
+    return configStorage.config.privacyFeatures?.cookieProtections.state === 'enabled' || true
 }
 
 // we determine if FLoC is enabled by testing for availability of its JS API
@@ -244,7 +243,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { responseHeaders }
             }
-            if (!cookieConfig.isExcluded(request.url)) {
+            if (!utils.isCookieExcluded(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             }
         }
@@ -620,12 +619,16 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
+    const firstPartyCookiePolicy = configStorage.config.privacyFeatures?.cookieProtections.settings.firstPartyCookiePolicy || {
+        threshold: 864000, // 10 days
+        maxAge: 864000 // 10 days
+    }
     const cookie = {
         isThirdParty: false,
         shouldBlock: false,
         tabRegisteredDomain: null,
         isTrackerFrame: false,
-        policy: cookieConfig.firstPartyCookiePolicy
+        policy: firstPartyCookiePolicy
     }
     // Special case for iframes that are blank we check if it's also enabled
     if (sender.url === 'about:blank') {
@@ -642,7 +645,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         }
 
         cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
-        cookie.shouldBlock = !cookieConfig.isExcluded(sender.url)
+        cookie.shouldBlock = !utils.isCookieExcluded(sender.url)
     }
     return {
         cookie,
@@ -756,7 +759,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
                 return { requestHeaders }
             }
-            if (!cookieConfig.isExcluded(request.url)) {
+            if (!utils.isCookieExcluded(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             }
         }
@@ -868,10 +871,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'updateUserAgentData') {
-        settings.ready()
-            .then(() => {
-                cookieConfig.updateCookieData()
-            }).catch(e => console.log(e))
+        // TODO: Reinstate user agent rotation
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()
@@ -910,8 +910,6 @@ const onStartup = () => {
         https.sendHttpsUpgradeTotals()
 
         Companies.buildFromStorage()
-
-        cookieConfig.updateCookieData()
 
         // fetch alias if needed
         const userData = settings.getSetting('userData')

@@ -236,6 +236,30 @@ function isSafeListed (url) {
     return false
 }
 
+function isCookieExcluded (url) {
+    const domain = (new URL(url)).host
+    return isDomainCookieExcluded(domain)
+}
+
+function isDomainCookieExcluded (domain) {
+    const excludeList = configStorage.config.privacyFeatures?.cookieProtections.exceptions
+    if (!excludeList) {
+        return false
+    }
+
+    if (excludeList.find(elem => elem.domain === domain)) {
+        return true
+    }
+
+    const comps = domain.split('.')
+    if (comps.length > 2) {
+        comps.shift()
+        return isDomainCookieExcluded(comps.join('.'))
+    }
+
+    return false
+}
+
 /**
  * Convert an image file to a base64 data:image file,
  * for use in injections where the extension URL may not be
@@ -295,6 +319,7 @@ module.exports = {
     getBeaconName,
     getUpdatedRequestListenerTypes,
     isSafeListed,
+    isCookieExcluded,
     extractLimitedDomainFromURL,
     isBroken,
     getBrokenFeatures,
