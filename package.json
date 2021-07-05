@@ -71,7 +71,7 @@
         "timekeeper": "^2.1.1"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.0.0",
+        "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.0.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.0.3",
         "bel": "6.0.0",
