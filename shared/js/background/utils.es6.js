@@ -160,13 +160,13 @@ function isBroken (url) {
 }
 
 function getBrokenFeaturesAboutBlank (url) {
-    if (!tdsStorage?.protections) return
+    if (!configStorage.config.privacyFeatures) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.protections) {
-        if (tdsStorage.protections[feature]?.aboutBlankEnabled === false) {
+    for (const feature in configStorage.config.privacyFeatures) {
+        if (configStorage.config.privacyFeatures[feature]?.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.protections[feature].aboutBlankSites || [])) {
+        if (isBrokenList(url, configStorage.config.privacyFeatures[feature].aboutBlankSites || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -174,13 +174,13 @@ function getBrokenFeaturesAboutBlank (url) {
 }
 
 function getBrokenFeatures (url) {
-    if (!tdsStorage?.protections) return
+    if (!configStorage.config.privacyFeatures) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.protections) {
-        if (tdsStorage.protections[feature]?.enabled === false) {
+    for (const feature in configStorage.config.privacyFeatures) {
+        if (configStorage.config.privacyFeatures[feature]?.state === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.protections[feature].sites || [])) {
+        if (isBrokenList(url, configStorage.config.privacyFeatures[feature].exceptions || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -208,8 +208,8 @@ function isBrokenList (url, lists) {
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in tdsStorage?.protections) {
-        brokenScripts[key] = tdsStorage.protections[key]?.scripts || []
+    for (const key in configStorage.config.privacyFeatures) {
+        brokenScripts[key] = configStorage.config.privacyFeatures[key]?.scripts || []
     }
     return brokenScripts
 }
