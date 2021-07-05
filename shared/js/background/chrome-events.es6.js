@@ -168,6 +168,7 @@ const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 const cookieConfig = require('./../background/storage/cookies.es6')
+const configStorage = require('./../background/storage/config.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
@@ -863,6 +864,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
+        configStorage.updateConfigData()
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'updateUserAgentData') {
@@ -898,6 +900,8 @@ const onStartup = () => {
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
+
+        configStorage.updateConfigData()
 
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))

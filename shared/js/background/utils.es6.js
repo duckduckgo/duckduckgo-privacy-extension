@@ -1,5 +1,6 @@
 const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
+const configStorage = require('./storage/config.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
@@ -154,8 +155,8 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage?.brokenSiteList) return
-    return isBrokenList(url, tdsStorage.brokenSiteList)
+    if (!configStorage?.config.unprotectedTemporary) return
+    return isBrokenList(url, configStorage?.config.unprotectedTemporary)
 }
 
 function getBrokenFeaturesAboutBlank (url) {
@@ -193,7 +194,12 @@ function isBrokenList (url, lists) {
     // If root domain in temp unprotected list, return true
     return lists.some((brokenSiteDomain) => {
         if (brokenSiteDomain) {
-            return hostname.match(new RegExp(brokenSiteDomain + '$'))
+            // TODO: Remove string check after config migration
+            if (brokenSiteDomain instanceof String) {
+                return hostname.match(new RegExp(brokenSiteDomain + '$'))
+            } else {
+                return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
+            }
         }
         return false
     })

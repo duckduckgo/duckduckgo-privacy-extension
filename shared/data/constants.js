@@ -138,6 +138,12 @@ module.exports = {
             "source": "external"
         }
     ],
+    "ExtensionConfig": {
+        "name": "extensionConfig",
+        "url": "https://staticcdn.duckduckgo.com/trackerblocking/config/v1/extension-config.json",
+        "format": "json",
+        "source": "external"
+    },
     "httpsErrorCodes": {
         "net::ERR_CONNECTION_REFUSED": 1,
         "net::ERR_ABORTED": 2,
