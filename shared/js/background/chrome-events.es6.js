@@ -226,7 +226,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
 
-        if (blockTrackingCookies()) {
+        if (blockTrackingCookies() && request.type !== 'main_frame') {
             if (!trackerutils.isTracker(request.url)) {
                 return { responseHeaders }
             }
@@ -738,7 +738,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             requestHeaders.push(GPCHeader)
         }
 
-        if (blockTrackingCookies()) {
+        if (blockTrackingCookies() && request.type !== 'main_frame') {
             if (!trackerutils.isTracker(request.url)) {
                 return { requestHeaders }
             }
