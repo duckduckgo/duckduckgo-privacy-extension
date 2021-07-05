@@ -8,9 +8,14 @@ export function init (args) {
     function transformArrayData (channelData, domainKey, sessionKey, thisArg) {
         let { audioKey } = getCachedResponse(thisArg, args)
         if (!audioKey) {
-            const cdSum = channelData.reduce((sum, v) => {
-                return sum + v
-            }, 0)
+            let cdSum = 0
+            for (const k in channelData) {
+                cdSum += channelData[k]
+            }
+            // If the buffer is blank, skip adding data
+            if (cdSum === 0) {
+                return
+            }
             audioKey = getDataKeySync(sessionKey, domainKey, cdSum)
             setCache(thisArg, args, audioKey)
         }
