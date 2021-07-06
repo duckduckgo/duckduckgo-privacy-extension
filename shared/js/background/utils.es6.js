@@ -242,7 +242,7 @@ function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const excludeList = configStorage.config.features?.cookieProtections.exceptions
+    const excludeList = configStorage.config.features?.trackingCookies.exceptions
     if (!excludeList) {
         return false
     }

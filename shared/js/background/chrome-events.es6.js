@@ -172,7 +172,11 @@ const configStorage = require('./../background/storage/config.es6')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
-    return configStorage.config.features?.cookieProtections.state === 'enabled' || true
+    if (configStorage.config.features) {
+        return configStorage.config.features.trackingCookies.state === 'enabled'
+    }
+
+    return true
 }
 
 // we determine if FLoC is enabled by testing for availability of its JS API
@@ -619,7 +623,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
-    const firstPartyCookiePolicy = configStorage.config.features?.cookieProtections.settings.firstPartyCookiePolicy || {
+    const firstPartyCookiePolicy = configStorage.config.features?.trackingCookies.settings.firstPartyCookiePolicy || {
         threshold: 864000, // 10 days
         maxAge: 864000 // 10 days
     }

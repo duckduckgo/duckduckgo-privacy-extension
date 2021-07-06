@@ -24,7 +24,7 @@ export async function loadProtections () {
         'audio',
         'battery',
         'canvas',
-        'cookie',
+        'trackingCookies',
         'do-not-track',
         'floc',
         'gpc',
