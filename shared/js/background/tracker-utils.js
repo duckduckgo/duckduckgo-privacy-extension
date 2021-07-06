@@ -3,6 +3,7 @@ const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
+const configStorage = require('./storage/config.es6')
 const settings = require('./settings.es6')
 
 // Determine if two URL's belong to the same entity.
@@ -32,12 +33,13 @@ function isTracker (url) {
 }
 
 /**
- * Determine if the social entity should be blockedon this URL. returns True if so.
+ * Determine if the social entity should be blocked on this URL. returns True if so.
  */
 function shouldBlockSocialNetwork (entity, url) {
+    const ctpEnabled = configStorage.config.privacyFeatures?.clickToPlay.state === 'enabled'
     const domain = tldts.parse(url).domain
     const excludeData = getDomainsToExludeByNetwork()
-    return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
+    return ctpEnabled && excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
 }
 
 /*
@@ -98,7 +100,7 @@ function getSocialTracker (url) {
 // Return true when click to load should be enabled. Can be used to dynamically disable
 // functionality, or check for experiments
 function clickToLoadIsActive () {
-    return true
+    return configStorage.config.privacyFeatures?.clickToPlay.state === 'enabled'
 }
 
 // Determine if a given URL is surrogate redirect.
