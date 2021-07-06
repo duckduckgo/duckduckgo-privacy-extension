@@ -736,9 +736,10 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
+        const GPCEnabled = configStorage.config.privacyFeatures?.gpc.state === 'enabled'
 
         let requestHeaders = request.requestHeaders
-        if (GPCHeader) {
+        if (GPCHeader && GPCEnabled) {
             requestHeaders.push(GPCHeader)
         }
 
