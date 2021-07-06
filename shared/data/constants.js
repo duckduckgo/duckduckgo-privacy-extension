@@ -92,36 +92,8 @@ module.exports = {
             "source": "external"
         },
         {
-            "name": "ReferrerExcludeList",
-            "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
-            "format": "json",
-            "source": "external"
-        },
-        {
             "name": "ClickToLoadConfig",
             "url": "https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json",
-            "format": "json",
-            "source": "external"
-        }
-    ],
-    "UserAgentLists": [
-        {
-            "name": "agents",
-            "url": "https://staticcdn.duckduckgo.com/useragents/random_useragent.json",
-            "format": "json",
-            "source": "external"
-        },
-        {
-            "name": "excludeList",
-            "url": "https://staticcdn.duckduckgo.com/useragents/useragent_excludes.json",
-            "format": "json",
-            "source": "external"
-        }
-    ],
-    "CookieLists": [
-        {
-            "name": "cookieExcludeList",
-            "url": "https://staticcdn.duckduckgo.com/useragents/cookie_configuration.json",
             "format": "json",
             "source": "external"
         }
