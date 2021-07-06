@@ -157,6 +157,10 @@ function socialTrackerIsAllowedByUser (trackerEntity, domain) {
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
 function truncateReferrer (referrer, target) {
+    if (configStorage.config.privacyFeatures?.referrer.state !== 'enabled') {
+        return undefined
+    }
+
     if (!referrer || referrer === '') {
         return undefined
     }
@@ -169,8 +173,8 @@ function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    if (tdsStorage.ReferrerExcludeList && tdsStorage.ReferrerExcludeList.excludedReferrers) {
-        const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
+    if (configStorage.config.privacyFeatures.referrer && configStorage.config.privacyFeatures.referrer.exceptions) {
+        const excludedDomains = configStorage.config.privacyFeatures.referrer.exceptions.map(e => e.domain)
         try {
             if (excludedDomains.includes(tldts.parse(referrer).domain) ||
                 excludedDomains.includes(tldts.parse(target).domain)) {

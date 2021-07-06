@@ -92,18 +92,6 @@ module.exports = {
             "source": "external"
         },
         {
-            "name": "brokenSiteList",
-            "url": "https://duckduckgo.com/contentblocking/trackers-unprotected-temporary.txt",
-            "format": "text",
-            "source": "external"
-        },
-        {
-            "name": "protections",
-            "url": "https://duckduckgo.com/contentblocking/protections.json",
-            "format": "json",
-            "source": "external"
-        },
-        {
             "name": "ReferrerExcludeList",
             "url": "https://staticcdn.duckduckgo.com/useragents/referrer_excludes.json",
             "format": "json",
