@@ -25,7 +25,6 @@ export async function loadProtections () {
         'battery',
         'canvas',
         'cookie',
-        'do-not-track',
         'floc',
         'gpc',
         'hardware',
