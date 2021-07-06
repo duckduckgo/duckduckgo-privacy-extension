@@ -43,7 +43,7 @@ function buildResponse (url, requestData, tab, isMainFrame) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
-    const blockingEnabled = configStorage.config.privacyFeatures?.contentBlocking.state === 'enabled'
+    const blockingEnabled = configStorage.config.features?.contentBlocking.state === 'enabled'
     // Skip requests to background tabs
     if (tabId === -1) { return }
 

@@ -160,13 +160,13 @@ function isBroken (url) {
 }
 
 function getBrokenFeaturesAboutBlank (url) {
-    if (!configStorage.config.privacyFeatures) return
+    if (!configStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in configStorage.config.privacyFeatures) {
-        if (configStorage.config.privacyFeatures[feature]?.aboutBlankEnabled === 'disabled') {
+    for (const feature in configStorage.config.features) {
+        if (configStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, configStorage.config.privacyFeatures[feature].aboutBlankSites || [])) {
+        if (isBrokenList(url, configStorage.config.features[feature].aboutBlankSites || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -174,13 +174,13 @@ function getBrokenFeaturesAboutBlank (url) {
 }
 
 function getBrokenFeatures (url) {
-    if (!configStorage.config.privacyFeatures) return
+    if (!configStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in configStorage.config.privacyFeatures) {
-        if (configStorage.config.privacyFeatures[feature]?.state === 'disabled') {
+    for (const feature in configStorage.config.features) {
+        if (configStorage.config.features[feature]?.state === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, configStorage.config.privacyFeatures[feature].exceptions || [])) {
+        if (isBrokenList(url, configStorage.config.features[feature].exceptions || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -208,8 +208,8 @@ function isBrokenList (url, lists) {
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in configStorage.config.privacyFeatures) {
-        brokenScripts[key] = configStorage.config.privacyFeatures[key]?.scripts || []
+    for (const key in configStorage.config.features) {
+        brokenScripts[key] = configStorage.config.features[key]?.scripts || []
     }
     return brokenScripts
 }
@@ -242,7 +242,7 @@ function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const excludeList = configStorage.config.privacyFeatures?.cookieProtections.exceptions
+    const excludeList = configStorage.config.features?.cookieProtections.exceptions
     if (!excludeList) {
         return false
     }

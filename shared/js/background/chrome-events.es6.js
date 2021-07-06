@@ -172,7 +172,7 @@ const configStorage = require('./../background/storage/config.es6')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
-    return configStorage.config.privacyFeatures?.cookieProtections.state === 'enabled' || true
+    return configStorage.config.features?.cookieProtections.state === 'enabled' || true
 }
 
 // we determine if FLoC is enabled by testing for availability of its JS API
@@ -619,7 +619,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
-    const firstPartyCookiePolicy = configStorage.config.privacyFeatures?.cookieProtections.settings.firstPartyCookiePolicy || {
+    const firstPartyCookiePolicy = configStorage.config.features?.cookieProtections.settings.firstPartyCookiePolicy || {
         threshold: 864000, // 10 days
         maxAge: 864000 // 10 days
     }
@@ -736,7 +736,7 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
-        const GPCEnabled = configStorage.config.privacyFeatures?.gpc.state === 'enabled'
+        const GPCEnabled = configStorage.config.features?.gpc.state === 'enabled'
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
