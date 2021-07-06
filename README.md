@@ -1,6 +1,6 @@
 # DuckDuckGo Browser Extensions
 
-[![Build Status](https://travis-ci.org/duckduckgo/duckduckgo-privacy-extension.svg?branch=develop)](https://travis-ci.org/duckduckgo/duckduckgo-privacy-extension)
+[![Build Status](https://github.com/duckduckgo/duckduckgo-privacy-extension/actions/workflows/tests.yml/badge.svg)](https://github.com/duckduckgo/duckduckgo-privacy-extension/actions/workflows/tests.yml)
 
 DuckDuckGo Firefox, Chrome, and Edge extensions
 
