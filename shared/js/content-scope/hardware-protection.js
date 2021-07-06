@@ -9,7 +9,7 @@ export function init (args) {
     overrideProperty('hardwareConcurrency', {
         object: Navigator.prototype,
         origValue: navigator.hardwareConcurrency,
-        targetValue: 8
+        targetValue: 2
     })
     overrideProperty('deviceMemory', {
         object: Navigator.prototype,
