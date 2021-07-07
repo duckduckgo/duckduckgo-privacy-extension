@@ -2,8 +2,6 @@ const trackerutils = require('../../shared/js/background/tracker-utils')
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
-const configStorage = require('../../shared/js/background/storage/config.es6')
-const configStub = require('./../helpers/config.es6')
 const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
@@ -14,7 +12,6 @@ describe('Tracker Utilities', () => {
     beforeAll(() => {
         settingsObserver = spyOn(settings, 'getSetting')
         tdsStorageStub.stub()
-        configStub.stub()
 
         // Make sure we don't use any list caches for these tests
         spyOn(Date, 'now').and.callFake(function () {
@@ -23,7 +20,6 @@ describe('Tracker Utilities', () => {
             return timer
         })
 
-        configStorage.config = configStub.configData
         return tdsStorage.getLists()
             .then(lists => {
                 return tds.setLists(lists)

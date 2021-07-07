@@ -4,8 +4,6 @@ const load = require('./../../helpers/utils.es6')
 const fakeBrokenSites = require('./../../data/brokensites')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../../helpers/tds.es6')
-const configStorage = require('../../../shared/js/background/storage/config.es6')
-const configStub = require('./../../helpers/config.es6')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 
@@ -14,9 +12,7 @@ describe('Site', () => {
         load.loadStub({ brokenSites: fakeBrokenSites })
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
         tdsStorageStub.stub()
-        configStub.stub()
-
-        configStorage.config = configStub.configData
+        
         return tdsStorage.getLists()
     })
 
@@ -61,7 +57,6 @@ describe('Site', () => {
             { url: 'https://nationwide.co.uk', expected: false },
             { url: 'https://accounts.google.com', expected: true }
         ]
-
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
                 const site = new Site(test.url)

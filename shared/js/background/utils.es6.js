@@ -1,6 +1,5 @@
 const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
-const configStorage = require('./storage/config.es6')
 const constants = require('../../data/constants')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
@@ -155,18 +154,18 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!configStorage?.config.unprotectedTemporary) return
-    return isBrokenList(url, configStorage?.config.unprotectedTemporary)
+    if (!tdsStorage?.config.unprotectedTemporary) return
+    return isBrokenList(url, tdsStorage?.config.unprotectedTemporary)
 }
 
 function getBrokenFeaturesAboutBlank (url) {
-    if (!configStorage.config.features) return
+    if (!tdsStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in configStorage.config.features) {
-        if (configStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
+    for (const feature in tdsStorage.config.features) {
+        if (tdsStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, configStorage.config.features[feature].aboutBlankSites || [])) {
+        if (isBrokenList(url, tdsStorage.config.features[feature].aboutBlankSites || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -174,13 +173,13 @@ function getBrokenFeaturesAboutBlank (url) {
 }
 
 function getBrokenFeatures (url) {
-    if (!configStorage.config.features) return
+    if (!tdsStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in configStorage.config.features) {
-        if (configStorage.config.features[feature]?.state === 'disabled') {
+    for (const feature in tdsStorage.config.features) {
+        if (tdsStorage.config.features[feature]?.state === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, configStorage.config.features[feature].exceptions || [])) {
+        if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -208,8 +207,8 @@ function isBrokenList (url, lists) {
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in configStorage.config.features) {
-        brokenScripts[key] = configStorage.config.features[key]?.scripts || []
+    for (const key in tdsStorage.config.features) {
+        brokenScripts[key] = tdsStorage.config.features[key]?.scripts || []
     }
     return brokenScripts
 }
@@ -242,7 +241,7 @@ function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const excludeList = configStorage.config.features?.trackingCookies.exceptions
+    const excludeList = tdsStorage.config.features?.trackingCookies.exceptions
     if (!excludeList) {
         return false
     }

@@ -167,13 +167,12 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const pixel = require('./pixel.es6')
 const https = require('./https.es6')
-const configStorage = require('./../background/storage/config.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
-    if (configStorage.config.features) {
-        return configStorage.config.features.trackingCookies.state === 'enabled'
+    if (tdsStorage.config.features) {
+        return tdsStorage.config.features.trackingCookies.state === 'enabled'
     }
 
     return true
@@ -623,7 +622,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
-    const firstPartyCookiePolicy = configStorage.config.features?.trackingCookies.settings.firstPartyCookiePolicy || {
+    const firstPartyCookiePolicy = tdsStorage.config.features?.trackingCookies.settings.firstPartyCookiePolicy || {
         threshold: 864000, // 10 days
         maxAge: 864000 // 10 days
     }
@@ -740,7 +739,7 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
-        const GPCEnabled = configStorage.config.features?.gpc.state === 'enabled'
+        const GPCEnabled = tdsStorage.config.features?.gpc.state === 'enabled'
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
@@ -872,7 +871,6 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
             .catch(e => console.log(e))
-        configStorage.updateConfigData()
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'updateUserAgentData') {
@@ -905,8 +903,6 @@ const onStartup = () => {
         httpsStorage.getLists(constants.httpsLists)
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
-
-        configStorage.updateConfigData()
 
         tdsStorage.getLists()
             .then(lists => trackers.setLists(lists))
