@@ -14,103 +14,75 @@ class TDSStorage {
         this.surrogates = ''
         this.config = {
             features: {
-                "contentBlocking": {
-                    "state": "enabled",
-                    "exceptions": [
-        
-                    ]
+                contentBlocking: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "trackingCookies": {
-                    "state": "enabled",
-                    "settings": {
-                        "firstPartyTrackerCookiePolicy": {
-                            "threshold": 86400,
-                            "maxAge": 86400
+                trackingCookies: {
+                    state: 'enabled',
+                    settings: {
+                        firstPartyTrackerCookiePolicy: {
+                            threshold: 86400,
+                            maxAge: 86400
                         }
                     },
-                    "exceptions": [
-                        
-                    ]
+                    exceptions: []
                 },
-                "clickToPlay": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                clickToPlay: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "fingerprintingCanvas": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                fingerprintingCanvas: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "fingerprintingAudio": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                fingerprintingAudio: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "fingerprintingTemporaryStorage": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                fingerprintingTemporaryStorage: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "referrer": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                referrer: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "fingerprintingBattery": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                fingerprintingBattery: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "fingerprintingScreenSize": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                fingerprintingScreenSize: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "fingerprintingHardware": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                fingerprintingHardware: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "floc": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                floc: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "gpc": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                gpc: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "autofill": {
-                    "state": "enabled",
-                    "exceptions": [
-                        
-                    ]
+                autofill: {
+                    state: 'enabled',
+                    exceptions: []
                 },
-                "userAgentRotation": {
-                    "state": "disabled",
-                    "settings": {
-                        "agentExcludePatterns": [
+                userAgentRotation: {
+                    state: 'disabled',
+                    settings: {
+                        agentExcludePatterns: [
                             {
-                                "agent": "Brave Chrome",
-                                "reason": "Uncommon UA"
+                                agent: 'Brave Chrome',
+                                reason: 'Uncommon UA'
                             }
                         ]
                     },
-                    "exceptions": [
-        
-                    ]
+                    exceptions: []
                 }
             },
             unprotectedTemporary: []

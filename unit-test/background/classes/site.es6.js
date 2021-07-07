@@ -12,7 +12,7 @@ describe('Site', () => {
         load.loadStub({ brokenSites: fakeBrokenSites })
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
         tdsStorageStub.stub()
-        
+
         return tdsStorage.getLists()
     })
 
