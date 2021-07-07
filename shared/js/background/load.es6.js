@@ -1,4 +1,4 @@
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 
 let dev = false
 

@@ -10,7 +10,7 @@ const UserDataView = require('./../views/user-data.es6.js')
 const UserDataModel = require('./../models/user-data.es6.js')
 const userDataTemplate = require('./../templates/user-data.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 function Options (ops) {
     Parent.call(this, ops)

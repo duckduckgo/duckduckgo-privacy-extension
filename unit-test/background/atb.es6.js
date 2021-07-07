@@ -1,7 +1,7 @@
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
-const browserWrapper = require('../../shared/js/background/chrome-wrapper.es6')
+const browserWrapper = require('../../shared/js/background/wrapper.es6')
 
 const settingHelper = require('../helpers/settings.es6')
 

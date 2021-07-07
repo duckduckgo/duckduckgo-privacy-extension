@@ -11,6 +11,12 @@
         ],
         "scripts": []
     },
+    "temporary-storage": {
+        "enabled": true,
+        "sites": [
+        ],
+        "scripts": []
+    },
     "referrer": {
         "enabled": true,
         "sites": [

@@ -129,14 +129,7 @@ module.exports = function (grunt) {
                     debug: buildType === 'dev'
                 },
                 transform: [
-                    ['babelify'],
-                    [(file) => {
-                        return through(function (buf, enc, next) {
-                            let requireName = 'chrome'
-                            this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
-                            next()
-                        })
-                    }]
+                    ['babelify']
                 ]
             },
             ui: {

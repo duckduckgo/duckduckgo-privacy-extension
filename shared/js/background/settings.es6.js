@@ -1,5 +1,5 @@
 const defaultSettings = require('../../data/defaultSettings')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 
 /**
  * Settings whose defaults can by managed by the system administrator
