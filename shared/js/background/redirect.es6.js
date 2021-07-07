@@ -10,6 +10,7 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
 const browser = utils.getBrowserName()
+const tdsStorage = require('./storage/tds.es6')
 
 const debugRequest = false
 
@@ -42,6 +43,7 @@ function buildResponse (url, requestData, tab, isMainFrame) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
+    const blockingEnabled = tdsStorage.config.features?.contentBlocking.state === 'enabled'
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
@@ -124,7 +126,7 @@ function handleRequest (requestData) {
         }
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
-        if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
+        if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party') && blockingEnabled) {
             // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
             // comes through on document unload and by the time we block it we have updated our tab data to the new
             // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the

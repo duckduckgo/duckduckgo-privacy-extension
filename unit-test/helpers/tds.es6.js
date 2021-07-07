@@ -4,12 +4,21 @@
  */
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsData = {
-    brokenSiteList: require('./../data/brokensites.js').brokenSites.split('\n'),
-    protections: require('./../data/protections.json'),
     tds: require('./../data/tds.json'),
     surrogates: require('./../data/surrogates.js').surrogates,
-    ReferrerExcludeList: require('./../data/fpExcludeLists.js').referrer,
-    ClickToLoadConfig: require('./../data/clickToLoadConfig.json')
+    ClickToLoadConfig: require('./../data/clickToLoadConfig.json'),
+    config: {
+        features: {
+            referrer: {
+                state: 'enabled',
+                exceptions: require('./../data/fpExcludeLists.js').referrer.excludedReferrers
+            },
+            clickToPlay: {
+                state: 'enabled'
+            }
+        },
+        unprotectedTemporary: require('./../data/brokensites.js').brokenSites
+    }
 }
 
 const stub = () => {

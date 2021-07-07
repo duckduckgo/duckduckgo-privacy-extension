@@ -12,8 +12,81 @@ class TDSStorage {
         })
         this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
-        this.brokenSiteList = []
-        this.protections = {}
+        this.config = {
+            features: {
+                contentBlocking: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                trackingCookies: {
+                    state: 'enabled',
+                    settings: {
+                        firstPartyTrackerCookiePolicy: {
+                            threshold: 86400,
+                            maxAge: 86400
+                        }
+                    },
+                    exceptions: []
+                },
+                clickToPlay: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                fingerprintingCanvas: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                fingerprintingAudio: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                fingerprintingTemporaryStorage: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                referrer: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                fingerprintingBattery: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                fingerprintingScreenSize: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                fingerprintingHardware: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                floc: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                gpc: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                autofill: {
+                    state: 'enabled',
+                    exceptions: []
+                },
+                userAgentRotation: {
+                    state: 'disabled',
+                    settings: {
+                        agentExcludePatterns: [
+                            {
+                                agent: 'Brave Chrome',
+                                reason: 'Uncommon UA'
+                            }
+                        ]
+                    },
+                    exceptions: []
+                }
+            },
+            unprotectedTemporary: []
+        }
     }
 
     getLists () {

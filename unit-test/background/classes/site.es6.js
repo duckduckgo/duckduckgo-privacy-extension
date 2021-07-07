@@ -12,6 +12,7 @@ describe('Site', () => {
         load.loadStub({ brokenSites: fakeBrokenSites })
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
         tdsStorageStub.stub()
+
         return tdsStorage.getLists()
     })
 
@@ -56,7 +57,6 @@ describe('Site', () => {
             { url: 'https://nationwide.co.uk', expected: false },
             { url: 'https://accounts.google.com', expected: true }
         ]
-
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
                 const site = new Site(test.url)

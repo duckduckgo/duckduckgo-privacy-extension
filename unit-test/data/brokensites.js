@@ -1,3 +1,6 @@
 module.exports = {
-    brokenSites: 'suntrust.com\ngoogle.com'
+    brokenSites: [
+        { domain: 'suntrust.com' },
+        { domain: 'google.com' }
+    ]
 }

@@ -21,16 +21,16 @@ export async function loadProtections () {
         return
     }
     const protectionNames = [
-        'audio',
-        'battery',
-        'canvas',
-        'cookie',
+        'fingerprintingAudio',
+        'fingerprintingBattery',
+        'fingerprintingCanvas',
+        'trackingCookies',
         'floc',
         'gpc',
-        'hardware',
+        'fingerprintingHardware',
         'referrer',
-        'screen-size',
-        'temporary-storage'
+        'fingerprintingScreenSize',
+        'fingerprintingTemporaryStorage'
     ]
 
     for (const protectionName of protectionNames) {

@@ -32,12 +32,13 @@ function isTracker (url) {
 }
 
 /**
- * Determine if the social entity should be blockedon this URL. returns True if so.
+ * Determine if the social entity should be blocked on this URL. returns True if so.
  */
 function shouldBlockSocialNetwork (entity, url) {
+    const ctpEnabled = tdsStorage.config.features?.clickToPlay.state === 'enabled'
     const domain = tldts.parse(url).domain
     const excludeData = getDomainsToExludeByNetwork()
-    return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
+    return ctpEnabled && excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
 }
 
 /*
@@ -98,7 +99,7 @@ function getSocialTracker (url) {
 // Return true when click to load should be enabled. Can be used to dynamically disable
 // functionality, or check for experiments
 function clickToLoadIsActive () {
-    return true
+    return tdsStorage.config.features?.clickToPlay.state === 'enabled'
 }
 
 // Determine if a given URL is surrogate redirect.
@@ -155,6 +156,10 @@ function socialTrackerIsAllowedByUser (trackerEntity, domain) {
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
 function truncateReferrer (referrer, target) {
+    if (tdsStorage.config.features?.referrer.state !== 'enabled') {
+        return undefined
+    }
+
     if (!referrer || referrer === '') {
         return undefined
     }
@@ -167,8 +172,8 @@ function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    if (tdsStorage.ReferrerExcludeList && tdsStorage.ReferrerExcludeList.excludedReferrers) {
-        const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
+    if (tdsStorage.config.features.referrer && tdsStorage.config.features.referrer.exceptions) {
+        const excludedDomains = tdsStorage.config.features.referrer.exceptions.map(e => e.domain)
         try {
             if (excludedDomains.includes(tldts.parse(referrer).domain) ||
                 excludedDomains.includes(tldts.parse(target).domain)) {

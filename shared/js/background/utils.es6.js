@@ -154,18 +154,18 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage?.brokenSiteList) return
-    return isBrokenList(url, tdsStorage.brokenSiteList)
+    if (!tdsStorage?.config.unprotectedTemporary) return
+    return isBrokenList(url, tdsStorage?.config.unprotectedTemporary)
 }
 
 function getBrokenFeaturesAboutBlank (url) {
-    if (!tdsStorage?.protections) return
+    if (!tdsStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.protections) {
-        if (tdsStorage.protections[feature]?.aboutBlankEnabled === false) {
+    for (const feature in tdsStorage.config.features) {
+        if (tdsStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.protections[feature].aboutBlankSites || [])) {
+        if (isBrokenList(url, tdsStorage.config.features[feature].aboutBlankSites || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -173,13 +173,13 @@ function getBrokenFeaturesAboutBlank (url) {
 }
 
 function getBrokenFeatures (url) {
-    if (!tdsStorage?.protections) return
+    if (!tdsStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.protections) {
-        if (tdsStorage.protections[feature]?.enabled === false) {
+    for (const feature in tdsStorage.config.features) {
+        if (tdsStorage.config.features[feature]?.state === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.protections[feature].sites || [])) {
+        if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || [])) {
             brokenFeatures.push(feature)
         }
     }
@@ -193,7 +193,12 @@ function isBrokenList (url, lists) {
     // If root domain in temp unprotected list, return true
     return lists.some((brokenSiteDomain) => {
         if (brokenSiteDomain) {
-            return hostname.match(new RegExp(brokenSiteDomain + '$'))
+            // TODO: Remove string check after config migration
+            if (brokenSiteDomain instanceof String) {
+                return hostname.match(new RegExp(brokenSiteDomain + '$'))
+            } else {
+                return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
+            }
         }
         return false
     })
@@ -202,8 +207,8 @@ function isBrokenList (url, lists) {
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in tdsStorage?.protections) {
-        brokenScripts[key] = tdsStorage.protections[key]?.scripts || []
+    for (const key in tdsStorage.config.features) {
+        brokenScripts[key] = tdsStorage.config.features[key]?.scripts || []
     }
     return brokenScripts
 }
@@ -225,6 +230,30 @@ function isSafeListed (url) {
     // Check broken sites
     if (isBroken(hostname)) {
         return true
+    }
+
+    return false
+}
+
+function isCookieExcluded (url) {
+    const domain = (new URL(url)).host
+    return isDomainCookieExcluded(domain)
+}
+
+function isDomainCookieExcluded (domain) {
+    const excludeList = tdsStorage.config.features?.trackingCookies.exceptions
+    if (!excludeList) {
+        return false
+    }
+
+    if (excludeList.find(elem => elem.domain === domain)) {
+        return true
+    }
+
+    const comps = domain.split('.')
+    if (comps.length > 2) {
+        comps.shift()
+        return isDomainCookieExcluded(comps.join('.'))
     }
 
     return false
@@ -289,6 +318,7 @@ module.exports = {
     getBeaconName,
     getUpdatedRequestListenerTypes,
     isSafeListed,
+    isCookieExcluded,
     extractLimitedDomainFromURL,
     isBroken,
     getBrokenFeatures,
