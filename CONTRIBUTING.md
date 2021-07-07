@@ -48,10 +48,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
  2. Load the extension in Chrome from the `build/chrome/dev` directory
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
-- Safari
-
-  The Safari extension is no longer supported.
-
 ### Development flow
 
 The `shared` directory contains JS, CSS, and images that are shared by all browsers.

@@ -1,4 +1,4 @@
-/* Generates a link that will work on both webextensions and safari
+/* Generates a link tag
  * url: href url
  * options: any a tag attribute
  */
@@ -17,18 +17,6 @@ module.exports = function (url, options) {
 
     for (const key in options) {
         a[key] = options[key]
-    }
-
-    if (window.safari) {
-        // safari can't use _blank target so we'll add a click handler
-        if (a.target === '_blank') {
-            a.removeAttribute('target')
-            a.href = 'javascript:void(0)'
-            a.onclick = () => {
-                window.safari.application.activeBrowserWindow.openTab().url = url
-                window.safari.self.hide()
-            }
-        }
     }
 
     return a

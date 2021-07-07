@@ -59,8 +59,6 @@ function handleRequest (requestData) {
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    //
-    // Safari doesn't have specific requests for main frames
     if (requestData.type === 'main_frame' && window.chrome) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             const newTab = tabManager.create(requestData)
