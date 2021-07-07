@@ -15,7 +15,6 @@ const expectedFingerprintValues = {
     wAvailLeft: 0,
     colorDepth: 24,
     pixelDepth: 24,
-    doNotTrack: null,
     productSub: '20030107',
     vendorSub: ''
 }
@@ -66,7 +65,6 @@ describe('Fingerprint Defense Tests', () => {
                     wAvailLeft: window.screen.availLeft,
                     colorDepth: screen.colorDepth,
                     pixelDepth: screen.pixelDepth,
-                    doNotTrack: navigator.doNotTrack,
                     productSub: navigator.productSub,
                     vendorSub: navigator.vendorSub
                 }

@@ -48,7 +48,7 @@
         "grunt": "1.4.1",
         "grunt-browserify": "6.0.0",
         "grunt-contrib-compass": "1.1.1",
-        "grunt-contrib-concat": "0.4.0",
+        "grunt-contrib-concat": "1.0.1",
         "grunt-contrib-watch": "1.1.0",
         "grunt-exec": "3.0.0",
         "grunt-execute": "0.2.2",

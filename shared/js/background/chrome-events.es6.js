@@ -178,24 +178,6 @@ function blockTrackingCookies () {
     return true
 }
 
-// we determine if FLoC is enabled by testing for availability of its JS API
-const isFlocEnabled = ('interestCohort' in document)
-
-// Overwrite FLoC JS API
-if (isFlocEnabled) {
-    chrome.webNavigation.onCommitted.addListener(details => {
-        const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && tab.site.whitelisted) return
-
-        chrome.tabs.executeScript(details.tabId, {
-            file: 'public/js/content-scripts/floc.js',
-            frameId: details.frameId,
-            matchAboutBlank: true,
-            runAt: 'document_start'
-        })
-    })
-}
-
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 chrome.webRequest.onBeforeRequest.addListener(
@@ -211,6 +193,8 @@ const extraInfoSpec = ['blocking', 'responseHeaders']
 if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
     extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
+// we determine if FLoC is enabled by testing for availability of its JS API
+const isFlocEnabled = ('interestCohort' in document)
 chrome.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
