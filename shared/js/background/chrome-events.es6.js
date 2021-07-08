@@ -857,8 +857,6 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
-    } else if (alarmEvent.name === 'updateUserAgentData') {
-        // TODO: Reinstate user agent rotation
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()
