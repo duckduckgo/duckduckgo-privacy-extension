@@ -10,7 +10,7 @@ const fetchAlias = () => {
 
     const userData = getSetting('userData')
 
-    if (!userData.token) return
+    if (!userData?.token) return
 
     return fetch('https://quack.duckduckgo.com/api/email/addresses', {
         method: 'post',
