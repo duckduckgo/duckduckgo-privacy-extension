@@ -43,7 +43,7 @@ function buildResponse (url, requestData, tab, isMainFrame) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
-    const blockingEnabled = tdsStorage.config.features?.contentBlocking.state === 'enabled'
+    const blockingEnabled = utils.isFeatureEnabled('contentBlocking')
     // Skip requests to background tabs
     if (tabId === -1) { return }
 

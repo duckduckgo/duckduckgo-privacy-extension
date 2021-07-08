@@ -243,7 +243,7 @@ Site.prototype = window.$.extend({},
 
         initAllowlisted: function (value) {
             this.isWhitelisted = value
-            this.isBroken = this.tab.site.isBroken
+            this.isBroken = this.tab.site.isBroken || this.tab.site.brokenFeatures.includes('contentBlocking')
             this.isAllowlisted = this.isBroken || this.isWhitelisted
         },
 

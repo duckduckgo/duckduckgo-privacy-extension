@@ -172,7 +172,7 @@ const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
     if (tdsStorage.config.features) {
-        return tdsStorage.config.features.trackingCookies.state === 'enabled'
+        return utils.isFeatureEnabled('trackingCookies')
     }
 
     return true
@@ -723,7 +723,7 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
-        const GPCEnabled = tdsStorage.config.features?.gpc.state === 'enabled'
+        const GPCEnabled = utils.isFeatureEnabled('gpc')
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {

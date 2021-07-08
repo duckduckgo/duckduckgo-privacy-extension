@@ -176,7 +176,7 @@ function getBrokenFeatures (url) {
     if (!tdsStorage.config.features) return
     const brokenFeatures = []
     for (const feature in tdsStorage.config.features) {
-        if (tdsStorage.config.features[feature]?.state === 'disabled') {
+        if (!isFeatureEnabled(feature)) {
             brokenFeatures.push(feature)
         }
         if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || [])) {
@@ -306,6 +306,23 @@ function isSameTopLevelDomain (url1, url2) {
     return firstDomain === secondDomain
 }
 
+/**
+ * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
+ * parameter to check if the state is equeal to other states (i.e. state === 'beta').
+ * 
+ * @param {String} featureName - the name of the feature
+ * @param {String} customState - An optional custom state to check for
+ * @returns 
+ */
+function isFeatureEnabled (featureName, customState) {
+    const feature = tdsStorage.config.features[featureName]
+    if (!feature) {
+        return false
+    }
+
+    return (customState) ? feature.state === customState : feature.state === 'enabled'
+}
+
 module.exports = {
     extractHostFromURL,
     extractTopSubdomainFromHost,
@@ -325,5 +342,6 @@ module.exports = {
     getBrokenFeaturesAboutBlank,
     imgToData,
     getBrokenScriptLists,
-    isSameTopLevelDomain
+    isSameTopLevelDomain,
+    isFeatureEnabled
 }
