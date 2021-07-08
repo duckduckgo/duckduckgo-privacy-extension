@@ -309,10 +309,10 @@ function isSameTopLevelDomain (url1, url2) {
 /**
  * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
  * parameter to check if the state is equeal to other states (i.e. state === 'beta').
- * 
+ *
  * @param {String} featureName - the name of the feature
  * @param {String} customState - An optional custom state to check for
- * @returns 
+ * @returns {bool} - if feature is enabled/matches specified state
  */
 function isFeatureEnabled (featureName, customState) {
     const feature = tdsStorage.config.features[featureName]

@@ -10,7 +10,6 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
 const browser = utils.getBrowserName()
-const tdsStorage = require('./storage/tds.es6')
 
 const debugRequest = false
 
