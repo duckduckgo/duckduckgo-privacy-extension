@@ -46,7 +46,7 @@
     ga.answer = 42
     ga.loaded = true
     ga.create = function() { return new Proxy({}, noopHandler) }
-    ga.getByName = noopReturnNull
+    ga.getByName = function() { return new Proxy({}, noopHandler) }
     ga.getAll = function() { return [Tracker] }
     ga.remove = noop
     window[gaPointer] = ga
