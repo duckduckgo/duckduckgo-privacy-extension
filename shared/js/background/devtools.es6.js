@@ -18,7 +18,6 @@ function connected (port) {
             tabId = m.tabId
             ports.set(tabId, port)
             const tab = tabManager.get({ tabId })
-            console.log('setTab', tab)
             postMessage(tabId, 'tabChange', tab)
         } else if (m.action === 'I' || m.action === 'B') {
             const { requestData, siteUrl, tracker } = m
