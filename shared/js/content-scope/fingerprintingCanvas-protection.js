@@ -1,4 +1,4 @@
-import { shouldExemptMethod, DDGProxy, DDGReflect, postDebugMessage } from './utils'
+import { shouldExemptMethod, DDGProxy, DDGReflect } from './utils'
 import { computeOffScreenCanvas } from './canvas'
 
 export function init (args) {
@@ -8,15 +8,12 @@ export function init (args) {
     // Using proxies here to swallow calls to toString etc
     const getImageDataProxy = new DDGProxy(CanvasRenderingContext2D.prototype, 'getImageData', {
         apply (target, thisArg, args) {
+            const isExempt = shouldExemptMethod('canvas')
             if (debug) {
-                postDebugMessage('canvas', {
-                    action: shouldExemptMethod('canvas') ? 'ignore' : 'restrict',
-                    kind: 'getImageData',
-                    documentUrl: document.location.href
-                })
+                getImageDataProxy.sendDebugMessage('canvas', isExempt ? 'ignore' : 'restrict')
             }
             // The normal return value
-            if (shouldExemptMethod('canvas')) {
+            if (isExempt) {
                 return DDGReflect.apply(target, thisArg, args)
             }
             // Anything we do here should be caught and ignored silently
@@ -36,14 +33,11 @@ export function init (args) {
     for (const methodName of canvasMethods) {
         const proxy = new DDGProxy(HTMLCanvasElement.prototype, methodName, {
             apply (target, thisArg, args) {
+                const isExempt = shouldExemptMethod('canvas')
                 if (debug) {
-                    postDebugMessage('canvas', {
-                        action: shouldExemptMethod('canvas') ? 'ignore' : 'restrict',
-                        kind: methodName,
-                        documentUrl: document.location.href
-                    })
+                    proxy.sendDebugMessage('canvas', isExempt ? 'ignore' : 'restrict')
                 }
-                if (shouldExemptMethod('canvas')) {
+                if (isExempt) {
                     return DDGReflect.apply(target, thisArg, args)
                 }
                 try {
