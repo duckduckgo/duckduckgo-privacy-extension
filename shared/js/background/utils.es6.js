@@ -340,6 +340,7 @@ module.exports = {
     isBroken,
     getBrokenFeatures,
     getBrokenFeaturesAboutBlank,
+    isBrokenList,
     imgToData,
     getBrokenScriptLists,
     isSameTopLevelDomain,

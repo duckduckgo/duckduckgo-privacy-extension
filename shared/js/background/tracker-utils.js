@@ -172,17 +172,9 @@ function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    if (tdsStorage.config.features.referrer && tdsStorage.config.features.referrer.exceptions) {
-        const excludedDomains = tdsStorage.config.features.referrer.exceptions.map(e => e.domain)
-        try {
-            if (excludedDomains.includes(tldts.parse(referrer).domain) ||
-                excludedDomains.includes(tldts.parse(target).domain)) {
-                // referrer or target is in the Referrer safe list
-                return undefined
-            }
-        } catch (e) {
-            // if we can't parse the domains for any reason, assume it's not exluded.
-        }
+    const exceptionList = tdsStorage.config.features.referrer.exceptions
+    if (utils.isBrokenList(referrer, exceptionList) || utils.isBrokenList(target, exceptionList)) {
+        return undefined
     }
 
     let modifiedReferrer = referrer
