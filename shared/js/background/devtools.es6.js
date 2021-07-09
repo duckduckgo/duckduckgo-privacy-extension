@@ -55,7 +55,6 @@ function connected (port) {
         } else if (m.action === 'toggleProtection') {
             const { tabId } = m
             const tab = tabManager.get({ tabId })
-            console.log('xxx', tab)
             if (tab.site?.isBroken) {
                 removeBroken(tab.site.domain)
                 removeBroken(new URL(tab.url).hostname)
@@ -69,15 +68,18 @@ function connected (port) {
             postMessage(tabId, 'tabChange', tab)
         } else if (m.action.startsWith('toggle')) {
             const { tabId } = m
-            const feature = m.action.slice(6).toLowerCase()
+            const feature = m.action.slice(6)
             const tab = tabManager.get({ tabId })
             const enabled = !tab.site?.brokenFeatures.includes(feature)
-            const excludedSites = tdsStorage.protections[feature].sites
-            const domain = tldts.getDomain(tab.site.domain)
+            const excludedSites = tdsStorage.config.features[feature].exceptions
+            const tabDomain = tldts.getDomain(tab.site.domain)
             if (enabled) {
-                excludedSites.push(domain)
+                excludedSites.push({
+                    domain: tabDomain,
+                    reason: 'Manually disabled'
+                })
             } else {
-                excludedSites.splice(excludedSites.indexOf(domain, 1))
+                excludedSites.splice(excludedSites.findIndex(({ domain }) => domain === tabDomain), 1)
             }
         }
     })

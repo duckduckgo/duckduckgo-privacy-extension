@@ -8,15 +8,15 @@ const displayFilters = document.querySelectorAll('#table-filter input')
 
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
 const port = chrome.runtime.connect()
-const features = [
-    'canvas',
-    'audio',
-    'referrer',
-    'floc',
-    'autofill',
-    'cookie',
-    'gpc'
-]
+const features = {
+    canvas: 'fingerprintingCanvas',
+    audio: 'fingerprintingAudio',
+    referrer: 'referrer',
+    floc: 'floc',
+    autofill: 'autofill',
+    cookie: 'trackingCookies',
+    gpc: 'gpc'
+}
 
 const actionIcons = {
     block: '🚫',
@@ -67,8 +67,8 @@ port.onMessage.addListener((message) => {
         } else if (m.action === 'tabChange') {
             const tab = m.message
             protectionButton.innerText = `Protection: ${tab.site?.whitelisted || tab.site?.isBroken ? 'OFF' : 'ON'}`
-            features.forEach((feature) => {
-                document.getElementById(feature).innerText = `${feature}: ${tab.site?.brokenFeatures.includes(feature) ? 'OFF' : 'ON'}`
+            Object.keys(features).forEach((feature) => {
+                document.getElementById(feature).innerText = `${feature}: ${tab.site?.brokenFeatures.includes(features[feature]) ? 'OFF' : 'ON'}`
             })
         } else if (m.action === 'cookie') {
             const { action, kind, url, requestId, type } = m.message
@@ -178,14 +178,14 @@ protectionButton.addEventListener('click', () => {
     })
 })
 
-features.forEach((feature) => {
+Object.keys(features).forEach((feature) => {
     const btn = document.createElement('button')
     btn.id = feature
     btn.innerText = `${feature}: ???`
     document.querySelector('.header').appendChild(btn)
     btn.addEventListener('click', () => {
         port.postMessage({
-            action: `toggle${feature}`,
+            action: `toggle${features[feature]}`,
             tabId
         })
     })
