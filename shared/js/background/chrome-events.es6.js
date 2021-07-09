@@ -552,39 +552,42 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Check the origin. Shouldn't be necessary, but better safe than sorry
         if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
 
-        const { userName, token } = req.addUserData
-        const { existingToken } = settings.getSetting('userData') || {}
-
-        // If the user is already registered, just notify tabs that we're ready
-        if (existingToken === token) {
-            chrome.tabs.query({}, (tabs) => {
-                tabs.forEach((tab) => {
+        const sendDdgUserReady = () =>
+            chrome.tabs.query({}, (tabs) =>
+                tabs.forEach((tab) =>
                     chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
-                })
-            })
-            return
-        }
+                )
+            )
 
-        // Check general data validity
-        if (isValidUsername(userName) && isValidToken(token)) {
-            settings.updateSetting('userData', req.addUserData)
-            // Once user is set, fetch the alias and notify all tabs
-            fetchAlias().then(response => {
-                if (response && response.error) {
-                    return res({ error: response.error.message })
-                }
+        settings.ready().then(() => {
+            const { userName, token } = req.addUserData
+            const { existingToken } = settings.getSetting('userData') || {}
 
-                chrome.tabs.query({}, (tabs) => {
-                    tabs.forEach((tab) => {
-                        chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
-                    })
-                })
-                showContextMenuAction()
+            // If the user is already registered, just notify tabs that we're ready
+            if (existingToken === token) {
+                sendDdgUserReady()
                 res({ success: true })
-            })
-        } else {
-            res({ error: 'Something seems wrong with the user data' })
-        }
+                return
+            }
+
+            // Check general data validity
+            if (isValidUsername(userName) && isValidToken(token)) {
+                settings.updateSetting('userData', req.addUserData)
+                // Once user is set, fetch the alias and notify all tabs
+                fetchAlias().then((response) => {
+                    if (response && response.error) {
+                        res({ error: response.error.message })
+                        return
+                    }
+
+                    sendDdgUserReady()
+                    showContextMenuAction()
+                    res({ success: true })
+                })
+            } else {
+                res({ error: 'Something seems wrong with the user data' })
+            }
+        })
 
         return true
     }
