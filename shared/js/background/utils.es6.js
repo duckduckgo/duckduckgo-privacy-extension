@@ -159,9 +159,9 @@ function isBroken (url) {
 }
 
 function removeBroken (domain) {
-    const index = isBrokenList(domain, tdsStorage.brokenSiteList)
+    const index = isBrokenList(domain, tdsStorage.config.unprotectedTemporary)
     if (index !== -1) {
-        console.log('remove', tdsStorage.brokenSiteList.splice(index, 1))
+        console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
     }
 }
 
