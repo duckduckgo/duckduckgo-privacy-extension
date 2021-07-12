@@ -595,7 +595,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.getListContents) {
         res({
-            data: tdsStorage.getSerialisableList(req.getListContents),
+            data: tdsStorage.getSerializableList(req.getListContents),
             etag: settings.getSetting(`${req.getListContents}-etag`) || ''
         })
         return true

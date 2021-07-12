@@ -231,7 +231,7 @@ class TDSStorage {
      * @param {*} name
      * @returns list in a fully serialisable format
      */
-    getSerialisableList (name) {
+    getSerializableList (name) {
         if (name === 'tds') {
             // copy and convert regexes to string
             const listCopy = JSON.parse(JSON.stringify(this.tds))
