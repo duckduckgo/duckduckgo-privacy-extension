@@ -155,11 +155,11 @@ function getAsyncBlockingSupport () {
 */
 function isBroken (url) {
     if (!tdsStorage?.config.unprotectedTemporary) return
-    return isBrokenList(url, tdsStorage?.config.unprotectedTemporary) !== -1
+    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
 }
 
 function removeBroken (domain) {
-    const index = isBrokenList(domain, tdsStorage.config.unprotectedTemporary)
+    const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
     if (index !== -1) {
         console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
     }
@@ -172,7 +172,7 @@ function getBrokenFeaturesAboutBlank (url) {
         if (tdsStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.config.features[feature].aboutBlankSites || [])) {
+        if (brokenListIndex(url, tdsStorage.config.features[feature].aboutBlankSites || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
@@ -186,14 +186,14 @@ function getBrokenFeatures (url) {
         if (tdsStorage.config.features[feature]?.state === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
+        if (brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
     return brokenFeatures
 }
 
-function isBrokenList (url, lists) {
+function brokenListIndex (url, lists) {
     const parsedDomain = tldts.parse(url)
     const hostname = parsedDomain.hostname || url
 
