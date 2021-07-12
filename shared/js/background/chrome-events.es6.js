@@ -15,15 +15,9 @@ const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
 const browserName = utils.getBrowserName()
+const devtools = require('./devtools.es6')
 
 const sha1 = require('../shared-utils/sha1')
-
-const RELEASE_EXTENSION_IDS = [
-    'caoacbimdbbljakfhgikoodekdnlcgpk', // edge store
-    'bkdgflcldnnnapblkhphbgpggdiikppg', // chrome store
-    'jid1-ZAdIEUB7XOzOJw@jetpack' // firefox
-]
-const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1 // eslint-disable-line no-unused-vars
 
 /**
  * Produce a random float, same output as Math.random()
@@ -232,6 +226,14 @@ chrome.webRequest.onHeadersReceived.addListener(
             }
             if (!utils.isCookieExcluded(request.url)) {
                 responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
+                devtools.postMessage(request.tabId, 'cookie', {
+                    action: 'block',
+                    kind: 'set-cookie',
+                    url: request.url,
+                    siteUrl: tab?.site?.url,
+                    requestId: request.requestId,
+                    type: request.type
+                })
             }
         }
 
@@ -261,6 +263,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
     if (!tab) return
 
     tab.updateSite(details.url)
+    devtools.postMessage(details.tabId, 'tabChange', tab)
 })
 
 /**
@@ -589,6 +592,41 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         })
         hideContextMenuAction()
     }
+
+    if (req.getListContents) {
+        res({
+            data: tdsStorage.getSerializableList(req.getListContents),
+            etag: settings.getSetting(`${req.getListContents}-etag`) || ''
+        })
+        return true
+    }
+
+    if (req.setListContents) {
+        const parsed = tdsStorage.parsedata(req.setListContents, req.value)
+        tdsStorage[req.setListContents] = parsed
+        trackers.setLists([{
+            name: req.setListContents,
+            data: parsed
+        }])
+        res()
+        return true
+    }
+
+    if (req.reloadList) {
+        const list = constants.tdsLists.find(l => l.name === req.reloadList)
+        if (list) {
+            tdsStorage.getList(list).then((list) => {
+                trackers.setLists([list])
+                res()
+            })
+        }
+        return true
+    }
+
+    if (req.debuggerMessage) {
+        devtools.postMessage(sender.tab?.id, req.debuggerMessage.action, req.debuggerMessage.message)
+        return true
+    }
 })
 
 /**
@@ -638,6 +676,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         cookie.shouldBlock = !utils.isCookieExcluded(sender.url)
     }
     return {
+        debug: devtools.isActive(tabId),
         cookie,
         globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),
@@ -752,6 +791,14 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             }
             if (!utils.isCookieExcluded(request.url)) {
                 requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
+                devtools.postMessage(request.tabId, 'cookie', {
+                    action: 'block',
+                    kind: 'cookie',
+                    url: request.url,
+                    siteUrl: tab?.site?.url,
+                    requestId: request.requestId,
+                    type: request.type
+                })
             }
         }
 
@@ -938,6 +985,7 @@ chrome.webRequest.onErrorOccurred.addListener(e => {
 if (browserName === 'moz') {
     cspProtection.init()
 }
+devtools.init()
 
 module.exports = {
     onStartup: onStartup
