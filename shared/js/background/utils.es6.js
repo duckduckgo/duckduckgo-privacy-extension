@@ -332,14 +332,14 @@ function isFeatureEnabled (featureName, customState) {
 
 /**
  * Returns the settings object associated with featureName in the config
- * 
+ *
  * @param {String} featureName - the name of the feature
  * @returns {Object} - Settings associated in the config with featureName
  */
 function getFeatureSettings (featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (!feature) {
-        return defaultValue
+        return undefined
     }
 
     return feature.settings
