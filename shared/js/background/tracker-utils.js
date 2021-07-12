@@ -173,7 +173,7 @@ function truncateReferrer (referrer, target) {
     }
 
     const exceptionList = tdsStorage.config.features.referrer.exceptions
-    if (utils.isBrokenList(referrer, exceptionList) || utils.isBrokenList(target, exceptionList)) {
+    if (utils.brokenListIndex(referrer, exceptionList) !== -1 || utils.brokenListIndex(target, exceptionList) !== -1) {
         return undefined
     }
 

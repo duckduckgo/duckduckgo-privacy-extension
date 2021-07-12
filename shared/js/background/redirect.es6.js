@@ -9,6 +9,7 @@ const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./$BROWSER-wrapper.es6')
 const settings = require('./settings.es6')
+const devtools = require('./devtools.es6')
 const browser = utils.getBrowserName()
 
 const debugRequest = false
@@ -119,6 +120,21 @@ function handleRequest (requestData) {
             }
         }
 
+        if (tracker) {
+            const cleanUrl = new URL(requestData.url)
+            cleanUrl.search = ''
+            cleanUrl.hash = ''
+            devtools.postMessage(tabId, 'tracker', {
+                tracker: {
+                    ...tracker,
+                    matchedRule: tracker.matchedRule?.rule.toString()
+                },
+                url: cleanUrl,
+                requestData,
+                siteUrl: thisTab.site.url
+            })
+        }
+
         // allow embedded twitter content if user enabled this setting
         if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
             tracker = null
@@ -143,7 +159,6 @@ function handleRequest (requestData) {
                 // record potential blocked trackers for this tab
                 thisTab.addToTrackers(tracker)
             }
-
             browserWrapper.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
             if (!thisTab.site.isAllowlisted() && tracker.action.match(/block|redirect/)) {
@@ -275,4 +290,5 @@ function isSameDomainRequest (tab, req) {
         return true
     }
 }
+
 exports.handleRequest = handleRequest

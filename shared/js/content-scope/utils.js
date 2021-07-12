@@ -155,6 +155,22 @@ export class DDGProxy {
             this.objectScope[this.property] = this.internal
         }
     }
+
+    sendDebugMessage (feature, action, args = {}) {
+        postDebugMessage(feature, {
+            action,
+            kind: this.property,
+            documentUrl: document.location.href,
+            ...args
+        })
+    }
+}
+
+export function postDebugMessage (feature, message) {
+    window.postMessage({
+        action: feature,
+        message
+    })
 }
 
 export let DDGReflect

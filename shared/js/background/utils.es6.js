@@ -155,7 +155,14 @@ function getAsyncBlockingSupport () {
 */
 function isBroken (url) {
     if (!tdsStorage?.config.unprotectedTemporary) return
-    return isBrokenList(url, tdsStorage?.config.unprotectedTemporary)
+    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
+}
+
+function removeBroken (domain) {
+    const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
+    if (index !== -1) {
+        console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
+    }
 }
 
 function getBrokenFeaturesAboutBlank (url) {
@@ -165,7 +172,7 @@ function getBrokenFeaturesAboutBlank (url) {
         if (tdsStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.config.features[feature].aboutBlankSites || [])) {
+        if (brokenListIndex(url, tdsStorage.config.features[feature].aboutBlankSites || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
@@ -179,19 +186,19 @@ function getBrokenFeatures (url) {
         if (!isFeatureEnabled(feature)) {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.config.features[feature].exceptions || [])) {
+        if (brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
     return brokenFeatures
 }
 
-function isBrokenList (url, lists) {
+function brokenListIndex (url, lists) {
     const parsedDomain = tldts.parse(url)
     const hostname = parsedDomain.hostname || url
 
     // If root domain in temp unprotected list, return true
-    return lists.some((brokenSiteDomain) => {
+    return lists.findIndex((brokenSiteDomain) => {
         if (brokenSiteDomain) {
             // TODO: Remove string check after config migration
             if (brokenSiteDomain instanceof String) {
@@ -352,13 +359,14 @@ module.exports = {
     isSafeListed,
     isCookieExcluded,
     extractLimitedDomainFromURL,
-    isBroken,
+    brokenListIndex,
     getBrokenFeatures,
     getBrokenFeaturesAboutBlank,
-    isBrokenList,
+    isBroken,
     imgToData,
     getBrokenScriptLists,
     isSameTopLevelDomain,
     isFeatureEnabled,
-    getFeatureSettings
+    getFeatureSettings,
+    removeBroken
 }
