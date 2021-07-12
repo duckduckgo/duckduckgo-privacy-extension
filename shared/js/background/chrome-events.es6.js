@@ -606,7 +606,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
-    const firstPartyCookiePolicy = tdsStorage.config.features?.trackingCookies.settings.firstPartyCookiePolicy || {
+    const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies').firstPartyCookiePolicy || {
         threshold: 864000, // 10 days
         maxAge: 864000 // 10 days
     }
