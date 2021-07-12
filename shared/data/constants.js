@@ -104,7 +104,7 @@ module.exports = {
         },
         {
             "name": "config",
-            "url": "https://staticcdn.duckduckgo.com/trackerblocking/config/v1/extension-config.json",
+            "url": "https://staticcdn.duckduckgo.com/trackerblocking/config/v1/extensionConfig.json",
             "format": "json",
             "source": "external"
         }
