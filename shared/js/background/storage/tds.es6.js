@@ -18,7 +18,7 @@ class TDSStorage {
                     state: 'enabled',
                     exceptions: []
                 },
-                trackingCookies: {
+                trackingCookies1p: {
                     state: 'enabled',
                     settings: {
                         firstPartyTrackerCookiePolicy: {
@@ -26,6 +26,10 @@ class TDSStorage {
                             maxAge: 86400
                         }
                     },
+                    exceptions: []
+                },
+                trackingCookies3p: {
+                    state: 'enabled',
                     exceptions: []
                 },
                 clickToPlay: {

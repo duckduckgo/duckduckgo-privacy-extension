@@ -1,15 +1,6 @@
 import { Cookie } from './cookie.js'
 import { defineProperty, postDebugMessage } from './utils'
 
-function blockCookies () {
-    // disable setting cookies
-    defineProperty(document, 'cookie', {
-        configurable: false,
-        set: function (value) { },
-        get: () => ''
-    })
-}
-
 let loadedPolicyResolve
 // Listen for a message from the content script which will configure the policy for this context
 const trackerHosts = new Set()
@@ -123,7 +114,7 @@ function applyCookieExpiryPolicy () {
     })
 }
 
-// Set up 3rd party cookie blocker
+// Set up 1st party cookie blocker
 export function load (args) {
     // The cookie expiry policy is injected into every frame immediately so that no cookie will
     // be missed.
@@ -133,10 +124,6 @@ export function load (args) {
 export function init (args) {
     args.cookie.debug = args.debug
     loadedPolicyResolve(args.cookie)
-    if (window.top !== window && args.cookie.isTrackerFrame && args.cookie.shouldBlock && args.cookie.isThirdParty) {
-        // overrides expiry policy with blocking - only in subframes
-        blockCookies()
-    }
 }
 
 export function update (args) {

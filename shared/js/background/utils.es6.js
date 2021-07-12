@@ -248,7 +248,7 @@ function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const excludeList = tdsStorage.config.features?.trackingCookies.exceptions
+    const excludeList = tdsStorage.config.features?.trackingCookies3p.exceptions
     if (!excludeList) {
         return false
     }

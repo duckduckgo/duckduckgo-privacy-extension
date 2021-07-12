@@ -24,7 +24,8 @@ export async function loadProtections () {
         'fingerprintingAudio',
         'fingerprintingBattery',
         'fingerprintingCanvas',
-        'trackingCookies',
+        'trackingCookies3p',
+        'trackingCookies1p',
         'floc',
         'gpc',
         'fingerprintingHardware',
@@ -34,7 +35,7 @@ export async function loadProtections () {
     ]
 
     for (const protectionName of protectionNames) {
-        const protection = import(`./${protectionName}-protection.js`).then(({ init, load, update }) => {
+        const protection = import(`./${protectionName}Protection.js`).then(({ init, load, update }) => {
             if (load) {
                 load()
             }

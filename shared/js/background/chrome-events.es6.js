@@ -165,11 +165,7 @@ const https = require('./https.es6')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
-    if (tdsStorage.config.features) {
-        return utils.isFeatureEnabled('trackingCookies')
-    }
-
-    return true
+    return utils.isFeatureEnabled('trackingCookies3p')
 }
 
 // Shallow copy of request types
@@ -647,7 +643,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
-    const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies').firstPartyCookiePolicy || {
+    const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies1p').firstPartyTrackerCookiePolicy || {
         threshold: 864000, // 10 days
         maxAge: 864000 // 10 days
     }
