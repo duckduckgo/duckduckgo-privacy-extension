@@ -39,7 +39,7 @@
         "@rollup/plugin-node-resolve": "^13.0.0",
         "babelify": "10.0.0",
         "duckduckgo-colors": "0.0.1",
-        "eslint": "^7.19.0",
+        "eslint": "^7.30.0",
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.22.1",
         "eslint-plugin-node": "^11.1.0",
