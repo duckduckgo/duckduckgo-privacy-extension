@@ -11,18 +11,15 @@ const settings = require('../../shared/js/background/settings.es6')
 describe('Tracker Utilities', () => {
     let tabObserver
     let managerObserver
-    let chromeObserver
-    let popupObserver
-    let experimentObserver
 
     beforeAll(() => {
         tdsStorageStub.stub()
         settings.updateSetting('activeExperiment', true)
         settings.updateSetting('experimentData', { blockFacebook: true })
         /* eslint-disable no-unused-vars */
-        experimentObserver = spyOn(trackerutils, 'clickToLoadIsActive').and.returnValue(true)
-        chromeObserver = spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
-        popupObserver = spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
+        spyOn(trackerutils, 'clickToLoadIsActive').and.returnValue(true)
+        spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
+        spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
         tabObserver = spyOn(Tab, 'constructor')
         managerObserver = spyOn(tabManager, 'get')
         tdsStorage.getLists()
