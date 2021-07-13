@@ -67,7 +67,7 @@
         "rollup": "^2.48.0",
         "rollup-plugin-dynamic-import-variables": "^1.1.0",
         "sass": "^1.32.4",
-        "standard": "10.0.3",
+        "standard": "16.0.3",
         "timekeeper": "^2.1.1"
     },
     "dependencies": {
