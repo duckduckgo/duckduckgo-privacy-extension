@@ -11,7 +11,7 @@ const utils = require('../utils.es6')
 const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
-const browserWrapper = require('../$BROWSER-wrapper.es6')
+const browserWrapper = require('../wrapper.es6')
 
 class Site {
     constructor (url) {

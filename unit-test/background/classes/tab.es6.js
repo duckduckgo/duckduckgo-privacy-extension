@@ -1,5 +1,5 @@
 const Tab = require('../../../shared/js/background/classes/tab.es6')
-const browserWrapper = require('../../../shared/js/background/chrome-wrapper.es6')
+const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 
 let tab
 

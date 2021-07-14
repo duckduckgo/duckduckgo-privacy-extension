@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
 const httpsMessages = constants.httpsMessages
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 // for now we consider tracker networks found on more than 7% of sites
 // as "major"

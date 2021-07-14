@@ -300,7 +300,7 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 /**
  * MESSAGES
  */
-const browserWrapper = require('./chrome-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,

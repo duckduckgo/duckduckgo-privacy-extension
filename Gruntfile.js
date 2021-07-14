@@ -129,19 +129,7 @@ module.exports = function (grunt) {
                     debug: buildType === 'dev'
                 },
                 transform: [
-                    ['babelify'],
-                    [(file) => {
-                        return through(function (buf, enc, next) {
-                            let requireName = browser
-                            if (browser === 'duckduckgo.safariextension') {
-                                requireName = 'safari'
-                            } else if (browser === 'firefox') {
-                                requireName = 'chrome'
-                            }
-                            this.push(buf.toString('utf8').replace(/\$BROWSER/g, requireName))
-                            next()
-                        })
-                    }]
+                    ['babelify']
                 ]
             },
             ui: {
@@ -193,10 +181,7 @@ module.exports = function (grunt) {
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
-            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browser}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`,
-            tmpSafari: `mv build/${browser}/${buildType} build/${browser}/tmp && mkdir -p build/${browser}/${buildType}/`,
-            mvSafari: `mv build/${browser}/tmp build/${browser}/${buildType}/ && mv build/${browser}/${buildType}/tmp build/${browser}/${buildType}/${browser}`,
-            mvWatchSafari: `rsync -ar build/${browser}/${buildType}/public build/${browser}/${buildType}/${browser}/ && rm -rf build/${browser}/${buildType}/public`
+            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browser}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
         },
 
         watch: {
@@ -206,7 +191,7 @@ module.exports = function (grunt) {
             },
             ui: {
                 files: watch.ui,
-                tasks: ['browserify:ui', 'watchSafari', 'exec:copyData']
+                tasks: ['browserify:ui', 'exec:copyData']
             },
             contentScope: {
                 files: watch.contentScope,
@@ -214,11 +199,11 @@ module.exports = function (grunt) {
             },
             backgroundES6JS: {
                 files: watch.background,
-                tasks: ['browserify:background', 'watchSafari']
+                tasks: ['browserify:background']
             },
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
-                tasks: ['exec:copyjs', 'watchSafari']
+                tasks: ['exec:copyjs']
             },
             contentScripts: {
                 files: watch.contentScripts,
@@ -245,23 +230,6 @@ module.exports = function (grunt) {
         }
     })
 
-    // sets up safari directory structure so that it can be loaded in extension builder
-    // duckduckgo.safariextension -> build type -> duckduckgo.safariextension -> build files
-    grunt.registerTask('safari', 'Move Safari build', () => {
-        if (browser === 'duckduckgo.safariextension') {
-            console.log('Moving Safari build')
-            grunt.task.run('exec:tmpSafari')
-            grunt.task.run('exec:mvSafari')
-        }
-    })
-
-    // moves generated files from watch into the correct build directory
-    grunt.registerTask('watchSafari', 'Moves Safari files after watch', () => {
-        if (browser === 'duckduckgo.safariextension') {
-            grunt.task.run('exec:mvWatchSafari')
-        }
-    })
-
     // Firefox and Chrome treat relative url differently in injected scripts. This fixes it.
     grunt.registerTask('updateFirefoxRelativeUrl', 'Update Firefox relative URL in injected css', () => {
         if (browser === 'firefox') {
@@ -269,7 +237,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS', 'execute:preProcessLists', 'safari'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS', 'execute:preProcessLists'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }

@@ -1,7 +1,7 @@
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 
 class TabManager {
     constructor () {

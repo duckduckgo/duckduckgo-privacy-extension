@@ -8,7 +8,7 @@ const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js'
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 function Site (ops) {
     this.model = ops.model

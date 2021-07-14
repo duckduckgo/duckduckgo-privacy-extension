@@ -16,7 +16,7 @@
 
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
-const events = require('./$BROWSER-events.es6')
+const events = require('./events.es6')
 const settings = require('./settings.es6')
 
 settings.ready().then(() => {

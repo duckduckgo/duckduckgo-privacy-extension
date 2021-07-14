@@ -12,16 +12,6 @@ const tests = [
         expectedVersion: '49'
     },
     {
-        ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15',
-        expectedBrowser: 'Safari',
-        expectedVersion: '11'
-    },
-    {
-        ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11) AppleWebKit/601.1.56 (KHTML, like Gecko) Version/9.0 Safari/601.1.56',
-        expectedBrowser: 'Safari',
-        expectedVersion: '9'
-    },
-    {
         ua: 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/60.0',
         expectedBrowser: 'Firefox',
         expectedVersion: '60'

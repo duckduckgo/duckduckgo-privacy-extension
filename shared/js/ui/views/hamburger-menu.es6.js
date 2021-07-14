@@ -1,6 +1,6 @@
 const Parent = window.DDG.base.View
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 const { IS_BETA } = require('../../background/channel.es6.js')
 
 function HamburgerMenu (ops) {

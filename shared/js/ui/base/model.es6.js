@@ -1,7 +1,7 @@
 const $ = require('jquery')
 const mixins = require('./mixins/index.es6.js')
 const store = require('./store.es6.js')
-const browserUIWrapper = require('./$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./ui-wrapper.es6.js')
 
 function BaseModel (attrs) {
     // attributes are applied directly
