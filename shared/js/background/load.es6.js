@@ -1,4 +1,4 @@
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 
 let dev = false
 
@@ -61,7 +61,7 @@ function loadExtensionFile (params) {
             xhr.setRequestHeader('If-None-Match', params.etag)
         }
     } else {
-        // set type xhr type tag. Safari internal xhr requests
+        // set type xhr type tag.
         // don't set a 200 status so we'll check this type
         xhr.type = 'internal'
         xhr.open('GET', browserWrapper.getExtensionURL(url))

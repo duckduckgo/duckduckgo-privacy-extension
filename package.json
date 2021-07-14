@@ -23,8 +23,6 @@
         "dev-firefox": "make dev browser=firefox type=dev watch=1",
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make dev browser=chrome type=dev watch=1",
-        "dev-safari": "make dev browser=duckduckgo.safariextension type=dev watch=1",
-        "release-safari": "make dev browser=duckduckgo.safariextension type=release",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },

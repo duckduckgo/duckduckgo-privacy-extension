@@ -2,7 +2,7 @@ const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
 const statusList = require('./shared/status-list.es6.js')
 const constants = require('../../../data/constants')
-const crossplatformLink = require('./shared/crossplatform-link.es6.js')
+const link = require('./shared/link.es6.js')
 
 function upperCaseFirst (string) {
     return string.charAt(0).toUpperCase() + string.slice(1)
@@ -36,7 +36,7 @@ module.exports = function () {
             ${tosdr && tosdr.reasons ? renderDetails(tosdr.reasons) : renderNoDetails()}
         </div>
         <div class="privacy-practices__attrib padded text--center border--top--inner">
-            Privacy Practices from ${crossplatformLink('https://tosdr.org/', {
+            Privacy Practices from ${link('https://tosdr.org/', {
         className: 'bold',
         target: '_blank',
         text: 'ToS;DR',
