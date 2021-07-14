@@ -91,6 +91,8 @@ class TDSStorage {
             },
             unprotectedTemporary: []
         }
+
+        this.removeLegacyLists()
     }
 
     getLists () {
@@ -250,6 +252,12 @@ class TDSStorage {
         } else {
             return this[name]
         }
+    }
+
+    removeLegacyLists () {
+        this.dbc.tdsStorage.delete('ReferrerExcludeList')
+        this.dbc.tdsStorage.delete('brokenSiteList')
+        this.dbc.tdsStorage.delete('protections')
     }
 }
 module.exports = new TDSStorage()
