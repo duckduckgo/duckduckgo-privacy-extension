@@ -66,7 +66,8 @@ export function shouldExemptMethod (type) {
 
 // Iterate through the key, passing an item index and a byte to be modified
 export function iterateDataKey (key, callback) {
-    let item = key.charCodeAt(0)
+    // Seed the PRNG with 32-bits of entropy from the key
+    let item = parseInt(key.substring(0, 8))
     for (const i in key) {
         let byte = key.charCodeAt(i)
         for (let j = 8; j >= 0; j--) {
