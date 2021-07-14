@@ -199,13 +199,8 @@ function brokenListIndex (url, lists) {
 
     // If root domain in temp unprotected list, return true
     return lists.findIndex((brokenSiteDomain) => {
-        if (brokenSiteDomain) {
-            // TODO: Remove string check after config migration
-            if (brokenSiteDomain instanceof String) {
-                return hostname.match(new RegExp(brokenSiteDomain + '$'))
-            } else {
-                return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
-            }
+        if (brokenSiteDomain.domain) {
+            return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
         }
         return false
     })
