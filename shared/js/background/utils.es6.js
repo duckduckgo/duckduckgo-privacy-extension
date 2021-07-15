@@ -243,12 +243,12 @@ function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const excludeList = tdsStorage.config.features?.trackingCookies3p.exceptions
-    if (!excludeList) {
+    const cookieSettings = getFeatureSettings('trackingCookies3p')
+    if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }
 
-    if (excludeList.find(elem => elem.domain === domain)) {
+    if (cookieSettings.excludedCookieDomains.find(elem => elem.domain === domain)) {
         return true
     }
 
