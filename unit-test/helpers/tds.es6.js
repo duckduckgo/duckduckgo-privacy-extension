@@ -7,18 +7,7 @@ const tdsData = {
     tds: require('./../data/tds.json'),
     surrogates: require('./../data/surrogates.js').surrogates,
     ClickToLoadConfig: require('./../data/clickToLoadConfig.json'),
-    config: {
-        features: {
-            referrer: {
-                state: 'enabled',
-                exceptions: require('./../data/fpExcludeLists.js').referrer.excludedReferrers
-            },
-            clickToPlay: {
-                state: 'enabled'
-            }
-        },
-        unprotectedTemporary: require('./../data/brokensites.js').brokenSites
-    }
+    config: require('./../data/extension-config.json')
 }
 
 const stub = () => {

@@ -2,7 +2,7 @@ const utils = require('../../shared/js/background/utils.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tds = require('./../data/tds')
 const load = require('./../helpers/utils.es6.js')
-const brokenSites = require('./../data/brokensites').brokenSites
+const config = require('./../data/extension-config.json')
 const surrogates = require('./../data/surrogates').surrogates
 
 const tdsStorageStub = require('../helpers/tds.es6')
@@ -65,7 +65,7 @@ const extractHostFromURLTestCases = [
 
 describe('utils find owner and parent function', () => {
     beforeAll(() => {
-        load.loadStub({ tds, surrogates, brokenSites })
+        load.loadStub({ tds, surrogates, config })
         tdsStorageStub.stub()
         return tdsStorage.getLists()
     })

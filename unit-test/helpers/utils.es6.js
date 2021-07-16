@@ -8,8 +8,8 @@ const loadStub = (stubData) => {
             return Promise.resolve(Object.assign(response, { status: 200, data: stubData.tds }))
         } else if (data.url.match('surrogates')) {
             return Promise.resolve(Object.assign(response, { status: 200, data: stubData.surrogates }))
-        } else if (data.url.match('whitelist-temporary')) {
-            return Promise.resolve(Object.assign(response, { status: 200, data: stubData.brokenSitess }))
+        } else if (data.url.match('extension-config')) {
+            return Promise.resolve(Object.assign(response, { status: 200, data: stubData.config }))
         } else {
             return Promise.reject(new Error('load error'))
         }
