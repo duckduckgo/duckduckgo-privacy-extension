@@ -169,10 +169,12 @@ function getBrokenFeaturesAboutBlank (url) {
     if (!tdsStorage.config.features) return
     const brokenFeatures = []
     for (const feature in tdsStorage.config.features) {
-        if (tdsStorage.config.features[feature]?.aboutBlankEnabled === 'disabled') {
+        const featureSettings = getFeatureSettings(feature)
+
+        if (featureSettings.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (brokenListIndex(url, tdsStorage.config.features[feature].aboutBlankSites || []) !== -1) {
+        if (brokenListIndex(url, featureSettings.aboutBlankSites || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
@@ -210,7 +212,8 @@ function brokenListIndex (url, lists) {
 function getBrokenScriptLists () {
     const brokenScripts = {}
     for (const key in tdsStorage.config.features) {
-        brokenScripts[key] = tdsStorage.config.features[key]?.scripts || []
+        const featureSettings = getFeatureSettings(key)
+        brokenScripts[key] = featureSettings.scripts.map(obj => obj.domain) || []
     }
     return brokenScripts
 }
