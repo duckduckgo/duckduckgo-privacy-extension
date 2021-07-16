@@ -165,11 +165,7 @@ const https = require('./https.es6')
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 function blockTrackingCookies () {
-    if (tdsStorage.config.features) {
-        return tdsStorage.config.features.trackingCookies.state === 'enabled'
-    }
-
-    return true
+    return utils.isFeatureEnabled('trackingCookies3p')
 }
 
 // Shallow copy of request types
@@ -647,7 +643,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     const site = Object.assign({}, tab?.site || {})
     const referrer = tab?.referrer || ''
 
-    const firstPartyCookiePolicy = tdsStorage.config.features?.trackingCookies.settings.firstPartyCookiePolicy || {
+    const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies1p').firstPartyTrackerCookiePolicy || {
         threshold: 864000, // 10 days
         maxAge: 864000 // 10 days
     }
@@ -765,7 +761,7 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
-        const GPCEnabled = tdsStorage.config.features?.gpc.state === 'enabled'
+        const GPCEnabled = utils.isFeatureEnabled('gpc')
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
@@ -881,8 +877,6 @@ chrome.alarms.create('updateLists', { periodInMinutes: 30 })
 chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
 chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
-// Update userAgent lists
-chrome.alarms.create('updateUserAgentData', { periodInMinutes: 30 })
 // Rotate the user agent spoofed
 chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
@@ -907,8 +901,6 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
             .catch(e => console.log(e))
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
-    } else if (alarmEvent.name === 'updateUserAgentData') {
-        // TODO: Reinstate user agent rotation
     } else if (alarmEvent.name === 'rotateSessionKey') {
         // TODO fix for manifest v3
         sessionKey = getHash()

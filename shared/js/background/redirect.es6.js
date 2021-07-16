@@ -11,7 +11,6 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const browser = utils.getBrowserName()
-const tdsStorage = require('./storage/tds.es6')
 
 const debugRequest = false
 
@@ -44,7 +43,7 @@ function buildResponse (url, requestData, tab, isMainFrame) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
-    const blockingEnabled = tdsStorage.config.features?.contentBlocking.state === 'enabled'
+    const blockingEnabled = utils.isFeatureEnabled('contentBlocking')
     // Skip requests to background tabs
     if (tabId === -1) { return }
 

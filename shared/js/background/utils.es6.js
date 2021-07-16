@@ -183,7 +183,7 @@ function getBrokenFeatures (url) {
     if (!tdsStorage.config.features) return
     const brokenFeatures = []
     for (const feature in tdsStorage.config.features) {
-        if (tdsStorage.config.features[feature]?.state === 'disabled') {
+        if (!isFeatureEnabled(feature)) {
             brokenFeatures.push(feature)
         }
         if (brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
@@ -199,13 +199,8 @@ function brokenListIndex (url, lists) {
 
     // If root domain in temp unprotected list, return true
     return lists.findIndex((brokenSiteDomain) => {
-        if (brokenSiteDomain) {
-            // TODO: Remove string check after config migration
-            if (brokenSiteDomain instanceof String) {
-                return hostname.match(new RegExp(brokenSiteDomain + '$'))
-            } else {
-                return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
-            }
+        if (brokenSiteDomain.domain) {
+            return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
         }
         return false
     })
@@ -248,12 +243,12 @@ function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const excludeList = tdsStorage.config.features?.trackingCookies.exceptions
-    if (!excludeList) {
+    const cookieSettings = getFeatureSettings('trackingCookies3p')
+    if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }
 
-    if (excludeList.find(elem => elem.domain === domain)) {
+    if (cookieSettings.excludedCookieDomains.find(elem => elem.domain === domain)) {
         return true
     }
 
@@ -313,6 +308,38 @@ function isSameTopLevelDomain (url1, url2) {
     return firstDomain === secondDomain
 }
 
+/**
+ * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
+ * parameter to check if the state is equeal to other states (i.e. state === 'beta').
+ *
+ * @param {String} featureName - the name of the feature
+ * @param {String} customState - An optional custom state to check for
+ * @returns {bool} - if feature is enabled/matches specified state
+ */
+function isFeatureEnabled (featureName, customState) {
+    const feature = tdsStorage.config.features[featureName]
+    if (!feature) {
+        return false
+    }
+
+    return (customState) ? feature.state === customState : feature.state === 'enabled'
+}
+
+/**
+ * Returns the settings object associated with featureName in the config
+ *
+ * @param {String} featureName - the name of the feature
+ * @returns {Object} - Settings associated in the config with featureName
+ */
+function getFeatureSettings (featureName) {
+    const feature = tdsStorage.config.features[featureName]
+    if (typeof feature !== 'object' || feature === null || !feature.settings) {
+        return {}
+    }
+
+    return feature.settings
+}
+
 module.exports = {
     extractHostFromURL,
     extractTopSubdomainFromHost,
@@ -327,11 +354,14 @@ module.exports = {
     isSafeListed,
     isCookieExcluded,
     extractLimitedDomainFromURL,
-    isBroken,
+    brokenListIndex,
     getBrokenFeatures,
     getBrokenFeaturesAboutBlank,
+    isBroken,
     imgToData,
     getBrokenScriptLists,
     isSameTopLevelDomain,
+    isFeatureEnabled,
+    getFeatureSettings,
     removeBroken
 }

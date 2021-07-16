@@ -18,7 +18,7 @@ class TDSStorage {
                     state: 'enabled',
                     exceptions: []
                 },
-                trackingCookies: {
+                trackingCookies1p: {
                     state: 'enabled',
                     settings: {
                         firstPartyTrackerCookiePolicy: {
@@ -26,6 +26,10 @@ class TDSStorage {
                             maxAge: 86400
                         }
                     },
+                    exceptions: []
+                },
+                trackingCookies3p: {
+                    state: 'enabled',
                     exceptions: []
                 },
                 clickToPlay: {
@@ -87,6 +91,8 @@ class TDSStorage {
             },
             unprotectedTemporary: []
         }
+
+        this.removeLegacyLists()
     }
 
     getLists () {
@@ -246,6 +252,12 @@ class TDSStorage {
         } else {
             return this[name]
         }
+    }
+
+    removeLegacyLists () {
+        this.dbc.tdsStorage.delete('ReferrerExcludeList')
+        this.dbc.tdsStorage.delete('brokenSiteList')
+        this.dbc.tdsStorage.delete('protections')
     }
 }
 module.exports = new TDSStorage()

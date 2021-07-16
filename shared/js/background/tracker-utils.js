@@ -35,7 +35,7 @@ function isTracker (url) {
  * Determine if the social entity should be blocked on this URL. returns True if so.
  */
 function shouldBlockSocialNetwork (entity, url) {
-    const ctpEnabled = tdsStorage.config.features?.clickToPlay.state === 'enabled'
+    const ctpEnabled = clickToLoadIsActive()
     const domain = tldts.parse(url).domain
     const excludeData = getDomainsToExludeByNetwork()
     return ctpEnabled && excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
@@ -99,7 +99,7 @@ function getSocialTracker (url) {
 // Return true when click to load should be enabled. Can be used to dynamically disable
 // functionality, or check for experiments
 function clickToLoadIsActive () {
-    return tdsStorage.config.features?.clickToPlay.state === 'enabled'
+    return utils.isFeatureEnabled('clickToPlay')
 }
 
 // Determine if a given URL is surrogate redirect.
@@ -156,7 +156,7 @@ function socialTrackerIsAllowedByUser (trackerEntity, domain) {
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
 function truncateReferrer (referrer, target) {
-    if (tdsStorage.config.features?.referrer.state !== 'enabled') {
+    if (!utils.isFeatureEnabled('referrer')) {
         return undefined
     }
 
@@ -172,17 +172,9 @@ function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    if (tdsStorage.config.features.referrer && tdsStorage.config.features.referrer.exceptions) {
-        const excludedDomains = tdsStorage.config.features.referrer.exceptions.map(e => e.domain)
-        try {
-            if (excludedDomains.includes(tldts.parse(referrer).domain) ||
-                excludedDomains.includes(tldts.parse(target).domain)) {
-                // referrer or target is in the Referrer safe list
-                return undefined
-            }
-        } catch (e) {
-            // if we can't parse the domains for any reason, assume it's not exluded.
-        }
+    const exceptionList = tdsStorage.config.features.referrer.exceptions
+    if (utils.brokenListIndex(referrer, exceptionList) !== -1 || utils.brokenListIndex(target, exceptionList) !== -1) {
+        return undefined
     }
 
     let modifiedReferrer = referrer
