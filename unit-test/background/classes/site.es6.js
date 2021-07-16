@@ -53,6 +53,10 @@ describe('Site', () => {
     describe('checkBrokenSites()', () => {
         const tests = [
             { url: 'https://suntrust.com', expected: true },
+            { url: 'https://othersuntrust.com', expected: false },
+            { url: 'https://sun.trust.com', expected: false },
+            { url: 'https://sun.rust.com', expected: false },
+            { url: 'https://sunt.rust.com', expected: false },
             { url: 'https://www1.onlinebanking.suntrust.com', expected: true },
             { url: 'https://nationwide.co.uk', expected: false },
             { url: 'https://accounts.google.com', expected: true }

@@ -195,14 +195,15 @@ function getBrokenFeatures (url) {
     return brokenFeatures
 }
 
-function brokenListIndex (url, lists) {
+function brokenListIndex (url, list) {
     const parsedDomain = tldts.parse(url)
     const hostname = parsedDomain.hostname || url
 
     // If root domain in temp unprotected list, return true
-    return lists.findIndex((brokenSiteDomain) => {
+    return list.findIndex((brokenSiteDomain) => {
         if (brokenSiteDomain.domain) {
-            return hostname.match(new RegExp(brokenSiteDomain.domain + '$'))
+            return hostname === brokenSiteDomain.domain ||
+                   hostname.endsWith(`.${brokenSiteDomain.domain}`)
         }
         return false
     })
