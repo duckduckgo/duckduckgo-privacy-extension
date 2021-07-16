@@ -213,7 +213,7 @@ function getBrokenScriptLists () {
     const brokenScripts = {}
     for (const key in tdsStorage.config.features) {
         const featureSettings = getFeatureSettings(key)
-        brokenScripts[key] = featureSettings.scripts.map(obj => obj.domain) || []
+        brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
     }
     return brokenScripts
 }
