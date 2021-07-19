@@ -19,7 +19,7 @@ let dev = false
 const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
-    const regExpAboutPage = /^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
