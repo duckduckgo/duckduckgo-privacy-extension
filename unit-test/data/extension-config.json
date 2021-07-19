@@ -1,0 +1,138 @@
+{
+    "version": "2021.6.7",
+    "readme": "https://github.com/duckduckgo/privacy-configuration",
+    "features": {
+        "contentBlocking": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "trackingCookies3p": {
+            "state": "enabled",
+            "exceptions": [],
+            "settings": {
+                "excludedCookieDomains": [
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "site breakage"
+                    }
+                ]
+            }
+        },
+        "trackingCookies1p": {
+            "state": "enabled",
+            "settings": {
+                "firstPartyTrackerCookiePolicy": {
+                    "threshold": 86400,
+                    "maxAge": 86400
+                }
+            },
+            "exceptions": []
+        },
+        "clickToPlay": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "fingerprintingCanvas": {
+            "state": "enabled",
+            "exceptions": [
+                {
+                    "domain": "textfree.us",
+                    "reason": "site breakage"
+                }
+            ]
+        },
+        "fingerprintingAudio": {
+            "state": "disabled",
+            "exceptions": [
+                {
+                    "domain": "youtube.com"
+                },
+                {
+                    "domain": "meet.google.com"
+                }
+            ]
+        },
+        "fingerprintingTemporaryStorage": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "referrer": {
+            "state": "enabled",
+            "exceptions": [
+                {
+                    "domain": "test.com",
+                    "reason": "testing"
+                },
+                {
+                    "domain": "testing.com",
+                    "reason": "testing"
+                }
+            ]
+        },
+        "fingerprintingBattery": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "fingerprintingScreenSize": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "fingerprintingHardware": {
+            "state": "enabled",
+            "exceptions": [
+                {
+                    "domain": "play.geforcenow.com"
+                },
+                {
+                    "domain": "stadia.google.com"
+                }
+            ]
+        },
+        "floc": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "gpc": {
+            "state": "enabled",
+            "exceptions": []
+        },
+        "autofill": {
+            "state": "enabled",
+            "exceptions": [
+                {
+                    "domain": "asana.com"
+                },
+                {
+                    "domain": "fastmail.com"
+                }
+            ]
+        },
+        "userAgentRotation": {
+            "state": "disabled",
+            "settings": {
+                "agentExcludePatterns": [
+                    {
+                        "agent": "Brave Chrome",
+                        "reason": "Uncommon UA"
+                    }
+                ]
+            },
+            "exceptions": [
+                {
+                    "domain": "dzcdn.net",
+                    "reason": "Breaks images on deezer"
+                }
+            ]
+        }
+    },
+    "unprotectedTemporary": [
+        {
+            "domain": "google.com",
+            "reason": "site breakage"
+        },
+        {
+            "domain": "suntrust.com",
+            "reason": "site breakage"
+        }
+    ]
+}

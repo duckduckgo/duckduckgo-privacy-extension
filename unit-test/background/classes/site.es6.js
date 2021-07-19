@@ -1,7 +1,7 @@
 const Site = require('../../../shared/js/background/classes/site.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const load = require('./../../helpers/utils.es6')
-const fakeBrokenSites = require('./../../data/brokensites')
+const config = require('./../../data/extension-config.json')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../../helpers/tds.es6')
 
@@ -9,7 +9,7 @@ const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 
 describe('Site', () => {
     beforeAll(() => {
-        load.loadStub({ brokenSites: fakeBrokenSites })
+        load.loadStub({ config })
         spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
         tdsStorageStub.stub()
 
