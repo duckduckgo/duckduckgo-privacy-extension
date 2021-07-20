@@ -208,7 +208,7 @@ function handleRequest (requestData) {
         if (thisTab.site.isBroken) {
             console.log('temporarily skip tracker blocking for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
+              'more info: https://github.com/duckduckgo/privacy-configuration')
         }
 
         // If we didn't block this script and it's a tracker, notify the content script.
@@ -234,7 +234,7 @@ function handleRequest (requestData) {
     if (thisTab.site.isBroken) {
         console.log('temporarily skip https upgrades for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
+              'more info: https://github.com/duckduckgo/privacy-configuration')
         return
     }
 
