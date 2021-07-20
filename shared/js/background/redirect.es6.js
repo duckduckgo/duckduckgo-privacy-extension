@@ -121,7 +121,7 @@ function handleRequest (requestData) {
         }
 
         if (tracker) {
-            let reportedTracker = { ...tracker }
+            const reportedTracker = { ...tracker }
             if (!blockingEnabled) {
                 reportedTracker.action = 'ignore'
             }

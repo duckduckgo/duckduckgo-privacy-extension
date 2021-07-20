@@ -211,7 +211,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
-            if (tab && (tab.site.whitelisted || tab.site.isBroken)) return { responseHeaders }
+            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isUrlExcludedByFeature(tab.url, 'trackingCookies3p'))) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
@@ -777,7 +777,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
-            if (tab && (tab.site.whitelisted || tab.site.isBroken)) return { requestHeaders }
+            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isUrlExcludedByFeature(tab.url, 'trackingCookies3p'))) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
