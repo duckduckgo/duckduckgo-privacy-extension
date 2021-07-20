@@ -211,7 +211,7 @@ chrome.webRequest.onHeadersReceived.addListener(
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
-            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isUrlExcludedByFeature(tab.url, 'trackingCookies3p'))) return { responseHeaders }
+            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isFeatureBrokenForURL(tab.url, 'trackingCookies3p'))) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
@@ -761,8 +761,7 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
-        let GPCEnabled = utils.isFeatureEnabled('gpc')
-        GPCEnabled = !utils.isUrlExcludedByFeature(request.url, 'gpc')
+        const GPCEnabled = utils.isFeatureEnabled('gpc') && !utils.isFeatureBrokenForURL(request.url, 'gpc')
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
@@ -777,7 +776,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             // Strip 3rd party response header
             const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
-            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isUrlExcludedByFeature(tab.url, 'trackingCookies3p'))) return { requestHeaders }
+            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isFeatureBrokenForURL(tab.url, 'trackingCookies3p'))) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {

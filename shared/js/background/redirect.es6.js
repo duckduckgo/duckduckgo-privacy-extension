@@ -43,13 +43,12 @@ function buildResponse (url, requestData, tab, isMainFrame) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
-    let blockingEnabled = utils.isFeatureEnabled('contentBlocking')
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
     let thisTab = tabManager.get(requestData)
 
-    blockingEnabled = !utils.isUrlExcludedByFeature(thisTab.url, 'contentBlocking')
+    const blockingEnabled = utils.isFeatureEnabled('contentBlocking') && !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
 
     // control access to web accessible resources
     if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
