@@ -209,6 +209,15 @@ function brokenListIndex (url, list) {
     })
 }
 
+function isUrlExcludedByFeature (url, feature) {
+    const exceptionList = tdsStorage.config.features[feature]?.exceptions
+    if (!exceptionList || exceptionList.length === 0) {
+        return false
+    }
+
+    return brokenListIndex(url, exceptionList) !== -1
+}
+
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
@@ -359,6 +368,7 @@ module.exports = {
     isCookieExcluded,
     extractLimitedDomainFromURL,
     brokenListIndex,
+    isUrlExcludedByFeature,
     getBrokenFeatures,
     getBrokenFeaturesAboutBlank,
     isBroken,

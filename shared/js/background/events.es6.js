@@ -761,7 +761,8 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const GPCHeader = GPC.getHeader()
-        const GPCEnabled = utils.isFeatureEnabled('gpc')
+        let GPCEnabled = utils.isFeatureEnabled('gpc')
+        GPCEnabled = !utils.isUrlExcludedByFeature(request.url, 'gpc')
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
