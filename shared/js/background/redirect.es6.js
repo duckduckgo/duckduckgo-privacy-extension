@@ -48,13 +48,17 @@ function handleRequest (requestData) {
 
     let thisTab = tabManager.get(requestData)
 
-    const blockingEnabled = utils.isFeatureEnabled('contentBlocking') && !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
+    let blockingEnabled = utils.isFeatureEnabled('contentBlocking')
 
     // control access to web accessible resources
     if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
             return { cancel: true }
         }
+    }
+
+    if (thisTab) {
+        blockingEnabled = !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
     }
 
     // For main_frame requests: create a new tab instance whenever we either
@@ -118,6 +122,7 @@ function handleRequest (requestData) {
                 return
             }
         }
+
 
         if (tracker) {
             const reportedTracker = { ...tracker }
