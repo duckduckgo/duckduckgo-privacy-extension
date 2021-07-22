@@ -48,8 +48,6 @@ function handleRequest (requestData) {
 
     let thisTab = tabManager.get(requestData)
 
-    const blockingEnabled = utils.isFeatureEnabled('contentBlocking') && !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
-
     // control access to web accessible resources
     if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
@@ -86,6 +84,8 @@ function handleRequest (requestData) {
         if (thisTab.site.specialDomainName) {
             return
         }
+
+        const blockingEnabled = utils.isFeatureEnabled('contentBlocking') && !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
 
         /**
          * Tracker blocking
