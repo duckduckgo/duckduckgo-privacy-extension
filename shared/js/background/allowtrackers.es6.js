@@ -1,10 +1,9 @@
 const tdsStorage = require('./storage/tds.es6')
 const utils = require('./utils.es6')
-const trackers = require('./trackers.es6')
 
 function isTrackerAllowlisted (site, request) {
-    if (!tdsStorage.config.features.contentBlocking.trackerAllowlist
-        && !Object.keys(tdsStorage.config.features.contentBlocking.trackerAllowlist).length) {
+    if (!tdsStorage.config.features.contentBlocking.trackerAllowlist &&
+        !Object.keys(tdsStorage.config.features.contentBlocking.trackerAllowlist).length) {
         return false
     }
 
@@ -18,7 +17,7 @@ function isTrackerAllowlisted (site, request) {
 }
 
 function _findAllowlistEntry (request, allowList) {
-    const host = utils.extractHostFromURL(request).split('.') 
+    const host = utils.extractHostFromURL(request).split('.')
     const urlList = Array.from(host)
 
     while (urlList.length > 1) {
@@ -39,6 +38,8 @@ function _matchesRule (site, request, allowListEntry) {
             if (request.match(ruleObj.rule)) {
                 matchedRule = ruleObj
                 return true
+            } else {
+                return false
             }
         })
     }
