@@ -17,10 +17,10 @@ const allowListTests = {
                 isAllowlisted: false
             },
             {
-                name: 'should match on ',
-                site: 'https://testsite2.com',
-                request: 'https://allowlist-tracker-1.com/videos.js',
-                isAllowlisted: false
+                name: 'should match query strings',
+                site: 'https://testsite.com',
+                request: 'https://allowlist-tracker-1.com/videos.js?a=123&b=456',
+                isAllowlisted: true
             }
         ]
     }
