@@ -11,6 +11,7 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const browser = utils.getBrowserName()
+const trackerAllowlist = require('./allowtrackers.es6')
 
 const debugRequest = false
 
@@ -91,6 +92,12 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
+        // temp allowlisted trackers to fix site breakage
+        const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
+        if (allowListed) {
+            console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
+            return
+        }
         let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
         /**
          * Click to Load Blocking

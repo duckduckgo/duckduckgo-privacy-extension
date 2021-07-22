@@ -15,11 +15,16 @@ const tdsData = {
             },
             clickToPlay: {
                 state: 'enabled'
+            },
+            contentBlocking: {
+                trackerAllowlist: require('./../data/trackerAllowlist.json')
             }
         },
         unprotectedTemporary: require('./../data/brokensites.js').brokenSites
     }
 }
+
+tdsStorage.config = tdsData['config']
 
 const stub = () => {
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
