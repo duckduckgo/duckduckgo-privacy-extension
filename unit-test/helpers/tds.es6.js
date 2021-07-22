@@ -12,7 +12,7 @@ const tdsData = {
 
 tdsData.config.features.contentBlocking.trackerAllowlist = require('./../data/trackerAllowlist.json')
 
-tdsStorage.config = tdsData['config']
+tdsStorage.config = tdsData.config
 
 const stub = () => {
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
