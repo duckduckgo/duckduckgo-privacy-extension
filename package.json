@@ -33,11 +33,11 @@
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.14.7",
         "@fingerprintjs/fingerprintjs": "^3.2.0",
-        "@rollup/plugin-commonjs": "^18.0.0",
+        "@rollup/plugin-commonjs": "^19.0.1",
         "@rollup/plugin-node-resolve": "^13.0.0",
         "babelify": "10.0.0",
         "duckduckgo-colors": "0.0.1",
-        "eslint": "^7.30.0",
+        "eslint": "^7.31.0",
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.22.1",
         "eslint-plugin-node": "^11.1.0",
@@ -69,7 +69,7 @@
         "timekeeper": "^2.1.1"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.0.1",
+        "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.1.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.0.3",
         "bel": "6.0.0",
@@ -89,7 +89,7 @@
         "sjcl": "^1.0.8",
         "tldts": "^5.7.38",
         "underscore": "1.13.1",
-        "web-ext": "^6.0.0"
+        "web-ext": "^6.2.0"
     },
     "babel": {
         "presets": [

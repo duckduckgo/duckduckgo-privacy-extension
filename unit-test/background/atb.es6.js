@@ -72,7 +72,8 @@ describe('atb.redirectURL()', () => {
         { url: 'https://beta.duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false },
         { url: 'http://beta.duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://beta.duckduckgo.com/?q=something', rewrite: true },
-        { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false }
+        { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
+        { url: 'https://dev-testing.duckduckgo.com/?q=something', rewrite: true }
     ]
 
     beforeEach(() => {
