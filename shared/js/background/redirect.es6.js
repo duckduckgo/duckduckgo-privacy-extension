@@ -123,7 +123,6 @@ function handleRequest (requestData) {
             }
         }
 
-
         if (tracker) {
             const reportedTracker = { ...tracker }
             if (!blockingEnabled) {
