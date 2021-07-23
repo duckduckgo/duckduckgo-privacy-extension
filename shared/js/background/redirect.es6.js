@@ -93,12 +93,6 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
-        // temp allowlisted trackers to fix site breakage
-        const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
-        if (allowListed) {
-            console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
-            return
-        }
         let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
         /**
          * Click to Load Blocking
@@ -127,6 +121,14 @@ function handleRequest (requestData) {
         }
 
         if (tracker) {
+            // temp allowlisted trackers to fix site breakage
+            const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
+            if (allowListed && utils.isFeatureEnabled('trackerAllowlist')) {
+                console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
+                tracker.action = 'ignore'
+                tracker.reason = `tracker allowlist - ${allowListed.reason}`
+            }
+
             const reportedTracker = { ...tracker }
             if (!blockingEnabled) {
                 reportedTracker.action = 'ignore'

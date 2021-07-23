@@ -18,6 +18,9 @@ class TDSStorage {
                     state: 'enabled',
                     exceptions: []
                 },
+                trackerAllowlist: {
+                    state: 'enabled',
+                },
                 trackingCookies1p: {
                     state: 'enabled',
                     settings: {

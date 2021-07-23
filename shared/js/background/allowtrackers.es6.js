@@ -2,12 +2,12 @@ const tdsStorage = require('./storage/tds.es6')
 const utils = require('./utils.es6')
 
 function isTrackerAllowlisted (site, request) {
-    if (!tdsStorage.config.features.contentBlocking.trackerAllowlist &&
-        !Object.keys(tdsStorage.config.features.contentBlocking.trackerAllowlist).length) {
+    if (!tdsStorage.config.features.trackerAllowlist &&
+        !Object.keys(tdsStorage.config.features.trackerAllowlist).length) {
         return false
     }
 
-    const allowListEntry = _findAllowlistEntry(request, tdsStorage.config.features.contentBlocking.trackerAllowlist)
+    const allowListEntry = _findAllowlistEntry(request, tdsStorage.config.features.trackerAllowlist)
 
     if (allowListEntry) {
         return _matchesRule(site, request, allowListEntry)

@@ -10,7 +10,7 @@ const tdsData = {
     config: require('./../data/extension-config.json')
 }
 
-tdsData.config.features.contentBlocking.trackerAllowlist = require('./../data/trackerAllowlist.json')
+tdsData.config.features.trackerAllowlist = require('./../data/trackerAllowlist.json')
 
 tdsStorage.config = tdsData.config
 
