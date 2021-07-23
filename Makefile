@@ -40,8 +40,9 @@ web-resources:
 	mkdir -p build/$(browser)/$(type)/web_accessible_resources
 	cp shared/data/web_accessible_resources/* build/$(browser)/$(type)/web_accessible_resources/
 	cp shared/tracker-surrogates/surrogates/*.js build/$(browser)/$(type)/web_accessible_resources/
-	basename -a build/$(browser)/$(type)/web_accessible_resources/* >> build/$(browser)/$(type)/data/surrogates.txt # fills file with names of surrogates
-	sed -i '' 's/^/domain.com\//; s/$$/ application\/javascript\n/' build/$(browser)/$(type)/data/surrogates.txt # prefixes each name with "domain.com" and adds "application/javascript" suffix
+	basename -a build/$(browser)/$(type)/web_accessible_resources/* >> build/$(browser)/$(type)/data/surrogates-names.txt # fills file with names of surrogates
+	cat build/$(browser)/$(type)/data/surrogates-names.txt | sed 's/^/domain.com\//; s/$$/ application\/javascript\n/' >> build/$(browser)/$(type)/data/surrogates.txt # prefixes each name with "domain.com" and adds "application/javascript" suffix
+	rm build/$(browser)/$(type)/data/surrogates-names.txt
 
 moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
