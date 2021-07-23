@@ -39,6 +39,7 @@ fonts:
 web-resources:
 	mkdir -p build/$(browser)/$(type)/web_accessible_resources
 	cp shared/data/web_accessible_resources/* build/$(browser)/$(type)/web_accessible_resources/
+	cp shared/tracker-surrogates/surrogates/*.js build/$(browser)/$(type)/web_accessible_resources/
 	for f in build/$(browser)/$(type)/web_accessible_resources/*; do echo '' >> $$f; done
 	cat build/$(browser)/$(type)/web_accessible_resources/* >> build/$(browser)/$(type)/data/surrogates.txt
 	sed -i.bak 's/^\/\///g' build/$(browser)/$(type)/data/surrogates.txt
