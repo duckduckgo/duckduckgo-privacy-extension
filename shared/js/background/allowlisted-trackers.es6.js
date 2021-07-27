@@ -3,11 +3,11 @@ const utils = require('./utils.es6')
 
 function isTrackerAllowlisted (site, request) {
     if (!tdsStorage.config.features.trackerAllowlist &&
-        !Object.keys(tdsStorage.config.features.trackerAllowlist).length) {
+        !Object.keys(tdsStorage.config.features.trackerAllowlist.allowlistedTrackers).length) {
         return false
     }
 
-    const allowListEntry = _findAllowlistEntry(request, tdsStorage.config.features.trackerAllowlist)
+    const allowListEntry = _findAllowlistEntry(request, tdsStorage.config.features.trackerAllowlist.allowlistedTrackers)
 
     if (allowListEntry) {
         return _matchesRule(site, request, allowListEntry)

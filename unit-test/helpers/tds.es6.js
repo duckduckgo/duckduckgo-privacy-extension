@@ -10,7 +10,10 @@ const tdsData = {
     config: require('./../data/extension-config.json')
 }
 
-tdsData.config.features.trackerAllowlist = require('./../data/trackerAllowlist.json')
+tdsData.config.features.trackerAllowlist = {
+    state: "enabled",
+    allowlistedTrackers: require('./../background/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
+}
 
 tdsStorage.config = tdsData.config
 

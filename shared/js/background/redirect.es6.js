@@ -11,7 +11,7 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const browser = utils.getBrowserName()
-const trackerAllowlist = require('./allowtrackers.es6')
+const trackerAllowlist = require('./allowlisted-trackers.es6')
 
 const debugRequest = false
 
