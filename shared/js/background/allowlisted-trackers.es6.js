@@ -38,6 +38,8 @@ function _findAllowlistEntry (request, allowList) {
 
 function _matchesRule (site, request, allowListEntry) {
     let matchedRule = null
+    request = request.split('?')[0]
+
     if (allowListEntry.rules && allowListEntry.rules.length) {
         allowListEntry.rules.some(ruleObj => {
             if (request.match(ruleObj.rule)) {
