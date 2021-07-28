@@ -67,7 +67,7 @@ function connected (port) {
             postMessage(tabId, 'tabChange', tab)
         } else if (m.action === 'toggletrackerAllowlist') {
             if (tdsStorage.config.features.trackerAllowlist.state === 'enabled') {
-                tdsStorage.config.features.trackerAllowlist.state = 'disabled' 
+                tdsStorage.config.features.trackerAllowlist.state = 'disabled'
             } else {
                 tdsStorage.config.features.trackerAllowlist.state = 'enabled'
             }
