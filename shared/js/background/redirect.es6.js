@@ -43,7 +43,6 @@ function buildResponse (url, requestData, tab, isMainFrame) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
-    const blockingEnabled = utils.isFeatureEnabled('contentBlocking')
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
@@ -86,6 +85,8 @@ function handleRequest (requestData) {
             return
         }
 
+        const blockingEnabled = utils.isFeatureEnabled('contentBlocking') && !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
+
         /**
          * Tracker blocking
          * If request is a tracker, cancel the request
@@ -119,13 +120,17 @@ function handleRequest (requestData) {
         }
 
         if (tracker) {
+            const reportedTracker = { ...tracker }
+            if (!blockingEnabled) {
+                reportedTracker.action = 'ignore'
+            }
             const cleanUrl = new URL(requestData.url)
             cleanUrl.search = ''
             cleanUrl.hash = ''
             devtools.postMessage(tabId, 'tracker', {
                 tracker: {
-                    ...tracker,
-                    matchedRule: tracker.matchedRule?.rule.toString()
+                    ...reportedTracker,
+                    matchedRule: reportedTracker.matchedRule?.rule.toString()
                 },
                 url: cleanUrl,
                 requestData,
@@ -139,7 +144,7 @@ function handleRequest (requestData) {
         }
 
         // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
-        if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party') && blockingEnabled) {
+        if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
             // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
             // comes through on document unload and by the time we block it we have updated our tab data to the new
             // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the
@@ -159,7 +164,7 @@ function handleRequest (requestData) {
             }
             browserWrapper.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
-            if (!thisTab.site.isAllowlisted() && tracker.action.match(/block|redirect/)) {
+            if (blockingEnabled && !thisTab.site.isAllowlisted() && tracker.action.match(/block|redirect/)) {
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
@@ -208,7 +213,7 @@ function handleRequest (requestData) {
         if (thisTab.site.isBroken) {
             console.log('temporarily skip tracker blocking for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
+              'more info: https://github.com/duckduckgo/privacy-configuration')
         }
 
         // If we didn't block this script and it's a tracker, notify the content script.
@@ -234,7 +239,7 @@ function handleRequest (requestData) {
     if (thisTab.site.isBroken) {
         console.log('temporarily skip https upgrades for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
+              'more info: https://github.com/duckduckgo/privacy-configuration')
         return
     }
 

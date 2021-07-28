@@ -8,15 +8,27 @@ const displayFilters = document.querySelectorAll('#table-filter input')
 
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
 const port = chrome.runtime.connect()
-const features = {
-    canvas: 'fingerprintingCanvas',
-    audio: 'fingerprintingAudio',
-    referrer: 'referrer',
-    floc: 'floc',
-    autofill: 'autofill',
-    cookie: 'trackingCookies',
-    gpc: 'gpc'
-}
+// fetch the list of configurable features from the config and create toggles for them.
+const loadConfigurableFeatures = new Promise((resolve) => {
+    chrome.runtime.sendMessage({
+        getListContents: 'config'
+    }, ({ data: config }) => {
+        const features = Object.keys(config.features)
+        features.forEach((feature) => {
+            const btn = document.createElement('button')
+            btn.id = feature
+            btn.innerText = `${feature}: ???`
+            document.querySelector('#protections').appendChild(btn)
+            btn.addEventListener('click', () => {
+                port.postMessage({
+                    action: `toggle${feature}`,
+                    tabId
+                })
+            })
+        })
+        resolve(features)
+    })
+})
 
 const actionIcons = {
     block: '🚫',
@@ -57,8 +69,10 @@ const actionHandlers = {
     tabChange: (m) => {
         const tab = m.message
         protectionButton.innerText = `Protection: ${tab.site?.whitelisted || tab.site?.isBroken ? 'OFF' : 'ON'}`
-        Object.keys(features).forEach((feature) => {
-            document.getElementById(feature).innerText = `${feature}: ${tab.site?.brokenFeatures.includes(features[feature]) ? 'OFF' : 'ON'}`
+        loadConfigurableFeatures.then((features) => {
+            features.forEach((feature) => {
+                document.getElementById(feature).innerText = `${feature}: ${tab.site?.brokenFeatures.includes(feature) ? 'OFF' : 'ON'}`
+            })
         })
     },
     cookie: (m) => {
@@ -173,7 +187,7 @@ function clear () {
     }
 }
 
-// buttons and toggles
+// listeners for buttons and toggles
 clearButton.addEventListener('click', clear)
 refreshButton.addEventListener('click', () => {
     clear()
@@ -187,19 +201,6 @@ protectionButton.addEventListener('click', () => {
     port.postMessage({
         action: 'toggleProtection',
         tabId
-    })
-})
-
-Object.keys(features).forEach((feature) => {
-    const btn = document.createElement('button')
-    btn.id = feature
-    btn.innerText = `${feature}: ???`
-    document.querySelector('.header').appendChild(btn)
-    btn.addEventListener('click', () => {
-        port.postMessage({
-            action: `toggle${features[feature]}`,
-            tabId
-        })
     })
 })
 
