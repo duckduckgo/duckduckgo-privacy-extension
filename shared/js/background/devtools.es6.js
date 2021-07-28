@@ -65,6 +65,12 @@ function connected (port) {
                 })
             }
             postMessage(tabId, 'tabChange', tab)
+        } else if (m.action === 'toggletrackerAllowlist') {
+            if (tdsStorage.config.features.trackerAllowlist.state === 'enabled') {
+                tdsStorage.config.features.trackerAllowlist.state = 'disabled' 
+            } else {
+                tdsStorage.config.features.trackerAllowlist.state = 'enabled'
+            }
         } else if (m.action.startsWith('toggle')) {
             const { tabId } = m
             const feature = m.action.slice(6)

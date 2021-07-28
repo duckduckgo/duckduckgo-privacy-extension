@@ -12,7 +12,9 @@ const tdsData = {
 
 tdsData.config.features.trackerAllowlist = {
     state: 'enabled',
-    allowlistedTrackers: require('./../background/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
+    settings: {
+        allowlistedTrackers: require('./../background/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
+    }
 }
 
 tdsStorage.config = tdsData.config
