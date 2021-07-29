@@ -1,4 +1,5 @@
 const tdsStorage = require('./storage/tds.es6')
+const tldts = require('tldts')
 const utils = require('./utils.es6')
 
 function isTrackerAllowlisted (site, request) {
@@ -22,8 +23,7 @@ function isTrackerAllowlisted (site, request) {
 }
 
 function _findAllowlistEntry (request, allowList) {
-    const host = utils.extractHostFromURL(request).split('.')
-    const urlList = Array.from(host)
+    const urlList = utils.extractHostFromURL(request).split('.')
 
     while (urlList.length > 1) {
         const requestDomain = urlList.join('.')
@@ -52,7 +52,7 @@ function _matchesRule (site, request, allowListEntry) {
     }
 
     if (matchedRule) {
-        if (matchedRule.domains.includes('<all>') || matchedRule.domains.includes(utils.extractHostFromURL(utils.extractLimitedDomainFromURL(site)))) {
+        if (matchedRule.domains.includes('<all>') || matchedRule.domains.includes(tldts.parse(site).domain)) {
             return matchedRule
         }
     } else {
