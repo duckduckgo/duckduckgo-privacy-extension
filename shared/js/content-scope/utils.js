@@ -22,8 +22,11 @@ export function shouldExemptUrl (type, url) {
     return false
 }
 
+let debug = false
+
 export function initStringExemptionLists (args) {
     const { stringExemptionLists } = args
+    debug = args.debug
     for (const type in stringExemptionLists) {
         exemptionLists[type] = []
         for (const stringExemption of stringExemptionLists[type]) {
@@ -130,19 +133,43 @@ export function defineProperty (object, propertyName, descriptor) {
     }
 }
 
+function camelcase (dashCaseText) {
+    return dashCaseText.replace(/-(.)/g, (match, letter) => {
+        return letter.toUpperCase()
+    })
+}
+
 export class DDGProxy {
-    constructor (objectScope, property, proxyObject) {
+    constructor (featureName, objectScope, property, proxyObject) {
         this.objectScope = objectScope
         this.property = property
+        this.featureName = featureName
+        const outputHandler = (...args) => {
+            const isExempt = shouldExemptMethod(this.featureName)
+            if (debug) {
+                postDebugMessage(camelcase(this.featureName), {
+                    action: isExempt ? 'ignore' : 'restrict',
+                    kind: this.property,
+                    documentUrl: document.location.href,
+                    stack: new Error().stack,
+                    args: JSON.stringify(args[2])
+                })
+            }
+            // The normal return value
+            if (isExempt) {
+                return DDGReflect.apply(...args)
+            }
+            return proxyObject.apply(...args)
+        }
         if (mozProxies) {
             this._native = objectScope[property]
             const handler = new window.wrappedJSObject.Object()
-            handler.apply = exportFunction(proxyObject.apply, window)
+            handler.apply = exportFunction(outputHandler, window)
             this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler)
         } else {
             this._native = objectScope[property]
             const handler = {}
-            handler.apply = proxyObject.apply
+            handler.apply = outputHandler
             this.internal = new window.Proxy(objectScope[property], handler)
         }
     }
@@ -154,15 +181,6 @@ export class DDGProxy {
         } else {
             this.objectScope[this.property] = this.internal
         }
-    }
-
-    sendDebugMessage (feature, action, args = {}) {
-        postDebugMessage(feature, {
-            action,
-            kind: this.property,
-            documentUrl: document.location.href,
-            ...args
-        })
     }
 }
 
