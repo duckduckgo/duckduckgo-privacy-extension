@@ -7,7 +7,7 @@ function isTrackerAllowlisted (site, request) {
     }
 
     if (!tdsStorage.config.features.trackerAllowlist &&
-        !tdsStorage.config.reatures.trackerAllowlist.settings &&
+        !tdsStorage.config.features.trackerAllowlist.settings &&
         !Object.keys(tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers).length) {
         return false
     }
