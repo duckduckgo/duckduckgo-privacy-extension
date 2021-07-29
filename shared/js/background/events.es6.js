@@ -59,6 +59,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
             })
         })
     }
+    createAutofillContextMenuItem()
 })
 
 /**
@@ -304,6 +305,7 @@ const browserWrapper = require('./wrapper.es6')
 const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
+    createAutofillContextMenuItem,
     showContextMenuAction,
     hideContextMenuAction,
     getAddresses,
