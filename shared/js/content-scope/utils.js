@@ -1,5 +1,8 @@
-/* global exportFunction */
+/* global exportFunction, mozProxies */
 import sjcl from './sjcl'
+
+// Tests don't define this variable so fallback to behave like chrome
+const hasMozProxies = typeof mozProxies !== 'undefined' ? mozProxies : false
 
 export function getDataKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
@@ -108,11 +111,8 @@ export function overrideProperty (name, prop) {
     return prop.origValue
 }
 
-// TODO make rollup aware of this so it can tree shake
-const mozProxies = 'wrappedJSObject' in window
-
 export function defineProperty (object, propertyName, descriptor) {
-    if (mozProxies) {
+    if (hasMozProxies) {
         const usedObj = object.wrappedJSObject
         const UsedObjectInterface = window.wrappedJSObject.Object
         const definedDescriptor = new UsedObjectInterface();
@@ -161,7 +161,7 @@ export class DDGProxy {
             }
             return proxyObject.apply(...args)
         }
-        if (mozProxies) {
+        if (hasMozProxies) {
             this._native = objectScope[property]
             const handler = new window.wrappedJSObject.Object()
             handler.apply = exportFunction(outputHandler, window)
@@ -176,7 +176,7 @@ export class DDGProxy {
 
     // Actually apply the proxy to the native property
     overload () {
-        if (mozProxies) {
+        if (hasMozProxies) {
             exportFunction(this.internal, this.objectScope, { defineAs: this.property })
         } else {
             this.objectScope[this.property] = this.internal
@@ -193,7 +193,7 @@ export function postDebugMessage (feature, message) {
 
 export let DDGReflect
 
-if (mozProxies) {
+if (hasMozProxies) {
     DDGReflect = window.wrappedJSObject.Reflect
 } else {
     DDGReflect = window.Reflect
