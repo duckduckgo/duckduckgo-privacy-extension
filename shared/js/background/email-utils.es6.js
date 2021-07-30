@@ -44,22 +44,24 @@ const fetchAlias = () => {
 }
 
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
-// Create the contextual menu hidden by default
-chrome.contextMenus.create({
-    id: MENU_ITEM_ID,
-    title: 'Use Duck Address',
-    contexts: ['editable'],
-    visible: false,
-    onclick: (info, tab) => {
-        const userData = getSetting('userData')
-        if (userData.nextAlias) {
-            chrome.tabs.sendMessage(tab.id, {
-                type: 'contextualAutofill',
-                alias: userData.nextAlias
-            })
+const createAutofillContextMenuItem = () => {
+    // Create the contextual menu hidden by default
+    chrome.contextMenus.create({
+        id: MENU_ITEM_ID,
+        title: 'Use Duck Address',
+        contexts: ['editable'],
+        visible: false,
+        onclick: (info, tab) => {
+            const userData = getSetting('userData')
+            if (userData.nextAlias) {
+                chrome.tabs.sendMessage(tab.id, {
+                    type: 'contextualAutofill',
+                    alias: userData.nextAlias
+                })
+            }
         }
-    }
-})
+    })
+}
 
 const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, { visible: true })
 
@@ -97,6 +99,7 @@ const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
+    createAutofillContextMenuItem,
     showContextMenuAction,
     hideContextMenuAction,
     getAddresses,
