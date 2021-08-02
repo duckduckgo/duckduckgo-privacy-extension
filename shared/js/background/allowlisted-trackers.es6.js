@@ -40,6 +40,12 @@ function _matchesRule (site, request, allowListEntry) {
     let matchedRule = null
     request = request.split('?')[0]
 
+    // remove port from request urls
+    const parsedRequest = new URL(request)
+    if (parsedRequest.port) {
+        request = request.replace(`:${parsedRequest.port}`, '')
+    }
+
     if (allowListEntry.rules && allowListEntry.rules.length) {
         allowListEntry.rules.some(ruleObj => {
             if (request.match(ruleObj.rule)) {
