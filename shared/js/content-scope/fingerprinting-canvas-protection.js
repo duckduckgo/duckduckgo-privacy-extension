@@ -6,6 +6,19 @@ export function init (args) {
     const domainKey = site.domain
     const featureName = 'fingerprinting-canvas'
 
+    if (args.debug) {
+        // Debugging of canvas methods
+        const debuggingMethods = ['putImageData', 'drawImage']
+        for (const methodName of debuggingMethods) {
+            const debuggingProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
+                apply (target, thisArg, args) {
+                    return DDGReflect.apply(target, thisArg, args)
+                }
+            })
+            debuggingProxy.overload()
+        }
+    }
+
     // Using proxies here to swallow calls to toString etc
     const getImageDataProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, 'getImageData', {
         apply (target, thisArg, args) {
