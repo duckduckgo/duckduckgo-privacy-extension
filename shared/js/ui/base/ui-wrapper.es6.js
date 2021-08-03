@@ -9,7 +9,7 @@ const backgroundMessage = (thisModel) => {
     // // notify subscribers
     window.chrome.runtime.onMessage.addListener((req, sender) => {
         if (sender.id !== chrome.runtime.id) return
-        if (req.whitelistChanged) thisModel.send('whitelistChanged')
+        if (req.allowlistChanged) thisModel.send('allowlistChanged')
         if (req.updateTabData) thisModel.send('updateTabData')
         if (req.didResetTrackersData) thisModel.send('didResetTrackersData', req.didResetTrackersData)
         if (req.closePopup) window.close()

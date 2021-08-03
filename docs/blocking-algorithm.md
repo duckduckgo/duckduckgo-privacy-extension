@@ -6,7 +6,7 @@ Trackers are third party assets that are known to share personal information, ei
 
 This list will identify which of those requests to block, or in some cases, substitute.
 
-The list consists of domains to match against asset requests, and specific rules - both blocking and whitelists - to match against the full URL, as well as exceptions and default conditions, to determine whether the URL is a tracker and can be blocked.
+The list consists of domains to match against asset requests, and specific rules - both blocking and allowlists - to match against the full URL, as well as exceptions and default conditions, to determine whether the URL is a tracker and can be blocked.
 
 ---
 

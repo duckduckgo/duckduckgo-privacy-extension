@@ -44,9 +44,9 @@ module.exports = function () {
             </a>
         </li>
         <li class="site-info__li--toggle js-site-protection-row padded ${this.model.protectionsEnabled ? 'is-active' : ''}">
-            <p class="is-transparent site-info__whitelist-status js-site-whitelist-status">
+            <p class="is-transparent site-info__allowlist-status js-site-allowlist-status">
                 <span class="text-line-after-icon privacy-on-off-message bold">
-                    ${setTransitionText(!this.model.isWhitelisted)}
+                    ${setTransitionText(!this.model.isAllowlisted)}
                 </span>
             </p>
             <p class="site-info__protection js-site-protection bold">Site Privacy Protection</p>
@@ -54,7 +54,7 @@ module.exports = function () {
                 ${toggleButton(this.model.protectionsEnabled, 'js-site-toggle pull-right')}
             </div>
         </li>
-        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded ${this.model.displayBrokenUI ? 'is-hidden' : ''}">
+        <li class="js-site-manage-whitelist-li site-info__li--manage-allowlist padded ${this.model.displayBrokenUI ? 'is-hidden' : ''}">
             ${renderManageAllowlist(this.model)}
         </li>
         <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
@@ -102,7 +102,7 @@ module.exports = function () {
 
     function renderManageAllowlist (model) {
         return bel`<div>
-    <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
+    <a href="javascript:void(0)" class="js-site-manage-allowlist site-info__manage-allowlist link-secondary bold">
         Unprotected Sites
     </a>
     <div class="separator"></div>

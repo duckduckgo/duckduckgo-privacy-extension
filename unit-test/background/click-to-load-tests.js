@@ -38,7 +38,7 @@ describe('Tracker Utilities', () => {
                 addOrUpdateTrackersBlocked: () => {},
                 addWebResourceAccess: () => {},
                 site: {
-                    whitelisted: false,
+                    allowlisted: false,
                     clickToLoad: []
                 }
             }

@@ -12,7 +12,7 @@
         "generate-etags": "node scripts/generateEtags.js > shared/data/etags.json",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
-        "release": "grunt build && node scripts/httpsWhitelist.js",
+        "release": "grunt build && node scripts/httpsAllowlist.js",
         "selenium": "cd selenium-test && node test.js",
         "lint": "eslint shared/js unit-test integration-test",
         "lint-fix": "eslint shared/js unit-test integration-test --fix",

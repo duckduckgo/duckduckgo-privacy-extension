@@ -325,7 +325,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         'more info: https://github.com/duckduckgo/privacy-configuration')
             return
         }
-        if (!argumentsObject.site.whitelisted) {
+        if (!argumentsObject.site.allowlisted) {
             res(argumentsObject)
             return
         }
@@ -484,8 +484,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.setList) {
         tabManager.setList(req.setList)
-    } else if (req.whitelistOptIn) {
-        tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value)
+    } else if (req.allowlistOptIn) {
+        tabManager.setGlobalAllowlist('allowlistOptIn', req.allowlistOptIn.domain, req.allowlistOptIn.value)
     } else if (req.getTab) {
         res(tabManager.get({ tabId: req.getTab }))
         return true
