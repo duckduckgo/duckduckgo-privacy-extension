@@ -232,7 +232,7 @@ function getBrokenScriptLists () {
 // tabManager.site.isProtectionEnabled() is the preferred method.
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
-    const safeList = settings.getSetting('whitelisted')
+    const safeList = settings.getSetting('allowlisted')
     const subdomains = hostname.split('.')
     // Check user safe list
     // TODO make the same as brokenListIndex matching

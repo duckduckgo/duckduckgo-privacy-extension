@@ -27,10 +27,10 @@ class Site {
         this.domain = domain
         this.trackerUrls = []
         this.grade = new Grade()
-        this.whitelisted = false // user-whitelisted sites; applies to all privacy features
-        this.whitelistOptIn = false
+        this.allowlisted = false // user-allowlisted sites; applies to all privacy features
+        this.allowlistOptIn = false
         this.denylisted = false
-        this.setWhitelistStatusFromGlobal(domain)
+        this.setListStatusFromGlobal(domain)
 
         /**
          * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
@@ -67,8 +67,8 @@ class Site {
      * When site objects are created we check the stored lists
      * and set the new site whitelist statuses
      */
-    setWhitelistStatusFromGlobal () {
-        const globalLists = ['whitelisted', 'whitelistOptIn', 'denylisted']
+    setListStatusFromGlobal () {
+        const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
         globalLists.forEach((name) => {
             const list = settings.getSetting(name) || {}
             this.setListValue(name, list[this.domain])
@@ -80,11 +80,11 @@ class Site {
     }
 
     /*
-     * Send message to the popup to rerender the whitelist
+     * Send message to the popup to rerender the allowlist
      */
-    notifyWhitelistChanged () {
+    notifyAllowlistChanged () {
         // this can send an error message when the popup is not open check lastError to hide it
-        chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
+        chrome.runtime.sendMessage({ allowlistChanged: true }, () => chrome.runtime.lastError)
     }
 
     isContentBlockingEnabled () {

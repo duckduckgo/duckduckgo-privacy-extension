@@ -2,9 +2,9 @@ const Parent = window.DDG.base.View
 const isHiddenClass = 'is-hidden'
 const isDisabledClass = 'is-disabled'
 const isInvalidInputClass = 'is-invalid-input'
-const whitelistItemsTemplate = require('./../templates/whitelist-items.es6.js')
+const allowlistItemsTemplate = require('./../templates/allowlist-items.es6.js')
 
-function Whitelist (ops) {
+function Allowlist (ops) {
     this.model = ops.model
     this.pageView = ops.pageView
     this.template = ops.template
@@ -15,7 +15,7 @@ function Whitelist (ops) {
     this.setup()
 }
 
-Whitelist.prototype = window.$.extend({},
+Allowlist.prototype = window.$.extend({},
     Parent.prototype,
     {
 
@@ -66,12 +66,12 @@ Whitelist.prototype = window.$.extend({},
             }
 
             if (!isButtonDisabled && e.key === 'Enter') {
-                // also add to whitelist on enter
+                // also add to allowlist on enter
                 this._addItem()
             }
         },
 
-        _showAddToWhitelistInput: function (e) {
+        _showAddToAllowlistInput: function (e) {
             this.$url.removeClass(isHiddenClass)
             this.$url.focus()
             this.$add.removeClass(isHiddenClass)
@@ -80,7 +80,7 @@ Whitelist.prototype = window.$.extend({},
         },
 
         setup: function () {
-            this._cacheElems('.js-whitelist', [
+            this._cacheElems('.js-allowlist', [
                 'remove',
                 'add',
                 'error',
@@ -93,10 +93,10 @@ Whitelist.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$remove, 'click', this._removeItem],
                 [this.$add, 'click', this._addItem],
-                [this.$showadd, 'click', this._showAddToWhitelistInput],
+                [this.$showadd, 'click', this._showAddToAllowlistInput],
                 [this.$url, 'keyup', this._manageInputChange],
-                // listen to changes to the whitelist model
-                [this.store.subscribe, 'change:whitelist', this.rerender]
+                // listen to changes to the allowlist model
+                [this.store.subscribe, 'change:allowlist', this.rerender]
             ])
         },
 
@@ -108,10 +108,10 @@ Whitelist.prototype = window.$.extend({},
 
         _renderList: function () {
             this.unbindEvents()
-            this.$container.html(whitelistItemsTemplate(this.model.list))
+            this.$container.html(allowlistItemsTemplate(this.model.list))
             this.setup()
         }
     }
 )
 
-module.exports = Whitelist
+module.exports = Allowlist

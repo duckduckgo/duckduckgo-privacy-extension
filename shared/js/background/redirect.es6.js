@@ -145,7 +145,7 @@ function handleRequest (requestData) {
             tracker = null
         }
 
-        // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
+        // count and block trackers. Skip things that matched in the trackersAllowlist unless they're first party
         if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
             // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
             // comes through on document unload and by the time we block it we have updated our tab data to the new

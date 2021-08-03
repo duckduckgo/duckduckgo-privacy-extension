@@ -2,19 +2,19 @@ const testDomains = require('./../data/httpsTestDomains.json')
 const https = require('../../shared/js/background/https.es6')
 const httpsStorage = require('../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../data/httpsBloom.json')
-const httpsWhitelist = require('./../data/httpsWhitelist.json')
+const httpsAllowlist = require('./../data/httpsAllowlist.json')
 const httpsNegativeBloom = require('./../data/httpsNegativeBloom.json')
-const httpsNegativeWhitelist = require('./../data/httpsNegativeWhitelist.json')
+const httpsNegativeAllowlist = require('./../data/httpsNegativeAllowlist.json')
 const load = require('./../helpers/https.es6')
 const httpsService = require('../../shared/js/background/https-service.es6')
 
 describe('Https upgrades', () => {
     beforeAll(() => {
         load.loadStub({
-            httpsBloom: httpsBloom,
-            httpsWhitelist: httpsWhitelist,
-            httpsNegativeBloom: httpsNegativeBloom,
-            httpsNegativeWhitelist: httpsNegativeWhitelist
+            httpsBloom,
+            httpsAllowlist,
+            httpsNegativeBloom,
+            httpsNegativeAllowlist
         })
 
         return httpsStorage.getLists()

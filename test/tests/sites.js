@@ -2,16 +2,16 @@
   QUnit.module("Sites");
 
   QUnit.test("test sites and site classes", function (assert) {
-      bkg.settings.updateSetting('whitelist', '');
+      bkg.settings.updateSetting('allowlist', '');
 
       var domain = "test.com";
       var newSite = new bkg.Site(domain)
 
       assert.ok(newSite.domain === domain, 'site has correct name');
-      assert.ok(newSite.isWhiteListed() === undefined, 'site is not whitelisted by default');
+      assert.ok(newSite.isAllowListed() === undefined, 'site is not allowlisted by default');
       
       newSite.setListValue('whitelisted', true);
-      assert.ok(newSite.isWhiteListed() === true, 'whitelisting a site works');
+      assert.ok(newSite.isAllowListed() === true, 'allowlisting a site works');
 
       newSite.addTracker({url: 'doubleclick.net'});
       var trackerList = newSite.trackerUrls;

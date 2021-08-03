@@ -59,9 +59,9 @@ function connected (port) {
                 removeBroken(new URL(tab.url).hostname)
             } else {
                 tabManager.setList({
-                    list: 'whitelisted',
+                    list: 'allowlisted',
                     domain: tab.site.domain,
-                    value: !tab.site.whitelisted
+                    value: !tab.site.allowlisted
                 })
             }
             postMessage(tabId, 'tabChange', tab)

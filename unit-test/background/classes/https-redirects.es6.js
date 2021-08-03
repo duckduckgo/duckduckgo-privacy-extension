@@ -117,7 +117,7 @@ describe('HttpsRedirects', () => {
             canRedirect = httpsRedirects.canRedirect(anotherRequest)
             expect(canRedirect).toEqual(true, 'it should let non-mainframe redirects pass')
         })
-        it('once a main frame redirect has been marked as not working, the domain should be blacklisted', () => {
+        it('once a main frame redirect has been marked as not working, the domain should be blocklisted', () => {
             fastForward(1500)
 
             for (let i = 0; i < 8; i++) {

@@ -1,4 +1,4 @@
-.options-content__whitelist {
+.options-content__allowlist {
 
     font-size: 14px;
     font-weight: 600;
@@ -17,20 +17,20 @@
 
     li {
 
-        $whitelist-item-height: 1.2em;
+        $allowlist-item-height: 1.2em;
 
         a {
             display: inline-block;
             max-width: 360px;
-            height: $whitelist-item-height;
-            line-height: $whitelist-item-height;
+            height: $allowlist-item-height;
+            line-height: $allowlist-item-height;
             overflow: hidden;
         }
 
         button.remove {
             color: $color--grey;
             font-size: 22px;
-            line-height: $whitelist-item-height;
+            line-height: $allowlist-item-height;
             background: transparent;
             border: none;
             margin: -4px 0 0 0;
@@ -39,7 +39,7 @@
     }
 }
 
-.whitelist-url {
+.allowlist-url {
     width: 245px;
     height: 36px;
     border-radius: 4px;
@@ -54,11 +54,11 @@
     }
 }
 
-.whitelist-url.is-invalid-input {
+.allowlist-url.is-invalid-input {
     border: solid 1px $red;
 }
 
-.whitelist-add {
+.allowlist-add {
     width: 120px;
     height: 30px;
     border-radius: 4px;
@@ -71,13 +71,13 @@
     cursor: pointer;
 }
 
-.whitelist-add.is-disabled {
+.allowlist-add.is-disabled {
     background-color: $silver;
     color: $grey-light;
     cursor: default;
 }
 
-.whitelist-show-add {
+.allowlist-show-add {
     height: 17px;
     color: $blue;
 }
