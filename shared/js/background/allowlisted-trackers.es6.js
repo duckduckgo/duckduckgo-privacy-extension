@@ -13,7 +13,8 @@ function isTrackerAllowlisted (site, request) {
         return false
     }
 
-    const allowListEntry = _findAllowlistEntry(request, tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers)
+    const parsedRequest = tldts.parse(request)
+    const allowListEntry = tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers[parsedRequest.domain]
 
     if (allowListEntry) {
         return _matchesRule(site, request, allowListEntry)
@@ -22,23 +23,9 @@ function isTrackerAllowlisted (site, request) {
     }
 }
 
-function _findAllowlistEntry (request, allowList) {
-    const urlList = utils.extractHostFromURL(request).split('.')
-
-    while (urlList.length > 1) {
-        const requestDomain = urlList.join('.')
-        urlList.shift()
-
-        const matchedTracker = allowList[requestDomain]
-        if (matchedTracker) {
-            return matchedTracker
-        }
-    }
-}
-
 function _matchesRule (site, request, allowListEntry) {
     let matchedRule = null
-    request = request.split('?')[0]
+    request = request.split('?')[0].split(';')[0]
 
     // remove port from request urls
     const parsedRequest = new URL(request)
