@@ -12,9 +12,11 @@ function Site (attrs) {
     attrs.disabled = true // disabled by default
     attrs.tab = null
     attrs.domain = '-'
-    attrs.isWhitelisted = false
-    attrs.isAllowlisted = false
+    attrs.protectionsEnabled = false
     attrs.isBroken = false
+    attrs.displayBrokenUI = false
+
+    attrs.isWhitelisted = false
     attrs.whitelistOptIn = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
@@ -77,7 +79,7 @@ Site.prototype = window.$.extend({},
                 this.domain = 'new tab' // tab can be null for firefox new tabs
                 this.set({ isCalculatingSiteRating: false })
             } else {
-                this.initAllowlisted(this.tab.site.whitelisted)
+                this.initAllowlisted(this.tab.site.whitelisted, this.tab.site.denylisted)
                 this.whitelistOptIn = this.tab.site.whitelistOptIn
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
@@ -222,7 +224,7 @@ Site.prototype = window.$.extend({},
         getMajorTrackerNetworksCount: function () {
             // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is whitelisted
-            const trackers = this.isAllowlisted ? this.tab.trackers : this.tab.trackersBlocked
+            const trackers = this.protectionsEnabled ? this.tab.trackers : this.tab.trackersBlocked
             const count = Object.values(trackers).reduce((total, t) => {
                 const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
                 total += isMajor ? 1 : 0
@@ -241,46 +243,57 @@ Site.prototype = window.$.extend({},
             return networks
         },
 
-        initAllowlisted: function (value) {
-            this.isWhitelisted = value
+        initAllowlisted: function (allowListValue, denyListValue) {
+            this.isWhitelisted = allowListValue
+            this.isDenylisted = denyListValue
+
             this.isBroken = this.tab.site.isBroken || this.tab.site.brokenFeatures.includes('contentBlocking')
-            this.isAllowlisted = this.isBroken || this.isWhitelisted
+            this.displayBrokenUI = this.isBroken
+
+            if (denyListValue) {
+                this.displayBrokenUI = false
+                this.protectionsEnabled = true
+            } else {
+                this.protectionsEnabled = !(this.isWhitelisted || this.isBroken)
+            }
+            this.set('protectionsEnabled', this.protectionsEnabled)
+        },
+
+        setList (list, domain, value) {
+            this.fetch({
+                setList: {
+                    list,
+                    domain,
+                    value
+                }
+            })
         },
 
         toggleWhitelist: function () {
             if (this.tab && this.tab.site) {
-                this.initAllowlisted(!this.isWhitelisted)
-                this.set('whitelisted', this.isWhitelisted)
-                const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
+                if (this.isBroken) {
+                    this.initAllowlisted(this.isWhitelisted, !this.isDenylisted)
+                    this.setList('denylisted', this.tab.site.domain, this.isDenylisted)
+                } else {
+                    // Explicitly remove all denylisting if the site is broken. This covers the case when the site has been removed from the list.
+                    this.setList('denylisted', this.tab.site.domain, false)
+                    this.initAllowlisted(!this.isWhitelisted)
 
-                // fire ept.on pixel if just turned privacy protection on,
-                // fire ept.off pixel if just turned privacy protection off.
-                if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
+                    // fire ept.on pixel if just turned privacy protection on,
+                    // fire ept.off pixel if just turned privacy protection off.
+                    if (this.isWhiteListed && this.whitelistOptIn) {
                     // If user reported broken site and opted to share data on site,
                     // attach domain and path to ept.on pixel if they turn privacy protection back on.
-                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
-                    this.set('whitelistOptIn', false)
-                    this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
-                    this.fetch({
-                        whitelistOptIn:
-                        {
-                            list: 'whitelistOptIn',
-                            domain: this.tab.site.domain,
-                            value: false
-                        }
-                    })
-                } else {
-                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
-                }
-
-                this.fetch({
-                    whitelisted:
-                    {
-                        list: 'whitelisted',
-                        domain: this.tab.site.domain,
-                        value: this.isWhitelisted
+                        const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                        this.set('whitelistOptIn', false)
+                        this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
+                        this.setList('whitelistOptIn', this.tab.site.domain, false)
+                    } else {
+                        this.fetch({ firePixel: ['ept', 'off'] })
                     }
-                })
+
+                    this.setList('whitelisted', this.tab.site.domain, this.isWhitelisted)
+                }
             }
         },
 
