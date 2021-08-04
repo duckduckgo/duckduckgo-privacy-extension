@@ -165,10 +165,6 @@ const https = require('./https.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
-function blockTrackingCookies () {
-    return utils.isFeatureEnabled('trackingCookies3p')
-}
-
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 chrome.webRequest.onBeforeRequest.addListener(
@@ -204,15 +200,14 @@ chrome.webRequest.onHeadersReceived.addListener(
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
 
-        if (blockTrackingCookies() && request.type !== 'main_frame') {
+        const tab = tabManager.get({ tabId: request.tabId })
+        if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
             if (!trackerutils.isTracker(request.url)) {
                 return { responseHeaders }
             }
 
             // Strip 3rd party response header
-            const tab = tabManager.get({ tabId: request.tabId })
             if (!request.responseHeaders) return { responseHeaders }
-            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isFeatureBrokenForURL(tab.url, 'trackingCookies3p'))) return { responseHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
@@ -660,7 +655,8 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     if (sender.url === 'about:blank') {
         site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
     }
-    if ((!site.whitelisted && !site.isBroken) && blockTrackingCookies()) {
+
+    if (tab?.site.isFeatureEnabled('trackingCookies3p')) {
         // determine the register domain of the sending tab
         const tabUrl = tab ? tab.url : sender.tab.url
         const parsed = tldts.parse(tabUrl)
@@ -710,7 +706,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             return
         }
 
-        // Check if origin is safe listed
         const tab = tabManager.get({ tabId: e.tabId })
 
         // Firefox only - Check if this tab had a surrogate redirect request and if it will
@@ -726,7 +721,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             }
         }
 
-        // Safe list and broken site list checks are included in the referrer evaluation
+        if (!tab || !tab.site.isFeatureEnabled('referrer')) {
+            return
+        }
+
+        // Additional safe list and broken site list checks are included in the referrer evaluation
         const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
         if (!modifiedReferrer) {
             return
@@ -762,23 +761,22 @@ if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
 // Attach GPC header to all requests if enabled.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
+        const tab = tabManager.get({ tabId: request.tabId })
         const GPCHeader = GPC.getHeader()
-        const GPCEnabled = utils.isFeatureEnabled('gpc') && !utils.isFeatureBrokenForURL(request.url, 'gpc')
+        const GPCEnabled = tab && tab.site.isFeatureEnabled('gpc')
 
         let requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
             requestHeaders.push(GPCHeader)
         }
 
-        if (blockTrackingCookies() && request.type !== 'main_frame') {
+        if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
             if (!trackerutils.isTracker(request.url)) {
                 return { requestHeaders }
             }
 
             // Strip 3rd party response header
-            const tab = tabManager.get({ tabId: request.tabId })
             if (!requestHeaders) return { requestHeaders }
-            if (tab && (tab.site.whitelisted || tab.site.isBroken || utils.isFeatureBrokenForURL(tab.url, 'trackingCookies3p'))) return { requestHeaders }
             if (!tab) {
                 const initiator = request.initiator || request.documentUrl
                 if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
@@ -800,7 +798,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
             }
         }
 
-        return { requestHeaders: requestHeaders }
+        return { requestHeaders }
     },
     { urls: ['<all_urls>'] },
     extraInfoSpecSendHeaders
@@ -817,7 +815,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 chrome.webRequest.onBeforeRedirect.addListener(
     details => {
         const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && !tab.site.isBroken && !tab.site.whitelisted && details.responseHeaders && trackerutils.clickToLoadIsActive()) {
+        if (tab && tab.site.isFeatureEnabled('clickToPlay') && details.responseHeaders) {
             // Detect cors error
             const headers = details.responseHeaders
             const corsHeaders = [
@@ -852,7 +850,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
         return
     }
 
-    if (tab && !tab.site.whitelisted && trackerutils.clickToLoadIsActive()) {
+    if (tab && tab.site.isFeatureEnabled('clickToPlay')) {
         chrome.tabs.executeScript(details.tabId, {
             file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,

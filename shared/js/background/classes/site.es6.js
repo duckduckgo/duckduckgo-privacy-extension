@@ -86,9 +86,18 @@ class Site {
         chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
     }
 
-    isWhiteListed () { return this.whitelisted }
+    isContentBlockingEnabled () {
+        return this.isFeatureEnabled('contentBlocking')
+    }
 
-    isAllowlisted () { return this.whitelisted || this.isBroken }
+    isProtectionEnabled () {
+        // Check if user has allowed disabled blocking or it's a known broken site.
+        return !(this.whitelisted || this.isBroken)
+    }
+
+    isFeatureEnabled (featureName) {
+        return this.isProtectionEnabled() && !this.brokenFeatures.includes(featureName)
+    }
 
     addTracker (t) {
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {

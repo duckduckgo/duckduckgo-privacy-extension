@@ -67,10 +67,10 @@ class Tab {
         let gradeIcon
         const grade = this.site.grade.get()
 
-        if (this.site.whitelisted || this.site.isBroken) {
-            gradeIcon = gradeIconLocations[grade.site.grade]
-        } else {
+        if (this.site.isContentBlockingEnabled()) {
             gradeIcon = gradeIconLocations[grade.enhanced.grade]
+        } else {
+            gradeIcon = gradeIconLocations[grade.site.grade]
         }
 
         const badgeData = { path: gradeIcon, tabId: this.id }
