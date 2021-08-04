@@ -1,6 +1,5 @@
 const tdsStorage = require('./storage/tds.es6')
 const tldts = require('tldts')
-const utils = require('./utils.es6')
 
 function isTrackerAllowlisted (site, request) {
     if (tdsStorage.config.features.trackerAllowlist.state === 'disabled') {
