@@ -2,12 +2,13 @@ const tdsStorage = require('./storage/tds.es6')
 const tldts = require('tldts')
 
 function isTrackerAllowlisted (site, request) {
+    // check that allowlist exists and is not disabled
     if (!tdsStorage.config.features.trackerAllowlist || tdsStorage.config.features.trackerAllowlist.state === 'disabled') {
         return false
     }
 
-    if (!tdsStorage.config.features.trackerAllowlist &&
-        !tdsStorage.config.features.trackerAllowlist.settings &&
+    // check that allowlist has entries
+    if (!tdsStorage.config.features.trackerAllowlist.settings &&
         !Object.keys(tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers).length) {
         return false
     }
@@ -50,6 +51,8 @@ function _matchesRule (site, request, allowListEntry) {
     } else {
         return false
     }
+
+    return false
 }
 
 module.exports = isTrackerAllowlisted
