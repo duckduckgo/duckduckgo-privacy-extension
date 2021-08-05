@@ -21,12 +21,13 @@ const getFromStorage = (key, cb) => {
     })
 }
 const getFromManagedStorage = (keys, cb) => {
-    chrome.storage.managed.get(keys, (result) => {
-        if (chrome.runtime.lastError) {
-            console.warn('Managed storage not available.', browser.runtime.lastError)
-        }
-        cb(result || {})
-    })
+    getFromStorage(keys, cb)
+    // chrome.storage.managed.get(keys, (result) => {
+    //     if (chrome.runtime.lastError) {
+    //         console.warn('Managed storage not available.', browser.runtime.lastError)
+    //     }
+    //     cb(result || {})
+    // })
 }
 
 const getExtensionId = () => {

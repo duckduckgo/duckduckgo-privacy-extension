@@ -181,9 +181,9 @@ chrome.webRequest.onBeforeRequest.addListener(
 )
 
 const extraInfoSpec = ['blocking', 'responseHeaders']
-if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-    extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
-}
+// if (chrome.webRequest.OnHeadersReceivedOptions?.EXTRA_HEADERS) {
+//     extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+// }
 // we determine if FLoC is enabled by testing for availability of its JS API
 const isFlocEnabled = ('interestCohort' in document)
 chrome.webRequest.onHeadersReceived.addListener(
@@ -287,16 +287,16 @@ chrome.tabs.onRemoved.addListener((id, info) => {
 chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError))
 
 // search via omnibox
-chrome.omnibox.onInputEntered.addListener(function (text) {
-    chrome.tabs.query({
-        currentWindow: true,
-        active: true
-    }, function (tabs) {
-        chrome.tabs.update(tabs[0].id, {
-            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage.os + 'cl'
-        })
-    })
-})
+// chrome.omnibox.onInputEntered.addListener(function (text) {
+//     chrome.tabs.query({
+//         currentWindow: true,
+//         active: true
+//     }, function (tabs) {
+//         chrome.tabs.update(tabs[0].id, {
+//             url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage.os + 'cl'
+//         })
+//     })
+// })
 
 /**
  * MESSAGES
@@ -756,9 +756,9 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 const GPC = require('./GPC.es6')
 
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
-if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-    extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
-}
+// if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+//     extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+// }
 // Attach GPC header to all requests if enabled.
 chrome.webRequest.onBeforeSendHeaders.addListener(
     request => {
