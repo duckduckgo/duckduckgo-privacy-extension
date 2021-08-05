@@ -181,7 +181,7 @@ module.exports = function (grunt) {
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
-            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browser}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
+            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browser === 'safari14' ? 'chrome' : browser}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
         },
 
         watch: {

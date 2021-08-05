@@ -24,6 +24,7 @@
         "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/",
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make dev browser=chrome type=dev watch=1",
+        "dev-safari14": "make dev browser=safari14 type=dev watch=1",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },
