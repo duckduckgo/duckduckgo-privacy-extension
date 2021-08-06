@@ -37,13 +37,13 @@ class TabManager {
      * domain: domain to whitelist
      * value: whitelist value, true or false
      */
-    whitelistDomain (data) {
+    setList (data) {
         this.setGlobalWhitelist(data.list, data.domain, data.value)
 
         for (const tabId in this.tabContainer) {
             const tab = this.tabContainer[tabId]
             if (tab.site && tab.site.domain === data.domain) {
-                tab.site.setWhitelisted(data.list, data.value)
+                tab.site.setListValue(data.list, data.value)
             }
         }
 

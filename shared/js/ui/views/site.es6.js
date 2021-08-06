@@ -39,16 +39,19 @@ Site.prototype = window.$.extend({},
     Parent.prototype,
     openOptionsPage,
     {
-        _onWhitelistClick: function (e) {
+        _onToggleClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
-            if (this.$protectionrow.hasClass('is-disabled')) return
 
             this.model.toggleWhitelist()
-            const whitelisted = this.model.isWhitelisted
-            this._showWhitelistedStatusMessage(!whitelisted)
+            if (!this.model.isBroken) {
+                const whitelisted = this.model.isWhitelisted
+                this._showWhitelistedStatusMessage(!whitelisted)
 
-            if (whitelisted) {
-                this._showBreakageConfirmation()
+                if (whitelisted) {
+                    this._showBreakageConfirmation()
+                }
+            } else {
+                this.closePopupAndReload(1500)
             }
         },
 
@@ -74,7 +77,6 @@ Site.prototype = window.$.extend({},
             this._cacheElems('.js-site', [
                 'toggle',
                 'protection',
-                'protection-row',
                 'whitelist-status',
                 'show-all-trackers',
                 'show-page-trackers',
@@ -92,7 +94,7 @@ Site.prototype = window.$.extend({},
             this.$gradescorecard = this.$('.js-hero-open')
 
             this.bindEvents([
-                [this.$toggle, 'click', this._onWhitelistClick],
+                [this.$toggle, 'click', this._onToggleClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
                 [this.$confirmbreakageyes, 'click', this._onConfirmBrokenClick],

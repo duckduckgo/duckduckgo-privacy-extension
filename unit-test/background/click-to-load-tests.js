@@ -5,7 +5,6 @@ const tdsStorageStub = require('./../helpers/tds.es6')
 const redirect = require('../../shared/js/background/redirect.es6')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
-const trackerutils = require('../../shared/js/background/tracker-utils')
 const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
@@ -17,7 +16,6 @@ describe('Tracker Utilities', () => {
         settings.updateSetting('activeExperiment', true)
         settings.updateSetting('experimentData', { blockFacebook: true })
         /* eslint-disable no-unused-vars */
-        spyOn(trackerutils, 'clickToLoadIsActive').and.returnValue(true)
         spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
         spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
         tabObserver = spyOn(Tab, 'constructor')

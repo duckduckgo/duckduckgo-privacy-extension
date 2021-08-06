@@ -19,7 +19,7 @@ Whitelist.prototype = window.$.extend({},
             console.log(`whitelist: remove ${domain}`)
 
             this.fetch({
-                whitelisted: {
+                setList: {
                     list: 'whitelisted',
                     domain: domain,
                     value: false
@@ -55,7 +55,7 @@ Whitelist.prototype = window.$.extend({},
                 console.log(`whitelist: add ${domainToWhitelist}`)
 
                 this.fetch({
-                    whitelisted: {
+                    setList: {
                         list: 'whitelisted',
                         domain: domainToWhitelist,
                         value: true

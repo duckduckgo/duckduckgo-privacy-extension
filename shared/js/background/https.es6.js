@@ -147,10 +147,8 @@ class HTTPS {
             return reqUrl
         }
 
-        // Skip upgrading sites that have been whitelisted by user
-        // via on/off toggle in popup
-        if (tab.site.whitelisted) {
-            console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. Skip upgrade check.`)
+        // Skip upgrading sites that have been disabled by user or through broken sites
+        if (!tab || !tab.site.isFeatureEnabled('https')) {
             return reqUrl
         }
 

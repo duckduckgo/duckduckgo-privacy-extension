@@ -58,7 +58,7 @@ function connected (port) {
                 removeBroken(tab.site.domain)
                 removeBroken(new URL(tab.url).hostname)
             } else {
-                tabManager.whitelistDomain({
+                tabManager.setList({
                     list: 'whitelisted',
                     domain: tab.site.domain,
                     value: !tab.site.whitelisted

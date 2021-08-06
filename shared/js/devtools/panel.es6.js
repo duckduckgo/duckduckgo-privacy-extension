@@ -109,13 +109,26 @@ const actionHandlers = {
         row.classList.add('jscookie')
         table.appendChild(row)
     },
-    canvas: (m) => {
-        const { documentUrl, action, kind } = m.message
+    fingerprintingCanvas: (m) => {
+        const { documentUrl, action, kind, stack, args } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
         cells[2].textContent = `Canvas ${action}`
-        cells[3].textContent = kind
+        const argsOut = JSON.parse(args).join(', ')
+        cells[3].setAttribute('colspan', 2)
+        cells[4].remove()
+        const lines = stack.split('\n')
+        lines.shift()
+
+        cells[3].textContent = `${kind}(${argsOut})`
+        const details = document.createElement('details')
+        const summary = document.createElement('summary')
+        summary.textContent = 'Call stack'
+        details.appendChild(summary)
+        details.appendChild(document.createTextNode(lines.join('\n')))
+        cells[3].appendChild(details)
+
         row.classList.add('canvas')
         table.appendChild(row)
     }

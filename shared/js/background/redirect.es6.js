@@ -86,7 +86,7 @@ function handleRequest (requestData) {
             return
         }
 
-        const blockingEnabled = utils.isFeatureEnabled('contentBlocking') && !utils.isFeatureBrokenForURL(thisTab.url, 'contentBlocking')
+        const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
         /**
          * Tracker blocking
@@ -98,25 +98,27 @@ function handleRequest (requestData) {
          * Click to Load Blocking
          * If it isn't in the tracker list, check the clickToLoad block list
          */
-        const socialTracker = trackerutils.getSocialTracker(requestData.url)
-        if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
-            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
-                !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
-                !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
-                // TDS doesn't block social sites by default, so update the action & redirect for click to load.
-                tracker.action = 'block'
-                if (socialTracker.redirectUrl) {
-                    tracker.action = 'redirect'
-                    tracker.reason = 'matched rule - surrogate'
-                    tracker.redirectUrl = socialTracker.redirectUrl
-                    if (!tracker.matchedRule) {
-                        tracker.matchedRule = {}
+        if (thisTab.site.isFeatureEnabled('clickToPlay')) {
+            const socialTracker = trackerutils.getSocialTracker(requestData.url)
+            if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
+                if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
+                    !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
+                    !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
+                    // TDS doesn't block social sites by default, so update the action & redirect for click to load.
+                    tracker.action = 'block'
+                    if (socialTracker.redirectUrl) {
+                        tracker.action = 'redirect'
+                        tracker.reason = 'matched rule - surrogate'
+                        tracker.redirectUrl = socialTracker.redirectUrl
+                        if (!tracker.matchedRule) {
+                            tracker.matchedRule = {}
+                        }
+                        tracker.matchedRule.surrogate = socialTracker.redirectUrl
                     }
-                    tracker.matchedRule.surrogate = socialTracker.redirectUrl
+                } else {
+                    // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
+                    return
                 }
-            } else {
-                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
-                return
             }
         }
 
@@ -176,7 +178,7 @@ function handleRequest (requestData) {
             }
             browserWrapper.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
-            if (blockingEnabled && !thisTab.site.isAllowlisted() && tracker.action.match(/block|redirect/)) {
+            if (blockingEnabled && tracker.action.match(/block|redirect/)) {
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()

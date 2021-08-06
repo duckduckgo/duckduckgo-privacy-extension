@@ -29,6 +29,7 @@ class Site {
         this.grade = new Grade()
         this.whitelisted = false // user-whitelisted sites; applies to all privacy features
         this.whitelistOptIn = false
+        this.denylisted = false
         this.setWhitelistStatusFromGlobal(domain)
 
         /**
@@ -63,19 +64,19 @@ class Site {
     }
 
     /*
-     * When site objects are created we check the stored whitelists
+     * When site objects are created we check the stored lists
      * and set the new site whitelist statuses
      */
     setWhitelistStatusFromGlobal () {
-        const globalwhitelists = ['whitelisted', 'whitelistOptIn']
-        globalwhitelists.forEach((name) => {
+        const globalLists = ['whitelisted', 'whitelistOptIn', 'denylisted']
+        globalLists.forEach((name) => {
             const list = settings.getSetting(name) || {}
-            this.setWhitelisted(name, list[this.domain])
+            this.setListValue(name, list[this.domain])
         })
     }
 
-    setWhitelisted (name, value) {
-        this[name] = value
+    setListValue (listName, value) {
+        this[listName] = value
     }
 
     /*
@@ -86,9 +87,24 @@ class Site {
         chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
     }
 
-    isWhiteListed () { return this.whitelisted }
+    isContentBlockingEnabled () {
+        return this.isFeatureEnabled('contentBlocking')
+    }
 
-    isAllowlisted () { return this.whitelisted || this.isBroken }
+    isProtectionEnabled () {
+        if (this.denylisted) {
+            return true
+        }
+        // Check if user has allowed disabled blocking or it's a known broken site.
+        return !(this.whitelisted || this.isBroken)
+    }
+
+    isFeatureEnabled (featureName) {
+        if (this.denylisted) {
+            return true
+        }
+        return this.isProtectionEnabled() && !this.brokenFeatures.includes(featureName)
+    }
 
     addTracker (t) {
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
