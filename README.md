@@ -11,11 +11,11 @@ DuckDuckGo Privacy Extensions is distributed under the Apache 2.0 [License](LICE
 
 The extension provides users with an improved private browsing experience whilst maintaining "Privacy Simplified".
 
-- [Removes known trackers from web pages] (https://spreadprivacy.com/duckduckgo-tracker-radar/)
+- [Removes known trackers from web pages](https://spreadprivacy.com/duckduckgo-tracker-radar/)
   - Supports shims/surrogates - replaces some of the tracking scripts with stand-in's to avoid breakage
-  - Uncloaks CNAME'd trackers.
+  - Uncloaks CNAME'd trackers
 - [Upgrades HTTP connections to be encrypted where possible](https://help.duckduckgo.com/duckduckgo-help-pages/privacy/smarter-encryption/)
-- [Announces to a website they must not track or sell on your data](https://globalprivacycontrol.org/).
+- [Announces to a website they must not track or sell on your data](https://globalprivacycontrol.org/)
 - Trims referrer header data
 - Reduced fingerprintability of various browser features
 - Removes FLoC from Chromium based browsers
