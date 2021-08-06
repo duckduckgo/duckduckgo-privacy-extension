@@ -33,6 +33,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - run: git submodule update --init --recursive
       - run: npm ci
       - run: npm test
   integration:
@@ -50,6 +51,7 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
+    - run: git submodule update --init --recursive
     - name: Install dependencies
       run: |
         sudo apt-get install xvfb

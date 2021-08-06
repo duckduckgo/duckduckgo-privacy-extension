@@ -17,6 +17,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - run: git submodule update --init --recursive
       - run: npm run release-chrome
       - name: Check bundle size
         run: du -h build/chrome/release/chrome-release-*.zip
@@ -34,6 +35,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - run: git submodule update --init --recursive
       - run: npm run release-firefox
       - name: Check bundle size
         run: du -sh build/firefox/release
