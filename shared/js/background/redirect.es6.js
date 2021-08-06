@@ -124,7 +124,7 @@ function handleRequest (requestData) {
 
         if (tracker) {
             // temp allowlisted trackers to fix site breakage
-            if (utils.isFeatureEnabled('trackerAllowlist')) {
+            if (thisTab.site.isFeatureEnabled('trackerAllowlist')) {
                 const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
 
                 if (allowListed) {
