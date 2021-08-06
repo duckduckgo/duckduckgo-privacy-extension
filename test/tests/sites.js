@@ -10,7 +10,7 @@
       assert.ok(newSite.domain === domain, 'site has correct name');
       assert.ok(newSite.isWhiteListed() === undefined, 'site is not whitelisted by default');
       
-      newSite.setWhitelisted('whitelisted', true);
+      newSite.setListValue('whitelisted', true);
       assert.ok(newSite.isWhiteListed() === true, 'whitelisting a site works');
 
       newSite.addTracker({url: 'doubleclick.net'});

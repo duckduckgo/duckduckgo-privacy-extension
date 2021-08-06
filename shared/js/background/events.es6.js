@@ -482,8 +482,8 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         Companies.resetData()
     }
 
-    if (req.whitelisted) {
-        tabManager.whitelistDomain(req.whitelisted)
+    if (req.setList) {
+        tabManager.setList(req.setList)
     } else if (req.whitelistOptIn) {
         tabManager.setGlobalWhitelist('whitelistOptIn', req.whitelistOptIn.domain, req.whitelistOptIn.value)
     } else if (req.getTab) {

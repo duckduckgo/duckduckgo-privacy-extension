@@ -71,7 +71,7 @@ body {
 
                 /* hide report broken site option on special urls */
                 li:last-child {
-                    .is-disabled &, &.is-disabled {
+                    .is-disabled & {
                         display: none;
                     }
                 }
