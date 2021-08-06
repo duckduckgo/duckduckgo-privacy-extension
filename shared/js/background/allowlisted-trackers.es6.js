@@ -35,14 +35,12 @@ function _matchesRule (site, request, allowListEntry) {
     }
 
     if (allowListEntry.rules && allowListEntry.rules.length) {
-        allowListEntry.rules.some(ruleObj => {
+        for (const ruleObj of allowListEntry.rules) {
             if (request.match(ruleObj.rule)) {
                 matchedRule = ruleObj
-                return true
-            } else {
-                return false
+                break
             }
-        })
+        }
     }
 
     if (matchedRule) {

@@ -122,11 +122,14 @@ function handleRequest (requestData) {
 
         if (tracker) {
             // temp allowlisted trackers to fix site breakage
-            const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
-            if (allowListed && utils.isFeatureEnabled('trackerAllowlist')) {
-                console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
-                tracker.action = 'ignore'
-                tracker.reason = `tracker allowlist - ${allowListed.reason}`
+            if (utils.isFeatureEnabled('trackerAllowlist')) {
+                const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
+                
+                if (allowListed) {
+                    console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
+                    tracker.action = 'ignore'
+                    tracker.reason = `tracker allowlist - ${allowListed.reason}`
+                }
             }
 
             const reportedTracker = { ...tracker }
