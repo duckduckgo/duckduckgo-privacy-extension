@@ -30,7 +30,8 @@ function _matchesRule (site, request, allowListEntry) {
     // remove port from request urls
     const parsedRequest = new URL(request)
     if (parsedRequest.port) {
-        request = request.replace(`:${parsedRequest.port}`, '')
+        parsedRequest.port = parsedRequest.protocol === 'https:' ? 443 : 80
+        request = parsedRequest.href
     }
 
     if (allowListEntry.rules && allowListEntry.rules.length) {
