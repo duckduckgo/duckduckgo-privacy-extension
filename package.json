@@ -7,8 +7,9 @@
     "license": "Apache-2.0",
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
-        "postinstall": "git submodule update --init --recursive && npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+        "postinstall": "git submodule update --init --recursive && npm run generate-etags && npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
         "copy-sjcl": "cd node_modules/sjcl/ && ./configure --compress=none --without-all --with-hmac --with-codecHex && make && cp sjcl.js ../../shared/js/content-scope/",
+        "generate-etags": "node scripts/generateEtags.js > shared/data/etags.json",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "release": "grunt build && node scripts/httpsWhitelist.js",

@@ -1,4 +1,5 @@
 const defaultSettings = require('../../data/defaultSettings')
+const etags = require('../../data/etags.json')
 const browserWrapper = require('./wrapper.es6')
 
 /**
@@ -53,7 +54,7 @@ function buildSettingsFromManagedStorage () {
 
 function buildSettingsFromDefaults () {
     // initial settings are a copy of default settings
-    settings = Object.assign({}, defaultSettings)
+    settings = Object.assign({}, defaultSettings, etags)
 }
 
 function syncSettingTolocalStorage () {
