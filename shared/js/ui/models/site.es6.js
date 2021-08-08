@@ -281,7 +281,7 @@ Site.prototype = window.$.extend({},
 
                     // fire ept.on pixel if just turned privacy protection on,
                     // fire ept.off pixel if just turned privacy protection off.
-                    if (this.isWhiteListed && this.whitelistOptIn) {
+                    if (this.isWhitelisted && this.whitelistOptIn) {
                     // If user reported broken site and opted to share data on site,
                     // attach domain and path to ept.on pixel if they turn privacy protection back on.
                         const siteUrl = this.tab.url.split('?')[0].split('#')[0]
