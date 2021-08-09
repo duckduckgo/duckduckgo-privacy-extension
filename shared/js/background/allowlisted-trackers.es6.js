@@ -8,7 +8,7 @@ function isTrackerAllowlisted (site, request) {
     }
 
     // check that allowlist has entries
-    if (!tdsStorage.config.features.trackerAllowlist.settings &&
+    if (!tdsStorage.config.features.trackerAllowlist.settings ||
         !Object.keys(tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers).length) {
         return false
     }
