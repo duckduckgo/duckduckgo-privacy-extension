@@ -4,3 +4,6 @@
 [submodule "shared/tracker-surrogates"]
 	path = shared/tracker-surrogates
 	url = https://github.com/duckduckgo/tracker-surrogates.git
+[submodule "shared/privacy-configuration"]
+	path = shared/privacy-configuration
+	url = https://github.com/duckduckgo/privacy-configuration.git
