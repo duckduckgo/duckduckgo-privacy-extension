@@ -10,6 +10,15 @@ const tdsData = {
     config: require('./../data/extension-config.json')
 }
 
+tdsData.config.features.trackerAllowlist = {
+    state: 'enabled',
+    settings: {
+        allowlistedTrackers: require('./../background/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
+    }
+}
+
+tdsStorage.config = tdsData.config
+
 const stub = () => {
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
 

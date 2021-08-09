@@ -11,6 +11,7 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const browser = utils.getBrowserName()
+const trackerAllowlist = require('./allowlisted-trackers.es6')
 
 const debugRequest = false
 
@@ -122,6 +123,17 @@ function handleRequest (requestData) {
         }
 
         if (tracker) {
+            // temp allowlisted trackers to fix site breakage
+            if (thisTab.site.isFeatureEnabled('trackerAllowlist')) {
+                const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
+
+                if (allowListed) {
+                    console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
+                    tracker.action = 'ignore'
+                    tracker.reason = `tracker allowlist - ${allowListed.reason}`
+                }
+            }
+
             const reportedTracker = { ...tracker }
             if (!blockingEnabled) {
                 reportedTracker.action = 'ignore'
