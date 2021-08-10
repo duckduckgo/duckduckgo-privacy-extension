@@ -637,7 +637,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         return null
     }
     // Clone site so we don't retain any site changes
-    const site = Object.assign({}, tab?.site || {})
+    const site = Object.assign({}, tab.site || {})
     const referrer = tab?.referrer || ''
 
     const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies1p').firstPartyTrackerCookiePolicy || {
@@ -656,7 +656,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
     }
 
-    if (tab?.site.isFeatureEnabled('trackingCookies3p') || tab?.site.isFeatureEnabled('trackingCookies1p')) {
+    if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
         // determine the register domain of the sending tab
         const tabUrl = tab ? tab.url : sender.tab.url
         const parsed = tldts.parse(tabUrl)
