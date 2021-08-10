@@ -656,6 +656,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
     }
 
+    // Extra contextual data required for 1p and 3p cookie protection - only send if at least one is enabled here
     if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
         // determine the register domain of the sending tab
         const parsed = tldts.parse(tab.url)
