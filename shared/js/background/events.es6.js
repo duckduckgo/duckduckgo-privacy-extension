@@ -658,15 +658,14 @@ function getArgumentsObject (tabId, sender, documentUrl) {
 
     if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
         // determine the register domain of the sending tab
-        const tabUrl = tab ? tab.url : sender.tab.url
-        const parsed = tldts.parse(tabUrl)
+        const parsed = tldts.parse(tab.url)
         cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
 
         if (documentUrl && trackerutils.isTracker(documentUrl) && sender.frameId !== 0) {
             cookie.isTrackerFrame = true
         }
 
-        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tabUrl)
+        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
     }
     return {
