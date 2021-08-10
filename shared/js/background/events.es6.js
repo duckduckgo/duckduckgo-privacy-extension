@@ -656,7 +656,7 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
     }
 
-    if (tab?.site.isFeatureEnabled('trackingCookies3p')) {
+    if (tab?.site.isFeatureEnabled('trackingCookies3p') || tab?.site.isFeatureEnabled('trackingCookies1p')) {
         // determine the register domain of the sending tab
         const tabUrl = tab ? tab.url : sender.tab.url
         const parsed = tldts.parse(tabUrl)
@@ -666,8 +666,8 @@ function getArgumentsObject (tabId, sender, documentUrl) {
             cookie.isTrackerFrame = true
         }
 
-        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(sender.url, sender.tab.url)
-        cookie.shouldBlock = !utils.isCookieExcluded(sender.url)
+        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tabUrl)
+        cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
     }
     return {
         debug: devtools.isActive(tabId),
