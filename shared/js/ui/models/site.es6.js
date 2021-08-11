@@ -248,45 +248,40 @@ Site.prototype = window.$.extend({},
         },
 
         toggleWhitelist: function () {
-            chrome.declarativeNetRequest.updateEnabledRulesets({
-                disableRulesetIds: ['ruleset_1'],
-                enableRulesetIds: ['ruleset_2']
-            }).then(() => {
-                if (this.tab && this.tab.site) {
-                    this.initAllowlisted(!this.isWhitelisted)
-                    this.set('whitelisted', this.isWhitelisted)
-                    const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
+            if (this.tab && this.tab.site) {
+                this.initAllowlisted(!this.isWhitelisted)
+                this.set('whitelisted', this.isWhitelisted)
+                const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
 
-                    // fire ept.on pixel if just turned privacy protection on,
-                    // fire ept.off pixel if just turned privacy protection off.
-                    if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
-                        // If user reported broken site and opted to share data on site,
-                        // attach domain and path to ept.on pixel if they turn privacy protection back on.
-                        const siteUrl = this.tab.url.split('?')[0].split('#')[0]
-                        this.set('whitelistOptIn', false)
-                        this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
-                        this.fetch({
-                            whitelistOptIn:
-                                {
-                                    list: 'whitelistOptIn',
-                                    domain: this.tab.site.domain,
-                                    value: false
-                                }
-                        })
-                    } else {
-                        this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
-                    }
-
+                // fire ept.on pixel if just turned privacy protection on,
+                // fire ept.off pixel if just turned privacy protection off.
+                if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
+                    // If user reported broken site and opted to share data on site,
+                    // attach domain and path to ept.on pixel if they turn privacy protection back on.
+                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                    this.set('whitelistOptIn', false)
+                    this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
                     this.fetch({
-                        whitelisted:
-                            {
-                                list: 'whitelisted',
-                                domain: this.tab.site.domain,
-                                value: this.isWhitelisted
-                            }
+                        whitelistOptIn:
+                        {
+                            list: 'whitelistOptIn',
+                            domain: this.tab.site.domain,
+                            value: false
+                        }
                     })
+                } else {
+                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
                 }
-            })
+
+                this.fetch({
+                    whitelisted:
+                    {
+                        list: 'whitelisted',
+                        domain: this.tab.site.domain,
+                        value: this.isWhitelisted
+                    }
+                })
+            }
         },
 
         submitBreakageForm: function (category) {

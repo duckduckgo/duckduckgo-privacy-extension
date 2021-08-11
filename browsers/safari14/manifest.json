@@ -54,18 +54,7 @@
     }
   ],
   "declarative_net_request": {
-    "rule_resources" : [
-      {
-        "id": "ruleset_1",
-        "enabled": true,
-        "path": "data/tracker_lists/rules_1.json"
-      },
-      {
-        "id": "ruleset_2",
-        "enabled": false,
-        "path": "data/tracker_lists/rules_2.json"
-      }
-    ]
+    "rule_resources" : ["./data/tracker_lists/rules.json"]
   },
   "permissions": [
     "contextMenus",
