@@ -1,0 +1,14 @@
+[
+  {
+    "id": 989,
+    "priority": 2,
+    "condition": {
+      "urlFilter": "google-analytics.com",
+      "isUrlFilterCaseSensitive": false,
+      "domainType": "thirdParty"
+    },
+    "action": {
+      "type": "block"
+    }
+  }
+]
