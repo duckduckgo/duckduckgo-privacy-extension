@@ -533,7 +533,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
     if (req.addUserData) {
         // Check the origin. Shouldn't be necessary, but better safe than sorry
-        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com/)) return
+        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)) return
 
         const sendDdgUserReady = () =>
             chrome.tabs.query({}, (tabs) =>
