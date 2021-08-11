@@ -32,12 +32,46 @@ function ready () {
     return _ready
 }
 
+// Ensures we have cleared up old storage keys we have renamed
+function checkForLegacyKeys () {
+    const legacyKeys = {
+        // Keys to migrate
+        whitelisted: 'allowlisted',
+        whitelistOptIn: 'allowlistOptIn',
+
+        // Keys to remove
+        cookieExcludeList: null,
+        'surrogates-etag': null,
+        'brokenSiteList-etag': null,
+        'surrogateList-etag': null,
+        'trackersWhitelist-etag': null,
+        'trackersWhitelistTemporary-etag': null
+    }
+    let syncNeeded = false
+    for (const legacyKey in legacyKeys) {
+        const key = legacyKeys[legacyKey]
+        if (!(legacyKey in settings)) {
+            continue
+        }
+        syncNeeded = true
+        const legacyValue = settings[legacyKey]
+        if (key && legacyValue) {
+            settings[key] = legacyValue
+        }
+        delete settings[legacyKey]
+    }
+    if (syncNeeded) {
+        syncSettingTolocalStorage()
+    }
+}
+
 function buildSettingsFromLocalStorage () {
     return new Promise((resolve) => {
         browserWrapper.getFromStorage(['settings'], function (results) {
             // copy over saved settings from storage
             if (!results) resolve()
             settings = browserWrapper.mergeSavedSettings(settings, results)
+            checkForLegacyKeys()
             resolve()
         })
     })

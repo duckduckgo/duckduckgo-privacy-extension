@@ -39,18 +39,18 @@
  
   // These abp blocking tests are based on actual entries from 
   // the easylist. These tests could fail in the future if the easylist
-  // entries are changed or whitelisted.
+  // entries are changed or allowlisted.
   var abpBlocking = [
     { url: 'https://googleads.g.doubleclick.net/pagead/id', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /googleads.
     { url: 'http://ads.rubiconproject.com/header/11078.js', block: true, options:{}, result: {parent: 'Fox One Stop Media', reason: 'trackersWithParentCompany'}}, //  ||rubiconproject.com^$third-party
     { url: 'https://s.yimg.com/rq/darla/3-0-2/js/g-r-min.js', block: false, options: {domain: 'yahoo.com'}}, // @@||yimg.com/rq/darla/*/g-r-min.js$domain=yahoo.com
-    { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false, options:{}}, // whitelisted by @@||yimg.com/zz/combo?*&*.js
+    { url: 'https://s.yimg.com/zz/combo?yt/y7/assets/1.0.81/js/components/darla/client-js/darla.js', block: false, options:{}}, // allowlisted by @@||yimg.com/zz/combo?*&*.js
     { url: 'https://aax.amazon-adsystem.com/', block: true, options:{}, result: {parent: 'Amazon.com', reason: 'trackersWithParentCompany'}}, // ||amazon-adsystem.com^$third-party
-    { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false, options:{}}, // whitelisted by @@||fastly.net/ad2/$script
+    { url: 'https://0914.global.ssl.fastly.net/ad2/script/x.js?cb=1510932127199', block: false, options:{}}, // allowlisted by @@||fastly.net/ad2/$script
     { url: 'https://securepubads.g.doubleclick.net/gpt/pubads_impl_168.js', block: true, options:{}, result: {parent: 'Google', reason: 'trackersWithParentCompany'}}, // /securepubads.
     { url: 'https://shim.btrll.com/', block: true, options:{}, result: {parent: 'BrightRoll', reason: 'trackersWithParentCompany'}}, // ||btrll.com^$third-party
     { url: 'http://ads.blogherads.com/73/7399/header.js', block: true, options: {type: 'object'}, result: {parent: 'BlogHer', reason: 'trackersWithParentCompany'}}, // /webservices/jsparselinks.aspx?$script
-    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'script', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test whitelist with options
+    { url: 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', block: false, options: {type: 'script', domain: 'destructoid.com'}}, // @@||maxcdn.bootstrapcdn.com^$script,domain=destructoid.com, test allowlist with options
     //
     //
     //// testing social blocking from our own data structure

@@ -17,9 +17,7 @@ module.exports = {
     "version": null,
     "atb": null,
     "set_atb": null,
-    "trackersWhitelistTemporary-etag": null,
-    "trackersWhitelist-etag": null,
-    "surrogateList-etag": null,
+    "config-etag": null,
     "httpsUpgradeBloomFilter-etag": null,
     "httpsDontUpgradeBloomFilters-etag": null,
     "httpsUpgradeList-etag": null,
@@ -29,7 +27,5 @@ module.exports = {
     "failedUpgrades": 0,
     "totalUpgrades": 0,
     "tds-etag": null,
-    "surrogates-etag": null,
-    "brokenSiteList-etag": null,
     "lastTdsUpdate": 0
 }
