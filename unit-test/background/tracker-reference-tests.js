@@ -1,6 +1,5 @@
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
-const settings = require('../../shared/js/background/settings.es6')
 
 const refTrackers = require('./reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
 const refTests = require('./reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')
@@ -34,7 +33,7 @@ describe('Tracker reference tests:', () => {
             const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
             const action = (result && result.action)
             expect(test.expectAction).toEqual(action)
-            if(expectRedirect) {
+            if (expectRedirect) {
                 expect(expectRedirect).toEqual(result.redirectUrl)
             }
         })
