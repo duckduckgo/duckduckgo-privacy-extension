@@ -122,7 +122,7 @@ describe('Storage blocking Tests', () => {
             const results = JSON.parse(await page.evaluate('JSON.stringify(results);'))
             const savedResult = results.results.find(({ id }) => id === 'memory').value
             const sameEntityiFrameResult = results.results.find(({ id }) => id === 'tracking third party iframe')?.value.find(({ test }) => test === 'JS cookie')?.result
-            console.log(savedResult, sameEntityiFrameResult)
+            // console.log(savedResult, sameEntityiFrameResult)
             expect(sameEntityiFrameResult).toBeTruthy()
             expect(sameEntityiFrameResult).not.toEqual(savedResult)
             page.close()
