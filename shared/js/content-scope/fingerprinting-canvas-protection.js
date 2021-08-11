@@ -6,6 +6,8 @@ export function init (args) {
     const domainKey = site.domain
     const featureName = 'fingerprinting-canvas'
 
+    const unsafeCanvases = new WeakSet()
+
     if (args.debug) {
         // Debugging of canvas methods
         const debuggingMethods = ['putImageData', 'drawImage']
@@ -19,9 +21,41 @@ export function init (args) {
         }
     }
 
+
+    // Include all these: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+    // Or overload the parent object and make an allow list of the put and draw calls only?
+    const unsafeMethods = [
+        'rect',
+        'fill',
+        'stroke',
+        'lineTo',
+        'beginPath',
+        'closePath',
+        'arc',
+        'fillText',
+        'fillRect',
+        'strokeText',
+        'createConicGradient',
+        'createLinearGradient',
+        'createRadialGradient',
+        'createPattern',
+    ]
+    for (const methodName of unsafeMethods) {
+        const unsafeProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
+            apply (target, thisArg, args) {
+                unsafeCanvases.add(thisArg.canvas)
+                return DDGReflect.apply(target, thisArg, args)
+            }
+        })
+        unsafeProxy.overload()
+    }
+
     // Using proxies here to swallow calls to toString etc
     const getImageDataProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, 'getImageData', {
         apply (target, thisArg, args) {
+            if (!unsafeCanvases.has(thisArg.canvas)) {
+                return DDGReflect.apply(target, thisArg, args)
+            }
             // Anything we do here should be caught and ignored silently
             try {
                 const { offScreenCtx } = computeOffScreenCanvas(thisArg.canvas, domainKey, sessionKey, getImageDataProxy)
@@ -39,6 +73,10 @@ export function init (args) {
     for (const methodName of canvasMethods) {
         const proxy = new DDGProxy(featureName, HTMLCanvasElement.prototype, methodName, {
             apply (target, thisArg, args) {
+                // Short circuit for low risk canvas calls
+                if (!unsafeCanvases.has(thisArg)) {
+                    return DDGReflect.apply(target, thisArg, args)
+                }
                 try {
                     const { offScreenCanvas } = computeOffScreenCanvas(thisArg, domainKey, sessionKey, getImageDataProxy)
                     // Call the original method on the modified off-screen canvas
