@@ -139,9 +139,10 @@ function logSettings () {
 }
 
 module.exports = {
-    getSetting: getSetting,
-    updateSetting: updateSetting,
-    removeSetting: removeSetting,
-    logSettings: logSettings,
-    ready: ready
+    isReady,
+    getSetting,
+    updateSetting,
+    removeSetting,
+    logSettings,
+    ready
 }

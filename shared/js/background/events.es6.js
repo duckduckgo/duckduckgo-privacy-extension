@@ -669,10 +669,11 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
     }
+    const globalPrivacyControlValue = settings.isReady && settings.getSetting('GPC')
     return {
         debug: devtools.isActive(tabId),
         cookie,
-        globalPrivacyControlValue: settings.getSetting('GPC'),
+        globalPrivacyControlValue,
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,

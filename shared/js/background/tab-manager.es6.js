@@ -107,7 +107,7 @@ class TabManager {
                     if (tab.statusCode === 200) tab.endStopwatch()
                 }
             }
-            return tab;
+            return tab
         }
     }
 

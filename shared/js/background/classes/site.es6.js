@@ -69,9 +69,11 @@ class Site {
      */
     setListStatusFromGlobal () {
         const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
-        globalLists.forEach((name) => {
-            const list = settings.getSetting(name) || {}
-            this.setListValue(name, list[this.domain])
+        settings.ready().then(() => {
+            globalLists.forEach((name) => {
+                const list = settings.getSetting(name) || {}
+                this.setListValue(name, list[this.domain])
+            })
         })
     }
 
