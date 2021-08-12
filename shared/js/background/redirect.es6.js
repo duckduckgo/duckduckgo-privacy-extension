@@ -1,7 +1,6 @@
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
-const trackers = require('./trackers.es6')
 const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
@@ -93,7 +92,7 @@ function handleRequest (requestData) {
          * If request is a tracker, cancel the request
          */
 
-        let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+        let tracker = trackerutils.getTrackerData(requestData.url, thisTab.site.url, requestData)
         /**
          * Click to Load Blocking
          * If it isn't in the tracker list, check the clickToLoad block list

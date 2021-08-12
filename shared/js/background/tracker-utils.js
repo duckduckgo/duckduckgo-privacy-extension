@@ -5,8 +5,22 @@ const tldts = require('tldts')
 const tdsStorage = require('./storage/tds.es6')
 const settings = require('./settings.es6')
 
+function hasTrackerListLoaded () {
+    return !!trackers.trackerList
+}
+
+function getTrackerData (...args) {
+    if (!hasTrackerListLoaded()) {
+        return null
+    }
+    return trackers.getTrackerData(...args)
+}
+
 // Determine if two URL's belong to the same entity.
 function isSameEntity (url1, url2) {
+    if (!hasTrackerListLoaded()) {
+        return false
+    }
     try {
         const domain1 = tldts.parse(url1).domain
         const domain2 = tldts.parse(url2).domain
@@ -24,6 +38,9 @@ function isSameEntity (url1, url2) {
 
 // return true if URL is in our tracker list
 function isTracker (url) {
+    if (!hasTrackerListLoaded()) {
+        return false
+    }
     const data = {
         urlToCheckSplit: utils.extractHostFromURL(url).split('.')
     }
@@ -181,6 +198,9 @@ function truncateReferrer (referrer, target) {
  * @returns {boolean}
  */
 function isFirstPartyByEntity (trackerUrl, siteUrl) {
+    if (!hasTrackerListLoaded()) {
+        return false
+    }
     const cnameResolution = trackers.resolveCname(trackerUrl)
     trackerUrl = cnameResolution.finalURL
 
@@ -197,14 +217,15 @@ function isFirstPartyByEntity (trackerUrl, siteUrl) {
 }
 
 module.exports = {
-    isSameEntity: isSameEntity,
-    isTracker: isTracker,
-    truncateReferrer: truncateReferrer,
-    getSocialTracker: getSocialTracker,
-    socialTrackerIsAllowedByUser: socialTrackerIsAllowedByUser,
-    shouldBlockSocialNetwork: shouldBlockSocialNetwork,
-    getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
-    getXraySurrogate: getXraySurrogate,
-    allowSocialLogin: allowSocialLogin,
-    isFirstPartyByEntity: isFirstPartyByEntity
+    getTrackerData,
+    isSameEntity,
+    isTracker,
+    truncateReferrer,
+    getSocialTracker,
+    socialTrackerIsAllowedByUser,
+    shouldBlockSocialNetwork,
+    getDomainsToExludeByNetwork,
+    getXraySurrogate,
+    allowSocialLogin,
+    isFirstPartyByEntity
 }
