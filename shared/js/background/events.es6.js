@@ -629,7 +629,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 let sessionKey = getHash()
 
 function getArgumentsObject (tabId, sender, documentUrl) {
-    const tab = tabManager.get({ tabId })
+    const tab = tabManager.createOrUpdateTab(tabId, sender.tab)
     if (!tab) {
         return null
     }
