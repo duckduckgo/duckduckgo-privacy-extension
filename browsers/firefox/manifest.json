@@ -2,11 +2,11 @@
     "name": "DuckDuckGo Privacy Essentials",
     "applications": {
         "gecko": {
-              "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
-              "strict_min_version": "57.0"
+            "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
+            "strict_min_version": "57.0"
         }
     },
-    "version": "2021.7.30",
+    "version": "2021.8.12-68238",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -18,42 +18,52 @@
         "default_icon": "img/icon_48.png",
         "default_popup": "html/popup.html"
     },
-    "omnibox": {"keyword": "ddg"},
+    "omnibox": {
+        "keyword": "ddg"
+    },
     "background": {
-            "scripts": [
-                "public/js/background.js"
-            ]
+        "scripts": [
+            "public/js/background.js"
+        ]
     },
     "chrome_settings_overrides": {
-      "search_provider": {
-        "favicon_url": "https://duckduckgo.com/favicon.ico",
-        "is_default": true,
-        "keyword": "duckduckgo.com",
-        "name": "DuckDuckGo",
-        "search_url": "https://duckduckgo.com/?q={searchTerms}&t=newext",
-        "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
-      }
+        "search_provider": {
+            "favicon_url": "https://duckduckgo.com/favicon.ico",
+            "is_default": true,
+            "keyword": "duckduckgo.com",
+            "name": "DuckDuckGo",
+            "search_url": "https://duckduckgo.com/?q={searchTerms}&t=newext",
+            "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
+        }
     },
     "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "match_about_blank": true,
-        "all_frames": true,
-        "css": ["public/css/noatb.css"],
-        "js": ["public/js/inject.js"],
-        "run_at": "document_start"
-      },
-      {
-        "js": [
-          "public/js/content-scripts/autofill.js"
-        ],
-        "css": [
-          "public/css/autofill-host-styles.css"
-        ],
-        "matches": ["<all_urls>"],
-        "all_frames": true,
-        "run_at": "document_start"
-      }
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "match_about_blank": true,
+            "all_frames": true,
+            "css": [
+                "public/css/noatb.css"
+            ],
+            "js": [
+                "public/js/inject.js"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "js": [
+                "public/js/content-scripts/autofill.js"
+            ],
+            "css": [
+                "public/css/autofill-host-styles.css"
+            ],
+            "matches": [
+                "<all_urls>"
+            ],
+            "all_frames": true,
+            "run_at": "document_start"
+        }
     ],
     "options_ui": {
         "page": "html/options.html"

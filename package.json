@@ -26,7 +26,8 @@
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make dev browser=chrome type=dev watch=1",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
-        "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
+        "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
+        "release-update": "git submodule update --remote shared/privacy-configuration/ && npm run generate-etags && node scripts/bumpVersion.js"
     },
     "devDependencies": {
         "@babel/cli": "^7.14.8",
