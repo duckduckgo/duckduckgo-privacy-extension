@@ -224,7 +224,7 @@ Site.prototype = window.$.extend({},
         getMajorTrackerNetworksCount: function () {
             // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is allowlisted
-            const trackers = !this.protectionsEnabled ? this.tab.trackers : this.tab.trackersBlocked
+            const trackers = this.protectionsEnabled ? this.tab.trackersBlocked : this.tab.trackers
             const count = Object.values(trackers).reduce((total, t) => {
                 const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
                 total += isMajor ? 1 : 0
