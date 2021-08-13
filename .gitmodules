@@ -7,3 +7,4 @@
 [submodule "shared/privacy-configuration"]
 	path = shared/privacy-configuration
 	url = https://github.com/duckduckgo/privacy-configuration.git
+  branch = main
