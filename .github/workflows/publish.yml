@@ -47,8 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           prerelease: true
-          target_commitish: ${{ github.sha }}
-          tag_name: ${{ env.VERSION }}
           body: ${{ env.NOTES }}
           files: |
             ./build/firefox/release/web-ext-artifacts/*.zip
