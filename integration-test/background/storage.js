@@ -44,7 +44,9 @@ describe('Storage blocking Tests', () => {
                 // Load the test pages home first to give some time for the extension background to start
                 // and register the content-script-message handler
                 await page.goto(`https://${testPageDomain}/`, { waitUntil: 'networkidle0' })
+                await page.bringToFront()
                 await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
+                await page.bringToFront()
                 // eslint-disable-next-line no-unmodified-loop-condition
                 while (!iframeFullyLoaded) {
                     await wait.ms(100)
@@ -116,6 +118,7 @@ describe('Storage blocking Tests', () => {
                 }
             }
             await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
+            await page.bringToFront()
             await waitForAllResults()
             await page.click('#retrive')
             await waitForAllResults()
