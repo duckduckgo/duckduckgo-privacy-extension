@@ -96,7 +96,6 @@ describe('Storage blocking Tests', () => {
     describe(`On https://${thirdPartyTracker}/privacy-protections/storage-blocking/`, () => {
         it('does not block iFrame tracker cookies from same entity', async () => {
             const { browser, page } = await setup()
-            
             await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
             await page.bringToFront()
             await waitForAllResults(page)
