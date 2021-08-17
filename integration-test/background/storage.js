@@ -6,14 +6,10 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 
 describe('Storage blocking Tests', () => {
-    let browser
-    let bgPage
 
-    beforeAll(async () => {
-        const puppet = await harness.setup()
-        browser = puppet.browser
-        bgPage = puppet.bgPage
-        await browser.newPage()
+    async function setup() {
+        const { browser, bgPage } = await harness.setup()
+        const page = await browser.newPage()
 
         await bgPage.waitForFunction(
             () => {
@@ -22,18 +18,15 @@ describe('Storage blocking Tests', () => {
             },
             { polling: 100, timeout: 10000 }
         )
-    })
-
-    afterAll(async () => {
-        await harness.teardown(browser)
-    })
+        return { browser, page }
+    }
 
     describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
         let cookies = []
 
         beforeAll(async () => {
             let iframeFullyLoaded = false
-            const page = await browser.newPage()
+            const { browser, page } = await setup()
             try {
                 page.on('requestfinished', (req) => {
                     // once we see this url, we can consider the test completed
@@ -58,6 +51,7 @@ describe('Storage blocking Tests', () => {
                 } while (cookies.length === 0)
             } finally {
                 await page.close()
+                await harness.teardown(browser)
             }
         })
 
@@ -111,7 +105,7 @@ describe('Storage blocking Tests', () => {
 
     describe(`On https://${thirdPartyTracker}/privacy-protections/storage-blocking/`, () => {
         it('does not block iFrame tracker cookies from same entity', async () => {
-            const page = await browser.newPage()
+            const { browser, page } = await setup()
             async function waitForAllResults () {
                 while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
                     await new Promise(resolve => setTimeout(resolve, 100))
@@ -125,10 +119,10 @@ describe('Storage blocking Tests', () => {
             const results = JSON.parse(await page.evaluate('JSON.stringify(results);'))
             const savedResult = results.results.find(({ id }) => id === 'memory').value
             const sameEntityiFrameResult = results.results.find(({ id }) => id === 'tracking third party iframe')?.value.find(({ test }) => test === 'JS cookie')?.result
-            // console.log(savedResult, sameEntityiFrameResult)
             expect(sameEntityiFrameResult).toBeTruthy()
-            expect(sameEntityiFrameResult).not.toEqual(savedResult)
+            expect(sameEntityiFrameResult).toEqual(savedResult)
             page.close()
+            await harness.teardown(browser)
         })
     })
 })
