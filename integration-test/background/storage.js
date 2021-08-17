@@ -1,5 +1,4 @@
 const harness = require('../helpers/harness')
-const wait = require('../helpers/wait')
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
@@ -24,30 +23,15 @@ describe('Storage blocking Tests', () => {
         let cookies = []
 
         beforeAll(async () => {
-            let iframeFullyLoaded = false
             const { browser, page } = await setup()
             try {
-                page.on('requestfinished', (req) => {
-                    // once we see this url, we can consider the test completed
-                    if (req.url().startsWith(`https://${thirdPartyTracker}/set-cookie`)) {
-                        iframeFullyLoaded = true
-                    }
-                })
                 // Load the test pages home first to give some time for the extension background to start
                 // and register the content-script-message handler
                 await page.goto(`https://${testPageDomain}/`, { waitUntil: 'networkidle0' })
                 await page.bringToFront()
-                await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
-                await page.bringToFront()
-                // eslint-disable-next-line no-unmodified-loop-condition
-                while (!iframeFullyLoaded) {
-                    await wait.ms(100)
-                }
+                await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle2' })
                 // collect all browser cookies
-                do {
-                    await wait.ms(1000) // allow cookies to be set
-                    cookies = (await page._client.send('Network.getAllCookies')).cookies
-                } while (cookies.length === 0)
+                cookies = (await page._client.send('Network.getAllCookies')).cookies
             } finally {
                 await page.close()
                 await harness.teardown(browser)
