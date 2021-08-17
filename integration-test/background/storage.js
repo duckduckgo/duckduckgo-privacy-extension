@@ -4,21 +4,27 @@ const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 
-describe('Storage blocking Tests', () => {
-    async function setup () {
-        const { browser, bgPage } = await harness.setup()
-        const page = await browser.newPage()
+async function setup () {
+    const { browser, bgPage } = await harness.setup()
+    const page = await browser.newPage()
 
-        await bgPage.waitForFunction(
-            () => {
-                console.log('waiting for tds...')
-                return window.dbg && window.dbg.tds && window.dbg.tds.tds
-            },
-            { polling: 100, timeout: 10000 }
-        )
-        return { browser, page }
+    await bgPage.waitForFunction(
+        () => {
+            console.log('waiting for tds...')
+            return window.dbg && window.dbg.tds && window.dbg.tds.tds
+        },
+        { polling: 100, timeout: 10000 }
+    )
+    return { browser, page }
+}
+
+async function waitForAllResults (page) {
+    while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
+        await new Promise(resolve => setTimeout(resolve, 100))
     }
+}
 
+describe('Storage blocking Tests', () => {
     describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
         let cookies = []
 
@@ -30,6 +36,7 @@ describe('Storage blocking Tests', () => {
                 await page.goto(`https://${testPageDomain}/`, { waitUntil: 'networkidle0' })
                 await page.bringToFront()
                 await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle2' })
+                await waitForAllResults(page)
                 // collect all browser cookies
                 cookies = (await page._client.send('Network.getAllCookies')).cookies
             } finally {
@@ -89,16 +96,12 @@ describe('Storage blocking Tests', () => {
     describe(`On https://${thirdPartyTracker}/privacy-protections/storage-blocking/`, () => {
         it('does not block iFrame tracker cookies from same entity', async () => {
             const { browser, page } = await setup()
-            async function waitForAllResults () {
-                while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
-                    await new Promise(resolve => setTimeout(resolve, 100))
-                }
-            }
+            
             await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
             await page.bringToFront()
-            await waitForAllResults()
+            await waitForAllResults(page)
             await page.click('#retrive')
-            await waitForAllResults()
+            await waitForAllResults(page)
             const results = JSON.parse(await page.evaluate('JSON.stringify(results);'))
             const savedResult = results.results.find(({ id }) => id === 'memory').value
             const sameEntityiFrameResult = results.results.find(({ id }) => id === 'tracking third party iframe')?.value.find(({ test }) => test === 'JS cookie')?.result
