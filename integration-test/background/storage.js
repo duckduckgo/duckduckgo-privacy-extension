@@ -94,6 +94,10 @@ describe('Storage blocking Tests', () => {
     })
 
     describe(`On https://${thirdPartyTracker}/privacy-protections/storage-blocking/`, () => {
+        /*
+         * Loads the storage test page on the tracker origin (broken.third-party.site) to test if the same entity
+         * rule is observed for frames on that page.
+         */
         it('does not block iFrame tracker cookies from same entity', async () => {
             const { browser, page } = await setup()
             await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
