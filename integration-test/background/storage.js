@@ -6,8 +6,7 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 
 describe('Storage blocking Tests', () => {
-
-    async function setup() {
+    async function setup () {
         const { browser, bgPage } = await harness.setup()
         const page = await browser.newPage()
 
