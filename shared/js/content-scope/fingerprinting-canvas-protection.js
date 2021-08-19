@@ -1,4 +1,4 @@
-import { DDGProxy, DDGReflect, getDataKeySync } from './utils'
+import { DDGProxy, DDGReflect } from './utils'
 import { computeOffScreenCanvas } from './canvas'
 
 export function init (args) {
@@ -7,7 +7,6 @@ export function init (args) {
     const featureName = 'fingerprinting-canvas'
 
     const unsafeCanvases = new WeakSet()
-    const canvasMetadata = new WeakMap()
     const canvasCache = new WeakMap()
 
     function clearCache (canvas) {

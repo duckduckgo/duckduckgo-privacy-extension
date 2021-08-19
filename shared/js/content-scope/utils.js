@@ -40,6 +40,10 @@ export function initStringExemptionLists (args) {
 
 // Checks the stack trace if there are known libraries that are broken.
 export function shouldExemptMethod (type) {
+    // Short circuit stack tracing if we don't have checks
+    if (exemptionLists[type].length === 0) {
+        return false
+    }
     try {
         const errorLines = new Error().stack.split('\n')
         const errorFiles = new Set()
@@ -148,10 +152,11 @@ export class DDGProxy {
         this.objectScope = objectScope
         this.property = property
         this.featureName = featureName
+        this.camelFeatureName = camelcase(this.featureName)
         const outputHandler = (...args) => {
-            const isExempt = shouldExemptMethod(this.featureName)
+            const isExempt = shouldExemptMethod(this.camelFeatureName)
             if (debug) {
-                postDebugMessage(camelcase(this.featureName), {
+                postDebugMessage(this.camelFeatureName, {
                     action: isExempt ? 'ignore' : 'restrict',
                     kind: this.property,
                     documentUrl: document.location.href,
