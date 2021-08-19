@@ -71,7 +71,11 @@ export function iterateDataKey (key, callback) {
     for (const i in key) {
         let byte = key.charCodeAt(i)
         for (let j = 8; j >= 0; j--) {
-            callback(item, byte)
+            const res = callback(item, byte)
+            // Exit early if callback returns null
+            if (res === null) {
+                return
+            }
 
             // find next item to perturb
             item = nextRandom(item)
