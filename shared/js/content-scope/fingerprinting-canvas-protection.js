@@ -8,30 +8,31 @@ export function init (args) {
 
     const unsafeCanvases = new WeakSet()
     const canvasMetadata = new WeakMap()
+    const canvasCache = new WeakMap()
 
-    function updateHash(canvas, args) {
+    function updateHash (canvas, args) {
         // Add support for other data types like image and ImageData.
-        let stringified = JSON.stringify(args);
-        let existingHash = canvasMetadata.get(canvas) || ''
-        let newHash = getDataKeySync(sessionKey, domainKey, existingHash + stringified)
+        const stringified = JSON.stringify(args)
+        const existingHash = canvasMetadata.get(canvas) || ''
+        const newHash = getDataKeySync(sessionKey, domainKey, existingHash + stringified)
         canvasMetadata.set(canvas, newHash)
-        console.log({stringified, args, newHash, existingHash}) 
+        // Clear cache as canvas has changed
+        canvasCache.delete(canvas)
     }
 
-    //if (args.debug) {
-        // Debugging of canvas methods
-        const debuggingMethods = ['putImageData', 'drawImage']
-        for (const methodName of debuggingMethods) {
-            const debuggingProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
-                apply (target, thisArg, args) {
-                    updateHash(thisArg.canvas, args) 
-                    return DDGReflect.apply(target, thisArg, args)
-                }
-            })
-            debuggingProxy.overload()
-        }
-    //}
-
+    // if (args.debug) {
+    // Debugging of canvas methods
+    const debuggingMethods = ['putImageData', 'drawImage']
+    for (const methodName of debuggingMethods) {
+        const debuggingProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
+            apply (target, thisArg, args) {
+                updateHash(thisArg.canvas, args)
+                return DDGReflect.apply(target, thisArg, args)
+            }
+        })
+        debuggingProxy.overload()
+    }
+    // }
 
     // Include all these: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
     // Or overload the parent object and make an allow list of the put and draw calls only?
@@ -49,13 +50,13 @@ export function init (args) {
         'createConicGradient',
         'createLinearGradient',
         'createRadialGradient',
-        'createPattern',
+        'createPattern'
     ]
     for (const methodName of unsafeMethods) {
         const unsafeProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
             apply (target, thisArg, args) {
                 unsafeCanvases.add(thisArg.canvas)
-                updateHash(thisArg.canvas, args) 
+                updateHash(thisArg.canvas, args)
                 return DDGReflect.apply(target, thisArg, args)
             }
         })
@@ -70,8 +71,7 @@ export function init (args) {
             }
             // Anything we do here should be caught and ignored silently
             try {
-                const canvasKey = canvasMetadata.get(thisArg.canvas)
-                const { offScreenCtx } = computeOffScreenCanvas(thisArg.canvas, domainKey, sessionKey, getImageDataProxy, canvasKey)
+                const { offScreenCtx } = getCachedOffScreenCanvasOrCompute(thisArg.canvas, domainKey, sessionKey, getImageDataProxy)
                 // Call the original method on the modified off-screen canvas
                 return DDGReflect.apply(target, offScreenCtx, args)
             } catch {
@@ -82,6 +82,19 @@ export function init (args) {
     })
     getImageDataProxy.overload()
 
+    // Get cached offscreen if one exists, otherwise compute one
+    function getCachedOffScreenCanvasOrCompute (canvas, domainKey, sessionKey, getImageDataProxy) {
+        let result
+        if (canvasCache.has(canvas)) {
+            result = canvasCache.get(canvas)
+        } else {
+            const canvasKey = canvasMetadata.get(canvas) || ''
+            result = computeOffScreenCanvas(canvas, domainKey, sessionKey, getImageDataProxy, canvasKey)
+            canvasCache.set(canvas, result)
+        }
+        return result
+    }
+
     const canvasMethods = ['toDataURL', 'toBlob']
     for (const methodName of canvasMethods) {
         const proxy = new DDGProxy(featureName, HTMLCanvasElement.prototype, methodName, {
@@ -91,12 +104,10 @@ export function init (args) {
                     return DDGReflect.apply(target, thisArg, args)
                 }
                 try {
-                    const canvasKey = canvasMetadata.get(thisArg) || ""
-                    const { offScreenCanvas } = computeOffScreenCanvas(thisArg, domainKey, sessionKey, getImageDataProxy, canvasKey)
+                    const { offScreenCanvas } = getCachedOffScreenCanvasOrCompute(thisArg, domainKey, sessionKey, getImageDataProxy)
                     // Call the original method on the modified off-screen canvas
                     return DDGReflect.apply(target, offScreenCanvas, args)
-                } catch (e) {
-//console.log(e);
+                } catch {
                     // Something we did caused an exception, fall back to the native
                     return DDGReflect.apply(target, thisArg, args)
                 }
