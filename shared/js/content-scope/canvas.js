@@ -1,10 +1,10 @@
 import { iterateDataKey, getDataKeySync } from './utils'
 
-export function computeOffScreenCanvas (canvas, domainKey, sessionKey, getImageDataProxy, canvasKey) {
+export function computeOffScreenCanvas (canvas, domainKey, sessionKey, getImageDataProxy) {
     const ctx = canvas.getContext('2d')
     // We *always* compute the random pixels on the complete pixel set, then pass back the subset later
     let imageData = getImageDataProxy._native.apply(ctx, [0, 0, canvas.width, canvas.height])
-    imageData = modifyPixelData(imageData, sessionKey, domainKey, canvasKey)
+    imageData = modifyPixelData(imageData, sessionKey, domainKey)
 
     // Make a off-screen canvas and put the data there
     const offScreenCanvas = document.createElement('canvas')
@@ -16,7 +16,7 @@ export function computeOffScreenCanvas (canvas, domainKey, sessionKey, getImageD
     return { offScreenCanvas, offScreenCtx }
 }
 
-export function modifyPixelData (imageData, domainKey, sessionKey, canvasKey) {
+export function modifyPixelData (imageData, domainKey, sessionKey) {
     const length = imageData.data.length / 4
     const hitMinimum = 50
     const hitMax = 500
@@ -24,12 +24,13 @@ export function modifyPixelData (imageData, domainKey, sessionKey, canvasKey) {
     const windows = Math.ceil(length / windowSize)
     const remainder = length % windowSize
     for (let windowNumber = 0; windowNumber < windows; windowNumber++) {
-        const windowHash = getDataKeySync(sessionKey, domainKey, canvasKey + windowNumber)
+        const windowStartIndex = windowNumber * windowSize
         let windowLength = windowSize
         if (windowNumber === windows - 1) {
             windowLength = remainder
         }
-        const windowStartIndex = windowNumber * windowSize
+        const checksum = getChecksum(imageData.data, windowStartIndex, windowStartIndex + windowLength)
+        const windowHash = getDataKeySync(sessionKey, domainKey, checksum + windowNumber)
 
         let hits = 0
         iterateDataKey(windowHash, (item, byte) => {
@@ -72,6 +73,14 @@ export function modifyPixelData (imageData, domainKey, sessionKey, canvasKey) {
     }
 
     return imageData
+}
+
+function getChecksum (d, start, end) {
+    let checkSum = 0;
+    for (let i = start; i < end; i += 4) {
+        checkSum += d[i] + d[i + 1] + d[i + 2] + d[i + 3]
+    }
+    return checkSum
 }
 
 function produceFilterMap (d, start, end) {

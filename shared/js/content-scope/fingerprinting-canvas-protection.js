@@ -10,12 +10,7 @@ export function init (args) {
     const canvasMetadata = new WeakMap()
     const canvasCache = new WeakMap()
 
-    function updateHash (canvas, args) {
-        // Add support for other data types like image and ImageData.
-        const stringified = JSON.stringify(args)
-        const existingHash = canvasMetadata.get(canvas) || ''
-        const newHash = getDataKeySync(sessionKey, domainKey, existingHash + stringified)
-        canvasMetadata.set(canvas, newHash)
+    function clearCache (canvas) {
         // Clear cache as canvas has changed
         canvasCache.delete(canvas)
     }
@@ -26,7 +21,7 @@ export function init (args) {
     for (const methodName of debuggingMethods) {
         const debuggingProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
             apply (target, thisArg, args) {
-                updateHash(thisArg.canvas, args)
+                clearCache(thisArg.canvas)
                 return DDGReflect.apply(target, thisArg, args)
             }
         })
@@ -56,7 +51,7 @@ export function init (args) {
         const unsafeProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
             apply (target, thisArg, args) {
                 unsafeCanvases.add(thisArg.canvas)
-                updateHash(thisArg.canvas, args)
+                clearCache(thisArg.canvas)
                 return DDGReflect.apply(target, thisArg, args)
             }
         })
@@ -88,8 +83,7 @@ export function init (args) {
         if (canvasCache.has(canvas)) {
             result = canvasCache.get(canvas)
         } else {
-            const canvasKey = canvasMetadata.get(canvas) || ''
-            result = computeOffScreenCanvas(canvas, domainKey, sessionKey, getImageDataProxy, canvasKey)
+            result = computeOffScreenCanvas(canvas, domainKey, sessionKey, getImageDataProxy)
             canvasCache.set(canvas, result)
         }
         return result
