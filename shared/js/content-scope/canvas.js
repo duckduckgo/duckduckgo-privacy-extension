@@ -37,17 +37,8 @@ export function modifyPixelData (imageData, domainKey, sessionKey) {
             const channel = byte % 3
             const lookupId = item % windowLength
             const pixelCanvasIndex = windowStartIndex + lookupId + channel
-            const d = imageData.data
-
-            if (d[pixelCanvasIndex + 1] === 0 && d[pixelCanvasIndex + 2] === 0) {
-                // Ignore non blank pixels there is high chance compression ignores them
-                if (d[pixelCanvasIndex] === 0 && d[pixelCanvasIndex + 3] === 0) {
-                    return
-                }
-                // Ignore phaser background
-                if (d[pixelCanvasIndex] === 255 && d[pixelCanvasIndex + 3] === 255) {
-                    return
-                }
+            if (shouldIgnorePixel(imageData.data, pixelCanvasIndex)) {
+                return
             }
 
             ++hits
@@ -76,7 +67,7 @@ export function modifyPixelData (imageData, domainKey, sessionKey) {
 }
 
 function getChecksum (d, start, end) {
-    let checkSum = 0;
+    let checkSum = 0
     for (let i = start; i < end; i += 4) {
         checkSum += d[i] + d[i + 1] + d[i + 2] + d[i + 3]
     }
@@ -87,18 +78,25 @@ function produceFilterMap (d, start, end) {
     const arr = []
     // Create an array of only pixels that have data in them
     for (let i = start; i < end; i += 4) {
-        // Blank Blue and Green color
-        if (d[i + 1] === 0 && d[i + 2] === 0) {
-            // Ignore non blank pixels there is high chance compression ignores them
-            if (d[i] === 0 && d[i + 3] === 0) {
-                continue
-            }
-            // Ignore phaser background
-            if (d[i] === 255 && d[i + 3] === 255) {
-                continue
-            }
+        if (shouldIgnorePixel(d, i)) {
+            continue
         }
         arr.push(i)
     }
     return arr
+}
+
+function shouldIgnorePixel (d, i) {
+    // Blank Blue and Green color
+    if (d[i + 1] === 0 && d[i + 2] === 0) {
+        // Ignore non blank pixels there is high chance compression ignores them
+        if (d[i] === 0 && d[i + 3] === 0) {
+            return true
+        }
+        // Ignore phaser background
+        if (d[i] === 255 && d[i + 3] === 255) {
+            return true
+        }
+    }
+    return false
 }
