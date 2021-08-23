@@ -81,7 +81,7 @@
         "eventemitter2": "6.4.4",
         "is-plain-object": "5.0.0",
         "jquery": "3.6.0",
-        "node-gyp": "^8.1.0",
+        "node-gyp": "^8.2.0",
         "normalize.scss": "0.1.0",
         "object.values": "1.1.4",
         "parse-link-header": "1.0.1",
