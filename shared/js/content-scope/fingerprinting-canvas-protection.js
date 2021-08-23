@@ -47,14 +47,17 @@ export function init (args) {
         'createPattern'
     ]
     for (const methodName of unsafeMethods) {
-        const unsafeProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
-            apply (target, thisArg, args) {
-                unsafeCanvases.add(thisArg.canvas)
-                clearCache(thisArg.canvas)
-                return DDGReflect.apply(target, thisArg, args)
-            }
-        })
-        unsafeProxy.overload()
+        // Some methods are browser specific
+        if (methodName in CanvasRenderingContext2D.prototype) {
+            const unsafeProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
+                apply (target, thisArg, args) {
+                    unsafeCanvases.add(thisArg.canvas)
+                    clearCache(thisArg.canvas)
+                    return DDGReflect.apply(target, thisArg, args)
+                }
+            })
+            unsafeProxy.overload()
+        }
     }
 
     // Using proxies here to swallow calls to toString etc
