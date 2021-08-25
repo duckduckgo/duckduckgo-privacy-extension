@@ -14,7 +14,6 @@ export function init (args) {
         canvasCache.delete(canvas)
     }
 
-    // if (args.debug) {
     // Debugging of canvas methods
     const debuggingMethods = ['putImageData', 'drawImage']
     for (const methodName of debuggingMethods) {
@@ -26,7 +25,6 @@ export function init (args) {
         })
         debuggingProxy.overload()
     }
-    // }
 
     // Include all these: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
     // Or overload the parent object and make an allow list of the put and draw calls only?

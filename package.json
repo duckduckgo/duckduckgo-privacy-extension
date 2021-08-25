@@ -89,6 +89,7 @@
         "punycode": "2.1.1",
         "regenerator-runtime": "^0.13.9",
         "runtimer": "1.0.3",
+        "seedrandom": "^3.0.5",
         "sjcl": "^1.0.8",
         "tldts": "^5.7.41",
         "underscore": "1.13.1",

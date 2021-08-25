@@ -1,10 +1,11 @@
-import { iterateDataKey, getDataKeySync } from './utils'
+import { getDataKeySync } from './utils'
+import Seedrandom from 'seedrandom'
 
 export function computeOffScreenCanvas (canvas, domainKey, sessionKey, getImageDataProxy) {
     const ctx = canvas.getContext('2d')
     // We *always* compute the random pixels on the complete pixel set, then pass back the subset later
     let imageData = getImageDataProxy._native.apply(ctx, [0, 0, canvas.width, canvas.height])
-    imageData = modifyPixelData(imageData, sessionKey, domainKey)
+    imageData = modifyPixelData(imageData, sessionKey, domainKey, canvas.width)
 
     // Make a off-screen canvas and put the data there
     const offScreenCanvas = document.createElement('canvas')
@@ -16,87 +17,93 @@ export function computeOffScreenCanvas (canvas, domainKey, sessionKey, getImageD
     return { offScreenCanvas, offScreenCtx }
 }
 
-export function modifyPixelData (imageData, domainKey, sessionKey) {
-    const length = imageData.data.length / 4
-    const hitMinimum = 50
-    const hitMax = 500
-    const windowSize = 2000
-    const windows = Math.ceil(length / windowSize)
-    const remainder = length % windowSize
-    for (let windowNumber = 0; windowNumber < windows; windowNumber++) {
-        const windowStartIndex = windowNumber * windowSize
-        let windowLength = windowSize
-        if (windowNumber === windows - 1) {
-            windowLength = remainder
+export function modifyPixelData (imageData, domainKey, sessionKey, width) {
+    const d = imageData.data
+    const length = d.length / 4
+    let checkSum = 0
+    const mappingArray = []
+    for (let i = 0; i < length; i += 4) {
+        if (!shouldIgnorePixel(d, i) && !adjacentSame(d, i, width)) {
+            mappingArray.push(i)
+            checkSum += d[i] + d[i + 1] + d[i + 2] + d[i + 3]
         }
-        const checksum = getChecksum(imageData.data, windowStartIndex, windowStartIndex + windowLength)
-        const windowHash = getDataKeySync(sessionKey, domainKey, checksum + windowNumber)
+    }
 
-        let hits = 0
-        iterateDataKey(windowHash, (item, byte) => {
-            const channel = byte % 3
-            const lookupId = item % windowLength
-            const pixelCanvasIndex = windowStartIndex + lookupId + channel
-            if (shouldIgnorePixel(imageData.data, pixelCanvasIndex)) {
-                return
-            }
+    const windowHash = getDataKeySync(sessionKey, domainKey, checkSum)
+    const rng = new Seedrandom(windowHash)
+    for (let i = 0; i < mappingArray.length; i++) {
+        const rand = rng()
+        const byte = Math.floor(rand * 10)
+        const channel = byte % 3
+        const pixelCanvasIndex = mappingArray[i] + channel
 
-            ++hits
-            imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
-        })
-
-        if (hits < hitMinimum) {
-            // Do additional work as this window didn't hit enough pixels
-            const lookupIds = produceFilterMap(imageData.data, windowStartIndex, windowStartIndex + windowLength)
-            if (lookupIds.length) {
-                iterateDataKey(windowHash, (item, byte) => {
-                    ++hits
-                    const channel = byte % 3
-                    const lookupId = item % lookupIds.length
-                    const pixelCanvasIndex = lookupIds[lookupId] + channel
-                    imageData.data[pixelCanvasIndex] = imageData.data[pixelCanvasIndex] ^ (byte & 0x1)
-                    if (hits >= hitMax) {
-                        return null
-                    }
-                })
-            }
-        }
+        d[pixelCanvasIndex] = d[pixelCanvasIndex] ^ (byte & 0x1)
     }
 
     return imageData
 }
 
-function getChecksum (d, start, end) {
-    let checkSum = 0
-    for (let i = start; i < end; i += 4) {
-        checkSum += d[i] + d[i + 1] + d[i + 2] + d[i + 3]
+// Ignore pixels that have neighbours that are the same
+function adjacentSame (d, i, width) {
+    const widthPixel = width * 4
+    const x = i % widthPixel
+    const maxLength = d.length
+
+    if (x < widthPixel) {
+        const right = i + 4
+        if (!pixelsSame(d, i, right)) {
+            return false
+        }
+        const diagonalRightUp = right - widthPixel
+        if (diagonalRightUp > 0 && !pixelsSame(d, i, diagonalRightUp)) {
+            return false
+        }
+        const diagonalRightDown = right + widthPixel
+        if (diagonalRightDown < maxLength && !pixelsSame(d, i, diagonalRightDown)) {
+            return false
+        }
     }
-    return checkSum
+
+    if (x > 0) {
+        const left = i - 4
+        if (!pixelsSame(d, i, left)) {
+            return false
+        }
+        const diagonalLeftUp = left - widthPixel
+        if (diagonalLeftUp > 0 && !pixelsSame(d, i, diagonalLeftUp)) {
+            return false
+        }
+        const diagonalLeftDown = left + widthPixel
+        if (diagonalLeftDown < maxLength && !pixelsSame(d, i, diagonalLeftDown)) {
+            return false
+        }
+    }
+
+    const up = i - widthPixel
+    if (up > 0 && !pixelsSame(d, i, up)) {
+        return false
+    }
+
+    const down = i + widthPixel
+    if (down < maxLength && !pixelsSame(d, i, down)) {
+        return false
+    }
+
+    return true
 }
 
-function produceFilterMap (d, start, end) {
-    const arr = []
-    // Create an array of only pixels that have data in them
-    for (let i = start; i < end; i += 4) {
-        if (shouldIgnorePixel(d, i)) {
-            continue
-        }
-        arr.push(i)
-    }
-    return arr
+// Check that a pixel at i and j match all channels
+function pixelsSame (d, i, j) {
+    return d[i] === d[j] &&
+           d[i + 1] === d[j + 1] &&
+           d[i + 2] === d[j + 2] &&
+           d[i + 3] === d[j + 3]
 }
 
 function shouldIgnorePixel (d, i) {
-    // Blank Blue and Green color
-    if (d[i + 1] === 0 && d[i + 2] === 0) {
-        // Ignore non blank pixels there is high chance compression ignores them
-        if (d[i] === 0 && d[i + 3] === 0) {
-            return true
-        }
-        // Ignore phaser background
-        if (d[i] === 255 && d[i + 3] === 255) {
-            return true
-        }
+    // Transparent pixels
+    if (d[i + 3] === 0) {
+        return true
     }
     return false
 }
