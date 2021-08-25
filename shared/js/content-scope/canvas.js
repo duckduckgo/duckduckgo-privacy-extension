@@ -94,17 +94,17 @@ function adjacentSame (imageData, index, width) {
     return true
 }
 
-// Check that a pixel at i and j match all channels
-function pixelsSame (d, i, j) {
-    return d[i] === d[j] &&
-           d[i + 1] === d[j + 1] &&
-           d[i + 2] === d[j + 2] &&
-           d[i + 3] === d[j + 3]
+// Check that a pixel at index and index2 match all channels
+function pixelsSame (imageData, index, index2) {
+    return imageData[index] === imageData[index2] &&
+           imageData[index + 1] === imageData[index2 + 1] &&
+           imageData[index + 2] === imageData[index2 + 2] &&
+           imageData[index + 3] === imageData[index2 + 3]
 }
 
-function shouldIgnorePixel (d, i) {
+function shouldIgnorePixel (imageData, index) {
     // Transparent pixels
-    if (d[i + 3] === 0) {
+    if (imageData[index + 3] === 0) {
         return true
     }
     return false
