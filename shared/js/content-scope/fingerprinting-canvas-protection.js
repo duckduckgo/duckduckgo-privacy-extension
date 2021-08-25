@@ -14,21 +14,24 @@ export function init (args) {
         canvasCache.delete(canvas)
     }
 
-    // Debugging of canvas methods
-    const debuggingMethods = ['putImageData', 'drawImage']
-    for (const methodName of debuggingMethods) {
-        const debuggingProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
+    // Known data methods
+    const safeMethods = ['putImageData', 'drawImage']
+    for (const methodName of safeMethods) {
+        const safeMethodProxy = new DDGProxy(featureName, CanvasRenderingContext2D.prototype, methodName, {
             apply (target, thisArg, args) {
                 clearCache(thisArg.canvas)
                 return DDGReflect.apply(target, thisArg, args)
             }
         })
-        debuggingProxy.overload()
+        safeMethodProxy.overload()
     }
 
-    // Include all these: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
-    // Or overload the parent object and make an allow list of the put and draw calls only?
     const unsafeMethods = [
+        'strokeRect',
+        'bezierCurveTo',
+        'quadraticCurveTo',
+        'arcTo',
+        'ellipse',
         'rect',
         'fill',
         'stroke',

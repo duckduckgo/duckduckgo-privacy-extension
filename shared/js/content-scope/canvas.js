@@ -44,50 +44,50 @@ export function modifyPixelData (imageData, domainKey, sessionKey, width) {
 }
 
 // Ignore pixels that have neighbours that are the same
-function adjacentSame (d, i, width) {
+function adjacentSame (imageData, index, width) {
     const widthPixel = width * 4
-    const x = i % widthPixel
-    const maxLength = d.length
+    const x = index % widthPixel
+    const maxLength = imageData.length
 
-// Pixels not on the right border of the canvas
+    // Pixels not on the right border of the canvas
     if (x < widthPixel) {
-        const right = i + 4
-        if (!pixelsSame(d, i, right)) {
+        const right = index + 4
+        if (!pixelsSame(imageData, index, right)) {
             return false
         }
         const diagonalRightUp = right - widthPixel
-        if (diagonalRightUp > 0 && !pixelsSame(d, i, diagonalRightUp)) {
+        if (diagonalRightUp > 0 && !pixelsSame(imageData, index, diagonalRightUp)) {
             return false
         }
         const diagonalRightDown = right + widthPixel
-        if (diagonalRightDown < maxLength && !pixelsSame(d, i, diagonalRightDown)) {
+        if (diagonalRightDown < maxLength && !pixelsSame(imageData, index, diagonalRightDown)) {
             return false
         }
     }
 
-// Pixels not on the left border of the canvas
+    // Pixels not on the left border of the canvas
     if (x > 0) {
-        const left = i - 4
-        if (!pixelsSame(d, i, left)) {
+        const left = index - 4
+        if (!pixelsSame(imageData, index, left)) {
             return false
         }
         const diagonalLeftUp = left - widthPixel
-        if (diagonalLeftUp > 0 && !pixelsSame(d, i, diagonalLeftUp)) {
+        if (diagonalLeftUp > 0 && !pixelsSame(imageData, index, diagonalLeftUp)) {
             return false
         }
         const diagonalLeftDown = left + widthPixel
-        if (diagonalLeftDown < maxLength && !pixelsSame(d, i, diagonalLeftDown)) {
+        if (diagonalLeftDown < maxLength && !pixelsSame(imageData, index, diagonalLeftDown)) {
             return false
         }
     }
 
-    const up = i - widthPixel
-    if (up > 0 && !pixelsSame(d, i, up)) {
+    const up = index - widthPixel
+    if (up > 0 && !pixelsSame(imageData, index, up)) {
         return false
     }
 
-    const down = i + widthPixel
-    if (down < maxLength && !pixelsSame(d, i, down)) {
+    const down = index + widthPixel
+    if (down < maxLength && !pixelsSame(imageData, index, down)) {
         return false
     }
 
