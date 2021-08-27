@@ -27,9 +27,10 @@ class Site {
         this.domain = domain
         this.trackerUrls = []
         this.grade = new Grade()
-        this.whitelisted = false // user-whitelisted sites; applies to all privacy features
-        this.whitelistOptIn = false
-        this.setWhitelistStatusFromGlobal(domain)
+        this.allowlisted = false // user-allowlisted sites; applies to all privacy features
+        this.allowlistOptIn = false
+        this.denylisted = false
+        this.setListStatusFromGlobal(domain)
 
         /**
          * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
@@ -63,32 +64,47 @@ class Site {
     }
 
     /*
-     * When site objects are created we check the stored whitelists
-     * and set the new site whitelist statuses
+     * When site objects are created we check the stored lists
+     * and set the new site list statuses
      */
-    setWhitelistStatusFromGlobal () {
-        const globalwhitelists = ['whitelisted', 'whitelistOptIn']
-        globalwhitelists.forEach((name) => {
+    setListStatusFromGlobal () {
+        const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
+        globalLists.forEach((name) => {
             const list = settings.getSetting(name) || {}
-            this.setWhitelisted(name, list[this.domain])
+            this.setListValue(name, list[this.domain])
         })
     }
 
-    setWhitelisted (name, value) {
-        this[name] = value
+    setListValue (listName, value) {
+        this[listName] = value
     }
 
     /*
-     * Send message to the popup to rerender the whitelist
+     * Send message to the popup to rerender the allowlist
      */
-    notifyWhitelistChanged () {
+    notifyAllowlistChanged () {
         // this can send an error message when the popup is not open check lastError to hide it
-        chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
+        chrome.runtime.sendMessage({ allowlistChanged: true }, () => chrome.runtime.lastError)
     }
 
-    isWhiteListed () { return this.whitelisted }
+    isContentBlockingEnabled () {
+        return this.isFeatureEnabled('contentBlocking')
+    }
 
-    isAllowlisted () { return this.whitelisted || this.isBroken }
+    isProtectionEnabled () {
+        if (this.denylisted) {
+            return true
+        }
+        // Check if user has allowed disabled blocking or it's a known broken site.
+        return !(this.allowlisted || this.isBroken)
+    }
+
+    isFeatureEnabled (featureName) {
+        if (this.denylisted) {
+            return true
+        }
+        return this.isProtectionEnabled() && !this.brokenFeatures.includes(featureName)
+    }
 
     addTracker (t) {
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {

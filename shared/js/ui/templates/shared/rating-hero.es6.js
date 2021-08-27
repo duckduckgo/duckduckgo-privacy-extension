@@ -71,7 +71,7 @@ function siteRatingSubtitle (isCalculating, rating, isAllowlisted, isBroken) {
 
     // deal with other states
     let msg = 'Privacy Grade'
-    // site is whitelisted
+    // site is allowlisted
     if (!isActive) {
         msg = 'Privacy Protection Disabled'
         // "null" state (empty tab, browser's "about:" pages)

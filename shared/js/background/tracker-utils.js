@@ -35,10 +35,9 @@ function isTracker (url) {
  * Determine if the social entity should be blocked on this URL. returns True if so.
  */
 function shouldBlockSocialNetwork (entity, url) {
-    const ctpEnabled = clickToLoadIsActive()
     const domain = tldts.parse(url).domain
     const excludeData = getDomainsToExludeByNetwork()
-    return ctpEnabled && excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
+    return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
 }
 
 /*
@@ -72,9 +71,6 @@ function getDomainsToExludeByNetwork () {
 
 // Return true if URL is in our click to load tracker list
 function getSocialTracker (url) {
-    if (!clickToLoadIsActive()) {
-        return
-    }
     const parsedDomain = tldts.parse(url)
     for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
@@ -94,12 +90,6 @@ function getSocialTracker (url) {
             }
         }
     }
-}
-
-// Return true when click to load should be enabled. Can be used to dynamically disable
-// functionality, or check for experiments
-function clickToLoadIsActive () {
-    return utils.isFeatureEnabled('clickToPlay')
 }
 
 // Determine if a given URL is surrogate redirect.
@@ -156,10 +146,6 @@ function socialTrackerIsAllowedByUser (trackerEntity, domain) {
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
 function truncateReferrer (referrer, target) {
-    if (!utils.isFeatureEnabled('referrer')) {
-        return undefined
-    }
-
     if (!referrer || referrer === '') {
         return undefined
     }
@@ -220,6 +206,5 @@ module.exports = {
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
     getXraySurrogate: getXraySurrogate,
     allowSocialLogin: allowSocialLogin,
-    clickToLoadIsActive: clickToLoadIsActive,
     isFirstPartyByEntity: isFirstPartyByEntity
 }

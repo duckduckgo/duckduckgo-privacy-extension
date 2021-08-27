@@ -70,12 +70,12 @@ module.exports = {
         {
             "type": "upgrade safelist",
             "name": "httpsUpgradeList",
-            "url": "https://staticcdn.duckduckgo.com/https/negative-https-whitelist.json"
+            "url": "https://staticcdn.duckduckgo.com/https/negative-https-allowlist.json"
         },
         {
             "type": "don\'t upgrade safelist",
             "name": "httpsDontUpgradeList",
-            "url": "https://staticcdn.duckduckgo.com/https/https-whitelist.json"
+            "url": "https://staticcdn.duckduckgo.com/https/https-allowlist.json"
         },
     ],
     "tdsLists": [

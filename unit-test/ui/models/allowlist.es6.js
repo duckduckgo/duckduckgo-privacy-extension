@@ -1,77 +1,77 @@
-const Whitelist = require('../../../shared/js/ui/models/whitelist.es6')
+const Allowlist = require('../../../shared/js/ui/models/allowlist.es6')
 
-let whitelist
+let allowlist
 
 const domainTestCases = [
     {
         url: 'duckduckgo.com',
-        whitelistedDomain: 'duckduckgo.com',
+        allowlistedDomain: 'duckduckgo.com',
         valid: true
     },
     {
         url: 'bttf.duckduckgo.com',
-        whitelistedDomain: 'duckduckgo.com',
+        allowlistedDomain: 'duckduckgo.com',
         valid: true
     },
     {
         url: 'duckduckgo.com/?q=test&ia=web',
-        whitelistedDomain: 'duckduckgo.com',
+        allowlistedDomain: 'duckduckgo.com',
         valid: true
     },
     {
         url: 'www.duckduckgo.com',
-        whitelistedDomain: 'duckduckgo.com',
+        allowlistedDomain: 'duckduckgo.com',
         valid: true
     },
     {
         url: 'testwww.com',
-        whitelistedDomain: 'testwww.com',
+        allowlistedDomain: 'testwww.com',
         valid: true
     },
     {
         url: 'www.testwww.com',
-        whitelistedDomain: 'testwww.com',
+        allowlistedDomain: 'testwww.com',
         valid: true
     },
     {
         url: 'duckduck',
-        whitelistedDomain: '',
+        allowlistedDomain: '',
         valid: false
     },
     {
         url: '127.0.0.1',
-        whitelistedDomain: '127.0.0.1',
+        allowlistedDomain: '127.0.0.1',
         valid: true
     },
     {
         url: 'localhost',
-        whitelistedDomain: 'localhost',
+        allowlistedDomain: 'localhost',
         valid: true
     },
     {
         url: 'localhost:5000',
-        whitelistedDomain: 'localhost',
+        allowlistedDomain: 'localhost',
         valid: true
     },
     {
         url: 'localhost:asdasdasd',
-        whitelistedDomain: '',
+        allowlistedDomain: '',
         valid: false
     },
     {
         url: '',
-        whitelistedDomain: '',
+        allowlistedDomain: '',
         valid: false
     }
 ]
 
-describe('whitelist.addDomain()', () => {
-    whitelist = new Whitelist({})
+describe('allowlist.addDomain()', () => {
+    allowlist = new Allowlist({})
     domainTestCases.forEach((test) => {
         it(`should return ${test.valid} for ${test.url}`, () => {
-            const result = whitelist.addDomain(test.url)
+            const result = allowlist.addDomain(test.url)
             if (test.valid) {
-                expect(result).toBe(test.whitelistedDomain)
+                expect(result).toBe(test.allowlistedDomain)
             } else {
                 expect(result).toBe(null)
             }

@@ -32,36 +32,36 @@ class TabManager {
         return this.tabContainer[tabData.tabId]
     };
 
-    /* This will whitelist any open tabs with the same domain
-     * list: name of the whitelist to update
-     * domain: domain to whitelist
-     * value: whitelist value, true or false
+    /* This will allowlist any open tabs with the same domain
+     * list: name of the allowlist to update
+     * domain: domain to allowlist
+     * value: allowlist value, true or false
      */
-    whitelistDomain (data) {
-        this.setGlobalWhitelist(data.list, data.domain, data.value)
+    setList (data) {
+        this.setGlobalAllowlist(data.list, data.domain, data.value)
 
         for (const tabId in this.tabContainer) {
             const tab = this.tabContainer[tabId]
             if (tab.site && tab.site.domain === data.domain) {
-                tab.site.setWhitelisted(data.list, data.value)
+                tab.site.setListValue(data.list, data.value)
             }
         }
 
-        browserWrapper.notifyPopup({ whitelistChanged: true })
+        browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
-    /* Update the whitelists kept in settings
+    /* Update the allowlists kept in settings
      */
-    setGlobalWhitelist (list, domain, value) {
-        const globalwhitelist = settings.getSetting(list) || {}
+    setGlobalAllowlist (list, domain, value) {
+        const globalallowlist = settings.getSetting(list) || {}
 
         if (value) {
-            globalwhitelist[domain] = true
+            globalallowlist[domain] = true
         } else {
-            delete globalwhitelist[domain]
+            delete globalallowlist[domain]
         }
 
-        settings.updateSetting(list, globalwhitelist)
+        settings.updateSetting(list, globalallowlist)
     }
 
     /* This handles the new tab case. You have clicked to
@@ -82,7 +82,7 @@ class TabManager {
                 /**
                  * Re: HTTPS. When the tab finishes loading:
                  * 1. check main_frame url (via tab.url) for http/s, update site grade
-                 * 2. check for incomplete upgraded https upgrade requests, whitelist
+                 * 2. check for incomplete upgraded https upgrade requests, allowlist
                  * the entire site if there are any then notify tabManager
                  * NOTE: we aren't making a distinction between active and passive
                  * content when https content is mixed after a forced upgrade

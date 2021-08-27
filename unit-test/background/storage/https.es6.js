@@ -1,17 +1,17 @@
 const httpsStorage = require('../../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../../data/httpsBloom.json')
-const httpsWhitelist = require('./../../data/httpsWhitelist.json')
+const httpsAllowlist = require('./../../data/httpsAllowlist.json')
 const httpsNegativeBloom = require('./../../data/httpsNegativeBloom.json')
-const httpsNegativeWhitelist = require('./../../data/httpsNegativeWhitelist.json')
+const httpsNegativeAllowlist = require('./../../data/httpsNegativeAllowlist.json')
 const load = require('./../../helpers/https.es6.js')
 
 describe('Https storage normal update', () => {
     beforeAll(() => {
         load.loadStub({
-            httpsBloom: httpsBloom,
-            httpsWhitelist: httpsWhitelist,
-            httpsNegativeBloom: httpsNegativeBloom,
-            httpsNegativeWhitelist: httpsNegativeWhitelist
+            httpsBloom,
+            httpsAllowlist,
+            httpsNegativeBloom,
+            httpsNegativeAllowlist
         })
     })
 
@@ -31,9 +31,9 @@ describe('Https storage bad xhr update', () => {
         badBloom.checksum.sha256 = 'badchecksum'
         load.loadStub({
             httpsBloom: badBloom,
-            httpsWhitelist: httpsWhitelist,
-            httpsNegativeBloom: httpsNegativeBloom,
-            httpsNegativeWhitelist: httpsNegativeWhitelist
+            httpsAllowlist,
+            httpsNegativeBloom,
+            httpsNegativeAllowlist
         })
 
         // stub for db storage

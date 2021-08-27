@@ -58,13 +58,19 @@ function connected (port) {
                 removeBroken(tab.site.domain)
                 removeBroken(new URL(tab.url).hostname)
             } else {
-                tabManager.whitelistDomain({
-                    list: 'whitelisted',
+                tabManager.setList({
+                    list: 'allowlisted',
                     domain: tab.site.domain,
-                    value: !tab.site.whitelisted
+                    value: !tab.site.allowlisted
                 })
             }
             postMessage(tabId, 'tabChange', tab)
+        } else if (m.action === 'toggletrackerAllowlist') {
+            if (tdsStorage.config.features.trackerAllowlist.state === 'enabled') {
+                tdsStorage.config.features.trackerAllowlist.state = 'disabled'
+            } else {
+                tdsStorage.config.features.trackerAllowlist.state = 'enabled'
+            }
         } else if (m.action.startsWith('toggle')) {
             const { tabId } = m
             const feature = m.action.slice(6)

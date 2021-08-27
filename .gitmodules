@@ -1,3 +1,10 @@
 [submodule "unit-test/background/reference-tests"]
 	path = unit-test/background/reference-tests
 	url = https://github.com/duckduckgo/privacy-reference-tests
+[submodule "shared/tracker-surrogates"]
+	path = shared/tracker-surrogates
+	url = https://github.com/duckduckgo/tracker-surrogates.git
+[submodule "shared/privacy-configuration"]
+	path = shared/privacy-configuration
+	url = https://github.com/duckduckgo/privacy-configuration.git
+  branch = main

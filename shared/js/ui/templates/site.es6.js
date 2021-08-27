@@ -16,7 +16,7 @@ module.exports = function () {
         showOpen: !this.model.disabled
     })}
         </li>
-        <li class="text--center padded border--bottom warning_bg bold ${this.model.isBroken ? '' : 'is-hidden'}">
+        <li class="text--center padded border--bottom warning_bg bold ${this.model.displayBrokenUI ? '' : 'is-hidden'}">
             We temporarily disabled Privacy Protection as it appears to be breaking this site.
         </li>
         <li class="site-info__li--https-status padded border--bottom">
@@ -43,18 +43,18 @@ module.exports = function () {
                 <span class="icon icon__arrow pull-right"></span>
             </a>
         </li>
-        <li class="site-info__li--toggle js-site-protection-row padded ${this.model.isAllowlisted ? '' : 'is-active'} ${this.model.isBroken ? 'is-disabled' : ''}">
-            <p class="is-transparent site-info__whitelist-status js-site-whitelist-status">
+        <li class="site-info__li--toggle js-site-protection-row padded ${this.model.protectionsEnabled ? 'is-active' : ''}">
+            <p class="is-transparent site-info__allowlist-status js-site-allowlist-status">
                 <span class="text-line-after-icon privacy-on-off-message bold">
-                    ${setTransitionText(!this.model.isWhitelisted)}
+                    ${setTransitionText(!this.model.isAllowlisted)}
                 </span>
             </p>
             <p class="site-info__protection js-site-protection bold">Site Privacy Protection</p>
             <div class="site-info__toggle-container">
-                ${toggleButton(!this.model.isAllowlisted, 'js-site-toggle pull-right')}
+                ${toggleButton(this.model.protectionsEnabled, 'js-site-toggle pull-right')}
             </div>
         </li>
-        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded ${this.model.isBroken ? 'is-hidden' : ''}">
+        <li class="js-site-manage-allowlist-li site-info__li--manage-allowlist padded ${this.model.displayBrokenUI ? 'is-hidden' : ''}">
             ${renderManageAllowlist(this.model)}
         </li>
         <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
@@ -90,11 +90,11 @@ module.exports = function () {
     }
 
     function renderTrackerNetworks (model) {
-        const isActive = !model.isAllowlisted ? 'is-active' : ''
+        const isActive = model.protectionsEnabled ? 'is-active' : ''
 
         return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
     <span class="site-info__trackers-status__icon
-        icon-${trackerNetworksIcon(model.siteRating, model.isAllowlisted, model.totalTrackerNetworksCount)}"></span>
+        icon-${trackerNetworksIcon(model.siteRating, !model.protectionsEnabled, model.totalTrackerNetworksCount)}"></span>
     <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
     <span class="icon icon__arrow pull-right"></span>
 </a>`
@@ -102,7 +102,7 @@ module.exports = function () {
 
     function renderManageAllowlist (model) {
         return bel`<div>
-    <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
+    <a href="javascript:void(0)" class="js-site-manage-allowlist site-info__manage-allowlist link-secondary bold">
         Unprotected Sites
     </a>
     <div class="separator"></div>

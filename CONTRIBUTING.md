@@ -27,6 +27,10 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 1. Create an issue describing the bug. see [Reporting bugs](CONTRIBUTING.md#reporting-bugs)
 2. Get approval from DDG staff before working on it. Since most bug fixes and feature development are handled internally, we want to make sure that your work doesn't conflict with any current projects.
 
+## Updating git submodules
+
+Run `git submodule update --remote` to fetch latest version of all git submodules.
+
 ## Testing locally
 
 ### Pre-Requisites
@@ -36,7 +40,7 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 - Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html).
 
 ### Building the extension
-- `npm install` has to be run before building the extension for the first time 
+- `npm install`, `git submodule update --init --recursive` both have to be run before building the extension for the first time 
 - Firefox
  1. Run `npm run dev-firefox`
  2. Load the extension in Firefox from the `build/firefox/dev` directory
@@ -63,7 +67,6 @@ Run the dev build task for your browser from the 'Build' section above. The gene
 After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
 
 ### Testing
-- Install the required test submodules: `git submodule update --init --recursive`
 - Unit tests: `npm test`
 - Integration Tests
   - Local, requires Chrome: `npm run test-int`
@@ -75,7 +78,7 @@ After running the build task it will continue watching for changes to any of the
 **Setup**
 
 1. For remote linux machine, first setup xvfb: `source selenium-test/setup.sh`
-2. `npm install`
+2. `npm install`, `git submodule update --init --recursive`
 3. `grunt`
 
 **Testing Single Site** `./selenium-test/ratings.js -u https://website.com`

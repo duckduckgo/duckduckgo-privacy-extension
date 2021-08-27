@@ -1,34 +1,34 @@
 const Parent = window.DDG.base.Model
 const tldts = require('tldts')
 
-function Whitelist (attrs) {
+function Allowlist (attrs) {
     attrs.list = {}
     Parent.call(this, attrs)
 
-    this.setWhitelistFromSettings()
+    this.setAllowlistFromSettings()
 }
 
-Whitelist.prototype = window.$.extend({},
+Allowlist.prototype = window.$.extend({},
     Parent.prototype,
     {
 
-        modelName: 'whitelist',
+        modelName: 'allowlist',
 
         removeDomain (itemIndex) {
             const domain = this.list[itemIndex]
-            console.log(`whitelist: remove ${domain}`)
+            console.log(`allowlist: remove ${domain}`)
 
             this.fetch({
-                whitelisted: {
-                    list: 'whitelisted',
+                setList: {
+                    list: 'allowlisted',
                     domain: domain,
                     value: false
                 }
             })
-            // Remove domain whitelist opt-in status, if present
+            // Remove domain allowlist opt-in status, if present
             this.fetch({
-                whitelistOptIn: {
-                    list: 'whitelistOptIn',
+                allowlistOptIn: {
+                    list: 'allowlistOptIn',
                     domain: domain,
                     value: false
                 }
@@ -40,42 +40,42 @@ Whitelist.prototype = window.$.extend({},
         },
 
         addDomain: function (url) {
-            // We only whitelist domains, not full URLs:
+            // We only allowlist domains, not full URLs:
             // - use getDomain, it will return null if the URL is invalid
             // - prefix with getSubDomain, which returns an empty string if none is found
             // But first, strip the 'www.' part, otherwise getSubDomain will include it
-            // and whitelisting won't work for that site
+            // and allowlisting won't work for that site
             url = url ? url.replace(/^www\./, '') : ''
             const parsedDomain = tldts.parse(url)
             const localDomain = url.match(/^localhost(:[0-9]+)?$/i) ? 'localhost' : null
             const subDomain = parsedDomain.subdomain
             const domain = localDomain || (parsedDomain.isIp ? parsedDomain.hostname : parsedDomain.domain)
             if (domain) {
-                const domainToWhitelist = subDomain ? subDomain + '.' + domain : domain
-                console.log(`whitelist: add ${domainToWhitelist}`)
+                const domainToAllowlist = subDomain ? subDomain + '.' + domain : domain
+                console.log(`allowlist: add ${domainToAllowlist}`)
 
                 this.fetch({
-                    whitelisted: {
-                        list: 'whitelisted',
-                        domain: domainToWhitelist,
+                    setList: {
+                        list: 'allowlisted',
+                        domain: domainToAllowlist,
                         value: true
                     }
                 })
 
-                this.setWhitelistFromSettings()
+                this.setAllowlistFromSettings()
             }
 
             return domain
         },
 
-        setWhitelistFromSettings: function () {
+        setAllowlistFromSettings: function () {
             const self = this
-            this.fetch({ getSetting: { name: 'whitelisted' } }).then((whitelist) => {
-                whitelist = whitelist || {}
-                const wlist = Object.keys(whitelist)
+            this.fetch({ getSetting: { name: 'allowlisted' } }).then((allowlist) => {
+                allowlist = allowlist || {}
+                const wlist = Object.keys(allowlist)
                 wlist.sort()
 
-                // Publish whitelist change notification via the store
+                // Publish allowlist change notification via the store
                 // used to know when to rerender the view
                 self.set('list', wlist)
             })
@@ -83,4 +83,4 @@ Whitelist.prototype = window.$.extend({},
     }
 )
 
-module.exports = Whitelist
+module.exports = Allowlist

@@ -229,12 +229,13 @@ function getBrokenScriptLists () {
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
-// tabManager.site.whitelisted is the preferred method.
+// tabManager.site.isProtectionEnabled() is the preferred method.
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
-    const safeList = settings.getSetting('whitelisted')
+    const safeList = settings.getSetting('allowlisted')
     const subdomains = hostname.split('.')
     // Check user safe list
+    // TODO make the same as brokenListIndex matching
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {
             return true
@@ -327,15 +328,15 @@ function isSameTopLevelDomain (url1, url2) {
  *
  * @param {String} featureName - the name of the feature
  * @param {String} customState - An optional custom state to check for
- * @returns {bool} - if feature is enabled/matches specified state
+ * @returns {bool} - if feature is enabled
  */
-function isFeatureEnabled (featureName, customState) {
+function isFeatureEnabled (featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (!feature) {
         return false
     }
 
-    return (customState) ? feature.state === customState : feature.state === 'enabled'
+    return feature.state === 'enabled'
 }
 
 /**
@@ -375,7 +376,6 @@ module.exports = {
     imgToData,
     getBrokenScriptLists,
     isSameTopLevelDomain,
-    isFeatureEnabled,
     getFeatureSettings,
     removeBroken
 }

@@ -5,7 +5,7 @@ const request = require('request'),
       process = require('process');
 
 const issuesApi = 'https://api.github.com/repos/EFForg/https-everywhere/issues';
-const httpsWhitelistLoc = 'data/httpsWhitelist.json';
+const httpsAllowlistLoc = 'data/httpsAllowlist.json';
 
 const token = process.env.GITHUB_API_TOKEN;
 
@@ -32,7 +32,7 @@ skip.map((x) => { skipDomains[x] = true });
 var titles = [];
 
 // get issues for https everywhere and parse out urls from 
-// the issue titles. We'll use these to build a whitelist
+// the issue titles. We'll use these to build a allowlist
 function getTitles(link) {
 
     if (!link) {
@@ -87,12 +87,12 @@ function parseTitles() {
             parsedTitles[domainToAdd] = true;
     });
 
-    fs.writeFile(httpsWhitelistLoc, JSON.stringify(parsedTitles, null, 4),((err) => { 
+    fs.writeFile(httpsAllowlistLoc, JSON.stringify(parsedTitles, null, 4),((err) => { 
                 if(err){console.log(err)}
     }));
 
     console.log("Wrote " + Object.keys(parsedTitles).length + " HTTPS entries");
 }
 
-console.log("Building HTTPS whitelist");
+console.log("Building HTTPS allowlist");
 getTitles(options);

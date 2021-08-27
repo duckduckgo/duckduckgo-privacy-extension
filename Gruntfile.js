@@ -1,6 +1,5 @@
 module.exports = function (grunt) {
     const through = require('through2')
-    const Fiber = require('fibers');
     const sass = require('sass')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
@@ -156,8 +155,7 @@ module.exports = function (grunt) {
 
         sass: {
             options: {
-                implementation: sass,
-                fiber: Fiber,
+                implementation: sass
             },
             dist: {
                 files: baseFileMap.sass

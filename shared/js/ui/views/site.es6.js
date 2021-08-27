@@ -39,26 +39,29 @@ Site.prototype = window.$.extend({},
     Parent.prototype,
     openOptionsPage,
     {
-        _onWhitelistClick: function (e) {
+        _onToggleClick: function (e) {
             if (this.$body.hasClass('is-disabled')) return
-            if (this.$protectionrow.hasClass('is-disabled')) return
 
-            this.model.toggleWhitelist()
-            const whitelisted = this.model.isWhitelisted
-            this._showWhitelistedStatusMessage(!whitelisted)
+            this.model.toggleAllowlist()
+            if (!this.model.isBroken) {
+                const allowlisted = this.model.isAllowlisted
+                this._showAllowlistedStatusMessage(!allowlisted)
 
-            if (whitelisted) {
-                this._showBreakageConfirmation()
+                if (allowlisted) {
+                    this._showBreakageConfirmation()
+                }
+            } else {
+                this.closePopupAndReload(1500)
             }
         },
 
-        // If we just whitelisted a site, show a message briefly before reloading
+        // If we just allowlisted a site, show a message briefly before reloading
         // otherwise just reload the tab and close the popup
-        _showWhitelistedStatusMessage: function (reload) {
+        _showAllowlistedStatusMessage: function (reload) {
             const isTransparentClass = 'is-transparent'
             // Wait for the rerendering to be done
             // 10ms timeout is the minimum to render the transition smoothly
-            setTimeout(() => this.$whiteliststatus.removeClass(isTransparentClass), 10)
+            setTimeout(() => this.$allowliststatus.removeClass(isTransparentClass), 10)
             setTimeout(() => this.$protection.addClass(isTransparentClass), 10)
 
             if (reload) {
@@ -74,12 +77,11 @@ Site.prototype = window.$.extend({},
             this._cacheElems('.js-site', [
                 'toggle',
                 'protection',
-                'protection-row',
-                'whitelist-status',
+                'allowlist-status',
                 'show-all-trackers',
                 'show-page-trackers',
-                'manage-whitelist',
-                'manage-whitelist-li',
+                'manage-allowlist',
+                'manage-allowlist-li',
                 'report-broken',
                 'privacy-practices',
                 'confirm-breakage-li',
@@ -92,13 +94,13 @@ Site.prototype = window.$.extend({},
             this.$gradescorecard = this.$('.js-hero-open')
 
             this.bindEvents([
-                [this.$toggle, 'click', this._onWhitelistClick],
+                [this.$toggle, 'click', this._onToggleClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
                 [this.$confirmbreakageyes, 'click', this._onConfirmBrokenClick],
                 [this.$confirmbreakageno, 'click', this._onConfirmNotBrokenClick],
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
-                [this.$managewhitelist, 'click', this._onManageWhitelistClick],
+                [this.$manageallowlist, 'click', this._onManageAllowlistClick],
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
@@ -124,7 +126,7 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        _onManageWhitelistClick: function () {
+        _onManageAllowlistClick: function () {
             if (this.model && this.model.disabled) {
                 return
             }
@@ -144,7 +146,7 @@ Site.prototype = window.$.extend({},
 
         _onConfirmBrokenClick: function () {
             const isHiddenClass = 'is-hidden'
-            this.$managewhitelistli.removeClass(isHiddenClass)
+            this.$manageallowlistli.removeClass(isHiddenClass)
             this.$confirmbreakageli.addClass(isHiddenClass)
             this.$body.removeClass('confirmation-active')
             this.showBreakageForm('toggle')
@@ -161,7 +163,7 @@ Site.prototype = window.$.extend({},
         _showBreakageConfirmation: function () {
             this.$body.addClass('confirmation-active')
             this.$confirmbreakageli.removeClass('is-hidden')
-            this.$managewhitelistli.addClass('is-hidden')
+            this.$manageallowlistli.addClass('is-hidden')
         },
 
         // pass clickSource to specify whether page should reload
