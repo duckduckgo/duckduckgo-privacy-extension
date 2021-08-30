@@ -49,6 +49,7 @@ function adjacentSame (d, i, width) {
     const x = i % widthPixel
     const maxLength = d.length
 
+// Pixels not on the right border of the canvas
     if (x < widthPixel) {
         const right = i + 4
         if (!pixelsSame(d, i, right)) {
@@ -64,6 +65,7 @@ function adjacentSame (d, i, width) {
         }
     }
 
+// Pixels not on the left border of the canvas
     if (x > 0) {
         const left = i - 4
         if (!pixelsSame(d, i, left)) {
