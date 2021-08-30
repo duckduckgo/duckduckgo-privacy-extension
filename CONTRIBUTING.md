@@ -48,6 +48,49 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
  2. Load the extension in Chrome from the `build/chrome/dev` directory
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
+### Safari web extension
+
+To build the next-gen web extension for Safari, you need the Xcode 13 beta (when you're reading this it might already be released), the related Command Line Tools and Safari 15 beta or Technology Preview. You can find them all here: https://developer.apple.com/download/all/.
+
+If you need to recreate the project from scratch, switch the default CLI to the beta version by running:
+
+```bash
+sudo xcode-select -switch <path/to/>Xcode-beta.app
+xcode-select --print-path
+```
+
+Now run
+
+```bash
+nvm use && npm install && npm run dev-safari14
+```
+
+Let it complete (when you see waiting...) and run:
+
+```bash
+xcrun safari-web-extension-converter build/safari14/dev/
+```
+
+This will build the Safari project for both iOS and macOS and open Xcode. There are a couple manual steps from here:
+
+- Open `Main.storyboard` and rename button to "Open Safari Extensions Preferences…"
+- "Hardened Runtime" should be enabled by default in this new Xcode. If not, enable it by selecting the project (the top item in the list in the left menu). For each of the "Targets" in the project editor (**both** the app and the extension)
+  - Select "Signing & Capabilities"
+  - Check the "Apple Events" from the "Resource Access" list
+- Set team and signing certificate for each of the "Targets" in the project editor (**both** the app and the extension)
+  - Team should be "Duck Duck Go, Inc."
+  - Signing Certificate should be "Development"
+
+You can now compile the bundle in Xcode by clicking on the ▶️ icon or hitting `cmd+r`. Remember to enable the extension in the Safari settings.
+
+When you want to distribute your `.app` file, you can wrap it as a `.dmg`, which is a common way to distribute macOS apps. You can find the `.app` bundle by cmd+clicking on the app extension when it's open. Using [the `create-dmg` tool](https://github.com/create-dmg/create-dmg), from within the same directory as the `.app` file, run:
+
+```bash
+mkdir -p temp && cp -r *.app temp && create-dmg --volname "DuckDuckGo Privacy Essentials for Safari" --icon "DuckDuckGo Privacy Essentials for Safari.app" 200 190 --window-size 800 400 --icon-size 100 --app-drop-link 600 185 "DuckDuckGo Privacy Essentials for Safari.dmg" temp && rm -rf temp
+```
+
+This will copy the app bundle in a subfolder, create the `.dmg`, and then remove the temporary subfolder.
+
 ### Development flow
 
 The `shared` directory contains JS, CSS, and images that are shared by all browsers.
