@@ -62,7 +62,7 @@ describe('Canvas verification', () => {
         }
     })
 
-    it('Canvas should pass verification code', async () => {
+    it('Canvas should pass all verification tests', async () => {
         const page = await browser.newPage()
         await page.goto('https://bad.third-party.site/privacy-protections/fingerprinting/canvas.html?run', { waitUntil: 'networkidle0' })
         await page.waitForFunction(
@@ -131,9 +131,9 @@ describe('First Party Fingerprint Randomization', () => {
     })
 
     frameTests.forEach(iframeHost => {
-        it(`${iframeHost} frame should match the parent frame`, async () => {
+        it(`Embedded same/cross-origin frames should match parent (frame: ${iframeHost})`, async () => {
             const page = await browser.newPage()
-            // Load an page with an iframe from a different hostname
+            // Load a page with an iframe from a different hostname
             await page.goto(`http://127.0.0.1:8080/index.html?host=${iframeHost}`, { waitUntil: 'networkidle0' })
             const fingerprint = await getFingerprintOfContext(page)
 
