@@ -1,0 +1,63 @@
+{
+  "_buildCommand2" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildAndRun"
+  },
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "5ac94014287b5bcdbecd4dead7345f765ba5d15136fc2a162fa44500cce8c67e"
+    }
+  ],
+  "containerPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/DuckDuckGo Privacy Essentials for Safari.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "x86_64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "iphonesimulator",
+      "sdk" : "iphonesimulator15.0",
+      "sdkVariant" : "iphonesimulator",
+      "supportedArchitectures" : [
+        "x86_64"
+      ],
+      "targetArchitecture" : "x86_64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Build/Products",
+      "derivedDataPath" : "/Users/gsv/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/gsv/Library/Developer/Xcode/DerivedData/DuckDuckGo_Privacy_Essentials_for_Safari-gurijtyulgesxrbdartivjqtcsxv/Index/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/gsv/Library/Developer/Xcode/DerivedData/DuckDuckGo_Privacy_Essentials_for_Safari-gurijtyulgesxrbdartivjqtcsxv/Index/PrecompiledHeaders",
+      "pchPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ASSETCATALOG_FILTER_FOR_DEVICE_MODEL" : "iPod9,1",
+          "ASSETCATALOG_FILTER_FOR_DEVICE_OS_VERSION" : "15.0",
+          "BUILD_ACTIVE_RESOURCES_ONLY" : "YES",
+          "ENABLE_PREVIEWS" : "NO",
+          "TARGET_DEVICE_IDENTIFIER" : "DBBB13D8-A7EB-4F3A-8406-BB14CF6255BB",
+          "TARGET_DEVICE_MODEL" : "iPod9,1",
+          "TARGET_DEVICE_OS_VERSION" : "15.0",
+          "TARGET_DEVICE_PLATFORM_NAME" : "iphonesimulator"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "schemeCommand2" : "launch",
+  "shouldCollectMetrics" : false,
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

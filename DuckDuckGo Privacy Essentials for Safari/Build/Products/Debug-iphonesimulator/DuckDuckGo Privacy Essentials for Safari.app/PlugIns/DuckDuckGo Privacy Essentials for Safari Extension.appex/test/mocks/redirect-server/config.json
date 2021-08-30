@@ -1,0 +1,16 @@
+{
+    "redirects": {
+        "redirect.local": {
+            "host": "http://redirect.local2:8070",
+            "code": 301
+        },
+        "redirect.local2": {
+            "host": "http://redirect.local3:8070",
+            "code": 301
+        },
+        "redirect.local3": {
+            "host": "https://duckduckgo.com",
+            "code": 302
+        }
+    }
+}

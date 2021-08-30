@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+DuckDuckGo Privacy Essentials for Safari Extension (iOS) in DuckDuckGo Privacy Essentials for Safari, no dependencies
+DuckDuckGo Privacy Essentials for Safari (iOS) in DuckDuckGo Privacy Essentials for Safari, depends on:
+DuckDuckGo Privacy Essentials for Safari Extension (iOS) in DuckDuckGo Privacy Essentials for Safari (explicit)

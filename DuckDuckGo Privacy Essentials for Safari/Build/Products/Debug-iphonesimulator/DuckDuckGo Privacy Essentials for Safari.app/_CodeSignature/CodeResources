@@ -1,0 +1,5540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>files</key>
+	<dict>
+		<key>AppIcon60x60@2x.png</key>
+		<data>
+		F6hepcVAjk5JnSuohLduiSKU6Bs=
+		</data>
+		<key>AppIcon76x76@2x~ipad.png</key>
+		<data>
+		mQRmhNKghRtKHHTdLWaOUImmD7U=
+		</data>
+		<key>Assets.car</key>
+		<data>
+		nvh4GqdGQF7JmCPcLbmAvsg16M8=
+		</data>
+		<key>Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib</key>
+		<data>
+		giaZVTjeNIQdl02GKMiwigJWpdk=
+		</data>
+		<key>Base.lproj/LaunchScreen.storyboardc/Info.plist</key>
+		<data>
+		n2t8gsDpfE6XkhG31p7IQJRxTxU=
+		</data>
+		<key>Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib</key>
+		<data>
+		U0x8EM0781fCPb62BbZIXKeDlZ4=
+		</data>
+		<key>Base.lproj/Main.html</key>
+		<data>
+		xOhrrLjOI5lhRRQz+FAoVG5Rpxc=
+		</data>
+		<key>Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib</key>
+		<data>
+		R8dwmFJ5cPG+Zp0zDhWQlgnbl4E=
+		</data>
+		<key>Base.lproj/Main.storyboardc/Info.plist</key>
+		<data>
+		MDrKFvFWroTb0+KEbQShBcoBvo4=
+		</data>
+		<key>Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib</key>
+		<data>
+		4aQmjJAtaaxMnvUWGQPOCI8Lo44=
+		</data>
+		<key>Icon.png</key>
+		<data>
+		lxBqrkqQMzfRUnT8M65lyjoc7M4=
+		</data>
+		<key>Info.plist</key>
+		<data>
+		fopRW8sbqJtZLeiJI1hNPEzBklk=
+		</data>
+		<key>PkgInfo</key>
+		<data>
+		n57qDP4tZfLD1rCS43W0B4LQjzE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/DuckDuckGo Privacy Essentials for Safari Extension</key>
+		<data>
+		DQon8TyjbeTv2fAssDOJ7Q9vrrA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/Info.plist</key>
+		<data>
+		tKopNLvUyKsEJrSerBbJe8V7J40=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/_CodeSignature/CodeResources</key>
+		<data>
+		1vxvpiCm2sps+EZe/Bu90u/lXnE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/constants.js</key>
+		<data>
+		JgY58FFLuuJVib7FsTmW7JMVG6g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/defaultSettings.js</key>
+		<data>
+		N28jXHO81qWg/2/nPSrsO5UORXw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/etags.json</key>
+		<data>
+		1lE6hkdKgFojIqJ6PlpdwoItnZY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/experiments-out.js</key>
+		<data>
+		5E0FAfl0yh927AMK5JFzisq1yx8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/surrogates.txt</key>
+		<data>
+		eJOySQ3PmYPs33z38byaG7ixATk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tosdr.json</key>
+		<data>
+		iu2NVM5aytET44upVd8yrs1/lOA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/entityMap.json</key>
+		<data>
+		d33BY7q/aQqTtKcQJZQTNVnDUKI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/general-whitelist.txt</key>
+		<data>
+		uWkiTpzU+TMgJyXdjGCdwJcJjXQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/prevalence.json</key>
+		<data>
+		U9duXL+7sb6szQxV/qQCIvn5ISc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/privacy-whitelist.txt</key>
+		<data>
+		EWSzzowRl2ozw5xGFp2v3NgEYuU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/rules.json</key>
+		<data>
+		Q3y8CJzQbW3eyFMJ0f8XvpDice8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/rules_1.json</key>
+		<data>
+		/fwBqr6bWbthy3rJIF3OcrEM5Ps=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/rules_2.json</key>
+		<data>
+		6t453AY8pmYtmphhZveachMdRxQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/trackersWithParentCompany.json</key>
+		<data>
+		bL+H6tnHoXp+zQCWDKoHN8CmTU0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/ad_status.js</key>
+		<data>
+		3aZLHKc03MicCQiq+16y0W1nGq0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/adsbygoogle.js</key>
+		<data>
+		8Z3AiBYn/tTHY5lOIsMgIBYNYgs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/amzn_ads.js</key>
+		<data>
+		SOg5Gu5QjCCfO8tYFA7mu+W735I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/analytics.js</key>
+		<data>
+		nJGvv/XwmDqlLjGpjx9BXoimaC0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/api.js</key>
+		<data>
+		Gd+UgOKSjpywYtKp0NvUcw5s1SI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/beacon.js</key>
+		<data>
+		2Y8hTD/RaSpu910lKu3VRJTmsbU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/chartbeat.js</key>
+		<data>
+		63eMttSxrjyYsa+X3AFgOvdoWWo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/fb-sdk.js</key>
+		<data>
+		iLTVBpqcabJEJdEnNois679cEaI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/ga.js</key>
+		<data>
+		ASkg6BUFZ1y8GTg565kAD+FEzHI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/gpt.js</key>
+		<data>
+		u4skkepozeKe/BmiyF51dmwoirk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/gtm.js</key>
+		<data>
+		cXfBdsepNnHXriYU7drFk4nZMZU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/inpage_linkid.js</key>
+		<data>
+		nnXxW2dZg7hf9+qMNwdMGS8XdCc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/outbrain.js</key>
+		<data>
+		bd5tCWV1DKkkULDePi7qCe+ARcg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/background.html</key>
+		<data>
+		I8agJ81L2QkIGgLwQDlnmqfpjz0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/devtools-panel.html</key>
+		<data>
+		hhu2LShNItY5CVpa9E3wI+VstD8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/feedback.html</key>
+		<data>
+		s168Mlm/gBsrw1cBXN2o0xiSyoc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/list-editor.html</key>
+		<data>
+		CEMNAXUMC2g1t5rr2jDT3631P8A=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/options.html</key>
+		<data>
+		GcU84nPG39YzLXEM6IqklZIWQJ0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/popup.html</key>
+		<data>
+		R49OaERZGAxm6Z6LEyH7eUjeY/c=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/arrow--large.svg</key>
+		<data>
+		dlVg9kIV+PGEVUeSR+6ni6g2C3k=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/arrow@2x.png</key>
+		<data>
+		MlXLILkYVxt5Y9yoy7y150pgvrU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/arrow@3x.png</key>
+		<data>
+		S9gaiBGjRVCYoHsRurGWFQfbX5I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/blocking--off.svg</key>
+		<data>
+		K3nAbRq6hDAyXsqrfDEviBwrLm0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/blocking--on.svg</key>
+		<data>
+		CIIz3BKCmMYd8mR+GWxe+9XRkXI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/broken-bicycle.svg</key>
+		<data>
+		alDqUaTkNIA1u9wNA17EDJheOzs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/check.svg</key>
+		<data>
+		ZUWy6LOPb025J4y61yCYSjFMxW4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/close.svg</key>
+		<data>
+		6DPbEVTTAikgGJxzSBZ2qMgYoTc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/ddg-icon@2x.png</key>
+		<data>
+		sea9tsQwzFO8B8OmCPyUmiHXlTw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/ddg-logo-simple@2x.png</key>
+		<data>
+		ZPLN2R5u70c6s/aIF6CQHEsSPrc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/error.svg</key>
+		<data>
+		exWn1buHFwoS0AwDERbL1n1xsmE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-on-major-networks-big.svg</key>
+		<data>
+		UYKaQFcv+51rS3a9T2ApBue9rEc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-on-major-networks.svg</key>
+		<data>
+		75YNT8LzWmfgJGYhDjsqT4gJ8CU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__a--is-active.svg</key>
+		<data>
+		VcWHCvV2fnfulzLQYE/kP5BMBu4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__a.svg</key>
+		<data>
+		/hnWulpUYEhzr0OVkCYvU18rwPQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b--is-active.svg</key>
+		<data>
+		N4HoAQn1kKmHumKIiFEwJ4f3x+E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b-plus--is-active.svg</key>
+		<data>
+		sd/9YyaqsqXiUTCdX/py0SKDmOE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b-plus.svg</key>
+		<data>
+		k175POaJD7xxK3Y/SV3FSaamctU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b.svg</key>
+		<data>
+		sUUlmf3T0dYPth4nHpm9+RxF9oQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c--is-active.svg</key>
+		<data>
+		sP0YYOuhKTvHswpnSnsEl3AUNSY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c-plus--is-active.svg</key>
+		<data>
+		lJqyZ/MnAyEyrBEHr/zLBrNGQkk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c-plus.svg</key>
+		<data>
+		aaGwEmc2zIsQ3A9YaN4xlN8lXr0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c.svg</key>
+		<data>
+		wzkCUFVq09rkzcFxeRYLYa9WQYQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__calculating-state.svg</key>
+		<data>
+		XRbw7FzE/xFlmOHM/w/XrvME8dQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__d--is-active.svg</key>
+		<data>
+		K/NMvSRclbDlxVB2QKmYqLtxWng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__d.svg</key>
+		<data>
+		oXdH8L0x8Itn9l5KtdP9Rd3L7nE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__f--is-active.svg</key>
+		<data>
+		vzV/qb0ViDmM2IZGf1xn6QVVbzM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__f.svg</key>
+		<data>
+		wtnD/Og96g4U3pfR7HN4/fMYu2Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__null-state.svg</key>
+		<data>
+		jgd2/XyikEuY8kGq4NHSV1hqZhg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-ribbon__bad.svg</key>
+		<data>
+		nT5H9Q/JlWzBlJYSzDX62hox3D0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-ribbon__good.svg</key>
+		<data>
+		4ZaSnTg/02/EUFZSYd/pcm0Hzjk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-ribbon__mixed.svg</key>
+		<data>
+		ZmqUlm3CtJ4AJDEaBkkR4rLLWDM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-warning-major-networks.svg</key>
+		<data>
+		40Vq8TFGhlN2YMC1VG5Xej0G2a0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/https--off.svg</key>
+		<data>
+		Cm8hpQIYUmg6jCuzpre44toVxMA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/https--on.svg</key>
+		<data>
+		fYOYkuqqIS7guUDqKHjvaQkRqtQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_128.png</key>
+		<data>
+		wZrt2AC2iHEJA26d0CDPC9BYi1E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_16.png</key>
+		<data>
+		tQGukM7arRP7qxbUAzEv4HKwca8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_19.png</key>
+		<data>
+		vLxtdiD4FSMouejwOtr2vp8oaUg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_38.png</key>
+		<data>
+		YlRCrsMGcSy4gQjlJWnNtg5M3/M=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_48.png</key>
+		<data>
+		mWo1eaQUYq6VuaTAqQc4B9sH+Eo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-horizontal.png</key>
+		<data>
+		3r9vpLPE7LWwPi5JTm1JqKhI+WM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-horizontal@2x.png</key>
+		<data>
+		C4lbgbrvR/e3gJhvhEEfTR8nTCY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-horizontal@3x.png</key>
+		<data>
+		EDMKVqiKG6iHXaXkm6PRon29qQE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-small.svg</key>
+		<data>
+		gd/mb3hjTgnMVpCZ61C1GWhyqj0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/loupe--highlight.svg</key>
+		<data>
+		J4BXFNjbO95Nz+JkmBrap4LTSuE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/loupe.svg</key>
+		<data>
+		0uoIbgfTL8+2OmUoWjOoIEmNEGM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/privacy--bad.svg</key>
+		<data>
+		95wAYRpz8Z8jvVvUcMZ/RzFoBng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/privacy--good.svg</key>
+		<data>
+		E80KRyO1xoIMMPRX5Ajtdal1zd8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/privacy--mixed.svg</key>
+		<data>
+		Lpv4OvxNVTFRfHX8iuiPWOM70ug=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/a.svg</key>
+		<data>
+		hLv5bBjKkDU7/kWJK2/g28OwIhY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/b-plus.svg</key>
+		<data>
+		qbvRUBCxRRcyXjCtlN+M3w1uXGg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/b.svg</key>
+		<data>
+		WpCYv2FLH/NCYCUfIeTLd6rZBfY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/c-plus.svg</key>
+		<data>
+		sjP3w20aZKBG20TJJwPOgj7Crg0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/c.svg</key>
+		<data>
+		m+uOg+9SRTQ29DfgMOB0CXZjJds=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/d.svg</key>
+		<data>
+		FuvhfLsh/ffCwTQAnohuD3AqXfA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/f.svg</key>
+		<data>
+		azlf9vNdePSNk2nnQGx4A7bvZ+Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_1024.png</key>
+		<data>
+		RuN1MRyuijSW9mECtCCYpS3sw3g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_128.png</key>
+		<data>
+		dozzcbTPwzw6/sz7REqHUfjH/1U=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_16.png</key>
+		<data>
+		tj8yShuA1QysD0mFnH1aj7Jm24Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_19.png</key>
+		<data>
+		Jyv4wQVKDsoeLYoKh+PqhTaPI/0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_256.png</key>
+		<data>
+		AdRQQwsGPu7WhtExGdwn0siQ69g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_38.png</key>
+		<data>
+		+/C4DGBmpAykFiWfbsDCoh3p2EM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_48.png</key>
+		<data>
+		eQg34bSY1mBOJr+SsklgApEVVJI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_512.png</key>
+		<data>
+		jXEEnpkJABlB09C6NlAjPrwbtYo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/settings-gear@2x.png</key>
+		<data>
+		MgCndrsdGY6teDE8w6/cGlTdVkQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/settings.svg</key>
+		<data>
+		6wnprrB/1LSL8t5r37Bs/zI95S0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/shield.svg</key>
+		<data>
+		A6YVAy+GV9Gxz49im2prn2EWmag=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_comment.svg</key>
+		<data>
+		hr5IlkhCO8b4K0Tl5h/CpEo23wg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_facebook_logo.svg</key>
+		<data>
+		YN7WU23Hzc9hE7Wq+duGGhXclb0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_group.svg</key>
+		<data>
+		PB+lGFaGw9i0B36a/Y+EnVXXmls=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_page.svg</key>
+		<data>
+		alPvlFPYBYPUZnk5gi3YDqTPy18=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_post.svg</key>
+		<data>
+		qOCF1itTApZmuIMu8l1xGHWz0Jc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_video.svg</key>
+		<data>
+		5Ag3AsGUMt/oHwQvV0Zmxp29+4o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/dax.png</key>
+		<data>
+		Rz5UTocp5+78RJ5j2usb/EaTw1Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/loading_dark.svg</key>
+		<data>
+		UprDtWjI8tQ4f8HAlyy4XzzY6ww=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/loading_light.svg</key>
+		<data>
+		V+7+NWogtX5C2NjvwEeRuDsh++w=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/status--bad.svg</key>
+		<data>
+		OOijxfbHNIPnDSCCsIyfGz80l9A=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/status--good.svg</key>
+		<data>
+		nMgfDbUDksEC0n+pc8A/BkcRHjE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/status--mixed.svg</key>
+		<data>
+		T4HTIwOZzMlvlckbXtoEyYnPYCI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-adobe.svg</key>
+		<data>
+		t4gAU8zgK5M9HfMChFi6tpLVqNk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-adtech.svg</key>
+		<data>
+		9TH/rvGkhOBWD08QTgTWLuaLdrk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-amazon.svg</key>
+		<data>
+		MR7XaPrS2zgi1nl6LrS73RMx8J4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-aol.svg</key>
+		<data>
+		aph3pUKIVjLQhgSqRXNE0+DlDjs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-appnexus.svg</key>
+		<data>
+		/VDnT7TobLRH3M4GqEaNwGqwnNw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-casale.svg</key>
+		<data>
+		mRE4Pa1Ls577JS3uSewVkzmm+kk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-chartbeat.svg</key>
+		<data>
+		tM7kmJh+jM8fqkbCsN0V2iSJbfg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-comscore.svg</key>
+		<data>
+		/cOn9q+f+eFXYqC5Q3OqS30A/j0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-criteo.svg</key>
+		<data>
+		92yWEk2eieAH2vl/AS1hbF6hXek=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-facebook.svg</key>
+		<data>
+		KePpJLZUojFfubG43ZwtAbzWTYc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-fox.svg</key>
+		<data>
+		uYwRVcfGiAsoCrb9e3GrDkAJLQM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-generic.svg</key>
+		<data>
+		UeZyOyLz8nlS/JL/QWIhK6KENqg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-google.svg</key>
+		<data>
+		W1Uq8jsXEp2QueC8UcwE3pArE9Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-mixpanel.svg</key>
+		<data>
+		A5gI/J19ITXoVvBVgrqcwr9eFKA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-moat.svg</key>
+		<data>
+		8zm/LMyg9jX343Du13zYI2Dhf3k=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-newrelic.svg</key>
+		<data>
+		hg0SCaINxOK9fMmvPYI/CU5ZsFM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-nielsen.svg</key>
+		<data>
+		KZztVl6GEJbsan+1s/E9CxfnKkk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-openx.svg</key>
+		<data>
+		CkLqoEkaTx//rvi6yeVMT2X9vYw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-outbrain.svg</key>
+		<data>
+		4pYAs8BWbvA8EB8ZSQmgZ90T69Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-quantcast.svg</key>
+		<data>
+		5wU632KL42AzLdPjjPjYSmbeVRQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-salesforce.svg</key>
+		<data>
+		UYpO8rH7Qemw0hEumOFlArgjpBw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-taboola.svg</key>
+		<data>
+		f2MPpD9FDGKQeGT6a2ieNwugiXo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-twitter.svg</key>
+		<data>
+		8PdyytdFMNh866UO/j/sKYaGHAE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-yahoo.svg</key>
+		<data>
+		fHrOtXBlyO7uk4PwL/pAGUMwqng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-yandex.svg</key>
+		<data>
+		ed2tEsLiSYdOcN4A2sT9HsvfzcM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-taboola.svg</key>
+		<data>
+		aKKXW0QSD2C6N8vQbJAMoW2LoYQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-twitter.svg</key>
+		<data>
+		h/B55iBY5O4V53H83OwIGRaQOAQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-yahoo.svg</key>
+		<data>
+		L7GSpS4kv2YaeRIBI2gnB7fqfUc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-yandex.svg</key>
+		<data>
+		I5HqOEPy3ueLyGn+MLW7l8c1w+o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-a.svg</key>
+		<data>
+		spe0kbNasO4v01qt6X+wmcot0Cc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-b-plus.svg</key>
+		<data>
+		gpYYrOFqeikPvZRZd4hW2kqR640=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-b.svg</key>
+		<data>
+		Lgnbbgk5G+XAWDMXu2RGkX2D6RE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-c-plus.svg</key>
+		<data>
+		2/7CG9fD4iOqcvaV+5ByYqNMm/8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-c.svg</key>
+		<data>
+		4rcpnHCxgpl7f+PQQWMqPoYcLck=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-d-minus.svg</key>
+		<data>
+		PuArptiFobmN1mZhtZlc+ePgZ3o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-d.svg</key>
+		<data>
+		Dz0Li2ccjY6zjGipN85CG94b1/I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-f.svg</key>
+		<data>
+		8Di/8JHJ67AC/XXONRy7WNydPXU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/wand.svg</key>
+		<data>
+		pkVqIwe71D0sgELsntQGO3+a5k0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/manifest.json</key>
+		<data>
+		86vNB0Fq2Vxs/yh0fE5TJo7nB3s=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/autofill-host-styles.css</key>
+		<data>
+		QzXp7rcpaHM8abF3+wVYT2kYy/g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/autofill.css</key>
+		<data>
+		STiaVG2zKLpgai6zcMX1QBQQ8xs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/base.css</key>
+		<data>
+		PhBZk04OnORn0GM9KwwYVpOlydc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/feedback.css</key>
+		<data>
+		uezpv9mXovuZ9XQdmXDAGMnWwmU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/noatb.css</key>
+		<data>
+		MxMBwqgDcldB1J6jcl0onV2Rj2s=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/options.css</key>
+		<data>
+		cSnNrCoYfmF6Po9kxBrTU1vtLzI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/popup.css</key>
+		<data>
+		iGWMbOioQV8eA1USHo67tBgqOKw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Bold-webfont.woff2</key>
+		<data>
+		xGyXjvivzlioCzm/xWhRGSdwyI8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Reg-webfont.woff</key>
+		<data>
+		VNbljruP6V/wk7BxnM3wYWuu+G8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Reg-webfont.woff2</key>
+		<data>
+		zwKJOhlrKmuVgQYERrfcsvasjHQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Sbold-webfont.woff</key>
+		<data>
+		I1SBvH2p6hQ3NrqPK+FfdUiZwEw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/background.js</key>
+		<data>
+		Evy6SzXcCOCrIWQHoo5+ZcTdavY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/base.js</key>
+		<data>
+		l8GoOg78L6DPDZ0a4/ep0W4FH+s=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/content-scripts/autofill.js</key>
+		<data>
+		PBfTHtnm/7o8DhquJPu5wTdryUA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/content-scripts/click-to-load.js</key>
+		<data>
+		KMtaWbgWSyX4mp3eO7l1D/v5Ypk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/content-scripts/fb-surrogate-xray.js</key>
+		<data>
+		OwSsBCjpjZgdrrT0XiB6fhi5T8U=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/devtools-panel.js</key>
+		<data>
+		Gq/WYq43eMrdeChwJDaOG+CYGw8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/feedback.js</key>
+		<data>
+		ZbwxMsCALON9iwO6z+K9MArp694=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/inject.js</key>
+		<data>
+		ZkAT7NvsY/I5wJiNcdlufnGqY9o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/list-editor.js</key>
+		<data>
+		OJpcWcGVOQGmP31nz7ubbtrrtEc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/options.js</key>
+		<data>
+		Yqei5282B4r9+v56U4SfzHTa+tc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/popup.js</key>
+		<data>
+		moV70h7fwb5EDmRGerwdn7E2Jus=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/background.js</key>
+		<data>
+		6krmuH3LVWXwxt87qNoYi4Ri/dA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/constants.js</key>
+		<data>
+		JgY58FFLuuJVib7FsTmW7JMVG6g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/defaultSettings.js</key>
+		<data>
+		N28jXHO81qWg/2/nPSrsO5UORXw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/etags.json</key>
+		<data>
+		1lE6hkdKgFojIqJ6PlpdwoItnZY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/experiments-out.js</key>
+		<data>
+		5E0FAfl0yh927AMK5JFzisq1yx8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tosdr.json</key>
+		<data>
+		iu2NVM5aytET44upVd8yrs1/lOA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/entityMap.json</key>
+		<data>
+		d33BY7q/aQqTtKcQJZQTNVnDUKI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/general-whitelist.txt</key>
+		<data>
+		uWkiTpzU+TMgJyXdjGCdwJcJjXQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/prevalence.json</key>
+		<data>
+		U9duXL+7sb6szQxV/qQCIvn5ISc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/privacy-whitelist.txt</key>
+		<data>
+		EWSzzowRl2ozw5xGFp2v3NgEYuU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/rules.json</key>
+		<data>
+		Q3y8CJzQbW3eyFMJ0f8XvpDice8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/rules_1.json</key>
+		<data>
+		/fwBqr6bWbthy3rJIF3OcrEM5Ps=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/rules_2.json</key>
+		<data>
+		6t453AY8pmYtmphhZveachMdRxQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/trackersWithParentCompany.json</key>
+		<data>
+		bL+H6tnHoXp+zQCWDKoHN8CmTU0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/ad_status.js</key>
+		<data>
+		3aZLHKc03MicCQiq+16y0W1nGq0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/adsbygoogle.js</key>
+		<data>
+		8Z3AiBYn/tTHY5lOIsMgIBYNYgs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/amzn_ads.js</key>
+		<data>
+		SOg5Gu5QjCCfO8tYFA7mu+W735I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/analytics.js</key>
+		<data>
+		nJGvv/XwmDqlLjGpjx9BXoimaC0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/api.js</key>
+		<data>
+		Gd+UgOKSjpywYtKp0NvUcw5s1SI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/beacon.js</key>
+		<data>
+		2Y8hTD/RaSpu910lKu3VRJTmsbU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/chartbeat.js</key>
+		<data>
+		63eMttSxrjyYsa+X3AFgOvdoWWo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/fb-sdk.js</key>
+		<data>
+		iLTVBpqcabJEJdEnNois679cEaI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/ga.js</key>
+		<data>
+		ASkg6BUFZ1y8GTg565kAD+FEzHI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/gpt.js</key>
+		<data>
+		u4skkepozeKe/BmiyF51dmwoirk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/gtm.js</key>
+		<data>
+		cXfBdsepNnHXriYU7drFk4nZMZU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/inpage_linkid.js</key>
+		<data>
+		nnXxW2dZg7hf9+qMNwdMGS8XdCc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/outbrain.js</key>
+		<data>
+		bd5tCWV1DKkkULDePi7qCe+ARcg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/debugSite.html</key>
+		<data>
+		YLqavk5DNlxD720Na+f1E9053to=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/arrow--large.svg</key>
+		<data>
+		dlVg9kIV+PGEVUeSR+6ni6g2C3k=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/arrow@2x.png</key>
+		<data>
+		MlXLILkYVxt5Y9yoy7y150pgvrU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/arrow@3x.png</key>
+		<data>
+		S9gaiBGjRVCYoHsRurGWFQfbX5I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/blocking--off.svg</key>
+		<data>
+		K3nAbRq6hDAyXsqrfDEviBwrLm0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/blocking--on.svg</key>
+		<data>
+		CIIz3BKCmMYd8mR+GWxe+9XRkXI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/broken-bicycle.svg</key>
+		<data>
+		alDqUaTkNIA1u9wNA17EDJheOzs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/check.svg</key>
+		<data>
+		ZUWy6LOPb025J4y61yCYSjFMxW4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/close.svg</key>
+		<data>
+		6DPbEVTTAikgGJxzSBZ2qMgYoTc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/ddg-icon@2x.png</key>
+		<data>
+		sea9tsQwzFO8B8OmCPyUmiHXlTw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/ddg-logo-simple@2x.png</key>
+		<data>
+		ZPLN2R5u70c6s/aIF6CQHEsSPrc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/error.svg</key>
+		<data>
+		exWn1buHFwoS0AwDERbL1n1xsmE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-on-major-networks-big.svg</key>
+		<data>
+		UYKaQFcv+51rS3a9T2ApBue9rEc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-on-major-networks.svg</key>
+		<data>
+		75YNT8LzWmfgJGYhDjsqT4gJ8CU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__a--is-active.svg</key>
+		<data>
+		VcWHCvV2fnfulzLQYE/kP5BMBu4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__a.svg</key>
+		<data>
+		/hnWulpUYEhzr0OVkCYvU18rwPQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b--is-active.svg</key>
+		<data>
+		N4HoAQn1kKmHumKIiFEwJ4f3x+E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b-plus--is-active.svg</key>
+		<data>
+		sd/9YyaqsqXiUTCdX/py0SKDmOE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b-plus.svg</key>
+		<data>
+		k175POaJD7xxK3Y/SV3FSaamctU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b.svg</key>
+		<data>
+		sUUlmf3T0dYPth4nHpm9+RxF9oQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c--is-active.svg</key>
+		<data>
+		sP0YYOuhKTvHswpnSnsEl3AUNSY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c-plus--is-active.svg</key>
+		<data>
+		lJqyZ/MnAyEyrBEHr/zLBrNGQkk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c-plus.svg</key>
+		<data>
+		aaGwEmc2zIsQ3A9YaN4xlN8lXr0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c.svg</key>
+		<data>
+		wzkCUFVq09rkzcFxeRYLYa9WQYQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__calculating-state.svg</key>
+		<data>
+		XRbw7FzE/xFlmOHM/w/XrvME8dQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__d--is-active.svg</key>
+		<data>
+		K/NMvSRclbDlxVB2QKmYqLtxWng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__d.svg</key>
+		<data>
+		oXdH8L0x8Itn9l5KtdP9Rd3L7nE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__f--is-active.svg</key>
+		<data>
+		vzV/qb0ViDmM2IZGf1xn6QVVbzM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__f.svg</key>
+		<data>
+		wtnD/Og96g4U3pfR7HN4/fMYu2Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__null-state.svg</key>
+		<data>
+		jgd2/XyikEuY8kGq4NHSV1hqZhg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-ribbon__bad.svg</key>
+		<data>
+		nT5H9Q/JlWzBlJYSzDX62hox3D0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-ribbon__good.svg</key>
+		<data>
+		4ZaSnTg/02/EUFZSYd/pcm0Hzjk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-ribbon__mixed.svg</key>
+		<data>
+		ZmqUlm3CtJ4AJDEaBkkR4rLLWDM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-warning-major-networks.svg</key>
+		<data>
+		40Vq8TFGhlN2YMC1VG5Xej0G2a0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/https--off.svg</key>
+		<data>
+		Cm8hpQIYUmg6jCuzpre44toVxMA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/https--on.svg</key>
+		<data>
+		fYOYkuqqIS7guUDqKHjvaQkRqtQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_128.png</key>
+		<data>
+		wZrt2AC2iHEJA26d0CDPC9BYi1E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_16.png</key>
+		<data>
+		tQGukM7arRP7qxbUAzEv4HKwca8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_19.png</key>
+		<data>
+		vLxtdiD4FSMouejwOtr2vp8oaUg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_38.png</key>
+		<data>
+		YlRCrsMGcSy4gQjlJWnNtg5M3/M=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_48.png</key>
+		<data>
+		mWo1eaQUYq6VuaTAqQc4B9sH+Eo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-horizontal.png</key>
+		<data>
+		3r9vpLPE7LWwPi5JTm1JqKhI+WM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-horizontal@2x.png</key>
+		<data>
+		C4lbgbrvR/e3gJhvhEEfTR8nTCY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-horizontal@3x.png</key>
+		<data>
+		EDMKVqiKG6iHXaXkm6PRon29qQE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-small.svg</key>
+		<data>
+		gd/mb3hjTgnMVpCZ61C1GWhyqj0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/loupe--highlight.svg</key>
+		<data>
+		J4BXFNjbO95Nz+JkmBrap4LTSuE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/loupe.svg</key>
+		<data>
+		0uoIbgfTL8+2OmUoWjOoIEmNEGM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/privacy--bad.svg</key>
+		<data>
+		95wAYRpz8Z8jvVvUcMZ/RzFoBng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/privacy--good.svg</key>
+		<data>
+		E80KRyO1xoIMMPRX5Ajtdal1zd8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/privacy--mixed.svg</key>
+		<data>
+		Lpv4OvxNVTFRfHX8iuiPWOM70ug=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/a.svg</key>
+		<data>
+		hLv5bBjKkDU7/kWJK2/g28OwIhY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/b-plus.svg</key>
+		<data>
+		qbvRUBCxRRcyXjCtlN+M3w1uXGg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/b.svg</key>
+		<data>
+		WpCYv2FLH/NCYCUfIeTLd6rZBfY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/c-plus.svg</key>
+		<data>
+		sjP3w20aZKBG20TJJwPOgj7Crg0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/c.svg</key>
+		<data>
+		m+uOg+9SRTQ29DfgMOB0CXZjJds=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/d.svg</key>
+		<data>
+		FuvhfLsh/ffCwTQAnohuD3AqXfA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/f.svg</key>
+		<data>
+		azlf9vNdePSNk2nnQGx4A7bvZ+Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_1024.png</key>
+		<data>
+		RuN1MRyuijSW9mECtCCYpS3sw3g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_128.png</key>
+		<data>
+		dozzcbTPwzw6/sz7REqHUfjH/1U=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_16.png</key>
+		<data>
+		tj8yShuA1QysD0mFnH1aj7Jm24Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_19.png</key>
+		<data>
+		Jyv4wQVKDsoeLYoKh+PqhTaPI/0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_256.png</key>
+		<data>
+		AdRQQwsGPu7WhtExGdwn0siQ69g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_38.png</key>
+		<data>
+		+/C4DGBmpAykFiWfbsDCoh3p2EM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_48.png</key>
+		<data>
+		eQg34bSY1mBOJr+SsklgApEVVJI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_512.png</key>
+		<data>
+		jXEEnpkJABlB09C6NlAjPrwbtYo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/settings-gear@2x.png</key>
+		<data>
+		MgCndrsdGY6teDE8w6/cGlTdVkQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/settings.svg</key>
+		<data>
+		6wnprrB/1LSL8t5r37Bs/zI95S0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/shield.svg</key>
+		<data>
+		A6YVAy+GV9Gxz49im2prn2EWmag=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_comment.svg</key>
+		<data>
+		hr5IlkhCO8b4K0Tl5h/CpEo23wg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_facebook_logo.svg</key>
+		<data>
+		YN7WU23Hzc9hE7Wq+duGGhXclb0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_group.svg</key>
+		<data>
+		PB+lGFaGw9i0B36a/Y+EnVXXmls=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_page.svg</key>
+		<data>
+		alPvlFPYBYPUZnk5gi3YDqTPy18=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_post.svg</key>
+		<data>
+		qOCF1itTApZmuIMu8l1xGHWz0Jc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_video.svg</key>
+		<data>
+		5Ag3AsGUMt/oHwQvV0Zmxp29+4o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/dax.png</key>
+		<data>
+		Rz5UTocp5+78RJ5j2usb/EaTw1Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/loading_dark.svg</key>
+		<data>
+		UprDtWjI8tQ4f8HAlyy4XzzY6ww=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/loading_light.svg</key>
+		<data>
+		V+7+NWogtX5C2NjvwEeRuDsh++w=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/status--bad.svg</key>
+		<data>
+		OOijxfbHNIPnDSCCsIyfGz80l9A=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/status--good.svg</key>
+		<data>
+		nMgfDbUDksEC0n+pc8A/BkcRHjE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/status--mixed.svg</key>
+		<data>
+		T4HTIwOZzMlvlckbXtoEyYnPYCI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-adobe.svg</key>
+		<data>
+		t4gAU8zgK5M9HfMChFi6tpLVqNk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-adtech.svg</key>
+		<data>
+		9TH/rvGkhOBWD08QTgTWLuaLdrk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-amazon.svg</key>
+		<data>
+		MR7XaPrS2zgi1nl6LrS73RMx8J4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-aol.svg</key>
+		<data>
+		aph3pUKIVjLQhgSqRXNE0+DlDjs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-appnexus.svg</key>
+		<data>
+		/VDnT7TobLRH3M4GqEaNwGqwnNw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-casale.svg</key>
+		<data>
+		mRE4Pa1Ls577JS3uSewVkzmm+kk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-chartbeat.svg</key>
+		<data>
+		tM7kmJh+jM8fqkbCsN0V2iSJbfg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-comscore.svg</key>
+		<data>
+		/cOn9q+f+eFXYqC5Q3OqS30A/j0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-criteo.svg</key>
+		<data>
+		92yWEk2eieAH2vl/AS1hbF6hXek=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-facebook.svg</key>
+		<data>
+		KePpJLZUojFfubG43ZwtAbzWTYc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-fox.svg</key>
+		<data>
+		uYwRVcfGiAsoCrb9e3GrDkAJLQM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-generic.svg</key>
+		<data>
+		UeZyOyLz8nlS/JL/QWIhK6KENqg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-google.svg</key>
+		<data>
+		W1Uq8jsXEp2QueC8UcwE3pArE9Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-mixpanel.svg</key>
+		<data>
+		A5gI/J19ITXoVvBVgrqcwr9eFKA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-moat.svg</key>
+		<data>
+		8zm/LMyg9jX343Du13zYI2Dhf3k=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-newrelic.svg</key>
+		<data>
+		hg0SCaINxOK9fMmvPYI/CU5ZsFM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-nielsen.svg</key>
+		<data>
+		KZztVl6GEJbsan+1s/E9CxfnKkk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-openx.svg</key>
+		<data>
+		CkLqoEkaTx//rvi6yeVMT2X9vYw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-outbrain.svg</key>
+		<data>
+		4pYAs8BWbvA8EB8ZSQmgZ90T69Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-quantcast.svg</key>
+		<data>
+		5wU632KL42AzLdPjjPjYSmbeVRQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-salesforce.svg</key>
+		<data>
+		UYpO8rH7Qemw0hEumOFlArgjpBw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-taboola.svg</key>
+		<data>
+		f2MPpD9FDGKQeGT6a2ieNwugiXo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-twitter.svg</key>
+		<data>
+		8PdyytdFMNh866UO/j/sKYaGHAE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-yahoo.svg</key>
+		<data>
+		fHrOtXBlyO7uk4PwL/pAGUMwqng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-yandex.svg</key>
+		<data>
+		ed2tEsLiSYdOcN4A2sT9HsvfzcM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-taboola.svg</key>
+		<data>
+		aKKXW0QSD2C6N8vQbJAMoW2LoYQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-twitter.svg</key>
+		<data>
+		h/B55iBY5O4V53H83OwIGRaQOAQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-yahoo.svg</key>
+		<data>
+		L7GSpS4kv2YaeRIBI2gnB7fqfUc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-yandex.svg</key>
+		<data>
+		I5HqOEPy3ueLyGn+MLW7l8c1w+o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-a.svg</key>
+		<data>
+		spe0kbNasO4v01qt6X+wmcot0Cc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-b-plus.svg</key>
+		<data>
+		gpYYrOFqeikPvZRZd4hW2kqR640=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-b.svg</key>
+		<data>
+		Lgnbbgk5G+XAWDMXu2RGkX2D6RE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-c-plus.svg</key>
+		<data>
+		2/7CG9fD4iOqcvaV+5ByYqNMm/8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-c.svg</key>
+		<data>
+		4rcpnHCxgpl7f+PQQWMqPoYcLck=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-d-minus.svg</key>
+		<data>
+		PuArptiFobmN1mZhtZlc+ePgZ3o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-d.svg</key>
+		<data>
+		Dz0Li2ccjY6zjGipN85CG94b1/I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-f.svg</key>
+		<data>
+		8Di/8JHJ67AC/XXONRy7WNydPXU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/wand.svg</key>
+		<data>
+		pkVqIwe71D0sgELsntQGO3+a5k0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/screenshots.html</key>
+		<data>
+		VhK8Qka6QF2Kqj91rbTkqg9/cMs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/settings.html</key>
+		<data>
+		a1wSut1Zj05su25g2FdxpfAg0PY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/top10.html</key>
+		<data>
+		VSaf/R12YjqsknAT0fKdC2MK9Og=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/unitTests.html</key>
+		<data>
+		BCECKJYy7YEb/nyUt1BMlnNgqXA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/arrow--large.svg</key>
+		<data>
+		dlVg9kIV+PGEVUeSR+6ni6g2C3k=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/arrow@2x.png</key>
+		<data>
+		MlXLILkYVxt5Y9yoy7y150pgvrU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/arrow@3x.png</key>
+		<data>
+		S9gaiBGjRVCYoHsRurGWFQfbX5I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/blocking--off.svg</key>
+		<data>
+		K3nAbRq6hDAyXsqrfDEviBwrLm0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/blocking--on.svg</key>
+		<data>
+		CIIz3BKCmMYd8mR+GWxe+9XRkXI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/broken-bicycle.svg</key>
+		<data>
+		alDqUaTkNIA1u9wNA17EDJheOzs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/check.svg</key>
+		<data>
+		ZUWy6LOPb025J4y61yCYSjFMxW4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/close.svg</key>
+		<data>
+		6DPbEVTTAikgGJxzSBZ2qMgYoTc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/ddg-icon@2x.png</key>
+		<data>
+		sea9tsQwzFO8B8OmCPyUmiHXlTw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/ddg-logo-simple@2x.png</key>
+		<data>
+		ZPLN2R5u70c6s/aIF6CQHEsSPrc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/error.svg</key>
+		<data>
+		exWn1buHFwoS0AwDERbL1n1xsmE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-on-major-networks-big.svg</key>
+		<data>
+		UYKaQFcv+51rS3a9T2ApBue9rEc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-on-major-networks.svg</key>
+		<data>
+		75YNT8LzWmfgJGYhDjsqT4gJ8CU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__a--is-active.svg</key>
+		<data>
+		VcWHCvV2fnfulzLQYE/kP5BMBu4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__a.svg</key>
+		<data>
+		/hnWulpUYEhzr0OVkCYvU18rwPQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b--is-active.svg</key>
+		<data>
+		N4HoAQn1kKmHumKIiFEwJ4f3x+E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b-plus--is-active.svg</key>
+		<data>
+		sd/9YyaqsqXiUTCdX/py0SKDmOE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b-plus.svg</key>
+		<data>
+		k175POaJD7xxK3Y/SV3FSaamctU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b.svg</key>
+		<data>
+		sUUlmf3T0dYPth4nHpm9+RxF9oQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c--is-active.svg</key>
+		<data>
+		sP0YYOuhKTvHswpnSnsEl3AUNSY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c-plus--is-active.svg</key>
+		<data>
+		lJqyZ/MnAyEyrBEHr/zLBrNGQkk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c-plus.svg</key>
+		<data>
+		aaGwEmc2zIsQ3A9YaN4xlN8lXr0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c.svg</key>
+		<data>
+		wzkCUFVq09rkzcFxeRYLYa9WQYQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__calculating-state.svg</key>
+		<data>
+		XRbw7FzE/xFlmOHM/w/XrvME8dQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__d--is-active.svg</key>
+		<data>
+		K/NMvSRclbDlxVB2QKmYqLtxWng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__d.svg</key>
+		<data>
+		oXdH8L0x8Itn9l5KtdP9Rd3L7nE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__f--is-active.svg</key>
+		<data>
+		vzV/qb0ViDmM2IZGf1xn6QVVbzM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__f.svg</key>
+		<data>
+		wtnD/Og96g4U3pfR7HN4/fMYu2Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__null-state.svg</key>
+		<data>
+		jgd2/XyikEuY8kGq4NHSV1hqZhg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-ribbon__bad.svg</key>
+		<data>
+		nT5H9Q/JlWzBlJYSzDX62hox3D0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-ribbon__good.svg</key>
+		<data>
+		4ZaSnTg/02/EUFZSYd/pcm0Hzjk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-ribbon__mixed.svg</key>
+		<data>
+		ZmqUlm3CtJ4AJDEaBkkR4rLLWDM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-warning-major-networks.svg</key>
+		<data>
+		40Vq8TFGhlN2YMC1VG5Xej0G2a0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/https--off.svg</key>
+		<data>
+		Cm8hpQIYUmg6jCuzpre44toVxMA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/https--on.svg</key>
+		<data>
+		fYOYkuqqIS7guUDqKHjvaQkRqtQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_128.png</key>
+		<data>
+		wZrt2AC2iHEJA26d0CDPC9BYi1E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_16.png</key>
+		<data>
+		tQGukM7arRP7qxbUAzEv4HKwca8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_19.png</key>
+		<data>
+		vLxtdiD4FSMouejwOtr2vp8oaUg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_38.png</key>
+		<data>
+		YlRCrsMGcSy4gQjlJWnNtg5M3/M=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_48.png</key>
+		<data>
+		mWo1eaQUYq6VuaTAqQc4B9sH+Eo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-horizontal.png</key>
+		<data>
+		3r9vpLPE7LWwPi5JTm1JqKhI+WM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-horizontal@2x.png</key>
+		<data>
+		C4lbgbrvR/e3gJhvhEEfTR8nTCY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-horizontal@3x.png</key>
+		<data>
+		EDMKVqiKG6iHXaXkm6PRon29qQE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-small.svg</key>
+		<data>
+		gd/mb3hjTgnMVpCZ61C1GWhyqj0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/loupe--highlight.svg</key>
+		<data>
+		J4BXFNjbO95Nz+JkmBrap4LTSuE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/loupe.svg</key>
+		<data>
+		0uoIbgfTL8+2OmUoWjOoIEmNEGM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/privacy--bad.svg</key>
+		<data>
+		95wAYRpz8Z8jvVvUcMZ/RzFoBng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/privacy--good.svg</key>
+		<data>
+		E80KRyO1xoIMMPRX5Ajtdal1zd8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/privacy--mixed.svg</key>
+		<data>
+		Lpv4OvxNVTFRfHX8iuiPWOM70ug=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/a.svg</key>
+		<data>
+		hLv5bBjKkDU7/kWJK2/g28OwIhY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/b-plus.svg</key>
+		<data>
+		qbvRUBCxRRcyXjCtlN+M3w1uXGg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/b.svg</key>
+		<data>
+		WpCYv2FLH/NCYCUfIeTLd6rZBfY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/c-plus.svg</key>
+		<data>
+		sjP3w20aZKBG20TJJwPOgj7Crg0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/c.svg</key>
+		<data>
+		m+uOg+9SRTQ29DfgMOB0CXZjJds=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/d.svg</key>
+		<data>
+		FuvhfLsh/ffCwTQAnohuD3AqXfA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/f.svg</key>
+		<data>
+		azlf9vNdePSNk2nnQGx4A7bvZ+Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_1024.png</key>
+		<data>
+		RuN1MRyuijSW9mECtCCYpS3sw3g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_128.png</key>
+		<data>
+		dozzcbTPwzw6/sz7REqHUfjH/1U=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_16.png</key>
+		<data>
+		tj8yShuA1QysD0mFnH1aj7Jm24Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_19.png</key>
+		<data>
+		Jyv4wQVKDsoeLYoKh+PqhTaPI/0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_256.png</key>
+		<data>
+		AdRQQwsGPu7WhtExGdwn0siQ69g=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_38.png</key>
+		<data>
+		+/C4DGBmpAykFiWfbsDCoh3p2EM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_48.png</key>
+		<data>
+		eQg34bSY1mBOJr+SsklgApEVVJI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_512.png</key>
+		<data>
+		jXEEnpkJABlB09C6NlAjPrwbtYo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/settings-gear@2x.png</key>
+		<data>
+		MgCndrsdGY6teDE8w6/cGlTdVkQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/settings.svg</key>
+		<data>
+		6wnprrB/1LSL8t5r37Bs/zI95S0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/shield.svg</key>
+		<data>
+		A6YVAy+GV9Gxz49im2prn2EWmag=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_comment.svg</key>
+		<data>
+		hr5IlkhCO8b4K0Tl5h/CpEo23wg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_facebook_logo.svg</key>
+		<data>
+		YN7WU23Hzc9hE7Wq+duGGhXclb0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_group.svg</key>
+		<data>
+		PB+lGFaGw9i0B36a/Y+EnVXXmls=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_page.svg</key>
+		<data>
+		alPvlFPYBYPUZnk5gi3YDqTPy18=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_post.svg</key>
+		<data>
+		qOCF1itTApZmuIMu8l1xGHWz0Jc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_video.svg</key>
+		<data>
+		5Ag3AsGUMt/oHwQvV0Zmxp29+4o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/dax.png</key>
+		<data>
+		Rz5UTocp5+78RJ5j2usb/EaTw1Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/loading_dark.svg</key>
+		<data>
+		UprDtWjI8tQ4f8HAlyy4XzzY6ww=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/loading_light.svg</key>
+		<data>
+		V+7+NWogtX5C2NjvwEeRuDsh++w=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/status--bad.svg</key>
+		<data>
+		OOijxfbHNIPnDSCCsIyfGz80l9A=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/status--good.svg</key>
+		<data>
+		nMgfDbUDksEC0n+pc8A/BkcRHjE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/status--mixed.svg</key>
+		<data>
+		T4HTIwOZzMlvlckbXtoEyYnPYCI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-adobe.svg</key>
+		<data>
+		t4gAU8zgK5M9HfMChFi6tpLVqNk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-adtech.svg</key>
+		<data>
+		9TH/rvGkhOBWD08QTgTWLuaLdrk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-amazon.svg</key>
+		<data>
+		MR7XaPrS2zgi1nl6LrS73RMx8J4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-aol.svg</key>
+		<data>
+		aph3pUKIVjLQhgSqRXNE0+DlDjs=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-appnexus.svg</key>
+		<data>
+		/VDnT7TobLRH3M4GqEaNwGqwnNw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-casale.svg</key>
+		<data>
+		mRE4Pa1Ls577JS3uSewVkzmm+kk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-chartbeat.svg</key>
+		<data>
+		tM7kmJh+jM8fqkbCsN0V2iSJbfg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-comscore.svg</key>
+		<data>
+		/cOn9q+f+eFXYqC5Q3OqS30A/j0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-criteo.svg</key>
+		<data>
+		92yWEk2eieAH2vl/AS1hbF6hXek=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-facebook.svg</key>
+		<data>
+		KePpJLZUojFfubG43ZwtAbzWTYc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-fox.svg</key>
+		<data>
+		uYwRVcfGiAsoCrb9e3GrDkAJLQM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-generic.svg</key>
+		<data>
+		UeZyOyLz8nlS/JL/QWIhK6KENqg=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-google.svg</key>
+		<data>
+		W1Uq8jsXEp2QueC8UcwE3pArE9Q=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-mixpanel.svg</key>
+		<data>
+		A5gI/J19ITXoVvBVgrqcwr9eFKA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-moat.svg</key>
+		<data>
+		8zm/LMyg9jX343Du13zYI2Dhf3k=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-newrelic.svg</key>
+		<data>
+		hg0SCaINxOK9fMmvPYI/CU5ZsFM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-nielsen.svg</key>
+		<data>
+		KZztVl6GEJbsan+1s/E9CxfnKkk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-openx.svg</key>
+		<data>
+		CkLqoEkaTx//rvi6yeVMT2X9vYw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-outbrain.svg</key>
+		<data>
+		4pYAs8BWbvA8EB8ZSQmgZ90T69Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-quantcast.svg</key>
+		<data>
+		5wU632KL42AzLdPjjPjYSmbeVRQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-salesforce.svg</key>
+		<data>
+		UYpO8rH7Qemw0hEumOFlArgjpBw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-taboola.svg</key>
+		<data>
+		f2MPpD9FDGKQeGT6a2ieNwugiXo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-twitter.svg</key>
+		<data>
+		8PdyytdFMNh866UO/j/sKYaGHAE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-yahoo.svg</key>
+		<data>
+		fHrOtXBlyO7uk4PwL/pAGUMwqng=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-yandex.svg</key>
+		<data>
+		ed2tEsLiSYdOcN4A2sT9HsvfzcM=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-taboola.svg</key>
+		<data>
+		aKKXW0QSD2C6N8vQbJAMoW2LoYQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-twitter.svg</key>
+		<data>
+		h/B55iBY5O4V53H83OwIGRaQOAQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-yahoo.svg</key>
+		<data>
+		L7GSpS4kv2YaeRIBI2gnB7fqfUc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-yandex.svg</key>
+		<data>
+		I5HqOEPy3ueLyGn+MLW7l8c1w+o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-a.svg</key>
+		<data>
+		spe0kbNasO4v01qt6X+wmcot0Cc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-b-plus.svg</key>
+		<data>
+		gpYYrOFqeikPvZRZd4hW2kqR640=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-b.svg</key>
+		<data>
+		Lgnbbgk5G+XAWDMXu2RGkX2D6RE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-c-plus.svg</key>
+		<data>
+		2/7CG9fD4iOqcvaV+5ByYqNMm/8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-c.svg</key>
+		<data>
+		4rcpnHCxgpl7f+PQQWMqPoYcLck=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-d-minus.svg</key>
+		<data>
+		PuArptiFobmN1mZhtZlc+ePgZ3o=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-d.svg</key>
+		<data>
+		Dz0Li2ccjY6zjGipN85CG94b1/I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-f.svg</key>
+		<data>
+		8Di/8JHJ67AC/XXONRy7WNydPXU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/wand.svg</key>
+		<data>
+		pkVqIwe71D0sgELsntQGO3+a5k0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/index.html</key>
+		<data>
+		HUjH407U9Ae20kpN8YF5mD42m2s=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/jquery/jquery-2.2.4.min.js</key>
+		<data>
+		abtp4lyn1e8JNTF1hOYVPz/ZqIw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/qunit-2.2.0.css</key>
+		<data>
+		ABkv1voIO9pUrMwU3i+IpeNoKEo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/qunit-2.2.0.js</key>
+		<data>
+		gVcOVh60+Gqv/ppkjUi3s6WUpXY=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/sinon-2.0.0.js</key>
+		<data>
+		qcgIdsKqXq9fDwim00PYd5Oqs/E=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/README.md</key>
+		<data>
+		1SedJdS8e63DkOMPq1ixJJSHfcQ=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/bin/server</key>
+		<data>
+		WXOiQSphw/OkQsIn5VtWDKjPc2c=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/config.json</key>
+		<data>
+		6z3bN7h0HvQpbq7c4rswP9jiwA8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/lib/redirect.js</key>
+		<data>
+		RjuJxMCMxp7q/NqsXuH+qZ4aLmw=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/package.json</key>
+		<data>
+		THshGhdHqLO1kh0Ac6Llat43VH0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/requireHelper.js</key>
+		<data>
+		HNvLZHZRl9XAktNDNHkLgQUU8D0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/sites/mozTop500.js</key>
+		<data>
+		rrSohr+xqXdudaZL8efISTDhKOo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/testEasylist.js</key>
+		<data>
+		YmuvUGu2Wp+TWL2FRSkkNOE1A9I=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/testUtils.js</key>
+		<data>
+		LdxvHQpfgVT0yE/XZLp3eaFWpl8=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/atb.js</key>
+		<data>
+		FCbh5GCypQeEdPplL1jdb07471U=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/companies.js</key>
+		<data>
+		Di1u7N13LCvc6Hmh4STIdH9KSzo=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/debugSite.js</key>
+		<data>
+		5c76ce/fbGRPUwmj71swOsnCs0w=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/editSettings.js</key>
+		<data>
+		kYPo4tcGLA0AtpVLvuQh9T2U/dk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/options.js</key>
+		<data>
+		yXZ6+l6ALaUCLkdYoZ0EDt84zow=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/screenshots.js</key>
+		<data>
+		4fH0clCdkbBrunJP71xIgonQbcA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/settings.js</key>
+		<data>
+		NpL6TGpSZKmtbGnyq6YVtaT8ewk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/sites.js</key>
+		<data>
+		92fzYqBfvAXHLDWLGXUmX0414HE=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/surrogates.js</key>
+		<data>
+		nCYUZLCLb8K48VzZwlhHnUkOBuI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/top10.js</key>
+		<data>
+		S7KTiQt60mfpweKHNROIfpyDfyk=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/trackers.js</key>
+		<data>
+		YPl7EeB+hlsMw+qnHbzuQIK5S9Y=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/utils.js</key>
+		<data>
+		ANuufqtv+gwoO8epvleY0JT5DP0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/ad_status.js</key>
+		<data>
+		mCf5M2+7Bw3ysnZ3Z07ROJcKiAU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/adsbygoogle.js</key>
+		<data>
+		+ZJWlyqnV3Rf57+QTLRIhGN+NMc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/amzn_ads.js</key>
+		<data>
+		J92EvT2lT+CX8oYpiyFsfugrE/A=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/analytics.js</key>
+		<data>
+		oOwqR97L9eL6fIbD/7z9eIE8X4c=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/api.js</key>
+		<data>
+		cW0Md6KThZVcnV642/pVWvBxpac=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/beacon.js</key>
+		<data>
+		Vet61FllkqcuI/Gvk/WT22Li6pA=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/chartbeat.js</key>
+		<data>
+		Ulry/gCwPBvIEBMKU8YecHjDefU=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/fb-sdk.js</key>
+		<data>
+		/Va3LsMB4c5EIJzPVOpUgaDCwe4=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/ga.js</key>
+		<data>
+		lOwP7NN6oFRC8PhDo6G2j2B+nG0=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/gpt.js</key>
+		<data>
+		av1+4jX0nNhToqxO55vzjKiUIFI=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/gtm.js</key>
+		<data>
+		RbdfknU0Uz2cwpQ0sw8NLEOUTBc=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/inpage_linkid.js</key>
+		<data>
+		DbhhvRBvyEsxHxEZdxbinvRsD2w=
+		</data>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/outbrain.js</key>
+		<data>
+		dMf5dKOQDEdqb/jGuyQxD5LhE2k=
+		</data>
+		<key>Script.js</key>
+		<data>
+		wV/zIZqbenTpMDSjB6Gb26OFPrs=
+		</data>
+		<key>Style.css</key>
+		<data>
+		jmfSY7ip+LLQdF7ltwtWtMOUYWY=
+		</data>
+	</dict>
+	<key>files2</key>
+	<dict>
+		<key>AppIcon60x60@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MixQgdwm3pM7UV5d8yJrOJaEQKKxchEcXj6oSsrlltQ=
+			</data>
+		</dict>
+		<key>AppIcon76x76@2x~ipad.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZCDLZUVF3vQ2N3ush7LIiIlg+EQVdai4Y6e/zscOEsE=
+			</data>
+		</dict>
+		<key>Assets.car</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0gZW61Qv+RNnxs6TI9RT8EwsCVKeqMFgrGfHgETsE7s=
+			</data>
+		</dict>
+		<key>Base.lproj/LaunchScreen.storyboardc/01J-lp-oVM-view-Ze5-6b-2t3.nib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			dwJvBwn3ktsX/CCP1p7gVcxJClwlZziY0l+1NcQOIy0=
+			</data>
+		</dict>
+		<key>Base.lproj/LaunchScreen.storyboardc/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			HyVdXMU7Ux4/KalAao30mpWOK/lEPT4gvYN09wf31cg=
+			</data>
+		</dict>
+		<key>Base.lproj/LaunchScreen.storyboardc/UIViewController-01J-lp-oVM.nib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cWq7q+iQcmpSoaFGecnyPdKFEPFwRD3slgUmxFADkVs=
+			</data>
+		</dict>
+		<key>Base.lproj/Main.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			sgys4qRsUmngxpFkJRogFLyx3dxWDic5z8FQJsfeCkw=
+			</data>
+		</dict>
+		<key>Base.lproj/Main.storyboardc/BYZ-38-t0r-view-8bC-Xf-vdC.nib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aLlG4SgIP6FnIsyV7nAMg4TiVe+RUxJuNUWAufL02vM=
+			</data>
+		</dict>
+		<key>Base.lproj/Main.storyboardc/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PpvapAjR62rl6Ym4E6hkTgpKmBICxTaQXeUqcpHmmqQ=
+			</data>
+		</dict>
+		<key>Base.lproj/Main.storyboardc/UIViewController-BYZ-38-t0r.nib</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			TYU1C26rdVQwlvYbP9BvFRjZmGD5p2dw35BIdN3pYlE=
+			</data>
+		</dict>
+		<key>Icon.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4cDU+xobKKeINoBPm4vr2Ap9QxjLoX5CuaFB1T94H14=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/DuckDuckGo Privacy Essentials for Safari Extension</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			oExXkEAuuEPMY72Sk8gCBAtbiG+NxIi7g/TIn0FHmwQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ChFbmPWkTLkCJPq8tqCZYkzkTAAhaLlEF0Wmkdi7I4M=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/OLLwbya0vhb9d6jPuGSoQzPoz8Iq8GC3gxZlomtSpA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/constants.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wOneyMET0GXCxhEQV35gTNSgM+E9GnrJWs3RIuJZXfY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/defaultSettings.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FzwTqSiVXB90PVtP/j3limwVM6aeBhxG1sqfO869PVc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/etags.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			m8aK9qN/bYpz4Vk0h+n/0xARn/t+3E1UedFQ3nHQU+g=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/experiments-out.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			h6Cet1tPgK4Jh8c6h6qHqmPgCt5yvb8o7h839JXSDw8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/surrogates.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			y9escn/ML+qGWP3f9W2d1lXxja4nO3v1IiSKeCQ1en0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tosdr.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			qQOq7PgS2YJUgPOx7TMbjbPhzIeHcSKAwOv2gKSIFU0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/entityMap.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Mbf9l8OZ8nUETbQ4lGXH7LINo86FfmZ8U9vYrppchOQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/general-whitelist.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			eTjDy+b82bye/NRPuKow5WLhoFs2ln4ZAnSGxCFHIQI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/prevalence.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JcQaNPZj6+0KsE3RvQ2RuB5Hx12z1WF7GBXqZV6v74M=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/privacy-whitelist.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KyjVwyekw/rTic0Of48mMdbO9VSC+xFiEw8ZMISZItk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/rules.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mY8CKSa2FWEY/0C205nNdQBIufsmC0jI2F9sp4Gk3aQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/rules_1.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bHXmSauLzjhHf1CMokxB47i+qtCUUmtMcDC8KbuKTYA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/rules_2.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			5lFWKMiqeAh5wWMxXwzsFSPkV6veIoCW0kYEEx9SVQE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/tracker_lists/trackersWithParentCompany.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			zM9FaXxSNVFHRSqvhpEYjvch9x6o5P6+Vsadsrh5V4o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/ad_status.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			T0EDiRmG/0DyfrgZq1JBniBoLoWR8gySn5iijISh+gg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/adsbygoogle.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			BtUUiFWvgPYht0FHva6SoCggX7GN2Y+fiIfLkcVcgTU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/amzn_ads.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			qP9SIIVuHd1kiEuj519hN0ykLOi+NNPpDe6fI/WLE6I=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/analytics.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Uy53WiNARFPKYF4NnhG7hp2F1aj4NxDVHHkIWOPnlD0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/api.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JcfJEjXoEwPquE0NGwr91x9c/Pu1UwRNj0TsmvTnP0Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/beacon.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SqUWlHh9RFY5OKYbnwYz/3NwKwBtUllws851z+46l+s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/chartbeat.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QfoYpHYHaaF3GOAmBu1i1AiwDXcwv4SVSAHXVa6NLAg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/fb-sdk.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			okzExUm4sKqw5lAqWlhHDjPceZh5ZnHpsTETIVzSGbQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/ga.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8ooMiozmwqEi0XdBgMfTjPDwQyKHlLT6CP32kTNOVBs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/gpt.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jX/hKTOG4JeZRKiatxRa1IAFWx/pPtVPI3E8x1GP7kA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/gtm.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0nAbela8ctFYbD9hkqzfvot+TjX9qDMTkeuiROeNbsM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/inpage_linkid.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/R38R9eU35wFIAtWP0KxoUgw4fjjwcbFJ6P2SW7JKKE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/data/web_accessible_resources/outbrain.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hhS+EfvsUVsUm3tss5sT7XgaqUOGAXPj60lqnN1zTRg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/background.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EKN0KcLv8n9yNUKiiNHFW+7XZh1ZtWSUuoXaU8KVtb0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/devtools-panel.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			TK9p6MTMsSyGl/JdxqrVbH/aO2ONkF5/0dzmR/b2ud8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/feedback.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			fB3U2xw/YDxBnRHmkspP5yx/tTOdehh5ibNfT9djVvU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/list-editor.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ydIp4b8aVUNUgJMz3qBXSF/N+gTuyBPqC+pYSYRWGGY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/options.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			uvXYxar8h1KKFWWqmkdPg7nOGcZm9c137OD9PCMSKdE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/html/popup.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2dS0kXL4nsjy9Ox+zkORDXKyaOuHBVJgGqpub3tSANQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/arrow--large.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aC9zAcZZAyiuFQzsE1xg9CKGwPbV+rb2yBjz8YsXFoY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/arrow@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nZvACe7MzyVtceWA6yOaJ9qtO79oGUEKim9eBLWYCCM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/arrow@3x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Ge2hdUAGRIFSekL5xPdw7Ouhkot/VjdJuUofn5DM8RA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/blocking--off.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			I6y7RQUIQRGjKKe4fnJz2kVnx2Si58yufc61D2we3tc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/blocking--on.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VwB/RvbvGHHMmfr6qqsZHlm4iROjGzMOh/S7o7sxku8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/broken-bicycle.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			efjhz0jV/e3wW4UfBUplI2eFyvEm+Br+3WdaIL8x9lQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/check.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Nbc6gZSXOQF1dsqxCN4PxOa1kH9HQS9usAcuQv4ik9E=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/close.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cNPyAWXt5oA5PcTlSZyXPB/nyQO9/MFlz5P218+6nSY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/ddg-icon@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1Vl5pdEhZ9ZoFSnQv/R42p2XFYC+u7J7R+Z4rxoqi4k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/ddg-logo-simple@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			N2Fr/u6tq70EArB1KsZMGMC422jWyita4TSDxA69yIY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/error.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aCZ9ZSi1Wd4UgcMULjpaIn1CoVWGnA/OxMgsnDTPpL0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-on-major-networks-big.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CSm2AZfi3Ed/9OeKCfji8PAOzm+jcaogjn4KZjs0EOw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-on-major-networks.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Z1x7MtaEcVab91V+rHkqHM+Qdr+O2tEunkVFNJGA1qk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__a--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SHxXs/T8zd/WioZlvrpbCtW36W0raJoq9sv6Bw/Oq/4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Bl1zNRvfKTg2AsRzYT9v+gJ1dZbObJPp9yOoCBdXN90=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l0hrJENUxbYM+okDkKjUifSxlZYPv4dLoUBH63SClV4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b-plus--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KeNM/uayJUxctrStKVVz/QV7Xw0BCos4ebzZbDqIyvs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bg+Bm40zFwZtCpl9LAZAIL9X4qdMfcnjR3mDBqQ0u5s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			i5zIB6kpxHasIeYakoNKEssoftlsFazIURhIvP/WJPw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VjPnXRUSZ5+26Mt22oZbv1W0N/fKeiW+Y5xoJEG/NOc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c-plus--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			inTkNBsREPBw1tu1pb8H4rw3FoPB/JOvhsvP1+uAeG4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			p7tLIsQHl7a940TxppO5c9sZna47Z4+kUTiHq6ZqD1E=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			irNBt+lHifonBB8cLYRjXQ6wsBMtcdS6awwp5X0nvZU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__calculating-state.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MlhrUsRZ2PHyooiptO4C6sJKPPuQb7cSpdbYfliAIuM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__d--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NuHyaWWo/HbEKyW49Y9B8ibbImKhNEfK3+Z90dlMGAQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l2/u/Gq9qaapxcgRWHqVm33fx3kCrssHqApylrIYF64=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__f--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LenCuHt0FlOmtjtA2q8xWosDufRqvFYOh+WBRkUd2sM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3Zz/+rJV/DHYe5WskPXva86N42CP8mcgF/jO9be7kbY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-rating__null-state.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LMsT8IBnPdsQxlgEPdwjp2xcZepjn2nROlmMbIdI3Ww=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-ribbon__bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			rC6zekh+ef16+3DyMd6F/tUFvVseLovwL/mCulqnoUY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-ribbon__good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6yi8fG3evNZo0b36toF3xBGdR8+o8ROa/OPOoLfCA8s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-ribbon__mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DfiwgcSyqZ04fSegxGIncscGVG8M5HdajagrN2cHoSA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/hero-warning-major-networks.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ylkk5iLdVvDcL12pTJ+RnW6y9TppbNeq0Y2cmoo5buk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/https--off.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jCd6gCOyN0fZUf4JXwwhqZQxFVD3wEYt8jomGzlKPR4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/https--on.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9HfFRd73mckmiqEnoOWjQdBkurKbNbZDwPi8GDu98Ow=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_128.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0urohgryVyp/tbQmraxx3Bagjl3w0ImYy4C79nqk4Fo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_16.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u9T5iuYAd9w5TVSr9+IqhjfJmF0R6DW6jKTTxc4BaQo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_19.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xU6l/54c96RnQxlRXVYF76SO05Yv72WQpyuVrl+gPsw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_38.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aWsjVgzm2WZw+jvbD3SwrvXU3S0VSutJT60rXiRzMiw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/icon_48.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6F8jadRyaYnfWAfmuXzqp2LFEwqDNX4AYCIDPT8yJkg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-horizontal.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			P1Bhd/WvBmbkasrVyXo71vOUR5cMV5qpr7iH8hxXeq4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-horizontal@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			awetUw1GTLi9LTa7Pr9ajCK9iY2zEayO1J1Sbylu3n8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-horizontal@3x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NVnAb+EVwjlrMQmQptTZtQc9bcqaTna5pP9kQEcgZ3k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/logo-small.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u3PyII2LHnOxK+ST7PvVHyWB3kyaAHTZAVIAvpJw4jo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/loupe--highlight.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Plc+p2Bqz9BGq9OjNydYJ7Ud3L1aVEwHme0CLFCU4TQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/loupe.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			sK2h/CH/eIQDZ6yN07wsymPFsPM2krqNleGS3UQDIOI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/privacy--bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			E/+JrwHgbsSXULkRdeBoQxEOIZJdrVVe6WhjGzS07IE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/privacy--good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			juaMb3mAHXNAEKsHn1EcAMxmgtabvkG+J/u9IhhR2js=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/privacy--mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AmYBud7QLzVFZajLFSmvSJlZ3+VCo+AbXEGQro8cbKw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CkBc1HPVtb6MmNPenhWfSis0P7twFfZryeewGpjjE0Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NfF2kFJzwsojr0h9ZGd2YikQPppp9fBLFL7mAZOXJtk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QHCfeK6zZpQY60CZwX1vgm/3eIfz5E9gzSO0Xv6A9gA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ikuRSMn0QVr9vaGqEIJj8JiH7dKX/r8InD1jJUAKlAA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vJECxIlgxmVXEb/r1Wh9gMKquF7UN+CQ6W4oxSZMbJA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nLPTct38fTOMWSzEPZOkUAtmXc3suFNg5eENOwFksZo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/rating-letters/f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EvvUHSDJcyPnz7oe7ruOo4oO0cAUGSueTiDTmqNvCUg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_1024.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0xsI0q4iTXEq7UCSmKW784GdJRmfUl0FdZ3M0tZxrB0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_128.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0dkfteJI8gWgyhZfA0Q49gMPbtcCw3ngepW+R8YUfrk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_16.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			700DpF6p+sg8RXsw9PdUVcgEOy19p01HleFN7FiW6/s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_19.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bvBVb+OYcycKSkEC5uGqm5eScshMxO7+ZRTMJJLIpzg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_256.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7AXowMWFwpwxU5FYFMkQVIpoK+sHnfGYneET7qAwHWc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_38.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZMIbuEl/z5G1icCCgtGNvcF+VIAypJCFxxAAquX0VEU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_48.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			WcM97XrxmaYbTpIAXHREM+OQCmNXMVpjtobSVRSadcA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/safari14/icon_512.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0MWG4Cm1tmp8XTjeoojeIQ4ihqZWs1yoloh+ird9IEk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/settings-gear@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			s4MflbFoE6mrjwOcIaIUz23pY52/g+cinFrqJPi8XSs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/settings.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W06kG0CkTuDAbCrTUvkl2KRpdT5bnSSmVvLYNMcqRVE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/shield.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2U5s5SnXyVJpvm23y9oW4EoBuRxok3lFuhTAqGfpl/A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_comment.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/afgiPPE+EyR4CqldzK7StjS23DrQpQ0cI+rIw6nujE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_facebook_logo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pJ5cVlJmIFbit2pligT6elIF4goR79aAti/5DDA7c1A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_group.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/Ws4dekRUJgUI9kfjRpTrMaDKIKIliKtWtBAJKdNW3A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_page.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9ot1pH3H423vLrdNqeEcItz7wA35+zglt5HNffU/ISU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_post.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/Fbg/LA+b85xKQ6VI56eaFb0ry698ntcJ8wDSY8wbcg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/blocked_video.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7rf70hh7xefhHVDiOwfIN2nNVEJUPsyjaYmMkC6Iem8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/dax.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JKGbZOIqWV33946v9YC4u0j/+vRlrXk1Kd42d4EU1j0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/loading_dark.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			stB0/QFToQHNWAFkN09grlf+Em4m8ohPtzyvfqscDZA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/social/loading_light.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/gq6AbVRNMwF4dzI8JMxiDujzjXS1g6rQf1diNqeAU8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/status--bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			suF56Rj4GM/az0ChGA+vgzJ1hq7lfFg9PouX+QnZdBg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/status--good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1IYB7kU4SGrOHTul4A9lahgtoLK69L6Ukl6p442oLbg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/status--mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RZziBL47Hn7fqXzrOmls8SCA/+TR+7lXDPrmXlKrdNc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-adobe.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7W2JhYqPXIzA5KGwUuMGINPHmtWjGaesUzMxfB+F7c8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-adtech.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EC09I0GdMf56SFbuhzbTlMfZ40fezAq1rjYt2au1F8A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-amazon.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bHnCayWNBr89IVhb6w004Ib8CwZMEfbk6e4Gfwd0g9w=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-aol.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GyQG+WdnW0zYOqJT90f5eLLAH0Q96qA5wEYgznEOeMA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-appnexus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			znT4T7JSGrgd6QQzGA9hD9mwG/HOpP4azeep4+drJnE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-casale.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bPAnCgrf0nbyHjCJAwAgJdS8VjobIkz+FxUStodKRvA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-chartbeat.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AHIltRFveNU+m2lzC/wZ5171e24K62Kx3VHv/MIBNVY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-comscore.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			R1LCatGqrLRNouL1y3xEZfXeDZDqOSR5pmay/idmn2Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-criteo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PF48WVQJYX/FXdJix36y3qzWfcXeWQtw5S57GP9XYAs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-facebook.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			IpNp31r0HYpAP7lZn0OnGAgycgqN+eqXvPbYL5Ey85U=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-fox.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gf4Cstajm1nN0OjMgIim0oP94VhNiep9FoROmyFoth8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-generic.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MX3sUB6aurd+GJegQMDZnuh5otQ9agqbWQGh/BRxLwI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-google.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CgFBr8ts6iryQCjA+4rIkjMGbUE0YryrYMFKC+SqgoM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-mixpanel.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Box8MwOByfx0Lg5QDKn6MYB+BLdDFeMq46R2+YIPUn4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-moat.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7l/yhlJ6+qOfEW6t7WnL0dfxaxoupOldUKeYXGkijks=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-newrelic.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EhUF4wahmjWKNOvlSMm8Mrp8Z+KYkRnveTmve0gO4nk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-nielsen.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Y+7nDs5H06pOBdhmczC4Z4C//6RioBKC7MnbblghtkM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-openx.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yRHWjF9nGYQKrABGUpmLJPLXz1V1pcy5oYm26q5muZo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-outbrain.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ciFbdRXBl4LV527Ar9vfZaj9q2r5qsyVuoFbdl2lZmI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-quantcast.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tzZKlXL8c0KeZ/GlBZ7+2Txs8rZ38EmEKVCM/Go1XKI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-salesforce.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			F1m+ZqZIHBHVQIrHj6MKFfGSHkmmRygIl0XPAYuAED0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-taboola.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9lIl7SvdeqLpMI+IBBInEFzX/KK/cOx0/iPcJ0ADZCs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-twitter.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Xtp7CAFkYt2KF5kpH/G5sgIGwkb4ORKnw2QNQFq3TgU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-yahoo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+n9rAlXA2sGsk72cJP8drBzTqP46h8TjDtRUi3C+BuY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-subview-yandex.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+Cnw/+iD3ZQ04V5IaHXWCn92MPpG+osbjlV+fVxyY88=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-taboola.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xTV1yZXji/zDQRskTyxW5H+Jv/A0ar626fyijS7ilF0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-twitter.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Fun4FbjrJCpqtaur5Qt306ubzuAGP2fo7fCoLMrkU0U=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-yahoo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			WA0hoR/23VLwlJpM+1dBEqNQXrlHsOamHs+LuxnqH5o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/tn-yandex.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tPaZqTZPLmAsy3tPu15oku6WsZLR6atuKZdSRVHv1yY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8N3f0qXrly2VJYfe3jDmpW/7t0P0EJ8T6E8RXwjh2gI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cM+dJZFyVIopiT55jc//ILBSHlRUnMQu9gu8Gtfl0+g=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			111ilvfE+SK5PKC82jigHmvB9/jWS4Ob+N63r/J/P/A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GJ6v8E7ATqTFieXEJF4ZxSbcHDeUrae4ymTfu/V2XO0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Vs6o0gbdzVFgMxFvV617dOnf1UTZAaQ3uhsDvqn5eg0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-d-minus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4+TXFL6T43jg4F3tGKrHgNboPFOZgu21XuAC57Ta1Ug=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W79tZMQikt5MSGKygIIB4k9TvKj+wecGQ7oF/eLtZgo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/toolbar-rating-f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hVW1azju3cT5F3I2flokj8b/PCqrOqjnnca4c3XAE44=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/img/wand.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			z6F0UgabFcWyCFAz/DuF/5+kQFediuiRxb7GCHsDeho=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/manifest.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yLGFKIH5BwtvE4k6AYdeGQgovpLvElEcz8fwJIH2kgo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/autofill-host-styles.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LAP20LwYPFaYM7pZkNW1yoWLrJSV0fgTx1yKkJ4wxGw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/autofill.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZW0QkGxpNQkvX7PVwkQiuSrXAUawKI02ls/YQMgdAjs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/base.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wOs0MfQqSe+xB4tqDv9ZT+w2/OKY2EZDecZI77x8GD8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/feedback.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0AxxWO4PCPxsq+KnBYpo5mfG7vbwy9Yugmlz4ErIWUM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/noatb.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vPoQsmADPtZLkm/ozsltbAYkwgu/MqJ+yljrLmqSimg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/options.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			f8E1Pufmzv1cSxZ9uYVOkLKPMVEo2keBu2q5RUV2dtc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/css/popup.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			K4AdwlcUPxy8gJHTx5vVSt1f7HXXHqQTBZL1a2nJv0I=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Bold-webfont.woff2</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hY3AjoqnB5725mp9TQINul+1UxXrdRGgNJ3UMcxL/68=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Reg-webfont.woff</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			y3cj0rP+yIrV9wFjBDkpogxwORsa0xs/rCeeQ4/ULi0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Reg-webfont.woff2</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			whmod+ssRzgLqVl0h5MYfzqu2VMwYaus5UYQJM19BwQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/font/ProximaNova-Sbold-webfont.woff</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			n3vOrNcQWuCZgn5RXH9FYrnTOJjbos0ABmT+YtcDG0o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/background.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			p8a9Oter3RiUA/QQfdyArxp/Zb1Ab6Wr0HUVPJhEg+w=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/base.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Ti9jPYZMiS1kumTYMsEzEGdqUIbpHX7h+J4HimJKIw4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/content-scripts/autofill.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gEP9rM20foOe0Cl3uFDqMKdFli6wW4WDRmwq7jlshNY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/content-scripts/click-to-load.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gu9VuyhaNdT9Y+G1us29SIdvFQ2rFU7UHcNWYiovt94=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/content-scripts/fb-surrogate-xray.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			BRCNHhwmBjsrblQ3DjkHWuoCVzbBtoYaCTDvGBRlfBA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/devtools-panel.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3nhVsVFV5dqANYhA4Nh69m6o5KheaUdoGLgl7YRrV0o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/feedback.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			iL+vDCsyKd/nUZuEnG61D4AEdTB1iRakc/j03rC25EE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/inject.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			HCARnhPFSZMEMmm0RlN7ADl3CUUlBCI5XAoRhiEQivE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/list-editor.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Nh+55k5tdlreRm1YjFgvTr/SxVCmlJCw5dq/3h+T3iM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/options.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			65WMozLEI7WY5wqsKpx/M6n4IXodx+ocLx7B709obkk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/public/js/popup.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jU/NW1uF+G8+elRBq5d20qXuzQOKrhvYkUz+MG34OiE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/background.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			quGmsCtugXrjTE3Z96zB9EHtWx/Iva1Au8qLyA2eRHI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/constants.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wOneyMET0GXCxhEQV35gTNSgM+E9GnrJWs3RIuJZXfY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/defaultSettings.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FzwTqSiVXB90PVtP/j3limwVM6aeBhxG1sqfO869PVc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/etags.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			m8aK9qN/bYpz4Vk0h+n/0xARn/t+3E1UedFQ3nHQU+g=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/experiments-out.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			h6Cet1tPgK4Jh8c6h6qHqmPgCt5yvb8o7h839JXSDw8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tosdr.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			qQOq7PgS2YJUgPOx7TMbjbPhzIeHcSKAwOv2gKSIFU0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/entityMap.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Mbf9l8OZ8nUETbQ4lGXH7LINo86FfmZ8U9vYrppchOQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/general-whitelist.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			eTjDy+b82bye/NRPuKow5WLhoFs2ln4ZAnSGxCFHIQI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/prevalence.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JcQaNPZj6+0KsE3RvQ2RuB5Hx12z1WF7GBXqZV6v74M=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/privacy-whitelist.txt</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KyjVwyekw/rTic0Of48mMdbO9VSC+xFiEw8ZMISZItk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/rules.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mY8CKSa2FWEY/0C205nNdQBIufsmC0jI2F9sp4Gk3aQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/rules_1.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bHXmSauLzjhHf1CMokxB47i+qtCUUmtMcDC8KbuKTYA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/rules_2.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			5lFWKMiqeAh5wWMxXwzsFSPkV6veIoCW0kYEEx9SVQE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/tracker_lists/trackersWithParentCompany.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			zM9FaXxSNVFHRSqvhpEYjvch9x6o5P6+Vsadsrh5V4o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/ad_status.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			T0EDiRmG/0DyfrgZq1JBniBoLoWR8gySn5iijISh+gg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/adsbygoogle.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			BtUUiFWvgPYht0FHva6SoCggX7GN2Y+fiIfLkcVcgTU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/amzn_ads.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			qP9SIIVuHd1kiEuj519hN0ykLOi+NNPpDe6fI/WLE6I=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/analytics.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Uy53WiNARFPKYF4NnhG7hp2F1aj4NxDVHHkIWOPnlD0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/api.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JcfJEjXoEwPquE0NGwr91x9c/Pu1UwRNj0TsmvTnP0Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/beacon.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SqUWlHh9RFY5OKYbnwYz/3NwKwBtUllws851z+46l+s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/chartbeat.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QfoYpHYHaaF3GOAmBu1i1AiwDXcwv4SVSAHXVa6NLAg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/fb-sdk.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			okzExUm4sKqw5lAqWlhHDjPceZh5ZnHpsTETIVzSGbQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/ga.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8ooMiozmwqEi0XdBgMfTjPDwQyKHlLT6CP32kTNOVBs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/gpt.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jX/hKTOG4JeZRKiatxRa1IAFWx/pPtVPI3E8x1GP7kA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/gtm.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0nAbela8ctFYbD9hkqzfvot+TjX9qDMTkeuiROeNbsM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/inpage_linkid.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/R38R9eU35wFIAtWP0KxoUgw4fjjwcbFJ6P2SW7JKKE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/data/web_accessible_resources/outbrain.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hhS+EfvsUVsUm3tss5sT7XgaqUOGAXPj60lqnN1zTRg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/debugSite.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			V38kGKI+hpwrdzK75gkqMW8PLoQ/hlHrajkK8BAO4GQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/arrow--large.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aC9zAcZZAyiuFQzsE1xg9CKGwPbV+rb2yBjz8YsXFoY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/arrow@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nZvACe7MzyVtceWA6yOaJ9qtO79oGUEKim9eBLWYCCM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/arrow@3x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Ge2hdUAGRIFSekL5xPdw7Ouhkot/VjdJuUofn5DM8RA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/blocking--off.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			I6y7RQUIQRGjKKe4fnJz2kVnx2Si58yufc61D2we3tc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/blocking--on.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VwB/RvbvGHHMmfr6qqsZHlm4iROjGzMOh/S7o7sxku8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/broken-bicycle.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			efjhz0jV/e3wW4UfBUplI2eFyvEm+Br+3WdaIL8x9lQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/check.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Nbc6gZSXOQF1dsqxCN4PxOa1kH9HQS9usAcuQv4ik9E=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/close.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cNPyAWXt5oA5PcTlSZyXPB/nyQO9/MFlz5P218+6nSY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/ddg-icon@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1Vl5pdEhZ9ZoFSnQv/R42p2XFYC+u7J7R+Z4rxoqi4k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/ddg-logo-simple@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			N2Fr/u6tq70EArB1KsZMGMC422jWyita4TSDxA69yIY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/error.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aCZ9ZSi1Wd4UgcMULjpaIn1CoVWGnA/OxMgsnDTPpL0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-on-major-networks-big.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CSm2AZfi3Ed/9OeKCfji8PAOzm+jcaogjn4KZjs0EOw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-on-major-networks.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Z1x7MtaEcVab91V+rHkqHM+Qdr+O2tEunkVFNJGA1qk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__a--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SHxXs/T8zd/WioZlvrpbCtW36W0raJoq9sv6Bw/Oq/4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Bl1zNRvfKTg2AsRzYT9v+gJ1dZbObJPp9yOoCBdXN90=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l0hrJENUxbYM+okDkKjUifSxlZYPv4dLoUBH63SClV4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b-plus--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KeNM/uayJUxctrStKVVz/QV7Xw0BCos4ebzZbDqIyvs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bg+Bm40zFwZtCpl9LAZAIL9X4qdMfcnjR3mDBqQ0u5s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			i5zIB6kpxHasIeYakoNKEssoftlsFazIURhIvP/WJPw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VjPnXRUSZ5+26Mt22oZbv1W0N/fKeiW+Y5xoJEG/NOc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c-plus--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			inTkNBsREPBw1tu1pb8H4rw3FoPB/JOvhsvP1+uAeG4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			p7tLIsQHl7a940TxppO5c9sZna47Z4+kUTiHq6ZqD1E=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			irNBt+lHifonBB8cLYRjXQ6wsBMtcdS6awwp5X0nvZU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__calculating-state.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MlhrUsRZ2PHyooiptO4C6sJKPPuQb7cSpdbYfliAIuM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__d--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NuHyaWWo/HbEKyW49Y9B8ibbImKhNEfK3+Z90dlMGAQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l2/u/Gq9qaapxcgRWHqVm33fx3kCrssHqApylrIYF64=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__f--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LenCuHt0FlOmtjtA2q8xWosDufRqvFYOh+WBRkUd2sM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3Zz/+rJV/DHYe5WskPXva86N42CP8mcgF/jO9be7kbY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-rating__null-state.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LMsT8IBnPdsQxlgEPdwjp2xcZepjn2nROlmMbIdI3Ww=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-ribbon__bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			rC6zekh+ef16+3DyMd6F/tUFvVseLovwL/mCulqnoUY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-ribbon__good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6yi8fG3evNZo0b36toF3xBGdR8+o8ROa/OPOoLfCA8s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-ribbon__mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DfiwgcSyqZ04fSegxGIncscGVG8M5HdajagrN2cHoSA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/hero-warning-major-networks.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ylkk5iLdVvDcL12pTJ+RnW6y9TppbNeq0Y2cmoo5buk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/https--off.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jCd6gCOyN0fZUf4JXwwhqZQxFVD3wEYt8jomGzlKPR4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/https--on.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9HfFRd73mckmiqEnoOWjQdBkurKbNbZDwPi8GDu98Ow=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_128.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0urohgryVyp/tbQmraxx3Bagjl3w0ImYy4C79nqk4Fo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_16.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u9T5iuYAd9w5TVSr9+IqhjfJmF0R6DW6jKTTxc4BaQo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_19.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xU6l/54c96RnQxlRXVYF76SO05Yv72WQpyuVrl+gPsw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_38.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aWsjVgzm2WZw+jvbD3SwrvXU3S0VSutJT60rXiRzMiw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/icon_48.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6F8jadRyaYnfWAfmuXzqp2LFEwqDNX4AYCIDPT8yJkg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-horizontal.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			P1Bhd/WvBmbkasrVyXo71vOUR5cMV5qpr7iH8hxXeq4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-horizontal@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			awetUw1GTLi9LTa7Pr9ajCK9iY2zEayO1J1Sbylu3n8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-horizontal@3x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NVnAb+EVwjlrMQmQptTZtQc9bcqaTna5pP9kQEcgZ3k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/logo-small.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u3PyII2LHnOxK+ST7PvVHyWB3kyaAHTZAVIAvpJw4jo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/loupe--highlight.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Plc+p2Bqz9BGq9OjNydYJ7Ud3L1aVEwHme0CLFCU4TQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/loupe.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			sK2h/CH/eIQDZ6yN07wsymPFsPM2krqNleGS3UQDIOI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/privacy--bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			E/+JrwHgbsSXULkRdeBoQxEOIZJdrVVe6WhjGzS07IE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/privacy--good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			juaMb3mAHXNAEKsHn1EcAMxmgtabvkG+J/u9IhhR2js=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/privacy--mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AmYBud7QLzVFZajLFSmvSJlZ3+VCo+AbXEGQro8cbKw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CkBc1HPVtb6MmNPenhWfSis0P7twFfZryeewGpjjE0Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NfF2kFJzwsojr0h9ZGd2YikQPppp9fBLFL7mAZOXJtk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QHCfeK6zZpQY60CZwX1vgm/3eIfz5E9gzSO0Xv6A9gA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ikuRSMn0QVr9vaGqEIJj8JiH7dKX/r8InD1jJUAKlAA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vJECxIlgxmVXEb/r1Wh9gMKquF7UN+CQ6W4oxSZMbJA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nLPTct38fTOMWSzEPZOkUAtmXc3suFNg5eENOwFksZo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/rating-letters/f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EvvUHSDJcyPnz7oe7ruOo4oO0cAUGSueTiDTmqNvCUg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_1024.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0xsI0q4iTXEq7UCSmKW784GdJRmfUl0FdZ3M0tZxrB0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_128.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0dkfteJI8gWgyhZfA0Q49gMPbtcCw3ngepW+R8YUfrk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_16.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			700DpF6p+sg8RXsw9PdUVcgEOy19p01HleFN7FiW6/s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_19.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bvBVb+OYcycKSkEC5uGqm5eScshMxO7+ZRTMJJLIpzg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_256.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7AXowMWFwpwxU5FYFMkQVIpoK+sHnfGYneET7qAwHWc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_38.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZMIbuEl/z5G1icCCgtGNvcF+VIAypJCFxxAAquX0VEU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_48.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			WcM97XrxmaYbTpIAXHREM+OQCmNXMVpjtobSVRSadcA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/safari14/icon_512.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0MWG4Cm1tmp8XTjeoojeIQ4ihqZWs1yoloh+ird9IEk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/settings-gear@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			s4MflbFoE6mrjwOcIaIUz23pY52/g+cinFrqJPi8XSs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/settings.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W06kG0CkTuDAbCrTUvkl2KRpdT5bnSSmVvLYNMcqRVE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/shield.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2U5s5SnXyVJpvm23y9oW4EoBuRxok3lFuhTAqGfpl/A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_comment.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/afgiPPE+EyR4CqldzK7StjS23DrQpQ0cI+rIw6nujE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_facebook_logo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pJ5cVlJmIFbit2pligT6elIF4goR79aAti/5DDA7c1A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_group.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/Ws4dekRUJgUI9kfjRpTrMaDKIKIliKtWtBAJKdNW3A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_page.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9ot1pH3H423vLrdNqeEcItz7wA35+zglt5HNffU/ISU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_post.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/Fbg/LA+b85xKQ6VI56eaFb0ry698ntcJ8wDSY8wbcg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/blocked_video.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7rf70hh7xefhHVDiOwfIN2nNVEJUPsyjaYmMkC6Iem8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/dax.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JKGbZOIqWV33946v9YC4u0j/+vRlrXk1Kd42d4EU1j0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/loading_dark.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			stB0/QFToQHNWAFkN09grlf+Em4m8ohPtzyvfqscDZA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/social/loading_light.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/gq6AbVRNMwF4dzI8JMxiDujzjXS1g6rQf1diNqeAU8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/status--bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			suF56Rj4GM/az0ChGA+vgzJ1hq7lfFg9PouX+QnZdBg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/status--good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1IYB7kU4SGrOHTul4A9lahgtoLK69L6Ukl6p442oLbg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/status--mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RZziBL47Hn7fqXzrOmls8SCA/+TR+7lXDPrmXlKrdNc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-adobe.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7W2JhYqPXIzA5KGwUuMGINPHmtWjGaesUzMxfB+F7c8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-adtech.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EC09I0GdMf56SFbuhzbTlMfZ40fezAq1rjYt2au1F8A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-amazon.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bHnCayWNBr89IVhb6w004Ib8CwZMEfbk6e4Gfwd0g9w=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-aol.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GyQG+WdnW0zYOqJT90f5eLLAH0Q96qA5wEYgznEOeMA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-appnexus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			znT4T7JSGrgd6QQzGA9hD9mwG/HOpP4azeep4+drJnE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-casale.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bPAnCgrf0nbyHjCJAwAgJdS8VjobIkz+FxUStodKRvA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-chartbeat.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AHIltRFveNU+m2lzC/wZ5171e24K62Kx3VHv/MIBNVY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-comscore.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			R1LCatGqrLRNouL1y3xEZfXeDZDqOSR5pmay/idmn2Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-criteo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PF48WVQJYX/FXdJix36y3qzWfcXeWQtw5S57GP9XYAs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-facebook.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			IpNp31r0HYpAP7lZn0OnGAgycgqN+eqXvPbYL5Ey85U=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-fox.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gf4Cstajm1nN0OjMgIim0oP94VhNiep9FoROmyFoth8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-generic.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MX3sUB6aurd+GJegQMDZnuh5otQ9agqbWQGh/BRxLwI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-google.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CgFBr8ts6iryQCjA+4rIkjMGbUE0YryrYMFKC+SqgoM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-mixpanel.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Box8MwOByfx0Lg5QDKn6MYB+BLdDFeMq46R2+YIPUn4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-moat.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7l/yhlJ6+qOfEW6t7WnL0dfxaxoupOldUKeYXGkijks=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-newrelic.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EhUF4wahmjWKNOvlSMm8Mrp8Z+KYkRnveTmve0gO4nk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-nielsen.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Y+7nDs5H06pOBdhmczC4Z4C//6RioBKC7MnbblghtkM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-openx.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yRHWjF9nGYQKrABGUpmLJPLXz1V1pcy5oYm26q5muZo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-outbrain.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ciFbdRXBl4LV527Ar9vfZaj9q2r5qsyVuoFbdl2lZmI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-quantcast.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tzZKlXL8c0KeZ/GlBZ7+2Txs8rZ38EmEKVCM/Go1XKI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-salesforce.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			F1m+ZqZIHBHVQIrHj6MKFfGSHkmmRygIl0XPAYuAED0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-taboola.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9lIl7SvdeqLpMI+IBBInEFzX/KK/cOx0/iPcJ0ADZCs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-twitter.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Xtp7CAFkYt2KF5kpH/G5sgIGwkb4ORKnw2QNQFq3TgU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-yahoo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+n9rAlXA2sGsk72cJP8drBzTqP46h8TjDtRUi3C+BuY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-subview-yandex.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+Cnw/+iD3ZQ04V5IaHXWCn92MPpG+osbjlV+fVxyY88=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-taboola.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xTV1yZXji/zDQRskTyxW5H+Jv/A0ar626fyijS7ilF0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-twitter.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Fun4FbjrJCpqtaur5Qt306ubzuAGP2fo7fCoLMrkU0U=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-yahoo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			WA0hoR/23VLwlJpM+1dBEqNQXrlHsOamHs+LuxnqH5o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/tn-yandex.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tPaZqTZPLmAsy3tPu15oku6WsZLR6atuKZdSRVHv1yY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8N3f0qXrly2VJYfe3jDmpW/7t0P0EJ8T6E8RXwjh2gI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cM+dJZFyVIopiT55jc//ILBSHlRUnMQu9gu8Gtfl0+g=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			111ilvfE+SK5PKC82jigHmvB9/jWS4Ob+N63r/J/P/A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GJ6v8E7ATqTFieXEJF4ZxSbcHDeUrae4ymTfu/V2XO0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Vs6o0gbdzVFgMxFvV617dOnf1UTZAaQ3uhsDvqn5eg0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-d-minus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4+TXFL6T43jg4F3tGKrHgNboPFOZgu21XuAC57Ta1Ug=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W79tZMQikt5MSGKygIIB4k9TvKj+wecGQ7oF/eLtZgo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/toolbar-rating-f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hVW1azju3cT5F3I2flokj8b/PCqrOqjnnca4c3XAE44=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/img/wand.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			z6F0UgabFcWyCFAz/DuF/5+kQFediuiRxb7GCHsDeho=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/screenshots.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			V3oisW3c2Lhr5/s8q7wB0kQOxPbP8qDmkW43EPkhBBk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/settings.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			zJXGt/9wAO9XcYF7XkT7lkIN1O1mF3RyKAdyopOPQKA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/top10.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AylfS16juQ0sg8aSCjT2CkFDA/2KTFFwXWAAyqvQy2A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/html/unitTests.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			BCcFSC6h0DlQc6tmQbDk3jmXHE8puasd6QkSPYDGKPk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/arrow--large.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aC9zAcZZAyiuFQzsE1xg9CKGwPbV+rb2yBjz8YsXFoY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/arrow@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nZvACe7MzyVtceWA6yOaJ9qtO79oGUEKim9eBLWYCCM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/arrow@3x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Ge2hdUAGRIFSekL5xPdw7Ouhkot/VjdJuUofn5DM8RA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/blocking--off.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			I6y7RQUIQRGjKKe4fnJz2kVnx2Si58yufc61D2we3tc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/blocking--on.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VwB/RvbvGHHMmfr6qqsZHlm4iROjGzMOh/S7o7sxku8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/broken-bicycle.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			efjhz0jV/e3wW4UfBUplI2eFyvEm+Br+3WdaIL8x9lQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/check.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Nbc6gZSXOQF1dsqxCN4PxOa1kH9HQS9usAcuQv4ik9E=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/close.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cNPyAWXt5oA5PcTlSZyXPB/nyQO9/MFlz5P218+6nSY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/ddg-icon@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1Vl5pdEhZ9ZoFSnQv/R42p2XFYC+u7J7R+Z4rxoqi4k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/ddg-logo-simple@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			N2Fr/u6tq70EArB1KsZMGMC422jWyita4TSDxA69yIY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/error.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aCZ9ZSi1Wd4UgcMULjpaIn1CoVWGnA/OxMgsnDTPpL0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-on-major-networks-big.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CSm2AZfi3Ed/9OeKCfji8PAOzm+jcaogjn4KZjs0EOw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-on-major-networks.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Z1x7MtaEcVab91V+rHkqHM+Qdr+O2tEunkVFNJGA1qk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__a--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			SHxXs/T8zd/WioZlvrpbCtW36W0raJoq9sv6Bw/Oq/4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Bl1zNRvfKTg2AsRzYT9v+gJ1dZbObJPp9yOoCBdXN90=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l0hrJENUxbYM+okDkKjUifSxlZYPv4dLoUBH63SClV4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b-plus--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KeNM/uayJUxctrStKVVz/QV7Xw0BCos4ebzZbDqIyvs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bg+Bm40zFwZtCpl9LAZAIL9X4qdMfcnjR3mDBqQ0u5s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			i5zIB6kpxHasIeYakoNKEssoftlsFazIURhIvP/WJPw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VjPnXRUSZ5+26Mt22oZbv1W0N/fKeiW+Y5xoJEG/NOc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c-plus--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			inTkNBsREPBw1tu1pb8H4rw3FoPB/JOvhsvP1+uAeG4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			p7tLIsQHl7a940TxppO5c9sZna47Z4+kUTiHq6ZqD1E=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			irNBt+lHifonBB8cLYRjXQ6wsBMtcdS6awwp5X0nvZU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__calculating-state.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MlhrUsRZ2PHyooiptO4C6sJKPPuQb7cSpdbYfliAIuM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__d--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NuHyaWWo/HbEKyW49Y9B8ibbImKhNEfK3+Z90dlMGAQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			l2/u/Gq9qaapxcgRWHqVm33fx3kCrssHqApylrIYF64=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__f--is-active.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LenCuHt0FlOmtjtA2q8xWosDufRqvFYOh+WBRkUd2sM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			3Zz/+rJV/DHYe5WskPXva86N42CP8mcgF/jO9be7kbY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-rating__null-state.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LMsT8IBnPdsQxlgEPdwjp2xcZepjn2nROlmMbIdI3Ww=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-ribbon__bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			rC6zekh+ef16+3DyMd6F/tUFvVseLovwL/mCulqnoUY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-ribbon__good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6yi8fG3evNZo0b36toF3xBGdR8+o8ROa/OPOoLfCA8s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-ribbon__mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			DfiwgcSyqZ04fSegxGIncscGVG8M5HdajagrN2cHoSA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/hero-warning-major-networks.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ylkk5iLdVvDcL12pTJ+RnW6y9TppbNeq0Y2cmoo5buk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/https--off.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jCd6gCOyN0fZUf4JXwwhqZQxFVD3wEYt8jomGzlKPR4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/https--on.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9HfFRd73mckmiqEnoOWjQdBkurKbNbZDwPi8GDu98Ow=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_128.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0urohgryVyp/tbQmraxx3Bagjl3w0ImYy4C79nqk4Fo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_16.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u9T5iuYAd9w5TVSr9+IqhjfJmF0R6DW6jKTTxc4BaQo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_19.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xU6l/54c96RnQxlRXVYF76SO05Yv72WQpyuVrl+gPsw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_38.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			aWsjVgzm2WZw+jvbD3SwrvXU3S0VSutJT60rXiRzMiw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/icon_48.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			6F8jadRyaYnfWAfmuXzqp2LFEwqDNX4AYCIDPT8yJkg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-horizontal.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			P1Bhd/WvBmbkasrVyXo71vOUR5cMV5qpr7iH8hxXeq4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-horizontal@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			awetUw1GTLi9LTa7Pr9ajCK9iY2zEayO1J1Sbylu3n8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-horizontal@3x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NVnAb+EVwjlrMQmQptTZtQc9bcqaTna5pP9kQEcgZ3k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/logo-small.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u3PyII2LHnOxK+ST7PvVHyWB3kyaAHTZAVIAvpJw4jo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/loupe--highlight.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Plc+p2Bqz9BGq9OjNydYJ7Ud3L1aVEwHme0CLFCU4TQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/loupe.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			sK2h/CH/eIQDZ6yN07wsymPFsPM2krqNleGS3UQDIOI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/privacy--bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			E/+JrwHgbsSXULkRdeBoQxEOIZJdrVVe6WhjGzS07IE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/privacy--good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			juaMb3mAHXNAEKsHn1EcAMxmgtabvkG+J/u9IhhR2js=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/privacy--mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AmYBud7QLzVFZajLFSmvSJlZ3+VCo+AbXEGQro8cbKw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CkBc1HPVtb6MmNPenhWfSis0P7twFfZryeewGpjjE0Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NfF2kFJzwsojr0h9ZGd2YikQPppp9fBLFL7mAZOXJtk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			QHCfeK6zZpQY60CZwX1vgm/3eIfz5E9gzSO0Xv6A9gA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ikuRSMn0QVr9vaGqEIJj8JiH7dKX/r8InD1jJUAKlAA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			vJECxIlgxmVXEb/r1Wh9gMKquF7UN+CQ6W4oxSZMbJA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nLPTct38fTOMWSzEPZOkUAtmXc3suFNg5eENOwFksZo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/rating-letters/f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EvvUHSDJcyPnz7oe7ruOo4oO0cAUGSueTiDTmqNvCUg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_1024.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0xsI0q4iTXEq7UCSmKW784GdJRmfUl0FdZ3M0tZxrB0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_128.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0dkfteJI8gWgyhZfA0Q49gMPbtcCw3ngepW+R8YUfrk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_16.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			700DpF6p+sg8RXsw9PdUVcgEOy19p01HleFN7FiW6/s=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_19.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bvBVb+OYcycKSkEC5uGqm5eScshMxO7+ZRTMJJLIpzg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_256.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7AXowMWFwpwxU5FYFMkQVIpoK+sHnfGYneET7qAwHWc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_38.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ZMIbuEl/z5G1icCCgtGNvcF+VIAypJCFxxAAquX0VEU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_48.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			WcM97XrxmaYbTpIAXHREM+OQCmNXMVpjtobSVRSadcA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/safari14/icon_512.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			0MWG4Cm1tmp8XTjeoojeIQ4ihqZWs1yoloh+ird9IEk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/settings-gear@2x.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			s4MflbFoE6mrjwOcIaIUz23pY52/g+cinFrqJPi8XSs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/settings.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W06kG0CkTuDAbCrTUvkl2KRpdT5bnSSmVvLYNMcqRVE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/shield.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			2U5s5SnXyVJpvm23y9oW4EoBuRxok3lFuhTAqGfpl/A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_comment.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/afgiPPE+EyR4CqldzK7StjS23DrQpQ0cI+rIw6nujE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_facebook_logo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			pJ5cVlJmIFbit2pligT6elIF4goR79aAti/5DDA7c1A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_group.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/Ws4dekRUJgUI9kfjRpTrMaDKIKIliKtWtBAJKdNW3A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_page.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9ot1pH3H423vLrdNqeEcItz7wA35+zglt5HNffU/ISU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_post.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/Fbg/LA+b85xKQ6VI56eaFb0ry698ntcJ8wDSY8wbcg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/blocked_video.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7rf70hh7xefhHVDiOwfIN2nNVEJUPsyjaYmMkC6Iem8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/dax.png</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			JKGbZOIqWV33946v9YC4u0j/+vRlrXk1Kd42d4EU1j0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/loading_dark.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			stB0/QFToQHNWAFkN09grlf+Em4m8ohPtzyvfqscDZA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/social/loading_light.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			/gq6AbVRNMwF4dzI8JMxiDujzjXS1g6rQf1diNqeAU8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/status--bad.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			suF56Rj4GM/az0ChGA+vgzJ1hq7lfFg9PouX+QnZdBg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/status--good.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			1IYB7kU4SGrOHTul4A9lahgtoLK69L6Ukl6p442oLbg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/status--mixed.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			RZziBL47Hn7fqXzrOmls8SCA/+TR+7lXDPrmXlKrdNc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-adobe.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7W2JhYqPXIzA5KGwUuMGINPHmtWjGaesUzMxfB+F7c8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-adtech.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EC09I0GdMf56SFbuhzbTlMfZ40fezAq1rjYt2au1F8A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-amazon.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bHnCayWNBr89IVhb6w004Ib8CwZMEfbk6e4Gfwd0g9w=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-aol.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GyQG+WdnW0zYOqJT90f5eLLAH0Q96qA5wEYgznEOeMA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-appnexus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			znT4T7JSGrgd6QQzGA9hD9mwG/HOpP4azeep4+drJnE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-casale.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			bPAnCgrf0nbyHjCJAwAgJdS8VjobIkz+FxUStodKRvA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-chartbeat.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			AHIltRFveNU+m2lzC/wZ5171e24K62Kx3VHv/MIBNVY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-comscore.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			R1LCatGqrLRNouL1y3xEZfXeDZDqOSR5pmay/idmn2Y=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-criteo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			PF48WVQJYX/FXdJix36y3qzWfcXeWQtw5S57GP9XYAs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-facebook.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			IpNp31r0HYpAP7lZn0OnGAgycgqN+eqXvPbYL5Ey85U=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-fox.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			gf4Cstajm1nN0OjMgIim0oP94VhNiep9FoROmyFoth8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-generic.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			MX3sUB6aurd+GJegQMDZnuh5otQ9agqbWQGh/BRxLwI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-google.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CgFBr8ts6iryQCjA+4rIkjMGbUE0YryrYMFKC+SqgoM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-mixpanel.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Box8MwOByfx0Lg5QDKn6MYB+BLdDFeMq46R2+YIPUn4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-moat.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			7l/yhlJ6+qOfEW6t7WnL0dfxaxoupOldUKeYXGkijks=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-newrelic.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EhUF4wahmjWKNOvlSMm8Mrp8Z+KYkRnveTmve0gO4nk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-nielsen.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Y+7nDs5H06pOBdhmczC4Z4C//6RioBKC7MnbblghtkM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-openx.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			yRHWjF9nGYQKrABGUpmLJPLXz1V1pcy5oYm26q5muZo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-outbrain.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			ciFbdRXBl4LV527Ar9vfZaj9q2r5qsyVuoFbdl2lZmI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-quantcast.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tzZKlXL8c0KeZ/GlBZ7+2Txs8rZ38EmEKVCM/Go1XKI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-salesforce.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			F1m+ZqZIHBHVQIrHj6MKFfGSHkmmRygIl0XPAYuAED0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-taboola.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9lIl7SvdeqLpMI+IBBInEFzX/KK/cOx0/iPcJ0ADZCs=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-twitter.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Xtp7CAFkYt2KF5kpH/G5sgIGwkb4ORKnw2QNQFq3TgU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-yahoo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+n9rAlXA2sGsk72cJP8drBzTqP46h8TjDtRUi3C+BuY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-subview-yandex.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+Cnw/+iD3ZQ04V5IaHXWCn92MPpG+osbjlV+fVxyY88=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-taboola.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			xTV1yZXji/zDQRskTyxW5H+Jv/A0ar626fyijS7ilF0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-twitter.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Fun4FbjrJCpqtaur5Qt306ubzuAGP2fo7fCoLMrkU0U=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-yahoo.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			WA0hoR/23VLwlJpM+1dBEqNQXrlHsOamHs+LuxnqH5o=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/tn-yandex.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			tPaZqTZPLmAsy3tPu15oku6WsZLR6atuKZdSRVHv1yY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-a.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8N3f0qXrly2VJYfe3jDmpW/7t0P0EJ8T6E8RXwjh2gI=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-b-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			cM+dJZFyVIopiT55jc//ILBSHlRUnMQu9gu8Gtfl0+g=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-b.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			111ilvfE+SK5PKC82jigHmvB9/jWS4Ob+N63r/J/P/A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-c-plus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			GJ6v8E7ATqTFieXEJF4ZxSbcHDeUrae4ymTfu/V2XO0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-c.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Vs6o0gbdzVFgMxFvV617dOnf1UTZAaQ3uhsDvqn5eg0=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-d-minus.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4+TXFL6T43jg4F3tGKrHgNboPFOZgu21XuAC57Ta1Ug=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-d.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W79tZMQikt5MSGKygIIB4k9TvKj+wecGQ7oF/eLtZgo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/toolbar-rating-f.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			hVW1azju3cT5F3I2flokj8b/PCqrOqjnnca4c3XAE44=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/img/wand.svg</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			z6F0UgabFcWyCFAz/DuF/5+kQFediuiRxb7GCHsDeho=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/index.html</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wIvxEebCVnZ/+HlAh8DYtGYFicAL4+H4r5ACWiX7R2g=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/jquery/jquery-2.2.4.min.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/qunit-2.2.0.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			TRew0sYnAsv7/kGC4r3M8UJYm/EWknssIZK7OnSUeaY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/qunit-2.2.0.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			jgja0v/h5XcbgxBUZ3diY8ZlGfvt+HnPxFBqCBtiDpc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/lib/sinon-2.0.0.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			XKgl0Xtc/MO5JeqsK5gwi2CkFOfUpue9XaQYp66wS8A=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/README.md</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Cen++E6T2T5ucMJxciwsnAiR5djwbNlCZdDklT2PkOA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/bin/server</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			HYvqTJfdaurZQJ7IuAQ8D40ddXc3etqUI9Svxxw5lpY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/config.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			FQcbu8eZIeb+Py5+QTw3RzCbcVah1q28Y/HocyM/PUY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/lib/redirect.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			oYU40MmyWtW6YH+H2vI3UDUX9kXWl4FhC3dWqUC9KP8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/mocks/redirect-server/package.json</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LnDkF3+Q8YOVqBNtT3qPQj22mR7fCT9/oOzX0ClZkIw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/requireHelper.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			v5r7qboyDkKtVuvA8L4ElA81/NLk00FpRnbez8OXJK8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/sites/mozTop500.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NochkvSPetPvqn7QryTZaqypK/Oh+LNQNbZyDQC0Z9k=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/testEasylist.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			8xxnzTf/+Bh5L4FdQH/hpo7zcfCG8vuLS+jzMQRCLMQ=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/testUtils.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mFXZpTRI0tbnzohLYg24QhRA0/AqG31gPG1s0hRNgQ8=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/atb.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			nCCqLwI59MlSD8nQ3Za67h2nu5aBTPsvUIsCEp5xT/c=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/companies.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			wCbN2jvNCTIYuMPRdmok+2zdpCuThkbmGcKs+5dJhOU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/debugSite.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			BVRbqh39BfhQNqAumOmcBNByU1e4Qf5wmKqwPdNjf44=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/editSettings.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EVzPCsknTPTuBgkCyeUSwjptEatorP8x8rvZ16JHzZU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/options.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NMHprFXlU+scQLCrakQ7PFf4omqtejGRSdB2Tn20SoE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/screenshots.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			KmBH2x8EsPO1Y3vZWZhgGKr3G7h8Lra9fbUNbT/7pQw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/settings.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			UWp//Oak661It1eeDLRWK8R3hfqlgwv52Ywo23D05Js=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/sites.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			kkmricIL3m3138fSYZ1ENzhBcsDD+sN1CQQ2bWDktqo=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/surrogates.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			H6WOaoM/N/4GMKvVoL7poWv/N92kiTzScukdAeX3qWc=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/top10.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			c3M2mLBmVkAkiMiQLrSgpTfeURNrvf827vyl9+4wIFM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/trackers.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			kY3jOdnuYl812+otSEURlR4cU+Ra3y9BDQNWKxUqDuU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/test/tests/utils.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mgdq/jV5WM/Ivmj8ozLBljqHFb8+SpArVEAVfIoLnZk=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/ad_status.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			9Hw1RT5IaqCVO6jiUyADMPmquFLPpWv105QU6gmBW7Q=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/adsbygoogle.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			juwSyP0Zeyau0SW+4nOSYWtYyv6wBTqKI7ZHTn0B3hU=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/amzn_ads.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			NKH3bFwG+VBupzAMseghwwGInSy0exrt33vFAdQGmYA=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/analytics.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			W7MQTBlQ7AcSERmsI4GYNsKy6kKOSY92wU+99GKTjSw=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/api.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			+XGYte54i0bMruY9tpulKbMrPXWG+OYh2YoIphTTYAM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/beacon.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			VUk0SHFqDboZXKoG7u3zEx3s1t6vOHE3U/iug6zQ8Ng=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/chartbeat.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			CjI53lQygPuCTJs14YW3tWOnqlWpuUXosGVKBG7ozCY=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/fb-sdk.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			u9uXa0De4pSPIbUtAk+YYliac7BLp+oeMSpHsMREi50=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/ga.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			fB2lLIrzud6ELdOW57aBNYWLlPBljBBYmK856T7USkg=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/gpt.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			V9YdpubYbQP2T9jbHXXbL/7+kUPJyV/4vy3AFPLWmbM=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/gtm.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			h/BgbF/NdYnkS3hnk23wN6lQbLcS2GOV4ChrwC5HIx4=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/inpage_linkid.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			n1XPO3D403/r3xoDNAC4ckvO7vIUaIYuhscFfJ51pFE=
+			</data>
+		</dict>
+		<key>PlugIns/DuckDuckGo Privacy Essentials for Safari Extension.appex/web_accessible_resources/outbrain.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LFNFU5hzAjzqhqCsuCmXP5H9YNBflrgSA5ydw4a+Vy8=
+			</data>
+		</dict>
+		<key>Script.js</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			LRVaT2vPomLLc9yQwZC5QLzz5OUdDowmv6dcuNyqh1k=
+			</data>
+		</dict>
+		<key>Style.css</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			Iyn8tL1LhG2ZHCWV/lFJ1fIbDsTt4KIsonLsJKP/rUs=
+			</data>
+		</dict>
+	</dict>
+	<key>rules</key>
+	<dict>
+		<key>^.*</key>
+		<true/>
+		<key>^.*\.lproj/</key>
+		<dict>
+			<key>optional</key>
+			<true/>
+			<key>weight</key>
+			<real>1000</real>
+		</dict>
+		<key>^.*\.lproj/locversion.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>1100</real>
+		</dict>
+		<key>^Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
+		</dict>
+		<key>^version.plist$</key>
+		<true/>
+	</dict>
+	<key>rules2</key>
+	<dict>
+		<key>.*\.dSYM($|/)</key>
+		<dict>
+			<key>weight</key>
+			<real>11</real>
+		</dict>
+		<key>^(.*/)?\.DS_Store$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>2000</real>
+		</dict>
+		<key>^.*</key>
+		<true/>
+		<key>^.*\.lproj/</key>
+		<dict>
+			<key>optional</key>
+			<true/>
+			<key>weight</key>
+			<real>1000</real>
+		</dict>
+		<key>^.*\.lproj/locversion.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>1100</real>
+		</dict>
+		<key>^Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
+		</dict>
+		<key>^Info\.plist$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^PkgInfo$</key>
+		<dict>
+			<key>omit</key>
+			<true/>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^embedded\.provisionprofile$</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+		<key>^version\.plist$</key>
+		<dict>
+			<key>weight</key>
+			<real>20</real>
+		</dict>
+	</dict>
+</dict>
+</plist>

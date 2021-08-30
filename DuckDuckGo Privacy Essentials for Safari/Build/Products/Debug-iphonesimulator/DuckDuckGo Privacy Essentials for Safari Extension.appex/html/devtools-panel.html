@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>DuckDuckGo Privacy Essentials Debugger</title>
+  <style type="text/css">
+    @font-face {
+      font-family: 'DDG_ProximaNova';
+      src: url('../public/font/ProximaNova-Reg-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'DDG_ProximaNova';
+      src: url('../public/font/ProximaNova-Sbold-webfont.woff') format('woff');
+      font-weight: 600;
+      font-style: bold;
+    }
+
+    body {
+      font-family: 'DDG_ProximaNova';
+      color: #000
+    }
+
+    .header {
+      padding: 10px;
+    }
+
+    #protections {
+      padding-top: 0px;
+    }
+
+    #protections > button {
+      margin: 2px;
+    }
+
+    .block {
+      background-color: #DE5833;
+    }
+
+    .redirect {
+      background-color: #FDD20A;
+    }
+
+    .ignore {
+      background-color: #CACACA;
+    }
+
+    .cookie {
+      background-color: #9CB8FF
+    }
+
+    .set-cookie {
+      background-color: #BDA8FC
+    }
+
+
+    table {
+      table-layout: fixed;
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid black;
+    }
+
+    thead th:nth-child(1) {
+      width: 2%;
+    }
+
+    thead th:nth-child(2) {
+      width: 48%;
+    }
+
+    thead th:nth-child(3) {
+      width: 18%;
+    }
+
+    thead th:nth-child(4) {
+      width: 22%;
+    }
+
+    thead th:nth-child(5) {
+      width: 10%;
+    }
+
+    th,
+    td {
+      padding: 5px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    tr > td:nth-child(4) {
+      word-wrap: anywhere;
+      overflow: auto;
+      white-space: break-spaces;
+    }
+
+    #tab-picker {
+      width: 300px;
+    }
+
+    #table-filter > label {
+      margin-left: 5px;
+      padding: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <template id="cookie-row">
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </template>
+
+  <template id="request-row">
+    <tr>
+      <td><a href="" class="block-toggle">I</a></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </template>
+
+  <div class="header">
+    <a href="./list-editor.html" target="_blank">🗒</a>
+    <select id="tab-picker">
+      <option value="">--Select Tab--</option>
+    </select>
+    <button id="clear">Clear</button>
+    <button id="refresh">Reload page</button>
+    <span>|</span>
+    <button id="protection">Protection: ??</button>
+    <label for="tds">Blocklist: </label>
+    <select name="tds" id="tds">
+      <option value="live">Live</option>
+      <option value="next">Next</option>
+      <option value="beta">Beta</option>
+    </select>
+  </div>
+  <div class="header" id="protections">
+  </div>
+  <div id="table-filter">
+    Display options:
+    <label class="block">
+      <input id="display-block" type="checkbox" checked><span>Blocked</span>
+   </label>
+   <label class="ignore">
+      <input id="display-ignore" type="checkbox" checked><span>Ignored</span>
+    </label>
+    <label class="redirect">
+      <input id="display-redirect" type="checkbox" checked><span>Redirected</span>
+    </label>
+    <label class="cookie">
+      <input id="display-cookie" type="checkbox" checked><span>HTTP Cookies</span>
+    </label>
+    <label class="jscookie">
+      <input id="display-jscookie" type="checkbox" checked><span>JS Cookies</span>
+    </label>
+    <label class="canvas">
+      <input id="display-canvas" type="checkbox" checked><span>Canvas API</span>
+    </label>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>URL</th>
+        <th>Action</th>
+        <th>Domain</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody id="request-table"></tbody>
+  </table>
+
+  <script src="/public/js/devtools-panel.js"></script>
+</body>
+
+</html>

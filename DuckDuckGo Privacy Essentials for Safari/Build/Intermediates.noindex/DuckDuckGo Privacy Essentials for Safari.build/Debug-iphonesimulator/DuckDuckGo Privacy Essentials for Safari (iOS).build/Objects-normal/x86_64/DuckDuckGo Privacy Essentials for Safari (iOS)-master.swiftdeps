@@ -1,0 +1,11 @@
+version: "Apple Swift version 5.5 (swiftlang-1300.0.27.6 clang-1300.0.27.2)"
+options: "7c210285ad91bfaec743ad1cdc75c0a36a39d4994ee93a2203d801d0d6081829"
+build_start_time: [1629811140, 285415172]
+build_end_time: [1629811140, 984503030]
+inputs:
+  ? "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Shared (App)/ViewController.swift"
+  : [1629810950, 360805511]
+  ? "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/iOS (App)/AppDelegate.swift"
+  : [1629810951, 393958568]
+  ? "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/iOS (App)/SceneDelegate.swift"
+  : [1629810951, 398170232]

@@ -1,0 +1,57 @@
+{
+  "_buildCommand2" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildAndRun"
+  },
+  "buildCommand" : "build",
+  "configuredTargets" : [
+    {
+      "guid" : "5ac94014287b5bcdbecd4dead7345f765060c5cb7cad6aa63fe4e3cf14483d40"
+    }
+  ],
+  "containerPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/DuckDuckGo Privacy Essentials for Safari.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "build",
+    "activeArchitecture" : "x86_64",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : false,
+      "platform" : "macosx",
+      "sdk" : "macosx12.0",
+      "sdkVariant" : "macos",
+      "supportedArchitectures" : [
+        "x86_64h",
+        "x86_64"
+      ],
+      "targetArchitecture" : "x86_64"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Build/Products",
+      "derivedDataPath" : "/Users/gsv/Library/Developer/Xcode/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/gsv/Library/Developer/Xcode/DerivedData/DuckDuckGo_Privacy_Essentials_for_Safari-gurijtyulgesxrbdartivjqtcsxv/Index/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/gsv/Library/Developer/Xcode/DerivedData/DuckDuckGo_Privacy_Essentials_for_Safari-gurijtyulgesxrbdartivjqtcsxv/Index/PrecompiledHeaders",
+      "pchPath" : "/Users/gsv/Documents/duckduckgo/duckduckgo-privacy-extension_safari/DuckDuckGo Privacy Essentials for Safari/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Debug",
+    "overrides" : {
+      "synthesized" : {
+        "table" : {
+          "ENABLE_PREVIEWS" : "NO"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "launch",
+  "schemeCommand2" : "launch",
+  "shouldCollectMetrics" : false,
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

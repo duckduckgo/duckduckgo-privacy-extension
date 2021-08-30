@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>DDG List Editor</title>
+  <style type="text/css">
+    @font-face {
+      font-family: 'DDG_ProximaNova';
+      src: url('../public/font/ProximaNova-Reg-webfont.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'DDG_ProximaNova';
+      src: url('../public/font/ProximaNova-Sbold-webfont.woff') format('woff');
+      font-weight: 600;
+      font-style: bold;
+    }
+
+    body {
+      font-family: 'DDG_ProximaNova';
+      color: #000
+    }
+
+    textarea {
+      width: 80%;
+      height: 600px;
+    }
+  </style>
+</head>
+
+<body>
+  <select id="list-picker"></select>
+  <div id="protections">
+    <textarea id="list-content"></textarea>
+  </div>
+  <button id="save">Save</button>
+  <button id="reload">Load remote version</button>
+
+  <script src="/public/js/list-editor.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+[
+  {
+    "id": 989,
+    "priority": 2,
+    "condition": {
+      "urlFilter": "google-analytics.com",
+      "isUrlFilterCaseSensitive": false,
+      "domainType": "thirdParty"
+    },
+    "action": {
+      "type": "block"
+    }
+  },
+  {
+    "id": 990,
+    "priority": 2,
+    "condition": {
+      "urlFilter": "https://gravida.pro/*",
+      "isUrlFilterCaseSensitive": false,
+      "domainType": "firstParty"
+    },
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": {
+        "header": "Sec-GPC",
+        "operation": "append",
+        "value": "1"
+      }
+    }
+  }
+]

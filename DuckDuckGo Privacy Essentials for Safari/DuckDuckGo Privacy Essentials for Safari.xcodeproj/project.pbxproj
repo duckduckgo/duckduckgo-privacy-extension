@@ -1,0 +1,975 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10C469CC26D5288700EBD37E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469CB26D5288700EBD37E /* AppDelegate.swift */; };
+		10C469CE26D5288700EBD37E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469CD26D5288700EBD37E /* SceneDelegate.swift */; };
+		10C469D126D5288700EBD37E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C469CF26D5288700EBD37E /* LaunchScreen.storyboard */; };
+		10C469D426D5288700EBD37E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C469D226D5288700EBD37E /* Main.storyboard */; };
+		10C469DD26D5288700EBD37E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469DC26D5288700EBD37E /* AppDelegate.swift */; };
+		10C469E026D5288700EBD37E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C469DE26D5288700EBD37E /* Main.storyboard */; };
+		10C469E826D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 10C469E726D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		10C469F226D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 10C469F126D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		10C469F726D5288700EBD37E /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BB26D5288600EBD37E /* Main.html */; };
+		10C469F826D5288700EBD37E /* Main.html in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BB26D5288600EBD37E /* Main.html */; };
+		10C469F926D5288700EBD37E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BD26D5288600EBD37E /* Icon.png */; };
+		10C469FA26D5288700EBD37E /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BD26D5288600EBD37E /* Icon.png */; };
+		10C469FB26D5288700EBD37E /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BE26D5288600EBD37E /* Style.css */; };
+		10C469FC26D5288700EBD37E /* Style.css in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BE26D5288600EBD37E /* Style.css */; };
+		10C469FD26D5288700EBD37E /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BF26D5288600EBD37E /* Script.js */; };
+		10C469FE26D5288700EBD37E /* Script.js in Resources */ = {isa = PBXBuildFile; fileRef = 10C469BF26D5288600EBD37E /* Script.js */; };
+		10C469FF26D5288700EBD37E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469C026D5288600EBD37E /* ViewController.swift */; };
+		10C46A0026D5288700EBD37E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469C026D5288600EBD37E /* ViewController.swift */; };
+		10C46A0126D5288700EBD37E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10C469C126D5288700EBD37E /* Assets.xcassets */; };
+		10C46A0226D5288700EBD37E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10C469C126D5288700EBD37E /* Assets.xcassets */; };
+		10C46A0326D5288700EBD37E /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469C326D5288700EBD37E /* SafariWebExtensionHandler.swift */; };
+		10C46A0426D5288700EBD37E /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C469C326D5288700EBD37E /* SafariWebExtensionHandler.swift */; };
+		10C46A1D26D5288800EBD37E /* web_accessible_resources in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1626D5288800EBD37E /* web_accessible_resources */; };
+		10C46A1E26D5288800EBD37E /* test in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1726D5288800EBD37E /* test */; };
+		10C46A1F26D5288800EBD37E /* html in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1826D5288800EBD37E /* html */; };
+		10C46A2026D5288800EBD37E /* img in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1926D5288800EBD37E /* img */; };
+		10C46A2126D5288800EBD37E /* public in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1A26D5288800EBD37E /* public */; };
+		10C46A2226D5288800EBD37E /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1B26D5288800EBD37E /* manifest.json */; };
+		10C46A2326D5288800EBD37E /* data in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1C26D5288800EBD37E /* data */; };
+		10C46A2426D5288800EBD37E /* web_accessible_resources in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1626D5288800EBD37E /* web_accessible_resources */; };
+		10C46A2526D5288800EBD37E /* test in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1726D5288800EBD37E /* test */; };
+		10C46A2626D5288800EBD37E /* html in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1826D5288800EBD37E /* html */; };
+		10C46A2726D5288800EBD37E /* img in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1926D5288800EBD37E /* img */; };
+		10C46A2826D5288800EBD37E /* public in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1A26D5288800EBD37E /* public */; };
+		10C46A2926D5288800EBD37E /* manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1B26D5288800EBD37E /* manifest.json */; };
+		10C46A2A26D5288800EBD37E /* data in Resources */ = {isa = PBXBuildFile; fileRef = 10C46A1C26D5288800EBD37E /* data */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		10C469E926D5288700EBD37E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 10C469B526D5288600EBD37E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 10C469E626D5288700EBD37E;
+			remoteInfo = "DuckDuckGo Privacy Essentials for Safari Extension (iOS)";
+		};
+		10C469F326D5288700EBD37E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 10C469B526D5288600EBD37E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 10C469F026D5288700EBD37E;
+			remoteInfo = "DuckDuckGo Privacy Essentials for Safari Extension (macOS)";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		10C46A0A26D5288700EBD37E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				10C469E826D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C46A1126D5288700EBD37E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				10C469F226D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		10C469BC26D5288600EBD37E /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = Base; path = ../Base.lproj/Main.html; sourceTree = "<group>"; };
+		10C469BD26D5288600EBD37E /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		10C469BE26D5288600EBD37E /* Style.css */ = {isa = PBXFileReference; lastKnownFileType = text.css; path = Style.css; sourceTree = "<group>"; };
+		10C469BF26D5288600EBD37E /* Script.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Script.js; sourceTree = "<group>"; };
+		10C469C026D5288600EBD37E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		10C469C126D5288700EBD37E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		10C469C326D5288700EBD37E /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		10C469C826D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DuckDuckGo Privacy Essentials for Safari.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		10C469CB26D5288700EBD37E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		10C469CD26D5288700EBD37E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		10C469D026D5288700EBD37E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		10C469D326D5288700EBD37E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		10C469D526D5288700EBD37E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10C469DA26D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DuckDuckGo Privacy Essentials for Safari.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		10C469DC26D5288700EBD37E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		10C469DF26D5288700EBD37E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		10C469E126D5288700EBD37E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10C469E226D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DuckDuckGo Privacy Essentials for Safari.entitlements"; sourceTree = "<group>"; };
+		10C469E726D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "DuckDuckGo Privacy Essentials for Safari Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		10C469EC26D5288700EBD37E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10C469F126D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "DuckDuckGo Privacy Essentials for Safari Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		10C469F626D5288700EBD37E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10C46A1626D5288800EBD37E /* web_accessible_resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = web_accessible_resources; path = ../../build/safari14/dev/web_accessible_resources; sourceTree = "<group>"; };
+		10C46A1726D5288800EBD37E /* test */ = {isa = PBXFileReference; lastKnownFileType = folder; name = test; path = ../../build/safari14/dev/test; sourceTree = "<group>"; };
+		10C46A1826D5288800EBD37E /* html */ = {isa = PBXFileReference; lastKnownFileType = folder; name = html; path = ../../build/safari14/dev/html; sourceTree = "<group>"; };
+		10C46A1926D5288800EBD37E /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; name = img; path = ../../build/safari14/dev/img; sourceTree = "<group>"; };
+		10C46A1A26D5288800EBD37E /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; name = public; path = ../../build/safari14/dev/public; sourceTree = "<group>"; };
+		10C46A1B26D5288800EBD37E /* manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = manifest.json; path = ../../build/safari14/dev/manifest.json; sourceTree = "<group>"; };
+		10C46A1C26D5288800EBD37E /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../../build/safari14/dev/data; sourceTree = "<group>"; };
+		10D29A7126D5293D00B4B2E7 /* DuckDuckGo Privacy Essentials for Safari Extension (macOS).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "DuckDuckGo Privacy Essentials for Safari Extension (macOS).entitlements"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		10C469C526D5288700EBD37E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469D726D5288700EBD37E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469E426D5288700EBD37E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469EE26D5288700EBD37E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		10C469B426D5288600EBD37E = {
+			isa = PBXGroup;
+			children = (
+				10D29A7126D5293D00B4B2E7 /* DuckDuckGo Privacy Essentials for Safari Extension (macOS).entitlements */,
+				10C469B926D5288600EBD37E /* Shared (App) */,
+				10C469C226D5288700EBD37E /* Shared (Extension) */,
+				10C469CA26D5288700EBD37E /* iOS (App) */,
+				10C469DB26D5288700EBD37E /* macOS (App) */,
+				10C469EB26D5288700EBD37E /* iOS (Extension) */,
+				10C469F526D5288700EBD37E /* macOS (Extension) */,
+				10C469C926D5288700EBD37E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		10C469B926D5288600EBD37E /* Shared (App) */ = {
+			isa = PBXGroup;
+			children = (
+				10C469C026D5288600EBD37E /* ViewController.swift */,
+				10C469C126D5288700EBD37E /* Assets.xcassets */,
+				10C469BA26D5288600EBD37E /* Resources */,
+			);
+			path = "Shared (App)";
+			sourceTree = "<group>";
+		};
+		10C469BA26D5288600EBD37E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				10C469BB26D5288600EBD37E /* Main.html */,
+				10C469BD26D5288600EBD37E /* Icon.png */,
+				10C469BE26D5288600EBD37E /* Style.css */,
+				10C469BF26D5288600EBD37E /* Script.js */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		10C469C226D5288700EBD37E /* Shared (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				10C46A1526D5288800EBD37E /* Resources */,
+				10C469C326D5288700EBD37E /* SafariWebExtensionHandler.swift */,
+			);
+			path = "Shared (Extension)";
+			sourceTree = "<group>";
+		};
+		10C469C926D5288700EBD37E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				10C469C826D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.app */,
+				10C469DA26D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.app */,
+				10C469E726D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */,
+				10C469F126D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		10C469CA26D5288700EBD37E /* iOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				10C469CB26D5288700EBD37E /* AppDelegate.swift */,
+				10C469CD26D5288700EBD37E /* SceneDelegate.swift */,
+				10C469CF26D5288700EBD37E /* LaunchScreen.storyboard */,
+				10C469D226D5288700EBD37E /* Main.storyboard */,
+				10C469D526D5288700EBD37E /* Info.plist */,
+			);
+			path = "iOS (App)";
+			sourceTree = "<group>";
+		};
+		10C469DB26D5288700EBD37E /* macOS (App) */ = {
+			isa = PBXGroup;
+			children = (
+				10C469DC26D5288700EBD37E /* AppDelegate.swift */,
+				10C469DE26D5288700EBD37E /* Main.storyboard */,
+				10C469E126D5288700EBD37E /* Info.plist */,
+				10C469E226D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.entitlements */,
+			);
+			path = "macOS (App)";
+			sourceTree = "<group>";
+		};
+		10C469EB26D5288700EBD37E /* iOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				10C469EC26D5288700EBD37E /* Info.plist */,
+			);
+			path = "iOS (Extension)";
+			sourceTree = "<group>";
+		};
+		10C469F526D5288700EBD37E /* macOS (Extension) */ = {
+			isa = PBXGroup;
+			children = (
+				10C469F626D5288700EBD37E /* Info.plist */,
+			);
+			path = "macOS (Extension)";
+			sourceTree = "<group>";
+		};
+		10C46A1526D5288800EBD37E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				10C46A1626D5288800EBD37E /* web_accessible_resources */,
+				10C46A1726D5288800EBD37E /* test */,
+				10C46A1826D5288800EBD37E /* html */,
+				10C46A1926D5288800EBD37E /* img */,
+				10C46A1A26D5288800EBD37E /* public */,
+				10C46A1B26D5288800EBD37E /* manifest.json */,
+				10C46A1C26D5288800EBD37E /* data */,
+			);
+			name = Resources;
+			path = "Shared (Extension)";
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		10C469C726D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10C46A0B26D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari (iOS)" */;
+			buildPhases = (
+				10C469C426D5288700EBD37E /* Sources */,
+				10C469C526D5288700EBD37E /* Frameworks */,
+				10C469C626D5288700EBD37E /* Resources */,
+				10C46A0A26D5288700EBD37E /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10C469EA26D5288700EBD37E /* PBXTargetDependency */,
+			);
+			name = "DuckDuckGo Privacy Essentials for Safari (iOS)";
+			productName = "DuckDuckGo Privacy Essentials for Safari (iOS)";
+			productReference = 10C469C826D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.app */;
+			productType = "com.apple.product-type.application";
+		};
+		10C469D926D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10C46A1226D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari (macOS)" */;
+			buildPhases = (
+				10C469D626D5288700EBD37E /* Sources */,
+				10C469D726D5288700EBD37E /* Frameworks */,
+				10C469D826D5288700EBD37E /* Resources */,
+				10C46A1126D5288700EBD37E /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				10C469F426D5288700EBD37E /* PBXTargetDependency */,
+			);
+			name = "DuckDuckGo Privacy Essentials for Safari (macOS)";
+			productName = "DuckDuckGo Privacy Essentials for Safari (macOS)";
+			productReference = 10C469DA26D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari.app */;
+			productType = "com.apple.product-type.application";
+		};
+		10C469E626D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension (iOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10C46A0726D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari Extension (iOS)" */;
+			buildPhases = (
+				10C469E326D5288700EBD37E /* Sources */,
+				10C469E426D5288700EBD37E /* Frameworks */,
+				10C469E526D5288700EBD37E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DuckDuckGo Privacy Essentials for Safari Extension (iOS)";
+			productName = "DuckDuckGo Privacy Essentials for Safari Extension (iOS)";
+			productReference = 10C469E726D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		10C469F026D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 10C46A0E26D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari Extension (macOS)" */;
+			buildPhases = (
+				10C469ED26D5288700EBD37E /* Sources */,
+				10C469EE26D5288700EBD37E /* Frameworks */,
+				10C469EF26D5288700EBD37E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DuckDuckGo Privacy Essentials for Safari Extension (macOS)";
+			productName = "DuckDuckGo Privacy Essentials for Safari Extension (macOS)";
+			productReference = 10C469F126D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		10C469B526D5288600EBD37E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1300;
+				LastUpgradeCheck = 1300;
+				TargetAttributes = {
+					10C469C726D5288700EBD37E = {
+						CreatedOnToolsVersion = 13.0;
+					};
+					10C469D926D5288700EBD37E = {
+						CreatedOnToolsVersion = 13.0;
+					};
+					10C469E626D5288700EBD37E = {
+						CreatedOnToolsVersion = 13.0;
+					};
+					10C469F026D5288700EBD37E = {
+						CreatedOnToolsVersion = 13.0;
+					};
+				};
+			};
+			buildConfigurationList = 10C469B826D5288600EBD37E /* Build configuration list for PBXProject "DuckDuckGo Privacy Essentials for Safari" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 10C469B426D5288600EBD37E;
+			productRefGroup = 10C469C926D5288700EBD37E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				10C469C726D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari (iOS) */,
+				10C469D926D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari (macOS) */,
+				10C469E626D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension (iOS) */,
+				10C469F026D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension (macOS) */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		10C469C626D5288700EBD37E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C469F926D5288700EBD37E /* Icon.png in Resources */,
+				10C469D126D5288700EBD37E /* LaunchScreen.storyboard in Resources */,
+				10C469F726D5288700EBD37E /* Main.html in Resources */,
+				10C469FD26D5288700EBD37E /* Script.js in Resources */,
+				10C46A0126D5288700EBD37E /* Assets.xcassets in Resources */,
+				10C469D426D5288700EBD37E /* Main.storyboard in Resources */,
+				10C469FB26D5288700EBD37E /* Style.css in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469D826D5288700EBD37E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C469FA26D5288700EBD37E /* Icon.png in Resources */,
+				10C469FC26D5288700EBD37E /* Style.css in Resources */,
+				10C469E026D5288700EBD37E /* Main.storyboard in Resources */,
+				10C469FE26D5288700EBD37E /* Script.js in Resources */,
+				10C46A0226D5288700EBD37E /* Assets.xcassets in Resources */,
+				10C469F826D5288700EBD37E /* Main.html in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469E526D5288700EBD37E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C46A2826D5288800EBD37E /* public in Resources */,
+				10C46A2A26D5288800EBD37E /* data in Resources */,
+				10C46A2726D5288800EBD37E /* img in Resources */,
+				10C46A2526D5288800EBD37E /* test in Resources */,
+				10C46A2626D5288800EBD37E /* html in Resources */,
+				10C46A2926D5288800EBD37E /* manifest.json in Resources */,
+				10C46A2426D5288800EBD37E /* web_accessible_resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469EF26D5288700EBD37E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C46A2126D5288800EBD37E /* public in Resources */,
+				10C46A2326D5288800EBD37E /* data in Resources */,
+				10C46A2026D5288800EBD37E /* img in Resources */,
+				10C46A1E26D5288800EBD37E /* test in Resources */,
+				10C46A1F26D5288800EBD37E /* html in Resources */,
+				10C46A2226D5288800EBD37E /* manifest.json in Resources */,
+				10C46A1D26D5288800EBD37E /* web_accessible_resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		10C469C426D5288700EBD37E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C469FF26D5288700EBD37E /* ViewController.swift in Sources */,
+				10C469CC26D5288700EBD37E /* AppDelegate.swift in Sources */,
+				10C469CE26D5288700EBD37E /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469D626D5288700EBD37E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C46A0026D5288700EBD37E /* ViewController.swift in Sources */,
+				10C469DD26D5288700EBD37E /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469E326D5288700EBD37E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C46A0326D5288700EBD37E /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		10C469ED26D5288700EBD37E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10C46A0426D5288700EBD37E /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		10C469EA26D5288700EBD37E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 10C469E626D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension (iOS) */;
+			targetProxy = 10C469E926D5288700EBD37E /* PBXContainerItemProxy */;
+		};
+		10C469F426D5288700EBD37E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 10C469F026D5288700EBD37E /* DuckDuckGo Privacy Essentials for Safari Extension (macOS) */;
+			targetProxy = 10C469F326D5288700EBD37E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		10C469BB26D5288600EBD37E /* Main.html */ = {
+			isa = PBXVariantGroup;
+			children = (
+				10C469BC26D5288600EBD37E /* Base */,
+			);
+			name = Main.html;
+			sourceTree = "<group>";
+		};
+		10C469CF26D5288700EBD37E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				10C469D026D5288700EBD37E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		10C469D226D5288700EBD37E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				10C469D326D5288700EBD37E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		10C469DE26D5288700EBD37E /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				10C469DF26D5288700EBD37E /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		10C46A0526D5288700EBD37E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		10C46A0626D5288700EBD37E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		10C46A0826D5288700EBD37E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari.Extension";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		10C46A0926D5288700EBD37E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari.Extension";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari Extension";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		10C46A0C26D5288700EBD37E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		10C46A0D26D5288700EBD37E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		10C46A0F26D5288700EBD37E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "DuckDuckGo Privacy Essentials for Safari Extension (macOS).entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari.Extension";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		10C46A1026D5288700EBD37E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "DuckDuckGo Privacy Essentials for Safari Extension (macOS).entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (Extension)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari Extension";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari.Extension";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari Extension";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		10C46A1326D5288700EBD37E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/DuckDuckGo Privacy Essentials for Safari.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		10C46A1426D5288700EBD37E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "macOS (App)/DuckDuckGo Privacy Essentials for Safari.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKE973VLUW;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "macOS (App)/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "DuckDuckGo Privacy Essentials for Safari";
+				INFOPLIST_KEY_NSMainStoryboardFile = Main;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SafariServices,
+					"-framework",
+					WebKit,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari";
+				PRODUCT_NAME = "DuckDuckGo Privacy Essentials for Safari";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		10C469B826D5288600EBD37E /* Build configuration list for PBXProject "DuckDuckGo Privacy Essentials for Safari" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10C46A0526D5288700EBD37E /* Debug */,
+				10C46A0626D5288700EBD37E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10C46A0726D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari Extension (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10C46A0826D5288700EBD37E /* Debug */,
+				10C46A0926D5288700EBD37E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10C46A0B26D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari (iOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10C46A0C26D5288700EBD37E /* Debug */,
+				10C46A0D26D5288700EBD37E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10C46A0E26D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari Extension (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10C46A0F26D5288700EBD37E /* Debug */,
+				10C46A1026D5288700EBD37E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		10C46A1226D5288700EBD37E /* Build configuration list for PBXNativeTarget "DuckDuckGo Privacy Essentials for Safari (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				10C46A1326D5288700EBD37E /* Debug */,
+				10C46A1426D5288700EBD37E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 10C469B526D5288600EBD37E /* Project object */;
+}
