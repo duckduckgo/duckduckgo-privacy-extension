@@ -50,6 +50,8 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
 ### Safari web extension
 
+More info: https://app.asana.com/0/0/1200807500295004/f.
+
 To build the next-gen web extension for Safari, you need the Xcode 13 beta (when you're reading this it might already be released), the related Command Line Tools and Safari 15 beta or Technology Preview. You can find them all here: https://developer.apple.com/download/all/.
 
 If you need to recreate the project from scratch, switch the default CLI to the beta version by running:
