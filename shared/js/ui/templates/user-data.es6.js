@@ -11,17 +11,17 @@ module.exports = function () {
 function renderUserDataContent (model) {
     return (!model.userName)
         ? bel`<div>
-                <p class="menu-paragraph">Off</p>
+                <p class="menu-paragraph">Autofill disabled</p>
                 <p class="options-info">
-                    <a href="https://duckduckgo.com/email/enable-autofill">Add Duck Address</a>
+                    <a href="https://duckduckgo.com/email/enable-autofill">Enable</a>
                 </p>
             </div>`
         : bel`<div>
                 <p class="menu-paragraph">
-                    <span class="js-userdata-container">${formatAddress(model.userName)}</span>
+                    Autofill enabled for <strong class="js-userdata-container">${formatAddress(model.userName)}</strong>
                 </p>
                 <p class="options-info js-userdata-logout">
-                    <a href="#">Remove from browser</a>
+                    <a href="#">Disable</a>
                 </p>
             </div>`
 }
