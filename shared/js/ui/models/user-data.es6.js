@@ -13,7 +13,7 @@ UserData.prototype = window.$.extend({},
 
         logout () {
             this.fetch({ logout: true })
-                .then(() => this.set('loggingOut', true))
+                .then(() => this.set('userName', null))
         },
 
         setUserDataFromSettings: function () {
