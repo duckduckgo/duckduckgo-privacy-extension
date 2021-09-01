@@ -2,6 +2,7 @@ import { readFile } from 'fs/promises';
 import * as rollup from 'rollup';
 import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
+import resolve from '@rollup/plugin-node-resolve';
 import dynamicImportVariables from 'rollup-plugin-dynamic-import-variables';
 
 
@@ -14,6 +15,7 @@ async function generateContentScope() {
     const inputOptions = {
         input: 'shared/js/content-scope/protections.js',
         plugins: [
+            resolve(),
             dynamicImportVariables({}),
             commonjs(),
             replace({
@@ -28,7 +30,9 @@ async function generateContentScope() {
         dir: 'build',
         format: 'iife',
         inlineDynamicImports: true,
-        name: 'protections'
+        name: 'protections',
+        // This if for seedrandom causing build issues
+        globals: { crypto: 'undefined' }
     };
 
     const bundle = await rollup.rollup(inputOptions);
