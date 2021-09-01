@@ -1,0 +1,35 @@
+name: Stage Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: 'Release version'
+
+jobs:
+  release_pr:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 16
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - name: Install dependencies
+      run: |
+        npm i -g web-ext
+        npm ci
+    - name: Update submodules and version
+      run: |
+        git submodule update --remote shared/privacy-configuration/
+        npm run generate-etags
+        node scripts/bumpVersion.js ${{ github.event.inputs.version }}
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        commit-message: ${{ github.event.inputs.version }}
+        branch: "release-${{ github.event.inputs.version }}"
+        title: "Prepare release ${{ github.event.inputs.version }}"
+        body: ''
