@@ -29,7 +29,7 @@
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },
     "devDependencies": {
-        "@babel/cli": "^7.14.8",
+        "@babel/cli": "^7.15.4",
         "@babel/core": "^7.15.0",
         "@babel/node": "^7.14.9",
         "@babel/polyfill": "^7.10.4",
