@@ -33,7 +33,7 @@
         "@babel/core": "^7.15.5",
         "@babel/node": "^7.15.4",
         "@babel/polyfill": "^7.10.4",
-        "@babel/preset-env": "^7.15.0",
+        "@babel/preset-env": "^7.15.4",
         "@fingerprintjs/fingerprintjs": "^3.3.0",
         "@rollup/plugin-commonjs": "^20.0.0",
         "@rollup/plugin-node-resolve": "^13.0.4",
