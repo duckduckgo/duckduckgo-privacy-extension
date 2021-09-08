@@ -1,10 +1,14 @@
 const Parent = window.DDG.base.View
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const BreakageFormView = require('./../views/breakage-form.es6.js')
+const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 
 function BrokenSiteFooterView (ops) {
     this.model = ops.model
     this.pageView = ops.pageView
     this.template = ops.template
+
+    // cache 'body' selector
+    this.$body = window.$('body')
 
     // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
@@ -27,8 +31,13 @@ BrokenSiteFooterView.prototype = window.$.extend({},
         _openBreakageForm: function (e) {
             e.preventDefault()
 
-            browserUIWrapper.startBreakageFlow(this.model.tab.id)
-            browserUIWrapper.closePopup()
+            this.views.breakageForm = new BreakageFormView({
+                siteView: this,
+                template: breakageFormTemplate,
+                model: this.model,
+                appendTo: this.$body,
+                clickSource: 'breakage-footer'
+            })
         },
 
         _setup: function () {

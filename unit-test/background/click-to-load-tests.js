@@ -1,28 +1,23 @@
-const chromeWrapper = require('../../shared/js/background/chrome-wrapper.es6.js')
+const chromeWrapper = require('../../shared/js/background/wrapper.es6.js')
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 const redirect = require('../../shared/js/background/redirect.es6')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
-const trackerutils = require('../../shared/js/background/tracker-utils')
 const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let tabObserver
     let managerObserver
-    let chromeObserver
-    let popupObserver
-    let experimentObserver
 
     beforeAll(() => {
         tdsStorageStub.stub()
         settings.updateSetting('activeExperiment', true)
         settings.updateSetting('experimentData', { blockFacebook: true })
         /* eslint-disable no-unused-vars */
-        experimentObserver = spyOn(trackerutils, 'facebookExperimentIsActive').and.returnValue(true)
-        chromeObserver = spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
-        popupObserver = spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
+        spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
+        spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
         tabObserver = spyOn(Tab, 'constructor')
         managerObserver = spyOn(tabManager, 'get')
         tdsStorage.getLists()
@@ -43,7 +38,7 @@ describe('Tracker Utilities', () => {
                 addOrUpdateTrackersBlocked: () => {},
                 addWebResourceAccess: () => {},
                 site: {
-                    whitelisted: false,
+                    allowlisted: false,
                     clickToLoad: []
                 }
             }

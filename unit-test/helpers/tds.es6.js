@@ -4,13 +4,20 @@
  */
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsData = {
-    brokenSiteList: require('./../data/brokensites.js').brokenSites.split('\n'),
-    protections: require('./../data/protections.json'),
     tds: require('./../data/tds.json'),
     surrogates: require('./../data/surrogates.js').surrogates,
-    ReferrerExcludeList: require('./../data/fpExcludeLists.js').referrer,
-    ClickToLoadConfig: require('./../data/clickToLoadConfig.json')
+    ClickToLoadConfig: require('./../data/clickToLoadConfig.json'),
+    config: require('./../data/extension-config.json')
 }
+
+tdsData.config.features.trackerAllowlist = {
+    state: 'enabled',
+    settings: {
+        allowlistedTrackers: require('./../background/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
+    }
+}
+
+tdsStorage.config = tdsData.config
 
 const stub = () => {
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')

@@ -1,6 +1,7 @@
 const Parent = window.DDG.base.View
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
+const { IS_BETA } = require('../../background/channel.es6.js')
 
 function HamburgerMenu (ops) {
     this.model = ops.model
@@ -21,7 +22,8 @@ HamburgerMenu.prototype = window.$.extend({},
                 'close',
                 'options-link',
                 'feedback-link',
-                'broken-site-link'
+                'broken-site-link',
+                'debugger-panel-link'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeMenu],
@@ -29,8 +31,12 @@ HamburgerMenu.prototype = window.$.extend({},
                 [this.$feedbacklink, 'click', this._handleFeedbackClick],
                 [this.$brokensitelink, 'click', this._handleBrokenSiteClick],
                 [this.model.store.subscribe, 'action:search', this._handleAction],
-                [this.model.store.subscribe, 'change:site', this._handleSiteUpdate]
+                [this.model.store.subscribe, 'change:site', this._handleSiteUpdate],
+                [this.$debuggerpanellink, 'click', this._handleDebuggerClick]
             ])
+            if (IS_BETA) {
+                this.$('#debugger-panel').removeClass('is-hidden')
+            }
         },
 
         _handleAction: function (notification) {
@@ -64,6 +70,16 @@ HamburgerMenu.prototype = window.$.extend({},
                 this._rerender()
                 this._setup()
             }
+        },
+
+        _handleDebuggerClick: function (e) {
+            e.preventDefault()
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                const tabId = tabs.length > 0 ? tabs[0].id : ''
+                chrome.tabs.create({
+                    url: chrome.runtime.getURL(`/html/devtools-panel.html?tabId=${tabId}`)
+                })
+            })
         }
     }
 )

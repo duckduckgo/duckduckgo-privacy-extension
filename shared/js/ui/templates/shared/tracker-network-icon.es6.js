@@ -1,9 +1,9 @@
 const bel = require('bel')
 
-module.exports = function (siteRating, isWhitelisted, totalTrackerNetworksCount) {
+module.exports = function (siteRating, isAllowlisted, totalTrackerNetworksCount) {
     let iconNameModifier = 'blocked'
 
-    if (isWhitelisted && (siteRating.before === 'D') && (totalTrackerNetworksCount !== 0)) {
+    if (isAllowlisted && (siteRating.before === 'D') && (totalTrackerNetworksCount !== 0)) {
         iconNameModifier = 'warning'
     }
 

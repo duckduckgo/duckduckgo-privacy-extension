@@ -29,6 +29,12 @@ module.exports = function () {
                     <span>If a site's not working, please tell us.</span>
                 </a>
             </li>
+            <li class="is-hidden" id="debugger-panel">
+                <a href="javascript:void(0)" class="menu-title js-hamburger-menu-debugger-panel-link">
+                    Protection debugger panel
+                    <span>Debug privacy protections on a page.</span>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>`

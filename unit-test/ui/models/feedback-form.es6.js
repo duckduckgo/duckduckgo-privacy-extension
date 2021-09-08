@@ -1,5 +1,5 @@
 const FeedbackForm = require('../../../shared/js/ui/models/feedback-form.es6')
-const browserUIWrapper = require('../../../shared/js/ui/base/$BROWSER-ui-wrapper.es6')
+const browserUIWrapper = require('../../../shared/js/ui/base/ui-wrapper.es6')
 
 let feedbackForm
 

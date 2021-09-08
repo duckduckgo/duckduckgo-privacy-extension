@@ -1,10 +1,28 @@
 # DuckDuckGo Browser Extensions
 
-[![Build Status](https://travis-ci.org/duckduckgo/duckduckgo-privacy-extension.svg?branch=develop)](https://travis-ci.org/duckduckgo/duckduckgo-privacy-extension)
+[![Build Status](https://github.com/duckduckgo/duckduckgo-privacy-extension/actions/workflows/build.yml/badge.svg)](https://github.com/duckduckgo/duckduckgo-privacy-extension/actions/workflows/build.yml)
+[![Build Status](https://github.com/duckduckgo/duckduckgo-privacy-extension/actions/workflows/tests.yml/badge.svg)](https://github.com/duckduckgo/duckduckgo-privacy-extension/actions/workflows/tests.yml)
 
 DuckDuckGo Firefox, Chrome, and Edge extensions
 
 DuckDuckGo Privacy Extensions is distributed under the Apache 2.0 [License](LICENSE.md).
+
+## Features
+
+The extension provides users with an improved private browsing experience whilst maintaining "Privacy Simplified".
+
+- [Removes known trackers from web pages](https://spreadprivacy.com/duckduckgo-tracker-radar/)
+  - Supports shims/surrogates - replaces some of the tracking scripts with stand-in's to avoid breakage
+  - Uncloaks CNAME'd trackers
+- [Upgrades HTTP connections to be encrypted where possible](https://help.duckduckgo.com/duckduckgo-help-pages/privacy/smarter-encryption/)
+- [Announces to a website they must not track or sell on your data](https://globalprivacycontrol.org/)
+- Trims referrer header data
+- Reduced fingerprintability of various browser features
+- Removes FLoC from Chromium based browsers
+- Cookies
+  - Reduces expiry of first party cookies set by third-party tracking scripts
+  - Blocks third party cookies from known trackers
+- Click to load for Facebook widgets
 
 ## Latest Versions
 

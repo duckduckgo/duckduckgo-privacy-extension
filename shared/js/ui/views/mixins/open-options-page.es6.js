@@ -1,4 +1,4 @@
-const browserUIWrapper = require('./../../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../../base/ui-wrapper.es6.js')
 
 module.exports = {
     openOptionsPage: function () {

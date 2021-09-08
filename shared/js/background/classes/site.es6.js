@@ -11,11 +11,15 @@ const utils = require('../utils.es6')
 const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
-const browserWrapper = require('../$BROWSER-wrapper.es6')
+const browserWrapper = require('../wrapper.es6')
 
 class Site {
     constructor (url) {
         this.url = url || ''
+
+        // Retain any www. prefix for our broken site lists
+        let domainWWW = utils.extractHostFromURL(this.url, true) || ''
+        domainWWW = domainWWW.toLowerCase()
 
         let domain = utils.extractHostFromURL(this.url) || ''
         domain = domain.toLowerCase()
@@ -23,12 +27,18 @@ class Site {
         this.domain = domain
         this.trackerUrls = []
         this.grade = new Grade()
-        this.whitelisted = false // user-whitelisted sites; applies to all privacy features
-        this.whitelistOptIn = false
-        this.setWhitelistStatusFromGlobal(domain)
+        this.allowlisted = false // user-allowlisted sites; applies to all privacy features
+        this.allowlistOptIn = false
+        this.denylisted = false
+        this.setListStatusFromGlobal(domain)
 
-        this.isBroken = utils.isBroken(domain) // broken sites reported to github repo
-        this.brokenFeatures = utils.getBrokenFeatures(domain) // site issues reported to github repo
+        /**
+         * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
+         * This would make the list apply to a much larger audience than is required.
+         * The other allowlisting code is different and probably should be changed to match.
+         */
+        this.isBroken = utils.isBroken(domainWWW) // broken sites reported to github repo
+        this.brokenFeatures = utils.getBrokenFeatures(domainWWW) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)
@@ -54,30 +64,47 @@ class Site {
     }
 
     /*
-     * When site objects are created we check the stored whitelists
-     * and set the new site whitelist statuses
+     * When site objects are created we check the stored lists
+     * and set the new site list statuses
      */
-    setWhitelistStatusFromGlobal () {
-        const globalwhitelists = ['whitelisted', 'whitelistOptIn']
-        globalwhitelists.forEach((name) => {
+    setListStatusFromGlobal () {
+        const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
+        globalLists.forEach((name) => {
             const list = settings.getSetting(name) || {}
-            this.setWhitelisted(name, list[this.domain])
+            this.setListValue(name, list[this.domain])
         })
     }
 
-    setWhitelisted (name, value) {
-        this[name] = value
+    setListValue (listName, value) {
+        this[listName] = value
     }
 
     /*
-     * Send message to the popup to rerender the whitelist
+     * Send message to the popup to rerender the allowlist
      */
-    notifyWhitelistChanged () {
+    notifyAllowlistChanged () {
         // this can send an error message when the popup is not open check lastError to hide it
-        chrome.runtime.sendMessage({ whitelistChanged: true }, () => chrome.runtime.lastError)
+        chrome.runtime.sendMessage({ allowlistChanged: true }, () => chrome.runtime.lastError)
     }
 
-    isWhiteListed () { return this.whitelisted }
+    isContentBlockingEnabled () {
+        return this.isFeatureEnabled('contentBlocking')
+    }
+
+    isProtectionEnabled () {
+        if (this.denylisted) {
+            return true
+        }
+        // Check if user has allowed disabled blocking or it's a known broken site.
+        return !(this.allowlisted || this.isBroken)
+    }
+
+    isFeatureEnabled (featureName) {
+        if (this.denylisted) {
+            return true
+        }
+        return this.isProtectionEnabled() && !this.brokenFeatures.includes(featureName)
+    }
 
     addTracker (t) {
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {

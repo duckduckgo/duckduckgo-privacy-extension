@@ -1,5 +1,8 @@
-/* global exportFunction */
+/* global exportFunction, mozProxies */
 import sjcl from './sjcl'
+
+// Tests don't define this variable so fallback to behave like chrome
+const hasMozProxies = typeof mozProxies !== 'undefined' ? mozProxies : false
 
 export function getDataKeySync (sessionKey, domainKey, inputData) {
     // eslint-disable-next-line new-cap
@@ -22,8 +25,11 @@ export function shouldExemptUrl (type, url) {
     return false
 }
 
+let debug = false
+
 export function initStringExemptionLists (args) {
     const { stringExemptionLists } = args
+    debug = args.debug
     for (const type in stringExemptionLists) {
         exemptionLists[type] = []
         for (const stringExemption of stringExemptionLists[type]) {
@@ -34,6 +40,10 @@ export function initStringExemptionLists (args) {
 
 // Checks the stack trace if there are known libraries that are broken.
 export function shouldExemptMethod (type) {
+    // Short circuit stack tracing if we don't have checks
+    if (exemptionLists[type].length === 0) {
+        return false
+    }
     try {
         const errorLines = new Error().stack.split('\n')
         const errorFiles = new Set()
@@ -65,7 +75,11 @@ export function iterateDataKey (key, callback) {
     for (const i in key) {
         let byte = key.charCodeAt(i)
         for (let j = 8; j >= 0; j--) {
-            callback(item, byte)
+            const res = callback(item, byte)
+            // Exit early if callback returns null
+            if (res === null) {
+                return
+            }
 
             // find next item to perturb
             item = nextRandom(item)
@@ -105,11 +119,8 @@ export function overrideProperty (name, prop) {
     return prop.origValue
 }
 
-// TODO make rollup aware of this so it can tree shake
-const mozProxies = 'wrappedJSObject' in window
-
 export function defineProperty (object, propertyName, descriptor) {
-    if (mozProxies) {
+    if (hasMozProxies) {
         const usedObj = object.wrappedJSObject
         const UsedObjectInterface = window.wrappedJSObject.Object
         const definedDescriptor = new UsedObjectInterface();
@@ -130,26 +141,51 @@ export function defineProperty (object, propertyName, descriptor) {
     }
 }
 
+function camelcase (dashCaseText) {
+    return dashCaseText.replace(/-(.)/g, (match, letter) => {
+        return letter.toUpperCase()
+    })
+}
+
 export class DDGProxy {
-    constructor (objectScope, property, proxyObject) {
+    constructor (featureName, objectScope, property, proxyObject) {
         this.objectScope = objectScope
         this.property = property
-        if (mozProxies) {
+        this.featureName = featureName
+        this.camelFeatureName = camelcase(this.featureName)
+        const outputHandler = (...args) => {
+            const isExempt = shouldExemptMethod(this.camelFeatureName)
+            if (debug) {
+                postDebugMessage(this.camelFeatureName, {
+                    action: isExempt ? 'ignore' : 'restrict',
+                    kind: this.property,
+                    documentUrl: document.location.href,
+                    stack: new Error().stack,
+                    args: JSON.stringify(args[2])
+                })
+            }
+            // The normal return value
+            if (isExempt) {
+                return DDGReflect.apply(...args)
+            }
+            return proxyObject.apply(...args)
+        }
+        if (hasMozProxies) {
             this._native = objectScope[property]
             const handler = new window.wrappedJSObject.Object()
-            handler.apply = exportFunction(proxyObject.apply, window)
+            handler.apply = exportFunction(outputHandler, window)
             this.internal = new window.wrappedJSObject.Proxy(objectScope.wrappedJSObject[property], handler)
         } else {
             this._native = objectScope[property]
             const handler = {}
-            handler.apply = proxyObject.apply
+            handler.apply = outputHandler
             this.internal = new window.Proxy(objectScope[property], handler)
         }
     }
 
     // Actually apply the proxy to the native property
     overload () {
-        if (mozProxies) {
+        if (hasMozProxies) {
             exportFunction(this.internal, this.objectScope, { defineAs: this.property })
         } else {
             this.objectScope[this.property] = this.internal
@@ -157,9 +193,16 @@ export class DDGProxy {
     }
 }
 
+export function postDebugMessage (feature, message) {
+    window.postMessage({
+        action: feature,
+        message
+    })
+}
+
 export let DDGReflect
 
-if (mozProxies) {
+if (hasMozProxies) {
     DDGReflect = window.wrappedJSObject.Reflect
 } else {
     DDGReflect = window.Reflect

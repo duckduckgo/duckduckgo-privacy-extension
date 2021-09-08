@@ -30,7 +30,7 @@ const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
-const browserWrapper = require('./../$BROWSER-wrapper.es6')
+const browserWrapper = require('./../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 
 class Tab {
@@ -64,24 +64,19 @@ class Tab {
 
     updateBadgeIcon (target) {
         if (this.site.specialDomainName) return
+        let gradeIcon
+        const grade = this.site.grade.get()
 
-        if (this.site.isBroken) {
-            this.resetBadgeIcon()
+        if (this.site.isContentBlockingEnabled()) {
+            gradeIcon = gradeIconLocations[grade.enhanced.grade]
         } else {
-            let gradeIcon
-            const grade = this.site.grade.get()
-
-            if (this.site.whitelisted) {
-                gradeIcon = gradeIconLocations[grade.site.grade]
-            } else {
-                gradeIcon = gradeIconLocations[grade.enhanced.grade]
-            }
-
-            const badgeData = { path: gradeIcon, tabId: this.id }
-            if (target) badgeData.target = target
-
-            browserWrapper.setBadgeIcon(badgeData)
+            gradeIcon = gradeIconLocations[grade.site.grade]
         }
+
+        const badgeData = { path: gradeIcon, tabId: this.id }
+        if (target) badgeData.target = target
+
+        browserWrapper.setBadgeIcon(badgeData)
     }
 
     updateSite (url) {

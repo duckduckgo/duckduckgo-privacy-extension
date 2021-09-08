@@ -5,17 +5,18 @@ module.exports = function (site, ops) {
     const status = siteRatingStatus(
         site.isCalculatingSiteRating,
         site.siteRating,
-        site.isWhitelisted
+        site.isAllowlisted
     )
     const subtitle = siteRatingSubtitle(
         site.isCalculatingSiteRating,
         site.siteRating,
-        site.isWhitelisted
+        site.isAllowlisted,
+        site.isBroken
     )
     const label = subtitleLabel(
         site.isCalculatingSiteRating,
         site.siteRating,
-        site.isWhitelisted
+        site.isAllowlisted
     )
 
     return bel`<div class="rating-hero-container js-rating-hero">
@@ -30,14 +31,14 @@ module.exports = function (site, ops) {
 </div>`
 }
 
-function siteRatingStatus (isCalculating, rating, isWhitelisted) {
+function siteRatingStatus (isCalculating, rating, isAllowlisted) {
     let status
     let isActive = ''
 
     if (isCalculating) {
         status = 'calculating'
     } else if (rating && rating.before) {
-        isActive = isWhitelisted ? '' : '--active'
+        isActive = isAllowlisted ? '' : '--active'
 
         if (isActive && rating.after) {
             status = rating.cssAfter
@@ -51,9 +52,12 @@ function siteRatingStatus (isCalculating, rating, isWhitelisted) {
     return status + isActive
 }
 
-function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
+function siteRatingSubtitle (isCalculating, rating, isAllowlisted, isBroken) {
     let isActive = true
-    if (isWhitelisted) isActive = false
+    if (isBroken) {
+        return ''
+    }
+    if (isAllowlisted) isActive = false
     // site grade/rating was upgraded by extension
     if (isActive && rating && rating.before && rating.after) {
         if (rating.before !== rating.after) {
@@ -67,7 +71,7 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
 
     // deal with other states
     let msg = 'Privacy Grade'
-    // site is whitelisted
+    // site is allowlisted
     if (!isActive) {
         msg = 'Privacy Protection Disabled'
         // "null" state (empty tab, browser's "about:" pages)
@@ -83,10 +87,10 @@ function siteRatingSubtitle (isCalculating, rating, isWhitelisted) {
 
 // to avoid duplicating messages between the icon and the subtitle,
 // we combine information for both here
-function subtitleLabel (isCalculating, rating, isWhitelisted) {
+function subtitleLabel (isCalculating, rating, isAllowlisted) {
     if (isCalculating) return
 
-    if (isWhitelisted && rating.before) {
+    if (isAllowlisted && rating.before) {
         return `Privacy Protection Disabled, Privacy Grade ${rating.before}`
     }
 

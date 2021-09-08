@@ -30,20 +30,5 @@ module.exports = {
                 }
             }
         }
-    },
-    u: {
-        name: 'Facebook click to load experiment',
-        description: 'Test blocking all Facebook and replacing it with clickable elements.',
-        active: true,
-        atbExperiments: {
-            d: {
-                description: 'Facebook blocking experiment group',
-                settings: {
-                    experimentData: {
-                        blockFacebook: true
-                    }
-                }
-            }
-        }
     }
 }

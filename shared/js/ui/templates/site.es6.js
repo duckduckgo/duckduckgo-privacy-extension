@@ -16,6 +16,9 @@ module.exports = function () {
         showOpen: !this.model.disabled
     })}
         </li>
+        <li class="text--center padded border--bottom warning_bg bold ${this.model.displayBrokenUI ? '' : 'is-hidden'}">
+            We temporarily disabled Privacy Protection as it appears to be breaking this site.
+        </li>
         <li class="site-info__li--https-status padded border--bottom">
             <p class="site-info__https-status bold">
                 <span class="site-info__https-status__icon
@@ -43,11 +46,11 @@ module.exports = function () {
     </ul>
 </div>`
 
-    function setTransitionText (isSiteWhitelisted) {
-        isSiteWhitelisted = isSiteWhitelisted || false
+    function setTransitionText (isSiteAllowlisted) {
+        isSiteAllowlisted = isSiteAllowlisted || false
         let text = 'Added to Unprotected Sites'
 
-        if (isSiteWhitelisted) {
+        if (isSiteAllowlisted) {
             text = 'Removed from Unprotected Sites'
         }
 
@@ -55,19 +58,19 @@ module.exports = function () {
     }
 
     function renderTrackerNetworks (model) {
-        const isActive = !model.isWhitelisted ? 'is-active' : ''
+        const isActive = model.protectionsEnabled ? 'is-active' : ''
 
         return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
     <span class="site-info__trackers-status__icon
-        icon-${trackerNetworksIcon(model.siteRating, model.isWhitelisted, model.totalTrackerNetworksCount)}"></span>
+        icon-${trackerNetworksIcon(model.siteRating, !model.protectionsEnabled, model.totalTrackerNetworksCount)}"></span>
     <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
     <span class="icon icon__arrow pull-right"></span>
 </a>`
     }
 
-    function renderManageWhitelist (model) {
+    function renderManageAllowlist (model) {
         return bel`<div>
-    <a href="javascript:void(0)" class="js-site-manage-whitelist site-info__manage-whitelist link-secondary bold">
+    <a href="javascript:void(0)" class="js-site-manage-allowlist site-info__manage-allowlist link-secondary bold">
         Unprotected Sites
     </a>
     <div class="separator"></div>

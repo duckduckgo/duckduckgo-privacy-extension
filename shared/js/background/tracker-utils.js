@@ -32,7 +32,7 @@ function isTracker (url) {
 }
 
 /**
- * Determine if the social entity should be blockedon this URL. returns True if so.
+ * Determine if the social entity should be blocked on this URL. returns True if so.
  */
 function shouldBlockSocialNetwork (entity, url) {
     const domain = tldts.parse(url).domain
@@ -71,9 +71,6 @@ function getDomainsToExludeByNetwork () {
 
 // Return true if URL is in our click to load tracker list
 function getSocialTracker (url) {
-    if (!facebookExperimentIsActive()) {
-        return
-    }
     const parsedDomain = tldts.parse(url)
     for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
@@ -93,19 +90,6 @@ function getSocialTracker (url) {
             }
         }
     }
-}
-
-// Return true when click to load should be enabled
-function facebookExperimentIsActive () {
-    // Check for experiment
-    const activeExperiment = settings.getSetting('activeExperiment')
-    if (activeExperiment) {
-        const experiment = settings.getSetting('experimentData')
-        if (experiment && experiment.blockFacebook) {
-            return true
-        }
-    }
-    return false
 }
 
 // Determine if a given URL is surrogate redirect.
@@ -174,17 +158,9 @@ function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    if (tdsStorage.ReferrerExcludeList && tdsStorage.ReferrerExcludeList.excludedReferrers) {
-        const excludedDomains = tdsStorage.ReferrerExcludeList.excludedReferrers.map(e => e.domain)
-        try {
-            if (excludedDomains.includes(tldts.parse(referrer).domain) ||
-                excludedDomains.includes(tldts.parse(target).domain)) {
-                // referrer or target is in the Referrer safe list
-                return undefined
-            }
-        } catch (e) {
-            // if we can't parse the domains for any reason, assume it's not exluded.
-        }
+    const exceptionList = tdsStorage.config.features.referrer.exceptions
+    if (utils.brokenListIndex(referrer, exceptionList) !== -1 || utils.brokenListIndex(target, exceptionList) !== -1) {
+        return undefined
     }
 
     let modifiedReferrer = referrer
@@ -230,6 +206,5 @@ module.exports = {
     getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
     getXraySurrogate: getXraySurrogate,
     allowSocialLogin: allowSocialLogin,
-    facebookExperimentIsActive: facebookExperimentIsActive,
     isFirstPartyByEntity: isFirstPartyByEntity
 }

@@ -62,13 +62,6 @@ BreakageForm.prototype = window.$.extend({},
         },
 
         _selectCategory: function () {
-            if (this.$dropdown.val()) {
-                this.$submit.removeClass('btn-disabled')
-                this.$submit.attr('disabled', false)
-            } else if (!this.$submit.hasClass('btn-disabled')) {
-                this.$submit.addClass('btn-disabled')
-                this.$submit.attr('disabled', true)
-            }
         }
     }
 )

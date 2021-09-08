@@ -141,9 +141,6 @@
     .is-browser--moz & {
         background-image: url("moz-extension://#{$asset-path}#{$image}");
     }
-    .is-browser--safari & {
-        background-image: url("../../img/#{$image}");
-    }
 }
 
 /* Sliding subviews */

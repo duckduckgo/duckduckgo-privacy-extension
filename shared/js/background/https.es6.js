@@ -4,7 +4,7 @@ const BloomFilter = require('@duckduckgo/jsbloom').filter
 const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 const tldts = require('tldts')
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
@@ -147,10 +147,8 @@ class HTTPS {
             return reqUrl
         }
 
-        // Skip upgrading sites that have been whitelisted by user
-        // via on/off toggle in popup
-        if (tab.site.whitelisted) {
-            console.log(`HTTPS: ${tab.site.domain} was whitelisted by user. Skip upgrade check.`)
+        // Skip upgrading sites that have been disabled by user or through broken sites
+        if (!tab || !tab.site.isFeatureEnabled('https')) {
             return reqUrl
         }
 

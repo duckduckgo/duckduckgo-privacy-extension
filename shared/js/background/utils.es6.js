@@ -154,53 +154,88 @@ function getAsyncBlockingSupport () {
  * check to see if this is a broken site reported on github
 */
 function isBroken (url) {
-    if (!tdsStorage?.brokenSiteList) return
-    return isBrokenList(url, tdsStorage.brokenSiteList)
+    if (!tdsStorage?.config.unprotectedTemporary) return
+    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
 }
 
-function getBrokenFeatures (url) {
-    if (!tdsStorage?.protections) return
+function removeBroken (domain) {
+    const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
+    if (index !== -1) {
+        console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
+    }
+}
+
+function getBrokenFeaturesAboutBlank (url) {
+    if (!tdsStorage.config.features) return
     const brokenFeatures = []
-    for (const feature in tdsStorage.protections) {
-        if (!tdsStorage.protections[feature]?.enabled) {
+    for (const feature in tdsStorage.config.features) {
+        const featureSettings = getFeatureSettings(feature)
+
+        if (featureSettings.aboutBlankEnabled === 'disabled') {
             brokenFeatures.push(feature)
         }
-        if (isBrokenList(url, tdsStorage.protections[feature].sites || [])) {
+        if (brokenListIndex(url, featureSettings.aboutBlankSites || []) !== -1) {
             brokenFeatures.push(feature)
         }
     }
     return brokenFeatures
 }
 
-function isBrokenList (url, lists) {
+function getBrokenFeatures (url) {
+    if (!tdsStorage.config.features) return
+    const brokenFeatures = []
+    for (const feature in tdsStorage.config.features) {
+        if (!isFeatureEnabled(feature)) {
+            brokenFeatures.push(feature)
+        }
+        if (brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
+            brokenFeatures.push(feature)
+        }
+    }
+    return brokenFeatures
+}
+
+function brokenListIndex (url, list) {
     const parsedDomain = tldts.parse(url)
     const hostname = parsedDomain.hostname || url
 
     // If root domain in temp unprotected list, return true
-    return lists.some((brokenSiteDomain) => {
-        if (brokenSiteDomain) {
-            return hostname.match(new RegExp(brokenSiteDomain + '$'))
+    return list.findIndex((brokenSiteDomain) => {
+        if (brokenSiteDomain.domain) {
+            return hostname === brokenSiteDomain.domain ||
+                   hostname.endsWith(`.${brokenSiteDomain.domain}`)
         }
         return false
     })
 }
 
+function isFeatureBrokenForURL (url, feature) {
+    const exceptionList = tdsStorage.config.features[feature]?.exceptions
+    if (!exceptionList || exceptionList.length === 0) {
+        return false
+    }
+
+    return brokenListIndex(url, exceptionList) !== -1
+}
+
 // We inject this into content scripts
 function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in tdsStorage?.protections) {
-        brokenScripts[key] = tdsStorage.protections[key]?.scripts || []
+    for (const key in tdsStorage.config.features) {
+        const featureSettings = getFeatureSettings(key)
+        brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
     }
     return brokenScripts
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
-// tabManager.site.whitelisted is the preferred method.
+// tabManager.site.isProtectionEnabled() is the preferred method.
 function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
-    const safeList = settings.getSetting('whitelisted')
+    const safeList = settings.getSetting('allowlisted')
     const subdomains = hostname.split('.')
     // Check user safe list
+    // TODO make the same as brokenListIndex matching
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {
             return true
@@ -211,6 +246,30 @@ function isSafeListed (url) {
     // Check broken sites
     if (isBroken(hostname)) {
         return true
+    }
+
+    return false
+}
+
+function isCookieExcluded (url) {
+    const domain = (new URL(url)).host
+    return isDomainCookieExcluded(domain)
+}
+
+function isDomainCookieExcluded (domain) {
+    const cookieSettings = getFeatureSettings('trackingCookies3p')
+    if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
+        return false
+    }
+
+    if (cookieSettings.excludedCookieDomains.find(elem => elem.domain === domain)) {
+        return true
+    }
+
+    const comps = domain.split('.')
+    if (comps.length > 2) {
+        comps.shift()
+        return isDomainCookieExcluded(comps.join('.'))
     }
 
     return false
@@ -263,6 +322,38 @@ function isSameTopLevelDomain (url1, url2) {
     return firstDomain === secondDomain
 }
 
+/**
+ * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
+ * parameter to check if the state is equeal to other states (i.e. state === 'beta').
+ *
+ * @param {String} featureName - the name of the feature
+ * @param {String} customState - An optional custom state to check for
+ * @returns {bool} - if feature is enabled
+ */
+function isFeatureEnabled (featureName) {
+    const feature = tdsStorage.config.features[featureName]
+    if (!feature) {
+        return false
+    }
+
+    return feature.state === 'enabled'
+}
+
+/**
+ * Returns the settings object associated with featureName in the config
+ *
+ * @param {String} featureName - the name of the feature
+ * @returns {Object} - Settings associated in the config with featureName
+ */
+function getFeatureSettings (featureName) {
+    const feature = tdsStorage.config.features[featureName]
+    if (typeof feature !== 'object' || feature === null || !feature.settings) {
+        return {}
+    }
+
+    return feature.settings
+}
+
 module.exports = {
     extractHostFromURL,
     extractTopSubdomainFromHost,
@@ -275,10 +366,16 @@ module.exports = {
     getBeaconName,
     getUpdatedRequestListenerTypes,
     isSafeListed,
+    isCookieExcluded,
     extractLimitedDomainFromURL,
-    isBroken,
+    brokenListIndex,
+    isFeatureBrokenForURL,
     getBrokenFeatures,
+    getBrokenFeaturesAboutBlank,
+    isBroken,
     imgToData,
     getBrokenScriptLists,
-    isSameTopLevelDomain
+    isSameTopLevelDomain,
+    getFeatureSettings,
+    removeBroken
 }

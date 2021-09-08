@@ -7,9 +7,11 @@ const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
+const devtools = require('./devtools.es6')
 const browser = utils.getBrowserName()
+const trackerAllowlist = require('./allowlisted-trackers.es6')
 
 const debugRequest = false
 
@@ -56,8 +58,6 @@ function handleRequest (requestData) {
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    //
-    // Safari doesn't have specific requests for main frames
     if (requestData.type === 'main_frame' && window.chrome) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             const newTab = tabManager.create(requestData)
@@ -81,20 +81,12 @@ function handleRequest (requestData) {
          */
         if (!(thisTab && thisTab.url && thisTab.id)) return
 
-        /**
-         * skip any broken sites
-         */
-        if (thisTab.site.isBroken) {
-            console.log('temporarily skip tracker blocking for site: ' +
-              utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
-            return
-        }
-
         // skip blocking on new tab and extension pages
         if (thisTab.site.specialDomainName) {
             return
         }
+
+        const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
         /**
          * Tracker blocking
@@ -106,26 +98,58 @@ function handleRequest (requestData) {
          * Click to Load Blocking
          * If it isn't in the tracker list, check the clickToLoad block list
          */
-        const socialTracker = trackerutils.getSocialTracker(requestData.url)
-        if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
-            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
-                !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
-                !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
-                // TDS doesn't block social sites by default, so update the action & redirect for click to load.
-                tracker.action = 'block'
-                if (socialTracker.redirectUrl) {
-                    tracker.action = 'redirect'
-                    tracker.reason = 'matched rule - surrogate'
-                    tracker.redirectUrl = socialTracker.redirectUrl
-                    if (!tracker.matchedRule) {
-                        tracker.matchedRule = {}
+        if (thisTab.site.isFeatureEnabled('clickToPlay')) {
+            const socialTracker = trackerutils.getSocialTracker(requestData.url)
+            if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
+                if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
+                    !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
+                    !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
+                    // TDS doesn't block social sites by default, so update the action & redirect for click to load.
+                    tracker.action = 'block'
+                    if (socialTracker.redirectUrl) {
+                        tracker.action = 'redirect'
+                        tracker.reason = 'matched rule - surrogate'
+                        tracker.redirectUrl = socialTracker.redirectUrl
+                        if (!tracker.matchedRule) {
+                            tracker.matchedRule = {}
+                        }
+                        tracker.matchedRule.surrogate = socialTracker.redirectUrl
                     }
-                    tracker.matchedRule.surrogate = socialTracker.redirectUrl
+                } else {
+                    // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
+                    return
                 }
-            } else {
-                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
-                return
             }
+        }
+
+        if (tracker) {
+            // temp allowlisted trackers to fix site breakage
+            if (thisTab.site.isFeatureEnabled('trackerAllowlist')) {
+                const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
+
+                if (allowListed) {
+                    console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
+                    tracker.action = 'ignore'
+                    tracker.reason = `tracker allowlist - ${allowListed.reason}`
+                }
+            }
+
+            const reportedTracker = { ...tracker }
+            if (!blockingEnabled) {
+                reportedTracker.action = 'ignore'
+            }
+            const cleanUrl = new URL(requestData.url)
+            cleanUrl.search = ''
+            cleanUrl.hash = ''
+            devtools.postMessage(tabId, 'tracker', {
+                tracker: {
+                    ...reportedTracker,
+                    matchedRule: reportedTracker.matchedRule?.rule.toString()
+                },
+                url: cleanUrl,
+                requestData,
+                siteUrl: thisTab.site.url
+            })
         }
 
         // allow embedded twitter content if user enabled this setting
@@ -133,7 +157,7 @@ function handleRequest (requestData) {
             tracker = null
         }
 
-        // count and block trackers. Skip things that matched in the trackersWhitelist unless they're first party
+        // count and block trackers. Skip things that matched in the trackersAllowlist unless they're first party
         if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
             // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
             // comes through on document unload and by the time we block it we have updated our tab data to the new
@@ -152,11 +176,9 @@ function handleRequest (requestData) {
                 // record potential blocked trackers for this tab
                 thisTab.addToTrackers(tracker)
             }
-
             browserWrapper.notifyPopup({ updateTabData: true })
-
-            // Block the request if the site is not whitelisted
-            if (!thisTab.site.whitelisted && tracker.action.match(/block|redirect/)) {
+            // Block the request if the site is not allowlisted
+            if (blockingEnabled && tracker.action.match(/block|redirect/)) {
                 // update badge icon for any requests that come in after
                 // the tab has finished loading
                 if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
@@ -199,6 +221,15 @@ function handleRequest (requestData) {
             }
         }
 
+        /**
+         * Notify skipping for broken sites
+         */
+        if (thisTab.site.isBroken) {
+            console.log('temporarily skip tracker blocking for site: ' +
+              utils.extractHostFromURL(thisTab.url) + '\n' +
+              'more info: https://github.com/duckduckgo/privacy-configuration')
+        }
+
         // If we didn't block this script and it's a tracker, notify the content script.
         if (requestData.type === 'script' && tracker) {
             chrome.tabs.sendMessage(requestData.tabId, {
@@ -222,7 +253,7 @@ function handleRequest (requestData) {
     if (thisTab.site.isBroken) {
         console.log('temporarily skip https upgrades for site: ' +
               utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/content-blocking-lists')
+              'more info: https://github.com/duckduckgo/privacy-configuration')
         return
     }
 
@@ -276,4 +307,5 @@ function isSameDomainRequest (tab, req) {
         return true
     }
 }
+
 exports.handleRequest = handleRequest

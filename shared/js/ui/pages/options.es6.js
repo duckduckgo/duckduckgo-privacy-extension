@@ -3,14 +3,14 @@ const mixins = require('./mixins/index.es6.js')
 const PrivacyOptionsView = require('./../views/privacy-options.es6.js')
 const PrivacyOptionsModel = require('./../models/privacy-options.es6.js')
 const privacyOptionsTemplate = require('./../templates/privacy-options.es6.js')
-const WhitelistView = require('./../views/whitelist.es6.js')
-const WhitelistModel = require('./../models/whitelist.es6.js')
-const whitelistTemplate = require('./../templates/whitelist.es6.js')
+const AllowlistView = require('./../views/allowlist.es6.js')
+const AllowlistModel = require('./../models/allowlist.es6.js')
+const allowlistTemplate = require('./../templates/allowlist.es6.js')
 const UserDataView = require('./../views/user-data.es6.js')
 const UserDataModel = require('./../models/user-data.es6.js')
 const userDataTemplate = require('./../templates/user-data.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 function Options (ops) {
     Parent.call(this, ops)
@@ -48,11 +48,11 @@ Options.prototype = window.$.extend({},
                 template: userDataTemplate
             })
 
-            this.views.whitelist = new WhitelistView({
+            this.views.allowlist = new AllowlistView({
                 pageView: this,
-                model: new WhitelistModel({}),
+                model: new AllowlistModel({}),
                 appendTo: $parent,
-                template: whitelistTemplate
+                template: allowlistTemplate
             })
 
             this.message = new BackgroundMessageModel({})

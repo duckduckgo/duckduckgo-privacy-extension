@@ -6,7 +6,7 @@
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
@@ -19,7 +19,7 @@ let dev = false
 const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
-    const regExpAboutPage = /^https?:\/\/(\w+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {

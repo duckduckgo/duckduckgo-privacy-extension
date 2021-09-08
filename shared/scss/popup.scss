@@ -117,7 +117,7 @@ body {
             text-align: center;
         }
 
-       .site-info__whitelist-status, .site-info__confirm-thanks {
+       .site-info__allowlist-status, .site-info__confirm-thanks {
            margin-top: 0;
            transition: margin 0.3s ease;
 
@@ -130,7 +130,7 @@ body {
            }
        }
 
-       .site-info__whitelist-status.is-transparent, .site-info__confirm-thanks.is-transparent {
+       .site-info__allowlist-status.is-transparent, .site-info__confirm-thanks.is-transparent {
            margin-top: -18px;
 
            .icon.icon__check,
@@ -297,7 +297,7 @@ body {
             }
         }
 
-        .site-info__li--manage-whitelist {
+        .site-info__li--manage-allowlist {
             background-color: $white;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
             text-align: center;

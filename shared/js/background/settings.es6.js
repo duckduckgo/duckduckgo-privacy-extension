@@ -1,6 +1,11 @@
 const defaultSettings = require('../../data/defaultSettings')
-const browserWrapper = require('./$BROWSER-wrapper.es6')
+const etags = require('../../data/etags.json')
+const browserWrapper = require('./wrapper.es6')
 
+/**
+ * Settings whose defaults can by managed by the system administrator
+ */
+const MANAGED_SETTINGS = ['hasSeenPostInstall']
 /**
  * Public api
  * Usage:
@@ -15,16 +20,49 @@ const _ready = init().then(() => {
 })
 
 function init () {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         buildSettingsFromDefaults()
-        buildSettingsFromLocalStorage().then(() => {
-            resolve()
-        })
+        buildSettingsFromManagedStorage()
+            .then(buildSettingsFromLocalStorage)
+            .then(() => resolve())
     })
 }
 
 function ready () {
     return _ready
+}
+
+// Ensures we have cleared up old storage keys we have renamed
+function checkForLegacyKeys () {
+    const legacyKeys = {
+        // Keys to migrate
+        whitelisted: 'allowlisted',
+        whitelistOptIn: 'allowlistOptIn',
+
+        // Keys to remove
+        cookieExcludeList: null,
+        'surrogates-etag': null,
+        'brokenSiteList-etag': null,
+        'surrogateList-etag': null,
+        'trackersWhitelist-etag': null,
+        'trackersWhitelistTemporary-etag': null
+    }
+    let syncNeeded = false
+    for (const legacyKey in legacyKeys) {
+        const key = legacyKeys[legacyKey]
+        if (!(legacyKey in settings)) {
+            continue
+        }
+        syncNeeded = true
+        const legacyValue = settings[legacyKey]
+        if (key && legacyValue) {
+            settings[key] = legacyValue
+        }
+        delete settings[legacyKey]
+    }
+    if (syncNeeded) {
+        syncSettingTolocalStorage()
+    }
 }
 
 function buildSettingsFromLocalStorage () {
@@ -33,6 +71,16 @@ function buildSettingsFromLocalStorage () {
             // copy over saved settings from storage
             if (!results) resolve()
             settings = browserWrapper.mergeSavedSettings(settings, results)
+            checkForLegacyKeys()
+            resolve()
+        })
+    })
+}
+
+function buildSettingsFromManagedStorage () {
+    return new Promise((resolve) => {
+        browserWrapper.getFromManagedStorage(MANAGED_SETTINGS, (results) => {
+            settings = browserWrapper.mergeSavedSettings(settings, results)
             resolve()
         })
     })
@@ -40,7 +88,7 @@ function buildSettingsFromLocalStorage () {
 
 function buildSettingsFromDefaults () {
     // initial settings are a copy of default settings
-    settings = Object.assign({}, defaultSettings)
+    settings = Object.assign({}, defaultSettings, etags)
 }
 
 function syncSettingTolocalStorage () {

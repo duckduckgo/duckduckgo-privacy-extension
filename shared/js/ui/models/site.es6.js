@@ -1,7 +1,7 @@
 const Parent = window.DDG.base.Model
 const constants = require('../../../data/constants')
 const httpsMessages = constants.httpsMessages
-const browserUIWrapper = require('./../base/$BROWSER-ui-wrapper.es6.js')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 // for now we consider tracker networks found on more than 7% of sites
 // as "major"
@@ -12,8 +12,12 @@ function Site (attrs) {
     attrs.disabled = true // disabled by default
     attrs.tab = null
     attrs.domain = '-'
-    attrs.isWhitelisted = false
-    attrs.whitelistOptIn = false
+    attrs.protectionsEnabled = false
+    attrs.isBroken = false
+    attrs.displayBrokenUI = false
+
+    attrs.isAllowlisted = false
+    attrs.allowlistOptIn = false
     attrs.isCalculatingSiteRating = true
     attrs.siteRating = {}
     attrs.httpsState = 'none'
@@ -75,8 +79,8 @@ Site.prototype = window.$.extend({},
                 this.domain = 'new tab' // tab can be null for firefox new tabs
                 this.set({ isCalculatingSiteRating: false })
             } else {
-                this.isWhitelisted = this.tab.site.whitelisted
-                this.whitelistOptIn = this.tab.site.whitelistOptIn
+                this.initAllowlisted(this.tab.site.allowlisted, this.tab.site.denylisted)
+                this.allowlistOptIn = this.tab.site.allowlistOptIn
                 if (this.tab.site.specialDomainName) {
                     this.domain = this.tab.site.specialDomainName // eg "extensions", "options", "new tab"
                     this.set({ isCalculatingSiteRating: false })
@@ -223,8 +227,8 @@ Site.prototype = window.$.extend({},
 
         getMajorTrackerNetworksCount: function () {
             // console.log('[model] getMajorTrackerNetworksCount()')
-            // Show only blocked major trackers count, unless site is whitelisted
-            const trackers = this.isWhitelisted ? this.tab.trackers : this.tab.trackersBlocked
+            // Show only blocked major trackers count, unless site is allowlisted
+            const trackers = this.protectionsEnabled ? this.tab.trackersBlocked : this.tab.trackers
             const count = Object.values(trackers).reduce((total, t) => {
                 const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
                 total += isMajor ? 1 : 0
@@ -243,40 +247,57 @@ Site.prototype = window.$.extend({},
             return networks
         },
 
-        toggleWhitelist: function () {
-            if (this.tab && this.tab.site) {
-                this.isWhitelisted = !this.isWhitelisted
-                this.set('whitelisted', this.isWhitelisted)
-                const whitelistOnOrOff = this.isWhitelisted ? 'off' : 'on'
+        initAllowlisted: function (allowListValue, denyListValue) {
+            this.isAllowlisted = allowListValue
+            this.isDenylisted = denyListValue
 
-                // fire ept.on pixel if just turned privacy protection on,
-                // fire ept.off pixel if just turned privacy protection off.
-                if (whitelistOnOrOff === 'on' && this.whitelistOptIn) {
+            this.isBroken = this.tab.site.isBroken || this.tab.site.brokenFeatures.includes('contentBlocking')
+            this.displayBrokenUI = this.isBroken
+
+            if (denyListValue) {
+                this.displayBrokenUI = false
+                this.protectionsEnabled = true
+            } else {
+                this.protectionsEnabled = !(this.isAllowlisted || this.isBroken)
+            }
+            this.set('protectionsEnabled', this.protectionsEnabled)
+        },
+
+        setList (list, domain, value) {
+            this.fetch({
+                setList: {
+                    list,
+                    domain,
+                    value
+                }
+            })
+        },
+
+        toggleAllowlist: function () {
+            if (this.tab && this.tab.site) {
+                if (this.isBroken) {
+                    this.initAllowlisted(this.isAllowlisted, !this.isDenylisted)
+                    this.setList('denylisted', this.tab.site.domain, this.isDenylisted)
+                } else {
+                    // Explicitly remove all denylisting if the site is broken. This covers the case when the site has been removed from the list.
+                    this.setList('denylisted', this.tab.site.domain, false)
+                    this.initAllowlisted(!this.isAllowlisted)
+
+                    // fire ept.on pixel if just turned privacy protection on,
+                    // fire ept.off pixel if just turned privacy protection off.
+                    if (this.isAllowlisted && this.allowlistOptIn) {
                     // If user reported broken site and opted to share data on site,
                     // attach domain and path to ept.on pixel if they turn privacy protection back on.
-                    const siteUrl = this.tab.url.split('?')[0].split('#')[0]
-                    this.set('whitelistOptIn', false)
-                    this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
-                    this.fetch({
-                        whitelistOptIn:
-                        {
-                            list: 'whitelistOptIn',
-                            domain: this.tab.site.domain,
-                            value: false
-                        }
-                    })
-                } else {
-                    this.fetch({ firePixel: ['ept', whitelistOnOrOff] })
-                }
-
-                this.fetch({
-                    whitelisted:
-                    {
-                        list: 'whitelisted',
-                        domain: this.tab.site.domain,
-                        value: this.isWhitelisted
+                        const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                        this.set('allowlistOptIn', false)
+                        this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
+                        this.setList('allowlistOptIn', this.tab.site.domain, false)
+                    } else {
+                        this.fetch({ firePixel: ['ept', 'off'] })
                     }
-                })
+
+                    this.setList('allowlisted', this.tab.site.domain, this.isAllowlisted)
+                }
             }
         },
 
@@ -312,12 +333,12 @@ Site.prototype = window.$.extend({},
 
             // remember that user opted into sharing site breakage data
             // for this domain, so that we can attach domain when they
-            // remove site from whitelist
-            this.set('whitelistOptIn', true)
+            // remove site from allowlist
+            this.set('allowlistOptIn', true)
             this.fetch({
-                whitelistOptIn:
+                allowlistOptIn:
                 {
-                    list: 'whitelistOptIn',
+                    list: 'allowlistOptIn',
                     domain: this.tab.site.domain,
                     value: true
                 }

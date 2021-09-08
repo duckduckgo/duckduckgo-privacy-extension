@@ -367,7 +367,6 @@ describe('Tracker Utilities', () => {
         settings.ready().then(() => {
             settings.updateSetting('activeExperiment', true)
             settings.updateSetting('experimentData', { blockFacebook: true })
-            spyOn(trackerutils, 'facebookExperimentIsActive').and.returnValue(true)
             for (const test of socialTrackerTests) {
                 const result = trackerutils.getSocialTracker(test.url)
                 expect(result.entity).withContext(`test (entity): ${test.name}`).toEqual(test.expectedResult.entity)
