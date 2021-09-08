@@ -58,10 +58,14 @@ const closePopup = () => {
     w.close()
 }
 
-const startBreakageFlow = (tabId) => {
-    console.log('Injecting')
-    window.chrome.tabs.executeScript(tabId, {
-        file: 'public/js/content-scripts/breakage-flow.js'
+const startBreakageFlow = (tabId, cb) => {
+    window.chrome.tabs.reload(tabId, {bypassCache: true}, () => {
+        setTimeout(() => {
+            window.chrome.tabs.executeScript(tabId, {
+                file: 'public/js/content-scripts/breakage-flow.js'
+            })
+            cb()
+        }, 1000)
     })
 }
 

@@ -82,7 +82,7 @@
 
         .breakage-form-text-area {
             resize: none;
-            width: 260px;
+            width: 100%;
             height: 110px;
             background: #fafafa;
             border: 1px solid $color--dark-silver;
@@ -100,7 +100,6 @@
         .breakage-form__success--message {
             font-size: 1em;
             line-height: 1.35em;
-            font-weight: bold;
             margin-top: 5px;
             color: $slate-light;
         }
@@ -200,6 +199,20 @@
                 background-color: #e3e3e3;
                 color: $grey;
                 cursor: default;
+            }
+        }
+
+        .form__disable {
+            background: #eeeeee;
+            color: #333333;
+            margin-bottom: 0;
+        }
+
+        .breakage-form__success--buttons {
+            margin-top: 22px;
+
+            .form__submit {
+                margin-bottom: 8px;
             }
         }
 

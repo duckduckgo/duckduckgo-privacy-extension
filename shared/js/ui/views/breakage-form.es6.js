@@ -1,4 +1,5 @@
 const Parent = window.DDG.base.View
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 function BreakageForm (ops) {
     this.model = ops.model
@@ -20,12 +21,16 @@ BreakageForm.prototype = window.$.extend({},
                 'submit',
                 'element',
                 'message',
-                'dropdown'
+                'dropdown',
+                'off',
+                'dismiss'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeForm],
                 [this.$submit, 'click', this._submitForm],
-                [this.$dropdown, 'change', this._selectCategory]
+                [this.$dropdown, 'change', this._selectCategory],
+                [this.$off, 'click', this._disableProtections],
+                [this.$dismiss, 'click', this._closeForm]
             ])
         },
 
@@ -62,7 +67,18 @@ BreakageForm.prototype = window.$.extend({},
         },
 
         _selectCategory: function () {
+        },
+
+        _disableProtections: function(e) {
+            if (e) e.preventDefault()
+
+            this.model.toggleAllowlist()
+
+            browserUIWrapper.startBreakageFlow(this.model.tab.id, () => {
+                browserUIWrapper.closePopup()
+            })
         }
+
     }
 )
 

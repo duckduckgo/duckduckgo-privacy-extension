@@ -47,15 +47,19 @@ module.exports = function () {
             <div class="breakage-form-separator"></div>
             <div class="breakage-form-disable-container">
                 <a href="#" class="link-secondary bold">
-                    <span class="disable-protection-text-line">
+                    <span class="disable-protection-text-line js-breakage-form-off">
                         Disable Privacy Protection
                     </span>
                 </a>
             </div>
         </div>
         <div class="breakage-form__message js-breakage-form-message is-transparent">
-            <h2 class="breakage-form__success--title">Thank you!</h2>
-            <div class="breakage-form__success--message">Your report will help improve the extension and make the experience better for other people.</div>
+            <h2 class="breakage-form__success--title">Report sent, thanks!</h2>
+            <div class="breakage-form__success--message">You can try disabling Privacy Protection on [site-here]. We won't block trackers there, but the site may work as expected.</div>
+            <div class="breakage-form__success--buttons">
+                <btn class="form__submit js-breakage-form-off" role="button">Disable Privacy Protection</btn>
+                <btn class="form__submit form__disable js-breakage-form-dismiss" role="button">No thanks</btn>
+            </div>
         </div>
     </div>
 </div>`
