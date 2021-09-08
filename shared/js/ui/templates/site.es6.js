@@ -40,38 +40,6 @@ module.exports = function () {
                 <span class="icon icon__arrow pull-right"></span>
             </a>
         </li>
-        <li class="site-info__li--toggle padded ${this.model.isWhitelisted ? '' : 'is-active'}">
-            <p class="is-transparent site-info__whitelist-status js-site-whitelist-status">
-                <span class="text-line-after-icon privacy-on-off-message bold">
-                    ${setTransitionText(!this.model.isWhitelisted)}
-                </span>
-            </p>
-            <p class="site-info__protection js-site-protection bold">Site Privacy Protection</p>
-            <div class="site-info__toggle-container">
-                ${toggleButton(!this.model.isWhitelisted, 'js-site-toggle pull-right')}
-            </div>
-        </li>
-        <li class="js-site-manage-whitelist-li site-info__li--manage-whitelist padded">
-            ${renderManageWhitelist(this.model)}
-        </li>
-        <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
-           <div class="js-site-confirm-breakage-message site-info__confirm-thanks is-transparent">
-                <span class="site-info__message">
-                    Thanks for the feedback!
-                </span>
-            </div>
-            <div class="js-site-confirm-breakage site-info--confirm-breakage">
-                <span class="site-info--is-site-broken bold">
-                    Is this website broken?
-                </span>
-                <btn class="js-site-confirm-breakage-yes site-info__confirm-breakage-yes btn-pill">
-                    Yes
-                </btn>
-                <btn class="js-site-confirm-breakage-no site-info__confirm-breakage-no btn-pill">
-                    No
-                </btn>
-            </div>
-        </li>
     </ul>
 </div>`
 

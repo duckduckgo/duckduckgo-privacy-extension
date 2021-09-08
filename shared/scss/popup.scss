@@ -642,6 +642,21 @@ body {
     margin: -6px -2px -4px -4px;
 }
 
+.broken-site-footer-block {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 17px;
+    background: #f7f7f7;
+
+    .broken-site-text-line {
+        color: #6e90f7;
+        font-size: 14px;
+        line-height: 16px;
+    }
+}
+
 @import "views/search-form";
 @import "views/hero";
 @import "views/hero-rating-container";
