@@ -6,6 +6,8 @@
     bottom: 0;
     left: 0;
     background: $white;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
 
     &__content {
         z-index: 1;
@@ -30,8 +32,8 @@
 
         .form__icon {
             @include cross_platform_bg_image("broken-bicycle.svg");
-            width: 150px;
-            height: 150px;
+            width: 96px;
+            height: 96px;
             background-repeat: no-repeat;
             background-size: cover;
             display: inline-block;
@@ -76,6 +78,18 @@
             &.is-transparent {
                 opacity: 0;
             }
+        }
+
+        .breakage-form-text-area {
+            resize: none;
+            width: 260px;
+            height: 110px;
+            background: #fafafa;
+            border: 1px solid $color--dark-silver;
+            border-radius: 3px;
+            display: block;
+            box-sizing: border-box;
+            margin-bottom: 8px;
         }
 
         .breakage-form__success--title {
@@ -192,6 +206,29 @@
         .breakage-form__footer {
             font-size: 11px;
             color: $slate-light;
+        }
+
+        .breakage-form-separator {
+            width: 268px;
+            height: 1px;
+            left: 16px;
+            margin-top: 15px;
+            background: #f2f2f2;
+        }
+
+        .breakage-form-disable-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            height: 48px;
+        }
+
+        .disable-protection-text-line {
+            color: #6e90f7;
+            font-size: 14px;
+            line-height: 16px;
         }
     }
 }

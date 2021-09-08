@@ -31,8 +31,6 @@ module.exports = function () {
             <div class="form__icon"></div>
         </div>
         <div class="breakage-form__element js-breakage-form-element">
-            <h2 class="breakage-form__title">Something broken?</h2>
-            <div class="breakage-form__explanation">Submitting an anonymous broken site report helps us debug these issues and improve the extension.</div>
             <div class="form__select breakage-form__input--dropdown">
                 <select class="js-breakage-form-dropdown">
                     <option value='unspecified' disabled selected>Select a category (optional)</option>
@@ -40,8 +38,20 @@ module.exports = function () {
                     <option value='other'>Something else</option>
                 </select>
             </div>
+            <textarea class="breakage-form-text-area" placeholder="If you'd like, tell us about the problem you experienced"></textarea>
             <btn class="form__submit js-breakage-form-submit" role="button">Send report</btn>
-            <div class="breakage-form__footer">Reports sent to DuckDuckGo are 100% anonymous and only include your selection above, the URL, and a list of trackers we found on the site.</div>
+            <div class="breakage-form__footer">
+                Reports sent to DuckDuckGo include non-identifiable information to help us diagnose and resolve problems.
+                <span class="breakage-form-show-more"> Show more</span>
+            </div>
+            <div class="breakage-form-separator"></div>
+            <div class="breakage-form-disable-container">
+                <a href="#" class="link-secondary bold">
+                    <span class="disable-protection-text-line">
+                        Disable Privacy Protection
+                    </span>
+                </a>
+            </div>
         </div>
         <div class="breakage-form__message js-breakage-form-message is-transparent">
             <h2 class="breakage-form__success--title">Thank you!</h2>
