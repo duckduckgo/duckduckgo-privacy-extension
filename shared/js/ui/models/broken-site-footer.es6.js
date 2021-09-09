@@ -34,7 +34,7 @@ BrokenSiteFooterModel.prototype = window.$.extend({},
             if (!this.tab) {
                 return
             }
-            
+
             this.initAllowlisted(this.tab.site.allowlisted, this.tab.site.denylisted)
             this.allowlistOptIn = this.tab.site.allowlistOptIn
         },

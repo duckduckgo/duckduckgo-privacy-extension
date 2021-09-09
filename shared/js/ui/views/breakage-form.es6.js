@@ -71,7 +71,7 @@ BreakageForm.prototype = window.$.extend({},
         _selectCategory: function () {
         },
 
-        _disableProtections: function(e) {
+        _disableProtections: function (e) {
             if (e) e.preventDefault()
 
             this.model.toggleAllowlist()
@@ -82,7 +82,7 @@ BreakageForm.prototype = window.$.extend({},
         },
 
         // Bypass sending a report and directly disable protections
-        _disableProtectionsBypass: function(e) {
+        _disableProtectionsBypass: function (e) {
             if (e) e.preventDefault()
 
             this.model.toggleAllowlist()

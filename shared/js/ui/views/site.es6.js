@@ -2,11 +2,9 @@ const Parent = window.DDG.base.View
 const GradeScorecardView = require('./../views/grade-scorecard.es6.js')
 const TrackerNetworksView = require('./../views/tracker-networks.es6.js')
 const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
-const BreakageFormView = require('./../views/breakage-form.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
-const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 

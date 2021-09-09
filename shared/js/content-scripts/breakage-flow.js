@@ -108,12 +108,14 @@
             z-index: 2147483647;
             display: block;
             position: fixed;
+            pointer-events: none;
         `,
         modalContent: `
             padding-left: 16px;
             padding-right: 16px;
             display: flex;
             flex-direction: column;
+            pointer-events: auto !important;
         `,
         modalContentTitle: `
             font-family: DuckDuckGoPrivacyEssentialsBold;
@@ -171,10 +173,10 @@
     }
 
     function toggleAllowlisted (status) {
-        window.chrome.runtime.sendMessage({ 
-            toggleSiteProtections: true, 
-            domain: window.location.hostname, 
-            status: status 
+        window.chrome.runtime.sendMessage({
+            toggleSiteProtections: true,
+            domain: window.location.hostname,
+            status: status
         }, () => window.chrome.runtime.lastError)
     }
 
@@ -208,7 +210,7 @@
         const closeButton = document.createElement('div')
         closeButton.style.cssText = styles.closeButton
         closeButton.textContent = 'x'
-        closeButton.addEventListener('click', function() {
+        closeButton.addEventListener('click', function () {
             document.body.removeChild(modalContainer)
         })
 
@@ -227,7 +229,7 @@
         const notBrokenButton = makeButton('Yes, send a report', 'lightMode')
         notBrokenButton.style.cssText += styles.modalButton
         notBrokenButton.addEventListener('click', function notBroken () {
-            var reportUrl = chrome.runtime.getURL('html/feedback.html')
+            let reportUrl = chrome.runtime.getURL('html/feedback.html')
             reportUrl += `?broken=true&url=${encodeURIComponent(window.location)}`
             window.chrome.runtime.sendMessage({ openBreakageReport: true, url: reportUrl })
             document.body.removeChild(modalContainer, () => window.chrome.runtime.lastError)
@@ -267,7 +269,7 @@
         const closeButton = document.createElement('div')
         closeButton.style.cssText = styles.closeButton
         closeButton.textContent = 'x'
-        closeButton.addEventListener('click', function() {
+        closeButton.addEventListener('click', function () {
             document.body.removeChild(modalContainer)
         })
 
@@ -305,7 +307,6 @@
     }
 
     function confirmSiteFixed (modalContainer, modalContent) {
-
         // Remove modal content
         while (modalContent.childNodes.length > 1) {
             modalContent.removeChild(modalContent.lastChild)
@@ -385,12 +386,12 @@
         modalContent.appendChild(buttonRow)
     }
 
-    var modalContainer;
+    let modalContainer = null
     if (window.breakageModel === 'confirmFix') {
         modalContainer = makeConfirmFixModal()
     } else if (window.breakageModel === 'reportPrompt') {
         modalContainer = makeReportPromptModal()
-    } else { 
+    } else {
         console.log('Unknown breakage model: ', window.breakageModel)
     }
     document.body.insertBefore(modalContainer, document.body.childNodes[0])

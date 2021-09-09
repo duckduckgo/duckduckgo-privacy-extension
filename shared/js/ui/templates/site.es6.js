@@ -1,5 +1,4 @@
 const bel = require('bel')
-const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
 const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
@@ -53,17 +52,6 @@ module.exports = function () {
     </ul>
 </div>`
 
-    function setTransitionText (isSiteAllowlisted) {
-        isSiteAllowlisted = isSiteAllowlisted || false
-        let text = 'Added to Unprotected Sites'
-
-        if (isSiteAllowlisted) {
-            text = 'Removed from Unprotected Sites'
-        }
-
-        return text
-    }
-
     function renderTrackerNetworks (model) {
         const isActive = model.protectionsEnabled ? 'is-active' : ''
 
@@ -73,17 +61,5 @@ module.exports = function () {
     <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
     <span class="icon icon__arrow pull-right"></span>
 </a>`
-    }
-
-    function renderManageAllowlist (model) {
-        return bel`<div>
-    <a href="javascript:void(0)" class="js-site-manage-allowlist site-info__manage-allowlist link-secondary bold">
-        Unprotected Sites
-    </a>
-    <div class="separator"></div>
-    <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
-        Report broken site
-    </a>
-</div>`
     }
 }
