@@ -91,16 +91,12 @@ BrokenSiteFooterModel.prototype = window.$.extend({},
             if (this.tab && this.tab.site) {
                 // Explic{itly remove all denylisting if the site is broken. This covers the case when the site has been removed from the list.
                 this.setList('denylisted', this.tab.site.domain, false)
-                this.initAllowlisted(!this.isAllowlisted)
+                this.initAllowlisted(true)
 
                 // fire ept.on pixel if just turned privacy protection on,
                 // fire ept.off pixel if just turned privacy protection off.
-                if (this.isAllowlisted && this.allowlistOptIn) {
-                    this.set('allowlistOptIn', false)
-                    this.setList('allowlistOptIn', this.tab.site.domain, false)
-                } else {
-                    this.fetch({ firePixel: ['ept', 'off'] })
-                }
+                this.set('allowlistOptIn', true)
+                this.setList('allowlistOptIn', this.tab.site.domain, true)
 
                 this.setList('allowlisted', this.tab.site.domain, this.isAllowlisted)
             }
