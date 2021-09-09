@@ -45,7 +45,7 @@
                 color: #3969EF;
             `,
             buttonBackground: `
-                background: #3969EF;
+                background: #6E90F7;
             `
         },
         cancelMode: {
@@ -57,11 +57,11 @@
             `
         },
         button: `
-            border-radius: 8px;
+            border-radius: 4px;
 
             padding: 11px 22px;
             font-weight: bold;
-            margin: 0px 6px;
+            margin-bottom: 8px;
             border-color: #3969EF;
             border: none;
 
@@ -74,20 +74,22 @@
             z-index: 2147483646;
         `,
         buttonTextContainer: `
-            display: flex; 
-            flex-direction: row;
             align-items: center;
         `,
+        buttonRow: `
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 8px;
+        `,
         modal: `
-            width: 425px;
+            width: 300px;
             margin: auto;
             background-color: #FFFFFF;
             position: absolute;
-            left: calc(100% - 425px - 24px);
+            left: calc(100% - 300px - 24px);
             top: 6px;
             display: block;
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
         `,
         disableProtectionsModal: `
             width: 525px;
@@ -108,21 +110,29 @@
             position: fixed;
         `,
         modalContent: `
-            padding: 24px;
+            padding-left: 16px;
+            padding-right: 16px;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
         `,
         modalContentTitle: `
             font-family: DuckDuckGoPrivacyEssentialsBold;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: bold;
-            line-height: 21px;
+            line-height: 20px;
+            text-align: center;
             margin: auto;
+            margin-bottom: 16px;
+            color: #333333;
         `,
         modalContentText: `
             font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
-            line-height: 21px;
+            line-height: 20px;
+            text-align: center;
+            letter-spacing: -0.24px;
+            color: #333333;
+            margin-bottom: 16px;
         `,
         modalTextContainer: `
             display: flex;
@@ -145,11 +155,23 @@
         logoImg: `
             height: 21px;
             width: 21px;
+        `,
+        closeContainer: `
+            width: 100%;
+            height: 48px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+        `,
+        closeButton: `
+            font-family: DuckDuckGoPrivacyEssentials;
+            font-size: 18px;
         `
     }
 
-    function toggleWhitelisted (status) {
-        window.chrome.runtime.sendMessage({ toggleSiteProtections: true, status: status }, () => window.chrome.runtime.lastError)
+    function toggleAllowlisted (status) {
+        window.chrome.runtime.sendMessage({ toggleSiteProtections: true, domain: window.location.hostname, status: status }, () => window.chrome.runtime.lastError)
     }
 
     function makeButton (buttonText, mode) {
@@ -175,28 +197,41 @@
         const modalContent = document.createElement('div')
         modalContent.style.cssText = styles.modalContent
 
+        const closeContainer = document.createElement('div')
+        closeContainer.style.cssText = styles.closeContainer
+
+        const closeButton = document.createElement('div')
+        closeButton.style.cssText = styles.closeButton
+        closeButton.textContent = 'x'
+        closeButton.addEventListener('click', function() {
+            document.body.removeChild(modalContainer)
+        })
+
+        closeContainer.appendChild(closeButton)
+        modalContent.appendChild(closeContainer)
+
         const title = document.createElement('div')
         title.style.cssText = styles.modalContentTitle
-        title.textContent = 'Is this site broken?'
+        title.textContent = 'Did disabling Privacy Protection fix the problem you experienced?'
 
         modalContent.appendChild(title)
 
         // Buttons
         const buttonRow = document.createElement('div')
-        buttonRow.style.cssText = 'margin:auto;'
-        const isBrokenButton = makeButton('Yes', 'lightMode')
-        isBrokenButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
-        isBrokenButton.addEventListener('click', function isBroken () {
-            confirmSiteBroken(modalContainer, modalContent)
-        })
-        const notBrokenButton = makeButton('No', 'cancelMode')
-        notBrokenButton.style.cssText += styles.modalButton + 'float: right;'
+        buttonRow.style.cssText = styles.buttonRow
+        const notBrokenButton = makeButton('No', 'lightMode')
+        notBrokenButton.style.cssText += styles.modalButton
         notBrokenButton.addEventListener('click', function notBroken () {
-            document.body.removeChild(modalContainer)
+            siteNotFixed(modalContainer, modalContent)
+        })
+        const isBrokenButton = makeButton('Yes', 'lightMode')
+        isBrokenButton.style.cssText += styles.modalButton
+        isBrokenButton.addEventListener('click', function isBroken () {
+            confirmSiteFixed(modalContainer, modalContent)
         })
 
-        buttonRow.appendChild(isBrokenButton)
         buttonRow.appendChild(notBrokenButton)
+        buttonRow.appendChild(isBrokenButton)
         modalContent.appendChild(buttonRow)
 
         modal.appendChild(modalContent)
@@ -205,10 +240,10 @@
         return modalContainer
     }
 
-    function confirmSiteBroken (modalContainer, modalContent) {
-        toggleWhitelisted(true)
+    function confirmSiteFixed (modalContainer, modalContent) {
 
-        while (modalContent.lastChild) {
+        // Remove modal content
+        while (modalContent.childNodes.length > 1) {
             modalContent.removeChild(modalContent.lastChild)
         }
 
@@ -217,38 +252,73 @@
 
         const title = document.createElement('div')
         title.style.cssText = styles.modalContentTitle
-        title.textContent = "Let's disable site protections for this site."
+        title.textContent = "Whew, glad it's fixed!"
 
         textContainer.appendChild(title)
 
         const message = document.createElement('div')
         message.style.cssText = styles.modalContentText
-        message.textContent = 'Did this fix the issue? (Try reloading the page)'
+        message.innerHTML = `We'll leave Privacy Protection disabled on <span style="font-family: DuckDuckGoPrivacyEssentialsBold;">${window.location.hostname}</span> so the site works as expected. You can always change this later in Settings.`
 
         textContainer.appendChild(message)
         modalContent.appendChild(textContainer)
 
         // Buttons
         const buttonRow = document.createElement('div')
-        buttonRow.style.cssText = 'margin:auto;'
-        const problemFixedButton = makeButton('Yes', 'lightMode')
-        problemFixedButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
-        problemFixedButton.addEventListener('click', function problemFixed () {
-            window.chrome.runtime.sendMessage({ openFeedbackPage: true }, () => window.chrome.runtime.lastError)
+        buttonRow.style.cssText = styles.buttonRow
+        const gotItButton = makeButton('Got it', 'lightMode')
+        gotItButton.style.cssText += styles.modalButton
+        gotItButton.addEventListener('click', function notFixed () {
             document.body.removeChild(modalContainer)
         })
-        const notFixedButton = makeButton('No', 'cancelMode')
-        notFixedButton.style.cssText += styles.modalButton + 'float: right;'
-        notFixedButton.addEventListener('click', function notFixed () {
-            toggleWhitelisted(false)
+
+        buttonRow.appendChild(gotItButton)
+        modalContent.appendChild(buttonRow)
+    }
+
+    function siteNotFixed (modalContainer, modalContent) {
+        toggleAllowlisted(false)
+
+        // Remove modal content
+        while (modalContent.childNodes.length > 1) {
+            modalContent.removeChild(modalContent.lastChild)
+        }
+
+        const textContainer = document.createElement('div')
+        textContainer.style.cssText = styles.modalTextContainer
+
+        const title = document.createElement('div')
+        title.style.cssText = styles.modalContentTitle
+        title.textContent = "Sorry that didn't fix it."
+
+        textContainer.appendChild(title)
+
+        const message = document.createElement('div')
+        message.style.cssText = styles.modalContentText
+        message.innerHTML = `We've reenabled Privacy Protection to ensure you're still protected on <span style="font-family: DuckDuckGoPrivacyEssentialsBold;">${window.location.hostname}</span>.`
+
+        textContainer.appendChild(message)
+        modalContent.appendChild(textContainer)
+
+        // Buttons
+        const buttonRow = document.createElement('div')
+        buttonRow.style.cssText = styles.buttonRow
+        const gotItButton = makeButton('Got it', 'lightMode')
+        gotItButton.style.cssText += styles.modalButton
+        gotItButton.addEventListener('click', function notFixed () {
+            document.body.removeChild(modalContainer)
+        })
+        const keepDisabledButton = makeButton('Keep Privacy Protection disabled', 'cancelMode')
+        keepDisabledButton.style.cssText += styles.modalButton
+        keepDisabledButton.addEventListener('click', function notFixed () {
+            toggleAllowlisted(true)
             document.body.removeChild(modalContainer)
             window.location.reload()
         })
 
-        buttonRow.appendChild(problemFixedButton)
-        buttonRow.appendChild(notFixedButton)
+        buttonRow.appendChild(gotItButton)
+        buttonRow.appendChild(keepDisabledButton)
         modalContent.appendChild(buttonRow)
-        modalContainer.childNodes[1].style.cssText = styles.disableProtectionsModal
     }
 
     const modalContainer = makeModal()

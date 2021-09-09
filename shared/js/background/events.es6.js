@@ -500,14 +500,15 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         res(grade)
         return true
     } else if (req.toggleSiteProtections) {
-        utils.getCurrentTab().then(tab => {
-            tabManager.whitelistDomain({
-                list: 'whitelisted',
-                domain: utils.extractHostFromURL(tab.url),
-                value: req.status
-            })
-
-            res(tab)
+        tabManager.setList({
+            list: 'allowlistOptIn',
+            domain: req.domain,
+            value: req.status
+        })
+        tabManager.setList({
+            list: 'allowlisted',
+            domain: req.domain,
+            value: req.status
         })
 
         return true

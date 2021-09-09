@@ -24,9 +24,19 @@ BrokenSiteFooterModel.prototype = window.$.extend({},
                         console.debug('Broken site footer model: no tab')
                     }
 
+                    this.setSiteProperties()
                     resolve()
                 })
             })
+        },
+
+        setSiteProperties: function () {
+            if (!this.tab) {
+                return
+            }
+            
+            this.initAllowlisted(this.tab.site.allowlisted, this.tab.site.denylisted)
+            this.allowlistOptIn = this.tab.site.allowlistOptIn
         },
 
         submitBreakageForm: function (category) {

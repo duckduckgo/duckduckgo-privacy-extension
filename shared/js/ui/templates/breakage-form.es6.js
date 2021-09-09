@@ -44,8 +44,8 @@ module.exports = function () {
                 Reports sent to DuckDuckGo include non-identifiable information to help us diagnose and resolve problems.
                 <span class="breakage-form-show-more"> Show more</span>
             </div>
-            <div class="breakage-form-separator"></div>
-            <div class="breakage-form-disable-container">
+            <div class="${this.model.protectionsEnabled ? '' : 'is-hidden'} breakage-form-separator"></div>
+            <div class="${this.model.protectionsEnabled ? '' : 'is-hidden'} breakage-form-disable-container">
                 <a href="#" class="link-secondary bold">
                     <span class="disable-protection-text-line js-breakage-form-off">
                         Disable Privacy Protection
