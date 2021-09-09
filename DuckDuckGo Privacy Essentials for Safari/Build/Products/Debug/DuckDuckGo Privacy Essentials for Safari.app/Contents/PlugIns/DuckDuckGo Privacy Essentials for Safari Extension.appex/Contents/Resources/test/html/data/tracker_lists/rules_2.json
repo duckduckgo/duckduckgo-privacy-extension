@@ -8,7 +8,7 @@
       "domainType": "thirdParty"
     },
     "action": {
-      "type": "allow"
+      "type": "block"
     }
   }
 ]

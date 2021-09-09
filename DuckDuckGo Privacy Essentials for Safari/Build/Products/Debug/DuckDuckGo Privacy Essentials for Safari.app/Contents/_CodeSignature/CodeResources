@@ -10,7 +10,7 @@
 		</data>
 		<key>Resources/Assets.car</key>
 		<data>
-		gPg4/8XWaMD6rz6EUy0s4OFn/GU=
+		emHJJYCLnQvrsw04ZCD1fcbECSo=
 		</data>
 		<key>Resources/Base.lproj/Main.html</key>
 		<data>
@@ -18,19 +18,19 @@
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/Info.plist</key>
 		<data>
-		WOhcu6W4LV2aPq95YXgbALuxjaU=
+		HT/nTMm5rEqQWesdjdu2DONthI4=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/MainMenu.nib</key>
 		<data>
-		cVeKCibeuLIy7XAZD+Ta3Oqzc/Q=
+		zwIka19hGCXG4ESguaijAEkgDfM=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib</key>
 		<data>
-		Z2ZICbJEiV5bopmdBCCsyoUwguE=
+		/HhgzRwaoltLGJM5uiCMj1/dNHU=
 		</data>
 		<key>Resources/Base.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib</key>
 		<data>
-		ftc0hW4jGEsdKGfsgOixXvtVqrI=
+		RCDYOksVQBeAfL3DEj0YBJQtpMk=
 		</data>
 		<key>Resources/Icon.png</key>
 		<data>
@@ -195,7 +195,7 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			GLVfsP3KfVtQN4eY2gjJ1NCdDs0=
+			lLmqPF7p8hP6tTzs7itXegTOw6A=
 			</data>
 			<key>requirement</key>
 			<string>identifier "com.yourCompany.DuckDuckGo-Privacy-Essentials-for-Safari.Extension" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: Emanuele Feliziani (ULDUVL2368)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
@@ -211,7 +211,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			O8E6NMQY/+C7ADecbCh1Fs8DSDhnBf1neyUlnzBq05o=
+			uLI1seJkg6dBJ5ZCCossqRsz66wX4sf7LW3eFR71N4Q=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.html</key>
@@ -225,28 +225,28 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			oVCyxTt4x8wgfKzZXc9L+3g3o4CVXfnLVoIn9Ta4FAk=
+			QtgYkF4159LD326hPkQXxo15xPGtXVBQ8HL9sLMFIeA=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/MainMenu.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			v5wbApZ4gfHQRphdcPVBPzBSrZBvLfaXNTBixIiAEWI=
+			nizkyyrvTR+wtW9sZXxkKdVW1MIFAk7fqZJCtmr0eCg=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/NSWindowController-B8D-0N-5wS.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			DT3mrYq3bhGaKEC7U0af9BR4u+tDKJqaHE9HekZOtM0=
+			+IzUA7OI4SK557z6x6heOx7p4VROTCiyATt2aDZHdBY=
 			</data>
 		</dict>
 		<key>Resources/Base.lproj/Main.storyboardc/XfG-lQ-9wD-view-m2S-Jp-Qdl.nib</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			+2RzNCzORd/h48hhyuasGzwkgzSVnVS7r4madKwAXKs=
+			wtcp0RgdRvbQYnAlsRqLKIPMDUZsbkCJWpfpqrz1De4=
 			</data>
 		</dict>
 		<key>Resources/Icon.png</key>

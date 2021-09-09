@@ -54,13 +54,31 @@
     }
   ],
   "declarative_net_request": {
-    "rule_resources" : ["./data/tracker_lists/rules.json"]
+    "rule_resources" : [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "data/tracker_lists/rules_1.json"
+      },
+      {
+        "id": "ruleset_2",
+        "enabled": false,
+        "path": "data/tracker_lists/rules_2.json"
+      },
+      {
+        "id": "ruleset_all",
+        "enabled": false,
+        "path": "data/tracker_lists/rules.json"
+      }
+    ]
   },
   "permissions": [
     "contextMenus",
     "webRequest",
     "webRequestBlocking",
     "*://*/*",
+    "http://*/*",
+    "https://*/*",
     "webNavigation",
     "omnibox",
     "declarativeNetRequest",
@@ -72,7 +90,10 @@
     "alarms"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "*://*/*",
+    "http://*/*",
+    "https://*/*"
   ],
   "web_accessible_resources": [
     "web_accessible_resources/*",

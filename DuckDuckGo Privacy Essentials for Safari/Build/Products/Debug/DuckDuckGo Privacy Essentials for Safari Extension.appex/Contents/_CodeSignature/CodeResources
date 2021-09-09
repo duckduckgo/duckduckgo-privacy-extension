@@ -50,11 +50,11 @@
 		</data>
 		<key>Resources/data/tracker_lists/rules_1.json</key>
 		<data>
-		/fwBqr6bWbthy3rJIF3OcrEM5Ps=
+		d8UD2mMPMaUSr1B7/WczkWLh+lY=
 		</data>
 		<key>Resources/data/tracker_lists/rules_2.json</key>
 		<data>
-		6t453AY8pmYtmphhZveachMdRxQ=
+		HrIjikBHpEaSg//cFkvqgWCOX0M=
 		</data>
 		<key>Resources/data/tracker_lists/trackersWithParentCompany.json</key>
 		<data>
@@ -606,7 +606,7 @@
 		</data>
 		<key>Resources/manifest.json</key>
 		<data>
-		86vNB0Fq2Vxs/yh0fE5TJo7nB3s=
+		WaBBBdfBajefn3EAp4DXbFCGh/0=
 		</data>
 		<key>Resources/public/css/autofill-host-styles.css</key>
 		<data>
@@ -698,7 +698,7 @@
 		</data>
 		<key>Resources/test/background.js</key>
 		<data>
-		6krmuH3LVWXwxt87qNoYi4Ri/dA=
+		DJaU6VqTMJAbuVsXIxUgqH9KlQ4=
 		</data>
 		<key>Resources/test/html/data/constants.js</key>
 		<data>
@@ -742,11 +742,11 @@
 		</data>
 		<key>Resources/test/html/data/tracker_lists/rules_1.json</key>
 		<data>
-		/fwBqr6bWbthy3rJIF3OcrEM5Ps=
+		d8UD2mMPMaUSr1B7/WczkWLh+lY=
 		</data>
 		<key>Resources/test/html/data/tracker_lists/rules_2.json</key>
 		<data>
-		6t453AY8pmYtmphhZveachMdRxQ=
+		HrIjikBHpEaSg//cFkvqgWCOX0M=
 		</data>
 		<key>Resources/test/html/data/tracker_lists/trackersWithParentCompany.json</key>
 		<data>
@@ -2000,14 +2000,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bHXmSauLzjhHf1CMokxB47i+qtCUUmtMcDC8KbuKTYA=
+			khr5YbUZGuDhOuQOxmCBbAF5Shq8m2xxLoxeiEdusV8=
 			</data>
 		</dict>
 		<key>Resources/data/tracker_lists/rules_2.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5lFWKMiqeAh5wWMxXwzsFSPkV6veIoCW0kYEEx9SVQE=
+			nwqEM/AVzOIqPLaxBqGyPvx4opbdEdBQOBOxGG7j3nI=
 			</data>
 		</dict>
 		<key>Resources/data/tracker_lists/trackersWithParentCompany.json</key>
@@ -2973,7 +2973,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yLGFKIH5BwtvE4k6AYdeGQgovpLvElEcz8fwJIH2kgo=
+			xGHat1ZqsjfB1PLy4YUsSJ8kBn0OKrVW5bToYXsKbcY=
 			</data>
 		</dict>
 		<key>Resources/public/css/autofill-host-styles.css</key>
@@ -3134,7 +3134,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			quGmsCtugXrjTE3Z96zB9EHtWx/Iva1Au8qLyA2eRHI=
+			P4ez9aimT5kNCSEur05BHkuS/4NpZtyL/DIbMVfrdFU=
 			</data>
 		</dict>
 		<key>Resources/test/html/data/constants.js</key>
@@ -3211,14 +3211,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			bHXmSauLzjhHf1CMokxB47i+qtCUUmtMcDC8KbuKTYA=
+			khr5YbUZGuDhOuQOxmCBbAF5Shq8m2xxLoxeiEdusV8=
 			</data>
 		</dict>
 		<key>Resources/test/html/data/tracker_lists/rules_2.json</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			5lFWKMiqeAh5wWMxXwzsFSPkV6veIoCW0kYEEx9SVQE=
+			nwqEM/AVzOIqPLaxBqGyPvx4opbdEdBQOBOxGG7j3nI=
 			</data>
 		</dict>
 		<key>Resources/test/html/data/tracker_lists/trackersWithParentCompany.json</key>

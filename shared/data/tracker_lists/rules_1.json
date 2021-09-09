@@ -20,12 +20,7 @@
       "domainType": "firstParty"
     },
     "action": {
-      "type": "modifyHeaders",
-      "requestHeaders": {
-        "header": "Sec-GPC",
-        "operation": "append",
-        "value": "1"
-      }
+      "type": "block"
     }
   }
 ]
