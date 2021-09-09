@@ -11,6 +11,13 @@ module.exports = function () {
 
     return bel`<div class="site-info site-info--main">
     <ul class="default-list">
+        <li class="site-info__protection-banner-li ${this.model.protectionsEnabled ? 'is-hidden' : ''}">
+            <div class="site-info__protection-banner-text-line">Privacy Protection disabled.</div>
+            <a href="javascript:void(0)" class="link-secondary-bold js-site-enable-protections protection-banner-button" role="button">
+                <span>Enable</span>
+            </a>
+        </li>
+
         <li class="border--bottom site-info__rating-li main-rating js-hero-open">
             ${ratingHero(this.model, {
         showOpen: !this.model.disabled

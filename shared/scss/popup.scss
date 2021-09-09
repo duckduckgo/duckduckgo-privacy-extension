@@ -161,6 +161,41 @@ body {
             transition: all 0.3s ease;
         }
 
+        .site-info__protection-banner-li {
+            height: 52px;
+            background: #fff2bf;
+            flex: none;
+            order: 1;
+            align-self: stretch;
+            flex-grow: 0;
+        }
+
+        .site-info__protection-banner-text-line {
+            position: absolute;
+            width: 204px;
+            height: 18px;
+            left: 16px;
+            top: 17px;
+            font-size: 14px;
+            line-height: 18px;
+            letter-spacing: -0.08px;
+            color: #222222;
+        }
+
+        .protection-banner-button {
+            position: absolute;
+            width: 43px;
+            height: 18px;
+            left: 241px;
+            top: 17px;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 18px;
+            text-align: right;
+            letter-spacing: -0.08px;
+            color: #222222;
+        }
+
         .site-info__li--toggle {
             background-color: $color--extra-light-platinum;
             color: $slate;

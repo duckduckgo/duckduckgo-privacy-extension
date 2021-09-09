@@ -271,6 +271,34 @@ Site.prototype = window.$.extend({},
                     value
                 }
             })
+        },
+
+        toggleAllowlist: function () {
+            if (this.tab && this.tab.site) {
+                if (this.isBroken) {
+                    this.initAllowlisted(this.isAllowlisted, !this.isDenylisted)
+                    this.setList('denylisted', this.tab.site.domain, this.isDenylisted)
+                } else {
+                    // Explicitly remove all denylisting if the site is broken. This covers the case when the site has been removed from the list.
+                    this.setList('denylisted', this.tab.site.domain, false)
+                    this.initAllowlisted(!this.isAllowlisted)
+
+                    // fire ept.on pixel if just turned privacy protection on,
+                    // fire ept.off pixel if just turned privacy protection off.
+                    if (this.isAllowlisted && this.allowlistOptIn) {
+                    // If user reported broken site and opted to share data on site,
+                    // attach domain and path to ept.on pixel if they turn privacy protection back on.
+                        const siteUrl = this.tab.url.split('?')[0].split('#')[0]
+                        this.set('allowlistOptIn', false)
+                        this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
+                        this.setList('allowlistOptIn', this.tab.site.domain, false)
+                    } else {
+                        this.fetch({ firePixel: ['ept', 'off'] })
+                    }
+
+                    this.setList('allowlisted', this.tab.site.domain, this.isAllowlisted)
+                }
+            }
         }
     }
 )

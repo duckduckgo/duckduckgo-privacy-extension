@@ -6,6 +6,7 @@ function BrokenSiteFooterModel (attrs) {
     attrs.tab = null
     attrs.isAllowlisted = false
     attrs.allowlistOptIn = false
+    attrs.protectionsEnabled = false
     Parent.call(this, attrs)
 }
 
@@ -75,6 +76,13 @@ BrokenSiteFooterModel.prototype = window.$.extend({},
         initAllowlisted: function (allowListValue, denyListValue) {
             this.isAllowlisted = allowListValue
             this.isDenylisted = denyListValue
+
+            if (denyListValue) {
+                this.protectionsEnabled = true
+            } else {
+                this.protectionsEnabled = !this.isAllowlisted
+            }
+            this.set('protectionsEnabled', this.protectionsEnabled)
         },
 
         setList (list, domain, value) {

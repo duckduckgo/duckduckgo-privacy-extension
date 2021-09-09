@@ -88,7 +88,8 @@ Site.prototype = window.$.extend({},
                 'confirm-breakage',
                 'confirm-breakage-yes',
                 'confirm-breakage-no',
-                'confirm-breakage-message'
+                'confirm-breakage-message',
+                'enable-protections'
             ])
 
             this.$gradescorecard = this.$('.js-hero-open')
@@ -102,7 +103,8 @@ Site.prototype = window.$.extend({},
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
                 [this.$manageallowlist, 'click', this._onManageAllowlistClick],
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
-                [this.store.subscribe, 'change:site', this.rerender]
+                [this.store.subscribe, 'change:site', this.rerender],
+                [this.$enableprotections, 'click', this._onToggleClick]
             ])
         },
 
