@@ -47,7 +47,7 @@ module.exports = function () {
             <div class="${this.model.protectionsEnabled ? '' : 'is-hidden'} breakage-form-separator"></div>
             <div class="${this.model.protectionsEnabled ? '' : 'is-hidden'} breakage-form-disable-container">
                 <a href="#" class="link-secondary bold">
-                    <span class="disable-protection-text-line js-breakage-form-off">
+                    <span class="disable-protection-text-line js-breakage-form-bypass">
                         Disable Privacy Protection
                     </span>
                 </a>

@@ -58,13 +58,19 @@ const closePopup = () => {
     w.close()
 }
 
-const startBreakageFlow = (tabId, cb) => {
+const startBreakageFlow = (tabId, flowStyle, cb) => {
     window.chrome.tabs.reload(tabId, {bypassCache: true}, () => {
         setTimeout(() => {
             window.chrome.tabs.executeScript(tabId, {
-                file: 'public/js/content-scripts/breakage-flow.js'
+                code: `window.breakageModel = '${flowStyle}'`
+            }, () => {
+                console.log('execute 2')
+                window.chrome.tabs.executeScript(tabId, {
+                    file: 'public/js/content-scripts/breakage-flow.js'
+                }, () => {
+                    cb()
+                })
             })
-            cb()
         }, 1000)
     })
 }

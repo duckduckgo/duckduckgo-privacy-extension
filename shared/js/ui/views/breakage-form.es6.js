@@ -23,6 +23,7 @@ BreakageForm.prototype = window.$.extend({},
                 'message',
                 'dropdown',
                 'off',
+                'bypass',
                 'dismiss'
             ])
             this.bindEvents([
@@ -30,6 +31,7 @@ BreakageForm.prototype = window.$.extend({},
                 [this.$submit, 'click', this._submitForm],
                 [this.$dropdown, 'change', this._selectCategory],
                 [this.$off, 'click', this._disableProtections],
+                [this.$bypass, 'click', this._disableProtectionsBypass],
                 [this.$dismiss, 'click', this._closeForm]
             ])
         },
@@ -74,7 +76,18 @@ BreakageForm.prototype = window.$.extend({},
 
             this.model.toggleAllowlist()
 
-            browserUIWrapper.startBreakageFlow(this.model.tab.id, () => {
+            browserUIWrapper.startBreakageFlow(this.model.tab.id, 'confirmFix', () => {
+                browserUIWrapper.closePopup()
+            })
+        },
+
+        // Bypass sending a report and directly disable protections
+        _disableProtectionsBypass: function(e) {
+            if (e) e.preventDefault()
+
+            this.model.toggleAllowlist()
+
+            browserUIWrapper.startBreakageFlow(this.model.tab.id, 'reportPrompt', () => {
                 browserUIWrapper.closePopup()
             })
         }

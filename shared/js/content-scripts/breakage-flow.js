@@ -171,7 +171,11 @@
     }
 
     function toggleAllowlisted (status) {
-        window.chrome.runtime.sendMessage({ toggleSiteProtections: true, domain: window.location.hostname, status: status }, () => window.chrome.runtime.lastError)
+        window.chrome.runtime.sendMessage({ 
+            toggleSiteProtections: true, 
+            domain: window.location.hostname, 
+            status: status 
+        }, () => window.chrome.runtime.lastError)
     }
 
     function makeButton (buttonText, mode) {
@@ -184,7 +188,67 @@
         return button
     }
 
-    function makeModal () {
+    function makeReportPromptModal () {
+        console.log('Making report modal')
+        const modalContainer = document.createElement('div')
+        modalContainer.style.cssText = styles.modalContainer
+        const styleElement = document.createElement('style')
+        styleElement.textContent = styles.fontStyle
+        modalContainer.appendChild(styleElement)
+
+        const modal = document.createElement('div')
+        modal.style.cssText = styles.modal
+
+        const modalContent = document.createElement('div')
+        modalContent.style.cssText = styles.modalContent
+
+        const closeContainer = document.createElement('div')
+        closeContainer.style.cssText = styles.closeContainer
+
+        const closeButton = document.createElement('div')
+        closeButton.style.cssText = styles.closeButton
+        closeButton.textContent = 'x'
+        closeButton.addEventListener('click', function() {
+            document.body.removeChild(modalContainer)
+        })
+
+        closeContainer.appendChild(closeButton)
+        modalContent.appendChild(closeContainer)
+
+        const title = document.createElement('div')
+        title.style.cssText = styles.modalContentTitle
+        title.textContent = 'Do you want to send a report? This helps us improve your experience.'
+
+        modalContent.appendChild(title)
+
+        // Buttons
+        const buttonRow = document.createElement('div')
+        buttonRow.style.cssText = styles.buttonRow
+        const notBrokenButton = makeButton('Yes, send a report', 'lightMode')
+        notBrokenButton.style.cssText += styles.modalButton
+        notBrokenButton.addEventListener('click', function notBroken () {
+            var reportUrl = chrome.runtime.getURL('html/feedback.html')
+            reportUrl += `?broken=true&url=${encodeURIComponent(window.location)}`
+            window.chrome.runtime.sendMessage({ openBreakageReport: true, url: reportUrl })
+            document.body.removeChild(modalContainer, () => window.chrome.runtime.lastError)
+        })
+        const isBrokenButton = makeButton('No thanks', 'cancelMode')
+        isBrokenButton.style.cssText += styles.modalButton
+        isBrokenButton.addEventListener('click', function isBroken () {
+            document.body.removeChild(modalContainer)
+        })
+
+        buttonRow.appendChild(notBrokenButton)
+        buttonRow.appendChild(isBrokenButton)
+        modalContent.appendChild(buttonRow)
+
+        modal.appendChild(modalContent)
+        modalContainer.appendChild(modal)
+
+        return modalContainer
+    }
+
+    function makeConfirmFixModal () {
         const modalContainer = document.createElement('div')
         modalContainer.style.cssText = styles.modalContainer
         const styleElement = document.createElement('style')
@@ -321,6 +385,13 @@
         modalContent.appendChild(buttonRow)
     }
 
-    const modalContainer = makeModal()
+    var modalContainer;
+    if (window.breakageModel === 'confirmFix') {
+        modalContainer = makeConfirmFixModal()
+    } else if (window.breakageModel === 'reportPrompt') {
+        modalContainer = makeReportPromptModal()
+    } else { 
+        console.log('Unknown breakage model: ', window.breakageModel)
+    }
     document.body.insertBefore(modalContainer, document.body.childNodes[0])
 })()

@@ -518,6 +518,10 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         chrome.tabs.create({ url: url })
 
         return true
+    } else if (req.openBreakageReport) {
+        chrome.tabs.create({ url: req.url })
+
+        return true
     }
 
     if (req.firePixel) {
