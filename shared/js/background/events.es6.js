@@ -522,6 +522,21 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         chrome.tabs.create({ url: req.url })
 
         return true
+    } else if (req.breakageFlow) {
+        chrome.tabs.reload(req.tabId, { bypassCache: true }, () => {
+            setTimeout(() => {
+                chrome.tabs.executeScript(req.tabId, {
+                    code: `window.breakageModel = '${req.breakageFlow}'`
+                }, () => {
+                    console.log('execute 2')
+                    chrome.tabs.executeScript(req.tabId, {
+                        file: 'public/js/content-scripts/breakage-flow.js'
+                    }, () => {
+                        res({ success: true })
+                    })
+                })
+            }, 1000)
+        })
     }
 
     if (req.firePixel) {

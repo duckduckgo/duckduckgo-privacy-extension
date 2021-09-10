@@ -173,7 +173,12 @@
     }
 
     function toggleAllowlisted (status) {
-        window.chrome.runtime.sendMessage({
+        let browserObj = window.chrome
+        if (navigator.userAgent.indexOf('Firefox') > 0) {
+            browserObj = browser
+        }
+
+        browserObj.runtime.sendMessage({
             toggleSiteProtections: true,
             domain: window.location.hostname,
             status: status

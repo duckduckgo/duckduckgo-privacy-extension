@@ -83,6 +83,7 @@
     "web_accessible_resources": [
         "/web_accessible_resources/*",
         "/public/css/autofill.css",
-        "/public/font/*"
+        "/public/font/*",
+        "/content-scripts/breakage-flow.js"
     ]
 }
