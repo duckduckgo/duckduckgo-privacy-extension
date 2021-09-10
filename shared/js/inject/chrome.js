@@ -1,3 +1,5 @@
+console.log("inject?");
+
 /**
  * Inject all the overwrites into the page.
  */

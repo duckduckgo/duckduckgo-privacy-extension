@@ -11,6 +11,7 @@ public/css/*.*
 *.swo
 build/firefox
 build/chrome
+build/chrome-beta
 build/test
 test/background.js
 shared/js/content-scope/sjcl.js

@@ -23,8 +23,11 @@
         "test-ci": "npm run lint && npm test && npm run test-int-x",
         "dev-firefox": "make dev browser=firefox type=dev watch=1",
         "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/",
+        "open-dev-chrome": "web-ext run -s build/chrome/dev/ -t chromium -u https://privacy-test-pages.glitch.me/",
+        "open-dev-chrome-beta": "web-ext run -s build/chrome-beta/dev/ -t chromium -u https://privacy-test-pages.glitch.me/",
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make dev browser=chrome type=dev watch=1",
+        "dev-chrome-beta": "make dev browser=chrome-beta type=dev watch=1",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },
