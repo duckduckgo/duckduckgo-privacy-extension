@@ -65,7 +65,7 @@
         "request": "^2.88.2",
         "rollup": "^2.56.3",
         "rollup-plugin-dynamic-import-variables": "^1.1.0",
-        "sass": "^1.39.0",
+        "sass": "^1.39.2",
         "standard": "16.0.3",
         "timekeeper": "^2.1.1",
         "yargs": "^17.1.1"
