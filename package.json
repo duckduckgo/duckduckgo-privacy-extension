@@ -92,7 +92,7 @@
         "sjcl": "^1.0.8",
         "tldts": "^5.7.43",
         "underscore": "1.13.1",
-        "web-ext": "^6.3.0"
+        "web-ext": "^6.4.0"
     },
     "babel": {
         "presets": [
