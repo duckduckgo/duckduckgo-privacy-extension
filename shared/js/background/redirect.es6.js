@@ -58,7 +58,7 @@ function handleRequest (requestData) {
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    if (requestData.type === 'main_frame' && window.chrome) {
+    if (requestData.type === 'main_frame' && globalThis.browser) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             const newTab = tabManager.create(requestData)
 
@@ -230,7 +230,7 @@ function handleRequest (requestData) {
 
         // If we didn't block this script and it's a tracker, notify the content script.
         if (requestData.type === 'script' && tracker) {
-            chrome.tabs.sendMessage(requestData.tabId, {
+            utils.sendTabMessage(requestData.tabId, {
                 type: 'update',
                 trackerDefinition: true,
                 hostname: tldts.parse(requestData.url).hostname
@@ -245,7 +245,7 @@ function handleRequest (requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-    if (!thisTab.site || !window.chrome) return
+    if (!thisTab.site || !globalThis.browser) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {

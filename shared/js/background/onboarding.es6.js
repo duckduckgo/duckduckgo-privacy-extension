@@ -50,20 +50,19 @@ function onDocumentEnd ({
                 console.error(err)
             }
 
-            // DDG privacy policy prevents us to use `chrome.runtime` on the SERP so we
+            // DDG privacy policy prevents us to use `browser.runtime` on the SERP so we
             // setup a relay here so that the SERP can communicate with the background process
             if (browserName === 'chrome') {
-                window.addEventListener('message', (e) => {
+                window.addEventListener('message', async (e) => {
                     if (e.origin === origin) {
                         switch (e.data.type) {
                         case 'healthCheckRequest': {
                             try {
-                                chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                    e.source.postMessage(
-                                        { type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError },
-                                        e.origin
-                                    )
-                                })
+                                await browser.runtime.sendMessage(extensionId, e.data.type)
+                                e.source.postMessage(
+                                    { type: 'healthCheckResponse', isAlive: true },
+                                    e.origin
+                                )
                             } catch (err) {
                                 e.source.postMessage(
                                     { type: 'healthCheckResponse', isAlive: false },
@@ -74,11 +73,7 @@ function onDocumentEnd ({
                         }
 
                         case 'rescheduleCounterMessagingRequest': {
-                            chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                if (chrome.runtime.lastError) {
-                                    console.error(chrome.runtime.lastError)
-                                }
-                            })
+                            browser.runtime.sendMessage(extensionId, e.data.type)
                             break
                         }
                         }
