@@ -6,7 +6,15 @@ const browserInfo = parseUserAgentString()
 const settings = require('./settings.es6')
 const load = require('./load.es6')
 
-function extractHostFromURL (url, shouldKeepWWW) {
+export function sendTabMessage (id, message, details) {
+    try {
+        browser.tabs.sendMessage(id, message, details)
+    } catch {
+        // Ignore errors
+    }
+}
+
+export function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
 
     const urlObj = tldts.parse(url)
@@ -20,7 +28,7 @@ function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
-function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
+export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
@@ -47,7 +55,7 @@ function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     }
 }
 
-function extractTopSubdomainFromHost (host) {
+export function extractTopSubdomainFromHost (host) {
     if (typeof host !== 'string') return false
     const rgx = /\./g
     if (host.match(rgx) && host.match(rgx).length > 1) {
@@ -57,7 +65,7 @@ function extractTopSubdomainFromHost (host) {
 }
 
 // pull off subdomains and look for parent companies
-function findParent (url) {
+export function findParent (url) {
     const parts = extractHostFromURL(url).split('.')
 
     while (parts.length > 1) {
@@ -70,27 +78,24 @@ function findParent (url) {
     }
 }
 
-function getCurrentURL (callback) {
-    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
+export function getCurrentURL (callback) {
+    browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabData) => {
         if (tabData.length) {
             callback(tabData[0].url)
         }
     })
 }
 
-function getCurrentTab (callback) {
-    return new Promise((resolve, reject) => {
-        chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
-            if (tabData.length) {
-                resolve(tabData[0])
-            }
-        })
-    })
+export async function getCurrentTab (callback) {
+    const tabData = await browser.tabs.query({ active: true, lastFocusedWindow: true })
+    if (tabData.length) {
+        return tabData[0]
+    }
 }
 
 // Browser / Version detection
 // Get correct name for fetching UI assets
-function getBrowserName () {
+export function getBrowserName () {
     if (!browserInfo || !browserInfo.browser) return
 
     let browser = browserInfo.browser.toLowerCase()
@@ -100,7 +105,7 @@ function getBrowserName () {
 }
 
 // Determine if upgradeToSecure supported (Firefox 59+)
-function getUpgradeToSecureSupport () {
+export function getUpgradeToSecureSupport () {
     let canUpgrade = false
     if (getBrowserName() !== 'moz') return canUpgrade
 
@@ -113,7 +118,7 @@ function getUpgradeToSecureSupport () {
 
 // Chrome errors with 'beacon', but supports 'ping'
 // Firefox only blocks 'beacon' (even though it should support 'ping')
-function getBeaconName () {
+export function getBeaconName () {
     const beaconNamesByBrowser = {
         chrome: 'ping',
         moz: 'beacon',
@@ -129,7 +134,7 @@ function getBeaconName () {
 }
 
 // Return requestListenerTypes + beacon or ping
-function getUpdatedRequestListenerTypes () {
+export function getUpdatedRequestListenerTypes () {
     const requestListenerTypes = constants.requestListenerTypes.slice()
     requestListenerTypes.push(getBeaconName())
 
@@ -137,7 +142,7 @@ function getUpdatedRequestListenerTypes () {
 }
 
 // return true if browser allows to handle request async
-function getAsyncBlockingSupport () {
+export function getAsyncBlockingSupport () {
     const browser = getBrowserName()
 
     if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
@@ -153,19 +158,19 @@ function getAsyncBlockingSupport () {
 /*
  * check to see if this is a broken site reported on github
 */
-function isBroken (url) {
+export function isBroken (url) {
     if (!tdsStorage?.config.unprotectedTemporary) return
     return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
 }
 
-function removeBroken (domain) {
+export function removeBroken (domain) {
     const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
     if (index !== -1) {
         console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
     }
 }
 
-function getBrokenFeaturesAboutBlank (url) {
+export function getBrokenFeaturesAboutBlank (url) {
     if (!tdsStorage.config.features) return
     const brokenFeatures = []
     for (const feature in tdsStorage.config.features) {
@@ -181,7 +186,7 @@ function getBrokenFeaturesAboutBlank (url) {
     return brokenFeatures
 }
 
-function getBrokenFeatures (url) {
+export function getBrokenFeatures (url) {
     if (!tdsStorage.config.features) return
     const brokenFeatures = []
     for (const feature in tdsStorage.config.features) {
@@ -195,7 +200,7 @@ function getBrokenFeatures (url) {
     return brokenFeatures
 }
 
-function brokenListIndex (url, list) {
+export function brokenListIndex (url, list) {
     const parsedDomain = tldts.parse(url)
     const hostname = parsedDomain.hostname || url
 
@@ -209,7 +214,7 @@ function brokenListIndex (url, list) {
     })
 }
 
-function isFeatureBrokenForURL (url, feature) {
+export function isFeatureBrokenForURL (url, feature) {
     const exceptionList = tdsStorage.config.features[feature]?.exceptions
     if (!exceptionList || exceptionList.length === 0) {
         return false
@@ -219,7 +224,7 @@ function isFeatureBrokenForURL (url, feature) {
 }
 
 // We inject this into content scripts
-function getBrokenScriptLists () {
+export function getBrokenScriptLists () {
     const brokenScripts = {}
     for (const key in tdsStorage.config.features) {
         const featureSettings = getFeatureSettings(key)
@@ -230,7 +235,7 @@ function getBrokenScriptLists () {
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
 // tabManager.site.isProtectionEnabled() is the preferred method.
-function isSafeListed (url) {
+export function isSafeListed (url) {
     const hostname = extractHostFromURL(url)
     const safeList = settings.getSetting('allowlisted')
     const subdomains = hostname.split('.')
@@ -251,7 +256,7 @@ function isSafeListed (url) {
     return false
 }
 
-function isCookieExcluded (url) {
+export function isCookieExcluded (url) {
     const domain = (new URL(url)).host
     return isDomainCookieExcluded(domain)
 }
@@ -280,7 +285,7 @@ function isDomainCookieExcluded (domain) {
  * for use in injections where the extension URL may not be
  * accessible
  */
-async function imgToData (imagePath) {
+export async function imgToData (imagePath) {
     const imgType = imagePath.substring(imagePath.lastIndexOf('.') + 1)
     try {
         const options = {
@@ -312,7 +317,7 @@ async function imgToData (imagePath) {
  * Tests whether the two URL's belong to the same
  * top level domain.
  */
-function isSameTopLevelDomain (url1, url2) {
+export function isSameTopLevelDomain (url1, url2) {
     const first = tldts.parse(url1, { allowPrivateDomains: true })
     const second = tldts.parse(url2, { allowPrivateDomains: true })
 
@@ -345,37 +350,11 @@ function isFeatureEnabled (featureName) {
  * @param {String} featureName - the name of the feature
  * @returns {Object} - Settings associated in the config with featureName
  */
-function getFeatureSettings (featureName) {
+export function getFeatureSettings (featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (typeof feature !== 'object' || feature === null || !feature.settings) {
         return {}
     }
 
     return feature.settings
-}
-
-module.exports = {
-    extractHostFromURL,
-    extractTopSubdomainFromHost,
-    getCurrentURL,
-    getCurrentTab,
-    getBrowserName,
-    getUpgradeToSecureSupport,
-    getAsyncBlockingSupport,
-    findParent,
-    getBeaconName,
-    getUpdatedRequestListenerTypes,
-    isSafeListed,
-    isCookieExcluded,
-    extractLimitedDomainFromURL,
-    brokenListIndex,
-    isFeatureBrokenForURL,
-    getBrokenFeatures,
-    getBrokenFeaturesAboutBlank,
-    isBroken,
-    imgToData,
-    getBrokenScriptLists,
-    isSameTopLevelDomain,
-    getFeatureSettings,
-    removeBroken
 }

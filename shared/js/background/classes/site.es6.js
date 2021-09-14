@@ -83,8 +83,7 @@ class Site {
      * Send message to the popup to rerender the allowlist
      */
     notifyAllowlistChanged () {
-        // this can send an error message when the popup is not open check lastError to hide it
-        chrome.runtime.sendMessage({ allowlistChanged: true }, () => chrome.runtime.lastError)
+        browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
     isContentBlockingEnabled () {

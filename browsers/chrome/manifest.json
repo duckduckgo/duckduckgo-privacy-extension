@@ -19,6 +19,7 @@
     "options_page": "html/options.html",
     "background": {
         "scripts": [
+            "public/js/browser-polyfill.js",
             "public/js/background.js"
         ]
     },

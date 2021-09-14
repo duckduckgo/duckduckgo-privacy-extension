@@ -68,6 +68,7 @@
         "sass": "^1.39.0",
         "standard": "16.0.3",
         "timekeeper": "^2.1.1",
+        "webextension-polyfill": "^0.8.0",
         "yargs": "^17.1.1"
     },
     "dependencies": {
@@ -99,7 +100,11 @@
             [
                 "@babel/preset-env",
                 {
-                    "debug": true
+                    "debug": true,
+                    "targets": {
+                      "chrome": 58,
+                      "firefox": 58
+                    }
                 }
             ]
         ]
