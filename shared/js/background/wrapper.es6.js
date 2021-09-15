@@ -5,7 +5,7 @@ export function getExtensionURL (path) {
 }
 
 export function getExtensionVersion () {
-    const manifest = globalThis.browser && browser.runtime.getManifest()
+    const manifest = browser.runtime.getManifest()
     return manifest.version
 }
 
@@ -36,11 +36,10 @@ export function getExtensionId () {
 }
 
 export async function notifyPopup (message) {
-    // this can throw an error message when the popup is not open.
     try {
         await browser.runtime.sendMessage(message)
-    } catch (e) {
-        console.log('send message failed', e)
+    } catch {
+        // Ignore this as can throw an error message when the popup is not open.
     }
 }
 

@@ -70,8 +70,10 @@ function init () {
     inject(initialScript)
 
     chrome.runtime.sendMessage({
-        registeredContentScript: true,
-        documentUrl: window.location.href
+        messageType: 'registeredContentScript',
+        options: {
+            documentUrl: window.location.href
+        }
     },
     (message) => {
         if (!message) {
@@ -82,9 +84,7 @@ function init () {
         if (message.debug) {
             window.addEventListener('message', (m) => {
                 if (m.data.action && m.data.message) {
-                    chrome.runtime.sendMessage({
-                        debuggerMessage: m.data
-                    })
+                    chrome.runtime.sendMessage({ messageType: 'debuggerMessage', options: m.data })
                 }
             })
         }

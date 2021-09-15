@@ -1,10 +1,9 @@
 import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
+import browser from 'webextension-polyfill'
 const browserInfo = parseUserAgentString()
 
-const fetch = (message) => {
-    return new Promise((resolve, reject) => {
-        window.chrome.runtime.sendMessage(message, (result) => resolve(result))
-    })
+const sendMessage = async (messageType, options) => {
+    return await browser.runtime.sendMessage({ messageType, options })
 }
 
 const backgroundMessage = (thisModel) => {
@@ -21,9 +20,9 @@ const backgroundMessage = (thisModel) => {
 
 const getBackgroundTabData = () => {
     return new Promise((resolve, reject) => {
-        fetch({ getCurrentTab: true }).then((tab) => {
+        sendMessage('getCurrentTab').then((tab) => {
             if (tab) {
-                fetch({ getTab: tab.id }).then((backgroundTabObj) => {
+                sendMessage('getTab', tab.id).then((backgroundTabObj) => {
                     resolve(backgroundTabObj)
                 })
             }
@@ -62,7 +61,7 @@ const closePopup = () => {
 }
 
 module.exports = {
-    fetch: fetch,
+    sendMessage,
     reloadTab: reloadTab,
     closePopup: closePopup,
     backgroundMessage: backgroundMessage,

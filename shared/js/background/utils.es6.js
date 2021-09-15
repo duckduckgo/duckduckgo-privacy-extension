@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 import tdsStorage from './storage/tds.es6'
 import settings from './settings.es6'
 import load from './load.es6'

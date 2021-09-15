@@ -51,7 +51,7 @@ TopBlocked.prototype = window.$.extend({},
 
         resetTrackersStats: function (e) {
             if (e) e.preventDefault()
-            this.model.fetch({ resetTrackersData: true })
+            this.model.sendMessage('resetTrackersData')
         },
 
         handleBackgroundMsg: function (message) {

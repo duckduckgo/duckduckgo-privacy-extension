@@ -5,6 +5,7 @@
  * if we do too much before adding it
  */
 import browser from 'webextension-polyfill'
+import * as messageHandlers from './message-handlers'
 const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
@@ -16,6 +17,8 @@ const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
+const tdsStorage = require('./storage/tds.es6')
+const browserWrapper = require('./wrapper.es6')
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -31,36 +34,39 @@ function getHash () {
     return sha1(getFloat().toString())
 }
 
-browser.runtime.onInstalled.addListener(function (details) {
+async function onInstalled (details) {
     tdsStorage.initOnInstall()
 
     if (details.reason.match(/install/)) {
-        settings.ready()
-            .then(() => {
-                settings.updateSetting('showWelcomeBanner', true)
-                if (browserName === 'chrome') {
-                    settings.updateSetting('showCounterMessaging', true)
-                }
-            })
-            .then(ATB.updateATBValues)
-            .then(ATB.openPostInstallPage)
-            .then(function () {
-                if (browserName === 'chrome') {
-                    experiment.setActiveExperiment()
-                }
-            })
+        await settings.ready()
+        settings.updateSetting('showWelcomeBanner', true)
+        if (browserName === 'chrome') {
+            settings.updateSetting('showCounterMessaging', true)
+        }
+        await ATB.updateATBValues()
+        await ATB.openPostInstallPage()
+        if (browserName === 'chrome') {
+            experiment.setActiveExperiment()
+        }
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
         experiment.setActiveExperiment()
     }
 
     // Inject the email content script on all tabs upon installation (not needed on Firefox)
     if (browserName !== 'moz') {
-        browser.tabs.query({}, (tabs) => {
-            tabs.forEach(tab => {
-                browser.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
-            })
-        })
+        const tabs = await browser.tabs.query({})
+        for (const tab of tabs) {
+            // Ignore URLs that we aren't permitted to access
+            if (tab.url.startsWith('chrome://')) {
+                continue
+            }
+            browser.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
+        }
     }
+}
+
+browser.runtime.onInstalled.addListener(function (details) {
+    onInstalled(details)
 })
 
 /**
@@ -106,7 +112,7 @@ browser.webNavigation.onCommitted.addListener(async details => {
                     showCounterMessaging,
                     browserName,
                     duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                    extensionId: browser.runtime.id
+                    extensionId: browserWrapper.getExtensionId()
                 }),
                 runAt: 'document_end'
             })
@@ -279,42 +285,53 @@ browser.tabs.onRemoved.addListener((id, info) => {
     tabManager.delete(id)
 })
 
-// message popup to close when the active tab changes. this can send an error message when the popup is not open. check lastError to hide it
-browser.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError))
+// message popup to close when the active tab changes.
+browser.tabs.onActivated.addListener(() => {
+    browserWrapper.notifyPopup({ closePopup: true })
+})
 
 // search via omnibox
-browser.omnibox.onInputEntered.addListener(function (text) {
-    chrome.tabs.query({
+browser.omnibox.onInputEntered.addListener(async function (text) {
+    const tabs = await browser.tabs.query({
         currentWindow: true,
         active: true
-    }, function (tabs) {
-        browser.tabs.update(tabs[0].id, {
-            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + utils.getOsName() + 'cl'
-        })
+    })
+    browser.tabs.update(tabs[0].id, {
+        url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + utils.getOsName() + 'cl'
     })
 })
 
 /**
  * MESSAGES
  */
-const browserWrapper = require('./wrapper.es6')
 const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
-    showContextMenuAction,
-    hideContextMenuAction,
-    getAddresses,
-    isValidUsername,
-    isValidToken
+    showContextMenuAction
 } = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
-// returning `true` makes it possible to send back an async response
-chrome.runtime.onMessage.addListener((req, sender, res) => {
-    if (sender.id !== browser.runtime.id) return
+browser.runtime.onMessage.addListener((req, sender) => {
+    if (sender.id !== browserWrapper.getExtensionId()) return
 
-    if (req.registeredContentScript || req.registeredTempAutofillContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.documentUrl)
+    // TODO clean up message passing
+    const legacyMessageTypes = [
+        'addUserData',
+        'getAddresses',
+        'refreshAlias'
+    ]
+    for (const legacyMessageType of legacyMessageTypes) {
+        if (legacyMessageType in req) {
+            req.messageType = legacyMessageType
+            req.options = req[legacyMessageType]
+        }
+    }
+
+    if (req.messageType in messageHandlers) {
+        return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
+    }
+    if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
+        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options.documentUrl || req.documentUrl)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
             return
@@ -326,278 +343,19 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             return
         }
         if (!argumentsObject.site.allowlisted) {
-            res(argumentsObject)
+            return Promise.resolve(argumentsObject)
+        }
+    }
+
+    // TODO clean up legacy onboarding messaging
+    if (browserName === 'chrome') {
+        if (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest') {
             return
         }
-        return
     }
 
-    if (req.getCurrentTab) {
-        utils.getCurrentTab().then(tab => {
-            res(tab)
-        })
-
-        return true
-    }
-
-    // Click to load interactions
-    if (req.initClickToLoad) {
-        settings.ready().then(() => {
-            const tab = tabManager.get({ tabId: sender.tab.id })
-            const config = { ...tdsStorage.ClickToLoadConfig }
-
-            // Determine whether to show one time messages or simplified messages
-            for (const [entity] of Object.entries(config)) {
-                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-                if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
-                    config[entity].simpleVersion = true
-                }
-            }
-
-            // if the current site is on the social exception list, remove it from the config.
-            let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
-            if (excludedNetworks) {
-                excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
-                excludedNetworks.forEach(e => delete config[e.entity])
-            }
-            res(config)
-        })
-        return true
-    }
-
-    if (req.getImage) {
-        if (req.getImage === 'None' || req.getImage === 'none' || req.getImage === undefined) {
-            res(undefined)
-        } else {
-            utils.imgToData(`img/social/${req.getImage}`).then(img => res(img))
-        }
-        return true
-    }
-
-    if (req.getLoadingImage) {
-        if (req.getLoadingImage === 'dark') {
-            utils.imgToData('img/social/loading_dark.svg').then(img => res(img))
-        } else if (req.getLoadingImage === 'light') {
-            utils.imgToData('img/social/loading_light.svg').then(img => res(img))
-        }
-        return true
-    }
-
-    if (req.getLogo) {
-        utils.imgToData('img/social/dax.png').then(img => res(img))
-        return true
-    }
-
-    if (req.getSocialSurrogateRules) {
-        const entityData = tdsStorage.ClickToLoadConfig[req.getSocialSurrogateRules]
-        if (entityData && entityData.surrogates) {
-            const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
-                accumulator.push(value.rule)
-                return accumulator
-            }, [])
-            res(rules)
-        }
-        return true
-    }
-
-    if (req.enableSocialTracker) {
-        settings.ready().then(() => {
-            const tab = tabManager.get({ tabId: sender.tab.id })
-            tab.site.clickToLoad.push(req.enableSocialTracker)
-
-            const entity = req.enableSocialTracker
-            if (req.isLogin) {
-                trackerutils.allowSocialLogin(tab.site.domain)
-            }
-            // Update number of times this social network has been 'clicked'
-            if (tdsStorage.ClickToLoadConfig[entity]) {
-                const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-                const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-                if (!clickToLoadClicks[entity]) {
-                    clickToLoadClicks[entity] = 1
-                } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
-                    clickToLoadClicks[entity] += 1
-                }
-                settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
-            }
-        })
-    }
-
-    if (req.updateSetting) {
-        const name = req.updateSetting.name
-        const value = req.updateSetting.value
-        settings.ready().then(() => {
-            settings.updateSetting(name, value)
-        })
-    } else if (req.getSetting) {
-        const name = req.getSetting.name
-        settings.ready().then(() => {
-            res(settings.getSetting(name))
-        })
-
-        return true
-    }
-
-    // popup will ask for the browser type then it is created
-    if (req.getBrowser) {
-        res(utils.getBrowserName())
-        return true
-    }
-
-    if (req.getExtensionVersion) {
-        res(browserWrapper.getExtensionVersion())
-        return true
-    }
-
-    if (req.getTopBlocked) {
-        res(Companies.getTopBlocked(req.getTopBlocked))
-        return true
-    } else if (req.getTopBlockedByPages) {
-        res(Companies.getTopBlockedByPages(req.getTopBlockedByPages))
-        return true
-    } else if (req.resetTrackersData) {
-        Companies.resetData()
-    }
-
-    if (req.setList) {
-        tabManager.setList(req.setList)
-    } else if (req.allowlistOptIn) {
-        tabManager.setGlobalAllowlist('allowlistOptIn', req.allowlistOptIn.domain, req.allowlistOptIn.value)
-    } else if (req.getTab) {
-        res(tabManager.get({ tabId: req.getTab }))
-        return true
-    } else if (req.getSiteGrade) {
-        const tab = tabManager.get({ tabId: req.getSiteGrade })
-        let grade = {}
-
-        if (!tab.site.specialDomainName) {
-            grade = tab.site.grade.get()
-        }
-
-        res(grade)
-        return true
-    }
-
-    if (req.firePixel) {
-        let fireArgs = req.firePixel
-        if (fireArgs.constructor !== Array) {
-            fireArgs = [req.firePixel]
-        }
-        res(pixel.fire.apply(null, fireArgs))
-        return true
-    }
-
-    if (req.getAlias) {
-        const userData = settings.getSetting('userData')
-        res({ alias: userData?.nextAlias })
-
-        return true
-    }
-
-    if (req.getAddresses) {
-        res(getAddresses())
-
-        return true
-    }
-
-    if (req.refreshAlias) {
-        fetchAlias().then(() => {
-            res(getAddresses())
-        })
-
-        return true
-    }
-
-    if (req.addUserData) {
-        // Check the origin. Shouldn't be necessary, but better safe than sorry
-        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)) return
-
-        const sendDdgUserReady = () =>
-            chrome.tabs.query({}, (tabs) =>
-                tabs.forEach((tab) => {
-                    browser.tabs.sendMessage(tab.id, { type: 'ddgUserReady' }).catch(() => {})
-                })
-            )
-
-        settings.ready().then(() => {
-            const { userName, token } = req.addUserData
-            const { existingToken } = settings.getSetting('userData') || {}
-
-            // If the user is already registered, just notify tabs that we're ready
-            if (existingToken === token) {
-                sendDdgUserReady()
-                res({ success: true })
-                return
-            }
-
-            // Check general data validity
-            if (isValidUsername(userName) && isValidToken(token)) {
-                settings.updateSetting('userData', req.addUserData)
-                // Once user is set, fetch the alias and notify all tabs
-                fetchAlias().then((response) => {
-                    if (response && response.error) {
-                        res({ error: response.error.message })
-                        return
-                    }
-
-                    sendDdgUserReady()
-                    showContextMenuAction()
-                    res({ success: true })
-                })
-            } else {
-                res({ error: 'Something seems wrong with the user data' })
-            }
-        })
-
-        return true
-    }
-
-    if (req.logout) {
-        settings.updateSetting('userData', {})
-        // Broadcast the logout to all tabs
-        chrome.tabs.query({}, (tabs) => {
-            tabs.forEach((tab) => {
-                browser.tabs.sendMessage(tab.id, { type: 'logout' }).catch(() => {})
-            })
-        })
-        hideContextMenuAction()
-    }
-
-    if (req.getListContents) {
-        res({
-            data: tdsStorage.getSerializableList(req.getListContents),
-            etag: settings.getSetting(`${req.getListContents}-etag`) || ''
-        })
-        return true
-    }
-
-    if (req.setListContents) {
-        const parsed = tdsStorage.parsedata(req.setListContents, req.value)
-        tdsStorage[req.setListContents] = parsed
-        trackers.setLists([{
-            name: req.setListContents,
-            data: parsed
-        }])
-        res()
-        return true
-    }
-
-    if (req.reloadList) {
-        const list = constants.tdsLists.find(l => l.name === req.reloadList)
-        if (list) {
-            tdsStorage.getList(list).then((list) => {
-                trackers.setLists([list])
-                res()
-            })
-        }
-        return true
-    }
-
-    if (req.debuggerMessage) {
-        devtools.postMessage(sender.tab?.id, req.debuggerMessage.action, req.debuggerMessage.message)
-        return true
-    }
+    console.error('Unrecognised message to background:', req, sender)
+    return false
 })
 
 /**
@@ -609,9 +367,6 @@ let sessionKey = getHash()
 function getArgumentsObject (tabId, sender, documentUrl) {
     const tab = tabManager.get({ tabId })
     if (!tab) {
-        return null
-    }
-    if (chrome.runtime.lastError) { // Prevent thrown errors when the frame disappears
         return null
     }
     // Clone site so we don't retain any site changes
@@ -640,11 +395,15 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         const parsed = tldts.parse(tab.url)
         cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
 
-        if (documentUrl && trackerutils.isTracker(documentUrl) && sender.frameId !== 0) {
-            cookie.isTrackerFrame = true
+        if (trackerutils.hasTrackerListLoaded()) {
+            if (documentUrl &&
+                trackerutils.isTracker(documentUrl) &&
+                sender.frameId !== 0) {
+                cookie.isTrackerFrame = true
+            }
+            cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         }
 
-        cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
     }
     return {
@@ -844,7 +603,6 @@ browser.webNavigation.onCommitted.addListener(details => {
 
 const httpsStorage = require('./storage/https.es6')
 const httpsService = require('./https-service.es6')
-const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs
@@ -860,23 +618,27 @@ browser.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
 browser.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
 
-browser.alarms.onAlarm.addListener(alarmEvent => {
+browser.alarms.onAlarm.addListener(async alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
-        settings.ready().then(() => {
-            httpsStorage.getLists()
-                .then(lists => https.setLists(lists))
-                .catch(e => console.log(e))
-        })
+        await settings.ready()
+        try {
+            const lists = await httpsStorage.getLists()
+            https.setLists(lists)
+        } catch (e) {
+            console.log(e)
+        }
     } else if (alarmEvent.name === 'updateUninstallURL') {
         browser.runtime.setUninstallURL(ATB.getSurveyURL())
     } else if (alarmEvent.name === 'updateLists') {
-        settings.ready().then(() => {
-            https.sendHttpsUpgradeTotals()
-        })
+        await settings.ready()
+        https.sendHttpsUpgradeTotals()
 
-        tdsStorage.getLists()
-            .then(lists => trackers.setLists(lists))
-            .catch(e => console.log(e))
+        try {
+            const lists = await tdsStorage.getLists()
+            trackers.setLists(lists)
+        } catch (e) {
+            console.log(e)
+        }
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'rotateSessionKey') {
@@ -890,39 +652,39 @@ browser.alarms.onAlarm.addListener(alarmEvent => {
 /**
  * on start up
  */
-const onStartup = () => {
-    chrome.tabs.query({ currentWindow: true, status: 'complete' }, function (savedTabs) {
-        for (let i = 0; i < savedTabs.length; i++) {
-            const tab = savedTabs[i]
+const onStartup = async () => {
+    const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
+    for (let i = 0; i < savedTabs.length; i++) {
+        const tab = savedTabs[i]
 
-            if (tab.url) {
-                tabManager.create(tab)
-            }
+        if (tab.url) {
+            tabManager.create(tab)
         }
-    })
+    }
 
-    settings.ready().then(async () => {
-        experiment.setActiveExperiment()
+    await settings.ready()
+    experiment.setActiveExperiment()
 
-        httpsStorage.getLists()
-            .then(lists => https.setLists(lists))
-            .catch(e => console.log(e))
+    try {
+        const httpsLists = await httpsStorage.getLists()
+        https.setLists(httpsLists)
 
-        tdsStorage.getLists()
-            .then(lists => trackers.setLists(lists))
-            .catch(e => console.log(e))
+        const tdsLists = await tdsStorage.getLists()
+        trackers.setLists(tdsLists)
+    } catch (e) {
+        console.log(e)
+    }
 
-        https.sendHttpsUpgradeTotals()
+    https.sendHttpsUpgradeTotals()
 
-        Companies.buildFromStorage()
+    Companies.buildFromStorage()
 
-        // fetch alias if needed
-        const userData = settings.getSetting('userData')
-        if (userData && userData.token) {
-            if (!userData.nextAlias) await fetchAlias()
-            showContextMenuAction()
-        }
-    })
+    // fetch alias if needed
+    const userData = settings.getSetting('userData')
+    if (userData && userData.token) {
+        if (!userData.nextAlias) await fetchAlias()
+        showContextMenuAction()
+    }
 }
 
 // Fire pixel on https upgrade failures to allow bad data to be removed from lists

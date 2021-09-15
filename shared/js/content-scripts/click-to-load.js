@@ -1,4 +1,7 @@
 (function clickToLoad () {
+    function sendMessage (messageType, options, callback) {
+        chrome.runtime.sendMessage({ messageType, options }, callback)
+    }
     let appID
     const loadingImages = {
         darkMode: '',
@@ -594,9 +597,7 @@
             parent.replaceChild(el, originalElement)
         }
         if (widgetData.replaceSettings.type === 'loginButton') {
-            chrome.runtime.sendMessage({
-                getImage: widgetData.replaceSettings.icon
-            }, function putLoginButton (icon) {
+            sendMessage('getImage', widgetData.replaceSettings.icon, function putLoginButton (icon) {
                 // Create a button to replace old element
                 const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon, originalElement)
                 button.addEventListener('click', widget.clickFunction(originalElement, container))
@@ -604,9 +605,7 @@
             })
         }
         if (widgetData.replaceSettings.type === 'dialog') {
-            chrome.runtime.sendMessage({
-                getImage: widgetData.replaceSettings.icon
-            }, function putButton (icon) {
+            sendMessage('getImage', widgetData.replaceSettings.icon, function putButton (icon) {
                 const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const el = createContentBlock(
@@ -643,15 +642,13 @@
      *********************************************************/
     function enableSocialTracker (entity, isLogin) {
         const message = {
-            enableSocialTracker: entity,
+            entity: entity,
             isLogin: isLogin
         }
-        chrome.runtime.sendMessage(message)
+        sendMessage('enableSocialTracker', message)
     }
 
-    chrome.runtime.sendMessage({
-        initClickToLoad: true
-    }, function (response) {
+    sendMessage('initClickToLoad', {}, function (response) {
         if (!response) {
             return
         }
@@ -666,23 +663,20 @@
     })
 
     // Fetch reusable assets
-    chrome.runtime.sendMessage({
-        getLoadingImage: 'light'
-    }, function (response) {
-        loadingImages.lightMode = response
-    })
+    sendMessage('getLoadingImage', 'light',
+        function (response) {
+            loadingImages.lightMode = response
+        })
 
-    chrome.runtime.sendMessage({
-        getLoadingImage: 'dark'
-    }, function (response) {
-        loadingImages.darkMode = response
-    })
+    sendMessage('getLoadingImage', 'dark',
+        function (response) {
+            loadingImages.darkMode = response
+        })
 
-    chrome.runtime.sendMessage({
-        getLogo: true
-    }, function (response) {
-        logoImg = response
-    })
+    sendMessage('getLogo', '',
+        function (response) {
+            logoImg = response
+        })
 
     // Listen for events from surrogates
     addEventListener('ddgClickToLoad', (event) => {
@@ -836,9 +830,7 @@
     }
 
     function makeModal (entity, acceptFunction, ...acceptFunctionParams) {
-        chrome.runtime.sendMessage({
-            getImage: entityData[entity].modalIcon
-        }, function putModal (icon) {
+        sendMessage('getImage', entityData[entity].modalIcon, function putModal (icon) {
             const modalContainer = document.createElement('div')
             modalContainer.style.cssText = styles.modalContainer
             const pageOverlay = document.createElement('div')

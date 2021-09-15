@@ -58,7 +58,7 @@ function handleRequest (requestData) {
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    if (requestData.type === 'main_frame' && globalThis.browser) {
+    if (requestData.type === 'main_frame') {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             const newTab = tabManager.create(requestData)
 
@@ -206,7 +206,7 @@ function handleRequest (requestData) {
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
                     // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
                     // in onBeforeSendHeaders
-                    if (tracker.matchedRule.strictRedirect && browser === 'moz') {
+                    if (tracker.matchedRule.strictRedirect && utils.getBrowserName() === 'moz') {
                         thisTab.surrogates[requestData.url] = webResource
                     } else {
                         const key = thisTab.addWebResourceAccess(webResource)
@@ -245,7 +245,7 @@ function handleRequest (requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-    if (!thisTab.site || !globalThis.browser) return
+    if (!thisTab.site || !browser) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {
