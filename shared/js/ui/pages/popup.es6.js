@@ -1,3 +1,4 @@
+globalThis.browser = require('webextension-polyfill')
 const Parent = window.DDG.base.Page
 const mixins = require('./mixins/index.es6.js')
 const HamburgerMenuView = require('./../views/hamburger-menu.es6.js')
