@@ -20,7 +20,7 @@ const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 
-const sha1 = require('../shared-utils/sha1')
+const browserName = utils.getBrowserName()
 
 /**
  * Produce a random float, same output as Math.random()
@@ -139,16 +139,6 @@ browser.webNavigation.onCommitted.addListener(async details => {
  * (Chrome only)
  */
 if (browserName === 'chrome') {
-    chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-        if (request === 'healthCheckRequest') {
-            sendResponse(true)
-        } else if (request === 'rescheduleCounterMessagingRequest') {
-            await settings.ready()
-            settings.updateSetting('rescheduleCounterMessagingOnStart', true)
-            sendResponse(true)
-        }
-    })
-
     browser.runtime.onStartup.addListener(async () => {
         await settings.ready()
 
@@ -163,17 +153,12 @@ if (browserName === 'chrome') {
  * REQUESTS
  */
 
-const redirect = require('./redirect.es6')
-const tabManager = require('./tab-manager.es6')
-const pixel = require('./pixel.es6')
-const https = require('./https.es6')
-
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 browser.webRequest.onBeforeRequest.addListener(
-    redirect.handleRequest,
+    handleRequest,
     {
         urls: ['<all_urls>'],
         types: requestListenerTypes
@@ -266,8 +251,6 @@ browser.webNavigation.onCommitted.addListener(details => {
 /**
  * TABS
  */
-
-const Companies = require('./companies.es6')
 
 browser.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
@@ -487,7 +470,6 @@ browser.webRequest.onBeforeSendHeaders.addListener(
 /**
  * Global Privacy Control
  */
-const GPC = require('./GPC.es6')
 
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
 if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
