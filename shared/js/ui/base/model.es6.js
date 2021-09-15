@@ -95,10 +95,22 @@ BaseModel.prototype = $.extend({},
 
         /**
          * Fetch data from background
-         * this.model.fetch({'messageName': messageValue}).then((response) ..
+         * this.model.sendMessage({'messageName': messageValue}).then((response) ..
          **/
         fetch: function (message) {
-            return browserUIWrapper.fetch(message)
+            throw new Error('please remove' + JSON.stringify(message))
+        },
+
+        /**
+         * Send message to background
+         * this.model.sendMessage(messageType, {...}).then((response) ..
+         **/
+        sendMessage (messageType, options) {
+            return browserUIWrapper.sendMessage(messageType, options)
+        },
+
+        firePixel (pixelData) {
+            return browserUIWrapper.sendMessage('firePixel', pixelData)
         },
 
         /**

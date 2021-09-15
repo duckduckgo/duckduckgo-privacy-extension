@@ -1,0 +1,273 @@
+const utils = require('./utils.es6')
+const settings = require('./settings.es6')
+const tabManager = require('./tab-manager.es6')
+const tdsStorage = require('./storage/tds.es6')
+const trackerutils = require('./tracker-utils')
+const trackers = require('./trackers.es6')
+const constants = require('../../data/constants')
+const Companies = require('./companies.es6')
+const pixel = require('./pixel.es6')
+const browserName = utils.getBrowserName()
+const devtools = require('./devtools.es6')
+const browserWrapper = require('./wrapper.es6')
+
+export function resetTrackersData () {
+    return Companies.resetData()
+}
+
+export function getExtensionVersion () {
+    return browserWrapper.getExtensionVersion()
+}
+
+export function setList (options) {
+    tabManager.setList(options)
+}
+
+export function allowlistOptIn (optInData) {
+    tabManager.setGlobalAllowlist('allowlistOptIn', optInData.domain, optInData.value)
+}
+
+// popup will ask for the browser type then it is created
+export function getBrowser () {
+    return browserName
+}
+
+export function firePixel (fireArgs) {
+    if (fireArgs.constructor !== Array) {
+        fireArgs = [fireArgs]
+    }
+    return pixel.fire.apply(null, fireArgs)
+}
+
+export function getTab (tabId) {
+    return tabManager.get({ tabId })
+}
+
+export function getSiteGrade (tabId) {
+    const tab = tabManager.get({ tabId })
+    let grade = {}
+
+    if (!tab.site.specialDomainName) {
+        grade = tab.site.grade.get()
+    }
+
+    return grade
+}
+
+export function getTopBlockedByPages (options) {
+    return Companies.getTopBlockedByPages(options)
+}
+
+// Click to load interactions
+export async function initClickToLoad (unused, sender) {
+    await settings.ready()
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    const config = { ...tdsStorage.ClickToLoadConfig }
+
+    // remove any social networks saved by the user
+    for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
+        if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
+            delete config[entity]
+        }
+    }
+
+    // Determine whether to show one time messages or simplified messages
+    for (const [entity] of Object.entries(config)) {
+        const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+        const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+        if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
+            config[entity].simpleVersion = true
+        }
+    }
+
+    // if the current site is on the social exception list, remove it from the config.
+    let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
+    if (excludedNetworks) {
+        excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
+        excludedNetworks.forEach(e => delete config[e.entity])
+    }
+    return config
+}
+
+export function getLoadingImage (theme) {
+    if (theme === 'dark') {
+        return utils.imgToData('img/social/loading_dark.svg')
+    } else if (theme === 'light') {
+        return utils.imgToData('img/social/loading_light.svg')
+    }
+}
+
+export function getImage (image) {
+    if (image === 'None' || image === 'none' || image === undefined) {
+        return Promise.resolve(undefined)
+    } else {
+        return utils.imgToData(`img/social/${image}`)
+    }
+}
+
+export function getLogo () {
+    return utils.imgToData('img/social/dax.png')
+}
+
+export function getCurrentTab () {
+    return utils.getCurrentTab()
+}
+
+export function getSocialSurrogateRules (entity) {
+    const entityData = tdsStorage.ClickToLoadConfig[entity]
+    if (entityData && entityData.surrogates) {
+        const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
+            accumulator.push(value.rule)
+            return accumulator
+        }, [])
+        return rules
+    }
+}
+
+export async function enableSocialTracker (data, sender) {
+    await settings.ready()
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    const entity = data.entity
+    tab.site.clickToLoad.push(entity)
+
+    if (data.isLogin) {
+        trackerutils.allowSocialLogin(tab.site.domain)
+    }
+    if (data.alwaysAllow) {
+        let allowList = settings.getSetting('clickToLoad')
+        const value = {
+            tracker: entity,
+            domain: tab.site.domain
+        }
+        if (allowList) {
+            if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
+                allowList.push(value)
+            }
+        } else {
+            allowList = [value]
+        }
+        settings.updateSetting('clickToLoad', allowList)
+    }
+    // Update number of times this social network has been 'clicked'
+    if (tdsStorage.ClickToLoadConfig[entity]) {
+        const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+        const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+        if (!clickToLoadClicks[entity]) {
+            clickToLoadClicks[entity] = 1
+        } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
+            clickToLoadClicks[entity] += 1
+        }
+        settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
+    }
+}
+
+export async function updateSetting ({ name, value }) {
+    await settings.ready()
+    settings.updateSetting(name, value)
+}
+
+export async function getSetting ({ name }) {
+    await settings.ready()
+    return settings.getSetting(name)
+}
+
+const {
+    isValidToken,
+    isValidUsername,
+    getAddresses,
+    fetchAlias,
+    showContextMenuAction,
+    hideContextMenuAction
+} = require('./email-utils.es6')
+
+export { getAddresses }
+
+export function getAlias () {
+    const userData = settings.getSetting('userData')
+    return { alias: userData?.nextAlias }
+}
+
+export async function refreshAlias () {
+    await fetchAlias()
+    return getAddresses()
+}
+
+export function getTopBlocked (options) {
+    return Companies.getTopBlocked(options)
+}
+
+export async function addUserData (userData, sender) {
+    const { userName, token } = userData
+    // Check the origin. Shouldn't be necessary, but better safe than sorry
+    if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)) return
+
+    const sendDdgUserReady = async () => {
+        const tabs = await browser.tabs.query({})
+        tabs.forEach((tab) =>
+            utils.sendTabMessage(tab.id, { type: 'ddgUserReady' })
+        )
+    }
+
+    await settings.ready()
+    const { existingToken } = settings.getSetting('userData') || {}
+
+    // If the user is already registered, just notify tabs that we're ready
+    if (existingToken === token) {
+        sendDdgUserReady()
+        return { success: true }
+    }
+
+    // Check general data validity
+    if (isValidUsername(userName) && isValidToken(token)) {
+        settings.updateSetting('userData', userData)
+        // Once user is set, fetch the alias and notify all tabs
+        const response = await fetchAlias()
+        if (response && response.error) {
+            return { error: response.error.message }
+        }
+
+        sendDdgUserReady()
+        showContextMenuAction()
+        return { success: true }
+    } else {
+        return { error: 'Something seems wrong with the user data' }
+    }
+}
+
+export async function logout () {
+    settings.updateSetting('userData', {})
+    // Broadcast the logout to all tabs
+    const tabs = await browser.tabs.query({})
+    tabs.forEach((tab) => {
+        utils.sendTabMessage(tab.id, { type: 'logout' })
+    })
+    hideContextMenuAction()
+}
+
+export function getListContents (list) {
+    return {
+        data: tdsStorage.getSerializableList(list),
+        etag: settings.getSetting(`${list}-etag`) || ''
+    }
+}
+
+export function setListContents (list) {
+    const parsed = tdsStorage.parsedata(list.setListContents, list.value)
+    tdsStorage[list] = parsed
+    trackers.setLists([{
+        name: list.setListContents,
+        data: parsed
+    }])
+}
+
+export async function reloadList (listName) {
+    let list = constants.tdsLists.find(l => l.name === listName)
+    if (list) {
+        list = await tdsStorage.getList(list)
+        trackers.setLists([list])
+    }
+}
+
+export function debuggerMessage (message, sender) {
+    devtools.postMessage(sender.tab?.id, message.action, message.message)
+}

@@ -16,7 +16,8 @@
     let sdkPatterns = [/connect.facebook.net\/[a-zA-Z_]+\/(sdk|all).js/]
     // Request list of rules to capture from the extension
     chrome.runtime.sendMessage({
-        getSocialSurrogateRules: entity
+        messageType: 'getSocialSurrogateRules',
+        options: entity
     }, function (response) {
         sdkPatterns = response
     })

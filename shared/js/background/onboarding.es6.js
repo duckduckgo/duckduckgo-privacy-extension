@@ -65,7 +65,7 @@ function onDocumentEnd ({
                                 )
                             } catch (err) {
                                 e.source.postMessage(
-                                    { type: 'healthCheckResponse', isAlive: false },
+                                    { type: 'healthCheckResponse', isAlive: false, error: e.data },
                                     e.origin
                                 )
                             }

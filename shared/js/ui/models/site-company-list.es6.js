@@ -17,9 +17,9 @@ SiteCompanyList.prototype = window.$.extend({},
 
         fetchAsyncData: function () {
             return new Promise((resolve, reject) => {
-                this.fetch({ getCurrentTab: true }).then((tab) => {
+                this.sendMessage('getCurrentTab').then((tab) => {
                     if (tab) {
-                        this.fetch({ getTab: tab.id }).then((bkgTab) => {
+                        this.sendMessage('getTab', tab.id).then((bkgTab) => {
                             this.tab = bkgTab
                             this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
                             this._updateCompaniesList()

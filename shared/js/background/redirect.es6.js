@@ -144,7 +144,7 @@ function handleRequest (requestData) {
             devtools.postMessage(tabId, 'tracker', {
                 tracker: {
                     ...reportedTracker,
-                    matchedRule: reportedTracker.matchedRule?.rule.toString()
+                    matchedRule: reportedTracker.matchedRule?.rule?.toString()
                 },
                 url: cleanUrl,
                 requestData,

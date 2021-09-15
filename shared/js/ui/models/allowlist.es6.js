@@ -18,20 +18,16 @@ Allowlist.prototype = window.$.extend({},
             const domain = this.list[itemIndex]
             console.log(`allowlist: remove ${domain}`)
 
-            this.fetch({
-                setList: {
-                    list: 'allowlisted',
-                    domain: domain,
-                    value: false
-                }
+            this.sendMessage('setList', {
+                list: 'allowlisted',
+                domain: domain,
+                value: false
             })
             // Remove domain allowlist opt-in status, if present
-            this.fetch({
-                allowlistOptIn: {
-                    list: 'allowlistOptIn',
-                    domain: domain,
-                    value: false
-                }
+            this.sendMessage('allowlistOptIn', {
+                list: 'allowlistOptIn',
+                domain: domain,
+                value: false
             })
 
             // Update list
@@ -54,12 +50,10 @@ Allowlist.prototype = window.$.extend({},
                 const domainToAllowlist = subDomain ? subDomain + '.' + domain : domain
                 console.log(`allowlist: add ${domainToAllowlist}`)
 
-                this.fetch({
-                    setList: {
-                        list: 'allowlisted',
-                        domain: domainToAllowlist,
-                        value: true
-                    }
+                this.sendMessage('setList', {
+                    list: 'allowlisted',
+                    domain: domainToAllowlist,
+                    value: true
                 })
 
                 this.setAllowlistFromSettings()
@@ -70,7 +64,7 @@ Allowlist.prototype = window.$.extend({},
 
         setAllowlistFromSettings: function () {
             const self = this
-            this.fetch({ getSetting: { name: 'allowlisted' } }).then((allowlist) => {
+            this.sendMessage('getSetting', { name: 'allowlisted' }).then((allowlist) => {
                 allowlist = allowlist || {}
                 const wlist = Object.keys(allowlist)
                 wlist.sort()

@@ -1,6 +1,6 @@
 module.exports = {
     setBrowserClassOnBodyTag: function () {
-        window.chrome.runtime.sendMessage({ getBrowser: true }, (browser) => {
+        window.chrome.runtime.sendMessage({ messageType: 'getBrowser' }, (browser) => {
             if (['edg', 'edge', 'brave'].includes(browser)) {
                 browser = 'chrome'
             }

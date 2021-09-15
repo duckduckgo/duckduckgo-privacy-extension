@@ -51,7 +51,7 @@ Site.prototype = window.$.extend({},
                         this.set('tosdr', tab.site.tosdr)
                         this.set('isaMajorTrackingNetwork', tab.site.parentPrevalence >= MAJOR_TRACKER_THRESHOLD_PCT)
 
-                        this.fetch({ getSetting: { name: 'tds-etag' } }).then(etag => this.set('tds', etag))
+                        this.sendMessage('getSetting', { name: 'tds-etag' }).then(etag => this.set('tds', etag))
                     } else {
                         console.debug('Site model: no tab')
                     }
@@ -67,7 +67,7 @@ Site.prototype = window.$.extend({},
         fetchSiteRating: function () {
             // console.log('[model] fetchSiteRating()')
             if (this.tab) {
-                this.fetch({ getSiteGrade: this.tab.id }).then((rating) => {
+                this.sendMessage('getSiteGrade', this.tab.id).then((rating) => {
                     console.log('fetchSiteRating: ', rating)
                     if (rating) this.update({ siteRating: rating })
                 })
@@ -110,7 +110,7 @@ Site.prototype = window.$.extend({},
             // console.log('[model] handleBackgroundMsg()')
             if (!this.tab) return
             if (message.action && message.action === 'updateTabData') {
-                this.fetch({ getTab: this.tab.id }).then((backgroundTabObj) => {
+                this.sendMessage('getTab', this.tab.id).then((backgroundTabObj) => {
                     this.tab = backgroundTabObj
                     this.update()
                     this.fetchSiteRating()
@@ -260,12 +260,10 @@ Site.prototype = window.$.extend({},
         },
 
         setList (list, domain, value) {
-            this.fetch({
-                setList: {
-                    list,
-                    domain,
-                    value
-                }
+            this.sendMessage('setList', {
+                list,
+                domain,
+                value
             })
         },
 
@@ -286,10 +284,10 @@ Site.prototype = window.$.extend({},
                     // attach domain and path to ept.on pixel if they turn privacy protection back on.
                         const siteUrl = this.tab.url.split('?')[0].split('#')[0]
                         this.set('allowlistOptIn', false)
-                        this.fetch({ firePixel: ['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }] })
+                        this.firePixel(['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }])
                         this.setList('allowlistOptIn', this.tab.site.domain, false)
                     } else {
-                        this.fetch({ firePixel: ['ept', 'off'] })
+                        this.firePixel(['ept', 'off'])
                     }
 
                     this.setList('allowlisted', this.tab.site.domain, this.isAllowlisted)
@@ -325,20 +323,19 @@ Site.prototype = window.$.extend({},
                 })
             }
             pixelParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates })
-            this.fetch({ firePixel: pixelParams })
+            this.firePixel(pixelParams)
 
             // remember that user opted into sharing site breakage data
             // for this domain, so that we can attach domain when they
             // remove site from allowlist
             this.set('allowlistOptIn', true)
-            this.fetch({
-                allowlistOptIn:
+            this.sendMessage('allowlistOptIn',
                 {
                     list: 'allowlistOptIn',
                     domain: this.tab.site.domain,
                     value: true
                 }
-            })
+            )
         }
     }
 )

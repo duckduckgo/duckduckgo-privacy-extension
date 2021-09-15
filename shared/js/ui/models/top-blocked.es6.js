@@ -21,7 +21,7 @@ TopBlocked.prototype = window.$.extend({},
 
         getTopBlocked: function () {
             return new Promise((resolve, reject) => {
-                this.fetch({ getTopBlockedByPages: this.numCompanies })
+                this.sendMessage('getTopBlockedByPages', this.numCompanies)
                     .then((data) => {
                         if (!data.totalPages || data.totalPages < 30) return resolve()
                         if (!data.topBlocked || data.topBlocked.length < 1) return resolve()

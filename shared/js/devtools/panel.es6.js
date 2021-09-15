@@ -6,13 +6,15 @@ const tabPicker = document.getElementById('tab-picker')
 const tdsOption = document.getElementById('tds')
 const displayFilters = document.querySelectorAll('#table-filter input')
 
+function sendMessage (messageType, options, callback) {
+    chrome.runtime.sendMessage({ messageType, options }, callback)
+}
+
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
 const port = chrome.runtime.connect()
 // fetch the list of configurable features from the config and create toggles for them.
 const loadConfigurableFeatures = new Promise((resolve) => {
-    chrome.runtime.sendMessage({
-        getListContents: 'config'
-    }, ({ data: config }) => {
+    sendMessage('getListContents', 'config', ({ data: config }) => {
         const features = Object.keys(config.features)
         features.forEach((feature) => {
             const btn = document.createElement('button')
@@ -217,7 +219,7 @@ protectionButton.addEventListener('click', () => {
     })
 })
 
-chrome.runtime.sendMessage({ getSetting: { name: 'tds-channel' } }, (result) => {
+sendMessage('getSetting', { name: 'tds-channel' }, (result) => {
     console.log('setting', result)
     const active = tdsOption.querySelector(`[value=${result}`)
     if (active) {
@@ -226,13 +228,11 @@ chrome.runtime.sendMessage({ getSetting: { name: 'tds-channel' } }, (result) => 
 })
 
 tdsOption.addEventListener('change', (e) => {
-    chrome.runtime.sendMessage({
-        updateSetting: {
-            name: 'tds-channel',
-            value: tdsOption.selectedOptions[0].value
-        }
+    sendMessage('updateSetting', {
+        name: 'tds-channel',
+        value: tdsOption.selectedOptions[0].value
     }, () => {
-        chrome.runtime.sendMessage({ reloadList: 'tds' })
+        sendMessage('reloadList', 'tds')
     })
 })
 

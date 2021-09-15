@@ -15,6 +15,8 @@ const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
+const tdsStorage = require('./storage/tds.es6')
+const browserWrapper = require('./wrapper.es6')
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -30,7 +32,7 @@ function getHash () {
     return sha1(getFloat().toString())
 }
 
-browser.runtime.onInstalled.addListener(async function (details) {
+async function onInstalled (details) {
     if (details.reason.match(/install/)) {
         await settings.ready()
         settings.updateSetting('showWelcomeBanner', true)
@@ -49,11 +51,19 @@ browser.runtime.onInstalled.addListener(async function (details) {
     // Inject the email content script on all tabs upon installation (not needed on Firefox)
     if (browserName !== 'moz') {
         const tabs = await browser.tabs.query({})
-        tabs.forEach(tab => {
+        for (const tab of tabs) {
+            // Ignore URLs that we aren't permitted to access
+            if (tab.url.startsWith('chrome://')) {
+                continue
+            }
             browser.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
-        })
+        }
     }
     createAutofillContextMenuItem()
+}
+
+browser.runtime.onInstalled.addListener(function (details) {
+    onInstalled(details)
 })
 
 /**
@@ -128,23 +138,31 @@ browser.webNavigation.onCommitted.addListener(async details => {
  * (Chrome only)
  */
 if (browserName === 'chrome') {
-    browser.runtime.onMessage.addListener(async (request, sender) => {
+    async function rescheduleCounterMessagingRequest () {
+        await settings.ready()
+        settings.updateSetting('rescheduleCounterMessagingOnStart', true)
+        return true
+    }
+    browser.runtime.onMessage.addListener((request, sender) => {
         if (request === 'healthCheckRequest') {
-            return true
+            return
         } else if (request === 'rescheduleCounterMessagingRequest') {
-            await settings.ready()
-            settings.updateSetting('rescheduleCounterMessagingOnStart', true)
+            rescheduleCounterMessagingRequest()
             return true
         }
     })
 
-    browser.runtime.onStartup.addListener(async () => {
+    async function startupCounterMessaging () {
         await settings.ready()
 
         if (settings.getSetting('rescheduleCounterMessagingOnStart')) {
             settings.removeSetting('rescheduleCounterMessagingOnStart')
             settings.updateSetting('showCounterMessaging', true)
         }
+    }
+
+    browser.runtime.onStartup.addListener(() => {
+        startupCounterMessaging()
     })
 }
 
@@ -291,24 +309,36 @@ browser.omnibox.onInputEntered.addListener(async function (text) {
 /**
  * MESSAGES
  */
-const browserWrapper = require('./wrapper.es6')
+const messageHandlers = require('./message-handlers')
 const {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     createAutofillContextMenuItem,
-    showContextMenuAction,
-    hideContextMenuAction,
-    getAddresses,
-    isValidUsername,
-    isValidToken
+    showContextMenuAction
 } = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
-browser.runtime.onMessage.addListener(async (req, sender) => {
+browser.runtime.onMessage.addListener((req, sender) => {
     if (sender.id !== browserWrapper.getExtensionId()) return
 
-    if (req.registeredContentScript || req.registeredTempAutofillContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.documentUrl)
+    // TODO clean up message passing
+    const legacyMessageTypes = [
+        'addUserData',
+        'getAddresses',
+        'refreshAlias'
+    ]
+    for (const legacyMessageType of legacyMessageTypes) {
+        if (legacyMessageType in req) {
+            req.messageType = legacyMessageType
+            req.options = req[legacyMessageType]
+        }
+    }
+
+    if (req.messageType in messageHandlers) {
+        return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
+    }
+    if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
+        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options.documentUrl || req.documentUrl)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
             return
@@ -320,262 +350,12 @@ browser.runtime.onMessage.addListener(async (req, sender) => {
             return
         }
         if (!argumentsObject.site.allowlisted) {
-            return argumentsObject
-        }
-        return
-    }
-
-    if (req.getCurrentTab) {
-        return utils.getCurrentTab()
-    }
-
-    // Click to load interactions
-    if (req.initClickToLoad) {
-        await settings.ready()
-        const tab = tabManager.get({ tabId: sender.tab.id })
-        const config = { ...tdsStorage.ClickToLoadConfig }
-
-        // remove any social networks saved by the user
-        for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-            if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
-                delete config[entity]
-            }
-        }
-
-        // Determine whether to show one time messages or simplified messages
-        for (const [entity] of Object.entries(config)) {
-            const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-            const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-            if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
-                config[entity].simpleVersion = true
-            }
-        }
-
-        // if the current site is on the social exception list, remove it from the config.
-        let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
-        if (excludedNetworks) {
-            excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
-            excludedNetworks.forEach(e => delete config[e.entity])
-        }
-        return config
-    }
-
-    if (req.getImage) {
-        if (req.getImage === 'None' || req.getImage === 'none' || req.getImage === undefined) {
-            return undefined
-        } else {
-            const img = await utils.imgToData(`img/social/${req.getImage}`)
-            return img
+            return Promise.resolve(argumentsObject)
         }
     }
 
-    if (req.getLoadingImage) {
-        if (req.getLoadingImage === 'dark') {
-            const img = await utils.imgToData('img/social/loading_dark.svg')
-            return img
-        } else if (req.getLoadingImage === 'light') {
-            const img = await utils.imgToData('img/social/loading_light.svg')
-            return img
-        }
-    }
-
-    if (req.getLogo) {
-        const img = await utils.imgToData('img/social/dax.png')
-        return img
-    }
-
-    if (req.getSocialSurrogateRules) {
-        const entityData = tdsStorage.ClickToLoadConfig[req.getSocialSurrogateRules]
-        if (entityData && entityData.surrogates) {
-            const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
-                accumulator.push(value.rule)
-                return accumulator
-            }, [])
-            return rules
-        }
-    }
-
-    if (req.enableSocialTracker) {
-        await settings.ready()
-        const tab = tabManager.get({ tabId: sender.tab.id })
-        tab.site.clickToLoad.push(req.enableSocialTracker)
-
-        const entity = req.enableSocialTracker
-        if (req.isLogin) {
-            trackerutils.allowSocialLogin(tab.site.domain)
-        }
-        if (req.alwaysAllow) {
-            let allowList = settings.getSetting('clickToLoad')
-            const value = {
-                tracker: entity,
-                domain: tab.site.domain
-            }
-            if (allowList) {
-                if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
-                    allowList.push(value)
-                }
-            } else {
-                allowList = [value]
-            }
-            settings.updateSetting('clickToLoad', allowList)
-        }
-        // Update number of times this social network has been 'clicked'
-        if (tdsStorage.ClickToLoadConfig[entity]) {
-            const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-            const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-            if (!clickToLoadClicks[entity]) {
-                clickToLoadClicks[entity] = 1
-            } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
-                clickToLoadClicks[entity] += 1
-            }
-            settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
-        }
-    }
-
-    if (req.updateSetting) {
-        const name = req.updateSetting.name
-        const value = req.updateSetting.value
-        await settings.ready()
-        settings.updateSetting(name, value)
-    } else if (req.getSetting) {
-        const name = req.getSetting.name
-        await settings.ready()
-        return settings.getSetting(name)
-    }
-
-    // popup will ask for the browser type then it is created
-    if (req.getBrowser) {
-        return utils.getBrowserName()
-    }
-
-    if (req.getExtensionVersion) {
-        return browserWrapper.getExtensionVersion()
-    }
-
-    if (req.getTopBlocked) {
-        return Companies.getTopBlocked(req.getTopBlocked)
-    } else if (req.getTopBlockedByPages) {
-        return Companies.getTopBlockedByPages(req.getTopBlockedByPages)
-    } else if (req.resetTrackersData) {
-        Companies.resetData()
-    }
-
-    if (req.setList) {
-        tabManager.setList(req.setList)
-    } else if (req.allowlistOptIn) {
-        tabManager.setGlobalAllowlist('allowlistOptIn', req.allowlistOptIn.domain, req.allowlistOptIn.value)
-    } else if (req.getTab) {
-        return tabManager.get({ tabId: req.getTab })
-    } else if (req.getSiteGrade) {
-        const tab = tabManager.get({ tabId: req.getSiteGrade })
-        let grade = {}
-
-        if (!tab.site.specialDomainName) {
-            grade = tab.site.grade.get()
-        }
-
-        return grade
-    }
-
-    if (req.firePixel) {
-        let fireArgs = req.firePixel
-        if (fireArgs.constructor !== Array) {
-            fireArgs = [req.firePixel]
-        }
-        return pixel.fire.apply(null, fireArgs)
-    }
-
-    if (req.getAlias) {
-        const userData = settings.getSetting('userData')
-        return { alias: userData?.nextAlias }
-    }
-
-    if (req.getAddresses) {
-        return getAddresses()
-    }
-
-    if (req.refreshAlias) {
-        await fetchAlias()
-        return getAddresses()
-    }
-
-    if (req.addUserData) {
-        // Check the origin. Shouldn't be necessary, but better safe than sorry
-        if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)) return
-
-        const sendDdgUserReady = async () => {
-            const tabs = await browser.tabs.query({})
-            tabs.forEach((tab) =>
-                utils.sendTabMessage(tab.id, { type: 'ddgUserReady' })
-            )
-        }
-
-        await settings.ready()
-        const { userName, token } = req.addUserData
-        const { existingToken } = settings.getSetting('userData') || {}
-
-        // If the user is already registered, just notify tabs that we're ready
-        if (existingToken === token) {
-            sendDdgUserReady()
-            return { success: true }
-        }
-
-        // Check general data validity
-        if (isValidUsername(userName) && isValidToken(token)) {
-            settings.updateSetting('userData', req.addUserData)
-            // Once user is set, fetch the alias and notify all tabs
-            const response = await fetchAlias()
-            if (response && response.error) {
-                return { error: response.error.message }
-            }
-
-            sendDdgUserReady()
-            showContextMenuAction()
-            return { success: true }
-        } else {
-            return { error: 'Something seems wrong with the user data' }
-        }
-    }
-
-    if (req.logout) {
-        settings.updateSetting('userData', {})
-        // Broadcast the logout to all tabs
-        const tabs = await browser.tabs.query({})
-        tabs.forEach((tab) => {
-            utils.sendTabMessage(tab.id, { type: 'logout' })
-        })
-        hideContextMenuAction()
-    }
-
-    if (req.getListContents) {
-        return {
-            data: tdsStorage.getSerializableList(req.getListContents),
-            etag: settings.getSetting(`${req.getListContents}-etag`) || ''
-        }
-    }
-
-    if (req.setListContents) {
-        const parsed = tdsStorage.parsedata(req.setListContents, req.value)
-        tdsStorage[req.setListContents] = parsed
-        trackers.setLists([{
-            name: req.setListContents,
-            data: parsed
-        }])
-        return
-    }
-
-    if (req.reloadList) {
-        let list = constants.tdsLists.find(l => l.name === req.reloadList)
-        if (list) {
-            list = await tdsStorage.getList(list)
-            trackers.setLists([list])
-            return
-        }
-    }
-
-    if (req.debuggerMessage) {
-        devtools.postMessage(sender.tab?.id, req.debuggerMessage.action, req.debuggerMessage.message)
-    }
+    console.error('Unrecognised message to background:', req, sender)
+    return false
 })
 
 /**
@@ -823,7 +603,6 @@ browser.webNavigation.onCommitted.addListener(details => {
 
 const httpsStorage = require('./storage/https.es6')
 const httpsService = require('./https-service.es6')
-const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs

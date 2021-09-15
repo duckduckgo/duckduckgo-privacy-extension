@@ -74,7 +74,8 @@ describe('onboarding', () => {
                     if (e.origin === window.location.origin && e.data.type === 'healthCheckResponse') {
                         resolve({
                             type: e.data.type,
-                            isAlive: e.data.isAlive
+                            isAlive: e.data.isAlive,
+                            data: e.data.data
                         })
                     }
                 })
@@ -83,6 +84,7 @@ describe('onboarding', () => {
         })
 
         expect(data.type).toBe('healthCheckResponse')
+        expect(data.error).toBe(undefined)
         expect(data.isAlive).toBe(true)
 
         await page.close()

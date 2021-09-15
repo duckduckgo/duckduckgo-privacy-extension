@@ -17,11 +17,11 @@ function FeedbackForm (attrs) {
     this.updateCanSubmit()
 
     // grab atb value from background process
-    this.fetch({ getSetting: { name: 'atb' } })
+    this.sendMessage('getSetting', { name: 'atb' })
         .then((atb) => { this.atb = atb })
-    this.fetch({ getExtensionVersion: true })
+    this.sendMessage('getExtensionVersion')
         .then((extensionVersion) => { this.extensionVersion = extensionVersion })
-    this.fetch({ getSetting: { name: 'tds-etag' } })
+    this.sendMessage('getSetting', { name: 'tds-etag' })
         .then((etag) => { this.tds = etag })
 }
 

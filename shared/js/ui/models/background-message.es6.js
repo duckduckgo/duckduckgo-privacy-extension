@@ -11,13 +11,13 @@ const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
  *  it to the global event store via model.send(msg)
  *  Other modules that are subscribed to state changes in backgroundMessage are notified
  *
- * 2. Two-way messaging using this.model.fetch() as a passthrough
+ * 2. Two-way messaging using this.model.sendMessage() as a passthrough
  *
- *  Each model can use a fetch method to send and receive a response from the background.
- *  Ex: this.model.fetch({'name': 'value'}).then((response) => console.log(response))
+ *  Each model can use a sendMessage method to send and receive a response from the background.
+ *  Ex: this.model.sendMessage('name', { ... }).then((response) => console.log(response))
  *  Listeners must be registered in the background to respond to messages with this 'name'.
  *
- *  The common fetch method is defined in base/model.es6.js
+ *  The common sendMessage method is defined in base/model.es6.js
  */
 function BackgroundMessage (attrs) {
     Parent.call(this, attrs)

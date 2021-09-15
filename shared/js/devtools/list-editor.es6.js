@@ -27,10 +27,12 @@ function listSwitcher () {
 listPicker.addEventListener('change', listSwitcher)
 listSwitcher()
 
+function sendMessage (messageType, options, callback) {
+    chrome.runtime.sendMessage({ messageType, options }, callback)
+}
+
 function loadList (name) {
-    chrome.runtime.sendMessage({
-        getListContents: name
-    }, ({ etag, data }) => {
+    sendMessage('getListContents', name, ({ etag, data }) => {
         const value = getListFormat(name) === 'json' ? JSON.stringify(data, null, '  ') : data
         document.querySelector('#list-content').value = value
     })
@@ -38,16 +40,14 @@ function loadList (name) {
 
 function saveList (name) {
     const value = listEditor.value
-    chrome.runtime.sendMessage({
+    sendMessage('setListContents', {
         setListContents: name,
         value: getListFormat(name) === 'json' ? JSON.parse(value) : value
     }, () => loadList(name))
 }
 
 function reloadList (name) {
-    chrome.runtime.sendMessage({
-        reloadList: name
-    }, () => loadList(name))
+    sendMessage('reloadList', name, () => loadList(name))
 }
 
 saveButton.addEventListener('click', () => {
