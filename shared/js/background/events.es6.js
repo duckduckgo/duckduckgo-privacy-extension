@@ -4,7 +4,6 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
-import 'regenerator-runtime/runtime' // needed for async/await until we config @babel/preset-env more precisely
 const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')

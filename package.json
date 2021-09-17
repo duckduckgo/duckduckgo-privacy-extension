@@ -68,6 +68,7 @@
         "sass": "^1.39.2",
         "standard": "16.0.3",
         "timekeeper": "^2.1.1",
+        "webextension-polyfill": "^0.8.0",
         "yargs": "^17.1.1"
     },
     "dependencies": {
@@ -86,7 +87,6 @@
         "parse-link-header": "1.0.1",
         "psl": "1.8.0",
         "punycode": "2.1.1",
-        "regenerator-runtime": "^0.13.9",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
         "sjcl": "^1.0.8",
@@ -99,6 +99,7 @@
             [
                 "@babel/preset-env",
                 {
+                    "exclude": ["transform-regenerator"],
                     "debug": true
                 }
             ]

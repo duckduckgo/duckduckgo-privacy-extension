@@ -8,7 +8,7 @@ const { removeBroken } = require('./utils.es6')
 const ports = new Map()
 
 function init () {
-    chrome.runtime.onConnect.addListener(connected)
+    browser.runtime.onConnect.addListener(connected)
 }
 
 function connected (port) {
