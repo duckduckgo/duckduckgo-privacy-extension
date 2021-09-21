@@ -1,13 +1,13 @@
-const tldts = require('tldts')
+import tldts from 'tldts'
 
-const tabManager = require('./tab-manager.es6')
-const trackers = require('./trackers.es6')
-const tdsStorage = require('./storage/tds.es6')
-const { removeBroken } = require('./utils.es6')
+import tabManager from './tab-manager.es6'
+import trackers from './trackers.es6'
+import tdsStorage from './storage/tds.es6'
+import { removeBroken } from './utils.es6'
 
 const ports = new Map()
 
-function init () {
+export function init () {
     browser.runtime.onConnect.addListener(connected)
 }
 
@@ -95,18 +95,12 @@ function connected (port) {
     })
 }
 
-function postMessage (tabId, action, message) {
+export function postMessage (tabId, action, message) {
     if (ports.has(tabId)) {
         ports.get(tabId).postMessage(JSON.stringify({ tabId, action, message }))
     }
 }
 
-function isActive (tabId) {
+export function isActive (tabId) {
     return ports.has(tabId)
-}
-
-module.exports = {
-    init,
-    postMessage,
-    isActive
 }

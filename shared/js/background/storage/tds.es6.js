@@ -1,9 +1,9 @@
-const load = require('./../load.es6')
-const Dexie = require('dexie')
-const constants = require('../../../data/constants')
-const settings = require('./../settings.es6')
-const browserWrapper = require('./../wrapper.es6')
-const extensionConfig = require('./../../../privacy-configuration/generated/extension-config.json')
+import load from './../load.es6'
+import constants from '../../../data/constants'
+import settings from './../settings.es6'
+import browserWrapper from './../wrapper.es6'
+import extensionConfig from './../../../privacy-configuration/generated/extension-config.json'
+import Dexie from 'dexie'
 
 class TDSStorage {
     constructor () {
@@ -185,4 +185,5 @@ class TDSStorage {
         this.dbc.tdsStorage.delete('protections')
     }
 }
-module.exports = new TDSStorage()
+const TDSStorageInstance = new TDSStorage()
+export default TDSStorageInstance

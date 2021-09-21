@@ -2,12 +2,12 @@
  * This exposes some modules we use for testing via the background page console.
  * NOTE this is not added to the release version of the extension
  */
-const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
-const load = require('./load.es6')
-const atb = require('./atb.es6')
-const https = require('./https.es6')
-const tds = require('./storage/tds.es6')
+import settings from './settings.es6'
+import tabManager from './tab-manager.es6'
+import load from './load.es6'
+import atb from './atb.es6'
+import https from './https.es6'
+import tds from './storage/tds.es6'
 
 window.dbg = {
     settings,

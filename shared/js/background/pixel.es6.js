@@ -4,10 +4,10 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-const load = require('./load.es6')
-const browserWrapper = require('./wrapper.es6')
-const settings = require('./settings.es6')
-const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+import load from './load.es6'
+import browserWrapper from './wrapper.es6'
+import settings from './settings.es6'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 
 /**
  *
@@ -17,7 +17,7 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  * @param {...*} args - any number of extra data
  *
  */
-function fire () {
+export function fire () {
     if (!arguments.length) return
 
     let args = Array.prototype.slice.call(arguments)
@@ -45,7 +45,7 @@ function fire () {
  * Return URL for the pixel request
  *
  */
-function getURL (pixelName) {
+export function getURL (pixelName) {
     if (!pixelName) return
 
     const url = 'https://improving.duckduckgo.com/t/'
@@ -79,7 +79,7 @@ function getAdditionalParams () {
  * @param {array} args - data we need to append
  *
  */
-function concatParams (args) {
+export function concatParams (args) {
     args = args || []
 
     let paramString = ''
@@ -104,10 +104,4 @@ function concatParams (args) {
     resultString = `${paramString}?${randomNum}${objParamString}`
 
     return resultString
-}
-
-module.exports = {
-    fire: fire,
-    getURL: getURL,
-    concatParams: concatParams
 }

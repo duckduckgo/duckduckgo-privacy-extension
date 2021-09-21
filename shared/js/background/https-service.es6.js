@@ -1,7 +1,7 @@
-const sha1 = require('../shared-utils/sha1')
+import sha1 from '../shared-utils/sha1'
 // eslint-disable-next-line node/no-deprecated-api
-const punycode = require('punycode')
-const constants = require('../../data/constants')
+import punycode from 'punycode'
+import constants from '../../data/constants'
 const HASH_PREFIX_SIZE = 4
 const ONE_HOUR_MS = 60 * 60 * 1000
 
@@ -108,4 +108,5 @@ class HTTPSService {
     }
 }
 
-module.exports = new HTTPSService()
+const HTTPSServiceInstance = new HTTPSService()
+export default HTTPSServiceInstance

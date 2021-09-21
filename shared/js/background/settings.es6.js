@@ -1,6 +1,6 @@
-const defaultSettings = require('../../data/defaultSettings')
-const etags = require('../../data/etags.json')
-const browserWrapper = require('./wrapper.es6')
+import browserWrapper from './wrapper.es6'
+import defaultSettings from '../../data/defaultSettings'
+import etags from '../../data/etags.json'
 
 /**
  * Settings whose defaults can by managed by the system administrator
@@ -28,7 +28,7 @@ function init () {
     })
 }
 
-function ready () {
+export function ready () {
     return _ready
 }
 
@@ -95,7 +95,7 @@ function syncSettingTolocalStorage () {
     browserWrapper.syncToStorage({ settings: settings })
 }
 
-function getSetting (name) {
+export function getSetting (name) {
     if (!isReady) {
         console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
         return
@@ -111,7 +111,7 @@ function getSetting (name) {
     }
 }
 
-function updateSetting (name, value) {
+export function updateSetting (name, value) {
     if (!isReady) {
         console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
         return
@@ -121,7 +121,7 @@ function updateSetting (name, value) {
     syncSettingTolocalStorage()
 }
 
-function removeSetting (name) {
+export function removeSetting (name) {
     if (!isReady) {
         console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
         return
@@ -132,16 +132,8 @@ function removeSetting (name) {
     }
 }
 
-function logSettings () {
+export function logSettings () {
     browserWrapper.getFromStorage(['settings'], function (s) {
         console.log(s.settings)
     })
-}
-
-module.exports = {
-    getSetting: getSetting,
-    updateSetting: updateSetting,
-    removeSetting: removeSetting,
-    logSettings: logSettings,
-    ready: ready
 }

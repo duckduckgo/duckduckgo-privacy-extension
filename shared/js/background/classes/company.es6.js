@@ -1,4 +1,4 @@
-class Company {
+export class Company {
     constructor (c) {
         this.name = c.name
         this.count = 0
@@ -22,5 +22,3 @@ class Company {
         this[property] = val
     }
 }
-
-module.exports = Company

@@ -1,6 +1,6 @@
-const settings = require('./settings.es6')
-const atbUtils = require('./atb-utils.es6')
-const retentionExperiments = require('../../data/experiments-out')
+import settings from './settings.es6'
+import atbUtils from './atb-utils.es6'
+import retentionExperiments from '../../data/experiments-out'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 class Experiment {
     constructor () {
@@ -98,4 +98,5 @@ class Experiment {
     }
 }
 
-module.exports = new Experiment()
+const experimentInstance = new Experiment()
+export default experimentInstance

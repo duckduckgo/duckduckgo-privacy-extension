@@ -4,8 +4,4 @@ const RELEASE_EXTENSION_IDS = [
     'bkdgflcldnnnapblkhphbgpggdiikppg', // chrome store
     'jid1-ZAdIEUB7XOzOJw@jetpack' // firefox
 ]
-const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1
-
-module.exports = {
-    IS_BETA
-}
+export const IS_BETA = RELEASE_EXTENSION_IDS.indexOf(chrome.runtime.id) === -1

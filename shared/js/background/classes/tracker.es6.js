@@ -1,7 +1,7 @@
-const Companies = require('../companies.es6')
-const tdsStorage = require('../storage/tds.es6')
+import Companies from '../companies.es6'
+import tdsStorage from '../storage/tds.es6'
 
-class Tracker {
+export class Tracker {
     constructor (t) {
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
@@ -38,5 +38,3 @@ class Tracker {
         return !!action.match(/block|redirect/)
     }
 }
-
-module.exports = Tracker

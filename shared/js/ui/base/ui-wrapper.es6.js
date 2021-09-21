@@ -1,10 +1,10 @@
-const fetch = (message) => {
+export function fetch (message) {
     return new Promise((resolve, reject) => {
         window.chrome.runtime.sendMessage(message, (result) => resolve(result))
     })
 }
 
-const backgroundMessage = (thisModel) => {
+export function backgroundMessage (thisModel) {
     // listen for messages from background and
     // // notify subscribers
     window.chrome.runtime.onMessage.addListener((req, sender) => {
@@ -16,7 +16,7 @@ const backgroundMessage = (thisModel) => {
     })
 }
 
-const getBackgroundTabData = () => {
+export function getBackgroundTabData () {
     return new Promise((resolve, reject) => {
         fetch({ getCurrentTab: true }).then((tab) => {
             if (tab) {
@@ -28,19 +28,19 @@ const getBackgroundTabData = () => {
     })
 }
 
-const search = (url) => {
+export function search (url) {
     window.chrome.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${window.localStorage.os}cr` })
 }
 
-const getExtensionURL = (path) => {
+export function getExtensionURL (path) {
     return chrome.runtime.getURL(path)
 }
 
-const openExtensionPage = (path) => {
+export function openExtensionPage (path) {
     window.chrome.tabs.create({ url: getExtensionURL(path) })
 }
 
-const openOptionsPage = (browser) => {
+export function openOptionsPage (browser) {
     if (browser === 'moz') {
         openExtensionPage('/html/options.html')
         window.close()
@@ -49,23 +49,11 @@ const openOptionsPage = (browser) => {
     }
 }
 
-const reloadTab = (id) => {
+export function reloadTab (id) {
     window.chrome.tabs.reload(id)
 }
 
-const closePopup = () => {
+export function closePopup () {
     const w = window.chrome.extension.getViews({ type: 'popup' })[0]
     w.close()
-}
-
-module.exports = {
-    fetch: fetch,
-    reloadTab: reloadTab,
-    closePopup: closePopup,
-    backgroundMessage: backgroundMessage,
-    getBackgroundTabData: getBackgroundTabData,
-    search: search,
-    openOptionsPage: openOptionsPage,
-    openExtensionPage: openExtensionPage,
-    getExtensionURL: getExtensionURL
 }

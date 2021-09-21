@@ -1,7 +1,7 @@
-const tldts = require('tldts')
-const tosdr = require('../../data/tosdr')
-const constants = require('../../data/constants')
-const utils = require('./utils.es6')
+import tldts from 'tldts'
+import tosdr from '../../data/tosdr'
+import constants from '../../data/constants'
+import utils from './utils.es6'
 
 const tosdrRegexList = []
 const tosdrScores = {}
@@ -129,4 +129,5 @@ class PrivacyPractices {
     }
 }
 
-module.exports = new PrivacyPractices()
+const PrivacyPracticesInstance = new PrivacyPractices()
+export default PrivacyPracticesInstance

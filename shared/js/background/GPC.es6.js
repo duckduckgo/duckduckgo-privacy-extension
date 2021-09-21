@@ -3,10 +3,10 @@
  * Sets GPC signal header
  *
  */
-const settings = require('./settings.es6')
+import settings from './settings.es6'
 
 // Return Sec-GPC header if setting enabled
-function getHeader () {
+export function getHeader () {
     const GPCEnabled = settings.getSetting('GPC')
     if (GPCEnabled) {
         return {
@@ -14,8 +14,4 @@ function getHeader () {
             value: '1'
         }
     }
-}
-
-module.exports = {
-    getHeader: getHeader
 }

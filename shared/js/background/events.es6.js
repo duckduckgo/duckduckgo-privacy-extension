@@ -4,19 +4,39 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
-const tldts = require('tldts')
-const ATB = require('./atb.es6')
-const utils = require('./utils.es6')
-const trackerutils = require('./tracker-utils')
-const experiment = require('./experiments.es6')
-const settings = require('./settings.es6')
-const constants = require('../../data/constants')
-const onboarding = require('./onboarding.es6')
-const cspProtection = require('./csp-blocking.es6')
+import ATB from './atb.es6'
+import utils from './utils.es6'
+import trackerutils from './tracker-utils'
+import experiment from './experiments.es6'
+import constants from '../../data/constants'
+import settings from './settings.es6'
+import onboarding from './onboarding.es6'
+import cspProtection from './csp-blocking.es6'
+import devtools from './devtools.es6'
+import sha1 from '../shared-utils/sha1'
+import redirect from './redirect.es6'
+import tabManager from './tab-manager.es6'
+import pixel from './pixel.es6'
+import https from './https.es6'
+import Companies from './companies.es6'
+import browserWrapper from './wrapper.es6'
+import {
+    REFETCH_ALIAS_ALARM,
+    fetchAlias,
+    createAutofillContextMenuItem,
+    showContextMenuAction,
+    hideContextMenuAction,
+    getAddresses,
+    isValidUsername,
+    isValidToken
+} from './email-utils.es6'
+import GPC from './GPC.es6'
+import httpsStorage from './storage/https.es6'
+import httpsService from './https-service.es6'
+import tdsStorage from './storage/tds.es6'
+import trackers from './trackers.es6'
+import tldts from 'tldts'
 const browserName = utils.getBrowserName()
-const devtools = require('./devtools.es6')
-
-const sha1 = require('../shared-utils/sha1')
 
 /**
  * Produce a random float, same output as Math.random()
@@ -156,12 +176,6 @@ if (browserName === 'chrome') {
 /**
  * REQUESTS
  */
-
-const redirect = require('./redirect.es6')
-const tabManager = require('./tab-manager.es6')
-const pixel = require('./pixel.es6')
-const https = require('./https.es6')
-
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
@@ -260,9 +274,6 @@ chrome.webNavigation.onCommitted.addListener(details => {
 /**
  * TABS
  */
-
-const Companies = require('./companies.es6')
-
 chrome.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
     if (info.status === 'complete') {
@@ -295,18 +306,6 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
 /**
  * MESSAGES
  */
-const browserWrapper = require('./wrapper.es6')
-const {
-    REFETCH_ALIAS_ALARM,
-    fetchAlias,
-    createAutofillContextMenuItem,
-    showContextMenuAction,
-    hideContextMenuAction,
-    getAddresses,
-    isValidUsername,
-    isValidToken
-} = require('./email-utils.es6')
-
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
@@ -751,8 +750,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 /**
  * Global Privacy Control
  */
-const GPC = require('./GPC.es6')
-
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
 if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
     extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
@@ -862,12 +859,6 @@ chrome.webNavigation.onCommitted.addListener(details => {
 /**
  * ALARMS
  */
-
-const httpsStorage = require('./storage/https.es6')
-const httpsService = require('./https-service.es6')
-const tdsStorage = require('./storage/tds.es6')
-const trackers = require('./trackers.es6')
-
 // recheck tracker and https lists every 12 hrs
 chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
 // tracker lists / content blocking lists are 30 minutes
@@ -911,7 +902,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
 /**
  * on start up
  */
-const onStartup = () => {
+export function onStartup () {
     chrome.tabs.query({ currentWindow: true, status: 'complete' }, function (savedTabs) {
         for (let i = 0; i < savedTabs.length; i++) {
             const tab = savedTabs[i]
@@ -977,7 +968,3 @@ if (browserName === 'moz') {
     cspProtection.init()
 }
 devtools.init()
-
-module.exports = {
-    onStartup: onStartup
-}

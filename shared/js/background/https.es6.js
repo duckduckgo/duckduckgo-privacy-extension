@@ -1,11 +1,11 @@
-const settings = require('./settings.es6')
-const utils = require('./utils.es6')
-const BloomFilter = require('@duckduckgo/jsbloom').filter
-const pixel = require('./pixel.es6')
-const httpsService = require('./https-service.es6')
-const tabManager = require('./tab-manager.es6')
-const browserWrapper = require('./wrapper.es6')
-const tldts = require('tldts')
+import settings from './settings.es6'
+import utils from './utils.es6'
+import pixel from './pixel.es6'
+import httpsService from './https-service.es6'
+import tabManager from './tab-manager.es6'
+import browserWrapper from './wrapper.es6'
+import { filter as BloomFilter } from '@duckduckgo/jsbloom'
+import tldts from 'tldts'
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
 
@@ -269,4 +269,5 @@ class HTTPS {
     }
 }
 
-module.exports = new HTTPS()
+const HTTPSInstance = new HTTPS()
+export default HTTPSInstance

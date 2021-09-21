@@ -1,6 +1,6 @@
-const utils = require('../utils.es6')
-const pixel = require('../pixel.es6')
-const constants = require('../../../data/constants')
+import utils from '../utils.es6'
+import pixel from '../pixel.es6'
+import constants from '../../../data/constants'
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
@@ -13,7 +13,7 @@ const REQUEST_REDIRECT_LIMIT = 7
  * If we hit too many redirects for a request, we block it via canRedirect().
  */
 
-class HttpsRedirects {
+export class HttpsRedirects {
     constructor () {
         this.failedUpgradeHosts = {}
         this.redirectCounts = {}
@@ -126,5 +126,3 @@ class HttpsRedirects {
         this.mainFrameRedirect = null
     }
 }
-
-module.exports = HttpsRedirects

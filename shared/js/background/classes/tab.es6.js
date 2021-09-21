@@ -14,6 +14,13 @@
  *          }
  *      }
  */
+import Site from './site.es6'
+import Tracker from './tracker.es6'
+import HttpsRedirects from './https-redirects.es6'
+import Companies from '../companies.es6'
+import browserWrapper from './../wrapper.es6'
+
+const webResourceKeyRegex = /.*\?key=(.*)/
 const gradeIconLocations = {
     A: 'img/toolbar-rating-a.svg',
     'B+': 'img/toolbar-rating-b-plus.svg',
@@ -26,14 +33,7 @@ const gradeIconLocations = {
     F: 'img/toolbar-rating-f.svg'
 }
 
-const Site = require('./site.es6')
-const Tracker = require('./tracker.es6')
-const HttpsRedirects = require('./https-redirects.es6')
-const Companies = require('../companies.es6')
-const browserWrapper = require('./../wrapper.es6')
-const webResourceKeyRegex = /.*\?key=(.*)/
-
-class Tab {
+export class Tab {
     constructor (tabData) {
         this.id = tabData.id || tabData.tabId
         this.trackers = {}
@@ -168,5 +168,3 @@ class Tab {
         return hasAccess
     }
 }
-
-module.exports = Tab

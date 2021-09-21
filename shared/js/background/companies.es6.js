@@ -1,9 +1,9 @@
-const TopBlocked = require('./classes/top-blocked.es6')
-const Company = require('./classes/company.es6')
-const browserWrapper = require('./wrapper.es6')
-const migrate = require('./migrate.es6')
+import TopBlocked from './classes/top-blocked.es6'
+import Company from './classes/company.es6'
+import browserWrapper from './wrapper.es6'
+import migrate from './migrate.es6'
 
-const Companies = (() => {
+export const Companies = (() => {
     let companyContainer = {}
     const topBlocked = new TopBlocked()
     const storageName = 'companyData'
@@ -148,5 +148,3 @@ const Companies = (() => {
         }
     }
 })()
-
-module.exports = Companies

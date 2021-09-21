@@ -1,7 +1,7 @@
-const load = require('./../load.es6')
-const Dexie = require('dexie')
-const constants = require('../../../data/constants')
-const settings = require('./../settings.es6')
+import load from './../load.es6'
+import Dexie from 'dexie'
+import constants from '../../../data/constants'
+import settings from './../settings.es6'
 
 class HTTPSStorage {
     constructor () {
@@ -113,4 +113,6 @@ class HTTPSStorage {
         })
     }
 }
-module.exports = new HTTPSStorage()
+
+const HTTPSStorageInstance = new HTTPSStorage()
+export default HTTPSStorageInstance

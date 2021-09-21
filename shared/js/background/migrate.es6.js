@@ -21,16 +21,14 @@ const entityRenameMapping = {
     Quantcast: 'Quantcast Corporation'
 }
 
-module.exports = {
-    migrateCompanyData: (company, storageData) => {
-        if (entityRenameMapping[company]) {
-            const oldName = company
-            const newName = entityRenameMapping[company]
-            storageData[newName] = storageData[oldName]
-            storageData[newName].name = newName
-            delete storageData[oldName]
-            company = newName
-        }
-        return [company, storageData]
+export function migrateCompanyData (company, storageData) {
+    if (entityRenameMapping[company]) {
+        const oldName = company
+        const newName = entityRenameMapping[company]
+        storageData[newName] = storageData[oldName]
+        storageData[newName].name = newName
+        delete storageData[oldName]
+        company = newName
     }
+    return [company, storageData]
 }

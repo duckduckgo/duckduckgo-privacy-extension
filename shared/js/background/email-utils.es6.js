@@ -1,10 +1,10 @@
-const { getSetting, updateSetting } = require('./settings.es6')
-const REFETCH_ALIAS_ALARM = 'refetchAlias'
+import { getSetting, updateSetting } from './settings.es6'
+export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 
 // Keep track of the number of attempted fetches. Stop trying after 5.
 let attempts = 1
 
-const fetchAlias = () => {
+export function fetchAlias () {
     // if another fetch was previously scheduled, clear that and execute now
     browser.alarms.get(REFETCH_ALIAS_ALARM, () => browser.alarms.clear(REFETCH_ALIAS_ALARM))
 
@@ -44,7 +44,7 @@ const fetchAlias = () => {
 }
 
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
-const createAutofillContextMenuItem = () => {
+export function createAutofillContextMenuItem () {
     // Create the contextual menu hidden by default
     browser.contextMenus.create({
         id: MENU_ITEM_ID,
@@ -63,11 +63,15 @@ const createAutofillContextMenuItem = () => {
     })
 }
 
-const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
+export function showContextMenuAction () {
+    return browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
+}
 
-const hideContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
+export function hideContextMenuAction () {
+    return browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
+}
 
-const getAddresses = () => {
+export function getAddresses () {
     const userData = getSetting('userData')
     return {
         personalAddress: userData?.userName,
@@ -80,30 +84,24 @@ const getAddresses = () => {
  * @param {string} address
  * @returns {string}
  */
-const formatAddress = (address) => address + '@duck.com'
+export function formatAddress (address) {
+    return address + '@duck.com'
+}
 
 /**
  * Checks formal username validity
  * @param {string} userName
  * @returns {boolean}
  */
-const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
+export function isValidUsername (userName) {
+    return /^[a-z0-9_]+$/.test(userName)
+}
 
 /**
  * Checks formal token validity
  * @param {string} token
  * @returns {boolean}
  */
-const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
-
-module.exports = {
-    REFETCH_ALIAS_ALARM,
-    fetchAlias,
-    createAutofillContextMenuItem,
-    showContextMenuAction,
-    hideContextMenuAction,
-    getAddresses,
-    formatAddress,
-    isValidUsername,
-    isValidToken
+export function isValidToken (token) {
+    return /^[a-z0-9]+$/.test(token)
 }

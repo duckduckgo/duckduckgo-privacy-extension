@@ -1,16 +1,16 @@
-const browserWrapper = require('./wrapper.es6')
+import browserWrapper from './wrapper.es6'
 
 let dev = false
 
-function JSONfromLocalFile (path) {
+export function JSONfromLocalFile (path) {
     return loadExtensionFile({ url: path, returnType: 'json' })
 }
 
-function JSONfromExternalFile (url) {
+export function JSONfromExternalFile (url) {
     return loadExtensionFile({ url: url, returnType: 'json', source: 'external' })
 }
 
-function url (url) {
+export function url (url) {
     return loadExtensionFile({ url: url, source: 'external' })
 }
 
@@ -40,7 +40,7 @@ function returnResponse (xhr, returnType) {
  *  - source: requests are internal by default. set source to 'external' for non-extension URLs
  *  - etag: set an if-none-match header
  */
-function loadExtensionFile (params) {
+export function loadExtensionFile (params) {
     const xhr = new XMLHttpRequest()
     let url = params.url
 
@@ -97,14 +97,6 @@ function loadExtensionFile (params) {
     })
 }
 
-function setDevMode () {
+export function setDevMode () {
     dev = true
-}
-
-module.exports = {
-    loadExtensionFile: loadExtensionFile,
-    JSONfromLocalFile: JSONfromLocalFile,
-    JSONfromExternalFile: JSONfromExternalFile,
-    url: url,
-    setDevMode: setDevMode
 }

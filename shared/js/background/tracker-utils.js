@@ -1,12 +1,12 @@
 // Utility functions for dealing with tracker information
-const utils = require('./utils.es6')
-const trackers = require('./trackers.es6')
-const tldts = require('tldts')
-const tdsStorage = require('./storage/tds.es6')
-const settings = require('./settings.es6')
+import utils from './utils.es6'
+import trackers from './trackers.es6'
+import tldts from 'tldts'
+import tdsStorage from './storage/tds.es6'
+import settings from './settings.es6'
 
 // Determine if two URL's belong to the same entity.
-function isSameEntity (url1, url2) {
+export function isSameEntity (url1, url2) {
     try {
         const domain1 = tldts.parse(url1).domain
         const domain2 = tldts.parse(url2).domain
@@ -23,7 +23,7 @@ function isSameEntity (url1, url2) {
 }
 
 // return true if URL is in our tracker list
-function isTracker (url) {
+export function isTracker (url) {
     const data = {
         urlToCheckSplit: utils.extractHostFromURL(url).split('.')
     }
@@ -34,7 +34,7 @@ function isTracker (url) {
 /**
  * Determine if the social entity should be blocked on this URL. returns True if so.
  */
-function shouldBlockSocialNetwork (entity, url) {
+export function shouldBlockSocialNetwork (entity, url) {
     const domain = tldts.parse(url).domain
     const excludeData = getDomainsToExludeByNetwork()
     return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
@@ -49,7 +49,7 @@ const socialExcludeCache = {
     expireTime: 0,
     refreshTimeMS: 1000 * 60 * 30 // 30 minutes
 }
-function getDomainsToExludeByNetwork () {
+export function getDomainsToExludeByNetwork () {
     if (Date.now() < socialExcludeCache.expireTime) {
         return socialExcludeCache.excludes
     }
@@ -70,7 +70,7 @@ function getDomainsToExludeByNetwork () {
 }
 
 // Return true if URL is in our click to load tracker list
-function getSocialTracker (url) {
+export function getSocialTracker (url) {
     const parsedDomain = tldts.parse(url)
     for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
@@ -93,7 +93,7 @@ function getSocialTracker (url) {
 }
 
 // Determine if a given URL is surrogate redirect.
-function getXraySurrogate (url) {
+export function getXraySurrogate (url) {
     const u = new URL(url)
     for (const [, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
         if (data.surrogates) {
@@ -109,7 +109,7 @@ function getXraySurrogate (url) {
 
 // Ensure we allow logged in sites to access facebook
 const logins = []
-function allowSocialLogin (url) {
+export function allowSocialLogin (url) {
     const domain = utils.extractHostFromURL(url)
     if (!logins.includes(domain)) {
         logins.push(domain)
@@ -119,7 +119,7 @@ function allowSocialLogin (url) {
 /**
  * Return true if the user has permanently saved the domain/tracker combination
  */
-function socialTrackerIsAllowedByUser (trackerEntity, domain) {
+export function socialTrackerIsAllowedByUser (trackerEntity, domain) {
     if (logins.includes(domain)) {
         return true
     }
@@ -145,7 +145,7 @@ function socialTrackerIsAllowedByUser (trackerEntity, domain) {
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
-function truncateReferrer (referrer, target) {
+export function truncateReferrer (referrer, target) {
     if (!referrer || referrer === '') {
         return undefined
     }
@@ -180,7 +180,7 @@ function truncateReferrer (referrer, target) {
  * @param {string} siteUrl
  * @returns {boolean}
  */
-function isFirstPartyByEntity (trackerUrl, siteUrl) {
+export function isFirstPartyByEntity (trackerUrl, siteUrl) {
     const cnameResolution = trackers.resolveCname(trackerUrl)
     trackerUrl = cnameResolution.finalURL
 
@@ -194,17 +194,4 @@ function isFirstPartyByEntity (trackerUrl, siteUrl) {
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(siteUrl).split('.') })
 
     return (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
-}
-
-module.exports = {
-    isSameEntity: isSameEntity,
-    isTracker: isTracker,
-    truncateReferrer: truncateReferrer,
-    getSocialTracker: getSocialTracker,
-    socialTrackerIsAllowedByUser: socialTrackerIsAllowedByUser,
-    shouldBlockSocialNetwork: shouldBlockSocialNetwork,
-    getDomainsToExludeByNetwork: getDomainsToExludeByNetwork,
-    getXraySurrogate: getXraySurrogate,
-    allowSocialLogin: allowSocialLogin,
-    isFirstPartyByEntity: isFirstPartyByEntity
 }

@@ -1,4 +1,4 @@
-function init () {
+export function init () {
     browser.webRequest.onBeforeRequest.addListener((details) => {
         try {
             // parse requestBody as an ASCII string
@@ -13,8 +13,4 @@ function init () {
         urls: ['<all_urls>'],
         types: ['csp_report']
     }, ['blocking', 'requestBody'])
-}
-
-module.exports = {
-    init
 }

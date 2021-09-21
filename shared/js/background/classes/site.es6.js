@@ -6,14 +6,14 @@
  * The Grade attributes are then used generate a site
  * privacy grade used in the popup.
  */
-const settings = require('../settings.es6')
-const utils = require('../utils.es6')
-const tdsStorage = require('./../storage/tds.es6')
-const privacyPractices = require('../privacy-practices.es6')
-const Grade = require('@duckduckgo/privacy-grade').Grade
-const browserWrapper = require('../wrapper.es6')
+import settings from '../settings.es6'
+import utils from '../utils.es6'
+import tdsStorage from './../storage/tds.es6'
+import privacyPractices from '../privacy-practices.es6'
+import { Grade } from '@duckduckgo/privacy-grade'
+import browserWrapper from '../wrapper.es6'
 
-class Site {
+export class Site {
     constructor (url) {
         this.url = url || ''
 
@@ -197,5 +197,3 @@ class Site {
         return null
     }
 }
-
-module.exports = Site

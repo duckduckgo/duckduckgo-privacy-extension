@@ -11,7 +11,7 @@ const ONE_MINUTE = 60000
  * majorVersion = # of weeks since noon EST on 2/24/16
  * minorVersion = # of days into the current week
  */
-function getCurrentATB () {
+export function getCurrentATB () {
     const d = new Date()
     const localTime = d.getTime()
     // convert local to UTC:
@@ -42,12 +42,7 @@ function getCurrentATB () {
     return { minorVersion, majorVersion, version }
 }
 
-function getDaysBetweenCohorts (cohort1, cohort2) {
+export function getDaysBetweenCohorts (cohort1, cohort2) {
     return 7 * (cohort2.majorVersion - cohort1.majorVersion) +
         (cohort2.minorVersion - cohort1.minorVersion)
-}
-
-module.exports = {
-    getCurrentATB,
-    getDaysBetweenCohorts
 }

@@ -1,4 +1,4 @@
-function TopBlocked () {
+export function TopBlocked () {
     this.data = []
 }
 
@@ -26,5 +26,3 @@ TopBlocked.prototype = {
         this.data = data
     }
 }
-
-module.exports = TopBlocked

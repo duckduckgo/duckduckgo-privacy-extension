@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-// NOTE: this needs to be the first thing that's require()d when the extension loads.
+// NOTE: this needs to be the first thing that's imported when the extension loads.
 // otherwise FF might miss the onInstalled event
-const events = require('./events.es6')
-const settings = require('./settings.es6')
+import events from './events.es6'
+import settings from './settings.es6'
 
 settings.ready().then(() => {
     // clearing last search on browser startup

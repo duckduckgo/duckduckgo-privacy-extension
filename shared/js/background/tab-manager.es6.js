@@ -1,7 +1,7 @@
-const Companies = require('./companies.es6')
-const settings = require('./settings.es6')
-const Tab = require('./classes/tab.es6')
-const browserWrapper = require('./wrapper.es6')
+import Companies from './companies.es6'
+import settings from './settings.es6'
+import Tab from './classes/tab.es6'
+import browserWrapper from './wrapper.es6'
 
 class TabManager {
     constructor () {
@@ -126,4 +126,4 @@ class TabManager {
 
 const tabManager = new TabManager()
 
-module.exports = tabManager
+export default tabManager

@@ -70,4 +70,5 @@ class Surrogates {
     }
 }
 
-module.exports = new Surrogates()
+const surrogatesInstance = new Surrogates()
+export default surrogatesInstance

@@ -1,17 +1,17 @@
-const tldts = require('tldts')
+import utils from './utils.es6'
+import trackers from './trackers.es6'
+import trackerutils from './tracker-utils'
+import https from './https.es6'
+import Companies from './companies.es6'
+import tabManager from './tab-manager.es6'
+import ATB from './atb.es6'
+import browserWrapper from './wrapper.es6'
+import settings from './settings.es6'
+import devtools from './devtools.es6'
+import trackerAllowlist from './allowlisted-trackers.es6'
 
-const utils = require('./utils.es6')
-const trackers = require('./trackers.es6')
-const trackerutils = require('./tracker-utils')
-const https = require('./https.es6')
-const Companies = require('./companies.es6')
-const tabManager = require('./tab-manager.es6')
-const ATB = require('./atb.es6')
-const browserWrapper = require('./wrapper.es6')
-const settings = require('./settings.es6')
-const devtools = require('./devtools.es6')
+import tldts from 'tldts'
 const browser = utils.getBrowserName()
-const trackerAllowlist = require('./allowlisted-trackers.es6')
 
 const debugRequest = false
 

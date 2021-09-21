@@ -1,4 +1,5 @@
-const utils = require('./utils.es6')
-const tldts = require('tldts')
-const Trackers = require('@duckduckgo/privacy-grade').Trackers
-module.exports = new Trackers({ tldjs: tldts, utils })
+import utils from './utils.es6'
+import tldts from 'tldts'
+import { Trackers } from '@duckduckgo/privacy-grade'
+const trackersInstance = new Trackers({ tldjs: tldts, utils })
+export default trackersInstance

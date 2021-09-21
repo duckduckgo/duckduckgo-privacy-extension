@@ -3,10 +3,10 @@
  * Please see https://duck.co/help/privacy/atb for more information.
  */
 
-const settings = require('./settings.es6')
-const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
-const load = require('./load.es6')
-const browserWrapper = require('./wrapper.es6')
+import settings from './settings.es6'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+import load from './load.es6'
+import browserWrapper from './wrapper.es6'
 
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
@@ -223,9 +223,9 @@ const ATB = (() => {
     }
 })()
 
+export default ATB
+
 settings.ready().then(() => {
     // set initial uninstall url
     browserWrapper.setUninstallURL(ATB.getSurveyURL())
 })
-
-module.exports = ATB
