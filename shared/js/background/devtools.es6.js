@@ -24,7 +24,7 @@ function connected (port) {
             const matchedTracker = trackers.getTrackerData(requestData.url, siteUrl, requestData)
             if (tracker.matchedRule) {
                 // find the rule for this url
-                const ruleIndex = matchedTracker.tracker.rules.findIndex((r) => r.rule.toString() === tracker.matchedRule)
+                const ruleIndex = matchedTracker.tracker.rules.findIndex((r) => r.rule?.toString() === tracker.matchedRule)
                 const rule = matchedTracker.tracker.rules[ruleIndex]
                 const parsedHost = tldts.parse(siteUrl)
                 if (!rule.exceptions) {
