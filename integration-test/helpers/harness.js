@@ -10,10 +10,11 @@ const setup = async (ops) => {
     ops = ops || {}
 
     const dataDir = process.env.CI ? `/tmp/profile${Math.random()}` : `temp-profile-${Math.random()}`
+    const browserChannel = process.env.CHANNEL ? process.env.CHANNEL : 'chrome';
     const puppeteerOps = {
         args: [
-            '--disable-extensions-except=build/chrome/dev',
-            '--load-extension=build/chrome/dev',
+            `--disable-extensions-except=build/${browserChannel}/dev`,
+            `--load-extension=build/${browserChannel}/dev`,
             `--user-data-dir=${dataDir}`
         ],
         headless: false
