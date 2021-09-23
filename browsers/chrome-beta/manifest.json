@@ -64,15 +64,14 @@
     "permissions": [
         "contextMenus",
         "webRequest",
-        "webRequestBlocking",
         "webNavigation",
         "activeTab",
         "tabs",
         "storage",
-        "<all_urls>",
         "alarms"
     ],
     "host_permissions": [
+        "<all_urls>",
         "*://*/*"
     ],
     "web_accessible_resources": [
