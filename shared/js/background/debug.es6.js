@@ -9,7 +9,7 @@ const atb = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
 
-window.dbg = {
+globalThis.dbg = {
     settings,
     tabManager,
     atb,
