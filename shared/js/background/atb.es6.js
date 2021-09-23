@@ -180,7 +180,7 @@ const ATB = (() => {
                         let postInstallURL = 'https://duckduckgo.com/app?post=1'
                         const atb = settings.getSetting('atb')
                         postInstallURL += atb ? `&atb=${atb}` : ''
-                        chrome.tabs.create({
+                        browser.tabs.create({
                             url: postInstallURL
                         })
                     }

@@ -30,7 +30,7 @@ function getHash () {
     return sha1(getFloat().toString())
 }
 
-chrome.runtime.onInstalled.addListener(function (details) {
+browser.runtime.onInstalled.addListener(function (details) {
     if (details.reason.match(/install/)) {
         settings.ready()
             .then(() => {
@@ -52,9 +52,9 @@ chrome.runtime.onInstalled.addListener(function (details) {
 
     // Inject the email content script on all tabs upon installation (not needed on Firefox)
     if (browserName !== 'moz') {
-        chrome.tabs.query({}, (tabs) => {
+        browser.tabs.query({}, (tabs) => {
             tabs.forEach(tab => {
-                chrome.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
+                browser.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
             })
         })
     }
@@ -67,11 +67,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
  */
 
 let onBeforeNavigateTimeStamp = null
-chrome.webNavigation.onBeforeNavigate.addListener(details => {
+browser.webNavigation.onBeforeNavigate.addListener(details => {
     onBeforeNavigateTimeStamp = details.timeStamp
 })
 
-chrome.webNavigation.onCommitted.addListener(async details => {
+browser.webNavigation.onCommitted.addListener(async details => {
     await settings.ready()
     const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
     const showCounterMessaging = settings.getSetting('showCounterMessaging')
@@ -89,7 +89,7 @@ chrome.webNavigation.onCommitted.addListener(async details => {
 
         if (onBeforeNavigateTimeStamp < details.timeStamp) {
             if (browserName === 'chrome') {
-                chrome.tabs.executeScript(details.tabId, {
+                browser.tabs.executeScript(details.tabId, {
                     code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
                         duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
                     }),
@@ -97,14 +97,14 @@ chrome.webNavigation.onCommitted.addListener(async details => {
                 })
             }
 
-            chrome.tabs.executeScript(details.tabId, {
+            browser.tabs.executeScript(details.tabId, {
                 code: onboarding.createOnboardingCodeInjectedAtDocumentEnd({
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
                     browserName,
                     duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                    extensionId: chrome.runtime.id
+                    extensionId: browser.runtime.id
                 }),
                 runAt: 'document_end'
             })
@@ -143,7 +143,7 @@ if (browserName === 'chrome') {
         }
     })
 
-    chrome.runtime.onStartup.addListener(async () => {
+    browser.runtime.onStartup.addListener(async () => {
         await settings.ready()
 
         if (settings.getSetting('rescheduleCounterMessagingOnStart')) {
@@ -166,7 +166,7 @@ const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
-chrome.webRequest.onBeforeRequest.addListener(
+browser.webRequest.onBeforeRequest.addListener(
     redirect.handleRequest,
     {
         urls: ['<all_urls>'],
@@ -176,12 +176,12 @@ chrome.webRequest.onBeforeRequest.addListener(
 )
 
 const extraInfoSpec = ['blocking', 'responseHeaders']
-if (chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-    extraInfoSpec.push(chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+    extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
 // we determine if FLoC is enabled by testing for availability of its JS API
 const isFlocEnabled = ('interestCohort' in document)
-chrome.webRequest.onHeadersReceived.addListener(
+browser.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
             tabManager.updateTabUrl(request)
@@ -245,7 +245,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 // tabManager.updateTabUrl only fires when a tab has finished loading with a 200,
 // which misses a couple of edge cases like browser special pages
 // and Gmail's weird redirect which returns a 200 via a service worker
-chrome.webNavigation.onCommitted.addListener(details => {
+browser.webNavigation.onCommitted.addListener(details => {
     // ignore navigation on iframes
     if (details.frameId !== 0) return
 
@@ -263,7 +263,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
 
 const Companies = require('./companies.es6')
 
-chrome.tabs.onUpdated.addListener((id, info) => {
+browser.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
     if (info.status === 'complete') {
         Companies.syncToStorage()
@@ -272,21 +272,21 @@ chrome.tabs.onUpdated.addListener((id, info) => {
     tabManager.createOrUpdateTab(id, info)
 })
 
-chrome.tabs.onRemoved.addListener((id, info) => {
+browser.tabs.onRemoved.addListener((id, info) => {
     // remove the tab object
     tabManager.delete(id)
 })
 
 // message popup to close when the active tab changes. this can send an error message when the popup is not open. check lastError to hide it
-chrome.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError))
+browser.tabs.onActivated.addListener(() => chrome.runtime.sendMessage({ closePopup: true }, () => chrome.runtime.lastError))
 
 // search via omnibox
-chrome.omnibox.onInputEntered.addListener(function (text) {
+browser.omnibox.onInputEntered.addListener(function (text) {
     chrome.tabs.query({
         currentWindow: true,
         active: true
     }, function (tabs) {
-        chrome.tabs.update(tabs[0].id, {
+        browser.tabs.update(tabs[0].id, {
             url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage.os + 'cl'
         })
     })
@@ -310,7 +310,7 @@ const {
 // handle any messages that come from content/UI scripts
 // returning `true` makes it possible to send back an async response
 chrome.runtime.onMessage.addListener((req, sender, res) => {
-    if (sender.id !== chrome.runtime.id) return
+    if (sender.id !== browser.runtime.id) return
 
     if (req.registeredContentScript || req.registeredTempAutofillContentScript) {
         const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.documentUrl)
@@ -537,7 +537,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         const sendDdgUserReady = () =>
             chrome.tabs.query({}, (tabs) =>
                 tabs.forEach((tab) =>
-                    chrome.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
+                    browser.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
                 )
             )
 
@@ -579,7 +579,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Broadcast the logout to all tabs
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach((tab) => {
-                chrome.tabs.sendMessage(tab.id, { type: 'logout' })
+                browser.tabs.sendMessage(tab.id, { type: 'logout' })
             })
         })
         hideContextMenuAction()
@@ -696,7 +696,7 @@ if (browserName !== 'moz') {
     referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
 }
 
-chrome.webRequest.onBeforeSendHeaders.addListener(
+browser.webRequest.onBeforeSendHeaders.addListener(
     function limitReferrerData (e) {
         let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
         if (referrer) {
@@ -754,11 +754,11 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 const GPC = require('./GPC.es6')
 
 const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
-if (chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-    extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+    extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
 }
 // Attach GPC header to all requests if enabled.
-chrome.webRequest.onBeforeSendHeaders.addListener(
+browser.webRequest.onBeforeSendHeaders.addListener(
     request => {
         const tab = tabManager.get({ tabId: request.tabId })
         const GPCHeader = GPC.getHeader()
@@ -811,7 +811,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
  * On FireFox, redirecting to a JS surrogate in some cases causes a CORS error. Determine if that is the case here.
  * If so, and we have an alternate XRAY surrogate implementation, inject it.
  */
-chrome.webRequest.onBeforeRedirect.addListener(
+browser.webRequest.onBeforeRedirect.addListener(
     details => {
         const tab = tabManager.get({ tabId: details.tabId })
         if (tab && tab.site.isFeatureEnabled('clickToPlay') && details.responseHeaders) {
@@ -826,7 +826,7 @@ chrome.webRequest.onBeforeRedirect.addListener(
                 const xray = trackerutils.getXraySurrogate(details.redirectUrl)
                 if (xray && utils.getBrowserName() === 'moz') {
                     console.log('Normal surrogate load failed, loading XRAY version')
-                    chrome.tabs.executeScript(details.tabId, {
+                    browser.tabs.executeScript(details.tabId, {
                         file: `public/js/content-scripts/${xray}`,
                         matchAboutBlank: true,
                         frameId: details.frameId,
@@ -841,7 +841,7 @@ chrome.webRequest.onBeforeRedirect.addListener(
 )
 
 // Inject our content script to overwite FB elements
-chrome.webNavigation.onCommitted.addListener(details => {
+browser.webNavigation.onCommitted.addListener(details => {
     const tab = tabManager.get({ tabId: details.tabId })
     if (tab && tab.site.isBroken) {
         console.log('temporarily skip embedded object replacements for site: ' + details.url +
@@ -850,7 +850,7 @@ chrome.webNavigation.onCommitted.addListener(details => {
     }
 
     if (tab && tab.site.isFeatureEnabled('clickToPlay')) {
-        chrome.tabs.executeScript(details.tabId, {
+        browser.tabs.executeScript(details.tabId, {
             file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,
             frameId: details.frameId,
@@ -869,19 +869,19 @@ const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs
-chrome.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
+browser.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
 // tracker lists / content blocking lists are 30 minutes
-chrome.alarms.create('updateLists', { periodInMinutes: 30 })
+browser.alarms.create('updateLists', { periodInMinutes: 30 })
 // update uninstall URL every 10 minutes
-chrome.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
+browser.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
-chrome.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
+browser.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 // Rotate the user agent spoofed
-chrome.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
+browser.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
-chrome.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
+browser.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
 
-chrome.alarms.onAlarm.addListener(alarmEvent => {
+browser.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
         settings.ready().then(() => {
             httpsStorage.getLists(constants.httpsLists)
@@ -889,7 +889,7 @@ chrome.alarms.onAlarm.addListener(alarmEvent => {
                 .catch(e => console.log(e))
         })
     } else if (alarmEvent.name === 'updateUninstallURL') {
-        chrome.runtime.setUninstallURL(ATB.getSurveyURL())
+        browser.runtime.setUninstallURL(ATB.getSurveyURL())
     } else if (alarmEvent.name === 'updateLists') {
         settings.ready().then(() => {
             https.sendHttpsUpgradeTotals()
@@ -947,7 +947,7 @@ const onStartup = () => {
 }
 
 // Fire pixel on https upgrade failures to allow bad data to be removed from lists
-chrome.webRequest.onErrorOccurred.addListener(e => {
+browser.webRequest.onErrorOccurred.addListener(e => {
     if (!(e.type === 'main_frame')) return
 
     const tab = tabManager.get({ tabId: e.tabId })
