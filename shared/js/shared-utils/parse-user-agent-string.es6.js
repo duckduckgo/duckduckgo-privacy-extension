@@ -1,5 +1,5 @@
 module.exports = (uaString) => {
-    if (!uaString) uaString = window.navigator.userAgent
+    if (!uaString) uaString = globalThis.navigator.userAgent
 
     let browser
     let version
@@ -22,8 +22,14 @@ module.exports = (uaString) => {
         browser = version = ''
     }
 
+    let os = 'o'
+    if (globalThis.navigator.userAgent.indexOf('Windows') !== -1) os = 'w'
+    if (globalThis.navigator.userAgent.indexOf('Mac') !== -1) os = 'm'
+    if (globalThis.navigator.userAgent.indexOf('Linux') !== -1) os = 'l'
+
     return {
-        browser: browser,
-        version: version
+        os,
+        browser,
+        version
     }
 }

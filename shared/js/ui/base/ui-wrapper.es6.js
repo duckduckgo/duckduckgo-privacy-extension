@@ -1,3 +1,6 @@
+import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
+const browserInfo = parseUserAgentString()
+
 const fetch = (message) => {
     return new Promise((resolve, reject) => {
         window.chrome.runtime.sendMessage(message, (result) => resolve(result))
@@ -29,7 +32,7 @@ const getBackgroundTabData = () => {
 }
 
 const search = (url) => {
-    window.chrome.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${window.localStorage.os}cr` })
+    window.chrome.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo.os}cr` })
 }
 
 const getExtensionURL = (path) => {

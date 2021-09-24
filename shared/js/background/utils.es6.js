@@ -99,6 +99,11 @@ export function getBrowserName () {
     return browser
 }
 
+export function getOsName () {
+    if (!browserInfo || !browserInfo.os) return
+    return browserInfo.os
+}
+
 // Determine if upgradeToSecure supported (Firefox 59+)
 export function getUpgradeToSecureSupport () {
     let canUpgrade = false
