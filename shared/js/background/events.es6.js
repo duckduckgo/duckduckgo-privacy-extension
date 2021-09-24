@@ -5,6 +5,7 @@
  * if we do too much before adding it
  */
 import browser from 'webextension-polyfill'
+import parseUserAgentString from  '../shared-utils/parse-user-agent-string.es6'
 import * as messageHandlers from './message-handlers'
 const tldts = require('tldts')
 const ATB = require('./atb.es6')
@@ -23,6 +24,8 @@ const browserWrapper = require('./wrapper.es6')
 const browserName = utils.getBrowserName()
 
 const blockingPermitted = "document" in globalThis;
+
+const browserInfo = parseUserAgentString()
 
 /**
  * Produce a random float, same output as Math.random()

@@ -1,7 +1,6 @@
 import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
 import browser from 'webextension-polyfill'
 const browserInfo = parseUserAgentString()
-const browser = require('webextension-polyfill')
 
 const sendMessage = async (messageType, options) => {
     return await browser.runtime.sendMessage({ messageType, options })
