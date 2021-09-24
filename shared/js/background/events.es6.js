@@ -287,7 +287,7 @@ chrome.omnibox.onInputEntered.addListener(function (text) {
         active: true
     }, function (tabs) {
         chrome.tabs.update(tabs[0].id, {
-            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + localStorage.os + 'cl'
+            url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + utils.getOsName() + 'cl'
         })
     })
 })
