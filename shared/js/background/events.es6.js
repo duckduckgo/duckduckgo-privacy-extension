@@ -23,7 +23,9 @@ const browserWrapper = require('./wrapper.es6')
 
 const browserName = utils.getBrowserName()
 
-const blockingPermitted = "document" in globalThis;
+const blockingPermitted = 'document' in globalThis
+// TODO remove all uses
+const dynamicScriptInjectionPermitted = 'document' in globalThis
 
 const browserInfo = parseUserAgentString()
 
@@ -65,7 +67,7 @@ async function onInstalled (details) {
             if (tab.url.startsWith('chrome://')) {
                 continue
             }
-            browser.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
+            browserWrapper.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
         }
     }
 }
@@ -82,62 +84,64 @@ browser.webNavigation.onBeforeNavigate.addListener(details => {
     onBeforeNavigateTimeStamp = details.timeStamp
 })
 
-browser.webNavigation.onCommitted.addListener(async details => {
-    await settings.ready()
-    const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
-    const showCounterMessaging = settings.getSetting('showCounterMessaging')
+if (dynamicScriptInjectionPermitted) {
+    browser.webNavigation.onCommitted.addListener(async details => {
+        await settings.ready()
+        const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
+        const showCounterMessaging = settings.getSetting('showCounterMessaging')
 
-    // We show the welcome banner and counter messaging only once
-    if (showWelcomeBanner || showCounterMessaging) {
-        const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
+        // We show the welcome banner and counter messaging only once
+        if (showWelcomeBanner || showCounterMessaging) {
+            const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
 
-        if (showWelcomeBanner) {
-            settings.removeSetting('showWelcomeBanner')
-        }
-        if (isAddressBarQuery && showCounterMessaging) {
-            settings.removeSetting('showCounterMessaging')
-        }
-
-        if (onBeforeNavigateTimeStamp < details.timeStamp) {
-            if (browserName === 'chrome') {
-                browser.tabs.executeScript(details.tabId, {
-                    code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
-                        duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
-                    }),
-                    runAt: 'document_start'
-                })
+            if (showWelcomeBanner) {
+                settings.removeSetting('showWelcomeBanner')
+            }
+            if (isAddressBarQuery && showCounterMessaging) {
+                settings.removeSetting('showCounterMessaging')
             }
 
-            browser.tabs.executeScript(details.tabId, {
-                code: onboarding.createOnboardingCodeInjectedAtDocumentEnd({
-                    isAddressBarQuery,
-                    showWelcomeBanner,
-                    showCounterMessaging,
-                    browserName,
-                    duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                    extensionId: browserWrapper.getExtensionId()
-                }),
-                runAt: 'document_end'
-            })
+            if (onBeforeNavigateTimeStamp < details.timeStamp) {
+                if (browserName === 'chrome') {
+                    browserWrapper.executeScript(details.tabId, {
+                        code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
+                            duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
+                        }),
+                        runAt: 'document_start'
+                    })
+                }
+
+                browserWrapper.executeScript(details.tabId, {
+                    code: onboarding.createOnboardingCodeInjectedAtDocumentEnd({
+                        isAddressBarQuery,
+                        showWelcomeBanner,
+                        showCounterMessaging,
+                        browserName,
+                        duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
+                        extensionId: chrome.runtime.id
+                    }),
+                    runAt: 'document_end'
+                })
+            }
         }
-    }
-}, {
-    // we only target the SERP (it has a `q` querystring param but not necessarily as the first querstring param)
-    url: [
-        {
-            schemes: ['https'],
-            hostEquals: constants.duckDuckGoSerpHostname,
-            pathEquals: '/',
-            queryContains: '?q='
-        },
-        {
-            schemes: ['https'],
-            hostEquals: constants.duckDuckGoSerpHostname,
-            pathEquals: '/',
-            queryContains: '&q='
-        }
-    ]
-})
+    }, {
+        // we only target the SERP (it has a `q` querystring param but not necessarily as the first querstring param)
+        url: [
+            {
+                schemes: ['https'],
+                hostEquals: constants.duckDuckGoSerpHostname,
+                pathEquals: '/',
+                queryContains: '?q='
+            },
+            {
+                schemes: ['https'],
+                hostEquals: constants.duckDuckGoSerpHostname,
+                pathEquals: '/',
+                queryContains: '&q='
+            }
+        ]
+    })
+}
 
 /**
  * Health checks + `showCounterMessaging` mutation
@@ -556,7 +560,7 @@ browser.webRequest.onBeforeRedirect.addListener(
                 const xray = trackerutils.getXraySurrogate(details.redirectUrl)
                 if (xray && utils.getBrowserName() === 'moz') {
                     console.log('Normal surrogate load failed, loading XRAY version')
-                    browser.tabs.executeScript(details.tabId, {
+                    browserWrapper.executeScript(details.tabId, {
                         file: `public/js/content-scripts/${xray}`,
                         matchAboutBlank: true,
                         frameId: details.frameId,
@@ -580,7 +584,7 @@ browser.webNavigation.onCommitted.addListener(details => {
     }
 
     if (tab && tab.site.isFeatureEnabled('clickToPlay')) {
-        browser.tabs.executeScript(details.tabId, {
+        browserWrapper.executeScript(details.tabId, {
             file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,
             frameId: details.frameId,

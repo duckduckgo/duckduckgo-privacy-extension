@@ -74,3 +74,15 @@ export function setUninstallURL (url) {
 export function changeTabURL (tabId, url) {
     return browser.tabs.update(tabId, { url })
 }
+
+export function executeScript (tabId, options) {
+    if (chrome.scripting) {
+        options.target = { tabId }
+        const files = [options.file]
+        options.files = files
+        delete options.file
+        chrome.scripting.executeScript(options)
+    } else {
+        chrome.tabs.executeScript(tabId, options)
+    }
+}
