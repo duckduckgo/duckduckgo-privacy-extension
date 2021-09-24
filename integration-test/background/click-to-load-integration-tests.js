@@ -12,7 +12,7 @@ xdescribe('Test Click To Load', () => {
         await bgPage.waitForFunction(
             () => {
                 console.log('waiting for tds...')
-                return window.dbg && window.dbg.tds && window.dbg.tds.ClickToLoadConfig
+                return globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.ClickToLoadConfig
             },
             { polling: 100, timeout: 10000 }
         )

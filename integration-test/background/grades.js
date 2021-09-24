@@ -50,7 +50,7 @@ describe('grade sanity checks', () => {
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
+            () => globalThis.dbg && dbg.https.isReady,
             { polling: 100, timeout: 20000 }
         )
     })

@@ -11,7 +11,7 @@ async function setup () {
     await bgPage.waitForFunction(
         () => {
             console.log('waiting for tds...')
-            return window.dbg && window.dbg.tds && window.dbg.tds.tds
+            return globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.tds
         },
         { polling: 100, timeout: 10000 }
     )

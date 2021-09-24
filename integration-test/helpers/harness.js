@@ -41,28 +41,28 @@ const setup = async (ops) => {
     const browser = await puppeteer.launch(puppeteerOps)
     // for some reason we need to init a blank page
     // before the extension is initialized
-    await browser.newPage()
+    const page = await browser.newPage()
     const targets = await browser.targets()
-    let bgPage
 
     // grab a handle on the background page for the extension
     // we can't use the long ID as it could possibly change
-    for (const t of targets) {
-        const title = t._targetInfo.title
+    let bgPage = targets.find((target) => {
+        return (target.type() === 'background_page' || target.type() === 'service_worker') && target.url().endsWith('public/js/background.js')
+    });
 
-        if (title === 'DuckDuckGo Privacy Essentials') {
-            bgPage = await t.page()
-            break
-        }
-    }
 
     if (!bgPage) {
         throw new Error('couldn\'t get background page')
     }
+    const worker = await bgPage.worker()
+    if (worker) {
+        bgPage = await worker.executionContext()
+    }
 
     const requests = []
-
-    bgPage.on('request', (req) => { requests.push(req.url()) })
+    if (bgPage.on) {
+        bgPage.on('request', (req) => { requests.push(req.url()) })
+    }
 
     return { browser, bgPage, requests }
 }

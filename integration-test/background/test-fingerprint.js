@@ -36,7 +36,7 @@ describe('Fingerprint Defense Tests', () => {
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
+            () => globalThis.dbg && dbg.https.isReady,
             { polling: 100, timeout: 60000 }
         )
     })
@@ -82,7 +82,7 @@ describe('First Party Fingerprint Randomization', () => {
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
+            () => globalThis.dbg && dbg.https.isReady,
             { polling: 100, timeout: 6000 }
         )
     })
@@ -154,7 +154,7 @@ describe('Verify injected script is not visible to the page', () => {
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
+            () => globalThis.dbg && dbg.https.isReady,
             { polling: 100, timeout: 6000 }
         )
     })
