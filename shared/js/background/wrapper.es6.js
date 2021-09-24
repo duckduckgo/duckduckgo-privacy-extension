@@ -77,10 +77,17 @@ export function changeTabURL (tabId, url) {
 
 export function executeScript (tabId, options) {
     if (chrome.scripting) {
-        options.target = { tabId }
+        let frameIds
+        if (options.frameId) {
+            frameIds = [options.frameId]
+        }
+        options.target = { tabId, frameIds }
         const files = [options.file]
         options.files = files
         delete options.file
+        delete options.matchAboutBlank
+        delete options.frameId
+        delete options.runAt
         chrome.scripting.executeScript(options)
     } else {
         chrome.tabs.executeScript(tabId, options)
