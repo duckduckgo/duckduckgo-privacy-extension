@@ -7,6 +7,12 @@
 import browser from 'webextension-polyfill'
 import parseUserAgentString from  '../shared-utils/parse-user-agent-string.es6'
 import * as messageHandlers from './message-handlers'
+import { handleRequest } from './redirect.es6'
+const tabManager = require('./tab-manager.es6')
+const Companies = require('./companies.es6')
+const GPC = require('./GPC.es6')
+const https = require('./https.es6')
+const pixel = require('./pixel.es6')
 const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
@@ -16,7 +22,6 @@ const settings = require('./settings.es6')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
-const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
@@ -27,6 +32,7 @@ const blockingPermitted = 'document' in globalThis
 // TODO remove all uses
 const dynamicScriptInjectionPermitted = 'document' in globalThis
 
+const sha1 = require('../shared-utils/sha1')
 const browserInfo = parseUserAgentString()
 
 /**
