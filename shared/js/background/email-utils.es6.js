@@ -50,15 +50,15 @@ const createAutofillContextMenuItem = () => {
         id: MENU_ITEM_ID,
         title: 'Use Duck Address',
         contexts: ['editable'],
-        visible: false,
-        onclick: (info, tab) => {
-            const userData = getSetting('userData')
-            if (userData.nextAlias) {
-                browser.tabs.sendMessage(tab.id, {
-                    type: 'contextualAutofill',
-                    alias: userData.nextAlias
-                })
-            }
+        visible: false
+    })
+    browser.contextMenus.onClicked.addListener((info, tab) => {
+        const userData = getSetting('userData')
+        if (userData.nextAlias) {
+            browser.tabs.sendMessage(tab.id, {
+                type: 'contextualAutofill',
+                alias: userData.nextAlias
+            })
         }
     })
 }
