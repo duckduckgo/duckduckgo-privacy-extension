@@ -54,7 +54,7 @@ class TDSStorage {
         return this.getDataXHR(listCopy, etag, source).then(response => {
             // for 200 response we update etags
             if (response && response.status === 200) {
-                const newEtag = response.getResponseHeader('etag') || ''
+                const newEtag = response.etag || ''
                 settings.updateSetting(`${listCopy.name}-etag`, newEtag)
             }
 

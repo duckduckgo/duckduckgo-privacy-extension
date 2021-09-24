@@ -49,32 +49,27 @@ function loadExtensionFile (params) {
     const fetchResult = fetch(url, {
         method: 'GET',
         headers
-    }).then(response => {
+    }).then(async response => {
         clearTimeout(fetchTimeout)
 
         const status = response.status
         const etag = response.headers.get('etag')
+        let data
 
         if (status === 200) {
             if (params.returnType === 'json') {
-                return response.json()
-                    .then(data => {
-                        return {
-                            status,
-                            etag,
-                            data
-                        }
-                    })
+                data = await response.json()
+            } else if (params.returnType === 'arraybuffer') {
+                data = await response.arrayBuffer()
+            } else {
+                data = await response.text()
             }
 
-            return response.text()
-                .then(data => {
-                    return {
-                        status,
-                        etag,
-                        data
-                    }
-                })
+            return {
+                status,
+                etag,
+                data
+            }
         } else if (status === 304) {
             console.log(`${url} returned 304, resource not changed`)
             return {
