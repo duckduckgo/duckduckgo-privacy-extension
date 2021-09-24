@@ -22,6 +22,8 @@ const browserWrapper = require('./wrapper.es6')
 
 const browserName = utils.getBrowserName()
 
+const blockingPermitted = "document" in globalThis;
+
 /**
  * Produce a random float, same output as Math.random()
  * @returns {float}
@@ -155,6 +157,11 @@ if (browserName === 'chrome') {
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
+const handleRequestPermissions = []
+if (blockingPermitted) {
+    handleRequestPermissions.push('blocking')
+}
+
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 browser.webRequest.onBeforeRequest.addListener(
@@ -163,15 +170,16 @@ browser.webRequest.onBeforeRequest.addListener(
         urls: ['<all_urls>'],
         types: requestListenerTypes
     },
-    ['blocking']
+    handleRequestPermissions
 )
 
-const extraInfoSpec = ['blocking', 'responseHeaders']
+const extraInfoSpec = ['responseHeaders']
+if (blockingPermitted) {
+    extraInfoSpec.push('blocking')
+}
 if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
     extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
-// we determine if FLoC is enabled by testing for availability of its JS API
-const isFlocEnabled = ('interestCohort' in document)
 browser.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
@@ -184,11 +192,6 @@ browser.webRequest.onHeadersReceived.addListener(
         }
 
         let responseHeaders = request.responseHeaders
-
-        if (isFlocEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
-            // there can be multiple permissions-policy headers, so we are good always appending one
-            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
-        }
 
         const tab = tabManager.get({ tabId: request.tabId })
         if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
@@ -410,7 +413,10 @@ function getArgumentsObject (tabId, sender, documentUrl) {
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
  */
-const referrerListenerOptions = ['blocking', 'requestHeaders']
+const referrerListenerOptions = ['requestHeaders']
+if (blockingPermitted) {
+    referrerListenerOptions.push('blocking')
+}
 if (browserName !== 'moz') {
     referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
 }
@@ -471,9 +477,12 @@ browser.webRequest.onBeforeSendHeaders.addListener(
  * Global Privacy Control
  */
 
-const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
+const extraInfoSpecSendHeaders = ['requestHeaders']
+if (blockingPermitted) {
+    extraInfoSpecSendHeaders.push('blocking')
+}
 if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-    extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+    extraInfoSpecSendHeaders.push(chrome.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
 }
 // Attach GPC header to all requests if enabled.
 browser.webRequest.onBeforeSendHeaders.addListener(
