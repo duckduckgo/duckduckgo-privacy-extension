@@ -14,26 +14,6 @@ function url (url) {
     return loadExtensionFile({ url: url, source: 'external' })
 }
 
-function returnResponse (xhr, returnType) {
-    if (returnType === 'json' && xhr && xhr.responseText) {
-        let res
-
-        try {
-            res = JSON.parse(xhr.responseText)
-        } catch (e) {
-            console.warn(`couldn't parse JSON response: ${xhr.responseText}`)
-        }
-
-        return res
-    } else if (returnType === 'xml') {
-        return xhr.responseXML
-    } else if (returnType === 'arraybuffer') {
-        return xhr.response
-    } else {
-        return xhr.responseText
-    }
-}
-
 /*
  * Params:
  *  - url: request URL
@@ -41,7 +21,7 @@ function returnResponse (xhr, returnType) {
  *  - etag: set an if-none-match header
  */
 function loadExtensionFile (params) {
-    const xhr = new XMLHttpRequest()
+    const headers = new Headers()
     let url = params.url
 
     if (params.source === 'external') {
@@ -55,46 +35,58 @@ function loadExtensionFile (params) {
             url += 'test=1'
         }
 
-        xhr.open('GET', url)
-
         if (params.etag) {
-            xhr.setRequestHeader('If-None-Match', params.etag)
+            headers.append('If-None-Match', params.etag)
         }
     } else {
-        // set type xhr type tag.
-        // don't set a 200 status so we'll check this type
-        xhr.type = 'internal'
-        xhr.open('GET', browserWrapper.getExtensionURL(url))
+        url = browserWrapper.getExtensionURL(url)
     }
 
-    if (params.responseType) {
-        xhr.responseType = params.responseType
-    }
+    let rej
+    const timeoutPromise = new Promise((resolve, reject) => { rej = reject })
+    const fetchTimeout = setTimeout(rej, params.timeout || 30000)
 
-    xhr.timeout = params.timeout || 30000
+    const fetchResult = fetch(url, {
+        method: 'GET',
+        headers
+    }).then(response => {
+        clearTimeout(fetchTimeout)
 
-    xhr.send(null)
+        const status = response.status
+        const etag = response.headers.get('etag')
 
-    return new Promise((resolve, reject) => {
-        xhr.ontimeout = () => {
-            reject(new Error(`${url} timed out`))
-        }
-        xhr.onreadystatechange = () => {
-            const done = XMLHttpRequest.DONE ? XMLHttpRequest.DONE : 4
-            if (xhr.readyState === done) {
-                if (xhr.status === 200 || (xhr.type && xhr.type === 'internal')) {
-                    xhr.data = returnResponse(xhr, params.returnType)
-                    if (!xhr.data) reject(new Error(`${url} returned no data`))
-                    resolve(xhr)
-                } else if (xhr.status === 304) {
-                    console.log(`${url} returned 304, resource not changed`)
-                    resolve(xhr)
-                } else {
-                    reject(new Error(`${url} returned ${xhr.status}`))
-                }
+        if (status === 200) {
+            if (params.returnType === 'json') {
+                return response.json()
+                    .then(data => {
+                        return {
+                            status,
+                            etag,
+                            data
+                        }
+                    })
             }
+
+            return response.text()
+                .then(data => {
+                    return {
+                        status,
+                        etag,
+                        data
+                    }
+                })
+        } else if (status === 304) {
+            console.log(`${url} returned 304, resource not changed`)
+            return {
+                status,
+                etag
+            }
+        } else {
+            throw new Error(`${url} returned ${response.status}`)
         }
     })
+
+    return Promise.race([timeoutPromise, fetchResult])
 }
 
 function setDevMode () {
