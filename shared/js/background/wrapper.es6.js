@@ -10,7 +10,11 @@ export function getExtensionVersion () {
 }
 
 export function setBadgeIcon (badgeData) {
-    browser.browserAction.setIcon(badgeData)
+    if (chrome.action) {
+        chrome.action.setIcon(badgeData)
+    } else {
+        chrome.browserAction.setIcon(badgeData)
+    }
 }
 
 export function syncToStorage (data) {
