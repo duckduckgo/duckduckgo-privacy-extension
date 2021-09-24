@@ -41,15 +41,14 @@ const setup = async (ops) => {
     const browser = await puppeteer.launch(puppeteerOps)
     // for some reason we need to init a blank page
     // before the extension is initialized
-    const page = await browser.newPage()
+    await browser.newPage()
     const targets = await browser.targets()
 
     // grab a handle on the background page for the extension
     // we can't use the long ID as it could possibly change
     let bgPage = targets.find((target) => {
         return (target.type() === 'background_page' || target.type() === 'service_worker') && target.url().endsWith('public/js/background.js')
-    });
-
+    })
 
     if (!bgPage) {
         throw new Error('couldn\'t get background page')

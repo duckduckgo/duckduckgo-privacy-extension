@@ -33,7 +33,6 @@ const blockingPermitted = 'document' in globalThis
 const dynamicScriptInjectionPermitted = 'document' in globalThis
 
 const sha1 = require('../shared-utils/sha1')
-const browserInfo = parseUserAgentString()
 
 /**
  * Produce a random float, same output as Math.random()
