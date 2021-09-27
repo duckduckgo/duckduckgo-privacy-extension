@@ -63,7 +63,7 @@
         "node-fetch": "^3.0.0",
         "puppeteer": "10.2.0",
         "request": "^2.88.2",
-        "rollup": "^2.56.3",
+        "rollup": "^2.57.0",
         "rollup-plugin-dynamic-import-variables": "^1.1.0",
         "sass": "^1.41.1",
         "standard": "16.0.3",
