@@ -862,7 +862,7 @@ chrome.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
 chrome.alarms.onAlarm.addListener(alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
         settings.ready().then(() => {
-            httpsStorage.getLists(constants.httpsLists)
+            httpsStorage.getLists()
                 .then(lists => https.setLists(lists))
                 .catch(e => console.log(e))
         })
@@ -903,7 +903,7 @@ const onStartup = () => {
     settings.ready().then(async () => {
         experiment.setActiveExperiment()
 
-        httpsStorage.getLists(constants.httpsLists)
+        httpsStorage.getLists()
             .then(lists => https.setLists(lists))
             .catch(e => console.log(e))
 
