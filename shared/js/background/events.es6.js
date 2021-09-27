@@ -345,13 +345,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             const tab = tabManager.get({ tabId: sender.tab.id })
             const config = { ...tdsStorage.ClickToLoadConfig }
 
-            // remove any social networks saved by the user
-            for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-                if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
-                    delete config[entity]
-                }
-            }
-
             // Determine whether to show one time messages or simplified messages
             for (const [entity] of Object.entries(config)) {
                 const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
@@ -415,21 +408,6 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
             const entity = req.enableSocialTracker
             if (req.isLogin) {
                 trackerutils.allowSocialLogin(tab.site.domain)
-            }
-            if (req.alwaysAllow) {
-                let allowList = settings.getSetting('clickToLoad')
-                const value = {
-                    tracker: entity,
-                    domain: tab.site.domain
-                }
-                if (allowList) {
-                    if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
-                        allowList.push(value)
-                    }
-                } else {
-                    allowList = [value]
-                }
-                settings.updateSetting('clickToLoad', allowList)
             }
             // Update number of times this social network has been 'clicked'
             if (tdsStorage.ClickToLoadConfig[entity]) {

@@ -485,7 +485,7 @@
                     if (this.replaceSettings.type === 'loginButton') {
                         isLogin = true
                     }
-                    enableSocialTracker(this.entity, false, isLogin)
+                    enableSocialTracker(this.entity, isLogin)
                     const parent = replacementElement.parentNode
 
                     // If we allow everything when this element is clicked,
@@ -641,10 +641,9 @@
     /*********************************************************
      *  Messaging to surrogates & extension
      *********************************************************/
-    function enableSocialTracker (entity, alwaysAllow, isLogin) {
+    function enableSocialTracker (entity, isLogin) {
         const message = {
             enableSocialTracker: entity,
-            alwaysAllow: alwaysAllow,
             isLogin: isLogin
         }
         chrome.runtime.sendMessage(message)
@@ -707,7 +706,7 @@
     })
 
     function runLogin (entity) {
-        enableSocialTracker(entity, false, true)
+        enableSocialTracker(entity, true)
         window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
     }
 
