@@ -8,10 +8,6 @@ export function hasTrackerListLoaded () {
     return !!trackers.trackerList
 }
 
-export function hasTrackerListLoaded () {
-    return !!trackers.trackerList
-}
-
 // Determine if two URL's belong to the same entity.
 export function isSameEntity (url1, url2) {
     try {

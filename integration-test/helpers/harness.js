@@ -46,16 +46,29 @@ const setup = async (ops) => {
 
     // grab a handle on the background page for the extension
     // we can't use the long ID as it could possibly change
-    let bgPage = targets.find((target) => {
-        return (target.type() === 'background_page' || target.type() === 'service_worker') && target.url().endsWith('public/js/background.js')
-    })
+    let bgPage
+    for (const t of targets) {
+        const title = t._targetInfo.title
+
+        if (title === 'DuckDuckGo Privacy Essentials') {
+            bgPage = await t.page()
+            break
+        }
+        if (t.type() === 'service_worker' && t.url().endsWith('public/js/background.js')) {
+            const client = await t.createCDPSession()
+            client.on('Console.messageAdded', (resp) => {
+                const { line, level, text } = resp.message
+                console.log(`console.${level} [${line}] ${text}`)
+            })
+            await client.send('Console.enable')
+            const worker = await t.worker()
+            bgPage = await worker.executionContext()
+            break
+        }
+    }
 
     if (!bgPage) {
         throw new Error('couldn\'t get background page')
-    }
-    const worker = await bgPage.worker()
-    if (worker) {
-        bgPage = await worker.executionContext()
     }
 
     const requests = []
