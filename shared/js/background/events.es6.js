@@ -423,7 +423,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                     domain: tab.site.domain
                 }
                 if (allowList) {
-                    if (!trackerutils.socialTrackerIsAllowed(value.tracker, value.domain)) {
+                    if (!trackerutils.socialTrackerIsAllowedByUser(value.tracker, value.domain)) {
                         allowList.push(value)
                     }
                 } else {
