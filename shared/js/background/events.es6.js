@@ -187,9 +187,9 @@ chrome.webRequest.onHeadersReceived.addListener(
             tabManager.updateTabUrl(request)
         }
 
-        if (/^https?:\/\/(.*?\.)?duckduckgo.com\/\?/.test(request.url)) {
+        if (ATB.shouldUpdateSetAtb(request)) {
             // returns a promise
-            return ATB.updateSetAtb(request)
+            return ATB.updateSetAtb()
         }
 
         let responseHeaders = request.responseHeaders
