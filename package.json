@@ -61,15 +61,15 @@
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.0.0",
-        "puppeteer": "10.2.0",
+        "puppeteer": "10.4.0",
         "request": "^2.88.2",
-        "rollup": "^2.56.3",
+        "rollup": "^2.57.0",
         "rollup-plugin-dynamic-import-variables": "^1.1.0",
         "sass": "^1.41.1",
         "standard": "16.0.3",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.8.0",
-        "yargs": "^17.1.1"
+        "yargs": "^17.2.1"
     },
     "dependencies": {
         "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.2.4",
