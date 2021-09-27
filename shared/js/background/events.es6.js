@@ -537,7 +537,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
                 settings.updateSetting('userData', req.addUserData)
                 // Once user is set, fetch the alias and notify all tabs
                 fetchAlias().then((response) => {
-                    if (response && response.error) {
+                    if (response && 'error' in response) {
                         res({ error: response.error.message })
                         return
                     }
@@ -678,12 +678,11 @@ if (browserName !== 'moz') {
 
 browser.webRequest.onBeforeSendHeaders.addListener(
     function limitReferrerData (e) {
-        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
-        if (referrer) {
-            referrer = referrer.value
-        } else {
+        const referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
+        if (!referrer) {
             return
         }
+        const referrerValue = referrer.value
 
         const tab = tabManager.get({ tabId: e.tabId })
 
@@ -705,7 +704,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(
         }
 
         // Additional safe list and broken site list checks are included in the referrer evaluation
-        const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
+        const modifiedReferrer = trackerutils.truncateReferrer(referrerValue, e.url)
         if (!modifiedReferrer) {
             return
         }
@@ -714,7 +713,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(
         if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
             tab.referrer = {
                 site: tab.site.url,
-                referrerHost: new URL(referrer).hostname,
+                referrerHost: new URL(referrerValue).hostname,
                 referrer: modifiedReferrer
             }
         }
