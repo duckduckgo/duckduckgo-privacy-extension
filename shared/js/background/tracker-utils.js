@@ -3,7 +3,6 @@ import * as utils from './utils.es6'
 import trackers from './trackers.es6'
 import * as tldts from 'tldts'
 import tdsStorage from './storage/tds.es6'
-import settings from './settings.es6'
 
 // Determine if two URL's belong to the same entity.
 export function isSameEntity (url1, url2) {
@@ -114,23 +113,6 @@ export function allowSocialLogin (url) {
     if (!logins.includes(domain)) {
         logins.push(domain)
     }
-}
-
-/**
- * Return true if the user has permanently saved the domain/tracker combination
- */
-export function socialTrackerIsAllowedByUser (trackerEntity, domain) {
-    if (logins.includes(domain)) {
-        return true
-    }
-    let allowList = settings.getSetting('clickToLoad')
-    if (allowList) {
-        allowList = allowList.filter(e => e.domain === domain && e.tracker === trackerEntity)
-        if (allowList.length > 0) {
-            return true
-        }
-    }
-    return false
 }
 
 /*
