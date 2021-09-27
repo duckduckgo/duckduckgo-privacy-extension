@@ -149,15 +149,15 @@ export function getUpdatedRequestListenerTypes () {
 
 // return true if browser allows to handle request async
 export function getAsyncBlockingSupport () {
-    const browser = getBrowserName()
+    const browserName = getBrowserName()
 
-    if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
+    if (browserName === 'moz' && browserInfo && browserInfo.version >= 52) {
         return true
-    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browser)) {
+    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browserName)) {
         return false
     }
 
-    console.warn(`Unrecognized browser "${browser}" - async response disallowed`)
+    console.warn(`Unrecognized browser "${browserName}" - async response disallowed`)
     return false
 }
 

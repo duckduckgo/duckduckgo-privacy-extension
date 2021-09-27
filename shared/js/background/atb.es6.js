@@ -4,6 +4,7 @@
  */
 import browser from 'webextension-polyfill'
 
+import browser from 'webextension-polyfill'
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
