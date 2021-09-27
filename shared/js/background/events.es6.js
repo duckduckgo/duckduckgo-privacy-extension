@@ -5,7 +5,6 @@
  * if we do too much before adding it
  */
 import browser from 'webextension-polyfill'
-import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 import * as messageHandlers from './message-handlers'
 import { handleRequest } from './redirect.es6'
 const tabManager = require('./tab-manager.es6')
