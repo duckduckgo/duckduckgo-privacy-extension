@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
 const tabManager = require('./tab-manager.es6')

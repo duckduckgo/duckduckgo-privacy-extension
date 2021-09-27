@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 
 const RELEASE_EXTENSION_IDS = [
     'caoacbimdbbljakfhgikoodekdnlcgpk', // edge store

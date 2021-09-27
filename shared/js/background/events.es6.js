@@ -4,6 +4,7 @@
  * on FF, we might actually miss the onInstalled event
  * if we do too much before adding it
  */
+import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')

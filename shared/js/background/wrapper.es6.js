@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill'
+
 export function getExtensionURL (path) {
     return browser.runtime.getURL(path)
 }
