@@ -1,3 +1,4 @@
+// @ts-check
 /**
  * NOTE: this needs to be the first listener that's added
  *
@@ -21,7 +22,7 @@ const sha1 = require('../shared-utils/sha1')
 
 /**
  * Produce a random float, same output as Math.random()
- * @returns {float}
+ * @returns {number}
  */
 function getFloat () {
     return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32

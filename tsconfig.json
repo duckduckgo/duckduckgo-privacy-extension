@@ -1,0 +1,8 @@
+{
+  "include": ["shared/js/background/background.es6.js"],
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "allowJs": true,
+    "outDir": "types"
+  }
+}

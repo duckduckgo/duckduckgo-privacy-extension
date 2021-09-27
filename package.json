@@ -15,12 +15,13 @@
         "release": "grunt build && node scripts/httpsAllowlist.js",
         "selenium": "cd selenium-test && node test.js",
         "lint": "eslint shared/js unit-test integration-test scripts",
+        "tsc": "tsc",
         "lint-fix": "eslint shared/js unit-test integration-test --fix",
         "test": "grunt test --browser=chrome --type=dev",
         "test-debug": "grunt test --browser=chrome --type=dev --test-debug",
         "test-int": "make dev browser=chrome type=dev && jasmine --config=integration-test/config.json",
         "test-int-x": "xvfb-run --server-args='-screen 0 1024x768x24' npm run test-int",
-        "test-ci": "npm run lint && npm test && npm run test-int-x",
+        "test-ci": "npm run lint && npm run tsc && npm test && npm run test-int-x",
         "dev-firefox": "make dev browser=firefox type=dev watch=1",
         "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/",
         "release-firefox": "make browser=firefox type=release",
@@ -38,6 +39,8 @@
         "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-node-resolve": "^13.0.5",
         "@rollup/plugin-replace": "^3.0.0",
+        "@types/chrome": "^0.0.158",
+        "@types/webextension-polyfill": "^0.8.0",
         "babelify": "10.0.0",
         "duckduckgo-colors": "0.0.1",
         "eslint": "^7.32.0",
@@ -68,6 +71,7 @@
         "sass": "^1.42.1",
         "standard": "16.0.4",
         "timekeeper": "^2.1.1",
+        "typescript": "^4.4.3",
         "webextension-polyfill": "^0.8.0",
         "yargs": "^17.2.1"
     },
@@ -99,7 +103,9 @@
             [
                 "@babel/preset-env",
                 {
-                    "exclude": ["transform-regenerator"],
+                    "exclude": [
+                        "transform-regenerator"
+                    ],
                     "debug": true
                 }
             ]

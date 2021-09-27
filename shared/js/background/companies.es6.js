@@ -1,4 +1,4 @@
-const TopBlocked = require('./classes/top-blocked.es6')
+import TopBlocked from './classes/top-blocked.es6'
 const Company = require('./classes/company.es6')
 const browserWrapper = require('./wrapper.es6')
 const migrate = require('./migrate.es6')

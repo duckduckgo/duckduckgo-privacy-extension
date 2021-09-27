@@ -1,30 +1,30 @@
-function TopBlocked () {
-    this.data = []
-}
+export default class TopBlocked {
+    constructor () {
+        this.data = []
+    }
 
-TopBlocked.prototype = {
-
-    add: function (element) {
+    /**
+     * @param {string} element
+     */
+    add (element) {
         this.data.push(element)
-    },
+    }
 
-    getTop: function (n, sortFunc) {
+    getTop (n, sortFunc) {
         this.sort(sortFunc)
         n = n || 10
         return this.data.slice(0, n)
-    },
+    }
 
-    sort: function (sortFunc) {
+    sort (sortFunc) {
         this.data.sort(sortFunc)
-    },
+    }
 
-    clear: function () {
+    clear () {
         this.data = []
-    },
+    }
 
-    setData: function (data) {
+    setData (data) {
         this.data = data
     }
 }
-
-module.exports = TopBlocked
