@@ -13,6 +13,29 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 const startup = require('./startup.es6')
+const getArgumentsObject = require('./helpers/arguments-object')
+
+export async function registeredContentScript (options, sender, req) {
+    const sessionKey = await utils.getSessionKey()
+    const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey)
+    if (!argumentsObject) {
+        // No info for the tab available, do nothing.
+        return
+    }
+
+    if (argumentsObject.site.isBroken) {
+        console.log('temporarily skip protections for site: ' + sender.tab.url +
+    'more info: https://github.com/duckduckgo/privacy-configuration')
+        return
+    }
+
+    // Disable content scripts when site protections are disabled
+    if (argumentsObject.site.allowlisted && req.messageType === 'registeredContentScript') {
+        return
+    }
+
+    return argumentsObject
+}
 
 export async function getDevMode () {
     const dev = await browserWrapper.getFromSessionStorage('dev')

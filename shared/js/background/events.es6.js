@@ -19,24 +19,9 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const getArgumentsObject = require('./helpers/arguments-object')
 const startup = require('./startup.es6')
 
-const sha1 = require('../shared-utils/sha1')
-
 const manifestVersion = browserWrapper.getManifestVersion()
-
-/**
- * Produce a random float, same output as Math.random()
- * @returns {number}
- */
-function getFloat () {
-    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
-}
-
-function getHash () {
-    return sha1(getFloat().toString())
-}
 
 async function onInstalled (details) {
     tdsStorage.initOnInstall()
@@ -355,28 +340,12 @@ browser.runtime.onMessage.addListener((req, sender) => {
         }
     }
 
-    if (req.messageType && req.messageType in messageHandlers) {
-        return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
+    if (req.registeredTempAutofillContentScript) {
+        req.messageType = 'registeredContentScript'
     }
-    if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options?.documentUrl || req.documentUrl, sessionKey)
-        if (!argumentsObject) {
-            // No info for the tab available, do nothing.
-            return
-        }
 
-        if (argumentsObject.site.isBroken) {
-            console.log('temporarily skip protections for site: ' + sender.tab.url +
-        'more info: https://github.com/duckduckgo/privacy-configuration')
-            return
-        }
-
-        // Disable content scripts when site protections are disabled
-        if (argumentsObject.site.allowlisted && req.messageType === 'registeredContentScript') {
-            return
-        }
-
-        return Promise.resolve(argumentsObject)
+    if (req.messageType && req.messageType in messageHandlers) {
+        return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
 
     // TODO clean up legacy onboarding messaging
@@ -389,12 +358,6 @@ browser.runtime.onMessage.addListener((req, sender) => {
     console.error('Unrecognized message to background:', req, sender)
     return false
 })
-
-/**
- * Fingerprint Protection
- */
-// TODO fix for manifest v3
-let sessionKey = getHash()
 
 /*
  * Referrer Trimming
@@ -527,8 +490,7 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'rotateSessionKey') {
-        // TODO fix for manifest v3
-        sessionKey = getHash()
+        utils.resetSessionKey()
     } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {
         fetchAlias()
     }
