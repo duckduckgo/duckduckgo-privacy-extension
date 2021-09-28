@@ -16,14 +16,15 @@ class TDSStorage {
         this.surrogates = ''
         this.ClickToLoadConfig = {}
         this.config = {}
-        // If initOnInstall is not called before getList, just resolve.
-        this._installing = Promise.resolve(false)
+        this.isInstalling = false
 
         this.removeLegacyLists()
     }
 
-    initOnInstall () {
-        this._installing = this._internalInitOnInstall()
+    async initOnInstall () {
+        this.isInstalling = true
+        this._installingPromise = await this._internalInitOnInstall()
+        this.isInstalling = false
     }
 
     async _internalInitOnInstall () {
@@ -44,7 +45,9 @@ class TDSStorage {
 
     async getList (list) {
         // If initOnInstall was called, await the updating from the local bundles before fetching
-        await this._installing
+        if (this.installing) {
+            await this._installingPromise
+        }
         const listCopy = JSON.parse(JSON.stringify(list))
         const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
         const version = this.getVersionParam()
