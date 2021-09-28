@@ -9,6 +9,7 @@
 *    - Assess if the extension has been deactivated by Chrome
 *    - Reschedule the onboarding for the next restart
 */
+import browser from 'webextension-polyfill'
 function createOnboardingCodeInjectedAtDocumentEnd (params) {
     // TODO: upgrade to `chrome.scripting.executeScript` when we upgrade to manifest v3
     // as it allows to inject a function with _arguments_. Here we simulate that in a hacky way
@@ -58,7 +59,7 @@ function onDocumentEnd ({
                         switch (e.data.type) {
                         case 'healthCheckRequest': {
                             try {
-                                chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
+                                browser.runtime.sendMessage(extensionId, { type: e.data.type }).then((response) => {
                                     e.source.postMessage(
                                         { type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError },
                                         e.origin
@@ -74,7 +75,7 @@ function onDocumentEnd ({
                         }
 
                         case 'rescheduleCounterMessagingRequest': {
-                            chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
+                            browser.runtime.sendMessage(extensionId, { type: e.data.type }).then((response) => {
                                 if (chrome.runtime.lastError) {
                                     console.error(chrome.runtime.lastError)
                                 }

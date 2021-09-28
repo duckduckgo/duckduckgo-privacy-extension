@@ -250,3 +250,13 @@ export async function reloadList (listName) {
 export function debuggerMessage (message, sender) {
     devtools.postMessage(sender.tab?.id, message.action, message.message)
 }
+
+export function healthCheckRequest () {
+    return true
+}
+
+export async function rescheduleCounterMessagingRequest () {
+    await settings.ready()
+    settings.updateSetting('rescheduleCounterMessagingOnStart', true)
+    return true
+}
