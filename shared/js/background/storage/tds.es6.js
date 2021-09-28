@@ -4,6 +4,7 @@ const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 const browserWrapper = require('./../wrapper.es6')
 const extensionConfig = require('./../../../privacy-configuration/generated/extension-config.json')
+const etags = require('../../../data/etags.json')
 
 class TDSStorage {
     constructor () {
@@ -14,17 +15,36 @@ class TDSStorage {
         this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
         this.ClickToLoadConfig = {}
-        this.config = extensionConfig
-        this.storeInLocalDB('config', extensionConfig)
+        this.config = {}
+        // If initOnInstall is not called before getList, just resolve.
+        this._installing = Promise.resolve(false)
 
         this.removeLegacyLists()
+    }
+
+    initOnInstall () {
+        this._installing = this._internalInitOnInstall()
+    }
+
+    async _internalInitOnInstall () {
+        await settings.ready()
+        const etagKey = 'config-etag'
+        const etagValue = settings.getSetting(etagKey)
+        // If there's an existing value ignore the bundled values
+        if (!etagValue) {
+            settings.updateSetting(etagKey, etags[etagKey])
+            this.config = extensionConfig
+            await this.storeInLocalDB('config', extensionConfig)
+        }
     }
 
     getLists () {
         return Promise.all(constants.tdsLists.map(list => this.getList(list)))
     }
 
-    getList (list) {
+    async getList (list) {
+        // If initOnInstall was called, await the updating from the local bundles before fetching
+        await this._installing
         const listCopy = JSON.parse(JSON.stringify(list))
         const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
         const version = this.getVersionParam()
