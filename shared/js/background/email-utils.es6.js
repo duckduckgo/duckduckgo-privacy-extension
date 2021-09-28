@@ -6,7 +6,7 @@ let attempts = 1
 
 const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
-    browser.alarms.get(REFETCH_ALIAS_ALARM, () => browser.alarms.clear(REFETCH_ALIAS_ALARM))
+    browser.alarms.clear(REFETCH_ALIAS_ALARM)
 
     const userData = getSetting('userData')
 
