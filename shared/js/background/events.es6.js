@@ -31,6 +31,8 @@ function getHash () {
 }
 
 chrome.runtime.onInstalled.addListener(function (details) {
+    tdsStorage.initOnInstall()
+
     if (details.reason.match(/install/)) {
         settings.ready()
             .then(() => {
