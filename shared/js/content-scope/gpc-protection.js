@@ -8,7 +8,7 @@ export function init (args) {
             if (navigator.globalPrivacyControl) return
             defineProperty(Navigator.prototype, 'globalPrivacyControl', {
                 get: () => true,
-                configurable: false,
+                configurable: true,
                 enumerable: true
             })
         } else {
