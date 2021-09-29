@@ -20,9 +20,14 @@ const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
     const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    const matchPage = /^https:\/\/([\w-]+\.)?duckduckgo.com\/\?/
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
+        shouldUpdateSetAtb (request) {
+            return matchPage.test(request.url)
+        },
+
         updateSetAtb: () => {
             let atbSetting = settings.getSetting('atb')
             const setAtbSetting = settings.getSetting('set_atb')
