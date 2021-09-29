@@ -15,3 +15,4 @@ build/test
 test/background.js
 shared/js/content-scope/sjcl.js
 shared/data/etags.json
+shared/data/bundled/*.json

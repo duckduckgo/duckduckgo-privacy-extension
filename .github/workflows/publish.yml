@@ -30,7 +30,7 @@ jobs:
           npm i -g web-ext
       - name: Build
         run: |
-          npm run generate-etags
+          npm run bundle-config
           npm run ${{ matrix.target }}
           echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
       - name: Package Firefox Release
