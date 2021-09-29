@@ -517,9 +517,9 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 
         const sendDdgUserReady = () =>
             chrome.tabs.query({}, (tabs) =>
-                tabs.forEach((tab) =>
-                    browser.tabs.sendMessage(tab.id, { type: 'ddgUserReady' })
-                )
+                tabs.forEach((tab) => {
+                    browser.tabs.sendMessage(tab.id, { type: 'ddgUserReady' }).catch(() => {})
+                })
             )
 
         settings.ready().then(() => {
@@ -560,7 +560,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
         // Broadcast the logout to all tabs
         chrome.tabs.query({}, (tabs) => {
             tabs.forEach((tab) => {
-                browser.tabs.sendMessage(tab.id, { type: 'logout' })
+                browser.tabs.sendMessage(tab.id, { type: 'logout' }).catch(() => {})
             })
         })
         hideContextMenuAction()
