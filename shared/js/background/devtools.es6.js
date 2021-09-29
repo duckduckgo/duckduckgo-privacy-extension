@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
 const tabManager = require('./tab-manager.es6')
@@ -8,7 +9,7 @@ const { removeBroken } = require('./utils.es6')
 const ports = new Map()
 
 function init () {
-    chrome.runtime.onConnect.addListener(connected)
+    browser.runtime.onConnect.addListener(connected)
 }
 
 function connected (port) {
@@ -24,7 +25,7 @@ function connected (port) {
             const matchedTracker = trackers.getTrackerData(requestData.url, siteUrl, requestData)
             if (tracker.matchedRule) {
                 // find the rule for this url
-                const ruleIndex = matchedTracker.tracker.rules.findIndex((r) => r.rule.toString() === tracker.matchedRule)
+                const ruleIndex = matchedTracker.tracker.rules.findIndex((r) => r.rule?.toString() === tracker.matchedRule)
                 const rule = matchedTracker.tracker.rules[ruleIndex]
                 const parsedHost = tldts.parse(siteUrl)
                 if (!rule.exceptions) {

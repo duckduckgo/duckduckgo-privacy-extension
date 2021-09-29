@@ -102,8 +102,7 @@ function handleRequest (requestData) {
             const socialTracker = trackerutils.getSocialTracker(requestData.url)
             if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
                 if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
-                    !thisTab.site.clickToLoad.includes(socialTracker.entity) && // clicked to load once
-                    !trackerutils.socialTrackerIsAllowedByUser(socialTracker.entity, thisTab.site.domain)) {
+                    !thisTab.site.clickToLoad.includes(socialTracker.entity)) {
                     // TDS doesn't block social sites by default, so update the action & redirect for click to load.
                     tracker.action = 'block'
                     if (socialTracker.redirectUrl) {
@@ -144,7 +143,7 @@ function handleRequest (requestData) {
             devtools.postMessage(tabId, 'tracker', {
                 tracker: {
                     ...reportedTracker,
-                    matchedRule: reportedTracker.matchedRule?.rule.toString()
+                    matchedRule: reportedTracker.matchedRule?.rule?.toString()
                 },
                 url: cleanUrl,
                 requestData,

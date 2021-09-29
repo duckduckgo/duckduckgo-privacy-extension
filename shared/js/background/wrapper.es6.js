@@ -1,26 +1,28 @@
-const getExtensionURL = (path) => {
-    return chrome.runtime.getURL(path)
+import browser from 'webextension-polyfill'
+
+export function getExtensionURL (path) {
+    return browser.runtime.getURL(path)
 }
 
-const getExtensionVersion = () => {
-    const manifest = window.chrome && chrome.runtime.getManifest()
+export function getExtensionVersion () {
+    const manifest = browser && browser.runtime.getManifest()
     return manifest.version
 }
 
-const setBadgeIcon = (badgeData) => {
-    chrome.browserAction.setIcon(badgeData)
+export function setBadgeIcon (badgeData) {
+    browser.browserAction.setIcon(badgeData)
 }
 
-const syncToStorage = (data) => {
+export function syncToStorage (data) {
     chrome.storage.local.set(data, function () { })
 }
 
-const getFromStorage = (key, cb) => {
+export function getFromStorage (key, cb) {
     chrome.storage.local.get(key, (result) => {
         cb(result[key])
     })
 }
-const getFromManagedStorage = (keys, cb) => {
+export function getFromManagedStorage (keys, cb) {
     chrome.storage.managed.get(keys, (result) => {
         if (chrome.runtime.lastError) {
             console.warn('Managed storage not available.', browser.runtime.lastError)
@@ -29,30 +31,30 @@ const getFromManagedStorage = (keys, cb) => {
     })
 }
 
-const getExtensionId = () => {
-    return chrome.runtime.id
+export function getExtensionId () {
+    return browser.runtime.id
 }
 
-const notifyPopup = (message) => {
+export function notifyPopup (message) {
     // this can send an error message when the popup is not open. check lastError to hide it
     chrome.runtime.sendMessage(message, () => chrome.runtime.lastError)
 }
 
-const normalizeTabData = (tabData) => {
+export function normalizeTabData (tabData) {
     return tabData
 }
 
-const mergeSavedSettings = (settings, results) => {
+export function mergeSavedSettings (settings, results) {
     return Object.assign(settings, results)
 }
 
-const getDDGTabUrls = () => {
+export function getDDGTabUrls () {
     return new Promise((resolve) => {
         chrome.tabs.query({ url: 'https://*.duckduckgo.com/*' }, (tabs) => {
             tabs = tabs || []
 
             tabs.forEach(tab => {
-                chrome.tabs.insertCSS(tab.id, {
+                browser.tabs.insertCSS(tab.id, {
                     file: '/public/css/noatb.css'
                 })
             })
@@ -62,28 +64,12 @@ const getDDGTabUrls = () => {
     })
 }
 
-const setUninstallURL = (url) => {
-    chrome.runtime.setUninstallURL(url)
+export function setUninstallURL (url) {
+    browser.runtime.setUninstallURL(url)
 }
 
-const changeTabURL = (tabId, url) => {
+export function changeTabURL (tabId, url) {
     return new Promise((resolve) => {
         chrome.tabs.update(tabId, { url }, resolve)
     })
-}
-
-module.exports = {
-    getExtensionURL: getExtensionURL,
-    getExtensionVersion: getExtensionVersion,
-    setBadgeIcon: setBadgeIcon,
-    syncToStorage: syncToStorage,
-    getFromStorage: getFromStorage,
-    notifyPopup: notifyPopup,
-    normalizeTabData: normalizeTabData,
-    mergeSavedSettings: mergeSavedSettings,
-    getDDGTabUrls: getDDGTabUrls,
-    setUninstallURL: setUninstallURL,
-    getExtensionId: getExtensionId,
-    changeTabURL,
-    getFromManagedStorage
 }

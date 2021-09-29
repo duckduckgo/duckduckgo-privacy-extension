@@ -2,6 +2,7 @@
  * DuckDuckGo's ATB pipeline to facilitate various experiments.
  * Please see https://duck.co/help/privacy/atb for more information.
  */
+import browser from 'webextension-polyfill'
 
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
@@ -20,9 +21,14 @@ const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
     const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    const matchPage = /^https:\/\/([\w-]+\.)?duckduckgo.com\/\?/
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
+        shouldUpdateSetAtb (request) {
+            return matchPage.test(request.url)
+        },
+
         updateSetAtb: () => {
             let atbSetting = settings.getSetting('atb')
             const setAtbSetting = settings.getSetting('set_atb')
@@ -180,7 +186,7 @@ const ATB = (() => {
                         let postInstallURL = 'https://duckduckgo.com/app?post=1'
                         const atb = settings.getSetting('atb')
                         postInstallURL += atb ? `&atb=${atb}` : ''
-                        chrome.tabs.create({
+                        browser.tabs.create({
                             url: postInstallURL
                         })
                     }

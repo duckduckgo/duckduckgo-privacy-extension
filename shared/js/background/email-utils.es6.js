@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 const { getSetting, updateSetting } = require('./settings.es6')
 const REFETCH_ALIAS_ALARM = 'refetchAlias'
 
@@ -6,7 +7,7 @@ let attempts = 1
 
 const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
-    chrome.alarms.get(REFETCH_ALIAS_ALARM, () => chrome.alarms.clear(REFETCH_ALIAS_ALARM))
+    browser.alarms.clear(REFETCH_ALIAS_ALARM)
 
     const userData = getSetting('userData')
 
@@ -35,7 +36,7 @@ const fetchAlias = () => {
             console.log('Error fetching new alias', e)
             // Don't try fetching more than 5 times in a row
             if (attempts < 5) {
-                chrome.alarms.create(REFETCH_ALIAS_ALARM, { delayInMinutes: 2 })
+                browser.alarms.create(REFETCH_ALIAS_ALARM, { delayInMinutes: 2 })
                 attempts++
             }
             // Return the error so we can handle it
@@ -46,26 +47,26 @@ const fetchAlias = () => {
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
 const createAutofillContextMenuItem = () => {
     // Create the contextual menu hidden by default
-    chrome.contextMenus.create({
+    browser.contextMenus.create({
         id: MENU_ITEM_ID,
         title: 'Use Duck Address',
         contexts: ['editable'],
-        visible: false,
-        onclick: (info, tab) => {
-            const userData = getSetting('userData')
-            if (userData.nextAlias) {
-                chrome.tabs.sendMessage(tab.id, {
-                    type: 'contextualAutofill',
-                    alias: userData.nextAlias
-                })
-            }
+        visible: false
+    })
+    browser.contextMenus.onClicked.addListener((info, tab) => {
+        const userData = getSetting('userData')
+        if (userData.nextAlias) {
+            browser.tabs.sendMessage(tab.id, {
+                type: 'contextualAutofill',
+                alias: userData.nextAlias
+            })
         }
     })
 }
 
-const showContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, { visible: true })
+const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
 
-const hideContextMenuAction = () => chrome.contextMenus.update(MENU_ITEM_ID, { visible: false })
+const hideContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
 
 const getAddresses = () => {
     const userData = getSetting('userData')

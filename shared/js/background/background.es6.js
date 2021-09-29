@@ -23,12 +23,5 @@ settings.ready().then(() => {
     // clearing last search on browser startup
     settings.updateSetting('last_search', '')
 
-    let os = 'o'
-    if (window.navigator.userAgent.indexOf('Windows') !== -1) os = 'w'
-    if (window.navigator.userAgent.indexOf('Mac') !== -1) os = 'm'
-    if (window.navigator.userAgent.indexOf('Linux') !== -1) os = 'l'
-
-    localStorage.os = os
-
     events.onStartup()
 })
