@@ -1,14 +1,16 @@
+import browser from 'webextension-polyfill'
+
 export function getExtensionURL (path) {
-    return chrome.runtime.getURL(path)
+    return browser.runtime.getURL(path)
 }
 
 export function getExtensionVersion () {
-    const manifest = window.chrome && chrome.runtime.getManifest()
+    const manifest = browser && browser.runtime.getManifest()
     return manifest.version
 }
 
 export function setBadgeIcon (badgeData) {
-    chrome.browserAction.setIcon(badgeData)
+    browser.browserAction.setIcon(badgeData)
 }
 
 export function syncToStorage (data) {
@@ -30,7 +32,7 @@ export function getFromManagedStorage (keys, cb) {
 }
 
 export function getExtensionId () {
-    return chrome.runtime.id
+    return browser.runtime.id
 }
 
 export function notifyPopup (message) {
@@ -52,7 +54,7 @@ export function getDDGTabUrls () {
             tabs = tabs || []
 
             tabs.forEach(tab => {
-                chrome.tabs.insertCSS(tab.id, {
+                browser.tabs.insertCSS(tab.id, {
                     file: '/public/css/noatb.css'
                 })
             })
@@ -63,7 +65,7 @@ export function getDDGTabUrls () {
 }
 
 export function setUninstallURL (url) {
-    chrome.runtime.setUninstallURL(url)
+    browser.runtime.setUninstallURL(url)
 }
 
 export function changeTabURL (tabId, url) {

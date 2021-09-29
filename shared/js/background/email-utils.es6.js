@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 const { getSetting, updateSetting } = require('./settings.es6')
 const REFETCH_ALIAS_ALARM = 'refetchAlias'
 

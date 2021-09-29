@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill'
+
 function init () {
     browser.webRequest.onBeforeRequest.addListener((details) => {
         try {

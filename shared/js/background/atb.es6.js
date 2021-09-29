@@ -2,6 +2,7 @@
  * DuckDuckGo's ATB pipeline to facilitate various experiments.
  * Please see https://duck.co/help/privacy/atb for more information.
  */
+import browser from 'webextension-polyfill'
 
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
@@ -185,7 +186,7 @@ const ATB = (() => {
                         let postInstallURL = 'https://duckduckgo.com/app?post=1'
                         const atb = settings.getSetting('atb')
                         postInstallURL += atb ? `&atb=${atb}` : ''
-                        chrome.tabs.create({
+                        browser.tabs.create({
                             url: postInstallURL
                         })
                     }
