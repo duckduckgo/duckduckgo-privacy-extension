@@ -24,7 +24,8 @@ BreakageForm.prototype = window.$.extend({},
                 'dropdown',
                 'off',
                 'bypass',
-                'dismiss'
+                'dismiss',
+                'show-more'
             ])
             this.bindEvents([
                 [this.$close, 'click', this._closeForm],
@@ -32,7 +33,8 @@ BreakageForm.prototype = window.$.extend({},
                 [this.$dropdown, 'change', this._selectCategory],
                 [this.$off, 'click', this._disableProtections],
                 [this.$bypass, 'click', this._disableProtectionsBypass],
-                [this.$dismiss, 'click', this._closeForm]
+                [this.$dismiss, 'click', this._closeForm],
+                [this.$showmore, 'click', this._showMore]
             ])
         },
 
@@ -90,6 +92,14 @@ BreakageForm.prototype = window.$.extend({},
             browserUIWrapper.startBreakageFlow(this.model.tab.id, 'reportPrompt', () => {
                 browserUIWrapper.closePopup()
             })
+        },
+
+        _showMore: function(e) {
+            if (e) e.preventDefault()
+
+            this.model.toggleShowMore()
+            this._rerender()
+            this._setup()
         }
 
     }

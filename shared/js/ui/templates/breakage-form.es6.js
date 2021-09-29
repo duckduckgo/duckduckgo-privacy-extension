@@ -22,7 +22,7 @@ function shuffle (arr) {
 }
 
 module.exports = function () {
-    return bel`<div class="breakage-form js-breakage-form">
+    return bel`<div class="breakage-form js-breakage-form ${this.model.showMore ? 'show-more' : ''}">
     <div class="breakage-form__content">
         <nav class="breakage-form__close-container">
             <a href="javascript:void(0)" class="icon icon__close js-breakage-form-close" role="button" aria-label="Dismiss form"></a>
@@ -42,7 +42,21 @@ module.exports = function () {
             <btn class="form__submit js-breakage-form-submit" role="button">Send report</btn>
             <div class="breakage-form__footer">
                 Reports sent to DuckDuckGo include non-identifiable information to help us diagnose and resolve problems.
-                <span class="breakage-form-show-more"> Show more</span>
+                <span class="breakage-form-show-more js-breakage-form-show-more">
+                    <a href="#" class="link-secondary show-more-btn" role="button">
+                        ${this.model.showMore ? 'Show less' : 'Show more'}
+                    </a>
+                </span>
+            </div>
+            <div class="${this.model.showMore ? '' : 'is-hidden'} breakage-form__show-more">
+                <span class="breakage-form__show-more-header">This report contains:</span>
+                <ul class="breakage-form__show-more-list">
+                    <li>URL <span class="bold">[${this.model.tab.url.split('?')[0].split('#')[0]}]</span></li>
+                    <li>Browser name and version</li>
+                    <li>List of trackers found on the page</li>
+                    <li>Your optional category and comment</li>
+                    <li>Wheteher the page was upgraded to an encrypted connection</li>
+                </ul>
             </div>
             <div class="${this.model.protectionsEnabled ? '' : 'is-hidden'} breakage-form-separator"></div>
             <div class="${this.model.protectionsEnabled ? '' : 'is-hidden'} breakage-form-disable-container">

@@ -7,6 +7,7 @@ function BrokenSiteFooterModel (attrs) {
     attrs.isAllowlisted = false
     attrs.allowlistOptIn = false
     attrs.protectionsEnabled = false
+    attrs.showMore = false
     Parent.call(this, attrs)
 }
 
@@ -118,6 +119,10 @@ BrokenSiteFooterModel.prototype = window.$.extend({},
 
                 this.setList('allowlisted', this.tab.site.domain, this.isAllowlisted)
             }
+        },
+
+        toggleShowMore: function() {
+            this.set('showMore', !this.showMore)
         }
     }
 )

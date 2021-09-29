@@ -6,8 +6,6 @@
     bottom: 0;
     left: 0;
     background: $white;
-    overflow-y: scroll !important;
-    overflow-x: hidden !important;
 
     &__content {
         z-index: 1;
@@ -217,8 +215,25 @@
         }
 
         .breakage-form__footer {
-            font-size: 11px;
+            font-size: 12px;
+            line-height: 14px;
             color: $slate-light;
+        }
+
+        .breakage-form__show-more {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 14px;
+            color: $slate-light;
+            text-align: left;
+
+            .breakage-form__show-more-list {
+                margin-left: 16px;
+            }
+        }
+
+        .show-more-btn {
+            color: #6e90f7;
         }
 
         .breakage-form-separator {
@@ -248,5 +263,10 @@
             display: none !important;
         }
     }
+}
+
+.breakage-form.show-more {
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
 }
 
