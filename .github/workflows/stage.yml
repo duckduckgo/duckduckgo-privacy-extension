@@ -24,7 +24,7 @@ jobs:
     - name: Update submodules and version
       run: |
         git submodule update --remote shared/privacy-configuration/
-        npm run generate-etags
+        npm run bundle-config
         node scripts/bumpVersion.js ${{ github.event.inputs.version }}
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3

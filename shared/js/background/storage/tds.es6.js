@@ -3,7 +3,7 @@ const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 const browserWrapper = require('./../wrapper.es6')
-const extensionConfig = require('./../../../privacy-configuration/generated/extension-config.json')
+const extensionConfig = require('./../../../data/bundled/extension-config.json')
 const etags = require('../../../data/etags.json')
 
 class TDSStorage {
