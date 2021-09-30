@@ -691,6 +691,10 @@ body {
         font-size: 14px;
         line-height: 16px;
     }
+
+    .link-secondary {
+        text-decoration-color: #6e90f7;
+    }
 }
 
 @import "views/search-form";

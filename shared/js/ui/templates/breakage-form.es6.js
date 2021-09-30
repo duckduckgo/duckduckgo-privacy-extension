@@ -67,7 +67,7 @@ module.exports = function () {
                 </a>
             </div>
         </div>
-        <div class="breakage-form__message js-breakage-form-message is-transparent">
+        <div class="breakage-form__message js-breakage-form-message is-hidden">
             <h2 class="breakage-form__success--title">Report sent, thanks!</h2>
             <div class="breakage-form__success--message">You can try disabling Privacy Protection on <span style="font-weight: bold;">${this.model.tab.site.domain}</span>. We won't block trackers there, but the site may work as expected.</div>
             <div class="breakage-form__success--buttons">

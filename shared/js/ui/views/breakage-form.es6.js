@@ -62,7 +62,7 @@ BreakageForm.prototype = window.$.extend({},
 
         _showThankYouMessage: function () {
             this.$element.addClass('is-transparent')
-            this.$message.removeClass('is-transparent')
+            this.$message.removeClass('is-hidden')
             // reload page after form submission if user got to form from
             // toggling privacy protection, otherwise destroy view.
             if (this.clickSource === 'toggle') {
