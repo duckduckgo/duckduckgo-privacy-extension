@@ -21,9 +21,8 @@ jobs:
       run: |
         npm i -g web-ext
         npm ci
-    - name: Update submodules and version
+    - name: Fetch config and update version
       run: |
-        git submodule update --remote shared/privacy-configuration/
         npm run bundle-config
         node scripts/bumpVersion.js ${{ github.event.inputs.version }}
     - name: Create Pull Request
