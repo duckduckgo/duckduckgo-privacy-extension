@@ -14,7 +14,7 @@
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "release": "grunt build && node scripts/httpsAllowlist.js",
         "selenium": "cd selenium-test && node test.js",
-        "lint": "eslint shared/js unit-test integration-test scripts/bundleConfig.mjs",
+        "lint": "eslint shared/js unit-test integration-test scripts",
         "lint-fix": "eslint shared/js unit-test integration-test --fix",
         "test": "grunt test --browser=chrome --type=dev",
         "test-debug": "grunt test --browser=chrome --type=dev --test-debug",
