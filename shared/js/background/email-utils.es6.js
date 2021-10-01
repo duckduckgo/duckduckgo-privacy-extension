@@ -45,24 +45,22 @@ const fetchAlias = () => {
 }
 
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
-const createAutofillContextMenuItem = () => {
-    // Create the contextual menu hidden by default
-    browser.contextMenus.create({
-        id: MENU_ITEM_ID,
-        title: 'Use Duck Address',
-        contexts: ['editable'],
-        visible: false
-    })
-    browser.contextMenus.onClicked.addListener((info, tab) => {
-        const userData = getSetting('userData')
-        if (userData.nextAlias) {
-            browser.tabs.sendMessage(tab.id, {
-                type: 'contextualAutofill',
-                alias: userData.nextAlias
-            })
-        }
-    })
-}
+// Create the contextual menu hidden by default
+browser.contextMenus.create({
+    id: MENU_ITEM_ID,
+    title: 'Use Duck Address',
+    contexts: ['editable'],
+    visible: false
+})
+browser.contextMenus.onClicked.addListener((info, tab) => {
+    const userData = getSetting('userData')
+    if (userData.nextAlias) {
+        browser.tabs.sendMessage(tab.id, {
+            type: 'contextualAutofill',
+            alias: userData.nextAlias
+        })
+    }
+})
 
 const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
 
@@ -100,7 +98,6 @@ const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
 module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
-    createAutofillContextMenuItem,
     showContextMenuAction,
     hideContextMenuAction,
     getAddresses,
