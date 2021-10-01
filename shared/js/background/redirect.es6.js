@@ -175,13 +175,12 @@ function handleRequest (requestData) {
                 // record potential blocked trackers for this tab
                 thisTab.addToTrackers(tracker)
             }
+            // update badge icon for any requests that come in after
+            // the tab has finished loading
+            if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
             browserWrapper.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
             if (blockingEnabled && tracker.action.match(/block|redirect/)) {
-                // update badge icon for any requests that come in after
-                // the tab has finished loading
-                if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
-
                 if (thisTab.statusCode === 200) {
                     Companies.add(tracker.tracker.owner)
                     if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
