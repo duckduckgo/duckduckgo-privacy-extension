@@ -1,7 +1,7 @@
-var request = require('request'),
-    fs = require('fs');
+const request = require('request')
+const fs = require('fs')
 
-let requestData = {
+const requestData = {
     method: 'get',
     uri: 'https://duckduckgo.com/contentblocking.js?l=entitylist2',
     gzip: true
@@ -9,20 +9,20 @@ let requestData = {
 
 request(requestData, (err, res, body) => {
     if (err) {
-        return console.log(err);
-    }
-    
-    let json = JSON.parse(body);
-    let out = {};
-
-    for(let parent in json) {
-        json[parent].properties.map(url => {
-            out[url] = parent;
-        });
-        json[parent].resources.map(url => {
-            out[url] = parent;
-        });
+        return console.log(err)
     }
 
-    fs.writeFile('shared/data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if(err) console.log(err)} );
-});
+    const json = JSON.parse(body)
+    const out = {}
+
+    for (const parent in json) {
+        json[parent].properties.forEach(url => {
+            out[url] = parent
+        })
+        json[parent].resources.forEach(url => {
+            out[url] = parent
+        })
+    }
+
+    fs.writeFile('shared/data/tracker_lists/entityMap.json', JSON.stringify(out), (err) => { if (err) console.log(err) })
+})
