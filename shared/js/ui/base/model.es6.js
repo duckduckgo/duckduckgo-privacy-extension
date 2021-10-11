@@ -94,14 +94,6 @@ BaseModel.prototype = $.extend({},
         },
 
         /**
-         * Fetch data from background
-         * this.model.sendMessage({'messageName': messageValue}).then((response) ..
-         **/
-        fetch: function (message) {
-            throw new Error('please remove' + JSON.stringify(message))
-        },
-
-        /**
          * Send message to background
          * this.model.sendMessage(messageType, {...}).then((response) ..
          **/

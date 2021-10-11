@@ -65,9 +65,7 @@ async function onInstalled (details) {
     }
 }
 
-browser.runtime.onInstalled.addListener(function (details) {
-    onInstalled(details)
-})
+browser.runtime.onInstalled.addListener(onInstalled)
 
 /**
  * ONBOARDING
@@ -354,7 +352,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         }
     }
 
-    console.error('Unrecognised message to background:', req, sender)
+    console.error('Unrecognized message to background:', req, sender)
     return false
 })
 

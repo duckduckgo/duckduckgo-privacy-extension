@@ -7,9 +7,9 @@ import constants from '../../data/constants'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 const browserInfo = parseUserAgentString()
 
-export function sendTabMessage (id, message, details) {
+export async function sendTabMessage (id, message, details) {
     try {
-        browser.tabs.sendMessage(id, message, details)
+        await browser.tabs.sendMessage(id, message, details)
     } catch {
         // Ignore errors
     }

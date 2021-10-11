@@ -21,7 +21,7 @@ const _ready = init().then(() => {
 async function init () {
     buildSettingsFromDefaults()
     await buildSettingsFromManagedStorage()
-    buildSettingsFromLocalStorage()
+    await buildSettingsFromLocalStorage()
 }
 
 function ready () {

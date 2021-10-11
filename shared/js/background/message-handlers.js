@@ -65,13 +65,6 @@ export async function initClickToLoad (unused, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     const config = { ...tdsStorage.ClickToLoadConfig }
 
-    // remove any social networks saved by the user
-    for (const [entity] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-        if (trackerutils.socialTrackerIsAllowedByUser(entity, tab.site.domain)) {
-            delete config[entity]
-        }
-    }
-
     // Determine whether to show one time messages or simplified messages
     for (const [entity] of Object.entries(config)) {
         const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}

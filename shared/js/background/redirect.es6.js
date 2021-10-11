@@ -10,7 +10,6 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
-const browser = utils.getBrowserName()
 const trackerAllowlist = require('./allowlisted-trackers.es6')
 
 const debugRequest = false
@@ -245,7 +244,7 @@ function handleRequest (requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-    if (!thisTab.site || !browser) return
+    if (!thisTab.site) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {
