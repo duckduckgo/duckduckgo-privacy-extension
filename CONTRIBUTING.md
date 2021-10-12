@@ -52,6 +52,20 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
  2. Load the extension in Chrome from the `build/chrome/dev` directory
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
+### Updating or testing config
+
+Modify shared/data/constants.js the config to point to http://localhost:8080/generated/extension-config.json
+
+Serve the config locally and also bundle it into the extension.
+
+```
+cd /dir/to/privacy-configuration
+node index.js
+http-server
+cd -
+npm run bundle-config
+```
+
 ### Development flow
 
 The `shared` directory contains JS, CSS, and images that are shared by all browsers.
