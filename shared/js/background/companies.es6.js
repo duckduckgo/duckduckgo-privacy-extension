@@ -121,7 +121,7 @@ const Companies = (() => {
         },
 
         buildFromStorage: () => {
-            browserWrapper.getFromStorage(storageName, function (storageData) {
+            browserWrapper.getFromStorage(storageName).then((storageData) => {
                 // uncomment for testing
                 // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
@@ -134,9 +134,9 @@ const Companies = (() => {
                 }
             })
 
-            browserWrapper.getFromStorage('totalPages', (n) => { if (n) totalPages = n })
-            browserWrapper.getFromStorage('totalPagesWithTrackers', (n) => { if (n) totalPagesWithTrackers = n })
-            browserWrapper.getFromStorage('lastStatsResetDate', (d) => {
+            browserWrapper.getFromStorage('totalPages').then((n) => { if (n) totalPages = n })
+            browserWrapper.getFromStorage('totalPagesWithTrackers').then((n) => { if (n) totalPagesWithTrackers = n })
+            browserWrapper.getFromStorage('lastStatsResetDate').then((d) => {
                 if (d) {
                     lastStatsResetDate = d
                 } else {

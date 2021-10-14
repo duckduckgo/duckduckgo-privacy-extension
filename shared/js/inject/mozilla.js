@@ -4,8 +4,10 @@ function init () {
     protections.loadProtections()
 
     chrome.runtime.sendMessage({
-        registeredContentScript: true,
-        documentUrl: window.location.href
+        messageType: 'registeredContentScript',
+        options: {
+            documentUrl: window.location.href
+        }
     },
     (message) => {
         // Background has disabled protections

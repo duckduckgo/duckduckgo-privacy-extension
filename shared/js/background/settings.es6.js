@@ -18,13 +18,10 @@ const _ready = init().then(() => {
     console.log('Settings are loaded')
 })
 
-function init () {
-    return new Promise((resolve) => {
-        buildSettingsFromDefaults()
-        buildSettingsFromManagedStorage()
-            .then(buildSettingsFromLocalStorage)
-            .then(() => resolve())
-    })
+async function init () {
+    buildSettingsFromDefaults()
+    await buildSettingsFromManagedStorage()
+    await buildSettingsFromLocalStorage()
 }
 
 function ready () {
@@ -64,25 +61,17 @@ function checkForLegacyKeys () {
     }
 }
 
-function buildSettingsFromLocalStorage () {
-    return new Promise((resolve) => {
-        browserWrapper.getFromStorage(['settings'], function (results) {
-            // copy over saved settings from storage
-            if (!results) resolve()
-            settings = browserWrapper.mergeSavedSettings(settings, results)
-            checkForLegacyKeys()
-            resolve()
-        })
-    })
+async function buildSettingsFromLocalStorage () {
+    const results = browserWrapper.getFromStorage(['settings'])
+    // copy over saved settings from storage
+    if (!results) return
+    settings = browserWrapper.mergeSavedSettings(settings, results)
+    checkForLegacyKeys()
 }
 
-function buildSettingsFromManagedStorage () {
-    return new Promise((resolve) => {
-        browserWrapper.getFromManagedStorage(MANAGED_SETTINGS, (results) => {
-            settings = browserWrapper.mergeSavedSettings(settings, results)
-            resolve()
-        })
-    })
+async function buildSettingsFromManagedStorage () {
+    const results = await browserWrapper.getFromManagedStorage(MANAGED_SETTINGS)
+    settings = browserWrapper.mergeSavedSettings(settings, results)
 }
 
 function buildSettingsFromDefaults () {
@@ -132,7 +121,7 @@ function removeSetting (name) {
 }
 
 function logSettings () {
-    browserWrapper.getFromStorage(['settings'], function (s) {
+    browserWrapper.getFromStorage(['settings']).then((s) => {
         console.log(s.settings)
     })
 }

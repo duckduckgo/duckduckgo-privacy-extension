@@ -174,24 +174,22 @@ const ATB = (() => {
                 })
         },
 
-        openPostInstallPage: () => {
+        openPostInstallPage: async () => {
             // only show post install page on install if:
             // - the user wasn't already looking at the app install page
             // - the user hasn't seen the page before
-            settings.ready().then(() => {
-                chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-                    const domain = (tabs && tabs[0]) ? tabs[0].url : ''
-                    if (ATB.canShowPostInstall(domain)) {
-                        settings.updateSetting('hasSeenPostInstall', true)
-                        let postInstallURL = 'https://duckduckgo.com/app?post=1'
-                        const atb = settings.getSetting('atb')
-                        postInstallURL += atb ? `&atb=${atb}` : ''
-                        browser.tabs.create({
-                            url: postInstallURL
-                        })
-                    }
+            await settings.ready()
+            const tabs = await browser.tabs.query({ currentWindow: true, active: true })
+            const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+            if (ATB.canShowPostInstall(domain)) {
+                settings.updateSetting('hasSeenPostInstall', true)
+                let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                const atb = settings.getSetting('atb')
+                postInstallURL += atb ? `&atb=${atb}` : ''
+                browser.tabs.create({
+                    url: postInstallURL
                 })
-            })
+            }
         },
 
         canShowPostInstall: (domain) => {

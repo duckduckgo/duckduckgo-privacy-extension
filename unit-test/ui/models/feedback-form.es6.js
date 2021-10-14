@@ -5,15 +5,15 @@ let feedbackForm
 
 function setup () {
     // make sure we always have an atb and extension version handy
-    const spy = spyOn(browserUIWrapper, 'fetch')
+    const spy = spyOn(browserUIWrapper, 'sendMessage')
 
-    spy.withArgs({ getSetting: { name: 'atb' } })
+    spy.withArgs('getSetting', { name: 'atb' })
         .and.returnValue(Promise.resolve('v110-1'))
 
-    spy.withArgs({ getSetting: { name: 'tds-etag' } })
+    spy.withArgs('getSetting', { name: 'tds-etag' })
         .and.returnValue(Promise.resolve('1234asdf'))
 
-    spy.withArgs({ getExtensionVersion: true })
+    spy.withArgs('getExtensionVersion', undefined)
         .and.returnValue(Promise.resolve('2018.5.1'))
 
     feedbackForm = new FeedbackForm({

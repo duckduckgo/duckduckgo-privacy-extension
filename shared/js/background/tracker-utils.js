@@ -4,6 +4,10 @@ import trackers from './trackers.es6'
 import * as tldts from 'tldts'
 import tdsStorage from './storage/tds.es6'
 
+export function hasTrackerListLoaded () {
+    return !!trackers.trackerList
+}
+
 // Determine if two URL's belong to the same entity.
 export function isSameEntity (url1, url2) {
     try {

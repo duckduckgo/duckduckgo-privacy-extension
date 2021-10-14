@@ -10,7 +10,6 @@ const ATB = require('./atb.es6')
 const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
-const browser = utils.getBrowserName()
 const trackerAllowlist = require('./allowlisted-trackers.es6')
 
 const debugRequest = false
@@ -58,7 +57,7 @@ function handleRequest (requestData) {
 
     // For main_frame requests: create a new tab instance whenever we either
     // don't have a tab instance for this tabId or this is a new requestId.
-    if (requestData.type === 'main_frame' && window.chrome) {
+    if (requestData.type === 'main_frame') {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             const newTab = tabManager.create(requestData)
 
@@ -206,7 +205,7 @@ function handleRequest (requestData) {
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
                     // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
                     // in onBeforeSendHeaders
-                    if (tracker.matchedRule.strictRedirect && browser === 'moz') {
+                    if (tracker.matchedRule.strictRedirect && utils.getBrowserName() === 'moz') {
                         thisTab.surrogates[requestData.url] = webResource
                     } else {
                         const key = thisTab.addWebResourceAccess(webResource)
@@ -230,7 +229,7 @@ function handleRequest (requestData) {
 
         // If we didn't block this script and it's a tracker, notify the content script.
         if (requestData.type === 'script' && tracker) {
-            chrome.tabs.sendMessage(requestData.tabId, {
+            utils.sendTabMessage(requestData.tabId, {
                 type: 'update',
                 trackerDefinition: true,
                 hostname: tldts.parse(requestData.url).hostname
@@ -245,7 +244,7 @@ function handleRequest (requestData) {
      * If an upgrade rule is found, request is upgraded from http to https
      */
 
-    if (!thisTab.site || !window.chrome) return
+    if (!thisTab.site) return
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {

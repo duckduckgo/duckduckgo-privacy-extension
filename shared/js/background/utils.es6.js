@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 import tdsStorage from './storage/tds.es6'
 import settings from './settings.es6'
 import load from './load.es6'
@@ -5,6 +6,14 @@ import * as tldts from 'tldts'
 import constants from '../../data/constants'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 const browserInfo = parseUserAgentString()
+
+export async function sendTabMessage (id, message, details) {
+    try {
+        await browser.tabs.sendMessage(id, message, details)
+    } catch {
+        // Ignore errors
+    }
+}
 
 export function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
@@ -71,21 +80,18 @@ export function findParent (url) {
 }
 
 export function getCurrentURL (callback) {
-    chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
+    browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabData) => {
         if (tabData.length) {
             callback(tabData[0].url)
         }
     })
 }
 
-export function getCurrentTab (callback) {
-    return new Promise((resolve, reject) => {
-        chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabData) {
-            if (tabData.length) {
-                resolve(tabData[0])
-            }
-        })
-    })
+export async function getCurrentTab (callback) {
+    const tabData = await browser.tabs.query({ active: true, lastFocusedWindow: true })
+    if (tabData.length) {
+        return tabData[0]
+    }
 }
 
 // Browser / Version detection
