@@ -4,8 +4,7 @@ const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click
 let browser
 let bgPage
 
-// DISABLED due to perma failing
-xdescribe('Test Click To Load', () => {
+describe('Test Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage } = await harness.setup())
 
