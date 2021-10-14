@@ -61,7 +61,7 @@ function onDocumentEnd ({
                             try {
                                 browser.runtime.sendMessage(extensionId, { type: e.data.type }).then((response) => {
                                     e.source.postMessage(
-                                        { type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError },
+                                        { type: 'healthCheckResponse', isAlive: true },
                                         e.origin
                                     )
                                 })
@@ -75,11 +75,7 @@ function onDocumentEnd ({
                         }
 
                         case 'rescheduleCounterMessagingRequest': {
-                            browser.runtime.sendMessage(extensionId, { type: e.data.type }).then((response) => {
-                                if (chrome.runtime.lastError) {
-                                    console.error(chrome.runtime.lastError)
-                                }
-                            })
+                            browser.runtime.sendMessage(extensionId, { type: e.data.type })
                             break
                         }
                         }
