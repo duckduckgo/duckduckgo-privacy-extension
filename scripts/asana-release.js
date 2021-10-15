@@ -111,10 +111,32 @@ const run = async () => {
 
     console.info('Adding followers...')
 
+    const taskAssignees = getAssigneeGids(releaseTasks)
+
     await asana.tasks.addFollowersForTask(
         new_task.gid,
-        { followers: [...getAssigneeGids(releaseTasks)] }
+        { followers: [...taskAssignees] }
     )
+
+    console.info('Assigning testing task to stakeholders...')
+
+    const { data: subtasks } = await asana.tasks.getSubtasksForTask(new_task.gid, {})
+
+    const testingSubtask = subtasks.find((task) => task.name.includes('Extension Testing'))
+
+    for (const taskAssignee of taskAssignees) {
+        const { new_task: duplicateTestingTask } = await asana.tasks.duplicateTask(
+            testingSubtask.gid,
+            {
+                name: 'Extension Testing',
+                include: ['parent', 'subtasks']
+            }
+        )
+        await asana.tasks.updateTask(
+            duplicateTestingTask.gid,
+            { assignee: taskAssignee }
+        )
+    }
 
     console.info('All done. Enjoy! 🎉')
 }
