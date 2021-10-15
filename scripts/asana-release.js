@@ -2,6 +2,7 @@
 /* eslint-disable camelcase */
 const fs = require('fs')
 const Asana = require('asana')
+const path = require('path')
 
 const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN
 const version = process.env.VERSION
