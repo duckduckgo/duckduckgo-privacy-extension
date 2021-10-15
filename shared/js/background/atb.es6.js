@@ -3,11 +3,10 @@
  * Please see https://duck.co/help/privacy/atb for more information.
  */
 import browser from 'webextension-polyfill'
-
+import * as utils from './utils'
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
-const browserWrapper = require('./wrapper.es6')
 
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
@@ -156,7 +155,7 @@ const ATB = (() => {
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
                 .then(ATB.setInitialVersions)
-                .then(browserWrapper.getDDGTabUrls)
+                .then(utils.getDDGTabUrls)
                 .then((urls) => {
                     let atb
                     let params
@@ -213,7 +212,7 @@ const ATB = (() => {
             const browserInfo = parseUserAgentString()
             const browserName = browserInfo.browser
             const browserVersion = browserInfo.version
-            const extensionVersion = browserWrapper.getExtensionVersion()
+            const extensionVersion = utils.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
@@ -229,7 +228,7 @@ const ATB = (() => {
 
 settings.ready().then(() => {
     // set initial uninstall url
-    browserWrapper.setUninstallURL(ATB.getSurveyURL())
+    utils.setUninstallURL(ATB.getSurveyURL())
 })
 
 module.exports = ATB

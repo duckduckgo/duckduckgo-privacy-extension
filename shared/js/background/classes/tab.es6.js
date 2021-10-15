@@ -14,6 +14,7 @@
  *          }
  *      }
  */
+import * as utils from '../utils'
 const gradeIconLocations = {
     A: 'img/toolbar-rating-a.svg',
     'B+': 'img/toolbar-rating-b-plus.svg',
@@ -30,7 +31,6 @@ const Site = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
-const browserWrapper = require('./../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 
 class Tab {
@@ -59,7 +59,7 @@ class Tab {
 
     resetBadgeIcon () {
         // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({ path: 'img/icon_48.png', tabId: this.id })
+        utils.setBadgeIcon({ path: 'img/icon_48.png', tabId: this.id })
     }
 
     updateBadgeIcon (target) {
@@ -76,7 +76,7 @@ class Tab {
         const badgeData = { path: gradeIcon, tabId: this.id }
         if (target) badgeData.target = target
 
-        browserWrapper.setBadgeIcon(badgeData)
+        utils.setBadgeIcon(badgeData)
     }
 
     updateSite (url) {

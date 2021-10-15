@@ -1,13 +1,11 @@
+import * as utils from './utils'
 const tldts = require('tldts')
-
-const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
-const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const trackerAllowlist = require('./allowlisted-trackers.es6')
@@ -49,7 +47,7 @@ function handleRequest (requestData) {
     let thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
-    if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
+    if (requestData.url.startsWith(utils.getExtensionURL('/web_accessible_resources'))) {
         if (!thisTab || !thisTab.hasWebResourceAccess(requestData.url)) {
             return { cancel: true }
         }
@@ -177,7 +175,7 @@ function handleRequest (requestData) {
             // update badge icon for any requests that come in after
             // the tab has finished loading
             if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
-            browserWrapper.notifyPopup({ updateTabData: true })
+            utils.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
             if (blockingEnabled && tracker.action.match(/block|redirect/)) {
                 if (thisTab.statusCode === 200) {
@@ -199,7 +197,7 @@ function handleRequest (requestData) {
                 // return surrogate redirect if match, otherwise
                 // tell Chrome to cancel this webrequest
                 if (tracker.redirectUrl) {
-                    const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
+                    const webResource = utils.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
 
                     // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
                     // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679

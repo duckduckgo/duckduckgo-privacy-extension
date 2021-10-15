@@ -1,13 +1,13 @@
+import * as utils from '../../../shared/js/background/utils'
 const Tab = require('../../../shared/js/background/classes/tab.es6')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 
 let tab
 
 describe('Tab', () => {
     describe('updateSite()', () => {
         beforeEach(() => {
-            spyOn(browserWrapper, 'setBadgeIcon')
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue('sdf')
+            spyOn(utils, 'setBadgeIcon')
+            spyOn(utils, 'getExtensionId').and.returnValue('sdf')
 
             tab = new Tab({
                 id: 123,

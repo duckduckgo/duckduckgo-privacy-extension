@@ -1,4 +1,4 @@
-const browserWrapper = require('./wrapper.es6')
+import * as utils from './utils'
 
 let dev = false
 
@@ -39,7 +39,7 @@ function loadExtensionFile (params) {
             headers.append('If-None-Match', params.etag)
         }
     } else {
-        url = browserWrapper.getExtensionURL(url)
+        url = utils.getExtensionURL(url)
     }
 
     let rej

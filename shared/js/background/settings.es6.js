@@ -1,5 +1,5 @@
+import * as utils from './utils'
 const defaultSettings = require('../../data/defaultSettings')
-const browserWrapper = require('./wrapper.es6')
 
 /**
  * Settings whose defaults can by managed by the system administrator
@@ -62,16 +62,16 @@ function checkForLegacyKeys () {
 }
 
 async function buildSettingsFromLocalStorage () {
-    const results = browserWrapper.getFromStorage(['settings'])
+    const results = utils.getFromStorage(['settings'])
     // copy over saved settings from storage
     if (!results) return
-    settings = browserWrapper.mergeSavedSettings(settings, results)
+    settings = utils.mergeSavedSettings(settings, results)
     checkForLegacyKeys()
 }
 
 async function buildSettingsFromManagedStorage () {
-    const results = await browserWrapper.getFromManagedStorage(MANAGED_SETTINGS)
-    settings = browserWrapper.mergeSavedSettings(settings, results)
+    const results = await utils.getFromManagedStorage(MANAGED_SETTINGS)
+    settings = utils.mergeSavedSettings(settings, results)
 }
 
 function buildSettingsFromDefaults () {
@@ -80,7 +80,7 @@ function buildSettingsFromDefaults () {
 }
 
 function syncSettingTolocalStorage () {
-    browserWrapper.syncToStorage({ settings: settings })
+    utils.syncToStorage({ settings: settings })
 }
 
 function getSetting (name) {
@@ -121,7 +121,7 @@ function removeSetting (name) {
 }
 
 function logSettings () {
-    browserWrapper.getFromStorage(['settings']).then((s) => {
+    utils.getFromStorage(['settings']).then((s) => {
         console.log(s.settings)
     })
 }

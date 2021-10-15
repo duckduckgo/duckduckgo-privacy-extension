@@ -1,8 +1,8 @@
+import * as utils from '../utils'
 const load = require('./../load.es6')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
-const browserWrapper = require('./../wrapper.es6')
 const extensionConfig = require('./../../../data/bundled/extension-config.json')
 const etags = require('../../../data/etags.json')
 
@@ -159,7 +159,7 @@ class TDSStorage {
     // add version param to url on the first install and only once a day after that
     getVersionParam () {
         const ONEDAY = 1000 * 60 * 60 * 24
-        const version = browserWrapper.getExtensionVersion()
+        const version = utils.getExtensionVersion()
         const lastTdsUpdate = settings.getSetting('lastTdsUpdate')
         const now = Date.now()
         let versionParam

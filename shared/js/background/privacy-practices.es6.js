@@ -1,7 +1,7 @@
+import * as utils from './utils'
 const tldts = require('tldts')
 const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')
-const utils = require('./utils.es6')
 
 const tosdrRegexList = []
 const tosdrScores = {}

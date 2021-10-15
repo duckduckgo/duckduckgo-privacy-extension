@@ -1,5 +1,5 @@
 // Utility functions for dealing with tracker information
-import * as utils from './utils.es6'
+import * as utils from './utils'
 import trackers from './trackers.es6'
 import * as tldts from 'tldts'
 import tdsStorage from './storage/tds.es6'

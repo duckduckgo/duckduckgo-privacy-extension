@@ -1,4 +1,4 @@
-require('../../background/mock-browser-api')
+import '../mock-browser-api'
 const httpsStorage = require('../../../shared/js/background/storage/https.es6')
 const httpsBloom = require('./../../data/httpsBloom.json')
 const httpsAllowlist = require('./../../data/httpsAllowlist.json')

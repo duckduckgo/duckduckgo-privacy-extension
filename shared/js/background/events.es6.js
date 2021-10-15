@@ -5,20 +5,19 @@
  * if we do too much before adding it
  */
 import browser from 'webextension-polyfill'
+import * as utils from './utils'
 import * as messageHandlers from './message-handlers'
 const tldts = require('tldts')
 const ATB = require('./atb.es6')
-const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
 const settings = require('./settings.es6')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
-const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
-const browserWrapper = require('./wrapper.es6')
+const browserName = utils.getBrowserName()
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -110,7 +109,7 @@ browser.webNavigation.onCommitted.addListener(async details => {
                     showCounterMessaging,
                     browserName,
                     duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                    extensionId: browserWrapper.getExtensionId()
+                    extensionId: utils.getExtensionId()
                 }),
                 runAt: 'document_end'
             })
@@ -285,7 +284,7 @@ browser.tabs.onRemoved.addListener((id, info) => {
 
 // message popup to close when the active tab changes.
 browser.tabs.onActivated.addListener(() => {
-    browserWrapper.notifyPopup({ closePopup: true })
+    utils.notifyPopup({ closePopup: true })
 })
 
 // search via omnibox
@@ -310,7 +309,7 @@ const {
 
 // handle any messages that come from content/UI scripts
 browser.runtime.onMessage.addListener((req, sender) => {
-    if (sender.id !== browserWrapper.getExtensionId()) return
+    if (sender.id !== utils.getExtensionId()) return
 
     // TODO clean up message passing
     const legacyMessageTypes = [

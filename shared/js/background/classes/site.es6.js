@@ -6,12 +6,11 @@
  * The Grade attributes are then used generate a site
  * privacy grade used in the popup.
  */
+import * as utils from '../utils'
 const settings = require('../settings.es6')
-const utils = require('../utils.es6')
 const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
-const browserWrapper = require('../wrapper.es6')
 
 class Site {
     constructor (url) {
@@ -83,7 +82,7 @@ class Site {
      * Send message to the popup to rerender the allowlist
      */
     notifyAllowlistChanged () {
-        browserWrapper.notifyPopup({ allowlistChanged: true })
+        utils.notifyPopup({ allowlistChanged: true })
     }
 
     isContentBlockingEnabled () {
@@ -127,7 +126,7 @@ class Site {
      *          or null if not a special page.
      */
     getSpecialDomain () {
-        const extensionId = browserWrapper.getExtensionId()
+        const extensionId = utils.getExtensionId()
         const url = this.url
         const localhostName = 'localhost'
         let domain = this.domain

@@ -1,6 +1,6 @@
+import * as utils from './utils'
 const TopBlocked = require('./classes/top-blocked.es6')
 const Company = require('./classes/company.es6')
-const browserWrapper = require('./wrapper.es6')
 const migrate = require('./migrate.es6')
 
 const Companies = (() => {
@@ -89,7 +89,7 @@ const Companies = (() => {
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
             const resetDate = Companies.getLastResetDate()
-            browserWrapper.notifyPopup({ didResetTrackersData: resetDate })
+            utils.notifyPopup({ didResetTrackersData: resetDate })
         },
 
         getLastResetDate: () => lastStatsResetDate,
@@ -107,10 +107,10 @@ const Companies = (() => {
         syncToStorage: () => {
             const toSync = {}
             toSync[storageName] = companyContainer
-            browserWrapper.syncToStorage(toSync)
-            browserWrapper.syncToStorage({ totalPages: totalPages })
-            browserWrapper.syncToStorage({ totalPagesWithTrackers: totalPagesWithTrackers })
-            browserWrapper.syncToStorage({ lastStatsResetDate: lastStatsResetDate })
+            utils.syncToStorage(toSync)
+            utils.syncToStorage({ totalPages: totalPages })
+            utils.syncToStorage({ totalPagesWithTrackers: totalPagesWithTrackers })
+            utils.syncToStorage({ lastStatsResetDate: lastStatsResetDate })
         },
 
         sanitizeData: (storageData) => {
@@ -121,7 +121,7 @@ const Companies = (() => {
         },
 
         buildFromStorage: () => {
-            browserWrapper.getFromStorage(storageName).then((storageData) => {
+            utils.getFromStorage(storageName).then((storageData) => {
                 // uncomment for testing
                 // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
@@ -134,9 +134,9 @@ const Companies = (() => {
                 }
             })
 
-            browserWrapper.getFromStorage('totalPages').then((n) => { if (n) totalPages = n })
-            browserWrapper.getFromStorage('totalPagesWithTrackers').then((n) => { if (n) totalPagesWithTrackers = n })
-            browserWrapper.getFromStorage('lastStatsResetDate').then((d) => {
+            utils.getFromStorage('totalPages').then((n) => { if (n) totalPages = n })
+            utils.getFromStorage('totalPagesWithTrackers').then((n) => { if (n) totalPagesWithTrackers = n })
+            utils.getFromStorage('lastStatsResetDate').then((d) => {
                 if (d) {
                     lastStatsResetDate = d
                 } else {

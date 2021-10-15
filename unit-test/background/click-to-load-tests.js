@@ -1,5 +1,5 @@
-require('../background/mock-browser-api')
-const chromeWrapper = require('../../shared/js/background/wrapper.es6.js')
+import './mock-browser-api'
+import * as utils from '../../shared/js/background/utils'
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
@@ -17,8 +17,8 @@ describe('Tracker Utilities', () => {
         settings.updateSetting('activeExperiment', true)
         settings.updateSetting('experimentData', { blockFacebook: true })
         /* eslint-disable no-unused-vars */
-        spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
-        spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
+        spyOn(utils, 'getExtensionURL').and.returnValue('chrome://extension/')
+        spyOn(utils, 'notifyPopup').and.returnValue(undefined)
         tabObserver = spyOn(Tab, 'constructor')
         managerObserver = spyOn(tabManager, 'get')
         tdsStorage.getLists()

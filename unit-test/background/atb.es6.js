@@ -1,8 +1,8 @@
-require('../background/mock-browser-api')
+import './mock-browser-api'
+import * as utils from '../../shared/js/background/utils'
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
-const browserWrapper = require('../../shared/js/background/wrapper.es6')
 
 const settingHelper = require('../helpers/settings.es6')
 
@@ -243,7 +243,7 @@ describe('complex install workflow cases', () => {
     })
 
     it('should handle the install process correctly if there\'s no DDG pages open', () => {
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([]))
+        spyOn(utils, 'getDDGTabUrls').and.returnValue(Promise.resolve([]))
 
         return atb.updateATBValues()
             .then(() => {
@@ -254,7 +254,7 @@ describe('complex install workflow cases', () => {
     })
     it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
         // pretend one of the pages has an ATB to pass
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
+        spyOn(utils, 'getDDGTabUrls').and.returnValue(Promise.resolve([
             'https://duckduckgo.com/about',
             'https://duckduckgo.com/?natb=v112-2ab'
         ]))
@@ -268,7 +268,7 @@ describe('complex install workflow cases', () => {
     })
     it('should handle the install process correctly if there\'s DDG pages open that do not pass an ATB param', () => {
         // pretend no pages have ATB to pass
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
+        spyOn(utils, 'getDDGTabUrls').and.returnValue(Promise.resolve([
             'https://duckduckgo.com/about',
             'https://duckduckgo.com/?q=test'
         ]))

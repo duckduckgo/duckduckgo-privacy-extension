@@ -1,7 +1,7 @@
+import * as utils from './utils'
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
-const browserWrapper = require('./wrapper.es6')
 
 class TabManager {
     constructor () {
@@ -15,7 +15,7 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create (tabData) {
-        const normalizedData = browserWrapper.normalizeTabData(tabData)
+        const normalizedData = utils.normalizeTabData(tabData)
         const newTab = new Tab(normalizedData)
         this.tabContainer[newTab.id] = newTab
         return newTab
@@ -47,7 +47,7 @@ class TabManager {
             }
         }
 
-        browserWrapper.notifyPopup({ allowlistChanged: true })
+        utils.notifyPopup({ allowlistChanged: true })
     }
 
     /* Update the allowlists kept in settings

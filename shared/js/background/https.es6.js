@@ -1,10 +1,9 @@
+import * as utils from './utils'
 const settings = require('./settings.es6')
-const utils = require('./utils.es6')
 const BloomFilter = require('@duckduckgo/jsbloom').filter
 const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
-const browserWrapper = require('./wrapper.es6')
 const tldts = require('tldts')
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
@@ -132,7 +131,7 @@ class HTTPS {
             console.warn(`HTTPS: Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`)
         } else {
             console.log(`HTTPS: Downgrading from ${tab.url} to ${targetUrl}`)
-            browserWrapper.changeTabURL(tabId, targetUrl)
+            utils.changeTabURL(tabId, targetUrl)
         }
     }
 

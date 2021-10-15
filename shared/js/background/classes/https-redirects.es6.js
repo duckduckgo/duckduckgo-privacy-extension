@@ -1,4 +1,4 @@
-const utils = require('../utils.es6')
+import * as utils from '../utils'
 const pixel = require('../pixel.es6')
 const constants = require('../../../data/constants')
 

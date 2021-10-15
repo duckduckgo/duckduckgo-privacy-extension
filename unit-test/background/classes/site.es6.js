@@ -1,5 +1,5 @@
+import * as utils from '../../../shared/js/background/utils'
 const Site = require('../../../shared/js/background/classes/site.es6')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const load = require('./../../helpers/utils.es6')
 const config = require('./../../data/extension-config.json')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
@@ -10,7 +10,7 @@ const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 describe('Site', () => {
     beforeAll(() => {
         load.loadStub({ config })
-        spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
+        spyOn(utils, 'getExtensionId').and.returnValue(EXT_ID)
         tdsStorageStub.stub()
 
         return tdsStorage.getLists()

@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-const utils = require('./utils.es6')
+import * as utils from './utils'
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 const tdsStorage = require('./storage/tds.es6')
@@ -10,14 +10,13 @@ const Companies = require('./companies.es6')
 const pixel = require('./pixel.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
-const browserWrapper = require('./wrapper.es6')
 
 export function resetTrackersData () {
     return Companies.resetData()
 }
 
 export function getExtensionVersion () {
-    return browserWrapper.getExtensionVersion()
+    return utils.getExtensionVersion()
 }
 
 export function setList (options) {

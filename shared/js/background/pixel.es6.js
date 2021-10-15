@@ -4,8 +4,8 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
+import * as utils from './utils'
 const load = require('./load.es6')
-const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 
@@ -60,7 +60,7 @@ function getURL (pixelName) {
 function getAdditionalParams () {
     const browserInfo = parseUserAgentString()
     const browser = browserInfo.browser
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = utils.getExtensionVersion()
     const atb = settings.getSetting('atb')
     const queryStringParams = {}
     const result = []

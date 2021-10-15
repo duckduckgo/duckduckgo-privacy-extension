@@ -1,4 +1,4 @@
-const utils = require('../../shared/js/background/utils.es6')
+import * as utils from '../../shared/js/background/utils'
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tds = require('./../data/tds')
 const load = require('./../helpers/utils.es6.js')
