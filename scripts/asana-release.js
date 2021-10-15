@@ -6,8 +6,12 @@ const Asana = require('asana')
 const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN
 const version = process.env.VERSION
 const releaseUrl = process.env.RELEASE_URL
-const chromeFilePath = fs.readdirSync('../build/chrome/release/').find(fn => fn.endsWith('.zip'))
-const firefoxFilePath = fs.readdirSync('../build/firefox/release/web-ext-artifacts').find(fn => fn.endsWith('.zip'))
+const chromeReleaseFolder = path.join(__dirname, '/../build/chrome/release/')
+const chromeFileName = fs.readdirSync(chromeReleaseFolder).find(fn => fn.endsWith('.zip'))
+const chromeFilePath = path.join(chromeReleaseFolder, chromeFileName)
+const firefoxReleaseFolder = path.join(__dirname, '/../build/firefox/release/web-ext-artifacts')
+const firefoxFileName = fs.readdirSync(firefoxReleaseFolder).find(fn => fn.endsWith('.zip'))
+const firefoxFilePath = path.join(firefoxReleaseFolder, firefoxFileName)
 
 const templateTaskGid = '1201192367380462'
 const projectGid = '312629933896096'
@@ -85,14 +89,24 @@ const run = async () => {
 
     console.info('Uploading files...')
 
-    const uploadFile = (err, data) => {
-        if (err) throw err
-
-        asana.attachments.createAttachmentForTask(new_task, { file: data })
+    const uploadFile = async (path) => {
+        // attachments.createAttachmentForTask won't work, Asana suggests this
+        // https://github.com/Asana/node-asana/issues/220
+        const params = {
+            method: 'POST',
+            url: `https://app.asana.com/api/1.0/tasks/${new_task.gid}/attachments`,
+            formData: {
+                file: fs.createReadStream(path)
+            },
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }
+        return asana.dispatcher.dispatch(params, {})
     }
 
-    fs.readFile(chromeFilePath, uploadFile)
-    fs.readFile(firefoxFilePath, uploadFile)
+    await uploadFile(chromeFilePath)
+    await uploadFile(firefoxFilePath)
 
     console.info('Adding followers...')
 
