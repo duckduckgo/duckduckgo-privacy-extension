@@ -17,7 +17,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: npm ci
+      - run: npm run install-ci
       - run: npm run lint
   unit:
     runs-on: ubuntu-20.04
@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: npm ci
+      - run: npm run install-ci
       - run: npm test
   integration:
     runs-on: ubuntu-20.04
@@ -53,5 +53,5 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install xvfb
-        npm ci
+        npm run install-ci
     - run: npm run test-int-x
