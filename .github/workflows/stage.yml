@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm i -g web-ext
-        npm ci
+        npm run install-ci
     - name: Fetch config and update version
       run: |
         npm run bundle-config

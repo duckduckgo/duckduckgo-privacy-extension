@@ -7,6 +7,7 @@
     "license": "Apache-2.0",
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
+        "install-ci": "npm ci --ignore-scripts && npm rebuild puppeteer && npm run postinstall",
         "postinstall": "git submodule update --init --recursive && npm run copy-sjcl && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
         "bundle-config": "node scripts/bundleConfig.mjs",
         "copy-sjcl": "cd node_modules/sjcl/ && ./configure --compress=none --without-all --with-hmac --with-codecHex && make && cp sjcl.js ../../shared/js/content-scope/",
