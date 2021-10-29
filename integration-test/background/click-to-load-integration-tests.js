@@ -51,7 +51,7 @@ describe('Test Click To Load', () => {
         } catch (e) {}
     })
 
-    it('CTL: Should load facebook elements on click', async () => {
+    xit('CTL: Should load facebook elements on click', async () => {
         const page = await browser.newPage()
 
         try {
