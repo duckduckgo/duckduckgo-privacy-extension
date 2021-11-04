@@ -12,6 +12,19 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 
+let dev = false
+
+// Exported functions are used as message handlers for messages with a
+// matching type. That is except for functions with the '_' prefix.
+
+export function _setDevMode () {
+    dev = true
+}
+
+export function getDevMode () {
+    return dev
+}
+
 export function resetTrackersData () {
     return Companies.resetData()
 }

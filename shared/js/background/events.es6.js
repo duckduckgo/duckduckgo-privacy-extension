@@ -325,7 +325,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         }
     }
 
-    if (req.messageType in messageHandlers) {
+    if (req.messageType && req.messageType[0] !== '_' && req.messageType in messageHandlers) {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
     }
     if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
