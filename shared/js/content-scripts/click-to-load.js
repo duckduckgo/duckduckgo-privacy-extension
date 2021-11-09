@@ -567,15 +567,23 @@
     function init (extensionResponseData) {
         for (const entity of Object.keys(extensionResponseData)) {
             entities.push(entity)
-            entityData[entity] = {
-                shouldShowLoginModal: true,
-                modalIcon: extensionResponseData[entity].informationalModal.icon,
-                modalTitle: extensionResponseData[entity].informationalModal.messageTitle,
-                modalText: extensionResponseData[entity].informationalModal.messageBody,
-                modalAcceptText: extensionResponseData[entity].informationalModal.confirmButtonText,
-                modalRejectText: extensionResponseData[entity].informationalModal.rejectButtonText,
-                simpleVersion: extensionResponseData[entity].simpleVersion
+            const { informationalModal, simpleVersion } = extensionResponseData[entity]
+            const shouldShowLoginModal = !!informationalModal
+
+            const currentEntityData = {
+                shouldShowLoginModal,
+                simpleVersion
             }
+
+            if (shouldShowLoginModal) {
+                currentEntityData.modalIcon = informationalModal.icon
+                currentEntityData.modalTitle = informationalModal.messageTitle
+                currentEntityData.modalText = informationalModal.messageBody
+                currentEntityData.modalAcceptText = informationalModal.confirmButtonText
+                currentEntityData.modalRejectText = informationalModal.rejectButtonText
+            }
+
+            entityData[entity] = currentEntityData
         }
         replaceClickToLoadElements(extensionResponseData)
     }
