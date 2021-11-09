@@ -715,6 +715,7 @@
         linkElement.style.cssText = styles.generalLink + styles[mode].linkFont
         linkElement.ariaLabel = 'Read about this privacy protection'
         linkElement.href = 'https://help.duckduckgo.com/duckduckgo-help-pages/privacy/embedded-content-protection/'
+        linkElement.target = '_blank'
         linkElement.textContent = 'Learn More'
         return linkElement
     }
