@@ -19,7 +19,11 @@ tdsData.config.features.trackerAllowlist = {
 
 tdsStorage.config = tdsData.config
 
-const stub = () => {
+const stub = ({ config }) => {
+    if (config) {
+        tdsData.config = config
+    }
+
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
 
     spyOn(tdsStorage, 'fallbackToDB')
