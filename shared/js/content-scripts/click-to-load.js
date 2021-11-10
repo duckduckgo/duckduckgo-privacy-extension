@@ -161,7 +161,7 @@
             padding-bottom: 10px;
         `,
         buttonTextContainer: `
-            display: flex; 
+            display: flex;
             flex-direction: row;
             align-items: center;
         `,
@@ -177,7 +177,7 @@
             margin: auto;
             display: flex;
             flex-direction: column;
-            
+
             font-family: DuckDuckGoPrivacyEssentials;
             line-height: 1;
         `,
@@ -442,6 +442,8 @@
 
         /*
          * Creates an iFrame for this facebook content.
+         *
+         * @returns {Element}
          */
         createFBIFrame () {
             const frame = document.createElement('iframe')
@@ -481,7 +483,7 @@
             return this.fadeElement(element, 10, true)
         }
 
-        clickFunction (originalElement, replacementElement, shouldFade = true) {
+        clickFunction (originalElement, replacementElement) {
             let clicked = false
             const handleClick = function handleClick (e) {
                 // Ensure that the click is created by a user event & prevent double clicks from adding more animations
@@ -591,11 +593,9 @@
     }
 
     /**
-     * Creates a safe element to replace the original tracking element.
+     * Creates a safe element and replaces the original tracking element with it.
      * @param {Object} widgetData - a single entry from elementData
      * @param {Element} originalElement - the element on the page we are replacing
-     *
-     * @returns {Element} a new element that can be inserted on the page in place of the original.
      */
     function createReplacementWidget (entity, widgetData, originalElement) {
         // Construct the widget based on data in the original element
