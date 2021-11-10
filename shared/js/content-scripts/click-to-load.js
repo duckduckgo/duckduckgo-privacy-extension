@@ -330,8 +330,11 @@
             cursor: pointer;
             text-decoration: none;
         `,
-        fbContainer: `
+        wrapperDiv: `
             display: inline-block;
+            border: 0;
+            padding: 0;
+            margin: 0;
         `
     }
 
@@ -500,7 +503,7 @@
                     }
                     // Create a container for the new FB element
                     const fbContainer = document.createElement('div')
-                    fbContainer.style.cssText = styles.fbContainer
+                    fbContainer.style.cssText = styles.wrapperDiv
                     const fadeIn = document.createElement('div')
                     fadeIn.style.cssText = 'display: none; opacity: 0;'
 
@@ -545,8 +548,7 @@
                     fbElement.addEventListener('load', () => {
                         this.fadeOutElement(replacementElement)
                             .then(v => {
-                                fbContainer.removeChild(replacementElement)
-                                fadeIn.style.cssText = 'opacity: 0;'
+                                fbContainer.replaceWith(fbElement)
                                 this.fadeInElement(fadeIn).then(v => {
                                     fbElement.focus() // focus on new element for screen readers
                                 })
@@ -616,18 +618,18 @@
             sendMessage('getImage', widgetData.replaceSettings.icon, function putButton (icon) {
                 const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
                 const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
-                const el = createContentBlock(
-                    widget,
-                    button,
-                    textButton,
-                    icon)
-                button.addEventListener('click', widget.clickFunction(originalElement, el))
-                textButton.addEventListener('click', widget.clickFunction(originalElement, el))
-                parent.replaceChild(el, originalElement)
+                const { contentBlock, shadowRoot } = createContentBlock(
+                    widget, button, textButton, icon
+                )
+                button.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
+                textButton.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
+                parent.replaceChild(contentBlock, originalElement)
+
                 // Show an unblock link if parent element forces small height
                 // which may hide video.
-                if ((!!el.offsetHeight && el.offsetHeight <= 200) || (!!el.parentNode && el.parentNode.offsetHeight <= 200)) {
-                    const textButton = el.querySelector(`#${titleID + 'TextButton'}`)
+                if ((!!contentBlock.offsetHeight && contentBlock.offsetHeight <= 200) ||
+                    (!!contentBlock.parentNode && contentBlock.parentNode.offsetHeight <= 200)) {
+                    const textButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
                     textButton.style.cssText += 'display: block'
                 }
             })
@@ -933,8 +935,14 @@
 
     // Create the content block to replace other divs/iframes with
     function createContentBlock (widget, button, textButton, img) {
-        const wrapper = document.createElement('div')
-        wrapper.style.cssText = 'display: inline-block;'
+        const contentBlock = document.createElement('div')
+        contentBlock.style.cssText = styles.wrapperDiv
+
+        // Put everyting inside the shadowRoot of the wrapper element to reduce
+        // the chances of the website's stylesheets messing up the placeholder's
+        // appearance.
+        const shadowRoot = contentBlock.attachShadow({ mode: 'closed' })
+
         // Style element includes our font & overwrites page styles
         const styleElement = document.createElement('style')
         const wrapperClass = 'DuckDuckGoSocialContainer'
@@ -948,13 +956,13 @@
                 font-weight: bold;
             }
         `
-        wrapper.appendChild(styleElement)
+        shadowRoot.appendChild(styleElement)
 
         // Create overall grid structure
         const element = document.createElement('div')
         element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
         element.className = wrapperClass
-        wrapper.appendChild(element)
+        shadowRoot.appendChild(element)
 
         // grid of three rows
         const titleRow = document.createElement('div')
@@ -1000,6 +1008,6 @@
         buttonRow.appendChild(button)
         contentRow.appendChild(buttonRow)
 
-        return wrapper
+        return { contentBlock, shadowRoot }
     }
 })()
