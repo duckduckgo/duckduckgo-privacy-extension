@@ -19,9 +19,9 @@ tdsData.config.features.trackerAllowlist = {
 
 tdsStorage.config = tdsData.config
 
-const stub = ({ config }) => {
-    if (config) {
-        tdsData.config = config
+const stub = (arg) => {
+    if (arg && arg.config) {
+        tdsData.config = arg.config
     }
 
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
