@@ -48,7 +48,7 @@ module.exports = function (grunt) {
             '<%= dirs.public.css %>/autofill.css': ['<%= ddgAutofill %>/autofill.css']
         },
         unitTest: {
-            '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
+            '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js', '!<%= dirs.unitTest.background %>/reference-tests/**/*.js'],
             '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.src.js %>/ui/base/index.es6.js', '<%= dirs.unitTest.ui %>/**/*.js'],
             '<%= dirs.unitTest.build %>/shared-utils.js': ['<%= dirs.unitTest.sharedUtils %>/**/*.js']
         },
