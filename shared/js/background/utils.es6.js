@@ -176,34 +176,28 @@ export function removeBroken (domain) {
     }
 }
 
-export function getBrokenFeaturesAboutBlank (url) {
+export function getEnabledFeaturesAboutBlank (url) {
     if (!tdsStorage.config.features) return
-    const brokenFeatures = []
+    const enabledFeatures = []
     for (const feature in tdsStorage.config.features) {
         const featureSettings = getFeatureSettings(feature)
 
-        if (featureSettings.aboutBlankEnabled === 'disabled') {
-            brokenFeatures.push(feature)
-        }
-        if (brokenListIndex(url, featureSettings.aboutBlankSites || []) !== -1) {
-            brokenFeatures.push(feature)
+        if (featureSettings.aboutBlankEnabled !== 'disabled' && brokenListIndex(url, featureSettings.aboutBlankSites || []) === -1) {
+            enabledFeatures.push(feature)
         }
     }
-    return brokenFeatures
+    return enabledFeatures
 }
 
-export function getBrokenFeatures (url) {
+export function getEnabledFeatures (url) {
     if (!tdsStorage.config.features) return
-    const brokenFeatures = []
+    const enabledFeatures = []
     for (const feature in tdsStorage.config.features) {
-        if (!isFeatureEnabled(feature)) {
-            brokenFeatures.push(feature)
-        }
-        if (brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) !== -1) {
-            brokenFeatures.push(feature)
+        if (isFeatureEnabled(feature) && brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) === -1) {
+            enabledFeatures.push(feature)
         }
     }
-    return brokenFeatures
+    return enabledFeatures
 }
 
 export function brokenListIndex (url, list) {
@@ -218,15 +212,6 @@ export function brokenListIndex (url, list) {
         }
         return false
     })
-}
-
-export function isFeatureBrokenForURL (url, feature) {
-    const exceptionList = tdsStorage.config.features[feature]?.exceptions
-    if (!exceptionList || exceptionList.length === 0) {
-        return false
-    }
-
-    return brokenListIndex(url, exceptionList) !== -1
 }
 
 // We inject this into content scripts

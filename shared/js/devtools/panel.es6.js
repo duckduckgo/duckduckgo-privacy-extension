@@ -73,7 +73,7 @@ const actionHandlers = {
         protectionButton.innerText = `Protection: ${tab.site?.allowlisted || tab.site?.isBroken ? 'OFF' : 'ON'}`
         loadConfigurableFeatures.then((features) => {
             features.forEach((feature) => {
-                document.getElementById(feature).innerText = `${feature}: ${tab.site?.brokenFeatures.includes(feature) ? 'OFF' : 'ON'}`
+                document.getElementById(feature).innerText = `${feature}: ${tab.site?.enabledFeatures.includes(feature) ? 'ON' : 'OFF'}`
             })
         })
     },
