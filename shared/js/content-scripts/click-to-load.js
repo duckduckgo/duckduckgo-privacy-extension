@@ -938,15 +938,22 @@
         const contentBlock = document.createElement('div')
         contentBlock.style.cssText = styles.wrapperDiv
 
-        // Put everyting inside the shadowRoot of the wrapper element to reduce
-        // the chances of the website's stylesheets messing up the placeholder's
-        // appearance.
+        // Put our custom font-faces inside the wrapper element, since
+        // @font-face does not work inside a shadowRoot.
+        // See https://github.com/mdn/interactive-examples/issues/887.
+        const fontFaceStyleElement = document.createElement('style')
+        fontFaceStyleElement.textContent = styles.fontStyle
+        contentBlock.appendChild(fontFaceStyleElement)
+
+        // Put everyting else inside the shadowRoot of the wrapper element to
+        // reduce the chances of the website's stylesheets messing up the
+        // placeholder's appearance.
         const shadowRoot = contentBlock.attachShadow({ mode: 'closed' })
 
         // Style element includes our font & overwrites page styles
         const styleElement = document.createElement('style')
         const wrapperClass = 'DuckDuckGoSocialContainer'
-        styleElement.textContent = styles.fontStyle + `
+        styleElement.textContent = `
             .${wrapperClass} a {
                 ${styles[widget.getMode()].linkFont}
                 font-weight: bold;
