@@ -247,7 +247,7 @@ Site.prototype = window.$.extend({},
             this.isAllowlisted = allowListValue
             this.isDenylisted = denyListValue
 
-            this.isBroken = this.tab.site.isBroken || this.tab.site.brokenFeatures.includes('contentBlocking')
+            this.isBroken = this.tab.site.isBroken || !this.tab.site.enabledFeatures.includes('contentBlocking')
             this.displayBrokenUI = this.isBroken
 
             if (denyListValue) {

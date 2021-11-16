@@ -38,7 +38,7 @@ class Site {
          * The other allowlisting code is different and probably should be changed to match.
          */
         this.isBroken = utils.isBroken(domainWWW) // broken sites reported to github repo
-        this.brokenFeatures = utils.getBrokenFeatures(domainWWW) // site issues reported to github repo
+        this.enabledFeatures = utils.getEnabledFeatures(domainWWW) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)
@@ -102,7 +102,7 @@ class Site {
         if (this.denylisted) {
             return true
         }
-        return this.isProtectionEnabled() && !this.brokenFeatures.includes(featureName)
+        return this.isProtectionEnabled() && this.enabledFeatures.includes(featureName)
     }
 
     addTracker (t) {

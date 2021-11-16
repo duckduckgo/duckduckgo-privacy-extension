@@ -384,7 +384,8 @@ function getArgumentsObject (tabId, sender, documentUrl) {
     }
     // Special case for iframes that are blank we check if it's also enabled
     if (sender.url === 'about:blank') {
-        site.brokenFeatures = site.brokenFeatures.concat(utils.getBrokenFeaturesAboutBlank(tab.url))
+        const aboutBlankEnabled = utils.getEnabledFeaturesAboutBlank(tab.url)
+        site.enabledFeatures = site.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
     }
 
     // Extra contextual data required for 1p and 3p cookie protection - only send if at least one is enabled here
