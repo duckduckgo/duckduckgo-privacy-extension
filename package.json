@@ -91,7 +91,7 @@
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
         "sjcl": "^1.0.8",
-        "tldts": "^5.7.51",
+        "tldts": "^5.7.52",
         "underscore": "1.13.1",
         "web-ext": "^6.5.0"
     },
