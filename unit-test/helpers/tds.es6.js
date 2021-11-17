@@ -14,9 +14,6 @@ const stub = (arg) => {
 
     if (arg && arg.config) {
         tdsData.config = arg.config
-        console.log('STUB custom config - ' + arg.config.readme)
-    } else {
-        console.log('STUB default config - ' + tdsData.config.readme)
     }
 
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
@@ -28,9 +25,7 @@ const stub = (arg) => {
         .and.callFake(key => Promise.resolve(tdsData[key]))
 
     spyOn(tdsStorage, 'getDataXHR')
-        .and.callFake((list, etag, source) => {
-            return Promise.resolve({ response: 200, data: tdsData[list.name] })
-        })
+        .and.callFake((list, etag, source) => Promise.resolve({ response: 200, data: tdsData[list.name] }))
 }
 module.exports = {
     stub
