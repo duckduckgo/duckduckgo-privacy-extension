@@ -38,8 +38,8 @@ for (const setName of Object.keys(testSets)) {
 
             if (test.frameURL === 'about:blank') {
                 it(`${test.name}`, () => {
-                    const brokenFeatures = utils.getBrokenFeaturesAboutBlank(test.siteURL)
-                    const isEnabled = !brokenFeatures.includes(test.featureName)
+                    const enabledFeatures = utils.getEnabledFeaturesAboutBlank(test.siteURL)
+                    const isEnabled = enabledFeatures.includes(test.featureName)
 
                     expect(isEnabled).toEqual(test.expectFeatureEnabled)
                 })
