@@ -1,15 +1,9 @@
 module.exports = function (grunt) {
-    const through = require('through2')
     const sass = require('sass')
+    const fileMapTransform = require('./scripts/browserifyFileMapTransform')
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
-
-    var values = require('object.values')
-
-    if (!Object.values) {
-        values.shim()
-    }
 
     let browser = grunt.option('browser')
     let buildType = grunt.option('type')
@@ -147,7 +141,11 @@ module.exports = function (grunt) {
                 options: {
                     browserifyOptions: {
                         debug: true
-                    }
+                    },
+                    transform: [
+                        fileMapTransform,
+                        ['babelify']
+                    ]
                 },
                 files: baseFileMap.unitTest
             }

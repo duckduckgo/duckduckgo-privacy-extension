@@ -11,9 +11,7 @@ const contentScriptUtils = require('../../shared/js/content-scope/utils.js')
 
 const testSets = require('./reference-tests/privacy-configuration/tests.json')
 const configs = {
-    'config1_reference.json': require('./reference-tests/privacy-configuration/config1_reference.json'),
-    'config2_reference.json': require('./reference-tests/privacy-configuration/config2_reference.json'),
-    'config3_reference.json': require('./reference-tests/privacy-configuration/config3_reference.json')
+    // FILE_MAP ./reference-tests/privacy-configuration/config*_reference.json
 }
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
