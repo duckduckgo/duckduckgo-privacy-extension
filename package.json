@@ -46,6 +46,7 @@
         "eslint-plugin-import": "^2.25.3",
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-promise": "^5.1.1",
+        "glob": "^7.2.0",
         "grunt": "1.4.1",
         "grunt-browserify": "6.0.0",
         "grunt-contrib-concat": "2.0.0",
@@ -84,7 +85,6 @@
         "jquery": "3.6.0",
         "node-gyp": "^8.4.0",
         "normalize.scss": "0.1.0",
-        "object.values": "1.1.5",
         "parse-link-header": "1.0.1",
         "psl": "1.8.0",
         "punycode": "2.1.1",
@@ -100,7 +100,9 @@
             [
                 "@babel/preset-env",
                 {
-                    "exclude": ["transform-regenerator"],
+                    "exclude": [
+                        "transform-regenerator"
+                    ],
                     "debug": true
                 }
             ]
