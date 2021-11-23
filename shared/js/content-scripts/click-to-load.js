@@ -594,8 +594,12 @@
 
     /**
      * Creates a safe element and replaces the original tracking element with it.
-     * @param {Object} widgetData - a single entry from elementData
-     * @param {Element} originalElement - the element on the page we are replacing
+     * @param {string} entity
+     *   The entity (e.g. company) associated with the tracking element.
+     * @param {Object} widgetData
+     *   A single entry from the CTP configuration file.
+     * @param {Element} originalElement
+     *   The tracking element on the page which we're replacing with a placeholder.
      */
     function createReplacementWidget (entity, widgetData, originalElement) {
         // Construct the widget based on data in the original element
