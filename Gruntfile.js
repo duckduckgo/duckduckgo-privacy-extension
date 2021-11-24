@@ -144,7 +144,8 @@ module.exports = function (grunt) {
                     },
                     transform: [
                         fileMapTransform,
-                        ['babelify']
+                        ['babelify'],
+                        ['brfs']
                     ]
                 },
                 files: baseFileMap.unitTest
