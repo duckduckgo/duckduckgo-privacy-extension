@@ -43,12 +43,8 @@ for (const setName of Object.keys(testSets)) {
 
                     expect(Boolean(GPCHeader && isEnabled)).toEqual(test.expectGPCHeader)
 
-                    if ('expectHeaderName' in test) {
-                        expect(GPCHeader.name).toEqual(test.expectHeaderName)
-                    }
-
-                    if ('expectHeaderValue' in test) {
-                        expect(GPCHeader.value).toEqual(test.expectHeaderValue)
+                    if ('expectGPCHeaderValue' in test) {
+                        expect(GPCHeader.value).toEqual(test.expectGPCHeaderValue)
                     }
                 })
             } else if ('expectGPCAPI' in test) {
@@ -61,7 +57,7 @@ for (const setName of Object.keys(testSets)) {
 
                     expect(isEnabled).toEqual(test.expectGPCAPI)
 
-                    if ('expectJavaScriptToBeTrue' in test) {
+                    if ('expectGPCAPIValue' in test) {
                         const FakeNavigator = function () {}
                         const fakeNavigator = new FakeNavigator()
                         const orgNavigator = globalThis.Navigator
@@ -70,15 +66,14 @@ for (const setName of Object.keys(testSets)) {
                         globalThis.Navigator = FakeNavigator
                         spyOnProperty(globalThis, 'navigator', 'get').and.returnValue(fakeNavigator)
 
-                        gpcContentScript.init.call(globalThis, args)
-
-                        // eslint-disable-next-line no-new-func
-                        const evalResult = Function('Navigator', 'navigator', `"use strict"; return ${test.expectJavaScriptToBeTrue}`)(FakeNavigator, fakeNavigator)
+                        if (isEnabled) {
+                            gpcContentScript.init(args)
+                        }
 
                         // clean up
                         globalThis.Navigator = orgNavigator
 
-                        expect(evalResult).toBeTrue()
+                        expect(String(FakeNavigator.prototype.globalPrivacyControl)).toBe(test.expectGPCAPIValue)
                     }
                 })
             } else {
