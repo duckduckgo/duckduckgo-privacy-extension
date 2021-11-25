@@ -20,6 +20,15 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
+
+      - name: Restore npm artifact from cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: |
           npm i -g web-ext
@@ -41,12 +50,6 @@ jobs:
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
         - name: Build
           run: |
             npm run bundle-config
