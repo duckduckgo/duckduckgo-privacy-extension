@@ -10,25 +10,73 @@ on:
 jobs:
   release_pr:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        target: [ release-chrome, release-firefox ]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js 16
-      uses: actions/setup-node@v1
-      with:
-        node-version: 16.x
-    - name: Install dependencies
-      run: |
-        npm i -g web-ext
-        npm run install-ci
-    - name: Fetch config and update version
-      run: |
-        npm run bundle-config
-        node scripts/bumpVersion.js ${{ github.event.inputs.version }}
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
-      with:
-        commit-message: ${{ github.event.inputs.version }}
-        branch: "release-${{ github.event.inputs.version }}"
-        title: "Prepare release ${{ github.event.inputs.version }}"
-        body: ''
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: Restore npm artifact from cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+          npm i -g web-ext
+          npm run install-ci
+      - name: Fetch config and update version
+        run: |
+          npm run bundle-config
+          node scripts/bumpVersion.js ${{ github.event.inputs.version }}
+      - name: Commit config and version updates
+        uses: stefanzweifel/git-auto-commit-action@8c3ed373fb7e451dbb9706bf99ad63124e33f614
+        with:
+          commit_message: ${{ github.event.inputs.version }}
+          branch: develop
+          title: "Prepare release ${{ github.event.inputs.version }}"
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@c3f61b2a3db543ceee83c759ac8e48419a1a2211
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Build
+          run: |
+            npm run bundle-config
+            npm run ${{ matrix.target }}
+            echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
+        - name: Package Firefox Release
+          if: matrix.target == 'release-firefox'
+          run: |
+            cd build/firefox/release && web-ext build
+            echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
+
+        - name: Create release draft
+          uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            draft: true
+            prerelease: true
+            body: ${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}
+            files: |
+              ./build/firefox/release/web-ext-artifacts/*.zip
+              ./build/chrome/release/*.zip
+
+        - name: Asana Workflow
+            env:
+              ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
+              VERSION: ${{ github.event.release.tag_name }}
+              RELEASE_URL: ${{ github.event.release.html_url }}
+            run:
+              node scripts/asana-release.js
