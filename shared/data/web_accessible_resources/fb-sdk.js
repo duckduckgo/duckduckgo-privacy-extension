@@ -17,7 +17,7 @@
 
     function messageAddon (detailObject) {
         detailObject.entity = 'Facebook'
-        const event = new CustomEvent('ddgClickToLoad', {
+        const event = new CustomEvent('ddg-ctp', {
             detail: detailObject,
             bubbles: false,
             cancelable: false,
@@ -97,8 +97,8 @@
         window.open('about:blank', popupName, popupParams)
     }
 
-    window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
-    window.addEventListener('RunFacebookLogin', runFacebookLogin)
+    window.addEventListener('ddg-ctp-Facebook-load-sdk', enableFacebookSDK)
+    window.addEventListener('ddg-ctp-Facebook-run-login', runFacebookLogin)
 
     function init () {
         if (window.fbAsyncInit) {

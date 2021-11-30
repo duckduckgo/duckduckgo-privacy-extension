@@ -500,7 +500,7 @@
                     // notify surrogate to enable SDK and replace original element.
                     if (this.clickAction.type === 'allowFull') {
                         parent.replaceChild(originalElement, replacementElement)
-                        window.dispatchEvent(new CustomEvent(`Load${this.entity}SDK`))
+                        window.dispatchEvent(new CustomEvent(`ddg-ctp-${this.entity}-load-sdk`))
                         return
                     }
                     // Create a container for the new FB element
@@ -689,7 +689,7 @@
         })
 
     // Listen for events from surrogates
-    addEventListener('ddgClickToLoad', (event) => {
+    addEventListener('ddg-ctp', (event) => {
         if (!event.detail) return
         const entity = event.detail.entity
         if (!entities.includes(entity)) {
@@ -711,7 +711,7 @@
 
     function runLogin (entity) {
         enableSocialTracker(entity, true)
-        window.dispatchEvent(new CustomEvent(`Run${entity}Login`))
+        window.dispatchEvent(new CustomEvent(`ddg-ctp-${entity}-run-login`))
     }
 
     /*********************************************************

@@ -106,15 +106,15 @@
             siteInit = wrappedWindow.fbAsyncInit
             wrappedWindow.fbAsyncInit()
         }
-        window.addEventListener('LoadFacebookSDK', enableFacebookSDK)
-        window.addEventListener('RunFacebookLogin', runFacebookLogin)
+        window.addEventListener('ddg-ctp-Facebook-load-sdk', enableFacebookSDK)
+        window.addEventListener('ddg-ctp-Facebook-run-login', runFacebookLogin)
     }
 
     if (!wrappedWindow.FB) {
         const FB = {
             messageAddon: function (detailObject) {
                 detailObject.entity = 'Facebook'
-                const event = new CustomEvent('ddgClickToLoad', {
+                const event = new CustomEvent('ddg-ctp', {
                     detail: detailObject,
                     bubbles: true,
                     cancelable: false,
