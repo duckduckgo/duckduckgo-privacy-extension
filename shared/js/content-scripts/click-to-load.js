@@ -555,7 +555,7 @@
                                     fbElement.focus() // focus on new element for screen readers
                                 })
                             })
-                    })
+                    }, { once: true })
                 }
             }.bind(this)
             // If this is a login button, show modal if needed
