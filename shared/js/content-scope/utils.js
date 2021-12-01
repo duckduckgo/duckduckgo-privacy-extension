@@ -10,9 +10,14 @@ export function getDataKeySync (sessionKey, domainKey, inputData) {
     return sjcl.codec.hex.fromBits(hmac.encrypt(inputData))
 }
 
-// linear feedback shift register to find a random approximation
-export function nextRandom (v) {
-    return Math.abs((v >> 1) | (((v << 62) ^ (v << 61)) & (~(~0 << 63) << 62)))
+// 32-bit XOR shift. Approximates randomness with high performance.
+// https://stackoverflow.com/questions/65661856/how-to-do-an-8-bit-16-bit-and-32-bit-linear-feedback-shift-register-prng-in-ja
+export function nextRandom(x) {
+    x |= x == 0; // if x == 0, set x = 1 instead
+    x ^= (x & 0x0007ffff) << 13;
+    x ^= x >> 17;
+    x ^= (x & 0x07ffffff) << 5;
+    return x & 0xffffffff;
 }
 
 const exemptionLists = {}
@@ -76,7 +81,8 @@ export function shouldExemptMethod (type) {
 
 // Iterate through the key, passing an item index and a byte to be modified
 export function iterateDataKey (key, callback) {
-    let item = key.charCodeAt(0)
+    // Seed the PRNG with 32-bits of entropy from the key
+    let item = parseInt(key.substring(0, 8))
     for (const i in key) {
         let byte = key.charCodeAt(i)
         for (let j = 8; j >= 0; j--) {
