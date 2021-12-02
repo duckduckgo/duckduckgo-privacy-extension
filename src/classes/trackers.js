@@ -115,10 +115,10 @@
                 urlToCheck = cnameResolution.finalURL
 
                 requestData.urlToCheck = urlToCheck
-                requestData.urlToCheckDomain = this.tldjs.parse(urlToCheck).domain,
+                requestData.urlToCheckDomain = this.tldjs.parse(urlToCheck).domain
                 requestData.urlToCheckSplit = this.utils.extractHostFromURL(urlToCheck).split('.')
                 tracker = this.findTracker(requestData)
-                
+
                 if (!tracker) {
                     return null
                 }
