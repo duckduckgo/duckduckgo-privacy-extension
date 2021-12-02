@@ -109,7 +109,7 @@
             let tracker = this.findTracker(requestData)
 
             if (!tracker) {
-                // if request doesn't have any rules asociated with it, we should check if it's a CNAMEed tracker
+                // if request doesn't have any rules associated with it, we should check if it's a CNAMEed tracker
                 const cnameResolution = this.resolveCname(urlToCheck)
                 fromCname = cnameResolution.fromCname
                 urlToCheck = cnameResolution.finalURL
