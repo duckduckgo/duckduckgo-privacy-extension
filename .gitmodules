@@ -4,3 +4,5 @@
 [submodule "shared/tracker-surrogates"]
 	path = shared/tracker-surrogates
 	url = https://github.com/duckduckgo/tracker-surrogates.git
+
+	
