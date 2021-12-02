@@ -88,9 +88,8 @@
             if (!this.entityList || !this.trackerList) {
                 throw new Error('tried to detect trackers before rules were loaded')
             }
-            const cnameResolution = this.resolveCname(urlToCheck)
-            const fromCname = cnameResolution.fromCname
-            urlToCheck = cnameResolution.finalURL
+
+            let fromCname
 
             // single object with all of our requeest and site data split and
             // processed into the correct format for the tracker set/get functions.
@@ -107,10 +106,22 @@
             }
 
             // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
-            const tracker = this.findTracker(requestData)
+            let tracker = this.findTracker(requestData)
 
             if (!tracker) {
-                return null
+                // if request doesn't have any rules asociated with it, we should check if it's a CNAMEed tracker
+                const cnameResolution = this.resolveCname(urlToCheck)
+                fromCname = cnameResolution.fromCname
+                urlToCheck = cnameResolution.finalURL
+
+                requestData.urlToCheck = urlToCheck
+                requestData.urlToCheckDomain = this.tldjs.parse(urlToCheck).domain,
+                requestData.urlToCheckSplit = this.utils.extractHostFromURL(urlToCheck).split('.')
+                tracker = this.findTracker(requestData)
+                
+                if (!tracker) {
+                    return null
+                }
             }
 
             // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
