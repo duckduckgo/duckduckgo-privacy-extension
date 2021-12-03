@@ -78,7 +78,7 @@
     "dependencies": {
         "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.3.1",
         "@duckduckgo/jsbloom": "^1.0.2",
-        "@duckduckgo/privacy-grade": "1.0.3",
+        "@duckduckgo/privacy-grade": "1.1.0",
         "bel": "6.0.0",
         "deep-freeze": "0.0.1",
         "dexie": "3.2.0",
