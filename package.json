@@ -73,7 +73,7 @@
         "standard": "16.0.4",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.8.0",
-        "yargs": "^17.2.1"
+        "yargs": "^17.3.0"
     },
     "dependencies": {
         "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill.git#3.3.1",
