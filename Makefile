@@ -2,16 +2,13 @@ ITEMS   := shared/html shared/data shared/img
 
 release: npm setup-build-dir grunt tosdr moveout fonts web-resources
 
-dev: setup-build-dir grunt-process-lists moveout fonts web-resources grunt-dev
+dev: setup-build-dir moveout fonts web-resources grunt-dev
 
 npm:
 	npm ci
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)
-
-grunt-process-lists:
-	grunt execute:preProcessLists --browser=$(browser) --type=$(type)
 
 grunt-dev:
 	mkdir -p build/$(browser)/dev/test/html
