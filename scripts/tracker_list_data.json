@@ -1,9 +1,0 @@
-[
-    {
-            "name": "companyList",
-            "type": "companyList",
-            "loc": "company-trackerlist.json",
-            "gmapping": "remapping.json",
-            "processedName": "trackersWithParentCompany"
-        }
-]

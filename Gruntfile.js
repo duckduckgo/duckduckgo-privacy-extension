@@ -162,9 +162,6 @@ module.exports = function (grunt) {
         },
 
         execute: {
-            preProcessLists: {
-                src: ['scripts/buildEntityMap.js']
-            },
             tosdr: {
                 src: []// 'scripts/tosdr.js']
             }
@@ -234,7 +231,7 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS', 'execute:preProcessLists'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS'])
 
     const devTasks = ['build']
     if (grunt.option('watch')) { devTasks.push('watch') }

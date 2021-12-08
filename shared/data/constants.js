@@ -1,6 +1,4 @@
 module.exports = {
-    "entityList": "https://duckduckgo.com/contentblocking.js?l=entitylist2",
-    "entityMap": "data/tracker_lists/entityMap.json",
     "displayCategories": ["Analytics", "Advertising", "Social Network"],
     "requestListenerTypes": ["main_frame","sub_frame","stylesheet","script","image","object","xmlhttprequest","other"],
     "feedbackUrl": "https://duckduckgo.com/feedback.js?type=extension-feedback",
