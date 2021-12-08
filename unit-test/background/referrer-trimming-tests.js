@@ -4,8 +4,10 @@ const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 
-const trackerutils = require('../../shared/js/background/tracker-utils')
+const tabManager = require('../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../shared/js/background/wrapper.es6')
+
+const limitReferrerData = require('../../shared/js/background/events/referrer-trimming')
 
 const configReference = require('./reference-tests/referrer-trimming/config_reference.json')
 const blocklistReference = require('./reference-tests/referrer-trimming/tracker_radar_reference.json')
@@ -31,14 +33,29 @@ for (const setName of Object.keys(testSets)) {
 
             if ('expectRefererHeaderValue' in test) {
                 it(`${test.name}`, () => {
-                    let truncatedReferrer = trackerutils.truncateReferrer(test.refererHeaderValue, test.targetURL)
+                    tabManager.delete(1)
+                    tabManager.create({
+                        tabId: 1,
+                        url: test.navigatingFromUrl || test.siteURL
+                    })
 
-                    // if truncateReferrer function returns undefined it means that the referrer should not be modified
-                    if (truncatedReferrer === undefined) {
-                        truncatedReferrer = test.refererHeaderValue
+                    const requestChanges = limitReferrerData({
+                        tabId: 1,
+                        url: test.navigatingToURL || test.requestURL,
+                        requestHeaders: [
+                            { name: 'something', value: 'else' },
+                            { name: 'referer', value: test.refererHeaderValue }
+                        ],
+                        type: test.requestType || 'main_frame'
+                    })
+
+                    let refererHeaderValueAfter = test.refererHeaderValue
+
+                    if (requestChanges && requestChanges.requestHeaders) {
+                        refererHeaderValueAfter = requestChanges.requestHeaders.find(h => h.name === 'referer')?.value
                     }
 
-                    expect(truncatedReferrer).toEqual(test.expectRefererHeaderValue)
+                    expect(refererHeaderValueAfter).toEqual(test.expectRefererHeaderValue)
                 })
             } else {
                 throw new Error(`Unknown type of test - ${test.name}`)

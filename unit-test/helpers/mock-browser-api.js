@@ -4,5 +4,8 @@ globalThis.browser = {
             set: () => {
             }
         }
+    },
+    browserAction: {
+        setIcon: () => {}
     }
 }
