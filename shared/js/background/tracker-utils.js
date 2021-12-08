@@ -140,7 +140,10 @@ export function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    if (isSameEntity(referrer, target)) {
+    // tracker can be cloaked using CNAME
+    const { fromCname, finalURL } = trackers.resolveCname(target)
+
+    if (isSameEntity(referrer, target) && (!fromCname || isSameEntity(referrer, finalURL))) {
         return undefined
     }
 
@@ -150,7 +153,7 @@ export function truncateReferrer (referrer, target) {
     }
 
     let modifiedReferrer = referrer
-    if (isTracker(target)) {
+    if (isTracker(target) || (fromCname && isTracker(finalURL))) {
         modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: false })
     } else {
         modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: true })
