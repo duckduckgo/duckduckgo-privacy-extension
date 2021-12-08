@@ -65,7 +65,7 @@
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.1.0",
-        "puppeteer": "11.0.0",
+        "puppeteer": "12.0.1",
         "request": "^2.88.2",
         "rollup": "^2.60.2",
         "rollup-plugin-dynamic-import-variables": "^1.1.0",
