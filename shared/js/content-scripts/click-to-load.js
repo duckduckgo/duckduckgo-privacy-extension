@@ -1,6 +1,14 @@
 (function clickToLoad () {
-    function sendMessage (messageType, options, callback) {
-        chrome.runtime.sendMessage({ messageType, options }, callback)
+    function sendMessage (messageType, options = {}) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({ messageType, options }, response => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message))
+                } else {
+                    resolve(response)
+                }
+            })
+        })
     }
     let appID
     const loadingImages = {
@@ -597,7 +605,7 @@
      * @param {Object} widgetData - a single entry from elementData
      * @param {Element} originalElement - the element on the page we are replacing
      */
-    function createReplacementWidget (entity, widgetData, originalElement) {
+    async function createReplacementWidget (entity, widgetData, originalElement) {
         // Construct the widget based on data in the original element
         const widget = new DuckWidget(widgetData, originalElement, entity)
         const parent = originalElement.parentNode
@@ -607,32 +615,30 @@
             parent.replaceChild(el, originalElement)
         }
         if (widgetData.replaceSettings.type === 'loginButton') {
-            sendMessage('getImage', widgetData.replaceSettings.icon, function putLoginButton (icon) {
-                // Create a button to replace old element
-                const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon, originalElement)
-                button.addEventListener('click', widget.clickFunction(originalElement, container))
-                parent.replaceChild(container, originalElement)
-            })
+            const icon = await sendMessage('getImage', widgetData.replaceSettings.icon)
+            // Create a button to replace old element
+            const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon, originalElement)
+            button.addEventListener('click', widget.clickFunction(originalElement, container))
+            parent.replaceChild(container, originalElement)
         }
         if (widgetData.replaceSettings.type === 'dialog') {
-            sendMessage('getImage', widgetData.replaceSettings.icon, function putButton (icon) {
-                const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
-                const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
-                const { contentBlock, shadowRoot } = createContentBlock(
-                    widget, button, textButton, icon
-                )
-                button.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
-                textButton.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
-                parent.replaceChild(contentBlock, originalElement)
+            const icon = await sendMessage('getImage', widgetData.replaceSettings.icon)
+            const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
+            const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
+            const { contentBlock, shadowRoot } = createContentBlock(
+                widget, button, textButton, icon
+            )
+            button.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
+            textButton.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
+            parent.replaceChild(contentBlock, originalElement)
 
-                // Show an unblock link if parent element forces small height
-                // which may hide video.
-                if ((!!contentBlock.offsetHeight && contentBlock.offsetHeight <= 200) ||
-                    (!!contentBlock.parentNode && contentBlock.parentNode.offsetHeight <= 200)) {
-                    const textButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
-                    textButton.style.cssText += 'display: block'
-                }
-            })
+            // Show an unblock link if parent element forces small height
+            // which may hide video.
+            if ((!!contentBlock.offsetHeight && contentBlock.offsetHeight <= 200) ||
+                (!!contentBlock.parentNode && contentBlock.parentNode.offsetHeight <= 200)) {
+                const textButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
+                textButton.style.cssText += 'display: block'
+            }
         }
     }
 
@@ -658,7 +664,7 @@
         sendMessage('enableSocialTracker', message)
     }
 
-    sendMessage('initClickToLoad', {}, function (response) {
+    sendMessage('initClickToLoad').then(response => {
         if (!response) {
             return
         }
@@ -673,20 +679,17 @@
     })
 
     // Fetch reusable assets
-    sendMessage('getLoadingImage', 'light',
-        function (response) {
-            loadingImages.lightMode = response
-        })
+    sendMessage('getLoadingImage', 'light').then(response => {
+        loadingImages.lightMode = response
+    })
 
-    sendMessage('getLoadingImage', 'dark',
-        function (response) {
-            loadingImages.darkMode = response
-        })
+    sendMessage('getLoadingImage', 'dark').then(response => {
+        loadingImages.darkMode = response
+    })
 
-    sendMessage('getLogo', '',
-        function (response) {
-            logoImg = response
-        })
+    sendMessage('getLogo', '').then(response => {
+        logoImg = response
+    })
 
     // Listen for events from surrogates
     addEventListener('ddg-ctp', (event) => {
@@ -840,66 +843,65 @@
         }
     }
 
-    function makeModal (entity, acceptFunction, ...acceptFunctionParams) {
-        sendMessage('getImage', entityData[entity].modalIcon, function putModal (icon) {
-            const modalContainer = document.createElement('div')
-            modalContainer.style.cssText = styles.modalContainer
-            const pageOverlay = document.createElement('div')
-            pageOverlay.style.cssText = styles.overlay
-            const modal = document.createElement('div')
-            modal.style.cssText = styles.modal
+    async function makeModal (entity, acceptFunction, ...acceptFunctionParams) {
+        const icon = await sendMessage('getImage', entityData[entity].modalIcon)
+        const modalContainer = document.createElement('div')
+        modalContainer.style.cssText = styles.modalContainer
+        const pageOverlay = document.createElement('div')
+        pageOverlay.style.cssText = styles.overlay
+        const modal = document.createElement('div')
+        modal.style.cssText = styles.modal
 
-            // Title
-            const modalTitle = createTitleRow('DuckDuckGo')
-            modal.appendChild(modalTitle)
+        // Title
+        const modalTitle = createTitleRow('DuckDuckGo')
+        modal.appendChild(modalTitle)
 
-            // Content
-            const modalContent = document.createElement('div')
-            modalContent.style.cssText = styles.modalContent
+        // Content
+        const modalContent = document.createElement('div')
+        modalContent.style.cssText = styles.modalContent
 
-            const iconElement = document.createElement('img')
-            iconElement.style.cssText = styles.icon + styles.modalIcon
-            iconElement.setAttribute('src', icon)
-            iconElement.setAttribute('height', '70px')
+        const iconElement = document.createElement('img')
+        iconElement.style.cssText = styles.icon + styles.modalIcon
+        iconElement.setAttribute('src', icon)
+        iconElement.setAttribute('height', '70px')
 
-            const title = document.createElement('div')
-            title.style.cssText = styles.modalContentTitle
-            title.textContent = entityData[entity].modalTitle
+        const title = document.createElement('div')
+        title.style.cssText = styles.modalContentTitle
+        title.textContent = entityData[entity].modalTitle
 
-            const message = document.createElement('div')
-            message.style.cssText = styles.modalContentText
-            message.textContent = entityData[entity].modalText + ' '
-            message.appendChild(getLearnMoreLink())
+        const message = document.createElement('div')
+        message.style.cssText = styles.modalContentText
+        message.textContent = entityData[entity].modalText + ' '
+        message.appendChild(getLearnMoreLink())
 
-            modalContent.appendChild(iconElement)
-            modalContent.appendChild(title)
-            modalContent.appendChild(message)
+        modalContent.appendChild(iconElement)
+        modalContent.appendChild(title)
+        modalContent.appendChild(message)
 
-            // Buttons
-            const buttonRow = document.createElement('div')
-            buttonRow.style.cssText = 'margin:auto;'
-            const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
-            allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
-            allowButton.addEventListener('click', function doLogin () {
-                acceptFunction(...acceptFunctionParams)
-                document.body.removeChild(modalContainer)
-            })
-            const rejectButton = makeButton(entityData[entity].modalRejectText, 'cancelMode')
-            rejectButton.style.cssText += styles.modalButton + 'float: right;'
-            rejectButton.addEventListener('click', function cancelLogin () {
-                document.body.removeChild(modalContainer)
-            })
-
-            buttonRow.appendChild(allowButton)
-            buttonRow.appendChild(rejectButton)
-            modalContent.appendChild(buttonRow)
-
-            modal.appendChild(modalContent)
-
-            modalContainer.appendChild(pageOverlay)
-            modalContainer.appendChild(modal)
-            document.body.insertBefore(modalContainer, document.body.childNodes[0])
+        // Buttons
+        const buttonRow = document.createElement('div')
+        buttonRow.style.cssText = 'margin:auto;'
+        const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
+        allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
+        allowButton.addEventListener('click', function doLogin () {
+            acceptFunction(...acceptFunctionParams)
+            document.body.removeChild(modalContainer)
         })
+        const rejectButton = makeButton(entityData[entity].modalRejectText, 'cancelMode')
+        rejectButton.style.cssText += styles.modalButton + 'float: right;'
+        rejectButton.addEventListener('click', function cancelLogin () {
+            document.body.removeChild(modalContainer)
+        })
+
+        buttonRow.appendChild(allowButton)
+        buttonRow.appendChild(rejectButton)
+        modalContent.appendChild(buttonRow)
+
+        modal.appendChild(modalContent)
+
+        modalContainer.appendChild(pageOverlay)
+        modalContainer.appendChild(modal)
+        document.body.insertBefore(modalContainer, document.body.childNodes[0])
     }
 
     function createTitleRow (message, textButton) {
