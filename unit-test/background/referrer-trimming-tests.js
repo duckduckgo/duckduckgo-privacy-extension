@@ -6,6 +6,7 @@ const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 
 const tabManager = require('../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../shared/js/background/wrapper.es6')
+const jsReferrerProtection = require('../../shared/js/content-scope/referrer-protection')
 
 const limitReferrerData = require('../../shared/js/background/events/referrer-trimming')
 
@@ -31,7 +32,7 @@ for (const setName of Object.keys(testSets)) {
                 return
             }
 
-            if ('expectRefererHeaderValue' in test) {
+            if ('expectReferrerHeaderValue' in test) {
                 it(`${test.name}`, () => {
                     tabManager.delete(1)
                     tabManager.create({
@@ -44,18 +45,67 @@ for (const setName of Object.keys(testSets)) {
                         url: test.navigatingToURL || test.requestURL,
                         requestHeaders: [
                             { name: 'something', value: 'else' },
-                            { name: 'referer', value: test.refererHeaderValue }
+                            { name: 'referer', value: test.referrerValue }
                         ],
                         type: test.requestType || 'main_frame'
                     })
 
-                    let refererHeaderValueAfter = test.refererHeaderValue
+                    let refererHeaderValueAfter = test.referrerValue
 
                     if (requestChanges && requestChanges.requestHeaders) {
                         refererHeaderValueAfter = requestChanges.requestHeaders.find(h => h.name === 'referer')?.value
                     }
 
-                    expect(refererHeaderValueAfter).toEqual(test.expectRefererHeaderValue)
+                    expect(refererHeaderValueAfter).toEqual(test.expectReferrerHeaderValue)
+                })
+            } else if ('expectReferrerAPIValue' in test) {
+                it(`${test.name}`, () => {
+                    tabManager.delete(1)
+                    tabManager.create({
+                        tabId: 1,
+                        url: test.siteURL
+                    })
+
+                    limitReferrerData({
+                        tabId: 1,
+                        url: test.siteURL,
+                        requestHeaders: [
+                            { name: 'something', value: 'else' },
+                            { name: 'referer', value: test.referrerValue }
+                        ],
+                        type: 'main_frame'
+                    })
+
+                    if ('frameURL' in test) {
+                        limitReferrerData({
+                            tabId: 1,
+                            url: test.frameURL,
+                            requestHeaders: [
+                                { name: 'referer', value: test.referrerValue }
+                            ],
+                            type: 'sub_frame'
+                        })
+                    }
+
+                    const tab = tabManager.get({ tabId: 1 })
+
+                    const FakeDocument = function () {}
+                    FakeDocument.prototype.referrer = test.referrerValue
+                    FakeDocument.prototype.location = {
+                        url: test.frameURL || test.siteURL
+                    }
+                    const orgDocument = globalThis.Document
+
+                    // replacing real document and Document with fake ones
+                    globalThis.Document = FakeDocument
+                    spyOnProperty(document, 'referrer', 'get').and.returnValue(test.referrerValue)
+
+                    jsReferrerProtection.init({ referrer: tab.referrer })
+
+                    // clean up
+                    globalThis.Document = orgDocument
+
+                    expect(FakeDocument.prototype.referrer).toEqual(test.expectReferrerAPIValue)
                 })
             } else {
                 throw new Error(`Unknown type of test - ${test.name}`)
