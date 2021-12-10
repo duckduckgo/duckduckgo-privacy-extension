@@ -1,18 +1,18 @@
-require('../helpers/mock-browser-api')
+require('../../helpers/mock-browser-api')
 
-const tds = require('../../shared/js/background/trackers.es6')
-const tdsStorageStub = require('./../helpers/tds.es6')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
+const tds = require('../../../shared/js/background/trackers.es6')
+const tdsStorageStub = require('../../helpers/tds.es6')
+const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
-const tabManager = require('../../shared/js/background/tab-manager.es6')
-const browserWrapper = require('../../shared/js/background/wrapper.es6')
-const jsReferrerProtection = require('../../shared/js/content-scope/referrer-protection')
+const tabManager = require('../../../shared/js/background/tab-manager.es6')
+const browserWrapper = require('../../../shared/js/background/wrapper.es6')
+const jsReferrerProtection = require('../../../shared/js/content-scope/referrer-protection')
 
-const limitReferrerData = require('../../shared/js/background/events/referrer-trimming')
+const limitReferrerData = require('../../../shared/js/background/events/referrer-trimming')
 
-const configReference = require('../data/reference-tests/referrer-trimming/config_reference.json')
-const blocklistReference = require('../data/reference-tests/referrer-trimming/tracker_radar_reference.json')
-const testSets = require('../data/reference-tests/referrer-trimming/tests.json')
+const configReference = require('../../data/reference-tests/referrer-trimming/config_reference.json')
+const blocklistReference = require('../../data/reference-tests/referrer-trimming/tracker_radar_reference.json')
+const testSets = require('../../data/reference-tests/referrer-trimming/tests.json')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 
