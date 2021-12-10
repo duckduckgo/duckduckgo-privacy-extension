@@ -96,7 +96,7 @@ export function iterateDataKey (key, callback) {
 }
 
 export function isFeatureBroken (args, feature) {
-    return !args.site.enabledFeatures.includes(feature)
+    return args.site.isBroken || args.site.allowlisted || !args.site.enabledFeatures.includes(feature)
 }
 
 /**

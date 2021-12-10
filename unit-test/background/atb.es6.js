@@ -1,4 +1,4 @@
-require('../background/mock-browser-api')
+require('../helpers/mock-browser-api')
 const atb = require('../../shared/js/background/atb.es6')
 const settings = require('../../shared/js/background/settings.es6')
 const load = require('../../shared/js/background/load.es6')
