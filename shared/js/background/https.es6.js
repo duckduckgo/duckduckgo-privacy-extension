@@ -163,7 +163,7 @@ class HTTPS {
         }
 
         // Only deal with http calls
-        if (urlObj.protocol !== 'http:') {
+        if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'ws:') {
             return reqUrl
         }
 
@@ -175,7 +175,7 @@ class HTTPS {
         }
 
         // create an upgraded URL
-        urlObj.protocol = 'https:'
+        urlObj.protocol = (urlObj.protocol === 'http:') ? 'https:' : 'wss:'
         const upgradedUrl = urlObj.toString()
 
         // request is upgradable
