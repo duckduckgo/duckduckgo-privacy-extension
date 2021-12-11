@@ -1,8 +1,16 @@
 globalThis.browser = {
     storage: {
         local: {
-            set: () => {
+            set: () => {},
+            get: () => {
+                return {}
             }
         }
+    },
+    browserAction: {
+        setIcon: () => {}
+    },
+    runtime: {
+        sendMessage: () => {}
     }
 }
