@@ -5,19 +5,19 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
 
-    let browser = grunt.option('browser')
-    let buildType = grunt.option('type')
+    const browser = grunt.option('browser')
+    const buildType = grunt.option('type')
 
     if (!(browser && buildType)) {
         console.error('Missing browser or  build type: --browser=<browser-name> --type=<dev,release>')
         process.exit(1)
     }
 
-    let buildPath = `build/${browser}/${buildType}`
+    const buildPath = `build/${browser}/${buildType}`
 
     /* These are files common to all browsers. To add or override any of these files
      * see the browserMap object below */
-    let baseFileMap = {
+    const baseFileMap = {
         ui: {
             '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
             '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
@@ -27,7 +27,7 @@ module.exports = function (grunt) {
             '<%= dirs.public.js %>/list-editor.js': ['<%= dirs.src.js %>/devtools/list-editor.es6.js']
         },
         contentScope: {
-            '<%= dirs.public.js %>/content-scope/*.js': ['<%= dirs.src.js %>/content-scope/*.js'],
+            '<%= dirs.public.js %>/content-scope/*.js': ['<%= dirs.src.js %>/content-scope/*.js']
         },
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
@@ -61,7 +61,7 @@ module.exports = function (grunt) {
     }
 
     /* watch any base files and browser specific files */
-    let watch = {
+    const watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js', '<%= dirs.src.js %>/devtools/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
@@ -72,7 +72,7 @@ module.exports = function (grunt) {
         data: ['<%= dirs.data %>/*.js']
     }
 
-    let karmaOps = {
+    const karmaOps = {
         configFile: 'karma.conf.js',
         basePath: 'build/test/',
         files: ['background.js', 'ui.js', 'shared-utils.js']
@@ -87,7 +87,11 @@ module.exports = function (grunt) {
             // INFO outputs the url/port for the test page
             logLevel: 'INFO',
             // don't run headless chrome tests
-            browsers: []
+            browsers: [],
+            // log in terminal everything that gets loged in the browser
+            browserConsoleLogOptions: {
+                level: 'debug'
+            }
         })
     }
 
@@ -109,10 +113,10 @@ module.exports = function (grunt) {
             },
             test: 'test',
             unitTest: {
-                background: `unit-test/background`,
-                ui: `unit-test/ui`,
-                sharedUtils: `unit-test/shared-utils`,
-                build: `build/test`
+                background: 'unit-test/background',
+                ui: 'unit-test/ui',
+                sharedUtils: 'unit-test/shared-utils',
+                build: 'build/test'
             }
         },
 
