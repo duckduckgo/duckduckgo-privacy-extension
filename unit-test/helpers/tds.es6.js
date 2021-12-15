@@ -12,8 +12,13 @@ const stub = (arg) => {
         config: require('./../data/extension-config.json')
     }
 
-    if (arg && arg.config) {
-        tdsData.config = arg.config
+    if (arg) {
+        if (arg.config) {
+            tdsData.config = arg.config
+        }
+        if (arg.tds) {
+            tdsData.tds = arg.tds
+        }
     }
 
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')

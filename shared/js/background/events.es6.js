@@ -19,6 +19,7 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
+const limitReferrerData = require('./events/referrer-trimming')
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -417,70 +418,15 @@ function getArgumentsObject (tabId, sender, documentUrl) {
 }
 
 /*
- * Truncate the referrer header according to the following rules:
- *   Don't modify the header when:
- *   - If the header is blank, it will not be modified.
- *   - If the referrer domain OR request domain are safe listed, the header will not be modified
- *   - If the referrer domain and request domain are part of the same entity (as defined in our
- *     entities file for first party sets), the header will not be modified.
- *
- *   Modify the header when:
- *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
- *   - In all other cases (the general case), the header will be modified to only the referrer origin (includes subdomain).
+ * Referrer Trimming
  */
 const referrerListenerOptions = ['blocking', 'requestHeaders']
-if (browserName !== 'moz') {
-    referrerListenerOptions.push('extraHeaders') // Required in chrome type browsers to receive referrer information
+if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+    referrerListenerOptions.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
 }
 
 browser.webRequest.onBeforeSendHeaders.addListener(
-    function limitReferrerData (e) {
-        let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
-        if (referrer) {
-            referrer = referrer.value
-        } else {
-            return
-        }
-
-        const tab = tabManager.get({ tabId: e.tabId })
-
-        // Firefox only - Check if this tab had a surrogate redirect request and if it will
-        // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.
-        if (browserName === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
-            const hasOrigin = e.requestHeaders.filter(h => h.name.match(/^origin$/i))
-            if (!hasOrigin.length) {
-                const redirectUrl = tab.surrogates[e.url]
-                // remove redirect entry for the tab
-                delete tab.surrogates[e.url]
-
-                return { redirectUrl }
-            }
-        }
-
-        if (!tab || !tab.site.isFeatureEnabled('referrer')) {
-            return
-        }
-
-        // Additional safe list and broken site list checks are included in the referrer evaluation
-        const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
-        if (!modifiedReferrer) {
-            return
-        }
-
-        const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
-        if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
-            tab.referrer = {
-                site: tab.site.url,
-                referrerHost: new URL(referrer).hostname,
-                referrer: modifiedReferrer
-            }
-        }
-        requestHeaders.push({
-            name: 'referer',
-            value: modifiedReferrer
-        })
-        return { requestHeaders: requestHeaders }
-    },
+    limitReferrerData,
     { urls: ['<all_urls>'] },
     referrerListenerOptions
 )
