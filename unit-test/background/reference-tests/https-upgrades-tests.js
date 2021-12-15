@@ -55,7 +55,6 @@ for (const setName of Object.keys(testSets)) {
             }
 
             it(test.name, () => {
-                // expect(https.canUpgradeUrl(test.requestURL)).toEqual(test.requestURL !== test.expectURL)
                 const url = test.requestURL
                 const tab = new Tab({
                     id: 1,
