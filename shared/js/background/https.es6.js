@@ -163,7 +163,7 @@ class HTTPS {
         }
 
         // Only deal with http calls
-        if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'ws:') {
+        if (!["http:", "ws:"].includes(urlObj.protocol)) {
             return reqUrl
         }
 
