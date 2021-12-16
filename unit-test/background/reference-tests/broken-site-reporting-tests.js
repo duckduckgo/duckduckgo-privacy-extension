@@ -15,7 +15,6 @@ for (const setName of Object.keys(testSets)) {
             }
 
             it(test.name, () => {
-                spyOn(browser.runtime, 'getManifest').and.returnValue({ version: '100.12' })
                 const loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
 
                 const trackingUrls = {}
