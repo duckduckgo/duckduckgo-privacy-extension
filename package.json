@@ -104,8 +104,7 @@
                 {
                     "exclude": [
                         "transform-regenerator"
-                    ],
-                    "debug": true
+                    ]
                 }
             ]
         ]

@@ -7,6 +7,9 @@ module.exports = function (config) {
         singleRun: true,
         files: [],
         logLevel: config.LOG_ERROR,
+        browserConsoleLogOptions: {
+            level: 'warn'
+        },
         browsers: ['ChromeHeadless'],
         reporters: ['dots'],
         customLaunchers: {
