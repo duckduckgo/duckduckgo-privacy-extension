@@ -11,6 +11,7 @@ globalThis.browser = {
         setIcon: () => {}
     },
     runtime: {
-        sendMessage: () => {}
+        sendMessage: () => {},
+        getManifest: () => ({ version: '1234.56' })
     }
 }
