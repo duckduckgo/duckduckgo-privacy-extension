@@ -102,6 +102,15 @@ function handleRequest (requestData) {
             if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
                 if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
                     !thisTab.site.clickToLoad.includes(socialTracker.entity)) {
+                    // Ensure this website isn't in the excluded domains list.
+                    if (socialTracker.data && socialTracker.data.excludedDomains) {
+                        for (const { domain: excludedDomain } of socialTracker.data.excludedDomains) {
+                            if (excludedDomain === thisTab.site.domain) {
+                                return
+                            }
+                        }
+                    }
+
                     // TDS doesn't block social sites by default, so update the action & redirect for click to load.
                     tracker.action = 'block'
                     if (socialTracker.redirectUrl) {
