@@ -3,7 +3,7 @@
     "applications": {
         "gecko": {
             "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
-            "strict_min_version": "57.0"
+            "strict_min_version": "65.0"
         }
     },
     "version": "2021.9.30",
