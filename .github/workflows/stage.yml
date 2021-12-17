@@ -50,33 +50,33 @@ jobs:
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Build
-          run: |
-            npm run bundle-config
-            npm run ${{ matrix.target }}
-            echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
-        - name: Package Firefox Release
-          if: matrix.target == 'release-firefox'
-          run: |
-            cd build/firefox/release && web-ext build
-            echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
+      - name: Build
+        run: |
+          npm run bundle-config
+          npm run ${{ matrix.target }}
+          echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
+      - name: Package Firefox Release
+        if: matrix.target == 'release-firefox'
+        run: |
+          cd build/firefox/release && web-ext build
+          echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
 
-        - name: Create release draft
-          uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-            draft: true
-            prerelease: true
-            body: ${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}
-            files: |
-              ./build/firefox/release/web-ext-artifacts/*.zip
-              ./build/chrome/release/*.zip
+      - name: Create release draft
+        uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: true
+          prerelease: true
+          body: ${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}
+          files: |
+            ./build/firefox/release/web-ext-artifacts/*.zip
+            ./build/chrome/release/*.zip
 
-        - name: Asana Workflow
-            env:
-              ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
-              VERSION: ${{ github.event.release.tag_name }}
-              RELEASE_URL: ${{ github.event.release.html_url }}
-            run:
-              node scripts/asana-release.js
+      - name: Asana Workflow
+        env:
+          ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
+          VERSION: ${{ github.event.release.tag_name }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+        run:
+          node scripts/asana-release.js
