@@ -66,32 +66,32 @@ const setup = async (ops) => {
 
     bgPage.on('request', (req) => { requests.push(req.url()) })
 
-    return { browser, bgPage, requests, teardown: teardown.bind(null, browser, dataDir) }
-}
-
-async function teardownInternal (browser, dataDir) {
-    browser && await browser.close()
-
-    // necessary so e.g. local storage
-    // doesn't carry over between test runs
-    //
-    // irrelevant on travis, where everything is clear with each new run
-    if (dataDir.includes(DATA_DIR_PREFIX)) {
-        spawnSync('rm', ['-rf', dataDir])
-    }
-}
-
-const teardown = async (browser, dataDir) => {
-    if (process.env.KEEP_OPEN) {
-        return new Promise((resolve) => {
-            browser.on('disconnected', async () => {
-                await teardownInternal(browser, dataDir)
-                resolve()
+    async function teardown (browser, dataDir) {
+        if (process.env.KEEP_OPEN) {
+            return new Promise((resolve) => {
+                browser.on('disconnected', async () => {
+                    await teardownInternal(browser, dataDir)
+                    resolve()
+                })
             })
-        })
-    } else {
-        await teardownInternal(browser, dataDir)
+        } else {
+            await teardownInternal(browser, dataDir)
+        }
     }
+
+    async function teardownInternal (browser, dataDir) {
+        browser && await browser.close()
+
+        // necessary so e.g. local storage
+        // doesn't carry over between test runs
+        //
+        // irrelevant on travis, where everything is clear with each new run
+        if (dataDir.includes(DATA_DIR_PREFIX)) {
+            spawnSync('rm', ['-rf', dataDir])
+        }
+    }
+
+    return { browser, bgPage, requests, teardown }
 }
 
 module.exports = {
