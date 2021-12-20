@@ -69,7 +69,7 @@
         "request": "^2.88.2",
         "rollup": "^2.61.1",
         "rollup-plugin-dynamic-import-variables": "^1.1.0",
-        "sass": "^1.44.0",
+        "sass": "^1.45.0",
         "standard": "16.0.4",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.8.0",
