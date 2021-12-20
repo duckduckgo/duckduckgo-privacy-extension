@@ -66,7 +66,7 @@ const setup = async (ops) => {
 
     bgPage.on('request', (req) => { requests.push(req.url()) })
 
-    async function teardown (browser, dataDir) {
+    async function teardown () {
         if (process.env.KEEP_OPEN) {
             return new Promise((resolve) => {
                 browser.on('disconnected', async () => {
@@ -79,8 +79,8 @@ const setup = async (ops) => {
         }
     }
 
-    async function teardownInternal (browser, dataDir) {
-        browser && await browser.close()
+    async function teardownInternal () {
+        await browser.close()
 
         // necessary so e.g. local storage
         // doesn't carry over between test runs
