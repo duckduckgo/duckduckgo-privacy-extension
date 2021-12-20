@@ -87,7 +87,7 @@
         "jquery": "3.6.0",
         "node-gyp": "^8.4.1",
         "normalize.scss": "0.1.0",
-        "parse-link-header": "1.0.1",
+        "parse-link-header": "2.0.0",
         "psl": "1.8.0",
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
