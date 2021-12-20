@@ -7,6 +7,7 @@ const harness = require('../helpers/harness')
 
 let browser
 let bgPage
+let teardown
 
 const expectedFingerprintValues = {
     availTop: 0,
@@ -32,7 +33,7 @@ function testFPValues (values) {
 
 describe('Fingerprint Defense Tests', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
@@ -41,7 +42,7 @@ describe('Fingerprint Defense Tests', () => {
         )
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        await teardown()
     })
 
     tests.forEach(test => {
@@ -78,7 +79,7 @@ describe('Fingerprint Defense Tests', () => {
 
 describe('First Party Fingerprint Randomization', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
@@ -87,7 +88,7 @@ describe('First Party Fingerprint Randomization', () => {
         )
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        await teardown()
     })
 
     async function runTest (test) {
@@ -150,7 +151,7 @@ describe('First Party Fingerprint Randomization', () => {
 
 describe('Verify injected script is not visible to the page', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
@@ -159,7 +160,7 @@ describe('Verify injected script is not visible to the page', () => {
         )
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        await teardown()
     })
 
     tests.forEach(test => {

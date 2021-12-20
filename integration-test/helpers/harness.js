@@ -1,15 +1,18 @@
 const puppeteer = require('puppeteer')
-const execSync = require('child_process').execSync
+const spawnSync = require('child_process').spawnSync
+const tempy = require('tempy')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
 if (process.env.KEEP_OPEN) {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000 * 1000
 }
 
+const DATA_DIR_PREFIX = 'ddg-temp'
+
 const setup = async (ops) => {
     ops = ops || {}
 
-    const dataDir = process.env.CI ? `/tmp/profile${Math.random()}` : `temp-profile-${Math.random()}`
+    const dataDir = tempy.directory({ prefix: DATA_DIR_PREFIX })
     const puppeteerOps = {
         args: [
             '--disable-extensions-except=build/chrome/dev',
@@ -63,35 +66,34 @@ const setup = async (ops) => {
 
     bgPage.on('request', (req) => { requests.push(req.url()) })
 
-    return { browser, bgPage, requests }
+    return { browser, bgPage, requests, teardown: teardown.bind(null, browser, dataDir) }
 }
 
-async function teardownInternal (browser) {
+async function teardownInternal (browser, dataDir) {
     browser && await browser.close()
 
     // necessary so e.g. local storage
     // doesn't carry over between test runs
     //
     // irrelevant on travis, where everything is clear with each new run
-    if (!process.env.TRAVIS) {
-        execSync('rm -rf temp-profile-*')
+    if (dataDir.includes(DATA_DIR_PREFIX)) {
+        spawnSync('rm', ['-rf', dataDir])
     }
 }
 
-const teardown = async (browser) => {
+const teardown = async (browser, dataDir) => {
     if (process.env.KEEP_OPEN) {
         return new Promise((resolve) => {
             browser.on('disconnected', async () => {
-                await teardownInternal(browser)
+                await teardownInternal(browser, dataDir)
                 resolve()
             })
         })
     } else {
-        teardownInternal(browser)
+        await teardownInternal(browser, dataDir)
     }
 }
 
 module.exports = {
-    setup,
-    teardown
+    setup
 }

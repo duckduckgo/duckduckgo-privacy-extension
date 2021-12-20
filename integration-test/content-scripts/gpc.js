@@ -41,10 +41,11 @@ const frameTests = [
 ]
 let server
 let server2
+let teardown
 
 describe('Ensure GPC is injected into frames', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
         server = setupServer({}, 8080)
         server2 = setupServer({}, 8081)
 
@@ -57,7 +58,7 @@ describe('Ensure GPC is injected into frames', () => {
     afterAll(async () => {
         await server.close()
         await server2.close()
-        await harness.teardown(browser)
+        await teardown()
     })
 
     frameTests.forEach(iframeHost => {

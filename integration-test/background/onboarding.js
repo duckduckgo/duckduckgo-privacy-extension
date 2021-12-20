@@ -1,11 +1,11 @@
 const harness = require('../helpers/harness')
 const wait = require('../helpers/wait')
 
-let browser, bgPage
+let browser, bgPage, teardown
 
 describe('onboarding', () => {
     beforeEach(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         await wait.forSetting(bgPage, 'showWelcomeBanner')
         await wait.forSetting(bgPage, 'showCounterMessaging')
@@ -13,7 +13,7 @@ describe('onboarding', () => {
 
     afterEach(async () => {
         try {
-            await harness.teardown(browser)
+            await teardown()
         } catch (e) {}
     })
 

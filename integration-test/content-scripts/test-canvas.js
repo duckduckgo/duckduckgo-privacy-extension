@@ -10,10 +10,11 @@ const path = require('path')
 
 let browser
 let bgPage
+let teardown
 
 describe('Canvas verification', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
@@ -22,7 +23,7 @@ describe('Canvas verification', () => {
         )
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        await teardown()
     })
 
     it('Canvas drawing should be different per hostname', async () => {
@@ -114,7 +115,7 @@ let server2
 
 describe('First Party Fingerprint Randomization', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
         server = setupServer({}, 8080)
         server2 = setupServer({}, 8081)
 
@@ -127,7 +128,7 @@ describe('First Party Fingerprint Randomization', () => {
     afterAll(async () => {
         await server.close()
         await server2.close()
-        await harness.teardown(browser)
+        await teardown(browser)
     })
 
     frameTests.forEach(iframeHost => {

@@ -13,6 +13,7 @@ const tests = [
 
 let browser
 let bgPage
+let teardown
 
 // getting HTTPS can take a while
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000
@@ -46,7 +47,7 @@ const checkGrade = (result, expected) => {
 
 describe('grade sanity checks', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
@@ -56,7 +57,7 @@ describe('grade sanity checks', () => {
     })
     afterAll(async () => {
         try {
-            await harness.teardown(browser)
+            await teardown()
         } catch (e) {}
     })
 
