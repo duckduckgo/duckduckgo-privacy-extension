@@ -1,15 +1,21 @@
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 const puppeteer = require('puppeteer')
-const execSync = require('child_process').execSync
+const spawnSync = require('child_process').spawnSync
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
 if (process.env.KEEP_OPEN) {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000 * 1000
 }
 
+const DATA_DIR_PREFIX = 'ddg-temp-'
+
 const setup = async (ops) => {
     ops = ops || {}
 
-    const dataDir = process.env.CI ? `/tmp/profile${Math.random()}` : `temp-profile-${Math.random()}`
+    const tmpDirPrefix = path.join(os.tmpdir(), DATA_DIR_PREFIX)
+    const dataDir = fs.mkdtempSync(tmpDirPrefix)
     const puppeteerOps = {
         args: [
             '--disable-extensions-except=build/chrome/dev',
@@ -63,35 +69,30 @@ const setup = async (ops) => {
 
     bgPage.on('request', (req) => { requests.push(req.url()) })
 
-    return { browser, bgPage, requests }
-}
-
-async function teardownInternal (browser) {
-    browser && await browser.close()
-
-    // necessary so e.g. local storage
-    // doesn't carry over between test runs
-    //
-    // irrelevant on travis, where everything is clear with each new run
-    if (!process.env.TRAVIS) {
-        execSync('rm -rf temp-profile-*')
-    }
-}
-
-const teardown = async (browser) => {
-    if (process.env.KEEP_OPEN) {
-        return new Promise((resolve) => {
-            browser.on('disconnected', async () => {
-                await teardownInternal(browser)
-                resolve()
+    async function teardown () {
+        if (process.env.KEEP_OPEN) {
+            return new Promise((resolve) => {
+                browser.on('disconnected', async () => {
+                    await teardownInternal()
+                    resolve()
+                })
             })
-        })
-    } else {
-        teardownInternal(browser)
+        } else {
+            await teardownInternal()
+        }
     }
+
+    async function teardownInternal () {
+        await browser.close()
+
+        // necessary so e.g. local storage
+        // doesn't carry over between test runs
+        spawnSync('rm', ['-rf', dataDir])
+    }
+
+    return { browser, bgPage, requests, teardown }
 }
 
 module.exports = {
-    setup,
-    teardown
+    setup
 }

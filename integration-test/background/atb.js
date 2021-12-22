@@ -6,16 +6,17 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 let browser
 let bgPage
 let requests
+let teardown
 
 describe('install workflow', () => {
     describe('postinstall page', () => {
         beforeEach(async () => {
-            ({ browser, bgPage, requests } = await harness.setup())
+            ({ browser, bgPage, requests, teardown } = await harness.setup())
         })
 
         afterEach(async () => {
             try {
-                await harness.teardown(browser)
+                await teardown()
             } catch (e) {}
         })
 
@@ -36,7 +37,7 @@ describe('install workflow', () => {
 
     describe('atb values', () => {
         beforeEach(async () => {
-            ({ browser, bgPage, requests } = await harness.setup())
+            ({ browser, bgPage, requests, teardown } = await harness.setup())
 
             /**
              * It's pretty difficult to test the install flow as it
@@ -60,7 +61,7 @@ describe('install workflow', () => {
         })
         afterEach(async () => {
             try {
-                await harness.teardown(browser)
+                await teardown()
             } catch (e) {}
         })
 
@@ -136,7 +137,7 @@ describe('search workflow', () => {
     let twoWeeksAgoAtb
 
     beforeAll(async () => {
-        ({ browser, bgPage, requests } = await harness.setup())
+        ({ browser, bgPage, requests, teardown } = await harness.setup())
 
         // wait until normal exti workflow is done so we don't confuse atb.js requests
         // when the actual tests run
@@ -151,7 +152,7 @@ describe('search workflow', () => {
     })
     afterAll(async () => {
         try {
-            await harness.teardown(browser)
+            await teardown()
         } catch (e) {}
     })
     beforeEach(async () => {

@@ -3,10 +3,11 @@ const harness = require('../helpers/harness')
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 let browser
 let bgPage
+let teardown
 
 describe('Test Click To Load', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         await bgPage.waitForFunction(
             () => {
@@ -21,7 +22,7 @@ describe('Test Click To Load', () => {
 
     afterAll(async () => {
         try {
-            await harness.teardown(browser)
+            await teardown()
         } catch (e) {}
     })
 

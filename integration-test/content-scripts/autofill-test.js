@@ -11,10 +11,11 @@ const sites = _sites.focusedSites.length ? _sites.focusedSites : _sites.sites
 
 let browser
 let bgPage
+let teardown
 
 describe('Autofill input detection Tests', () => {
     beforeAll(async () => {
-        ({ browser, bgPage } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait for HTTPs to successfully load
         await bgPage.waitForFunction(
@@ -30,7 +31,7 @@ describe('Autofill input detection Tests', () => {
         await page.close()
     })
     afterAll(async () => {
-        await harness.teardown(browser)
+        await teardown()
     })
 
     sites.forEach(({ name, url, autofillExpected, actions }) => {

@@ -5,7 +5,7 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 
 async function setup () {
-    const { browser, bgPage } = await harness.setup()
+    const { browser, bgPage, teardown } = await harness.setup()
     const page = await browser.newPage()
 
     await bgPage.waitForFunction(
@@ -15,7 +15,7 @@ async function setup () {
         },
         { polling: 100, timeout: 10000 }
     )
-    return { browser, page }
+    return { browser, page, teardown }
 }
 
 async function waitForAllResults (page) {
@@ -29,7 +29,7 @@ describe('Storage blocking Tests', () => {
         let cookies = []
 
         beforeAll(async () => {
-            const { browser, page } = await setup()
+            const { page, teardown } = await setup()
             try {
                 // Load the test pages home first to give some time for the extension background to start
                 // and register the content-script-message handler
@@ -41,7 +41,7 @@ describe('Storage blocking Tests', () => {
                 cookies = (await page._client.send('Network.getAllCookies')).cookies
             } finally {
                 await page.close()
-                await harness.teardown(browser)
+                await teardown()
             }
         })
 
@@ -99,7 +99,7 @@ describe('Storage blocking Tests', () => {
          * rule is observed for frames on that page.
          */
         it('does not block iFrame tracker cookies from same entity', async () => {
-            const { browser, page } = await setup()
+            const { page, teardown } = await setup()
             await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
             await page.bringToFront()
             await waitForAllResults(page)
@@ -110,8 +110,8 @@ describe('Storage blocking Tests', () => {
             const sameEntityiFrameResult = results.results.find(({ id }) => id === 'tracking third party iframe - JS cookie')?.value
             expect(sameEntityiFrameResult).toBeTruthy()
             expect(sameEntityiFrameResult).toEqual(savedResult)
-            page.close()
-            await harness.teardown(browser)
+            await page.close()
+            await teardown()
         })
     })
 })
