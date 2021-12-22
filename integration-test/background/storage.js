@@ -99,7 +99,7 @@ describe('Storage blocking Tests', () => {
          * rule is observed for frames on that page.
          */
         it('does not block iFrame tracker cookies from same entity', async () => {
-            const { browser, page, teardown } = await setup()
+            const { page, teardown } = await setup()
             await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
             await page.bringToFront()
             await waitForAllResults(page)
@@ -111,7 +111,7 @@ describe('Storage blocking Tests', () => {
             expect(sameEntityiFrameResult).toBeTruthy()
             expect(sameEntityiFrameResult).toEqual(savedResult)
             await page.close()
-            await teardown(browser)
+            await teardown()
         })
     })
 })

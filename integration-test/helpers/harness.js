@@ -1,18 +1,21 @@
+const fs = require('fs')
+const os = require('os')
+const path = require('path')
 const puppeteer = require('puppeteer')
 const spawnSync = require('child_process').spawnSync
-const tempy = require('tempy')
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
 if (process.env.KEEP_OPEN) {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000 * 1000
 }
 
-const DATA_DIR_PREFIX = 'ddg-temp'
+const DATA_DIR_PREFIX = 'ddg-temp-'
 
 const setup = async (ops) => {
     ops = ops || {}
 
-    const dataDir = tempy.directory({ prefix: DATA_DIR_PREFIX })
+    const tmpDirPrefix = path.join(os.tmpdir(), DATA_DIR_PREFIX)
+    const dataDir = fs.mkdtempSync(tmpDirPrefix)
     const puppeteerOps = {
         args: [
             '--disable-extensions-except=build/chrome/dev',
@@ -70,12 +73,12 @@ const setup = async (ops) => {
         if (process.env.KEEP_OPEN) {
             return new Promise((resolve) => {
                 browser.on('disconnected', async () => {
-                    await teardownInternal(browser, dataDir)
+                    await teardownInternal()
                     resolve()
                 })
             })
         } else {
-            await teardownInternal(browser, dataDir)
+            await teardownInternal()
         }
     }
 
@@ -84,11 +87,7 @@ const setup = async (ops) => {
 
         // necessary so e.g. local storage
         // doesn't carry over between test runs
-        //
-        // irrelevant on travis, where everything is clear with each new run
-        if (dataDir.includes(DATA_DIR_PREFIX)) {
-            spawnSync('rm', ['-rf', dataDir])
-        }
+        spawnSync('rm', ['-rf', dataDir])
     }
 
     return { browser, bgPage, requests, teardown }

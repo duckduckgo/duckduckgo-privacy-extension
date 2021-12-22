@@ -128,7 +128,7 @@ describe('First Party Fingerprint Randomization', () => {
     afterAll(async () => {
         await server.close()
         await server2.close()
-        await teardown(browser)
+        await teardown()
     })
 
     frameTests.forEach(iframeHost => {
