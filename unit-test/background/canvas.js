@@ -1,4 +1,4 @@
-import { modifyPixelData } from '../../shared/js/content-scope/canvas'
+import { modifyPixelData } from '../../shared/content-scope-scripts/src/canvas'
 
 function calculateCheckSum (imageData) {
     return imageData.data.reduce((t, v) => { return t + v }, 0)

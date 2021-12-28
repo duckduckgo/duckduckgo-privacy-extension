@@ -26,9 +26,6 @@ module.exports = function (grunt) {
             '<%= dirs.public.js %>/devtools-panel.js': ['<%= dirs.src.js %>/devtools/panel.es6.js'],
             '<%= dirs.public.js %>/list-editor.js': ['<%= dirs.src.js %>/devtools/list-editor.es6.js']
         },
-        contentScope: {
-            '<%= dirs.public.js %>/content-scope/*.js': ['<%= dirs.src.js %>/content-scope/*.js']
-        },
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
         },
@@ -68,7 +65,7 @@ module.exports = function (grunt) {
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
         autofillContentScript: ['<%= ddgAutofill %>/*.js'],
         autofillCSS: ['<%= ddgAutofill %>/*.css'],
-        contentScope: ['<%= dirs.src.js %>/content-scope/*.js', '<%= dirs.public.js %>/inject/*.js'],
+        contentScope: ['shared/content-scope-scripts/**/*.js'],
         data: ['<%= dirs.data %>/*.js']
     }
 
@@ -148,7 +145,13 @@ module.exports = function (grunt) {
                     },
                     transform: [
                         fileMapTransform,
-                        ['babelify'],
+                        ['babelify', {
+                            presets: [['@babel/preset-env', {
+                                exclude: [
+                                    'transform-regenerator'
+                                ]
+                            }]]
+                        }],
                         ['brfs']
                     ]
                 },
@@ -174,7 +177,7 @@ module.exports = function (grunt) {
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            copyContentScope: `node scripts/inject.mjs ${browser} > build/${browser}/${buildType}/public/js/inject.js`,
+            copyContentScope: `cd shared/content-scope-scripts/ && npm run build && cp build/${browser}/inject.js ../../build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,

@@ -1,4 +1,4 @@
-const Cookie = require('../../shared/js/content-scope/cookie')
+const Cookie = require('../../shared/content-scope-scripts/src/cookie')
 
 describe('Cookie', () => {
     describe('constructor', () => {
