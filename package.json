@@ -30,14 +30,14 @@
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },
     "devDependencies": {
-        "@babel/cli": "^7.16.0",
+        "@babel/cli": "^7.16.7",
         "@babel/core": "^7.16.5",
-        "@babel/node": "^7.16.5",
+        "@babel/node": "^7.16.7",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.16.5",
         "@fingerprintjs/fingerprintjs": "^3.3.2",
         "@rollup/plugin-commonjs": "^21.0.1",
-        "@rollup/plugin-node-resolve": "^13.1.1",
+        "@rollup/plugin-node-resolve": "^13.1.2",
         "@rollup/plugin-replace": "^3.0.0",
         "asana": "^0.18.6",
         "babelify": "10.0.0",
