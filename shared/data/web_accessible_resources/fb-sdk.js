@@ -1,4 +1,4 @@
-//facebook.net/sdk.js application/javascript
+// facebook.net/sdk.js application/javascript
 (() => {
     'use strict'
     const originalFBURL = document.currentScript.src
@@ -115,7 +115,7 @@
                     initData = obj
                     runInit = true
                     messageAddon({
-                        'appID': obj.appId
+                        appID: obj.appId
                     })
                 }
             },
@@ -124,19 +124,21 @@
                     const shareLink = 'https://www.facebook.com/sharer/sharer.php?u=' + obj.href
                     window.open(shareLink, 'share-facebook', 'width=550,height=235')
                 }
+                // eslint-disable-next-line node/no-callback-literal
                 cb({})
             },
             getAccessToken: function () {},
             getAuthResponse: function () {
-                return {status: ''}
+                return { status: '' }
             },
-            getLoginStatus: function (callback) { callback({status: ''}) },
+            // eslint-disable-next-line node/no-callback-literal
+            getLoginStatus: function (callback) { callback({ status: '' }) },
             getUserID: function () {},
             login: function (cb, params) {
                 fbLogin.callback = cb
                 fbLogin.params = params
                 messageAddon({
-                    'action': 'login'
+                    action: 'login'
                 })
             },
             logout: function () {},

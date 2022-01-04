@@ -5,7 +5,7 @@ module.exports = {
         description: 'Testing full Tracker Radar list',
         active: false,
         atbExperiments: {
-            'm': {
+            m: {
                 description: 'Full list experiment group',
                 settings: {
                     experimentData: {
@@ -21,7 +21,7 @@ module.exports = {
         description: 'Testing 3rd party cookie blocking and 1st party cookie expiry',
         active: true,
         atbExperiments: {
-            'c': {
+            c: {
                 description: '3rd party experiment group',
                 settings: {
                     experimentData: {
