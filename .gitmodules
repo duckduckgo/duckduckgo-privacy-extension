@@ -6,4 +6,4 @@
 	url = https://github.com/duckduckgo/tracker-surrogates.git
 [submodule "shared/content-scope-scripts"]
 	path = shared/content-scope-scripts
-	url = https://github.com/jonathanKingston/content-scope-scripts
+	url = https://github.com/duckduckgo/content-scope-scripts
