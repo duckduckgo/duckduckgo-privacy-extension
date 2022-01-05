@@ -8,7 +8,8 @@
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
         "install-ci": "npm ci --ignore-scripts && npm rebuild puppeteer && npm run postinstall",
-        "postinstall": "git submodule update --init --recursive && cd shared/content-scope-scripts && npm install && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+        "postinstall": "git submodule update --init --recursive && export PATH='$PATH:$PWD/node_modules/chromedriver/bin'",
+        "install-content-scope": "cd shared/content-scope-scripts && npm install",
         "bundle-config": "node scripts/bundleConfig.mjs",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
@@ -21,10 +22,10 @@
         "test-int": "make dev browser=chrome type=dev && jasmine --config=integration-test/config.json",
         "test-int-x": "xvfb-run --server-args='-screen 0 1024x768x24' npm run test-int",
         "test-ci": "npm run lint && npm test && npm run test-int-x",
-        "dev-firefox": "make dev browser=firefox type=dev watch=1",
+        "dev-firefox": "npm run install-content-scope && make dev browser=firefox type=dev watch=1",
         "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/",
         "release-firefox": "make browser=firefox type=release",
-        "dev-chrome": "make dev browser=chrome type=dev watch=1",
+        "dev-chrome": "npm run install-content-scope && make dev browser=chrome type=dev watch=1",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },

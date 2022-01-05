@@ -92,6 +92,12 @@ module.exports = function (grunt) {
         })
     }
 
+    let contentScopeBuild = ''
+    // If we're watching the content scope files, regenerate them
+    if (grunt.option('watch')) {
+        contentScopeBuild = '&& npm run build'
+    }
+
     const ddgAutofill = 'node_modules/@duckduckgo/autofill/dist'
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -177,7 +183,7 @@ module.exports = function (grunt) {
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            copyContentScope: `cd shared/content-scope-scripts/ && npm run build && cp build/${browser}/inject.js ../../build/${browser}/${buildType}/public/js/inject.js`,
+            copyContentScope: `cd shared/content-scope-scripts/ ${contentScopeBuild} && cp build/${browser}/inject.js ../../build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
@@ -241,7 +247,9 @@ module.exports = function (grunt) {
     grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS'])
 
     const devTasks = ['build']
-    if (grunt.option('watch')) { devTasks.push('watch') }
+    if (grunt.option('watch')) {
+        devTasks.push('watch')
+    }
 
     grunt.registerTask('dev', 'Build and optionally watch files for development', devTasks)
     grunt.registerTask('test', 'Build and run tests', ['browserify:unitTest', 'karma'])
