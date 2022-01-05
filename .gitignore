@@ -13,4 +13,4 @@ build/firefox
 build/chrome
 build/test
 test/background.js
-shared/js/content-scope/sjcl.js
+shared/content-scope-scripts/

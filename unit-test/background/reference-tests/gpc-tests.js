@@ -5,11 +5,11 @@ const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const Site = require('../../../shared/js/background/classes/site.es6')
 const GPC = require('../../../shared/js/background/GPC.es6')
-const gpcContentScript = require('../../../shared/js/content-scope/gpc-protection')
+const gpcContentScript = require('../../../shared/content-scope-scripts/src/features/gpc')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const settings = require('../../../shared/js/background/settings.es6')
 
-const contentScriptUtils = require('../../../shared/js/content-scope/utils.js')
+const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
 
 const testSets = require('../../data/reference-tests/global-privacy-control/tests.json')
 const config = require('../../data/reference-tests/global-privacy-control/config_reference.json')

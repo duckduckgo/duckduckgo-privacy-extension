@@ -7,7 +7,7 @@ const Site = require('../../../shared/js/background/classes/site.es6')
 const utils = require('../../../shared/js/background/utils.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 
-const contentScriptUtils = require('../../../shared/js/content-scope/utils.js')
+const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
 
 const testSets = require('../../data/reference-tests/privacy-configuration/tests.json')
 const configs = {

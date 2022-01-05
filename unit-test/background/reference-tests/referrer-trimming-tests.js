@@ -6,7 +6,7 @@ const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const tabManager = require('../../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
-const jsReferrerProtection = require('../../../shared/js/content-scope/referrer-protection')
+const jsReferrerProtection = require('../../../shared/content-scope-scripts/src/features/referrer')
 
 const limitReferrerData = require('../../../shared/js/background/events/referrer-trimming')
 
