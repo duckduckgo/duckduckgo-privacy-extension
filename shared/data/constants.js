@@ -121,5 +121,8 @@ module.exports = {
         'SSL received a record that exceeded the maximum permissible length.': 11,
         'The certificate is not trusted because it is self-signed.': 12,
         downgrade_redirect_loop: 13
+    },
+    platform: {
+        name: 'extension'
     }
 }
