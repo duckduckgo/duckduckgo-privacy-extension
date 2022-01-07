@@ -278,17 +278,9 @@ Site.prototype = window.$.extend({},
                     this.setList('denylisted', this.tab.site.domain, false)
                     this.initAllowlisted(!this.isAllowlisted)
 
-                    // fire ept.on pixel if just turned privacy protection on,
-                    // fire ept.off pixel if just turned privacy protection off.
                     if (this.isAllowlisted && this.allowlistOptIn) {
-                    // If user reported broken site and opted to share data on site,
-                    // attach domain and path to ept.on pixel if they turn privacy protection back on.
-                        const siteUrl = this.tab.url.split('?')[0].split('#')[0]
                         this.set('allowlistOptIn', false)
-                        this.firePixel(['ept', 'on', { siteUrl: encodeURIComponent(siteUrl) }])
                         this.setList('allowlistOptIn', this.tab.site.domain, false)
-                    } else {
-                        this.firePixel(['ept', 'off'])
                     }
 
                     this.setList('allowlisted', this.tab.site.domain, this.isAllowlisted)

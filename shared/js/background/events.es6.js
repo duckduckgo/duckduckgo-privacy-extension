@@ -166,7 +166,6 @@ if (browserName === 'chrome') {
 
 const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
-const pixel = require('./pixel.es6')
 const https = require('./https.es6')
 
 const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
@@ -632,7 +631,7 @@ const onStartup = async () => {
     }
 }
 
-// Fire pixel on https upgrade failures to allow bad data to be removed from lists
+// Count https upgrade failures to allow bad data to be removed from lists
 browser.webRequest.onErrorOccurred.addListener(e => {
     if (!(e.type === 'main_frame')) return
 
@@ -650,11 +649,6 @@ browser.webRequest.onErrorOccurred.addListener(e => {
 
         if (errCode) {
             https.incrementUpgradeCount('failedUpgrades')
-            const url = new URL(e.url)
-            pixel.fire('ehd', {
-                url: `${encodeURIComponent(url.hostname)}`,
-                error: errCode
-            })
         }
     }
 }, { urls: ['<all_urls>'] })

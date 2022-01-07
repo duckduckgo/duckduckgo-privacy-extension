@@ -1,7 +1,7 @@
 require('../../helpers/mock-browser-api')
 
 const submitBreakageForm = require('../../../shared/js/ui/models/submit-breakage-form.es6')
-const pixel = require('../../../shared/js/background/pixel.es6')
+const submitBrokenSiteReport = require('../../../shared/js/background/broken-site-report')
 const loadPixel = require('../../../shared/js/background/load.es6')
 const testSets = require('../../data/reference-tests/broken-site-reporting/tests.json')
 
@@ -47,9 +47,9 @@ for (const setName of Object.keys(testSets)) {
                             }
                         }
                     },
-                    // normally pixel params are passed from popup to background script via messaging,
+                    // normally report params are passed from popup to background script via messaging,
                     // we are making a shortcut here
-                    firePixel: params => pixel.fire.apply(null, params),
+                    submitBrokenSiteReport: params => submitBrokenSiteReport.fire.apply(null, params),
                     set: () => {},
                     sendMessage: () => {}
                 }, test.category)
