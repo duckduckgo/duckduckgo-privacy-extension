@@ -1,6 +1,6 @@
 /**
  *
- * This is part of our tool for anonymous engagement metrics
+ * This is part of our tool for anonymous broken site reports
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
@@ -17,22 +17,15 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  * @param {...*} args - any number of extra data
  *
  */
-function fire () {
+export function fire () {
     if (!arguments.length) return
 
     let args = Array.prototype.slice.call(arguments)
-    const pixelName = args[0]
-
-    if (typeof pixelName !== 'string') return
-
-    // Only allow broken site reports
-    if (pixelName !== 'epbf') return
-
+    const pixelName = 'epbf'
     const url = getURL(pixelName)
 
     if (!url) return
 
-    args = args.slice(1)
     args = args.concat(getAdditionalParams())
     const paramString = concatParams(args)
 
@@ -45,7 +38,7 @@ function fire () {
  * Return URL for the pixel request
  *
  */
-function getURL (pixelName) {
+export function getURL (pixelName) {
     if (!pixelName) return
 
     const url = 'https://improving.duckduckgo.com/t/'
@@ -79,7 +72,7 @@ function getAdditionalParams () {
  * @param {array} args - data we need to append
  *
  */
-function concatParams (args) {
+export function concatParams (args) {
     args = args || []
 
     let paramString = ''
@@ -104,10 +97,4 @@ function concatParams (args) {
     resultString = `${paramString}?${randomNum}${objParamString}`
 
     return resultString
-}
-
-module.exports = {
-    fire: fire,
-    getURL: getURL,
-    concatParams: concatParams
 }

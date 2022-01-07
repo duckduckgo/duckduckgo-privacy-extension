@@ -1,7 +1,6 @@
 const settings = require('./settings.es6')
 const utils = require('./utils.es6')
 const BloomFilter = require('@duckduckgo/jsbloom').filter
-const pixel = require('./pixel.es6')
 const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./wrapper.es6')
@@ -257,7 +256,6 @@ class HTTPS {
             // clear the counts
             settings.updateSetting('totalUpgrades', 0)
             settings.updateSetting('failedUpgrades', 0)
-            pixel.fire('ehs', { total: upgrades, failures: failed })
         }
     }
 

@@ -101,8 +101,8 @@ BaseModel.prototype = $.extend({},
             return browserUIWrapper.sendMessage(messageType, options)
         },
 
-        firePixel (pixelData) {
-            return browserUIWrapper.sendMessage('firePixel', pixelData)
+        submitBrokenSiteReport (brokenSiteData) {
+            return browserUIWrapper.sendMessage('submitBrokenSiteReport', brokenSiteData)
         },
 
         /**

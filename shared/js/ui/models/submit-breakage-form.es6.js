@@ -7,7 +7,7 @@ module.exports = function (category) {
     // remove params and fragments from url to avoid including sensitive data
     const siteUrl = this.tab.url.split('?')[0].split('#')[0]
     const trackerObjects = this.tab.trackersBlocked
-    const pixelParams = ['epbf',
+    const brokenSiteParams = [
         { category: category },
         { siteUrl: encodeURIComponent(siteUrl) },
         { upgradedHttps: upgradedHttps.toString() },
@@ -25,8 +25,8 @@ module.exports = function (category) {
             }
         })
     }
-    pixelParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates })
-    this.firePixel(pixelParams)
+    brokenSiteParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates })
+    this.submitBrokenSiteReport(brokenSiteParams)
 
     // remember that user opted into sharing site breakage data
     // for this domain, so that we can attach domain when they

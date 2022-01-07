@@ -7,7 +7,7 @@ const trackerutils = require('./tracker-utils')
 const trackers = require('./trackers.es6')
 const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
-const pixel = require('./pixel.es6')
+const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
@@ -33,11 +33,8 @@ export function getBrowser () {
     return browserName
 }
 
-export function firePixel (fireArgs) {
-    if (fireArgs.constructor !== Array) {
-        fireArgs = [fireArgs]
-    }
-    return pixel.fire.apply(null, fireArgs)
+export function submitBrokenSiteReport (brokenSiteArgs) {
+    return brokenSiteReport.fire.apply(null, brokenSiteArgs)
 }
 
 export function getTab (tabId) {
