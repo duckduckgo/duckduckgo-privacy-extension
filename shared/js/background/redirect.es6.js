@@ -61,11 +61,10 @@ function handleRequest (requestData) {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             const newTab = tabManager.create(requestData)
 
-            // andrey: temporary disable this. it was letting redirect loops through on Tumblr
             // persist the last URL the tab was trying to upgrade to HTTPS
-            // if (thisTab && thisTab.httpsRedirects) {
-            //     newTab.httpsRedirects.persistMainFrameRedirect(thisTab.httpsRedirects.getMainFrameRedirect())
-            // }
+            if (thisTab && thisTab.httpsRedirects) {
+                newTab.httpsRedirects.persistMainFrameRedirect(thisTab.httpsRedirects.getMainFrameRedirect())
+            }
             thisTab = newTab
         }
 
