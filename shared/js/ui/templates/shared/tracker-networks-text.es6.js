@@ -17,7 +17,7 @@ module.exports = function (site, isMajorNetworksCount) {
 
 function trackersBlockedOrFound (site, trackersCount) {
     let msg = ''
-    if (site && (site.isAllowlisted || trackersCount === 0)) {
+    if (site && site.isAllowlisted) {
         msg = 'Found'
     } else {
         msg = 'Blocked'
