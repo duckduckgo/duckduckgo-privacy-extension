@@ -412,7 +412,8 @@ function getArgumentsObject (tabId, sender, documentUrl) {
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,
-        referrer
+        referrer,
+        platform: constants.platform
     }
 }
 
