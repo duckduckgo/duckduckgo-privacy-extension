@@ -18,9 +18,10 @@ module.exports = function (category) {
         const trackerDomains = trackerObjects[tracker].urls
         Object.keys(trackerDomains).forEach((domain) => {
             if (trackerDomains[domain].isBlocked) {
-                blockedTrackers.push(domain)
                 if (trackerDomains[domain].reason === 'matched rule - surrogate') {
                     surrogates.push(domain)
+                } else {
+                    blockedTrackers.push(domain)
                 }
             }
         })

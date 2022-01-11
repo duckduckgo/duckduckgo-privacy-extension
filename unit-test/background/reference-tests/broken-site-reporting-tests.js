@@ -64,7 +64,7 @@ for (const setName of Object.keys(testSets)) {
 
                 if (test.expectReportURLParams) {
                     test.expectReportURLParams.forEach(param => {
-                        expect(requestURLString).toContain(`${param.name}=${param.value}`)
+                        expect(requestURLString).toMatch(new RegExp(`[?&]${param.name}=${param.value}[&$]`))
                     })
                 }
             })
