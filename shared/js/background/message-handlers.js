@@ -62,6 +62,13 @@ export async function initClickToLoad (unused, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     const config = { ...tdsStorage.ClickToLoadConfig }
 
+    // Remove first-party entries.
+    const siteUrlSplit = tab.site.domain.split('.')
+    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
+    if (websiteOwner) {
+        delete config[websiteOwner]
+    }
+
     // Determine whether to show one time messages or simplified messages
     for (const [entity] of Object.entries(config)) {
         const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
