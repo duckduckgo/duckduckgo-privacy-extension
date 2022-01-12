@@ -39,7 +39,7 @@ jobs:
       - name: Commit config and version updates
         uses: stefanzweifel/git-auto-commit-action@8c3ed373fb7e451dbb9706bf99ad63124e33f614
         with:
-          branch: develop
+          branch: jkt/fix-missing-register-arg
           commit_message: "Prepare release ${{ github.event.inputs.version }}"
           tagging_message: ${{ github.event.inputs.version }}
 
