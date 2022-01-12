@@ -329,7 +329,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
     }
     if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options.documentUrl || req.documentUrl)
+        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options?.documentUrl || req.documentUrl)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
             return
