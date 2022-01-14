@@ -357,6 +357,21 @@
             this.dataElements = {}
             this.gatherDataElements()
             this.entity = entity
+            this.widgetID = Math.random()
+        }
+
+        dispatchEvent (eventTarget, eventName) {
+            eventTarget.dispatchEvent(
+                new CustomEvent(
+                    eventName, {
+                        detail: {
+                            entity: this.entity,
+                            replaceSettings: this.replaceSettings,
+                            widgetID: this.widgetID
+                        }
+                    }
+                )
+            )
         }
 
         // Collect and store data elements from original widget. Store default values
@@ -508,7 +523,7 @@
                     // notify surrogate to enable SDK and replace original element.
                     if (this.clickAction.type === 'allowFull') {
                         parent.replaceChild(originalElement, replacementElement)
-                        window.dispatchEvent(new CustomEvent(`ddg-ctp-${this.entity}-load-sdk`))
+                        this.dispatchEvent(window, 'ddg-ctp-load-sdk')
                         return
                     }
                     // Create a container for the new FB element
@@ -718,7 +733,13 @@
 
     function runLogin (entity) {
         enableSocialTracker(entity, true)
-        window.dispatchEvent(new CustomEvent(`ddg-ctp-${entity}-run-login`))
+        window.dispatchEvent(
+            new CustomEvent('ddg-ctp-run-login', {
+                detail: {
+                    entity
+                }
+            })
+        )
     }
 
     /*********************************************************
