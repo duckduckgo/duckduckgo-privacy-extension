@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1641835234145,
+    "version": 1642335495631,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -259,9 +259,10 @@
                             {
                                 "rule": "securepubads.g.doubleclick.net/tag/js/gpt.js",
                                 "domains": [
-                                    "wunderground.com"
+                                    "wunderground.com",
+                                    "youmath.it"
                                 ],
-                                "reason": "videos not loading"
+                                "reason": "videos not loading, adwall"
                             },
                             {
                                 "rule": "securepubads.g.doubleclick.net/gpt/pubads_impl_",
@@ -280,6 +281,17 @@
                                     "decathlon.co.uk"
                                 ],
                                 "reason": "checkout broken"
+                            }
+                        ]
+                    },
+                    "googlesyndication.com": {
+                        "rules": [
+                            {
+                                "rule": "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+                                "domains": [
+                                    "youmath.it"
+                                ],
+                                "reason": "adwall"
                             }
                         ]
                     },
