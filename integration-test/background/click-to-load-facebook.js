@@ -5,7 +5,7 @@ let browser
 let bgPage
 let teardown
 
-describe('Test Click To Load', () => {
+describe('Test Facebook Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
 
@@ -26,7 +26,7 @@ describe('Test Click To Load', () => {
         } catch (e) {}
     })
 
-    it('CTL: Should block FB requests by default', async () => {
+    it('CTL: Should block Facebook requests by default', async () => {
         const page = await browser.newPage()
 
         try {
@@ -52,7 +52,7 @@ describe('Test Click To Load', () => {
         } catch (e) {}
     })
 
-    xit('CTL: Should load facebook elements on click', async () => {
+    xit('CTL: Should load Facebook elements on click', async () => {
         const page = await browser.newPage()
 
         try {
