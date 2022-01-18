@@ -97,8 +97,16 @@
         window.open('about:blank', popupName, popupParams)
     }
 
-    window.addEventListener('ddg-ctp-Facebook-load-sdk', enableFacebookSDK)
-    window.addEventListener('ddg-ctp-Facebook-run-login', runFacebookLogin)
+    window.addEventListener('ddg-ctp-load-sdk', event => {
+        if (event.detail.entity === 'Facebook') {
+            enableFacebookSDK()
+        }
+    })
+    window.addEventListener('ddg-ctp-run-login', event => {
+        if (event.detail.entity === 'Facebook') {
+            runFacebookLogin()
+        }
+    })
 
     function init () {
         if (window.fbAsyncInit) {
