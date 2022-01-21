@@ -615,41 +615,48 @@
         replaceClickToLoadElements(extensionResponseData)
     }
 
-    /**
-     * Creates a safe element and replaces the original tracking element with it.
-     * @param {string} entity
-     *   The entity (e.g. company) associated with the tracking element.
-     * @param {Object} widgetData
-     *   A single entry from the CTP configuration file.
-     * @param {Element} originalElement
-     *   The tracking element on the page which we're replacing with a placeholder.
-     */
-    async function createReplacementWidget (entity, widgetData, originalElement) {
-        // Construct the widget based on data in the original element
-        const widget = new DuckWidget(widgetData, originalElement, entity)
-        const parent = originalElement.parentNode
+    function replaceTrackingElement (widget, trackingElement, placeholderElement) {
+        widget.dispatchEvent(trackingElement, 'ddg-ctp-tracking-element')
+        trackingElement.replaceWith(placeholderElement)
+        widget.dispatchEvent(placeholderElement, 'ddg-ctp-placeholder-element')
+    }
 
-        if (widgetData.replaceSettings.type === 'blank') {
-            const el = document.createElement('div')
-            parent.replaceChild(el, originalElement)
+    /**
+     * Creates a placeholder element for the given tracking element and replaces
+     * it on the page.
+     * @param {DuckWidget} widget
+     *   The CTP 'widget' associated with the tracking element.
+     * @param {Element} trackingElement
+     *   The tracking element on the page that should be replaced with a placeholder.
+     */
+    async function createPlaceholderElementAndReplace (widget, trackingElement) {
+        if (widget.replaceSettings.type === 'blank') {
+            replaceTrackingElement(widget, trackingElement, document.createElement('div'))
         }
-        if (widgetData.replaceSettings.type === 'loginButton') {
-            const icon = await sendMessage('getImage', widgetData.replaceSettings.icon)
+
+        if (widget.replaceSettings.type === 'loginButton') {
+            const icon = await sendMessage('getImage', widget.replaceSettings.icon)
             // Create a button to replace old element
-            const { button, container } = makeLoginButton(widgetData.replaceSettings.buttonText, widget.getMode(), widgetData.replaceSettings.popupTitleText, widgetData.replaceSettings.popupBodyText, icon, originalElement)
-            button.addEventListener('click', widget.clickFunction(originalElement, container))
-            parent.replaceChild(container, originalElement)
+            const { button, container } = makeLoginButton(
+                widget.replaceSettings.buttonText, widget.getMode(),
+                widget.replaceSettings.popupTitleText,
+                widget.replaceSettings.popupBodyText, icon, trackingElement
+            )
+            button.addEventListener('click', widget.clickFunction(trackingElement, container))
+            replaceTrackingElement(widget, trackingElement, container)
         }
-        if (widgetData.replaceSettings.type === 'dialog') {
-            const icon = await sendMessage('getImage', widgetData.replaceSettings.icon)
-            const button = makeButton(widgetData.replaceSettings.buttonText, widget.getMode())
-            const textButton = makeTextButton(widgetData.replaceSettings.buttonText, widget.getMode())
+
+        if (widget.replaceSettings.type === 'dialog') {
+            const icon = await sendMessage('getImage', widget.replaceSettings.icon)
+            const button = makeButton(widget.replaceSettings.buttonText, widget.getMode())
+            const textButton = makeTextButton(widget.replaceSettings.buttonText, widget.getMode())
             const { contentBlock, shadowRoot } = createContentBlock(
                 widget, button, textButton, icon
             )
-            button.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
-            textButton.addEventListener('click', widget.clickFunction(originalElement, contentBlock))
-            parent.replaceChild(contentBlock, originalElement)
+            button.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
+            textButton.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
+
+            replaceTrackingElement(widget, trackingElement, contentBlock)
 
             // Show an unblock link if parent element forces small height
             // which may hide video.
@@ -663,10 +670,11 @@
 
     function replaceClickToLoadElements (config) {
         for (const entity of Object.keys(config)) {
-            for (const widget of Object.values(config[entity].elementData)) {
-                const els = document.querySelectorAll(widget.selectors.join())
-                for (const el of els) {
-                    createReplacementWidget(entity, widget, el)
+            for (const widgetData of Object.values(config[entity].elementData)) {
+                const trackingElements = document.querySelectorAll(widgetData.selectors.join())
+                for (const trackingElement of trackingElements) {
+                    const widget = new DuckWidget(widgetData, trackingElement, entity)
+                    createPlaceholderElementAndReplace(widget, trackingElement)
                 }
             }
         }
