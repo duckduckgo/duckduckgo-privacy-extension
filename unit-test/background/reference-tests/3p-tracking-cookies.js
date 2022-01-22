@@ -15,12 +15,15 @@ const configReference = require('../../data/reference-tests/block-third-party-tr
 const blocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
 const testSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
 
+const jsdom = require('jsdom')
+const { JSDOM } = jsdom
+
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
 
-    describe(`Referrer Trimming tests / ${testSet.name} /`, () => {
+    describe(`Third party tracking cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
             spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
@@ -77,24 +80,23 @@ for (const setName of Object.keys(testSets)) {
 
                     const args = getArgumentsObject(1, { url: test.frameURL || test.siteURL, frameId: test.frameURL ? 1 : 0 }, test.frameURL || test.siteURL, 'abc123')
 
-                    let cookieJar = ''
+                    const cookieJar = new jsdom.CookieJar()
+                    const dom = new JSDOM(`<iframe src="${test.frameURL}"></iframe>`, {
+                        url: test.siteURL,
+                        cookieJar
+                    })
 
-                    const orgDocument = globalThis.document
-                    globalThis.document = {cookie:{}}
+                    // protection only works in an iframe
+                    const jsdomWindow = dom.window.frames[0].window
 
-                    const spyCookieSet = spyOnProperty(document, 'cookie', 'set').and.callFake(args => (cookieJar += args))
-                    const spyCookieGet = spyOnProperty(document, 'cookie', 'get').and.callFake(() => cookieJar)
+                    jsCookieProtection.init(args, jsdomWindow)
 
-                    jsCookieProtection.init(args)
-
-                    document.cookie = test.setDocumentCookie
-
-                    globalThis.document = orgDocument
+                    jsdomWindow.document.cookie = test.setDocumentCookie
 
                     if (test.expectDocumentCookieSet) {
-                        expect(cookieJar).toEqual(test.setDocumentCookie)
+                        expect(cookieJar.getCookieStringSync(test.frameURL)).toEqual(test.setDocumentCookie)
                     } else {
-                        expect(cookieJar).toEqual('')
+                        expect(cookieJar.getCookieStringSync(test.frameURL)).toEqual('')
                     }
                 })
             } else {
