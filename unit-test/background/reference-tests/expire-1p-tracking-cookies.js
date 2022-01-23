@@ -4,15 +4,16 @@ const tds = require('../../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
+const { handleRequest } = require('../../../shared/js/background/redirect.es6')
 const tabManager = require('../../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
 const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/tracking-cookies-1p')
 
-const configReference = require('../../data/reference-tests/expire-1p-tracking-cookies/config_reference.json')
-const blocklistReference = require('../../data/reference-tests/expire-1p-tracking-cookies/tracker_radar_reference.json')
-const testSets = require('../../data/reference-tests/expire-1p-tracking-cookies/tests.json')
+const configReference = require('../../data/reference-tests/expire-first-party-tracking-cookies/config_reference.json')
+const blocklistReference = require('../../data/reference-tests/expire-first-party-tracking-cookies/tracker_radar_reference.json')
+const testSets = require('../../data/reference-tests/expire-first-party-tracking-cookies/tests.json')
 
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
@@ -35,7 +36,7 @@ for (const setName of Object.keys(testSets)) {
                 return
             }
 
-            it(`${test.name}`, () => {
+            it(`${test.name}`, (done) => {
                 tabManager.delete(1)
                 tabManager.create({
                     tabId: 1,
@@ -45,25 +46,53 @@ for (const setName of Object.keys(testSets)) {
                 const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123')
 
                 const cookieJar = new jsdom.CookieJar()
-                const dom = new JSDOM({
+                const dom = new JSDOM('', {
                     url: test.siteURL,
                     cookieJar
                 })
 
                 const jsdomWindow = dom.window
 
-                jsCookieProtection.load(jsdomWindow)
-                jsCookieProtection.init(args, jsdomWindow)
+                // fake call stack to mock that provided script is a caller
+                jsdomWindow.Error = function () {
+                    this.stack = test.scriptURL + ':11:123'
+                }
 
+                jsCookieProtection.load({}, jsdomWindow)
+                jsCookieProtection.init(args)
+
+                spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, msg) => {
+                    if (tabId === 1) {
+                        jsCookieProtection.update(msg)
+                    }
+                })
+
+                handleRequest({
+                    tabId: 1,
+                    url: test.scriptURL,
+                    type: 'script'
+                })
+
+                const setDate = Date.now()
                 jsdomWindow.document.cookie = test.cookieString
 
-                console.warn(cookieJar.getCookieStringSync(test.siteURL))
+                // original cookie is set and then, async, expiration date is updated
+                // we want to wait for that update, so we also have to be async
+                setImmediate(() => {
+                    const outputCookies = cookieJar.getCookiesSync(test.siteURL)
 
-                // if (test.expectDocumentCookieSet) {
-                //     expect(cookieJar.getCookieStringSync(test.frameURL)).toEqual(test.setDocumentCookie)
-                // } else {
-                //     expect(cookieJar.getCookieStringSync(test.frameURL)).toEqual('')
-                // }
+                    if (test.expectCookieSet) {
+                        expect(outputCookies.length).toEqual(1)
+
+                        // extract expiry date in seconds from when cookie was set
+                        const diff = Math.floor((outputCookies[0].expiryDate().getTime() - setDate) / 1000)
+                        expect(diff).toBe(test.expectExpiryToBe)
+                    } else {
+                        expect(outputCookies.length).toEqual(0)
+                    }
+
+                    done()
+                })
             })
         })
     })
