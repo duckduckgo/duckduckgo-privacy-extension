@@ -74,7 +74,7 @@ for (const setName of Object.keys(testSets)) {
                 })
 
                 const setDate = Date.now()
-                jsdomWindow.document.cookie = test.cookieString
+                jsdomWindow.document.cookie = test.setDocumentCookie
 
                 // original cookie is set and then, async, expiration date is updated
                 // we want to wait for that update, so we also have to be async
@@ -83,10 +83,16 @@ for (const setName of Object.keys(testSets)) {
 
                     if (test.expectCookieSet) {
                         expect(outputCookies.length).toEqual(1)
+                        const cookie = outputCookies[0]
 
-                        // extract expiry date in seconds from when cookie was set
-                        const diff = Math.floor((outputCookies[0].expiryDate().getTime() - setDate) / 1000)
-                        expect(diff).toBe(test.expectExpiryToBe)
+                        if (test.expectExpiryToBe === -1) {
+                            expect(cookie.isPersistent()).toBe(false)
+                        } else {
+                            expect(cookie.isPersistent()).toBe(true)
+                            // extract expiry date in seconds from when cookie was set
+                            const diff = Math.floor((cookie.expiryDate().getTime() - setDate) / 1000)
+                            expect(diff).toBe(test.expectExpiryToBe)
+                        }
                     } else {
                         expect(outputCookies.length).toEqual(0)
                     }
