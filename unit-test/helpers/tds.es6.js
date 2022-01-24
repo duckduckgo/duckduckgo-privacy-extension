@@ -19,6 +19,9 @@ const stub = (arg) => {
         if (arg.tds) {
             tdsData.tds = arg.tds
         }
+        if (arg.ClickToLoadConfig) {
+            tdsData.ClickToLoadConfig = arg.ClickToLoadConfig
+        }
     }
 
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
