@@ -63,8 +63,12 @@ for (const setName of Object.keys(testSets)) {
                 }
 
                 if (test.expectReportURLParams) {
+                    const requestUrl = new URL(requestURLString)
+                    // we can't use searchParams because those are automatically decoded
+                    const searchItems = requestUrl.search.split('&')
+
                     test.expectReportURLParams.forEach(param => {
-                        expect(requestURLString).toContain(`${param.name}=${param.value}`)
+                        expect(searchItems).toContain(`${param.name}=${param.value}`)
                     })
                 }
             })
