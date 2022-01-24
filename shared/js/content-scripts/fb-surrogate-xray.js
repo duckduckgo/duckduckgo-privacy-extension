@@ -106,8 +106,16 @@
             siteInit = wrappedWindow.fbAsyncInit
             wrappedWindow.fbAsyncInit()
         }
-        window.addEventListener('ddg-ctp-Facebook-load-sdk', enableFacebookSDK)
-        window.addEventListener('ddg-ctp-Facebook-run-login', runFacebookLogin)
+        window.addEventListener('ddg-ctp-load-sdk', event => {
+            if (event.detail.entity === 'Facebook') {
+                enableFacebookSDK()
+            }
+        })
+        window.addEventListener('ddg-ctp-run-login', event => {
+            if (event.detail.entity === 'Facebook') {
+                runFacebookLogin()
+            }
+        })
     }
 
     if (!wrappedWindow.FB) {

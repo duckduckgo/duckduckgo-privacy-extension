@@ -30,7 +30,7 @@
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip"
     },
     "devDependencies": {
-        "@babel/cli": "^7.16.7",
+        "@babel/cli": "^7.16.8",
         "@babel/core": "^7.16.7",
         "@babel/node": "^7.16.7",
         "@babel/polyfill": "^7.10.4",
@@ -56,12 +56,12 @@
         "grunt-sass": "3.1.0",
         "jasmine": "4.0.1",
         "jasmine-core": "3.5.0",
-        "karma": "6.3.10",
+        "karma": "6.3.11",
         "karma-chrome-launcher": "3.1.0",
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
-        "node-fetch": "^3.1.0",
+        "node-fetch": "^3.1.1",
         "puppeteer": "13.0.1",
         "request": "^2.88.2",
         "sass": "^1.47.0",
