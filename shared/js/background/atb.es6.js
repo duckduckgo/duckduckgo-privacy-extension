@@ -29,7 +29,8 @@ const ATB = (() => {
             return matchPage.test(request.url)
         },
 
-        updateSetAtb: () => {
+        updateSetAtb: async () => {
+            await settings.ready()
             let atbSetting = settings.getSetting('atb')
             const setAtbSetting = settings.getSetting('set_atb')
 
@@ -52,6 +53,8 @@ const ATB = (() => {
 
                 if (res.data.updateVersion) {
                     settings.updateSetting('atb', res.data.updateVersion)
+                } else if (atbSetting === ATB_ERROR_COHORT) {
+                    settings.updateSetting('atb', res.data.version)
                 }
             })
         },
