@@ -62,7 +62,7 @@ function checkForLegacyKeys () {
 }
 
 async function buildSettingsFromLocalStorage () {
-    const results = browserWrapper.getFromStorage(['settings'])
+    const results = await browserWrapper.getFromStorage(['settings'])
     // copy over saved settings from storage
     if (!results) return
     settings = browserWrapper.mergeSavedSettings(settings, results)
