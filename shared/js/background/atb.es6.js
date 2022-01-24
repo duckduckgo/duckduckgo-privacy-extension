@@ -53,8 +53,6 @@ const ATB = (() => {
 
                 if (res.data.updateVersion) {
                     settings.updateSetting('atb', res.data.updateVersion)
-                } else if (atbSetting === ATB_ERROR_COHORT) {
-                    settings.updateSetting('atb', res.data.version)
                 }
             })
         },
