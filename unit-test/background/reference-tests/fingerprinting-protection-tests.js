@@ -11,6 +11,7 @@ const getArgumentsObject = require('../../../shared/js/background/helpers/argume
 const batteryProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-battery')
 const hardwareProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-hardware')
 const screenProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-screen-size')
+const tempStorageProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-temporary-storage')
 const { isFeatureBroken } = require('../../../shared/content-scope-scripts/src/utils')
 
 const configReference = require('../../data/reference-tests/fingerprinting-protections/config_reference.json')
@@ -63,6 +64,9 @@ for (const setName of Object.keys(testSets)) {
                 }
                 if (!isFeatureBroken(args, 'fingerprintingScreenSize')) {
                     screenProtection.init({}, dom.window)
+                }
+                if (!isFeatureBroken(args, 'fingerprintingTemporaryStorage')) {
+                    tempStorageProtection.init({}, dom.window)
                 }
 
                 // validate result
