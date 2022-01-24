@@ -173,7 +173,7 @@ describe('atb.updateSetAtb()', () => {
         })
     })
 
-    it('should be able to handle cases where atb is null', (done) => {
+    it('should be reset atb when null', (done) => {
         settingHelper.stub({ set_atb: 'v112-1' })
         const loadJSONSpy = stubLoadJSON({ returnedAtb: 'v112-2' })
 
@@ -182,7 +182,7 @@ describe('atb.updateSetAtb()', () => {
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/set_atb=v112-1/))
             expect(loadJSONSpy).toHaveBeenCalledWith(jasmine.stringMatching(/e=1/))
 
-            expect(settings.getSetting('atb')).toEqual('v1-1')
+            expect(settings.getSetting('atb')).toEqual('v112-2')
             expect(settings.getSetting('set_atb')).toEqual('v112-2')
 
             done()
