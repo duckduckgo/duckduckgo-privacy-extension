@@ -6,7 +6,7 @@
             "strict_min_version": "65.0"
         }
     },
-    "version": "2022.1.17",
+    "version": "2022.01.24",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
