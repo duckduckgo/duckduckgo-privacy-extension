@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1642335495631,
+    "version": 1643197961938,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -281,6 +281,24 @@
                                     "decathlon.co.uk"
                                 ],
                                 "reason": "checkout broken"
+                            }
+                        ]
+                    },
+                    "evidon.com": {
+                        "rules": [
+                            {
+                                "rule": "c.evidon.com/geo/country.js",
+                                "domains": [
+                                    "crunchyroll.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
+                                "rule": "evidon.com/sitenotice/",
+                                "domains": [
+                                    "crunchyroll.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
