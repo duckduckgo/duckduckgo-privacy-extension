@@ -12,6 +12,8 @@
  * @param {LoggedRequestDetails[]} requests
  *   Array of request details, appended to as requests happen.
  *   Note: The requests array is mutated by this function.
+ * @returns {function}
+ *   Function that clears logged requests (and in progress requests).
  */
 function logPageRequests (page, requests) {
     const requestDetailsByRequestId = new Map()
@@ -64,6 +66,11 @@ function logPageRequests (page, requests) {
         }
         requests.push(details)
     })
+
+    return () => {
+        requests.length = 0
+        requestDetailsByRequestId.clear()
+    }
 }
 
 module.exports = {

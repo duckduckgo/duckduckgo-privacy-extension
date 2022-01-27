@@ -1,6 +1,7 @@
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
 const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
+const backgroundWait = require('../helpers/backgroundWait')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
 const testConfig = {
@@ -125,21 +126,7 @@ function summariseYouTubeRequests (requests) {
 describe('Test YouTube Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // Wait for the extension to load its configuration files.
-        await bgPage.waitForFunction(
-            () => (
-                window.dbg &&
-                window.dbg.tds &&
-                !window.dbg.tds.isInstalling &&
-                window.dbg.tds.ClickToLoadConfig &&
-                window.dbg.tds.tds.trackers &&
-                window.dbg.tds.tds &&
-                window.dbg.tds.tds.domains &&
-                window.dbg.tds.tds.domains['youtube.com'] === 'Google LLC'
-            ),
-            { polling: 10 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
 
         // Overwrite the parts of the configuration needed for our tests.
         await loadTestConfig(bgPage, testConfig)
@@ -158,12 +145,12 @@ describe('Test YouTube Click To Load', () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []
-        logPageRequests(page, pageRequests)
+        const clearRequests = logPageRequests(page, pageRequests)
 
         // Initially there should be a bunch of requests. The iframe_api should
         // be redirected to our surrogate but otherwise YouTube requests should
         // be blocked.
-        await page.goto(testSite, { waitUntil: 'networkidle2' })
+        await page.goto(testSite, { waitUntil: 'networkidle0' })
         {
             const {
                 youTubeIframeApi, youTubeStandard, youTubeNocookie
@@ -180,7 +167,7 @@ describe('Test YouTube Click To Load', () => {
 
         // Once the user clicks to load a video, the iframe_api should be loaded
         // and the video should be unblocked.
-        pageRequests.length = 0
+        clearRequests()
         const button = await page.evaluateHandle(
             'document.querySelector("div:nth-child(2) > div")' +
             '.shadowRoot.querySelector("button")'
@@ -200,8 +187,8 @@ describe('Test YouTube Click To Load', () => {
         }
 
         // When the page is reloaded, requests should be blocked again.
-        pageRequests.length = 0
-        await page.reload({ waitUntil: 'networkidle2' })
+        clearRequests()
+        await page.reload({ waitUntil: 'networkidle0' })
         {
             const {
                 youTubeIframeApi, youTubeStandard, youTubeNocookie
@@ -217,7 +204,7 @@ describe('Test YouTube Click To Load', () => {
         }
 
         // The header button should also unblock YouTube.
-        pageRequests.length = 0
+        clearRequests()
         const headerButton = await page.evaluateHandle(
             'document.querySelector("#short-container > div")' +
             '.shadowRoot.querySelector("#DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton")'
@@ -241,7 +228,7 @@ describe('Test YouTube Click To Load', () => {
 
     it('CTL: YouTube interacting with iframe API', async () => {
         const page = await browser.newPage()
-        await page.goto(testSite, { waitUntil: 'networkidle2' })
+        await page.goto(testSite, { waitUntil: 'networkidle0' })
 
         // Test the Iframe API controls and events function correctly, even when
         // used with an existing video.
