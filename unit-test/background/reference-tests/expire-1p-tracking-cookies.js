@@ -33,6 +33,7 @@ for (const setName of Object.keys(testSets)) {
         })
 
         afterEach(() => {
+            // eslint-disable-next-line no-global-assign
             globalThis = orgGlobalThis
         })
 
