@@ -22,6 +22,7 @@ const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
+const orgGlobalThis = globalThis
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
@@ -32,6 +33,11 @@ for (const setName of Object.keys(testSets)) {
             tdsStorageStub.stub({ config: configReference })
 
             return tdsStorage.getLists().then(lists => tds.setLists(lists))
+        })
+
+        afterEach(() => {
+            // eslint-disable-next-line no-global-assign
+            globalThis = orgGlobalThis
         })
 
         testSet.tests.forEach(test => {
@@ -55,18 +61,21 @@ for (const setName of Object.keys(testSets)) {
                 // mock non-standard APIs not implemented by jsdom
                 apiMocksInit(dom.window)
 
+                // eslint-disable-next-line no-global-assign
+                globalThis = dom.window
+
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {
-                    batteryProtection.init({}, dom.window)
+                    batteryProtection.init()
                 }
                 if (!isFeatureBroken(args, 'fingerprintingHardware')) {
-                    hardwareProtection.init({}, dom.window)
+                    hardwareProtection.init()
                 }
                 if (!isFeatureBroken(args, 'fingerprintingScreenSize')) {
-                    screenProtection.init({}, dom.window)
+                    screenProtection.init()
                 }
                 if (!isFeatureBroken(args, 'fingerprintingTemporaryStorage')) {
-                    tempStorageProtection.init({}, dom.window)
+                    tempStorageProtection.init()
                 }
 
                 // validate result
