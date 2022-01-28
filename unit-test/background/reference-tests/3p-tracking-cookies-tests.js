@@ -19,6 +19,7 @@ const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
+const orgGlobalThis = globalThis
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
@@ -29,6 +30,11 @@ for (const setName of Object.keys(testSets)) {
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
             return tdsStorage.getLists().then(lists => tds.setLists(lists))
+        })
+
+        afterEach(() => {
+            // eslint-disable-next-line no-global-assign
+            globalThis = orgGlobalThis
         })
 
         testSet.tests.forEach(test => {
@@ -88,7 +94,6 @@ for (const setName of Object.keys(testSets)) {
 
                     // protection only works in an iframe
                     const jsdomWindow = dom.window.frames[0].window
-                    const orgGlobalThis = globalThis
 
                     // eslint-disable-next-line no-global-assign
                     globalThis = jsdomWindow
@@ -96,10 +101,6 @@ for (const setName of Object.keys(testSets)) {
                     jsCookieProtection.init(args)
 
                     jsdomWindow.document.cookie = test.setDocumentCookie
-
-                    // clean up
-                    // eslint-disable-next-line no-global-assign
-                    globalThis = orgGlobalThis
 
                     if (test.expectDocumentCookieSet) {
                         expect(cookieJar.getCookieStringSync(test.frameURL)).toEqual(test.setDocumentCookie)
