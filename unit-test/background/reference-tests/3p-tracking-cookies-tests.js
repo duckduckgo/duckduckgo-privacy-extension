@@ -88,10 +88,18 @@ for (const setName of Object.keys(testSets)) {
 
                     // protection only works in an iframe
                     const jsdomWindow = dom.window.frames[0].window
+                    const orgGlobalThis = globalThis
 
-                    jsCookieProtection.init(args, jsdomWindow)
+                    // eslint-disable-next-line no-global-assign
+                    globalThis = jsdomWindow
+
+                    jsCookieProtection.init(args)
 
                     jsdomWindow.document.cookie = test.setDocumentCookie
+
+                    // clean up
+                    // eslint-disable-next-line no-global-assign
+                    globalThis = orgGlobalThis
 
                     if (test.expectDocumentCookieSet) {
                         expect(cookieJar.getCookieStringSync(test.frameURL)).toEqual(test.setDocumentCookie)
