@@ -19,6 +19,7 @@ const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
+const orgGlobalThis = globalThis
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
@@ -29,6 +30,10 @@ for (const setName of Object.keys(testSets)) {
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
             return tdsStorage.getLists().then(lists => tds.setLists(lists))
+        })
+
+        afterEach(() => {
+            globalThis = orgGlobalThis
         })
 
         testSet.tests.forEach(test => {
@@ -58,7 +63,10 @@ for (const setName of Object.keys(testSets)) {
                     this.stack = test.scriptURL + ':11:123'
                 }
 
-                jsCookieProtection.load({}, jsdomWindow)
+                // eslint-disable-next-line no-global-assign
+                globalThis = jsdomWindow
+
+                jsCookieProtection.load({})
                 jsCookieProtection.init(args)
 
                 spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, msg) => {
