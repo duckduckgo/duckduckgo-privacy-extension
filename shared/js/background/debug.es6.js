@@ -8,6 +8,7 @@ const load = require('./load.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
+const messageHandlers = require('./message-handlers')
 
 window.dbg = {
     settings,
@@ -22,3 +23,4 @@ window.dbg = {
 // metrics from being thrown off
 load.setDevMode()
 atb.setDevMode()
+messageHandlers._setDevMode()
