@@ -6,7 +6,6 @@
  */
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
-const tldts = require('tldts')
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const trackerutils = require('./tracker-utils')
@@ -20,6 +19,8 @@ const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
+const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
+const getArgumentsObject = require('./helpers/arguments-object')
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -198,49 +199,20 @@ browser.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb()
         }
 
-        let responseHeaders = request.responseHeaders
+        const responseHeaders = request.responseHeaders
 
         if (isFlocEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
             // there can be multiple permissions-policy headers, so we are good always appending one
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
 
-        const tab = tabManager.get({ tabId: request.tabId })
-        if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
-            if (!trackerutils.isTracker(request.url)) {
-                return { responseHeaders }
-            }
-
-            // Strip 3rd party response header
-            if (!request.responseHeaders) return { responseHeaders }
-            if (!tab) {
-                const initiator = request.initiator || request.documentUrl
-                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
-                    return { responseHeaders }
-                }
-            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
-                return { responseHeaders }
-            }
-            if (!utils.isCookieExcluded(request.url)) {
-                responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
-                devtools.postMessage(request.tabId, 'cookie', {
-                    action: 'block',
-                    kind: 'set-cookie',
-                    url: request.url,
-                    siteUrl: tab?.site?.url,
-                    requestId: request.requestId,
-                    type: request.type
-                })
-            }
-        }
-
         return { responseHeaders }
     },
-    {
-        urls: ['<all_urls>']
-    },
+    { urls: ['<all_urls>'] },
     extraInfoSpec
 )
+
+browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec)
 
 /**
  * Web Navigation
@@ -329,7 +301,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
     }
     if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
-        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options?.documentUrl || req.documentUrl)
+        const argumentsObject = getArgumentsObject(sender.tab.id, sender, req.options?.documentUrl || req.documentUrl, sessionKey)
         if (!argumentsObject) {
             // No info for the tab available, do nothing.
             return
@@ -362,61 +334,6 @@ browser.runtime.onMessage.addListener((req, sender) => {
 // TODO fix for manifest v3
 let sessionKey = getHash()
 
-function getArgumentsObject (tabId, sender, documentUrl) {
-    const tab = tabManager.get({ tabId })
-    if (!tab) {
-        return null
-    }
-    // Clone site so we don't retain any site changes
-    const site = Object.assign({}, tab.site || {})
-    const referrer = tab?.referrer || ''
-
-    const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies1p').firstPartyTrackerCookiePolicy || {
-        threshold: 864000, // 10 days
-        maxAge: 864000 // 10 days
-    }
-    const cookie = {
-        isThirdParty: false,
-        shouldBlock: false,
-        tabRegisteredDomain: null,
-        isTrackerFrame: false,
-        policy: firstPartyCookiePolicy
-    }
-    // Special case for iframes that are blank we check if it's also enabled
-    if (sender.url === 'about:blank') {
-        const aboutBlankEnabled = utils.getEnabledFeaturesAboutBlank(tab.url)
-        site.enabledFeatures = site.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
-    }
-
-    // Extra contextual data required for 1p and 3p cookie protection - only send if at least one is enabled here
-    if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
-        // determine the register domain of the sending tab
-        const parsed = tldts.parse(tab.url)
-        cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
-
-        if (trackerutils.hasTrackerListLoaded()) {
-            if (documentUrl &&
-                trackerutils.isTracker(documentUrl) &&
-                sender.frameId !== 0) {
-                cookie.isTrackerFrame = true
-            }
-            cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
-        }
-
-        cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
-    }
-    return {
-        debug: devtools.isActive(tabId),
-        cookie,
-        globalPrivacyControlValue: settings.getSetting('GPC'),
-        stringExemptionLists: utils.getBrokenScriptLists(),
-        sessionKey,
-        site,
-        referrer,
-        platform: constants.platform
-    }
-}
-
 /*
  * Referrer Trimming
  */
@@ -447,37 +364,9 @@ browser.webRequest.onBeforeSendHeaders.addListener(
         const GPCHeader = GPC.getHeader()
         const GPCEnabled = tab && tab.site.isFeatureEnabled('gpc')
 
-        let requestHeaders = request.requestHeaders
+        const requestHeaders = request.requestHeaders
         if (GPCHeader && GPCEnabled) {
             requestHeaders.push(GPCHeader)
-        }
-
-        if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
-            if (!trackerutils.isTracker(request.url)) {
-                return { requestHeaders }
-            }
-
-            // Strip 3rd party response header
-            if (!requestHeaders) return { requestHeaders }
-            if (!tab) {
-                const initiator = request.initiator || request.documentUrl
-                if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
-                    return { requestHeaders }
-                }
-            } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
-                return { requestHeaders }
-            }
-            if (!utils.isCookieExcluded(request.url)) {
-                requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
-                devtools.postMessage(request.tabId, 'cookie', {
-                    action: 'block',
-                    kind: 'cookie',
-                    url: request.url,
-                    siteUrl: tab?.site?.url,
-                    requestId: request.requestId,
-                    type: request.type
-                })
-            }
         }
 
         return { requestHeaders }
@@ -485,6 +374,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(
     { urls: ['<all_urls>'] },
     extraInfoSpecSendHeaders
 )
+
+browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
 
 /**
  * Click to Load
