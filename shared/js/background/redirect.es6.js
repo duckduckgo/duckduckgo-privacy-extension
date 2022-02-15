@@ -11,6 +11,10 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const trackerAllowlist = require('./allowlisted-trackers.es6')
+const {
+    stripTrackingParameters,
+    trackingParametersStrippingEnabled
+} = require('./url-parameters.es6')
 
 const debugRequest = false
 
@@ -68,9 +72,39 @@ function handleRequest (requestData) {
             thisTab = newTab
         }
 
+        const mainFrameRequestURL = new URL(requestData.url)
+
+        // Tracking parameter stripping.
+
+        thisTab.urlParametersRemoved = (
+            // Tracking parameters were stripped previously, this is the request
+            // event that fired after the redirection to strip the parameters.
+            thisTab.urlParametersRemovedUrl &&
+            thisTab.urlParametersRemovedUrl === requestData.url
+        ) || (
+            // Strip tracking parameters if 1. there are any and 2. the feature
+            // is enabled for both the request URL and the initiator URL.
+            trackingParametersStrippingEnabled(
+                thisTab.site, requestData.initiatorUrl
+            ) && stripTrackingParameters(mainFrameRequestURL)
+        )
+
+        // To strip tracking parameters, the request is redirected and this event
+        // listener fires again for the redirected request. Take note of the URL
+        // before redirecting the request, so that  the `urlParametersRemoved`
+        // breakage flag persists after the redirection.
+        if (thisTab.urlParametersRemoved && !thisTab.urlParametersRemovedUrl) {
+            thisTab.urlParametersRemovedUrl = mainFrameRequestURL.href
+        } else {
+            thisTab.urlParametersRemovedUrl = null
+        }
+
         // add atb params only to main_frame
-        const ddgAtbRewrite = ATB.redirectURL(requestData)
-        if (ddgAtbRewrite) return ddgAtbRewrite
+        const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
+
+        if (thisTab.urlParametersRemoved || atbParametersAdded) {
+            return { redirectUrl: mainFrameRequestURL.href }
+        }
     } else {
         /**
          * Check that we have a valid tab
