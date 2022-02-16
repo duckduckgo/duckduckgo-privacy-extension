@@ -129,6 +129,30 @@ describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1)
         })
     })
+
+    describe('atb storage', () => {
+        beforeEach(async () => {
+            ({ browser, bgPage, requests, teardown } = await harness.setup())
+            await backgroundWait.forSetting(bgPage, 'extiSent')
+        })
+
+        afterEach(async () => {
+            try {
+                await teardown()
+            } catch (e) {}
+        })
+
+        it('should retreive stored ATB value on reload', async () => {
+            // set an ATB value from the past
+            const pastATBValue = 'v123-1'
+            await bgPage.evaluate((pastATBValue) => dbg.settings.updateSetting('atb', pastATBValue), pastATBValue)
+            // reload background
+            await bgPage.evaluate(() => window.location.reload())
+            await backgroundWait.forSetting(bgPage, 'extiSent')
+            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+            expect(atb).toEqual(pastATBValue)
+        })
+    })
 })
 
 describe('search workflow', () => {
