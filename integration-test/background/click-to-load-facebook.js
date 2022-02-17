@@ -1,7 +1,9 @@
 const { getDomain } = require('tldts')
+
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
 const backgroundWait = require('../helpers/backgroundWait')
+const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net'])
@@ -125,6 +127,42 @@ describe('Test Facebook Click To Load', () => {
             expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
         }
+
+        page.close()
+    })
+})
+
+describe('Facebook SDK schema', () => {
+    beforeAll(async () => {
+        ({ browser, bgPage, teardown } = await harness.setup({ loadExtension: false }))
+    })
+
+    afterAll(async () => {
+        try {
+            await teardown()
+        } catch (e) {}
+    })
+
+    it('CTL: Facebook SDK schema hasn\'t changed', async () => {
+        const page = await browser.newPage()
+        await page.goto(testSite, { waitUntil: 'networkidle2' })
+
+        // Note: If these tests fail, update the
+        //       /integration-test/data/api_schemas/facebook-sdk.json file
+        //       to match
+        //       /integration-test/artifacts/api_schemas/facebook-sdk.json
+        //       and make any corresponding changes required to the surrogate
+        //       scripts /shared/data/web_accessible_resources/facebook-sdk.js
+        //       and /shared/js/content-scripts/fb-surrogate-xray.js.
+        //       If no changes to the surrogate scripts are required, please
+        //       explain why to the reviewer!
+        //
+        //  See also https://developers.facebook.com/docs/graph-api/changelog
+
+        const { actualSchema, expectedSchema } = await setupAPISchemaTest(
+            page, 'facebook-sdk.json', ['FB']
+        )
+        expect(actualSchema).toEqual(expectedSchema)
 
         page.close()
     })
