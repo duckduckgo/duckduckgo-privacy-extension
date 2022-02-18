@@ -1,3 +1,6 @@
+const fs = require('fs')
+const path = require('path')
+
 function parsePath (path) {
     const pathParts = []
 
@@ -26,7 +29,8 @@ function parsePath (path) {
     }
 
     // Find the target Object from that path.
-    let currentObject = window
+    // eslint-disable-next-line no-eval
+    let currentObject = eval(pathParts.shift())
     for (const path of pathParts) {
         currentObject = currentObject[path]
     }
@@ -41,18 +45,24 @@ function parsePath (path) {
  *       unloadTestConfig() is called after your tests are done.
  * @param {Page} bgPage
  *   The extension's background page.
- * @param {Object} testConfig
- *   Your test configuration.
+ * @param {string} testConfigFilename
+ *   The file name of your JSON test configuration, in the
+ *   /integration-test/data/configs/ directory.
  *    - the keys are a string containing the configuration's "path", for example
- *      "dbg.tds.tds.trackers.duckduckgo\\.com".
+ *      "window.dbg.tds.tds.trackers.duckduckgo\\.com".
  *    - the values should be your test configuration to set for that path, for
  *      the above example an Object containing the tracker entry.
  *   Note:
  *    - Paths containing '.' can  be escaped with a backslash.
- *    - Don't include the 'window.' prefix in paths.
+ *    - Make sure to include the 'window.' (or similar global Object) prefix.
  *    - There's no need to escape whitespace in paths.
  */
-async function loadTestConfig (bgPage, testConfig) {
+async function loadTestConfig (bgPage, testConfigFilename) {
+    const filePath = path.resolve(
+        __dirname, '..', 'data', 'configs', testConfigFilename
+    )
+    const testConfig = JSON.parse(fs.readFileSync(filePath).toString())
+
     await bgPage.evaluate((testConfig, parsePathString) => {
         window.configBackup = window.configBackup || {}
         // eslint-disable-next-line no-eval

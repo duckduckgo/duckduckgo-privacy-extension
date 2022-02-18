@@ -2,6 +2,7 @@ const { getDomain } = require('tldts')
 
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
+const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
@@ -52,9 +53,15 @@ describe('Test Facebook Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
+
+        // Overwrite the parts of the configuration needed for our tests.
+        await loadTestConfig(bgPage, 'click-to-load-facebook.json')
     })
 
     afterAll(async () => {
+        // Restore the original configuration.
+        await unloadTestConfig(bgPage)
+
         try {
             await teardown()
         } catch (e) {}

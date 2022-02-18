@@ -5,76 +5,6 @@ const backgroundWait = require('../helpers/backgroundWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
-const testConfig = {
-    'dbg.tds.tds.trackers.youtube\\.com': {
-        owner: {
-            name: 'Google LLC',
-            displayName: 'YouTube',
-            privacyPolicy: 'https://policies.google.com/privacy?hl=en',
-            url: 'http://google.com'
-        },
-        default: 'ignore'
-    },
-    'dbg.tds.tds.trackers.youtube-nocookie\\.com': {
-        owner: {
-            name: 'Google LLC',
-            displayName: 'YouTube',
-            privacyPolicy: 'https://policies.google.com/privacy?hl=en',
-            url: 'http://google.com'
-        },
-        default: 'ignore'
-    },
-    'dbg.tds.ClickToLoadConfig.Google LLC': {
-        domains: [
-            'youtube.com',
-            'youtube-nocookie.com'
-        ],
-        excludedSubdomains: [],
-        excludedDomains: [{
-            domain: 'duckduckgo.com',
-            reason: 'Existing privacy protections for YouTube videos'
-        }],
-        elementData: {
-            'YouTube embedded video': {
-                selectors: [
-                    'iframe[src*=\'://youtube.com/embed\']',
-                    'iframe[src*=\'://youtube-nocookie.com/embed\']',
-                    'iframe[src*=\'://www.youtube.com/embed\']',
-                    'iframe[src*=\'://www.youtube-nocookie.com/embed\']'
-                ],
-                replaceSettings: {
-                    type: 'youtube-video',
-                    buttonText: 'Unblock Video',
-                    infoTitle: 'DuckDuckGo blocked this YouTube Video',
-                    infoText: 'We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.',
-                    simpleInfoText: 'We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.'
-                },
-                clickAction: {
-                    type: 'youtube-video'
-                }
-            },
-            'YouTube embedded subscription button': {
-                selectors: [
-                    'iframe[src*=\'://youtube.com/subscribe_embed\']',
-                    'iframe[src*=\'://youtube-nocookie.com/subscribe_embed\']',
-                    'iframe[src*=\'://www.youtube.com/subscribe_embed\']',
-                    'iframe[src*=\'://www.youtube-nocookie.com/subscribe_embed\']'
-                ],
-                replaceSettings: {
-                    type: 'blank'
-                }
-            }
-        },
-        informationalModal: {},
-        surrogates: [
-            {
-                rule: '(www.)?youtube(-nocookie)?.com/iframe_api',
-                surrogate: 'youtube-iframe-api.js'
-            }
-        ]
-    }
-}
-
 const youTubeStandardDomains = new Set(['youtu.be', 'youtube.com', 'www.youtube.com'])
 const youTubeNocookieDomains = new Set(['youtube-nocookie.com', 'www.youtube-nocookie.com'])
 
@@ -130,12 +60,12 @@ describe('Test YouTube Click To Load', () => {
         await backgroundWait.forAllConfiguration(bgPage)
 
         // Overwrite the parts of the configuration needed for our tests.
-        await loadTestConfig(bgPage, testConfig)
+        await loadTestConfig(bgPage, 'click-to-load-youtube.json')
     })
 
     afterAll(async () => {
         // Restore the original configuration.
-        await unloadTestConfig(bgPage, testConfig)
+        await unloadTestConfig(bgPage)
 
         try {
             await teardown()
