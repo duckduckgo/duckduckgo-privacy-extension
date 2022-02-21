@@ -163,10 +163,10 @@ function handleRequest (requestData) {
             // just default to true.
             const sameDomain = isSameDomainRequest(thisTab, requestData)
 
-            // only count trackers on pages with 200 response. Trackers on these sites are still
+            // Trackers on these sites are still
             // blocked below but not counted on the popup. We can also run into a case where
             // we block a tracker faster then we can update the tab so we check sameDomain.
-            if (thisTab.statusCode === 200 && sameDomain) {
+            if (sameDomain) {
                 // record all tracker urls on a site even if we don't block them
                 thisTab.site.addTracker(tracker)
 
@@ -179,10 +179,8 @@ function handleRequest (requestData) {
             browserWrapper.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
             if (blockingEnabled && tracker.action.match(/block|redirect/)) {
-                if (thisTab.statusCode === 200) {
-                    Companies.add(tracker.tracker.owner)
-                    if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
-                }
+                Companies.add(tracker.tracker.owner)
+                if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // for debugging specific requests. see test/tests/debugSite.js
                 if (debugRequest && debugRequest.length) {
