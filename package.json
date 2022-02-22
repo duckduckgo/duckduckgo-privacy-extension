@@ -32,7 +32,7 @@
     "devDependencies": {
         "@babel/cli": "^7.16.8",
         "@babel/core": "^7.16.7",
-        "@babel/node": "^7.16.7",
+        "@babel/node": "^7.16.8",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.16.11",
         "@fingerprintjs/fingerprintjs": "^3.3.2",
@@ -87,7 +87,7 @@
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.58",
+        "tldts": "^5.7.65",
         "underscore": "1.13.2",
         "web-ext": "^6.6.0"
     },
