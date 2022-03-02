@@ -287,6 +287,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
     // TODO clean up message passing
     const legacyMessageTypes = [
         'addUserData',
+        'getUserData',
         'getAddresses',
         'refreshAlias'
     ]
