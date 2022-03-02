@@ -19,7 +19,10 @@ const setup = async (ops) => {
     const dataDir = fs.mkdtempSync(tmpDirPrefix)
     const puppeteerOps = {
         args: [
-            `--user-data-dir=${dataDir}`
+            `--user-data-dir=${dataDir}`,
+            // Make rendering more consistent for screenshot tests.
+            '--font-render-hinting=none',
+            '--disable-gpu'
         ],
         headless: false
     }
