@@ -85,7 +85,7 @@ describe('Test Facebook Click To Load', () => {
 
             expect(facebookSDKRedirect.checked).toBeTrue()
             expect(facebookSDKRedirect.alwaysRedirected).toBeTrue()
-            expect(requestCount).toBeGreaterThan(5)
+            expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
         }
@@ -112,7 +112,7 @@ describe('Test Facebook Click To Load', () => {
 
             expect(facebookSDKRedirect.checked).toBeTrue()
             expect(facebookSDKRedirect.alwaysRedirected).toBeFalse()
-            expect(requestCount).toBeGreaterThan(5)
+            expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(0)
             expect(allowCount).toEqual(requestCount)
         }
@@ -130,7 +130,7 @@ describe('Test Facebook Click To Load', () => {
             // FIXME - It seems that requests to the SDK are not reliably
             //         redirected after the page is reloaded.
             // expect(facebookSDKRedirect.alwaysRedirected).toBeTrue()
-            expect(requestCount).toBeGreaterThan(5)
+            expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
         }
