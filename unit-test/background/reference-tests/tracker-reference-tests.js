@@ -28,6 +28,10 @@ describe('Tracker reference tests:', () => {
     const tests = domainTests.concat(surrogateTests)
 
     for (const test of tests) {
+        if (test.exceptPlatforms?.includes('web-extension')) {
+            continue
+        }
+
         it(`${test.name}`, () => {
             const rootURL = test.siteURL
             const requestURL = test.requestURL
