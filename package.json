@@ -35,7 +35,7 @@
         "@babel/node": "^7.16.8",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.16.11",
-        "@fingerprintjs/fingerprintjs": "^3.3.2",
+        "@fingerprintjs/fingerprintjs": "^3.3.3",
         "asana": "^0.18.6",
         "babelify": "10.0.0",
         "brfs": "^2.0.2",
