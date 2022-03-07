@@ -1,0 +1,13 @@
+{
+    "window.dbg.tds.config.features.trackingParameters": {
+        "state": "enabled",
+        "exceptions": [ ],
+        "settings": {
+            "parameters": [
+                "utm_[a-z]+",
+                "fbclid",
+                "fb_source"
+            ]
+        }
+    }
+}
